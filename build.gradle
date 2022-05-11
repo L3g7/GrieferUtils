@@ -1,0 +1,35 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+
+minecraft {
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    runDir = "run"
+    mappings = "stable_20"
+}
+
+processResources.from(sourceSets.main.resources.srcDirs) {
+    include 'addon.json'
+    expand 'version': version
+}
+
+jar.archiveName = "griefer-utils-v${version}.jar"
+
+reobf.jar.mappingType = "NOTCH"
+
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+	options.encoding = 'UTF-8'
+}

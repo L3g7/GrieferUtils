@@ -1,0 +1,17 @@
+# gradle
+build
+.gradle
+
+# run
+logs
+out
+run
+
+# other
+eclipse
+gradlew.bat
+
+# idea
+*.iml
+*.ipr
+*.iws

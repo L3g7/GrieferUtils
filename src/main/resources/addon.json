@@ -1,0 +1,13 @@
+{
+  "name": "GrieferUtils",
+  "description": "\u00A7cFalls du das hier liest, gab es einen Fehler. :(\n\u00A7c\u00A7lVermutlich hast du kein Forge installiert.",
+  "icon": "https://grieferutils.l3g7.dev/icon/padded/128x128",
+  "author": "L3g7",
+  "addonVersion": "${version}",
+
+  "mainClass": "dev.l3g7.griefer_utils.Main",
+  "transformerClass": "dev.l3g7.griefer_utils.asm.Transformer",
+
+  "category": 3,
+  "uuid": "%uuid%"
+}

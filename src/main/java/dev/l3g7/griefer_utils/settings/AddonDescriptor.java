@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.settings;
 import dev.l3g7.griefer_utils.Main;
 import dev.l3g7.griefer_utils.event.events.LateInit;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.UpdateCheck;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.Reflection;
 import dev.l3g7.griefer_utils.util.VersionUtil;
@@ -36,6 +37,11 @@ public class AddonDescriptor {
         AddonInfo addonInfo = getAddonInfo();
         if (addonInfo != null) {
             Reflection.set(addonInfo, "L3g7 \u2503 v" + VersionUtil.getAddonVersion(), "author");
+
+            if(!UpdateCheck.isUpToDate()) {
+                Reflection.set(addonInfo, "\u00A7e\u00A7lGrieferUtils wurde aktualisiert!\nBitte starte Minecraft neu.", "description");
+                return;
+            }
 
             // Load description from server, so it can be used as news board
             // Also sneaky way to get usage stats

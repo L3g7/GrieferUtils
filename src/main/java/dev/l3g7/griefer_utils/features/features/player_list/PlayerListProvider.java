@@ -16,9 +16,8 @@ public class PlayerListProvider {
 
     @OnEnable
     private void init() {
-        loadJson("http://coolertyp.scammer-radar.de/onlineScammer.json", Provider.SCAMMER_RADAR_V1, scammerList);
-        loadJson("http://newh1ve.de:8080/scammer/scammers", Provider.SCAMMER_RADAR_V2, scammerList);
-        loadJson("http://newh1ve.de:8080/mm/middlemans", Provider.SCAMMER_RADAR_V2, trustedList);
+        loadJson("http://newh1ve.de:8080/scammer/scammers", Provider.SCAMMER_RADAR, scammerList);
+        loadJson("http://newh1ve.de:8080/mm/middlemans", Provider.SCAMMER_RADAR, trustedList);
 
         if (IOUtil.request("http://api.realmates.tk/mmapi.php?CB=aktimagalles").asString(res -> {
             for (String name : res.split(";"))
@@ -75,7 +74,7 @@ public class PlayerListProvider {
 
     public enum Provider {
 
-        SCAMMER_RADAR_V1("ScammerRadar v1"), SCAMMER_RADAR_V2("ScammerRadar v2"), REAL_MATES("RealMates");
+        SCAMMER_RADAR("ScammerRadar"), REAL_MATES("RealMates");
 
         private final String name;
 

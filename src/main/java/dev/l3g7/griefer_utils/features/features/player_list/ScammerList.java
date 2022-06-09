@@ -1,10 +1,8 @@
 package dev.l3g7.griefer_utils.features.features.player_list;
 
-import dev.l3g7.griefer_utils.event.events.LateInit;
 import dev.l3g7.griefer_utils.event.events.network.tablist.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.ModColor;
@@ -12,9 +10,6 @@ import net.labymod.utils.ModColor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static dev.l3g7.griefer_utils.features.features.player_list.PlayerListProvider.Provider.SCAMMER_RADAR_V1;
-import static dev.l3g7.griefer_utils.features.features.player_list.PlayerListProvider.Provider.SCAMMER_RADAR_V2;
 
 @Singleton
 public class ScammerList extends PlayerList {
@@ -47,20 +42,6 @@ public class ScammerList extends PlayerList {
             .icon("info")
             .defaultValue(true);
 
-    private final BooleanSetting useScammerRadarV1Provider = new BooleanSetting()
-            .name("ScammerRadar V1")
-            .config("features.scammer_list.scammer_radar_v1")
-            .icon("scammer_radar")
-            .defaultValue(true)
-            .callback(v -> TabListNameUpdateEvent.updateTabListNames());
-
-    private final BooleanSetting useScammerRadarV2Provider = new BooleanSetting()
-            .name("ScammerRadar V2")
-            .config("features.scammer_list.scammer_radar_v2")
-            .icon("scammer_radar")
-            .defaultValue(true)
-            .callback(v -> TabListNameUpdateEvent.updateTabListNames());
-
     private final BooleanSetting enabled = new BooleanSetting()
             .name("Scammerliste")
             .config("features.scammer_list.active")
@@ -68,10 +49,7 @@ public class ScammerList extends PlayerList {
             .defaultValue(false)
             .callback(v -> TabListNameUpdateEvent.updateTabListNames())
             .subSettingsWithHeader("Scammerliste",
-                    tabAction, chatAction, displayNameAction, showInProfile,
-                    new HeaderSetting().entryHeight(10),
-                    new HeaderSetting("§e§lQuellen"),
-                    useScammerRadarV1Provider, useScammerRadarV2Provider);
+                    tabAction, chatAction, displayNameAction, showInProfile);
 
     public ScammerList() {
         super("Scammer!", ModColor.RED, 14, "§c[§lSCAMMER§c] ", "§c[⚠] ");
@@ -82,28 +60,10 @@ public class ScammerList extends PlayerList {
         return enabled;
     }
 
-    @LateInit
-    public void lateInit() {
-        if (!PlayerListProvider.providerAvailability.getOrDefault(SCAMMER_RADAR_V1, false))
-            disable(useScammerRadarV1Provider, SCAMMER_RADAR_V1);
-        if (!PlayerListProvider.providerAvailability.getOrDefault(SCAMMER_RADAR_V2, false))
-            disable(useScammerRadarV2Provider, SCAMMER_RADAR_V2);
-    }
-
-    private void disable(BooleanSetting setting, PlayerListProvider.Provider provider) {
-        setting .description("§cEs gab einen Fehler beim Laden der Daten von §c" + provider.getName() + "§c!")
-                .name("§c§m" + setting.getDisplayName())
-                .callback(v -> {if(v) setting.set(false);});
-    }
-
     @Override
     List<PlayerListProvider.PlayerListEntry> getEntries(String name, UUID uuid) {
         List<PlayerListProvider.PlayerListEntry> result = new ArrayList<>();
         for (PlayerListProvider.PlayerListEntry entry : PlayerListProvider.scammerList) {
-            // Check if provider is enabled
-            if (!useScammerRadarV1Provider.get() && entry.getProvider() == SCAMMER_RADAR_V1) continue;
-            if (!useScammerRadarV2Provider.get() && entry.getProvider() == SCAMMER_RADAR_V2) continue;
-
             if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
                 result.add(entry);
         }

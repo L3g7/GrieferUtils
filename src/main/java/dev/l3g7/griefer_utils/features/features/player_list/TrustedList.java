@@ -83,10 +83,10 @@ public class TrustedList extends PlayerList {
 
     @LateInit
     public void lateInit() {
-        if (!PlayerListProvider.providerAvailability.getOrDefault(SCAMMER_RADAR_V2, false))
-            disable(useScammerRadarV2Provider, SCAMMER_RADAR_V2);
+        if (!PlayerListProvider.providerAvailability.getOrDefault(SCAMMER_RADAR, false))
+            disable(useScammerRadarV2Provider, SCAMMER_RADAR);
         if (!PlayerListProvider.providerAvailability.getOrDefault(REAL_MATES, false))
-            disable(useRealMatesProvider, SCAMMER_RADAR_V1);
+            disable(useRealMatesProvider, REAL_MATES);
     }
 
     private void disable(BooleanSetting setting, PlayerListProvider.Provider provider) {
@@ -100,7 +100,7 @@ public class TrustedList extends PlayerList {
         List<PlayerListProvider.PlayerListEntry> result = new ArrayList<>();
         for (PlayerListProvider.PlayerListEntry entry : PlayerListProvider.trustedList) {
             // Check if provider is enabled
-            if (!useScammerRadarV2Provider.get() && entry.getProvider() == SCAMMER_RADAR_V2) continue;
+            if (!useScammerRadarV2Provider.get() && entry.getProvider() == SCAMMER_RADAR) continue;
             if (!useRealMatesProvider.get() && entry.getProvider() == REAL_MATES) continue;
 
             if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))

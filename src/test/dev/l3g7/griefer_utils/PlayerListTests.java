@@ -27,19 +27,13 @@ public class PlayerListTests {
 
     @Test
     @Timeout(5)
-    public void testScammerRadarV1() {
-        testDefaultList("http://coolertyp.scammer-radar.de/onlineScammer.json");
-    }
-
-    @Test
-    @Timeout(5)
-    public void testScammerRadarV2Scammers() {
+    public void testScammerRadarScammers() {
         testDefaultList("http://newh1ve.de:8080/scammer/scammers");
     }
 
     @Test
     @Timeout(5)
-    public void testScammerRadarV2MMs() {
+    public void testScammerRadarMMs() {
         testDefaultList("http://newh1ve.de:8080/mm/middlemans");
     }
 

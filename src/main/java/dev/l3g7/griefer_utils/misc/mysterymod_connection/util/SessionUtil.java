@@ -1,9 +1,7 @@
 package dev.l3g7.griefer_utils.misc.mysterymod_connection.util;
 
-import com.mojang.authlib.Agent;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 
@@ -31,14 +29,10 @@ public class SessionUtil {
             if (Minecraft.getMinecraft() != null) {
                 session = Minecraft.getMinecraft().getSession();
             } else {
-                if (!System.getenv().containsKey("GRIEFER_UTILS_TEST_USERNAME"))
+                if (!System.getenv().containsKey("MINECRAFT_TEST_USERNAME"))
                     throw new RuntimeException("No login information found!");
                 try {
-                    YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(Proxy.NO_PROXY, "1").createUserAuthentication(Agent.MINECRAFT);
-                    auth.setUsername(System.getenv("GRIEFER_UTILS_TEST_USERNAME"));
-                    auth.setPassword(System.getenv("GRIEFER_UTILS_TEST_PASSWORD"));
-                    auth.logIn();
-                    session = new Session(auth.getSelectedProfile().getName(), auth.getSelectedProfile().getId().toString().replace("-", ""), auth.getAuthenticatedToken(), "mojang");
+                    session = MicrosoftAuth.loginWithCredentials(System.getenv("MINECRAFT_TEST_USERNAME"), System.getenv("MINECRAFT_TEST_PASSWORD"));
                 } catch (Throwable t) {
                     t.printStackTrace();
                     throw new RuntimeException("Login failed!");

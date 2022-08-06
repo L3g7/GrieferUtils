@@ -24,6 +24,7 @@ public class BetterSwitchCmd extends Feature {
     private final BooleanSetting enabled = new BooleanSetting()
             .name("BetterSwitchCmd")
             .config("features.better_switch_cmd.active")
+            .description("Ermöglicht das direkte Joinen auf einen Citybuild mit \"/switch [CB]\", \"/cb [CB]\" oder \"/cb[CB]\".")
             .icon(Material.COMPASS)
             .defaultValue(false);
 

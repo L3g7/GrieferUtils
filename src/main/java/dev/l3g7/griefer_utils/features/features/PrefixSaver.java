@@ -35,7 +35,7 @@ public class PrefixSaver extends Feature {
 
 	@SubscribeEvent
 	public void onMouseClick(MouseEvent event) {
-		if (!isActive())// || !isOnGrieferGames())
+		if (!isActive() || !isOnGrieferGames())
 			return;
 
 		if (event.button != 1 || !event.buttonstate)

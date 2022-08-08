@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.misc;
+package dev.l3g7.griefer_utils.features.features.prefixsaver;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;

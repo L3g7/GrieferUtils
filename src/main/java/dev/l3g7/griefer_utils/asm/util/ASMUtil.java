@@ -1,7 +1,6 @@
 package dev.l3g7.griefer_utils.asm.util;
 
 import dev.l3g7.griefer_utils.asm.mappings.MappingNode;
-import dev.l3g7.griefer_utils.asm.mappings.Mappings;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.MethodNode;
 

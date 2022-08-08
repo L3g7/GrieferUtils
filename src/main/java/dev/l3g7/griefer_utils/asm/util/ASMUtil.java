@@ -12,10 +12,9 @@ public class ASMUtil extends InsnListUtil implements Opcodes {
 
 	public static MethodNode currentMethodNode = null;
 
-	public static void updateMethod(MethodNode node, boolean isObfuscated) {
+	public static void updateMethod(MethodNode node) {
 		currentMethodNode = node;
 		InsnUtil.labelStack.clear();
-		Mappings.obfuscated = isObfuscated;
 	}
 
 	public static String getDescription(MappingNode.Method method) {

@@ -33,6 +33,8 @@ public class Mappings {
 	public static $EventHandler EventHandler = new $EventHandler();
 	public static $TrueSight    TrueSight = new $TrueSight();
 
+	public static boolean obfuscated = false;
+
 	// Mapping methods
 	public static Class getClass(String mapping) {
 		switch (mapping.toLowerCase()) {
@@ -42,15 +44,16 @@ public class Mappings {
 			case "int": return Int;
 		}
 		for(Field f : Mappings.class.getDeclaredFields()) {
+			if(!Class.class.isAssignableFrom(f.getType()))
+				continue;
+
 			Class mClass = Reflection.get(f, (Object) null);
-			if(mClass.toString().equals(mapping.replace('.', '/')))
+			if(mClass.unobfuscated.equals(mapping.replace('.', '/')))
 				return Reflection.get(f, (Object) null);
 		}
 
 		throw new RuntimeException("Could not find mapping class for '" + mapping + "' !");
 	}
-
-	public static boolean obfuscated = false;
 
 	// Mapping Classes
 	public static class $Block extends Class {

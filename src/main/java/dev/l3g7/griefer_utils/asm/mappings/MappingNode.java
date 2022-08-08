@@ -30,7 +30,7 @@ public abstract class MappingNode {
 		}
 
 		public Class(String name) {
-			super(null, null);
+			super(name, name);
 			this.name = name;
 		}
 

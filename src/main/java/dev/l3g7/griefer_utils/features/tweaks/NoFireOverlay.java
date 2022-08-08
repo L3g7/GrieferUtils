@@ -29,7 +29,7 @@ public class NoFireOverlay extends Feature {
 
     @EventListener
     public void onRender(RenderBurningCheckEvent event) {
-        if (!isActive())
+        if (!isActive() || !isOnGrieferGames())
             return;
 
         event.setCanceled(player() == event.getEntity() && mc().gameSettings.thirdPersonView == 0);

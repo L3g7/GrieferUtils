@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.misc;
 
+import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,6 +16,10 @@ public class ItemBuilder {
 
     public ItemBuilder(Item item) {
         itemStack = new ItemStack(item);
+    }
+
+    public ItemBuilder(Block block) {
+        itemStack = new ItemStack(block);
     }
 
     public ItemBuilder(ItemStack item) {
@@ -34,6 +39,11 @@ public class ItemBuilder {
         tag.getCompoundTag("display").setTag("Lore", loreTag);
 
         itemStack.setTagCompound(tag);
+        return this;
+    }
+
+    public ItemBuilder damage(int damage) {
+        itemStack.setItemDamage(damage);
         return this;
     }
 

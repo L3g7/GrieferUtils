@@ -186,13 +186,18 @@ public class CooldownNotifications extends Feature {
         Config.save();
     }
 
-    @OnEnable
-    private void loadCooldowns() {
+    @EventListener
+    private void loadCooldowns(ServerJoinEvent ignored) {
+        if (!isActive() || !isOnGrieferGames())
+            return;
+
         // Save end dates along with player uuid so no problems occur when using multiple accounts
         String path = "features.cooldown_notifications.end_dates." + profile().getId().toString();
-        if (Config.has(path))
+        if (Config.has(path)) {
+            endDates.clear();
             for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet())
                 endDates.add(new Cooldown(e.getKey(), e.getValue().getAsLong()));
+        }
     }
 
     /**

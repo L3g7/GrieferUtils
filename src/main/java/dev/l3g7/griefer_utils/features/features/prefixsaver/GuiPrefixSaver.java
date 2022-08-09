@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.features.features.prefixsaver;
 
+import dev.l3g7.griefer_utils.misc.ItemBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
@@ -35,20 +36,26 @@ public class GuiPrefixSaver extends GuiChest {
 	}
 
 	static {
-		ItemStack pane = new ItemStack(Blocks.stained_glass_pane);
-		pane.setItemDamage(7);
+		ItemStack pane = new ItemBuilder(Blocks.stained_glass_pane)
+		 .damage(7)
+		 .build();
+
 		for (int i = 0; i < 27; i++)
 			inv.setInventorySlotContents(i, pane);
 
-		ItemStack accept = new ItemStack(Items.dye);
-		accept.setItemDamage(10); // Hellgrüne Farbe
-		accept.setStackDisplayName("§aBestätigen");
-		inv.setInventorySlotContents(ACCEPT_SLOT_ID, accept);
+		inv.setInventorySlotContents(ACCEPT_SLOT_ID,
+		 new ItemBuilder(Items.dye)
+		 .damage(10) // Lime
+		 .name("§aBestätigen")
+		 .build()
+		);
 
 
-		ItemStack decline = new ItemStack(Items.dye);
-		decline.setItemDamage(1); // Rote Farbe
-		decline.setStackDisplayName("§cAbbrechen");
-		inv.setInventorySlotContents(DECLINE_SLOT_ID, decline);
+		inv.setInventorySlotContents(DECLINE_SLOT_ID,
+		 new ItemBuilder(Items.dye)
+		  .damage(1) // Red
+		  .name("§cAbbrechen")
+		  .build()
+		);
 	}
 }

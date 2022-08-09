@@ -47,6 +47,7 @@ public abstract class Module extends SimpleTextModule {
     public String getSettingName() { return configKey; }
     public String getDescription() { return description; }
     public boolean isShown() { return !LabyMod.getInstance().isInGame() || ServerCheck.isOnGrieferGames(); }
+    public boolean isActive() { return getBooleanElement().getCurrentValue(); }
 
     public void loadSettings() {}
     public int getSortingId() { return 0; }

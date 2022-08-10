@@ -17,6 +17,7 @@ public class PrefixSaver extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 	 .name("PrefixSaver")
 	 .config("features.prefix_saver.active")
+	 .description("Fragt beim Einlösen eines Prefixes nach einer Bestätigung.")
 	 .icon(new ItemBuilder(Blocks.redstone_ore).enchant())
 	 .defaultValue(false);
 

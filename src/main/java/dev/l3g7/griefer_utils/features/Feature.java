@@ -59,7 +59,8 @@ public abstract class Feature implements Comparable<Feature> {
     public enum Category {
 
         FEATURE(MainPage.features),
-        TWEAK(MainPage.tweaks);
+        TWEAK(MainPage.tweaks),
+        MISC(null);
 
         public final BooleanSetting setting;
 

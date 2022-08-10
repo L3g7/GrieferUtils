@@ -2,7 +2,6 @@ package dev.l3g7.griefer_utils.settings;
 
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.Transactions;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -40,21 +39,21 @@ public class MainPage {
                     new HeaderSetting("§e§lTweaks").scale(.7),
                     new HeaderSetting("§r").scale(.4).entryHeight(10));
 
-    public static List<SettingsElement> settings = Arrays.asList(
+    public static final List<SettingsElement> settings = Arrays.asList(
             new HeaderSetting("§r"),
             new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
             new HeaderSetting("§e§lStartseite").scale(.7),
             new HeaderSetting("§r").scale(.4).entryHeight(10),
-            features, tweaks, Transactions.element);
+            features, tweaks);
 
     public MainPage() {
-        populateSubsettings(features, Feature.Category.FEATURE);
-        populateSubsettings(tweaks, Feature.Category.TWEAK);
+        features.subSettings(loadSubSettings(Feature.Category.FEATURE));
+        tweaks.subSettings(loadSubSettings(Feature.Category.TWEAK));
+        settings.addAll(loadSubSettings(Feature.Category.MISC));
     }
 
-    private void populateSubsettings(BooleanSetting setting, Feature.Category category) {
-        setting.subSettings(
-                FileProvider.getAllClasses()
+    private List<SettingsElement> loadSubSettings(Feature.Category category) {
+        return FileProvider.getAllClasses()
                         .filter(c -> Reflection.hasSuperclass(c, Feature.class))
                         .filter(c -> !Modifier.isAbstract(c.getModifiers()))
                         .map(Reflection::loadClass)
@@ -62,7 +61,6 @@ public class MainPage {
                         .filter(f -> f.getCategory() == category)
                         .sorted()
                         .map(Feature::getMainElement)
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList());
     }
 }

@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3d;
-import java.awt.*;
+import java.awt.Color;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
 
@@ -28,43 +28,47 @@ public class ChunkIndicator extends Feature {
 
 	private static final Color BLUE = new Color(0x3F3FFF);
 	private static final Color CYAN = new Color(0x009B9B);
-	private static final int[] SIN = new int[] {0, 1, 0, -1};
-	private static final int[] COS = new int[] {1, 0, -1, 0};
+	private static final int[] SIN = new int[]{0, 1, 0, -1};
+	private static final int[] COS = new int[]{1, 0, -1, 0};
 
 	private Color color;
 	private BlockPos chunkRoot;
 
 	private final BooleanSetting red_lines = new BooleanSetting()
-	 .name("Rote Linien")
-	 .config("features.chunk_indicator.red")
-	 .icon(new ItemBuilder(Blocks.wool).damage(14))
-	 .defaultValue(true);
+			.name("Rote Linien")
+			.config("features.chunk_indicator.red")
+			.description("Ob die Linien in den Ecken der anliegenden Chunks angezeigt werden sollen.")
+			.icon(new ItemBuilder(Blocks.wool).damage(14))
+			.defaultValue(true);
 
 	private final BooleanSetting yellow_lines = new BooleanSetting()
-	 .name("Gelbe Linien")
-	 .config("features.chunk_indicator.yellow")
-	 .icon(new ItemBuilder(Blocks.wool).damage(4))
-	 .defaultValue(true);
+			.name("Gelbe Linien")
+			.config("features.chunk_indicator.yellow")
+			.description("Ob die 2x2-Linien angezeigt werden sollen.")
+			.icon(new ItemBuilder(Blocks.wool).damage(4))
+			.defaultValue(true);
 
 	private final BooleanSetting cyan_lines = new BooleanSetting()
-	 .name("Türkise Linien")
-	 .config("features.chunk_indicator.cyan")
-	 .icon(new ItemBuilder(Blocks.wool).damage(9))
-	 .defaultValue(true);
+			.name("Türkise Linien")
+			.config("features.chunk_indicator.cyan")
+			.description("Ob die 8x8-Linien angezeigt werden sollen.")
+			.icon(new ItemBuilder(Blocks.wool).damage(9))
+			.defaultValue(true);
 
 	private final BooleanSetting blue_lines = new BooleanSetting()
-	 .name("Blaue Linien")
-	 .config("features.chunk_indicator.blue")
-	 .icon(new ItemBuilder(Blocks.wool).damage(11))
-	 .defaultValue(true);
+			.name("Blaue Linien")
+			.config("features.chunk_indicator.blue")
+			.description("Ob die 16x16-Linien angezeigt werden sollen.")
+			.icon(new ItemBuilder(Blocks.wool).damage(11))
+			.defaultValue(true);
 
 	private final BooleanSetting enabled = new BooleanSetting()
-	 .name("Chunk-Indikator")
-	 .config("features.chunk_indicator.active")
-	 .icon("chunk_indicator")
-	 .description("Zeigt dir die Chunk-Grenzen an.")
-	 .defaultValue(false)
-	 .subSettingsWithHeader("Chunk-Indikator", red_lines, yellow_lines, cyan_lines, blue_lines);
+			.name("Chunk-Indikator")
+			.config("features.chunk_indicator.active")
+			.icon("chunk_indicator")
+			.description("Zeigt dir die Chunk-Grenzen an.")
+			.defaultValue(false)
+			.subSettingsWithHeader("Chunk-Indikator", red_lines, yellow_lines, cyan_lines, blue_lines);
 
 	public ChunkIndicator() {
 		super(Category.FEATURE);
@@ -77,8 +81,7 @@ public class ChunkIndicator extends Feature {
 
 	@SubscribeEvent
 	public void onRender(RenderWorldLastEvent ignored) {
-		if (!isActive()
-		 || player() == null)
+		if (!isActive() || player() == null)
 			return;
 
 		chunkRoot = new BlockPos(player().chunkCoordX * 16, 0, player().chunkCoordZ * 16);
@@ -98,9 +101,9 @@ public class ChunkIndicator extends Feature {
 		for (int i = 0; i < 8; i++) {
 			color = null;
 
-			if      (blue_lines.get() && i == 0) color = BLUE;
+			if (blue_lines.get() && i == 0) color = BLUE;
 			else if (cyan_lines.get() && i % 4 == 0) color = CYAN;
-			else if (yellow_lines.get())         color = Color.YELLOW;
+			else if (yellow_lines.get()) color = Color.YELLOW;
 
 			if (color != null)
 				verticalLine(2 * i, 0);
@@ -112,9 +115,9 @@ public class ChunkIndicator extends Feature {
 		for (int i = 0; i < 257; i += 2) {
 			color = null;
 
-			if      (blue_lines.get() && i % 16 == 0) color = BLUE;
-			else if (cyan_lines.get() && i % 8 == 0)  color = CYAN;
-			else if (yellow_lines.get())              color = Color.YELLOW;
+			if (blue_lines.get() && i % 16 == 0) color = BLUE;
+			else if (cyan_lines.get() && i % 8 == 0) color = CYAN;
+			else if (yellow_lines.get()) color = Color.YELLOW;
 
 			if (color != null)
 				draw4Lines(chunkRoot.add(0, i, 0), chunkRoot.add(16, i, 0), color);

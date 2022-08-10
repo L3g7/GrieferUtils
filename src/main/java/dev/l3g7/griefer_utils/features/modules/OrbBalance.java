@@ -32,7 +32,6 @@ public class OrbBalance extends Module {
 	private static final Pattern SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich [\\d.]+ \\S+ für ([\\d.]+) Orbs verkauft\\.$");
 	private static final Pattern BUY_PATTERN = Pattern.compile("^\\[GrieferGames] Du hast erfolgreich das Produkt .+ für ([\\d.]+) Orbs gekauft\\.$");
 
-
 	Long balance = null;
 
 	public OrbBalance() {
@@ -46,17 +45,19 @@ public class OrbBalance extends Module {
 
 		IInventory inv = Reflection.get(mc.currentScreen, "lowerChestInventory", "field_147015_w", "w");
 
+		int skullSlot;
 		if (inv.getName().equals("§6Händler"))
-			tryScrapeFromSkull(inv.getStackInSlot(10));
+			skullSlot = 10;
 		else if (inv.getName().equals("§6Verkäufer"))
-			tryScrapeFromSkull(inv.getStackInSlot(13));
-	}
+			skullSlot = 13;
+		else
+			return;
 
-	private void tryScrapeFromSkull(ItemStack skull) {
+		ItemStack skull = inv.getStackInSlot(skullSlot);
 		if (skull == null
-		 || !(skull.getItem() instanceof ItemSkull)
-		 || !skull.getDisplayName().equals("§6Deine Orbs")
-		 || !ItemUtil.hasLore(skull))
+				|| !(skull.getItem() instanceof ItemSkull)
+				|| !skull.getDisplayName().equals("§6Deine Orbs")
+				|| !ItemUtil.hasLore(skull))
 			return;
 
 		Matcher matcher = SKULL_PATTERN.matcher(ItemUtil.getLastLore(skull));

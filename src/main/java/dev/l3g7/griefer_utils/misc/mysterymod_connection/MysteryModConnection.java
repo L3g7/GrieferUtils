@@ -68,6 +68,8 @@ public class MysteryModConnection {
                 });
         try {
             bootstrap.connect(SERVER_HOST, SERVER_PORT).get();
+        } catch (NullPointerException e) {
+            // Address could not be resolved, probably no internet
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }

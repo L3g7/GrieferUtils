@@ -10,22 +10,23 @@ import java.util.List;
 public class ItemUtil {
 	
 	public static List<String> getLore(ItemStack itemStack) {
+		List<String> lore = new ArrayList<>();
+
 		if (itemStack == null)
-			return new ArrayList<>();
+			return lore;
 
 		NBTTagCompound tag = itemStack.getTagCompound();
 		if (tag == null || !tag.hasKey("display", 10))
-			return new ArrayList<>();
+			return lore;
 
 		NBTTagCompound nbt = tag.getCompoundTag("display");
 		if (nbt.getTagId("Lore") != 9)
-			return new ArrayList<>();
+			return lore;
 
 		NBTTagList tagList = nbt.getTagList("Lore", 8);
 		if (tagList.tagCount() < 1)
-			return new ArrayList<>();
+			return lore;
 
-		List<String> lore = new ArrayList<>();
 		for (int i = 0; i < tagList.tagCount(); i++)
 			lore.add(tagList.getStringTagAt(i));
 

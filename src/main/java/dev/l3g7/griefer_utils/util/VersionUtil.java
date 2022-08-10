@@ -13,9 +13,14 @@ public class VersionUtil {
 
     public static String getAddonVersion() {
         if(addonVersion == null) {
-            addonVersion = IOUtil.JSON_PARSER.parse(new String(FileProvider.getProvider().getData().get("addon.json"))).getAsJsonObject().get("addonVersion").getAsString();
-            if(addonVersion.equals("${version}")) {
+            byte[] addonJson = FileProvider.getProvider().getData().get("addon.json");
+            if(addonJson == null) {
                 addonVersion = "DEBUG";
+            } else {
+                addonVersion = IOUtil.JSON_PARSER.parse(new String(addonJson)).getAsJsonObject().get("addonVersion").getAsString();
+                if(addonVersion.equals("${version}")) {
+                    addonVersion = "DEBUG";
+                }
             }
         }
         return addonVersion;

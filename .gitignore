@@ -15,3 +15,4 @@ gradlew.bat
 *.iml
 *.ipr
 *.iws
+.idea

@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.features;
+package dev.l3g7.griefer_utils.features.tweaks;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
@@ -23,13 +23,13 @@ public class BetterSwitchCmd extends Feature {
 
     private final BooleanSetting enabled = new BooleanSetting()
             .name("BetterSwitchCmd")
-            .config("features.better_switch_cmd.active")
+            .config("tweaks.better_switch_cmd.active")
             .description("Ermöglicht das direkte Joinen auf einen Citybuild. Siehe '/cb'.")
             .icon(Material.COMPASS)
-            .defaultValue(false);
+            .defaultValue(true);
 
     public BetterSwitchCmd() {
-        super(Category.FEATURE);
+        super(Category.TWEAK);
     }
 
     @Override

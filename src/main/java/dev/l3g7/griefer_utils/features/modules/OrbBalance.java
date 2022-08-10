@@ -37,7 +37,7 @@ public class OrbBalance extends Module {
 	Long balance = null;
 
 	public OrbBalance() {
-		super("Orbguthaben", "Zeigt dir an, wie viele Orbs du hast.", "orb_balance", new ControlElement.IconData(Material.ENDER_PEARL));
+		super("Orbguthaben", "Zeigt dir an, wie viele Orbs du hast.", "orb_balance", new ControlElement.IconData(Material.EXP_BOTTLE));
 	}
 
 	@SubscribeEvent

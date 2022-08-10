@@ -10,11 +10,18 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.scoreboard.Team;
+import net.minecraft.util.BlockPos;
 import org.lwjgl.opengl.GL11;
+
+import javax.vecmath.Vector3d;
+import java.awt.*;
+
+import static org.lwjgl.opengl.GL11.GL_LINES;
 
 public class RenderUtil {
 
@@ -142,4 +149,32 @@ public class RenderUtil {
                 && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null;
     }
 
+    public static void renderLine(BlockPos start, BlockPos end, Color color) {
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer buf = tessellator.getWorldRenderer();
+        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+        float partialTicks = LabyMod.getInstance().getPartialTicks();
+        Vector3d cameraPos = new Vector3d(entity.prevPosX + ((entity.posX - entity.prevPosX) * partialTicks), entity.prevPosY + ((entity.posY - entity.prevPosY) * partialTicks), entity.prevPosZ + ((entity.posZ - entity.prevPosZ) * partialTicks));
+        double x1 = start.getX() - cameraPos.getX();
+        double y1 = start.getY() - cameraPos.getY();
+        double z1 = start.getZ() - cameraPos.getZ();
+        double x2 = end.getX() - cameraPos.getX();
+        double y2 = end.getY() - cameraPos.getY();
+        double z2 = end.getZ() - cameraPos.getZ();
+
+        float oldLineWidth = GL11.glGetFloat(GL11.GL_LINE_WIDTH);
+        GL11.glLineWidth(1.5f);
+        GlStateManager.disableTexture2D();
+
+        buf.begin(GL_LINES, DefaultVertexFormats.POSITION);
+        GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+
+        buf.pos(x1, y1, z1).endVertex();
+        buf.pos(x2, y2, z2).endVertex();
+
+        tessellator.draw();
+
+        GL11.glLineWidth(oldLineWidth);
+        GlStateManager.enableTexture2D();
+    }
 }

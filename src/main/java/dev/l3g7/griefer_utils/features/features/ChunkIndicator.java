@@ -4,7 +4,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.ItemBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.RenderUtils;
+import dev.l3g7.griefer_utils.util.RenderUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -118,7 +118,7 @@ public class ChunkIndicator extends Feature {
 
 	private void draw4Lines(BlockPos start, BlockPos end, Color color) {
 		for (int i = 0; i < 4; i++)
-			RenderUtils.renderStatic(rotate(start, i), rotate(end, i), color);
+			RenderUtil.renderLine(rotate(start, i), rotate(end, i), color);
 	}
 
 	private BlockPos rotate(BlockPos point, int angle) {

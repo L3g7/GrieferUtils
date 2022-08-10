@@ -3,8 +3,11 @@ package dev.l3g7.griefer_utils.misc;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.Reflection;
-import dev.l3g7.griefer_utils.util.VersionUtil;
 import net.labymod.addon.AddonLoader;
+import net.labymod.main.LabyMod;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.io.File;
 import java.net.HttpURLConnection;
@@ -13,13 +16,45 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.util.VersionUtil.getAddonVersion;
+
 public class UpdateCheck {
 
 	private static boolean isUpToDate = true;
 
-	public static void checkForUpdate(UUID addonUuid) {
+	public static boolean isUpToDate() {
+		return isUpToDate;
+	}
+
+	private boolean shouldShowAchievment = false;
+
+	public UpdateCheck() {
+		if (!Config.has("version")) {
+			Config.set("version", getAddonVersion());
+			Config.save();
+			return;
+		}
+
+		if (Config.get("version").getAsString().equals(getAddonVersion()))
+			return;
+
+		Config.set("version", getAddonVersion());
+		Config.save();
+		shouldShowAchievment = true;
+		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@SubscribeEvent
+	public void onTick(TickEvent.RenderTickEvent ignored) {
+		if (shouldShowAchievment) {
+			LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", "Update wurde installiert.", "Der Changelog befindet sich in den Einstellungen.");
+			shouldShowAchievment = false;
+		}
+	}
+
+	public void checkForUpdate(UUID addonUuid) {
 		File currentAddonJar = AddonLoader.getFiles().get(addonUuid);
-		if(currentAddonJar == null) {
+		if (currentAddonJar == null) {
 			// Probably in dev environment, skip updating
 			return;
 		}
@@ -28,7 +63,7 @@ public class UpdateCheck {
 			JsonObject latestRelease = releases.get(0).getAsJsonObject();
 
 			String tag = latestRelease.get("tag_name").getAsString().replaceFirst("v", "");
-			if(tag.equals(VersionUtil.getAddonVersion())) {
+			if (tag.equals(getAddonVersion())) {
 				return;
 			}
 
@@ -54,9 +89,4 @@ public class UpdateCheck {
 			}
 		});
 	}
-
-	public static boolean isUpToDate() {
-		return isUpToDate;
-	}
-
 }

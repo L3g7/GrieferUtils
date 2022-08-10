@@ -1,9 +1,10 @@
 package dev.l3g7.griefer_utils.settings;
 
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.Constants;
+import dev.l3g7.griefer_utils.features.Transactions;
+import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.Reflection;
@@ -45,8 +46,9 @@ public class MainPage {
 			new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
 			new HeaderSetting("§e§lStartseite").scale(.7),
 			new HeaderSetting("§r").scale(.4).entryHeight(10),
-			features, tweaks)
-	);
+			features, tweaks,
+			Reflection.loadClass(Transactions.class).getMainElement(),
+			new HeaderSetting()));
 
 	public MainPage() {
 		features.subSettings(loadSubSettings(Feature.Category.FEATURE));

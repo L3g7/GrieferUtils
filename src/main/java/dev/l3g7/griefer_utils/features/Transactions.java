@@ -1,9 +1,8 @@
-package dev.l3g7.griefer_utils.features.misc;
+package dev.l3g7.griefer_utils.features;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.LateInit;
 import dev.l3g7.griefer_utils.event.events.SettingsUpdateEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;

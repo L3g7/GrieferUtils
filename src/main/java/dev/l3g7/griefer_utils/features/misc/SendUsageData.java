@@ -16,10 +16,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class SendUsageData extends Feature {
 
 	private final RadioSetting<SendMode> sendUsageData = new RadioSetting<>(SendMode.class)
-			.name("Nutzungsdaten senden")
+			.name("§fNutzungsdaten senden")
 			.icon("info")
 			.defaultValue(SendMode.NORMAL)
-			.description("Würde mich freuen, wenn es 'Normal' bleibt ^^\n\nIm normalen Modus wird nur die Account-UUID mitgesendet, im anonymen nichts.")
+			.description("Würde uns freuen, wenn es 'Normal' bleibt ^^\n\nIm normalen Modus wird nur die Account-UUID mitgesendet, im anonymen nichts.")
 			.config("send_usage_data")
 			.stringProvider(SendMode::getName);
 
@@ -49,14 +49,14 @@ public class SendUsageData extends Feature {
 
 	@LateInit
 	public void sendUsageData() {
-		if(sendUsageData.get() == SendMode.ANONYMOUS) {
+		if (sendUsageData.get() == SendMode.ANONYMOUS) {
 			IOUtil.request("https://grieferutils.l3g7.dev/analytics").close();
 			return;
 		}
 
 		JsonObject data = new JsonObject();
 
-		UUID uuid = mc().getSession().getProfile().getId();;
+		UUID uuid = mc().getSession().getProfile().getId();
 		data.addProperty("uuid_most", uuid.getMostSignificantBits());
 		data.addProperty("uuid_least", uuid.getLeastSignificantBits());
 

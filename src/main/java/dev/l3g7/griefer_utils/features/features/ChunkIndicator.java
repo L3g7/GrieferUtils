@@ -4,14 +4,24 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.ItemBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.RenderUtil;
+import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.opengl.GL11;
 
+import javax.vecmath.Vector3d;
 import java.awt.*;
+
+import static org.lwjgl.opengl.GL11.GL_LINES;
 
 @Singleton
 public class ChunkIndicator extends Feature {
@@ -118,7 +128,7 @@ public class ChunkIndicator extends Feature {
 
 	private void draw4Lines(BlockPos start, BlockPos end, Color color) {
 		for (int i = 0; i < 4; i++)
-			RenderUtil.renderLine(rotate(start, i), rotate(end, i), color);
+			drawRect(rotate(start, i), rotate(end, i), color);
 	}
 
 	private BlockPos rotate(BlockPos point, int angle) {
@@ -131,5 +141,37 @@ public class ChunkIndicator extends Feature {
 		double z2 = x1 * SIN[angle] + z1 * COS[angle];
 
 		return new BlockPos(x2 + center.getX(), point.getY(), z2 + center.getZ());
+	}
+
+	/**
+	 * Based on <a href="https://github.com/CCBlueX/LiquidBounce/blob/5419a2894b4665b7695d0443180275a70f13607a/src/main/java/net/ccbluex/liquidbounce/utils/render/RenderUtils.java#L82">LiquidBounce's RenderUtils#drawBlockBox</a>
+	 */
+	private static void drawRect(BlockPos first, BlockPos second, Color color) {
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer buf = tessellator.getWorldRenderer();
+		Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+		float partialTicks = LabyMod.getInstance().getPartialTicks();
+		Vector3d cameraPos = new Vector3d(entity.prevPosX + ((entity.posX - entity.prevPosX) * partialTicks), entity.prevPosY + ((entity.posY - entity.prevPosY) * partialTicks), entity.prevPosZ + ((entity.posZ - entity.prevPosZ) * partialTicks));
+		double x1 = first.getX() - cameraPos.getX();
+		double y1 = first.getY() - cameraPos.getY();
+		double z1 = first.getZ() - cameraPos.getZ();
+		double x2 = second.getX() - cameraPos.getX();
+		double y2 = second.getY() - cameraPos.getY();
+		double z2 = second.getZ() - cameraPos.getZ();
+
+		float oldLineWidth = GL11.glGetFloat(GL11.GL_LINE_WIDTH);
+		GL11.glLineWidth(1.5f);
+		GlStateManager.disableTexture2D();
+
+		buf.begin(GL_LINES, DefaultVertexFormats.POSITION);
+		GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+
+		buf.pos(x1, y1, z1).endVertex();
+		buf.pos(x2, y2, z2).endVertex();
+
+		tessellator.draw();
+
+		GL11.glLineWidth(oldLineWidth);
+		GlStateManager.enableTexture2D();
 	}
 }

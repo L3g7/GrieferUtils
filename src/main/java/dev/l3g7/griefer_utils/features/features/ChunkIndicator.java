@@ -128,7 +128,7 @@ public class ChunkIndicator extends Feature {
 
 	private void draw4Lines(BlockPos start, BlockPos end, Color color) {
 		for (int i = 0; i < 4; i++)
-			drawRect(rotate(start, i), rotate(end, i), color);
+			drawLine(rotate(start, i), rotate(end, i), color);
 	}
 
 	private BlockPos rotate(BlockPos point, int angle) {
@@ -146,18 +146,18 @@ public class ChunkIndicator extends Feature {
 	/**
 	 * Based on <a href="https://github.com/CCBlueX/LiquidBounce/blob/5419a2894b4665b7695d0443180275a70f13607a/src/main/java/net/ccbluex/liquidbounce/utils/render/RenderUtils.java#L82">LiquidBounce's RenderUtils#drawBlockBox</a>
 	 */
-	private static void drawRect(BlockPos first, BlockPos second, Color color) {
+	private static void drawLine(BlockPos start, BlockPos end, Color color) {
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer buf = tessellator.getWorldRenderer();
 		Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
 		float partialTicks = LabyMod.getInstance().getPartialTicks();
 		Vector3d cameraPos = new Vector3d(entity.prevPosX + ((entity.posX - entity.prevPosX) * partialTicks), entity.prevPosY + ((entity.posY - entity.prevPosY) * partialTicks), entity.prevPosZ + ((entity.posZ - entity.prevPosZ) * partialTicks));
-		double x1 = first.getX() - cameraPos.getX();
-		double y1 = first.getY() - cameraPos.getY();
-		double z1 = first.getZ() - cameraPos.getZ();
-		double x2 = second.getX() - cameraPos.getX();
-		double y2 = second.getY() - cameraPos.getY();
-		double z2 = second.getZ() - cameraPos.getZ();
+		double x1 = start.getX() - cameraPos.getX();
+		double y1 = start.getY() - cameraPos.getY();
+		double z1 = start.getZ() - cameraPos.getZ();
+		double x2 = end.getX() - cameraPos.getX();
+		double y2 = end.getY() - cameraPos.getY();
+		double z2 = end.getZ() - cameraPos.getZ();
 
 		float oldLineWidth = GL11.glGetFloat(GL11.GL_LINE_WIDTH);
 		GL11.glLineWidth(1.5f);

@@ -14,7 +14,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KeySetting extends KeyElement implements SettingElementBuilder<KeyElement> {
+public class KeySetting extends KeyElement implements SettingElementBuilder<KeySetting> {
 
 	private final List<Runnable> callbacks = new ArrayList<>();
 	private String configKey = null;

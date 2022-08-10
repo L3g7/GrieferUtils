@@ -11,9 +11,11 @@ import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Singleton
 public class BetterSwitchCmd extends Feature {
@@ -79,6 +81,20 @@ public class BetterSwitchCmd extends Feature {
             waitingForGui = false;
         });
 
+    }
+
+    @SubscribeEvent
+    public void onTick(TickEvent ignored) {
+        if (!waitingForGui || !(mc().currentScreen instanceof GuiChest))
+            return;
+
+        IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory", "field_147015_w", "w");
+        if (!inv.getDisplayName().getUnformattedText().equals("§6§lServerwechsel")
+         || !inv.getStackInSlot(10).getItem().equals(Items.iron_axe))
+            return;
+
+        mc().playerController.windowClick(player().openContainer.windowId, slot, 0, 0, player());
+        waitingForGui = false;
     }
 
     public void join(int cb) {

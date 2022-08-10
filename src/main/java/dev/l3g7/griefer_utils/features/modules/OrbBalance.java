@@ -1,7 +1,6 @@
 package dev.l3g7.griefer_utils.features.modules;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.event.events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;

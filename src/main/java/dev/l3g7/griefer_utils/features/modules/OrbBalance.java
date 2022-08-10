@@ -40,7 +40,7 @@ public class OrbBalance extends Module {
 
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (!isActive() || !(mc.currentScreen instanceof GuiChest))
+		if (!isActive() || !ServerCheck.isOnCitybuild() || !(mc.currentScreen instanceof GuiChest))
 			return;
 
 		IInventory inv = Reflection.get(mc.currentScreen, "lowerChestInventory", "field_147015_w", "w");
@@ -69,7 +69,7 @@ public class OrbBalance extends Module {
 
 	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
-		if (!isActive())
+		if (!ServerCheck.isOnCitybuild())
 			return;
 
 		String msg = event.getUnformatted().replaceAll("§.", "");
@@ -99,8 +99,8 @@ public class OrbBalance extends Module {
 	}
 
 	@EventListener
-	private void loadBalance(ServerJoinEvent ignored) {
-		if (!isActive() || !ServerCheck.isOnGrieferGames())
+	public void loadBalance(ServerJoinEvent ignored) {
+		if (!ServerCheck.isOnGrieferGames())
 			return;
 
 		String path = "modules.orb_balance.balances." + mc.getSession().getProfile().getId().toString();

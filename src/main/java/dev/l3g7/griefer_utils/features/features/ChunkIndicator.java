@@ -4,6 +4,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.ItemBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
@@ -33,6 +34,7 @@ public class ChunkIndicator extends Feature {
 
 	private Color color;
 	private BlockPos chunkRoot;
+	private boolean enabled = false;
 
 	private final BooleanSetting red_lines = new BooleanSetting()
 			.name("Rote Linien")
@@ -62,12 +64,13 @@ public class ChunkIndicator extends Feature {
 			.icon(new ItemBuilder(Blocks.wool).damage(11))
 			.defaultValue(true);
 
-	private final BooleanSetting enabled = new BooleanSetting()
+	private final KeySetting toggle = new KeySetting()
 			.name("Chunk-Indikator")
-			.config("features.chunk_indicator.active")
+			.config("features.chunk_indicator.key")
 			.icon("chunk_indicator")
 			.description("Zeigt dir die Chunk-Grenzen an.")
-			.defaultValue(false)
+			.callback(() -> enabled = !enabled)
+			.settingsEnabled(true)
 			.subSettingsWithHeader("Chunk-Indikator", red_lines, yellow_lines, cyan_lines, blue_lines);
 
 	public ChunkIndicator() {
@@ -76,12 +79,12 @@ public class ChunkIndicator extends Feature {
 
 	@Override
 	public SettingsElement getMainElement() {
-		return enabled;
+		return toggle;
 	}
 
 	@SubscribeEvent
 	public void onRender(RenderWorldLastEvent ignored) {
-		if (!isActive() || player() == null)
+		if (!enabled || !isCategoryEnabled() || player() == null)
 			return;
 
 		chunkRoot = new BlockPos(player().chunkCoordX * 16, 0, player().chunkCoordZ * 16);

@@ -22,7 +22,7 @@ public class KeySetting extends KeyElement implements SettingElementBuilder<KeyS
 	private boolean pressed;
 
 	public KeySetting() {
-		super("§cNo name set", null, 0, v -> {});
+		super("§cNo name set", null, -1, v -> {});
 
 		Reflection.set(this, (Consumer<Integer>) v -> {
 			currentValue = v;

@@ -4,28 +4,27 @@ on:
   push:
     tags: 'v*'
 
-
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Cache Gradle packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Build with Gradle
         run: ./gradlew build
 
@@ -33,19 +32,28 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-asset
+          body: ${{ github.event.head_commit.message }}
+
+      - name: Upload addon jar
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build/libs/griefer-utils-${{ steps.get_version.outputs.VERSION }}.jar
           asset_name: griefer-utils-${{ steps.get_version.outputs.VERSION }}.jar
+          asset_content_type: application/java-archive
+
+      - name: Upload unobf addon jar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/libs/griefer-utils-${{ steps.get_version.outputs.VERSION }}-unobf.jar
+          asset_name: griefer-utils-${{ steps.get_version.outputs.VERSION }}-unobf.jar
           asset_content_type: application/java-archive

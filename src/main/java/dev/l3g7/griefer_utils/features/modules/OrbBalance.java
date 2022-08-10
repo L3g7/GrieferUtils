@@ -40,7 +40,7 @@ public class OrbBalance extends Module {
 	}
 
 	@SubscribeEvent
-	public void onTick(TickEvent event) {
+	public void onTick(TickEvent.ClientTickEvent event) {
 		if (!isActive() || !(mc.currentScreen instanceof GuiChest))
 			return;
 

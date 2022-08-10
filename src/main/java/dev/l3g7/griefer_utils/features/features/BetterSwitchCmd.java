@@ -24,7 +24,7 @@ public class BetterSwitchCmd extends Feature {
     private final BooleanSetting enabled = new BooleanSetting()
             .name("BetterSwitchCmd")
             .config("features.better_switch_cmd.active")
-            .description("Ermöglicht das direkte Joinen auf einen Citybuild mit \"/switch [CB]\", \"/cb [CB]\" oder \"/cb[CB]\".")
+            .description("Ermöglicht das direkte Joinen auf einen Citybuild. Siehe '/cb'.")
             .icon(Material.COMPASS)
             .defaultValue(false);
 
@@ -43,8 +43,15 @@ public class BetterSwitchCmd extends Feature {
             return;
 
         String msg = event.getMsg().toLowerCase();
-        
-        if (msg.matches("^/(?:cb ?|switch )(?:n|nature)$"))
+
+        if (msg.equals("/cb")) {
+            display(Constants.ADDON_PREFIX + "Syntax: '/switch <CB>', '/cb <CB>' oder '/cb<CB>'.");
+            display(Constants.ADDON_PREFIX + "§7§nShortcuts:");
+            display(Constants.ADDON_PREFIX + "§7Nature: 'n'");
+            display(Constants.ADDON_PREFIX + "§7Extreme: 'x'");
+            display(Constants.ADDON_PREFIX + "§7Evil: 'e'");
+        }
+        else if (msg.matches("^/(?:cb ?|switch )(?:n|nature)$"))
             join(23);
         else if (msg.matches("^/(?:cb ?|switch )(?:x|extreme)$"))
             join(24);

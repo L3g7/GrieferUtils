@@ -21,7 +21,7 @@ public class Received extends Module {
     static BigDecimal moneyReceived = BigDecimal.ZERO;
 
     public Received() {
-        super("Bekommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start bekommen hast", "received", new IconData(Material.EMERALD));
+        super("Eingenommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast", "received", new IconData(Material.EMERALD));
     }
 
     @EventListener

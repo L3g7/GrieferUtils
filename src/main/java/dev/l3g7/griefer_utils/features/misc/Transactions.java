@@ -1,8 +1,9 @@
-package dev.l3g7.griefer_utils.features;
+package dev.l3g7.griefer_utils.features.misc;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.LateInit;
 import dev.l3g7.griefer_utils.event.events.SettingsUpdateEvent;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
@@ -21,9 +22,9 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class Transactions {
+public class Transactions extends Feature {
 
-    public static final CategorySetting element = new CategorySetting()
+    private final CategorySetting element = new CategorySetting()
             .name("§eTransaktionen")
             .icon("mysterymod")
             .description("§eVerbindet...")
@@ -36,6 +37,15 @@ public class Transactions {
                     new HeaderSetting("§c§nDie Beträge sind abgerundet§c!").scale(.7));
 
     private List<Transaction> transactions = Collections.emptyList();
+
+    public Transactions() {
+        super(Category.MISC);
+    }
+
+    @Override
+    public SettingsElement getMainElement() {
+        return element;
+    }
 
     @LateInit
     public void connect() {

@@ -48,7 +48,7 @@ public abstract class Feature implements Comparable<Feature> {
     public void sendQueued(String cmd) { TickScheduler.queue("chat", () -> { if(player() != null) send(cmd); }, 50); }
 
     public void displayAchievement(String title, String description, Object... args) {
-        LabyMod.getInstance().getGuiCustomAchievement().displayAchievement(title, String.format(description, args));
+        LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", title, String.format(description, args));
     }
 
     @Override

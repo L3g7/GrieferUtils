@@ -16,8 +16,8 @@ import net.minecraft.client.multiplayer.ServerData;
 public class AutoPortal extends Feature {
 
 	private final BooleanSetting join = new BooleanSetting()
-			.name("Automatisch beitreten")
-			.description("Betritt automatisch den Portalraum, sobald Minecraft gestartet wurde.")
+			.name("Start im Portalraum")
+			.description("Betritt automatisch Griefergames, sobald Minecraft gestartet wurde.")
 			.icon(Material.GRASS)
 			.defaultValue(false)
 			.config("features.auto_portal.join");

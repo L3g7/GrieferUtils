@@ -26,7 +26,7 @@ public class AutoPortal extends Feature {
 			.name("AutoPortal")
 			.description("Geht automatisch in den Portalraum.")
 			.icon("portal")
-			.defaultValue(true)
+			.defaultValue(false)
 			.config("features.auto_portal.active")
 			.subSettingsWithHeader("AutoPortal", join);
 

@@ -3,7 +3,7 @@ package dev.l3g7.griefer_utils.file_provider;
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.file_provider.impl.FileProviderImpl;
 import dev.l3g7.griefer_utils.file_provider.impl.JarFileProviderImpl;
-import dev.l3g7.griefer_utils.file_provider.impl.ResourceFileProviderImpl;
+import dev.l3g7.griefer_utils.file_provider.impl.URLFileProviderImpl;
 import dev.l3g7.griefer_utils.util.Reflection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +28,7 @@ public class FileProvider {
 
     public static FileProviderImpl getProvider() {
         if(fileProvider == null) {
-            for (FileProviderImpl impl : new FileProviderImpl[]{new JarFileProviderImpl(), new ResourceFileProviderImpl()}) {
+            for (FileProviderImpl impl : new FileProviderImpl[]{new JarFileProviderImpl(), new URLFileProviderImpl()}) {
                 if(impl.isAvailable()) {
                     fileProvider = impl;
                     LOGGER.debug("Using " + impl.getClass().getSimpleName() + ", found " + impl.getData().size() + " files");

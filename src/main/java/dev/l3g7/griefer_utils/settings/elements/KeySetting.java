@@ -20,6 +20,7 @@ public class KeySetting extends KeyElement implements SettingElementBuilder<KeyS
 	private String configKey = null;
 	private Integer currentValue;
 	private boolean pressed;
+	private boolean triggersInChest = false;
 
 	public KeySetting() {
 		super("§cNo name set", null, -1, v -> {});
@@ -55,6 +56,11 @@ public class KeySetting extends KeyElement implements SettingElementBuilder<KeyS
 		return this;
 	}
 
+	public KeySetting triggersInChest() {
+		this.triggersInChest = true;
+		return this;
+	}
+
 	public KeySetting config(String configKey) {
 		this.configKey = configKey;
 		if (Config.has(configKey)) {
@@ -77,17 +83,17 @@ public class KeySetting extends KeyElement implements SettingElementBuilder<KeyS
 
 	@SubscribeEvent
 	public void onKeyPress(InputEvent.KeyInputEvent event) {
-		if(Keyboard.isRepeatEvent())
+		if (Keyboard.isRepeatEvent() || currentValue == null)
 			return;
 
-		if(Minecraft.getMinecraft().currentScreen == null || Minecraft.getMinecraft().currentScreen instanceof GuiChest) {
+		if (mc.currentScreen == null || (mc.currentScreen instanceof GuiChest && triggersInChest)) {
 			if (currentValue == Keyboard.getEventKey()) {
 				// Only run callback if the state was changed
-				if(pressed == Keyboard.getEventKeyState())
+				if (pressed == Keyboard.getEventKeyState())
 					return;
 
 				pressed = Keyboard.getEventKeyState();
-				if(pressed)
+				if (pressed)
 					callbacks.forEach(Runnable::run);
 			}
 		}

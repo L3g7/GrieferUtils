@@ -36,7 +36,7 @@ public class AddonDescriptor {
     public void init() {
         AddonInfo addonInfo = getAddonInfo();
         if (addonInfo != null) {
-            Reflection.set(addonInfo, "L3g7 \u2503 v" + VersionUtil.getAddonVersion(), "author");
+            Reflection.set(addonInfo, "L3g7, L3g73 \u2503 v" + VersionUtil.getAddonVersion(), "author");
 
             if(!UpdateCheck.isUpToDate()) {
                 Reflection.set(addonInfo, "\u00A7e\u00A7lGrieferUtils wurde aktualisiert!\nBitte starte Minecraft neu.", "description");

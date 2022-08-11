@@ -26,7 +26,7 @@ public class UpdateCheck {
 		return isUpToDate;
 	}
 
-	private boolean shouldShowAchievment = false;
+	private boolean shouldShowAchievement = false;
 
 	public UpdateCheck() {
 		// Starting for the first time -> Not updated
@@ -41,15 +41,15 @@ public class UpdateCheck {
 
 		Config.set("version", getAddonVersion());
 		Config.save();
-		shouldShowAchievment = true;
+		shouldShowAchievement = true;
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@SubscribeEvent
 	public void onTick(TickEvent.RenderTickEvent ignored) {
-		if (shouldShowAchievment) { // I have to use RenderTickEvent instead of GuiOpenEvent since the main gui is opened before it is rendered -> Achievement is only shown for ~1s
+		if (shouldShowAchievement) { // I have to use RenderTickEvent instead of GuiOpenEvent since the main gui is opened before it is rendered -> Achievement is only shown for ~1s
 			LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", "Update wurde installiert.", "Der Changelog befindet sich in den Einstellungen.");
-			shouldShowAchievment = false;
+			shouldShowAchievement = false;
 		}
 	}
 

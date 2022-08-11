@@ -19,14 +19,14 @@ public class PlayerListProvider {
         loadJson("http://newh1ve.de:8080/scammer/scammers", Provider.SCAMMER_RADAR, scammerList);
         loadJson("http://newh1ve.de:8080/mm/middlemans", Provider.SCAMMER_RADAR, trustedList);
 
-        if (IOUtil.request("http://api.realmates.tk/mmapi.php?CB=aktimagalles").asString(res -> {
-            for (String name : res.split(";"))
-                trustedList.add(new PlayerListEntry(name, null, Provider.REAL_MATES));
-        }).successful() && IOUtil.request("http://api.realmates.tk/mmapi.php?member").asString(res2 -> {
-            for (String name : res2.split(";"))
-                trustedList.add(new PlayerListEntry(name, null, Provider.REAL_MATES));
-        }).successful())
-            providerAvailability.put(Provider.REAL_MATES, true);
+//        if (IOUtil.request("http://api.realmates.tk/mmapi.php?CB=aktimagalles").asString(res -> {
+//            for (String name : res.split(";"))
+//                trustedList.add(new PlayerListEntry(name, null, Provider.REAL_MATES));
+//        }).successful() && IOUtil.request("http://api.realmates.tk/mmapi.php?member").asString(res2 -> {
+//            for (String name : res2.split(";"))
+//                trustedList.add(new PlayerListEntry(name, null, Provider.REAL_MATES));
+//        }).successful())
+//            providerAvailability.put(Provider.REAL_MATES, true);
     }
 
     private void loadJson(String url, Provider provider, List<PlayerListEntry> list) {

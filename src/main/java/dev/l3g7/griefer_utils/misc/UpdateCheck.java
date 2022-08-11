@@ -29,6 +29,7 @@ public class UpdateCheck {
 	private boolean shouldShowAchievment = false;
 
 	public UpdateCheck() {
+		// Starting for the first time -> Not updated
 		if (!Config.has("version")) {
 			Config.set("version", getAddonVersion());
 			Config.save();
@@ -46,7 +47,7 @@ public class UpdateCheck {
 
 	@SubscribeEvent
 	public void onTick(TickEvent.RenderTickEvent ignored) {
-		if (shouldShowAchievment) {
+		if (shouldShowAchievment) { // I have to use RenderTickEvent instead of GuiOpenEvent since the main gui is opened before it is rendered -> Achievement is only shown for ~1s
 			LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", "Update wurde installiert.", "Der Changelog befindet sich in den Einstellungen.");
 			shouldShowAchievment = false;
 		}

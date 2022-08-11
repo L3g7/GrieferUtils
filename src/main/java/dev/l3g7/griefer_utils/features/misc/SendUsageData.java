@@ -50,7 +50,7 @@ public class SendUsageData extends Feature {
 	@LateInit
 	public void sendUsageData() {
 		if (sendUsageData.get() == SendMode.ANONYMOUS) {
-			IOUtil.request("https://grieferutils.l3g7.dev/analytics").close();
+			IOUtil.request("https://grieferutils.l3g7.dev/analytics/").close();
 			return;
 		}
 
@@ -60,7 +60,7 @@ public class SendUsageData extends Feature {
 		data.addProperty("uuid_most", uuid.getMostSignificantBits());
 		data.addProperty("uuid_least", uuid.getLeastSignificantBits());
 
-		IOUtil  .request("https://grieferutils.l3g7.dev/analytics")
+		IOUtil  .request("https://grieferutils.l3g7.dev/analytics/")
 				.post("application/json", data.toString().getBytes(UTF_8))
 				.close();
 	}

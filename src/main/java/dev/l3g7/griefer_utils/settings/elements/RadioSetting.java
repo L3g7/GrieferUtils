@@ -53,6 +53,7 @@ public class RadioSetting<E extends Enum<E>> extends ColorPickerCheckBoxBulkElem
                             return;
 
                         Config.set(configKey, e.name());
+                        Config.save();
                         break;
                     }
                 }

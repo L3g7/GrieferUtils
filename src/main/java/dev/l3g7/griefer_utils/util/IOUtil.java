@@ -177,8 +177,11 @@ public class IOUtil {
 			eventLoopGroup.submit(() -> {
 				try {
 					action.run();
-					if (shouldClose)
-						close();
+					if (shouldClose) {
+						conn.getInputStream().close();
+						conn.disconnect();
+						shouldClose = false;
+					}
 				} catch (Throwable e) {
 					e.printStackTrace();
 					stackTrace.printStackTrace();

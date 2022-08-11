@@ -11,10 +11,6 @@ import dev.l3g7.griefer_utils.settings.elements.TextSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import net.labymod.settings.elements.SettingsElement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 @Singleton
 public class Changelog extends Feature {
 
@@ -22,18 +18,16 @@ public class Changelog extends Feature {
 			.name("§z§eChangelog")
 			.description("§eVerbindet...")
 			.icon("white_scroll")
-			.settingsEnabled(false);
-
+			.settingsEnabled(false)
+			.subSettings(
+					new HeaderSetting("§r"),
+					new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
+					new HeaderSetting("§f§lChangelog").scale(.7).entryHeight(7),
+					new HeaderSetting("§r").scale(.4).entryHeight(10)
+			);
 
 	public Changelog() {
 		super(Category.MISC);
-
-		List<SettingsElement> elements = new ArrayList<>(Arrays.asList(
-				new HeaderSetting("§r"),
-				new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-				new HeaderSetting("§f§lChangelog").scale(.7).entryHeight(7),
-				new HeaderSetting("§r").scale(.4).entryHeight(10)
-		));
 
 		IOUtil.request("https://api.github.com/repos/L3g7/GrieferUtils/releases").asJsonArray(releases -> {
 			for (JsonElement releaseElement : releases) {
@@ -41,12 +35,12 @@ public class Changelog extends Feature {
 
 				String title = "§l" + release.get("tag_name").getAsString();
 
-				elements.add(new CategorySetting()
+				element.subSettings(new CategorySetting()
 						.name(" " + title)
 						.subSettings(
 								new HeaderSetting("§r"),
 								new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-								new HeaderSetting("§f§l" + title).scale(.7),
+								new HeaderSetting("§f§lChangelog - " + title).scale(.7),
 								new TextSetting(release.get("body").getAsString().replace("\r", ""))
 						));
 			}
@@ -59,7 +53,6 @@ public class Changelog extends Feature {
 					.settingsEnabled(false)
 		);
 
-		element.subSettings(elements);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.misc;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.Reflection;
@@ -10,6 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -64,11 +66,15 @@ public class UpdateCheck {
 			JsonObject latestRelease = releases.get(0).getAsJsonObject();
 
 			String tag = latestRelease.get("tag_name").getAsString().replaceFirst("v", "");
-			if (tag.equals(getAddonVersion())) {
+			if (tag.equals(getAddonVersion()))
 				return;
-			}
 
-			JsonObject asset = latestRelease.get("assets").getAsJsonArray().get(0).getAsJsonObject();
+			JsonArray assets = latestRelease.get("assets").getAsJsonArray();
+			JsonObject asset = assets.get(0).getAsJsonObject();
+
+			if (asset.get("name").getAsString().endsWith("unobf.jar"))
+				asset = assets.get(1).getAsJsonObject();
+
 			String downloadUrl = asset.get("browser_download_url").getAsString();
 
 			HttpURLConnection conn;
@@ -81,7 +87,12 @@ public class UpdateCheck {
 
 				Files.copy(conn.getInputStream(), newAddonJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-				Runtime.getRuntime().addShutdownHook(new Thread(currentAddonJar::delete));
+				File deleteQueueFile = AddonLoader.getDeleteQueueFile();
+				deleteQueueFile.createNewFile();
+
+				try (FileWriter fw = new FileWriter(deleteQueueFile)) {
+					fw.write(currentAddonJar.getName() + "\n");
+				}
 
 				isUpToDate = false;
 

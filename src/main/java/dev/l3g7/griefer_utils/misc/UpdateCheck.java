@@ -13,13 +13,18 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.util.VersionUtil.getAddonVersion;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
 
 public class UpdateCheck {
 
@@ -32,8 +37,8 @@ public class UpdateCheck {
 	private boolean shouldShowAchievement = false;
 
 	public UpdateCheck() {
-		// Starting for the first time -> Not updated
 		if (!Config.has("version")) {
+			// Starting for the first time -> Not updated
 			Config.set("version", getAddonVersion());
 			Config.save();
 			return;
@@ -50,7 +55,10 @@ public class UpdateCheck {
 
 	@SubscribeEvent
 	public void onTick(TickEvent.RenderTickEvent ignored) {
-		if (shouldShowAchievement) { // I have to use RenderTickEvent instead of GuiOpenEvent since the main gui is opened before it is rendered -> Achievement is only shown for ~1s
+		// Using @LateInit results in the achievement display time being reduced due to heavy lag between the GuiOpenEvent and the first main menu render.
+		// Using RenderTickEvent, the achievement gets displayed as soon as the main menu really renders.
+
+		if (shouldShowAchievement) {
 			LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", "Update wurde installiert.", "Der Changelog befindet sich in den Einstellungen.");
 			shouldShowAchievement = false;
 		}
@@ -70,6 +78,7 @@ public class UpdateCheck {
 			if (tag.equals(getAddonVersion()))
 				return;
 
+			// Get latest addon asset
 			JsonArray assets = latestRelease.get("assets").getAsJsonArray();
 			JsonObject asset = null;
 
@@ -82,39 +91,34 @@ public class UpdateCheck {
 			}
 
 			if (asset == null) {
-				System.err.println("No correct GrieferUtils release found");
+				System.err.println("No correct GrieferUtils release could be found");
 				return;
 			}
-
-			if (asset.get("name").getAsString().endsWith("unobf.jar"))
-				asset = assets.get(1).getAsJsonObject();
 
 			String downloadUrl = asset.get("browser_download_url").getAsString();
 
 			HttpURLConnection conn;
 
 			try {
+				// Download new version
 				conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
 				conn.addRequestProperty("User-Agent", "GrieferUtils");
 
-				File newAddonJar = new File((File) Reflection.get(AddonLoader.class, "addonsDirectory"), asset.get("name").getAsString());
-
+				File addonsDirectory = Reflection.get(AddonLoader.class, "addonsDirectory");
+				File newAddonJar = new File(addonsDirectory, asset.get("name").getAsString());
 				Files.copy(conn.getInputStream(), newAddonJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-				File deleteQueueFile = AddonLoader.getDeleteQueueFile();
-
-				if (!deleteQueueFile.exists())
-					deleteQueueFile.createNewFile();
-
-				try (FileWriter fw = new FileWriter(deleteQueueFile)) {
-					fw.write(currentAddonJar.getName() + "\n");
-				}
+				// Add old version to LabyMod's .delete
+				Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();
+				String deleteLine = currentAddonJar.getName() + System.lineSeparator();
+				Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
 
 				isUpToDate = false;
 
-			} catch (Throwable e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		});
 	}
+
 }

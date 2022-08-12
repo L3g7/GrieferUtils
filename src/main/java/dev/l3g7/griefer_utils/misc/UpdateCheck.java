@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.util.IOUtil;
-import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.addon.AddonLoader;
 import net.labymod.main.LabyMod;
 import net.minecraftforge.common.MinecraftForge;
@@ -12,17 +11,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.util.VersionUtil.getAddonVersion;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 
@@ -104,9 +101,8 @@ public class UpdateCheck {
 				conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
 				conn.addRequestProperty("User-Agent", "GrieferUtils");
 
-				File addonsDirectory = Reflection.get(AddonLoader.class, "addonsDirectory");
-				File newAddonJar = new File(addonsDirectory, asset.get("name").getAsString());
-				Files.copy(conn.getInputStream(), newAddonJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				File newAddonJar = new File(AddonLoader.getAddonsDirectory(), asset.get("name").getAsString());
+				Files.copy(conn.getInputStream(), newAddonJar.toPath(), REPLACE_EXISTING);
 
 				// Add old version to LabyMod's .delete
 				Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();

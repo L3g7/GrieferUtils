@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.misc;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.Reflection;
@@ -70,7 +71,20 @@ public class UpdateCheck {
 				return;
 
 			JsonArray assets = latestRelease.get("assets").getAsJsonArray();
-			JsonObject asset = assets.get(0).getAsJsonObject();
+			JsonObject asset = null;
+
+			for (JsonElement jsonElement : assets) {
+				JsonObject currentAsset = jsonElement.getAsJsonObject();
+				if (currentAsset.get("name").getAsString().equals("griefer-utils-v" + tag + ".jar")) {
+					asset = currentAsset;
+					break;
+				}
+			}
+
+			if (asset == null) {
+				System.err.println("No correct GrieferUtils release found");
+				return;
+			}
 
 			if (asset.get("name").getAsString().endsWith("unobf.jar"))
 				asset = assets.get(1).getAsJsonObject();
@@ -88,7 +102,9 @@ public class UpdateCheck {
 				Files.copy(conn.getInputStream(), newAddonJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
 				File deleteQueueFile = AddonLoader.getDeleteQueueFile();
-				deleteQueueFile.createNewFile();
+
+				if (!deleteQueueFile.exists())
+					deleteQueueFile.createNewFile();
 
 				try (FileWriter fw = new FileWriter(deleteQueueFile)) {
 					fw.write(currentAddonJar.getName() + "\n");

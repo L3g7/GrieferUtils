@@ -6,6 +6,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
+import dev.l3g7.griefer_utils.util.VersionUtil;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.UUID;
@@ -49,6 +50,9 @@ public class SendUsageData extends Feature {
 
 	@LateInit
 	public void sendUsageData() {
+		if (VersionUtil.getAddonVersion().equals("DEBUG"))
+			return;
+
 		if (sendUsageData.get() == SendMode.ANONYMOUS) {
 			IOUtil.request("https://grieferutils.l3g7.dev/analytics/").close();
 			return;

@@ -67,7 +67,7 @@ public class ItemCounter extends ItemInfoSupplier {
 		if (containerAmount == 0 || playerAmount == 0)
 			return Collections.emptyList();
 
-		toolTip.add(String.format("├ %s: %s", containerName, formatAmount(containerAmount)));
+		toolTip.add(String.format("├ %s§r§7: %s", containerName, formatAmount(containerAmount)));
 		toolTip.add("└ Inventar: " + formatAmount(playerAmount));
 
 		return toolTip;

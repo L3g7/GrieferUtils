@@ -38,7 +38,7 @@ public class Transactions extends Feature {
     private List<Transaction> transactions = Collections.emptyList();
 
     public Transactions() {
-        super(Category.MISC);
+        super(null);
     }
 
     @Override

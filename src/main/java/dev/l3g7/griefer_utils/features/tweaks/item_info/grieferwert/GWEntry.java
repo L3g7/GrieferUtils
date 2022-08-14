@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.features.grieferwert;
+package dev.l3g7.griefer_utils.features.tweaks.item_info.grieferwert;
 
 import com.google.gson.JsonObject;
 import net.minecraft.item.Item;

@@ -1,30 +1,26 @@
-package dev.l3g7.griefer_utils.features.features.grieferwert;
+package dev.l3g7.griefer_utils.features.tweaks.item_info.grieferwert;
 
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.event.events.OnEnable;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.tweaks.item_info.ItemInfo.ItemInfoSupplier;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Singleton
-public class GrieferWert extends Feature {
+public class GrieferWert extends ItemInfoSupplier {
 
     private final BooleanSetting enabled = new BooleanSetting()
             .name("GrieferWert")
             .icon("coin_pile")
             .defaultValue(false)
-            .config("features.griefer_wert.active");
-
-    public GrieferWert() {
-        super(Category.FEATURE);
-    }
+            .config("tweaks.item_info.griefer_wert.active");
 
     @Override
     public SettingsElement getMainElement() {
@@ -45,24 +41,29 @@ public class GrieferWert extends Feature {
         });
     }
 
-    @SubscribeEvent
-    public void onTooltip(ItemTooltipEvent e) {
+    @Override
+    public List<String> getToolTip(ItemStack itemStack) {
         if (!isActive() || !isOnGrieferGames() || gwEntries == null)
-            return;
+            return Collections.emptyList();
 
         List<String> gwEntries = new ArrayList<>();
 
         // Populate gwEntries
         this.gwEntries.stream()
-                .filter(g -> g.testItem(e.itemStack))
+                .filter(g -> g.testItem(itemStack))
                 .map(GWEntry::toTooltipString)
                 .forEach(gwEntries::add);
 
         // Add gwEntries to tooltip
-        if (!gwEntries.isEmpty()) {
-            e.toolTip.add("§r");
-            e.toolTip.add("§a§lGrieferwert:");
-            e.toolTip.addAll(gwEntries);
-        }
+        if (gwEntries.isEmpty())
+            return Collections.emptyList();
+
+        List<String> toolTip = new ArrayList<>();
+
+        toolTip.add("§r");
+        toolTip.add("§a§lGrieferwert:");
+        toolTip.addAll(gwEntries);
+
+        return toolTip;
     }
 }

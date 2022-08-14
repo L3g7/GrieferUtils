@@ -1,39 +1,38 @@
-package dev.l3g7.griefer_utils.features.features;
+package dev.l3g7.griefer_utils.features.tweaks.item_info;
 
-import dev.l3g7.griefer_utils.features.Feature;
+import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.features.tweaks.item_info.ItemInfo.ItemInfoSupplier;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.item.ItemStack;
+
+import java.util.Collections;
+import java.util.List;
 
 @Singleton
-public class RepairValueViewer extends Feature {
+public class RepairValueViewer extends ItemInfoSupplier {
 
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("Reparaturwert anzeigen")
 			.icon(Material.ANVIL)
 			.defaultValue(false)
-			.config("features.repair_value_viewer.active");
-
-	public RepairValueViewer() {
-		super(Category.FEATURE);
-	}
+			.config("tweaks.item_info.repair_value_viewer.active");
 
 	@Override
 	public SettingsElement getMainElement() {
 		return enabled;
 	}
 
-	@SubscribeEvent
-	public void onTooltip(ItemTooltipEvent e) {
+	@Override
+	public List<String> getToolTip(ItemStack itemStack) {
 		if (!isActive())
-			return;
+			return Collections.emptyList();
 
-		e.toolTip.add("§r");
-		int cost = e.itemStack.getRepairCost();
-		e.toolTip.add("§r§7Reparaturwert: §r§" + getColor(cost) + cost);
+		int cost = itemStack.getRepairCost();
+
+		return ImmutableList.of("§r", "§r§7Reparaturwert: §r§" + getColor(cost) + cost);
 	}
 
 	/**

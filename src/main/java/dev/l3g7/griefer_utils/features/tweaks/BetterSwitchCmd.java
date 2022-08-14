@@ -70,6 +70,7 @@ public class BetterSwitchCmd extends Feature {
 
 		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory", "field_147015_w", "w");
 		if (!inv.getDisplayName().getUnformattedText().equals("§6§lServerwechsel")
+				|| inv.getStackInSlot(10) == null
 				|| !inv.getStackInSlot(10).getItem().equals(Items.iron_axe))
 			return;
 

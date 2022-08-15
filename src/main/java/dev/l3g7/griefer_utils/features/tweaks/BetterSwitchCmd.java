@@ -2,6 +2,7 @@ package dev.l3g7.griefer_utils.features.tweaks;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
+import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Constants;
@@ -18,7 +19,18 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 @Singleton
 public class BetterSwitchCmd extends Feature {
 
+	private static final String ALL = getRegex("\\S+");
+	private static final String NATURE = getRegex("n|nature");
+	private static final String EXTREME = getRegex("x|extreme");
+	private static final String EVIL = getRegex("e|evil");
+	private static final String NUMBER = getRegex("\\d+");
+
+	private static String getRegex(String cityBuild) {
+		return "^/(?:cb ?|switch )(" + cityBuild + ")(?: (.*))?$";
+	}
+
 	private Integer slot = null;
+	private String command = "";
 
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("BetterSwitchCmd")
@@ -49,16 +61,22 @@ public class BetterSwitchCmd extends Feature {
 			display(Constants.ADDON_PREFIX + "§7Nature: 'n'");
 			display(Constants.ADDON_PREFIX + "§7Extreme: 'x'");
 			display(Constants.ADDON_PREFIX + "§7Evil: 'e'");
-		} else if (msg.matches("^/(?:cb ?|switch )(?:n|nature)$"))
+			event.setCanceled(true);
+			return;
+		}
+
+		if (msg.matches(NATURE))
 			join(23);
-		else if (msg.matches("^/(?:cb ?|switch )(?:x|extreme)$"))
+		else if (msg.matches(EXTREME))
 			join(24);
-		else if (msg.matches("^/(?:cb ?|switch )(?:e|evil)$"))
+		else if (msg.matches(EVIL))
 			join(25);
-		else if (msg.matches("^/(?:cb ?|switch )(\\d+)$"))
-			join(Integer.parseInt(msg.replaceAll("^/(?:cb ?|switch )(\\d+)$", "$1")));
+		else if (msg.matches(NUMBER))
+			join(Integer.parseInt(msg.replaceAll(NUMBER, "$1")));
 		else
 			return;
+
+		command = msg.replaceAll(ALL, "$2");
 
 		event.setCanceled(true);
 	}
@@ -91,6 +109,15 @@ public class BetterSwitchCmd extends Feature {
 		slot = (row * 9 + column) + 10;
 
 		send("/switch");
+	}
+
+	@EventListener
+	public void onCityBuild(CityBuildJoinEvent event) {
+		if (command.isEmpty())
+			return;
+
+		send(command);
+		command = "";
 	}
 
 }

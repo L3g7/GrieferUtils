@@ -14,13 +14,13 @@ import static dev.l3g7.griefer_utils.asm.util.InsnListUtil.findByMappings;
 import static dev.l3g7.griefer_utils.asm.util.InsnListUtil.insertAfter;
 import static dev.l3g7.griefer_utils.asm.util.InsnUtil.*;
 
-@ClassTarget("net.labymod.ingamechat.GuiChatCustom")
+//@ClassTarget("net.labymod.ingamechat.GuiChatCustom")
 public class GuiChatCustomEditor implements Opcodes {
 
 	/**
 	 * ASM to fix right-click-on-mobile-player crash
 	 */
-	@MethodTarget(name = "drawScreen", parameters = {"int", "int", "float"}, returnValue = "void")
+//	@MethodTarget(name = "drawScreen", parameters = {"int", "int", "float"}, returnValue = "void")
 	public static void editDrawScreen() {
 
 		AbstractInsnNode start = findByMappings(Mappings.NameHistoryUtil.getNameHistory()).getPrevious().getPrevious();

@@ -40,7 +40,7 @@ public class GuiChatCustomEditor implements Opcodes {
 
 	public static boolean isMobilePlayer(String name, int mouseX, int mouseY) {
 		if (name.startsWith("!")) {
-			Reflection.invoke(Minecraft.getMinecraft().currentScreen, "drawHoveringText", ImmutableList.of("§cFür Handyspieler können keine Namensänderungen anzeigt werden."), mouseX, mouseY);
+			Reflection.invoke(Minecraft.getMinecraft().currentScreen, new String[] {"drawHoveringText", "func_146283_a", "a"}, ImmutableList.of("§cFür Handyspieler können keine Namensänderungen anzeigt werden."), mouseX, mouseY);
 			GlStateManager.disableLighting();
 			return true;
 		}

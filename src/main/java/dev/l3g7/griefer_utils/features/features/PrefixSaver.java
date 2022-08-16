@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.features.prefixsaver;
+package dev.l3g7.griefer_utils.features.features;
 
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;

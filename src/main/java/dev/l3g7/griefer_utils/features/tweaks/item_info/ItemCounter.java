@@ -115,6 +115,6 @@ public class ItemCounter extends ItemInfoSupplier {
 	}
 
 	private int getAmount(ItemStack itemStack) {
-		return Math.max(levels.indexOf(itemStack.getTagCompound().getCompoundTag("tag").getString("compressionLevel")), 1) * itemStack.stackSize;
+		return Math.max(levels.indexOf(itemStack.serializeNBT().getCompoundTag("tag").getString("compressionLevel")), 1) * itemStack.stackSize;
 	}
 }

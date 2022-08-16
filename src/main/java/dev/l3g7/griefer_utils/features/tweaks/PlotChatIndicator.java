@@ -1,15 +1,19 @@
 package dev.l3g7.griefer_utils.features.tweaks;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.Config;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -20,7 +24,7 @@ import java.lang.reflect.Array;
 @Singleton
 public class PlotChatIndicator extends Feature {
 
-    private PlotChatState plotchatState = PlotChatState.UNKNOWN;
+    private Boolean plotchatState = null;
     private boolean waitingForPlotchatStatus = false;
 
     private final BooleanSetting enabled = new BooleanSetting()
@@ -30,7 +34,7 @@ public class PlotChatIndicator extends Feature {
             .icon("speech_bubble")
             .defaultValue(false)
             .callback(v -> {
-                if (v && isOnCityBuild() && plotchatState == PlotChatState.UNKNOWN && !waitingForPlotchatStatus) {
+                if (v && isOnCityBuild() && plotchatState == null && !waitingForPlotchatStatus) {
                     waitingForPlotchatStatus = true;
                     sendQueued("/p chat");
                 }
@@ -47,13 +51,20 @@ public class PlotChatIndicator extends Feature {
 
     @EventListener
     public void onServerSwitch(ServerSwitchEvent event) {
-        plotchatState = PlotChatState.UNKNOWN;
+        plotchatState = null;
     }
 
     @EventListener
     public void onCityBuildJoin(CityBuildJoinEvent event) {
-        if (!isActive())
+        if (!isActive() || plotchatState != null)
             return;
+
+        String path = "tweaks.plot_chat_indicator.states." + mc().getSession().getProfile().getId().toString();
+
+        if (Config.has(path)) {
+            plotchatState = Config.get(path).getAsBoolean();
+            return;
+        }
 
         waitingForPlotchatStatus = true;
         sendQueued("/p chat");
@@ -66,7 +77,11 @@ public class PlotChatIndicator extends Feature {
 
         // Update plot chat state
         if (event.getFormatted().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
-            plotchatState = event.getFormatted().contains(" aktiviert") ? PlotChatState.ENABLED : PlotChatState.DISABLED;
+            plotchatState = event.getFormatted().contains(" aktiviert");
+            // Save state along with player uuid so no problems occur when using multiple accounts
+            Config.set("tweaks.plot_chat_indicator.states." + Minecraft.getMinecraft().getSession().getProfile().getId().toString(), plotchatState);
+            Config.save();
+
             if (waitingForPlotchatStatus) {
                 waitingForPlotchatStatus = false;
                 sendQueued("/p chat");
@@ -76,7 +91,7 @@ public class PlotChatIndicator extends Feature {
 
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post event) {
-        if (!isActive() || !isOnGrieferGames() || plotchatState != PlotChatState.ENABLED)
+        if (!isActive() || !isOnGrieferGames() || plotchatState == null || !plotchatState)
             return;
 
         // Check if chat is open
@@ -98,9 +113,14 @@ public class PlotChatIndicator extends Feature {
         }
     }
 
-    private enum PlotChatState {
+    @EventListener
+    public void loadState(ServerJoinEvent ignored) {
+        if (!ServerCheck.isOnGrieferGames())
+            return;
 
-        ENABLED, DISABLED, UNKNOWN
+        String path = "tweaks.plot_chat_indicator.states." + Minecraft.getMinecraft().getSession().getProfile().getId().toString();
 
+        if (Config.has(path))
+            plotchatState = Config.get(path).getAsBoolean();
     }
 }

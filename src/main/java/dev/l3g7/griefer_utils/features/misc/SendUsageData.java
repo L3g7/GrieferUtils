@@ -9,8 +9,6 @@ import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.VersionUtil;
 import net.labymod.settings.elements.SettingsElement;
 
-import java.util.UUID;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Singleton
@@ -60,9 +58,8 @@ public class SendUsageData extends Feature {
 
 		JsonObject data = new JsonObject();
 
-		UUID uuid = mc().getSession().getProfile().getId();
-		data.addProperty("uuid_most", uuid.getMostSignificantBits());
-		data.addProperty("uuid_least", uuid.getLeastSignificantBits());
+		data.addProperty("uuid_most", uuid().getMostSignificantBits());
+		data.addProperty("uuid_least", uuid().getLeastSignificantBits());
 
 		IOUtil  .request("https://grieferutils.l3g7.dev/analytics/")
 				.post("application/json", data.toString().getBytes(UTF_8))

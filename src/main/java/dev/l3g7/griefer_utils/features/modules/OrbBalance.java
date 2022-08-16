@@ -8,6 +8,7 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.ItemUtil;
+import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
@@ -103,7 +104,7 @@ public class OrbBalance extends Module {
 		if (!ServerCheck.isOnGrieferGames())
 			return;
 
-		String path = "modules.orb_balance.balances." + mc.getSession().getProfile().getId().toString();
+		String path = "modules.orb_balance.balances." + PlayerUtil.getUUID();
 
 		if (Config.has(path))
 			balance = Config.get(path).getAsLong();
@@ -111,7 +112,7 @@ public class OrbBalance extends Module {
 
 	private void saveBalance() {
 		// Save balance along with player uuid so no problems occur when using multiple accounts
-		Config.set("modules.orb_balance.balances." + mc.getSession().getProfile().getId().toString(), balance);
+		Config.set("modules.orb_balance.balances." + PlayerUtil.getUUID(), balance);
 		Config.save();
 	}
 }

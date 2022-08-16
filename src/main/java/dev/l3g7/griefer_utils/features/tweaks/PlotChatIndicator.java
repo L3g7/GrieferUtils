@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -59,7 +58,7 @@ public class PlotChatIndicator extends Feature {
         if (!isActive() || plotchatState != null)
             return;
 
-        String path = "tweaks.plot_chat_indicator.states." + mc().getSession().getProfile().getId().toString();
+        String path = "tweaks.plot_chat_indicator.states." + uuid();
 
         if (Config.has(path)) {
             plotchatState = Config.get(path).getAsBoolean();
@@ -79,7 +78,7 @@ public class PlotChatIndicator extends Feature {
         if (event.getFormatted().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
             plotchatState = event.getFormatted().contains(" aktiviert");
             // Save state along with player uuid so no problems occur when using multiple accounts
-            Config.set("tweaks.plot_chat_indicator.states." + Minecraft.getMinecraft().getSession().getProfile().getId().toString(), plotchatState);
+            Config.set("tweaks.plot_chat_indicator.states." + uuid(), plotchatState);
             Config.save();
 
             if (waitingForPlotchatStatus) {
@@ -118,7 +117,7 @@ public class PlotChatIndicator extends Feature {
         if (!ServerCheck.isOnGrieferGames())
             return;
 
-        String path = "tweaks.plot_chat_indicator.states." + Minecraft.getMinecraft().getSession().getProfile().getId().toString();
+        String path = "tweaks.plot_chat_indicator.states." + uuid();
 
         if (Config.has(path))
             plotchatState = Config.get(path).getAsBoolean();

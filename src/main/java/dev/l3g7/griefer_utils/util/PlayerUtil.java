@@ -44,4 +44,8 @@ public class PlayerUtil {
         }
         return null;
     }
+
+    public static UUID getUUID() {
+        return Minecraft.getMinecraft().getSession().getProfile().getId();
+    }
 }

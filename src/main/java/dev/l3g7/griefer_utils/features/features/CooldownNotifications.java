@@ -3,15 +3,14 @@ package dev.l3g7.griefer_utils.features.features;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.event.events.OnEnable;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.Reflection;
@@ -30,7 +29,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @Singleton
@@ -182,7 +184,7 @@ public class CooldownNotifications extends Feature {
             o.addProperty(key.name, key.endTime);
 
         // Save end dates along with player uuid so no problems occur when using multiple accounts
-        Config.set("features.cooldown_notifications.end_dates." + profile().getId().toString(), o);
+        Config.set("features.cooldown_notifications.end_dates." + uuid(), o);
         Config.save();
     }
 
@@ -192,7 +194,7 @@ public class CooldownNotifications extends Feature {
             return;
 
         // Save end dates along with player uuid so no problems occur when using multiple accounts
-        String path = "features.cooldown_notifications.end_dates." + profile().getId().toString();
+        String path = "features.cooldown_notifications.end_dates." + uuid();
         if (Config.has(path)) {
             endDates.clear();
             for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet())

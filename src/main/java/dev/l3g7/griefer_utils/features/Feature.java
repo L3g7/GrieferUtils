@@ -1,10 +1,10 @@
 package dev.l3g7.griefer_utils.features;
 
-import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
-import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.MainPage;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
@@ -12,6 +12,8 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.IChatComponent;
+
+import java.util.UUID;
 
 public abstract class Feature implements Comparable<Feature> {
 
@@ -33,7 +35,7 @@ public abstract class Feature implements Comparable<Feature> {
     public Minecraft mc() { return Minecraft.getMinecraft(); }
     public EntityPlayerSP player() { return mc().thePlayer; }
     public WorldClient world() { return mc().theWorld; }
-    public GameProfile profile() { return mc().getSession().getProfile(); }
+    public UUID uuid() { return PlayerUtil.getUUID(); }
 
     public void display(IChatComponent component) { player().addChatMessage(component); }
     public void display(String msg) { LabyMod.getInstance().displayMessageInChat(msg); }

@@ -59,8 +59,7 @@ public class Transactions extends Feature {
                     .settingsEnabled(true);
 
             // Send Transaction packet every 10s
-            UUID uuid = Minecraft.getMinecraft().getSession().getProfile().getId();
-            MysteryModConnection.getEventLoopGroup().scheduleAtFixedRate(() -> MysteryModConnection.sendPacket(new RequestTransactionsPacket(uuid)), 0, 10, TimeUnit.SECONDS);
+            MysteryModConnection.getEventLoopGroup().scheduleAtFixedRate(() -> MysteryModConnection.sendPacket(new RequestTransactionsPacket(uuid())), 0, 10, TimeUnit.SECONDS);
         } else {
             element.name("§c§mTransaktionen")
                     .description("§c§oMysteryMod ist nicht erreichbar! (" + event.getState().name() + ")")
@@ -91,7 +90,7 @@ public class Transactions extends Feature {
 
         if (!wasTransactionsOpened) {
             // Send RequestTransactionsPacket upon opening transactions, so they are up-to-date
-            MysteryModConnection.sendPacket(new RequestTransactionsPacket(Minecraft.getMinecraft().getSession().getProfile().getId()));
+            MysteryModConnection.sendPacket(new RequestTransactionsPacket(uuid()));
             wasTransactionsOpened = true;
         }
 

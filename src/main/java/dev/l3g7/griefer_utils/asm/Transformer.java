@@ -4,7 +4,6 @@ import dev.l3g7.griefer_utils.asm.annotations.ClassTarget;
 import dev.l3g7.griefer_utils.asm.annotations.MethodTarget;
 import dev.l3g7.griefer_utils.asm.mappings.MappingNode;
 import dev.l3g7.griefer_utils.asm.mappings.Mappings;
-import dev.l3g7.griefer_utils.asm.util.ASMDebug;
 import dev.l3g7.griefer_utils.asm.util.ASMUtil;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.util.Reflection;
@@ -12,7 +11,8 @@ import dev.l3g7.griefer_utils.util.VersionUtil;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

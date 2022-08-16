@@ -16,7 +16,6 @@ public class Mappings {
 	public static Class Void = new Class("V");
 	public static Class Float = new Class("F");
 	public static Class Int = new Class("I");
-	public static Class String = new Class("java/lang/String", null);
 
 	// Minecraft v1.8.9
 	public static $Block                Block = new $Block();
@@ -30,15 +29,9 @@ public class Mappings {
 	public static $Potion               Potion = new $Potion();
 	public static $RendererLivingEntity RendererLivingEntity = new $RendererLivingEntity();
 
-	// LabyMod v1.8.9
-	public static $GuiChatCustom GuiChatCustom = new $GuiChatCustom();
-	public static $NameHistoryUtil NameHistoryUtil = new $NameHistoryUtil();
-	public static $NameHistory NameHistory = new $NameHistory();
-
 	// GrieferUtils
-	public static $EventHandler        EventHandler = new $EventHandler();
-	public static $TrueSight           TrueSight = new $TrueSight();
-	public static $GuiChatCustomEditor GuiChatCustomEditor = new $GuiChatCustomEditor();
+	public static $EventHandler EventHandler = new $EventHandler();
+	public static $TrueSight    TrueSight = new $TrueSight();
 
 	public static boolean obfuscated = false;
 
@@ -126,23 +119,5 @@ public class Mappings {
 		public $TrueSight() { super("dev/l3g7/griefer_utils/features/tweaks/TrueSight", null); }
 
 		public Method getRenderModelAlpha() { return new Method(null, "getRenderModelAlpha", this, Float); }
-	}
-	public static class $GuiChatCustom extends Class {
-		public $GuiChatCustom() { super("net/labymod/ingamechat/GuiChatCustom", null); }
-
-		public Method drawScreen() { return new Method("a", "drawScreen", this, Void, Int, Int, Float); }
-	}
-	public static class $NameHistoryUtil extends Class {
-		public $NameHistoryUtil() { super("net/labymod/ingamechat/namehistory/NameHistoryUtil", null); }
-
-		public Method getNameHistory() { return new Method(null, "getNameHistory", this, NameHistory, String); }
-	}
-	public static class $NameHistory extends Class {
-		public $NameHistory() { super("net/labymod/ingamechat/namehistory/NameHistory", null); }
-	}
-	public static class $GuiChatCustomEditor extends Class {
-		public $GuiChatCustomEditor() { super("dev/l3g7/griefer_utils/asm/editors/GuiChatCustomEditor", null); }
-
-		public Method isMobilePlayer() { return new Method(null, "isMobilePlayer", this, Boolean, String, Int, Int); }
 	}
 }

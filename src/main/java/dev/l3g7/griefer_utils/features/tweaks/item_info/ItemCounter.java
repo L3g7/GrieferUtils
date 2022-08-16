@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.features.tweaks.item_info;
 
+import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.features.tweaks.item_info.ItemInfo.ItemInfoSupplier;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -16,6 +17,8 @@ import java.util.List;
 
 @Singleton
 public class ItemCounter extends ItemInfoSupplier {
+
+	private static final List<String> levels = ImmutableList.of("ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN");
 
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("Item-Zähler")
@@ -112,6 +115,6 @@ public class ItemCounter extends ItemInfoSupplier {
 	}
 
 	private int getAmount(ItemStack itemStack) {
-		return Math.max(itemStack.serializeNBT().getCompoundTag("tag").getInteger("currentAmount"), 1) * itemStack.stackSize;
+		return Math.max(levels.indexOf(itemStack.getTagCompound().getCompoundTag("tag").getString("compressionLevel")), 1) * itemStack.stackSize;
 	}
 }

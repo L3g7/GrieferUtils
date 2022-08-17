@@ -1,6 +1,5 @@
 package dev.l3g7.griefer_utils.features.tweaks.item_info;
 
-import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.features.tweaks.item_info.ItemInfo.ItemInfoSupplier;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -8,8 +7,10 @@ import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagEnd;
+import net.minecraft.nbt.NBTTagString;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,14 +19,20 @@ import java.util.List;
 @Singleton
 public class ItemCounter extends ItemInfoSupplier {
 
-	private static final List<String> levels = ImmutableList.of("ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN");
-
+	private final BooleanSetting ignoreDamage = new BooleanSetting()
+			.name("Schaden ignorieren")
+			.description("Ignoriert den Schaden der Items beim Zählen der Anzahl.")
+			.config("tweaks.item_info.item_counter.active")
+			.icon("broken_pickaxe")
+			.defaultValue(false);
+	
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("Item-Zähler")
 			.description("Zeigt unter einem Item an, wie viele von dem Typ in dem derzeitigen Inventar vorhanden sind.")
-			.config("tweaks.item_info.zip_preview.active")
+			.config("tweaks.item_info.item_counter.active")
 			.icon("spyglass")
-			.defaultValue(false);
+			.defaultValue(false)
+			.subSettingsWithHeader("Item-Zähler", ignoreDamage);
 
 	@Override
 	public SettingsElement getMainElement() {
@@ -53,9 +60,8 @@ public class ItemCounter extends ItemInfoSupplier {
 			containerName = chestSlots.get(0).inventory.getDisplayName().getUnformattedText();
 
 		// Convert to ints
-		Item item = itemStack.getItem();
-		int containerAmount = getAmount(chestSlots, item);
-		int playerAmount = getAmount(playerSlots, item);
+		int containerAmount = getAmount(chestSlots, itemStack);
+		int playerAmount = getAmount(playerSlots, itemStack);
 
 		// Don't add if the item is not compressed and the only one in the inv
 		if (playerAmount + containerAmount == itemStack.stackSize)
@@ -99,7 +105,7 @@ public class ItemCounter extends ItemInfoSupplier {
 		return formattedString.trim();
 	}
 
-	private int getAmount(List<Slot> items, Item searchedItem) {
+	private int getAmount(List<Slot> items, ItemStack searchedItem) {
 		int amount = 0;
 
 		for (Slot slot : items) {
@@ -107,7 +113,8 @@ public class ItemCounter extends ItemInfoSupplier {
 				continue;
 
 			ItemStack itemStack = slot.getStack();
-			if (itemStack.getItem().equals(searchedItem))
+			if (itemStack.getItem().equals(searchedItem.getItem())
+					&& (ignoreDamage.get() || itemStack.getItemDamage() == searchedItem.getItemDamage()))
 				amount += getAmount(itemStack);
 		}
 
@@ -115,6 +122,13 @@ public class ItemCounter extends ItemInfoSupplier {
 	}
 
 	private int getAmount(ItemStack itemStack) {
-		return (int) (Math.max(Math.pow(9, levels.indexOf(itemStack.serializeNBT().getCompoundTag("tag").getString("compressionLevel"))), 1) * itemStack.stackSize);
+		NBTBase base = itemStack.serializeNBT().getCompoundTag("tag").getCompoundTag("display").getTagList("Lore", 8).get(0);
+		if (base instanceof NBTTagEnd) // Item didn't have lore
+			return itemStack.stackSize;
+
+		String amount = ((NBTTagString) base).getString();
+		return amount.startsWith("§7Anzahl: §e")
+				? Integer.parseInt(amount.substring(12)) * itemStack.stackSize
+				: itemStack.stackSize;
 	}
 }

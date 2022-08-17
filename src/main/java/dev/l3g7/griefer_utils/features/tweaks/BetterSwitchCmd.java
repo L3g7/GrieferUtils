@@ -11,8 +11,9 @@ import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.init.Items;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -20,9 +21,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public class BetterSwitchCmd extends Feature {
 
 	private static final String ALL = getRegex("\\S+");
-	private static final String NATURE = getRegex("n|nature");
-	private static final String EXTREME = getRegex("x|extreme");
-	private static final String EVIL = getRegex("e|evil");
+	private static final String[] SPECIAL_SERVER = new String[] {"n|nature", "x|extreme", "e|evil", "w|wasser", "l|lava", "v|event"};
 	private static final String NUMBER = getRegex("\\d+");
 
 	private static String getRegex(String cityBuild) {
@@ -61,23 +60,24 @@ public class BetterSwitchCmd extends Feature {
 			display(Constants.ADDON_PREFIX + "§7Nature: 'n'");
 			display(Constants.ADDON_PREFIX + "§7Extreme: 'x'");
 			display(Constants.ADDON_PREFIX + "§7Evil: 'e'");
+			display(Constants.ADDON_PREFIX + "§7Wasser: 'w'");
+			display(Constants.ADDON_PREFIX + "§7Lava: 'l'");
+			display(Constants.ADDON_PREFIX + "§7Event: 'v'");
 			event.setCanceled(true);
 			return;
 		}
 
-		if (msg.matches(NATURE))
-			join(23);
-		else if (msg.matches(EXTREME))
-			join(24);
-		else if (msg.matches(EVIL))
-			join(25);
-		else if (msg.matches(NUMBER))
+		for (int i = 0; i < SPECIAL_SERVER.length; i++)
+			if (msg.matches(getRegex(SPECIAL_SERVER[i])))
+				join(i + 23);
+
+		if (slot == null && msg.matches(NUMBER))
 			join(Integer.parseInt(msg.replaceAll(NUMBER, "$1")));
-		else
+		else if (slot == null)
 			return;
 
-		command = msg.replaceAll(ALL, "$2");
 
+		command = msg.replaceAll(ALL, "$2");
 		event.setCanceled(true);
 	}
 
@@ -89,7 +89,7 @@ public class BetterSwitchCmd extends Feature {
 		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory", "field_147015_w", "w");
 		if (!inv.getDisplayName().getUnformattedText().equals("§6§lServerwechsel")
 				|| inv.getStackInSlot(10) == null
-				|| !inv.getStackInSlot(10).getItem().equals(Items.iron_axe))
+				|| !inv.getStackInSlot(10).getItem().equals(Item.getItemFromBlock(Blocks.diamond_block)))
 			return;
 
 		mc().playerController.windowClick(player().openContainer.windowId, slot, 0, 0, player());
@@ -97,7 +97,7 @@ public class BetterSwitchCmd extends Feature {
 	}
 
 	public void join(int cb) {
-		if (cb < 1 || cb > 25) {
+		if (cb < 1 || cb > 28) {
 			display(Constants.ADDON_PREFIX + "Citybuild %d existiert nicht!", cb);
 			return;
 		}

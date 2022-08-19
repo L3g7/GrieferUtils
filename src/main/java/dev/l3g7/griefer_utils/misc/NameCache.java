@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.tweaks.autounnick;
+package dev.l3g7.griefer_utils.misc;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.event_bus.EventPriority;

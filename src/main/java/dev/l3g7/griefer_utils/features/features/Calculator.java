@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class Calculator extends Feature {
 
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
-	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?<= )(?<equation>\\d+(?:\\.\\d+)? *(?:[*k+\\-:/^,e]+\\d+|k))(?:(?= )|$)");
+	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?<= )(?<equation>\\d+k?(?: *[*k+\\-:/^,e]+ *\\d+k?)+)(?:(?= )|$)");
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 
 	private final RadioSetting<WithdrawAction> autoWithdraw = new RadioSetting<>(WithdrawAction.class)

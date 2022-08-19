@@ -28,7 +28,7 @@ public class Spent extends Module {
     public void onMessageReceive(MessageReceiveEvent event) {
         Matcher matcher = Constants.PAYMENT_SEND_PATTERN.matcher(event.getFormatted());
         if (matcher.matches()) {
-            moneySpent = moneySpent.add(new BigDecimal(matcher.group("amount").replace(".", "").replace(",", ".")));
+            moneySpent = moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", "")));
         }
     }
 

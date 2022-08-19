@@ -28,7 +28,7 @@ public class Received extends Module {
     public void onMessageReceive(MessageReceiveEvent event) {
         Matcher matcher = Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.getFormatted());
         if (matcher.matches()) {
-            moneyReceived = moneyReceived.add(new BigDecimal(matcher.group("amount").replace(".", "").replace(",", ".")));
+            moneyReceived = moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", "")));
         }
     }
 

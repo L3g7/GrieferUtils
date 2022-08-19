@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.event.events.network.tablist;
 import dev.l3g7.griefer_utils.event.event_bus.EventBus;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.features.tweaks.autounnick.NameCache;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 
 public class TabListRemovePlayerEvent extends TabListEvent {
@@ -11,7 +12,7 @@ public class TabListRemovePlayerEvent extends TabListEvent {
 
     public TabListRemovePlayerEvent(S38PacketPlayerListItem.AddPlayerData data) {
         super(data);
-        this.cachedName = cachedNames.getOrDefault(data.getProfile().getId(), null);
+        this.cachedName = NameCache.getName(data);
     }
 
     @Override

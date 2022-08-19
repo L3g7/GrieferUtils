@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringListSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
+import net.minecraft.client.Minecraft;
 
 @Singleton
 public class ShowJoins extends Feature {
@@ -46,6 +47,9 @@ public class ShowJoins extends Feature {
     }
 
     private boolean isNameInFilter(String name) {
+        if (Minecraft.getMinecraft().getSession().getProfile().getName().equals(name)) // Don't show Joins/Leaves for yourself
+            return false;
+
         if(filter.get())
             return filterData.getValues().stream().anyMatch(s -> s.equalsIgnoreCase(name));
 
@@ -56,6 +60,7 @@ public class ShowJoins extends Feature {
     public void onJoin(TabListAddPlayerEvent event) {
         if (!isActive() || !isOnGrieferGames() || !isOnCityBuild())
             return;
+
 
         if (isNameInFilter(event.getName())) // Can't call display on network thread (concurrent modification)
             TickScheduler.runNextRenderTick(() -> display(Constants.ADDON_PREFIX + "§8[§a+§8] §r" + event.getName()));

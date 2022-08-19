@@ -11,13 +11,13 @@ public class EntityPlayerEditor {
 
 	/**
 	 * ASM for RenderInvisibilityCheckEvent
-	 *//*
+	 */
 	@MethodTarget(name = "isInvisibleToPlayer", parameters = {"net.minecraft.entity.player.EntityPlayer"}, returnValue = "boolean")
 	public static void editIsInvisibleToPlayer() {
 		EntityEditor.editIsInvisibleToPlayer();
 	}
 
-*/	/**
+	/**
 	 * ASM for DisplayNameRenderEvents
 	 */
 	@MethodTarget(name = "getDisplayName", returnValue = "net.minecraft.util.IChatComponent")

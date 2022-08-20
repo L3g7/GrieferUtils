@@ -4,6 +4,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
@@ -16,19 +17,17 @@ import java.util.stream.Collectors;
 @Singleton
 public class ItemInfo extends Feature {
 
-	private final List<ItemInfoSupplier> itemInfoSuppliers = FileProvider.getAllClasses()
+	private static final List<ItemInfoSupplier> itemInfoSuppliers = FileProvider.getAllClasses()
 			.filter(c -> Reflection.hasSuperclass(c, ItemInfoSupplier.class))
 			.map(Reflection::loadClass)
 			.map(ItemInfoSupplier.class::cast)
 			.sorted()
 			.collect(Collectors.toList());
 
-	private final BooleanSetting enabled = new BooleanSetting()
+	private final CategorySetting category = new CategorySetting()
 			.name("Item-Infos")
 			.description("Zeigt unterschiedliche Informationen unter einem Item an.")
-			.config("tweaks.item_info.active")
 			.icon("info")
-			.defaultValue(false)
 			.subSettingsWithHeader("Item-Infos", itemInfoSuppliers.stream()
 					.map(Feature::getMainElement)
 					.toArray(SettingsElement[]::new));
@@ -45,7 +44,7 @@ public class ItemInfo extends Feature {
 
 	@Override
 	public SettingsElement getMainElement() {
-		return enabled;
+		return category;
 	}
 	
 	public static abstract class ItemInfoSupplier extends Feature {
@@ -61,7 +60,7 @@ public class ItemInfo extends Feature {
 		@Override
 		public boolean isActive() {
 			return ((BooleanSetting) getMainElement()).get()
-					&& FileProvider.getSingleton(ItemInfo.class).isActive();
+					&& Category.TWEAK.setting.get();
 		}
 	}
 }

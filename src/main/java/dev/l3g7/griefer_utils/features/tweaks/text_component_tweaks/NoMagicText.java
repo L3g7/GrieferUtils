@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.features.tweaks.text_component_tweaks;
 
+import dev.l3g7.griefer_utils.event.events.network.tablist.TabListEvent;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
@@ -16,7 +17,7 @@ public class NoMagicText extends TextComponentTweak {
             .config("tweaks.no_magic_text.active")
             .icon(Material.BLAZE_POWDER)
             .defaultValue(true)
-            .callback(c -> updatePlayerInfoList())
+            .callback(c -> TabListEvent.updatePlayerInfoList())
             .subSettingsWithHeader("Magischer Text", chat, tab, item);
 
     public NoMagicText() {

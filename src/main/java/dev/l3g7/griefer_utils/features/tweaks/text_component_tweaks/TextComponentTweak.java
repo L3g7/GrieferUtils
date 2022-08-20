@@ -1,6 +1,5 @@
 package dev.l3g7.griefer_utils.features.tweaks.text_component_tweaks;
 
-import dev.l3g7.griefer_utils.event.event_bus.EventBus;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageModifyEvent;
 import dev.l3g7.griefer_utils.event.events.network.tablist.TabListEvent;
@@ -8,7 +7,6 @@ import dev.l3g7.griefer_utils.event.events.network.tablist.TabListNameUpdateEven
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -25,7 +23,7 @@ abstract class TextComponentTweak extends Feature {
             .name("In Tabliste")
             .icon("tab_list")
             .defaultValue(true)
-            .callback(c -> updatePlayerInfoList());
+            .callback(c -> TabListEvent.updatePlayerInfoList());
 
     final BooleanSetting item = new BooleanSetting()
             .name("In Item-Beschreibungen")
@@ -37,17 +35,6 @@ abstract class TextComponentTweak extends Feature {
         item.config("tweaks." + configName + ".item");
         tab.config("tweaks." + configName + ".tab");
         chat.config("tweaks." + configName + ".chat");
-    }
-
-    void updatePlayerInfoList() {
-        if (mc().getNetHandler() == null)
-            return;
-
-        for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
-            IChatComponent originalComponent = TabListEvent.cachedComponents.get(info.getGameProfile().getId());
-            IChatComponent component = EventBus.post(new TabListNameUpdateEvent(info.getGameProfile(), originalComponent)).getComponent();
-            info.setDisplayName(component);
-        }
     }
 
     @EventListener

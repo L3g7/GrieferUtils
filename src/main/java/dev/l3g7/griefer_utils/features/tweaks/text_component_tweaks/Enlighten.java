@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
+import static dev.l3g7.griefer_utils.event.events.network.tablist.TabListEvent.updatePlayerInfoList;
 import static net.minecraft.util.EnumChatFormatting.*;
 
 

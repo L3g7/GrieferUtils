@@ -1,7 +1,10 @@
 package dev.l3g7.griefer_utils.event.events.network.tablist;
 
 import dev.l3g7.griefer_utils.event.event_bus.Event;
+import dev.l3g7.griefer_utils.event.event_bus.EventBus;
 import dev.l3g7.griefer_utils.misc.NameCache;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.IChatComponent;
 
@@ -21,5 +24,16 @@ public class TabListEvent extends Event {
 
     public String getName() {
         return NameCache.getName(data);
+    }
+
+    public static void updatePlayerInfoList() {
+        if (Minecraft.getMinecraft().getNetHandler() == null)
+            return;
+
+        for (NetworkPlayerInfo info : Minecraft.getMinecraft().getNetHandler().getPlayerInfoMap()) {
+            IChatComponent originalComponent = TabListEvent.cachedComponents.get(info.getGameProfile().getId());
+            IChatComponent component = EventBus.post(new TabListNameUpdateEvent(info.getGameProfile(), originalComponent)).getComponent();
+            info.setDisplayName(component);
+        }
     }
 }

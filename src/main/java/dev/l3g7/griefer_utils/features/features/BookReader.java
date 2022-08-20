@@ -3,7 +3,6 @@ package dev.l3g7.griefer_utils.features.features;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
@@ -22,6 +21,8 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 
+import java.io.IOException;
+
 @Singleton
 public class BookReader extends Feature {
 
@@ -30,7 +31,7 @@ public class BookReader extends Feature {
 			.description("Erlaubt das Lesen von Büchern.")
 			.icon(Material.BOOK)
 			.defaultValue(true)
-			.config("features.book_reader.active");
+			.config("tweaks.book_reader.active");
 
 	@Override
 	public SettingsElement getMainElement() {
@@ -38,7 +39,7 @@ public class BookReader extends Feature {
 	}
 
 	public BookReader() {
-		super(Category.FEATURE);
+		super(Category.TWEAK);
 	}
 
 	@SubscribeEvent
@@ -89,6 +90,7 @@ public class BookReader extends Feature {
 
 	// Required because GuiScreenBook escapes to the main game
 	private static class GuiBook extends GuiScreenBook {
+
 		private final GuiScreen previousScreen = Minecraft.getMinecraft().currentScreen;
 
 		public GuiBook(EntityPlayer player, ItemStack book) {
@@ -100,23 +102,13 @@ public class BookReader extends Feature {
 				mc.displayGuiScreen(previousScreen);
 		}
 
-		protected void actionPerformed(GuiButton button) {
-			if (!button.enabled)
-				return;
-
-			int currPage_ = Reflection.get(this, "currPage", "field_146484_x", "x");
-			int bookTotalPages = Reflection.get(this, "bookTotalPages", "field_146483_y", "y");
-
-			if (button.id == 0)
+		protected void actionPerformed(GuiButton button) throws IOException {
+			if (button.enabled && button.id == 0)
 				this.mc.displayGuiScreen(previousScreen);
-
-			else if (button.id == 1 && currPage_ < bookTotalPages - 1)
-				Reflection.set(this, ++currPage_, "currPage", "field_146484_x", "x");
-
-			else if (button.id == 2 && currPage_ > 0)
-				Reflection.set(this, --currPage_, "currPage", "field_146484_x", "x");
-
-			Reflection.invoke(this, new String[]{"updateButtons", "func_146464_h", "f"});
+			else
+				super.actionPerformed(button);
 		}
+
 	}
+
 }

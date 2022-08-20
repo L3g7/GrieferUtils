@@ -4,7 +4,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -31,7 +30,7 @@ public class AutoSprint extends Feature {
         if (!isActive())
             return;
 
-        if (player() != null)
+        if (player() != null && mc().gameSettings.keyBindForward.isKeyDown())
             player().setSprinting(true);
     }
 

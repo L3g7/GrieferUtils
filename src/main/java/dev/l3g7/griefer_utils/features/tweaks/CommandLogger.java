@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.features;
+package dev.l3g7.griefer_utils.features.tweaks;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
@@ -14,7 +14,7 @@ public class CommandLogger extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("CommandLogger")
 			.description("Schreibt die Befehle, die du ausführst in die Konsole und damit den Log.")
-			.config("features.command_logger.active")
+			.config("tweaks.command_logger.active")
 			.icon(Material.COMMAND)
 			.defaultValue(false);
 
@@ -24,7 +24,7 @@ public class CommandLogger extends Feature {
 	}
 
 	public CommandLogger() {
-		super(Category.FEATURE);
+		super(Category.TWEAK);
 	}
 
 	@EventListener

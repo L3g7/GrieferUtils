@@ -116,7 +116,7 @@ public class BookReader extends Feature {
 			else if (button.id == 2 && currPage_ > 0)
 				Reflection.set(this, --currPage_, "currPage", "field_146484_x", "x");
 
-			Reflection.invoke(this, "updateButtons", "func_146464_h", "f");
+			Reflection.invoke(this, new String[]{"updateButtons", "func_146464_h", "f"});
 		}
 	}
 }

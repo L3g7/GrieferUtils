@@ -99,7 +99,7 @@ public class ItemCounter extends ItemInfoSupplier {
 
 		if (pieces != 0) {
 			if (!formattedString.isEmpty()) formattedString += ", ";
-			formattedString += pieces + " Stück";
+			formattedString += (stacks > 1 ? stacks + " Stück" : "ein Stück");
 		}
 
 		return formattedString.trim();

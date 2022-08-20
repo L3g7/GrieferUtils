@@ -23,7 +23,7 @@ abstract class TextComponentTweak extends Feature {
 
     final BooleanSetting tab = new BooleanSetting()
             .name("In Tabliste")
-            .icon("rainbow_name")
+            .icon("tab_list")
             .defaultValue(true)
             .callback(c -> updatePlayerInfoList());
 
@@ -63,8 +63,7 @@ abstract class TextComponentTweak extends Feature {
         if (!item.get() || !isActive())
             return;
 
-        for (int i = 0; i < e.toolTip.size(); i++)
-            e.toolTip.set(i, modify(e.toolTip.get(i)));
+        e.toolTip.replaceAll(this::modify);
     }
 
     @EventListener

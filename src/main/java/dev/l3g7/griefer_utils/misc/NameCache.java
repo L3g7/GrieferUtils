@@ -34,9 +34,6 @@ public class NameCache {
 		return uuidToUser.containsKey(uuid);
 	}
 
-
-
-
 	@EventListener(priority = EventPriority.HIGH)
 	public static void onPacket(PacketReceiveEvent event) {
 		if (!(event.getPacket() instanceof S38PacketPlayerListItem))
@@ -47,10 +44,13 @@ public class NameCache {
 		switch (packet.func_179768_b()) {
 			case ADD_PLAYER:
 				processAddPacket(packet);
+				break;
 			case UPDATE_DISPLAY_NAME:
 				processUpdatePacket(packet);
+				break;
 			case REMOVE_PLAYER:
 				processRemovePacket(packet);
+				break;
 		}
 	}
 
@@ -84,7 +84,9 @@ public class NameCache {
 			return;
 
 		String name = data.getDisplayName().getUnformattedText();
-		if (name.contains("~"))
-			nickToUuidCache.put(name.substring(name.indexOf('~') + 2), data.getProfile().getId());
+		if (name.contains("~")) {
+			nickToUuidCache.put(name.substring(name.indexOf('~')), data.getProfile().getId());
+			System.out.println("Added " + name.substring(name.indexOf('~')));
+		}
 	}
 }

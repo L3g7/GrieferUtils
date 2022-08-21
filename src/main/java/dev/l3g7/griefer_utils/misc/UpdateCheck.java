@@ -72,8 +72,10 @@ public class UpdateCheck {
 			JsonObject latestRelease = releases.get(0).getAsJsonObject();
 
 			String tag = latestRelease.get("tag_name").getAsString().replaceFirst("v", "");
-			if (tag.equals(getAddonVersion()))
+			if (tag.equals(getAddonVersion())) {
+				Runtime.getRuntime().addShutdownHook(new Thread(() -> checkForUpdate(addonUuid)));
 				return;
+			}
 
 			// Get latest addon asset
 			JsonArray assets = latestRelease.get("assets").getAsJsonArray();

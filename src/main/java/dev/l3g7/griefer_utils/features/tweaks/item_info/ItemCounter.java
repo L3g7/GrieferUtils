@@ -128,7 +128,7 @@ public class ItemCounter extends ItemInfoSupplier {
 
 		String amount = ((NBTTagString) base).getString();
 		return amount.startsWith("§7Anzahl: §e")
-				? Integer.parseInt(amount.substring(12)) * itemStack.stackSize
+				? Integer.parseInt(amount.substring(12).replace(".", "")) * itemStack.stackSize
 				: itemStack.stackSize;
 	}
 }

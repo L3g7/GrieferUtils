@@ -47,6 +47,11 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder amount(int amount) {
+        itemStack.stackSize = amount;
+        return this;
+    }
+
     public ItemBuilder enchant() {
         return enchant(Enchantment.protection);
     }

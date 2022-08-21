@@ -23,11 +23,13 @@ public class Mappings {
 	public static $EntityLivingBase     EntityLivingBase = new $EntityLivingBase();
 	public static $EntityPlayer         EntityPlayer = new $EntityPlayer();
 	public static $EntityRenderer       EntityRenderer = new $EntityRenderer();
+	public static $EnumParticleTypes    EnumParticleTypes = new $EnumParticleTypes();
 	public static $GlStateManager       GlStateManager = new $GlStateManager();
 	public static $IChatComponent       IChatComponent = new $IChatComponent();
 	public static $Material             Material = new $Material();
 	public static $Potion               Potion = new $Potion();
 	public static $RendererLivingEntity RendererLivingEntity = new $RendererLivingEntity();
+	public static $WorldClient          WorldClient = new $WorldClient();
 
 	// GrieferUtils
 	public static $EventHandler EventHandler = new $EventHandler();
@@ -114,10 +116,21 @@ public class Mappings {
 		public Method shouldBeVisible() { return new Method(null, "shouldBeVisible", this, Boolean, Entity); }
 		public Method modifyDisplayName() { return new Method(null, "modifyDisplayName", this, IChatComponent, IChatComponent, EntityPlayer); }
 		public Method shouldRenderFog() { return new Method(null, "shouldRenderFog", this, Boolean, Int); }
+		public Method shouldRenderBarrier() { return new Method(null, "shouldRenderBarrier", this, Boolean); }
 	}
 	public static class $TrueSight extends Class {
 		public $TrueSight() { super("dev/l3g7/griefer_utils/features/tweaks/TrueSight", null); }
 
 		public Method getRenderModelAlpha() { return new Method(null, "getRenderModelAlpha", this, Float); }
+	}
+	public static class $EnumParticleTypes extends Class {
+		public $EnumParticleTypes() { super("net/minecraft/util/EnumParticleTypes", "cy"); }
+
+		public Field barrier = new Field("J", "BARRIER", this, this);
+	}
+	public static class $WorldClient extends Class {
+		public $WorldClient() { super("net/minecraft/client/multiplayer/WorldClient", "bdb"); }
+
+		public Method doVoidFogParticles() { return new Method("b", "doVoidFogParticles", this, Void, Int, Int, Int); }
 	}
 }

@@ -1,10 +1,7 @@
 package dev.l3g7.griefer_utils.event;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventBus;
-import dev.l3g7.griefer_utils.event.events.render.DisplayNameRenderEvent;
-import dev.l3g7.griefer_utils.event.events.render.RenderBurningCheckEvent;
-import dev.l3g7.griefer_utils.event.events.render.RenderFogCheckEvent;
-import dev.l3g7.griefer_utils.event.events.render.RenderInvisibilityCheckEvent;
+import dev.l3g7.griefer_utils.event.events.render.*;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,6 +32,11 @@ public class EventHandler {
     // Called by EntityRendererEditor (editSetupFog)
     public static boolean shouldRenderFog(int type) {
         return !EventBus.post(new RenderFogCheckEvent(type)).isCanceled();
+    }
+
+    // Called by ClientWorldEditor (editVoidFog)
+    public static boolean shouldRenderBarrier() {
+        return !EventBus.post(new RenderBarrierCheckEvent()).isCanceled();
     }
 
 }

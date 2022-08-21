@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.features.tweaks;
 
+import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -10,8 +11,16 @@ import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 
+import java.util.List;
+
 @Singleton
 public class ChatMods extends Feature {
+
+    private static final List<String> MYSTERY_MOD_DOWNLOAD_NOTIFICATION = ImmutableList.of(
+            "§r§8[§r§6GrieferGames§r§8] §r§cOhje. Du benutzt noch kein MysteryMod!§r",
+            "§r§8[§r§6GrieferGames§r§8] §r§fWir sind optimiert für MysteryMod und die neusten Funktionen hast Du nur damit.§r",
+            "§r§8[§r§6GrieferGames§r§8] §r§fDownload: §r§ahttps://mysterymod.net/download/§r"
+    );
 
     private final BooleanSetting antiClearChat = new BooleanSetting()
             .name("AntiClearChat")
@@ -32,10 +41,22 @@ public class ChatMods extends Feature {
             .config("tweaks.chat_mods.news.mode")
             .stringProvider(NewsMode::getName);
 
+    private final BooleanSetting removeStreamerNotifications = new BooleanSetting()
+            .name("Streamer-Benachrichtigungen entfernen")
+            .icon("twitch")
+            .defaultValue(false)
+            .config("tweaks.chat_mods.remove_streamer.active");
+
+    private final BooleanSetting stfuMysteryMod = new BooleanSetting()
+            .name("Download-Benachrichtigungen entfernen")
+            .icon("mysterymod")
+            .defaultValue(true)
+            .config("tweaks.chat_mods.stfu_mysterymod.active");
+
     private final CategorySetting category = new CategorySetting()
             .name("ChatMods")
             .icon("speech_bubble")
-            .subSettingsWithHeader("ChatMods", antiClearChat, removeSupremeSpaces, news);
+            .subSettingsWithHeader("ChatMods", antiClearChat, removeSupremeSpaces, removeStreamerNotifications, stfuMysteryMod, news);
 
     public ChatMods() {
         super(Category.TWEAK);
@@ -85,5 +106,13 @@ public class ChatMods extends Feature {
         // remove supreme spaces
         if (!event.isCanceled())
             event.setCanceled(removeSupremeSpaces.get() && event.getFormatted().trim().equals("§r§8\u00bb§r"));
+
+        // remove streamer
+        if (!event.isCanceled())
+            event.setCanceled(removeStreamerNotifications.get() && event.getFormatted().startsWith("§8[§6Streamer§8]"));
+
+        // Remove MysteryMod download notification
+        if (!event.isCanceled())
+            event.setCanceled(stfuMysteryMod.get() && MYSTERY_MOD_DOWNLOAD_NOTIFICATION.contains(event.getFormatted()));
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.ResourceLocation;
@@ -143,5 +144,9 @@ public class RenderUtil {
 
         return Minecraft.isGuiEnabled() && entity != Minecraft.getMinecraft().getRenderManager().livingPlayer
                 && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null;
+    }
+
+    static {
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(RenderUtil.symbolFontRenderer);
     }
 }

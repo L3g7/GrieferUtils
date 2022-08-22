@@ -6,21 +6,15 @@ import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.RenderUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Singleton
 public class ArmorBreakWarning extends Feature {
-
-	static {
-		((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(RenderUtil.symbolFontRenderer);
-	}
 
 	private static final char[] chars = new char[] {'\u2502', '\u2593', '\u2592', '\u2591'};
 

@@ -15,6 +15,7 @@ import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -25,6 +26,8 @@ public class PlotChatIndicator extends Feature {
 
     private Boolean plotchatState = null;
     private boolean waitingForPlotchatStatus = false;
+
+    private String configPath = "tweaks.plot_chat_indicator.states." + uuid() + (".normal");
 
     private final BooleanSetting enabled = new BooleanSetting()
             .name("Plot-Chat-Indikator")
@@ -58,14 +61,19 @@ public class PlotChatIndicator extends Feature {
         if (!isActive() || plotchatState != null)
             return;
 
-        String path = "tweaks.plot_chat_indicator.states." + uuid();
+        boolean onEventServer = false;
+        ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
+        if (team != null)
+            onEventServer = team.getColorPrefix().equals("§fEvent");
 
-        if (Config.has(path)) {
-            plotchatState = Config.get(path).getAsBoolean();
-            return;
-        }
+        configPath = "tweaks.plot_chat_indicator.states." + uuid() + (onEventServer ? ".event" : ".normal");
 
-        waitingForPlotchatStatus = true;
+		if (Config.has(configPath)) {
+			plotchatState = Config.get(configPath).getAsBoolean();
+			return;
+		}
+
+		waitingForPlotchatStatus = true;
         sendQueued("/p chat");
     }
 
@@ -78,7 +86,7 @@ public class PlotChatIndicator extends Feature {
         if (event.getFormatted().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
             plotchatState = event.getFormatted().contains(" aktiviert");
             // Save state along with player uuid so no problems occur when using multiple accounts
-            Config.set("tweaks.plot_chat_indicator.states." + uuid(), plotchatState);
+            Config.set(configPath, plotchatState);
             Config.save();
 
             if (waitingForPlotchatStatus) {
@@ -114,12 +122,7 @@ public class PlotChatIndicator extends Feature {
 
     @EventListener
     public void loadState(ServerJoinEvent ignored) {
-        if (!ServerCheck.isOnGrieferGames())
-            return;
-
-        String path = "tweaks.plot_chat_indicator.states." + uuid();
-
-        if (Config.has(path))
-            plotchatState = Config.get(path).getAsBoolean();
+        if (ServerCheck.isOnGrieferGames() && Config.has(configPath))
+            plotchatState = Config.get(configPath).getAsBoolean();
     }
 }

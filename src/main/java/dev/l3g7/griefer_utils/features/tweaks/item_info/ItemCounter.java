@@ -59,7 +59,6 @@ public class ItemCounter extends ItemInfoSupplier {
 		if (!chestSlots.isEmpty())
 			containerName = chestSlots.get(0).inventory.getDisplayName().getUnformattedText();
 
-		// Convert to ints
 		int containerAmount = getAmount(chestSlots, itemStack);
 		int playerAmount = getAmount(playerSlots, itemStack);
 
@@ -99,7 +98,7 @@ public class ItemCounter extends ItemInfoSupplier {
 
 		if (pieces != 0) {
 			if (!formattedString.isEmpty()) formattedString += ", ";
-			formattedString += (stacks > 1 ? stacks + " Stück" : "ein Stück");
+			formattedString += (pieces > 1 ? pieces + " Stück" : "ein Stück");
 		}
 
 		return formattedString.trim();

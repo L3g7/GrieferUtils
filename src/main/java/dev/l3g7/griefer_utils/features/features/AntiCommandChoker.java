@@ -23,7 +23,7 @@ public class AntiCommandChoker extends Feature {
 	private static final IngameChatManager IGM = IngameChatManager.INSTANCE;
 
 	private final BooleanSetting enabled = new BooleanSetting()
-			.name("Anti Command Choker")
+			.name("AntiCommandChoker")
 			.description("Verhindert das Senden von Nachrichten, die mit \"7\" beginnen.")
 			.config("features.anti_command_choker.active")
 			.icon(new ItemBuilder(Blocks.barrier).amount(7))

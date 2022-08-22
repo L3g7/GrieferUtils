@@ -4,8 +4,8 @@ import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.settings.elements.KeyElement;
 import net.labymod.utils.Consumer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -86,7 +86,25 @@ public class KeySetting extends KeyElement implements SettingElementBuilder<KeyS
 		if (Keyboard.isRepeatEvent() || currentValue == null)
 			return;
 
-		if (mc.currentScreen == null || (mc.currentScreen instanceof GuiChest && triggersInChest)) {
+		if (mc.currentScreen == null) {
+			if (currentValue == Keyboard.getEventKey()) {
+				// Only run callback if the state was changed
+				if (pressed == Keyboard.getEventKeyState())
+					return;
+
+				pressed = Keyboard.getEventKeyState();
+				if (pressed)
+					callbacks.forEach(Runnable::run);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onGuiKeyPress(GuiScreenEvent.KeyboardInputEvent event) {
+		if (Keyboard.isRepeatEvent() || currentValue == null || !triggersInChest)
+			return;
+
+		if (mc.currentScreen instanceof GuiContainer) {
 			if (currentValue == Keyboard.getEventKey()) {
 				// Only run callback if the state was changed
 				if (pressed == Keyboard.getEventKeyState())

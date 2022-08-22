@@ -89,6 +89,6 @@ public class NpcEntityGhostHand extends Feature {
 
 		EntityOtherPlayerMP npc = ((EntityOtherPlayerMP) entity);
 		GameProfile gp = npc.getGameProfile();
-		return gp.getName().startsWith("ยง") && !NameCache.hasUUID(gp.getId());
+		return gp.getName().startsWith("§") && !NameCache.hasUUID(gp.getId());
 	}
 }

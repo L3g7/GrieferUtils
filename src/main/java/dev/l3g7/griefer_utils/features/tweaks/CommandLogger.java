@@ -16,7 +16,7 @@ public class CommandLogger extends Feature {
 			.description("Schreibt die Befehle, die du ausführst in die Konsole und damit den Log.")
 			.config("tweaks.command_logger.active")
 			.icon(Material.COMMAND)
-			.defaultValue(false);
+			.defaultValue(true);
 
 	@Override
 	public SettingsElement getMainElement() {

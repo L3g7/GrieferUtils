@@ -22,7 +22,7 @@ public class NpcEntityGhostHand extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("NPC-Klick-Helfer")
 			.description("Ermöglicht das Klicken auf NPCs durch Entities.")
-			.icon("fading_steve")
+			.icon("cursor")
 			.config("features.npc_ghost_hand.active")
 			.defaultValue(true);
 

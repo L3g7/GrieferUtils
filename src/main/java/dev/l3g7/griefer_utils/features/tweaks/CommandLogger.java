@@ -30,6 +30,10 @@ public class CommandLogger extends Feature {
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
 		if (isActive() && isOnGrieferGames() && event.getMsg().startsWith("/"))
-			System.out.println("Executed command: " + event.getMsg());
+			log(event.getMsg());
+	}
+
+	public static void log(String cmd) {
+		System.out.println("Executed command: " + cmd);
 	}
 }

@@ -1,5 +1,7 @@
 package dev.l3g7.griefer_utils.features;
 
+import dev.l3g7.griefer_utils.features.tweaks.CommandLogger;
+import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.MainPage;
@@ -44,7 +46,12 @@ public abstract class Feature implements Comparable<Feature> {
     public void suggest(String cmd) { mc().displayGuiScreen(new GuiChat(cmd)); }
     public void suggest(String format, Object... args) { suggest(String.format(format, args)); }
 
-    public void send(String cmd) { player().sendChatMessage(cmd); }
+    public void send(String cmd) {
+        if (FileProvider.getSingleton(CommandLogger.class).isActive())
+            CommandLogger.log(cmd);
+
+        player().sendChatMessage(cmd);
+    }
     public void send(String format, Object... args) { send(String.format(format, args)); }
 
     public void sendQueued(String cmd) { TickScheduler.queue("chat", () -> { if(player() != null) send(cmd); }, 50); }

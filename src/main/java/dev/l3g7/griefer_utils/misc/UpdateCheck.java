@@ -26,6 +26,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 public class UpdateCheck {
 
 	private static boolean isUpToDate = true;
+	private static boolean triggeredShutdownHook = true;
 
 	public static boolean isUpToDate() {
 		return isUpToDate;
@@ -73,7 +74,10 @@ public class UpdateCheck {
 
 			String tag = latestRelease.get("tag_name").getAsString().replaceFirst("v", "");
 			if (tag.equals(getAddonVersion())) {
-				Runtime.getRuntime().addShutdownHook(new Thread(() -> checkForUpdate(addonUuid)));
+				if (!triggeredShutdownHook) {
+					Runtime.getRuntime().addShutdownHook(new Thread(() -> checkForUpdate(addonUuid)));
+					triggeredShutdownHook = true;
+				}
 				return;
 			}
 

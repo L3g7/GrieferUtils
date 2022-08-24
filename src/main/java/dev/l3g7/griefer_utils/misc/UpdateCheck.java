@@ -26,7 +26,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 public class UpdateCheck {
 
 	private static boolean isUpToDate = true;
-	private static boolean triggeredShutdownHook = true;
+	private static boolean triggeredShutdownHook = false;
 
 	public static boolean isUpToDate() {
 		return isUpToDate;

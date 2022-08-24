@@ -109,7 +109,7 @@ public class ChatMods extends Feature {
 
         // remove streamer
         if (!event.isCanceled())
-            event.setCanceled(removeStreamerNotifications.get() && event.getFormatted().startsWith("§8[§6Streamer§8]"));
+            event.setCanceled(removeStreamerNotifications.get() && event.getFormatted().startsWith("§r§8[§6Streamer§8]"));
 
         // Remove MysteryMod download notification
         if (!event.isCanceled())

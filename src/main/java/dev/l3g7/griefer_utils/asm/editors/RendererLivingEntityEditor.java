@@ -20,7 +20,8 @@ public class RendererLivingEntityEditor {
         AbstractInsnNode alphaValueNode = findByMappings(GlStateManager.color()).getPrevious();
 
         // Replace value with getRenderModelAlpha call
-        replace(alphaValueNode, methodInsn(INVOKESTATIC, TrueSight.getRenderModelAlpha()));
+        insertAfter(alphaValueNode, methodInsn(INVOKESTATIC, TrueSight.getRenderModelAlpha()));
+        replace(alphaValueNode, varInsn(ALOAD, 1));
     }
 
 }

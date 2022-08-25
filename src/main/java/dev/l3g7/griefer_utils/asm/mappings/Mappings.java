@@ -121,7 +121,7 @@ public class Mappings {
 	public static class $TrueSight extends Class {
 		public $TrueSight() { super("dev/l3g7/griefer_utils/features/tweaks/TrueSight", null); }
 
-		public Method getRenderModelAlpha() { return new Method(null, "getRenderModelAlpha", this, Float); }
+		public Method getRenderModelAlpha() { return new Method(null, "getRenderModelAlpha", this, Float, EntityLivingBase); }
 	}
 	public static class $EnumParticleTypes extends Class {
 		public $EnumParticleTypes() { super("net/minecraft/util/EnumParticleTypes", "cy"); }

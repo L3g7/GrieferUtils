@@ -3,14 +3,19 @@ package dev.l3g7.griefer_utils.features.tweaks;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.RenderInvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.features.selfDisguise.SelfDisguise;
+import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SliderSetting;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityFallingBlock;
@@ -95,7 +100,7 @@ public class TrueSight extends Feature {
 
     @EventListener
     public void onRenderInvisibleEntity(RenderInvisibilityCheckEvent event) {
-        if(!isActive())
+        if(!isActive() || player().getName().equals(event.getEntity().getName()))
             return;
 
         // Iterate through entity's super classes
@@ -114,8 +119,16 @@ public class TrueSight extends Feature {
     }
 
     // Called by RendererLivingEntityEditor
-    public static float getRenderModelAlpha() {
+    public static float getRenderModelAlpha(EntityLivingBase livingBase) {
         if(!enabled.get() || !ServerCheck.isOnGrieferGames() || !Category.TWEAK.setting.get())
+            return 0.15f;
+
+        // Render yourself invisible if SelfDisguise is active
+        if (livingBase instanceof EntityPlayerSP
+                && livingBase.getName().equals(Minecraft.getMinecraft().thePlayer.getName())
+                && FileProvider.getSingleton(SelfDisguise.class).isActive()
+                && FileProvider.getSingleton(SelfDisguise.class).isDisguised()
+                && Category.FEATURE.setting.get())
             return 0.15f;
 
         return 0.01f * (100f - opacity.get());

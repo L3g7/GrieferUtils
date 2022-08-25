@@ -93,12 +93,13 @@ public class BetterSwitchCmd extends Feature {
 
 	@EventListener
 	public void onCityBuild(CityBuildJoinEvent event) {
+		joined = false;
+
 		if (command.isEmpty())
 			return;
 
 		send(command);
 		command = "";
-		joined = false;
 	}
 
 }

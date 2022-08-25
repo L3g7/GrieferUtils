@@ -60,6 +60,7 @@ public class FilterWebhooks extends Feature {
         for (Map.Entry<String, String> entry : webhooks.entrySet())
             data.addProperty(entry.getKey(), entry.getValue());
         Config.set("tweaks.webhooks.filter", data);
+        Config.save();
     }
 
     @OnEnable

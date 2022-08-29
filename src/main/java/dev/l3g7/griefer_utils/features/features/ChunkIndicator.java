@@ -7,7 +7,6 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -20,7 +19,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3d;
-import java.awt.Color;
+import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
 
@@ -155,7 +154,7 @@ public class ChunkIndicator extends Feature {
 	private static void drawLine(BlockPos start, BlockPos end, Color color) {
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer buf = tessellator.getWorldRenderer();
-		Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+		Entity entity = mc().getRenderViewEntity();
 		float partialTicks = LabyMod.getInstance().getPartialTicks();
 		Vector3d cameraPos = new Vector3d(entity.prevPosX + ((entity.posX - entity.prevPosX) * partialTicks), entity.prevPosY + ((entity.posY - entity.prevPosY) * partialTicks), entity.prevPosZ + ((entity.posZ - entity.prevPosZ) * partialTicks));
 		double x1 = start.getX() - cameraPos.getX();

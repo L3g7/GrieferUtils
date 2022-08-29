@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.misc.mysterymod_connection.packet.transactions.Tra
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.client.Minecraft;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -144,7 +143,7 @@ public class Transactions extends Feature {
         public static Direction get(Transaction t) {
             if (t.getReceiverName().equals(t.getSenderName()))
                 return SELF;
-            if (Minecraft.getMinecraft().getSession().getUsername().equals(t.getSenderName()))
+            if (Feature.name().equals(t.getSenderName()))
                 return SENT;
             else
                 return RECEIVED;

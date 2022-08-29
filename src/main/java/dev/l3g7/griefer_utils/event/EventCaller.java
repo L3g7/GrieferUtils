@@ -21,7 +21,6 @@ import net.labymod.labyconnect.packets.PacketAddonDevelopment;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.AddonElement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.network.Packet;
@@ -31,6 +30,8 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import static dev.l3g7.griefer_utils.features.Feature.mc;
 
 /**
  * Handles the stuff for calling events
@@ -67,7 +68,7 @@ public class EventCaller {
 
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent event) {
-        GuiScreen gui = Minecraft.getMinecraft().currentScreen;
+        GuiScreen gui = mc().currentScreen;
 
         // SettingsUpdateEvent
         if (gui instanceof LabyModAddonsGui) {

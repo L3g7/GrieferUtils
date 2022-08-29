@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SliderSetting;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -125,7 +124,7 @@ public class TrueSight extends Feature {
 
         // Render yourself invisible if SelfDisguise is active
         if (livingBase instanceof EntityPlayerSP
-                && livingBase.getName().equals(Minecraft.getMinecraft().thePlayer.getName())
+                && livingBase.getName().equals(player().getName())
                 && FileProvider.getSingleton(SelfDisguise.class).isActive()
                 && FileProvider.getSingleton(SelfDisguise.class).isDisguised()
                 && Category.FEATURE.setting.get())

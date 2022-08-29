@@ -4,14 +4,13 @@ import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.tablist.TabListAddPlayerEvent;
 import dev.l3g7.griefer_utils.event.events.network.tablist.TabListRemovePlayerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringListSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
-import net.minecraft.client.Minecraft;
 
 @Singleton
 public class ShowJoins extends Feature {
@@ -47,7 +46,7 @@ public class ShowJoins extends Feature {
     }
 
     private boolean isNameInFilter(String name) {
-        if (Minecraft.getMinecraft().getSession().getProfile().getName().equals(name)) // Don't show Joins/Leaves for yourself
+        if (Feature.name().equals(name)) // Don't show Joins/Leaves for yourself
             return false;
 
         if(filter.get())

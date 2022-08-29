@@ -6,9 +6,6 @@ import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.main.LabyMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -23,6 +20,9 @@ import net.minecraft.item.EnumDyeColor;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static dev.l3g7.griefer_utils.features.Feature.player;
+import static dev.l3g7.griefer_utils.features.Feature.world;
 
 /**
  * @author L3g73 (L3g7 said i should put that there ._.)
@@ -53,19 +53,15 @@ public class DisguiseParser {
 
 	private static final List<String> VILLAGER_PROFESSIONS = ImmutableList.of("farmer", "librarian", "priest", "blacksmith", "butcher", "nitwit");
 
-	private static EntityPlayerSP player;
-	private static WorldClient world;
 	private static Disguise disguise;
 	
 	public static Disguise parse(String command) {
-		player = Minecraft.getMinecraft().thePlayer;
-		world = Minecraft.getMinecraft().theWorld;
 
 		String[] arguments = command.split(" ");
 
 		disguise = new Disguise(parseEntityType(arguments[1]));
 
-		world.addEntityToWorld(-Math.abs(new Random().nextInt()), disguise.getEntity());
+		world().addEntityToWorld(-Math.abs(new Random().nextInt()), disguise.getEntity());
 
 		if (arguments.length > 2) {
 			try {
@@ -94,20 +90,20 @@ public class DisguiseParser {
 		// Special entities
 		switch (entityName) {
 			case "elder_guardian":
-				entity = new EntityGuardian(world);
+				entity = new EntityGuardian(world());
 				((EntityGuardian) entity).setElder();
 				break;
 			case "armor_stand":
-				entity = new EntityArmorStand(world);
+				entity = new EntityArmorStand(world());
 				for (int i = 0; i < 4; i++)
-					entity.setCurrentItemOrArmor(i + 1, player.inventory.armorInventory[i]);
+					entity.setCurrentItemOrArmor(i + 1, player().inventory.armorInventory[i]);
 				break;
 			case "falling_block":
-				entity = new EntityFallingBlock(world, player.posX, player.posY, player.posZ, Blocks.stone.getDefaultState());
+				entity = new EntityFallingBlock(world(), player().posX, player().posY, player().posZ, Blocks.stone.getDefaultState());
 				break;
 			case "skeletal_horse":
 			case "undead_horse":
-				entity = new EntityHorse(world);
+				entity = new EntityHorse(world());
 				((EntityHorse) entity).setHorseType(entityName.equals("undead_horse") ? 3 : 4);
 				break;
 		}
@@ -117,10 +113,10 @@ public class DisguiseParser {
 
 		// Renamed entities
 		if (RENAMED_ENTITIES.containsKey(entityName))
-			return EntityList.createEntityByName(RENAMED_ENTITIES.get(entityName), world);
+			return EntityList.createEntityByName(RENAMED_ENTITIES.get(entityName), world());
 
 		// All other entities
-		return EntityList.createEntityByName(toCamelCase(entityName), world);
+		return EntityList.createEntityByName(toCamelCase(entityName), world());
 	}
 
 	private static String toCamelCase(String snakeCase) {

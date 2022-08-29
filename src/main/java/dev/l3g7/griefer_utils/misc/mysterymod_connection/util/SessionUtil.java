@@ -2,11 +2,12 @@ package dev.l3g7.griefer_utils.misc.mysterymod_connection.util;
 
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 
 import java.net.Proxy;
 import java.util.UUID;
+
+import static dev.l3g7.griefer_utils.features.Feature.mc;
 
 public class SessionUtil {
 
@@ -15,8 +16,8 @@ public class SessionUtil {
 
     public static MinecraftSessionService getSessionService() {
         if (sessionService == null) {
-            if (Minecraft.getMinecraft() != null)
-                sessionService = Minecraft.getMinecraft().getSessionService();
+            if (mc() != null)
+                sessionService = mc().getSessionService();
             else
                 sessionService = new YggdrasilAuthenticationService(Proxy.NO_PROXY, UUID.randomUUID().toString()).createMinecraftSessionService();
         }
@@ -26,8 +27,8 @@ public class SessionUtil {
 
     public static Session getSession() {
         if (session == null) {
-            if (Minecraft.getMinecraft() != null) {
-                session = Minecraft.getMinecraft().getSession();
+            if (mc() != null) {
+                session = mc().getSession();
             } else {
                 if (!System.getenv().containsKey("MINECRAFT_TEST_USERNAME"))
                     throw new RuntimeException("No login information found!");

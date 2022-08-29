@@ -7,8 +7,6 @@ import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -61,10 +59,10 @@ public class Trajectories extends Feature {
 
     /**
      *
-     * Copyright (C) LiquidBounce 2020, GNU General Public License v3.0
-     * See https://github.com/CCBlueX/LiquidBounce/blob/9c546f0598843e315f26f35c6e0c31d211f55276/shared/main/java/net/ccbluex/liquidbounce/features/module/modules/render/Projectiles.kt
-     *
-     * converted to Java, added mode checks, removed colorMode
+     * Copyright (C) LiquidBounce 2020, GNU General Public License v3.0<br>
+     * See <a href="https://github.com/CCBlueX/LiquidBounce/blob/9c546f0598843e315f26f35c6e0c31d211f55276/shared/main/java/net/ccbluex/liquidbounce/features/module/modules/render/Projectiles.kt">Projectiles.kt</a>
+     * <p>
+     * converted to Java, added mode checks, removed colorMode<br>
      * TODO: beautify
      *
      */
@@ -73,11 +71,10 @@ public class Trajectories extends Feature {
         if (mode.get() == TrajectoriesMode.DISABLED || !isCategoryEnabled() || !isOnGrieferGames())
             return;
 
-        EntityPlayerSP player = player();
-        if (player == null)
+        if (player() == null)
             return;
-        if (player.getHeldItem() != null) {
-            ItemStack heldItem = player.getHeldItem();
+        if (player().getHeldItem() != null) {
+            ItemStack heldItem = player().getHeldItem();
             if (heldItem == null)
                 return;
 
@@ -88,13 +85,13 @@ public class Trajectories extends Feature {
             float motionSlowdown = 0.99F;
             float gravity, size, power;
             if (item instanceof ItemBow) {
-                if (!player.isUsingItem())
+                if (!player().isUsingItem())
                     return;
 
                 isBow = true;
                 gravity = 0.05F;
                 size = 0.3F;
-                int duration = player.getItemInUseDuration();
+                int duration = player().getItemInUseDuration();
 
                 power = (float) duration / 20.0F;
                 power = (power * power + power * 2.0F) / 3.0F;
@@ -121,10 +118,10 @@ public class Trajectories extends Feature {
             double posX, posY, posZ;
             double motionX;
             byte pitchOffset;
-            power = Minecraft.getMinecraft().thePlayer.rotationYaw;
-            pitch = Minecraft.getMinecraft().thePlayer.rotationPitch;
+            power = player().rotationYaw;
+            pitch = player().rotationPitch;
             posX = (double) Reflection.get(renderManager, "renderPosX", "field_78725_b", "o") - (double) (MathHelper.cos(power / 180.0F * (float) Math.PI) * 0.16F);
-            posY = (double) Reflection.get(renderManager, "renderPosY", "field_78726_c", "p") + (double) Minecraft.getMinecraft().thePlayer.getEyeHeight() - 0.10000000149011612D;
+            posY = (double) Reflection.get(renderManager, "renderPosY", "field_78726_c", "p") + (double) player().getEyeHeight() - 0.10000000149011612D;
             posZ = (double) Reflection.get(renderManager, "renderPosZ", "field_78723_d", "q") - (double) (MathHelper.sin(power / 180.0F * (float) Math.PI) * 0.16F);
             motionX = (double) (-MathHelper.sin(power / 180.0F * 3.1415927F) * MathHelper.cos(pitch / 180.0F * 3.1415927F)) * (isBow ? 1.0D : 0.4D);
             if (item instanceof ItemPotion && ItemPotion.isSplash(heldItem.getItemDamage()))
@@ -161,7 +158,7 @@ public class Trajectories extends Feature {
             while (!hasLanded && posY > 0.0D) {
                 Vec3 posBefore = new Vec3(posX, posY, posZ);
                 Vec3 posAfter = new Vec3(posX + motionX, posY + motionY, posZ + motionZ);
-                landingPosition = Minecraft.getMinecraft().theWorld.rayTraceBlocks(posBefore, posAfter, false, true, false);
+                landingPosition = world().rayTraceBlocks(posBefore, posAfter, false, true, false);
                 posBefore = new Vec3(posX, posY, posZ);
                 posAfter = new Vec3(posX + motionX, posY + motionY, posZ + motionZ);
                 if (landingPosition != null) {
@@ -181,7 +178,7 @@ public class Trajectories extends Feature {
                         int z = chunkMinZ;
                         if (chunkMinZ <= chunkMaxZ) {
                             while (true) {
-                                Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(x, z).getEntitiesWithinAABBForEntity(Minecraft.getMinecraft().thePlayer, arrowBox, collidedEntities, null);
+                                world().getChunkFromChunkCoords(x, z).getEntitiesWithinAABBForEntity(player(), arrowBox, collidedEntities, null);
                                 if (z == chunkMaxZ)
                                     break;
 
@@ -197,7 +194,7 @@ public class Trajectories extends Feature {
                 }
 
                 for (Entity possibleEntity : collidedEntities) {
-                    if (possibleEntity.canBeCollidedWith() && possibleEntity != Minecraft.getMinecraft().thePlayer) {
+                    if (possibleEntity.canBeCollidedWith() && possibleEntity != player()) {
                         AxisAlignedBB possibleEntityBoundingBox = possibleEntity.getEntityBoundingBox().expand(size, size, size);
                         MovingObjectPosition movingObjectPosition = possibleEntityBoundingBox.calculateIntercept(posBefore, posAfter);
                         if (movingObjectPosition != null) {
@@ -211,7 +208,7 @@ public class Trajectories extends Feature {
                 posX += motionX;
                 posY += motionY;
                 posZ += motionZ;
-                IBlockState blockState = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(posX, posY, posZ));
+                IBlockState blockState = world().getBlockState(new BlockPos(posX, posY, posZ));
                 Block block = blockState.getBlock();
                 if (block.getMaterial() == net.minecraft.block.material.Material.water) {
                     motionX *= 0.6D;

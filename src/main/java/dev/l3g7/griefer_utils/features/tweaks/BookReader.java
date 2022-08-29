@@ -5,7 +5,6 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiScreenBook;
@@ -91,7 +90,7 @@ public class BookReader extends Feature {
 	// Required because GuiScreenBook escapes to the main game
 	private static class GuiBook extends GuiScreenBook {
 
-		private final GuiScreen previousScreen = Minecraft.getMinecraft().currentScreen;
+		private final GuiScreen previousScreen = mc.currentScreen;
 
 		public GuiBook(EntityPlayer player, ItemStack book) {
 			super(player, book, false);

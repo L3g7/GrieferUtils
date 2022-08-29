@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.features.tweaks.CommandLogger;
+import dev.l3g7.griefer_utils.event.event_bus.EventBus;
+import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.MainPage;
@@ -30,27 +31,28 @@ public abstract class Feature implements Comparable<Feature> {
     }
 
     public boolean isCategoryEnabled() { return category.setting.get(); }
-    public boolean isOnGrieferGames() { return ServerCheck.isOnGrieferGames(); }
-    public boolean isOnCityBuild() { return ServerCheck.isOnCitybuild(); }
+    public static boolean isOnGrieferGames() { return ServerCheck.isOnGrieferGames(); }
+    public static boolean isOnCityBuild() { return ServerCheck.isOnCitybuild(); }
 
-    public Minecraft mc() { return Minecraft.getMinecraft(); }
-    public EntityPlayerSP player() { return mc().thePlayer; }
-    public WorldClient world() { return mc().theWorld; }
-    public UUID uuid() { return PlayerUtil.getUUID(); }
+    public static Minecraft mc() { return Minecraft.getMinecraft(); }
+    public static EntityPlayerSP player() { return mc().thePlayer; }
+    public static WorldClient world() { return mc().theWorld; }
+    public static UUID uuid() { return PlayerUtil.getUUID(); }
+    public static String name() { return PlayerUtil.getName(); }
 
-    public void display(IChatComponent component) { player().addChatMessage(component); }
-    public void display(String msg) { LabyMod.getInstance().displayMessageInChat(msg); }
-    public void display(String format, Object... args) { display(String.format(format, args)); }
+    public static void display(IChatComponent component) { player().addChatMessage(component); }
+    public static void display(String msg) { LabyMod.getInstance().displayMessageInChat(msg); }
+    public static void display(String format, Object... args) { display(String.format(format, args)); }
 
-    public void suggest(String cmd) { mc().displayGuiScreen(new GuiChat(cmd)); }
-    public void suggest(String format, Object... args) { suggest(String.format(format, args)); }
+    public static void suggest(String cmd) { mc().displayGuiScreen(new GuiChat(cmd)); }
+    public static void suggest(String format, Object... args) { suggest(String.format(format, args)); }
 
-    public void send(String cmd) { CommandLogger.logAndSend(cmd); }
-    public void send(String format, Object... args) { send(String.format(format, args)); }
+    public static void send(String cmd) { if (!EventBus.post(new MessageSendEvent(cmd)).isCanceled()) player().sendChatMessage(cmd); }
+    public static void send(String format, Object... args) { send(String.format(format, args)); }
 
-    public void sendQueued(String cmd) { TickScheduler.queue("chat", () -> { if(player() != null) send(cmd); }, 50); }
+    public static void sendQueued(String cmd) { TickScheduler.queue("chat", () -> { if(player() != null) send(cmd); }, 50); }
 
-    public void displayAchievement(String title, String description, Object... args) {
+    public static void displayAchievement(String title, String description, Object... args) {
         LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", title, String.format(description, args));
     }
 

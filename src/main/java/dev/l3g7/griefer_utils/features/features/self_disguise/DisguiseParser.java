@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.features.selfDisguise;
+package dev.l3g7.griefer_utils.features.features.self_disguise;
 
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.misc.Constants;

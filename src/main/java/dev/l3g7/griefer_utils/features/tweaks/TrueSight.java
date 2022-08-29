@@ -3,7 +3,7 @@ package dev.l3g7.griefer_utils.features.tweaks;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.RenderInvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.features.selfDisguise.SelfDisguise;
+import dev.l3g7.griefer_utils.features.features.self_disguise.SelfDisguise;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Config;

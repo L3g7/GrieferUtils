@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.features.selfDisguise;
+package dev.l3g7.griefer_utils.features.features.self_disguise;
 
 import net.minecraft.entity.Entity;
 

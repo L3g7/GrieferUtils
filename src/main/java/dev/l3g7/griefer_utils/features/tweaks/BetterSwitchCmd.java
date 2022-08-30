@@ -78,7 +78,7 @@ public class BetterSwitchCmd extends Feature {
 
 		if (!joined && msg.matches(NUMBER))
 			join("cb" + msg.replaceAll(NUMBER, "$1"));
-		else if (!joined)
+		else
 			return;
 
 
@@ -87,8 +87,8 @@ public class BetterSwitchCmd extends Feature {
 	}
 
 	public void join(String cb) {
-		joined = true;
 		send("/switch " + cb);
+		joined = true;
 	}
 
 	@EventListener

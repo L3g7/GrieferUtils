@@ -84,9 +84,7 @@ public class NameCache {
 			return;
 
 		String name = data.getDisplayName().getUnformattedText();
-		if (name.contains("~")) {
+		if (name.contains("~"))
 			nickToUuidCache.put(name.substring(name.indexOf('~')), data.getProfile().getId());
-			System.out.println("Added " + name.substring(name.indexOf('~')));
-		}
 	}
 }

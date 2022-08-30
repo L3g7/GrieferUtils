@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.features.features.self_disguise;
 
+import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
@@ -7,6 +8,7 @@ import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerQuitEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -24,6 +26,7 @@ public class SelfDisguise extends Feature {
 	private String command = null;
 	private Entity currentDisguise = null;
 	private boolean blockCoordinates = false;
+	private boolean shouldLoadFromConfig = false;
 
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("SelfDisguise")
@@ -43,7 +46,18 @@ public class SelfDisguise extends Feature {
 
 	@EventListener
 	public void onCbJoin(CityBuildJoinEvent event) {
-		undisguise();
+		if (!shouldLoadFromConfig) {
+			undisguise();
+			return;
+		}
+
+		if (currentDisguise != null)
+			world().removeEntity(currentDisguise);
+
+		Disguise disguise = DisguiseParser.parse(Config.get("features.self_disguise.commands." + uuid()).getAsString());
+		currentDisguise = disguise.getEntity();
+		blockCoordinates = disguise.isBlockCoordinates();
+		shouldLoadFromConfig = false;
 	}
 
 	@EventListener
@@ -69,6 +83,11 @@ public class SelfDisguise extends Feature {
 
 	@EventListener
 	public void onReceive(MessageReceiveEvent event) {
+		if (event.getFormatted().equals("§r§7Du bist noch verkleidet. Nutze §r§e/disguise status§r§7, um weitere Informationen zu erhalten.§r")) {
+			shouldLoadFromConfig = true;
+			return;
+		}
+
 		if (!isActive() || !isOnGrieferGames() || command == null)
 			return;
 
@@ -89,6 +108,8 @@ public class SelfDisguise extends Feature {
 		Disguise disguise = DisguiseParser.parse(command);
 		currentDisguise = disguise.getEntity();
 		blockCoordinates = disguise.isBlockCoordinates();
+		Config.set("features.self_disguise.commands." + uuid(), command);
+		Config.save();
 
 		command = null;
 	}
@@ -97,6 +118,10 @@ public class SelfDisguise extends Feature {
 	public void onTick(TickEvent.RenderTickEvent event) {
 		if (!isActive() || !isOnGrieferGames() || !isDisguised())
 			return;
+
+		// When you teleport somewhere far away, the entity is unloaded
+		if (!world().loadedEntityList.contains(currentDisguise))
+			world().loadEntities(ImmutableList.of(currentDisguise));
 
 		if (mc().gameSettings.thirdPersonView == 0) {
 			currentDisguise.setInvisible(true);

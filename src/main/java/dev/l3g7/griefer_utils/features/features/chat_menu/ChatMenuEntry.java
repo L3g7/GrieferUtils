@@ -1,0 +1,236 @@
+package dev.l3g7.griefer_utils.features.features.chat_menu;
+
+import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.settings.elements.StringSetting;
+import net.labymod.settings.elements.ControlElement;
+import net.labymod.utils.Consumer;
+import net.labymod.utils.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
+import org.apache.logging.log4j.LogManager;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static dev.l3g7.griefer_utils.features.Feature.mc;
+import static dev.l3g7.griefer_utils.features.features.chat_menu.ChatMenuEntry.Action.*;
+
+public class ChatMenuEntry {
+	private static final Map<Action, String> descriptionMap = new HashMap<Action, String>() {{
+		put(OPEN_URL, "Welche Webseite geöffnet werden soll.");
+		put(RUN_CMD, "Welcher Befehl ausgeführt werden soll.");
+		put(SUGGEST_CMD, "Welcher Befehl vorgeschlagen werden soll.");
+	}};
+
+	private static final Map<String, Object> DEFAULT_ICONS = new HashMap<String, Object>() {{
+		put("0_open_profile", "chat_menu/profile");
+		put("1_name_history", "chat_menu/history");
+		put("2_copy_name", "chat_menu/copy");
+		put("3_search_forum", "chat_menu/internet");
+		put("4_open_inv", "chest");
+		put("5_view_gear", Material.DIAMOND_CHESTPLATE);
+		put("6_open_ec", "ender_chest");
+	}};
+
+	private final StringSetting name;
+	private final StringSetting value;
+	private final DropDownSetting<Action> action;
+	private Consumer<String> customConsumer = null;
+	private boolean enabled = false;
+	private boolean isDefault = false;
+
+	public ChatMenuEntry() {
+		this("", SUGGEST_CMD, "");
+	}
+
+	public ChatMenuEntry(String name, Action action, String value) {
+		this.name = new StringSetting()
+				.name("Name")
+				.description("Welcher Text im Chat-Menü angezeigt werden soll.")
+				.defaultValue(name)
+				.callback(v -> {
+					ChatMenu.saveEntries();
+					ChatMenu.updateSettings();
+				})
+				.icon(Material.NAME_TAG);
+
+		this.value = new StringSetting()
+				.name("Befehl")
+				.description("Welcher Befehl im Chat-Menü angezeigt werden soll.")
+				.defaultValue(value)
+				.callback(v -> {
+					ChatMenu.saveEntries();
+					ChatMenu.updateSettings();
+				})
+				.icon(Material.PAPER);
+
+		this.action = new DropDownSetting<>(Action.class)
+				.name("Aktion")
+				.description("Welche Aktion ausgeführt werden soll.")
+				.icon(Material.COMMAND)
+				.callback(a -> {
+					this.value.name(a == OPEN_URL ? "URL" : "Befehl") // Update name and description of value
+							.description(descriptionMap.get(a) + "\n(%PLAYER% wird durch den Spielernamen ersetzt.)");
+					ChatMenu.saveEntries();
+					ChatMenu.updateSettings();
+				})
+				.defaultValue(action)
+				.stringProvider(Action::getName);
+	}
+
+	public ChatMenuEntry(String name, Consumer<String> consumer) {
+		this(name, SUGGEST_CMD, "");
+		customConsumer = consumer;
+	}
+
+	public ChatMenuEntry setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		return this;
+	}
+
+	public void enableDefault() {
+		isDefault = true;
+		setEnabled(true);
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public boolean isValid() {
+		return !name.get().trim().isEmpty()
+				&& action.get() != null
+				&& !value.get().trim().isEmpty();
+	}
+
+	public String getName() {
+		return name.get();
+	}
+
+	public ControlElement.IconData getIcon() {
+		String name = action.get() == OPEN_URL ? "chat_menu/internet" : "chat_menu/chat";
+		if (isDefault) {
+			Object icon = DEFAULT_ICONS.get(ChatMenu.DEFAULT_ENTRIES.get(this));
+			if (icon instanceof Material)
+				return new ControlElement.IconData(((Material) icon));
+			name = ((String) icon);
+		}
+
+		return new ControlElement.IconData("griefer_utils/icons/" + name + ".png");
+	}
+
+	public BooleanSetting getSetting() {
+		BooleanSetting setting = new BooleanSetting()
+				.callback(v -> {
+					enabled = v;
+					ChatMenu.saveEntries();
+				})
+				.defaultValue(enabled)
+				.name(name.get())
+				.icon(getIcon());
+
+		if (!isDefault)
+				setting.subSettings(name, action, value);
+
+		return setting;
+	}
+
+	public Consumer<String> getConsumer() {
+		if (customConsumer != null)
+			return customConsumer;
+
+		switch (action.get()) {
+			case OPEN_URL:
+				return s -> ChatMenuEntry.openWebsite(value.get().replaceAll("(?i)%PLAYER%", s));
+
+			case RUN_CMD:
+				return s -> Feature.send(value.get().replaceAll("(?i)%PLAYER%", s));
+
+			case SUGGEST_CMD:
+				return s -> Minecraft.getMinecraft().displayGuiScreen(new GuiChat(value.get().replaceAll("(?i)%PLAYER%", s)));
+		}
+
+		return null;
+	}
+
+	public JsonObject toJson() {
+		if (isDefault)
+			return null;
+
+		JsonObject object = new JsonObject();
+
+		object.addProperty("name", name.get());
+		object.addProperty("action", action.get().getConfigKey());
+		object.addProperty("value", value.get());
+		object.addProperty("enabled", enabled);
+
+		return object;
+	}
+
+	public static ChatMenuEntry fromJson(JsonObject object) {
+		return new ChatMenuEntry(
+				object.get("name").getAsString(),
+				Action.fromConfig(object.get("action").getAsString()),
+				object.get("value").getAsString()
+		).setEnabled(object.get("enabled").getAsBoolean());
+	}
+
+	public static void openWebsite(String url) {
+		if (!mc().gameSettings.chatLinks)
+			return;
+
+		try {
+			URI uri = new URI(url);
+			String s = uri.getScheme();
+
+			if (s == null)
+				throw new URISyntaxException(url, "Missing protocol");
+
+			if (!s.equalsIgnoreCase("http") && !s.equalsIgnoreCase("https"))
+				throw new URISyntaxException(url, "Unsupported protocol: " + s.toLowerCase());
+
+			Desktop.getDesktop().browse(uri);
+		} catch (URISyntaxException use) {
+			LogManager.getLogger().error("Can't open url " + url, use);
+		} catch (IOException ioe) {
+			LogManager.getLogger().error("Couldn't open link" , ioe);
+		}
+	}
+
+	enum Action {
+		OPEN_URL("Url öffnen", "open_url"),
+		RUN_CMD("Befehl ausführen", "run"),
+		SUGGEST_CMD("Befehl vorschlagen", "suggest");
+
+		private final String name;
+		private final String configKey;
+
+		Action(String name, String configKey) {
+			this.name = name;
+			this.configKey = configKey;
+		}
+
+		private static Action fromConfig(String key) {
+			for (Action value : Action.values())
+				if (value.configKey.equals(key))
+					return value;
+
+			return SUGGEST_CMD;
+		}
+
+		private String getName() {
+			return name;
+		}
+
+		private String getConfigKey() {
+			return configKey;
+		}
+	}
+}

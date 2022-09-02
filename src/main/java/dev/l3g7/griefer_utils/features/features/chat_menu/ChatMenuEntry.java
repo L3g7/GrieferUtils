@@ -43,7 +43,7 @@ public class ChatMenuEntry {
 	private final StringSetting value;
 	private final DropDownSetting<Action> action;
 	private Consumer<String> customConsumer = null;
-	private boolean enabled = false;
+	private boolean enabled = true;
 	private boolean isDefault = false;
 
 	public ChatMenuEntry() {

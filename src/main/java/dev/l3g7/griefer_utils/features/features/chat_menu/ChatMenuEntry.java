@@ -30,13 +30,13 @@ public class ChatMenuEntry {
 	}};
 
 	private static final Map<String, Object> DEFAULT_ICONS = new HashMap<String, Object>() {{
-		put("0_open_profile", "chat_menu/profile");
-		put("1_name_history", "chat_menu/history");
-		put("2_copy_name", "chat_menu/copy");
-		put("3_search_forum", "chat_menu/internet");
-		put("4_open_inv", "chest");
-		put("5_view_gear", Material.DIAMOND_CHESTPLATE);
-		put("6_open_ec", "ender_chest");
+		put("open_profile", "chat_menu/profile");
+		put("name_history", "chat_menu/history");
+		put("copy_name", "chat_menu/copy");
+		put("search_forum", "chat_menu/internet");
+		put("open_inv", "chest");
+		put("view_gear", Material.DIAMOND_CHESTPLATE);
+		put("open_ec", "ender_chest");
 	}};
 
 	private final StringSetting name;

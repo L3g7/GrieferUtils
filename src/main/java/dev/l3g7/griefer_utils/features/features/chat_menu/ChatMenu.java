@@ -207,7 +207,7 @@ public class ChatMenu extends Feature {
 
 
 	@SubscribeEvent
-	public void onTick(GuiScreenEvent.KeyboardInputEvent.Pre event) {
+	public void onKeyboard(GuiScreenEvent.KeyboardInputEvent.Pre event) {
 		if (renderer == null)
 			return;
 

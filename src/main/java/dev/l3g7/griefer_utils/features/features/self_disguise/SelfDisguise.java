@@ -142,10 +142,11 @@ public class SelfDisguise extends Feature {
 	}
 	private void undisguise() {
 
-		if (isDisguised())
+		if (isDisguised() && world() != null)
 			world().removeEntity(currentDisguise);
 		command = null;
-		player().setInvisible(false);
+		if (player() != null)
+			player().setInvisible(false);
 		currentDisguise = null;
 	}
 

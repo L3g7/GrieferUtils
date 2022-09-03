@@ -4,7 +4,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.ItemBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.KeySetting;
+import dev.l3g7.griefer_utils.settings.elements.keysetting.KeySetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.renderer.GlStateManager;
@@ -65,7 +65,7 @@ public class ChunkIndicator extends Feature {
 
 	private final KeySetting toggle = new KeySetting()
 			.name("Chunk-Indikator")
-			.config("features.chunk_indicator.key")
+			.config("features.chunk_indicator.keys")
 			.icon("chunk_indicator")
 			.description("Zeigt dir die Chunk-Grenzen an.")
 			.callback(() -> enabled = !enabled)

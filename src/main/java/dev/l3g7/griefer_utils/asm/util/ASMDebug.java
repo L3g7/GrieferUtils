@@ -6,7 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class ASMDebug {
+
+	public static void dumpCurrentMethod() {
+		System.out.println("----- DUMP START -----");
+		dump(ASMUtil.currentMethodNode.instructions);
+		System.out.println("----- DUMP END -----");
+	}
 
 	public static void dump(InsnList l) {
 		AbstractInsnNode n = l.getFirst();

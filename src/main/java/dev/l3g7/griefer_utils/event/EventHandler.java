@@ -1,10 +1,12 @@
 package dev.l3g7.griefer_utils.event;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventBus;
+import dev.l3g7.griefer_utils.event.events.network.PacketSendEvent;
 import dev.l3g7.griefer_utils.event.events.render.*;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.Packet;
 import net.minecraft.util.IChatComponent;
 
 /**
@@ -37,6 +39,11 @@ public class EventHandler {
     // Called by ClientWorldEditor (editVoidFog)
     public static boolean shouldRenderBarrier() {
         return !EventBus.post(new RenderBarrierCheckEvent()).isCanceled();
+    }
+
+    // Called by NetHandlerPlayClientEditor (editAddToSendQueue)
+    public static boolean shouldSendPacket(Packet<?> packet) {
+        return !EventBus.post(new PacketSendEvent(packet)).isCanceled();
     }
 
 }

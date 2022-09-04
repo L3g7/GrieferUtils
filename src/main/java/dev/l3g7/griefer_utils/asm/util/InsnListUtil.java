@@ -10,7 +10,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class InsnListUtil extends InsnUtil {
+public class InsnListUtil extends InsnUtil implements Opcodes {
 
 	public static final String INJECT_END = "<injectEnd>";
 
@@ -46,7 +46,7 @@ public class InsnListUtil extends InsnUtil {
 	public static void insertBeforeReturns(AbstractInsnNode... nodes) {
 		InsnList insnList = ASMUtil.currentMethodNode.instructions;
 		stream(insnList)
-				.filter(n -> n.getOpcode() == Opcodes.ARETURN)
+				.filter(n -> n.getOpcode() == ARETURN || n.getOpcode() == RETURN)
 				.forEach(n -> insnList.insertBefore(n, insnListByArray(nodes)));
 	}
 

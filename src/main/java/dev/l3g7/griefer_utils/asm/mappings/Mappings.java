@@ -26,8 +26,10 @@ public class Mappings {
 	public static $EnumParticleTypes    EnumParticleTypes = new $EnumParticleTypes();
 	public static $GlStateManager       GlStateManager = new $GlStateManager();
 	public static $IChatComponent       IChatComponent = new $IChatComponent();
+	public static $NetHandlerPlayClient NetHandlerPlayClient = new $NetHandlerPlayClient();
 	public static $Material             Material = new $Material();
 	public static $Potion               Potion = new $Potion();
+	public static $Packet               Packet = new $Packet();
 	public static $RendererLivingEntity RendererLivingEntity = new $RendererLivingEntity();
 	public static $WorldClient          WorldClient = new $WorldClient();
 
@@ -109,6 +111,14 @@ public class Mappings {
 
 		public Method renderModel() { return new Method("a", "renderModel", this, Void, EntityLivingBase, Float, Float, Float, Float, Float, Float); }
 	}
+	public static class $Packet extends Class {
+		private $Packet() { super("net/minecraft/network/Packet", "ff"); }
+	}
+	public static class $NetHandlerPlayClient extends Class {
+		private $NetHandlerPlayClient() { super("net/minecraft/client/network/NetHandlerPlayClient", "bcy"); }
+
+		public Method addToSendQueue() { return new Method("a", "addToSendQueue", this, Void, Packet); }
+	}
 	public static class $EventHandler extends Class {
 		public $EventHandler() { super("dev/l3g7/griefer_utils/event/EventHandler", null); }
 
@@ -117,6 +127,7 @@ public class Mappings {
 		public Method modifyDisplayName() { return new Method(null, "modifyDisplayName", this, IChatComponent, IChatComponent, EntityPlayer); }
 		public Method shouldRenderFog() { return new Method(null, "shouldRenderFog", this, Boolean, Int); }
 		public Method shouldRenderBarrier() { return new Method(null, "shouldRenderBarrier", this, Boolean); }
+		public Method shouldSendPacket() { return new Method(null, "shouldSendPacket", this, Boolean, Packet); }
 	}
 	public static class $TrueSight extends Class {
 		public $TrueSight() { super("dev/l3g7/griefer_utils/features/tweaks/TrueSight", null); }

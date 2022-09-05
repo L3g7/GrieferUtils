@@ -32,18 +32,23 @@ public class RepairValueViewer extends ItemInfoSupplier {
 
 		int cost = itemStack.getRepairCost();
 
-		return ImmutableList.of("§r", "§r§7Reparaturwert: §r§" + getColor(cost) + cost);
+		return ImmutableList.of("§r", "§r§7Reparaturwert: §r§" + getColor(itemStack) + cost);
 	}
 
 	/**
 	 *  0   - Green
-	 * 1-34 - Yellow
-	 * ≥ 35 - Red
+	 * 1-39 - Yellow
+	 * ≥ 40 - Red
 	 */
-	private char getColor(int cost) {
+	private char getColor(ItemStack itemStack) {
+		// The repair cost of the item (see ContainerRepair.updateRepairOutput())
+		// If the item is only damaged 1/4, you can repair it with a single material (i.e. a diamond), thus costing only 1 level
+		// more than the repair value. Otherwise, it can be repaired with another item of the same type (i.e. a diamond sword), costing only 2 levels more.
+		int cost = itemStack.getRepairCost() + (itemStack.getItemDamage() >= itemStack.getMaxDamage() / 4 ? 1 : 2);
+
 		if(cost < 1)
 			return 'a';
-		if(cost > 35)
+		if(cost > 39)
 			return 'c';
 		return 'e';
 	}

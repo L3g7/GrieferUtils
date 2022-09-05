@@ -2,7 +2,9 @@ package dev.l3g7.griefer_utils.features.features;
 
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
@@ -13,13 +15,22 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 @Singleton
 public class ToolSaver extends Feature {
 
+    private final BooleanSetting saveNonRepairable = new BooleanSetting()
+            .name("Irreperables retten")
+            .description("Ob Items, die nicht mehr repariert werden können, auch gerettet werden sollen.")
+            .icon("broken_pickaxe")
+            .defaultValue(true)
+            .config("features.tool_saver.save_non_repairable");
+
     private final NumberSetting damage = new NumberSetting()
             .name("ToolSaver")
             .description("Deaktiviert Klicks, sobald das in der Hand gehaltene Werkzeug die eingestellte Haltbarkeit unterschreitet.\n" +
-                         "(0 zum Deaktivieren)")
+                    "(0 zum Deaktivieren)")
             .icon("broken_pickaxe")
             .defaultValue(0)
-            .config("features.tool_saver.active");
+            .config("features.tool_saver.damage")
+            .settingsEnabled(true)
+            .subSettingsWithHeader("ToolSaver", saveNonRepairable);
 
     public ToolSaver() {
         super(Category.FEATURE);
@@ -35,17 +46,10 @@ public class ToolSaver extends Feature {
         if (damage.get() == 0 || !isCategoryEnabled())
             return;
 
-        if (player() == null)
-            return;
-
         if ((event.button != 0 && event.button != 1) || !event.buttonstate)
             return;
 
-        ItemStack heldItem = player().getHeldItem();
-        if (heldItem == null || heldItem.getMaxDamage() == 0)
-            return;
-
-        if (damage.get() >= heldItem.getMaxDamage() - heldItem.getItemDamage())
+        if (shouldCancel())
             event.setCanceled(true);
     }
 
@@ -56,17 +60,26 @@ public class ToolSaver extends Feature {
         if (damage.get() == 0 || !isCategoryEnabled())
             return;
 
-        if (player() == null)
-            return;
-
-        ItemStack heldItem = player().getHeldItem();
-        if (heldItem == null || heldItem.getMaxDamage() == 0)
-            return;
-
-        if (damage.get() < heldItem.getMaxDamage() - heldItem.getItemDamage())
+        if (!shouldCancel())
             return;
 
         KeyBinding.setKeyBindState(mc().gameSettings.keyBindUseItem.getKeyCode(), false);
         KeyBinding.setKeyBindState(mc().gameSettings.keyBindAttack.getKeyCode(), false);
+    }
+
+    private boolean shouldCancel() {
+
+        if (player() == null)
+            return false;
+
+        ItemStack heldItem = player().getHeldItem();
+
+        if (heldItem == null || !heldItem.isItemStackDamageable())
+            return false;
+
+        if  (!ItemUtil.canBeRepaired(heldItem) && !saveNonRepairable.get())
+            return false;
+
+        return damage.get() > heldItem.getMaxDamage() - heldItem.getItemDamage();
     }
 }

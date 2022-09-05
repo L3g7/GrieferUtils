@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.features.tweaks.item_info.ItemInfo.ItemInfoSupplier;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
@@ -44,12 +45,7 @@ public class RepairValueViewer extends ItemInfoSupplier {
 		if (itemStack.getRepairCost() < 1)
 			return 'a';
 
-		// The repair cost of the item (see ContainerRepair.updateRepairOutput())
-		// If the item is only damaged 1/4, you can repair it with a single material (i.e. a diamond), thus costing only 1 level
-		// more than the repair value. Otherwise, it can be repaired with another item of the same type (i.e. a diamond sword), costing 2 levels more.
-		int xpCost = itemStack.getRepairCost() + (itemStack.getItemDamage() >= itemStack.getMaxDamage() / 4 ? 1 : 2);
-
-		return xpCost > 39 ? 'c' : 'e';
+		return ItemUtil.canBeRepaired(itemStack) ? 'e' : 'c';
 	}
 
 }

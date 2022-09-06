@@ -72,7 +72,7 @@ public class BookReader extends Feature {
 	}
 
 	private boolean openIfBook(ItemStack item) {
-		if (item == null || (item.getItem() != Items.writable_book && item.getItem() != Items.written_book))
+		if (item == null || !item.hasTagCompound() || (item.getItem() != Items.writable_book && item.getItem() != Items.written_book))
 			return false;
 
 		// Try to remove the "* Invalid book tag *" by making sure it has all the required tags

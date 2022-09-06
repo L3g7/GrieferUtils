@@ -1,6 +1,5 @@
 package dev.l3g7.griefer_utils.features.tweaks;
 
-import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
@@ -11,21 +10,22 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
-@SuppressWarnings("unchecked") // Java doesn't like the generics of the map builder, so i have to cast it -> unchecked
 public class BetterSwitchCmd extends Feature {
 
 	private static final String ALL = getRegex("\\S+");
-	private static final Map<String, String> SPECIAL_SERVERS = (ImmutableMap<String, String>) (Object) ImmutableMap.builder()
-			.put("n|nature", "nature")
-			.put("x|extreme", "extreme")
-			.put("e|evil", "cbevil")
-			.put("w|wasser", "farm1")
-			.put("l|lava", "nether1")
-			.put("v|event", "eventserver")
-			.build();
+	private static final Map<String, String> SPECIAL_SERVERS = new HashMap<String, String>(){{
+			put("n|nature", "nature");
+			put("x|extreme", "extreme");
+			put("e|evil", "cbevil");
+			put("w|wasser", "farm1");
+			put("l|lava", "nether1");
+			put("v|event", "eventserver");
+	}};
+
 	private static final String NUMBER = getRegex("\\d+");
 
 	private static String getRegex(String cityBuild) {
@@ -33,7 +33,7 @@ public class BetterSwitchCmd extends Feature {
 	}
 
 	private String command = "";
-	private boolean joined = false;
+	private boolean awaitingSendCommand = false;
 
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("BetterSwitchCmd")
@@ -57,6 +57,11 @@ public class BetterSwitchCmd extends Feature {
 		if (!isActive() || !isOnGrieferGames())
 			return;
 
+		if (awaitingSendCommand) {
+			awaitingSendCommand = false;
+			return;
+		}
+
 		String msg = event.getMsg();
 
 		if (msg.equals("/cb")) {
@@ -72,28 +77,24 @@ public class BetterSwitchCmd extends Feature {
 			return;
 		}
 
+
 		for (String s : SPECIAL_SERVERS.keySet())
-			if (!joined && msg.matches(getRegex(s)))
-				join(SPECIAL_SERVERS.get(s));
+			if (msg.matches(getRegex(s)))
+				join(SPECIAL_SERVERS.get(s), event);
 
-		if (!joined && msg.matches(NUMBER))
-			join("cb" + msg.replaceAll(NUMBER, "$1"));
-		else if (!joined)
-			return;
-
-
-		command = msg.replaceAll(ALL, "$2");
-		event.setCanceled(true);
+		if (msg.matches(NUMBER))
+			join("cb" + msg.replaceAll(NUMBER, "$1"), event);
 	}
 
-	public void join(String cb) {
+	public void join(String cb, MessageSendEvent event) {
+		awaitingSendCommand = true;
 		send("/switch " + cb);
-		joined = true;
+		command = event.getMsg().replaceAll(ALL, "$2");
+		event.setCanceled(true);
 	}
 
 	@EventListener
 	public void onCityBuild(CityBuildJoinEvent event) {
-		joined = false;
 
 		if (command.isEmpty())
 			return;

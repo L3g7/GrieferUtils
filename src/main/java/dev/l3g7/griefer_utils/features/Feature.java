@@ -7,6 +7,7 @@ import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
+import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.IChatComponent;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public abstract class Feature implements Comparable<Feature> {
@@ -39,6 +41,7 @@ public abstract class Feature implements Comparable<Feature> {
     public static WorldClient world() { return mc().theWorld; }
     public static UUID uuid() { return PlayerUtil.getUUID(); }
     public static String name() { return PlayerUtil.getName(); }
+    public static ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }
 
     public static void display(IChatComponent component) { player().addChatMessage(component); }
     public static void display(String msg) { LabyMod.getInstance().displayMessageInChat(msg); }

@@ -7,7 +7,6 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
-import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.core.LabyModCore;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.settings.elements.SettingsElement;
@@ -51,9 +50,8 @@ public class ChatMenu extends Feature {
 			.name("Neue Option erstellen")
 			.callback(() -> {
 				ChatMenuEntry newEntry = new ChatMenuEntry();
-				getPath().add(newEntry.getSetting());
+				path().add(newEntry.getSetting());
 				customEntries.add(newEntry);
-				updateSettings();
 				mc().currentScreen.initGui();
 			});
 
@@ -112,7 +110,7 @@ public class ChatMenu extends Feature {
 						customEntries.remove(entry);
 						settings.remove(setting);
 						updateSettings();
-						ArrayList<SettingsElement> list = getPath();
+						ArrayList<SettingsElement> list = path();
 						list.remove(list.size() - 1);
 						mc().currentScreen.initGui();
 					}));
@@ -124,16 +122,13 @@ public class ChatMenu extends Feature {
 		enabled.subSettingsWithHeader("Chatmenü", settings.toArray(new SettingsElement[0]));
 	}
 
-	public void loadEntries() {
-		List<SettingsElement> settings = new ArrayList<>();
+	private void loadEntries() {
 
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES.keySet()) {
 			String path = "features.chat_menu.entries." + DEFAULT_ENTRIES.get(entry);
 
 			if (Config.has(path))
 				entry.setEnabled(Config.get(path).getAsBoolean());
-
-			settings.add(entry.getSetting());
 		}
 
 		String path = "features.chat_menu.entries.custom";
@@ -141,33 +136,13 @@ public class ChatMenu extends Feature {
 			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
 				ChatMenuEntry entry = ChatMenuEntry.fromJson(jsonElement.getAsJsonObject());
 
-				if (!entry.isValid())
-					continue;
-
-				customEntries.add(entry);
-
-				SettingsElement setting = entry.getSetting();
-				setting.getSubSettings().add(new ButtonSetting()
-						.name("Option entfernen")
-						.callback(() -> {
-							customEntries.remove(entry);
-							settings.remove(setting);
-							updateSettings();
-							ArrayList<SettingsElement> list = getPath();
-							list.remove(list.size() - 1);
-							mc().currentScreen.initGui();
-						}));
-				settings.add(setting);
+				if (entry.isValid())
+					customEntries.add(entry);
 			}
 		}
 
-		settings.add(newEntrySetting);
-		enabled.subSettingsWithHeader("Chatmenü", settings.toArray(new SettingsElement[0]));
 		loaded = true;
-	}
-
-	private static ArrayList<SettingsElement> getPath() {
-		return Reflection.get(mc().currentScreen, "path");
+		updateSettings();
 	}
 
 	@SubscribeEvent

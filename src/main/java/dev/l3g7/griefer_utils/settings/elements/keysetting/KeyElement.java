@@ -166,6 +166,7 @@ public class KeyElement extends ControlElement {
 			int keyCode = Keyboard.getEventKey();
 
 			if (keyCode == 1) {
+				keys.clear();
 				close();
 				return;
 			}
@@ -204,7 +205,8 @@ public class KeyElement extends ControlElement {
 		}
 
 		private void close() {
-			if (!textField.getText().equals(preField.getText())) // Only trigger if something changed
+			if (!textField.getText().equals(preField.getText()) // Only trigger if something changed
+					|| (!preField.getText().equals("NONE") && keys.isEmpty()))
 				callback.accept(keys);
 			MinecraftForge.EVENT_BUS.unregister(this);
 			Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);

@@ -18,7 +18,7 @@ public class ChatReactorEntry {
 
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\$(\\d+)");
 
-	private final BooleanSetting parseAsRegex;
+	private final BooleanSetting parseAsRegEx;
 	private final StringSetting command;
 	private final StringSetting name;
 	private StringSetting trigger;
@@ -28,16 +28,16 @@ public class ChatReactorEntry {
 		this(false, "", "", "");
 	}
 
-	private ChatReactorEntry(boolean defaultParseAsRegex, String defaultTrigger, String defaultName, String defaultCommand) {
-		parseAsRegex = new BooleanSetting()
+	private ChatReactorEntry(boolean defaultParseAsRegEx, String defaultTrigger, String defaultName, String defaultCommand) {
+		parseAsRegEx = new BooleanSetting()
 				.name("Modus")
-				.icon("Regex")
-				.custom("Regex", "Normal")
+				.icon("regex")
+				.custom("RegEx", "Normal")
 				.description("Wie der Trigger interpretiert werden soll.")
-				.defaultValue(defaultParseAsRegex)
-				.callback(isRegex -> {
-					trigger.name(isRegex ? "Ausdruck" : "Text");
-					trigger.description(isRegex ? "Nach welchem Ausdruck überprüft werden soll." : "Auf welchen Text geachtet werden soll.");
+				.defaultValue(defaultParseAsRegEx)
+				.callback(isRegEx -> {
+					trigger.name(isRegEx ? "Ausdruck" : "Text");
+					trigger.description(isRegEx ? "Nach welchem Ausdruck überprüft werden soll." : "Auf welchen Text geachtet werden soll.");
 					trigger.set(trigger.get()); // Trigger callback
 
 					ChatReactor.saveEntries();
@@ -57,7 +57,7 @@ public class ChatReactorEntry {
 
 					validateTrigger();
 
-					if (!parseAsRegex.get())
+					if (!parseAsRegEx.get())
 						return;
 
 					trigger.name(pattern != null ? "Ausdruck" : "§cAusdruck");
@@ -93,8 +93,8 @@ public class ChatReactorEntry {
 		return new CategorySetting()
 				.name((isTriggerValid() ? "" : "§c") + name.get())
 				.description(isTriggerValid() ? null : "Der Ausdrück ist ungültig.")
-				.icon(parseAsRegex.get() ? "regex" : Material.PAPER)
-				.subSettings(name, parseAsRegex, trigger, command);
+				.icon(parseAsRegEx.get() ? "regex" : Material.PAPER)
+				.subSettings(name, parseAsRegEx, trigger, command);
 	}
 
 	public boolean isValid() {
@@ -111,13 +111,13 @@ public class ChatReactorEntry {
 	}
 
 	private boolean isTriggerValid() {
-		return !parseAsRegex.get() || pattern != null;
+		return !parseAsRegEx.get() || pattern != null;
 	}
 
 	public JsonObject toJson() {
 		JsonObject object = new JsonObject();
 
-		object.addProperty("is_regex", parseAsRegex.get());
+		object.addProperty("is_regex", parseAsRegEx.get());
 		object.addProperty("name", name.get());
 		object.addProperty("trigger", trigger.get());
 		object.addProperty("command", command.get());
@@ -138,7 +138,7 @@ public class ChatReactorEntry {
 		if (!isTriggerValid())
 			return;
 
-		if (!parseAsRegex.get()) {
+		if (!parseAsRegEx.get()) {
 			if (trigger.get().equals(text))
 				send(command.get());
 			return;

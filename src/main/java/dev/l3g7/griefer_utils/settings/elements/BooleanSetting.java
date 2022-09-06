@@ -67,6 +67,11 @@ public class BooleanSetting extends BooleanElement implements SettingElementBuil
         return this;
     }
 
+    public BooleanSetting custom(String enabledText, String disabledText) {
+        custom(new String[]{enabledText, disabledText});
+        return this;
+    }
+
     private ItemStack itemIcon = null;
 
     @Override

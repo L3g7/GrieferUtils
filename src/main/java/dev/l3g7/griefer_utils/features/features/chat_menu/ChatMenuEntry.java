@@ -10,6 +10,7 @@ import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
@@ -105,9 +106,9 @@ public class ChatMenuEntry {
 	}
 
 	public boolean isValid() {
-		return !name.get().trim().isEmpty()
+		return !StringUtils.isBlank(name.get())
 				&& action.get() != null
-				&& !value.get().trim().isEmpty();
+				&& !StringUtils.isBlank(value.get());
 	}
 
 	public String getName() {

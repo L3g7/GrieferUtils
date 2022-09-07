@@ -174,7 +174,7 @@ public class ChatMenu extends Feature {
 
 		List<ChatMenuEntry> entries = new ArrayList<>();
 		DEFAULT_ENTRIES.keySet().stream().filter(ChatMenuEntry::isEnabled).forEach(entries::add);
-		customEntries.stream().filter(ChatMenuEntry::isEnabled).forEach(entries::add);
+		customEntries.stream().filter(e -> e.isEnabled() && e.isValid()).forEach(entries::add);
 
 		renderer = new ChatMenuRenderer(entries, value.substring(5, value.length() - 1));
 		event.setCanceled(true);

@@ -16,31 +16,29 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features;
+package dev.l3g7.griefer_utils.util;
 
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * The base class for features.
+ * A utility class for simplified access to parts of Minecraft.
  */
-public abstract class Feature implements MinecraftUtil {
+public interface MinecraftUtil {
 
-	// TODO
-	public boolean isCategoryEnabled() {
-		return true;
+	default Minecraft mc() { return Minecraft.getMinecraft(); }
+	default EntityPlayerSP player() { return mc().thePlayer; }
+	default InventoryPlayer inventory() { return player().inventory; }
+	default ItemStack[] armorInventory() { return inventory().armorInventory; }
+
+	class StaticImport {
+
+		static Minecraft mc() { return Minecraft.getMinecraft(); }
+		static EntityPlayerSP player() { return mc().thePlayer; }
+		static InventoryPlayer inventory() { return player().inventory; }
+		static ItemStack[] armorInventory() { return inventory().armorInventory; }
+
 	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public @interface MainElement { }
-
 }

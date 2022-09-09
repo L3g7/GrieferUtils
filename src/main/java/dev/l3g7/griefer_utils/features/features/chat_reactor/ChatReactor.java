@@ -31,6 +31,7 @@ public class ChatReactor extends Feature {
 
 	private static final BooleanSetting enabled = new BooleanSetting()
 			.name("ChatReactor")
+			.description("Führt bei Chat Nachrichten Befehle aus.")
 			.defaultValue(false)
 			.config("features.chat_reactor.active")
 			.icon("siren");

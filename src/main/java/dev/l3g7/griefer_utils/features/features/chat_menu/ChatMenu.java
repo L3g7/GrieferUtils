@@ -57,6 +57,7 @@ public class ChatMenu extends Feature {
 
 	private static final BooleanSetting enabled = new BooleanSetting()
 			.name("Chatmenü")
+			.description("Öffnet ein Chatmenü beim Rechtsklicken auf einen Spieler im Chat.")
 			.defaultValue(false)
 			.config("features.chat_menu.active")
 			.icon("chat_menu/chat");

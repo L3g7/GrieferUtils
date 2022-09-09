@@ -2,6 +2,7 @@ package dev.l3g7.griefer_utils.event.events.network.tablist;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventBus;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.event.event_bus.EventPriority;
 import dev.l3g7.griefer_utils.event.events.network.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
@@ -20,7 +21,7 @@ public class TabListRemovePlayerEvent extends TabListEvent {
         return cachedName;
     }
 
-    @EventListener
+    @EventListener(priority = EventPriority.HIGHEST) // If its priority is lower, the name is removed from the cache before it is pulled
     public static void onPacket(PacketReceiveEvent event) {
         if (event.getPacket() instanceof S38PacketPlayerListItem) {
             S38PacketPlayerListItem packet = (S38PacketPlayerListItem) event.getPacket();

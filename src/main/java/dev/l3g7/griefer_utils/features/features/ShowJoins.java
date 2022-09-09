@@ -52,14 +52,13 @@ public class ShowJoins extends Feature {
         if(filter.get())
             return filterData.getValues().stream().anyMatch(s -> s.equalsIgnoreCase(name));
 
-        return name != null && !name.contains("§"); // All NPCs' names on GrieferGames contain §
+        return name != null && !(name.contains("§") || name.contains(".") || name.contains(" ")); // All NPCs' names on GrieferGames contain at least one invalid char
     }
 
     @EventListener
     public void onJoin(TabListAddPlayerEvent event) {
-        if (!isActive() || !isOnGrieferGames() || !isOnCityBuild())
+        if (!isActive() || !isOnGrieferGames())
             return;
-
 
         if (isNameInFilter(event.getName())) // Can't call display on network thread (concurrent modification)
             TickScheduler.runNextRenderTick(() -> display(Constants.ADDON_PREFIX + "§8[§a+§8] §r" + event.getName()));

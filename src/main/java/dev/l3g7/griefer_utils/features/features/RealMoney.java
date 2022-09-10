@@ -30,11 +30,11 @@ public class RealMoney extends Feature {
             .stringProvider(TagPosition::getName);
 
     private final BooleanSetting enabled = new BooleanSetting()
-            .name("Realmoney")
+            .name("RealMoney")
             .icon("coin_pile")
             .defaultValue(false)
             .config("features.real_money.active")
-            .subSettingsWithHeader("Realmoney", tag, position);
+            .subSettingsWithHeader("RealMoney", tag, position);
 
     public RealMoney() {
         super(Category.FEATURE);

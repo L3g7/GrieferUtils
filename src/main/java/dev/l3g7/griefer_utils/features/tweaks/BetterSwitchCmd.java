@@ -38,8 +38,8 @@ public class BetterSwitchCmd extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("BetterSwitchCmd")
 			.config("tweaks.better_switch_cmd.active")
-			.description("Fügt Aliasse für /switch <cb> hinzu (siehe '/cb').\n" +
-					"Der Text nach dem Citybuild wird beim Beitritt in den Chat geschrieben.")
+			.description("Verbessert den '/switch <cb>' Befehl durch Aliasse und einem optionalem Join-Text. (Siehe '/cb')\n\n" +
+					"Der Join-Text wird nach dem Beitreten automatisch in den Chat geschrieben")
 			.icon(Material.COMPASS)
 			.defaultValue(true);
 
@@ -65,7 +65,7 @@ public class BetterSwitchCmd extends Feature {
 		String msg = event.getMsg();
 
 		if (msg.equals("/cb")) {
-			display(Constants.ADDON_PREFIX + "Syntax: '/switch <CB> [command]', '/cb <CB> [command]' oder '/cb<CB> [command]'.");
+			display(Constants.ADDON_PREFIX + "Syntax: '/switch <CB> [text]', '/cb <CB> [text]' oder '/cb<CB> [text]'.");
 			display(Constants.ADDON_PREFIX + "§7§nShortcuts:");
 			display(Constants.ADDON_PREFIX + "§7Nature: 'n'");
 			display(Constants.ADDON_PREFIX + "§7Extreme: 'x'");

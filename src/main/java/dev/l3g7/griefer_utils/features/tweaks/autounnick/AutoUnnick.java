@@ -44,7 +44,7 @@ public class AutoUnnick extends Feature {
 			.defaultValue(false);
 
 	private final BooleanSetting enabled = new BooleanSetting()
-			.name("Automatisch Entnicken")
+			.name("Automatisch entnicken")
 			.description("Entnickt automatisch Spieler.")
 			.config("tweaks.auto_unnick.active")
 			.icon(Material.NAME_TAG)

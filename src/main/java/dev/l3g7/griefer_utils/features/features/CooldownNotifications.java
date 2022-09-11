@@ -147,7 +147,7 @@ public class CooldownNotifications extends Feature {
         if (mc().currentScreen instanceof GuiChest) {
             IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory", "field_147015_w", "w");
             if (inventory.getDisplayName().getFormattedText().equals("§6Cooldowns§r")) {
-                if (inventory.getSizeInventory() != 27 || inventory.getStackInSlot(11) == null || inventory.getStackInSlot(11).getItem() != Items.gold_ingot)
+                if (inventory.getSizeInventory() != 45 || inventory.getStackInSlot(11) == null || inventory.getStackInSlot(11).getItem() != Items.gold_ingot)
                     return;
 
                 // Iterate through slots
@@ -174,7 +174,7 @@ public class CooldownNotifications extends Feature {
                     if (waitingForCooldownGUI && isActive())
                         mc().displayGuiScreen(null);
                 }
-            }
+            } else System.out.println(inventory.getDisplayName().getFormattedText().replace('§', '&'));
         }
     }
 

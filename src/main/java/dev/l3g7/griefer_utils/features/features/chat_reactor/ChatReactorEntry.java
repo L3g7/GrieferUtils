@@ -46,7 +46,7 @@ public class ChatReactorEntry {
 
 		trigger = new StringSetting()
 				.name("Text")
-				.description("Wenn du das hier siehst ist irgendwas falsch gelaufen :<")
+				.description("Auf welchen Text geachtet werden soll.")
 				.defaultValue(defaultTrigger)
 				.callback(s -> {
 					ChatReactor.saveEntries();
@@ -61,7 +61,7 @@ public class ChatReactorEntry {
 						return;
 
 					trigger.name(pattern != null ? "Ausdruck" : "§cAusdruck");
-					trigger.description(pattern != null ? null : "Der Ausdrück ist ungültig.");
+					trigger.description(pattern != null ? "Nach welchem Ausdruck überprüft werden soll." : "Der Ausdrück ist ungültig.");
 					ChatReactor.updateSettings();
 				})
 				.icon(Material.PAPER);

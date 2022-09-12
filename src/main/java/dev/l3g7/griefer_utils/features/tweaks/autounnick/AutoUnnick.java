@@ -54,6 +54,7 @@ public class AutoUnnick extends Feature {
 
 	public AutoUnnick() {
 		super(Category.TWEAK);
+		Category.TWEAK.setting.callback(c -> updatePlayerInfoList());
 	}
 
 	@Override

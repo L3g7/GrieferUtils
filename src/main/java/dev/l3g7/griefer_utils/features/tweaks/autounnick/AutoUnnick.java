@@ -36,8 +36,8 @@ public class AutoUnnick extends Feature {
 	private static final String COMMAND = "/grieferutils_autounnick_namehistory_prompt_fix ";
 
 	private final BooleanSetting tab = new BooleanSetting()
-			.name("Tabliste")
-			.description("Ob spieler in der Tabliste entnickt werden sollen.")
+			.name("In Tabliste")
+			.description("Ob Spieler in der Tabliste entnickt werden sollen.")
 			.config("tweaks.auto_unnick.tab")
 			.icon("tab_list")
 			.callback(c -> updatePlayerInfoList())
@@ -50,7 +50,7 @@ public class AutoUnnick extends Feature {
 			.icon(Material.NAME_TAG)
 			.defaultValue(true)
 			.callback(c -> updatePlayerInfoList())
-			.subSettingsWithHeader("AutoUnnick", tab);
+			.subSettingsWithHeader("Automatisch entnicken", tab);
 
 	public AutoUnnick() {
 		super(Category.TWEAK);

@@ -17,23 +17,21 @@ import java.util.regex.Pattern;
 import static dev.l3g7.griefer_utils.misc.Constants.*;
 
 /**
- * Replaces the click events in chat to fix crashes when right-clicking a bedrock player and to hide the popup if chat menu is active.
+ * Replaces the click events in chat to hide the popup if chat menu is active,
+ * or adds click events to private- and plot chat messages
  */
-public class ClickEventReplacer {
+public class ClickEventHandler {
 
 	public static final String COMMAND = "/grieferutils_click_event_replace_suggest_msg ";
 	private static final Pattern[] MESSAGE_PATTERNS = new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN};
 
 	@EventListener(priority = EventPriority.HIGHEST)
 	public static void modifyMessage(MessageModifyEvent event) {
-
-		boolean isChatMenuEnabled = FileProvider.getSingleton(ChatMenu.class).isActive();
+		if (!FileProvider.getSingleton(ChatMenu.class).isActive())
+			return;
 
 		// Replaces all /msg click-events
-		event.setMessage(replaceClickEvents(event.getMessage(), isChatMenuEnabled));
-
-		if (!isChatMenuEnabled)
-			return;
+		event.setMessage(replaceClickEvents(event.getMessage()));
 
 		String name = null;
 
@@ -68,7 +66,7 @@ public class ClickEventReplacer {
 		return msg;
 	}
 
-	private static IChatComponent replaceClickEvents(IChatComponent component, boolean isChatMenuActive) {
+	private static IChatComponent replaceClickEvents(IChatComponent component) {
 		for (IChatComponent msg : component.getSiblings()) {
 			ChatStyle style = msg.getChatStyle();
 			ClickEvent event;
@@ -76,11 +74,12 @@ public class ClickEventReplacer {
 			if (style != null && (event = style.getChatClickEvent()) != null) {
 				String value = event.getValue();
 
-				if (value.startsWith("/msg ") && (value.startsWith("/msg !") || isChatMenuActive))
+				if (value.startsWith("/msg "))
 					setEvent(value.substring(5), msg);
 			}
 		}
 
 		return component;
 	}
+
 }

@@ -53,4 +53,10 @@ public class ArrayUtil {
 		return s.toString();
 	}
 
+	public static <T> T last(T[] array) {
+		if (array.length == 0)
+			return null;
+
+		return array[array.length - 1];
+	}
 }

@@ -16,16 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.file_provider;
+@Category.Meta(name = "Spieler", icon = "steve", configKey = "player")
+package dev.l3g7.griefer_utils.features.player;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-/**
- * A marker for singletons.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Singleton {}
+import dev.l3g7.griefer_utils.features.Category;

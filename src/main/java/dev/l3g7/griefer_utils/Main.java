@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils;
 
+import dev.l3g7.griefer_utils.event.EventHandler;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import net.labymod.api.LabyModAddon;
 import net.labymod.core.asm.LabyModCoreMod;
@@ -40,30 +41,7 @@ public class Main extends LabyModAddon {
 		if (!LabyModCoreMod.isForge())
 			return;
 
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@SubscribeEvent
-	public void onTick(TickEvent.PlayerTickEvent e)  {
-		for (NetworkPlayerInfo networkPlayerInfo : Minecraft.getMinecraft().getNetHandler().getPlayerInfoMap()) {
-			if("AbgegrieftHD".equals(networkPlayerInfo.getGameProfile().getName())) {
-				System.out.println("-----");
-				System.out.println(networkPlayerInfo.getGameProfile());
-				System.out.println(networkPlayerInfo.getResponseTime());
-				System.out.println(networkPlayerInfo.getGameType());
-				System.out.println(networkPlayerInfo.hasLocationSkin());
-				System.out.println(networkPlayerInfo.getSkinType());
-				System.out.println(networkPlayerInfo.getLocationSkin());
-				System.out.println(networkPlayerInfo.getLocationCape());
-				System.out.println(networkPlayerInfo.getPlayerTeam());
-				System.out.println(networkPlayerInfo.getDisplayName());
-				System.out.println(networkPlayerInfo.func_178835_l());
-				System.out.println(networkPlayerInfo.func_178860_m());
-				System.out.println(networkPlayerInfo.func_178847_n());
-				System.out.println(networkPlayerInfo.func_178858_o());
-				System.out.println(networkPlayerInfo.func_178855_p());
-			}
-		}
+		EventHandler.init();
 	}
 
 	@Override

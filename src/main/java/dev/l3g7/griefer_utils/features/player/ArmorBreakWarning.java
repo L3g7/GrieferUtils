@@ -18,11 +18,14 @@
 
 package dev.l3g7.griefer_utils.features.player;
 
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.RenderWorldEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.RenderUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 import java.lang.annotation.ElementType;
@@ -46,10 +49,7 @@ public class ArmorBreakWarning extends Feature {
 
 	/**
 	 * TODO:
-	 * EventListener
 	 * RenderWorldEvent
-	 * category-info
-	 * MainPage
 	 * FileProvider plugability
 	 * PlayerTickEvent pre checks
 	 */
@@ -73,11 +73,5 @@ public class ArmorBreakWarning extends Feature {
 		if (warnSlot != -1)
 			RenderUtil.renderTitle(ARMOR_ICONS[warnSlot] + " geht kaputt!", 2, 0xFF5555, true);
 	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public @interface EventListener {}
-
-	public static class RenderWorldEvent {}
 
 }

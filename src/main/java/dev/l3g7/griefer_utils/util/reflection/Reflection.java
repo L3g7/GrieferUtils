@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.util.reflection;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -34,10 +35,24 @@ public class Reflection {
 	}
 
 	/**
+	 * Returns the value of a field.
+	 */
+	public static <V> V get(Object target, Field field) {
+		return FieldReflection.get(target, field);
+	}
+
+	/**
 	 * Sets the value of a field.
 	 */
 	public static void set(Object target, String name, Object value) {
 		FieldReflection.set(target, name, value);
+	}
+
+	/**
+	 * Returns all fields with the given annotation present.
+	 */
+	public static Field[] getAnnotatedFields(Class<?> targetClass, Class<? extends Annotation> annotation) {
+		return FieldReflection.getAnnotatedFields(targetClass, annotation);
 	}
 
 	/**
@@ -59,6 +74,20 @@ public class Reflection {
 	 */
 	public static <T> T invoke(Object target, String name, Object... params) {
 		return MethodReflection.invoke(target, name, params);
+	}
+
+	/**
+	 * Invoke a method with given parameters.
+	 */
+	public static <T> T invoke(Object target, Method method, Object... params) {
+		return MethodReflection.invoke(target, method, params);
+	}
+
+	/**
+	 * Returns all methods with the given annotation present.
+	 */
+	public static Method[] getAnnotatedMethods(Class<?> targetClass, Class<? extends Annotation> annotation) {
+		return MethodReflection.getAnnotatedMethods(targetClass, annotation);
 	}
 
 	/**

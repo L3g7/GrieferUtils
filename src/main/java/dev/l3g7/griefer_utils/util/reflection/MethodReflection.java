@@ -20,7 +20,10 @@ package dev.l3g7.griefer_utils.util.reflection;
 
 import dev.l3g7.griefer_utils.util.ArrayUtil;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
 
@@ -46,12 +49,22 @@ class MethodReflection {
 		if (method == null)
 			throw elevate(new NoSuchMethodException(), "Could not find method '%s' with parameters '%s' in '%s'", name, ArrayUtil.toString(params, o -> o.getClass().toString(), ", "), targetClass.getName());
 
+		return invoke(target, method, params);
+	}
+
+	/**
+	 * Invoke a method with given parameters.
+	 */
+	static <V> V invoke(Object target, Method method, Object... params) {
+		if (method == null)
+			throw elevate(new IllegalArgumentException(), "Tried to invoke null method");
+
 		// Invoke
 		try {
 			method.setAccessible(true);
 			return (V) method.invoke(target, params);
 		} catch (Throwable e) {
-			throw elevate(e, "Tried to invoke method '%s' with parameters '%s' in '%s'", name, ArrayUtil.toString(params, o -> o.getClass().toString(), ", "), targetClass.getName());
+			throw elevate(e, "Tried to invoke method '%s' with parameters '%s' in '%s'", method.getName(), ArrayUtil.toString(params, o -> o.getClass().toString(), ", "), target.toString());
 		}
 	}
 
@@ -69,6 +82,19 @@ class MethodReflection {
 			return resolveMethod(targetClass.getSuperclass(), name, parameters);
 
 		return null;
+	}
+
+	/**
+	 * Returns all methods with the given annotation present.
+	 */
+	static Method[] getAnnotatedMethods(Class<?> targetClass, Class<? extends Annotation> annotation) {
+		List<Method> methods = new ArrayList<>();
+		for (Method Method : targetClass.getDeclaredMethods()) {
+			if (Method.isAnnotationPresent(annotation))
+				methods.add(Method);
+		}
+
+		return methods.toArray(new Method[0]);
 	}
 
 }

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.file_provider;
+package dev.l3g7.griefer_utils.event.events;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,8 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A marker for singletons.
+ * An event triggered after GrieferUtils was enabled.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Singleton {}
+@Target(ElementType.METHOD)
+public @interface OnEnable { }

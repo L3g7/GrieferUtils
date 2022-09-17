@@ -18,7 +18,10 @@
 
 package dev.l3g7.griefer_utils.util.reflection;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
 
@@ -45,12 +48,24 @@ class FieldReflection {
 		if (field == null)
 			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", name, targetClass.getName());
 
+		return get(target, field);
+	}
+
+	/**
+	 * Returns the value of a field.
+	 */
+	static <V> V get(Object target, Field field) {
+
+		// Check target
+		if (target == null)
+			throw elevate(new IllegalArgumentException(), "Tried to get null field");
+
 		// Get value
 		try {
 			field.setAccessible(true);
 			return (V) field.get(target);
 		} catch (Throwable e) {
-			throw elevate(e, "Tried to access field '%s' in '%s'", name, targetClass.getName());
+			throw elevate(e, "Tried to access field '%s' in '%s'", field.getName(), target.toString());
 		}
 	}
 
@@ -92,6 +107,19 @@ class FieldReflection {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns all fields with the given annotation present.
+	 */
+	static Field[] getAnnotatedFields(Class<?> targetClass, Class<? extends Annotation> annotation) {
+		List<Field> fields = new ArrayList<>();
+		for (Field field : targetClass.getDeclaredFields()) {
+			if (field.isAnnotationPresent(annotation))
+				fields.add(field);
+		}
+
+		return fields.toArray(new Field[0]);
 	}
 
 }

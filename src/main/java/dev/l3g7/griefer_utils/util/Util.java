@@ -52,7 +52,7 @@ public class Util {
 	 * @see Util#elevate(Throwable)
 	 */
 	public static RuntimeException elevate(Throwable throwable, String message, Object... args) {
-		return elevate(addMessage(throwable, message, args));
+		return addMessage(elevate(throwable), message, args);
 	}
 
 }

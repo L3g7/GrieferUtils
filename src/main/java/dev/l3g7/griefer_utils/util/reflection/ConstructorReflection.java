@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.util.reflection;
 import dev.l3g7.griefer_utils.util.ArrayUtil;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
 
@@ -42,6 +43,8 @@ class ConstructorReflection {
 		try {
 			constructor.setAccessible(true);
 			return constructor.newInstance(params);
+		} catch (InvocationTargetException e) {
+			throw elevate(e.getCause(), "Tried to construct '%s'", targetClass.getName());
 		} catch (Throwable e) {
 			throw elevate(e, "Tried to construct '%s'", targetClass.getName());
 		}

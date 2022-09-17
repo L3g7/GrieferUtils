@@ -50,9 +50,12 @@ public class URLFileProviderImpl implements FileProviderImpl {
 		if (file.isDirectory())
 			for (File child : file.listFiles())
 				load(root, child);
-		else
+		else if (file != root) {
 			// Strip root path and normalize string
-			files.put(file.getCanonicalPath().substring(root.getCanonicalPath().length() + 1).replace('\\', '/'), file);
+			String path = file.getCanonicalPath().substring(root.getCanonicalPath().length() + 1).replace('\\', '/');
+			files.put(path, file);
+			entries.add(path);
+		}
 	}
 
 	@Override
@@ -62,6 +65,9 @@ public class URLFileProviderImpl implements FileProviderImpl {
 
 	@Override
 	public InputStream getData(String file) {
+		if (files.get(file) == null)
+			throw new IllegalArgumentException("Tried to get data of unknown file " + file);
+
 		try {
 			return new FileInputStream(files.get(file));
 		} catch (FileNotFoundException e) {

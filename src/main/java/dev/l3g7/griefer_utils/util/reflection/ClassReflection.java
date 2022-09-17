@@ -30,7 +30,7 @@ class ClassReflection {
 
 	static <T> Class<T> load(String name) {
 		try {
-			return (Class<T>) Class.forName(name);
+			return (Class<T>) Class.forName(name.replaceAll("\\.class$", "").replace('/', '.'));
 		} catch (Throwable e) {
 			throw elevate(e, "Could not load class '%s'", name);
 		}

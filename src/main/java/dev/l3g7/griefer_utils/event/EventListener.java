@@ -16,16 +16,21 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.file_provider;
+package dev.l3g7.griefer_utils.event;
+
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * A marker for singletons.
- */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Singleton {}
+@Target(ElementType.METHOD)
+public @interface EventListener {
+
+	EventPriority priority() default EventPriority.NORMAL;
+	boolean receiveCanceled() default false;
+	boolean triggerWhenDisabled() default false;
+
+}

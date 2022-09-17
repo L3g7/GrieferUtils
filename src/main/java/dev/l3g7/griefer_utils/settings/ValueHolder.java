@@ -76,8 +76,8 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 	}
 
 	default S defaultValue(V value) {
-		if (getStorage().value == null)
-			getStorage().value = value;
+		if (get() == null)
+			set(value);
 
 		return (S) this;
 	}

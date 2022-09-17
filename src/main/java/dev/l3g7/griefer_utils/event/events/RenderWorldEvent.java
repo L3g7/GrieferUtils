@@ -16,16 +16,17 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.file_provider;
+package dev.l3g7.griefer_utils.event.events;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 /**
- * A marker for singletons.
+ * A RenderTickEvent called when no gui is opened.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Singleton {}
+public class RenderWorldEvent extends TickEvent.RenderTickEvent {
+
+	public RenderWorldEvent(Phase phase, float renderTickTime) {
+		super(phase, renderTickTime);
+	}
+
+}

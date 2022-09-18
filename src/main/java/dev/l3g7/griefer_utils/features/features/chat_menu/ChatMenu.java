@@ -6,7 +6,7 @@ import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.misc.ClickEventReplacer;
+import dev.l3g7.griefer_utils.misc.ClickEventHandler;
 import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
@@ -192,14 +192,14 @@ public class ChatMenu extends Feature {
 			return;
 
 		String value = LabyModCore.getMinecraft().getClickEventValue(Mouse.getX(), Mouse.getY());
-		if (value == null || !value.startsWith(ClickEventReplacer.COMMAND))
+		if (value == null || !value.startsWith(ClickEventHandler.COMMAND))
 			return;
 
 		List<ChatMenuEntry> entries = new ArrayList<>();
 		DEFAULT_ENTRIES.keySet().stream().filter(ChatMenuEntry::isEnabled).forEach(entries::add);
 		customEntries.stream().filter(e -> e.isEnabled() && e.isValid()).forEach(entries::add);
 
-		renderer = new ChatMenuRenderer(entries, value.substring(ClickEventReplacer.COMMAND.length(), value.length() - 1));
+		renderer = new ChatMenuRenderer(entries, value.substring(ClickEventHandler.COMMAND.length(), value.length() - 1));
 		event.setCanceled(true);
 	}
 

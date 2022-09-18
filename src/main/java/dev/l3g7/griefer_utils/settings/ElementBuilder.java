@@ -25,7 +25,6 @@ import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
-import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,16 +37,25 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 
+	/**
+	 * Sets the name of the setting.
+	 */
 	default S name(String name) {
 		((S) this).setDisplayName(name);
 		return (S) this;
 	}
 
+	/**
+	 * Sets the description of the setting to the given strings.
+	 */
 	default S description(String... description) {
 		((S) this).setDescriptionText(String.join("\n", description));
 		return (S) this;
 	}
 
+	/**
+	 * Sets the icon of the setting.
+	 */
 	default S icon(Object icon) {
 		if (!(this instanceof ControlElement))
 			throw new UnsupportedOperationException(this.getClass().getSimpleName() + "doesn't support icons!");
@@ -64,15 +72,24 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		return (S) this;
 	}
 
+	/**
+	 * Adds the given settings as sub settings.
+	 */
 	default S subSettings(SettingsElement... settings) {
 		return subSettings(Arrays.asList(settings));
 	}
 
+	/**
+	 * Adds the given settings as sub settings.
+	 */
 	default S subSettings(List<SettingsElement> settings) {
 		((S) this).getSubSettings().getElements().addAll(settings);
 		return (S) this;
 	}
 
+	/**
+	 * Sets the sub settings to the given settings, preceded by a header.
+	 */
 	default S subSettingsWithHeader(String title, SettingsElement... settings) {
 		((S) this).getSubSettings().getElements().clear();
 		subSettings(
@@ -84,6 +101,9 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		return subSettings(settings);
 	}
 
+	/**
+	 * Manually enables / disables sub settings.
+	 */
 	default S settingsEnabled(boolean settingsEnabled) {
 		if (!(this instanceof ControlElement))
 			throw new UnsupportedOperationException(this.getClass().getSimpleName() + "doesn't support settings!");

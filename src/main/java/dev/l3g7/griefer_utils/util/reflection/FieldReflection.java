@@ -26,7 +26,7 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.util.Util.elevate;
 
 /**
- * field related reflection.
+ * Field related reflection.
  */
 @SuppressWarnings("unchecked")
 class FieldReflection {

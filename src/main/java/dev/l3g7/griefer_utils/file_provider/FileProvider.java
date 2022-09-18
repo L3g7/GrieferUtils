@@ -106,15 +106,14 @@ public class FileProvider {
 	}
 
 	/**
-	 * Returns all files with a matching name.
+	 * Returns all files with the given annotation.
 	 */
-	public static Collection<String> getClassesWithAnnotatedMethods(Class<?> superClass, Class<? extends Annotation> annotation) {
+	public static Collection<String> getClassesWithAnnotatedMethods(Class<? extends Annotation> annotation) {
 		List<String> classes = new ArrayList<>();
-		String internalName = Type.getInternalName(superClass);
 
 		// Find classes
 		for (String file : getFiles(f -> f.endsWith(".class")))
-			if (ClassMeta.read(file).hasSuperClass(internalName))
+			if (ClassMeta.read(file).hasMethodAnnotation(annotation))
 				classes.add(file);
 
 		return classes;

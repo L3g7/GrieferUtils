@@ -79,7 +79,7 @@ public class GlStateEngine {
 
 
 	/**
-	 * multiplies the current matrix by a translation matrix.
+	 * Multiplies the current matrix by a translation matrix.
 	 */
 	public static void translate(float x, float y) {
 		GlStateManager.translate(x, y, 1);

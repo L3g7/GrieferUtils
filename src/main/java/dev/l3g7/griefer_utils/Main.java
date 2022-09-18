@@ -23,16 +23,11 @@ import dev.l3g7.griefer_utils.settings.MainPage;
 import net.labymod.api.LabyModAddon;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.List;
 
 /**
- * description missing.
+ * The main.
  */
 public class Main extends LabyModAddon {
 

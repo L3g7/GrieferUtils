@@ -28,9 +28,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EventListener {
-
 	EventPriority priority() default EventPriority.NORMAL;
+
+	/**
+	 * Whether the method should be called if the event is canceled.
+	 */
 	boolean receiveCanceled() default false;
+
+	/**
+	 * Whether the method should be called if the setting it's in is disabled.
+	 */
 	boolean triggerWhenDisabled() default false;
 
 }

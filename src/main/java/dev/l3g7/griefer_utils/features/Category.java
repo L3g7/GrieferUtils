@@ -40,6 +40,9 @@ public class Category {
 	private final BooleanSetting setting;
 	private final String configKey;
 
+	/**
+	 * Creates a new category from the given package, using data from its meta annotation.
+	 */
 	private Category(Package pkg) {
 		if (!pkg.isAnnotationPresent(Meta.class))
 			throw new IllegalStateException("Could not find category of " + pkg);

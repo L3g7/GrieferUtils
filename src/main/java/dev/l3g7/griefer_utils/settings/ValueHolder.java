@@ -38,10 +38,16 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 
 	Storage<V> getStorage();
 
+	/**
+	 * Returns the currently held value.
+	 */
 	default V get() {
 		return getStorage().value;
 	}
 
+	/**
+	 * Sets the currently held value.
+	 */
 	default S set(V value) {
 		Storage<V> s = getStorage();
 		s.value = value;
@@ -58,6 +64,9 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 		return (S) this;
 	}
 
+	/**
+	 * Loads the value from the given config key and adds a callback that saves changes to it.
+	 */
 	default S config(String configKey) {
 		Storage<V> s = getStorage();
 		s.configKey = configKey;
@@ -75,6 +84,9 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 		return (S) this;
 	}
 
+	/**
+	 * If unset, sets the current value to the given one.
+	 */
 	default S defaultValue(V value) {
 		if (get() == null)
 			set(value);
@@ -82,6 +94,9 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 		return (S) this;
 	}
 
+	/**
+	 * Adds a callback to be triggered when the held value changes.
+	 */
 	default S callback(Consumer<V> callback) {
 		getStorage().callbacks.add(callback);
 		return (S) this;

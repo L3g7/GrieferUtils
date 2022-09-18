@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import static dev.l3g7.griefer_utils.util.Util.elevate;
 
 /**
- * constructor related reflection.
+ * Constructor related reflection.
  */
 @SuppressWarnings("unchecked")
 class ConstructorReflection {

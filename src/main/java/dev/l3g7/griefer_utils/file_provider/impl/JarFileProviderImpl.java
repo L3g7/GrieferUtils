@@ -36,6 +36,9 @@ public class JarFileProviderImpl implements FileProviderImpl {
 	private final Set<String> entries = new HashSet<>();
 	private final JarFile jarFile;
 
+	/**
+	 * IDk what is happening here, I'm just the guy writing the docs
+	 */
 	public JarFileProviderImpl() throws IOException, IllegalStateException {
 
 		String jarPath = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();

@@ -24,6 +24,9 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import net.labymod.settings.elements.NumberElement;
 
+/**
+ * A setting holding an integer.
+ */
 public class NumberSetting extends NumberElement implements ElementBuilder<NumberSetting>, ValueHolder<NumberSetting, Integer> {
 
 	private final Storage<Integer> storage = new Storage<>(JsonPrimitive::new, JsonElement::getAsInt);
@@ -38,10 +41,16 @@ public class NumberSetting extends NumberElement implements ElementBuilder<Numbe
 		return storage;
 	}
 
+	/**
+	 * Sets the lower limit the value can have.
+	 */
 	public NumberSetting min(int min) {
 		return (NumberSetting) setMinValue(min);
 	}
 
+	/**
+	 * Sets the upper limit the value can have.
+	 */
 	public NumberSetting max(int max) {
 		return (NumberSetting) setMaxValue(max);
 	}

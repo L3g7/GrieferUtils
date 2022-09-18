@@ -24,9 +24,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLDecoder;
 import java.util.*;
-import java.util.jar.JarFile;
 
 /**
  * An implementation for providing files if the addon can be found in the system classloader's urls.
@@ -36,6 +34,9 @@ public class URLFileProviderImpl implements FileProviderImpl {
 	private final Set<String> entries = new HashSet<>();
 	private final Map<String, File> files = new HashMap<>();
 
+	/**
+	 * IDk what is happening here, I'm just the guy writing the docs
+	 */
 	public URLFileProviderImpl() throws IOException, URISyntaxException {
 		for (URL url : ((URLClassLoader) ClassLoader.getSystemClassLoader()).getURLs()) {
 			File root = new File(url.toURI());

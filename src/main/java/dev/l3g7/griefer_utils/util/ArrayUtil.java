@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.util;
 
-import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 /**
@@ -27,14 +27,14 @@ import java.util.function.Function;
 public class ArrayUtil {
 
 	/**
-	 * Checks if two arrays are equal using a custom function.
+	 * Returns whether two arrays are equal using a custom function.
 	 */
-	public static <A, B> boolean equals(A[] a, B[] b, BiFunction<A, B, Boolean> func) {
+	public static <A, B> boolean equals(A[] a, B[] b, BiPredicate<A, B> check) {
 		if(a.length != b.length)
 			return false;
 
 		for(int i = 0; i < a.length; i++)
-			if(!func.apply(a[i], b[i]))
+			if(!check.test(a[i], b[i]))
 				return false;
 
 		return true;
@@ -53,6 +53,9 @@ public class ArrayUtil {
 		return s.toString();
 	}
 
+	/**
+	 * Returns the last entry of an array, or null, if the array is empty.
+	 */
 	public static <T> T last(T[] array) {
 		if (array.length == 0)
 			return null;

@@ -48,6 +48,9 @@ public abstract class Feature implements MinecraftUtil {
 	private Category category;
 	private SettingsElement mainElement;
 
+	/**
+	 * IDk what is happening here, I'm just the guy writing the docs
+	 */
 	public void init() {
 		category = Category.getCategory(getClass().getPackage());
 

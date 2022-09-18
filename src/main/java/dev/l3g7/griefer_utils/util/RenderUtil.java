@@ -28,7 +28,7 @@ import static dev.l3g7.griefer_utils.util.render.GlStateEngine.*;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
- * description missing.
+ * A utility class for rendering stuff.
  */
 public class RenderUtil {
 
@@ -37,9 +37,13 @@ public class RenderUtil {
 	public static final char[] ARMOR_ICONS = new char[] {'\u2502', '\u2593', '\u2592', '\u2591'};
 
 	static {
+		// Required to actually load the font when Minecraft is started
 		((IReloadableResourceManager) mc().getResourceManager()).registerReloadListener(iconFontRenderer);
 	}
 
+	/**
+	 * Renders a title using the iconFontRenderer.
+	 */
 	public static void renderTitle(String title, float scale, int color, boolean subTitle) {
 		ScaledResolution res = new ScaledResolution(mc());
 		begin();

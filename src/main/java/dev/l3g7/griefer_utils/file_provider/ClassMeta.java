@@ -23,36 +23,61 @@ import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.objectweb.asm.ClassReader.SKIP_CODE;
 
 /**
- * Meta information of a class, read using ASM to avoid it being loaded.
+ * A wrapper for the name of the classes super class.
  */
 public class ClassMeta {
 
 	private static final Map<String, ClassMeta> metaCache = new HashMap<>();
+	private final List<String> methodAnnotations = new ArrayList<>();
 	private final String superName;
 
+	/**
+	 * Loads the meta from the class data without loading it.
+	 */
 	public ClassMeta(byte[] data) {
 		ClassNode node = new ClassNode();
 		new ClassReader(data).accept(node, SKIP_CODE);
 		superName = node.superName;
+
+		for (MethodNode method : node.methods)
+			for (AnnotationNode annotation : method.visibleAnnotations)
+				methodAnnotations.add(annotation.desc);
 	}
 
+	/**
+	 * Loads the meta from a class.
+	 */
 	public ClassMeta(Class<?> clazz) {
 		Class<?> superClass = clazz.getSuperclass();
 		this.superName = superClass == null ? null : Type.getInternalName(superClass);
+
+		for (Method method : clazz.getMethods())
+			for (Annotation annotation : method.getAnnotations())
+				methodAnnotations.add(Type.getDescriptor(annotation.getClass()));
 	}
 
 	public String getSuperName() {
 		return superName;
+	}
+
+	public List<String> getMethodAnnotations() {
+		return methodAnnotations;
 	}
 
 	/**
@@ -69,6 +94,13 @@ public class ClassMeta {
 
 			meta = read(meta.getSuperName() + ".class");
 		}
+	}
+
+	/**
+	 * Returns true if the class has the specified annotation.
+	 */
+	public boolean hasMethodAnnotation(Class<? extends Annotation> annotation) {
+		return getMethodAnnotations().contains(Type.getDescriptor(annotation));
 	}
 
 	/**

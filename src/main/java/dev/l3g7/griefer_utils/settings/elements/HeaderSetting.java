@@ -22,6 +22,9 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.HeaderElement;
 
+/**
+ * A setting to display text.
+ */
 public class HeaderSetting extends HeaderElement implements ElementBuilder<HeaderSetting> {
 
 	private int entryHeight = super.getEntryHeight();

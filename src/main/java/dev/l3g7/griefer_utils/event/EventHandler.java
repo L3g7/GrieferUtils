@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.event;
 
-import dev.l3g7.griefer_utils.event.events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.RenderWorldEvent;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
@@ -37,14 +36,15 @@ public class EventHandler implements MinecraftUtil {
 	private final EventBus EVENT_BUS = MinecraftForge.EVENT_BUS;
 
 	public static void init() {
-		MinecraftForge.EVENT_BUS.register(FileProvider.getSingleton(EventListener.class));
-		FileProvider.getClassesWithSuperClass()
+		MinecraftForge.EVENT_BUS.register(FileProvider.getSingleton(EventHandler.class));
 	}
 
 	@SubscribeEvent
 	public void onRenderTick(TickEvent.RenderTickEvent event) {
-		if (mc().currentScreen == null)
+		if (mc().currentScreen == null) {
+			System.out.println("Posting something, idkm9");
 			EVENT_BUS.post(new RenderWorldEvent(event.phase, event.renderTickTime));
+		}
 	}
 
 }

@@ -41,6 +41,7 @@ public class MainPage {
 		new HeaderSetting("§r").scale(.4).entryHeight(10)));
 
 	static {
+		// Add every feature to its category
 		for (String file : FileProvider.getClassesWithSuperClass(Feature.class)) {
 			Class<Feature> feature = FileProvider.loadClass(file);
 
@@ -49,11 +50,9 @@ public class MainPage {
 			Category.getCategory(feature.getPackage()).add(instance);
 		}
 
-		for (Category category : Category.getCategories()) {
+		// Add every category to the main page
+		for (Category category : Category.getCategories())
 			settings.add(category.getSetting());
-			System.out.println("Subsga " +  category.getSetting().getSubSettings().getElements());
-		}
-
 	}
 
 }

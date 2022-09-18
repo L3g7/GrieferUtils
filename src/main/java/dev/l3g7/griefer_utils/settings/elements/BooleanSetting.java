@@ -24,6 +24,9 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import net.labymod.settings.elements.BooleanElement;
 
+/**
+ * A setting holding a boolean, represented ingame by a switch.
+ */
 public class BooleanSetting extends BooleanElement implements ElementBuilder<BooleanSetting>, ValueHolder<BooleanSetting, Boolean> {
 
 	private final Storage<Boolean> storage = new ValueHolder.Storage<>(JsonPrimitive::new, JsonElement::getAsBoolean);

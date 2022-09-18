@@ -25,17 +25,15 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.RenderUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 import static dev.l3g7.griefer_utils.util.RenderUtil.ARMOR_ICONS;
 import static net.labymod.utils.Material.DIAMOND_CHESTPLATE;
 
+/**
+ * Displays a warning when equipped armor falls below the set durability.
+ * (0 to disable)
+ */
 @Singleton
 public class ArmorBreakWarning extends Feature {
 
@@ -48,7 +46,7 @@ public class ArmorBreakWarning extends Feature {
 		.icon(DIAMOND_CHESTPLATE);
 
 	/**
-	 * TODO:
+	 * TODD:
 	 * RenderWorldEvent
 	 * FileProvider plugability
 	 * PlayerTickEvent pre checks

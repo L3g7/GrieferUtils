@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
 
+import static org.lwjgl.input.Keyboard.*;
+
 /**
  * Copied and modified from net.minecraft.client.gui.GuiTextField
  * TODO: beautify (ASM?)
@@ -86,38 +88,40 @@ public class SignTextField extends Gui {
 	}
 
 	public void deleteWords(int p_146177_1_) {
-		if (text.length() != 0) {
-			if (selectionEnd != cursorPos) {
-				writeText("");
-			} else {
-				deleteFromCursor(getNthWordFromCursor(p_146177_1_) - cursorPos);
-			}
-		}
+		if (text.length() == 0)
+			return;
+
+		if (selectionEnd != cursorPos)
+			writeText("");
+		else
+			deleteFromCursor(getNthWordFromCursor(p_146177_1_) - cursorPos);
 	}
 
 	public void deleteFromCursor(int p_146175_1_) {
-		if (text.length() != 0) {
-			if (selectionEnd != cursorPos) {
-				writeText("");
-			} else {
-				boolean flag = p_146175_1_ < 0;
-				int i = flag ? cursorPos + p_146175_1_ : cursorPos;
-				int j = flag ? cursorPos : cursorPos + p_146175_1_;
-				String s = "";
+		if (text.length() == 0)
+			return;
 
-				if (i >= 0) {
-					s = text.substring(0, i);
-				}
+		if (selectionEnd != cursorPos) {
+			writeText("");
+			return;
+		}
 
-				if (j < text.length()) {
-					s = s + text.substring(j);
-				}
-				text = s;
+		boolean flag = p_146175_1_ < 0;
+		int i = flag ? cursorPos + p_146175_1_ : cursorPos;
+		int j = flag ? cursorPos : cursorPos + p_146175_1_;
+		String s = "";
 
-				if (flag) {
-					moveCursorBy(p_146175_1_);
-				}
-			}
+		if (i >= 0) {
+			s = text.substring(0, i);
+		}
+
+		if (j < text.length()) {
+			s = s + text.substring(j);
+		}
+		text = s;
+
+		if (flag) {
+			moveCursorBy(p_146175_1_);
 		}
 	}
 
@@ -183,114 +187,105 @@ public class SignTextField extends Gui {
 		setCursorPosition(text.length());
 	}
 
-	public boolean textBoxKeyTyped(char p_146201_1_, int p_146201_2_) {
-		if (!isFocused) {
+	private boolean isEverythingSelected() {
+		return cursorPos == text.length() && selectionEnd == 0;
+	}
+
+	public boolean textBoxKeyTyped(char typedChar, int keyCode) {
+		if (!isFocused)
 			return false;
-		} else if (GuiScreen.isKeyComboCtrlA(p_146201_2_)) {
+
+		if (GuiScreen.isKeyComboCtrlA(keyCode)) {
+
+			// Return false if everything is already selected to tell BetterGuiEditSign to select the other SignTextFields as well
+			if (isEverythingSelected())
+				return false;
+
 			setCursorPositionEnd();
 			setSelectionPos(0);
 			return true;
-		} else if (GuiScreen.isKeyComboCtrlC(p_146201_2_)) {
-			GuiScreen.setClipboardString(getSelectedText());
-			return true;
-		} else if (GuiScreen.isKeyComboCtrlV(p_146201_2_)) {
-			if (isEnabled) {
-				writeText(GuiScreen.getClipboardString());
-			}
+		}
+
+		switch (keyCode) {
+		case KEY_BACK:
+			if (!isEnabled)
+				return true;
+
+			if (GuiScreen.isCtrlKeyDown())
+				deleteWords(-1);
+			else
+				deleteFromCursor(-1);
 
 			return true;
-		} else if (GuiScreen.isKeyComboCtrlX(p_146201_2_)) {
-			GuiScreen.setClipboardString(getSelectedText());
 
-			if (isEnabled) {
-				writeText("");
-			}
+		case KEY_HOME:
+
+			if (GuiScreen.isShiftKeyDown())
+				setSelectionPos(0);
+			else
+				setCursorPositionZero();
 
 			return true;
-		} else {
-			switch (p_146201_2_) {
-			case 14:
 
+		case KEY_LEFT:
+
+			if (GuiScreen.isShiftKeyDown()) {
 				if (GuiScreen.isCtrlKeyDown()) {
-					if (isEnabled) {
-						deleteWords(-1);
-					}
-				} else if (isEnabled) {
-					deleteFromCursor(-1);
-				}
-
-				return true;
-			case 199:
-
-				if (GuiScreen.isShiftKeyDown()) {
-					setSelectionPos(0);
+					setSelectionPos(getNthWordFromPos(-1, getSelectionEnd()));
 				} else {
-					setCursorPositionZero();
+					setSelectionPos(getSelectionEnd() - 1);
 				}
-
-				return true;
-			case 203:
-
-				if (GuiScreen.isShiftKeyDown()) {
-					if (GuiScreen.isCtrlKeyDown()) {
-						setSelectionPos(getNthWordFromPos(-1, getSelectionEnd()));
-					} else {
-						setSelectionPos(getSelectionEnd() - 1);
-					}
-				} else if (GuiScreen.isCtrlKeyDown()) {
-					setCursorPosition(getNthWordFromCursor(-1));
-				} else {
-					moveCursorBy(-1);
-				}
-
-				return true;
-			case 205:
-
-				if (GuiScreen.isShiftKeyDown()) {
-					if (GuiScreen.isCtrlKeyDown()) {
-						setSelectionPos(getNthWordFromPos(1, getSelectionEnd()));
-					} else {
-						setSelectionPos(getSelectionEnd() + 1);
-					}
-				} else if (GuiScreen.isCtrlKeyDown()) {
-					setCursorPosition(getNthWordFromCursor(1));
-				} else {
-					moveCursorBy(1);
-				}
-
-				return true;
-			case 207:
-
-				if (GuiScreen.isShiftKeyDown()) {
-					setSelectionPos(text.length());
-				} else {
-					setCursorPositionEnd();
-				}
-
-				return true;
-			case 211:
-
-				if (GuiScreen.isCtrlKeyDown()) {
-					if (isEnabled) {
-						deleteWords(1);
-					}
-				} else if (isEnabled) {
-					deleteFromCursor(1);
-				}
-
-				return true;
-			default:
-
-				if (ChatAllowedCharacters.isAllowedCharacter(p_146201_1_)) {
-					if (isEnabled) {
-						writeText(Character.toString(p_146201_1_));
-					}
-
-					return true;
-				} else {
-					return false;
-				}
+			} else if (GuiScreen.isCtrlKeyDown()) {
+				setCursorPosition(getNthWordFromCursor(-1));
+			} else {
+				moveCursorBy(-1);
 			}
+
+			return true;
+
+		case KEY_RIGHT:
+
+			if (GuiScreen.isShiftKeyDown()) {
+				if (GuiScreen.isCtrlKeyDown()) {
+					setSelectionPos(getNthWordFromPos(1, getSelectionEnd()));
+				} else {
+					setSelectionPos(getSelectionEnd() + 1);
+				}
+			} else if (GuiScreen.isCtrlKeyDown()) {
+				setCursorPosition(getNthWordFromCursor(1));
+			} else {
+				moveCursorBy(1);
+			}
+
+			return true;
+
+		case KEY_END:
+
+			if (GuiScreen.isShiftKeyDown())
+				setSelectionPos(text.length());
+			else
+				setCursorPositionEnd();
+
+			return true;
+
+		case KEY_DELETE:
+			if (!isEnabled)
+				return true;
+
+			if (GuiScreen.isCtrlKeyDown())
+				deleteWords(1);
+			else
+				deleteFromCursor(1);
+
+			return true;
+
+		default:
+			boolean isAllowed = ChatAllowedCharacters.isAllowedCharacter(typedChar);
+
+			if (isAllowed && isEnabled)
+				writeText(Character.toString(typedChar));
+
+			return isAllowed;
 		}
 	}
 
@@ -299,7 +294,7 @@ public class SignTextField extends Gui {
 		boolean inArea = mouseX >= center - 47 && mouseX < center + 47 && mouseY >= 100 + yPos
 				&& mouseY < 100 + yPos + 10;
 
-		if (isFocused && inArea && mouseButton == 0)
+		if (inArea && mouseButton == 0)
 			setCursorPosition(font
 					.trimStringToWidth(font.trimStringToWidth(text, mouseX - center - xPos),
 							mouseX - xPos)
@@ -387,12 +382,11 @@ public class SignTextField extends Gui {
 		return cursorPos;
 	}
 
-	public void setFocused(boolean p_146195_1_) {
-		if (p_146195_1_ && !isFocused) {
+	public void setFocused(boolean focused) {
+		if (focused && !isFocused)
 			cursorCounter = 0;
-		}
 
-		isFocused = p_146195_1_;
+		isFocused = focused;
 	}
 
 	public void setEnabled(boolean p_146184_1_) {
@@ -403,18 +397,8 @@ public class SignTextField extends Gui {
 		return selectionEnd;
 	}
 
-	public void setSelectionPos(int p_146199_1_) {
-		int i = text.length();
-
-		if (p_146199_1_ > i) {
-			p_146199_1_ = i;
-		}
-
-		if (p_146199_1_ < 0) {
-			p_146199_1_ = 0;
-		}
-
-		selectionEnd = p_146199_1_;
+	public void setSelectionPos(int pos) {
+		selectionEnd = MathHelper.clamp_int(pos, 0, text.length());
 	}
 
 }

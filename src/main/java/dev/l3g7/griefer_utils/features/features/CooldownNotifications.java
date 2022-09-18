@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.features.features;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.event.event_bus.EventPriority;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
@@ -29,17 +30,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 @Singleton
 public class CooldownNotifications extends Feature {
 
     private static final String TITLE = "§8§m------------§r§8[ §r§6Cooldowns §r§8]§r§8§m------------§r";
-    private final List<Cooldown> endDates = new ArrayList<>();
+    private final Set<Cooldown> endDates = new HashSet<>();
     private boolean waitingForCooldownGUI = false;
 
     private final BooleanSetting enabled = new BooleanSetting()
@@ -87,7 +85,7 @@ public class CooldownNotifications extends Feature {
         }
     }
 
-    @EventListener
+    @EventListener(priority = EventPriority.LOWEST) // Make sure loadCooldowns is triggered before
     public void onServerJoin(ServerJoinEvent event) {
         if (!isActive() || !isOnGrieferGames())
             return;
@@ -171,10 +169,12 @@ public class CooldownNotifications extends Feature {
                 if (foundAny) {
                     saveCooldowns();
                     // Close cooldowns if waitingForCooldownGUI (was automatically opened)
-                    if (waitingForCooldownGUI && isActive())
+                    if (waitingForCooldownGUI && isActive()) {
                         mc().displayGuiScreen(null);
+                        waitingForCooldownGUI = false;
+                    }
                 }
-            } else System.out.println(inventory.getDisplayName().getFormattedText().replace('§', '&'));
+            }
         }
     }
 
@@ -189,12 +189,12 @@ public class CooldownNotifications extends Feature {
     }
 
     @EventListener
-    private void loadCooldowns(ServerJoinEvent ignored) {
+    public void loadCooldowns(ServerJoinEvent ignored) {
         if (!isActive() || !isOnGrieferGames())
             return;
 
-        // Save end dates along with player uuid so no problems occur when using multiple accounts
         String path = "features.cooldown_notifications.end_dates." + uuid();
+
         if (Config.has(path)) {
             endDates.clear();
             for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet())
@@ -246,5 +246,9 @@ public class CooldownNotifications extends Feature {
             return false;
         }
 
+        @Override
+        public int hashCode() {
+            return (int) (31 * name.hashCode() + endTime);
+        }
     }
 }

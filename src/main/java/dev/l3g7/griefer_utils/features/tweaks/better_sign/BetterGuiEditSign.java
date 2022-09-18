@@ -58,9 +58,6 @@ public class BetterGuiEditSign extends GuiScreen {
 	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
 		NetHandlerPlayClient nethandlerplayclient = mc.getNetHandler();
-		for (IChatComponent component : tileSign.signText) {
-			System.out.println(component.getFormattedText());
-		}
 
 		if (nethandlerplayclient != null)
 			nethandlerplayclient.addToSendQueue(new C12PacketUpdateSign(tileSign.getPos(), tileSign.signText));

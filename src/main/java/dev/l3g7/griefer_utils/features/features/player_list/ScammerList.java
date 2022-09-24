@@ -63,10 +63,10 @@ public class ScammerList extends PlayerList {
     @Override
     List<PlayerListProvider.PlayerListEntry> getEntries(String name, UUID uuid) {
         List<PlayerListProvider.PlayerListEntry> result = new ArrayList<>();
-        for (PlayerListProvider.PlayerListEntry entry : PlayerListProvider.scammerList) {
-            if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
-                result.add(entry);
-        }
+        for (PlayerListProvider.PlayerListEntry entry : PlayerListProvider.scammerList)
+	        if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
+		        result.add(entry);
+
         return result;
     }
 

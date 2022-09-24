@@ -7,7 +7,7 @@ import dev.l3g7.griefer_utils.asm.mappings.Mappings;
 import dev.l3g7.griefer_utils.asm.util.ASMUtil;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.util.Reflection;
-import dev.l3g7.griefer_utils.util.VersionUtil;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -23,7 +23,7 @@ public class Transformer implements IClassTransformer {
     private final Map<String, Class<?>> editors = new HashMap<>();
 
     public Transformer() {
-        if (VersionUtil.isForge()) {
+        if (LabyModCoreMod.isForge()) {
             FileProvider
                     .getClassesInPackage("dev.l3g7.griefer_utils.asm.editors")
                     .filter(clazz -> clazz.isAnnotationPresent(ClassTarget.class))

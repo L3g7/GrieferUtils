@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.features.misc;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.misc.update_screen.UpdateScreen;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
@@ -33,6 +34,13 @@ public class Changelog extends Feature {
 			for (JsonElement releaseElement : releases) {
 				JsonObject release = releaseElement.getAsJsonObject();
 
+				if (!UpdateScreen.hasData()) {
+					UpdateScreen.setData(
+						release.get("tag_name").getAsString(),
+						release.get("body").getAsString().substring("Changelog:\r".length())
+					);
+				}
+
 				String title = "§l" + release.get("tag_name").getAsString();
 
 				element.subSettings(new CategorySetting()
@@ -44,6 +52,7 @@ public class Changelog extends Feature {
 								new TextSetting(release.get("body").getAsString().replace("\r", ""))
 						));
 			}
+
 			element .name("§zChangelog")
 					.description(null)
 					.settingsEnabled(true);

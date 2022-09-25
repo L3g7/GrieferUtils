@@ -3,12 +3,11 @@ package dev.l3g7.griefer_utils.misc;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.features.misc.AutoUpdate;
+import dev.l3g7.griefer_utils.features.misc.update_screen.UpdateScreen;
+import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import net.labymod.addon.AddonLoader;
-import net.labymod.main.LabyMod;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +24,8 @@ import static java.nio.file.StandardOpenOption.CREATE;
 
 public class UpdateCheck {
 
+	private static final AutoUpdate autoUpdate = FileProvider.getSingleton(AutoUpdate.class);
+
 	private static boolean isUpToDate = true;
 	private static boolean triggeredShutdownHook = false;
 
@@ -32,9 +33,7 @@ public class UpdateCheck {
 		return isUpToDate;
 	}
 
-	private boolean shouldShowAchievement = false;
-
-	public UpdateCheck() {
+	public static void checkForUpdate(UUID uuid) {
 		if (!Config.has("version")) {
 			// Starting for the first time -> Not updated
 			Config.set("version", getAddonVersion());
@@ -42,27 +41,22 @@ public class UpdateCheck {
 			return;
 		}
 
+		check(uuid);
+
 		if (Config.get("version").getAsString().equals(getAddonVersion()))
 			return;
 
 		Config.set("version", getAddonVersion());
 		Config.save();
-		shouldShowAchievement = true;
-		MinecraftForge.EVENT_BUS.register(this);
+
+		if (autoUpdate.showUpdateScreen.get())
+			UpdateScreen.trigger();
 	}
 
-	@SubscribeEvent
-	public void onTick(TickEvent.RenderTickEvent ignored) {
-		// Using @LateInit results in the achievement display time being reduced due to heavy lag between the GuiOpenEvent and the first main menu render.
-		// Using RenderTickEvent, the achievement gets displayed as soon as the main menu really renders.
+	private static void check(UUID addonUuid) {
+		if (!autoUpdate.enabled.get())
+			return;
 
-		if (shouldShowAchievement) {
-			LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", "Update wurde installiert.", "Der Changelog befindet sich in den Einstellungen.");
-			shouldShowAchievement = false;
-		}
-	}
-
-	public void checkForUpdate(UUID addonUuid) {
 		File currentAddonJar = AddonLoader.getFiles().get(addonUuid);
 		if (currentAddonJar == null) {
 			// Probably in dev environment, skip updating
@@ -75,7 +69,7 @@ public class UpdateCheck {
 			String tag = latestRelease.get("tag_name").getAsString().replaceFirst("v", "");
 			if (tag.equals(getAddonVersion())) {
 				if (!triggeredShutdownHook) {
-					Runtime.getRuntime().addShutdownHook(new Thread(() -> checkForUpdate(addonUuid)));
+					Runtime.getRuntime().addShutdownHook(new Thread(() -> check(addonUuid)));
 					triggeredShutdownHook = true;
 				}
 				return;

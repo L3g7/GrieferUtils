@@ -15,11 +15,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class SendUsageData extends Feature {
 
 	private final RadioSetting<SendMode> sendUsageData = new RadioSetting<>(SendMode.class)
-			.name("§fNutzungsdaten senden")
+			.name("§0§fNutzungsdaten senden")
 			.icon("info")
 			.defaultValue(SendMode.NORMAL)
 			.description("Würde uns freuen, wenn es 'Normal' bleibt ^^\n\nIm normalen Modus wird nur die Account-UUID mitgesendet, im anonymen nichts.")
-			.config("send_usage_data")
+			.config("misc.send_usage_data")
 			.stringProvider(SendMode::getName);
 
 	public SendUsageData() {

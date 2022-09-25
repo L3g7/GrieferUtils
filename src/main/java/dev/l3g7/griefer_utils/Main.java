@@ -30,7 +30,7 @@ public class Main extends LabyModAddon { //TODO: WebASM, Look through all classe
 	}
 
 	public void loadConfig() {
-		new UpdateCheck().checkForUpdate(about.uuid);
+		UpdateCheck.checkForUpdate(about.uuid);
 	}
 
 	@Override

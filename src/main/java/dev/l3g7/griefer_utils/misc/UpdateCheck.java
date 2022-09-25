@@ -3,16 +3,18 @@ package dev.l3g7.griefer_utils.misc;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dev.l3g7.griefer_utils.features.misc.AutoUpdate;
 import dev.l3g7.griefer_utils.features.misc.update_screen.UpdateScreen;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.util.IOUtil;
 import net.labymod.addon.AddonLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -63,8 +65,8 @@ public class UpdateCheck {
 			return;
 		}
 
-		IOUtil.request("https://api.github.com/repos/L3g7/GrieferUtils/releases").asJsonArray(releases -> {
-			JsonObject latestRelease = releases.get(0).getAsJsonObject();
+		try (InputStreamReader in = new InputStreamReader(new URL("https://api.github.com/repos/L3g7/GrieferUtils/releases").openConnection().getInputStream(), StandardCharsets.UTF_8)) {
+			JsonObject latestRelease = new JsonParser().parse(in).getAsJsonArray().get(0).getAsJsonObject();
 
 			String tag = latestRelease.get("tag_name").getAsString().replaceFirst("v", "");
 			if (tag.equals(getAddonVersion())) {
@@ -114,7 +116,7 @@ public class UpdateCheck {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		});
+		} catch (IOException ignored) {}
 	}
 
 }

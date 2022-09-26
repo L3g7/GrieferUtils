@@ -65,11 +65,7 @@ public class TextList extends GuiListExtended {
 		}
 
 		lines.add(new Line(text));
-		textWidth = getMaxStringWidth();
-	}
-
-	private int getMaxStringWidth() {
-		return 450;
+		textWidth = MAX_LENGTH;
 	}
 
 	@Override

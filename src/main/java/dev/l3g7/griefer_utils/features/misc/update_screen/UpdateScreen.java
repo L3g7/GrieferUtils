@@ -25,6 +25,7 @@ public class UpdateScreen extends GuiScreen {
 	private TextList textList;
 	private GuiScreen previousScreen;
 
+	// Make sure the gui closes to the correct screen
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onGuiOpen(GuiOpenEvent event) {
 		if (event.isCanceled() || event.gui instanceof UpdateScreen)
@@ -62,7 +63,7 @@ public class UpdateScreen extends GuiScreen {
 
 		textList = new TextList(mc, width, height, 64, height - 42, fontRendererObj);
 		textList.addEntries(changelog);
-		textList.addEntry(""); // Add space after the text
+		textList.addEntry("");
 
 		buttonList.clear();
 		buttonList.add(new GuiButton(0, width / 2 + 4 + 75, height - 28, 150, 20, "Schließen"));
@@ -73,7 +74,7 @@ public class UpdateScreen extends GuiScreen {
 		mc.displayGuiScreen(previousScreen);
 	}
 
-	private boolean isDisableButtonHovered(int mouseX, int mouseY) {
+	private boolean isLeftButtonHovered(int mouseX, int mouseY) {
 		return mouseX > this.width / 2 - 205 && mouseX < this.width / 2 - 54 && mouseY > this.height - 28 && mouseY < this.height - 8;
 	}
 
@@ -81,19 +82,20 @@ public class UpdateScreen extends GuiScreen {
 		drawBackground(0);
 		textList.drawScreen(mouseX, mouseY, partialTicks);
 
-
-
 		String text = "§nGrieferUtils - Changelog - " + version;
 
+		// Title
 		GlStateManager.scale(1.5, 1.5, 1.5);
 		drawCenteredString(fontRendererObj, text, width / 3, 15, 0xffffff);
 		GlStateManager.scale(1/1.5, 1/1.5, 1/1.5);
 
+		// Icon
 		int textWidth = fontRendererObj.getStringWidth(text);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/icon.png"));
 		LabyMod.getInstance().getDrawUtils().drawTexture(width / 2d - textWidth * 0.75 - 29, 18, 256, 256, 20, 20);
 
-		text = ModColor.cl(isDisableButtonHovered(mouseX, mouseY) ? 'c' : '7') + "Nicht nochmal anzeigen";
+		// Left button
+		text = ModColor.cl(isLeftButtonHovered(mouseX, mouseY) ? 'c' : '7') + "Nicht nochmal anzeigen";
 		LabyMod.getInstance().getDrawUtils().drawString(text, width / 2d - 186, height - 22);
 
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -105,7 +107,7 @@ public class UpdateScreen extends GuiScreen {
 	}
 
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		if (isDisableButtonHovered(mouseX, mouseY)) {
+		if (isLeftButtonHovered(mouseX, mouseY)) {
 			FileProvider.getSingleton(AutoUpdate.class).showUpdateScreen.set(false);
 			closeGui();
 			return;

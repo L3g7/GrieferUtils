@@ -61,6 +61,16 @@ public class ArrayUtil {
 	}
 
 	/**
+	 * Returns the last entry of an array, or null, if the array is empty.
+	 */
+	public static <T> T last(T[] array) {
+		if (array.length == 0)
+			return null;
+
+		return array[array.length - 1];
+	}
+
+	/**
 	 * Maps an iterable using a function.
 	 * @see Stream#map(Function)
 	 */

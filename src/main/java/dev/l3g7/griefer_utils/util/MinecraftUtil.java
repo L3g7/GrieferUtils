@@ -35,10 +35,10 @@ public interface MinecraftUtil {
 
 	class StaticImport {
 
-		static Minecraft mc() { return Minecraft.getMinecraft(); }
-		static EntityPlayerSP player() { return mc().thePlayer; }
-		static InventoryPlayer inventory() { return player().inventory; }
-		static ItemStack[] armorInventory() { return inventory().armorInventory; }
+		public static Minecraft mc() { return Minecraft.getMinecraft(); }
+		public static EntityPlayerSP player() { return mc().thePlayer; }
+		public static InventoryPlayer inventory() { return player().inventory; }
+		public static ItemStack[] armorInventory() { return inventory().armorInventory; }
 
 	}
 }

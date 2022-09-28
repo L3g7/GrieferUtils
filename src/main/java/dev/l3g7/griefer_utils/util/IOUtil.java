@@ -30,11 +30,60 @@ import java.util.function.Consumer;
 
 public class IOUtil {
 
+/*
+	TODO:
+	IOUtil concept:
+
+
+	Sync file read:
+		IOUtil.file(configFile)
+		.readJsonObject(v -> config = v)
+		.orElse(t -> config = new JsonObject());
+
+	config = IOUtil.read(configFile)
+		.asJsonObject()
+        .orElse(t -> new JsonObject());
+
+	Sync url read:
+		IOUtil.request("https://api.../releases")
+		.asJsonArray(releases -> {/* stuff TM * /});
+
+	releases = IOUtil.read("https://api.../releases")
+		.asJsonArray();
+
+	Async url read:
+		IOUtil.request(url)
+		.asJsonArray(array -> {/* stuff TM * /});
+
+    IOUtil.read(url)
+		.asJsonArray(array -> {/* stuff TM * /});
+
+	Async url write:
+		IOUtil.request("https://grieferutils.l3g7.dev/analytics/")
+		.post("application/json", data.toString().getBytes(UTF_8))
+		.close();
+
+    IOUtil.write("https://grieferutils.l3g7.dev/analytics/")
+	    .json("application/json", data);
+	*/
+
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final JsonParser JSON_PARSER = new JsonParser();
 
 	public static FileRequest file(File file) {
 		return new FileRequest(file);
+	}
+
+	public static HttpRequest request(String url) {
+		return new HttpRequest(url.trim());
+	}
+
+	public static String urlEncode(String s) {
+		try {
+			return URLEncoder.encode(s, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static class FileRequest {
@@ -78,6 +127,128 @@ public class IOUtil {
 				callback.accept(error);
 		}
 
+	}
+
+	public static class HttpRequest {
+
+		private HttpURLConnection conn;
+		private volatile Throwable error = null;
+		private volatile Consumer<Throwable> errorCallback = null;
+		private volatile boolean shouldClose = false;
+
+		private HttpRequest(String url) {
+			try {
+				conn = (HttpURLConnection) new URL(url).openConnection();
+				conn.setConnectTimeout(3000);
+				conn.setReadTimeout(10000);
+				conn.addRequestProperty("User-Agent", "GrieferUtils");
+			} catch (Throwable e) {
+				e.printStackTrace();
+				error = e;
+			}
+		}
+
+		public HttpRequest post(String contentType, byte[] data) {
+			tryAsync(() -> {
+				conn.addRequestProperty("Content-Type", contentType);
+				conn.setDoOutput(true);
+
+				conn.setRequestMethod("POST");
+
+				try (OutputStream stream = conn.getOutputStream()) {
+					stream.write(data);
+					stream.flush();
+				}
+			});
+			return this;
+		}
+
+		public HttpRequest asJsonArray(Consumer<JsonArray> consumer) {
+			tryAsync(() -> {
+				try (InputStreamReader in = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
+					consumer.accept(JSON_PARSER.parse(in).getAsJsonArray());
+				}
+			});
+			return this;
+		}
+
+		public HttpRequest asJsonString(Consumer<String> consumer) {
+			tryAsync(() -> {
+				try (InputStreamReader in = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
+					consumer.accept(JSON_PARSER.parse(in).getAsString());
+				}
+			});
+			return this;
+		}
+
+		public HttpRequest asString(Consumer<String> consumer) {
+			tryAsync(() -> {
+				try (InputStream in = conn.getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+					byte[] buffer = new byte[4096];
+
+					int n;
+					while ((n = in.read(buffer)) != -1)
+						out.write(buffer, 0, n);
+
+					consumer.accept(out.toString("UTF-8"));
+				}
+			});
+			return this;
+		}
+
+		public int getResponseCode() {
+			try {
+				return conn.getResponseCode();
+			} catch (Throwable e) {
+				e.printStackTrace();
+				return -1;
+			}
+		}
+
+		public void orElse(Consumer<Throwable> callback) {
+			errorCallback = callback;
+			if (error != null)
+				callback.accept(error);
+		}
+
+		public void close() {
+			shouldClose = true;
+		}
+
+		public boolean successful() {
+			return error == null;
+		}
+
+		private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("GrieferUtils' IO", false, Thread.MIN_PRIORITY));
+
+		private void tryAsync(AsyncAction action) {
+			if (error != null)
+				return;
+
+			Throwable stackTrace = new Throwable();
+			eventLoopGroup.submit(() -> {
+				try {
+					action.run();
+					if (shouldClose) {
+						conn.getInputStream().close();
+						conn.disconnect();
+						shouldClose = false;
+					}
+				} catch (Throwable e) {
+					e.printStackTrace();
+					stackTrace.printStackTrace();
+					error = e;
+					if (errorCallback != null)
+						errorCallback.accept(e);
+				}
+			});
+		}
+
+		private interface AsyncAction {
+
+			void run() throws IOException;
+
+		}
 	}
 
 }

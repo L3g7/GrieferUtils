@@ -18,33 +18,107 @@
 
 package dev.l3g7.griefer_utils.event;
 
-import dev.l3g7.griefer_utils.event.events.RenderWorldEvent;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.file_provider.meta.AnnotationMeta;
+import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.ListenerList;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
+import java.lang.reflect.Method;
+
+import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
- * Handles the logic for forge and annotation based events.
+ * Handles the logic for registering methods annotated with {@link EventListener} to the {@link MinecraftForge#EVENT_BUS}.
  */
-@Singleton
-public class EventHandler implements MinecraftUtil {
+public class EventHandler implements MinecraftUtil, Opcodes {
 
-	private final EventBus EVENT_BUS = MinecraftForge.EVENT_BUS;
+	private static final int BUS_ID = 0; // MinecraftForge.EVENT_BUS
 
 	public static void init() {
-		MinecraftForge.EVENT_BUS.register(FileProvider.getSingleton(EventHandler.class));
+		for (MethodMeta method : FileProvider.getAnnotatedMethods(EventListener.class)) {
+
+			// Skip virtual listeners
+			if (!method.isStatic())
+				return;
+
+			ListenerList listeners = getEventListenerList(method);
+
+			// Get metadata
+			AnnotationMeta meta = method.getAnnotation(EventListener.class);
+			EventPriority priority = meta.getValue("priority", true);
+			boolean receiveCanceled = meta.getValue("receiveCanceled", false);
+
+			listeners.register(BUS_ID, priority, e -> {
+				if (receiveCanceled || !e.isCanceled())
+					Reflection.invoke(null, method.loadMethod(), e);
+			});
+		}
 	}
 
-	@SubscribeEvent
-	public void onRenderTick(TickEvent.RenderTickEvent event) {
-		if (mc().currentScreen == null) {
-			System.out.println("Posting something, idkm9");
-			EVENT_BUS.post(new RenderWorldEvent(event.phase, event.renderTickTime));
+	/**
+	 * Registers all virtual methods annotated with {@link EventListener} to the {@link MinecraftForge#EVENT_BUS}.
+	 */
+	public static void register(Object obj) {
+		Class<?> clazz = obj.getClass();
+		for (Method method : Reflection.getAnnotatedMethods(clazz, EventListener.class)) {
+
+			// Skip static listeners
+			if ((method.getModifiers() & ACC_STATIC) != 0)
+				return;
+
+			ListenerList listeners = getEventListenerList(new MethodMeta(null, method));
+
+			// Get metadata
+			EventListener meta = method.getAnnotation(EventListener.class);
+			EventPriority priority = meta.priority();
+			boolean receiveCanceled = meta.receiveCanceled();
+			boolean triggerWhenDisabled = meta.triggerWhenDisabled();
+
+			// Check if obj is Feature
+			if (obj instanceof Feature) {
+				// Check if feature is disabled
+				Feature feature = (Feature) obj;
+				listeners.register(BUS_ID, priority, event -> {
+					if ((receiveCanceled || !event.isCanceled())
+					&& (triggerWhenDisabled || feature.isEnabled()))
+						Reflection.invoke(obj, method, event);
+				});
+			} else {
+				// Don't check
+				listeners.register(BUS_ID, priority, event -> {
+					if (receiveCanceled || !event.isCanceled())
+						Reflection.invoke(obj, method, event);
+				});
+			}
 		}
+	}
+
+	/**
+	 * Validates the parameters of the method and returns the {@link ListenerList} of the {@link Event} being listened to.
+	 */
+	private static ListenerList getEventListenerList(MethodMeta method) {
+
+		// Check count
+		Type[] params = Type.getArgumentTypes(method.desc);
+		if (params.length != 1)
+			throw new IllegalArgumentException("Method " + method + " has @EventListener annotation, but requires " + params.length + " arguments");
+
+		// Check type
+		Class<?> eventClass = Reflection.load(params[0].getClassName());
+		if (!Event.class.isAssignableFrom(eventClass))
+			throw new IllegalArgumentException("Method " + method + " has @EventListener annotation, but takes " + eventClass);
+
+		// Return ListenerList
+		Event event = c(Reflection.construct(eventClass));
+		return event.getListenerList();
 	}
 
 }

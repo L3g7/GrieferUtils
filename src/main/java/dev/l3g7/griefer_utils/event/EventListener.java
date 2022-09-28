@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.event;
 
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.lang.annotation.ElementType;
@@ -31,12 +32,13 @@ public @interface EventListener {
 	EventPriority priority() default EventPriority.NORMAL;
 
 	/**
-	 * Whether the method should be called if the event is canceled.
+	 * Whether the listener should be triggered for canceled events.
 	 */
 	boolean receiveCanceled() default false;
 
 	/**
-	 * Whether the method should be called if the setting it's in is disabled.
+	 * If the listener should be triggered if it's defining {@link Feature} is disabled.
+	 * Has no effect if the defining class is not a subclass of {@link Feature} or the listener is static.
 	 */
 	boolean triggerWhenDisabled() default false;
 

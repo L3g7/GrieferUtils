@@ -18,22 +18,19 @@
 
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.EventHandler;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,25 +74,7 @@ public abstract class Feature implements MinecraftUtil {
 		loadSubSettings(mainElement, configKey);
 
 		// Register events
-		for (Method method : Reflection.getAnnotatedMethods(getClass(), EventListener.class)) {
-			EventListener meta = method.getDeclaredAnnotation(EventListener.class);
-			Class<?>[] parameters = method.getParameterTypes();
-			if (parameters.length != 1)
-				throw new IllegalArgumentException("Method " + method + " has @EventListener annotation, but requires " + parameters.length + " arguments");
-
-			Class<?> eventClass = parameters[0];
-
-			if (!Event.class.isAssignableFrom(eventClass))
-				throw new IllegalArgumentException("Method " + method + " has @EventListener annotation, but takes " + eventClass);
-
-			Event event = (Event) Reflection.construct(eventClass);
-			event.getListenerList().register(0, meta.priority(), e -> {
-				if ((!event.isCancelable() || !event.isCanceled() || meta.receiveCanceled())
-				&& (meta.triggerWhenDisabled() || isEnabled()))
-					Reflection.invoke(this, method, e);
-			});
-		}
-		MinecraftForge.EVENT_BUS.register(this);
+		EventHandler.register(this);
 	}
 
 	private void loadSubSettings(SettingsElement parent, String parentKey) {

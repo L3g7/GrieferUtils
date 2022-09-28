@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.file_provider;
+package dev.l3g7.griefer_utils.file_provider.provider_impl;
 
-import dev.l3g7.griefer_utils.file_provider.impl.JarFileProviderImpl;
-import dev.l3g7.griefer_utils.file_provider.impl.URLFileProviderImpl;
+import dev.l3g7.griefer_utils.file_provider.provider_impl.JarFileProviderImpl;
+import dev.l3g7.griefer_utils.file_provider.provider_impl.URLFileProviderImpl;
 
 import java.io.InputStream;
 import java.util.Collection;

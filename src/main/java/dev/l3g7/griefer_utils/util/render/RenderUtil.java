@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.util;
+package dev.l3g7.griefer_utils.util.render;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
@@ -32,12 +32,10 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class RenderUtil {
 
-	private static final FontRenderer iconFontRenderer = new FontRenderer(mc().gameSettings, new ResourceLocation("griefer_utils/icon_font.png"), mc().renderEngine, false);
-
 	public static final char[] ARMOR_ICONS = new char[] {'\u2502', '\u2593', '\u2592', '\u2591'};
 
-	static {
-		// Required to actually load the font when Minecraft is started
+	private static final FontRenderer iconFontRenderer = new FontRenderer(mc().gameSettings, new ResourceLocation("griefer_utils/icon_font.png"), mc().renderEngine, false);
+	static { // TODO: without custom font
 		((IReloadableResourceManager) mc().getResourceManager()).registerReloadListener(iconFontRenderer);
 	}
 
@@ -56,6 +54,7 @@ public class RenderUtil {
 		scale(scale);
 		iconFontRenderer.drawString(title, -iconFontRenderer.getStringWidth(title) / 2f, subTitle ? 5 : -10, color, true);
 		end();
+
 
 		end();
 	}

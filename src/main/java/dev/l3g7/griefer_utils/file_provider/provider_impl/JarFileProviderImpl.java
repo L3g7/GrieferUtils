@@ -16,9 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.file_provider.impl;
-
-import dev.l3g7.griefer_utils.file_provider.FileProviderImpl;
+package dev.l3g7.griefer_utils.file_provider.provider_impl;
 
 import java.io.IOException;
 import java.io.InputStream;

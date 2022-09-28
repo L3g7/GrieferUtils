@@ -28,6 +28,9 @@ import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
  */
 class ClassReflection {
 
+	/**
+	 * Loads the class.
+	 */
 	static <T> Class<T> load(String name) {
 		try {
 			return c(Class.forName(name.replaceAll("\\.class$", "").replace('/', '.')));
@@ -40,6 +43,9 @@ class ClassReflection {
 	 * Checks if the object can be passed as targetClass.
 	 */
 	static boolean isApplicable(Class<?> targetClass, Object object) {
+		if (object instanceof Class<?>)
+			return targetClass.isAssignableFrom((Class<?>) object);
+
 		return (!targetClass.isPrimitive() && object == null) || targetClass.isInstance(object) || ClassUtils.primitiveToWrapper(targetClass).isInstance(object);
 	}
 

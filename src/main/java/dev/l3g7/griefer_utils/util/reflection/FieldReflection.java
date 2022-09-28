@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
+import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
  * Field related reflection.
  */
-@SuppressWarnings("unchecked")
 class FieldReflection {
 
 	/**
@@ -63,7 +63,7 @@ class FieldReflection {
 		// Get value
 		try {
 			field.setAccessible(true);
-			return (V) field.get(target);
+			return c(field.get(target));
 		} catch (Throwable e) {
 			throw elevate(e, "Tried to access field '%s' in '%s'", field.getName(), target.toString());
 		}

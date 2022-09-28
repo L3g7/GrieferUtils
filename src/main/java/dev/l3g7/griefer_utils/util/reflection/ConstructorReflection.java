@@ -24,11 +24,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
+import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
  * Constructor related reflection.
  */
-@SuppressWarnings("unchecked")
 class ConstructorReflection {
 
 	/**
@@ -57,7 +57,7 @@ class ConstructorReflection {
 		for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
 			// Check arg types
 			if (ArrayUtil.equals(constructor.getParameterTypes(), parameters, ClassReflection::isApplicable))
-				return (Constructor<T>) constructor;
+				return c(constructor);
 		}
 
 		return null;

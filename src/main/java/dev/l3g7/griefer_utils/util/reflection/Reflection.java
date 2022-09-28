@@ -100,8 +100,16 @@ public class Reflection {
 	/**
 	 * Tries to load the class with the specified name.
 	 */
-	public static Class<?> load(String name) {
+	public static <T> Class<T> load(String name) {
 		return ClassReflection.load(name);
+	}
+
+	/**
+	 * Converts the given object into a generic object.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T c(Object o) {
+		return (T) o;
 	}
 
 }

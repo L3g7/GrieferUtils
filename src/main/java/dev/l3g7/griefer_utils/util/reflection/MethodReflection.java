@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
+import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
  * Method related reflection.
  */
-@SuppressWarnings("unchecked")
 class MethodReflection {
 
 	/**
@@ -62,7 +62,7 @@ class MethodReflection {
 		// Invoke
 		try {
 			method.setAccessible(true);
-			return (V) method.invoke(target, params);
+			return c(method.invoke(target, params));
 		} catch (Throwable e) {
 			throw elevate(e, "Tried to invoke method '%s' with parameters '%s' in '%s'", method.getName(), ArrayUtil.toString(params, o -> o.getClass().toString(), ", "), target.toString());
 		}

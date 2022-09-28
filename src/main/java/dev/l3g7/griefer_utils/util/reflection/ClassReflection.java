@@ -21,16 +21,16 @@ package dev.l3g7.griefer_utils.util.reflection;
 import org.apache.commons.lang3.ClassUtils;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
+import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
  * Class related reflection.
  */
-@SuppressWarnings("unchecked")
 class ClassReflection {
 
 	static <T> Class<T> load(String name) {
 		try {
-			return (Class<T>) Class.forName(name.replaceAll("\\.class$", "").replace('/', '.'));
+			return c(Class.forName(name.replaceAll("\\.class$", "").replace('/', '.')));
 		} catch (Throwable e) {
 			throw elevate(e, "Could not load class '%s'", name);
 		}

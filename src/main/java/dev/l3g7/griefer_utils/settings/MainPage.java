@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.settings;
 import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.settings.elements.SettingsElement;
@@ -41,9 +42,8 @@ public class MainPage {
 		new HeaderSetting("§r").scale(.4).entryHeight(10)));
 
 	static {
-		// Add every feature to its category
-		for (String file : FileProvider.getClassesWithSuperClass(Feature.class)) {
-			Class<Feature> feature = FileProvider.loadClass(file);
+		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Feature.class)) {
+			Class<Feature> feature = meta.loadClass();
 
 			Feature instance = FileProvider.getSingleton(feature);
 			instance.init();

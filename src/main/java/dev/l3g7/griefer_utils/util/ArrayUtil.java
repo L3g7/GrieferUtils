@@ -18,8 +18,15 @@
 
 package dev.l3g7.griefer_utils.util;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
  * A utility class for array stuff.
@@ -54,12 +61,32 @@ public class ArrayUtil {
 	}
 
 	/**
-	 * Returns the last entry of an array, or null, if the array is empty.
+	 * Maps an iterable using a function.
+	 * @see Stream#map(Function)
 	 */
-	public static <T> T last(T[] array) {
-		if (array.length == 0)
-			return null;
-
-		return array[array.length - 1];
+	public static <V, R> List<R> map(Iterable<V> t, Function<V, R> mapFunc) {
+		return StreamSupport.stream(t.spliterator(), false)
+			.map(mapFunc)
+			.collect(Collectors.toList());
 	}
+
+	/**
+	 * Maps an array using a function.
+	 * @see Stream#map(Function)
+	 */
+	public static <V, R> List<R> map(V[] t, Function<V, R> mapFunc) {
+		return Arrays.stream(t)
+			.map(mapFunc)
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * Flatmaps an array.
+	 */
+	public static <T> T[] flatmap(T[][] array) {
+		return c(Arrays.stream(array)
+			.flatMap(Stream::of)
+			.toArray());
+	}
+
 }

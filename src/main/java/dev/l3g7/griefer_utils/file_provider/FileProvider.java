@@ -18,16 +18,27 @@
 
 package dev.l3g7.griefer_utils.file_provider;
 
-import dev.l3g7.griefer_utils.file_provider.impl.JarFileProviderImpl;
-import dev.l3g7.griefer_utils.file_provider.impl.URLFileProviderImpl;
+import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
+import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
+import dev.l3g7.griefer_utils.file_provider.provider_impl.FileProviderImpl;
+import dev.l3g7.griefer_utils.file_provider.provider_impl.JarFileProviderImpl;
+import dev.l3g7.griefer_utils.file_provider.provider_impl.URLFileProviderImpl;
+import dev.l3g7.griefer_utils.util.Util;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import org.apache.commons.io.IOUtils;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.ClassNode;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
+import static org.objectweb.asm.ClassReader.SKIP_CODE;
 
 /**
  * A class providing a list of all files in the addon.
@@ -36,7 +47,7 @@ public class FileProvider {
 
 	private static final Class<?>[] PROVIDERS = new Class[]{JarFileProviderImpl.class, URLFileProviderImpl.class};
 
-	private static final Map<String, Class<?>> classes = new HashMap<>();
+	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>();
 	private static final Map<Class<?>, Object> singletonInstances = new HashMap<>();
 	private static FileProviderImpl impl = null;
 
@@ -53,11 +64,12 @@ public class FileProvider {
 			try {
 				return impl = (FileProviderImpl) Reflection.construct(providerClass);
 			} catch (Throwable throwable) {
+				// Only throw errors if no implementation could load
 				errors.add(throwable);
 			}
 		}
 
-		// Only throw errors if no implementation could load
+		// If this point is reached, no implementation could be loaded -> throw errors
 		errors.forEach(Throwable::printStackTrace);
 		throw new RuntimeException("No available file provider could be found!");
 	}
@@ -77,13 +89,6 @@ public class FileProvider {
 	}
 
 	/**
-	 * Returns all files with a matching name.
-	 */
-	public static Collection<String> getFiles(String name) {
-		return getFiles(f -> f.equals(name) || f.endsWith("/" + name));
-	}
-
-	/**
 	 * Returns the content of a file as an InputStream.
 	 */
 	public static InputStream getData(String file) {
@@ -91,54 +96,82 @@ public class FileProvider {
 	}
 
 	/**
+	 * Returns the class meta for a class based on it's description.
+	 */
+	public static ClassMeta getClassMetaByDesc(String desc) {
+		return getClassMeta(Type.getType(desc).getInternalName() + ".class");
+	}
+
+	/**
+	 * Returns the class meta for a file.
+	 */
+	public static ClassMeta getClassMeta(String file) {
+		if (classMetaCache.containsKey(file))
+			return classMetaCache.get(file);
+
+		// Check if file is known
+		if (!getFiles().contains(file)) {
+			// Load ClassMeta using Reflection
+			ClassMeta meta = new ClassMeta(Reflection.load(file));
+			classMetaCache.put(file, meta);
+			return meta;
+		}
+
+		if (!file.endsWith(".class"))
+			throw new IllegalArgumentException("Cannot load class meta of " + file);
+
+		// Load ClassMeta using ASM
+		try (InputStream in = getData(file)) {
+			ClassNode node = new ClassNode();
+			new ClassReader(IOUtils.toByteArray(in)).accept(node, SKIP_CODE);
+
+			ClassMeta meta = new ClassMeta(node);
+			classMetaCache.put(file, meta);
+			return meta;
+		} catch (IOException e) {
+			throw Util.elevate(e, "Tried to read class meta of " + file);
+		}
+	}
+
+	/**
 	 * Returns all classes with the specified super class.
 	 */
-	public static Collection<String> getClassesWithSuperClass(Class<?> superClass) {
-		List<String> classes = new ArrayList<>();
+	public static Collection<ClassMeta> getClassesWithSuperClass(Class<?> superClass) {
+		List<ClassMeta> classes = new ArrayList<>();
 		String internalName = Type.getInternalName(superClass);
 
 		// Find classes
-		for (String file : getFiles(f -> f.endsWith(".class")))
-			if (ClassMeta.read(file).hasSuperClass(internalName))
-				classes.add(file);
+		for (String file : getFiles(f -> f.endsWith(".class"))) {
+			ClassMeta meta = getClassMeta(file);
+			if (meta.hasSuperClass(internalName))
+				classes.add(meta);
+		}
 
 		return classes;
 	}
 
 	/**
-	 * Returns all files with the given annotation.
+	 * Returns all methods with the given annotation present.
 	 */
-	public static Collection<String> getClassesWithAnnotatedMethods(Class<? extends Annotation> annotation) {
-		List<String> classes = new ArrayList<>();
+	public static Collection<MethodMeta> getAnnotatedMethods(Class<? extends Annotation> annotation) {
+		List<MethodMeta> methods = new ArrayList<>();
+		String annotationName = Type.getDescriptor(annotation);
 
 		// Find classes
 		for (String file : getFiles(f -> f.endsWith(".class")))
-			if (ClassMeta.read(file).hasMethodAnnotation(annotation))
-				classes.add(file);
+			for (MethodMeta method : getClassMeta(file).methods)
+				if (method.hasAnnotation(annotationName))
+					methods.add(method);
 
-		return classes;
-	}
-
-	/**
-	 * Loads the specified file as a class.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> Class<T> loadClass(String file) {
-		if (classes.containsKey(file))
-			return (Class<T>) classes.get(file);
-
-		Class<?> loadedClass = Reflection.load(file);
-		classes.put(file, loadedClass);
-		return (Class<T>) loadedClass;
+		return methods;
 	}
 
 	/**
 	 * Loads the specified class as a singleton.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T getSingleton(Class<T> singleton) {
 		if (singletonInstances.containsKey(singleton))
-			return (T) singletonInstances.get(singleton);
+			return c(singletonInstances.get(singleton));
 
 		if (!singleton.isAnnotationPresent(Singleton.class))
 			throw new IllegalArgumentException(singleton + " is not a singleton!");

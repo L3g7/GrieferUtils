@@ -2,15 +2,11 @@ package dev.l3g7.griefer_utils.features.tweaks;
 
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.GuiBook;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiScreenBook;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -20,8 +16,6 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
-
-import java.io.IOException;
 
 @Singleton
 public class BookReader extends Feature {
@@ -84,31 +78,8 @@ public class BookReader extends Feature {
 		if (!tag.hasKey("pages"))
 			tag.setTag("pages", new NBTTagList());
 
-		mc().displayGuiScreen(new GuiBook(player(), item));
+		mc().displayGuiScreen(new GuiBook(item, false));
 		return true;
-	}
-
-	// Required because GuiScreenBook escapes to the main game
-	private static class GuiBook extends GuiScreenBook {
-
-		private final GuiScreen previousScreen = Minecraft.getMinecraft().currentScreen;
-
-		public GuiBook(EntityPlayer player, ItemStack book) {
-			super(player, book, false);
-		}
-
-		protected void keyTyped(char typedChar, int keyCode) {
-			if (keyCode == 1)
-				Minecraft.getMinecraft().displayGuiScreen(previousScreen);
-		}
-
-		protected void actionPerformed(GuiButton button) throws IOException {
-			if (button.enabled && button.id == 0)
-				Minecraft.getMinecraft().displayGuiScreen(previousScreen);
-			else
-				super.actionPerformed(button);
-		}
-
 	}
 
 }

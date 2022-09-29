@@ -1,10 +1,13 @@
 package dev.l3g7.griefer_utils.util;
 
 import com.google.gson.*;
+import com.sun.jna.Memory;
+import com.sun.jna.Platform;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -13,10 +16,46 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.function.Consumer;
 
+import static dev.l3g7.griefer_utils.misc.Comdlg32.*;
+
 public class IOUtil {
 
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final JsonParser JSON_PARSER = new JsonParser();
+
+	public static void chooseFile(Consumer<File> fileConsumer) {
+		/*
+		 * Swing file chooser
+		 */
+		if (!Platform.isWindows()) {
+			new Thread(() -> {
+				final JFileChooser fc = new JFileChooser((File) null);
+				fc.setMultiSelectionEnabled(false);
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+				fileConsumer.accept(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION ? fc.getSelectedFile() : null);
+			}).start();
+		}
+
+		/*
+		 * Windows file chooser
+		 */
+		OpenFileName params = new OpenFileName();
+		params.lpstrFile = new Memory(1041);
+		params.lpstrFile.clear(1041);
+		params.nMaxFile = 260;
+
+		if (GetOpenFileNameW(params)) {
+			fileConsumer.accept(new File(params.lpstrFile.getString(0, true)));
+			return;
+		}
+
+		int error = CommDlgExtendedError();
+		if (error != 0) // Selection was aborted by the user
+			System.err.println("GetOpenFileName failed with error " + error);
+
+		fileConsumer.accept(null);
+	}
 
 	public static FileRequest file(File file) {
 		return new FileRequest(file);

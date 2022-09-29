@@ -41,6 +41,10 @@ public class Config {
         set(path, val == null ? JsonNull.INSTANCE : new JsonPrimitive(val));
     }
 
+	public static void set(String path, Double val) {
+		set(path, val == null ? JsonNull.INSTANCE : new JsonPrimitive(val));
+	}
+
     public static void set(String path, String val) {
         set(path, val == null ? JsonNull.INSTANCE : new JsonPrimitive(val));
     }

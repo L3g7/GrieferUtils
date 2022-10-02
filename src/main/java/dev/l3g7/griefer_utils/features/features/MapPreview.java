@@ -47,7 +47,7 @@ public class MapPreview extends Feature {
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onTooltip(ItemTooltipEvent event) {
-		if (!(event.itemStack.getItem() instanceof ItemMap))
+		if (!isActive() || !isOnGrieferGames() || !(event.itemStack.getItem() instanceof ItemMap))
 			return;
 
 		tooltip = event.toolTip;
@@ -62,7 +62,7 @@ public class MapPreview extends Feature {
 
 	@SubscribeEvent
 	public void onRender(GuiScreenEvent.DrawScreenEvent.Post event) {
-		if (!(event.gui instanceof GuiContainer))
+		if (!isActive() || !isOnGrieferGames() || !(event.gui instanceof GuiContainer))
 			return;
 
 		GuiContainer currentScreen = (GuiContainer) event.gui;

@@ -18,20 +18,29 @@ import static dev.l3g7.griefer_utils.misc.Constants.*;
 
 /**
  * Replaces the click events in chat to hide the popup if chat menu is active,
- * or adds click events to private- and plot chat messages
+ * adds click events to private- and plot chat messages
+ * and makes /tpaccept and /tpdeny clickable.
  */
 public class ClickEventHandler {
 
 	public static final String COMMAND = "/grieferutils_click_event_replace_suggest_msg ";
+
+	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
+	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
 	private static final Pattern[] MESSAGE_PATTERNS = new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN};
 
 	@EventListener(priority = EventPriority.HIGHEST)
 	public static void modifyMessage(MessageModifyEvent event) {
+		modifyMsgs(event);
+		modifyTps(event);
+	}
+
+	private static void modifyMsgs(MessageModifyEvent event) {
 		if (!FileProvider.getSingleton(ChatMenu.class).isActive())
 			return;
 
 		// Replaces all /msg click-events
-		event.setMessage(replaceClickEvents(event.getMessage()));
+		event.setMessage(replaceMsgClickEvents(event.getMessage()));
 
 		String name = null;
 
@@ -50,7 +59,24 @@ public class ClickEventHandler {
 		if (name.startsWith("~"))
 			name = NameCache.getName(name);
 
-		event.setMessage(setEvent(name, event.getMessage()));
+		event.setMessage(setClickEvent(event.getMessage(), COMMAND + name));
+	}
+
+	private static void modifyTps(MessageModifyEvent event) {
+		String msg = event.getMessage().getUnformattedText();
+
+		if (!msg.equals(TP_ACCEPT) && !msg.equals(TP_DENY))
+			return;
+
+		String command = msg.equals(TP_ACCEPT) ? "/tpaccept" : "/tpdeny";
+
+		IChatComponent component = event.getMessage();
+
+		for (IChatComponent part : component.getSiblings())
+			if (part.getUnformattedText().equals(command))
+				part.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
+
+		event.setMessage(component);
 	}
 
 	@EventListener
@@ -61,12 +87,7 @@ public class ClickEventHandler {
 		}
 	}
 
-	private static IChatComponent setEvent(String name, IChatComponent msg) {
-		msg.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, COMMAND + name));
-		return msg;
-	}
-
-	private static IChatComponent replaceClickEvents(IChatComponent component) {
+	private static IChatComponent replaceMsgClickEvents(IChatComponent component) {
 		for (IChatComponent msg : component.getSiblings()) {
 			ChatStyle style = msg.getChatStyle();
 			ClickEvent event;
@@ -75,11 +96,16 @@ public class ClickEventHandler {
 				String value = event.getValue();
 
 				if (value.startsWith("/msg "))
-					setEvent(value.substring(5), msg);
+					setClickEvent(msg, COMMAND + value.substring(5));
 			}
 		}
 
 		return component;
+	}
+
+	private static IChatComponent setClickEvent(IChatComponent msg, String command) {
+		msg.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
+		return msg;
 	}
 
 }

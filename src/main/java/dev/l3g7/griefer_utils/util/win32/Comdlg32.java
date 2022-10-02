@@ -9,7 +9,7 @@
  *
  * (Source: https://github.com/steos/jnafilechooser)
  */
-package dev.l3g7.griefer_utils.misc;
+package dev.l3g7.griefer_utils.util.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;

@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.function.Consumer;
 
-import static dev.l3g7.griefer_utils.misc.Comdlg32.*;
+import static dev.l3g7.griefer_utils.util.win32.Comdlg32.*;
 
 public class IOUtil {
 

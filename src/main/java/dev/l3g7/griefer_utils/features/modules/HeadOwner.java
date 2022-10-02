@@ -94,6 +94,9 @@ public class HeadOwner extends Module {
 
 		Entity renderEntity = mc.getRenderViewEntity();
 
+		if (renderEntity == null)
+			return null;
+
 		Vec3 look = renderEntity.getLook(1);
 		Vec3 eyes = renderEntity.getPositionEyes(1);
 		Vec3 maxEyes = eyes.addVector(look.xCoord * 1000, look.yCoord * 1000, look.zCoord * 1000);

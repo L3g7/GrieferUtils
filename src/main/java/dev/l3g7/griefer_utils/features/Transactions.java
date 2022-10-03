@@ -79,7 +79,7 @@ public class Transactions extends Feature {
 
     @EventListener
     public void onSettingsUpdate(SettingsUpdateEvent event) {
-        List<SettingsElement> list = event.getList();
+        List<SettingsElement> list = event.getTempElements();
 
         // Check if transactions are open
         if (list.isEmpty() || list.get(0) != element.getSubSettings().getElements().get(0)) {

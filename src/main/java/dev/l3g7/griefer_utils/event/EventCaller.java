@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.event.events.render.EntityRenderEvent;
 import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerQuitEvent;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.AddonDescriptor;
@@ -21,6 +22,7 @@ import net.labymod.labyconnect.packets.PacketAddonDevelopment;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.AddonElement;
+import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.network.Packet;
@@ -30,6 +32,9 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.features.Feature.mc;
 
@@ -73,8 +78,13 @@ public class EventCaller {
         // SettingsUpdateEvent
         if (gui instanceof LabyModAddonsGui) {
             AddonElement openedAddon = Reflection.get(gui, "openedAddonSettings");
-            if (openedAddon != null && openedAddon.getInstalledAddon().equals(Main.getInstance()))
-                EventBus.post(new SettingsUpdateEvent(Reflection.get(gui, "tempElementsStored")));
+			if (openedAddon == null || !openedAddon.getInstalledAddon().equals(Main.getInstance()))
+				return;
+
+	        ArrayList<SettingsElement> path = Feature.path();
+	        List<SettingsElement> settings = path.size() > 0 ? path.get(path.size() - 1).getSubSettings().getElements() : openedAddon.getSubSettings();
+
+	        EventBus.post(new SettingsUpdateEvent(settings, Reflection.get(gui, "tempElementsStored")));
         }
     }
 

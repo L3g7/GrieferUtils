@@ -25,8 +25,7 @@ public class ShowJoins extends Feature {
             .icon(Material.HOPPER)
             .config("features.show_joins.filter.active")
             .defaultValue(false)
-            .subSettingsWithHeader("Joins anzeigen - Filter",
-                    filterData);
+            .subSettingsWithHeader("Joins anzeigen - Filter", filterData);
 
     private final BooleanSetting enabled = new BooleanSetting()
             .name("Joins anzeigen")

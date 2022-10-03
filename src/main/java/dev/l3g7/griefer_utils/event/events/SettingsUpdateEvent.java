@@ -7,14 +7,20 @@ import java.util.List;
 
 public class SettingsUpdateEvent extends Event {
 
-    private final List<SettingsElement> list;
+	private final List<SettingsElement> settings; // The actual settings
+    private final List<SettingsElement> tempElements; // The elements that are being shown
 
-    public SettingsUpdateEvent(List<SettingsElement> list) {
-        this.list = list;
+    public SettingsUpdateEvent(List<SettingsElement> settings, List<SettingsElement> tempElements) {
+		this.settings = settings;
+        this.tempElements = tempElements;
     }
 
-    public List<SettingsElement> getList() {
-        return list;
+	public List<SettingsElement> getSettings() {
+		return settings;
+	}
+
+	public List<SettingsElement> getTempElements() {
+        return tempElements;
     }
 
 }

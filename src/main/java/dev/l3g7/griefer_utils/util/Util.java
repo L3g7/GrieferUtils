@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.util;
 
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 /**
  * Everything that doesn't fit into the other utility classes.
@@ -53,6 +54,15 @@ public class Util {
 	 */
 	public static RuntimeException elevate(Throwable throwable, String message, Object... args) {
 		return addMessage(elevate(throwable), message, args);
+	}
+
+	/**
+	 * Terminates Java.
+	 * Should only be used for debug purposes.
+	 */
+	@Deprecated
+	public static void die(int status) {
+		FMLCommonHandler.instance().exitJava(status, false);
 	}
 
 }

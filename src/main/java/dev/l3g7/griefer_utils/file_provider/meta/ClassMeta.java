@@ -86,4 +86,9 @@ public class ClassMeta {
 		return c(loadedClass);
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 }

@@ -102,4 +102,9 @@ public class MethodMeta implements Opcodes {
 		throw elevate(new NoSuchMethodException(), "Could not find method %s %s in %s!", name, desc, owner.name);
 	}
 
+	@Override
+	public String toString() {
+		return owner + "." + name + desc;
+	}
+
 }

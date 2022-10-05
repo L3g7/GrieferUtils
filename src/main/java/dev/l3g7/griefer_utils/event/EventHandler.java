@@ -18,11 +18,11 @@
 
 package dev.l3g7.griefer_utils.event;
 
+import dev.l3g7.griefer_utils.event.events.RenderWorldEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.meta.AnnotationMeta;
 import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -32,13 +32,15 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.StaticImport.mc;
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
  * Handles the logic for registering methods annotated with {@link EventListener} to the {@link MinecraftForge#EVENT_BUS}.
  */
-public class EventHandler implements MinecraftUtil, Opcodes {
+public class EventHandler implements Opcodes {
 
 	private static final int BUS_ID = 0; // MinecraftForge.EVENT_BUS
 
@@ -47,17 +49,20 @@ public class EventHandler implements MinecraftUtil, Opcodes {
 
 			// Skip virtual listeners
 			if (!method.isStatic())
-				return;
+				continue;
 
-			ListenerList listeners = getEventListenerList(method);
+			Class<? extends Event> eventClass = getEventClass(method);
+			ListenerList listeners = Reflection.construct(eventClass).getListenerList();
 
 			// Get metadata
 			AnnotationMeta meta = method.getAnnotation(EventListener.class);
 			EventPriority priority = meta.getValue("priority", true);
 			boolean receiveCanceled = meta.getValue("receiveCanceled", false);
+			boolean receiveSubclasses = meta.getValue("receiveSubclasses", false);
 
 			listeners.register(BUS_ID, priority, e -> {
-				if (receiveCanceled || !e.isCanceled())
+				if (receiveCanceled || !e.isCanceled()
+					&& (receiveSubclasses || e.getClass() == eventClass))
 					Reflection.invoke(null, method.loadMethod(), e);
 			});
 		}
@@ -74,27 +79,32 @@ public class EventHandler implements MinecraftUtil, Opcodes {
 			if ((method.getModifiers() & ACC_STATIC) != 0)
 				return;
 
-			ListenerList listeners = getEventListenerList(new MethodMeta(null, method));
+			Class<? extends Event> eventClass = getEventClass(new MethodMeta(null, method));
+			ListenerList listeners = Reflection.construct(eventClass).getListenerList();
 
 			// Get metadata
 			EventListener meta = method.getAnnotation(EventListener.class);
 			EventPriority priority = meta.priority();
 			boolean receiveCanceled = meta.receiveCanceled();
 			boolean triggerWhenDisabled = meta.triggerWhenDisabled();
+			boolean receiveSubclasses = meta.receiveSubclasses();
+
+			Predicate<Event> check = event ->
+				(receiveCanceled || !event.isCanceled()
+					&& (receiveSubclasses || event.getClass() == eventClass));
 
 			// Check if obj is Feature
 			if (obj instanceof Feature) {
 				// Check if feature is disabled
 				Feature feature = (Feature) obj;
 				listeners.register(BUS_ID, priority, event -> {
-					if ((receiveCanceled || !event.isCanceled())
-					&& (triggerWhenDisabled || feature.isEnabled()))
+					if (check.test(event) && (triggerWhenDisabled || feature.isEnabled()))
 						Reflection.invoke(obj, method, event);
 				});
 			} else {
 				// Don't check
 				listeners.register(BUS_ID, priority, event -> {
-					if (receiveCanceled || !event.isCanceled())
+					if (check.test(event))
 						Reflection.invoke(obj, method, event);
 				});
 			}
@@ -102,9 +112,9 @@ public class EventHandler implements MinecraftUtil, Opcodes {
 	}
 
 	/**
-	 * Validates the parameters of the method and returns the {@link ListenerList} of the {@link Event} being listened to.
+	 * Validates the parameters of the method and returns the class of the {@link Event} being listened to.
 	 */
-	private static ListenerList getEventListenerList(MethodMeta method) {
+	private static Class<? extends Event> getEventClass(MethodMeta method) {
 
 		// Check count
 		Type[] params = Type.getArgumentTypes(method.desc);
@@ -116,9 +126,7 @@ public class EventHandler implements MinecraftUtil, Opcodes {
 		if (!Event.class.isAssignableFrom(eventClass))
 			throw new IllegalArgumentException("Method " + method + " has @EventListener annotation, but takes " + eventClass);
 
-		// Return ListenerList
-		Event event = c(Reflection.construct(eventClass));
-		return event.getListenerList();
+		return c(eventClass);
 	}
 
 }

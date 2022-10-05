@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EventListener {
+
 	EventPriority priority() default EventPriority.NORMAL;
 
 	/**
@@ -37,9 +38,14 @@ public @interface EventListener {
 	boolean receiveCanceled() default false;
 
 	/**
-	 * If the listener should be triggered if it's defining {@link Feature} is disabled.
+	 * Whether the listener should be triggered if it's defining {@link Feature} is disabled.
 	 * Has no effect if the defining class is not a subclass of {@link Feature} or the listener is static.
 	 */
 	boolean triggerWhenDisabled() default false;
+
+	/**
+	 * Whether the listener should be triggered for subclasses of the event being listened to.
+	 */
+	boolean receiveSubclasses() default true;
 
 }

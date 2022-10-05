@@ -95,7 +95,7 @@ public class MethodMeta implements Opcodes {
 		Class<?> ownerClass = owner.loadClass();
 
 		// Search for method in ownerClass
-		for (Method method : flatmap(new Method[][] {ownerClass.getDeclaredMethods(), ownerClass.getMethods()}))
+		for (Method method : flatmap(Method.class, ownerClass.getDeclaredMethods(), ownerClass.getMethods()))
 			if (name.equals(method.getName()) && desc.equals(Type.getMethodDescriptor(method)))
 				return loadedMethod = method;
 

@@ -18,10 +18,12 @@
 
 package dev.l3g7.griefer_utils.util;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -93,10 +95,12 @@ public class ArrayUtil {
 	/**
 	 * Flatmaps an array.
 	 */
-	public static <T> T[] flatmap(T[][] array) {
+	public static <T> T[] flatmap(Class<T> type, T[]... array) {
+		// Convert type to array class
 		return c(Arrays.stream(array)
 			.flatMap(Stream::of)
-			.toArray());
+			.collect(Collectors.toList())
+			.toArray(c(Array.newInstance(type, 0))));
 	}
 
 }

@@ -68,12 +68,13 @@ public class Feedback extends Feature {
 			.name("Beschreibung");
 
 		FileSetting attachments = (FileSetting) new FileSetting("Feedback - " + name + " - Dateianhang")
+			.totalLimit(8_000_000L, "8 MB")
 			.name("Dateianhang §8(optional)");
 
 		StringSetting contact = (StringSetting) new StringSetting()
 			.name("Kontaktmöglichkeit")
 			.description("Wie können wir dich bei möglichen Rückfragen erreichen?")
-			.maxLength(100);
+			.maxLength(1028);
 
 
 		return setting.subSettingsWithHeader(
@@ -91,7 +92,7 @@ public class Feedback extends Feature {
 						// Clear all fields
 						title.set("");
 						description.clearPages();
-						attachments.getFiles();
+						attachments.clearFiles();
 						contact.set("");
 						displayAchievement("Danke \u2764", "Vielen Dank für dein Feedback!");
 					}
@@ -102,7 +103,7 @@ public class Feedback extends Feature {
 	public static boolean sendFeedback(ApiEndpoint endpoint, String title, String description, List<File> files, String contact) {
 
 		if (title.isEmpty() || description.isEmpty() || contact.isEmpty()) {
-			displayAchievement("§c§lFehler \u26A0", "§cBitte fülle alle benötigten Felder aus!");
+			displayAchievement("§e§l§nFehlende Daten", "§eBitte fülle alle benötigten Felder aus!");
 			return false;
 		}
 
@@ -117,13 +118,13 @@ public class Feedback extends Feature {
 				JsonObject fileEntry = new JsonObject();
 				fileEntry.addProperty("name", file.getName());
 				fileEntry.addProperty("mime_type", URLConnection.guessContentTypeFromName(file.getName()));
-				fileEntry.addProperty("data", new String(Files.readAllBytes(file.toPath())));
+				fileEntry.addProperty("data", new String(Files.readAllBytes(file.toPath()), UTF_8));
 
 				fileData.add(fileEntry);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			displayAchievement("§c§lFehler \u26A0", "§cEs ist Fehler beim Hochladen der Dateien aufgetreten.");
+			displayAchievement("§c§l§nFehler \u26A0", "§cEs ist Fehler beim Hochladen der Dateien aufgetreten.");
 			return false;
 		}
 

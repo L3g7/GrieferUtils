@@ -7,9 +7,13 @@ logs
 out
 run
 
+# debug
+src/main/java/dev/l3g7/griefer_utils/features/features/DEBUG
+
 # other
 eclipse
 gradlew.bat
+compile.bat
 
 # idea
 *.iml

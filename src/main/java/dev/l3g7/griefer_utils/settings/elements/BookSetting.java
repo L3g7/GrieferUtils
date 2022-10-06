@@ -15,6 +15,7 @@ import java.util.List;
 public class BookSetting extends SmallButtonSetting {
 
 	private List<String> pages = new ArrayList<>();
+	private Integer limit = null;
 
 	public BookSetting() {
 
@@ -40,10 +41,15 @@ public class BookSetting extends SmallButtonSetting {
 			Minecraft.getMinecraft().displayGuiScreen(new GuiBook(book, true).addCloseCallback(bookPages -> {
 				pages = bookPages;
 				buttonIcon(new IconData(pages.isEmpty() ? Material.BOOK_AND_QUILL : Material.BOOK));
-			}));
+			}).limit(limit));
 		});
 
 		buttonIcon(new IconData(Material.BOOK_AND_QUILL));
+	}
+
+	public BookSetting limit(Integer limit) {
+		this.limit = limit;
+		return this;
 	}
 
 	public List<String> getPages() {

@@ -30,8 +30,8 @@ public class GuiBook extends GuiScreen {
 
 	private static final int bookImageWidth = 192;
 	private static final int bookImageHeight = 192;
-
 	private static final ResourceLocation bookGuiTextures = new ResourceLocation("textures/gui/book.png");
+
 	private final GuiScreen previousScreen = Minecraft.getMinecraft().currentScreen;
 	private final ItemStack bookObj;
 	private final boolean bookCanBeEdited;
@@ -44,6 +44,7 @@ public class GuiBook extends GuiScreen {
 	private int currentPage = -1;
 	private NextPageButton buttonNextPage;
 	private NextPageButton buttonPreviousPage;
+	private Integer limit = null;
 
 	public GuiBook(ItemStack book, boolean canBeEdited) {
 		bookObj = book;
@@ -55,11 +56,7 @@ public class GuiBook extends GuiScreen {
 
 			if (bookPages != null) {
 				bookPages = (NBTTagList) bookPages.copy();
-				bookTotalPages = bookPages.tagCount();
-
-				if (bookTotalPages < 1) {
-					bookTotalPages = 1;
-				}
+				bookTotalPages = Math.min(bookPages.tagCount(), 1);
 			}
 		}
 
@@ -68,6 +65,11 @@ public class GuiBook extends GuiScreen {
 			bookPages.appendTag(new NBTTagString(""));
 			bookTotalPages = 1;
 		}
+	}
+
+	public GuiBook limit(Integer limit) {
+		this.limit = limit;
+		return this;
 	}
 
 	public GuiBook addCloseCallback(Consumer<List<String>> closeCallback) {
@@ -105,24 +107,29 @@ public class GuiBook extends GuiScreen {
 	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
 
+		if (closeCallback != null)
+			closeCallback.accept(getPagesAsList());
+	}
+
+	private List<String> getPagesAsList() {
 		// Remove empty pages at the end
-		if (closeCallback != null) {
-			while (this.bookPages.tagCount() > 0) {
-				String s = bookPages.getStringTagAt(bookPages.tagCount() - 1);
+		NBTTagList bookPages = (NBTTagList) this.bookPages.copy();
+		while (bookPages.tagCount() > 0) {
 
-				if (!s.isEmpty())
-					break;
+			int index = bookPages.tagCount() - 1;
 
-				bookPages.removeTag(bookPages.tagCount() - 1);
-			}
+			if (!bookPages.getStringTagAt(index).isEmpty())
+				break;
 
-			List<String> pages = Lists.newArrayList();
-
-			for (int i = 0; i < bookPages.tagCount(); i++)
-				pages.add(bookPages.getStringTagAt(i));
-
-			closeCallback.accept(pages);
+			bookPages.removeTag(index);
 		}
+
+		List<String> pages = Lists.newArrayList();
+
+		for (int i = 0; i < bookPages.tagCount(); i++)
+			pages.add(bookPages.getStringTagAt(i));
+
+		return pages;
 	}
 
 	private void updateButtons() {
@@ -187,9 +194,8 @@ public class GuiBook extends GuiScreen {
 			case KEY_BACK:
 				String s = pageGetCurrent();
 
-				if (s.length() > 0) {
+				if (s.length() > 0)
 					pageSetCurrent(s.substring(0, s.length() - 1));
-				}
 
 				return;
 			case KEY_RETURN:
@@ -213,8 +219,15 @@ public class GuiBook extends GuiScreen {
 	 * Sets the text of the current page as determined by currPage
 	 */
 	private void pageSetCurrent(String newText) {
-		if (bookPages != null && currPage >= 0 && currPage < bookPages.tagCount())
-			bookPages.set(currPage, new NBTTagString(newText));
+		if (bookPages == null || currPage < 0 || currPage >= bookPages.tagCount())
+			return;
+
+		String oldData = bookPages.getStringTagAt(currPage);
+		bookPages.set(currPage, new NBTTagString(newText));
+
+		// Reset if the limit was reached
+		if (limit != null && String.join("\r", getPagesAsList()).length() > limit)
+			bookPages.set(currPage, new NBTTagString(oldData));
 	}
 
 	/**

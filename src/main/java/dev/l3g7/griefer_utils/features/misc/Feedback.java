@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.features.misc;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
@@ -11,8 +12,8 @@ import net.labymod.utils.Material;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.nio.file.Files;
-import java.util.Base64;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -57,19 +58,22 @@ public class Feedback extends Feature {
 	private CategorySetting addSettings(CategorySetting setting, ApiEndpoint endpoint) {
 		String name = setting.getDisplayName();
 
-		StringSetting title = new StringSetting()
+		StringSetting title = (StringSetting) new StringSetting()
 			.name("Titel")
-			.defaultValue("");
+			.defaultValue("")
+			.maxLength(256);
 
 		BookSetting description = (BookSetting) new BookSetting()
+			.limit(4096)
 			.name("Beschreibung");
 
 		FileSetting attachments = (FileSetting) new FileSetting("Feedback - " + name + " - Dateianhang")
 			.name("Dateianhang §8(optional)");
 
-		StringSetting contact = new StringSetting()
+		StringSetting contact = (StringSetting) new StringSetting()
 			.name("Kontaktmöglichkeit")
-			.description("Wie können wir dich bei möglichen Rückfragen erreichen?");
+			.description("Wie können wir dich bei möglichen Rückfragen erreichen?")
+			.maxLength(100);
 
 
 		return setting.subSettingsWithHeader(
@@ -84,6 +88,7 @@ public class Feedback extends Feature {
 				.name("Abschicken")
 				.callback(() -> {
 					if (sendFeedback(endpoint, title.get(), String.join("\r", description.getPages()), attachments.getFiles(), contact.get())) {
+						// Clear all fields
 						title.set("");
 						description.clearPages();
 						attachments.getFiles();
@@ -96,31 +101,48 @@ public class Feedback extends Feature {
 
 	public static boolean sendFeedback(ApiEndpoint endpoint, String title, String description, List<File> files, String contact) {
 
-		JsonObject fileData = new JsonObject();
+		if (title.isEmpty() || description.isEmpty() || contact.isEmpty()) {
+			displayAchievement("§c§lFehler \u26A0", "§cBitte fülle alle benötigten Felder aus!");
+			return false;
+		}
 
+		JsonArray fileData = new JsonArray();
+
+		// Add files
 		try {
 			for (File file : files) {
 				if (!file.exists())
 					throw new IOException(file.getAbsolutePath() + " does not exist");
 
-				byte[] bytes = Files.readAllBytes(file.toPath());
-				fileData.addProperty(file.getName(), new String(Base64.getEncoder().encode(bytes)));
+				JsonObject fileEntry = new JsonObject();
+				fileEntry.addProperty("name", file.getName());
+				fileEntry.addProperty("mime_type", URLConnection.guessContentTypeFromName(file.getName()));
+				fileEntry.addProperty("data", new String(Files.readAllBytes(file.toPath())));
+
+				fileData.add(fileEntry);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			displayAchievement("Fehler", "Es ist Fehler beim Hochladen der Dateien aufgetreten.");
+			displayAchievement("§c§lFehler \u26A0", "§cEs ist Fehler beim Hochladen der Dateien aufgetreten.");
 			return false;
 		}
 
+		// Add everything to the main payload
 		JsonObject data = new JsonObject();
 
 		data.addProperty("title", title);
 		data.addProperty("description", description);
 		data.add("files", fileData);
 		data.addProperty("contact", contact);
-		data.addProperty("sender", name() + " | " + uuid().toString());
 
-		IOUtil.request("https://grieferutils.l3g7.dev/feedback/" + endpoint.url)
+		JsonObject sender = new JsonObject();
+		sender.addProperty("name", name());
+		sender.addProperty("uuid", uuid().toString());
+
+		data.add("sender", sender);
+
+		// Send the payload
+		IOUtil.request("https://grieferutils.l3g7.dev/feedback/" + endpoint.url + "/")
 			.post("application/json", data.toString().getBytes(UTF_8))
 			.close();
 

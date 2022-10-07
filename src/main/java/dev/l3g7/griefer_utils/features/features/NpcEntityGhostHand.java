@@ -37,7 +37,7 @@ public class NpcEntityGhostHand extends Feature {
 
 	@SubscribeEvent
 	public void onClick(MouseEvent event) {
-		if (world() == null || player() == null)
+		if (!isActive() || !isOnGrieferGames() || world() == null || player() == null)
 			return;
 
 		// Only intercept right clicks

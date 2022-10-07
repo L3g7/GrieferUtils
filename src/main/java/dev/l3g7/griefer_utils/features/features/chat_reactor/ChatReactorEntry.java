@@ -19,16 +19,17 @@ public class ChatReactorEntry {
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\$(\\d+)");
 
 	private final BooleanSetting parseAsRegEx;
+	private final BooleanSetting compareEverything;
 	private final StringSetting command;
 	private final StringSetting name;
 	private StringSetting trigger;
 	private Pattern pattern = null;
 
 	public ChatReactorEntry() {
-		this(false, "", "", "");
+		this(false, false, "", "", "");
 	}
 
-	private ChatReactorEntry(boolean defaultParseAsRegEx, String defaultTrigger, String defaultName, String defaultCommand) {
+	private ChatReactorEntry(boolean defaultParseAsRegEx, boolean defaultCompareEverything, String defaultTrigger, String defaultName, String defaultCommand) {
 		parseAsRegEx = new BooleanSetting()
 				.name("Modus")
 				.icon("regex")
@@ -43,6 +44,17 @@ public class ChatReactorEntry {
 					ChatReactor.saveEntries();
 					ChatReactor.updateSettings();
 				});
+
+		compareEverything = new BooleanSetting()
+			.name("Vergleichsmodus")
+			.icon("spyglass")
+			.custom("Alles", "Teile")
+			.description("Ob die gesamte Nachricht oder nur ein Teil übereinstimmen muss.")
+			.defaultValue(defaultCompareEverything)
+			.callback(b -> {
+				ChatReactor.saveEntries();
+				ChatReactor.updateSettings();
+			});
 
 		trigger = new StringSetting()
 				.name("Text")
@@ -94,7 +106,7 @@ public class ChatReactorEntry {
 				.name((isTriggerValid() ? "" : "§c") + name.get())
 				.description(isTriggerValid() ? null : "Der Ausdrück ist ungültig.")
 				.icon(parseAsRegEx.get() ? "regex" : Material.PAPER)
-				.subSettings(name, parseAsRegEx, trigger, command);
+				.subSettings(name, parseAsRegEx, compareEverything, trigger, command);
 	}
 
 	public boolean isValid() {
@@ -118,6 +130,7 @@ public class ChatReactorEntry {
 		JsonObject object = new JsonObject();
 
 		object.addProperty("is_regex", parseAsRegEx.get());
+		object.addProperty("compare_everything", compareEverything.get());
 		object.addProperty("name", name.get());
 		object.addProperty("trigger", trigger.get());
 		object.addProperty("command", command.get());
@@ -126,12 +139,18 @@ public class ChatReactorEntry {
 	}
 
 	public static ChatReactorEntry fromJson(JsonObject object) {
-		return new ChatReactorEntry(
+		try {
+			return new ChatReactorEntry(
 				object.get("is_regex").getAsBoolean(),
+				object.get("compare_everything").getAsBoolean(),
 				object.get("trigger").getAsString(),
 				object.get("name").getAsString(),
 				object.get("command").getAsString()
-		);
+			);
+		} catch (Throwable t) { // Make sure MC doesn't crash when the entry is incomplete (compare_everything was added in 1.9)
+			t.printStackTrace();
+			return new ChatReactorEntry();
+		}
 	}
 
 	public void checkMatch(String text) {
@@ -139,14 +158,14 @@ public class ChatReactorEntry {
 			return;
 
 		if (!parseAsRegEx.get()) {
-			if (trigger.get().equals(text))
+			if (compareEverything.get() ? trigger.get().equals(text) : text.contains(trigger.get()))
 				send(command.get());
 			return;
 		}
 
 		Matcher matcher = Pattern.compile(trigger.get()).matcher(text);
 
-		if (!matcher.find())
+		if (!(compareEverything.get() ? matcher.matches() : matcher.find()))
 			return;
 
 		String command = this.command.get();

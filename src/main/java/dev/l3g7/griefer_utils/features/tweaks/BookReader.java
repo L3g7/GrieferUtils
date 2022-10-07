@@ -55,9 +55,13 @@ public class BookReader extends Feature {
 		if (!isActive()
 				|| !isOnGrieferGames()
 				|| !Mouse.getEventButtonState()
-				|| Mouse.getEventButton() != 1
 				|| !(mc().currentScreen instanceof GuiContainer))
 			return;
+
+		if (Mouse.getEventButton() != 1) {
+			event.setCanceled(true);
+			return;
+		}
 
 		Slot slot = ((GuiContainer) mc().currentScreen).getSlotUnderMouse();
 		if (slot != null)

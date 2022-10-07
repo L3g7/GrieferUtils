@@ -86,15 +86,12 @@ public class ChatMenu extends Feature {
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES.keySet())
 			Config.set("features.chat_menu.entries." + DEFAULT_ENTRIES.get(entry), entry.isEnabled());
 
-		if (!customEntries.isEmpty()) {
-			JsonArray array = new JsonArray();
-			for (ChatMenuEntry customEntry : customEntries)
-				if (customEntry.isValid())
-					array.add(customEntry.toJson());
+		JsonArray array = new JsonArray();
+		for (ChatMenuEntry customEntry : customEntries)
+			if (customEntry.isValid())
+				array.add(customEntry.toJson());
 
-			Config.set("features.chat_menu.entries.custom", array);
-		}
-
+		Config.set("features.chat_menu.entries.custom", array);
 		Config.save();
 	}
 

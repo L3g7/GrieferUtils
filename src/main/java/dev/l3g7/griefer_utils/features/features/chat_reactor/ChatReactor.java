@@ -50,15 +50,12 @@ public class ChatReactor extends Feature {
 		if (!loaded) // Don't save the config when starting
 			return;
 
-		if (!entries.isEmpty()) {
-			JsonArray array = new JsonArray();
-			for (ChatReactorEntry entry : entries)
-				if (entry.isValid())
-					array.add(entry.toJson());
+		JsonArray array = new JsonArray();
+		for (ChatReactorEntry entry : entries)
+			if (entry.isValid())
+				array.add(entry.toJson());
 
-			Config.set("features.chat_reactor.entries", array);
-		}
-
+		Config.set("features.chat_reactor.entries", array);
 		Config.save();
 	}
 
@@ -110,7 +107,7 @@ public class ChatReactor extends Feature {
 
 	@EventListener
 	public void onMsg(MessageReceiveEvent event) {
-		if (!isActive() || !isOnGrieferGames())
+		if (!isActive())// || !isOnGrieferGames())
 			return;
 
 		for (ChatReactorEntry entry : entries)

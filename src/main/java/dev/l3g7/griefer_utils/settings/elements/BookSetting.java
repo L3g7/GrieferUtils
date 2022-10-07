@@ -58,6 +58,7 @@ public class BookSetting extends SmallButtonSetting {
 
 	public void clearPages() {
 		pages.clear();
+		buttonIcon(new IconData(Material.BOOK_AND_QUILL));
 	}
 
 }

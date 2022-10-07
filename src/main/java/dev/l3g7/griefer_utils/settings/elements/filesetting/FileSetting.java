@@ -40,7 +40,7 @@ public class FileSetting extends SmallButtonSetting {
 						if (totalLimit < size) {
 							displayAchievement("§e§l§nDateien zu groß", "§eAlle Datein zusammen dürfen maximal %s groß sein.", limitString);
 							return;
-						} else System.out.println(size);
+						}
 					} catch (IOException ignored) {
 						displayAchievement("§c§l§nFehler \u26A0", "§cEs ist Fehler aufgetreten.\n(Wurde ein Anhang gelöscht?)");
 						return;
@@ -82,7 +82,7 @@ public class FileSetting extends SmallButtonSetting {
 
 	public void clearFiles() {
 		files.clear();
-		getSubSettings().getElements().removeIf(s -> s instanceof FileSetting);
+		getSubSettings().getElements().removeIf(s -> s instanceof FileEntry);
 	}
 
 }

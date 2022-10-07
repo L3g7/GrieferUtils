@@ -74,7 +74,7 @@ public class Feedback extends Feature {
 		StringSetting contact = (StringSetting) new StringSetting()
 			.name("Kontaktmöglichkeit")
 			.description("Wie können wir dich bei möglichen Rückfragen erreichen?")
-			.maxLength(1028);
+			.maxLength(1024);
 
 
 		return setting.subSettingsWithHeader(

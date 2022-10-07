@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.util.Base64;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -118,7 +119,7 @@ public class Feedback extends Feature {
 				JsonObject fileEntry = new JsonObject();
 				fileEntry.addProperty("name", file.getName());
 				fileEntry.addProperty("mime_type", URLConnection.guessContentTypeFromName(file.getName()));
-				fileEntry.addProperty("data", new String(Files.readAllBytes(file.toPath()), UTF_8));
+				fileEntry.addProperty("data", Base64.getEncoder().encodeToString(Files.readAllBytes(file.toPath())));
 
 				fileData.add(fileEntry);
 			}

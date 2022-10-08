@@ -18,43 +18,46 @@
 
 package dev.l3g7.griefer_utils.util.render;
 
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.util.ResourceLocation;
+import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.ForgeHooksClient;
+import org.lwjgl.opengl.GL11;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.StaticImport.mc;
-import static dev.l3g7.griefer_utils.util.render.GlStateEngine.*;
-import static org.lwjgl.opengl.GL11.*;
+import static dev.l3g7.griefer_utils.util.render.GlEngine.*;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 /**
  * A utility class for rendering stuff.
  */
 public class RenderUtil {
 
-	public static final char[] ARMOR_ICONS = new char[] {'\u2502', '\u2593', '\u2592', '\u2591'};
-
-	private static final FontRenderer iconFontRenderer = new FontRenderer(mc().gameSettings, new ResourceLocation("griefer_utils/icon_font.png"), mc().renderEngine, false);
-	static { // TODO: without custom font
-		((IReloadableResourceManager) mc().getResourceManager()).registerReloadListener(iconFontRenderer);
-	}
+	private static final RenderItem itemRender = mc().getRenderItem();
 
 	/**
-	 * Renders a title using the iconFontRenderer.
+	 * Renders an item with a given color tint.
 	 */
-	public static void renderTitle(String title, float scale, int color, boolean subTitle) {
-		ScaledResolution res = new ScaledResolution(mc());
-		begin();
-
-
-		translate(res.getScaledWidth() / 2f, res.getScaledHeight() / 2f);
-		blend(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+	public static void renderItem(ItemStack stack, int x, int y, int color) {
+		IBakedModel model = itemRender.getItemModelMesher().getItemModel(stack);
+		RenderItem itemRender = mc().getRenderItem();
 
 		begin();
-		scale(scale);
-		iconFontRenderer.drawString(title, -iconFontRenderer.getStringWidth(title) / 2f, subTitle ? 5 : -10, color, true);
-		end();
+		disableBlocksBlurAndMipmap();
 
+		// Transform
+		Reflection.invoke(itemRender, "setupGuiTransform", x, y, model.isGui3d());
+		model = ForgeHooksClient.handleCameraTransforms(model, TransformType.GUI);
+		scale(0.5F);
+		translate(-0.5F, -0.5F, -0.5F);
+
+		// Draw item
+		WorldRenderer worldrenderer = beginWorldDrawing(GL_QUADS, DefaultVertexFormats.ITEM);
+		Reflection.invoke(itemRender, "renderQuads", worldrenderer, model.getGeneralQuads(), color, stack);
 
 		end();
 	}

@@ -24,10 +24,13 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
-import static dev.l3g7.griefer_utils.util.render.RenderUtil.ARMOR_ICONS;
 import static net.labymod.utils.Material.DIAMOND_CHESTPLATE;
 
 /**
@@ -37,16 +40,19 @@ import static net.labymod.utils.Material.DIAMOND_CHESTPLATE;
 @Singleton
 public class ArmorBreakWarning extends Feature {
 
-	private int warnSlot = -1;
+	private final FontRenderer font = mc().fontRendererObj;
+
+	private final Item[] warnItems = new Item[]{Items.iron_boots, Items.iron_leggings, Items.iron_chestplate, Items.iron_helmet};
+	private ItemStack currentWarnItem = null;
 
 	@MainElement
-	private final NumberSetting damage = new NumberSetting()
+	private final NumberSetting threshold = new NumberSetting()
 		.name("ArmorBreakWarning")
 		.description("Zeigt eine Warnung an, sobald eine angezogene Rüstung die eingestellte Haltbarkeit unterschreitet.", "(0 zum Deaktivieren)")
 		.icon(DIAMOND_CHESTPLATE);
 
+	// TODO
 	/**
-	 * TODO:
 	 * Feature
 	 * FileProvider plugability
 	 * Check TODOs
@@ -56,22 +62,41 @@ public class ArmorBreakWarning extends Feature {
 
 	@EventListener
 	public void onPlayerTick(PlayerTickEvent event) {
-		int slotId = 0;
-		for (ItemStack stack : armorInventory()) {
-			if (stack != null && stack.isItemStackDamageable() && damage.get() > stack.getMaxDamage() - stack.getItemDamage()) {
-				warnSlot = slotId;
-				return;
-			}
-			slotId++;
-		}
+		currentWarnItem = null;
 
-		warnSlot = -1;
+		// Go through armor
+		ItemStack[] armor = armorInventory();
+		for (int i = 0; i < armor.length; i++) {
+			ItemStack stack = armor[i];
+
+			// Check if item can get damaged
+			if (stack == null || !stack.isItemStackDamageable())
+				continue;
+
+			int itemDurability = stack.getMaxDamage() - stack.getItemDamage();
+
+			// Check if durability is less than threshold
+			if (threshold.get() > itemDurability)
+				currentWarnItem = new ItemStack(warnItems[i]);
+		}
 	}
 
 	@EventListener
 	public void onRenderWorld(RenderWorldEvent event) {
-		if (warnSlot != -1)
-			RenderUtil.renderTitle(ARMOR_ICONS[warnSlot] + " geht kaputt!", 2, 0xFF5555, true);
+		if (currentWarnItem == null)
+			return;
+
+		float scale = 2;
+
+		int strWidth = font.getStringWidth("§cgeht kaputt!") + 18; // 16px Item + 2px padding
+		float x = (screenWidth() - strWidth * scale) / 2f;
+		float y = screenHeight() / 2f + 3; // 3px shift
+
+		GlStateManager.scale(scale, scale, 0);
+		GlStateManager.translate(x / scale, y / scale, 0);
+
+		RenderUtil.renderItem(currentWarnItem, 0, 0, 0xFFFF5555);
+		font.drawStringWithShadow("§cgeht kaputt!", 18, 4, -1);
 	}
 
 }

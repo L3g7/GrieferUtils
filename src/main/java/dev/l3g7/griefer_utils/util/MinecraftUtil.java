@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -32,6 +33,8 @@ public interface MinecraftUtil {
 	default EntityPlayerSP player() { return mc().thePlayer; }
 	default InventoryPlayer inventory() { return player().inventory; }
 	default ItemStack[] armorInventory() { return inventory().armorInventory; }
+	default int screenWidth() { return new ScaledResolution(mc()).getScaledWidth(); }
+	default int screenHeight() { return new ScaledResolution(mc()).getScaledHeight(); }
 
 	class StaticImport {
 

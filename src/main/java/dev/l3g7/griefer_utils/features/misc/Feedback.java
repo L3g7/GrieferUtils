@@ -7,8 +7,13 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import dev.l3g7.griefer_utils.settings.elements.filesetting.FileSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
+import dev.l3g7.griefer_utils.util.Reflection;
+import net.labymod.main.LabyMod;
+import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +61,19 @@ public class Feedback extends Feature {
 		return category;
 	}
 
+	/**
+	 * LabyMod doesn't update GuiCustomAchievement when in subsettings<br>
+	 * (look for {@code Tabs.drawScreen(this, mouseX, mouseY)} in LabyModAddonsGui)<br>
+	 * so we have to do it ourselves c.c
+	 */
+	@SubscribeEvent
+	public void onRenderTick(TickEvent.RenderTickEvent event) {
+		if (mc().currentScreen instanceof LabyModAddonsGui
+			&& world() != null
+			&& (boolean) Reflection.invoke(mc().currentScreen, "isInSubSettings"))
+			LabyMod.getInstance().getGuiCustomAchievement().updateAchievementWindow();
+	}
+
 	private CategorySetting addSettings(CategorySetting setting, ApiEndpoint endpoint) {
 		String name = setting.getDisplayName();
 
@@ -89,7 +107,7 @@ public class Feedback extends Feature {
 			new ButtonSetting()
 				.name("Abschicken")
 				.callback(() -> {
-					if (sendFeedback(endpoint, title.get(), String.join("\r", description.getPages()), attachments.getFiles(), contact.get())) {
+					if (sendFeedback(endpoint, title.get(), String.join("\n\n", description.getPages()), attachments.getFiles(), contact.get())) {
 						// Clear all fields
 						title.set("");
 						description.clearPages();

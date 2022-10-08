@@ -226,7 +226,7 @@ public class GuiBook extends GuiScreen {
 		bookPages.set(currPage, new NBTTagString(newText));
 
 		// Reset if the limit was reached
-		if (limit != null && String.join("\r", getPagesAsList()).length() > limit)
+		if (limit != null && String.join("\n\n", getPagesAsList()).length() > limit)
 			bookPages.set(currPage, new NBTTagString(oldData));
 	}
 

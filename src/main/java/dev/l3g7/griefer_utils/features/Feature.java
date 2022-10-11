@@ -41,32 +41,30 @@ import static dev.l3g7.griefer_utils.util.Util.elevate;
  */
 public abstract class Feature implements MinecraftUtil {
 
-	private static final Pattern CAPS_PATTERN = Pattern.compile("([A-Z])");
 	private Category category;
 	private SettingsElement mainElement;
 
 	/**
-	 * IDk what is happening here, I'm just the guy writing the docs
+	 * <p>
+	 * Initialises the feature.
+	 * </p><p>
+	 * This can sadly not be done in the constructor as non-static fields are accessed.
+	 * If anyone knows a better way of doing this, let me know ;D
+	 * </p>
 	 */
 	public void init() {
 		category = Category.getCategory(getClass().getPackage());
 
 		// Load main element
 		Field[] mainElementFields = Reflection.getAnnotatedFields(getClass(), MainElement.class);
-		if (mainElementFields.length == 0)
-			throw new IllegalStateException("Could not find a main element");
-
-		if (mainElementFields.length > 1)
-			throw new IllegalStateException("Found multiple main elements");
+		if (mainElementFields.length != 1)
+			throw new IllegalStateException("Found an invalid amount of main elements");
 
 		mainElement = Reflection.get(this, mainElementFields[0]);
 
 		// Load config key
 		String configKey = getClass().getSimpleName();
-		Matcher matcher = CAPS_PATTERN.matcher(configKey);
-		while (matcher.find())
-			configKey = configKey.replaceFirst(matcher.group(1),  (matcher.start() == 0 ? "" : "_") + matcher.group(1).toLowerCase());
-		configKey = category.getConfigKey() + "." + configKey;
+		configKey = category.getConfigKey() + "." + convertCamelCaseToSnakeCase(configKey);
 
 		// Load settings
 		if (mainElement instanceof ValueHolder<?, ?>)
@@ -77,6 +75,9 @@ public abstract class Feature implements MinecraftUtil {
 		EventHandler.register(this);
 	}
 
+	/**
+	 * Loads the config values for all subSettings.
+	 */
 	private void loadSubSettings(SettingsElement parent, String parentKey) {
 		for (SettingsElement element : parent.getSubSettings().getElements()) {
 			String key = parentKey + "." + getFieldName(element);
@@ -86,6 +87,9 @@ public abstract class Feature implements MinecraftUtil {
 		}
 	}
 
+	/**
+	 * Gets the name of a field based on it's value.
+	 */
 	private String getFieldName(SettingsElement element) {
 		for (Field field : getClass().getDeclaredFields())
 			if (Reflection.get(this, field) == element)
@@ -98,6 +102,9 @@ public abstract class Feature implements MinecraftUtil {
 		return mainElement;
 	}
 
+	/**
+	 * Checks if the parent category and the feature itself is enabled.
+	 */
 	public boolean isEnabled() {
 		if (!category.isEnabled())
 			return false;
@@ -109,6 +116,21 @@ public abstract class Feature implements MinecraftUtil {
 		return true;
 	}
 
+	private static final Pattern CAPS_PATTERN = Pattern.compile("([A-Z])");
+
+	/**
+	 * Converts a CamelCase string to snake_case
+	 */
+	private static String convertCamelCaseToSnakeCase(String str) {
+		Matcher matcher = CAPS_PATTERN.matcher(str);
+		while (matcher.find())
+			str = str.replaceFirst(matcher.group(1),  (matcher.start() == 0 ? "" : "_") + matcher.group(1).toLowerCase());
+		return str;
+	}
+
+	/**
+	 * An annotation for marking the main element in a feature.
+	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
 	public @interface MainElement { }

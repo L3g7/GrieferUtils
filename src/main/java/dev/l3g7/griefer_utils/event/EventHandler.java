@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.event;
 
-import dev.l3g7.griefer_utils.event.events.RenderWorldEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.meta.AnnotationMeta;
@@ -34,7 +33,6 @@ import org.objectweb.asm.Type;
 import java.lang.reflect.Method;
 import java.util.function.Predicate;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.StaticImport.mc;
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
@@ -47,7 +45,7 @@ public class EventHandler implements Opcodes {
 	public static void init() {
 		for (MethodMeta method : FileProvider.getAnnotatedMethods(EventListener.class)) {
 
-			// Skip virtual listeners
+			// Skip static listeners
 			if (!method.isStatic())
 				continue;
 
@@ -69,7 +67,7 @@ public class EventHandler implements Opcodes {
 	}
 
 	/**
-	 * Registers all virtual methods annotated with {@link EventListener} to the {@link MinecraftForge#EVENT_BUS}.
+	 * Registers all non-static methods annotated with {@link EventListener} to the {@link MinecraftForge#EVENT_BUS}.
 	 */
 	public static void register(Object obj) {
 		Class<?> clazz = obj.getClass();

@@ -76,6 +76,9 @@ public class Config {
     private static final File configFile = new File(new File(Minecraft.getMinecraft().mcDataDir, "config"), "GrieferUtils.json");
     private static JsonObject config = null;
 
+	/**
+	 * Writes the configuration to the config file.
+	 */
     public static void save() {
 	    if (config == null)
 		    config = new JsonObject();
@@ -84,7 +87,7 @@ public class Config {
     }
 
 	/**
-	 * Returns the config, which is loaded if it wasn't already.
+	 * Reads the config file if necessary and returns the config object.
 	 */
 	private static JsonObject getConfig() {
 		if (config == null)
@@ -94,4 +97,5 @@ public class Config {
 
 		return config;
     }
+
 }

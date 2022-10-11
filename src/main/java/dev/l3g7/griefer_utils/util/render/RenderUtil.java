@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.ForgeHooksClient;
-import org.lwjgl.opengl.GL11;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.StaticImport.mc;
 import static dev.l3g7.griefer_utils.util.render.GlEngine.*;

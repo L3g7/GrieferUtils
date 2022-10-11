@@ -53,8 +53,6 @@ public class ArmorBreakWarning extends Feature {
 
 	// TODO
 	/**
-	 * Feature
-	 * FileProvider plugability
 	 * Check TODOs
 	 * Check warnings
 	 * Check for comments

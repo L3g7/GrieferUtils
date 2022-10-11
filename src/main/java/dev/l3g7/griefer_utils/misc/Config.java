@@ -87,7 +87,7 @@ public class Config {
     }
 
 	/**
-	 * Reads the config file if necessary and returns the config object.
+	 * Lazy loads the config if required and returns it.
 	 */
 	private static JsonObject getConfig() {
 		if (config == null)

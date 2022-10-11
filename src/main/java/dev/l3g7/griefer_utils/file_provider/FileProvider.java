@@ -18,11 +18,10 @@
 
 package dev.l3g7.griefer_utils.file_provider;
 
+import dev.l3g7.griefer_utils.file_provider.impl.URLFileProvider;
 import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
-import dev.l3g7.griefer_utils.file_provider.provider_impl.FileProviderImpl;
-import dev.l3g7.griefer_utils.file_provider.provider_impl.JarFileProviderImpl;
-import dev.l3g7.griefer_utils.file_provider.provider_impl.URLFileProviderImpl;
+import dev.l3g7.griefer_utils.file_provider.impl.JarFileProvider;
 import dev.l3g7.griefer_utils.util.Util;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import org.apache.commons.io.IOUtils;
@@ -37,48 +36,80 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.util.Util.elevate;
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 import static org.objectweb.asm.ClassReader.SKIP_CODE;
 
 /**
  * A class providing a list of all files in the addon.
  */
-public class FileProvider {
+public abstract class FileProvider {
 
-	private static final Class<?>[] PROVIDERS = new Class[]{JarFileProviderImpl.class, URLFileProviderImpl.class};
+	/**
+	 * Updates the known files using refClass.
+	 * @return the error if one occurred, null otherwise
+	 */
+	protected abstract Throwable update0(Class<?> refClass);
 
-	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>();
+	/**
+	 * @return a list of all known files.
+	 */
+	protected abstract Collection<String> getFiles0();
+
+	/**
+	 * @return an InputStream containing the given file's contents
+	 */
+	protected abstract InputStream getData0(String file);
+
+
+
+	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>(); // file -> class meta
 	private static final Map<Class<?>, Object> singletonInstances = new HashMap<>();
-	private static FileProviderImpl impl = null;
+	private static FileProvider provider = null;
 
 	/**
 	 * Lazy loads the implementation if required and returns it.
 	 */
-	private static FileProviderImpl getProvider() {
-		if (impl != null)
-			return impl;
+	private static FileProvider getProvider() {
+		if (provider == null) {
+			List<Throwable> errors = new ArrayList<>();
 
-		// Load implementation
-		List<Throwable> errors = new ArrayList<>();
-		for (Class<?> providerClass : PROVIDERS) {
-			try {
-				return impl = (FileProviderImpl) Reflection.construct(providerClass);
-			} catch (Throwable throwable) {
+			// Test possible providers
+			for (FileProvider possibleProvider : new FileProvider[]{JarFileProvider.INSTANCE, URLFileProvider.INSTANCE}) {
+				Throwable error = possibleProvider.update0(FileProvider.class);
+				if (error == null)
+					return provider = possibleProvider;
+
 				// Only throw errors if no implementation could load
-				errors.add(throwable);
+				errors.add(error);
 			}
+
+			// If this point is reached, no implementation could be loaded -> throw errors
+			errors.forEach(Throwable::printStackTrace);
+			throw new RuntimeException("No available file provider could be found!");
 		}
 
-		// If this point is reached, no implementation could be loaded -> throw errors
-		errors.forEach(Throwable::printStackTrace);
-		throw new RuntimeException("No available file provider could be found!");
+		return provider;
 	}
+
+	/**
+	 * Updates the current provider using the given class.
+	 * Currently unused, makes possible extensions of GrieferUtils easier.
+	 */
+	@SuppressWarnings("unused")
+	public static void update(Class<?> refClass) {
+		Throwable error = getProvider().update0(refClass);
+		if (error != null)
+			throw elevate(error);
+	}
+
+
 
 	/**
 	 * Returns all files.
 	 */
 	public static Collection<String> getFiles() {
-		return getProvider().getFiles();
+		return getProvider().getFiles0();
 	}
 
 	/**
@@ -92,7 +123,7 @@ public class FileProvider {
 	 * Returns the content of a file as an InputStream.
 	 */
 	public static InputStream getData(String file) {
-		return getProvider().getData(file);
+		return getProvider().getData0(file);
 	}
 
 	/**

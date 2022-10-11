@@ -16,39 +16,54 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.file_provider.provider_impl;
+package dev.l3g7.griefer_utils.file_provider.impl;
+
+import dev.l3g7.griefer_utils.file_provider.FileProvider;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
+import static dev.l3g7.griefer_utils.util.Util.addMessage;
+
 /**
- * An implementation for providing files if the addon can be found in the system classloader's urls.
+ * An implementation for providing files if the addon was loaded from a jar file.
  */
-public class URLFileProviderImpl implements FileProviderImpl {
+public class URLFileProvider extends FileProvider {
+
+	public static final URLFileProvider INSTANCE = new URLFileProvider();
 
 	private final Set<String> entries = new HashSet<>();
 	private final Map<String, File> files = new HashMap<>();
 
-	/**
-	 * IDk what is happening here, I'm just the guy writing the docs
-	 */
-	public URLFileProviderImpl() throws IOException, URISyntaxException {
-		for (URL url : ((URLClassLoader) ClassLoader.getSystemClassLoader()).getURLs()) {
-			File root = new File(url.toURI());
-			load(root, root);
-		}
+	private URLFileProvider() {}
 
-		if (entries.isEmpty())
-			throw new IllegalStateException("No entries found");
+	/**
+	 * Loads all files known by the system class loader.
+	 * @return the error if one occurred, null otherwise
+	 */
+	@Override
+	protected Throwable update0(Class<?> ignored) {
+		for (URL url : ((URLClassLoader) ClassLoader.getSystemClassLoader()).getURLs()) {
+			try {
+				File root = new File(url.toURI());
+				load(root, root);
+			} catch (Throwable e) {
+				return addMessage(e, "Tried to load urls from " + ClassLoader.getSystemClassLoader());
+			}
+		}
+		return null;
 	}
 
+	/**
+	 * Loads the given file.
+	 */
 	private void load(File root, File file) throws IOException {
 		if (file.isDirectory())
 			for (File child : file.listFiles())
 				load(root, child);
+
 		else if (file != root) {
 			// Strip root path and normalize string
 			String path = file.getCanonicalPath().substring(root.getCanonicalPath().length() + 1).replace('\\', '/');
@@ -57,13 +72,19 @@ public class URLFileProviderImpl implements FileProviderImpl {
 		}
 	}
 
+	/**
+	 * @return a list of all known files.
+	 */
 	@Override
-	public Collection<String> getFiles() {
+	protected Collection<String> getFiles0() {
 		return entries;
 	}
 
+	/**
+	 * @return an InputStream containing the given file's contents
+	 */
 	@Override
-	public InputStream getData(String file) {
+	protected InputStream getData0(String file) {
 		if (files.get(file) == null)
 			throw new IllegalArgumentException("Tried to get data of unknown file " + file);
 

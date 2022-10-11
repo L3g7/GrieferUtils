@@ -94,6 +94,7 @@ public class ArrayUtil {
 	/**
 	 * Flatmaps an array.
 	 */
+	@SafeVarargs
 	public static <T> T[] flatmap(Class<T> type, T[]... array) {
 		// Convert type to array class
 		return c(Arrays.stream(array)

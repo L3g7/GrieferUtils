@@ -16,7 +16,7 @@ import net.labymod.settings.elements.SettingsElement;
 public class Changelog extends Feature {
 
 	private final CategorySetting element = new CategorySetting()
-			.name("§z§eChangelog")
+			.name("§y§eChangelog")
 			.description("§eVerbindet...")
 			.icon("white_scroll")
 			.settingsEnabled(false)
@@ -53,11 +53,11 @@ public class Changelog extends Feature {
 						));
 			}
 
-			element .name("§zChangelog")
+			element .name("§y§fChangelog")
 					.description(null)
 					.settingsEnabled(true);
 		}).orElse(t ->
-			element .name("§z§c§mChangelog")
+			element .name("§y§c§mChangelog")
 					.description("§cDu wurdest geratelimited.")
 					.settingsEnabled(false)
 		);

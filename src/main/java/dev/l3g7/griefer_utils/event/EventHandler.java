@@ -45,7 +45,7 @@ public class EventHandler implements Opcodes {
 	public static void init() {
 		for (MethodMeta method : FileProvider.getAnnotatedMethods(EventListener.class)) {
 
-			// Skip static listeners
+			// Skip non-static listeners
 			if (!method.isStatic())
 				continue;
 

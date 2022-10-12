@@ -16,249 +16,245 @@ import net.minecraft.item.*;
 import net.minecraft.util.*;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Cylinder;
 
+import javax.vecmath.Vector3d;
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.minecraft.block.material.Material.water;
+import static org.lwjgl.opengl.GL11.*;
 
 @Singleton
 public class Trajectories extends Feature {
 
-    private final RadioSetting<TrajectoriesMode> mode = new RadioSetting<>(TrajectoriesMode.class)
-            .name("Trajectories")
-            .icon("marker")
-            .defaultValue(TrajectoriesMode.DISABLED)
-            .config("features.trajectories.mode")
-            .stringProvider(TrajectoriesMode::getName);
+	private final RadioSetting<TrajectoriesMode> mode = new RadioSetting<>(TrajectoriesMode.class)
+		.name("Trajectories")
+		.icon("marker")
+		.defaultValue(TrajectoriesMode.DISABLED)
+		.config("features.trajectories.mode")
+		.stringProvider(TrajectoriesMode::getName);
 
-    private enum TrajectoriesMode {
+	private enum TrajectoriesMode {
 
-        DISABLED("Aus"), TRAIL("Trail"), DOT("Punkt");
+		DISABLED("Aus"), TRAIL("Trail"), DOT("Punkt");
 
-        private final String name;
+		private final String name;
 
-        TrajectoriesMode(String name) {
-            this.name = name;
-        }
+		TrajectoriesMode(String name) {
+			this.name = name;
+		}
 
-        public String getName() {
-            return name;
-        }
+		public String getName() {
+			return name;
+		}
 
-    }
+	}
 
-    public Trajectories() {
-        super(Category.FEATURE);
-    }
+	public Trajectories() {
+		super(Category.FEATURE);
+	}
 
-    @Override
-    public SettingsElement getMainElement() {
-        return mode;
-    }
+	@Override
+	public SettingsElement getMainElement() {
+		return mode;
+	}
 
-    /**
-     *
-     * Copyright (C) LiquidBounce 2020, GNU General Public License v3.0<br>
-     * See <a href="https://github.com/CCBlueX/LiquidBounce/blob/9c546f0598843e315f26f35c6e0c31d211f55276/shared/main/java/net/ccbluex/liquidbounce/features/module/modules/render/Projectiles.kt">Projectiles.kt</a>
-     * <p>
-     * converted to Java, added mode checks, removed colorMode<br>
-     * TODO: beautify
-     *
-     */
-    @SubscribeEvent
-    public void onRender(RenderWorldLastEvent event) {
-        if (mode.get() == TrajectoriesMode.DISABLED || !isCategoryEnabled() || !isOnGrieferGames())
-            return;
+	/**
+	 *
+	 * Copyright (C) LiquidBounce 2020, GNU General Public License v3.0<br>
+	 * See <a href="https://github.com/CCBlueX/LiquidBounce/blob/9c546f0598843e315f26f35c6e0c31d211f55276/shared/main/java/net/ccbluex/liquidbounce/features/module/modules/render/Projectiles.kt">Projectiles.kt</a>
+	 * <p>
+	 * converted to Java, added mode checks, removed colorMode, cleaned the code up<br>
+	 *
+	 */
+	@SubscribeEvent
+	public void onRender(RenderWorldLastEvent event) {
+		if (mode.get() == TrajectoriesMode.DISABLED
+			|| !isCategoryEnabled()
+			|| !isOnGrieferGames()
+			|| player() == null
+			|| player().getHeldItem() == null)
+			return;
 
-        if (player() == null)
-            return;
-        if (player().getHeldItem() != null) {
-            ItemStack heldItem = player().getHeldItem();
-            if (heldItem == null)
-                return;
+		ItemStack heldItem = player().getHeldItem();
+		if (heldItem == null)
+			return;
 
-            Item item = heldItem.getItem();
-            RenderManager renderManager = mc().getRenderManager();
-            boolean isBow = false;
-            float motionFactor = 1.5F;
-            float motionSlowdown = 0.99F;
-            float gravity, size, power;
-            if (item instanceof ItemBow) {
-                if (!player().isUsingItem())
-                    return;
+		Item item = heldItem.getItem();
+		RenderManager renderManager = mc().getRenderManager();
+		boolean isBow = false;
+		float motionFactor = 1.5F;
+		float motionSlowdown = 0.99F;
+		float size = 0.25f;
+		float power = player().rotationYaw;
+		float gravity = 0.05f;
 
-                isBow = true;
-                gravity = 0.05F;
-                size = 0.3F;
-                int duration = player().getItemInUseDuration();
+		if (item instanceof ItemBow) {
+			if (!player().isUsingItem())
+				return;
 
-                power = (float) duration / 20.0F;
-                power = (power * power + power * 2.0F) / 3.0F;
+			isBow = true;
+			size = 0.3F;
 
-                if (power < 0.1F)
-                    return;
+			power = player().getItemInUseDuration() / 20f;
+			power = (power * power + power * 2f) / 3f;
 
-                motionFactor = Math.min(power, 1.0F) * 3.0F;
-            } else if (item instanceof ItemFishingRod) {
-                gravity = 0.04F;
-                size = 0.25F;
-                motionSlowdown = 0.92F;
-            } else if (item instanceof ItemPotion && ItemPotion.isSplash(heldItem.getItemDamage())) {
-                gravity = 0.05F;
-                size = 0.25F;
-                motionFactor = 0.5F;
-            } else if (item instanceof ItemSnowball || item instanceof ItemEnderPearl || item instanceof ItemEgg) {
-                gravity = 0.03F;
-                size = 0.25F;
-            } else
-                return;
+			if (power < 0.1F)
+				return;
 
-            float pitch;
-            double posX, posY, posZ;
-            double motionX;
-            byte pitchOffset;
-            power = player().rotationYaw;
-            pitch = player().rotationPitch;
-            posX = (double) Reflection.get(renderManager, "renderPosX", "field_78725_b", "o") - (double) (MathHelper.cos(power / 180.0F * (float) Math.PI) * 0.16F);
-            posY = (double) Reflection.get(renderManager, "renderPosY", "field_78726_c", "p") + (double) player().getEyeHeight() - 0.10000000149011612D;
-            posZ = (double) Reflection.get(renderManager, "renderPosZ", "field_78723_d", "q") - (double) (MathHelper.sin(power / 180.0F * (float) Math.PI) * 0.16F);
-            motionX = (double) (-MathHelper.sin(power / 180.0F * 3.1415927F) * MathHelper.cos(pitch / 180.0F * 3.1415927F)) * (isBow ? 1.0D : 0.4D);
-            if (item instanceof ItemPotion && ItemPotion.isSplash(heldItem.getItemDamage()))
-                pitchOffset = -20;
-            else
-                pitchOffset = 0;
+			motionFactor = Math.min(power, 1f) * 3f;
+		} else if (item instanceof ItemFishingRod) {
+			gravity = 0.04F;
+			motionSlowdown = 0.92F;
+		} else if (item instanceof ItemPotion && ItemPotion.isSplash(heldItem.getItemDamage())) {
+			motionFactor = 0.5f;
+		} else if (item instanceof ItemSnowball || item instanceof ItemEnderPearl || item instanceof ItemEgg) {
+			gravity = 0.03f;
+		} else
+			return;
 
-            double motionY = (double) (-MathHelper.sin((pitch + (float) pitchOffset) / 180.0F * 3.1415927F)) * (isBow ? 1.0D : 0.4D);
-            double motionZ = (double) (MathHelper.cos(power / 180.0F * 3.1415927F) * MathHelper.cos(pitch / 180.0F * 3.1415927F)) * (isBow ? 1.0D : 0.4D);
-            float distance = MathHelper.sqrt_double(motionX * motionX + motionY * motionY + motionZ * motionZ);
-            motionX /= distance;
-            motionY /= distance;
-            motionZ /= distance;
-            motionX *= motionFactor;
-            motionY *= motionFactor;
-            motionZ *= motionFactor;
-            MovingObjectPosition landingPosition = null;
-            boolean hasLanded = false;
-            boolean hitEntity = false;
-            WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
+		final double renderPosX = Reflection.get(renderManager, "renderPosX", "field_78725_b", "o");
+		final double renderPosY = Reflection.get(renderManager, "renderPosY", "field_78726_c", "p");
+		final double renderPosZ = Reflection.get(renderManager, "renderPosZ", "field_78723_d", "q");
 
-            GL11.glDepthMask(false);
-            GL11.glEnable(3042);
-            GL11.glEnable(2848);
-            GL11.glDisable(2929);
-            GL11.glDisable(3008);
-            GL11.glDisable(3553);
-            GL11.glBlendFunc(770, 771);
-            GL11.glHint(3154, 4354);
-            GL11.glColor4f(0, 160f / 255f, 1, 1);
-            GL11.glLineWidth(2.0F);
-            worldRenderer.begin(3, DefaultVertexFormats.POSITION);
+		float pitch = player().rotationPitch;
+		byte pitchOffset = (byte) ((item instanceof ItemPotion && ItemPotion.isSplash(heldItem.getItemDamage())) ? -20 : 0);
 
-            while (!hasLanded && posY > 0.0D) {
-                Vec3 posBefore = new Vec3(posX, posY, posZ);
-                Vec3 posAfter = new Vec3(posX + motionX, posY + motionY, posZ + motionZ);
-                landingPosition = world().rayTraceBlocks(posBefore, posAfter, false, true, false);
-                posBefore = new Vec3(posX, posY, posZ);
-                posAfter = new Vec3(posX + motionX, posY + motionY, posZ + motionZ);
-                if (landingPosition != null) {
-                    hasLanded = true;
-                    posAfter = new Vec3(landingPosition.hitVec.xCoord, landingPosition.hitVec.yCoord, landingPosition.hitVec.zCoord);
-                }
+		float pitchRadians = (float) Math.toRadians(pitch);
+		float powerRadians = (float) Math.toRadians(power);
+		float offsetPitchRadians = (float) Math.toRadians(pitch + pitchOffset);
 
-                AxisAlignedBB arrowBox = (new AxisAlignedBB(posX - (double) size, posY - (double) size, posZ - (double) size, posX + (double) size, posY + (double) size, posZ + (double) size)).addCoord(motionX, motionY, motionZ).expand(1.0D, 1.0D, 1.0D);
-                int chunkMinX = MathHelper.floor_double((arrowBox.minX - 2.0D) / 16.0D);
-                int chunkMaxX = MathHelper.floor_double((arrowBox.maxX + 2.0D) / 16.0D);
-                int chunkMinZ = MathHelper.floor_double((arrowBox.minZ - 2.0D) / 16.0D);
-                int chunkMaxZ = MathHelper.floor_double((arrowBox.maxZ + 2.0D) / 16.0D);
-                List<Entity> collidedEntities = new ArrayList<>();
-                int x = chunkMinX;
-                if (chunkMinX <= chunkMaxX) {
-                    while (true) {
-                        int z = chunkMinZ;
-                        if (chunkMinZ <= chunkMaxZ) {
-                            while (true) {
-                                world().getChunkFromChunkCoords(x, z).getEntitiesWithinAABBForEntity(player(), arrowBox, collidedEntities, null);
-                                if (z == chunkMaxZ)
-                                    break;
+		Vector3d pos = new Vector3d (
+			renderPosX - (MathHelper.cos(powerRadians) * 0.16F),
+			renderPosY + player().getEyeHeight() - 0.10000000149011612D,
+			renderPosZ - (MathHelper.sin(powerRadians) * 0.16F)
+		);
 
-                                ++z;
-                            }
-                        }
+		Vector3d motion = new Vector3d (
+			-MathHelper.sin(powerRadians) * MathHelper.cos(pitchRadians),
+			-MathHelper.sin(offsetPitchRadians),
+			MathHelper.cos(powerRadians) * MathHelper.cos(pitchRadians)
+		);
 
-                        if (x == chunkMaxX)
-                            break;
+		if (!isBow)
+			motion.scale(0.4);
+		motion.scale(1 / motion.length());
+		motion.scale(motionFactor);
 
-                        ++x;
-                    }
-                }
+		MovingObjectPosition landingPosition = null;
+		boolean hasLanded = false;
+		boolean hitEntity = false;
+		WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
-                for (Entity possibleEntity : collidedEntities) {
-                    if (possibleEntity.canBeCollidedWith() && possibleEntity != player()) {
-                        AxisAlignedBB possibleEntityBoundingBox = possibleEntity.getEntityBoundingBox().expand(size, size, size);
-                        MovingObjectPosition movingObjectPosition = possibleEntityBoundingBox.calculateIntercept(posBefore, posAfter);
-                        if (movingObjectPosition != null) {
-                            hitEntity = true;
-                            hasLanded = true;
-                            landingPosition = movingObjectPosition;
-                        }
-                    }
-                }
+		glDepthMask(false);
+		glEnable(GL_BLEND);
+		glEnable(GL_LINE_SMOOTH);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_ALPHA_TEST);
+		glDisable(GL_TEXTURE_2D);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+		glColor4f(0, 160 / 255f, 1, 1);
+		glLineWidth(2);
+		worldRenderer.begin(3, DefaultVertexFormats.POSITION);
 
-                posX += motionX;
-                posY += motionY;
-                posZ += motionZ;
-                IBlockState blockState = world().getBlockState(new BlockPos(posX, posY, posZ));
-                Block block = blockState.getBlock();
-                if (block.getMaterial() == net.minecraft.block.material.Material.water) {
-                    motionX *= 0.6D;
-                    motionY *= 0.6D;
-                    motionZ *= 0.6D;
-                } else {
-                    motionX *= motionSlowdown;
-                    motionY *= motionSlowdown;
-                    motionZ *= motionSlowdown;
-                }
+		while (!hasLanded && pos.y > 0.0D) {
+			Vec3 posBefore = new Vec3(pos.x, pos.y, pos.z);
+			Vec3 posAfter = new Vec3(pos.x + motion.x, pos.y + motion.y, pos.z + motion.z);
 
-                motionY -= gravity;
-                if (mode.get() == TrajectoriesMode.TRAIL)
-                    worldRenderer.pos(posX - (double) Reflection.get(renderManager, "renderPosX", "field_78725_b", "o"), posY - (double) Reflection.get(renderManager, "renderPosY", "field_78726_c", "p"), posZ - (double) Reflection.get(renderManager, "renderPosZ", "field_78723_d", "q")).endVertex();
-            }
+			landingPosition = world().rayTraceBlocks(posBefore, posAfter, false, true, false);
+			posBefore = new Vec3(pos.x, pos.y, pos.z);
+			posAfter = new Vec3(pos.x + motion.x, pos.y + motion.y, pos.z + motion.z);
 
-            Tessellator.getInstance().draw();
-            GL11.glPushMatrix();
-            GL11.glTranslated(posX - (double) Reflection.get(renderManager, "renderPosX", "field_78725_b", "o"), posY - (double) Reflection.get(renderManager, "renderPosY", "field_78726_c", "p"),
-                    posZ - (double) Reflection.get(renderManager, "renderPosZ", "field_78723_d", "q"));
-            if (landingPosition != null) {
-                EnumFacing facing = landingPosition.sideHit;
-                switch (facing.getAxis().ordinal()) {
-                    case 0:
-                        GL11.glRotatef(90.0F, 0.0F, 0.0F, 1.0F);
-                    case 1:
-                    default:
-                        break;
-                    case 2:
-                        GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
-                }
+			if (landingPosition != null) {
+				hasLanded = true;
+				posAfter = new Vec3(landingPosition.hitVec.xCoord, landingPosition.hitVec.yCoord, landingPosition.hitVec.zCoord);
+			}
 
-                if (hitEntity) {
-                    GL11.glColor4f(1, 0, 0, 150f / 255f);
-                }
-            }
+			AxisAlignedBB arrowBox = (new AxisAlignedBB(
+				pos.x - size,
+				pos.y - size,
+				pos.z - size,
+				pos.x + size,
+				pos.y + size,
+				pos.z + size))
+				.addCoord(motion.x, motion.y, motion.z)
+				.expand(1.0D, 1.0D, 1.0D);
 
-            GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
-            Cylinder cylinder = new Cylinder();
-            cylinder.setDrawStyle(100011);
-            cylinder.draw(0.2F, 0.0F, 0.0F, 60, 1);
-            GL11.glPopMatrix();
-            GL11.glDepthMask(true);
-            GL11.glDisable(3042);
-            GL11.glDisable(2848);
-            GL11.glEnable(2929);
-            GL11.glEnable(3008);
-            GL11.glEnable(3553);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        }
-    }
+			int chunkMinX = MathHelper.floor_double((arrowBox.minX - 2.0D) / 16.0D);
+			int chunkMaxX = MathHelper.floor_double((arrowBox.maxX + 2.0D) / 16.0D);
+			int chunkMinZ = MathHelper.floor_double((arrowBox.minZ - 2.0D) / 16.0D);
+			int chunkMaxZ = MathHelper.floor_double((arrowBox.maxZ + 2.0D) / 16.0D);
+
+			List<Entity> collidedEntities = new ArrayList<>();
+
+			for (int x = chunkMinX; x <= chunkMaxX; x++)
+				for (int z = chunkMinZ; z <= chunkMaxZ; z++)
+					world().getChunkFromChunkCoords(x, z).getEntitiesWithinAABBForEntity(player(), arrowBox, collidedEntities, null);
+
+			for (Entity possibleEntity : collidedEntities) {
+				if (possibleEntity.canBeCollidedWith() && possibleEntity != player()) {
+					AxisAlignedBB possibleEntityBoundingBox = possibleEntity.getEntityBoundingBox().expand(size, size, size);
+					MovingObjectPosition movingObjectPosition = possibleEntityBoundingBox.calculateIntercept(posBefore, posAfter);
+					if (movingObjectPosition != null) {
+						hitEntity = true;
+						hasLanded = true;
+						landingPosition = movingObjectPosition;
+					}
+				}
+			}
+
+			pos.add(motion);
+
+			IBlockState blockState = world().getBlockState(new BlockPos(pos.x, pos.y, pos.z));
+			Block block = blockState.getBlock();
+
+			motion.scale(block.getMaterial() == water ? 0.6 : motionSlowdown);
+
+			motion.y -= gravity;
+
+			if (mode.get() == TrajectoriesMode.TRAIL)
+				worldRenderer.pos(
+					pos.x - renderPosX,
+					pos.y - renderPosY,
+					pos.z - renderPosZ).endVertex();
+		}
+
+		Tessellator.getInstance().draw();
+
+		glPushMatrix();
+		glTranslated(
+			pos.x - renderPosX,
+			pos.y - renderPosY,
+			pos.z - renderPosZ
+		);
+
+		if (landingPosition != null) {
+			int ordinal = landingPosition.sideHit.ordinal();
+
+			if (ordinal == 0)
+				glRotatef(90f, 0f, 0f, 1f);
+			if (ordinal == 2)
+				glRotatef(90f, 1f, 0f, 0f);
+
+			if (hitEntity)
+				glColor4f(1, 0, 0, 150f / 255f);
+		}
+
+		glRotatef(-90f, 1f, 0f, 0f);
+		Cylinder cylinder = new Cylinder();
+		cylinder.setDrawStyle(100011);
+		cylinder.draw(0.2F, 0f, 0f, 60, 1);
+
+		glPopMatrix();
+		glDepthMask(true);
+		glDisable(GL_BLEND);
+		glDisable(GL_LINE_SMOOTH);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_TEXTURE_2D);
+		glColor4f(1f, 1f, 1f, 1f);
+	}
 
 }

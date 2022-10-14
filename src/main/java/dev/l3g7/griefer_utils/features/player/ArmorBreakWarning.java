@@ -31,6 +31,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static net.labymod.utils.Material.DIAMOND_CHESTPLATE;
 
 /**
@@ -81,7 +83,8 @@ public class ArmorBreakWarning extends Feature {
 
 	@EventListener
 	public void onRenderWorld(RenderWorldEvent event) {
-		if (currentWarnItem == null)
+		ItemStack warnItem = this.currentWarnItem; // Avoid concurrent modifications
+		if (warnItem == null)
 			return;
 
 		float scale = 2;
@@ -93,7 +96,7 @@ public class ArmorBreakWarning extends Feature {
 		GlStateManager.scale(scale, scale, 0);
 		GlStateManager.translate(x / scale, y / scale, 0);
 
-		RenderUtil.renderItem(currentWarnItem, 0, 0, 0xFFFF5555);
+		RenderUtil.renderItem(warnItem, 0, 0, 0xFFFF5555);
 		font.drawStringWithShadow("§cgeht kaputt!", 18, 4, -1);
 	}
 

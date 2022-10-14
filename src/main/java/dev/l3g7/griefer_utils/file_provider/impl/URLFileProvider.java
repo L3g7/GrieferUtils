@@ -28,7 +28,7 @@ import java.util.*;
 import static dev.l3g7.griefer_utils.util.Util.addMessage;
 
 /**
- * An implementation for providing files if the addon was loaded from a jar file.
+ * An implementation for providing files if the addon was loaded using an URLClassLoader.
  */
 public class URLFileProvider extends FileProvider {
 

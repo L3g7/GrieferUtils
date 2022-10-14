@@ -86,6 +86,9 @@ public class Category {
 		setting.subSettings(feature.getMainElement());
 	}
 
+	/**
+	 * An annotation for defining the metadata of a category.
+	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.PACKAGE)
 	public @interface Meta {

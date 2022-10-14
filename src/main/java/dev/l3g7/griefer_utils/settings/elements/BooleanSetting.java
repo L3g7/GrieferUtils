@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.settings.ValueHolder;
 import net.labymod.settings.elements.BooleanElement;
 
 /**
- * A setting holding a boolean, represented ingame by a switch.
+ * A setting holding a boolean, represented in-game by a switch.
  */
 public class BooleanSetting extends BooleanElement implements ElementBuilder<BooleanSetting>, ValueHolder<BooleanSetting, Boolean> {
 

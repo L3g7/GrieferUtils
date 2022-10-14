@@ -34,7 +34,7 @@ import static dev.l3g7.griefer_utils.util.Util.elevate;
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
- * Meta information of a method.
+ * Meta information of an annotation.
  */
 public class AnnotationMeta implements Opcodes {
 

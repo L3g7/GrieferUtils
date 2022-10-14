@@ -42,6 +42,7 @@ public class MainPage {
 		new HeaderSetting("§r").scale(.4).entryHeight(10)));
 
 	static {
+		// Load features
 		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Feature.class)) {
 			Class<Feature> feature = meta.loadClass();
 

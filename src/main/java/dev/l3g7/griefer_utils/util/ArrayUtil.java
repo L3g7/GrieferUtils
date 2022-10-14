@@ -53,11 +53,14 @@ public class ArrayUtil {
 	 */
 	public static <T> String toString(T[] array, Function<T, String> func, String delimiter) {
 		StringBuilder s = new StringBuilder();
+
 		for (int i = 0; i < array.length; i++) {
 			if(i != 0)
 				s.append(delimiter);
+
 			s.append(func.apply(array[i]));
 		}
+
 		return s.toString();
 	}
 

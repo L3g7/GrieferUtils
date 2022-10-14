@@ -23,7 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * The frontend of reflection.
+ * The "frontend" of reflection.
  */
 public class Reflection {
 

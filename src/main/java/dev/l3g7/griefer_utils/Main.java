@@ -19,6 +19,8 @@
 package dev.l3g7.griefer_utils;
 
 import dev.l3g7.griefer_utils.event.EventHandler;
+import dev.l3g7.griefer_utils.event.events.OnEnable;
+import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import net.labymod.api.LabyModAddon;
 import net.labymod.core.asm.LabyModCoreMod;
@@ -26,8 +28,10 @@ import net.labymod.settings.elements.SettingsElement;
 
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.util.reflection.Reflection.invoke;
+
 /**
- * The main.
+ * The main class.
  */
 public class Main extends LabyModAddon {
 
@@ -37,6 +41,10 @@ public class Main extends LabyModAddon {
 			return;
 
 		EventHandler.init();
+
+		// Call all methods annotated with @OnEnable
+		FileProvider.getAnnotatedMethods(OnEnable.class)
+			.forEach(m -> invoke(m.owner.loadClass(), m.loadMethod()));
 	}
 
 	@Override

@@ -18,13 +18,16 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.Main;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An event triggered after GrieferUtils was enabled.
+ * An annotations marking methods triggered after GrieferUtils was enabled.
+ * @see Main#onEnable()
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

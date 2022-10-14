@@ -41,15 +41,17 @@ processResources.from(sourceSets.main.resources.srcDirs) {
     expand 'version': version
 }
 
+// Set compile options
 reobf.jar.mappingType = "NOTCH"
-
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 	options.encoding = 'UTF-8'
 }
 
+// Change jar name
 jar.archiveName = "griefer-utils-v${version}.jar"
 
+// Create unobfuscated jar
 tasks.build.dependsOn('deobfJar')
 task deobfJar(type: Jar) {
     from sourceSets.main.output

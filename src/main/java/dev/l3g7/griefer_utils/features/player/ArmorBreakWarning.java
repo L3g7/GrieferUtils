@@ -31,8 +31,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import static net.labymod.utils.Material.DIAMOND_CHESTPLATE;
 
 /**
@@ -47,18 +45,13 @@ public class ArmorBreakWarning extends Feature {
 	private final Item[] warnItems = new Item[]{Items.iron_boots, Items.iron_leggings, Items.iron_chestplate, Items.iron_helmet};
 	private ItemStack currentWarnItem = null;
 
+
 	@MainElement
 	private final NumberSetting threshold = new NumberSetting()
 		.name("ArmorBreakWarning")
 		.description("Zeigt eine Warnung an, sobald eine angezogene Rüstung die eingestellte Haltbarkeit unterschreitet.", "(0 zum Deaktivieren)")
 		.icon(DIAMOND_CHESTPLATE);
 
-	// TODO
-	/**
-	 * Check TODOs
-	 * Check warnings
-	 * Check for comments
-	 */
 
 	@EventListener
 	public void onPlayerTick(PlayerTickEvent event) {
@@ -80,6 +73,7 @@ public class ArmorBreakWarning extends Feature {
 				currentWarnItem = new ItemStack(warnItems[i]);
 		}
 	}
+
 
 	@EventListener
 	public void onRenderWorld(RenderWorldEvent event) {

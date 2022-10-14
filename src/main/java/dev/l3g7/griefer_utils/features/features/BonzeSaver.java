@@ -7,14 +7,14 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.ItemBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import java.util.List;
 
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ALL_ITEMS;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
@@ -23,8 +23,8 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DR
 public class BonzeSaver extends Feature {
 
 	private final BooleanSetting enabled = new BooleanSetting()
-			.name("BonzeSaver")
-			.description("Deaktiviert Linksklicks, wenn eine Bonzeklinge in der Hand gehalten wird.")
+			.name("Birth- / BonzeSaver")
+			.description("Deaktiviert Linksklicks, wenn eine Birth- oder eine Bonzeklinge in der Hand gehalten wird.")
 			.icon(new ItemBuilder(Items.diamond_sword).enchant())
 			.defaultValue(true)
 			.config("features.bonze_saver.active");
@@ -54,7 +54,7 @@ public class BonzeSaver extends Feature {
 		if (inv.getCurrentItem() == null)
 			return;
 
-		if (isBonze(inv.getCurrentItem()))
+		if (shouldBeSaved(inv.getCurrentItem()))
 			event.setCanceled(true);
 	}
 
@@ -69,25 +69,18 @@ public class BonzeSaver extends Feature {
 		C07PacketPlayerDigging.Action action = ((C07PacketPlayerDigging) event.getPacket()).getStatus();
 
 		// Prevent dropping
-		if ((action == DROP_ITEM || action == DROP_ALL_ITEMS) && isBonze(player().getHeldItem()))
+		if ((action == DROP_ITEM || action == DROP_ALL_ITEMS) && shouldBeSaved(player().getHeldItem()))
 			event.setCanceled(true);
 	}
 
-	private boolean isBonze(ItemStack itemStack) {
+	private boolean shouldBeSaved(ItemStack itemStack) {
 		if (itemStack == null)
 			return false;
 
-		if (itemStack.getItem() != Items.diamond_sword || !itemStack.isItemEnchanted())
+		if (itemStack.getItem() != Items.diamond_sword)
 			return false;
 
-		// Check by tooltip
-		List<String> tooltip = itemStack.getTooltip(player(), false);
-
-		for(int i = 0; i < tooltip.size() - 1; i++)
-			if (tooltip.get(i).replaceAll("§.", "").equals("Edle Klinge von GrafBonze") && tooltip.get(i + 1).replaceAll("§.", "").startsWith("Signiert von GrafBonze am "))
-				return true;
-
-		return false;
+		return EnchantmentHelper.getEnchantmentLevel(Enchantment.looting.effectId, itemStack) == 21;
 	}
 
 }

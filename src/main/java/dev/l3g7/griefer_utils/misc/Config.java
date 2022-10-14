@@ -33,7 +33,7 @@ import static dev.l3g7.griefer_utils.util.ArrayUtil.last;
 public class Config {
 
 	/**
-	 * Returns whether the given path exists.
+	 * @return whether the given path exists.
 	 */
     public static boolean has(String path) {
         if (path == null)
@@ -44,7 +44,7 @@ public class Config {
     }
 
 	/**
-	 * Returns the element stored at the given path, or null if no element is present.
+	 * @return the element stored at the given path, or null if no element is present.
 	 */
     public static JsonElement get(String path) {
         String[] parts = path.split("\\.");
@@ -60,7 +60,7 @@ public class Config {
     }
 
 	/**
-	 * Returns the parent object of the given path.
+	 * @return the parent object of the given path.
 	 */
     private static JsonObject getPath(String[] parts) {
         JsonObject o = getConfig();

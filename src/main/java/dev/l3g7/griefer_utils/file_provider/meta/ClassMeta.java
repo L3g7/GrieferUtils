@@ -61,7 +61,7 @@ public class ClassMeta {
 	}
 
 	/**
-	 * Returns true if the class has the specified super class.
+	 * @return true if the class has the specified super class.
 	 */
 	public boolean hasSuperClass(String superName) {
 		ClassMeta meta = this;

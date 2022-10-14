@@ -81,7 +81,7 @@ public class AnnotationMeta implements Opcodes {
 	}
 
 	/**
-	 * Returns the defined or default value.
+	 * @return the defined or default value.
 	 */
 	public <T> T getValue(String key, boolean isEnum) {
 		// Check if value is known

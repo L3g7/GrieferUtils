@@ -71,7 +71,7 @@ public class MethodMeta implements Opcodes {
 	}
 
 	/**
-	 * Returns the annotation with the given description.
+	 * @return the annotation with the given description.
 	 */
 	public AnnotationMeta getAnnotation(String annotationDesc) {
 		return annotations.stream().filter(meta -> meta.desc.equals(annotationDesc)).findFirst().orElse(null);

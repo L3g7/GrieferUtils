@@ -32,7 +32,7 @@ import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 class FieldReflection {
 
 	/**
-	 * Returns the value of a field.
+	 * @return the value of a field.
 	 */
 	static <V> V get(Object target, String name) {
 
@@ -52,7 +52,7 @@ class FieldReflection {
 	}
 
 	/**
-	 * Returns the value of a field.
+	 * @return the value of a field.
 	 */
 	static <V> V get(Object target, Field field) {
 
@@ -110,7 +110,7 @@ class FieldReflection {
 	}
 
 	/**
-	 * Returns all fields with the given annotation present.
+	 * @return all fields with the given annotation present.
 	 */
 	static Field[] getAnnotatedFields(Class<?> targetClass, Class<? extends Annotation> annotation) {
 		List<Field> fields = new ArrayList<>();

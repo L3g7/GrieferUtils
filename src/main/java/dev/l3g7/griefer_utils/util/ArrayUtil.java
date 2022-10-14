@@ -35,7 +35,7 @@ import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 public class ArrayUtil {
 
 	/**
-	 * Returns whether two arrays are equal using a custom function.
+	 * @return whether two arrays are equal using a custom function.
 	 */
 	public static <A, B> boolean equals(A[] a, B[] b, BiPredicate<A, B> check) {
 		if(a.length != b.length)
@@ -49,7 +49,7 @@ public class ArrayUtil {
 	}
 
 	/**
-	 * Returns a string representation of an array using a custom function.
+	 * @return a string representation of an array using a custom function.
 	 */
 	public static <T> String toString(T[] array, Function<T, String> func, String delimiter) {
 		StringBuilder s = new StringBuilder();
@@ -65,7 +65,7 @@ public class ArrayUtil {
 	}
 
 	/**
-	 * Returns the last entry of an array, or null, if the array is empty.
+	 * @return the last entry of an array, or null, if the array is empty.
 	 */
 	public static <T> T last(T[] array) {
 		if (array.length == 0)

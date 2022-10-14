@@ -106,35 +106,35 @@ public abstract class FileProvider {
 
 
 	/**
-	 * Returns all files.
+	 * @return all known files.
 	 */
 	public static Collection<String> getFiles() {
 		return getProvider().getFiles0();
 	}
 
 	/**
-	 * Returns all files matching the filter.
+	 * @return all files matching the filter.
 	 */
 	private static Collection<String> getFiles(Predicate<String> filter) {
 		return getFiles().stream().filter(filter).collect(Collectors.toList());
 	}
 
 	/**
-	 * Returns the content of a file as an InputStream.
+	 * @return the content of a file as an InputStream.
 	 */
 	public static InputStream getData(String file) {
 		return getProvider().getData0(file);
 	}
 
 	/**
-	 * Returns the class meta for a class based on it's description.
+	 * @return the class meta for a class based on it's description.
 	 */
 	public static ClassMeta getClassMetaByDesc(String desc) {
 		return getClassMeta(Type.getType(desc).getInternalName() + ".class");
 	}
 
 	/**
-	 * Returns the class meta for a file.
+	 * @return the class meta for a file.
 	 */
 	public static ClassMeta getClassMeta(String file) {
 		if (classMetaCache.containsKey(file))
@@ -165,7 +165,7 @@ public abstract class FileProvider {
 	}
 
 	/**
-	 * Returns all classes with the specified super class.
+	 * @return all classes with the specified super class.
 	 */
 	public static Collection<ClassMeta> getClassesWithSuperClass(Class<?> superClass) {
 		List<ClassMeta> classes = new ArrayList<>();
@@ -182,7 +182,7 @@ public abstract class FileProvider {
 	}
 
 	/**
-	 * Returns all methods with the given annotation present.
+	 * @return all methods with the given annotation present.
 	 */
 	public static Collection<MethodMeta> getAnnotatedMethods(Class<? extends Annotation> annotation) {
 		List<MethodMeta> methods = new ArrayList<>();

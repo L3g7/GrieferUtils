@@ -28,14 +28,14 @@ import java.lang.reflect.Method;
 public class Reflection {
 
 	/**
-	 * Returns the value of a field.
+	 * @return the value of a field.
 	 */
 	public static <V> V get(Object target, String name) {
 		return FieldReflection.get(target, name);
 	}
 
 	/**
-	 * Returns the value of a field.
+	 * @return the value of a field.
 	 */
 	public static <V> V get(Object target, Field field) {
 		return FieldReflection.get(target, field);
@@ -49,7 +49,7 @@ public class Reflection {
 	}
 
 	/**
-	 * Returns all fields with the given annotation present.
+	 * @return all fields with the given annotation present.
 	 */
 	public static Field[] getAnnotatedFields(Class<?> targetClass, Class<? extends Annotation> annotation) {
 		return FieldReflection.getAnnotatedFields(targetClass, annotation);
@@ -84,7 +84,7 @@ public class Reflection {
 	}
 
 	/**
-	 * Returns all methods with the given annotation present.
+	 * @return all methods with the given annotation present.
 	 */
 	public static Method[] getAnnotatedMethods(Class<?> targetClass, Class<? extends Annotation> annotation) {
 		return MethodReflection.getAnnotatedMethods(targetClass, annotation);

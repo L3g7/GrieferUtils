@@ -39,7 +39,7 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 	Storage<V> getStorage();
 
 	/**
-	 * Returns the currently held value.
+	 * @return the currently held value.
 	 */
 	default V get() {
 		Storage<V> storage = getStorage();

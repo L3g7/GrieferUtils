@@ -85,7 +85,7 @@ class MethodReflection {
 	}
 
 	/**
-	 * Returns all methods with the given annotation present.
+	 * @return all methods with the given annotation present.
 	 */
 	static Method[] getAnnotatedMethods(Class<?> targetClass, Class<? extends Annotation> annotation) {
 		List<Method> methods = new ArrayList<>();

@@ -20,12 +20,12 @@ import java.util.List;
 public class ItemCounter extends ItemInfoSupplier {
 
 	private final BooleanSetting ignoreDamage = new BooleanSetting()
-			.name("Schaden ignorieren")
-			.description("Ignoriert den Schaden der Items beim Zählen der Anzahl.")
-			.config("tweaks.item_info.item_counter.active")
+			.name("Schaden / Sub-IDs ignorieren")
+			.description("Ignoriert den Schaden / die Sub-IDs der Items beim Zählen der Anzahl.")
+			.config("tweaks.item_info.item_counter.ignore_sub_ids")
 			.icon("broken_pickaxe")
 			.defaultValue(false);
-	
+
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("Item-Zähler")
 			.description("Zeigt unter einem Item an, wie viele von dem Typ in dem derzeitigen Inventar vorhanden sind.")

@@ -33,8 +33,10 @@ public class BooleanSetting extends BooleanElement implements ElementBuilder<Boo
 
 	public BooleanSetting() {
 		super("§cNo name set", null, v -> {}, false);
-		custom("An", "Aus").setSettingEnabled(true);
-		this.addCallback(this::set);
+		custom("An", "Aus");
+		setSettingEnabled(true);
+		addCallback(this::set);
+		fallbackValue(false);
 	}
 
 	@Override

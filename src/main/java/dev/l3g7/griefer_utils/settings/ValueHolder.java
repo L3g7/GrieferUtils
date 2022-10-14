@@ -42,7 +42,13 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 	 * Returns the currently held value.
 	 */
 	default V get() {
-		return getStorage().value;
+		Storage<V> storage = getStorage();
+
+		// Use fallback value if value is null
+		if (storage.value == null)
+			return storage.fallbackValue;
+
+		return storage.value;
 	}
 
 	/**
@@ -61,6 +67,15 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 		// Trigger callbacks
 		s.callbacks.forEach(c -> c.accept(value));
 
+		return (S) this;
+	}
+
+	/**
+	 * Sets a fallback value to use if no value is in the config and no default value is set.
+	 */
+	default S fallbackValue(V value) {
+		Storage<V> s = getStorage();
+		s.fallbackValue = value;
 		return (S) this;
 	}
 
@@ -109,6 +124,7 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 
 		private T value = null;
 		private String configKey = null;
+		private T fallbackValue = null;
 		private final List<Consumer<T>> callbacks = new ArrayList<>();
 
 		private final Function<T, JsonElement> encodeFunc;

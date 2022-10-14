@@ -34,6 +34,7 @@ public class NumberSetting extends NumberElement implements ElementBuilder<Numbe
 	public NumberSetting() {
 		super("§cNo name set", null, 0);
 		addCallback(this::set);
+		fallbackValue(0);
 	}
 
 	@Override

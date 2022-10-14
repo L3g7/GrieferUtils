@@ -49,7 +49,7 @@ public class URLFileProvider extends FileProvider {
 			try {
 				File root = new File(url.toURI());
 				load(root, root);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				return addMessage(e, "Tried to load urls from " + ClassLoader.getSystemClassLoader());
 			}
 		}

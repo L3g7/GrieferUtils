@@ -63,7 +63,7 @@ public class JarFileProvider extends FileProvider {
 			if (jarFile.size() == 0)
 				return new IllegalStateException("Empty jar file: " + jarPath);
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			return e;
 		}
 		return null;

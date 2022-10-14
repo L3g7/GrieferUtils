@@ -7,12 +7,12 @@ logs
 out
 run
 
-# other
-eclipse
-gradlew.bat
-
 # idea
 *.iml
 *.ipr
 *.iws
 .idea
+
+# other
+eclipse
+.gitattributes

@@ -83,7 +83,7 @@ public class Config {
 	    if (config == null)
 		    config = new JsonObject();
 
-	    IOUtil.file(configFile).writeJson(config);
+		IOUtil.writeJson(configFile, config);
     }
 
 	/**
@@ -91,9 +91,9 @@ public class Config {
 	 */
 	private static JsonObject getConfig() {
 		if (config == null)
-			IOUtil.file(configFile)
-				.readJsonObject(v -> config = v)
-				.orElse(t -> config = new JsonObject());
+			config = IOUtil.read(configFile)
+				.asJsonObject()
+				.orElse(new JsonObject());
 
 		return config;
     }

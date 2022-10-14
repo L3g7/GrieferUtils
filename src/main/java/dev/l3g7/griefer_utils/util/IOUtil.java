@@ -19,238 +19,119 @@
 package dev.l3g7.griefer_utils.util;
 
 import com.google.gson.*;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.util.concurrent.DefaultThreadFactory;
+import dev.l3g7.griefer_utils.misc.ThrowingSupplier;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.function.Consumer;
+import java.nio.file.StandardOpenOption;
+import java.util.Optional;
 
+import static dev.l3g7.griefer_utils.util.Util.elevate;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+/**
+ * A utility class for simplified file and network operations.
+ * All operations use an encoding of UTF-8.
+ */
 public class IOUtil {
 
-/*
-	TODO:
-	IOUtil concept:
+	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	private static final JsonParser jsonParser = new JsonParser();
 
-
-	Sync file read:
-		IOUtil.file(configFile)
-		.readJsonObject(v -> config = v)
-		.orElse(t -> config = new JsonObject());
-
-	config = IOUtil.read(configFile)
-		.asJsonObject()
-        .orElse(t -> new JsonObject());
-
-	Sync url read:
-		IOUtil.request("https://api.../releases")
-		.asJsonArray(releases -> {/* stuff TM * /});
-
-	releases = IOUtil.read("https://api.../releases")
-		.asJsonArray();
-
-	Async url read:
-		IOUtil.request(url)
-		.asJsonArray(array -> {/* stuff TM * /});
-
-    IOUtil.read(url)
-		.asJsonArray(array -> {/* stuff TM * /});
-
-	Async url write:
-		IOUtil.request("https://grieferutils.l3g7.dev/analytics/")
-		.post("application/json", data.toString().getBytes(UTF_8))
-		.close();
-
-    IOUtil.write("https://grieferutils.l3g7.dev/analytics/")
-	    .json("application/json", data);
-	*/
-
-	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	public static final JsonParser JSON_PARSER = new JsonParser();
-
-	public static FileRequest file(File file) {
-		return new FileRequest(file);
+	/**
+	 * @return A wrapper class for reading the contents of the given file.
+	 */
+	public static FileReadOperation read(File file) {
+		return new FileReadOperation(file);
 	}
 
-	public static HttpRequest request(String url) {
-		return new HttpRequest(url.trim());
-	}
+	/**
+	 * Writes the content to the file.
+	 */
+	public static void write(File file, String content) {
+		file.getParentFile().mkdirs();
 
-	public static String urlEncode(String s) {
 		try {
-			return URLEncoder.encode(s, "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+			Files.write(file.toPath(), content.getBytes(UTF_8));
+		} catch (IOException e) {
+			throw elevate(e);
 		}
 	}
 
-	public static class FileRequest {
+	/**
+	 * Writes the content it to the file using pretty printing.
+	 */
+	public static void writeJson(File file, JsonElement content) {
+		write(file, gson.toJson(content));
+	}
+
+	/**
+	 * A wrapper class for reading the contents of a file.
+	 */
+	public static class FileReadOperation extends ReadOperation {
 
 		private final File file;
-		private Throwable error = null;
 
-		private FileRequest(File file) {
+		private FileReadOperation(File file) {
 			this.file = file;
 		}
 
-		public void writeJson(JsonElement element) {
-			file.getParentFile().mkdirs();
-			try (OutputStreamWriter ow = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8)) {
-				ow.write(GSON.toJson(element));
-			} catch (Throwable e) {
-				e.printStackTrace();
-				error = e;
-			}
-		}
-
-		public FileRequest readJsonObject(Consumer<JsonObject> consumer) {
-			if (!file.exists() || file.isDirectory()) {
-				error = new IOException(file.exists() ? "file is directory" : "file does not exist");
-			}
-
-			if (error != null)
-				return this;
-
-			try (InputStreamReader in = new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8)) {
-				consumer.accept(JSON_PARSER.parse(in).getAsJsonObject());
-			} catch (Throwable e) {
-				e.printStackTrace();
-				error = e;
-			}
-			return this;
-		}
-
-		public void orElse(Consumer<Throwable> callback) {
-			if (error != null)
-				callback.accept(error);
+		@Override
+		protected InputStream open() throws Exception {
+			return Files.newInputStream(file.toPath(), StandardOpenOption.READ);
 		}
 
 	}
 
-	public static class HttpRequest {
+	/**
+	 * A wrapper class for reading the contents of an url.
+	 */
+	public static class URLReadOperation extends ReadOperation {
 
-		private HttpURLConnection conn;
-		private volatile Throwable error = null;
-		private volatile Consumer<Throwable> errorCallback = null;
-		private volatile boolean shouldClose = false;
+		private final String url;
 
-		private HttpRequest(String url) {
+		private URLReadOperation(String url) {
+			this.url = url;
+		}
+
+		@Override
+		protected InputStream open() throws Exception {
+			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+			conn.addRequestProperty("User-Agent", "GrieferUtils");
+			return conn.getInputStream();
+		}
+	}
+
+	public abstract static class ReadOperation {
+
+		protected abstract InputStream open() throws Exception;
+
+		/**
+		 * Tries to read the input stream as a json object.
+		 */
+		public Optional<JsonObject> asJsonObject() {
+			return catchErrors(() -> {
+				try (InputStreamReader in = new InputStreamReader(open(), UTF_8)) {
+					return jsonParser.parse(in).getAsJsonObject();
+				}
+			});
+		}
+
+		/**
+		 * @return the value given by the supplier or an empty optional if the supplier throws an error.
+		 */
+		private <V> Optional<V> catchErrors(ThrowingSupplier<V> supplier) {
 			try {
-				conn = (HttpURLConnection) new URL(url).openConnection();
-				conn.setConnectTimeout(3000);
-				conn.setReadTimeout(10000);
-				conn.addRequestProperty("User-Agent", "GrieferUtils");
-			} catch (Throwable e) {
+				return Optional.of(supplier.run());
+			} catch (Exception e) {
 				e.printStackTrace();
-				error = e;
+				return Optional.empty();
 			}
-		}
-
-		public HttpRequest post(String contentType, byte[] data) {
-			tryAsync(() -> {
-				conn.addRequestProperty("Content-Type", contentType);
-				conn.setDoOutput(true);
-
-				conn.setRequestMethod("POST");
-
-				try (OutputStream stream = conn.getOutputStream()) {
-					stream.write(data);
-					stream.flush();
-				}
-			});
-			return this;
-		}
-
-		public HttpRequest asJsonArray(Consumer<JsonArray> consumer) {
-			tryAsync(() -> {
-				try (InputStreamReader in = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
-					consumer.accept(JSON_PARSER.parse(in).getAsJsonArray());
-				}
-			});
-			return this;
-		}
-
-		public HttpRequest asJsonString(Consumer<String> consumer) {
-			tryAsync(() -> {
-				try (InputStreamReader in = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
-					consumer.accept(JSON_PARSER.parse(in).getAsString());
-				}
-			});
-			return this;
-		}
-
-		public HttpRequest asString(Consumer<String> consumer) {
-			tryAsync(() -> {
-				try (InputStream in = conn.getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-					byte[] buffer = new byte[4096];
-
-					int n;
-					while ((n = in.read(buffer)) != -1)
-						out.write(buffer, 0, n);
-
-					consumer.accept(out.toString("UTF-8"));
-				}
-			});
-			return this;
-		}
-
-		public int getResponseCode() {
-			try {
-				return conn.getResponseCode();
-			} catch (Throwable e) {
-				e.printStackTrace();
-				return -1;
-			}
-		}
-
-		public void orElse(Consumer<Throwable> callback) {
-			errorCallback = callback;
-			if (error != null)
-				callback.accept(error);
-		}
-
-		public void close() {
-			shouldClose = true;
-		}
-
-		public boolean successful() {
-			return error == null;
-		}
-
-		private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("GrieferUtils' IO", false, Thread.MIN_PRIORITY));
-
-		private void tryAsync(AsyncAction action) {
-			if (error != null)
-				return;
-
-			Throwable stackTrace = new Throwable();
-			eventLoopGroup.submit(() -> {
-				try {
-					action.run();
-					if (shouldClose) {
-						conn.getInputStream().close();
-						conn.disconnect();
-						shouldClose = false;
-					}
-				} catch (Throwable e) {
-					e.printStackTrace();
-					stackTrace.printStackTrace();
-					error = e;
-					if (errorCallback != null)
-						errorCallback.accept(e);
-				}
-			});
-		}
-
-		private interface AsyncAction {
-
-			void run() throws IOException;
-
 		}
 	}
 

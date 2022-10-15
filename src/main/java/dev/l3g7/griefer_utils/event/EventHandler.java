@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.event;
 
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.file_provider.meta.AnnotationMeta;
 import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
@@ -42,11 +43,16 @@ public class EventHandler implements Opcodes {
 
 	private static final int BUS_ID = 0; // MinecraftForge.EVENT_BUS
 
+	/**
+	 * Registers all static methods annotated with {@link EventListener} to the {@link MinecraftForge#EVENT_BUS} as well as non-static methods if the owner is marked with {@link Singleton}.
+	 */
 	public static void init() {
+		AnnotationEventHandler.init();
 		for (MethodMeta method : FileProvider.getAnnotatedMethods(EventListener.class)) {
 
+			boolean isSingleton = method.owner.hasAnnotation(Singleton.class);
 			// Skip non-static listeners
-			if (!method.isStatic())
+			if (!method.isStatic() && !isSingleton)
 				continue;
 
 			Class<? extends Event> eventClass = getEventClass(method);
@@ -61,7 +67,7 @@ public class EventHandler implements Opcodes {
 			listeners.register(BUS_ID, priority, e -> {
 				if (receiveCanceled || !e.isCanceled()
 					&& (receiveSubclasses || e.getClass() == eventClass))
-					Reflection.invoke(null, method.loadMethod(), e);
+					Reflection.invoke(resolveOwner(method, isSingleton), method.load(), e);
 			});
 		}
 	}
@@ -70,6 +76,8 @@ public class EventHandler implements Opcodes {
 	 * Registers all non-static methods annotated with {@link EventListener} to the {@link MinecraftForge#EVENT_BUS}.
 	 */
 	public static void register(Object obj) {
+		AnnotationEventHandler.register(obj);
+
 		Class<?> clazz = obj.getClass();
 		for (Method method : Reflection.getAnnotatedMethods(clazz, EventListener.class)) {
 
@@ -125,6 +133,16 @@ public class EventHandler implements Opcodes {
 			throw new IllegalArgumentException("Method " + method + " has @EventListener annotation, but takes " + eventClass);
 
 		return c(eventClass);
+	}
+
+	/**
+	 * @return the owner singleton if isSingleton is true, null otherwise.
+	 */
+	private static Object resolveOwner(MethodMeta method, boolean isSingleton) {
+		if (!isSingleton)
+			return null;
+
+		return FileProvider.getSingleton(method.owner.load());
 	}
 
 }

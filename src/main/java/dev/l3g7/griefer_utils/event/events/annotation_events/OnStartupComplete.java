@@ -16,9 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event.events;
-
-import dev.l3g7.griefer_utils.Main;
+package dev.l3g7.griefer_utils.event.events.annotation_events;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,9 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotations marking methods triggered after GrieferUtils was enabled.
- * @see Main#onEnable()
+ * An annotations marking methods triggered after the main menu was opened for the first time.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface OnEnable { }
+public @interface OnStartupComplete { }

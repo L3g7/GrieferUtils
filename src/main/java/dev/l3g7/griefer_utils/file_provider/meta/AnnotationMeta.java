@@ -77,7 +77,7 @@ public class AnnotationMeta implements Opcodes {
 		if (type != null)
 			return c(type);
 		else
-			return c(type = FileProvider.getClassMetaByDesc(desc).loadClass());
+			return c(type = FileProvider.getClassMetaByDesc(desc).load());
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class AnnotationMeta implements Opcodes {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private Object convertToEnum(Object value) {
 		String[] data = (String[]) value;
-		return Enum.valueOf((Class<? extends Enum>) c(FileProvider.getClassMetaByDesc(data[0]).loadClass()), data[1]);
+		return Enum.valueOf((Class<? extends Enum>) c(FileProvider.getClassMetaByDesc(data[0]).load()), data[1]);
 	}
 
 }

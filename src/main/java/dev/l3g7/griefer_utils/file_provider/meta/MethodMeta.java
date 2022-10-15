@@ -18,11 +18,9 @@
 
 package dev.l3g7.griefer_utils.file_provider.meta;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +32,7 @@ import static dev.l3g7.griefer_utils.util.Util.elevate;
 /**
  * Meta information of a method.
  */
-public class MethodMeta implements Opcodes {
+public class MethodMeta implements IMeta {
 
 	public final ClassMeta owner;
 	public final String name;
@@ -60,39 +58,21 @@ public class MethodMeta implements Opcodes {
 	public MethodMeta(ClassMeta owner, Method method) {
 		this.owner = owner;
 		this.name = method.getName();
-		this.modifiers = method.getModifiers();
 		this.desc = Type.getMethodDescriptor(method);
+		this.modifiers = method.getModifiers();
 		this.annotations = map(method.getAnnotations(), AnnotationMeta::new);
 		this.loadedMethod = method;
 	}
 
-	public boolean hasAnnotation(String annotationDesc) {
-		return getAnnotation(annotationDesc) != null;
-	}
-
-	/**
-	 * @return the annotation with the given description.
-	 */
-	public AnnotationMeta getAnnotation(String annotationDesc) {
-		return annotations.stream().filter(meta -> meta.desc.equals(annotationDesc)).findFirst().orElse(null);
-	}
-
-	public AnnotationMeta getAnnotation(Class<? extends Annotation> type) {
-		return getAnnotation(Type.getDescriptor(type));
-	}
-
-	public boolean isStatic() {
-		return (modifiers & ACC_STATIC) != 0;
-	}
 
 	/**
 	 * Loads the method.
 	 */
-	public Method loadMethod() {
+	public Method load() {
 		if (loadedMethod != null)
 			return loadedMethod;
 
-		Class<?> ownerClass = owner.loadClass();
+		Class<?> ownerClass = owner.load();
 
 		// Search for method in ownerClass
 		for (Method method : flatmap(Method.class, ownerClass.getDeclaredMethods(), ownerClass.getMethods()))
@@ -100,6 +80,16 @@ public class MethodMeta implements Opcodes {
 				return loadedMethod = method;
 
 		throw elevate(new NoSuchMethodException(), "Could not find method %s %s in %s!", name, desc, owner.name);
+	}
+
+	@Override
+	public List<AnnotationMeta> getAnnotations() {
+		return annotations;
+	}
+
+	@Override
+	public int getModifiers() {
+		return modifiers;
 	}
 
 	@Override

@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
+import java.util.Collections;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.ArrayUtil.map;
@@ -31,11 +32,13 @@ import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 /**
  * Meta information of a class.
  */
-public class ClassMeta {
+public class ClassMeta implements IMeta {
 
 	public final String name;
 	public final String superName;
+	public final int modifiers;
 	public final List<MethodMeta> methods;
+	public final List<AnnotationMeta> annotations;
 	private Class<?> loadedClass = null;
 
 	/**
@@ -44,7 +47,9 @@ public class ClassMeta {
 	public ClassMeta(ClassNode node) {
 		this.name = node.name;
 		this.superName = node.superName;
+		this.modifiers = node.access;
 		this.methods = map(node.methods, m -> new MethodMeta(this, m));
+		this.annotations = node.visibleAnnotations == null ? Collections.emptyList() : map(node.visibleAnnotations, AnnotationMeta::new);
 	}
 
 	/**
@@ -55,7 +60,9 @@ public class ClassMeta {
 
 		this.name = Type.getInternalName(clazz);
 		this.superName = superClass == null ? null : Type.getInternalName(superClass);
+		this.modifiers = clazz.getModifiers();
 		this.methods = map(clazz.getDeclaredMethods(), m -> new MethodMeta(this, m));
+		this.annotations = map(clazz.getAnnotations(), AnnotationMeta::new);
 
 		this.loadedClass = clazz;
 	}
@@ -79,11 +86,21 @@ public class ClassMeta {
 	/**
 	 * Loads the class.
 	 */
-	public <T> Class<T> loadClass() {
+	public <T> Class<T> load() {
 		if (loadedClass == null)
 			loadedClass = Reflection.load(name);
 
 		return c(loadedClass);
+	}
+
+	@Override
+	public List<AnnotationMeta> getAnnotations() {
+		return annotations;
+	}
+
+	@Override
+	public int getModifiers() {
+		return modifiers;
 	}
 
 	@Override

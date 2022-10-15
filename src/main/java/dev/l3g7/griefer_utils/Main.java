@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils;
 
 import dev.l3g7.griefer_utils.event.EventHandler;
-import dev.l3g7.griefer_utils.event.events.OnEnable;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import net.labymod.api.LabyModAddon;
@@ -35,6 +35,17 @@ import static dev.l3g7.griefer_utils.util.reflection.Reflection.invoke;
  */
 public class Main extends LabyModAddon {
 
+
+	private static Main instance;
+
+	public static Main getInstance() {
+		return instance;
+	}
+
+	public Main() {
+		instance = this;
+	}
+
 	@Override
 	public void onEnable() {
 		if (!LabyModCoreMod.isForge())
@@ -44,7 +55,7 @@ public class Main extends LabyModAddon {
 
 		// Call all methods annotated with @OnEnable
 		FileProvider.getAnnotatedMethods(OnEnable.class)
-			.forEach(m -> invoke(m.owner.loadClass(), m.loadMethod()));
+			.forEach(m -> invoke(m.owner.load(), m.load()));
 	}
 
 	@Override

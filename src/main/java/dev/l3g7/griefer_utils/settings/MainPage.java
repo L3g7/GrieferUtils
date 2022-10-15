@@ -44,7 +44,7 @@ public class MainPage {
 	static {
 		// Load features
 		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Feature.class)) {
-			Class<Feature> feature = meta.loadClass();
+			Class<Feature> feature = meta.load();
 
 			Feature instance = FileProvider.getSingleton(feature);
 			instance.init();

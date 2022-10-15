@@ -30,6 +30,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -48,6 +49,13 @@ public class IOUtil {
 	 */
 	public static FileReadOperation read(File file) {
 		return new FileReadOperation(file);
+	}
+
+	/**
+	 * @return A wrapper class for reading the contents of the given url.
+	 */
+	public static URLReadOperation read(String url) {
+		return new URLReadOperation(url);
 	}
 
 	/**
@@ -102,7 +110,7 @@ public class IOUtil {
 		@Override
 		protected InputStream open() throws Exception {
 			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-			conn.addRequestProperty("User-Agent", "GrieferUtils");
+			conn.addRequestProperty("User-Agent", "GrieferUtils v" + AddonUtil.getVersion());
 			return conn.getInputStream();
 		}
 	}
@@ -113,6 +121,13 @@ public class IOUtil {
 
 		/**
 		 * Tries to read the input stream as a json object.
+		 * <br>
+		 * Example:
+		 * <pre>
+		 * obj = IOUtil.read(file)
+		 *     .asJsonObject()
+		 *     .orElse(new JsonObject());
+		 * </pre>
 		 */
 		public Optional<JsonObject> asJsonObject() {
 			return catchErrors(() -> {
@@ -120,6 +135,24 @@ public class IOUtil {
 					return jsonParser.parse(in).getAsJsonObject();
 				}
 			});
+		}
+
+		/**
+		 * Tries to read the input stream as a json string, asynchronously.
+		 * <br>
+		 * Example:
+		 * <pre>
+		 * IOUtil.read(url)
+		 *     .asJsonString(str -> log("success", str))
+		 *     .orElse(e -> log("error", e));
+		 * </pre>
+		 */
+		public AsyncFailable asJsonString(Consumer<String> callback) {
+			return asyncCatchErrors(() -> {
+				try (InputStreamReader in = new InputStreamReader(open(), UTF_8)) {
+					return jsonParser.parse(in).getAsString();
+				}
+			}, callback);
 		}
 
 		/**
@@ -133,6 +166,37 @@ public class IOUtil {
 				return Optional.empty();
 			}
 		}
+
+		/**
+		 * @see ReadOperation#catchErrors
+		 */
+		private <V> AsyncFailable asyncCatchErrors(ThrowingSupplier<V> supplier, Consumer<V> callback) {
+			AsyncFailable op = new AsyncFailable();
+			new Thread(() -> {
+				try {
+					callback.accept(supplier.run());
+				} catch (Exception e) {
+					e.printStackTrace();
+					if (op.fallback != null)
+						op.fallback.accept(e);
+				}
+			}).start();
+			return op;
+		}
+
 	}
 
+	public static class AsyncFailable {
+
+		private Consumer<Exception> fallback;
+
+		public void orElse(Consumer<Exception> fallback) {
+			this.fallback = fallback;
+		}
+
+		public void orElse(Runnable fallback) {
+			this.fallback = t -> fallback.run();
+		}
+
+	}
 }

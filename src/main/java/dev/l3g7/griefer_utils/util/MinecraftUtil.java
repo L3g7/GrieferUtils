@@ -18,6 +18,8 @@
 
 package dev.l3g7.griefer_utils.util;
 
+import net.labymod.api.EventManager;
+import net.labymod.main.LabyMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
@@ -35,6 +37,8 @@ public interface MinecraftUtil {
 	default ItemStack[] armorInventory() { return inventory().armorInventory; }
 	default int screenWidth() { return new ScaledResolution(mc()).getScaledWidth(); }
 	default int screenHeight() { return new ScaledResolution(mc()).getScaledHeight(); }
+	default LabyMod labyMod() { return LabyMod.getInstance(); }
+	default EventManager lmEventManager() { return labyMod().getEventManager(); }
 
 	class StaticImport {
 

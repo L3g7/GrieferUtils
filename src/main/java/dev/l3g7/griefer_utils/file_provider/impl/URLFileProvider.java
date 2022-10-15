@@ -19,13 +19,16 @@
 package dev.l3g7.griefer_utils.file_provider.impl;
 
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.util.Util;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.NoSuchFileException;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.util.Util.addMessage;
+import static dev.l3g7.griefer_utils.util.Util.elevate;
 
 /**
  * An implementation for providing files if the addon was loaded using an URLClassLoader.
@@ -86,7 +89,7 @@ public class URLFileProvider extends FileProvider {
 	@Override
 	protected InputStream getData0(String file) {
 		if (files.get(file) == null)
-			throw new IllegalArgumentException("Tried to get data of unknown file " + file);
+			throw elevate(new FileNotFoundException(file));
 
 		try {
 			return new FileInputStream(files.get(file));

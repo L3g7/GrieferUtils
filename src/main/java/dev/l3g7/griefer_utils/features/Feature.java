@@ -80,7 +80,7 @@ public abstract class Feature implements MinecraftUtil {
 	 */
 	private void loadSubSettings(SettingsElement parent, String parentKey) {
 		for (SettingsElement element : parent.getSubSettings().getElements()) {
-			String key = parentKey + "." + getFieldName(element);
+			String key = parentKey + "." + convertCamelCaseToSnakeCase(getFieldName(element));
 			loadSubSettings(element, key);
 			if (element instanceof ValueHolder<?, ?>)
 				((ValueHolder<?, ?>) element).config(key);

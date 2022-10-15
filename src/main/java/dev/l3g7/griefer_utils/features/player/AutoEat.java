@@ -57,7 +57,7 @@ public class AutoEat extends Feature {
 		.icon(COOKED_BEEF)
 		.subSettingsWithHeader("AutoEat", triggerMode, preferredFood);
 
-	private int previousHotbarSlot;
+	private int previousHotbarSlot = -1;
 	private boolean finishing = false;
 
 	@EventListener
@@ -82,11 +82,15 @@ public class AutoEat extends Feature {
 
 	@EventListener
 	public void onUseItemFinish(PlayerUseItemEvent.Finish event) {
+		if (previousHotbarSlot == -1)
+			return;
+
 		finishing = true;
 		// Wait some ticks to finish eating, maybe because of NCP?
 		TickScheduler.runLater(() -> {
 			KeyBinding.setKeyBindState(settings().keyBindUseItem.getKeyCode(), false);
 			TickScheduler.runNextTick(() -> inventory().currentItem = previousHotbarSlot);
+			previousHotbarSlot = -1;
 			finishing = false;
 		}, 5);
 	}

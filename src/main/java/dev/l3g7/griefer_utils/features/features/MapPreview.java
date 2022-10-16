@@ -45,12 +45,10 @@ public class MapPreview extends Feature {
 		return enabled;
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGH)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onTooltip(ItemTooltipEvent event) {
 		if (!isActive() || !isOnGrieferGames() || !(event.itemStack.getItem() instanceof ItemMap))
 			return;
-
-		tooltip = event.toolTip;
 
 		// Add space(s)
 		int lines = (int) Math.ceil(48 / (mc().fontRendererObj.FONT_HEIGHT + 1d));
@@ -58,6 +56,8 @@ public class MapPreview extends Feature {
 
 		for (int i = 0; i < lines; i++)
 			event.toolTip.add(Strings.repeat(' ', spaces));
+
+		tooltip = new ArrayList<>(event.toolTip);
 	}
 
 	@SubscribeEvent
@@ -82,21 +82,21 @@ public class MapPreview extends Feature {
 
 		// Enable lighting (otherwise it's darker than it should be)
 		renderer.enableLightmap();
-		renderMap(tooltip, event.mouseX, event.mouseY, currentScreen.width, currentScreen.height, mc().fontRendererObj, mapData);
+		renderMap(event.mouseX, event.mouseY, currentScreen.width, currentScreen.height, mc().fontRendererObj, mapData);
 		renderer.disableLightmap();
 	}
 
 	/**
 	 * Source of the code to calculate the position: {@link net.minecraftforge.fml.client.config.GuiUtils#drawHoveringText(List, int, int, int, int, int, FontRenderer) GuiUtils.drawHoveringText}
 	 */
-	private void renderMap(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, FontRenderer font, MapData mapData) {
+	private void renderMap(int mouseX, int mouseY, int screenWidth, int screenHeight, FontRenderer font, MapData mapData) {
 		GlStateManager.disableRescaleNormal();
 		RenderHelper.disableStandardItemLighting();
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
 		int tooltipTextWidth = 0;
 
-		for (String textLine : textLines) {
+		for (String textLine : tooltip) {
 			int textLineWidth = font.getStringWidth(textLine);
 
 			if (textLineWidth > tooltipTextWidth)
@@ -122,8 +122,8 @@ public class MapPreview extends Feature {
 		if (needsWrap) {
 			int wrappedTooltipWidth = 0;
 			List<String> wrappedTextLines = new ArrayList<>();
-			for (int i = 0; i < textLines.size(); i++) {
-				String textLine = textLines.get(i);
+			for (int i = 0; i < tooltip.size(); i++) {
+				String textLine = tooltip.get(i);
 				List<String> wrappedLine = font.listFormattedStringToWidth(textLine, tooltipTextWidth);
 
 				if (i == 0)
@@ -138,7 +138,7 @@ public class MapPreview extends Feature {
 				}
 			}
 			tooltipTextWidth = wrappedTooltipWidth;
-			textLines = wrappedTextLines;
+			tooltip = wrappedTextLines;
 
 			if (mouseX > screenWidth / 2)
 				tooltipX = mouseX - 16 - tooltipTextWidth;
@@ -149,16 +149,16 @@ public class MapPreview extends Feature {
 		int tooltipY = mouseY - 12;
 		int tooltipHeight = 8;
 
-		if (textLines.size() > 1) {
-			tooltipHeight += (textLines.size() - 1) * 10;
-			if (textLines.size() > titleLinesCount)
+		if (tooltip.size() > 1) {
+			tooltipHeight += (tooltip.size() - 1) * 10;
+			if (tooltip.size() > titleLinesCount)
 				tooltipHeight += 2; // gap between title lines and next lines
 		}
 
 		if (tooltipY + tooltipHeight + 6 > screenHeight)
 			tooltipY = screenHeight - tooltipHeight - 6;
 
-		for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
+		for (int lineNumber = 0; lineNumber < tooltip.size(); ++lineNumber) {
 			if (lineNumber + 1 == titleLinesCount)
 				tooltipY += 2;
 

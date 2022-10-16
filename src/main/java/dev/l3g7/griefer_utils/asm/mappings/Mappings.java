@@ -12,10 +12,12 @@ import java.lang.reflect.Field;
 public class Mappings {
 
 	// Java
-	public static Class Boolean = new Class("Z");
-	public static Class Void = new Class("V");
-	public static Class Float = new Class("F");
-	public static Class Int = new Class("I");
+	public static Class       Boolean = new Class("Z");
+	public static Class       Void = new Class("V");
+	public static Class       Float = new Class("F");
+	public static Class       Int = new Class("I");
+	public static $List       List = new $List();
+	public static $Collection Collection = new $Collection();
 
 	// Minecraft v1.8.9
 	public static $Block                Block = new $Block();
@@ -24,18 +26,23 @@ public class Mappings {
 	public static $EntityPlayer         EntityPlayer = new $EntityPlayer();
 	public static $EntityRenderer       EntityRenderer = new $EntityRenderer();
 	public static $EnumParticleTypes    EnumParticleTypes = new $EnumParticleTypes();
+	public static $FontRenderer         FontRenderer = new $FontRenderer();
 	public static $GlStateManager       GlStateManager = new $GlStateManager();
+	public static $GuiIngame            GuiIngame = new $GuiIngame();
 	public static $IChatComponent       IChatComponent = new $IChatComponent();
 	public static $NetHandlerPlayClient NetHandlerPlayClient = new $NetHandlerPlayClient();
 	public static $Material             Material = new $Material();
 	public static $Potion               Potion = new $Potion();
 	public static $Packet               Packet = new $Packet();
 	public static $RendererLivingEntity RendererLivingEntity = new $RendererLivingEntity();
+	public static $ScoreObjective       ScoreObjective = new $ScoreObjective();
+	public static $ScaledResolution     ScaledResolution = new $ScaledResolution();
 	public static $WorldClient          WorldClient = new $WorldClient();
 
 	// GrieferUtils
-	public static $EventHandler EventHandler = new $EventHandler();
-	public static $TrueSight    TrueSight = new $TrueSight();
+	public static $EventHandler      EventHandler = new $EventHandler();
+	public static $TrueSight         TrueSight = new $TrueSight();
+	public static $ScoreboardHandler ScoreBoardHandler = new $ScoreboardHandler();
 
 	public static boolean obfuscated = false;
 
@@ -60,6 +67,14 @@ public class Mappings {
 	}
 
 	// Mapping Classes
+	public static class $List extends Class {
+		private $List() { super("java/util/List", null); }
+
+		public Method size() { return new Method(null, "size", this, Int); }
+	}
+	public static class $Collection extends Class {
+		private $Collection() { super("java/util/Collection", null); }
+	}
 	public static class $Block extends Class {
 		private $Block() { super("net/minecraft/block/Block", "afh"); }
 
@@ -87,10 +102,19 @@ public class Mappings {
 
 		public Method setupFog() { return new Method("a", "setupFog", this, Void, Int, Float); }
 	}
+	public static class $FontRenderer extends Class {
+		private $FontRenderer() { super("net/minecraft/client/gui/FontRenderer", "avn"); }
+	}
 	public static class $GlStateManager extends Class {
 		private $GlStateManager() { super("net/minecraft/client/renderer/GlStateManager", "bfl"); }
 
 		public Method color() { return new Method("c", "color", this, Void, Float, Float, Float, Float); }
+	}
+	public static class $GuiIngame extends Class {
+		private $GuiIngame() { super("net/minecraft/client/gui/GuiIngame", "avo"); }
+
+		public Method getFontRenderer () { return new Method("f", "getFontRenderer", this, FontRenderer); }
+		public Method renderScoreboard() { return new Method("a", "renderScoreboard", this, Void, ScoreObjective, ScaledResolution); }
 	}
 	public static class $IChatComponent extends Class {
 		private $IChatComponent() { super("net/minecraft/util/IChatComponent", "eu"); }
@@ -119,6 +143,12 @@ public class Mappings {
 
 		public Method addToSendQueue() { return new Method("a", "addToSendQueue", this, Void, Packet); }
 	}
+	public static class $ScoreObjective extends Class {
+		private $ScoreObjective() { super("net/minecraft/scoreboard/ScoreObjective", "auk"); }
+	}
+	public static class $ScaledResolution extends Class {
+		private $ScaledResolution() { super("net/minecraft/client/gui/ScaledResolution", "avr"); }
+	}
 	public static class $EventHandler extends Class {
 		public $EventHandler() { super("dev/l3g7/griefer_utils/event/EventHandler", null); }
 
@@ -143,5 +173,11 @@ public class Mappings {
 		public $WorldClient() { super("net/minecraft/client/multiplayer/WorldClient", "bdb"); }
 
 		public Method doVoidFogParticles() { return new Method("b", "doVoidFogParticles", this, Void, Int, Int, Int); }
+	}
+	public static class $ScoreboardHandler extends Class {
+		public $ScoreboardHandler() { super("dev/l3g7/griefer_utils/features/tweaks/scoreboard_info/ScoreboardHandler", null); }
+
+		public Method filterScores() { return new Method(null, "filterScores", this, Collection, Collection); }
+		public Method shouldNotUnlockScoreboard() { return new Method(null, "shouldNotUnlockScoreboard", this, Boolean); }
 	}
 }

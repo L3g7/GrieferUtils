@@ -28,12 +28,12 @@ import java.util.regex.Pattern;
 @Singleton
 public class OrbBalance extends Module {
 
-	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
+	public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
 	private static final Pattern SKULL_PATTERN = Pattern.compile("^§7Du besitzt aktuell §e([\\d.]+) Orbs§7\\.$");
 	private static final Pattern SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich [\\d.]+ \\S+ für ([\\d.]+) Orbs verkauft\\.$");
 	private static final Pattern BUY_PATTERN = Pattern.compile("^\\[GrieferGames] Du hast erfolgreich das Produkt .+ für ([\\d.]+) Orbs gekauft\\.$");
 
-	Long balance = null;
+	private static long balance = -1;
 
 	public OrbBalance() {
 		super("Orbguthaben", "Zeigt dir an, wie viele Orbs du hast.", "orb_balance", new ControlElement.IconData(Material.EXP_BOTTLE));
@@ -91,7 +91,7 @@ public class OrbBalance extends Module {
 
 	@Override
 	public String[] getValues() {
-		return balance == null ? getDefaultValues() : new String[]{DECIMAL_FORMAT.format(balance)};
+		return balance == -1 ? getDefaultValues() : new String[]{DECIMAL_FORMAT.format(balance)};
 	}
 
 	@Override
@@ -115,4 +115,9 @@ public class OrbBalance extends Module {
 		Config.set("modules.orb_balance.balances." + PlayerUtil.getUUID(), balance);
 		Config.save();
 	}
+
+	public static long getBalance() {
+		return balance;
+	}
+
 }

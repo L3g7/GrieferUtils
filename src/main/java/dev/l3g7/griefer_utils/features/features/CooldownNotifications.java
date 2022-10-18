@@ -152,7 +152,7 @@ public class CooldownNotifications extends Feature {
                 boolean foundAny = false;
                 for (int i = 0; i < inventory.getSizeInventory(); i++) {
                     ItemStack s = inventory.getStackInSlot(i);
-                    if(s.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
+                    if(s == null || s.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
                         continue;
 
                     // Load cooldown time from item

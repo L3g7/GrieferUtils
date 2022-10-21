@@ -159,7 +159,7 @@ public class Calculator extends Feature {
 		/* ************* *
 		 *    Equation   *
 		 * ************* */
-		if (((autoEquationDetect.get() || event.getMsg().startsWith("/pay ")) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
+		if (((autoEquationDetect.get() || event.getMsg().startsWith("/pay ") || event.getMsg().startsWith("/bank ")) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
 				|| (placeholder.get() && evalEquations(PLACEHOLDER_PATTERN, event)))
 			event.setCanceled(true);
 	}

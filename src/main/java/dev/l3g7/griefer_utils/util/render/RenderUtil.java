@@ -19,6 +19,8 @@
 package dev.l3g7.griefer_utils.util.render;
 
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import net.labymod.main.LabyMod;
+import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -61,4 +63,14 @@ public class RenderUtil {
 		end();
 	}
 
+	public static void renderIconData(ControlElement.IconData iconData, int x, int y) {
+		if (iconData == null)
+			return;
+
+		if (iconData.hasTextureIcon()) {
+			mc().getTextureManager().bindTexture(iconData.getTextureIcon());
+			LabyMod.getInstance().getDrawUtils().drawTexture(x + 3, y + 3, 256.0D, 256.0D, 16.0D, 16.0D);
+		} else if (iconData.hasMaterialIcon())
+			LabyMod.getInstance().getDrawUtils().drawItem(iconData.getMaterialIcon().createItemStack(), x + 3, y + 2, null);
+	}
 }

@@ -68,7 +68,7 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		else
 			throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
 
-		Reflection.set(this, "iconData", iconData);
+		Reflection.set(this, iconData, "iconData");
 		return (S) this;
 	}
 

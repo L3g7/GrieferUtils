@@ -37,7 +37,7 @@ public class AddonDescriptor {
 	public void updateDescription() {
 		AddonInfo addonInfo = AddonUtil.getInfo();
 		if (addonInfo != null) {
-			Reflection.set(addonInfo, "author", "L3g7 \u2503 v" + AddonUtil.getVersion());
+			Reflection.set(addonInfo, "L3g7 \u2503 v" + AddonUtil.getVersion(), "author");
 			updateDescription(YELLOW + "Verbinde mit GrieferUtils-Server ...");
 
 			// Load description from server, so it can be used as news board
@@ -48,7 +48,7 @@ public class AddonDescriptor {
 	}
 
 	private void updateDescription(String description) {
-		Reflection.set(AddonUtil.getInfo(), "description", description);
+		Reflection.set(AddonUtil.getInfo(), description, "description");
 	}
 
 }

@@ -60,7 +60,7 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 
 		// Update element value
 		if (Reflection.getField(getClass(), "currentValue") != null)
-			Reflection.set(this, "currentValue", value);
+			Reflection.set(this, value, "currentValue");
 		if (Reflection.getMethod(getClass(), "updateValue") != null)
 			Reflection.invoke(this, "updateValue");
 

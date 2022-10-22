@@ -48,7 +48,7 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		// Initialize menu
 		DropDownMenu<E> menu = new DropDownMenu<>("§fMenuTitle", 0, 0, 0, 0);
 		menu.fill(enumClass.getEnumConstants());
-		Reflection.set(this, "dropDownMenu", menu);
+		Reflection.set(this, menu, "dropDownMenu");
 
 		// Use name field as default stringProvider
 		stringProvider(e -> Reflection.get(e, "name"));

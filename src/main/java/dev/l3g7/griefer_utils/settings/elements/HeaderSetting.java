@@ -38,7 +38,7 @@ public class HeaderSetting extends HeaderElement implements ElementBuilder<Heade
 	}
 
 	public HeaderSetting scale(double scale) {
-		Reflection.set(this, "textSize", scale);
+		Reflection.set(this, scale, "textSize");
 		return this;
 	}
 

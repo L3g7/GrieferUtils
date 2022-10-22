@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.util.reflection;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
@@ -34,19 +35,24 @@ class FieldReflection {
 	/**
 	 * @return the value of a field.
 	 */
-	static <V> V get(Object target, String name) {
+	static <V> V get(Object target, String... names) {
 
 		// Check target
 		if (target == null)
-			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", name);
+			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", Arrays.toString(names));
 
 		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-		Field field = resolveField(targetClass, name);
+		Field field = null;
+		for (String name : names) {
+			field = resolveField(targetClass, name);
+			if (field != null)
+				break;
+		}
 
 		// Check field
 		if (field == null)
-			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", name, targetClass.getName());
+			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", Arrays.toString(names), targetClass.getName());
 
 		return get(target, field);
 	}
@@ -72,26 +78,31 @@ class FieldReflection {
 	/**
 	 * Sets the value of a field.
 	 */
-	static void set(Object target, String name, Object value) {
+	static void set(Object target, Object value, String... names) {
 
 		// Check target
 		if (target == null)
-			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", name);
+			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", Arrays.toString(names));
 
 		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-		Field field = resolveField(targetClass, name);
+		Field field = null;
+		for (String name : names) {
+			field = resolveField(targetClass, name);
+			if (field != null)
+				break;
+		}
 
 		// Check field
 		if (field == null)
-			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", name, targetClass.getName());
+			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", Arrays.toString(names), targetClass.getName());
 
 		// Get value
 		try {
 			field.setAccessible(true);
 			field.set(target, value);
 		} catch (Throwable e) {
-			throw elevate(e, "Tried to access field '%s' in '%s'", name, targetClass.getName());
+			throw elevate(e, "Tried to access field '%s' in '%s'", Arrays.toString(names), targetClass.getName());
 		}
 	}
 

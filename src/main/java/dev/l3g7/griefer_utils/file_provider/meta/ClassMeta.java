@@ -39,6 +39,8 @@ public class ClassMeta implements IMeta {
 	public final int modifiers;
 	public final List<MethodMeta> methods;
 	public final List<AnnotationMeta> annotations;
+
+	public final ClassNode asmNode;
 	private Class<?> loadedClass = null;
 
 	/**
@@ -50,6 +52,8 @@ public class ClassMeta implements IMeta {
 		this.modifiers = node.access;
 		this.methods = map(node.methods, m -> new MethodMeta(this, m));
 		this.annotations = node.visibleAnnotations == null ? Collections.emptyList() : map(node.visibleAnnotations, AnnotationMeta::new);
+
+		this.asmNode = node;
 	}
 
 	/**
@@ -64,6 +68,7 @@ public class ClassMeta implements IMeta {
 		this.methods = map(clazz.getDeclaredMethods(), m -> new MethodMeta(this, m));
 		this.annotations = map(clazz.getAnnotations(), AnnotationMeta::new);
 
+		this.asmNode = null;
 		this.loadedClass = clazz;
 	}
 

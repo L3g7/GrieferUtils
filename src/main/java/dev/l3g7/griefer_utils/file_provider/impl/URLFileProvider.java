@@ -19,12 +19,10 @@
 package dev.l3g7.griefer_utils.file_provider.impl;
 
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.util.Util;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.NoSuchFileException;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.util.Util.addMessage;

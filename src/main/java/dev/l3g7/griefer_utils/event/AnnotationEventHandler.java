@@ -51,7 +51,7 @@ public class AnnotationEventHandler implements Opcodes {
 			List<Runnable> runnables = listeners.computeIfAbsent(annotation, c -> new ArrayList<>());
 
 			for (MethodMeta method : FileProvider.getAnnotatedMethods(annotation)) {
-				boolean isSingleton = method.owner.hasAnnotation(Singleton.class);
+				boolean isSingleton = method.owner().hasAnnotation(Singleton.class);
 
 				if (!method.isStatic() && !isSingleton)
 					continue;
@@ -83,7 +83,7 @@ public class AnnotationEventHandler implements Opcodes {
 		if (!isSingleton)
 			return null;
 
-		return FileProvider.getSingleton(method.owner.load());
+		return FileProvider.getSingleton(method.owner().load());
 	}
 
 	private boolean startupComplete = false;

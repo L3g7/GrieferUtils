@@ -50,7 +50,7 @@ public class EventHandler implements Opcodes {
 		AnnotationEventHandler.init();
 		for (MethodMeta method : FileProvider.getAnnotatedMethods(EventListener.class)) {
 
-			boolean isSingleton = method.owner.hasAnnotation(Singleton.class);
+			boolean isSingleton = method.owner().hasAnnotation(Singleton.class);
 			// Skip non-static listeners
 			if (!method.isStatic() && !isSingleton)
 				continue;
@@ -123,7 +123,7 @@ public class EventHandler implements Opcodes {
 	private static Class<? extends Event> getEventClass(MethodMeta method) {
 
 		// Check count
-		Type[] params = Type.getArgumentTypes(method.desc);
+		Type[] params = Type.getArgumentTypes(method.desc());
 		if (params.length != 1)
 			throw new IllegalArgumentException("Method " + method + " has @EventListener annotation, but requires " + params.length + " arguments");
 
@@ -142,7 +142,7 @@ public class EventHandler implements Opcodes {
 		if (!isSingleton)
 			return null;
 
-		return FileProvider.getSingleton(method.owner.load());
+		return FileProvider.getSingleton(method.owner().load());
 	}
 
 }

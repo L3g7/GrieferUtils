@@ -34,11 +34,13 @@ import static dev.l3g7.griefer_utils.util.Util.elevate;
  */
 public class MethodMeta implements IMeta {
 
-	public final ClassMeta owner;
-	public final String name;
-	public final String desc;
-	public final int modifiers;
-	public final List<AnnotationMeta> annotations;
+	private final ClassMeta owner;
+	private final String name;
+	private final String desc;
+	private final int modifiers;
+	private final List<AnnotationMeta> annotations;
+
+	public final MethodNode asmNode;
 	private Method loadedMethod = null;
 
 	/**
@@ -49,7 +51,11 @@ public class MethodMeta implements IMeta {
 		this.name = data.name;
 		this.desc = data.desc;
 		this.modifiers = data.access;
-		this.annotations = data.visibleAnnotations == null ? Collections.emptyList() : map(data.visibleAnnotations, AnnotationMeta::new);
+		this.annotations = data.visibleAnnotations == null ? new ArrayList<>() : map(data.visibleAnnotations, AnnotationMeta::new);
+		if (data.invisibleAnnotations != null)
+			this.annotations.addAll(map(data.invisibleAnnotations, AnnotationMeta::new));
+
+		this.asmNode = data;
 	}
 
 	/**
@@ -61,9 +67,38 @@ public class MethodMeta implements IMeta {
 		this.desc = Type.getMethodDescriptor(method);
 		this.modifiers = method.getModifiers();
 		this.annotations = map(method.getAnnotations(), AnnotationMeta::new);
+
+		this.asmNode = null;
 		this.loadedMethod = method;
 	}
 
+	public ClassMeta owner() {
+		return owner;
+	}
+
+	public String name() {
+		return asmNode != null ? asmNode.name : name;
+	}
+
+	public String desc() {
+		return asmNode != null ? asmNode.desc : desc;
+	}
+
+	public int modifiers() {
+		return asmNode != null ? asmNode.access : modifiers;
+	}
+
+	@Override
+	public List<AnnotationMeta> annotations() {
+		if (asmNode != null) {
+			List<AnnotationMeta> annotations = asmNode.visibleAnnotations == null ? new ArrayList<>() : map(asmNode.visibleAnnotations, AnnotationMeta::new);
+			if (asmNode.invisibleAnnotations != null)
+				annotations.addAll(map(asmNode.invisibleAnnotations, AnnotationMeta::new));
+
+			return annotations;
+		}
+		return annotations;
+	}
 
 	/**
 	 * Loads the method.
@@ -80,16 +115,6 @@ public class MethodMeta implements IMeta {
 				return loadedMethod = method;
 
 		throw elevate(new NoSuchMethodException(), "Could not find method %s %s in %s!", name, desc, owner.name);
-	}
-
-	@Override
-	public List<AnnotationMeta> getAnnotations() {
-		return annotations;
-	}
-
-	@Override
-	public int getModifiers() {
-		return modifiers;
 	}
 
 	@Override

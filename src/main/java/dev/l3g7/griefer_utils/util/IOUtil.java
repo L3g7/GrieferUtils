@@ -111,6 +111,7 @@ public class IOUtil {
 		protected InputStream open() throws Exception {
 			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 			conn.addRequestProperty("User-Agent", "GrieferUtils v" + AddonUtil.getVersion());
+			conn.setConnectTimeout(10000);
 			return conn.getInputStream();
 		}
 	}

@@ -44,11 +44,11 @@ public class MainPage {
 	static {
 		// Load features
 		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Feature.class)) {
-			Class<Feature> feature = meta.load();
+			if (meta.isAbstract())
+				continue;
 
-			Feature instance = FileProvider.getSingleton(feature);
+			Feature instance = FileProvider.getSingleton(meta.load());
 			instance.init();
-			Category.getCategory(feature.getPackage()).add(instance);
 		}
 
 		// Add every category to the main page

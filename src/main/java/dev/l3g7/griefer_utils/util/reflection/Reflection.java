@@ -51,8 +51,8 @@ public class Reflection {
 	/**
 	 * @return all fields with the given annotation present.
 	 */
-	public static Field[] getAnnotatedFields(Class<?> targetClass, Class<? extends Annotation> annotation) {
-		return FieldReflection.getAnnotatedFields(targetClass, annotation);
+	public static Field[] getAnnotatedFields(Class<?> targetClass, Class<? extends Annotation> annotation, boolean checkSuperClasses) {
+		return FieldReflection.getAnnotatedFields(targetClass, annotation, checkSuperClasses);
 	}
 
 	/**
@@ -102,6 +102,13 @@ public class Reflection {
 	 */
 	public static <T> Class<T> load(String name) {
 		return ClassReflection.load(name);
+	}
+
+	/**
+	 * @return the package's parent.
+	 */
+	public static Package getParentPackage(Package pkg) {
+		return PackageReflection.getParentPackage(pkg);
 	}
 
 	/**

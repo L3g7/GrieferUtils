@@ -64,7 +64,8 @@ class MethodReflection {
 			method.setAccessible(true);
 			return c(method.invoke(target, params));
 		} catch (Throwable e) {
-			throw elevate(e, "Tried to invoke method '%s' with parameters '%s' in '%s'", method.getName(), ArrayUtil.toString(params, o -> o.getClass().toString(), ", "), target.toString());
+
+			throw elevate(e, "Tried to invoke method '%s' with parameters '%s' in '%s'", method.getName(), ArrayUtil.toString(params, o -> o == null ? "<null>" : o.getClass().toString(), ", "), target == null ? "<null>" : target.toString());
 		}
 	}
 
@@ -89,7 +90,7 @@ class MethodReflection {
 	 */
 	static Method[] getAnnotatedMethods(Class<?> targetClass, Class<? extends Annotation> annotation) {
 		List<Method> methods = new ArrayList<>();
-		for (Method Method : targetClass.getDeclaredMethods()) {
+		for (Method Method : ArrayUtil.flatmap(Method.class, targetClass.getDeclaredMethods(), targetClass.getMethods())) {
 			if (Method.isAnnotationPresent(annotation))
 				methods.add(Method);
 		}

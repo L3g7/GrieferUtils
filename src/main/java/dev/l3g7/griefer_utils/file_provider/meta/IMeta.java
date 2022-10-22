@@ -29,8 +29,8 @@ import java.util.List;
  */
 public interface IMeta extends Opcodes {
 
-	List<AnnotationMeta> getAnnotations();
-	int getModifiers();
+	List<AnnotationMeta> annotations();
+	int modifiers();
 
 	/**
 	 * @return whether an annotation with the given description exists.
@@ -47,7 +47,7 @@ public interface IMeta extends Opcodes {
 	 * @return the annotation with the given description.
 	 */
 	default AnnotationMeta getAnnotation(String annotationDesc) {
-		return getAnnotations().stream().filter(meta -> meta.desc.equals(annotationDesc)).findFirst().orElse(null);
+		return annotations().stream().filter(meta -> meta.desc.equals(annotationDesc)).findFirst().orElse(null);
 	}
 
 	default AnnotationMeta getAnnotation(Class<? extends Annotation> type) {
@@ -56,7 +56,11 @@ public interface IMeta extends Opcodes {
 
 
 	default boolean isStatic() {
-		return (getModifiers() & ACC_STATIC) != 0;
+		return (modifiers() & ACC_STATIC) != 0;
+	}
+
+	default boolean isAbstract() {
+		return (modifiers() & ACC_ABSTRACT) != 0;
 	}
 
 }

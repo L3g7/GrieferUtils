@@ -131,4 +131,9 @@ public class AnnotationMeta implements Opcodes {
 		return Enum.valueOf((Class<? extends Enum>) c(FileProvider.getClassMetaByDesc(data[0]).load()), data[1]);
 	}
 
+	@Override
+	public String toString() {
+		return desc;
+	}
+
 }

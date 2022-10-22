@@ -22,7 +22,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.ArrayUtil.flatmap;

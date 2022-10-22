@@ -21,7 +21,9 @@ package dev.l3g7.griefer_utils.features;
 import dev.l3g7.griefer_utils.event.EventHandler;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.util.ArrayUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.SettingsElement;
@@ -53,12 +55,23 @@ public abstract class Feature implements MinecraftUtil {
 	 * </p>
 	 */
 	public void init() {
-		category = Category.getCategory(getClass().getPackage());
+
+		// Find package holding category meta
+		Package pkg = getClass().getPackage();
+		do {
+			if (pkg.isAnnotationPresent(Category.Meta.class))
+				break;
+		} while ((pkg = Reflection.getParentPackage(pkg)) != null);
+
+		if (pkg == null)
+			throw new IllegalStateException("Could not find category of " + getClass().getPackage().getName());
+
+		category = Category.getCategory(pkg);
 
 		// Load main element
-		Field[] mainElementFields = Reflection.getAnnotatedFields(getClass(), MainElement.class);
+		Field[] mainElementFields = Reflection.getAnnotatedFields(getClass(), MainElement.class, false);
 		if (mainElementFields.length != 1)
-			throw new IllegalStateException("Found an invalid amount of main elements");
+			throw new IllegalStateException("Found an invalid amount of main elements for " + getClass().getSimpleName());
 
 		mainElement = Reflection.get(this, mainElementFields[0]);
 
@@ -73,6 +86,8 @@ public abstract class Feature implements MinecraftUtil {
 
 		// Register events
 		EventHandler.register(this);
+
+		category.add(this);
 	}
 
 	/**
@@ -80,6 +95,9 @@ public abstract class Feature implements MinecraftUtil {
 	 */
 	private void loadSubSettings(SettingsElement parent, String parentKey) {
 		for (SettingsElement element : parent.getSubSettings().getElements()) {
+			if (element instanceof HeaderSetting)
+				continue;
+
 			String key = parentKey + "." + convertCamelCaseToSnakeCase(getFieldName(element));
 			loadSubSettings(element, key);
 			if (element instanceof ValueHolder<?, ?>)
@@ -88,14 +106,14 @@ public abstract class Feature implements MinecraftUtil {
 	}
 
 	/**
-	 * Gets the name of a field based on it's value.
+	 * Gets the name of a field based on its value.
 	 */
 	private String getFieldName(SettingsElement element) {
-		for (Field field : getClass().getDeclaredFields())
+		for (Field field : ArrayUtil.flatmap(Field.class, getClass().getDeclaredFields(), getClass().getFields()))
 			if (Reflection.get(this, field) == element)
 				return field.getName();
 
-		throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.getDisplayName());
+		throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.getDisplayName() + " in " + this);
 	}
 
 	public SettingsElement getMainElement() {

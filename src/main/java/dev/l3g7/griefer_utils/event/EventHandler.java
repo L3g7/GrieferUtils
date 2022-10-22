@@ -65,7 +65,7 @@ public class EventHandler implements Opcodes {
 			boolean receiveSubclasses = meta.getValue("receiveSubclasses", false);
 
 			listeners.register(BUS_ID, priority, e -> {
-				if (receiveCanceled || !e.isCanceled()
+				if ((receiveCanceled || !e.isCanceled())
 					&& (receiveSubclasses || e.getClass() == eventClass))
 					Reflection.invoke(resolveOwner(method, isSingleton), method.load(), e);
 			});

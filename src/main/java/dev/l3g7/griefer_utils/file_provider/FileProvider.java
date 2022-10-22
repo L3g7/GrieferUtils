@@ -127,21 +127,24 @@ public abstract class FileProvider {
 	}
 
 	/**
-	 * @return the class meta for a class based on it's description.
+	 * @return the class meta for a class based on its description.
 	 */
 	public static ClassMeta getClassMetaByDesc(String desc) {
-		return getClassMeta(Type.getType(desc).getInternalName() + ".class");
+		return getClassMeta(Type.getType(desc).getInternalName() + ".class", true);
 	}
 
 	/**
+	 * @param loadUnknownFiles whether files not known for the provider should be loaded using reflection.
 	 * @return the class meta for a file.
 	 */
-	public static ClassMeta getClassMeta(String file) {
+	public static ClassMeta getClassMeta(String file, boolean loadUnknownFiles) {
 		if (classMetaCache.containsKey(file))
 			return classMetaCache.get(file);
 
 		// Check if file is known
 		if (!getFiles().contains(file)) {
+			if (!loadUnknownFiles)
+				return null;
 			// Load ClassMeta using Reflection
 			ClassMeta meta = new ClassMeta(Reflection.load(file));
 			classMetaCache.put(file, meta);
@@ -173,7 +176,7 @@ public abstract class FileProvider {
 
 		// Find classes
 		for (String file : getFiles(f -> f.endsWith(".class"))) {
-			ClassMeta meta = getClassMeta(file);
+			ClassMeta meta = getClassMeta(file, false);
 			if (meta.hasSuperClass(internalName))
 				classes.add(meta);
 		}
@@ -190,7 +193,7 @@ public abstract class FileProvider {
 
 		// Find classes
 		for (String file : getFiles(f -> f.endsWith(".class")))
-			for (MethodMeta method : getClassMeta(file).methods)
+			for (MethodMeta method : getClassMeta(file, false).methods)
 				if (method.hasAnnotation(annotationName))
 					methods.add(method);
 

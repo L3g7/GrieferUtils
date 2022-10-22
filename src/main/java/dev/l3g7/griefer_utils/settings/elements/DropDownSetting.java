@@ -56,8 +56,8 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 
 	@Override
 	public DropDownSetting<E> name(String name) {
-		getDropDownMenu().setTitle("MT " + name);
-		return ElementBuilder.super.name("SN " + name);
+		getDropDownMenu().setTitle(name);
+		return ElementBuilder.super.name(name);
 	}
 
 	@Override

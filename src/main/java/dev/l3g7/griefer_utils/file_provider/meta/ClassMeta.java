@@ -37,6 +37,7 @@ public class ClassMeta implements IMeta {
 	public final String name;
 	public final String superName;
 	public final int modifiers;
+	public final String signature;
 	public final List<MethodMeta> methods;
 	public final List<AnnotationMeta> annotations;
 
@@ -50,6 +51,7 @@ public class ClassMeta implements IMeta {
 		this.name = node.name;
 		this.superName = node.superName;
 		this.modifiers = node.access;
+		this.signature = node.signature;
 		this.methods = map(node.methods, m -> new MethodMeta(this, m));
 		this.annotations = node.visibleAnnotations == null ? Collections.emptyList() : map(node.visibleAnnotations, AnnotationMeta::new);
 
@@ -65,6 +67,7 @@ public class ClassMeta implements IMeta {
 		this.name = Type.getInternalName(clazz);
 		this.superName = superClass == null ? null : Type.getInternalName(superClass);
 		this.modifiers = clazz.getModifiers();
+		this.signature = null;
 		this.methods = map(clazz.getDeclaredMethods(), m -> new MethodMeta(this, m));
 		this.annotations = map(clazz.getAnnotations(), AnnotationMeta::new);
 
@@ -84,7 +87,9 @@ public class ClassMeta implements IMeta {
 			if (meta.superName == null)
 				return false;
 
-			meta = FileProvider.getClassMeta(meta.superName + ".class");
+			meta = FileProvider.getClassMeta(meta.superName + ".class", false);
+			if (meta == null)
+				return false;
 		}
 	}
 
@@ -99,12 +104,12 @@ public class ClassMeta implements IMeta {
 	}
 
 	@Override
-	public List<AnnotationMeta> getAnnotations() {
+	public List<AnnotationMeta> annotations() {
 		return annotations;
 	}
 
 	@Override
-	public int getModifiers() {
+	public int modifiers() {
 		return modifiers;
 	}
 

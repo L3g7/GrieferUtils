@@ -34,7 +34,7 @@ public class RenderWorldEvent extends TickEvent.RenderTickEvent {
 	}
 
 	@EventListener(receiveSubclasses = false)
-	public static void onRenderTick(TickEvent.RenderTickEvent event) {
+	private static void onRenderTick(TickEvent.RenderTickEvent event) {
 		if (mc().currentScreen == null)
 			EVENT_BUS.post(new RenderWorldEvent(event.phase, event.renderTickTime));
 	}

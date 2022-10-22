@@ -19,7 +19,6 @@
 package dev.l3g7.griefer_utils.util;
 
 import com.google.gson.*;
-import dev.l3g7.griefer_utils.misc.ThrowingSupplier;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -121,46 +121,41 @@ public class IOUtil {
 
 		/**
 		 * Tries to read the input stream as a json object.
+		 */
+		public Optional<JsonObject> asJsonObject() {
+			return readSync(in -> jsonParser.parse(in).getAsJsonObject());
+		}
+
+		/**
+		 * Tries to read the input stream as a json string.
+		 */
+		public AsyncFailable asJsonString(Consumer<String> callback) {
+			return readAsync(in -> jsonParser.parse(in).getAsString(), callback);
+		}
+
+		/**
+		 * Tries to read the input stream as a json string.
+		 */
+		public AsyncFailable asJsonArray(Consumer<JsonArray> callback) {
+			return readAsync(in -> jsonParser.parse(in).getAsJsonArray(), callback);
+		}
+
+		/**
+		 * Tries to read the input stream using the given parser.
 		 * <br>
 		 * Example:
-		 * <pre>
+		 * <pre>{@code
 		 * obj = IOUtil.read(file)
 		 *     .asJsonObject()
 		 *     .orElse(new JsonObject());
-		 * </pre>
-		 */
-		public Optional<JsonObject> asJsonObject() {
-			return catchErrors(() -> {
-				try (InputStreamReader in = new InputStreamReader(open(), UTF_8)) {
-					return jsonParser.parse(in).getAsJsonObject();
-				}
-			});
-		}
-
-		/**
-		 * Tries to read the input stream as a json string, asynchronously.
-		 * <br>
-		 * Example:
-		 * <pre>
-		 * IOUtil.read(url)
-		 *     .asJsonString(str -> log("success", str))
-		 *     .orElse(e -> log("error", e));
-		 * </pre>
-		 */
-		public AsyncFailable asJsonString(Consumer<String> callback) {
-			return asyncCatchErrors(() -> {
-				try (InputStreamReader in = new InputStreamReader(open(), UTF_8)) {
-					return jsonParser.parse(in).getAsString();
-				}
-			}, callback);
-		}
-
-		/**
+		 * }</pre>
 		 * @return the value given by the supplier or an empty optional if the supplier throws an error.
 		 */
-		private <V> Optional<V> catchErrors(ThrowingSupplier<V> supplier) {
+		private <V> Optional<V> readSync(Function<InputStreamReader, V> parser) {
 			try {
-				return Optional.of(supplier.run());
+				try (InputStreamReader in = new InputStreamReader(open(), UTF_8)) {
+					return Optional.of(parser.apply(in));
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				return Optional.empty();
@@ -168,13 +163,22 @@ public class IOUtil {
 		}
 
 		/**
-		 * @see ReadOperation#catchErrors
+		 * Tries to read the input stream using the given parser.
+		 * <br>
+		 * Example:
+		 * <pre>{@code
+		 * IOUtil.read(url)
+		 *     .asJsonString(str -> log("success", str))
+		 *     .orElse(error -> log("error", error));
+		 * }</pre>
 		 */
-		private <V> AsyncFailable asyncCatchErrors(ThrowingSupplier<V> supplier, Consumer<V> callback) {
+		private <V> AsyncFailable readAsync(Function<InputStreamReader, V> parser, Consumer<V> callback) {
 			AsyncFailable op = new AsyncFailable();
 			new Thread(() -> {
 				try {
-					callback.accept(supplier.run());
+					try (InputStreamReader in = new InputStreamReader(open(), UTF_8)) {
+						callback.accept(parser.apply(in));
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 					if (op.fallback != null)

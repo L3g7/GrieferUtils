@@ -87,7 +87,7 @@ public class Trajectories extends Feature {
 		float motionFactor = 1.5F;
 		float motionSlowdown = 0.99F;
 		float size = 0.25f;
-		float power = player().rotationYaw;
+		float power;
 		float gravity = 0.05f;
 
 		if (item instanceof ItemBow) {
@@ -122,19 +122,19 @@ public class Trajectories extends Feature {
 		byte pitchOffset = (byte) ((item instanceof ItemPotion && ItemPotion.isSplash(heldItem.getItemDamage())) ? -20 : 0);
 
 		float pitchRadians = (float) Math.toRadians(pitch);
-		float powerRadians = (float) Math.toRadians(power);
+		float yawRadians = (float) Math.toRadians(player().rotationYaw);
 		float offsetPitchRadians = (float) Math.toRadians(pitch + pitchOffset);
 
 		Vector3d pos = new Vector3d (
-			renderPosX - (MathHelper.cos(powerRadians) * 0.16F),
+			renderPosX - (MathHelper.cos(yawRadians) * 0.16F),
 			renderPosY + player().getEyeHeight() - 0.10000000149011612D,
-			renderPosZ - (MathHelper.sin(powerRadians) * 0.16F)
+			renderPosZ - (MathHelper.sin(yawRadians) * 0.16F)
 		);
 
 		Vector3d motion = new Vector3d (
-			-MathHelper.sin(powerRadians) * MathHelper.cos(pitchRadians),
+			-MathHelper.sin(yawRadians) * MathHelper.cos(pitchRadians),
 			-MathHelper.sin(offsetPitchRadians),
-			MathHelper.cos(powerRadians) * MathHelper.cos(pitchRadians)
+			MathHelper.cos(yawRadians) * MathHelper.cos(pitchRadians)
 		);
 
 		if (!isBow)

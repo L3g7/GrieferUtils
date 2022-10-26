@@ -34,6 +34,7 @@ import dev.l3g7.griefer_utils.util.IOUtil;
 			return firstString + firstString + secondString + secondString;
 		}
 
+		// Prefixes couldn't be loaded
 		if (prefixes == null)
 			return "4";
 
@@ -52,6 +53,7 @@ import dev.l3g7.griefer_utils.util.IOUtil;
 		return "4";
 	}
 
+	// Removes all §r at the start of the text
 	private String trim(String text) {
 		while (text.startsWith("§r"))
 			text = text.substring(2);
@@ -59,6 +61,7 @@ import dev.l3g7.griefer_utils.util.IOUtil;
 		return text;
 	}
 
+	// Returns the formatting code of the char at the given index
 	public Character getFormattingAt(int index) {
 		Character formattingCode = null;
 

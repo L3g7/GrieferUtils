@@ -77,7 +77,8 @@ public class HeadOwner extends Module {
             return null;
 
         MovingObjectPosition rayTraceResult = mc.thePlayer.rayTrace(1000, 1);
-        if (rayTraceResult.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+        if (rayTraceResult == null // Should only happen when one of the player's coordinates is NaN, but it happens (See https://discord.com/channels/1012404337433116792/1034951755240321146)
+	        || rayTraceResult.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
             return null;
 
         return mc.theWorld.getTileEntity(rayTraceResult.getBlockPos());

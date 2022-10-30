@@ -41,7 +41,7 @@ public class OrbBalance extends Module {
 
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (!isActive() || !ServerCheck.isOnCitybuild() || !(mc.currentScreen instanceof GuiChest))
+		if (!ServerCheck.isOnCitybuild() || !(mc.currentScreen instanceof GuiChest))
 			return;
 
 		IInventory inv = Reflection.get(mc.currentScreen, "lowerChestInventory", "field_147015_w", "w");

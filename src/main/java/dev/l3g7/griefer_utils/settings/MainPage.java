@@ -28,6 +28,7 @@ import net.labymod.settings.elements.SettingsElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -43,13 +44,13 @@ public class MainPage {
 
 	static {
 		// Load features
-		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Feature.class)) {
+		FileProvider.getClassesWithSuperClass(Feature.class).stream().sorted(Comparator.comparing(o -> o.name)).forEach(meta -> {
 			if (meta.isAbstract())
-				continue;
+				return;
 
 			Feature instance = FileProvider.getSingleton(meta.load());
 			instance.init();
-		}
+		});
 
 		// Add every category to the main page
 		for (Category category : Category.getCategories())

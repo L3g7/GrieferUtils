@@ -19,19 +19,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static dev.l3g7.griefer_utils.misc.Constants.DECIMAL_FORMAT_3;
+import static dev.l3g7.griefer_utils.misc.Constants.ORB_SELL_PATTERN;
 
 @Singleton
 public class OrbBalance extends Module {
 
-	public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
-	private static final Pattern SKULL_PATTERN = Pattern.compile("^§7Du besitzt aktuell §e([\\d.]+) Orbs§7\\.$");
-	private static final Pattern SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich [\\d.]+ \\S+ für ([\\d.]+) Orbs verkauft\\.$");
-	private static final Pattern BUY_PATTERN = Pattern.compile("^\\[GrieferGames] Du hast erfolgreich das Produkt .+ für ([\\d.]+) Orbs gekauft\\.$");
+	private static final Pattern SKULL_PATTERN = Pattern.compile("^§7Du besitzt aktuell §e(?<orbs>[\\d.]+) Orbs§7\\.$");
+	private static final Pattern BUY_PATTERN = Pattern.compile("^\\[GrieferGames] Du hast erfolgreich das Produkt .+ für (?<orbs>[\\d.]+) Orbs gekauft\\.$");
 
 	private static long balance = -1;
 
@@ -63,7 +61,7 @@ public class OrbBalance extends Module {
 
 		Matcher matcher = SKULL_PATTERN.matcher(ItemUtil.getLastLore(skull));
 		if (matcher.matches()) {
-			balance = Long.parseLong(matcher.group(1).replace(".", ""));
+			balance = Long.parseLong(matcher.group("orbs").replace(".", ""));
 			saveBalance();
 		}
 	}
@@ -73,25 +71,25 @@ public class OrbBalance extends Module {
 		if (!ServerCheck.isOnCitybuild())
 			return;
 
-		String msg = event.getUnformatted().replaceAll("§.", "");
+		String msg = event.getUnformatted();
 
-		Matcher sellMatcher = SELL_PATTERN.matcher(msg);
+		Matcher sellMatcher = ORB_SELL_PATTERN.matcher(msg);
 		if (sellMatcher.matches()) {
-			balance += Long.parseLong(sellMatcher.group(1).replace(".", ""));
+			balance += Long.parseLong(sellMatcher.group("orbs").replace(".", ""));
 			saveBalance();
 			return;
 		}
 
 		Matcher buyMatcher = BUY_PATTERN.matcher(msg);
 		if (buyMatcher.matches()) {
-			balance -= Long.parseLong(buyMatcher.group(1).replace(".", ""));
+			balance -= Long.parseLong(buyMatcher.group("orbs").replace(".", ""));
 			saveBalance();
 		}
 	}
 
 	@Override
 	public String[] getValues() {
-		return balance == -1 ? getDefaultValues() : new String[]{DECIMAL_FORMAT.format(balance)};
+		return balance == -1 ? getDefaultValues() : new String[]{DECIMAL_FORMAT_3.format(balance)};
 	}
 
 	@Override

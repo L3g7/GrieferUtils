@@ -70,6 +70,20 @@ public class IconTest implements Opcodes {
 	@Test
 	void testIcons() {
 		for (ClassNode classNode : classes) {
+
+			// Check category icons
+			if (classNode.name.endsWith("package-info")) {
+				for (AnnotationNode node : classNode.visibleAnnotations) {
+					if (!node.desc.equals(Type.getDescriptor(Category.Meta.class)))
+						continue;
+					List<Object> values = node.values;
+					for (int i = 0; i < values.size(); i += 2)
+						if (values.get(i).equals("icon"))
+							testResource((String) values.get(i + 1));
+				}
+			}
+
+			// Check setting icons
 			for (MethodNode method : classNode.methods) {
 				for (AbstractInsnNode node : method.instructions.toArray()) {
 					if (node.getOpcode() != INVOKEVIRTUAL)
@@ -84,7 +98,7 @@ public class IconTest implements Opcodes {
 					do {
 						valNode = valNode.getPrevious();
 					} while (valNode instanceof LineNumberNode || valNode instanceof LabelNode);
-					testResource(classNode, method, valNode);
+					testInsnNode(classNode, method, valNode);
 				}
 			}
 		}
@@ -93,11 +107,11 @@ public class IconTest implements Opcodes {
 	/**
 	 * Tests whether the icon accessed by the insn node is available.
 	 */
-	private void testResource(ClassNode classNode, MethodNode method, AbstractInsnNode node) {
+	private void testInsnNode(ClassNode classNode, MethodNode method, AbstractInsnNode node) {
 		if (node instanceof LdcInsnNode) {
 			Object cst = ((LdcInsnNode) node).cst;
 			assertTrue(cst instanceof String, String.valueOf(cst));
-			assertTrue(FileProvider.getFiles().contains("assets/minecraft/griefer_utils/icons/" + cst + ".png"), (String) cst);
+			testResource((String) cst);
 		} else if (node instanceof FieldInsnNode) {
 			String owner = ((FieldInsnNode) node).owner;
 			assertEquals(owner, Type.getInternalName(Material.class), owner);
@@ -109,7 +123,7 @@ public class IconTest implements Opcodes {
 	}
 
 	/**
-	 * Checks icons given as a constructor parameter.
+	 * Tests icons given as a constructor parameter.
 	 */
 	private void testConstructor(ClassNode owner, MethodNode constructor, VarInsnNode position) {
 		for (ClassNode classNode : classes) {
@@ -129,10 +143,16 @@ public class IconTest implements Opcodes {
 					for (int i = 0; i < Type.getArgumentTypes(constructor.desc).length - position.var; i++)
 						n = n.getPrevious();
 
-					testResource(classNode, method, n);
+					testInsnNode(classNode, method, n);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Tests resource icons.
+	 */
+	private void testResource(String path) {
+		assertTrue(FileProvider.getFiles().contains("assets/minecraft/griefer_utils/icons/" + path + ".png"), path + ".png");
+	}
 }

@@ -161,25 +161,26 @@ public abstract class PlayerList extends Feature {
 		// Check if message is GLOBAL_RECEIVE, PLOTCHAT_RECEIVE, MESSAGE_RECEIVE or MESSAGE_SEND
 		MESSAGE_PATTERNS.stream().map(p -> p.matcher(event.original.getFormattedText())).filter(Matcher::matches).findFirst().ifPresent(matcher -> {
 
+			// Check if player should be marked
 			String name = matcher.group("name").replaceAll("§.", "");
+			if (!uuids.contains(PlayerUtil.getUUID(name)) && !names.contains(PlayerUtil.unnick(name)))
+				return;
 
-			if (uuids.contains(PlayerUtil.getUUID(name)) || names.contains(PlayerUtil.unnick(name))) {
-				ChatStyle style = new ChatStyle();
+			ChatStyle style = new ChatStyle();
 
-				// Add /profil command on click
-				style.setChatClickEvent(new ClickEvent(RUN_COMMAND, "/profil " + PlayerUtil.unnick(name)));
+			// Add /profil command on click
+			style.setChatClickEvent(new ClickEvent(RUN_COMMAND, "/profil " + PlayerUtil.unnick(name)));
 
-				// Add description
-				style.setChatHoverEvent(new HoverEvent(SHOW_TEXT, new ChatComponentText("§" + color.getColorChar() + "§l" + this.name)));
+			// Add description
+			style.setChatHoverEvent(new HoverEvent(SHOW_TEXT, new ChatComponentText("§" + color.getColorChar() + "§l" + this.name)));
 
-				// Update message
-				event.message.getSiblings().add(0,  toComponent(chatAction.get()).setChatStyle(style));
-			}
+			// Update message
+			event.message.getSiblings().add(0,  toComponent(chatAction.get()).setChatStyle(style));
 		});
 	}
 
 	/**
-	 * The event listener handling /profile.
+	 * The event listener handling /profil.
 	 * @see PlayerList#showInProfile
 	 */
 	@EventListener
@@ -187,28 +188,31 @@ public abstract class PlayerList extends Feature {
 		if (!showInProfile.get())
 			return;
 
-		// Check if profile is open
-		if (mc().currentScreen instanceof GuiChest) {
-			IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory", "field_147015_w", "w");
+		// Check if chest is open
+		if (!(mc().currentScreen instanceof GuiChest))
+			return;
 
-			// Check if title matches
-			Matcher matcher = PROFILE_TITLE_PATTERN.matcher(inventory.getDisplayName().getFormattedText());
-			if (!matcher.matches())
-				return;
+		IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory", "field_147015_w", "w");
 
-			String name = matcher.group("name").replaceAll("§.", "");
-			if (uuids.contains(PlayerUtil.getUUID(name)) || names.contains(name)) {
-				// Construct item
-				ItemStack indicatorPane = new ItemStack(Blocks.stained_glass_pane, 1, paneType);
-				indicatorPane.setStackDisplayName("§" + color.getColorChar() + "§l" + this.name);
+		// Check if chest is /profil using title
+		Matcher matcher = PROFILE_TITLE_PATTERN.matcher(inventory.getDisplayName().getFormattedText());
+		if (!matcher.matches())
+			return;
 
-				// Replace every glass pane with indicatorPane
-				for (int i = 0; i < inventory.getSizeInventory(); i++) {
-					ItemStack slot = inventory.getStackInSlot(i);
-					if (slot != null && slot.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
-						inventory.setInventorySlotContents(i, indicatorPane);
-				}
-			}
+		// Check if player should be marked
+		String name = matcher.group("name").replaceAll("§.", "");
+		if (!uuids.contains(PlayerUtil.getUUID(name)) && !names.contains(name))
+			return;
+
+		// Construct item
+		ItemStack indicatorPane = new ItemStack(Blocks.stained_glass_pane, 1, paneType);
+		indicatorPane.setStackDisplayName("§" + color.getColorChar() + "§l" + this.name);
+
+		// Replace every glass pane with indicatorPane
+		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+			ItemStack slot = inventory.getStackInSlot(i);
+			if (slot != null && slot.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
+				inventory.setInventorySlotContents(i, indicatorPane);
 		}
 	}
 

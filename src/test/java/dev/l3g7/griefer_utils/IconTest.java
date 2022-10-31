@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.util.Util;
 import net.labymod.utils.Material;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.ClassReader;
@@ -43,12 +44,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class IconTest implements Opcodes {
 
 	private static final List<ClassNode> classes = new ArrayList<>();
+	private static final List<String> unusedIcons = new ArrayList<>();
 
 	/**
-	 * Load all classes
+	 * Loads all classes and icons.
 	 */
 	@BeforeAll
-	static void beforeAll() {
+	static void loadResources() {
+		// Load classes
 		FileProvider.getFiles().stream().filter(f -> f.endsWith(".class")).forEach(file -> {
 			try (InputStream in = FileProvider.getData(file)) {
 				ClassNode classNode = new ClassNode();
@@ -62,6 +65,13 @@ public class IconTest implements Opcodes {
 				throw Util.elevate(e, "Tried to read class meta of " + file);
 			}
 		});
+
+		// Load icons
+		FileProvider.getFiles().stream().filter(f -> f.startsWith("assets/minecraft/griefer_utils/icons/")).forEach(file -> {
+			if (!file.endsWith("/README.md"))
+				unusedIcons.add(file);
+		});
+
 	}
 
 	/**
@@ -102,6 +112,15 @@ public class IconTest implements Opcodes {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Tests whether all available icons are used.
+	 */
+	@AfterAll
+	static void checkUnusedIcons() {
+		for (String unusedIcon : unusedIcons)
+			fail("Unused icon " + unusedIcon);
 	}
 
 	/**
@@ -154,5 +173,6 @@ public class IconTest implements Opcodes {
 	 */
 	private void testResource(String path) {
 		assertTrue(FileProvider.getFiles().contains("assets/minecraft/griefer_utils/icons/" + path + ".png"), path + ".png");
+		unusedIcons.remove("assets/minecraft/griefer_utils/icons/" + path + ".png");
 	}
 }

@@ -66,7 +66,7 @@ public abstract class PlayerList extends Feature {
 
 	private final String name, icon;
 	private final ModColor color;
-	private final int paneType;
+	private final int paneType; // The glass pane color in /profil
 
 	// List entries
 	private final List<UUID> uuids = new ArrayList<>();
@@ -210,7 +210,9 @@ public abstract class PlayerList extends Feature {
 
 	enum MarkAction {
 
-		DISABLED("Aus"), ICON("Als Icon"), TAG("Als Text");
+		DISABLED("Aus"),  // Don't mark an entry
+		ICON("Als Icon"), // Mark an entry using an icon, e.g. [⚠]
+		TAG("Als Text");  // Mark an entry using a tag,   e.g. [SCAMMER]
 
 		final String name;
 		MarkAction(String name) {
@@ -219,6 +221,9 @@ public abstract class PlayerList extends Feature {
 
 	}
 
+	/**
+	 * Converts a {@link MarkAction} into a {@link ChatComponentText}.
+	 */
 	private ChatComponentText toComponent(MarkAction action) {
 		if (action == ICON)
 			return new ChatComponentText(color + "[" + icon + "] ");

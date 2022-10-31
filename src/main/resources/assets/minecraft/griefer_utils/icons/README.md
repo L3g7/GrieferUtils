@@ -2,6 +2,10 @@
 
 <table>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png" height=16em width=16em/> green_scroll.png</a></td>
+    <td><a href="https://stock.pixlr.com/details/1001469300">Stock by Pixlr</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/info.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/info.png" height=16em width=16em/> info.png</a></td>
     <td><a href="https://minecraft-heads.com/custom-heads/alphabet/24498">minecraft-heads</a></td>
   </tr>

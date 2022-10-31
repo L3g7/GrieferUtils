@@ -58,6 +58,7 @@ import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 /**
  * An indicator for players on a <a href="https://scammer-radar.de/">ScammerRadar</a> list.
  * @see ScammerList
+ * @see TrustedList
  */
 public abstract class PlayerList extends Feature {
 

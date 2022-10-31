@@ -128,8 +128,11 @@ public abstract class PlayerList extends Feature {
 	 */
 	@EventListener(priority = EventPriority.LOW)
 	public void onDisplayNameRender(DisplayNameGetEvent event) {
+		if (displayNameAction.get() == DISABLED)
+			return;
+
 		if (uuids.contains(event.player.getUniqueID()) || names.contains(event.player.getName()))
-			event.displayName = toComponent(chatAction.get()).appendSibling(event.displayName);
+			event.displayName = toComponent(displayNameAction.get()).appendSibling(event.displayName);
 	}
 
 	/**
@@ -142,7 +145,7 @@ public abstract class PlayerList extends Feature {
 			return;
 
 		if (uuids.contains(event.profile.getId()) || names.contains(event.profile.getName()))
-			event.component = toComponent(chatAction.get()).appendSibling(event.component);
+			event.component = toComponent(tabAction.get()).appendSibling(event.component);
 	}
 
 	/**

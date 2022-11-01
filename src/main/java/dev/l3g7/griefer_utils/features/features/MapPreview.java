@@ -65,6 +65,10 @@ public class MapPreview extends Feature {
 		if (!isActive() || !isOnGrieferGames() || !(event.gui instanceof GuiContainer))
 			return;
 
+		// If a stack is being held by the mouse, no tooltip is shown
+		if (player().inventory.getItemStack() != null)
+			return;
+
 		GuiContainer currentScreen = (GuiContainer) event.gui;
 		Slot slot = currentScreen.getSlotUnderMouse();
 		if (slot == null || !slot.getHasStack())

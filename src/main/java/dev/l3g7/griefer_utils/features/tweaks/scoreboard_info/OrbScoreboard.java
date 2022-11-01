@@ -5,8 +5,8 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 
-import static dev.l3g7.griefer_utils.features.modules.OrbBalance.DECIMAL_FORMAT;
 import static dev.l3g7.griefer_utils.features.modules.OrbBalance.getBalance;
+import static dev.l3g7.griefer_utils.misc.Constants.DECIMAL_FORMAT_3;
 
 @Singleton
 public class OrbScoreboard extends ScoreboardHandler.ScoreboardMod {
@@ -29,7 +29,7 @@ public class OrbScoreboard extends ScoreboardHandler.ScoreboardMod {
 	@Override
 	protected String getValue() {
 		long balance = getBalance();
-		return balance == -1 ? "?" : DECIMAL_FORMAT.format(balance);
+		return balance == -1 ? "?" : DECIMAL_FORMAT_3.format(balance);
 	}
 
 }

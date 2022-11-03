@@ -107,7 +107,7 @@ public class ChatReactor extends Feature {
 
 	@EventListener
 	public void onMsg(MessageReceiveEvent event) {
-		if (!isActive())// || !isOnGrieferGames())
+		if (!isActive() || !isOnGrieferGames())
 			return;
 
 		for (ChatReactorEntry entry : entries)

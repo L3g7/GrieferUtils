@@ -20,7 +20,8 @@ import net.minecraft.util.IChatComponent;
 public class AntiCommandChoker extends Feature {
 
 	private static final String COMMAND = "/grieferutils_anti_command_choker ";
-	private static final IngameChatManager IGM = IngameChatManager.INSTANCE;
+	private static final IngameChatManager ICM = IngameChatManager.INSTANCE;
+	private boolean sendingCommand = false;
 
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("AntiCommandChoker")
@@ -43,6 +44,11 @@ public class AntiCommandChoker extends Feature {
 		if (!isActive() || !isOnGrieferGames())
 			return;
 
+		if (sendingCommand) {
+			sendingCommand = false;
+			return;
+		}
+
 		String msg = event.getMsg();
 		if (msg.startsWith(COMMAND)) {
 
@@ -50,17 +56,18 @@ public class AntiCommandChoker extends Feature {
 			int id = Integer.parseInt(message.split(" ")[0]);
 			String command = message.substring(Integer.toString(id).length() + 1);
 
+			sendingCommand = true;
 			send(command);
 
 			// Edit the sent message
-			IGM.getSentMessages().remove(IGM.getSentMessages().size() - 1);
-			IGM.addToSentMessages(command);
+			ICM.getSentMessages().remove(ICM.getSentMessages().size() - 1);
+			ICM.addToSentMessages(command);
 
 			// Remove the message (everywhere, since I don't know in which chatroom it is)
-			for (ChatRenderer chatRenderer : IGM.getChatRenderers())
+			for (ChatRenderer chatRenderer : ICM.getChatRenderers())
 				clear(chatRenderer, id);
-			clear(IGM.getMain(), id);
-			clear(IGM.getSecond(), id);
+			clear(ICM.getMain(), id);
+			clear(ICM.getSecond(), id);
 
 			event.setCanceled(true);
 			return;

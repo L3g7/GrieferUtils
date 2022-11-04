@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.features.Feature.isOnGrieferGames;
 import static dev.l3g7.griefer_utils.features.Feature.mc;
 
 public class TabListEvent extends Event {
@@ -28,7 +29,7 @@ public class TabListEvent extends Event {
     }
 
     public static void updatePlayerInfoList() {
-        if (mc().getNetHandler() == null)
+        if (!isOnGrieferGames() || mc().getNetHandler() == null)
             return;
 
         for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {

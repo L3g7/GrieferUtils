@@ -1,15 +1,12 @@
 package dev.l3g7.griefer_utils.features.tweaks;
 
-import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.event.event_bus.EventPriority;
 import dev.l3g7.griefer_utils.event.events.chat.MessageModifyEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;

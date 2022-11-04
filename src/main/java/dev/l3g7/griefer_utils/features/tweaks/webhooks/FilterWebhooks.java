@@ -66,8 +66,11 @@ public class FilterWebhooks extends Feature {
     @OnEnable
     private void loadWebhooks() {
         if (Config.has("tweaks.webhooks.filter"))
-            for (Map.Entry<String, JsonElement> entry : Config.get("tweaks.webhooks.filter").getAsJsonObject().entrySet())
-                webhooks.put(entry.getKey(), entry.getValue().getAsString());
+            for (Map.Entry<String, JsonElement> entry : Config.get("tweaks.webhooks.filter").getAsJsonObject().entrySet()) {
+				String value = entry.getValue().getAsString();
+				if (!value.trim().isEmpty())
+		            webhooks.put(entry.getKey(), entry.getValue().getAsString());
+            }
     }
 
     @SubscribeEvent

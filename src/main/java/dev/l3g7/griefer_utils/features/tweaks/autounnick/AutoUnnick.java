@@ -85,7 +85,7 @@ public class AutoUnnick extends Feature {
 		setNameWithPrefix(event.getComponent(), parts[0], parts[1], nickName, true);
 	}
 
-	@EventListener
+	@EventListener(priority = EventPriority.HIGH)
 	public void onMessageModifyChat(MessageModifyEvent event) {
 		if (!isActive() || !isOnGrieferGames())
 			return;

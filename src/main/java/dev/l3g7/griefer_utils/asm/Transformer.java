@@ -34,7 +34,6 @@ public class Transformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (editors.containsKey(transformedName)) {
-            Mappings.obfuscated = !name.equals(transformedName);
             try {
                 // Read array to node
                 ClassNode classNode = new ClassNode();

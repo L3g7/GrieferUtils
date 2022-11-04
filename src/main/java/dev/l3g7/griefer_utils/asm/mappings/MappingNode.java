@@ -1,5 +1,7 @@
 package dev.l3g7.griefer_utils.asm.mappings;
 
+import net.labymod.core.asm.LabyModCoreMod;
+
 import java.util.ArrayList;
 
 /**
@@ -17,7 +19,7 @@ public abstract class MappingNode {
 
 	@Override
 	public String toString() {
-		return (Mappings.obfuscated && obfuscated != null) ? obfuscated : unobfuscated;
+		return (LabyModCoreMod.isObfuscated() && obfuscated != null) ? obfuscated : unobfuscated;
 	}
 
 	public static class Class extends MappingNode {

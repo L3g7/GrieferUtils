@@ -2,6 +2,7 @@ package dev.l3g7.griefer_utils.asm.mappings;
 
 import dev.l3g7.griefer_utils.asm.mappings.MappingNode.Class;
 import dev.l3g7.griefer_utils.util.Reflection;
+import net.labymod.core.asm.LabyModCoreMod;
 
 import java.lang.reflect.Field;
 
@@ -21,6 +22,7 @@ public class Mappings {
 
 	// Minecraft v1.8.9
 	public static $Block                Block = new $Block();
+	public static $ChatLine             ChatLine = new $ChatLine();
 	public static $Entity               Entity = new $Entity();
 	public static $EntityLivingBase     EntityLivingBase = new $EntityLivingBase();
 	public static $EntityPlayer         EntityPlayer = new $EntityPlayer();
@@ -29,6 +31,7 @@ public class Mappings {
 	public static $FontRenderer         FontRenderer = new $FontRenderer();
 	public static $GlStateManager       GlStateManager = new $GlStateManager();
 	public static $GuiIngame            GuiIngame = new $GuiIngame();
+	public static $ChatRenderer         ChatRenderer = new $ChatRenderer();
 	public static $IChatComponent       IChatComponent = new $IChatComponent();
 	public static $NetHandlerPlayClient NetHandlerPlayClient = new $NetHandlerPlayClient();
 	public static $Material             Material = new $Material();
@@ -43,8 +46,7 @@ public class Mappings {
 	public static $EventHandler      EventHandler = new $EventHandler();
 	public static $TrueSight         TrueSight = new $TrueSight();
 	public static $ScoreboardHandler ScoreBoardHandler = new $ScoreboardHandler();
-
-	public static boolean obfuscated = false;
+	public static $MessageSkulls     MessageSkulls = new $MessageSkulls();
 
 	// Mapping methods
 	public static Class getClass(String mapping) {
@@ -109,6 +111,7 @@ public class Mappings {
 		private $GlStateManager() { super("net/minecraft/client/renderer/GlStateManager", "bfl"); }
 
 		public Method color() { return new Method("c", "color", this, Void, Float, Float, Float, Float); }
+		public Method enableBlend() { return new Method("l", "enableBlend", this, Void); }
 	}
 	public static class $GuiIngame extends Class {
 		private $GuiIngame() { super("net/minecraft/client/gui/GuiIngame", "avo"); }
@@ -179,5 +182,18 @@ public class Mappings {
 
 		public Method filterScores() { return new Method(null, "filterScores", this, Collection, Collection); }
 		public Method shouldNotUnlockScoreboard() { return new Method(null, "shouldNotUnlockScoreboard", this, Boolean); }
+	}
+	public static class $ChatRenderer extends Class {
+		public $ChatRenderer() { super("net/labymod/ingamechat/renderer/ChatRenderer", null); }
+
+		public Method renderChat() { return new Method(null, "renderChat", this, Void, Int); }
+	}
+	public static class $ChatLine extends Class {
+		public $ChatLine() { super("net/labymod/ingamechat/renderer/ChatLine", null); }
+	}
+	public static class $MessageSkulls extends Class {
+		public $MessageSkulls() { super("dev/l3g7/griefer_utils/features/tweaks/MessageSkulls", null); }
+
+		public Method renderSkull() { return new Method(null, "renderSkull", this, Void, ChatLine, Int); }
 	}
 }

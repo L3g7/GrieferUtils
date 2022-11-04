@@ -43,8 +43,10 @@ public class Constants {
 	public static final Pattern PAYMENT_RECEIVE_PATTERN = Pattern.compile(String.format("^%s(?<!§f) §r§ahat dir \\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
 	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s§r§a \\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
 
-
 	public static final DecimalFormat DECIMAL_FORMAT_98 = new DecimalFormat("###,###.##################################################################################################", new DecimalFormatSymbols(Locale.GERMAN)); // max 98 decimal places
+	public static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+
+	public static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>\\S+) für (?<orbs>[\\d.]+) Orbs verkauft\\.$");
 
 }

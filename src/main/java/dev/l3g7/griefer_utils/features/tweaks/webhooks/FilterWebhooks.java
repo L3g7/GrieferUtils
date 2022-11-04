@@ -91,6 +91,7 @@ public class FilterWebhooks extends Feature {
         String msg = event.getUnformatted().toLowerCase();
         for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
             if (webhooks.containsKey(filter.getFilterName())
+	                && !webhooks.get(filter.getFilterName()).trim().isEmpty()
                     && Arrays.stream(filter.getWordsContains()).anyMatch(w -> msg.contains(w.toLowerCase()))
                     && Arrays.stream(filter.getWordsContainsNot()).noneMatch(w -> msg.contains(w.toLowerCase()))) {
                 // Build payload

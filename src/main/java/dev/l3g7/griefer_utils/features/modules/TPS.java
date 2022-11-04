@@ -6,6 +6,7 @@ import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S05PacketSpawnPosition;
@@ -62,7 +63,11 @@ public class TPS extends Module {
 			return;
 
 		// Time it takes for the packet to reach the client
-		int tripTime = mc.getNetHandler().getPlayerInfo(uuid()).getResponseTime() / 2;
+		NetworkPlayerInfo playerInfo = mc.getNetHandler().getPlayerInfo(uuid());
+		if (playerInfo == null)
+			return;
+
+		int tripTime = playerInfo.getResponseTime() / 2;
 
 		long currentWorldTime = packet.getTotalWorldTime();
 		long currentMillis = System.currentTimeMillis();

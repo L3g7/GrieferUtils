@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.misc;
 
+import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.event_bus.EventPriority;
 import dev.l3g7.griefer_utils.event.events.chat.MessageModifyEvent;
@@ -7,10 +8,12 @@ import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.features.chat_menu.ChatMenu;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import net.labymod.utils.ModColor;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,12 +30,28 @@ public class ClickEventHandler {
 
 	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
 	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
-	private static final Pattern[] MESSAGE_PATTERNS = new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN};
+	private static final List<Pattern> MESSAGE_PATTERNS = ImmutableList.of(PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN);
 
 	@EventListener(priority = EventPriority.HIGHEST)
 	public static void modifyMessage(MessageModifyEvent event) {
+		modifyStatuses(event);
 		modifyMsgs(event);
 		modifyTps(event);
+	}
+
+	private static void modifyStatuses(MessageModifyEvent event) {
+		String formattedText = event.getMessage().getFormattedText();
+		Matcher matcher = STATUS_PATTERN.matcher(formattedText);
+		if (!matcher.matches())
+			return;
+
+		String name = matcher.group("name");
+		IChatComponent message = event.getMessage();
+
+		for (IChatComponent part : message.getSiblings())
+			part.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", ModColor.removeColor(name))));
+
+		event.setMessage(message);
 	}
 
 	private static void modifyMsgs(MessageModifyEvent event) {

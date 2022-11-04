@@ -27,12 +27,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.event.events.network.tablist.TabListEvent.updatePlayerInfoList;
-import static dev.l3g7.griefer_utils.misc.Constants.*;
+import static dev.l3g7.griefer_utils.misc.Constants.MESSAGE_PATTERNS;
 
 @Singleton
 public class AutoUnnick extends Feature {
 
-	private static final List<Pattern> ALL_PATTERNS = ImmutableList.of(GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN);
 	private static final String COMMAND = "/grieferutils_autounnick_namehistory_prompt_fix ";
 
 	private final BooleanSetting tab = new BooleanSetting()
@@ -107,8 +106,7 @@ public class AutoUnnick extends Feature {
 		if (!name.contains("~"))
 			return;
 
-		for (Pattern pattern : ALL_PATTERNS) {
-
+		for (Pattern pattern : MESSAGE_PATTERNS) {
 			Matcher matcher = pattern.matcher(event.getMessage().getFormattedText());
 
 			if (matcher.matches()) {

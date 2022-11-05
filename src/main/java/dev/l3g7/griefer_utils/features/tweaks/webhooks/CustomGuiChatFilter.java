@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unchecked")
 public class CustomGuiChatFilter extends GuiChatCustom {
 
-    private static final Pattern HOOK_URL_PATTERN = Pattern.compile("^https://(?:\\w+\\.)?discord\\.com/api/webhooks/(\\d{18}\\d?/[\\w-]{68})$");
+    private static final Pattern HOOK_URL_PATTERN = Pattern.compile("^https://(?:\\w+\\.)?discord(?:app)?\\.com/api/webhooks/(\\d{18}\\d?/[\\w-]{68})$");
 
     private final Scrollbar scrollbar = new Scrollbar(15);
     private Filter selectedFilter;

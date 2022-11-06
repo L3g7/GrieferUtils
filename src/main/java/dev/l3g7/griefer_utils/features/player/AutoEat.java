@@ -140,7 +140,7 @@ public class AutoEat extends Feature {
 
 	enum PreferredFood {
 
-		HIGH_SATURATION("stark sättigende Nahrung", (a, b) -> a < b), LOW_SATURATION("schwach sättigende Nahrung", (a, b) -> a > b);
+		HIGH_SATURATION("stark sättigend", (a, b) -> a < b), LOW_SATURATION("schwach sättigend", (a, b) -> a > b);
 
 		final String name;
 		final BiPredicate<Integer, Integer> compareFunc;

@@ -42,6 +42,7 @@ import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> implements ElementBuilder<DropDownSetting<E>>, ValueHolder<DropDownSetting<E>, E> {
 
 	private final Storage<E> storage;
+	private final IconStorage iconStorage = new IconStorage();
 	private Function<E, String> stringProvider = Enum::toString;
 	private int dropDownWidth;
 
@@ -111,6 +112,11 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 	}
 
 	@Override
+	public IconStorage getIconStorage() {
+		return iconStorage;
+	}
+
+	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		DropDownMenu<?> dropDownMenu = getDropDownMenu();
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
@@ -120,6 +126,7 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		dropDownMenu.setSelected(null);
 
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
+		drawIcon(x, y);
 
 		dropDownMenu.setSelected(c(selected));
 

@@ -54,6 +54,7 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 	private final List<Consumer<Boolean>> pressCallbacks = new ArrayList<>();
 	private boolean pressed;
 
+	private final IconStorage iconStorage = new IconStorage();
 	private final Storage<Set<Integer>> storage = new Storage<>(values -> {
 		JsonArray array = new JsonArray();
 		values.stream().map(JsonPrimitive::new).forEach(array::add);
@@ -79,6 +80,11 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 	@Override
 	public Storage<Set<Integer>> getStorage() {
 		return storage;
+	}
+
+	@Override
+	public IconStorage getIconStorage() {
+		return iconStorage;
 	}
 
 	@Override
@@ -128,6 +134,7 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
+		drawIcon(x, y);
 		if (previewField == null)
 			return;
 

@@ -38,6 +38,7 @@ import static net.labymod.gui.elements.CheckBox.EnumCheckBoxValue.*;
 public class RadioSetting<E extends Enum<E>> extends ColorPickerCheckBoxBulkElement implements ElementBuilder<RadioSetting<E>>, ValueHolder<RadioSetting<E>, E> {
 
 	private final Storage<E> storage;
+	private final IconStorage iconStorage = new IconStorage();
 	private final List<CheckBox> checkBoxes = Reflection.get(this, Reflection.getField(ColorPickerCheckBoxBulkElement.class, "checkBoxes"));
 	private final Class<E> enumClass;
 
@@ -98,6 +99,7 @@ public class RadioSetting<E extends Enum<E>> extends ColorPickerCheckBoxBulkElem
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		RenderUtil.renderIconData(iconData, x, y);
+		drawIcon(x, y);
 
 		LabyMod.getInstance().getDrawUtils().drawRectangle(x, y, maxX, maxY, 0x1e505050);
 		mc.fontRendererObj.drawString(displayName, x + 25, y + 9, 0xFFFFFF);
@@ -122,4 +124,8 @@ public class RadioSetting<E extends Enum<E>> extends ColorPickerCheckBoxBulkElem
 		return storage;
 	}
 
+	@Override
+	public IconStorage getIconStorage() {
+		return iconStorage;
+	}
 }

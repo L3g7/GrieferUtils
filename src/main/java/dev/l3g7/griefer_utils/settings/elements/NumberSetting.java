@@ -29,6 +29,7 @@ import net.labymod.settings.elements.NumberElement;
  */
 public class NumberSetting extends NumberElement implements ElementBuilder<NumberSetting>, ValueHolder<NumberSetting, Integer> {
 
+	private final IconStorage iconStorage = new IconStorage();
 	private final Storage<Integer> storage = new Storage<>(JsonPrimitive::new, JsonElement::getAsInt);
 
 	public NumberSetting() {
@@ -40,6 +41,11 @@ public class NumberSetting extends NumberElement implements ElementBuilder<Numbe
 	@Override
 	public Storage<Integer> getStorage() {
 		return storage;
+	}
+
+	@Override
+	public IconStorage getIconStorage() {
+		return iconStorage;
 	}
 
 	/**
@@ -54,6 +60,12 @@ public class NumberSetting extends NumberElement implements ElementBuilder<Numbe
 	 */
 	public NumberSetting max(int max) {
 		return (NumberSetting) setMaxValue(max);
+	}
+
+	@Override
+	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+		super.draw(x, y, maxX, maxY, mouseX, mouseY);
+		drawIcon(x, y);
 	}
 
 }

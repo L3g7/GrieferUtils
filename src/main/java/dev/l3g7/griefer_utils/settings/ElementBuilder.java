@@ -21,10 +21,12 @@ package dev.l3g7.griefer_utils.settings;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
+import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +57,7 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 
 	/**
 	 * Sets the icon of the setting.
+	 * @param icon of type {@link Material}, {@link ItemStack} or {@link String} for GrieferUtils icons.
 	 */
 	default S icon(Object icon) {
 		if (!(this instanceof ControlElement))
@@ -65,11 +68,33 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 			iconData = new IconData((Material) icon);
 		else if (icon instanceof String)
 			iconData = new IconData("griefer_utils/icons/" + icon + ".png");
-		else
+		else if (icon instanceof ItemStack) {
+			iconData = null;
+			getIconStorage().itemStack = (ItemStack) icon;
+		} else
 			throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
 
 		Reflection.set(this, iconData, "iconData");
 		return (S) this;
+	}
+
+	/**
+	 * A storage for ItemStack icons.
+	 * Should be implemented for every setting extending {@link ControlElement}.
+	 */
+	default IconStorage getIconStorage() {
+		throw new UnsupportedOperationException("unimplemented");
+	}
+
+	/**
+	 * Draws the ItemStack icon, if set.
+	 */
+	default void drawIcon(int x, int y) {
+		ItemStack itemIcon = getIconStorage().itemStack;
+		if (itemIcon == null)
+			return;
+
+		LabyMod.getInstance().getDrawUtils().drawItem(itemIcon, x + 3, y + 2, null);
 	}
 
 	/**
@@ -94,15 +119,9 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		return (S) this;
 	}
 
-	/**
-	 * Manually enables / disables sub settings.
-	 */
-	default S settingsEnabled(boolean settingsEnabled) {
-		if (!(this instanceof ControlElement))
-			throw new UnsupportedOperationException(this.getClass().getSimpleName() + "doesn't support settings!");
+	class IconStorage {
 
-		((ControlElement) this).setSettingEnabled(settingsEnabled);
-		return (S) this;
+		private ItemStack itemStack = null;
+
 	}
-
 }

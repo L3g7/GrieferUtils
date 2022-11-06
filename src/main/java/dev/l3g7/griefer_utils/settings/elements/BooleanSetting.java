@@ -30,6 +30,7 @@ import net.labymod.settings.elements.BooleanElement;
 public class BooleanSetting extends BooleanElement implements ElementBuilder<BooleanSetting>, ValueHolder<BooleanSetting, Boolean> {
 
 	private final Storage<Boolean> storage = new ValueHolder.Storage<>(JsonPrimitive::new, JsonElement::getAsBoolean);
+	private final IconStorage iconStorage = new IconStorage();
 
 	public BooleanSetting() {
 		super("§cNo name set", null, v -> {}, false);
@@ -42,6 +43,17 @@ public class BooleanSetting extends BooleanElement implements ElementBuilder<Boo
 	@Override
 	public Storage<Boolean> getStorage() {
 		return storage;
+	}
+
+	@Override
+	public IconStorage getIconStorage() {
+		return iconStorage;
+	}
+
+	@Override
+	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+		super.draw(x, y, maxX, maxY, mouseX, mouseY);
+		drawIcon(x, y);
 	}
 
 }

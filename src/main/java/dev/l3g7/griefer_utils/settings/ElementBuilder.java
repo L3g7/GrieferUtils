@@ -69,7 +69,7 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		else if (icon instanceof String)
 			iconData = new IconData("griefer_utils/icons/" + icon + ".png");
 		else if (icon instanceof ItemStack) {
-			iconData = null;
+			iconData = new IconData();
 			getIconStorage().itemStack = (ItemStack) icon;
 		} else
 			throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");

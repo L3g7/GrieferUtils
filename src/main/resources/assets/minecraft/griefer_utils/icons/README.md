@@ -2,6 +2,10 @@
 
 <table>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/bone_with_meat.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/bone_with_meat.png" height=16em width=16em/> bone_with_meat.png</a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/mob_effect/saturation.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png" height=16em width=16em/> green_scroll.png</a></td>
     <td><a href="https://stock.pixlr.com/details/1001469300">Stock by Pixlr</a></td>
   </tr>

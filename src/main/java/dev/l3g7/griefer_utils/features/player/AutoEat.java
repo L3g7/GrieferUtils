@@ -24,6 +24,8 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import net.labymod.utils.Material;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -45,17 +47,20 @@ public class AutoEat extends Feature {
 	private final DropDownSetting<TriggerMode> triggerMode = new DropDownSetting<>(TriggerMode.class)
 		.name("Auslösung")
 		.description("Wann AutoEat essen soll.", "Wenn effizient ausgewählt ist, wird gegessen, wenn kein Sättigungspunkt des Essens verschwendet wird.")
+		.icon("bone_with_meat")
 		.defaultValue(EFFICIENTLY);
 
 	private final DropDownSetting<PreferredFood> preferredFood = new DropDownSetting<>(PreferredFood.class)
 		.name("Bevorzugte Nahrung")
+		.icon(COOKED_BEEF)
 		.defaultValue(HIGH_SATURATION);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("AutoEat")
 		.icon(COOKED_BEEF)
-		.subSettingsWithHeader("AutoEat", triggerMode, preferredFood);
+		.subSettingsWithHeader("AutoEat",
+			triggerMode, preferredFood);
 
 	private int previousHotbarSlot = -1;
 	private boolean finishing = false;

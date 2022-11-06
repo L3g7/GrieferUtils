@@ -25,7 +25,11 @@ import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.DropDownElement;
+import net.labymod.settings.elements.SettingsElement;
+import net.labymod.utils.DrawUtils;
+import net.labymod.utils.ModColor;
 
+import java.util.List;
 import java.util.function.Function;
 
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
@@ -37,6 +41,8 @@ import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> implements ElementBuilder<DropDownSetting<E>>, ValueHolder<DropDownSetting<E>, E> {
 
 	private final Storage<E> storage;
+	private Function<E, String> stringProvider = Enum::toString;
+	private int dropDownWidth;
 
 	public DropDownSetting(Class<E> enumClass) {
 		super("§cNo name set", null);
@@ -46,7 +52,7 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		storage = new Storage<>(e -> new JsonPrimitive(e.name()), s -> Enum.valueOf(enumClass, s.getAsString()));
 
 		// Initialize menu
-		DropDownMenu<E> menu = new DropDownMenu<>("§fMenuTitle", 0, 0, 0, 0);
+		DropDownMenu<E> menu = new DropDownMenu<>("", 0, 0, 0, 0);
 		menu.fill(enumClass.getEnumConstants());
 		Reflection.set(this, menu, "dropDownMenu");
 
@@ -56,8 +62,15 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 
 	@Override
 	public DropDownSetting<E> name(String name) {
-		getDropDownMenu().setTitle(name);
+		if (getIconData() == null)
+			getDropDownMenu().setTitle(name);
 		return ElementBuilder.super.name(name);
+	}
+
+	@Override
+	public DropDownSetting<E> icon(Object icon) {
+		getDropDownMenu().setTitle("");
+		return ElementBuilder.super.icon(icon);
 	}
 
 	@Override
@@ -67,16 +80,63 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 	}
 
 	/**
+	 * Disables sub settings for DropDownSetting, as this is not implemented in rendering.
+	 */
+	@Override
+	public DropDownSetting<E> subSettings(List<SettingsElement> settings) {
+		throw new UnsupportedOperationException("unimplemented");
+	}
+
+	/**
 	 * Uses given function to convert the dropdown values to strings when drawing.
 	 */
 	public DropDownSetting<E> stringProvider(Function<E, String> function) {
-		getDropDownMenu().setEntryDrawer((o, x, y, trimmedEntry) -> LabyMod.getInstance().getDrawUtils().drawString(function.apply((E) o), x, y));
+		stringProvider = function;
+		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
+		getDropDownMenu().setEntryDrawer((o, x, y, trimmedEntry) -> drawUtils.drawString(function.apply((E) o), x, y));
+		dropDownWidth = ((List<E>) Reflection.get(getDropDownMenu(), "list"))
+			.stream().mapToInt(e -> drawUtils.getStringWidth(function.apply(e)))
+			.max()
+			.orElse(0);
+
+		dropDownWidth = Math.max(dropDownWidth, 90);
+
 		return this;
 	}
 
 	@Override
 	public Storage<E> getStorage() {
 		return storage;
+	}
+
+	@Override
+	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+		DropDownMenu<?> dropDownMenu = getDropDownMenu();
+		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
+
+		// Reset selection, so selected value isn't rendered
+		Object selected = dropDownMenu.getSelected();
+		dropDownMenu.setSelected(null);
+
+		super.draw(x, y, maxX, maxY, mouseX, mouseY);
+
+		dropDownMenu.setSelected(c(selected));
+
+		int height = maxY - y - 6;
+
+		// Draw selected entry with fixed width
+		String trimmedEntry = drawUtils.trimStringToWidth(ModColor.cl("f") + stringProvider.apply((E) selected), 80);
+		drawUtils.drawString(trimmedEntry, (maxX - 100 - 5) + 5, (y + 3) + height / 2f - 4);
+
+		drawUtils.drawGradientShadowRight(100, 0, 100);
+
+		// Draw dropdown with fixed width
+		if (!dropDownMenu.isOpen())
+			return;
+
+		dropDownMenu.setWidth(dropDownWidth + 9);
+		dropDownMenu.drawMenuDirect(dropDownMenu.getX(), dropDownMenu.getY(), mouseX, mouseY);
+		dropDownMenu.setWidth(100);
 	}
 
 }

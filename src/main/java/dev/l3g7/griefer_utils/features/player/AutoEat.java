@@ -24,8 +24,6 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import net.labymod.utils.Material;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -134,7 +132,7 @@ public class AutoEat extends Feature {
 
 	enum TriggerMode {
 
-		HALF_BAR("Bei halbem Hungerbalken"), EFFICIENTLY("Effizient");
+		HALF_BAR("bei halbem Hungerbalken"), EFFICIENTLY("effizient");
 
 		final String name;
 		TriggerMode(String name) {

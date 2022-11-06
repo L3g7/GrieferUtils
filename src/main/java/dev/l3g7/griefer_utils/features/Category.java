@@ -18,9 +18,8 @@
 
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.misc.Constants;
+import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -55,11 +54,7 @@ public class Category {
 			.icon(meta.icon())
 			.defaultValue(true)
 			.config(configKey + ".active")
-			.subSettings(
-				new HeaderSetting("§r"),
-				new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-				new HeaderSetting("§e§l" + meta.name()).scale(.7),
-				new HeaderSetting("§r").scale(.4).entryHeight(10));
+			.subSettings();
 	}
 
 	public static Category getCategory(Package pkg) {
@@ -83,7 +78,7 @@ public class Category {
 	}
 
 	public void add(Feature feature) {
-		setting.subSettings(feature.getMainElement());
+		setting.subSettings(ImmutableList.of(feature.getMainElement()));
 	}
 
 	/**

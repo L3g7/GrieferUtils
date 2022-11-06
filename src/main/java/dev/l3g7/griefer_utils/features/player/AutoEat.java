@@ -59,8 +59,7 @@ public class AutoEat extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("AutoEat")
 		.icon(COOKED_BEEF)
-		.subSettingsWithHeader("AutoEat",
-			triggerMode, preferredFood);
+		.subSettings(triggerMode, preferredFood);
 
 	private int previousHotbarSlot = -1;
 	private boolean finishing = false;

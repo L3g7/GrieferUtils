@@ -103,7 +103,7 @@ public abstract class PlayerList extends Feature {
 		enabled
 			.name(name + "liste")
 			.icon(settingIcon)
-			.subSettingsWithHeader(name + "liste", tabAction, chatAction, displayNameAction, showInProfile);
+			.subSettings(tabAction, chatAction, displayNameAction, showInProfile);
 		this.name = name;
 		this.icon = chatIcon;
 		this.color = color;

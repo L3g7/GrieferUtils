@@ -48,6 +48,13 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 	}
 
 	/**
+	 * Sets the name of the setting, joined by \n.
+	 */
+	default S name(String... name) {
+		return name(String.join("\n", name));
+	}
+
+	/**
 	 * Sets the description of the setting to the given strings.
 	 */
 	default S description(String... description) {

@@ -28,6 +28,7 @@ import net.labymod.settings.elements.DropDownElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
 import net.labymod.utils.ModColor;
+import net.minecraft.client.gui.Gui;
 
 import java.util.List;
 import java.util.function.Function;
@@ -126,9 +127,14 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 
 		// Draw selected entry with fixed width
 		String trimmedEntry = drawUtils.trimStringToWidth(ModColor.cl("f") + stringProvider.apply((E) selected), 80);
-		drawUtils.drawString(trimmedEntry, (maxX - 100 - 5) + 5, (y + 3) + height / 2f - 4);
+		drawUtils.drawString(trimmedEntry, maxX - 100, (y + 3) + height / 2f - 4);
 
-		drawUtils.drawGradientShadowRight(100, 0, 100);
+		// Draw gradient
+		drawUtils.drawGradientShadowRight(maxX - 21, y + 3, maxY - 3);
+		drawUtils.drawGradientShadowRight(maxX - 21, y + 3, maxY - 3);
+
+		// Hide overlapping pixels
+		Gui.drawRect(maxX - 21, maxY - 13, maxX - 20, maxY - 3, 0xFF000000);
 
 		// Draw dropdown with fixed width
 		if (!dropDownMenu.isOpen())

@@ -6,6 +6,10 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/mob_effect/saturation.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chunk.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chunk.png" height=16em width=16em/> chunk.png</a></td>
+    <td><a href="https://www.deviantart.com/ishmanallenlitchmore/art/chunk-of-minecraft-382711453">IshmanAllenLitchmore</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png" height=16em width=16em/> green_scroll.png</a></td>
     <td><a href="https://stock.pixlr.com/details/1001469300">Stock by Pixlr</a></td>
   </tr>
@@ -20,6 +24,10 @@
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/lens.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/lens.png" height=16em width=16em/> lens.png</a></td>
     <td><a href="https://www.shutterstock.com/image-vector/772538452">Shutterstock</a></td>
+  </tr>
+  <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/lightning.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/lightning.png" height=16em width=16em/> lightning.png</a></td>
+    <td><a href="https://www.freepik.com/premium-vector/vector-illustration-cute-pixel-art-icon-geek-lightning-element-style-90s-game_29366701.htm">Olive Kitt</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/red_scroll.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/red_scroll.png" height=16em width=16em/> red_scroll.png</a></td>

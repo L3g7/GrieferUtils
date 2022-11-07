@@ -9,6 +9,7 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
+import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.ArrayList;
@@ -108,6 +109,9 @@ public class ChatReactor extends Feature {
 	@EventListener
 	public void onMsg(MessageReceiveEvent event) {
 		if (!isActive() || !isOnGrieferGames())
+			return;
+
+		if (mc().currentScreen instanceof LabyModAddonsGui && path().contains(getMainElement()))
 			return;
 
 		for (ChatReactorEntry entry : entries)

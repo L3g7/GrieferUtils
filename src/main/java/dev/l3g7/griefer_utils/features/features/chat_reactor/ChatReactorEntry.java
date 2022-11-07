@@ -123,7 +123,7 @@ public class ChatReactorEntry {
 	}
 
 	private boolean isTriggerValid() {
-		return !parseAsRegEx.get() || pattern != null;
+		return isValid() && (!parseAsRegEx.get() || pattern != null);
 	}
 
 	public JsonObject toJson() {

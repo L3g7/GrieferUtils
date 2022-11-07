@@ -18,12 +18,15 @@
 
 package dev.l3g7.griefer_utils.event;
 
+import dev.l3g7.griefer_utils.event.events.RenderWorldEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.render.ChunkIndicator;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.file_provider.meta.AnnotationMeta;
 import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -61,13 +64,17 @@ public class EventHandler implements Opcodes {
 			// Get metadata
 			AnnotationMeta meta = method.getAnnotation(EventListener.class);
 			EventPriority priority = meta.getValue("priority", true);
+			boolean triggerWhenDisabled = meta.getValue("triggerWhenDisabled", false);
 			boolean receiveCanceled = meta.getValue("receiveCanceled", false);
 			boolean receiveSubclasses = meta.getValue("receiveSubclasses", false);
 
 			listeners.register(BUS_ID, priority, e -> {
 				if ((receiveCanceled || !e.isCanceled())
-					&& (receiveSubclasses || e.getClass() == eventClass))
-					Reflection.invoke(resolveOwner(method, isSingleton), method.load(), e);
+					&& (receiveSubclasses || e.getClass() == eventClass)) {
+					Object owner = resolveOwner(method, isSingleton);
+					if (triggerWhenDisabled || !(owner instanceof Feature) || ((Feature) owner).isEnabled())
+						Reflection.invoke(resolveOwner(method, isSingleton), method.load(), e);
+				}
 			});
 		}
 	}

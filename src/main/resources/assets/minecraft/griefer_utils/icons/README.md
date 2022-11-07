@@ -11,7 +11,7 @@
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png" height=16em width=16em/> green_scroll.png</a></td>
-    <td><a href="https://stock.pixlr.com/details/1001469300">Stock by Pixlr</a></td>
+    <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/info.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/info.png" height=16em width=16em/> info.png</a></td>
@@ -31,7 +31,7 @@
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/red_scroll.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/red_scroll.png" height=16em width=16em/> red_scroll.png</a></td>
-    <td><a href="https://stock.pixlr.com/details/1001469300">Stock by Pixlr</a></td>
+    <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/speech_bubble.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/speech_bubble.png" height=16em width=16em/> speech_bubble.png</a></td>

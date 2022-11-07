@@ -29,7 +29,7 @@ import net.labymod.settings.elements.BooleanElement;
  */
 public class BooleanSetting extends BooleanElement implements ElementBuilder<BooleanSetting>, ValueHolder<BooleanSetting, Boolean> {
 
-	private final Storage<Boolean> storage = new ValueHolder.Storage<>(JsonPrimitive::new, JsonElement::getAsBoolean);
+	private final Storage<Boolean> storage = new ValueHolder.Storage<>(JsonPrimitive::new, JsonElement::getAsBoolean, false);
 	private final IconStorage iconStorage = new IconStorage();
 
 	public BooleanSetting() {
@@ -37,7 +37,6 @@ public class BooleanSetting extends BooleanElement implements ElementBuilder<Boo
 		custom("An", "Aus");
 		setSettingEnabled(true);
 		addCallback(this::set);
-		fallbackValue(false);
 	}
 
 	@Override

@@ -46,11 +46,10 @@ public class RadioSetting<E extends Enum<E>> extends ColorPickerCheckBoxBulkElem
 		super("§cNo name set");
 		this.enumClass = enumClass;
 
-		// Initialize storage
-		storage = new Storage<>(e -> new JsonPrimitive(e.name()), s -> Enum.valueOf(enumClass, s.getAsString()));
-
-		// Reverse values
 		E[] values = enumClass.getEnumConstants();
+
+		// Initialize storage
+		storage = new Storage<>(e -> new JsonPrimitive(e.name()), s -> Enum.valueOf(enumClass, s.getAsString()), values[0]);
 
 		// Add values
 		for (E e : values) {

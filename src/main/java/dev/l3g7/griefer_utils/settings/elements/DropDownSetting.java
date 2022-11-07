@@ -51,7 +51,7 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		setChangeListener(this::set);
 
 		// Initialize storage
-		storage = new Storage<>(e -> new JsonPrimitive(e.name()), s -> Enum.valueOf(enumClass, s.getAsString()));
+		storage = new Storage<>(e -> new JsonPrimitive(e.name()), s -> Enum.valueOf(enumClass, s.getAsString()), enumClass.getEnumConstants()[0]);
 
 		// Initialize menu
 		DropDownMenu<E> menu = new DropDownMenu<>("", 0, 0, 0, 0);

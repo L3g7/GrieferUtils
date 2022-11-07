@@ -71,15 +71,6 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 	}
 
 	/**
-	 * Sets a fallback value to use if no value is in the config and no default value is set.
-	 */
-	default S fallbackValue(V value) {
-		Storage<V> s = getStorage();
-		s.fallbackValue = value;
-		return (S) this;
-	}
-
-	/**
 	 * Loads the value from the given config key and adds a callback that saves changes to it.
 	 */
 	default S config(String configKey) {
@@ -124,15 +115,16 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 
 		private T value = null;
 		private String configKey = null;
-		private T fallbackValue = null;
+		private final T fallbackValue;
 		private final List<Consumer<T>> callbacks = new ArrayList<>();
 
 		private final Function<T, JsonElement> encodeFunc;
 		private final Function<JsonElement, T> decodeFunc;
 
-		public Storage(Function<T, JsonElement> encodeFunc, Function<JsonElement, T> decodeFunc) {
+		public Storage(Function<T, JsonElement> encodeFunc, Function<JsonElement, T> decodeFunc, T fallbackValue) {
 			this.encodeFunc = encodeFunc;
 			this.decodeFunc = decodeFunc;
+			this.fallbackValue = fallbackValue;
 		}
 
 	}

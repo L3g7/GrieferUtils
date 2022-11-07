@@ -63,7 +63,8 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 		e -> new LinkedHashSet<>(
 			StreamSupport.stream(e.getAsJsonArray().spliterator(), false)
 			.map(JsonElement::getAsInt)
-			.collect(Collectors.toList()))
+			.collect(Collectors.toList())),
+		new TreeSet<>()
 	);
 
 	public KeySetting() {
@@ -74,7 +75,6 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 		previewField.setCursorPositionEnd();
 		previewField.setFocused(false);
 		MinecraftForge.EVENT_BUS.register(this);
-		fallbackValue(new TreeSet<>());
 	}
 
 	@Override

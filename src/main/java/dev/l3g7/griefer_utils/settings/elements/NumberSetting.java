@@ -30,12 +30,11 @@ import net.labymod.settings.elements.NumberElement;
 public class NumberSetting extends NumberElement implements ElementBuilder<NumberSetting>, ValueHolder<NumberSetting, Integer> {
 
 	private final IconStorage iconStorage = new IconStorage();
-	private final Storage<Integer> storage = new Storage<>(JsonPrimitive::new, JsonElement::getAsInt);
+	private final Storage<Integer> storage = new Storage<>(JsonPrimitive::new, JsonElement::getAsInt, 0);
 
 	public NumberSetting() {
 		super("§cNo name set", null, 0);
 		addCallback(this::set);
-		fallbackValue(0);
 	}
 
 	@Override

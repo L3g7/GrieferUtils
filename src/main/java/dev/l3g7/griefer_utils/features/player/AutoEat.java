@@ -108,7 +108,7 @@ public class AutoEat extends Feature {
 
 		// Go through hotbar
 		for (int i = 0; i < 9; i++) {
-			ItemStack item = player().inventory.getStackInSlot(i);
+			ItemStack item = inventory().getStackInSlot(i);
 			// Skip non-foods
 			if (item == null || item.getItem() == null || !(item.getItem() instanceof ItemFood))
 				continue;

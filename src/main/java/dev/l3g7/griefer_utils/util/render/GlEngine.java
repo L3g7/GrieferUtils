@@ -25,7 +25,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.StaticImport.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 

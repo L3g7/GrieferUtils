@@ -18,29 +18,41 @@
 
 package dev.l3g7.griefer_utils.util;
 
+import dev.l3g7.griefer_utils.util.misc.Vec3f;
+import net.labymod.main.LabyMod;
+import net.labymod.utils.DrawUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 
 /**
- * A utility class for simplified access to parts of Minecraft.
+ * A utility class for simplified access to parts of Minecraft (and LabyMod).
  */
-public interface MinecraftUtil {
+public class MinecraftUtil {
 
-	default Minecraft mc() { return Minecraft.getMinecraft(); }
-	default GameSettings settings() { return mc().gameSettings; }
-	default EntityPlayerSP player() { return mc().thePlayer; }
-	default InventoryPlayer inventory() { return player().inventory; }
-	default ItemStack[] armorInventory() { return inventory().armorInventory; }
-	default int screenWidth() { return new ScaledResolution(mc()).getScaledWidth(); }
-	default int screenHeight() { return new ScaledResolution(mc()).getScaledHeight(); }
+	public static Minecraft       mc()              { return Minecraft.getMinecraft();                      }
+	public static EntityPlayerSP  player()          { return mc().thePlayer;                                }
+	public static GameSettings    settings()        { return mc().gameSettings;                             }
+	public static TextureManager  textureManager()  { return mc().getTextureManager();                      }
+	public static WorldClient     world()           { return mc().theWorld;                                 }
 
-	class StaticImport {
+	public static ItemStack[]     armorInventory()  { return inventory().armorInventory;                    }
+	public static InventoryPlayer inventory()       { return player().inventory;                            }
 
-		public static Minecraft mc() { return Minecraft.getMinecraft(); }
+	public static int             screenWidth()     { return new ScaledResolution(mc()).getScaledWidth();   }
+	public static int             screenHeight()    { return new ScaledResolution(mc()).getScaledHeight();  }
+	public static float           partialTicks()    { return labyMod().getPartialTicks();                   }
 
-	}
+	public static Vec3f           pos(Entity e)     { return new Vec3f(e.posX, e.posY, e.posZ);             }
+
+	public static LabyMod         labyMod()         { return LabyMod.getInstance();                         }
+	public static DrawUtils       drawUtils()       { return labyMod().getDrawUtils();                      }
+
 }

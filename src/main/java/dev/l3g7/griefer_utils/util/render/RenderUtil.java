@@ -18,20 +18,26 @@
 
 package dev.l3g7.griefer_utils.util.render;
 
+import dev.l3g7.griefer_utils.util.misc.Vec3f;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
-import net.labymod.main.LabyMod;
-import net.labymod.settings.elements.ControlElement;
+import net.labymod.settings.elements.ControlElement.IconData;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.ForgeHooksClient;
+import org.lwjgl.opengl.GL11;
+
+import java.awt.*;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.util.render.GlEngine.*;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * A utility class for rendering stuff.
@@ -45,7 +51,6 @@ public class RenderUtil {
 	 */
 	public static void renderItem(ItemStack stack, int x, int y, int color) {
 		IBakedModel model = itemRender.getItemModelMesher().getItemModel(stack);
-		RenderItem itemRender = mc().getRenderItem();
 
 		begin();
 		disableBlocksBlurAndMipmap();
@@ -63,14 +68,54 @@ public class RenderUtil {
 		end();
 	}
 
-	public static void renderIconData(ControlElement.IconData iconData, int x, int y) {
+	public static void renderIconData(IconData iconData, int x, int y) {
 		if (iconData == null)
 			return;
 
 		if (iconData.hasTextureIcon()) {
-			mc().getTextureManager().bindTexture(iconData.getTextureIcon());
-			LabyMod.getInstance().getDrawUtils().drawTexture(x + 3, y + 3, 256.0D, 256.0D, 16.0D, 16.0D);
+			textureManager().bindTexture(iconData.getTextureIcon());
+			drawUtils().drawTexture(x + 3, y + 3, 256, 256, 16, 16);
 		} else if (iconData.hasMaterialIcon())
-			LabyMod.getInstance().getDrawUtils().drawItem(iconData.getMaterialIcon().createItemStack(), x + 3, y + 2, null);
+			drawUtils().drawItem(iconData.getMaterialIcon().createItemStack(), x + 3, y + 2, null);
 	}
+
+	public static void drawLine(BlockPos start, BlockPos end, Color color) {
+		drawLine(start.getX(), start.getY(), start.getZ(), end.getX(), end.getY(), end.getZ(), color);
+	}
+
+	public static void drawLine(Vec3f start, Vec3f end, Color color) {
+		drawLine(start.x, start.y, start.z, end.x, end.y, end.z, color);
+	}
+
+	/**
+	 * Based on <a href="https://github.com/CCBlueX/LiquidBounce/blob/5419a2894b4665b7695d0443180275a70f13607a/src/main/java/net/ccbluex/liquidbounce/utils/render/RenderUtils.java#L82">LiquidBounce's RenderUtils#drawBlockBox</a>
+	 */
+	public static void drawLine(float startX, float startY, float startZ, float endX, float endY, float endZ, Color color) {
+		Entity entity = mc().getRenderViewEntity();
+
+		// Get cam pos
+		Vec3f prevPos = new Vec3f(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
+
+		Vec3f cam = prevPos.add(pos(entity).minus(prevPos).multiply(partialTicks()));
+
+		// Update line width
+//		float oldLineWidth = glGetFloat(GL_LINE_WIDTH);
+		GL11.glLineWidth(1.5f);
+		GlStateManager.disableTexture2D();
+
+		// Draw lines
+		GlEngine.begin();
+		WorldRenderer buf = GlEngine.beginWorldDrawing(GL_LINES, DefaultVertexFormats.POSITION);
+		GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+
+		buf.pos(startX - cam.x, startY - cam.y, startZ - cam.z).endVertex();
+		buf.pos(endX - cam.x, endY - cam.y, endZ - cam.z).endVertex();
+
+		GlEngine.end();
+
+		// Reset line width
+//		GL11.glLineWidth(oldLineWidth);
+		GlStateManager.enableTexture2D();
+	}
+
 }

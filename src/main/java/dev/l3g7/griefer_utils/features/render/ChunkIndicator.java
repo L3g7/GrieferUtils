@@ -25,26 +25,18 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
-import net.labymod.main.LabyMod;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
+import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import org.lwjgl.opengl.GL11;
 
-import javax.vecmath.Vector3d;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.features.render.ChunkIndicator.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.features.render.ChunkIndicator.TriggerMode.TOGGLE;
-import static org.lwjgl.opengl.GL11.GL_LINES;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 /**
@@ -132,7 +124,7 @@ public class ChunkIndicator extends Feature {
 				continue;
 
 			for (int side = 0; side < 4; side++)
-				drawLine(chunkRoot.add(rotate(line.startOffset, side)), chunkRoot.add(rotate(line.endOffset, side)), line.color);
+				RenderUtil.drawLine(chunkRoot.add(rotate(line.startOffset, side)), chunkRoot.add(rotate(line.endOffset, side)), line.color);
 		}
 	}
 
@@ -164,36 +156,6 @@ public class ChunkIndicator extends Feature {
 		return null;
 	}
 
-	/**
-	 * Based on <a href="https://github.com/CCBlueX/LiquidBounce/blob/5419a2894b4665b7695d0443180275a70f13607a/src/main/java/net/ccbluex/liquidbounce/utils/render/RenderUtils.java#L82">LiquidBounce's RenderUtils#drawBlockBox</a>
-	 */
-	private void drawLine(BlockPos start, BlockPos end, Color color) {
-		Tessellator tessellator = Tessellator.getInstance();
-		WorldRenderer buf = tessellator.getWorldRenderer();
-		Entity entity = mc().getRenderViewEntity();
-
-		// Get cam pos
-		float partialTicks = LabyMod.getInstance().getPartialTicks();
-		Vector3d cam = new Vector3d(entity.prevPosX + ((entity.posX - entity.prevPosX) * partialTicks), entity.prevPosY + ((entity.posY - entity.prevPosY) * partialTicks), entity.prevPosZ + ((entity.posZ - entity.prevPosZ) * partialTicks));
-
-		// Update line width
-		float oldLineWidth = GL11.glGetFloat(GL11.GL_LINE_WIDTH);
-		GL11.glLineWidth(1.5f);
-		GlStateManager.disableTexture2D();
-
-		// Draw lines
-		buf.begin(GL_LINES, DefaultVertexFormats.POSITION);
-		GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
-
-		buf.pos(start.getX() - cam.getX(), start.getY() - cam.getY(), start.getZ() - cam.getZ()).endVertex();
-		buf.pos(end.getX() - cam.getX(), end.getY() - cam.getY(), end.getZ() - cam.getZ()).endVertex();
-
-		tessellator.draw();
-
-		// Reset line width
-		GL11.glLineWidth(oldLineWidth);
-		GlStateManager.enableTexture2D();
-	}
 
 	/**
 	 * A wrapper class holding a line to be rendered.

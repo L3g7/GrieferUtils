@@ -128,13 +128,21 @@ public class IconTest implements Opcodes {
 	 */
 	private void testInsnNode(ClassNode classNode, MethodNode method, AbstractInsnNode node) {
 		if (node instanceof LdcInsnNode) {
+			// Resource icons
 			Object cst = ((LdcInsnNode) node).cst;
 			assertTrue(cst instanceof String, String.valueOf(cst));
 			testResource((String) cst);
 		} else if (node instanceof FieldInsnNode) {
+			// Material icons
 			String owner = ((FieldInsnNode) node).owner;
 			assertEquals(owner, Type.getInternalName(Material.class), owner);
+		} else if (node instanceof MethodInsnNode) {
+			// ItemStack icons
+			MethodInsnNode m = (MethodInsnNode) node;
+			String check = m.owner + "." + m.name + m.desc;
+			assertEquals(check, "net/minecraft/item/ItemStack.<init>(Lnet/minecraft/block/Block;II)V", check);
 		} else if (node instanceof VarInsnNode) {
+			// Constructor icons
 			testConstructor(classNode, method, (VarInsnNode) node);
 		} else {
 			fail("Unknown node " + node.getClass().getSimpleName());

@@ -24,6 +24,9 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.settings;
+
 /**
  * Automatically sprints when walking.
  */

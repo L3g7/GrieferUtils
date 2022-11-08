@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.StaticImport.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.ADD_PLAYER;
 import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.UPDATE_DISPLAY_NAME;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;

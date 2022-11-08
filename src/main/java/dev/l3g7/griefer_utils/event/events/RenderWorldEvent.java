@@ -21,7 +21,7 @@ package dev.l3g7.griefer_utils.event.events;
 import dev.l3g7.griefer_utils.event.EventListener;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.StaticImport.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 /**

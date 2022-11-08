@@ -21,7 +21,7 @@ package dev.l3g7.griefer_utils.features.player;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.misc.TickScheduler;
+import dev.l3g7.griefer_utils.util.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import net.minecraft.client.settings.KeyBinding;
@@ -34,6 +34,7 @@ import java.util.function.BiPredicate;
 
 import static dev.l3g7.griefer_utils.features.player.AutoEat.PreferredFood.HIGH_SATURATION;
 import static dev.l3g7.griefer_utils.features.player.AutoEat.TriggerMode.EFFICIENTLY;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.labymod.utils.Material.COOKED_BEEF;
 
 /**

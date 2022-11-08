@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.settings;
 
-import dev.l3g7.griefer_utils.misc.Constants;
+import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.main.LabyMod;

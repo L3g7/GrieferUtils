@@ -25,11 +25,11 @@ import dev.l3g7.griefer_utils.event.events.DisplayNameGetEvent;
 import dev.l3g7.griefer_utils.event.events.TabListEvent;
 import dev.l3g7.griefer_utils.event.events.labymod.MessageModifyEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
+import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.ModColor;
@@ -52,6 +52,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.features.player.player_list.PlayerList.MarkAction.*;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 

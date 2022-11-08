@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.misc;
+package dev.l3g7.griefer_utils.util.misc;
 
 import dev.l3g7.griefer_utils.event.EventListener;
 import net.minecraftforge.fml.common.gameevent.TickEvent;

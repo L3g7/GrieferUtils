@@ -24,7 +24,6 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.ArrayUtil;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 
@@ -41,7 +40,7 @@ import static dev.l3g7.griefer_utils.util.Util.elevate;
 /**
  * The base class for features.
  */
-public abstract class Feature implements MinecraftUtil {
+public abstract class Feature {
 
 	private Category category;
 	private SettingsElement mainElement;

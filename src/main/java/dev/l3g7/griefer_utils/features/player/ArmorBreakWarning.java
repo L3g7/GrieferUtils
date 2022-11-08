@@ -31,6 +31,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.labymod.utils.Material.DIAMOND_CHESTPLATE;
 
 /**

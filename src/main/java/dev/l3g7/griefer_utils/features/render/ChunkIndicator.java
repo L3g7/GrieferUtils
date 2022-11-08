@@ -45,6 +45,7 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.features.render.ChunkIndicator.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.features.render.ChunkIndicator.TriggerMode.TOGGLE;
 import static org.lwjgl.opengl.GL11.GL_LINES;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 /**
  * Automatically sprints when walking.

@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.util.render;
 
-import dev.l3g7.griefer_utils.util.misc.Vec3f;
+import dev.l3g7.griefer_utils.util.misc.Vec3d;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.minecraft.client.renderer.GlStateManager;
@@ -59,13 +59,13 @@ public class RenderUtil {
 		Reflection.invoke(itemRender, "setupGuiTransform", x, y, model.isGui3d());
 		model = ForgeHooksClient.handleCameraTransforms(model, TransformType.GUI);
 		scale(0.5F);
-		translate(-0.5F, -0.5F, -0.5F);
+		translate(-0.5F);
 
 		// Draw item
 		WorldRenderer worldrenderer = beginWorldDrawing(GL_QUADS, DefaultVertexFormats.ITEM);
 		Reflection.invoke(itemRender, "renderQuads", worldrenderer, model.getGeneralQuads(), color, stack);
 
-		end();
+		finish();
 	}
 
 	public static void renderIconData(IconData iconData, int x, int y) {
@@ -83,10 +83,6 @@ public class RenderUtil {
 		drawLine(start.getX(), start.getY(), start.getZ(), end.getX(), end.getY(), end.getZ(), color);
 	}
 
-	public static void drawLine(Vec3f start, Vec3f end, Color color) {
-		drawLine(start.x, start.y, start.z, end.x, end.y, end.z, color);
-	}
-
 	/**
 	 * Based on <a href="https://github.com/CCBlueX/LiquidBounce/blob/5419a2894b4665b7695d0443180275a70f13607a/src/main/java/net/ccbluex/liquidbounce/utils/render/RenderUtils.java#L82">LiquidBounce's RenderUtils#drawBlockBox</a>
 	 */
@@ -94,9 +90,9 @@ public class RenderUtil {
 		Entity entity = mc().getRenderViewEntity();
 
 		// Get cam pos
-		Vec3f prevPos = new Vec3f(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
+		Vec3d prevPos = new Vec3d(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
 
-		Vec3f cam = prevPos.add(pos(entity).minus(prevPos).multiply(partialTicks()));
+		Vec3d cam = prevPos.add(pos(entity).subtract(prevPos).scale(partialTicks()));
 
 		// Update line width
 //		float oldLineWidth = glGetFloat(GL_LINE_WIDTH);
@@ -111,7 +107,7 @@ public class RenderUtil {
 		buf.pos(startX - cam.x, startY - cam.y, startZ - cam.z).endVertex();
 		buf.pos(endX - cam.x, endY - cam.y, endZ - cam.z).endVertex();
 
-		GlEngine.end();
+		GlEngine.finish();
 
 		// Reset line width
 //		GL11.glLineWidth(oldLineWidth);

@@ -25,11 +25,14 @@ import dev.l3g7.griefer_utils.event.events.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import net.labymod.main.LabyMod;
 import net.labymod.user.User;
 import net.labymod.utils.ModColor;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
 
 /**
  * Shows a player's clan tag underneath their name tag.
@@ -37,14 +40,30 @@ import java.util.UUID;
 @Singleton
 public class ClanTags extends Feature {
 
+	private final Map<UUID, String> tags = new HashMap<>();
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Clantags")
 		.description("Zeigt den Clantag eines Spielers unter seinem Nametag.")
 		.icon("rainbow_name")
-		.defaultValue(true);
+		.defaultValue(true)
+		.callback(this::toggleClanTags);
 
-	@EventListener
+	private void toggleClanTags(boolean enabled) {
+		if (enabled) {
+			tags.forEach((uuid, tag) -> {
+				User user = labyMod().getUserManager().getUser(uuid);
+				user.setSubTitle(tag);
+				user.setSubTitleSize(0.8);
+			});
+		} else {
+			for (User user : labyMod().getUserManager().getUsers().values())
+				user.setSubTitle(null);
+		}
+	}
+
+	@EventListener(triggerWhenDisabled = true)
 	public void onPlayerTick(MysteryModPayloadEvent event) {
 		if (!event.channel.equals("user_subtitle"))
 			return;
@@ -53,10 +72,14 @@ public class ClanTags extends Feature {
 			JsonObject obj = elem.getAsJsonObject();
 
 			UUID uuid = UUID.fromString(obj.get("targetId").getAsString());
-			User user = LabyMod.getInstance().getUserManager().getUser(uuid);
+			User user = labyMod().getUserManager().getUser(uuid);
 
-			user.setSubTitle(ModColor.createColors(obj.get("text").getAsString()));
-			user.setSubTitleSize(obj.get("scale").getAsDouble());
+			String tag = ModColor.createColors(obj.get("text").getAsString());
+			tags.put(uuid, tag);
+			if (isEnabled()) {
+				user.setSubTitle(tag);
+				user.setSubTitleSize(obj.get("scale").getAsDouble());
+			}
 		}
 	}
 

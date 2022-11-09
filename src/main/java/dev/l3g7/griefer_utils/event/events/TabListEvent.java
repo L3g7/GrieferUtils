@@ -55,6 +55,10 @@ public class TabListEvent extends Event {
 		}
 	}
 
+	public static IChatComponent getCachedName(UUID uuid) {
+		return cachedNames.get(uuid);
+	}
+
 	/**
 	 * An event being posted when a tab list entry updates its name.
 	 */

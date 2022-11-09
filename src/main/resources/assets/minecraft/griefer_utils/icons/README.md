@@ -34,6 +34,10 @@
     <td><a href="https://labymod.net">LabyMod asset (jar/.../settings/settings/keymarker.png)</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/rainbow_name.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/rainbow_name.png" height=16em width=16em/> rainbow_name.png</a></td>
+    <td><a href="https://labymod.net">LabyMod asset (jar/.../settings/settings/tags.png)</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/red_scroll.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/red_scroll.png" height=16em width=16em/> red_scroll.png</a></td>
     <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
   </tr>

@@ -40,7 +40,7 @@ import static dev.l3g7.griefer_utils.features.render.ChunkIndicator.TriggerMode.
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 /**
- * Automatically sprints when walking.
+ * Shows chunk boundaries.
  */
 @Singleton
 public class ChunkIndicator extends Feature {
@@ -84,6 +84,7 @@ public class ChunkIndicator extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Chunk-Indikator")
+		.description("Zeigt die Chunkgrenzen an. (Ähnlich wie F3 + G seit 1.10)")
 		.icon("chunk")
 		.subSettings(key, triggerMode,
 			new HeaderSetting(),

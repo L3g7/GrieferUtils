@@ -40,6 +40,7 @@ public class ClanTags extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Clantags")
+		.description("Zeigt den Clantag eines Spielers unter seinem Nametag.")
 		.icon("rainbow_name")
 		.defaultValue(true);
 

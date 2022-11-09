@@ -36,6 +36,7 @@ public class AutoSprint extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("AutoSprint")
+		.description("Sprintet automatisch.")
 		.icon("speed")
 		.defaultValue(true);
 

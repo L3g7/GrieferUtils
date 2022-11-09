@@ -30,6 +30,10 @@
     <td><a href="https://www.freepik.com/premium-vector/vector-illustration-cute-pixel-art-icon-geek-lightning-element-style-90s-game_29366701.htm">Olive Kitt</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/light_bulb.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/light_bulb.png" height=16em width=16em/> light_bulb.png</a></td>
+    <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/marker.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/marker.png" height=16em width=16em/> marker.png</a></td>
     <td><a href="https://labymod.net">LabyMod asset (jar/.../settings/settings/keymarker.png)</a></td>
   </tr>

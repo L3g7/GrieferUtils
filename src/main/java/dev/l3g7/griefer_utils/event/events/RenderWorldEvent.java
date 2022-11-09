@@ -29,7 +29,7 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
  */
 public class RenderWorldEvent extends TickEvent.RenderTickEvent {
 
-	public RenderWorldEvent(Phase phase, float renderTickTime) {
+	private RenderWorldEvent(Phase phase, float renderTickTime) {
 		super(phase, renderTickTime);
 	}
 

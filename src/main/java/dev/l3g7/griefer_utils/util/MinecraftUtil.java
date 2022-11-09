@@ -18,41 +18,63 @@
 
 package dev.l3g7.griefer_utils.util;
 
-import dev.l3g7.griefer_utils.util.misc.Vec3f;
+import dev.l3g7.griefer_utils.util.misc.Vec3d;
+import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.DrawUtils;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 
 /**
  * A utility class for simplified access to parts of Minecraft (and LabyMod).
  */
 public class MinecraftUtil {
 
-	public static Minecraft       mc()              { return Minecraft.getMinecraft();                      }
-	public static EntityPlayerSP  player()          { return mc().thePlayer;                                }
-	public static GameSettings    settings()        { return mc().gameSettings;                             }
-	public static TextureManager  textureManager()  { return mc().getTextureManager();                      }
-	public static WorldClient     world()           { return mc().theWorld;                                 }
+	public static Minecraft       mc()             { return Minecraft.getMinecraft(); }
+	public static EntityPlayerSP  player()         { return mc().thePlayer; }
+	public static GameSettings    settings()       { return mc().gameSettings; }
+	public static TextureManager  textureManager() { return mc().getTextureManager(); }
+	public static WorldClient     world()          { return mc().theWorld; }
 
-	public static ItemStack[]     armorInventory()  { return inventory().armorInventory;                    }
-	public static InventoryPlayer inventory()       { return player().inventory;                            }
+	public static ItemStack[]     armorInventory() { return inventory().armorInventory; }
+	public static InventoryPlayer inventory()      { return player().inventory; }
 
-	public static int             screenWidth()     { return new ScaledResolution(mc()).getScaledWidth();   }
-	public static int             screenHeight()    { return new ScaledResolution(mc()).getScaledHeight();  }
-	public static float           partialTicks()    { return labyMod().getPartialTicks();                   }
+	public static int             screenWidth()    { return new ScaledResolution(mc()).getScaledWidth(); }
+	public static int             screenHeight()   { return new ScaledResolution(mc()).getScaledHeight(); }
+	public static float           partialTicks()   { return labyMod().getPartialTicks(); }
 
-	public static Vec3f           pos(Entity e)     { return new Vec3f(e.posX, e.posY, e.posZ);             }
+	public static LabyMod         labyMod()        { return LabyMod.getInstance(); }
+	public static DrawUtils       drawUtils()      { return labyMod().getDrawUtils(); }
 
-	public static LabyMod         labyMod()         { return LabyMod.getInstance();                         }
-	public static DrawUtils       drawUtils()       { return labyMod().getDrawUtils();                      }
+	public static AxisAlignedBB axisAlignedBB(Vec3d a, Vec3d b) {
+		return new AxisAlignedBB(a.x, a.y, a.z, b.x, b.y, b.z);
+	}
+
+	public static Block blockAt(Vec3d pos) {
+		return world().getBlockState(new BlockPos(pos.x, pos.y, pos.z)).getBlock();
+	}
+
+	public static Vec3d pos(Entity e) {
+		return new Vec3d(e.posX, e.posY, e.posZ);
+	}
+
+	public static Vec3d renderPos() {
+		RenderManager renderManager = mc().getRenderManager();
+		double x = Reflection.get(renderManager, "renderPosX", "field_78725_b", "o");
+		double y = Reflection.get(renderManager, "renderPosY", "field_78726_c", "p");
+		double z = Reflection.get(renderManager, "renderPosZ", "field_78723_d", "q");
+		return new Vec3d(x, y, z);
+	}
 
 }

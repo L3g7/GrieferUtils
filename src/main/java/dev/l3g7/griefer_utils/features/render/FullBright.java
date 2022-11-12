@@ -36,8 +36,7 @@ public class FullBright extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("FullBright")
 		.description("Stellt den Gammawert auf 10.")
-		.icon("light_bulb")
-		.defaultValue(true);
+		.icon("light_bulb");
 
 	@EventListener
 	public void onPlayerTick(TickEvent.ClientTickEvent event) {

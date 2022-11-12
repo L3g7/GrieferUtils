@@ -37,8 +37,7 @@ public class AutoSprint extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("AutoSprint")
 		.description("Sprintet automatisch.")
-		.icon("speed")
-		.defaultValue(true);
+		.icon("speed");
 
 	@EventListener
 	public void onPlayerTick(PlayerTickEvent event) {

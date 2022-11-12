@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features;
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 
+import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -52,8 +53,8 @@ public class Category {
 		setting = new BooleanSetting()
 			.name(meta.name())
 			.icon(meta.icon())
-			.defaultValue(true)
 			.config(configKey + ".active")
+			.defaultValue(true)
 			.subSettings();
 	}
 

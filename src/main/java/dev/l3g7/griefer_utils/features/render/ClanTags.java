@@ -47,7 +47,6 @@ public class ClanTags extends Feature {
 		.name("Clantags")
 		.description("Zeigt den Clantag eines Spielers unter seinem Nametag.")
 		.icon("rainbow_name")
-		.defaultValue(true)
 		.callback(this::toggleClanTags);
 
 	private void toggleClanTags(boolean enabled) {

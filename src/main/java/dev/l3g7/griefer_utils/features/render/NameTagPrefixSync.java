@@ -36,8 +36,7 @@ public class NameTagPrefixSync extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Nametag mit Prefix")
 		.description("Färbt den Namen über dem Kopf, dass er zum ausgewählten Prefix passt.")
-		.icon("rainbow_name")
-		.defaultValue(true);
+		.icon("rainbow_name");
 
 	@EventListener
 	public void onDisplayNameRender(DisplayNameGetEvent event) {

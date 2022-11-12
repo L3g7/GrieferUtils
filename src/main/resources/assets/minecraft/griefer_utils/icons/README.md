@@ -10,6 +10,10 @@
     <td><a href="https://www.deviantart.com/ishmanallenlitchmore/art/chunk-of-minecraft-382711453">IshmanAllenLitchmore</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/fire.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/fire.png" height=16em width=16em/> fire.png</a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/block/fire_0.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/green_scroll.png" height=16em width=16em/> green_scroll.png</a></td>
     <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
   </tr>

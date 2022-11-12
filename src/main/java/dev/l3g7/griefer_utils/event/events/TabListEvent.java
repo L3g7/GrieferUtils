@@ -79,10 +79,10 @@ public class TabListEvent extends Event {
 
 			// Ignore packets not updating name
 			S38PacketPlayerListItem packet = (S38PacketPlayerListItem) event.packet;
-			if (packet.func_179768_b() != ADD_PLAYER && packet.func_179768_b() != UPDATE_DISPLAY_NAME)
+			if (packet.getAction() != ADD_PLAYER && packet.getAction() != UPDATE_DISPLAY_NAME)
 				return;
 
-			for (S38PacketPlayerListItem.AddPlayerData data : packet.func_179767_a()) {
+			for (S38PacketPlayerListItem.AddPlayerData data : packet.getEntries()) {
 				if (data.getDisplayName() == null)
 					continue;
 

@@ -69,7 +69,6 @@ processResources.from(sourceSets.main.resources.srcDirs) {
 	include 'addon.json'
 	expand 'version': version
 }
-
 // Unobfuscated jar creation
 tasks.build.dependsOn('deobfJar')
 task deobfJar(type: Jar) {

@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
-import dev.l3g7.griefer_utils.asm.editors.EntityPlayerEditor;
+import dev.l3g7.griefer_utils.mixin.mixins.MixinEntityPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,7 +38,7 @@ public class DisplayNameGetEvent extends Event {
 	}
 
 	/**
-	 * Triggered by {@link EntityPlayerEditor}
+	 * Triggered by {@link MixinEntityPlayer}
 	 */
 	public static IChatComponent post(EntityPlayer player, IChatComponent displayName) {
 		DisplayNameGetEvent event = new DisplayNameGetEvent(player, displayName);

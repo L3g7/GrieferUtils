@@ -25,9 +25,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 /**
  * Colors the player display name to match the selected prefix.

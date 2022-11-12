@@ -25,7 +25,7 @@ public class JarFileProviderImpl implements FileProviderImpl { // When running i
             if (jarPath.contains(".jar")) {
 
                 // Sanitize jarPath
-                jarPath = jarPath.substring(6, jarPath.lastIndexOf("!")); // remove protocol and class
+                jarPath = jarPath.substring(5, jarPath.lastIndexOf("!")); // remove protocol and class
                 jarPath = URLDecoder.decode(jarPath, StandardCharsets.UTF_8.name());
 
                 // Read jar file as zip

@@ -53,7 +53,7 @@ public class JarFileProvider extends FileProvider {
 				throw new IllegalStateException("Invalid code source location: " + jarPath);
 
 			// Sanitize jarPath
-			jarPath = jarPath.substring(6, jarPath.lastIndexOf("!")); // remove protocol and class
+			jarPath = jarPath.substring(5, jarPath.lastIndexOf("!")); // remove protocol and class
 			jarPath = URLDecoder.decode(jarPath, "UTF-8");
 
 			// Read entries

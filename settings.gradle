@@ -1,0 +1,9 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = "https://maven.minecraftforge.net/" }
+        maven { url = "https://jitpack.io/" }
+        maven { url = "https://repo.spongepowered.org/repository/maven-public/" }
+    }
+}

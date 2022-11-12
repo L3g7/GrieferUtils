@@ -6,7 +6,7 @@
   "addonVersion": "${version}",
 
   "mainClass": "dev.l3g7.griefer_utils.Main",
-  "transformerClass": "dev.l3g7.griefer_utils.asm.Transformer",
+  "transformerClass": "dev.l3g7.griefer_utils.mixin.MixinLoader",
 
   "category": 3,
   "uuid": "%uuid%"

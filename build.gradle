@@ -16,46 +16,68 @@
  * limitations under the License.
  */
 
-// Init stuff
+// Dependencies
 buildscript {
-	repositories {
-		maven {
-			name = "forge"
-			url = "http://files.minecraftforge.net/maven"
-		}
+	dependencies {
+		classpath 'com.github.gatooooooo:ForgeGradle:FG_2.1-SNAPSHOT' // Makes ForgeGradle work with Gradle 6
+		classpath 'com.github.xcfrg:mixingradle:ae2a80e' // Makes MixinGradle work with ForgeGradle 2.1 (Minecraft 1.8)
 	}
-	dependencies.classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
 }
+plugins { id "java" }
+
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'org.spongepowered.mixin'
+
+repositories {
+	mavenCentral()
+
+	gradlePluginPortal()
+	maven { url = "https://repo.spongepowered.org/repository/maven-public/" }
+	maven { url = "https://jitpack.io/" }
+	maven { url = "https://maven.minecraftforge.net/" }
+}
+
+// Mixin
+dependencies {
+	implementation "org.spongepowered:mixin:0.7.11-SNAPSHOT"
+	annotationProcessor "org.spongepowered:mixin:0.7.11-SNAPSHOT"
+}
+
+mixin {
+	disableRefMapWarning = true
+	defaultObfuscationEnv searge
+	add sourceSets.main, refmap
+}
+
+// Minecraft
 minecraft {
 	version = "1.8.9-11.15.1.2318-1.8.9"
 	runDir = "run"
-	mappings = "stable_20"
+	mappings = "stable_22"
+	makeObfSourceJar = false
+	clientJvmArgs += ["-Dfml.coreMods.load=net.labymod.core.asm.LabyModCoreMod", "-DdebugMode=true", "-Daddonresources=addon.json"]
 }
 
+// Compile options
+sourceCompatibility = targetCompatibility = 1.8
+compileJava.options.encoding = "UTF-8"
+jar.archiveName = "griefer-utils-v${version}.jar"
+reobf.jar.mappingType = "NOTCH"
 
-// Expand addon.json's version
+// addon.json's version
 processResources.from(sourceSets.main.resources.srcDirs) {
 	include 'addon.json'
 	expand 'version': version
 }
 
-// Set compile options
-reobf.jar.mappingType = "NOTCH"
-project.sourceCompatibility = project.targetCompatibility = '1.8'
-compileJava.options.encoding = 'UTF-8'
-
-// Change jar name
-jar.archiveName = "griefer-utils-v${version}.jar"
-
-// Create unobfuscated jar
+// Unobfuscated jar creation
 tasks.build.dependsOn('deobfJar')
 task deobfJar(type: Jar) {
 	from sourceSets.main.output
-	archiveName = "griefer-utils-v${version}-unobf.jar"
+	archiveName = "griefer-utils-v${version}-api.jar"
 }
 
-// Add test suite
+// Test suite
 test {
 	useJUnitPlatform()
 }

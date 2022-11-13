@@ -7,6 +7,7 @@ import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +45,8 @@ public interface SettingElementBuilder<T extends SettingsElement> { // Not reall
                 iconData = new ControlElement.IconData("griefer_utils/icons/transparent.png");
             } else if(icon instanceof ItemBuilder) {
                 return icon(((ItemBuilder) icon).build());
+            } else if(icon instanceof ResourceLocation) {
+	            iconData = new ControlElement.IconData(((ResourceLocation) icon));
             } else
                 throw new UnsupportedOperationException(icon.getClass().toString() + " is an unsupported icon type!");
             Reflection.set(this, iconData, "iconData");

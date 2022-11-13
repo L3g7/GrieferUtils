@@ -53,7 +53,7 @@ public class ChatMenu extends Feature {
 	protected static ChatMenuRenderer renderer = null;
 	protected static boolean loaded = false;
 
-	private static final ButtonSetting newEntrySetting = new ButtonSetting()
+	protected static final ButtonSetting newEntrySetting = new ButtonSetting()
 			.name("Neue Option erstellen")
 			.callback(() -> {
 				ChatMenuEntry newEntry = new ChatMenuEntry();

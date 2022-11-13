@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.util;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -8,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemUtil {
-	
+
+	public static ItemStack MISSING_TEXTURE = new ItemStack(Blocks.stone, 1, 10000);
+
 	public static List<String> getLore(ItemStack itemStack) {
 		List<String> lore = new ArrayList<>();
 

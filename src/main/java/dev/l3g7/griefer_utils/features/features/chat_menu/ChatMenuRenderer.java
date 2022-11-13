@@ -1,9 +1,11 @@
 package dev.l3g7.griefer_utils.features.features.chat_menu;
 
 import net.labymod.main.LabyMod;
+import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.DrawUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 
 import java.util.List;
@@ -79,16 +81,23 @@ public class ChatMenuRenderer {
 
 			drawString(name, x + 21, currentY += 15);
 
-			// Draw icons (Copied from GuiChatCustom)
-			if (entry.getIcon().hasMaterialIcon()) {
-				GlStateManager.pushMatrix();
-				GlStateManager.scale(0.75, 0.75, 1.0);
-				double posMultiplier = 1 / 0.75;
-				LabyMod.getInstance().getDrawUtils().renderItemIntoGUI(entry.getIcon().getMaterialIcon().createItemStack(), (x + 4) * posMultiplier, (currentY - 2) * posMultiplier);
-				GlStateManager.popMatrix();
-			} else if (entry.getIcon().hasTextureIcon()) {
-				mc.getTextureManager().bindTexture(entry.getIcon().getTextureIcon());
-				utils.drawTexture(x + 4, currentY - 2, 256, 256, 12, 12);
+			if (entry.getIcon() instanceof ItemStack) {
+				GlStateManager.scale(.75, .75, 1);
+				double inverseScale = 1 / 0.75d;
+				utils.drawItem(((ItemStack) entry.getIcon()), (x + 4) * inverseScale, (currentY - 2) * inverseScale, null);
+				GlStateManager.scale(inverseScale, inverseScale, 1);
+			} else if (entry.getIcon() instanceof ControlElement.IconData) {
+				ControlElement.IconData iconData = ((ControlElement.IconData) entry.getIcon());
+				if (iconData.hasMaterialIcon()) {
+					GlStateManager.pushMatrix();
+					GlStateManager.scale(0.75, 0.75, 1.0);
+					double posMultiplier = 1 / 0.75;
+					LabyMod.getInstance().getDrawUtils().renderItemIntoGUI(iconData.getMaterialIcon().createItemStack(), (x + 4) * posMultiplier, (currentY - 2) * posMultiplier);
+					GlStateManager.popMatrix();
+				} else if (iconData.hasTextureIcon()) {
+					mc.getTextureManager().bindTexture(iconData.getTextureIcon());
+					utils.drawTexture(x + 4, currentY - 2, 256, 256, 12, 12);
+				}
 			}
 
 			// Draw frame if hovered

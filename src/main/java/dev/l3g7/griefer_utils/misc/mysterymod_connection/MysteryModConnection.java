@@ -71,7 +71,8 @@ public class MysteryModConnection {
         } catch (NullPointerException e) {
             // Address could not be resolved, probably no internet
         } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+	        state = State.SESSION_SERVERS_DOWN;
+            e.printStackTrace();
         }
     }
 

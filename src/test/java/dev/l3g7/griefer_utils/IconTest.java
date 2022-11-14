@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.util.Util;
 import net.labymod.utils.Material;
+import net.minecraft.init.Blocks;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -140,7 +141,7 @@ public class IconTest implements Opcodes {
 			// ItemStack icons
 			MethodInsnNode m = (MethodInsnNode) node;
 			String check = m.owner + "." + m.name + m.desc;
-			assertEquals(check, "net/minecraft/item/ItemStack.<init>(Lnet/minecraft/block/Block;II)V", check);
+			assertTrue(check.matches("net/minecraft/item/ItemStack.<init>\\(Lnet/minecraft/(?:block/Block|item/Item);I?I?\\)V"), check);
 		} else if (node instanceof VarInsnNode) {
 			// Constructor icons
 			testConstructor(classNode, method, (VarInsnNode) node);

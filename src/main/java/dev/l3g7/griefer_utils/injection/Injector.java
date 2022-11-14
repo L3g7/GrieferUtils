@@ -16,10 +16,15 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.injection;
 
+import dev.l3g7.griefer_utils.injection.transformer.Transformer;
+import dev.l3g7.griefer_utils.injection.transformer.transformers.EntityRendererTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
@@ -32,15 +37,21 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Loads and injects the Mixin library.
  */
-public class MixinLoader implements IClassTransformer {
+public class Injector implements IClassTransformer {
 
 	private static final String MIXIN_CONFIG = "griefer_utils.mixins.json";
 
-	public MixinLoader() throws ReflectiveOperationException, IOException {
+	public Injector() throws ReflectiveOperationException, IOException {
+		loadMixin();
+	}
+
+	private void loadMixin() throws ReflectiveOperationException, IOException {
 		File mixinLibrary = new File("libraries/org/spongepowered/mixin/0.7.11/mixin-0.7.11.jar");
 		if (!mixinLibrary.exists()) {
 			// Download library

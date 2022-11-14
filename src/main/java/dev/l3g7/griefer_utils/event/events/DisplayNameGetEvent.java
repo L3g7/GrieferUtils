@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
-import dev.l3g7.griefer_utils.mixin.mixins.MixinEntityPlayer;
+import dev.l3g7.griefer_utils.injection.mixin.MixinEntityPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.MinecraftForge;

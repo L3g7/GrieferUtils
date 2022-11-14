@@ -16,22 +16,22 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin.mixins;
+package dev.l3g7.griefer_utils.injection.mixin;
 
-import dev.l3g7.griefer_utils.event.events.BurningCheckEvent;
-import net.minecraft.entity.Entity;
+import dev.l3g7.griefer_utils.event.events.DisplayNameGetEvent;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.IChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(Entity.class)
-public class MixinEntity {
+@Mixin(EntityPlayer.class)
+public class MixinEntityPlayer {
 
-	@Inject(method = "isBurning", at = @At("RETURN"), cancellable = true)
-	private void injectIsBurning(CallbackInfoReturnable<Boolean> cir) {
-		if (cir.getReturnValueZ())
-			cir.setReturnValue(BurningCheckEvent.isBurning((Entity) (Object) this));
+	@Inject(method = "getDisplayName", at = @At("RETURN"), cancellable = true)
+	private void injectGetDisplayName(CallbackInfoReturnable<IChatComponent> cir) {
+		cir.setReturnValue(DisplayNameGetEvent.post((EntityPlayer) (Object) this, cir.getReturnValue()));
 	}
 
 }

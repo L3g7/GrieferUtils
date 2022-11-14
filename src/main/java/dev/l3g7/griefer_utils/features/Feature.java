@@ -19,6 +19,9 @@
 package dev.l3g7.griefer_utils.features;
 
 import dev.l3g7.griefer_utils.event.EventHandler;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
@@ -42,16 +45,14 @@ import static dev.l3g7.griefer_utils.util.Util.elevate;
  */
 public abstract class Feature {
 
+	private static boolean onCityBuild;
+
 	private Category category;
 	private SettingsElement mainElement;
 
 	/**
 	 * <p>
 	 * Initialises the feature.
-	 * </p><p>
-	 * This can sadly not be done in the constructor as non-static fields are accessed.
-	 * If anyone knows a better way of doing this, let me know ;D
-	 * </p>
 	 */
 	public void init() {
 
@@ -133,6 +134,10 @@ public abstract class Feature {
 		return true;
 	}
 
+	public boolean isOnCityBuild() {
+		return onCityBuild;
+	}
+
 	private static final Pattern CAPS_PATTERN = Pattern.compile("([A-Z])");
 
 	/**
@@ -141,8 +146,18 @@ public abstract class Feature {
 	private static String convertCamelCaseToSnakeCase(String str) {
 		Matcher matcher = CAPS_PATTERN.matcher(str);
 		while (matcher.find())
-			str = str.replaceFirst(matcher.group(1),  (matcher.start() == 0 ? "" : "_") + matcher.group(1).toLowerCase());
+			str = str.replaceFirst(matcher.group(1), (matcher.start() == 0 ? "" : "_") + matcher.group(1).toLowerCase());
 		return str;
+	}
+
+	@EventListener
+	private static void onServerJoin(ServerJoinEvent event) {
+		onCityBuild = true;
+	}
+
+	@EventListener
+	private static void onServerSwitch(ServerSwitchEvent event) {
+		onCityBuild = false;
 	}
 
 	/**

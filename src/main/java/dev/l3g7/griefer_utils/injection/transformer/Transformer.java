@@ -47,10 +47,6 @@ public abstract class Transformer implements Opcodes {
 			}
 			case INVOKEVIRTUAL: {
 				MethodInsnNode insn = (MethodInsnNode) node;
-				System.out.println(
-					insn.owner + "=" + Type.getType(Mapping.mapClass(NOTCH, Type.getObjectType(args[0]).getDescriptor())).getInternalName() +" "
-						+ insn.name + "=" + Mapping.mapMethodName(NOTCH, args[0], args[1], args[2]) + " "
-						+ insn.desc + "="  + Mapping.mapMethodDesc(NOTCH, args[2]));
 				return
 					insn.owner.equals(Type.getType(Mapping.mapClass(NOTCH, Type.getObjectType(args[0]).getDescriptor())).getInternalName()) &&
 					insn.name.equals(Mapping.mapMethodName(NOTCH, args[0], args[1], args[2])) &&

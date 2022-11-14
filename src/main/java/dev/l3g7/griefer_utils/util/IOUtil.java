@@ -41,8 +41,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class IOUtil {
 
-	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	private static final JsonParser jsonParser = new JsonParser();
+	public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	public static final JsonParser jsonParser = new JsonParser();
 
 	/**
 	 * @return A wrapper class for reading the contents of the given file.

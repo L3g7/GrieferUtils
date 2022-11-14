@@ -92,7 +92,7 @@ public class TabListEvent extends Event {
 
 				// Update values
 				cachedNames.put(data.getProfile().getId(), data.getDisplayName());
-				Reflection.set(data, tabListEvent.component, "displayName", "field_179965_e", "e");
+				Reflection.set(data, tabListEvent.component, "displayName");
 			}
 		}
 

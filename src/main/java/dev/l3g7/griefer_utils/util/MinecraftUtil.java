@@ -71,9 +71,9 @@ public class MinecraftUtil {
 
 	public static Vec3d renderPos() {
 		RenderManager renderManager = mc().getRenderManager();
-		double x = Reflection.get(renderManager, "renderPosX", "field_78725_b", "o");
-		double y = Reflection.get(renderManager, "renderPosY", "field_78726_c", "p");
-		double z = Reflection.get(renderManager, "renderPosZ", "field_78723_d", "q");
+		double x = Reflection.get(renderManager, "renderPosX");
+		double y = Reflection.get(renderManager, "renderPosY");
+		double z = Reflection.get(renderManager, "renderPosZ");
 		return new Vec3d(x, y, z);
 	}
 

@@ -1,0 +1,19 @@
+{
+  "net/minecraft/client/gui/inventory/GuiChest": {
+    "fields": {
+      "lowerChestInventory": "field_147015_w"
+    }
+  },
+  "net/minecraft/client/renderer/entity/RenderManager": {
+    "fields": {
+      "renderPosX": "field_78725_b",
+      "renderPosY": "field_78726_c",
+      "renderPosZ": "field_78723_d"
+    }
+  },
+  "net/minecraft/network/play/server/S38PacketPlayerListItem$AddPlayerData": {
+    "fields": {
+      "displayName": "field_179965_e"
+    }
+  }
+}

@@ -194,7 +194,7 @@ public abstract class PlayerList extends Feature {
 		if (!(mc().currentScreen instanceof GuiChest))
 			return;
 
-		IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory", "field_147015_w", "w");
+		IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
 
 		// Check if chest is /profil using title
 		Matcher matcher = PROFILE_TITLE_PATTERN.matcher(inventory.getDisplayName().getFormattedText());

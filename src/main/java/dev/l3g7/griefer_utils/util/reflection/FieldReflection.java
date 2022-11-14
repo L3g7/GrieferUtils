@@ -19,6 +19,8 @@
 package dev.l3g7.griefer_utils.util.reflection;
 
 import dev.l3g7.griefer_utils.util.ArrayUtil;
+import dev.l3g7.griefer_utils.util.misc.Mapping;
+import org.objectweb.asm.Type;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -27,6 +29,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
+import static dev.l3g7.griefer_utils.util.misc.Mapping.MappingTarget.NOTCH;
+import static dev.l3g7.griefer_utils.util.misc.Mapping.MappingTarget.SRG;
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
@@ -37,24 +41,20 @@ class FieldReflection {
 	/**
 	 * @return the value of a field.
 	 */
-	static <V> V get(Object target, String... names) {
+	static <V> V get(Object target, String name) {
 
 		// Check target
 		if (target == null)
-			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", Arrays.toString(names));
+			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", name);
 
 		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-		Field field = null;
-		for (String name : names) {
-			field = resolveField(targetClass, name);
-			if (field != null)
-				break;
-		}
+		String mappedName = Mapping.mapField(SRG, Type.getInternalName(targetClass), name);
+		Field field = resolveField(targetClass, mappedName);
 
 		// Check field
 		if (field == null)
-			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", Arrays.toString(names), targetClass.getName());
+			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", mappedName, targetClass.getName());
 
 		return get(target, field);
 	}
@@ -80,31 +80,30 @@ class FieldReflection {
 	/**
 	 * Sets the value of a field.
 	 */
-	static void set(Object target, Object value, String... names) {
+	static void set(Object target, Object value, String name) {
 
 		// Check target
 		if (target == null)
-			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", Arrays.toString(names));
+			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", name);
 
 		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-		Field field = null;
-		for (String name : names) {
-			field = resolveField(targetClass, name);
-			if (field != null)
-				break;
-		}
+		String mappedName = Mapping.mapField(SRG, Type.getInternalName(targetClass), name);
+		Field field = resolveField(targetClass, mappedName);
 
 		// Check field
-		if (field == null)
-			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", Arrays.toString(names), targetClass.getName());
+		if (field == null) {
+			System.err.printf("Could not find field '%s' / '%s' in '%s'%n", name, mappedName, targetClass.getName());
+			System.out.println("Fields: " + Arrays.toString(targetClass.getDeclaredFields()) + " & " + Arrays.toString(targetClass.getFields()));
+			throw elevate(new NoSuchFieldException(), "Could not find field '%s' / '%s' in '%s'", name, mappedName, targetClass.getName());
+		}
 
 		// Get value
 		try {
 			field.setAccessible(true);
 			field.set(target, value);
 		} catch (Throwable e) {
-			throw elevate(e, "Tried to access field '%s' in '%s'", Arrays.toString(names), targetClass.getName());
+			throw elevate(e, "Tried to access field '%s' / '%s' in '%s'", name, mappedName, targetClass.getName());
 		}
 	}
 

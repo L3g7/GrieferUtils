@@ -1,0 +1,33 @@
+{
+  "net/minecraft/block/Block": {
+    "notch": "afh",
+    "methods": {
+      "getMaterial()Lnet/minecraft/block/material/Material;": "t"
+    }
+  },
+  "net/minecraft/block/material/Material": {
+    "notch": "arm",
+    "fields": {
+      "lava": "i",
+      "water": "h"
+    }
+  },
+  "net/minecraft/client/renderer/EntityRenderer": {
+    "notch": "bfk",
+    "methods": {
+      "setupFog(IF)V": "a"
+    }
+  },
+  "net/minecraft/entity/EntityLivingBase": {
+    "notch": "pr",
+    "methods": {
+      "isPotionActive(Lnet/minecraft/potion/Potion;)Z": "a"
+    }
+  },
+  "net/minecraft/potion/Potion": {
+    "notch": "pe",
+    "fields": {
+      "blindness": "q"
+    }
+  }
+}

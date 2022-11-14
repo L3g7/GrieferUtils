@@ -30,8 +30,8 @@ public class Reflection {
 	/**
 	 * @return the value of a field.
 	 */
-	public static <V> V get(Object target, String... names) {
-		return FieldReflection.get(target, names);
+	public static <V> V get(Object target, String name) {
+		return FieldReflection.get(target, name);
 	}
 
 	/**
@@ -44,8 +44,8 @@ public class Reflection {
 	/**
 	 * Sets the value of a field.
 	 */
-	public static void set(Object target, Object value, String... names) {
-		FieldReflection.set(target, value, names);
+	public static void set(Object target, Object value, String name) {
+		FieldReflection.set(target, value, name);
 	}
 
 	/**

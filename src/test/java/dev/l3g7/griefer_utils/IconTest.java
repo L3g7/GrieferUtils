@@ -22,7 +22,6 @@ import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.util.Util;
 import net.labymod.utils.Material;
-import net.minecraft.init.Blocks;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

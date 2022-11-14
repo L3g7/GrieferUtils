@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.util;
 
+import dev.l3g7.griefer_utils.util.misc.ChatQueue;
 import dev.l3g7.griefer_utils.util.misc.Vec3d;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.main.LabyMod;
@@ -33,6 +34,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
@@ -75,6 +77,15 @@ public class MinecraftUtil {
 		double y = Reflection.get(renderManager, "renderPosY");
 		double z = Reflection.get(renderManager, "renderPosZ");
 		return new Vec3d(x, y, z);
+	}
+
+	public static void send(String message) {
+		ChatQueue.send(message);
+	}
+
+	public static String getServerFromScoreboard() {
+		ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
+		return team == null ? "" : team.getColorPrefix().replace("§.", "");
 	}
 
 }

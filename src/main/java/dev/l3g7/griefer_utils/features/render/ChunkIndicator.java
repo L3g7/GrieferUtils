@@ -26,7 +26,6 @@ import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -38,6 +37,7 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.features.render.ChunkIndicator.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.features.render.ChunkIndicator.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static net.minecraft.init.Blocks.stained_hardened_clay;
 
 /**
  * Shows chunk boundaries.
@@ -61,24 +61,24 @@ public class ChunkIndicator extends Feature {
 	private final BooleanSetting yellow_lines = new BooleanSetting()
 		.name("Gelbe Linien", "(Alle 2 Blöcke)")
 		.description("Ob die 2x2-Linien angezeigt werden sollen.")
-		.icon(new ItemStack(Blocks.stained_hardened_clay, 1, 4))
+		.icon(new ItemStack(stained_hardened_clay, 1, 4))
 		.defaultValue(true);
 
 	private final BooleanSetting cyan_lines = new BooleanSetting()
 		.name("Türkise Linien", "(Alle 8 Blöcke)")
 		.description("Ob die 8x8-Linien angezeigt werden sollen.")
-		.icon(new ItemStack(Blocks.stained_hardened_clay, 1, 9))
+		.icon(new ItemStack(stained_hardened_clay, 1, 9))
 		.defaultValue(true);
 
 	private final BooleanSetting blue_lines = new BooleanSetting()
 		.name("Blaue Linien", "(Alle 16 Blöcke)")
 		.description("Ob die 16x16-Linien angezeigt werden sollen.")
-		.icon(new ItemStack(Blocks.stained_hardened_clay, 1, 11))
+		.icon(new ItemStack(stained_hardened_clay, 1, 11))
 		.defaultValue(true);
 
 	private final BooleanSetting red_lines = new BooleanSetting()
 		.name("Rote Linien", "(Nachbar-Chunks)")
-		.icon(new ItemStack(Blocks.stained_hardened_clay, 1, 14))
+		.icon(new ItemStack(stained_hardened_clay, 1, 14))
 		.defaultValue(true);
 
 	@MainElement

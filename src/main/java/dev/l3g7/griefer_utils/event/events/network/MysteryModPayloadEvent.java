@@ -20,7 +20,7 @@ package dev.l3g7.griefer_utils.event.events.network;
 
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.labymod.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import net.labymod.utils.JsonParse;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;

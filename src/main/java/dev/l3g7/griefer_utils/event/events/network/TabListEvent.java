@@ -20,7 +20,7 @@ package dev.l3g7.griefer_utils.event.events.network;
 
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.labymod.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;

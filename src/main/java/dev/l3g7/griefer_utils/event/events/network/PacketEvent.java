@@ -16,31 +16,55 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event.events.labymod;
+package dev.l3g7.griefer_utils.event.events.network;
 
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
-import net.labymod.api.EventManager;
+import dev.l3g7.griefer_utils.injection.mixin.MixinNetHandlerPlayClient;
 import net.labymod.main.LabyMod;
-import net.labymod.utils.Consumer;
 import net.minecraft.network.Packet;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
-/**
- * A forge event for LabyMod's {@link EventManager#registerOnIncomingPacket(Consumer)}.
- */
-public class PacketReceiveEvent extends Event {
+public class PacketEvent extends Event {
 
 	public final Packet<?> packet;
 
-	private PacketReceiveEvent(Packet<?> packet) {
+	private PacketEvent(Packet<?> packet) {
 		this.packet = packet;
 	}
 
-	@OnEnable
-	private static void register() {
-		LabyMod.getInstance().getEventManager().registerOnIncomingPacket(p -> EVENT_BUS.post(new PacketReceiveEvent((Packet<?>) p)));
+	public static class PacketReceiveEvent extends PacketEvent {
+
+		private PacketReceiveEvent(Packet<?> packet) {
+			super(packet);
+		}
+
+		@OnEnable
+		private static void register() {
+			LabyMod.getInstance().getEventManager().registerOnIncomingPacket(p -> EVENT_BUS.post(new PacketReceiveEvent((Packet<?>) p)));
+		}
+
+	}
+
+	public static class PacketSendEvent extends PacketEvent {
+
+		@Override
+		public boolean isCancelable() {
+			return true;
+		}
+
+		public PacketSendEvent(Packet<?> packet) {
+			super(packet);
+		}
+
+		/**
+		 * Triggered by {@link MixinNetHandlerPlayClient}.
+		 */
+		public static boolean shouldSendPacket(Packet<?> packet) {
+			return !MinecraftForge.EVENT_BUS.post(new PacketSendEvent(packet));
+		}
 	}
 
 }

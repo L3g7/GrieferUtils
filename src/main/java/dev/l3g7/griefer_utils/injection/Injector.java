@@ -46,9 +46,11 @@ import java.util.Map;
 public class Injector implements IClassTransformer {
 
 	private static final String MIXIN_CONFIG = "griefer_utils.mixins.json";
+	private static final Map<String, Transformer> transformers = new HashMap<>();
 
 	public Injector() throws ReflectiveOperationException, IOException {
 		loadMixin();
+		transformers.put("net.minecraft.client.renderer.EntityRenderer", new EntityRendererTransformer());
 	}
 
 	private void loadMixin() throws ReflectiveOperationException, IOException {
@@ -77,6 +79,18 @@ public class Injector implements IClassTransformer {
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
+		Transformer transformer = transformers.get(transformedName);
+		if (transformer != null) {
+			ClassNode classNode = new ClassNode();
+			ClassReader reader = new ClassReader(basicClass);
+			reader.accept(classNode, 0);
+
+			transformer.transform(classNode, transformedName);
+
+			ClassWriter writer = new ClassWriter(3);
+			classNode.accept(writer);
+			return writer.toByteArray();
+		}
 		return basicClass;
 	}
 

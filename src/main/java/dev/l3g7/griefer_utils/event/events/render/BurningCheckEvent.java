@@ -16,19 +16,22 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event.events;
+package dev.l3g7.griefer_utils.event.events.render;
 
+import dev.l3g7.griefer_utils.injection.mixin.MixinEntity;
+import net.minecraft.entity.Entity;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * An event being posted when EntityRenderer#setupFog is called.
+ * An event being posted when {@link Entity#isBurning()} is called.
  */
-public class SetupFogEvent extends Event {
+public class BurningCheckEvent extends Event {
 
-	public final FogType fogType;
+	public final Entity entity;
 
-	public SetupFogEvent(FogType fogType) {
-		this.fogType = fogType;
+	private BurningCheckEvent(Entity entity) {
+		this.entity = entity;
 	}
 
 	@Override
@@ -36,7 +39,12 @@ public class SetupFogEvent extends Event {
 		return true;
 	}
 
-	public enum FogType {
-		BLINDNESS, WATER, LAVA
+	/**
+	 * Triggered by {@link MixinEntity}
+	 */
+	public static boolean isBurning(Entity entity) {
+		BurningCheckEvent event = new BurningCheckEvent(entity);
+		return !MinecraftForge.EVENT_BUS.post(event);
 	}
+
 }

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event.events;
+package dev.l3g7.griefer_utils.event.events.network;
 
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.event.EventListener;

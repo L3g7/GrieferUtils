@@ -19,13 +19,10 @@
 package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.BurningCheckEvent;
-import dev.l3g7.griefer_utils.event.events.DisplayNameGetEvent;
-import dev.l3g7.griefer_utils.event.events.TabListEvent;
+import dev.l3g7.griefer_utils.event.events.render.BurningCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import net.minecraft.util.IChatComponent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 

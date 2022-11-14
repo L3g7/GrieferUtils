@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.injection.mixin;
 
-import dev.l3g7.griefer_utils.event.events.BurningCheckEvent;
+import dev.l3g7.griefer_utils.event.events.render.BurningCheckEvent;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

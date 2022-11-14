@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.features.player;
 
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.RenderWorldEvent;
+import dev.l3g7.griefer_utils.event.events.render.RenderWorldEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;

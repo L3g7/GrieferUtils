@@ -19,8 +19,8 @@
 package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.SetupFogEvent;
-import dev.l3g7.griefer_utils.event.events.SetupFogEvent.FogType;
+import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent;
+import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent.FogType;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;

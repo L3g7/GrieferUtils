@@ -34,15 +34,14 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.util.reflection.Reflection.set;
+import static net.minecraft.init.Blocks.*;
+import static net.minecraft.init.Items.skull;
+import static net.minecraft.init.Items.*;
 
 /**
  * Shows invisible entities.
@@ -70,72 +69,52 @@ public class TrueSight extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		addEntities(
-			EntityArmorStand.class, "Armorstand", Items.armor_stand,
-			EntityBat.class, "Fledermaus", Items.spawn_egg, 65,
-			EntityBlaze.class, "Blaze", Items.spawn_egg, 161,
-			EntityCaveSpider.class, "Höhlenspinne", Items.spawn_egg, 59,
-			EntityChicken.class, "Huhn", Items.spawn_egg, 93,
-			EntityCow.class, "Kuh", Items.spawn_egg, 92,
-			EntityCreeper.class, "Creeper", Items.spawn_egg, 50,
-			EntityDragon.class, "Enderdrache", Blocks.dragon_egg,
-			EntityEnderman.class, "Enderman", Items.spawn_egg, 58,
-			EntityEndermite.class, "Endermite", Items.spawn_egg, 67,
-			EntityFallingBlock.class, "FallingBlock", Blocks.sand,
-			EntityGhast.class, "Ghast", Items.spawn_egg, 56,
-			EntityGiantZombie.class, "Riese", Items.spawn_egg, 54,
-			EntityGuardian.class, "Guardian", Items.spawn_egg, 68,
-			EntityHorse.class, "Pferd", Items.spawn_egg, 100,
-			EntityIronGolem.class, "Eisengolem", Blocks.iron_block,
-			EntityMagmaCube.class, "Magmawürfel", Items.spawn_egg, 62,
-			EntityMooshroom.class, "Pilzkuh", Items.spawn_egg, 96,
-			EntityOcelot.class, "Ozelot", Items.spawn_egg, 98,
-			EntityPig.class, "Schwein", Items.spawn_egg, 90,
-			EntityPigZombie.class, "Schweinezombie", Items.spawn_egg, 57,
-			EntityPlayer.class, "Spieler", Items.skull, 3,
-			EntityRabbit.class, "Hase", Items.spawn_egg, 101,
-			EntitySheep.class, "Schaf", Items.spawn_egg, 91,
-			EntitySilverfish.class, "Silberfischchen", Items.spawn_egg, 60,
-			EntitySkeleton.class, "Skelett", Items.spawn_egg, 51,
-			EntitySlime.class, "Slime", Items.spawn_egg, 55,
-			EntitySnowman.class, "Schneegolem", Items.snowball,
-			EntitySpider.class, "Spinne", Items.spawn_egg, 52,
-			EntitySquid.class, "Tintenfisch", Items.spawn_egg, 94,
-			EntityVillager.class, "Dorfbewohner", Items.spawn_egg, 120,
-			EntityWitch.class, "Hexe", Items.spawn_egg, 66,
-			EntityWolf.class, "Wolf", Items.spawn_egg, 95,
-			EntityZombie.class, "Zombie", Items.spawn_egg, 54
-		);
-	}
+		add(EntityArmorStand.class, "Armorstand", armor_stand, 0);
+		add(EntityBat.class, "Fledermaus", spawn_egg, 65);
+		add(EntityBlaze.class, "Blaze", spawn_egg, 161);
+		add(EntityCaveSpider.class, "Höhlenspinne", spawn_egg, 59);
+		add(EntityChicken.class, "Huhn", spawn_egg, 93);
+		add(EntityCow.class, "Kuh", spawn_egg, 92);
+		add(EntityCreeper.class, "Creeper", spawn_egg, 50);
+		add(EntityDragon.class, "Enderdrache", dragon_egg, 0);
+		add(EntityEnderman.class, "Enderman", spawn_egg, 58);
+		add(EntityEndermite.class, "Endermite", spawn_egg, 67);
+		add(EntityFallingBlock.class, "FallingBlock", sand, 0);
+		add(EntityGhast.class, "Ghast", spawn_egg, 56);
+		add(EntityGiantZombie.class, "Riese", spawn_egg, 54);
+		add(EntityGuardian.class, "Guardian", spawn_egg, 68);
+		add(EntityHorse.class, "Pferd", spawn_egg, 100);
+		add(EntityIronGolem.class, "Eisengolem", iron_block, 0);
+		add(EntityMagmaCube.class, "Magmawürfel", spawn_egg, 62);
+		add(EntityMooshroom.class, "Pilzkuh", spawn_egg, 96);
+		add(EntityOcelot.class, "Ozelot", spawn_egg, 98);
+		add(EntityPig.class, "Schwein", spawn_egg, 90);
+		add(EntityPigZombie.class, "Schweinezombie", spawn_egg, 57);
+		add(EntityPlayer.class, "Spieler", skull, 3);
+		add(EntityRabbit.class, "Hase", spawn_egg, 101);
+		add(EntitySheep.class, "Schaf", spawn_egg, 91);
+		add(EntitySilverfish.class, "Silberfischchen", spawn_egg, 60);
+		add(EntitySkeleton.class, "Skelett", spawn_egg, 51);
+		add(EntitySlime.class, "Slime", spawn_egg, 55);
+		add(EntitySnowman.class, "Schneegolem", snowball, 0);
+		add(EntitySpider.class, "Spinne", spawn_egg, 52);
+		add(EntitySquid.class, "Tintenfisch", spawn_egg, 94);
+		add(EntityVillager.class, "Dorfbewohner", spawn_egg, 120);
+		add(EntityWitch.class, "Hexe", spawn_egg, 66);
+		add(EntityWolf.class, "Wolf", spawn_egg, 95);
+		add(EntityZombie.class, "Zombie", spawn_egg, 54);
 
-	/**
-	 * @param args: Consisting of
-	 *            - entityType
-	 *            - entity name
-	 *            - icon item
-	 *            - optional item damage
-	 */
-	private void addEntities(Object... args) {
-		for (int i = 0; i < args.length; i += 3) {
-			try {
-				Class<? extends Entity> entity = c(args[i]);
-				int damage = args[i + 3] instanceof Integer ? c(args[i + 3]) : 0;
-
-				entities.put(entity, new BooleanSetting()
-					.name((String) args[i + 1])
-					.config(getConfigKey() + ".entities." + entity.getSimpleName())
-					.icon(args[i + 2] instanceof Item ? new ItemStack((Item) args[i + 2], 1, damage) : new ItemStack((Block) args[i + 2], 1, damage))
-					.defaultValue(entity == EntityPlayer.class));
-				if (args[i + 3] instanceof Integer)
-					i++;
-			} catch (ClassCastException e) {
-				System.err.println("Failed @ " + i);
-				e.printStackTrace();
-			}
-		}
 		List<SettingsElement> settings = new ArrayList<>(entities.values());
 		settings.sort(Comparator.comparing(SettingsElement::getDisplayName));
 		enabled.subSettings(settings);
+	}
+
+	private void add(Class<? extends Entity> entity, String name, Object item, int damage) {
+		entities.put(entity, new BooleanSetting()
+			.name(name)
+			.config(getConfigKey() + ".entities." + entity.getSimpleName())
+			.icon(item instanceof Item ? new ItemStack((Item) item, 1, damage) : new ItemStack((Block) item, 1, damage))
+			.defaultValue(entity == EntityPlayer.class));
 	}
 
 	@EventListener
@@ -146,8 +125,7 @@ public class TrueSight extends Feature {
 				event.setCanceled(entities.get(entity).get());
 				break;
 			}
-			entity = entity.getSuperclass();
-		} while (entity != null);
+		} while ((entity = entity.getSuperclass()) != null);
 	}
 
 	public static float getRenderModelAlpha() {

@@ -18,8 +18,10 @@
 
 package dev.l3g7.griefer_utils.injection;
 
+import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.injection.transformer.Transformer;
-import dev.l3g7.griefer_utils.injection.transformer.transformers.EntityRendererTransformer;
+import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
@@ -50,7 +52,7 @@ public class Injector implements IClassTransformer {
 
 	public Injector() throws ReflectiveOperationException, IOException {
 		loadMixin();
-		transformers.put("net.minecraft.client.renderer.EntityRenderer", new EntityRendererTransformer());
+		loadTransformers();
 	}
 
 	private void loadMixin() throws ReflectiveOperationException, IOException {
@@ -77,6 +79,13 @@ public class Injector implements IClassTransformer {
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
 	}
 
+	private void loadTransformers() {
+		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Transformer.class)) {
+			Transformer transformer = Reflection.construct(meta.load());
+			transformers.put(transformer.getTarget(), transformer);
+		}
+	}
+
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
 		Transformer transformer = transformers.get(transformedName);
@@ -85,7 +94,7 @@ public class Injector implements IClassTransformer {
 			ClassReader reader = new ClassReader(basicClass);
 			reader.accept(classNode, 0);
 
-			transformer.transform(classNode, transformedName);
+			transformer.transform(classNode);
 
 			ClassWriter writer = new ClassWriter(3);
 			classNode.accept(writer);

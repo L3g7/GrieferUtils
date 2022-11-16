@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.injection.transformer.transformers;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent.FogType;
 import dev.l3g7.griefer_utils.injection.transformer.Transformer;
+import dev.l3g7.griefer_utils.injection.transformer.Transformer.Target;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraftforge.common.MinecraftForge;
 import org.objectweb.asm.Type;
@@ -13,6 +14,7 @@ import java.util.ListIterator;
 /**
  * Injects the {@link SetupFogEvent} into {@link EntityRenderer}.
  */
+@Target("net.minecraft.client.renderer.EntityRenderer")
 public class EntityRendererTransformer extends Transformer {
 
 	@Override

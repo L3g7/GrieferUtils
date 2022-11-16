@@ -5,6 +5,10 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
+
 import static dev.l3g7.griefer_utils.util.misc.Mapping.MappingTarget.NOTCH;
 
 /**
@@ -13,18 +17,21 @@ import static dev.l3g7.griefer_utils.util.misc.Mapping.MappingTarget.NOTCH;
 public abstract class Transformer implements Opcodes {
 
 	protected ClassNode classNode;
-	protected String transformedName;
+	protected final String target;
 
-	public void transform(ClassNode node, String transformedName) {
+	protected Transformer() {
+		this.target = getClass().getDeclaredAnnotation(Target.class).value();
+	}
+
+	public void transform(ClassNode node) {
 		this.classNode = node;
-		this.transformedName = transformedName;
 		process();
 	}
 
 	protected abstract void process();
 
 	protected MethodNode getMethod(String name, String desc) {
-		String mappedName = Mapping.mapMethodName(NOTCH, transformedName, name, desc);
+		String mappedName = Mapping.mapMethodName(NOTCH, target, name, desc);
 		String mappedDesc = Mapping.mapMethodDesc(NOTCH, desc);
 		return classNode.methods.stream()
 			.filter(m -> m.name.equals(mappedName) && m.desc.equals(mappedDesc))
@@ -57,4 +64,12 @@ public abstract class Transformer implements Opcodes {
 		}
 	}
 
+	public String getTarget() {
+		return target;
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Target {
+		String value();
+	}
 }

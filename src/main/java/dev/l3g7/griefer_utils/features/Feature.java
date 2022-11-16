@@ -35,9 +35,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static dev.l3g7.griefer_utils.util.Util.elevate;
 
 /**
@@ -78,7 +78,7 @@ public abstract class Feature {
 
 		// Load config key
 		configKey = getClass().getSimpleName();
-		configKey = category.getConfigKey() + "." + convertCamelCaseToSnakeCase(configKey);
+		configKey = category.getConfigKey() + "." + UPPER_CAMEL.to(LOWER_UNDERSCORE, configKey);
 
 		// Load settings
 		if (mainElement instanceof ValueHolder<?, ?>)
@@ -99,7 +99,7 @@ public abstract class Feature {
 			if (element instanceof HeaderSetting)
 				continue;
 
-			String key = parentKey + "." + convertCamelCaseToSnakeCase(getFieldName(element));
+			String key = parentKey + "." + UPPER_CAMEL.to(LOWER_UNDERSCORE, getFieldName(element));
 			loadSubSettings(element, key);
 			if (element instanceof ValueHolder<?, ?>)
 				((ValueHolder<?, ?>) element).config(key);
@@ -119,6 +119,10 @@ public abstract class Feature {
 
 	public SettingsElement getMainElement() {
 		return mainElement;
+	}
+
+	public Category getCategory() {
+		return category;
 	}
 
 	/**
@@ -141,18 +145,6 @@ public abstract class Feature {
 
 	public boolean isOnCityBuild() {
 		return onCityBuild;
-	}
-
-	private static final Pattern CAPS_PATTERN = Pattern.compile("([A-Z])");
-
-	/**
-	 * Converts a CamelCase string to snake_case
-	 */
-	private static String convertCamelCaseToSnakeCase(String str) {
-		Matcher matcher = CAPS_PATTERN.matcher(str);
-		while (matcher.find())
-			str = str.replaceFirst(matcher.group(1), (matcher.start() == 0 ? "" : "_") + matcher.group(1).toLowerCase());
-		return str;
 	}
 
 	@EventListener

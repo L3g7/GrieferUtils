@@ -52,8 +52,10 @@ public class MainPage {
 		});
 
 		// Add every category to the main page
-		for (Category category : Category.getCategories())
-			settings.add(category.getSetting());
+		Category.getCategories().stream()
+			.map(Category::getSetting)
+			.sorted(Comparator.comparing(SettingsElement::getDisplayName))
+			.forEach(settings::add);
 	}
 
 }

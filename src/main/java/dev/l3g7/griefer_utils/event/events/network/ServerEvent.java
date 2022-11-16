@@ -48,13 +48,28 @@ public class ServerEvent extends Event {
 
 		public final ServerData data;
 
-		public ServerJoinEvent(ServerData data) {
+		private ServerJoinEvent(ServerData data) {
 			this.data = data;
 		}
 
 		@OnEnable
 		private static void register() {
 			LabyMod.getInstance().getEventManager().registerOnJoin(data -> MinecraftForge.EVENT_BUS.post(new ServerJoinEvent(data)));
+		}
+
+	}
+
+	public static class ServerQuitEvent extends ServerEvent {
+
+		public final ServerData data;
+
+		private ServerQuitEvent(ServerData data) {
+			this.data = data;
+		}
+
+		@OnEnable
+		private static void register() {
+			LabyMod.getInstance().getEventManager().registerOnQuit(data -> MinecraftForge.EVENT_BUS.post(new ServerQuitEvent(data)));
 		}
 
 	}

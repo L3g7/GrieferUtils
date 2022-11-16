@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 public class Constants {
 
 	public static final String ADDON_NAME = "GrieferUtils";
+	public static final String ADDON_PREFIX = "§8[§r§f§l" + ADDON_NAME + "§r§8] §r§f";
 
 	// Rank patterns
 	public static final Pattern FORMATTED_RANK_PATTERN = Pattern.compile("(?<rank>[§\\w+]{3,})");

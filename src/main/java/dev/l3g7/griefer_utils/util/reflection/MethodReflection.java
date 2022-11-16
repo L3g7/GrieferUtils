@@ -19,6 +19,8 @@
 package dev.l3g7.griefer_utils.util.reflection;
 
 import dev.l3g7.griefer_utils.util.ArrayUtil;
+import dev.l3g7.griefer_utils.util.misc.Mapping;
+import org.objectweb.asm.Type;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
+import static dev.l3g7.griefer_utils.util.misc.Mapping.MappingTarget.SRG;
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
@@ -44,8 +47,9 @@ class MethodReflection {
 
 		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
+		String mappedName = Mapping.mapMethodName(SRG, Type.getInternalName(targetClass), name, "");
 
-		Method method = resolveMethod(targetClass, name, params);
+		Method method = resolveMethod(targetClass, mappedName, params);
 		if (method == null)
 			throw elevate(new NoSuchMethodException(), "Could not find method '%s' with parameters '%s' in '%s'", name, ArrayUtil.toString(params, o -> o.getClass().toString(), ", "), targetClass.getName());
 

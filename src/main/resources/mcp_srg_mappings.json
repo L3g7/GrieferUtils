@@ -11,6 +11,11 @@
       "renderPosZ": "field_78723_d"
     }
   },
+  "net/minecraft/entity/monster/EntitySlime": {
+    "methods": {
+      "setSlimeSize": "func_70799_a"
+    }
+  },
   "net/minecraft/network/play/server/S38PacketPlayerListItem$AddPlayerData": {
     "fields": {
       "displayName": "field_179965_e"

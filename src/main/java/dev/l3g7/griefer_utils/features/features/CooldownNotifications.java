@@ -39,6 +39,7 @@ public class CooldownNotifications extends Feature {
     private static final String TITLE = "§8§m------------§r§8[ §r§6Cooldowns §r§8]§r§8§m------------§r";
     private final Set<Cooldown> endDates = new HashSet<>();
     private boolean waitingForCooldownGUI = false;
+	private boolean sendCooldowns = false;
 
     private final BooleanSetting enabled = new BooleanSetting()
             .name("Cooldown-Benachrichtigungen")
@@ -87,35 +88,45 @@ public class CooldownNotifications extends Feature {
 
     @EventListener(priority = EventPriority.LOWEST) // Make sure loadCooldowns is triggered before
     public void onServerJoin(ServerJoinEvent event) {
-        if (!isActive() || !isOnGrieferGames())
-            return;
+	    if (!isOnGrieferGames())
+		    return;
 
-        if (endDates.size() == 0) {
-            display(TITLE);
-            display("§c");
-            display("§cEs liegen noch keine Daten vor. Bitte gehe auf einen Citybuild!");
-            display("§c");
-            display(TITLE);
-            return;
-        }
-
-        endDates.forEach(Cooldown::checkEndTime);
-
-        // Display cooldown information on server join
-        display(TITLE);
-
-        for (Cooldown key : endDates)
-            if (key.endTime == 0)
-                display("§8» §e%s§7:§r %s", key.name, "§aVerfügbar");
-        for (Cooldown key : endDates)
-            if (key.endTime > 0)
-                display("§8» §e%s§7:§r %s", key.name, "§6Verfügbar am " + Constants.DATE_FORMAT.format(new Date(key.endTime)));
-        for (Cooldown key : endDates)
-            if (key.endTime < 0)
-                display("§8» §e%s§7:§r %s", key.name, "§cNicht freigeschaltet");
-
-        display(TITLE);
+	    sendCooldowns = true;
     }
+
+	@EventListener
+	public void onCityBuildJoins(CityBuildJoinEvent event) {
+		if (!isActive() || !isOnGrieferGames() || !sendCooldowns)
+			return;
+
+		sendCooldowns = false;
+
+		if (endDates.size() == 0) {
+			display(TITLE);
+			display("§c");
+			display("§cEs liegen noch keine Daten vor. Bitte gehe auf einen Citybuild!");
+			display("§c");
+			display(TITLE);
+			return;
+		}
+
+		endDates.forEach(Cooldown::checkEndTime);
+
+		// Display cooldown information on server join
+		display(TITLE);
+
+		for (Cooldown key : endDates)
+			if (key.endTime == 0)
+				display("§8» §e%s§7:§r %s", key.name, "§aVerfügbar");
+		for (Cooldown key : endDates)
+			if (key.endTime > 0)
+				display("§8» §e%s§7:§r %s", key.name, "§6Verfügbar am " + Constants.DATE_FORMAT.format(new Date(key.endTime)));
+		for (Cooldown key : endDates)
+			if (key.endTime < 0)
+				display("§8» §e%s§7:§r %s", key.name, "§cNicht freigeschaltet");
+
+		display(TITLE);
+	}
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent event) {

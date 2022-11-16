@@ -1,12 +1,18 @@
 package dev.l3g7.griefer_utils.features.features.player_list;
 
+import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.event.events.network.tablist.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.playerlist.PlayerListSetting;
 import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
+import dev.l3g7.griefer_utils.settings.elements.playerlist.PlayerSetting;
+import dev.l3g7.griefer_utils.util.IOUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.ModColor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +48,15 @@ public class ScammerList extends PlayerList {
             .icon("info")
             .defaultValue(true);
 
+	private final PlayerListSetting customScammerList = new PlayerListSetting()
+			.name("%s. Scammer")
+			.config("features.scammer_list.custom_entries");
+
+	private final CategorySetting customScammers = new CategorySetting()
+		.name("Scammer hinzufügen")
+		.icon("red_scroll")
+		.subSettingsWithHeader("Scammer", customScammerList);
+
     private final BooleanSetting enabled = new BooleanSetting()
             .name("Scammerliste")
             .config("features.scammer_list.active")
@@ -49,10 +64,19 @@ public class ScammerList extends PlayerList {
             .defaultValue(false)
             .callback(v -> TabListNameUpdateEvent.updateTabListNames())
             .subSettingsWithHeader("Scammerliste",
-                    tabAction, chatAction, displayNameAction, showInProfile);
+                    tabAction, chatAction, displayNameAction, showInProfile, customScammers);
 
     public ScammerList() {
         super("Scammer!", ModColor.RED, 14, "§c[§lSCAMMER§c] ", "§c[⚠] ");
+
+		// Load from ScammerRadar's list
+	    File scammerFile = new File(mc().mcDataDir, "LabyMod/antiScammer/localScammer.json");
+	    if(scammerFile.exists()) {
+		    IOUtil.file(scammerFile).readJsonArray(obj -> {
+			    for (JsonElement element : obj)
+				    customScammerList.add(PlayerSetting.fromJson(element));
+		    });
+	    }
     }
 
     @Override
@@ -63,11 +87,15 @@ public class ScammerList extends PlayerList {
     @Override
     List<PlayerListProvider.PlayerListEntry> getEntries(String name, UUID uuid) {
         List<PlayerListProvider.PlayerListEntry> result = new ArrayList<>();
-        for (PlayerListProvider.PlayerListEntry entry : PlayerListProvider.scammerList)
-	        if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
-		        result.add(entry);
 
-        return result;
+		List<PlayerListProvider.PlayerListEntry> entries = new ArrayList<>(PlayerListProvider.scammerList);
+		entries.addAll(customScammerList.getEntries());
+
+	    for (PlayerListProvider.PlayerListEntry entry : entries)
+		    if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
+			    result.add(entry);
+
+	    return result;
     }
 
     @Override

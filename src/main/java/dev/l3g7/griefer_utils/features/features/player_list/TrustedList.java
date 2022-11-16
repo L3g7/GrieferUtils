@@ -3,6 +3,8 @@ package dev.l3g7.griefer_utils.features.features.player_list;
 import dev.l3g7.griefer_utils.event.events.network.tablist.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.playerlist.PlayerListSetting;
 import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.ModColor;
@@ -42,6 +44,15 @@ public class TrustedList extends PlayerList {
             .icon("info")
             .defaultValue(true);
 
+	private final PlayerListSetting customTrustedList = new PlayerListSetting()
+		.name("%s. Trusted")
+		.config("features.trusted_list.custom_entries");
+
+	private final CategorySetting customTrusted = new CategorySetting()
+		.name("Trusteds hinzufügen")
+		.icon("green_scroll")
+		.subSettingsWithHeader("Trusteds", customTrustedList);
+
     private final BooleanSetting enabled = new BooleanSetting()
             .name("Trustedliste")
             .config("features.trusted_list.active")
@@ -49,7 +60,7 @@ public class TrustedList extends PlayerList {
             .defaultValue(false)
             .callback(v -> TabListNameUpdateEvent.updateTabListNames())
             .subSettingsWithHeader("Trustedliste",
-                                   tabAction, chatAction, displayNameAction, showInProfile);
+                                   tabAction, chatAction, displayNameAction, showInProfile, customTrusted);
 
     public TrustedList() {
         super("Trusted", ModColor.GREEN, 5, "§a[§lTRUSTED§a] ", "§a[✰] ");
@@ -63,11 +74,15 @@ public class TrustedList extends PlayerList {
     @Override
     List<PlayerListProvider.PlayerListEntry> getEntries(String name, UUID uuid) {
         List<PlayerListProvider.PlayerListEntry> result = new ArrayList<>();
-        for (PlayerListProvider.PlayerListEntry entry : PlayerListProvider.trustedList)
-	        if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
-		        result.add(entry);
 
-		return result;
+	    List<PlayerListProvider.PlayerListEntry> entries = new ArrayList<>(PlayerListProvider.trustedList);
+	    entries.addAll(customTrustedList.getEntries());
+
+	    for (PlayerListProvider.PlayerListEntry entry : entries)
+		    if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
+			    result.add(entry);
+
+	    return result;
     }
 
     @Override

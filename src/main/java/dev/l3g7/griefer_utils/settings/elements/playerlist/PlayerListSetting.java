@@ -45,6 +45,11 @@ public class PlayerListSetting extends SettingsElement {
 		return this;
 	}
 
+	public PlayerListSetting add(PlayerSetting playerSetting) {
+		values.add(playerSetting);
+		return this;
+	}
+
 	public List<String> getNames() {
 		return values.stream().map(StringSetting::get).collect(Collectors.toList());
 	}

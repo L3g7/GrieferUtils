@@ -124,7 +124,7 @@ public abstract class PlayerList extends Feature {
                 style.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/profil " + entries.get(0).getName()));
 
                 // Add description
-                style.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(String.join("\n", createDescription(entries)))));
+                style.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(String.format("§%s§l%s\n%s", titleColor.getColorChar(), paneName, String.join("\n", createDescription(entries))))));
 
                 // Update message
                 event.setMessage(new ChatComponentText(actionToString(getChatAction()).trim()).setChatStyle(style).appendText(" ").appendSibling(event.getMessage()));
@@ -168,7 +168,6 @@ public abstract class PlayerList extends Feature {
         // Create description based on providers
 
         List<String> description = new ArrayList<>();
-        description.add("§" + titleColor.getColorChar() + "§l" + paneName);
         if (entries.size() == 1) {
             // Single provider
             description.add(String.format("§%cLaut %s", titleColor.getColorChar(), entries.get(0).getProvider().getName()));

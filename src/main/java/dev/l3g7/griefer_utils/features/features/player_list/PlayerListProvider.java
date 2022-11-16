@@ -74,7 +74,9 @@ public class PlayerListProvider {
 
     public enum Provider {
 
-        SCAMMER_RADAR("ScammerRadar"), REAL_MATES("RealMates");
+        SCAMMER_RADAR("ScammerRadar"),
+	    REAL_MATES("RealMates"),
+	    USER("dir");
 
         private final String name;
 

@@ -49,6 +49,7 @@ public abstract class Feature {
 
 	private Category category;
 	private SettingsElement mainElement;
+	private String configKey;
 
 	/**
 	 * <p>
@@ -76,7 +77,7 @@ public abstract class Feature {
 		mainElement = Reflection.get(this, mainElementFields[0]);
 
 		// Load config key
-		String configKey = getClass().getSimpleName();
+		configKey = getClass().getSimpleName();
 		configKey = category.getConfigKey() + "." + convertCamelCaseToSnakeCase(configKey);
 
 		// Load settings
@@ -132,6 +133,10 @@ public abstract class Feature {
 		if (mainElement instanceof NumberSetting)
 			return ((NumberSetting) mainElement).get() != 0;
 		return true;
+	}
+
+	public String getConfigKey() {
+		return configKey;
 	}
 
 	public boolean isOnCityBuild() {

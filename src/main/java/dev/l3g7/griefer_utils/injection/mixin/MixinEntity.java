@@ -19,7 +19,9 @@
 package dev.l3g7.griefer_utils.injection.mixin;
 
 import dev.l3g7.griefer_utils.event.events.render.BurningCheckEvent;
+import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,6 +34,13 @@ public class MixinEntity {
 	private void injectIsBurning(CallbackInfoReturnable<Boolean> cir) {
 		if (cir.getReturnValueZ())
 			cir.setReturnValue(BurningCheckEvent.isBurning((Entity) (Object) this));
+	}
+
+	@Inject(method = "isInvisibleToPlayer", at = @At("RETURN"), cancellable = true)
+	private void injectIsInvisibleToPlayer(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+		if (cir.getReturnValueZ()) {
+			cir.setReturnValue(InvisibilityCheckEvent.isInvisible((Entity) (Object) this));
+		}
 	}
 
 }

@@ -30,6 +30,18 @@
       "setupFog(IF)V": "a"
     }
   },
+  "net/minecraft/client/renderer/GlStateManager": {
+    "notch": "bfl",
+    "methods": {
+      "color(FFFF)V": "c"
+    }
+  },
+  "net/minecraft/client/renderer/entity/RendererLivingEntity": {
+    "notch": "bjl",
+    "methods": {
+      "renderModel(Lnet/minecraft/entity/EntityLivingBase;FFFFFF)V": "a"
+    }
+  },
   "net/minecraft/entity/EntityLivingBase": {
     "notch": "pr",
     "methods": {

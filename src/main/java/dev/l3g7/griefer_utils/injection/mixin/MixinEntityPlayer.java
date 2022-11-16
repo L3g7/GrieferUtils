@@ -19,6 +19,8 @@
 package dev.l3g7.griefer_utils.injection.mixin;
 
 import dev.l3g7.griefer_utils.event.events.DisplayNameGetEvent;
+import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,6 +34,13 @@ public class MixinEntityPlayer {
 	@Inject(method = "getDisplayName", at = @At("RETURN"), cancellable = true)
 	private void injectGetDisplayName(CallbackInfoReturnable<IChatComponent> cir) {
 		cir.setReturnValue(DisplayNameGetEvent.post((EntityPlayer) (Object) this, cir.getReturnValue()));
+	}
+
+	@Inject(method = "isInvisibleToPlayer", at = @At("RETURN"), cancellable = true)
+	private void injectIsInvisibleToPlayer(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+		if (cir.getReturnValueZ()) {
+			cir.setReturnValue(InvisibilityCheckEvent.isInvisible((Entity) (Object) this));
+		}
 	}
 
 }

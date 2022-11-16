@@ -2,12 +2,20 @@
 
 <table>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/blue_light_bulb.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/blue_light_bulb.png" height=16em width=16em/> blue_light_bulb.png</a></td>
+    <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/bone_with_meat.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/bone_with_meat.png" height=16em width=16em/> bone_with_meat.png</a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/mob_effect/saturation.png">Minecraft asset</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chunk.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chunk.png" height=16em width=16em/> chunk.png</a></td>
     <td><a href="https://www.deviantart.com/ishmanallenlitchmore/art/chunk-of-minecraft-382711453">IshmanAllenLitchmore</a></td>
+  </tr>
+  <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/fading_steve.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/fading_steve.png" height=16em width=16em/> fading_steve.png</a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/steve.png">Minecraft asset</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/fire.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/fire.png" height=16em width=16em/> fire.png</a></td>

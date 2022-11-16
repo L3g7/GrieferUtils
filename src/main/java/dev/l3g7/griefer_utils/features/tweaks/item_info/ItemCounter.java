@@ -66,25 +66,26 @@ public class ItemCounter extends ItemInfoSupplier {
 		if (playerAmount + containerAmount == itemStack.stackSize)
 			return Collections.emptyList();
 
+		int stackSize = itemStack.getMaxStackSize();
 		// Add to tooltip
 		List<String> toolTip = new ArrayList<>();
 
 		toolTip.add("§r");
-		toolTip.add("Insgesamt: " + formatAmount(containerAmount + playerAmount));
+		toolTip.add("Insgesamt: " + formatAmount(containerAmount + playerAmount, stackSize));
 
 		if (containerAmount == 0 || playerAmount == 0)
 			return toolTip;
 
-		toolTip.add(String.format("├ %s§r§7: %s", containerName, formatAmount(containerAmount)));
-		toolTip.add("└ Inventar: " + formatAmount(playerAmount));
+		toolTip.add(String.format("├ %s§r§7: %s", containerName, formatAmount(containerAmount, stackSize)));
+		toolTip.add("└ Inventar: " + formatAmount(playerAmount, stackSize));
 
 		return toolTip;
 	}
 
-	private String formatAmount(int amount) {
-		int pieces = amount % 64;
-		int stacks = amount / 64 % 54;
-		int dks = amount / 64 / 54;
+	private String formatAmount(int amount, int stackSize) {
+		int pieces = amount % stackSize;
+		int stacks = amount / stackSize % 54;
+		int dks = amount / stackSize / 54;
 
 		String formattedString = "";
 

@@ -28,8 +28,11 @@ import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import org.lwjgl.opengl.GL11;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
@@ -60,13 +63,11 @@ public class PlotChatIndicator extends Feature {
 
 	@EventListener
 	private void onServerSwitch(ServerSwitchEvent event) {
-		System.out.println("ServerSwitchEvent");
 		state = UNKNOWN;
 	}
 
 	@EventListener
 	private void onCityBuildJoin(CityBuildJoinEvent event) {
-		System.out.println("CityBuildJoinEvent");
 		if (state != UNKNOWN)
 			return;
 
@@ -91,15 +92,12 @@ public class PlotChatIndicator extends Feature {
 	}
 
 	@EventListener
-	private void onRender(RenderGameOverlayEvent.Post event) {
+	private void onRender(GuiScreenEvent.DrawScreenEvent.Pre event) {
 		if (state != ACTIVE)
 			return;
 
 		// Check if chat is open
-		if (event.type != RenderGameOverlayEvent.ElementType.CHAT)
-			return;
-
-		GuiScreen gcc = mc().currentScreen;
+		GuiScreen gcc = event.gui;
 		if (!(gcc instanceof GuiChat))
 			return;
 
@@ -107,7 +105,7 @@ public class PlotChatIndicator extends Feature {
 		int color = 0xFFFFA126;
 
 		// Render frame
-		GuiScreen.drawRect(2, gcc.height - 14, gcc.width - 2 - buttonWidth, gcc.height - 2, 100 << 24);
+		GuiScreen.drawRect(2, gcc.height - 14, gcc.width - 2 - buttonWidth, gcc.height - 2, 0x33000000);
 
 		GuiScreen.drawRect(1, gcc.height - 15, gcc.width - 1 - buttonWidth, gcc.height - 14, color);
 		GuiScreen.drawRect(1, gcc.height - 2, gcc.width - 1 - buttonWidth, gcc.height - 1, color);

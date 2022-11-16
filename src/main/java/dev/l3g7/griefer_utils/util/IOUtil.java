@@ -109,6 +109,23 @@ public class IOUtil {
 			return this;
 		}
 
+		public FileRequest readJsonArray(Consumer<JsonArray> consumer) {
+			if (!file.exists() || file.isDirectory()) {
+				error = new IOException(file.exists() ? "file is directory" : "file does not exist");
+			}
+
+			if (error != null)
+				return this;
+
+			try (InputStreamReader in = new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8)) {
+				consumer.accept(JSON_PARSER.parse(in).getAsJsonArray());
+			} catch (Throwable e) {
+				e.printStackTrace();
+				error = e;
+			}
+			return this;
+		}
+
 		public void orElse(Consumer<Throwable> callback) {
 			if (error != null)
 				callback.accept(error);
@@ -145,6 +162,15 @@ public class IOUtil {
 				try (OutputStream stream = conn.getOutputStream()) {
 					stream.write(data);
 					stream.flush();
+				}
+			});
+			return this;
+		}
+
+		public HttpRequest asJsonObject(Consumer<JsonObject> consumer) {
+			tryAsync(() -> {
+				try (InputStreamReader in = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
+					consumer.accept(JSON_PARSER.parse(in).getAsJsonObject());
 				}
 			});
 			return this;

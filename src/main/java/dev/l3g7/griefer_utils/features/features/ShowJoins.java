@@ -8,16 +8,15 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.StringListSetting;
+import dev.l3g7.griefer_utils.settings.elements.playerlist.PlayerListSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 
 @Singleton
 public class ShowJoins extends Feature {
 
-    private final StringListSetting filterData = new StringListSetting()
+    private final PlayerListSetting filterData = new PlayerListSetting()
             .name("%s. Spieler")
-            .icon("steve")
             .config("features.show_joins.filter.data");
 
     private final BooleanSetting filter = new BooleanSetting()
@@ -49,7 +48,7 @@ public class ShowJoins extends Feature {
             return false;
 
         if(filter.get())
-            return filterData.getValues().stream().anyMatch(s -> s.equalsIgnoreCase(name));
+            return filterData.getNames().stream().anyMatch(s -> s.equalsIgnoreCase(name));
 
         return name != null && !(name.contains("§") || name.contains(".") || name.contains(" ")); // All NPCs' names on GrieferGames contain at least one invalid char
     }

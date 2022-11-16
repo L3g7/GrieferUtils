@@ -5,11 +5,23 @@
       "getMaterial()Lnet/minecraft/block/material/Material;": "t"
     }
   },
+  "net/minecraft/block/state/IBlockState": {
+    "notch": "alz",
+    "methods": {
+      "getBlock()Lnet/minecraft/block/Block;": "c"
+    }
+  },
   "net/minecraft/block/material/Material": {
     "notch": "arm",
     "fields": {
       "lava": "i",
       "water": "h"
+    }
+  },
+  "net/minecraft/client/multiplayer/WorldClient": {
+    "notch": "bdb",
+    "methods": {
+      "doVoidFogParticles(III)V": "b"
     }
   },
   "net/minecraft/client/renderer/EntityRenderer": {
@@ -22,6 +34,12 @@
     "notch": "pr",
     "methods": {
       "isPotionActive(Lnet/minecraft/potion/Potion;)Z": "a"
+    }
+  },
+  "net/minecraft/init/Blocks": {
+    "notch": "afi",
+    "fields": {
+      "barrier": "cv"
     }
   },
   "net/minecraft/potion/Potion": {

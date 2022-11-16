@@ -52,6 +52,7 @@ public abstract class Transformer implements Opcodes {
 					insn.name.equals(Mapping.mapField(NOTCH, args[0], args[1])) &&
 					insn.desc.equals(Mapping.mapClass(NOTCH, args[2]));
 			}
+			case INVOKEINTERFACE:
 			case INVOKEVIRTUAL: {
 				MethodInsnNode insn = (MethodInsnNode) node;
 				return

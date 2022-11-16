@@ -83,6 +83,11 @@ public class SelfDisguise extends Feature {
 
 	@EventListener
 	public void onReceive(MessageReceiveEvent event) {
+		if (event.getUnformatted().equals("[GrieferGames] Verwandlungen sind auf diesem Grundstück deaktiviert. Deine aktuelle Verwandlung wurde aufgehoben.")) {
+			undisguise();
+			return;
+		}
+
 		if (event.getFormatted().equals("§r§7Du bist noch verkleidet. Nutze §r§e/disguise status§r§7, um weitere Informationen zu erhalten.§r")) {
 			shouldLoadFromConfig = true;
 			return;
@@ -140,6 +145,7 @@ public class SelfDisguise extends Feature {
 			currentDisguise.setLocationAndAngles(p.posX, p.posY, p.posZ, p.rotationYaw, p.rotationPitch);
 		currentDisguise.setRotationYawHead(p.getRotationYawHead());
 	}
+
 	private void undisguise() {
 
 		if (isDisguised() && world() != null)

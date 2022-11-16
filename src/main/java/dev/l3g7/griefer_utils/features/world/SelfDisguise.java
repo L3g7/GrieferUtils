@@ -132,6 +132,11 @@ public class SelfDisguise extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onReceive(ClientChatReceivedEvent event) {
+		if (event.message.getUnformattedText().equals("[GrieferGames] Verwandlungen sind auf diesem Grundstück deaktiviert. Deine aktuelle Verwandlung wurde aufgehoben.")) {
+			resetDisguise();
+			return;
+		}
+
 		if (lastSentDisguiseCommand == null)
 			return;
 

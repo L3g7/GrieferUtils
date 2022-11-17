@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-@Category.Meta(name = "Welt", icon = "chunk", configKey = "world")
+@Category.Meta(name = "Welt", icon = "earth", configKey = "world")
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.features.Category;

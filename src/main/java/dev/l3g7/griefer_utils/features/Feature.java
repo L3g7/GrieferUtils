@@ -148,12 +148,12 @@ public abstract class Feature {
 	}
 
 	@EventListener
-	private static void onServerJoin(ServerJoinEvent event) {
+	private static void _onServerJoin(ServerJoinEvent event) {
 		onCityBuild = true;
 	}
 
 	@EventListener
-	private static void onServerSwitch(ServerSwitchEvent event) {
+	private static void _onServerSwitch(ServerSwitchEvent event) {
 		onCityBuild = false;
 	}
 

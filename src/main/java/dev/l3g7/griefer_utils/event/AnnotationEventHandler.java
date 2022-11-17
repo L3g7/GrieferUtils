@@ -66,6 +66,8 @@ public class AnnotationEventHandler implements Opcodes {
 	 */
 	static void register(Object obj) {
 		Class<?> clazz = obj.getClass();
+		if (clazz.isAnnotationPresent(Singleton.class))
+			return;
 
 		for (Class<? extends Annotation> annotation : annotations) {
 			List<Runnable> runnables = listeners.computeIfAbsent(annotation, c -> new ArrayList<>());

@@ -83,6 +83,9 @@ public class EventHandler implements Opcodes {
 		AnnotationEventHandler.register(obj);
 
 		Class<?> clazz = obj.getClass();
+		if (clazz.isAnnotationPresent(Singleton.class))
+			return;
+
 		for (Method method : Reflection.getAnnotatedMethods(clazz, EventListener.class)) {
 
 			// Skip static listeners

@@ -110,7 +110,7 @@ public class PlayerSetting extends StringSetting {
 			ResourceLocation location = new ResourceLocation(url);
 			mc.getTextureManager().loadTexture(location, head);
 
-			Map<ResourceLocation, ITextureObject> mapTextureObjects = Reflection.get(mc.getTextureManager(), "mapTextureObjects");
+			Map<ResourceLocation, ITextureObject> mapTextureObjects = Reflection.get(mc.getTextureManager(), "mapTextureObjects", "field_110585_a", "b");
 			mapTextureObjects.put(location, head);
 		});
 	}

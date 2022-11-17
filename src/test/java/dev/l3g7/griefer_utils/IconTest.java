@@ -107,7 +107,7 @@ public class IconTest implements Opcodes {
 					AbstractInsnNode valNode = node;
 					do {
 						valNode = valNode.getPrevious();
-					} while (valNode instanceof LineNumberNode || valNode instanceof LabelNode);
+					} while (valNode instanceof LineNumberNode || valNode instanceof LabelNode || valNode instanceof FrameNode);
 					testInsnNode(classNode, method, valNode);
 				}
 			}

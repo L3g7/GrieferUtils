@@ -13,7 +13,7 @@ import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.lang.reflect.Array;
@@ -74,8 +74,6 @@ public class PlotChatIndicator extends Feature {
 
     @EventListener
     public void onReceive(MessageReceiveEvent event) {
-        if (!isActive())
-            return;
 
         // Update plot chat state
         if (event.getFormatted().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
@@ -90,15 +88,11 @@ public class PlotChatIndicator extends Feature {
     }
 
     @SubscribeEvent
-    public void onRender(RenderGameOverlayEvent.Post event) {
+    public void onRender(GuiScreenEvent.DrawScreenEvent.Pre event) {
         if (!isActive() || !isOnGrieferGames() || plotchatState == null || !plotchatState)
             return;
 
-        // Check if chat is open
-	    if (event.type != RenderGameOverlayEvent.ElementType.CHAT)
-			return;
-
-	    GuiScreen gcc = mc().currentScreen;
+	    GuiScreen gcc = event.gui;
 	    if (!(gcc instanceof GuiChat))
 	        return;
 

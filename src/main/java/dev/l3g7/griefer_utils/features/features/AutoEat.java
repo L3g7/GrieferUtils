@@ -47,7 +47,7 @@ public class AutoEat extends Feature {
         return enabled;
     }
 
-    private int previousHotbarSlot;
+    private int previousHotbarSlot = -1;
     private boolean waiting = false;
 
     @SubscribeEvent
@@ -69,11 +69,17 @@ public class AutoEat extends Feature {
 
     @SubscribeEvent
     public void onUseItemFinish(PlayerUseItemEvent.Finish event) {
+	    if (!isActive() || !isOnGrieferGames() || previousHotbarSlot == -1)
+			return;
+
         waiting = true;
         // Need to wait some ticks, maybe because of NCP?
         TickScheduler.runLater(() -> {
             KeyBinding.setKeyBindState(mc().gameSettings.keyBindUseItem.getKeyCode(), false);
-            TickScheduler.runNextTick(() -> player().inventory.currentItem = previousHotbarSlot);
+            TickScheduler.runNextTick(() -> {
+				player().inventory.currentItem = previousHotbarSlot;
+	            previousHotbarSlot = -1;
+            });
             waiting = false;
         }, 5);
     }

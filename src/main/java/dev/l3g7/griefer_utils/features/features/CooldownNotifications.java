@@ -98,20 +98,15 @@ public class CooldownNotifications extends Feature {
 	}
 
 	@EventListener
-	public void onCityBuildJoins(CityBuildJoinEvent event) {
+	public void onCityBuildJoin(CityBuildJoinEvent event) {
 		if (!isActive() || !isOnGrieferGames() || !sendCooldowns)
 			return;
 
 		sendCooldowns = false;
 
-		if (endDates.size() == 0) {
-			display(TITLE);
-			display("§c");
-			display("§cEs liegen noch keine Daten vor. Bitte gehe auf einen Citybuild!");
-			display("§c");
-			display(TITLE);
+		// Cooldowns haven't been loaded yet
+		if (endDates.size() == 0)
 			return;
-		}
 
 		endDates.keySet().forEach(this::checkEndTime);
 
@@ -186,6 +181,8 @@ public class CooldownNotifications extends Feature {
 					if (waitingForCooldownGUI && isActive()) {
 						mc().displayGuiScreen(null);
 						waitingForCooldownGUI = false;
+						sendCooldowns = true;
+						onCityBuildJoin(null);
 					}
 				}
 			}
@@ -212,7 +209,7 @@ public class CooldownNotifications extends Feature {
 	}
 
 	@EventListener
-	public void loadCooldowns(ServerJoinEvent ignored) {
+	public void loadCooldowns(ServerJoinEvent event) {
 		if (!isActive() || !isOnGrieferGames())
 			return;
 

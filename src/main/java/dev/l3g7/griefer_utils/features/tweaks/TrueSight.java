@@ -92,7 +92,7 @@ public class TrueSight extends Feature {
     private void addEntity(Class<?> entityClass, String name, ItemStack icon) {
         enabled.subSettings(new BooleanSetting()
                 .name(name)
-                .config("tweaks.truesight.entities." + entityClass.getSimpleName().toLowerCase())
+                .config("tweaks.true_sight.entities." + entityClass.getSimpleName().toLowerCase())
                 .icon(icon)
                 .defaultValue(entityClass == EntityPlayer.class));
     }
@@ -107,7 +107,7 @@ public class TrueSight extends Feature {
         Class<?> clazz = entity.getClass();
         do {
             // Check if config key exists
-            String key = "tweaks.truesight.entities." + clazz.getSimpleName().toLowerCase();
+            String key = "tweaks.true_sight.entities." + clazz.getSimpleName().toLowerCase();
             if(Config.has(key)) {
                 // Render if TrueSight is enabled for this entity
                 if(Config.get(key).getAsBoolean())

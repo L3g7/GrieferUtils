@@ -10,10 +10,14 @@ import dev.l3g7.griefer_utils.features.features.chat_menu.ChatMenu;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import net.labymod.utils.ModColor;
 import net.minecraft.event.ClickEvent;
+import net.minecraft.event.HoverEvent;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,12 +35,41 @@ public class ClickEventHandler {
 	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
 	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
 	private static final List<Pattern> MESSAGE_PATTERNS = ImmutableList.of(PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN);
+	private static final Map<String, String> GLOBALCHAT_CB_TO_SWITCH = new HashMap<String, String>(){{
+		put("CBE", "cbevil");
+		put("WASSER", "farm1");
+		put("LAVA", "nether1");
+		put("EVENT", "eventserver");
+	}};
 
 	@EventListener(priority = EventPriority.HIGHEST)
 	public static void modifyMessage(MessageModifyEvent event) {
+		modifyGlobalChats(event);
 		modifyStatuses(event);
 		modifyMsgs(event);
 		modifyTps(event);
+	}
+
+	private static void modifyGlobalChats(MessageModifyEvent event) {
+		String unformattedText = event.getMessage().getUnformattedText();
+		if (!unformattedText.startsWith("@["))
+			return;
+
+		String cb = unformattedText.substring(2, unformattedText.indexOf(']'));
+
+		IChatComponent message = event.getMessage();
+
+		for (IChatComponent sibling : message.getSiblings()) {
+			if (!sibling.getUnformattedTextForChat().equals(cb))
+				continue;
+
+			sibling.getChatStyle()
+				.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/switch " + GLOBALCHAT_CB_TO_SWITCH.getOrDefault(cb, cb)))
+				.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§6Klicke, um auf den CB zu wechseln")));
+			break;
+		}
+
+		event.setMessage(message);
 	}
 
 	private static void modifyStatuses(MessageModifyEvent event) {

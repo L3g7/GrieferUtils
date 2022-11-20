@@ -199,6 +199,7 @@ public class Calculator extends Feature {
 
 				// Replace value
 				msg = msg.substring(0, matcher.start()) + Constants.DECIMAL_FORMAT_98.format(new BigDecimal(expResult).setScale(decimalPlaces.get(), RoundingMode.HALF_UP)) + msg.substring(matcher.end());
+				matcher = pattern.matcher(msg);
 			} while (matcher.find());
 
 			// Fix symbols

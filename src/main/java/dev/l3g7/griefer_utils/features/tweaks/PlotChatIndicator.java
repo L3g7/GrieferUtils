@@ -1,15 +1,21 @@
 package dev.l3g7.griefer_utils.features.tweaks;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.settings.elements.SettingsElement;
+import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -17,13 +23,14 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.lang.reflect.Array;
-import java.util.HashMap;
+import java.util.List;
 
 @Singleton
 public class PlotChatIndicator extends Feature {
 
-	private final HashMap<String, Boolean> states = new HashMap<>();
-	private String server = "";
+	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event");
+	private StringBuilder states; // A StringBuilder is used since it has .setChatAt, and with HashMaps you'd have 26 entries per account in the config)
+	private String server;
 
     private Boolean plotchatState = null;
     private boolean waitingForPlotchatStatus = false;
@@ -55,18 +62,33 @@ public class PlotChatIndicator extends Feature {
         plotchatState = null;
     }
 
+	@EventListener
+	public void onServerJoin(ServerJoinEvent event) {
+		if (!isOnGrieferGames())
+			return;
+
+		String path = "tweaks.plot_chat_indicator.states." + PlayerUtil.getUUID();
+		if (Config.has(path))
+			states = new StringBuilder(Config.get(path).getAsString());
+		else
+			states = new StringBuilder(Strings.repeat("?", 26));
+	}
+
     @EventListener
     public void onCityBuildJoin(CityBuildJoinEvent event) {
-        if (!isActive() || plotchatState != null)
-            return;
-
         ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
-		server = team == null ? "" : team.getColorPrefix();
+		server = team == null ? "" : ModColor.removeColor(team.getColorPrefix());
 
-		if (states.containsKey(server)) {
-			plotchatState = states.get(server);
+		if (server.equals("Lava") || server.equals("Wasser")) {
+			plotchatState = false;
 			return;
 		}
+
+	    char character = states.charAt(getIndex(server));
+		plotchatState = character == '?' ? null : character == 'Y';
+
+		if (plotchatState != null || !isActive())
+			return;
 
 		waitingForPlotchatStatus = true;
         sendQueued("/p chat");
@@ -78,7 +100,9 @@ public class PlotChatIndicator extends Feature {
         // Update plot chat state
         if (event.getFormatted().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
             plotchatState = event.getFormatted().contains(" aktiviert");
-			states.put(server, plotchatState);
+	        states.setCharAt(getIndex(server), plotchatState ? 'Y' : 'N');
+			Config.set("tweaks.plot_chat_indicator.states." + PlayerUtil.getUUID(), states.toString());
+			Config.save();
 
             if (waitingForPlotchatStatus) {
                 waitingForPlotchatStatus = false;
@@ -86,6 +110,13 @@ public class PlotChatIndicator extends Feature {
             }
         }
     }
+
+	private int getIndex(String server) {
+		if (specialServers.contains(server))
+			return specialServers.indexOf(server) + 22;
+
+		return Integer.parseInt(server.substring(2)) - 1;
+	}
 
     @SubscribeEvent
     public void onRender(GuiScreenEvent.DrawScreenEvent.Pre event) {

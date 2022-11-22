@@ -28,6 +28,7 @@ public class Mappings {
 	public static $EnumParticleTypes    EnumParticleTypes = new $EnumParticleTypes();
 	public static $FontRenderer         FontRenderer = new $FontRenderer();
 	public static $GlStateManager       GlStateManager = new $GlStateManager();
+	public static $GuiChest             GuiChest = new $GuiChest();
 	public static $GuiIngame            GuiIngame = new $GuiIngame();
 	public static $IChatComponent       IChatComponent = new $IChatComponent();
 	public static $NetHandlerPlayClient NetHandlerPlayClient = new $NetHandlerPlayClient();
@@ -116,6 +117,11 @@ public class Mappings {
 		public Method getFontRenderer () { return new Method("f", "getFontRenderer", this, FontRenderer); }
 		public Method renderScoreboard() { return new Method("a", "renderScoreboard", this, Void, ScoreObjective, ScaledResolution); }
 	}
+	public static class $GuiChest extends Class {
+		private $GuiChest() { super("net/minecraft/client/gui/inventory/GuiChest", "ayr"); }
+
+		public Method drawGuiContainerForegroundLayer() { return new Method("b", "drawGuiContainerForegroundLayer", this, Void, Int, Int); }
+	}
 	public static class $IChatComponent extends Class {
 		private $IChatComponent() { super("net/minecraft/util/IChatComponent", "eu"); }
 	}
@@ -158,6 +164,7 @@ public class Mappings {
 		public Method shouldRenderFog() { return new Method(null, "shouldRenderFog", this, Boolean, Int); }
 		public Method shouldRenderBarrier() { return new Method(null, "shouldRenderBarrier", this, Boolean); }
 		public Method shouldSendPacket() { return new Method(null, "shouldSendPacket", this, Boolean, Packet); }
+		public Method drawGuiContainerForegroundLayer() { return new Method(null, "drawGuiContainerForegroundLayer", this, Void, GuiChest); }
 	}
 	public static class $TrueSight extends Class {
 		public $TrueSight() { super("dev/l3g7/griefer_utils/features/tweaks/TrueSight", null); }

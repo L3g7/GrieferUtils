@@ -4,6 +4,7 @@ import dev.l3g7.griefer_utils.event.event_bus.EventBus;
 import dev.l3g7.griefer_utils.event.events.network.PacketSendEvent;
 import dev.l3g7.griefer_utils.event.events.render.*;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.Packet;
@@ -41,9 +42,14 @@ public class EventHandler {
         return !EventBus.post(new RenderBarrierCheckEvent()).isCanceled();
     }
 
-    // Called by NetHandlerPlayClientEditor (editAddToSendQueue)
-    public static boolean shouldSendPacket(Packet<?> packet) {
-        return !EventBus.post(new PacketSendEvent(packet)).isCanceled();
-    }
+	// Called by NetHandlerPlayClientEditor (editAddToSendQueue)
+	public static boolean shouldSendPacket(Packet<?> packet) {
+		return !EventBus.post(new PacketSendEvent(packet)).isCanceled();
+	}
+
+	// Called by GuiContainerEditor (editDrawGuiContainerForegroundLayer)
+	public static void drawGuiContainerForegroundLayer(GuiChest chest) {
+		EventBus.post(new DrawGuiContainerForegroundLayerEvent(chest));
+	}
 
 }

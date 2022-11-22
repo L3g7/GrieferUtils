@@ -46,7 +46,7 @@ public class BookReader extends Feature {
 				|| !(mc().currentScreen instanceof GuiContainer))
 			return;
 
-		if (openIfBook(player().getHeldItem()))
+		if (openBook(player().getHeldItem()))
 			event.setCanceled(true);
 	}
 
@@ -64,16 +64,19 @@ public class BookReader extends Feature {
 
 		ItemStack item = slot.getStack();
 
-		if (item == null || !item.hasTagCompound() || (item.getItem() != Items.writable_book && item.getItem() != Items.written_book))
+		if (item == null || (item.getItem() != Items.writable_book && item.getItem() != Items.written_book))
 			return;
 
-		if (Mouse.getEventButton() != 1 || openIfBook(item))
+		if (Mouse.getEventButton() != 1 || openBook(item))
 			event.setCanceled(true);
 	}
 
-	private boolean openIfBook(ItemStack item) {
+	private boolean openBook(ItemStack item) {
 
 		// Try to remove the "* Invalid book tag *" by making sure it has all the required tags
+		if (!item.hasTagCompound())
+			item.setTagCompound(new NBTTagCompound());
+
 		NBTTagCompound tag = item.getTagCompound();
 		if (!tag.hasKey("title"))
 			tag.setString("title", "A book");

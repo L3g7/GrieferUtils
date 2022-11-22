@@ -5,8 +5,8 @@ import dev.l3g7.griefer_utils.event.events.network.tablist.TabListNameUpdateEven
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
-import dev.l3g7.griefer_utils.settings.elements.playerlist.PlayerListSetting;
 import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
+import dev.l3g7.griefer_utils.settings.elements.playerlist.PlayerListSetting;
 import dev.l3g7.griefer_utils.settings.elements.playerlist.PlayerSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import net.labymod.settings.elements.SettingsElement;
@@ -71,7 +71,7 @@ public class ScammerList extends PlayerList {
 
 		// Load from ScammerRadar's list
 	    File scammerFile = new File(mc().mcDataDir, "LabyMod/antiScammer/localScammer.json");
-	    if(scammerFile.exists()) {
+	    if(scammerFile.exists() && scammerFile.length() != 0) {
 		    IOUtil.file(scammerFile).readJsonArray(obj -> {
 			    for (JsonElement element : obj)
 				    customScammerList.add(PlayerSetting.fromJson(element));

@@ -30,7 +30,7 @@ public class MessageSkulls extends Feature {
 
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Kopf vor Nachrichten")
-		.description("Zeigt den Kopf des Autors vor Nachrichten im öffentlichen Chat an.")
+		.description("Zeigt den Kopf des Autors vor Nachrichten an.")
 		.config("tweaks.message_skulls.active")
 		.icon("steve")
 		.defaultValue(false);

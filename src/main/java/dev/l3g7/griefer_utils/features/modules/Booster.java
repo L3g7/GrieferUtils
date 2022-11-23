@@ -85,10 +85,8 @@ public class Booster extends Module {
 
 		IInventory inventory = Reflection.get(mc.currentScreen, "lowerChestInventory", "field_147015_w", "w");
 
-		if (!inventory.getDisplayName().getFormattedText().equals("§6Booster - Übersicht§r")) {
-			System.out.println(inventory.getDisplayName().getFormattedText());
+		if (!inventory.getDisplayName().getFormattedText().equals("§6Booster - Übersicht§r"))
 			return;
-		}
 
 		if (waitingForBoosterGUI && isActive()) {
 			mc.displayGuiScreen(null);

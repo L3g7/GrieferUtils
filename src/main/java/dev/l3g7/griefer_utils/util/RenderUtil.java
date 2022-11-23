@@ -5,9 +5,25 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 
+import java.text.DecimalFormat;
+
 public class RenderUtil {
 
-	public static FontRenderer symbolFontRenderer = new FontRenderer(Minecraft.getMinecraft().gameSettings, new ResourceLocation("griefer_utils/font/ascii.png"), Minecraft.getMinecraft().renderEngine, false);
+	public static final FontRenderer symbolFontRenderer = new FontRenderer(Minecraft.getMinecraft().gameSettings, new ResourceLocation("griefer_utils/font/ascii.png"), Minecraft.getMinecraft().renderEngine, false);
+	private static final DecimalFormat DOUBLE_NUMBER = new DecimalFormat("00");
+
+	public static String formatTime(long endTime) {
+		long seconds = (endTime - System.currentTimeMillis()) / 1000L;
+		long h = seconds / 60 / 60;
+		long m = seconds / 60 % 60;
+		long s = seconds % 60;
+
+		String time = DOUBLE_NUMBER.format(m) + ":" + DOUBLE_NUMBER.format(s);
+		if (h > 0)
+			time = DOUBLE_NUMBER.format(h) + ":" + time;
+
+		return time;
+	}
 
 	public static String formatTime(long endTime, boolean shorten) {
 		long secondsRaw = (endTime - System.currentTimeMillis()) / 1000L;

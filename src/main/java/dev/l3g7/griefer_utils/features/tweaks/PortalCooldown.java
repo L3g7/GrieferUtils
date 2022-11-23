@@ -35,7 +35,7 @@ public class PortalCooldown extends Feature {
 	@SubscribeEvent
 	public void onMessage(ClientChatReceivedEvent event) {
 		if (event.message.getFormattedText().equals("§r§8[§r§6GrieferGames§r§8] §r§fDu bist im §r§5Portalraum§r§f. Wähle deinen Citybuild aus.§r")) {
-			timeoutEnd = System.currentTimeMillis() + 12 * 1000;
+			timeoutEnd = 12 * 20;
 		}
 	}
 
@@ -51,13 +51,13 @@ public class PortalCooldown extends Feature {
 
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (!isActive() || player() == null)
+		if (!isActive() || player() == null || event.phase == TickEvent.Phase.START)
 			return;
 
-		if (timeoutEnd != 0) {
-			int delta = (int) (timeoutEnd - System.currentTimeMillis());
-			player().experienceLevel = (int) Math.ceil(delta / 1000f);
-			player().experience = delta / 12000f;
+		if (timeoutEnd >= 0) {
+			player().experienceLevel = (int) Math.ceil(timeoutEnd / 20f);
+			player().experience = timeoutEnd / 240f;
+			timeoutEnd--;
 		}
 	}
 

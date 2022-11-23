@@ -76,7 +76,6 @@ public class ChestSearch extends Feature {
 				// Suppress inventory closing when keyBindInventory is pressed
 				if (Keyboard.getEventKey() == mc().gameSettings.keyBindInventory.getKeyCode())
 					event.setCanceled(true);
-//					Reflection.set(Reflection.get(Keyboard.class, "current_event"), -1, "key");
 			}
 		}
 	}

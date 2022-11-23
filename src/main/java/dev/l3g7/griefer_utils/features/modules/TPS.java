@@ -43,7 +43,7 @@ public class TPS extends Module {
 		if (currentTPS == null)
 			return getDefaultValues();
 
-		return new String[] {String.valueOf(currentTPS)};
+		return new String[] {Math.round(currentTPS / .002) / 100 + "%"};
 	}
 
 	@EventListener

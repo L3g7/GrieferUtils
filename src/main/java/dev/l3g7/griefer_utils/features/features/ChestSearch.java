@@ -11,7 +11,6 @@ import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -51,7 +50,7 @@ public class ChestSearch extends Feature {
 		}
 		if (event.gui instanceof GuiChest) {
 			// Don't add search if title contains color code, as it's probably a npc gui then
-			if (((IInventory) Reflection.get(event.gui, "lowerChestInventory")).getDisplayName().getFormattedText().replace("§r", "").contains("§")) {
+			if (((IInventory) Reflection.get(event.gui, "lowerChestInventory", "field_147015_w", "w")).getDisplayName().getFormattedText().replace("§r", "").contains("§")) {
 				searchField = null;
 				return;
 			}

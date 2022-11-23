@@ -185,7 +185,7 @@ public class Booster extends Module {
 			.collect(Collectors.toList());
 
 		if (values.isEmpty())
-			return new String[0];
+			return getDefaultValues();
 
 		// Add count to start
 		values.add(0, String.valueOf(boosters.values().stream().map(BoosterData::count).mapToInt(Integer::intValue).sum()));

@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
+import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -65,14 +66,18 @@ public class CooldownNotifications extends Feature {
 
 	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
-		// Check if /grieferboost, /kopf or /premium was used (other cooldowns are currently not supported)
-		if (event.getFormatted().matches("^§r§aDu hast §r§2.+-Booster §r§aerhalten\\. Danke für deine Unterstützung von GrieferGames!§r$"))
+		if (event.getFormatted().matches("^Du hast .+-Booster erhalten\\. Danke für deine Unterstützung von GrieferGames!$"))
 			endDates.put("/grieferboost", System.currentTimeMillis() + 1000 * 3600 * 24 * 14);
-		else if (event.getFormatted().matches("^§r§8\\[§r§6Kopf§r§8] §r§aDu hast einen §r§2.+§r§a-Kopf erhalten!§r$"))
+		else if (event.getFormatted().equals("[CaseOpening] Du hast 2 Kisten erhalten."))
+			endDates.put("/freekiste", System.currentTimeMillis() + 1000 * 3600 * 24 * 14);
+		else if (event.getUnformatted().matches("^\\[Kopf] Du hast einen .+ Kopf erhalten[!.]$"))
 			endDates.put("/kopf", System.currentTimeMillis() + 1000 * 3600 * 24 * (PlayerUtil.getRank(player().getName()).equals("Titan") ? 14 : 7));
-		else if (event.getFormatted().matches("^§r§fDu hast §r.+§r §r§fden §r§6Premium Rang §r§faktiviert.§r$"))
+		else if (event.getFormatted().matches("^Du hast .+ den Premium Rang aktiviert\\.$"))
 			endDates.put("/premium", System.currentTimeMillis() + 1000 * 3600 * 24 * 7);
-		else return;
+		else if (event.getUnformatted().equals("[StartKick] Ersteller: " + PlayerUtil.getName()))
+			endDates.put("/startkick", System.currentTimeMillis() + 1000 * 3600 * 12);
+		else
+			return;
 
 		saveCooldowns();
 	}
@@ -165,8 +170,12 @@ public class CooldownNotifications extends Feature {
 						continue;
 
 					// Load cooldown time from item
+					String name = ModColor.removeColor(s.getDisplayName()).replace("-Befehl", "");
+					if (name.startsWith("/clan") || name.equals("Riesige GS überschreiben") || name.equals("/premium"))
+						continue;
+
 					try {
-						endDates.put(s.getDisplayName().replaceAll("§.", "").replace("-Befehl", ""), getAvailability(s));
+						endDates.put(name, getAvailability(s));
 					} catch (ParseException e) {
 						// Ignore item
 						e.printStackTrace();
@@ -217,8 +226,12 @@ public class CooldownNotifications extends Feature {
 
 		if (Config.has(path)) {
 			endDates.clear();
-			for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet())
+			for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet()) {
+				if (e.getKey().startsWith("/clan") || e.getKey().equals("Riesige GS überschreiben") || e.getKey().equals("/premium"))
+					continue;
+
 				endDates.put(e.getKey(), e.getValue().getAsLong());
+			}
 		}
 	}
 

@@ -45,16 +45,10 @@ public class ChestSearch extends Feature {
 
 	@SubscribeEvent
 	public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post event) {
-		if (searchField != null) {
+		if (searchField != null)
 			previousSearch = searchField.getText();
-		}
-		if (event.gui instanceof GuiChest) {
-			// Don't add search if title contains color code, as it's probably a npc gui then
-			if (((IInventory) Reflection.get(event.gui, "lowerChestInventory", "field_147015_w", "w")).getDisplayName().getFormattedText().replace("§r", "").contains("§")) {
-				searchField = null;
-				return;
-			}
 
+		if (event.gui instanceof GuiChest) {
 			int guiLeft = Reflection.get(event.gui, "guiLeft", "field_147003_i", "i");
 			int guiTop = Reflection.get(event.gui, "guiTop", "field_147009_r", "r");
 			searchField = new ModTextField(0, mc().fontRendererObj, guiLeft + 82, guiTop + 6, 83, mc().fontRendererObj.FONT_HEIGHT);

@@ -1,6 +1,5 @@
 package dev.l3g7.griefer_utils.features.features.player_list;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.event_bus.EventPriority;
@@ -34,7 +33,7 @@ import java.util.regex.Pattern;
 public abstract class PlayerList extends Feature {
 
     private static final Pattern PROFILE_TITLE_PATTERN = Pattern.compile(String.format("^§6Profil von §e%s§r$", Constants.FORMATTED_PLAYER_NAME_PATTERN));
-    private static final ImmutableList<Pattern> ALL_PATTERNS = ImmutableList.of(Constants.GLOBAL_RECEIVE_PATTERN, Constants.PLOTCHAT_RECEIVE_PATTERN, Constants.MESSAGE_RECEIVE_PATTERN, Constants.MESSAGE_SEND_PATTERN);
+    private static final List<Pattern> ALL_PATTERNS = new ArrayList<Pattern>(Constants.MESSAGE_PATTERNS) {{add(Constants.GLOBALCHAT_PATTERN);}};
 
     private final String paneName;
     private final ModColor titleColor;
@@ -111,7 +110,7 @@ public abstract class PlayerList extends Feature {
         if (getChatAction() == MarkAction.DISABLED || !isActive() || !isOnGrieferGames())
             return;
 
-        // Check if message is GLOBAL_RECEIVE, PLOTCHAT_RECEIVE, MESSAGE_RECEIVE, MESSAGE_SEND
+        // Check if message is GLOBAL_RECEIVE, PLOTCHAT_RECEIVE, MESSAGE_RECEIVE, MESSAGE_SEND or GLOBALCHAT
         ALL_PATTERNS.stream().map(p -> p.matcher(event.getOriginal().getFormattedText())).filter(Matcher::matches).findFirst().ifPresent(matcher -> {
 
             String name = matcher.group("name").replaceAll("§.", "");

@@ -39,6 +39,7 @@ public class Constants {
 	public static final List<Pattern> MESSAGE_PATTERNS = ImmutableList.of(GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN);
 
 	public static final Pattern STATUS_PATTERN = Pattern.compile(String.format("^%s§f (?<message>[^\u00bb]*)§*r*$", FORMATTED_PLAYER_PATTERN));
+	public static final Pattern GLOBALCHAT_PATTERN = Pattern.compile(String.format("^§r§a§l@§r§8\\[§r§6(?<cb>\\w+)§r§8] %s §r§8» §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 
 	public static final Pattern PAYMENT_RECEIVE_PATTERN = Pattern.compile(String.format("^%s(?<!§f) §r§ahat dir \\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
 	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s§r§a \\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));

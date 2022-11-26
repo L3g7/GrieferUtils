@@ -19,44 +19,57 @@
 package dev.l3g7.griefer_utils.util.misc;
 
 import dev.l3g7.griefer_utils.event.EventListener;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import dev.l3g7.griefer_utils.util.misc.functions.TRunnable;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A scheduler for delaying code while staying synchronized with Minecraft's client ticks.
  */
 public class TickScheduler {
 
-    private static final Map<Runnable, Integer> clientTickTasks = new HashMap<>();
-
-	/**
-	 * Runs the given runnable when the next client tick is triggered.
-	 */
-    public static void runNextTick(Runnable runnable) {
-        runLater(runnable, 1);
-    }
+	private static final Map<TRunnable, AtomicInteger> clientTickTasks = new HashMap<>();
+	private static final Map<TRunnable, AtomicInteger> renderTickTasks = new HashMap<>();
 
 	/**
 	 * Runs the given runnable after the given delay in client ticks.
 	 */
-    public static void runLater(Runnable runnable, int delay) {
-        clientTickTasks.put(runnable, delay);
-    }
+	public static void runAfterClientTicks(TRunnable runnable, int delay) {
+		clientTickTasks.put(runnable, new AtomicInteger(delay));
+	}
 
-    @EventListener
-    private static void onClientTick(TickEvent.ClientTickEvent event) {
-        List<Runnable> runnableList = new ArrayList<>(clientTickTasks.keySet());
-        for (Runnable runnable : runnableList) {
+	/**
+	 * Runs the given runnable after the given delay in render ticks.
+	 */
+	public static void runAfterRenderTicks(TRunnable runnable, int delay) {
+		renderTickTasks.put(runnable, new AtomicInteger(delay));
+	}
+
+	@EventListener
+	private static void onClientTick(ClientTickEvent event) {
+		updateTasks(clientTickTasks);
+	}
+
+	@EventListener
+	private static void onRenderTick(RenderTickEvent event) {
+		updateTasks(renderTickTasks);
+	}
+
+	/**
+	 * Decreases the ticks after which the task should run and runs it if ticks = 0.
+	 */
+	private static void updateTasks(Map<TRunnable, AtomicInteger> tasks) {
+		tasks.forEach((runnable, delay) -> {
 			// Decrease time, run if 0
-            if (clientTickTasks.compute(runnable, (r, i) -> i - 1) == 0) {
-                clientTickTasks.remove(runnable);
-                runnable.run();
-            }
-        }
-    }
+			if (tasks.get(runnable).decrementAndGet() == 0) {
+				tasks.remove(runnable);
+				runnable.run();
+			}
+		});
+	}
 
 }

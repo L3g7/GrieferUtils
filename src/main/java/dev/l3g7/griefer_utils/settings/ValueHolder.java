@@ -21,7 +21,6 @@ package dev.l3g7.griefer_utils.settings;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.util.misc.Config;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
-import net.labymod.settings.elements.SettingsElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,10 +82,19 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 			set(s.decodeFunc.apply(Config.get(configKey)));
 
 		// Add callback
-		s.callbacks.add(value -> {
-			Config.set(s.configKey, s.encodeFunc.apply(value));
-			Config.save();
-		});
+		s.callbacks.add(value -> save());
+
+		return (S) this;
+	}
+
+	/**
+	 * Saves the value in the config.
+	 */
+	default S save() {
+		Storage<V> s = getStorage();
+
+		Config.set(s.configKey, s.encodeFunc.apply(get()));
+		Config.save();
 
 		return (S) this;
 	}

@@ -99,6 +99,9 @@ public abstract class Feature {
 			if (element instanceof HeaderSetting)
 				continue;
 
+			if (element.getSubSettings().getElements().isEmpty() && !(element instanceof ValueHolder<?, ?>))
+				continue;
+
 			String key = parentKey + "." + UPPER_CAMEL.to(LOWER_UNDERSCORE, getFieldName(element));
 			loadSubSettings(element, key);
 			if (element instanceof ValueHolder<?, ?>)

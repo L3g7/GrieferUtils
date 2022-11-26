@@ -19,6 +19,8 @@
 package dev.l3g7.griefer_utils.util;
 
 import com.google.gson.*;
+import dev.l3g7.griefer_utils.util.misc.functions.TConsumer;
+import dev.l3g7.griefer_utils.util.misc.functions.TFunction;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -102,6 +103,7 @@ public class IOUtil {
 	public static class URLReadOperation extends ReadOperation {
 
 		private final String url;
+		private HttpURLConnection conn;
 
 		private URLReadOperation(String url) {
 			this.url = url;
@@ -109,10 +111,20 @@ public class IOUtil {
 
 		@Override
 		protected InputStream open() throws Exception {
-			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+			conn = (HttpURLConnection) new URL(url).openConnection();
 			conn.addRequestProperty("User-Agent", "GrieferUtils v" + AddonUtil.getVersion());
 			conn.setConnectTimeout(10000);
 			return conn.getInputStream();
+		}
+
+		public int getResponseCode() {
+			try {
+				open();
+				return conn.getResponseCode();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return -1;
+			}
 		}
 	}
 
@@ -130,14 +142,14 @@ public class IOUtil {
 		/**
 		 * Tries to read the input stream as a json string.
 		 */
-		public AsyncFailable asJsonString(Consumer<String> callback) {
+		public AsyncFailable asJsonString(TConsumer<String> callback) {
 			return readAsync(in -> jsonParser.parse(in).getAsString(), callback);
 		}
 
 		/**
-		 * Tries to read the input stream as a json string.
+		 * Tries to read the input stream as a json array.
 		 */
-		public AsyncFailable asJsonArray(Consumer<JsonArray> callback) {
+		public AsyncFailable asJsonArray(TConsumer<JsonArray> callback) {
 			return readAsync(in -> jsonParser.parse(in).getAsJsonArray(), callback);
 		}
 
@@ -152,7 +164,7 @@ public class IOUtil {
 		 * }</pre>
 		 * @return the value given by the supplier or an empty optional if the supplier throws an error.
 		 */
-		private <V> Optional<V> readSync(Function<InputStreamReader, V> parser) {
+		private <V> Optional<V> readSync(TFunction<InputStreamReader, V> parser) {
 			try {
 				try (InputStreamReader in = new InputStreamReader(open(), UTF_8)) {
 					return Optional.of(parser.apply(in));
@@ -173,7 +185,7 @@ public class IOUtil {
 		 *     .orElse(error -> log("error", error));
 		 * }</pre>
 		 */
-		private <V> AsyncFailable readAsync(Function<InputStreamReader, V> parser, Consumer<V> callback) {
+		private <V> AsyncFailable readAsync(TFunction<InputStreamReader, V> parser, TConsumer<V> callback) {
 			AsyncFailable op = new AsyncFailable();
 			new Thread(() -> {
 				try {
@@ -194,10 +206,6 @@ public class IOUtil {
 	public static class AsyncFailable {
 
 		private Consumer<Exception> fallback;
-
-		public void orElse(Consumer<Exception> fallback) {
-			this.fallback = fallback;
-		}
 
 		public void orElse(Runnable fallback) {
 			this.fallback = t -> fallback.run();

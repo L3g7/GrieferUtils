@@ -73,8 +73,12 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		IconData iconData;
 		if (icon instanceof Material)
 			iconData = new IconData((Material) icon);
-		else if (icon instanceof String)
-			iconData = new IconData("griefer_utils/icons/" + icon + ".png");
+		else if (icon instanceof String) {
+			if (((String) icon).startsWith("labymod:"))
+				iconData = new IconData("labymod/textures/" + ((String) icon).substring(8) + ".png");
+			else
+				iconData = new IconData("griefer_utils/icons/" + icon + ".png");
+		}
 		else if (icon instanceof ItemStack) {
 			iconData = new IconData();
 			getIconStorage().itemStack = (ItemStack) icon;

@@ -50,10 +50,6 @@
     <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock</a></td>
   </tr>
   <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/marker.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/marker.png" height=16em width=16em/> marker.png</a></td>
-    <td><a href="https://labymod.net">LabyMod asset (jar/.../settings/settings/keymarker.png)</a></td>
-  </tr>
-  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/maximize.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/maximize.png" height=16em width=16em/> maximize.png</a></td>
     <td>selfmade</td>
   </tr>
@@ -84,9 +80,5 @@
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/tab_list.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/tab_list.png" height=16em width=16em/> tab_list.png</a></td>
     <td><a href="https://labymod.net">LabyMod asset (jar/.../settings/settings/serverbanner.png)</a></td>
-  </tr>
-  <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_name.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_name.png" height=16em width=16em/> yellow_name.png</a></td>
-    <td><a href="https://labymod.net">LabyMod asset (jar/.../settings/settings/tags.png)</a></td>
   </tr>
 </table>

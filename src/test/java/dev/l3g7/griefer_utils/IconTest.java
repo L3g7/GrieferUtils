@@ -180,6 +180,8 @@ public class IconTest implements Opcodes {
 	 * Tests resource icons.
 	 */
 	private void testResource(String path) {
+		if (path.startsWith("labymod:"))
+			return;
 		assertTrue(FileProvider.getFiles().contains("assets/minecraft/griefer_utils/icons/" + path + ".png"), path + ".png");
 		unusedIcons.remove("assets/minecraft/griefer_utils/icons/" + path + ".png");
 	}

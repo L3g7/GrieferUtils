@@ -63,7 +63,7 @@ public class Trajectories extends Feature {
 	private final RadioSetting<TrajectoryMode> mode = new RadioSetting<>(TrajectoryMode.class)
 		.name("Trajectories")
 		.description("Zeigt dir die Flugbahn des gehaltenen Items an.")
-		.icon("marker")
+		.icon("labymod:settings/settings/marker")
 		.defaultValue(DISABLED);
 
 	private final Disk circle = new Disk();

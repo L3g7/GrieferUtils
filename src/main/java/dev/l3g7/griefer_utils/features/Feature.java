@@ -35,6 +35,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
@@ -95,17 +96,22 @@ public abstract class Feature {
 	 * Loads the config values for all subSettings.
 	 */
 	private void loadSubSettings(SettingsElement parent, String parentKey) {
-		for (SettingsElement element : parent.getSubSettings().getElements()) {
+		for (SettingsElement element : new ArrayList<>(parent.getSubSettings().getElements())) {
 			if (element instanceof HeaderSetting)
 				continue;
 
-			if (element.getSubSettings().getElements().isEmpty() && !(element instanceof ValueHolder<?, ?>))
+			boolean hasSubSettings = !element.getSubSettings().getElements().isEmpty();
+			if (!hasSubSettings && !(element instanceof ValueHolder<?, ?>))
 				continue;
 
 			String key = parentKey + "." + UPPER_CAMEL.to(LOWER_UNDERSCORE, getFieldName(element));
 			loadSubSettings(element, key);
-			if (element instanceof ValueHolder<?, ?>)
-				((ValueHolder<?, ?>) element).config(key);
+			if (element instanceof ValueHolder<?, ?>) {
+				if (hasSubSettings)
+					((ValueHolder<?, ?>) element).config(key + ".value");
+				else
+					((ValueHolder<?, ?>) element).config(key);
+			}
 		}
 	}
 

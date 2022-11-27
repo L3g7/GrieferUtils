@@ -58,6 +58,10 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/block/nether_portal.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/radar.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/radar.png" height=16em width=16em/> radar.png</a></td>
+    <td><a href="https://walternewton.tumblr.com/64762433376">Walter Newton</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/rainbow_name.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/rainbow_name.png" height=16em width=16em/> rainbow_name.png</a></td>
     <td><a href="https://labymod.net">LabyMod asset (jar/.../settings/settings/tags.png)</a></td>
   </tr>

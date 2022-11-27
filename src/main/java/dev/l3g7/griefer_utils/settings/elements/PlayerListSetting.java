@@ -23,6 +23,7 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.util.misc.PlayerDataProvider;
+import dev.l3g7.griefer_utils.util.misc.PlayerDataProvider.PlayerData;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.main.ModTextures;
@@ -44,7 +45,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
-// Test
+
 public class PlayerListSetting extends ControlElement implements ElementBuilder<PlayerListSetting>, ValueHolder<PlayerListSetting, List<UUID>> {
 
 	private final Storage<List<UUID>> storage = new Storage<>(list -> {
@@ -57,9 +58,15 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 		return list;
 	}, new ArrayList<>());
 
+	private SettingsElement container = this;
+
 	public PlayerListSetting() {
 		super("§cEs gab einen Fehler!", null);
 		setSettingEnabled(true);
+	}
+
+	public void setContainer(SettingsElement container) {
+		this.container = container;
 	}
 
 	@Override
@@ -72,12 +79,13 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 
 		PlayerAddSetting addSetting = new PlayerAddSetting();
 		settings.add(addSetting);
-		subSettings(settings.toArray(new SettingsElement[0]));
+		getSettings().remove(this);
+		((ElementBuilder<?>) container).subSettings(settings);
 
 		return this;
 	}
 
-	private void renderData(int x, int y, int size, PlayerDataProvider.PlayerData data) {
+	private void renderData(int x, int y, int size, PlayerData data) {
 		DrawUtils drawUtils = drawUtils();
 		if (data.isLoaded()) {
 			GlStateManager.bindTexture(data.getSkin().getGlTextureId());
@@ -92,7 +100,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 	}
 
 	private List<SettingsElement> getSettings() {
-		return getSubSettings().getElements();
+		return container.getSubSettings().getElements();
 	}
 
 	@Override
@@ -107,12 +115,12 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 
 	private class PlayerDisplaySetting extends ControlElement {
 
-		private final PlayerDataProvider.PlayerData data;
+		private final PlayerData data;
 		private boolean deleteHovered = false;
 
 		public PlayerDisplaySetting(UUID uuid) {
 			super("§cUnknown name", new IconData(ModTextures.MISC_HEAD_QUESTION));
-			data = PlayerDataProvider.get(uuid);
+			data = PlayerDataProvider.lookup(uuid);
 		}
 
 		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
@@ -196,7 +204,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 			}
 
 			private void updateValidity() {
-				if (PlayerDataProvider.get(inputField.getText()).isInvalid()) {
+				if (PlayerDataProvider.lookup(inputField.getText()).isInvalid()) {
 					inputField.setTextColor(0xFFFF0000);
 					doneButton.enabled = false;
 				} else {
@@ -206,7 +214,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 			}
 
 			public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-				PlayerDataProvider.PlayerData data = PlayerDataProvider.get(inputField.getText());
+				PlayerData data = PlayerDataProvider.get(inputField.getText());
 
 				backgroundScreen.drawScreen(0, 0, partialTicks);
 				drawRect(0, 0, width, height, Integer.MIN_VALUE);
@@ -250,7 +258,6 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 				inputField.textboxKeyTyped(typedChar, keyCode);
 				updateValidity();
 			}
-
 		}
 
 	}

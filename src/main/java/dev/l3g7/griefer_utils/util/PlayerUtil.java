@@ -60,4 +60,8 @@ public class PlayerUtil {
 		return null;
 	}
 
+	public static boolean isValid(String name) {
+		return name != null && name.matches("^\\w{3,}$");
+	}
+
 }

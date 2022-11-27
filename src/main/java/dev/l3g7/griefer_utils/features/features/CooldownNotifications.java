@@ -9,6 +9,7 @@ import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -32,6 +33,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Singleton
@@ -41,6 +43,7 @@ public class CooldownNotifications extends Feature {
 	public final Map<String, Long> endDates = new HashMap<>();
 	private boolean waitingForCooldownGUI = false;
 	private boolean sendCooldowns = false;
+	private CompletableFuture<Void> guiInitBlock = null;
 
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Cooldown-Benachrichtigungen")
@@ -50,7 +53,7 @@ public class CooldownNotifications extends Feature {
 		.callback(v -> {
 			// If no data is found, open and close /cooldowns automatically
 			if (v && endDates.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForCooldownGUI) {
-				sendQueued("/cooldowns");
+				guiInitBlock = ChatQueue.sendBlocking("/cooldowns", "/cooldowns geht nicht!");
 				waitingForCooldownGUI = true;
 			}
 		});
@@ -89,7 +92,7 @@ public class CooldownNotifications extends Feature {
 
 		// If no data is found, open and close /cooldowns automatically
 		if (endDates.isEmpty()) {
-			sendQueued("/cooldowns");
+			guiInitBlock = ChatQueue.sendBlocking("/cooldowns", "/cooldowns geht nicht!");
 			waitingForCooldownGUI = true;
 		}
 	}
@@ -189,6 +192,7 @@ public class CooldownNotifications extends Feature {
 					// Close cooldowns if waitingForCooldownGUI (was automatically opened)
 					if (waitingForCooldownGUI && isActive()) {
 						mc().displayGuiScreen(null);
+						guiInitBlock.complete(null);
 						waitingForCooldownGUI = false;
 						sendCooldowns = true;
 						onCityBuildJoin(null);

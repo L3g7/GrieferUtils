@@ -1,9 +1,7 @@
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.event.event_bus.EventBus;
-import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
+import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
@@ -50,10 +48,8 @@ public abstract class Feature implements Comparable<Feature> {
     public static void suggest(String cmd) { mc().displayGuiScreen(new GuiChat(cmd)); }
     public static void suggest(String format, Object... args) { suggest(String.format(format, args)); }
 
-    public static void send(String cmd) { if (!EventBus.post(new MessageSendEvent(cmd)).isCanceled()) player().sendChatMessage(cmd); }
+    public static void send(String cmd) { ChatQueue.send(cmd); }
     public static void send(String format, Object... args) { send(String.format(format, args)); }
-
-    public static void sendQueued(String cmd) { TickScheduler.queue("chat", () -> { if(player() != null) send(cmd); }, 50); }
 
     public static void displayAchievement(String title, String description, Object... args) {
         LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", title, String.format(description, args));

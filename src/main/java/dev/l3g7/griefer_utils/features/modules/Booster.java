@@ -71,7 +71,7 @@ public class Booster extends Module {
 		if (!isActive() || !isOnGrieferGames())
 			return;
 
-		Feature.sendQueued("/booster");
+		Feature.send("/booster");
 		waitingForBoosterGUI = waitingForBoosterInfo = true;
 	}
 

@@ -44,7 +44,7 @@ public class PlotChatIndicator extends Feature {
             .callback(v -> {
                 if (v && isOnCityBuild() && plotchatState == null && !waitingForPlotchatStatus) {
                     waitingForPlotchatStatus = true;
-                    sendQueued("/p chat");
+                    send("/p chat");
                 }
             });
 
@@ -91,7 +91,7 @@ public class PlotChatIndicator extends Feature {
 			return;
 
 		waitingForPlotchatStatus = true;
-        sendQueued("/p chat");
+        send("/p chat");
     }
 
     @EventListener
@@ -106,7 +106,7 @@ public class PlotChatIndicator extends Feature {
 
             if (waitingForPlotchatStatus) {
                 waitingForPlotchatStatus = false;
-                sendQueued("/p chat");
+                send("/p chat");
             }
         }
     }

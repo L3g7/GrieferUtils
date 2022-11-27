@@ -6,6 +6,7 @@ import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -27,11 +28,11 @@ import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.features.Feature.isOnGrieferGames;
-import static dev.l3g7.griefer_utils.features.Feature.sendQueued;
 import static dev.l3g7.griefer_utils.misc.Constants.DECIMAL_FORMAT_3;
 
 @Singleton
@@ -43,6 +44,7 @@ public class OrbStats extends Module {
 	private String lastItem = null;
 	private boolean waitingForGUI = false;
 	private GuiScreen lastScreen = null;
+	private CompletableFuture<Void> guiInitBlock = null;
 
 	public OrbStats() {
 		super("OrbStatistik", "Zeigt dir an, wie oft das zuletzt abgegebene Item insgesamt abgegeben wurde.", "orb_stats", new ControlElement.IconData(Material.EXP_BOTTLE));
@@ -52,7 +54,7 @@ public class OrbStats extends Module {
 		getBooleanElement().addCallback(v -> {
 		// If no data is found, open and close /stats automatically
 		if (v && stats.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForGUI) {
-			sendQueued("/stats");
+			guiInitBlock = ChatQueue.sendBlocking("/stats", "/stats geht nicht!");
 			waitingForGUI = true;
 			lastScreen = mc.currentScreen;
 		}
@@ -89,6 +91,7 @@ public class OrbStats extends Module {
 			extractInfo(inv.getStackInSlot(i), itemWasNull);
 
 		if (waitingForGUI) {
+			guiInitBlock.complete(null);
 			mc.displayGuiScreen(lastScreen);
 			lastScreen = null;
 			waitingForGUI = false;
@@ -104,7 +107,7 @@ public class OrbStats extends Module {
 
 		// If no data is found, open and close /stats automatically
 		if (stats.isEmpty()) {
-			sendQueued("/stats");
+			guiInitBlock = ChatQueue.sendBlocking("/stats", "/stats geht nicht!");
 			waitingForGUI = true;
 		}
 	}

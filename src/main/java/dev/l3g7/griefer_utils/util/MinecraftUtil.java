@@ -45,6 +45,7 @@ public class MinecraftUtil {
 
 	public static Minecraft       mc()             { return Minecraft.getMinecraft(); }
 	public static EntityPlayerSP  player()         { return mc().thePlayer; }
+	public static String          name()           { return mc().getSession().getUsername(); }
 	public static GameSettings    settings()       { return mc().gameSettings; }
 	public static TextureManager  textureManager() { return mc().getTextureManager(); }
 	public static WorldClient     world()          { return mc().theWorld; }
@@ -77,6 +78,10 @@ public class MinecraftUtil {
 		double y = Reflection.get(renderManager, "renderPosY");
 		double z = Reflection.get(renderManager, "renderPosZ");
 		return new Vec3d(x, y, z);
+	}
+
+	public static void display(String message) {
+		labyMod().displayMessageInChat(message);
 	}
 
 	public static void send(String message) {

@@ -21,8 +21,12 @@ package dev.l3g7.griefer_utils.util.misc;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.authlib.properties.Property;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.IOUtil.URLReadOperation;
+import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.labymod.utils.JsonParse;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -37,33 +41,94 @@ import java.net.URL;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static java.lang.Thread.MIN_PRIORITY;
+import static net.minecraftforge.fml.common.eventhandler.EventPriority.HIGHEST;
 
 public class PlayerDataProvider {
 
 	private static final List<PlayerData> playerData = new ArrayList<>();
-	private static final PlayerData INVALID_NAME = new PlayerData();
+	private static final PlayerData UNKNOWN_PLAYER = new PlayerData();
 
-	public static PlayerData get(String name) {
-		if (!name.matches("^\\w{3,}$"))
-			return INVALID_NAME;
+	public static PlayerData lookup(String name) {
+		if (!PlayerUtil.isValid(name))
+			return UNKNOWN_PLAYER;
 
-		for (PlayerData data : playerData) {
-			if (name.equalsIgnoreCase(data.name))
-				return data;
-		}
-		PlayerData data = new PlayerData(name);
+		PlayerData data = get(name);
+		if (data != UNKNOWN_PLAYER)
+			return data;
+
+		data = new PlayerData(name);
 		playerData.add(data);
 		return data;
 	}
 
-	public static PlayerData get(UUID uuid) {
-		for (PlayerData data : playerData) {
-			if (uuid.equals(data.uuid))
-				return data;
-		}
-		PlayerData data = new PlayerData(uuid);
+	public static PlayerData lookup(UUID uuid) {
+		PlayerData data = get(uuid);
+		if (data != UNKNOWN_PLAYER)
+			return data;
+
+		data = new PlayerData(uuid);
 		playerData.add(data);
 		return data;
+	}
+
+	public static PlayerData get(String name) {
+		if (!PlayerUtil.isValid(name))
+			return UNKNOWN_PLAYER;
+
+		for (PlayerData data : playerData)
+			if (name.equalsIgnoreCase(data.name))
+				return data;
+
+		return UNKNOWN_PLAYER;
+	}
+
+	public static PlayerData get(UUID uuid) {
+		for (PlayerData data : playerData)
+			if (uuid.equals(data.uuid))
+				return data;
+
+		return UNKNOWN_PLAYER;
+	}
+
+	@EventListener(priority = HIGHEST)
+	private static void onJoin(TabListPlayerAddEvent event) {
+		if (!PlayerUtil.isValid(event.data.getProfile().getName()))
+			return;
+
+		UUID uuid = event.data.getProfile().getId();
+		if (get(uuid) != UNKNOWN_PLAYER)
+			return;
+
+		PlayerData data = new PlayerData();
+		playerData.add(data);
+		data.uuid = uuid;
+		data.invalid = false;
+
+		data.name = event.data.getProfile().getName();
+		for (Map.Entry<String, Collection<Property>> entry : event.data.getProfile().getProperties().asMap().entrySet()) {
+			for (Property property : entry.getValue()) {
+				if (property.getName().equals("textures")) {
+					String url = JsonParse.parse(new String(Base64.getDecoder().decode(property.getValue()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+					Thread loadTextureThread = new Thread(() -> {
+						try {
+							BufferedImage img = ImageIO.read(new URL(url));
+							data.slim = img.getHeight() == 32;
+
+							TickScheduler.runAfterRenderTicks(() -> {
+								data.skin = new DynamicTexture(img);
+								data.loaded = true;
+								data.skin.loadTexture(mc().getResourceManager());
+							}, 1);
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
+					}, "GrieferUtils Skin download for " + data.name);
+					loadTextureThread.setPriority(MIN_PRIORITY);
+					loadTextureThread.start();
+				}
+			}
+		}
 	}
 
 	public static class PlayerData {
@@ -77,6 +142,7 @@ public class PlayerDataProvider {
 
 		private PlayerData() {
 			name = null;
+			uuid = null;
 			invalid = true;
 		}
 
@@ -123,7 +189,6 @@ public class PlayerDataProvider {
 						uuid = info.getGameProfile().getId();
 						skin = mc().getTextureManager().getTexture(info.getLocationSkin());
 						slim = info.getSkinType().equals("slim");
-						System.out.println("foundInTab " + name + " " + uuid);
 						return;
 					}
 				}
@@ -131,14 +196,11 @@ public class PlayerDataProvider {
 
 			new Thread(() -> {
 				try {
-					System.out.println("loadFromMojang... " + uuid + " " + name);
 					loadFromMojang();
 				} catch (IOException e1) {
 					try {
-						System.out.println("loadFromAshcon... " + uuid + " " + name);
 						loadFromAshcon();
 					} catch (IOException e2) {
-						System.out.println("failed... " + uuid + " " + name);
 						e1.printStackTrace();
 						e2.printStackTrace();
 						invalid = true;
@@ -164,14 +226,12 @@ public class PlayerDataProvider {
 				JsonObject data = op.asJsonObject().orElseThrow(() -> new JsonParseException("Invalid response for " + name));
 				uuid = UUID.fromString(data.get("id").getAsString().replaceAll("(.{8})(.{4})(.{4})(.{4})(.{12})", "$1-$2-$3-$4-$5"));
 			}
-			System.out.println("uuid resolved... " + uuid + " " + name);
 
 			JsonObject profile = IOUtil.read("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid).asJsonObject().orElse(null);
 			if (profile == null) {
 				loadFromAshcon();
 				return;
 			}
-			System.out.println("profile resolved... " + uuid + " " + profile);
 
 			name = profile.get("name").getAsString();
 
@@ -185,10 +245,8 @@ public class PlayerDataProvider {
 				BufferedImage img = ImageIO.read(new URL(url));
 				slim = img.getHeight() == 32;
 
-				System.out.println("texture resolved... " + uuid);
 				TickScheduler.runAfterRenderTicks(() -> {
 					skin = new DynamicTexture(img);
-					System.out.println("texture loaded... " + uuid);
 					loaded = true;
 					skin.loadTexture(mc().getResourceManager());
 				}, 1);
@@ -200,17 +258,14 @@ public class PlayerDataProvider {
 		 */
 		private void loadFromAshcon() throws IOException {
 			JsonObject profile = IOUtil.read("https://api.ashcon.app/mojang/v2/user/" + (name == null ? uuid : name)).asJsonObject().orElseThrow(() -> new JsonParseException("Invalid response for " + name));
-			System.out.println("a profile resolved... " + uuid + " " + name + " " + profile);
 			name = profile.get("username").getAsString();
 			uuid = UUID.fromString(profile.get("uuid").getAsString());
 			slim = profile.get("textures").getAsJsonObject().get("slim").getAsBoolean();
 			String skinData = profile.get("textures").getAsJsonObject().get("skin").getAsJsonObject().get("data").getAsString();
 			BufferedImage img = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(skinData)));
-			System.out.println("a image read "+ uuid);
 
 			TickScheduler.runAfterRenderTicks(() -> {
 				skin = new DynamicTexture(img);
-				System.out.println("a image loaded " + uuid);
 				loaded = true;
 				skin.loadTexture(mc().getResourceManager());
 			}, 1);

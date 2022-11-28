@@ -11,6 +11,11 @@
       "renderPosZ": "field_78723_d"
     }
   },
+  "net/minecraft/client/Minecraft": {
+    "fields": {
+      "timer": "field_71428_T"
+    }
+  },
   "net/minecraft/entity/monster/EntitySlime": {
     "methods": {
       "setSlimeSize": "func_70799_a"

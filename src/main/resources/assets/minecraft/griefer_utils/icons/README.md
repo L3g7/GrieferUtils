@@ -14,6 +14,10 @@
     <td><a href="https://www.deviantart.com/ishmanallenlitchmore/art/chunk-of-minecraft-382711453">IshmanAllenLitchmore</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/cursor.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/cursor.png" height=16em width=16em/> cursor.png</a></td>
+    <td><a href="https://stock.adobe.com/319860630">Adobe Stock</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/earth.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/earth.png" height=16em width=16em/> earth.png</a></td>
     <td><a href="https://www.dreamstime.com/129325507">dreamstime</a></td>
   </tr>

@@ -45,7 +45,7 @@ public class ChatQueue {
 	}
 
 	@SubscribeEvent
-	public void onTickAfiursjufrjusjf(TickEvent.ClientTickEvent event) {
+	public void onTick(TickEvent.ClientTickEvent event) {
 		if (event.phase == TickEvent.Phase.START)
 			return;
 

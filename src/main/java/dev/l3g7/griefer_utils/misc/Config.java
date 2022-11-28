@@ -73,7 +73,25 @@ public class Config {
             IOUtil.file(configFile)
                     .readJsonObject(v -> config = v)
                     .orElse(t -> config = new JsonObject());
+			patchConfig();
         }
         return config;
     }
+
+	/**
+	 * Resets Cooldown notification and OrbStats if config is under v1.10.1
+	 */
+	private static void patchConfig() {
+		if (!config.has("version"))
+			return;
+
+		String[] parts = config.get("version").getAsString().substring(1).split("\\.");
+		if (Integer.parseInt(parts[1]) > 10)
+			return;
+
+		if (parts.length == 2) {
+			resolve("features.cooldown_notifications.end_dates".split("\\.")).remove("end_dates");
+			resolve("modules.orb_stats.stats".split("\\.")).remove("stats");
+		}
+	}
 }

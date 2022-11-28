@@ -88,8 +88,6 @@ public abstract class Feature {
 
 		// Register events
 		EventHandler.register(this);
-
-		category.add(this);
 	}
 
 	/**

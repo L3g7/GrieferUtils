@@ -43,13 +43,19 @@ public class MainPage {
 
 	static {
 		// Load features
-		FileProvider.getClassesWithSuperClass(Feature.class).stream().sorted(Comparator.comparing(o -> o.name)).forEach(meta -> {
+		List<Feature> features = new ArrayList<>();
+		FileProvider.getClassesWithSuperClass(Feature.class).forEach(meta -> {
 			if (meta.isAbstract())
 				return;
 
 			Feature instance = FileProvider.getSingleton(meta.load());
 			instance.init();
+			features.add(instance);
 		});
+
+		features.sort(Comparator.comparing(f -> f.getMainElement().getDisplayName()));
+		for (Feature feature : features)
+			feature.getCategory().add(feature);
 
 		// Add every category to the main page
 		Category.getCategories().stream()

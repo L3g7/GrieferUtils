@@ -43,7 +43,7 @@ public class SwordSaver extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Birth- / BonzeSaver")
-		.description("Deaktiviert Linksklicks und Dropping, bei Diamantschwertern mit Plünderung 21.")
+		.description("Deaktiviert Linksklicks und Dropping bei Diamantschwertern mit Plünderung 21.")
 		.icon(() -> {
 			ItemStack sword = new ItemStack(Items.diamond_sword);
 			sword.addEnchantment(Enchantment.unbreaking, 1);

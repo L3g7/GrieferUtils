@@ -30,6 +30,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * An interface for builder-like setting creation.
@@ -87,6 +88,10 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 
 		Reflection.set(this, iconData, "iconData");
 		return (S) this;
+	}
+
+	default S icon(Supplier<?> icon) {
+		return icon(icon.get());
 	}
 
 	/**

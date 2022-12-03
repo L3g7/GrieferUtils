@@ -32,7 +32,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -69,13 +71,13 @@ public class CooldownNotifications extends Feature {
 
 	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
-		if (event.getFormatted().matches("^Du hast .+-Booster erhalten\\. Danke für deine Unterstützung von GrieferGames!$"))
+		if (event.getUnformatted().matches("^Du hast .+-Booster erhalten\\. Danke für deine Unterstützung von GrieferGames!$"))
 			endDates.put("/grieferboost", System.currentTimeMillis() + 1000 * 3600 * 24 * 14);
-		else if (event.getFormatted().equals("[CaseOpening] Du hast 2 Kisten erhalten."))
+		else if (event.getUnformatted().equals("[CaseOpening] Du hast 2 Kisten erhalten."))
 			endDates.put("/freekiste", System.currentTimeMillis() + 1000 * 3600 * 24 * 14);
 		else if (event.getUnformatted().matches("^\\[Kopf] Du hast einen .+ Kopf erhalten[!.]$"))
 			endDates.put("/kopf", System.currentTimeMillis() + 1000 * 3600 * 24 * (PlayerUtil.getRank(player().getName()).equals("Titan") ? 14 : 7));
-		else if (event.getFormatted().matches("^Du hast .+ den Premium Rang aktiviert\\.$"))
+		else if (event.getUnformatted().matches("^Du hast .+ den Premium Rang aktiviert\\.$"))
 			endDates.put("/premium", System.currentTimeMillis() + 1000 * 3600 * 24 * 7);
 		else if (event.getUnformatted().equals("[StartKick] Ersteller: " + PlayerUtil.getName()))
 			endDates.put("/startkick", System.currentTimeMillis() + 1000 * 3600 * 12);

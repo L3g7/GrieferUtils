@@ -4,6 +4,7 @@ import dev.l3g7.griefer_utils.event.event_bus.EventBus;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketSendEvent;
+import dev.l3g7.griefer_utils.event.events.server.ServerQuitEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import net.minecraft.client.Minecraft;
@@ -42,6 +43,14 @@ public class ChatQueue {
 			messagesSentWithoutDelay = 0;
 			currentQueueDelay = QUEUE_DELAY;
 		}
+	}
+
+	@EventListener
+	public void onQuit(ServerQuitEvent event) {
+		lastMessageSentTimestamp = messagesSentWithoutDelay = 0;
+		currentBlock = null;
+		queuedMessages.clear();
+		blockingMessages.clear();
 	}
 
 	@SubscribeEvent

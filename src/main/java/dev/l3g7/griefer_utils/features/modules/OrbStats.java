@@ -112,28 +112,21 @@ public class OrbStats extends Module {
 
 	@EventListener
 	public void onCBJoin(CityBuildJoinEvent event) {
-		System.out.println("AAAAAAAA" + isActive() + isOnGrieferGames());
 		if (!isActive() || !isOnGrieferGames())
 			return;
 
-		System.out.println("BBBBBBBBBBBBB");
-
 		// If no data is found, open and close /stats automatically
 		if (stats.isEmpty()) {
-			System.out.println("TRIGGERING");
 			guiInitBlock = ChatQueue.sendBlocking("/stats", "/stats geht nicht!");
 			waitingForGUI = true;
-		} else System.out.println(stats);
+		}
 	}
 
 	@EventListener
 	public void onMsgReceive(MessageReceiveEvent event) {
 		Matcher matcher = Constants.ORB_SELL_PATTERN.matcher(event.getUnformatted());
-		if (!matcher.matches()) {
-			System.out.println(event.getUnformatted());
-			System.out.println(matcher.pattern().pattern());
+		if (!matcher.matches())
 			return;
-		}
 
 		lastItem = matcher.group("item");
 

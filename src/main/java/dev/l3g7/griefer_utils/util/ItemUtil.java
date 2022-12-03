@@ -1,16 +1,21 @@
 package dev.l3g7.griefer_utils.util;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class ItemUtil {
 
 	public static ItemStack MISSING_TEXTURE = new ItemStack(Blocks.stone, 1, 10000);
+	public static JsonParser PARSER = new JsonParser();
 
 	public static List<String> getLore(ItemStack itemStack) {
 		List<String> lore = new ArrayList<>();
@@ -53,4 +58,25 @@ public class ItemUtil {
 
 		return xpCost < 40;
 	}
+
+	public static String getUUIDFromSkullTexture(ItemStack itemStack) {
+		if (itemStack == null || itemStack.getItem() != Items.skull || !itemStack.hasTagCompound())
+			return null;
+
+		NBTTagList textures = itemStack.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
+		if (textures.hasNoTags())
+			return null;
+
+		String b64 = ((NBTTagCompound) textures.get(0)).getString("Value");
+		if (b64.isEmpty())
+			return null;
+
+		JsonObject object = PARSER.parse(new String(Base64.getDecoder().decode(b64))).getAsJsonObject();
+		if (!object.has("profileId"))
+			return null;
+
+		String uuidString = object.get("profileId").getAsString();
+		return uuidString.replaceFirst("^(.{8})(.{4})(.{4})(.{4})(.{12})$", "$1-$2-$3-$4-$5");
+	}
+
 }

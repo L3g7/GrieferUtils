@@ -10,6 +10,7 @@ import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.Config;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.Reflection;
 import net.labymod.settings.elements.ControlElement;
@@ -78,7 +79,16 @@ public class OrbStats extends Module {
 
 		IInventory inv = Reflection.get(mc.currentScreen, "lowerChestInventory", "field_147015_w", "w");
 
-		if (!inv.getName().equals("§6Statistik von §e" + PlayerUtil.getName()))
+		// When the players name contains a word that was blacklisted at some point, it is not included in the title
+		// (Source: 75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db / bc1f3d61-0878-4006-ba46-fb479fc37a1e)
+		if (!inv.getName().equals("§6Statistik von §e" + PlayerUtil.getName()) && !inv.getName().equals("§6Statistik"))
+			return;
+
+		// Check if it's the users stats that are open
+		ItemStack skull = inv.getStackInSlot(10);
+		String uuid = ItemUtil.getUUIDFromSkullTexture(skull);
+
+		if (uuid == null || !uuid.equalsIgnoreCase(PlayerUtil.getUUID().toString()))
 			return;
 
 		// Inv hasn't been loaded yet
@@ -102,21 +112,28 @@ public class OrbStats extends Module {
 
 	@EventListener
 	public void onCBJoin(CityBuildJoinEvent event) {
+		System.out.println("AAAAAAAA" + isActive() + isOnGrieferGames());
 		if (!isActive() || !isOnGrieferGames())
 			return;
 
+		System.out.println("BBBBBBBBBBBBB");
+
 		// If no data is found, open and close /stats automatically
 		if (stats.isEmpty()) {
+			System.out.println("TRIGGERING");
 			guiInitBlock = ChatQueue.sendBlocking("/stats", "/stats geht nicht!");
 			waitingForGUI = true;
-		}
+		} else System.out.println(stats);
 	}
 
 	@EventListener
 	public void onMsgReceive(MessageReceiveEvent event) {
 		Matcher matcher = Constants.ORB_SELL_PATTERN.matcher(event.getUnformatted());
-		if (!matcher.matches())
+		if (!matcher.matches()) {
+			System.out.println(event.getUnformatted());
+			System.out.println(matcher.pattern().pattern());
 			return;
+		}
 
 		lastItem = matcher.group("item");
 
@@ -160,6 +177,9 @@ public class OrbStats extends Module {
 	public void loadConfig(ServerJoinEvent ignored) {
 		if (!ServerCheck.isOnGrieferGames())
 			return;
+
+		lastItem = null;
+		stats.clear();
 
 		String path = "modules.orb_stats.stats." + PlayerUtil.getUUID();
 

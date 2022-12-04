@@ -31,11 +31,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraftforge.client.event.MouseEvent;
 
+import static dev.l3g7.griefer_utils.util.ItemUtil.createItem;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.RELEASE_USE_ITEM;
 
 /**
- * Suppresses left clicks and dropping when holing a diamond sword enchanted with looting 21.
+ * Suppresses left clicks and dropping when holding a diamond sword enchanted with looting 21.
  */
 @Singleton
 public class SwordSaver extends Feature {
@@ -44,11 +45,7 @@ public class SwordSaver extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Birth- / BonzeSaver")
 		.description("Deaktiviert Linksklicks und Dropping bei Diamantschwertern mit Plünderung 21.")
-		.icon(() -> {
-			ItemStack sword = new ItemStack(Items.diamond_sword);
-			sword.addEnchantment(Enchantment.unbreaking, 1);
-			return sword;
-		});
+		.icon(createItem(Items.diamond_sword, 0, true));
 
 	/**
 	 * Suppresses left clicks if the held item should be saved.

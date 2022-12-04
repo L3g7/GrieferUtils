@@ -1,6 +1,6 @@
-package dev.l3g7.griefer_utils.features.features;
+package dev.l3g7.griefer_utils.features.features.item_saver;
 
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.features.item_saver.ItemSaver.ItemSaverImpl;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Singleton
-public class ToolSaver extends Feature {
+public class ToolSaver extends ItemSaverImpl {
 
     private final BooleanSetting saveNonRepairable = new BooleanSetting()
             .name("Irreperables retten")
@@ -28,13 +28,9 @@ public class ToolSaver extends Feature {
                     "(0 zum Deaktivieren)")
             .icon("broken_pickaxe")
             .defaultValue(0)
-            .config("features.tool_saver.damage")
+            .config("features.item_saver.tool_saver.damage")
             .settingsEnabled(true)
             .subSettingsWithHeader("ToolSaver", saveNonRepairable);
-
-    public ToolSaver() {
-        super(Category.FEATURE);
-    }
 
     @Override
     public SettingsElement getMainElement() {

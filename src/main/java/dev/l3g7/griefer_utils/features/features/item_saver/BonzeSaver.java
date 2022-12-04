@@ -1,8 +1,8 @@
-package dev.l3g7.griefer_utils.features.features;
+package dev.l3g7.griefer_utils.features.features.item_saver;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketSendEvent;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.features.item_saver.ItemSaver.ItemSaverImpl;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.ItemBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -20,18 +20,14 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DR
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
 
 @Singleton
-public class BonzeSaver extends Feature {
+public class BonzeSaver extends ItemSaverImpl {
 
 	private final BooleanSetting enabled = new BooleanSetting()
 			.name("Birth- / BonzeSaver")
 			.description("Deaktiviert Linksklicks, wenn eine Birth- oder eine Bonzeklinge in der Hand gehalten wird.")
 			.icon(new ItemBuilder(Items.diamond_sword).enchant())
 			.defaultValue(true)
-			.config("features.bonze_saver.active");
-
-	public BonzeSaver() {
-		super(Category.FEATURE);
-	}
+			.config("features.item_saver.bonze_saver.active");
 
 	@Override
 	public SettingsElement getMainElement() {

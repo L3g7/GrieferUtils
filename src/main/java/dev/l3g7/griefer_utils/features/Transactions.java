@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.features;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.LateInit;
 import dev.l3g7.griefer_utils.event.events.SettingsUpdateEvent;
+import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
@@ -49,6 +50,12 @@ public class Transactions extends Feature {
     public void connect() {
         MysteryModConnection.connect();
     }
+
+	@EventListener
+	public void onJoin(ServerJoinEvent event) {
+		if (MysteryModConnection.state != CheckAuthPacket.State.SUCCESSFUL)
+			MysteryModConnection.connect();
+	}
 
     @EventListener
     public void onStateChange(StateChangeEvent event) {

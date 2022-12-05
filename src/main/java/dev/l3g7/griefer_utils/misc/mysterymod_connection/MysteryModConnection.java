@@ -25,7 +25,7 @@ public class MysteryModConnection {
 
     private static NioSocketChannel channel;
 
-    static State state = State.LOADING;
+    public static State state = State.LOADING;
     static final Logger LOGGER = LogManager.getLogger();
 
     private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("GrieferUtils' MysteryMod-Connection", false, Thread.MIN_PRIORITY));

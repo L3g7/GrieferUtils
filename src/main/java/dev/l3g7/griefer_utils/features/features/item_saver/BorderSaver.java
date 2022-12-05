@@ -46,8 +46,6 @@ public class BorderSaver extends ItemSaverImpl {
 		if (event.action != RIGHT_CLICK_BLOCK)
 			return;
 
-		clickedOnBlock = true;
-
 		ItemStack heldItem = player().getHeldItem();
 
 		if (heldItem == null || !heldItem.hasTagCompound())
@@ -57,11 +55,15 @@ public class BorderSaver extends ItemSaverImpl {
 		if (!heldItem.getTagCompound().getBoolean("wall_effect"))
 			return;
 
+		clickedOnBlock = true;
 		event.setCanceled(true);
-		TickScheduler.runNextTick(() -> ConfirmGui.openGui(
-			"§6Möchtest du den Rand benutzen?",
-			() -> mc().playerController.sendUseItem(player(), world(), player().getHeldItem())
-		));
+		TickScheduler.runNextTick(() -> {
+			ConfirmGui.openGui(
+				"§6Möchtest du den Rand benutzen?",
+				() -> mc().playerController.sendUseItem(player(), world(), player().getHeldItem())
+			);
+			clickedOnBlock = false;
+		});
 	}
 
 }

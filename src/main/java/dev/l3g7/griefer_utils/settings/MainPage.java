@@ -21,9 +21,11 @@ package dev.l3g7.griefer_utils.settings;
 import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.crash.CrashReport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +44,14 @@ public class MainPage {
 		new HeaderSetting("§r").scale(.4).entryHeight(10)));
 
 	static {
+		try {
+			loadFeatures();
+		} catch (Throwable t) {
+			MinecraftUtil.mc().displayCrashReport(new CrashReport("GrieferUtils konnte nicht geladen werden!", t));
+		}
+	}
+
+	private static void loadFeatures() {
 		// Load features
 		List<Feature> features = new ArrayList<>();
 		FileProvider.getClassesWithSuperClass(Feature.class).forEach(meta -> {

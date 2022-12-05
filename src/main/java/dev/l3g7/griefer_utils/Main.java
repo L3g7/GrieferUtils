@@ -22,9 +22,11 @@ import dev.l3g7.griefer_utils.event.AnnotationEventHandler;
 import dev.l3g7.griefer_utils.event.EventHandler;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.settings.MainPage;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.api.LabyModAddon;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.crash.CrashReport;
 
 import java.util.List;
 
@@ -48,8 +50,13 @@ public class Main extends LabyModAddon {
 		if (!LabyModCoreMod.isForge())
 			return;
 
-		EventHandler.init();
-		AnnotationEventHandler.triggerEvent(OnEnable.class);
+		try {
+			EventHandler.init();
+			AnnotationEventHandler.triggerEvent(OnEnable.class);
+		} catch (Throwable t) {
+			MinecraftUtil.mc().displayCrashReport(new CrashReport("GrieferUtils konnte nicht geladen werden!", t));
+		}
+
 	}
 
 	@Override

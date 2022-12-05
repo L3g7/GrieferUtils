@@ -77,7 +77,7 @@ public class AddonUtil {
 			addonInfo = AddonLoader.getOfflineAddons().stream().filter(addon -> addon.getUuid().equals(addonUuid)).findFirst().orElse(null);
 
 		if (addonInfo == null)
-			throw new NullPointerException("Could not retrieve addon info");
+			throw new NullPointerException("Addon-Infos konnten nicht geladen werden!");
 
 		return addonInfo;
 	}

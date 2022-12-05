@@ -31,6 +31,9 @@ public class PrefixSaver extends ItemSaverImpl {
 
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		if (!isActive() || !isOnGrieferGames())
+			return;
+
 		if (event.action == LEFT_CLICK_BLOCK)
 			return;
 

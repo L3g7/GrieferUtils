@@ -33,6 +33,9 @@ public class BorderSaver extends ItemSaverImpl {
 
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		if (!isActive() || !isOnGrieferGames())
+			return;
+
 		// For some reason, a RIGHT_CLICK_AIR PlayerInteractEvent is triggered right after the RIGHT_CLICK_BLOCK event
 		if (clickedOnBlock) {
 			clickedOnBlock = false;

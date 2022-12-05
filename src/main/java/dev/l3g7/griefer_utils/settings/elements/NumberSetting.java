@@ -51,14 +51,18 @@ public class NumberSetting extends NumberElement implements ElementBuilder<Numbe
 	 * Sets the lower limit the value can have.
 	 */
 	public NumberSetting min(int min) {
-		return (NumberSetting) setMinValue(min);
+		setMinValue(min);
+		set(getCurrentValue());
+		return this;
 	}
 
 	/**
 	 * Sets the upper limit the value can have.
 	 */
 	public NumberSetting max(int max) {
-		return (NumberSetting) setMaxValue(max);
+		setMaxValue(max);
+		set(getCurrentValue());
+		return this;
 	}
 
 	@Override

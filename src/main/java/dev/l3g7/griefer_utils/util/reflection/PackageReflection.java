@@ -18,6 +18,9 @@
 
 package dev.l3g7.griefer_utils.util.reflection;
 
+import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
+
 /**
  * Package related reflection.
  */
@@ -31,7 +34,14 @@ class PackageReflection {
 		if (!name.contains("."))
 			return null;
 
-		return Package.getPackage(name.substring(0, name.lastIndexOf(".")));
+		Package parent = Package.getPackage(name.substring(0, name.lastIndexOf(".")));
+		if (parent == null) {
+			// Try to load package using file provider
+			ClassMeta meta = FileProvider.getClassMeta(name.substring(0, name.lastIndexOf(".")).replace('.', '/') + "/package-info.class", false);
+			if (meta != null)
+				return meta.load().getPackage();
+		}
+		return parent;
 	}
 
 }

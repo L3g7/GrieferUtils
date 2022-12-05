@@ -43,6 +43,15 @@ public class ItemUtil {
 		return lore.size() > 0 ? lore.get(lore.size() - 1) : "";
 	}
 
+	public static boolean canBeRepaired(ItemStack itemStack) {
+		// The repair cost of the item (Source: ContainerRepair.updateRepairOutput())
+		// If the item is only damaged 1/4, you can repair it with a single material of the same type (i.e. a diamond), thus costing only 1 level
+		// more than the repair value. Otherwise, it can be repaired with another item of the same type (i.e. a diamond sword), costing 2 levels more.
+		int xpCost = itemStack.getRepairCost() + (itemStack.getItemDamage() >= itemStack.getMaxDamage() / 4 ? 1 : 2);
+
+		return xpCost < 40;
+	}
+
 	public static ItemStack createItem(Item item, int meta, String name) { return createItem(new ItemStack(item, 1, meta), false, name); }
 	public static ItemStack createItem(Item item, int meta, boolean enchanted) { return createItem(new ItemStack(item, 1, meta), enchanted, null); }
 	public static ItemStack createItem(Block block, int meta, boolean enchanted) { return createItem(new ItemStack(block, 1, meta), enchanted, null); }

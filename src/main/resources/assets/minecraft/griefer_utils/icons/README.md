@@ -10,6 +10,10 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/mob_effect/saturation.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/bone_with_meat.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/broken_pickaxe.png" height=16em width=16em/> broken_pickaxe.png</a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/gui/container/stats_icons.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chunk.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chunk.png" height=16em width=16em/> chunk.png</a></td>
     <td><a href="https://www.deviantart.com/ishmanallenlitchmore/art/chunk-of-minecraft-382711453">IshmanAllenLitchmore</a></td>
   </tr>
@@ -76,6 +80,10 @@
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/red_scroll.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/red_scroll.png" height=16em width=16em/> red_scroll.png</a></td>
     <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
+  </tr>
+  <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/shield_with_sword.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/shield_with_sword.png" height=16em width=16em/> shield_with_sword.png</a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/mob_effect/resistance.png">Minecraft asset</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/speech_bubble.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/speech_bubble.png" height=16em width=16em/> speech_bubble.png</a></td>

@@ -33,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.features.Feature.displayAchievement;
 import static dev.l3g7.griefer_utils.features.Feature.isOnGrieferGames;
 import static dev.l3g7.griefer_utils.misc.Constants.DECIMAL_FORMAT_3;
 
@@ -53,13 +54,16 @@ public class OrbStats extends Module {
 
 	public void loadSettings() {
 		getBooleanElement().addCallback(v -> {
-		// If no data is found, open and close /stats automatically
-		if (v && stats.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForGUI) {
-			guiInitBlock = ChatQueue.sendBlocking("/stats", "/stats geht nicht!");
-			waitingForGUI = true;
-			lastScreen = mc.currentScreen;
-		}
-	});
+			// If no data is found, open and close /stats automatically
+			if (v && stats.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForGUI) {
+				guiInitBlock = ChatQueue.sendBlocking("/stats", () -> {
+					displayAchievement("§c§lFehler \u26A0", "§c" + "/stats geht nicht!");
+					resetWaitingForGUI();
+				});
+				waitingForGUI = true;
+				lastScreen = mc.currentScreen;
+			}
+		});
 	}
 
 	@Override
@@ -80,7 +84,6 @@ public class OrbStats extends Module {
 		IInventory inv = Reflection.get(mc.currentScreen, "lowerChestInventory", "field_147015_w", "w");
 
 		// When the players name contains a word that was blacklisted at some point, it is not included in the title
-		// (Source: 75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db / bc1f3d61-0878-4006-ba46-fb479fc37a1e)
 		if (!inv.getName().equals("§6Statistik von §e" + PlayerUtil.getName()) && !inv.getName().equals("§6Statistik"))
 			return;
 
@@ -88,26 +91,27 @@ public class OrbStats extends Module {
 		ItemStack skull = inv.getStackInSlot(10);
 		String uuid = ItemUtil.getUUIDFromSkullTexture(skull);
 
-		if (uuid == null || !uuid.equalsIgnoreCase(PlayerUtil.getUUID().toString()))
+		if (!PlayerUtil.getUUID().toString().equalsIgnoreCase(uuid))
 			return;
 
 		// Inv hasn't been loaded yet
 		if (inv.getStackInSlot(42) == null || inv.getStackInSlot(42).getItem() != Items.wheat)
 			return;
 
-		boolean itemWasNull = lastItem == null;
-
 		for (int i = 0; i < inv.getSizeInventory(); i++)
-			extractInfo(inv.getStackInSlot(i), itemWasNull);
+			extractInfo(inv.getStackInSlot(i));
 
-		if (waitingForGUI) {
-			guiInitBlock.complete(null);
-			mc.displayGuiScreen(lastScreen);
-			lastScreen = null;
-			waitingForGUI = false;
-		}
+		if (waitingForGUI)
+			resetWaitingForGUI();
 
 		saveConfig();
+	}
+
+	private void resetWaitingForGUI() {
+		guiInitBlock.complete(null);
+		mc.displayGuiScreen(lastScreen);
+		lastScreen = null;
+		waitingForGUI = false;
 	}
 
 	@EventListener
@@ -117,7 +121,10 @@ public class OrbStats extends Module {
 
 		// If no data is found, open and close /stats automatically
 		if (stats.isEmpty()) {
-			guiInitBlock = ChatQueue.sendBlocking("/stats", "/stats geht nicht!");
+			guiInitBlock = ChatQueue.sendBlocking("/stats", () -> {
+				displayAchievement("§c§lFehler \u26A0", "§c" + "/stats geht nicht!");
+				resetWaitingForGUI();
+			});
 			waitingForGUI = true;
 		}
 	}
@@ -135,7 +142,7 @@ public class OrbStats extends Module {
 		stats.compute(lastItem.hashCode(), (key, value) -> (value == null ? 0 : value) + addend);
 	}
 
-	private void extractInfo(ItemStack stack, boolean itemWasNull) {
+	private void extractInfo(ItemStack stack) {
 		if (stack == null || !stack.hasTagCompound())
 			return;
 
@@ -144,7 +151,7 @@ public class OrbStats extends Module {
 
 		for (int i = 0; i < lore.tagCount(); i++) {
 			String line = lore.getStringTagAt(i);
-			if (!line.contains("§7- §e§8> "))
+			if (!line.contains("§7- §e"))
 				continue;
 
 			Matcher matcher = RANKING_PATTERN.matcher(line);
@@ -159,7 +166,7 @@ public class OrbStats extends Module {
 			String item = matcher.group("item");
 
 			// If no item was last used, it is set to the one with the highest amount
-			if (itemWasNull && (lastItem == null || stats.get(lastItem.hashCode()) < amount))
+			if (lastItem == null || stats.get(lastItem.hashCode()) < amount)
 				lastItem = item;
 
 			stats.put(item.hashCode(), amount);

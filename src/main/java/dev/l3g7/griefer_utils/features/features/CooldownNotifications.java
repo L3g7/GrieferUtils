@@ -55,7 +55,10 @@ public class CooldownNotifications extends Feature {
 		.callback(v -> {
 			// If no data is found, open and close /cooldowns automatically
 			if (v && endDates.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForCooldownGUI) {
-				guiInitBlock = ChatQueue.sendBlocking("/cooldowns", "/cooldowns geht nicht!");
+				guiInitBlock = ChatQueue.sendBlocking("/cooldowns", () -> {
+					displayAchievement("§c§lFehler \u26A0", "§c" + "/cooldowns geht nicht!");
+					resetWaitingForGUI();
+				});
 				waitingForCooldownGUI = true;
 			}
 		});
@@ -94,7 +97,10 @@ public class CooldownNotifications extends Feature {
 
 		// If no data is found, open and close /cooldowns automatically
 		if (endDates.isEmpty()) {
-			guiInitBlock = ChatQueue.sendBlocking("/cooldowns", "/cooldowns geht nicht!");
+			guiInitBlock = ChatQueue.sendBlocking("/cooldowns", () -> {
+				displayAchievement("§c§lFehler \u26A0", "§c" + "/cooldowns geht nicht!");
+				resetWaitingForGUI();
+			});
 			waitingForCooldownGUI = true;
 		}
 	}
@@ -192,16 +198,19 @@ public class CooldownNotifications extends Feature {
 				if (foundAny) {
 					saveCooldowns();
 					// Close cooldowns if waitingForCooldownGUI (was automatically opened)
-					if (waitingForCooldownGUI && isActive()) {
-						mc().displayGuiScreen(null);
-						guiInitBlock.complete(null);
-						waitingForCooldownGUI = false;
-						sendCooldowns = true;
-						onCityBuildJoin(null);
-					}
+					if (waitingForCooldownGUI && isActive())
+						resetWaitingForGUI();
 				}
 			}
 		}
+	}
+
+	private void resetWaitingForGUI() {
+		mc().displayGuiScreen(null);
+		guiInitBlock.complete(null);
+		waitingForCooldownGUI = false;
+		sendCooldowns = true;
+		onCityBuildJoin(null);
 	}
 
 	private boolean checkEndTime(String name) {

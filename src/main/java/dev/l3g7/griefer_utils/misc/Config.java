@@ -79,19 +79,19 @@ public class Config {
     }
 
 	/**
-	 * Resets Cooldown notification and OrbStats if config is under v1.10.1
+	 * Resets Cooldown notification and OrbStats if config is under v1.11.2
 	 */
 	private static void patchConfig() {
 		if (!config.has("version"))
 			return;
 
-		String[] parts = config.get("version").getAsString().substring(1).split("\\.");
-		if (Integer.parseInt(parts[1]) > 10)
+		String[] parts = config.get("version").getAsString().split("\\.");
+		int minorVer = Integer.parseInt(parts[1]);
+		if (minorVer > 11 || (parts.length == 3 && minorVer == 11 && Integer.parseInt(parts[2]) > 1))
 			return;
 
-		if (parts.length == 2) {
-			resolve("features.cooldown_notifications.end_dates".split("\\.")).remove("end_dates");
-			resolve("modules.orb_stats.stats".split("\\.")).remove("stats");
-		}
+		resolve("features.cooldown_notifications.end_dates".split("\\.")).remove("end_dates");
+		resolve("modules.orb_stats.stats".split("\\.")).remove("stats");
 	}
+
 }

@@ -5,7 +5,6 @@ import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.chat.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketSendEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerQuitEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -28,11 +27,11 @@ public class ChatQueue {
 	private static final int QUEUE_DELAY = 50; // 2.5s
 
 	private static final List<String> queuedMessages = new ArrayList<>();
-	private static final List<Triple<String, Future<Void>, String>> blockingMessages = new ArrayList<>();
+	private static final List<Triple<String, Future<Void>, Runnable>> blockingMessages = new ArrayList<>();
 	private static int currentQueueDelay = QUEUE_DELAY;
 	private static long lastMessageSentTimestamp = 0; // When the last message was sent. Used for block timeout
 	private static int messagesSentWithoutDelay = 0; // Counter how many messages were sent without chat delay. If >=3, a 60t delay will be forced
-	private static Pair<Future<Void>, String> currentBlock = null;
+	private static Pair<Future<Void>, Runnable> currentBlock = null;
 
 	@EventListener
 	public void onPacketSend(PacketSendEvent event) {
@@ -75,7 +74,7 @@ public class ChatQueue {
 				e.onGround = true;
 
 				if ((System.currentTimeMillis() - lastMessageSentTimestamp) >= 3000) {
-					Feature.displayAchievement("§c§lFehler \u26A0", "§c" + currentBlock.b);
+					currentBlock.b.run();
 					currentBlock = null; // Drop block if it's taking longer than 2.5s
 				}
 				return;
@@ -87,7 +86,7 @@ public class ChatQueue {
 			String msg;
 			if (!blockingMessages.isEmpty()) { // Prioritize blocking messages
 				++messagesSentWithoutDelay;
-				Triple<String, Future<Void>, String> entry = blockingMessages.remove(0);
+				Triple<String, Future<Void>, Runnable> entry = blockingMessages.remove(0);
 				msg = entry.getLeft();
 				currentBlock = Pair.of(entry.getMiddle(), entry.getRight());
 			} else {
@@ -117,7 +116,7 @@ public class ChatQueue {
 	/**
 	 * Sends a message and blocks movement until the future is completed.
 	 */
-	public static CompletableFuture<Void> sendBlocking(String message, String errorMessage) {
+	public static CompletableFuture<Void> sendBlocking(String message, Runnable errorMessage) {
 		CompletableFuture<Void> future = new CompletableFuture<>();
 		blockingMessages.add(Triple.of(message, future, errorMessage));
 		return future;

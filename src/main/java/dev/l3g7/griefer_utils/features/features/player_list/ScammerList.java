@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.features.features.player_list;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.event.events.network.tablist.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
@@ -92,7 +93,7 @@ public class ScammerList extends PlayerList {
 		entries.addAll(customScammerList.getEntries());
 
 	    for (PlayerListProvider.PlayerListEntry entry : entries)
-		    if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
+		    if (NameCache.ensureRealName(entry.getName()).equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
 			    result.add(entry);
 
 	    return result;

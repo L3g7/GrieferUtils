@@ -88,7 +88,7 @@ public class MessageSkulls extends Feature {
 			endIndex = msg.indexOf(' ', startIndex);
 
 		String name = msg.substring(startIndex, endIndex);
-		NetworkPlayerInfo playerInfo = mc().getNetHandler().getPlayerInfo(name.contains("~") ? NameCache.getName(name) : name);
+		NetworkPlayerInfo playerInfo = mc().getNetHandler().getPlayerInfo(NameCache.ensureRealName(name));
 		if (playerInfo == null)
 			return;
 

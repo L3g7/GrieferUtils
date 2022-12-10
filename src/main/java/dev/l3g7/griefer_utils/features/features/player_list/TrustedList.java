@@ -2,6 +2,7 @@ package dev.l3g7.griefer_utils.features.features.player_list;
 
 import dev.l3g7.griefer_utils.event.events.network.tablist.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.playerlist.PlayerListSetting;
@@ -79,7 +80,7 @@ public class TrustedList extends PlayerList {
 	    entries.addAll(customTrustedList.getEntries());
 
 	    for (PlayerListProvider.PlayerListEntry entry : entries)
-		    if (entry.getName().equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
+		    if (NameCache.ensureRealName(entry.getName()).equalsIgnoreCase(name) || (uuid != null && uuid.equals(entry.getUuid())))
 			    result.add(entry);
 
 	    return result;

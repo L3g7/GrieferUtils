@@ -108,8 +108,7 @@ public class ClickEventHandler {
 		if (name == null)
 			return;
 
-		if (name.startsWith("~"))
-			name = NameCache.getName(name);
+		name = NameCache.ensureRealName(name);
 
 		event.setMessage(setClickEvent(event.getMessage(), COMMAND + name));
 	}

@@ -26,6 +26,10 @@ public class NameCache {
 		return getName(getUUID(nick));
 	}
 
+	public static String ensureRealName(String nick) {
+		return nick.contains("~") ? getName(nick) : nick;
+	}
+
 	public static UUID getUUID(String nick) {
 		return nickToUuidCache.get(nick);
 	}

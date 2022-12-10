@@ -82,7 +82,7 @@ public class Config {
 	 * Resets Cooldown notification and OrbStats if config is under v1.11.2
 	 */
 	private static void patchConfig() {
-		if (!config.has("version"))
+		if (!config.has("version") || config.get("version").getAsString().equals("DEBUG"))
 			return;
 
 		String[] parts = config.get("version").getAsString().split("\\.");

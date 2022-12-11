@@ -125,6 +125,12 @@ public abstract class PlayerList extends Feature {
 			});
 	}
 
+	@Override
+	public void init() {
+		super.init();
+		getCategory().getSetting().addCallback(v -> TabListEvent.updatePlayerInfoList());
+	}
+
 	/**
 	 * The event listener handling display names.
 	 * @see PlayerList#displayNameAction

@@ -32,7 +32,6 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import static dev.l3g7.griefer_utils.event.events.network.TabListEvent.updatePlayerInfoList;
 import static net.minecraftforge.fml.common.eventhandler.EventPriority.LOW;
 
-@Singleton
 abstract class TextComponentTweak extends Feature {
 
 	final BooleanSetting chat = new BooleanSetting()

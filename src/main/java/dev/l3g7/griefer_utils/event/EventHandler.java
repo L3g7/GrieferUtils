@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.event;
 
 import dev.l3g7.griefer_utils.event.event_bus.EventBus;
+import dev.l3g7.griefer_utils.event.events.chat.ChatLineAddEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketSendEvent;
 import dev.l3g7.griefer_utils.event.events.render.*;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
@@ -50,6 +51,11 @@ public class EventHandler {
 	// Called by GuiContainerEditor (editDrawGuiContainerForegroundLayer)
 	public static void drawGuiContainerForegroundLayer(GuiChest chest) {
 		EventBus.post(new DrawGuiContainerForegroundLayerEvent(chest));
+	}
+
+	// Called by ChatRendererEditor (editAddChatLine)
+	public static void addChatLine(String message) {
+		EventBus.post(new ChatLineAddEvent(message));
 	}
 
 }

@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.event_bus.EventPriority;
 import dev.l3g7.griefer_utils.event.events.OnEnable;
-import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.chat.ChatLineAddEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Config;
@@ -83,12 +83,12 @@ public class FilterWebhooks extends Feature {
     }
 
     @EventListener(priority = EventPriority.LOWEST)
-    public void onMessageReceive(MessageReceiveEvent event) {
+    public void onMessageReceive(ChatLineAddEvent event) {
         if (!isActive())
             return;
 
         // Check if filters match
-        String msg = event.getUnformatted().toLowerCase();
+        String msg = event.getMessage().toLowerCase();
         for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
             if (webhooks.containsKey(filter.getFilterName())
 	                && !webhooks.get(filter.getFilterName()).trim().isEmpty()
@@ -99,7 +99,7 @@ public class FilterWebhooks extends Feature {
                         .with("content", null)
                         .with("embeds", JsonBuilder.array(new JsonBuilder()
                                 .withSanitized("title", filter.getFilterName())
-                                .withSanitized("description", event.getUnformatted())
+                                .withSanitized("description", event.getMessage())
                                 .withOptional(filter::isHighlightMessage, "color", ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff))
                                 .with("footer", EMBED_FOOTER)
                                 .build()

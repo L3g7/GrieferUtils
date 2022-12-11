@@ -2,7 +2,6 @@ package dev.l3g7.griefer_utils.asm.mappings;
 
 import dev.l3g7.griefer_utils.asm.mappings.MappingNode.Class;
 import dev.l3g7.griefer_utils.util.Reflection;
-import net.labymod.core.asm.LabyModCoreMod;
 
 import java.lang.reflect.Field;
 
@@ -17,6 +16,9 @@ public class Mappings {
 	public static Class       Void = new Class("V");
 	public static Class       Float = new Class("F");
 	public static Class       Int = new Class("I");
+	public static $String     String = new $String();
+	public static $Integer    Integer = new $Integer();
+	public static $Object     Object = new $Object();
 	public static $List       List = new $List();
 	public static $Collection Collection = new $Collection();
 
@@ -70,6 +72,15 @@ public class Mappings {
 	}
 
 	// Mapping Classes
+	public static class $String extends Class {
+		private $String() { super("java/lang/String", null); }
+	}
+	public static class $Object extends Class {
+		private $Object() { super("java/lang/Object", null); }
+	}
+	public static class $Integer extends Class {
+		private $Integer() { super("java/lang/Integer", null); }
+	}
 	public static class $List extends Class {
 		private $List() { super("java/util/List", null); }
 
@@ -168,6 +179,7 @@ public class Mappings {
 		public Method shouldRenderBarrier() { return new Method(null, "shouldRenderBarrier", this, Boolean); }
 		public Method shouldSendPacket() { return new Method(null, "shouldSendPacket", this, Boolean, Packet); }
 		public Method drawGuiContainerForegroundLayer() { return new Method(null, "drawGuiContainerForegroundLayer", this, Void, GuiChest); }
+		public Method addChatLine() { return new Method(null, "addChatLine", this, Void, String); }
 	}
 	public static class $TrueSight extends Class {
 		public $TrueSight() { super("dev/l3g7/griefer_utils/features/tweaks/TrueSight", null); }
@@ -194,6 +206,7 @@ public class Mappings {
 		public $ChatRenderer() { super("net/labymod/ingamechat/renderer/ChatRenderer", null); }
 
 		public Method renderChat() { return new Method(null, "renderChat", this, Void, Int); }
+		public Method addChatLine() { return new Method(null, "addChatLine", this, Void, String, Boolean, String, Object, Int, Int, Integer, Boolean); }
 	}
 	public static class $ChatLine extends Class {
 		public $ChatLine() { super("net/labymod/ingamechat/renderer/ChatLine", null); }

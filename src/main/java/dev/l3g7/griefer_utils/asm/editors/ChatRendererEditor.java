@@ -6,8 +6,7 @@ import dev.l3g7.griefer_utils.asm.mappings.Mappings;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 
-import static dev.l3g7.griefer_utils.asm.util.InsnListUtil.findByMappings;
-import static dev.l3g7.griefer_utils.asm.util.InsnListUtil.insertAfter;
+import static dev.l3g7.griefer_utils.asm.util.InsnListUtil.*;
 import static dev.l3g7.griefer_utils.asm.util.InsnUtil.methodInsn;
 import static dev.l3g7.griefer_utils.asm.util.InsnUtil.varInsn;
 
@@ -25,6 +24,17 @@ public class ChatRendererEditor implements Opcodes {
 			varInsn(ALOAD, 23),
 			varInsn(ILOAD, 29),
 			methodInsn(INVOKESTATIC, Mappings.MessageSkulls.renderSkull())
+		);
+	}
+
+	/**
+	 * ASM for AddChatLineEvents
+	 */
+	@MethodTarget(name = "addChatLine", parameters = {"java.lang.String", "boolean", "java.lang.String", "java.lang.Object", "int", "int", "java.lang.Integer", "boolean"}, returnValue = "void")
+	public static void editAddChatLine() {
+		insertAtStart(
+			varInsn(ALOAD, 1),
+			methodInsn(INVOKESTATIC, Mappings.EventHandler.addChatLine())
 		);
 	}
 

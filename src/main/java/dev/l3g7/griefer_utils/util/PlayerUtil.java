@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.util;
 
 import net.minecraft.client.network.NetworkPlayerInfo;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -33,7 +34,7 @@ public class PlayerUtil {
 	 * @return the player's real name.
 	 */
 	public static String unnick(String nickedName) {
-		for(NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
+		for(NetworkPlayerInfo info : new ArrayList<>(mc().getNetHandler().getPlayerInfoMap())) {
 			if(info.getDisplayName() != null) {
 				String[] parts = info.getDisplayName().getUnformattedText().split("\u2503");
 				if(parts.length > 1 && parts[1].trim().equals(nickedName))

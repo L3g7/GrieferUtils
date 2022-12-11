@@ -65,7 +65,6 @@ import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 public abstract class PlayerList extends Feature {
 
 	private static final Pattern PROFILE_TITLE_PATTERN = Pattern.compile(String.format("^§6Profil von §e%s§r$", Constants.FORMATTED_PLAYER_NAME_PATTERN));
-	private static final ImmutableList<Pattern> MESSAGE_PATTERNS = ImmutableList.of(Constants.GLOBAL_RECEIVE_PATTERN, Constants.PLOTCHAT_RECEIVE_PATTERN, Constants.MESSAGE_RECEIVE_PATTERN, Constants.MESSAGE_SEND_PATTERN);
 
 	private final String name, icon;
 	private final ModColor color;
@@ -162,7 +161,7 @@ public abstract class PlayerList extends Feature {
 			return;
 
 		// Check if message is GLOBAL_RECEIVE, PLOTCHAT_RECEIVE, MESSAGE_RECEIVE or MESSAGE_SEND
-		MESSAGE_PATTERNS.stream().map(p -> p.matcher(event.original.getFormattedText())).filter(Matcher::matches).findFirst().ifPresent(matcher -> {
+		Constants.MESSAGE_PATTERNS.stream().map(p -> p.matcher(event.original.getFormattedText())).filter(Matcher::matches).findFirst().ifPresent(matcher -> {
 
 			// Check if player should be marked
 			String name = matcher.group("name").replaceAll("§.", "");

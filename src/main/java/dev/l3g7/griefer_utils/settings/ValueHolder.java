@@ -136,5 +136,9 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 			this.fallbackValue = fallbackValue;
 		}
 
+		public boolean hasValue() {
+			return value != null;
+		}
+
 	}
 }

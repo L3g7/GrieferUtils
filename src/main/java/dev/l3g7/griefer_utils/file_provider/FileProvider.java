@@ -18,10 +18,10 @@
 
 package dev.l3g7.griefer_utils.file_provider;
 
+import dev.l3g7.griefer_utils.file_provider.impl.JarFileProvider;
 import dev.l3g7.griefer_utils.file_provider.impl.URLFileProvider;
 import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
-import dev.l3g7.griefer_utils.file_provider.impl.JarFileProvider;
 import dev.l3g7.griefer_utils.util.Util;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import org.apache.commons.io.IOUtils;
@@ -177,7 +177,7 @@ public abstract class FileProvider {
 		// Find classes
 		for (String file : getFiles(f -> f.endsWith(".class"))) {
 			ClassMeta meta = getClassMeta(file, false);
-			if (meta.hasSuperClass(internalName))
+			if (meta != null && meta.hasSuperClass(internalName))
 				classes.add(meta);
 		}
 
@@ -192,10 +192,15 @@ public abstract class FileProvider {
 		String annotationName = Type.getDescriptor(annotation);
 
 		// Find classes
-		for (String file : getFiles(f -> f.endsWith(".class")))
-			for (MethodMeta method : getClassMeta(file, false).methods)
+		for (String file : getFiles(f -> f.endsWith(".class"))) {
+			ClassMeta meta = getClassMeta(file, false);
+			if (meta == null)
+				continue;
+
+			for (MethodMeta method : meta.methods)
 				if (method.hasAnnotation(annotationName))
 					methods.add(method);
+		}
 
 		return methods;
 	}

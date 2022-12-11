@@ -22,24 +22,12 @@ import dev.l3g7.griefer_utils.event.EventHandler;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.settings.ValueHolder;
+import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import dev.l3g7.griefer_utils.util.ArrayUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.SettingsElement;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-
-import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static dev.l3g7.griefer_utils.util.Util.elevate;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * The base class for features.
@@ -70,58 +58,12 @@ public abstract class Feature {
 
 		category = Category.getCategory(pkg);
 
-		// Load main element
-		Field[] mainElementFields = Reflection.getAnnotatedFields(getClass(), MainElement.class, false);
-		if (mainElementFields.length != 1)
-			throw new IllegalStateException("Found an invalid amount of main elements for " + getClass().getSimpleName());
-
-		mainElement = Reflection.get(this, mainElementFields[0]);
-
-		// Load config key
-		configKey = getClass().getSimpleName();
-		configKey = category.getConfigKey() + "." + UPPER_CAMEL.to(LOWER_UNDERSCORE, configKey);
-
-		// Load settings
-		if (mainElement instanceof ValueHolder<?, ?>)
-			((ValueHolder<?, ?>) mainElement).config(configKey + "." + mainElementFields[0].getName());
-		loadSubSettings(mainElement, configKey);
+		Pair<SettingsElement, String> data = ElementBuilder.initMainElement(this, category.getConfigKey());
+		mainElement = data.getLeft();
+		configKey = data.getRight();
 
 		// Register events
 		EventHandler.register(this);
-	}
-
-	/**
-	 * Loads the config values for all subSettings.
-	 */
-	private void loadSubSettings(SettingsElement parent, String parentKey) {
-		for (SettingsElement element : new ArrayList<>(parent.getSubSettings().getElements())) {
-			if (element instanceof HeaderSetting)
-				continue;
-
-			boolean hasSubSettings = !element.getSubSettings().getElements().isEmpty();
-			if (!hasSubSettings && !(element instanceof ValueHolder<?, ?>))
-				continue;
-
-			String key = parentKey + "." + UPPER_CAMEL.to(LOWER_UNDERSCORE, getFieldName(element));
-			loadSubSettings(element, key);
-			if (element instanceof ValueHolder<?, ?>) {
-				if (hasSubSettings)
-					((ValueHolder<?, ?>) element).config(key + ".value");
-				else
-					((ValueHolder<?, ?>) element).config(key);
-			}
-		}
-	}
-
-	/**
-	 * Gets the name of a field based on its value.
-	 */
-	private String getFieldName(SettingsElement element) {
-		for (Field field : ArrayUtil.flatmap(Field.class, getClass().getDeclaredFields(), getClass().getFields()))
-			if (Reflection.get(this, field) == element)
-				return field.getName();
-
-		throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.getDisplayName() + " in " + this);
 	}
 
 	public SettingsElement getMainElement() {
@@ -163,12 +105,5 @@ public abstract class Feature {
 	private static void _onServerSwitch(ServerSwitchEvent event) {
 		onCityBuild = false;
 	}
-
-	/**
-	 * An annotation for marking the main element in a feature.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public @interface MainElement { }
 
 }

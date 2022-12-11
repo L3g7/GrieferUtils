@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.settings;
 
+import dev.l3g7.griefer_utils.util.ArrayUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
@@ -27,10 +28,20 @@ import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
+
+import static com.google.common.base.CaseFormat.*;
+import static dev.l3g7.griefer_utils.util.Util.elevate;
 
 /**
  * An interface for builder-like setting creation.
@@ -134,6 +145,66 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		((S) this).getSubSettings().getElements().addAll(settings);
 		return (S) this;
 	}
+
+	static Pair<SettingsElement, String> initMainElement(Object owner, String parentKey) {
+		Class<?> ownerClass = owner.getClass();
+
+		// Load main element
+		Field[] mainElementFields = Reflection.getAnnotatedFields(ownerClass, MainElement.class, false);
+		if (mainElementFields.length != 1)
+			throw new IllegalStateException("Found an invalid amount of main elements for " + ownerClass.getSimpleName());
+
+		SettingsElement mainElement = Reflection.get(owner, mainElementFields[0]);
+
+		// Load config key
+		String configKey = ownerClass.getSimpleName();
+		configKey = parentKey + "." + UPPER_CAMEL.to(LOWER_UNDERSCORE, configKey);
+
+		// Load settings
+		if (mainElement instanceof ValueHolder<?, ?>)
+			((ValueHolder<?, ?>) mainElement).config(configKey + "." + mainElementFields[0].getName());
+		loadSubSettings(owner, mainElement, configKey);
+
+		return Pair.of(mainElement, configKey);
+	}
+
+	/**
+	 * Loads the config values for all subSettings.
+	 */
+	static void loadSubSettings(Object owner, SettingsElement parent, String parentKey) {
+		for (SettingsElement element : new ArrayList<>(parent.getSubSettings().getElements())) {
+			if (element instanceof HeaderSetting)
+				continue;
+
+			boolean hasSubSettings = !element.getSubSettings().getElements().isEmpty();
+			if (!hasSubSettings && !(element instanceof ValueHolder<?, ?>))
+				continue;
+
+			Field field = Arrays.stream(ArrayUtil.flatmap(Field.class, owner.getClass().getDeclaredFields(), owner.getClass().getFields()))
+				.filter(f -> Reflection.get(owner, f) == element)
+				.findFirst()
+				.orElseThrow(() -> elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.getDisplayName() + " in " + owner));
+
+			if (field.getName().equals("value"))
+				throw elevate(new IllegalStateException(), field + " has an illegal name!");
+
+			String key = parentKey + "." + LOWER_CAMEL.to(LOWER_UNDERSCORE, field.getName());
+			loadSubSettings(owner, element, key);
+			if (element instanceof ValueHolder<?, ?>) {
+				if (hasSubSettings)
+					((ValueHolder<?, ?>) element).config(key + ".value");
+				else
+					((ValueHolder<?, ?>) element).config(key);
+			}
+		}
+	}
+
+	/**
+	 * An annotation for marking the main element in a feature.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	@interface MainElement { }
 
 	class IconStorage {
 

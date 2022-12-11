@@ -63,6 +63,13 @@ public class Reflection {
 	}
 
 	/**
+	 * @return all fields in a class and its super classes.
+	 */
+	public static Field[] getAllFields(Class<?> clazz) {
+		return FieldReflection.getAllFields(clazz);
+	}
+
+	/**
 	 * Creates a new instance of the targetClass.
 	 */
 	public static <T> T construct(Class<T> targetClass, Object... params) {

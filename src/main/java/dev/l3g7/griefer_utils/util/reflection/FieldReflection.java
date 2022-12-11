@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
-import static dev.l3g7.griefer_utils.util.misc.Mapping.MappingTarget.NOTCH;
 import static dev.l3g7.griefer_utils.util.misc.Mapping.MappingTarget.SRG;
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
@@ -93,8 +92,6 @@ class FieldReflection {
 
 		// Check field
 		if (field == null) {
-			System.err.printf("Could not find field '%s' / '%s' in '%s'%n", name, mappedName, targetClass.getName());
-			System.out.println("Fields: " + Arrays.toString(targetClass.getDeclaredFields()) + " & " + Arrays.toString(targetClass.getFields()));
 			throw elevate(new NoSuchFieldException(), "Could not find field '%s' / '%s' in '%s'", name, mappedName, targetClass.getName());
 		}
 

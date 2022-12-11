@@ -18,9 +18,8 @@
 
 package dev.l3g7.griefer_utils.settings;
 
-import dev.l3g7.griefer_utils.util.ArrayUtil;
-import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
@@ -180,7 +179,7 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 			if (!hasSubSettings && !(element instanceof ValueHolder<?, ?>))
 				continue;
 
-			Field field = Arrays.stream(ArrayUtil.flatmap(Field.class, owner.getClass().getDeclaredFields(), owner.getClass().getFields()))
+			Field field = Arrays.stream(Reflection.getAllFields(owner.getClass()))
 				.filter(f -> Reflection.get(owner, f) == element)
 				.findFirst()
 				.orElseThrow(() -> elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.getDisplayName() + " in " + owner));

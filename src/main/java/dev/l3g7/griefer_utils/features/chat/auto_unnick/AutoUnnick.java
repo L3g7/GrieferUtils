@@ -63,10 +63,7 @@ public class AutoUnnick extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Automatisch entnicken")
 		.icon(Material.NAME_TAG)
-		.callback(c -> {
-			System.out.println("Update");
-			updatePlayerInfoList();
-		})
+		.callback(c -> updatePlayerInfoList())
 		.subSettings(tab);
 
 	@Override
@@ -86,7 +83,6 @@ public class AutoUnnick extends Feature {
 
 	@EventListener(priority = EventPriority.HIGH)
 	public void onTabListNameUpdate(TabListEvent.TabListNameUpdateEvent event) {
-		System.out.println("tabupdate " + isEnabled() + " / " + getCategory().getSetting() + " / " + getCategory().getSetting().getStorage().value + " / " + ((BooleanSetting) getCategory().getSetting()).getCurrentValue());
 		if (!tab.get())
 			return;
 
@@ -161,9 +157,6 @@ public class AutoUnnick extends Feature {
 
 		String prefix = new PrefixFinder(rank, formattedName).getPrefix();
 
-		if ("Aline_Yuuki".equals(unnickedName)) {
-			System.out.println("got prefix: " + prefix + " from " + Arrays.toString(PrefixFinder.prefixes));
-		}
 		Collection<IChatComponent> name = getNameComponents(unnickedName, prefix, isTabList);
 		ClickEvent clickEvent = parent.getChatStyle().getChatClickEvent();
 

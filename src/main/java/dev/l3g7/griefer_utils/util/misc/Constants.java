@@ -48,4 +48,6 @@ public class Constants {
 	public static final Pattern PLOTCHAT_RECEIVE_PATTERN = Pattern.compile(String.format("^§r§8\\[§r§6Plot\\-Chat§r§8\\]\\[§r§6(?<id>-?\\d+;-?\\d+)§r§8\\] %s§r§8 : §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 	public static final Pattern GLOBAL_RECEIVE_PATTERN = Pattern.compile(String.format("^§r%s%s§r§f §r§8» §r%s$", FORMATTED_CLAN_TAG_PATTERN, FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 
+	public static final Pattern PAYMENT_RECEIVE_PATTERN = Pattern.compile(String.format("^%s(?<!§f) §r§ahat dir \\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
+
 }

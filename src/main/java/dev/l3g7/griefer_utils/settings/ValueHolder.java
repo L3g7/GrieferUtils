@@ -122,10 +122,10 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 	 */
 	class Storage<T> {
 
-		private T value = null;
+		public T value = null;
 		private String configKey = null;
 		private final T fallbackValue;
-		private final List<Consumer<T>> callbacks = new ArrayList<>();
+		public final List<Consumer<T>> callbacks = new ArrayList<>();
 
 		private final Function<T, JsonElement> encodeFunc;
 		private final Function<JsonElement, T> decodeFunc;
@@ -134,10 +134,6 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 			this.encodeFunc = encodeFunc;
 			this.decodeFunc = decodeFunc;
 			this.fallbackValue = fallbackValue;
-		}
-
-		public boolean hasValue() {
-			return value != null;
 		}
 
 	}

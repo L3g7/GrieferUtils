@@ -22,7 +22,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
+import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.StringElement;
+import net.labymod.utils.Consumer;
 
 /**
  * A setting holding a string, represented in-game by a text input.
@@ -35,7 +37,10 @@ public class StringSetting extends StringElement implements ElementBuilder<Strin
 	public StringSetting() {
 		super("§cNo name set", null, "", v -> {});
 		setSettingEnabled(true);
-		addCallback(this::set);
+		Reflection.set(this, (Consumer<String>) value -> {
+			getStorage().value = value;
+			getStorage().callbacks.forEach(c -> c.accept(value));
+		}, "changeListener");
 	}
 
 	@Override

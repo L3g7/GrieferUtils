@@ -26,6 +26,7 @@ import net.labymod.utils.DrawUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -86,6 +87,10 @@ public class MinecraftUtil {
 
 	public static void send(String message) {
 		ChatQueue.send(message);
+	}
+
+	public static void suggest(String message) {
+		mc().displayGuiScreen(new GuiChat(message));
 	}
 
 	public static String getServerFromScoreboard() {

@@ -53,6 +53,8 @@ public class TabListEvent extends Event {
 
 		for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
 			IChatComponent originalComponent = cachedNames.get(info.getGameProfile().getId());
+
+			// create full deep-copy of component
 			TabListNameUpdateEvent event = new TabListNameUpdateEvent(info.getGameProfile(), originalComponent);
 			EVENT_BUS.post(event);
 			info.setDisplayName(event.component);
@@ -73,7 +75,13 @@ public class TabListEvent extends Event {
 
 		private TabListNameUpdateEvent(GameProfile profile, IChatComponent component) {
 			this.profile = profile;
-			this.component = component;
+			this.component = component.createCopy();
+			deepCopyStyle(this.component);
+		}
+
+		private void deepCopyStyle(IChatComponent component) {
+			component.setChatStyle(component.getChatStyle().createDeepCopy());
+			component.getSiblings().forEach(this::deepCopyStyle);
 		}
 
 		@EventListener

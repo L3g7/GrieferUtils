@@ -40,6 +40,8 @@ import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
+import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static net.minecraft.init.Blocks.*;
 import static net.minecraft.init.Items.skull;
 import static net.minecraft.init.Items.*;
@@ -113,7 +115,7 @@ public class TrueSight extends Feature {
 	private void add(Class<? extends Entity> entity, String name, Object item, int damage) {
 		entities.put(entity, new BooleanSetting()
 			.name(name)
-			.config(getConfigKey() + ".entities." + entity.getSimpleName())
+			.config(getConfigKey() + ".entities." + UPPER_CAMEL.to(LOWER_UNDERSCORE, name))
 			.icon(item instanceof Item ? new ItemStack((Item) item, 1, damage) : new ItemStack((Block) item, 1, damage))
 			.defaultValue(entity == EntityPlayer.class));
 	}

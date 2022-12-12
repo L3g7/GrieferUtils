@@ -100,16 +100,16 @@ public class PlayerHider extends Feature {
 
 		// Fire
 		if (player.isImmuneToFire() != isActive())
-			Reflection.set(player, isActive(), "isImmuneToFire", "ab");
+			Reflection.set(player, isActive(), "isImmuneToFire", "field_70178_ae", "ab");
 
 		// Sprinting particles
 		player.setSprinting(!isActive());
 
 		// Effect particles
 		if (isActive())
-			Reflection.invoke(player, new String[] {"resetPotionEffectMetadata", "bj"});
+			Reflection.invoke(player, new String[] {"resetPotionEffectMetadata", "func_175133_bi", "bj"});
 		else
-			Reflection.invoke(player, new String[] {"updatePotionMetadata", "B"});
+			Reflection.invoke(player, new String[] {"updatePotionMetadata", "func_175135_B", "B"});
 
 		player.setSilent(isActive());
 		player.setEating(false);

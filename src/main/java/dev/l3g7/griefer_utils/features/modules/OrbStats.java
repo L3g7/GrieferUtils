@@ -176,6 +176,7 @@ public class OrbStats extends Module {
 		// Add the received orbs
 		int addend = Integer.parseInt(matcher.group("amount").replace(".", ""));
 		stats.compute(lastItem.hashCode(), (key, value) -> (value == null ? 0 : value) + addend);
+		saveConfig();
 	}
 
 	private void extractInfo(ItemStack stack) {

@@ -27,6 +27,7 @@ import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.annotation.ElementType;
@@ -84,6 +85,8 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		IconData iconData;
 		if (icon instanceof Material)
 			iconData = new IconData((Material) icon);
+		else if (icon instanceof ResourceLocation)
+			iconData = new IconData((ResourceLocation) icon);
 		else if (icon instanceof String) {
 			if (((String) icon).startsWith("labymod:"))
 				iconData = new IconData("labymod/textures/" + ((String) icon).substring(8) + ".png");
@@ -153,7 +156,8 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		if (mainElementFields.length != 1)
 			throw new IllegalStateException("Found an invalid amount of main elements for " + ownerClass.getSimpleName());
 
-		SettingsElement mainElement = Reflection.get(owner, mainElementFields[0]);
+		Field mainElementField = mainElementFields[0];
+		SettingsElement mainElement = Reflection.get(owner, mainElementField);
 
 		// Load config key
 		String configKey = ownerClass.getSimpleName();
@@ -161,8 +165,10 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 
 		// Load settings
 		if (mainElement instanceof ValueHolder<?, ?>)
-			((ValueHolder<?, ?>) mainElement).config(configKey + "." + mainElementFields[0].getName());
-		loadSubSettings(owner, mainElement, configKey);
+			((ValueHolder<?, ?>) mainElement).config(configKey + "." + mainElementField.getName());
+
+		if (mainElementField.getAnnotation(MainElement.class).configureSubSettings())
+			loadSubSettings(owner, mainElement, configKey);
 
 		return Pair.of(mainElement, configKey);
 	}
@@ -203,7 +209,11 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
-	@interface MainElement { }
+	@interface MainElement {
+
+		boolean configureSubSettings() default true;
+
+	}
 
 	class IconStorage {
 

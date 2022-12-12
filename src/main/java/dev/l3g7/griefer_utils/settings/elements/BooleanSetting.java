@@ -42,6 +42,12 @@ public class BooleanSetting extends BooleanElement implements ElementBuilder<Boo
 	}
 
 	@Override
+	public BooleanSetting custom(String... args) {
+		super.custom(args);
+		return this;
+	}
+
+	@Override
 	public Storage<Boolean> getStorage() {
 		return storage;
 	}

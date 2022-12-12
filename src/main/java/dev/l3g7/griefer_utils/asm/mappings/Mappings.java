@@ -15,6 +15,7 @@ public class Mappings {
 	public static Class       Boolean = new Class("Z");
 	public static Class       Void = new Class("V");
 	public static Class       Float = new Class("F");
+	public static Class       Double = new Class("D");
 	public static Class       Int = new Class("I");
 	public static $String     String = new $String();
 	public static $Integer    Integer = new $Integer();
@@ -41,6 +42,7 @@ public class Mappings {
 	public static $Potion               Potion = new $Potion();
 	public static $Packet               Packet = new $Packet();
 	public static $RendererLivingEntity RendererLivingEntity = new $RendererLivingEntity();
+	public static $ScoreboardModule     ScoreboardModule = new $ScoreboardModule();
 	public static $ScoreObjective       ScoreObjective = new $ScoreObjective();
 	public static $ScaledResolution     ScaledResolution = new $ScaledResolution();
 	public static $WorldClient          WorldClient = new $WorldClient();
@@ -57,6 +59,7 @@ public class Mappings {
 			case "boolean": return Boolean;
 			case "void": return Void;
 			case "float": return Float;
+			case "double": return Double;
 			case "int": return Int;
 		}
 		for(Field f : Mappings.class.getDeclaredFields()) {
@@ -210,6 +213,11 @@ public class Mappings {
 	}
 	public static class $ChatLine extends Class {
 		public $ChatLine() { super("net/labymod/ingamechat/renderer/ChatLine", null); }
+	}
+	public static class $ScoreboardModule extends Class {
+		public $ScoreboardModule() { super("net/labymod/ingamegui/modules/ScoreboardModule", null); }
+
+		public Method renderScoreboard() { return new Method(null, "renderScoreboard", this, Void, ScoreObjective, Double, Double, Boolean); }
 	}
 	public static class $MessageSkulls extends Class {
 		public $MessageSkulls() { super("dev/l3g7/griefer_utils/features/tweaks/MessageSkulls", null); }

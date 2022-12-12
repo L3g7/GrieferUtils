@@ -6,10 +6,7 @@ import dev.l3g7.griefer_utils.event.events.server.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.server.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.misc.ChatQueue;
-import dev.l3g7.griefer_utils.misc.Config;
-import dev.l3g7.griefer_utils.misc.Constants;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.misc.*;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.Reflection;
@@ -17,11 +14,15 @@ import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -33,19 +34,42 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.features.Feature.displayAchievement;
-import static dev.l3g7.griefer_utils.features.Feature.isOnGrieferGames;
+import static dev.l3g7.griefer_utils.features.Feature.*;
 import static dev.l3g7.griefer_utils.misc.Constants.DECIMAL_FORMAT_3;
 
 @Singleton
 public class OrbStats extends Module {
 
 	private static final Pattern RANKING_PATTERN = Pattern.compile("§7(?<item>.*): §e(?<amount>[0-9]+).*");
+	private static final Map<String, String> GUI_TO_CHAT_MAPPING = new HashMap<String, String>() {{
+		put("Hasenfelle", "Hasenfell");
+		put("Rohe Fische", "Roher Fisch");
+		put("Roche Lachse", "Roher Lachs");
+		put("Obsidianblöcke", "Obsidian");
+		put("Prismarinblöcke", "Prismarinblock");
+		put("Rosensträucher", "Rosenstrauch");
+		put("Glowstoneblöcke", "Glowstoneblock");
+		put("Seelensandblöcke", "Seelensand");
+		put("Quartzerze", "Netherquarzerz");
+		put("Quarze", "Netherquarz");
+		put("Sandblöcke", "Sand");
+		put("Rote Sandblöcke", "Roter Sand");
+		put("Kiesblöcke", "Kies");
+		put("Erdblöcke", "Erde");
+		put("Myzelblöcke", "Myzel");
+		put("Podsolblöcke", "Podsol");
+		put("Grobe Erdblöcke", "grobe Erde");
+		put("Farne", "Farn");
+		put("Löwenzähne", "Löwenzahn");
+		put("Mohne", "Mohn");
+		put("Sternlauche", "Sternlauch");
+	}};
 
 	private HashMap<Integer, Integer> stats = new HashMap<>();
 	private String lastItem = null;
 	private boolean waitingForGUI = false;
-	private GuiScreen lastScreen = null;
+	private GuiScreen statsRevertScreen = null;
+	private GuiChest lastScreen = null;
 	private CompletableFuture<Void> guiInitBlock = null;
 
 	public OrbStats() {
@@ -61,7 +85,7 @@ public class OrbStats extends Module {
 					resetWaitingForGUI();
 				});
 				waitingForGUI = true;
-				lastScreen = mc.currentScreen;
+				statsRevertScreen = mc.currentScreen;
 			}
 		});
 	}
@@ -74,6 +98,12 @@ public class OrbStats extends Module {
 	@Override
 	public String[] getDefaultValues() {
 		return new String[]{"?"};
+	}
+
+	@SubscribeEvent
+	public void onGuiOpen(GuiOpenEvent event) {
+		if (event.gui instanceof GuiChest)
+			lastScreen = ((GuiChest) event.gui);
 	}
 
 	@SubscribeEvent
@@ -109,8 +139,8 @@ public class OrbStats extends Module {
 
 	private void resetWaitingForGUI() {
 		guiInitBlock.complete(null);
-		mc.displayGuiScreen(lastScreen);
-		lastScreen = null;
+		mc.displayGuiScreen(statsRevertScreen);
+		statsRevertScreen = null;
 		waitingForGUI = false;
 	}
 
@@ -136,6 +166,12 @@ public class OrbStats extends Module {
 			return;
 
 		lastItem = matcher.group("item");
+
+		Slot s = lastScreen.inventorySlots.getSlot(11);
+		// Both grass items and grass blocks have "Gras" as their name when selling them
+		if (s.getHasStack() && lastItem.equals("Gras"))
+			lastItem = s.getStack().getItem() == Item.getItemFromBlock(Blocks.grass) ? "Grasblöcke" : "Gräser";
+
 
 		// Add the received orbs
 		int addend = Integer.parseInt(matcher.group("amount").replace(".", ""));
@@ -164,6 +200,11 @@ public class OrbStats extends Module {
 				continue;
 
 			String item = matcher.group("item");
+			// Both clay and stained hardened clay are called "Tonblöcke" in the /stats gui
+			if (item.equals("Tonblöcke") && stack.getItem() == Item.getItemFromBlock(Blocks.sand))
+				item = "Ton";
+
+			item = GUI_TO_CHAT_MAPPING.getOrDefault(item, item);
 
 			// If no item was last used, it is set to the one with the highest amount
 			if (lastItem == null || stats.get(lastItem.hashCode()) < amount)

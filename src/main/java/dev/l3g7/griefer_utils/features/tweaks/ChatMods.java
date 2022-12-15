@@ -1,7 +1,9 @@
 package dev.l3g7.griefer_utils.features.tweaks;
 
 import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.event.event_bus.Event;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.event.events.chat.MessageDisplayEvent;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
@@ -84,12 +86,21 @@ public class ChatMods extends Feature {
 
     private boolean isNews = false;
 
-    @EventListener
-    public void onMessageReceive(MessageReceiveEvent event) {
+	@EventListener
+	public void onMessageReceive(MessageDisplayEvent event) {
+		processMessage(event.getMsg(), event);
+	}
+
+	@EventListener
+	public void onMessageReceive(MessageReceiveEvent event) {
+		processMessage(event.getFormatted(), event);
+	}
+
+	public void processMessage(String message, Event.Cancelable event) {
         if (!isCategoryEnabled() || !isOnGrieferGames())
             return;
 
-        boolean isNewsLine = event.getFormatted().equals("§r§f§m------------§r§8 [ §r§6News§r§8 ] §r§f§m------------§r");
+        boolean isNewsLine = message.equals("§r§f§m------------§r§8 [ §r§6News§r§8 ] §r§f§m------------§r");
         if (isNewsLine)
             isNews = !isNews;
 
@@ -97,22 +108,22 @@ public class ChatMods extends Feature {
         if (news.get() == NewsMode.NONE)
             event.setCanceled(isNews || isNewsLine);
         else if (news.get() == NewsMode.COMPACT)
-            event.setCanceled(isNewsLine || (isNews && event.getFormatted().trim().equals("§r§8\u00bb§r")));
+            event.setCanceled(isNewsLine || (isNews && message.trim().equals("§r§8\u00bb§r")));
 
         // Anti clear chat
         if (!event.isCanceled())
-            event.setCanceled(antiClearChat.get() && event.getFormatted().replaceAll("§.", "").trim().isEmpty());
+            event.setCanceled(antiClearChat.get() && message.replaceAll("§.", "").trim().isEmpty());
 
         // remove supreme spaces
         if (!event.isCanceled())
-            event.setCanceled(removeSupremeSpaces.get() && event.getFormatted().trim().equals("§r§8\u00bb§r"));
+            event.setCanceled(removeSupremeSpaces.get() && message.trim().equals("§r§8\u00bb§r"));
 
         // remove streamer
         if (!event.isCanceled())
-            event.setCanceled(removeStreamerNotifications.get() && event.getFormatted().startsWith("§r§8[§6Streamer§8]"));
+            event.setCanceled(removeStreamerNotifications.get() && message.startsWith("§r§8[§6Streamer§8]"));
 
         // Remove MysteryMod download notification
         if (!event.isCanceled())
-            event.setCanceled(stfuMysteryMod.get() && MYSTERY_MOD_DOWNLOAD_NOTIFICATION.contains(event.getFormatted()));
+            event.setCanceled(stfuMysteryMod.get() && MYSTERY_MOD_DOWNLOAD_NOTIFICATION.contains(message));
     }
 }

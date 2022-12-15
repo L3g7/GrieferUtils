@@ -88,7 +88,7 @@ public class FilterWebhooks extends Feature {
             return;
 
         // Check if filters match
-        String msg = event.getMessage().toLowerCase();
+        String msg = event.getMessage().toLowerCase().replaceAll("§.", "");
         for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
             if (webhooks.containsKey(filter.getFilterName())
 	                && !webhooks.get(filter.getFilterName()).trim().isEmpty()

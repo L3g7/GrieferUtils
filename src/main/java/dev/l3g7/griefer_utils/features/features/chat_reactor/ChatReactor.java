@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.features.features.chat_reactor;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.event.events.chat.MessageDisplayEvent;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
@@ -107,7 +108,16 @@ public class ChatReactor extends Feature {
 	}
 
 	@EventListener
+	public void onMsg(MessageDisplayEvent event) {
+		checkMsg(event.getMsg().replaceAll("§.", ""));
+	}
+
+	@EventListener
 	public void onMsg(MessageReceiveEvent event) {
+		checkMsg(event.getUnformatted());
+	}
+
+	public void checkMsg(String msg) {
 		if (!isActive() || !isOnGrieferGames())
 			return;
 
@@ -115,6 +125,6 @@ public class ChatReactor extends Feature {
 			return;
 
 		for (ChatReactorEntry entry : entries)
-			entry.checkMatch(event.getUnformatted());
+			entry.checkMatch(msg);
 	}
 }

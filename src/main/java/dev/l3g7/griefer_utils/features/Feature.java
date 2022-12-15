@@ -1,5 +1,7 @@
 package dev.l3g7.griefer_utils.features;
 
+import dev.l3g7.griefer_utils.event.event_bus.EventBus;
+import dev.l3g7.griefer_utils.event.events.chat.MessageDisplayEvent;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.MainPage;
@@ -42,8 +44,11 @@ public abstract class Feature implements Comparable<Feature> {
     public static ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }
 
     public static void display(IChatComponent component) { player().addChatMessage(component); }
-    public static void display(String msg) { LabyMod.getInstance().displayMessageInChat(msg); }
     public static void display(String format, Object... args) { display(String.format(format, args)); }
+    public static void display(String msg) {
+        if (!EventBus.post(new MessageDisplayEvent(msg)).isCanceled())
+            LabyMod.getInstance().displayMessageInChat(msg);
+    }
 
     public static void suggest(String cmd) { mc().displayGuiScreen(new GuiChat(cmd)); }
     public static void suggest(String format, Object... args) { suggest(String.format(format, args)); }

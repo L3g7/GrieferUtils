@@ -50,7 +50,7 @@ public class OrbStats extends Module {
 		put("Rosensträucher", "Rosenstrauch");
 		put("Glowstoneblöcke", "Glowstoneblock");
 		put("Seelensandblöcke", "Seelensand");
-		put("Quartzerze", "Netherquarzerz");
+		put("Quarzerze", "Netherquarzerz");
 		put("Quarze", "Netherquarz");
 		put("Sandblöcke", "Sand");
 		put("Rote Sandblöcke", "Roter Sand");
@@ -63,6 +63,15 @@ public class OrbStats extends Module {
 		put("Löwenzähne", "Löwenzahn");
 		put("Mohne", "Mohn");
 		put("Sternlauche", "Sternlauch");
+
+		put("Smaragde", "Smaragden");
+
+		put("Dioritblöcke", "Diorit");
+		put("Granitblöcke", "Granit");
+		put("Andesitblöcke", "Andesit");
+		put("Polierte Dioritblöcke", "Polierter Diorit");
+		put("Polierte Granitblöcke", "Polierter Granit");
+		put("Polierte Andesitblöcke", "Polierter Andesit");
 	}};
 
 	private HashMap<Integer, Integer> stats = new HashMap<>();

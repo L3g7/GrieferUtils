@@ -3,7 +3,6 @@ package dev.l3g7.griefer_utils.features.tweaks;
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.event.event_bus.Event;
 import dev.l3g7.griefer_utils.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.event.events.chat.MessageDisplayEvent;
 import dev.l3g7.griefer_utils.event.events.chat.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
@@ -85,11 +84,6 @@ public class ChatMods extends Feature {
     }
 
     private boolean isNews = false;
-
-	@EventListener
-	public void onMessageReceive(MessageDisplayEvent event) {
-		processMessage(event.getMsg(), event);
-	}
 
 	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {

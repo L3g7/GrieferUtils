@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.util;
 
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -65,4 +66,18 @@ public class PlayerUtil {
 		return name != null && name.matches("^\\w{3,}$");
 	}
 
+	public static String getRank(String name) {
+		IChatComponent component = mc().getNetHandler().getPlayerInfo(name).getDisplayName();
+		if (component != null) {
+			String[] parts = component.getUnformattedText().split("\u2503");
+			if (parts.length > 1) {
+				return parts[0].trim();
+			}
+		}
+		return "";
+	}
+
+	public static String getName() {
+		return mc().getSession().getUsername();
+	}
 }

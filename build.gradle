@@ -58,6 +58,9 @@ minecraft {
 	clientJvmArgs += ["-Dfml.coreMods.load=net.labymod.core.asm.LabyModCoreMod", "-DdebugMode=true", "-Daddonresources=addon.json"]
 }
 
+// mXparser
+dependencies.implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.1.0'
+
 // Compile options
 java.sourceCompatibility = java.targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = "UTF-8"

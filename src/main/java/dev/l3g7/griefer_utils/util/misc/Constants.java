@@ -35,6 +35,10 @@ public class Constants {
 	public static final Pattern FORMATTED_DELIMITER_PATTERN = Pattern.compile("§r§8§*l*\\u2503");
 
 	// Name patterns
+	public static final Pattern UNFORMATTED_JAVA_PLAYER_NAME_PATTERN = Pattern.compile("~?\\w{3,17}");
+	public static final Pattern UNFORMATTED_BEDROCK_PLAYER_NAME_PATTERN = Pattern.compile("![\\w+]{3,17}");
+	public static final Pattern UNFORMATTED_PLAYER_NAME_PATTERN = Pattern.compile(String.format("(?<player>%s|%s)", UNFORMATTED_JAVA_PLAYER_NAME_PATTERN, UNFORMATTED_BEDROCK_PLAYER_NAME_PATTERN));
+
 	public static final Pattern FORMATTED_JAVA_PLAYER_NAME_PATTERN = Pattern.compile("[~§\\w]{3,}");
 	public static final Pattern FORMATTED_BEDROCK_PLAYER_NAME_PATTERN = Pattern.compile("[!§\\w+]{3,}");
 	public static final Pattern FORMATTED_PLAYER_NAME_PATTERN = Pattern.compile(String.format("(?<name>%s|%s)", FORMATTED_JAVA_PLAYER_NAME_PATTERN, FORMATTED_BEDROCK_PLAYER_NAME_PATTERN));
@@ -43,6 +47,7 @@ public class Constants {
 	// Miscellaneous patterns
 	public static final Pattern FORMATTED_CLAN_TAG_PATTERN = Pattern.compile("(?<clantag>§r§6\\[§r[§\\-\\w]{3,}§r§6] )?");
 	public static final Pattern CHAT_MESSAGE_PATTERN = Pattern.compile("(?<message>.*)§*r*");
+	public static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay %s (?<amount>[\\d,.]+)", UNFORMATTED_PLAYER_NAME_PATTERN));
 
 	// Message patterns
 	public static final Pattern MESSAGE_RECEIVE_PATTERN = Pattern.compile(String.format("^§r§6\\[§r%s§r§6 \\-> §r§cmir§r§6\\] §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));

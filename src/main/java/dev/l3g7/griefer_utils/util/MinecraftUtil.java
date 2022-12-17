@@ -84,13 +84,24 @@ public class MinecraftUtil {
 	public static void display(String message) {
 		labyMod().displayMessageInChat(message);
 	}
+	public static void display(String format, Object... args) {
+		display(String.format(format, args));
+	}
 
 	public static void send(String message) {
 		ChatQueue.send(message);
 	}
 
+	public static void send(String format, Object... args) {
+		send(String.format(format, args));
+	}
+
 	public static void suggest(String message) {
 		mc().displayGuiScreen(new GuiChat(message));
+	}
+
+	public static void suggest(String format, Object... args) {
+		suggest(String.format(format, args));
 	}
 
 	public static String getServerFromScoreboard() {

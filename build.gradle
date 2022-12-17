@@ -59,7 +59,7 @@ minecraft {
 }
 
 // Compile options
-sourceCompatibility = targetCompatibility = 1.8
+java.sourceCompatibility = java.targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = "UTF-8"
 jar.archiveName = "griefer-utils-v${version}.jar"
 reobf.jar.mappingType = "NOTCH"

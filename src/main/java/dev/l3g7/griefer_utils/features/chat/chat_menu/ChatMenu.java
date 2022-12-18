@@ -22,12 +22,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.misc.Config;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
@@ -275,6 +277,14 @@ public class ChatMenu extends Feature {
 		}
 
 		mc().dispatchKeypresses();
+	}
+
+	@EventListener(triggerWhenDisabled = true)
+	public void onMessageSend(MessageEvent.MessageSendEvent event) {
+		if (event.message.startsWith(COMMAND)) {
+			MinecraftUtil.suggest("/msg " + event.message.substring(COMMAND.length()));
+			event.setCanceled(true);
+		}
 	}
 
 	private static void openNameHistory(String name) {

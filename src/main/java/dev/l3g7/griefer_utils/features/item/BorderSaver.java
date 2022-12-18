@@ -70,7 +70,6 @@ public class BorderSaver extends Feature {
 
 	@EventListener
 	public void onPlayerInteract(PlayerInteractEvent event) {
-
 		// For some reason, a RIGHT_CLICK_AIR PlayerInteractEvent is triggered right after the RIGHT_CLICK_BLOCK event
 		if (clickedOnBlock) {
 			clickedOnBlock = false;
@@ -90,6 +89,7 @@ public class BorderSaver extends Feature {
 		if (!heldItem.getTagCompound().getBoolean("wall_effect"))
 			return;
 
+		clickedOnBlock = true;
 		event.setCanceled(true);
 		mc().displayGuiScreen(new GuiChest(player().inventory, inv) {
 
@@ -105,6 +105,7 @@ public class BorderSaver extends Feature {
 
 				mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld, mc.thePlayer.getHeldItem());
 				mc.displayGuiScreen(null);
+				clickedOnBlock = true;
 			}
 
 		});

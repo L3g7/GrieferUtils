@@ -99,7 +99,7 @@ public class FilterWebhooks extends Feature {
                         .with("content", null)
                         .with("embeds", JsonBuilder.array(new JsonBuilder()
                                 .withSanitized("title", filter.getFilterName())
-                                .withSanitized("description", event.getMessage())
+                                .withSanitized("description", event.getMessage().replaceAll("§.", ""))
                                 .withOptional(filter::isHighlightMessage, "color", ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff))
                                 .with("footer", EMBED_FOOTER)
                                 .build()

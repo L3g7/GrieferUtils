@@ -38,6 +38,17 @@
       "setSlimeSize": "func_70799_a"
     }
   },
+  "net/minecraft/entity/EntityLivingBase": {
+    "fields": {
+      "resetPotionEffectMetadata": "func_175133_bi",
+      "updatePotionMetadata": "func_175135_B
+    }
+  },
+  "net/minecraft/entity/Entity": {
+    "fields": {
+      "isImmuneToFire": "field_70178_ae"
+    }
+  },
   "net/minecraft/network/play/server/S38PacketPlayerListItem$AddPlayerData": {
     "fields": {
       "displayName": "field_179965_e"

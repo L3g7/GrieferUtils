@@ -166,7 +166,7 @@ public abstract class PlayerList extends Feature {
 		if (chatAction.get() == DISABLED)
 			return;
 
-		// Check if message is GLOBAL_RECEIVE, PLOTCHAT_RECEIVE, MESSAGE_RECEIVE or MESSAGE_SEND
+		// Check if message is GLOBAL_RECEIVE, PLOTCHAT_RECEIVE, MESSAGE_RECEIVE, MESSAGE_SEND or GLOBAL_CHAT
 		Constants.MESSAGE_PATTERNS.stream().map(p -> p.matcher(event.original.getFormattedText())).filter(Matcher::matches).findFirst().ifPresent(matcher -> {
 
 			// Check if player should be marked

@@ -4,10 +4,15 @@
       "lowerChestInventory": "field_147015_w"
     }
   },
-  "net.minecraft.client.gui.inventory.GuiEditSign": {
+  "net/minecraft/client/gui/inventory/GuiEditSign": {
     "fields": {
       "tileSign": "field_146848_f",
       "editLine": "field_146851_h"
+    }
+  },
+  "net/minecraft/client/gui/GuiChat": {
+    "fields": {
+      "defaultInputFieldText": "field_146409_v"
     }
   },
   "net/minecraft/client/renderer/entity/RenderManager": {

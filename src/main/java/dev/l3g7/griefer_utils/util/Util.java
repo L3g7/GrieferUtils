@@ -21,6 +21,8 @@ package dev.l3g7.griefer_utils.util;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import java.text.DecimalFormat;
+
 /**
  * Everything that doesn't fit into the other utility classes.
  */
@@ -65,4 +67,36 @@ public class Util {
 		FMLCommonHandler.instance().exitJava(status, false);
 	}
 
+
+	private static final DecimalFormat DOUBLE_NUMBER = new DecimalFormat("00");
+
+	public static String formatTime(long endTime) {
+		long seconds = (endTime - System.currentTimeMillis()) / 1000L;
+		long h = seconds / 60 / 60;
+		long m = seconds / 60 % 60;
+		long s = seconds % 60;
+
+		String time = DOUBLE_NUMBER.format(m) + ":" + DOUBLE_NUMBER.format(s);
+		if (h > 0)
+			time = DOUBLE_NUMBER.format(h) + ":" + time;
+
+		return time;
+	}
+
+	public static String formatTime(long endTime, boolean shorten) {
+		long secondsRaw = (endTime - System.currentTimeMillis()) / 1000L;
+		if(secondsRaw <= 0L)
+			return shorten ? "0s" : "0 Sekunden";
+		return formatTime(secondsRaw / 60L / 60L, secondsRaw / 60L % 60L, secondsRaw % 60L, shorten);
+	}
+
+	public static String formatTime(long hours, long minutes, long seconds, boolean shorten) {
+		String result = "";
+		if (hours > 0L)
+			result += shorten ? hours + "h " : hours == 1L ? "eine Stunde, " : hours + " Stunden, ";
+		if (minutes > 0L)
+			result += shorten ? minutes + "m " : minutes == 1L ? "eine Minute, " : minutes + " Minuten, ";
+		result += shorten ? seconds + "s" : seconds == 1L ? "eine Sekunde" : seconds + " Sekunden";
+		return result;
+	}
 }

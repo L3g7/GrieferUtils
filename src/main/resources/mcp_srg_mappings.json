@@ -36,5 +36,10 @@
     "fields": {
       "displayName": "field_179965_e"
     }
+  },
+  "net/minecraft/scoreboard/Scoreboard": {
+    "fields": {
+      "entitiesScoreObjectives": "field_96544_c"
+    }
   }
 }

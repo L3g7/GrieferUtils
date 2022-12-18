@@ -18,12 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
-import com.google.common.base.Strings;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.world.scoreboard.BankScoreboard;
+import dev.l3g7.griefer_utils.features.render.scoreboard.BankScoreboard;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -47,9 +46,6 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -98,7 +94,6 @@ public class Calculator extends Feature {
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
 	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?<= )(?<equation>\\d+(?:(?: *[*k+\\-:/^,e]+ *\\d+k?)+|k+))(?:(?= )|$)");
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
-	public static final DecimalFormat DECIMAL_FORMAT_98 = new DecimalFormat("###,###." + Strings.repeat("#", 98), new DecimalFormatSymbols(Locale.GERMAN)); // max 98 decimal places
 	private BigDecimal lastPayment = BigDecimal.ZERO;
 	private String lastPaymentReceiver;
 
@@ -137,7 +132,6 @@ public class Calculator extends Feature {
 			}
 		}
 	}
-
 
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
@@ -212,7 +206,7 @@ public class Calculator extends Feature {
 				}
 
 				// Replace value
-				msg = msg.substring(0, matcher.start()) + DECIMAL_FORMAT_98.format(new BigDecimal(expResult).setScale(decimalPlaces.get(), RoundingMode.HALF_UP)) + msg.substring(matcher.end());
+				msg = msg.substring(0, matcher.start()) + Constants.DECIMAL_FORMAT_98.format(new BigDecimal(expResult).setScale(decimalPlaces.get(), RoundingMode.HALF_UP)) + msg.substring(matcher.end());
 				matcher = pattern.matcher(msg);
 			} while (matcher.find());
 

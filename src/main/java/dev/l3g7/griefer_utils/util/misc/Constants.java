@@ -18,8 +18,12 @@
 
 package dev.l3g7.griefer_utils.util.misc;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -59,4 +63,5 @@ public class Constants {
 
 	public static final Pattern PAYMENT_RECEIVE_PATTERN = Pattern.compile(String.format("^%s(?<!§f) §r§ahat dir \\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
 
+	public static final DecimalFormat DECIMAL_FORMAT_98 = new DecimalFormat("###,###." + Strings.repeat("#", 98), new DecimalFormatSymbols(Locale.GERMAN)); // max 98 decimal places
 }

@@ -4,6 +4,12 @@
       "lowerChestInventory": "field_147015_w"
     }
   },
+  "net/minecraft/client/gui/inventory/GuiContainer": {
+    "fields": {
+      "guiLeft": "field_147003_i",
+      "guiTop": "field_147009_r"
+    }
+  },
   "net/minecraft/client/gui/inventory/GuiEditSign": {
     "fields": {
       "tileSign": "field_146848_f",

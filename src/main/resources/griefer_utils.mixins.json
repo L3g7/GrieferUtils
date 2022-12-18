@@ -8,5 +8,8 @@
     "MixinEntity",
     "MixinEntityPlayer",
     "MixinNetHandlerPlayClient"
+  ],
+  "client": [
+    "MixinGuiChest"
   ]
 }

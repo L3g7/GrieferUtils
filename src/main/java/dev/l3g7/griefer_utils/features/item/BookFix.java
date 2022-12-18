@@ -85,12 +85,15 @@ public class BookFix extends Feature {
 	 * @return {@code true} if the click should be canceled.
 	 */
 	private boolean processClick(ItemStack item, boolean openBook) {
-		if (item == null || !item.hasTagCompound() || (item.getItem() != Items.writable_book && item.getItem() != Items.written_book))
+		if (item == null || (item.getItem() != Items.writable_book && item.getItem() != Items.written_book))
 			return false;
 
 		if (openBook) {
 			// Fix missing tags
 			NBTTagCompound tag = item.getTagCompound();
+			if (tag == null)
+				tag = new NBTTagCompound();
+
 			if (!tag.hasKey("title"))
 				tag.setString("title", "A book");
 			if (!tag.hasKey("author"))

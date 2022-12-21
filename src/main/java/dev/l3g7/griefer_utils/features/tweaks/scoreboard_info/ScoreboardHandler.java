@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.features.Feature.isOnGrieferGames;
 import static dev.l3g7.griefer_utils.features.Feature.world;
 
 @Singleton
@@ -26,12 +27,12 @@ public class ScoreboardHandler {
 
 	@SuppressWarnings("unused") // Invoked via asm
 	public static boolean shouldNotUnlockScoreboard() {
-		return info.stream().noneMatch(Feature::isActive);
+		return !isOnGrieferGames() || info.stream().noneMatch(Feature::isActive);
 	}
 
 	@SuppressWarnings("unused") // Invoked via asm
 	public static Collection<Score> filterScores(Collection<Score> scores) {
-		if (info.stream().noneMatch(Feature::isActive))
+		if (!isOnGrieferGames() || info.stream().noneMatch(Feature::isActive))
 			return scores;
 
 		// Skip the servers ip address

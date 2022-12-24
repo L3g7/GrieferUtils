@@ -54,8 +54,8 @@ public class EventHandler {
 	}
 
 	// Called by ChatRendererEditor (editAddChatLine)
-	public static void addChatLine(String message) {
-		EventBus.post(new ChatLineAddEvent(message));
+	public static void addChatLine(String message, boolean refresh) {
+		ChatLineAddEvent.onLineAdd(message, refresh);
 	}
 
 }

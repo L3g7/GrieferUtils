@@ -34,6 +34,7 @@ public class ChatRendererEditor implements Opcodes {
 	public static void editAddChatLine() {
 		insertAtStart(
 			varInsn(ALOAD, 1),
+			varInsn(ILOAD, 8),
 			methodInsn(INVOKESTATIC, Mappings.EventHandler.addChatLine())
 		);
 	}

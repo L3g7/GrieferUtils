@@ -182,7 +182,7 @@ public class Mappings {
 		public Method shouldRenderBarrier() { return new Method(null, "shouldRenderBarrier", this, Boolean); }
 		public Method shouldSendPacket() { return new Method(null, "shouldSendPacket", this, Boolean, Packet); }
 		public Method drawGuiContainerForegroundLayer() { return new Method(null, "drawGuiContainerForegroundLayer", this, Void, GuiChest); }
-		public Method addChatLine() { return new Method(null, "addChatLine", this, Void, String); }
+		public Method addChatLine() { return new Method(null, "addChatLine", this, Void, String, Boolean); }
 	}
 	public static class $TrueSight extends Class {
 		public $TrueSight() { super("dev/l3g7/griefer_utils/features/tweaks/TrueSight", null); }

@@ -84,7 +84,7 @@ public class FilterWebhooks extends Feature {
 
     @EventListener(priority = EventPriority.LOWEST)
     public void onMessageReceive(ChatLineAddEvent event) {
-        if (!isActive())
+        if (!isActive() || !isOnGrieferGames())
             return;
 
         // Check if filters match

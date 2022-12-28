@@ -11,7 +11,6 @@ import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -45,6 +44,11 @@ public class ChestSearch extends Feature {
 
 	@SubscribeEvent
 	public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post event) {
+		if (!isOnGrieferGames() || !isActive()) {
+			searchField = null;
+			return;
+		}
+
 		if (searchField != null)
 			previousSearch = searchField.getText();
 
@@ -62,8 +66,6 @@ public class ChestSearch extends Feature {
 
 	@SubscribeEvent
 	public void onKeyPress(GuiScreenEvent.KeyboardInputEvent.Pre event) {
-		if (!isActive())
-			return;
 		if (searchField != null && Keyboard.getEventKeyState()) {
 			if (searchField.textboxKeyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey())) {
 				// Suppress inventory closing when keyBindInventory is pressed
@@ -75,50 +77,48 @@ public class ChestSearch extends Feature {
 
 	@SubscribeEvent
 	public void onMousePress(GuiScreenEvent.MouseInputEvent.Post event) {
-		if (!isActive())
+		if (searchField == null || Mouse.getEventButton() == -1)
 			return;
-		if (searchField != null && Mouse.getEventButton() != -1) {
-			int x = Mouse.getEventX() * event.gui.width / mc().displayWidth;
-			int y = event.gui.height - Mouse.getEventY() * event.gui.height / mc().displayHeight - 1;
 
-			searchField.mouseClicked(x, y, Mouse.getEventButton());
-		}
+		int x = Mouse.getEventX() * event.gui.width / mc().displayWidth;
+		int y = event.gui.height - Mouse.getEventY() * event.gui.height / mc().displayHeight - 1;
+
+		searchField.mouseClicked(x, y, Mouse.getEventButton());
 	}
 
 	@EventListener
 	public void onScreenDraw(DrawGuiContainerForegroundLayerEvent event) {
-		if (!isActive())
+		if (searchField == null)
 			return;
-		if (searchField != null) {
-			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-			int guiLeft = Reflection.get(event.chest, "guiLeft", "field_147003_i", "i");
-			int guiTop = Reflection.get(event.chest, "guiTop", "field_147009_r", "r");
-			GlStateManager.translate(-guiLeft, -guiTop, 1000);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-			// Draw search background
-			mc().getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/creative_inventory/tab_item_search.png"));
-			event.chest.drawTexturedModalRect(guiLeft + 80, guiTop + 4, 80, 4, 90, 12);
+		int guiLeft = Reflection.get(event.chest, "guiLeft", "field_147003_i", "i");
+		int guiTop = Reflection.get(event.chest, "guiTop", "field_147009_r", "r");
+		GlStateManager.translate(-guiLeft, -guiTop, 300);
 
-			searchField.drawTextBox();
+		// Draw search background
+		mc().getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/creative_inventory/tab_item_search.png"));
+		event.chest.drawTexturedModalRect(guiLeft + 80, guiTop + 4, 80, 4, 90, 12);
 
-			// Draw search
-			String text = searchField.getText().toLowerCase();
-			if (!text.isEmpty()) {
-				List<ItemStack> items = event.chest.inventorySlots.getInventory();
-				int x = guiLeft + 7;
-				int y = guiTop + 17;
-				for (int i = 0; i < items.size() - 36; i++) {
-					int sX = x + (18 * (i % 9));
-					int sY = y + (18 * (i / 9));
+		searchField.drawTextBox();
 
-					if (items.get(i) == null || !items.get(i).getDisplayName().toLowerCase().contains(text))
-						GuiScreen.drawRect(sX, sY, sX + 18, sY + 18, 0xAA000000);
-				}
+		// Draw search
+		String text = searchField.getText().toLowerCase();
+		if (!text.isEmpty()) {
+			List<ItemStack> items = event.chest.inventorySlots.getInventory();
+			int x = guiLeft + 7;
+			int y = guiTop + 17;
+			for (int i = 0; i < items.size() - 36; i++) {
+				int sX = x + (18 * (i % 9));
+				int sY = y + (18 * (i / 9));
+
+				if (items.get(i) == null || !items.get(i).getDisplayName().toLowerCase().replaceAll("§.", "").contains(text))
+					GuiScreen.drawRect(sX, sY, sX + 18, sY + 18, 0xAA000000);
 			}
-
-			GlStateManager.translate(guiLeft, guiTop, -1000);
 		}
+
+		GlStateManager.translate(guiLeft, guiTop, -300);
 	}
 
 }

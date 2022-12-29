@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.render.ChatLineAddEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
@@ -124,11 +125,11 @@ public class ChatReactor extends Feature {
 	}
 
 	@EventListener
-	public void onMsg(ClientChatReceivedEvent event) {
+	public void onMsg(ChatLineAddEvent event) {
 		if (mc().currentScreen instanceof LabyModAddonsGui && ((List<SettingsElement>) Reflection.get(mc().currentScreen, "path")).contains(getMainElement()))
 			return;
 
 		for (ChatReactorEntry entry : entries)
-			entry.checkMatch(event.message.getUnformattedText());
+			entry.checkMatch(event.getMessage());
 	}
 }

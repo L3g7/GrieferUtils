@@ -37,6 +37,7 @@ public class BankScoreboard extends ScoreboardHandler.ScoreboardMod {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Bankguthaben im Scoreboard")
+		.description("Fügt das Bankguthaben im Scoreboard hinzu.")
 		.icon("bank");
 
 	public BankScoreboard() {

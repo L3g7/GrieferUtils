@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
@@ -44,8 +45,10 @@ public class InteractableMessages extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Interagierbare Nachrichten")
+		.description("Macht TPAs, den CityBuild bei Globalchat-Nachrichten und den Status interagierbar.")
 		.icon("cursor");
 
+	private static final String COMMAND_PREFIX = "/griefer_utils_interactable_messages";
 	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
 	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
 	public static final Pattern STATUS_PATTERN = Pattern.compile(String.format("^%s§f (?<message>[^\u00bb]*)§*r*$", FORMATTED_PLAYER_PATTERN));
@@ -61,6 +64,11 @@ public class InteractableMessages extends Feature {
 		modifyGlobalChats(event);
 		modifyStatuses(event);
 		modifyTps(event);
+	}
+
+	@EventListener(triggerWhenDisabled = true)
+	public void onSend(MessageEvent.MessageSendEvent event) {
+
 	}
 
 	private static void modifyGlobalChats(MessageModifyEvent event) {

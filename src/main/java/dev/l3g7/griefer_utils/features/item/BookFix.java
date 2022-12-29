@@ -54,7 +54,7 @@ public class BookFix extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Bücher fixen")
-		.description("Unterbindet Linksklicks auf Büchern und öffnet eine Vorschau bei Rechtsklicks.")
+		.description("Unterbindet Linksklick auf Bücher und öffnet eine Vorschau bei Rechtsklick.")
 		.icon(Material.BOOK);
 
 	/**

@@ -72,6 +72,7 @@ public class CooldownNotifications extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Cooldown-Benachrichtigungen")
+		.description("Zeigt die momentanen Cooldowns an.")
 		.icon(Material.WATCH)
 		.config("features.cooldown_notifications.active")
 		.callback(v -> {

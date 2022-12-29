@@ -103,7 +103,7 @@ public abstract class PlayerList extends Feature {
 	public PlayerList(String name, String chatIcon, Object settingIcon, ModColor color, int paneType, String url) {
 		enabled
 			.name(name + "liste")
-			.description("Zeigt Spieler in der ScammerRadar-" + name + "liste an.")
+			.description("Markiert Spieler in der ScammerRadar-" + name + "liste.")
 			.icon(settingIcon)
 			.subSettings(tabAction, chatAction, displayNameAction, showInProfile);
 		this.name = name;

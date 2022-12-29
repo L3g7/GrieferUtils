@@ -40,7 +40,7 @@ public class ChatMods extends Feature {
 	);
 
 	private final BooleanSetting antiClearChat = new BooleanSetting()
-		.name("AntiClearChat")
+		.name("Clearchat unterbinden")
 		.icon(Material.BARRIER)
 		.defaultValue(true);
 

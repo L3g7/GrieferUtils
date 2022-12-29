@@ -35,6 +35,7 @@ public class ShowBarriers extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Barrieren anzeigen")
+		.description("Fügt Partikel bei Barrieren-Blöcken hinzu.")
 		.icon(Material.BARRIER);
 
 	@EventListener

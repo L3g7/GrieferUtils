@@ -64,6 +64,7 @@ public class ChatTime extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("ChatTime")
+		.description("Fügt den Zeitpunkt des Empfangens vor Chatnachrichten hinzu.")
 		.icon(Material.WATCH)
 		.subSettings(style, format);
 

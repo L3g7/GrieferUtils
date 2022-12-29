@@ -56,8 +56,9 @@ public class FilterWebhooks extends Feature {
 
 	@MainElement
     private final BooleanSetting enabled = new BooleanSetting()
-            .name("Webhooks in Filtern")
-            .icon("webhook");
+		.name("Webhooks in Filtern")
+		.description("Sendet eine Chatnachricht an einen Discord-Webhook, wenn ein LabyMod-Filter auslöst.")
+		.icon("webhook");
 
     public FilterWebhooks() {
 	    EMBED_FOOTER.addProperty("text", Constants.ADDON_NAME + " v" + AddonUtil.getVersion());

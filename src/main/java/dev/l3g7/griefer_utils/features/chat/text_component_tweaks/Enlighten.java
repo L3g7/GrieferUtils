@@ -58,6 +58,7 @@ public class Enlighten extends TextComponentTweak {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Aufhellen")
+		.description("Hellt dunkle Texte auf.")
 		.config("tweaks.enlighten.active")
 		.icon("light_bulb")
 		.callback(c -> updatePlayerInfoList())

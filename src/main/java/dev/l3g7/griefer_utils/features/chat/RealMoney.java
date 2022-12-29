@@ -49,6 +49,7 @@ public class RealMoney extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("RealMoney")
+		.description("Fügt einen Tag zu eingehenden Bezahlungen hinzu.")
 		.icon("coin_pile")
 		.subSettings(tag, position);
 

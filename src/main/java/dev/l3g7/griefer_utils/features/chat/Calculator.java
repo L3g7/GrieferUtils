@@ -87,6 +87,7 @@ public class Calculator extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Rechner")
+		.description("Ein Rechner in Nachrichten.")
 		.icon("calculator")
 		.subSettings(decimalPlaces, new HeaderSetting(),
 			autoWithdraw, depositAll, placeholder, autoEquationDetect);

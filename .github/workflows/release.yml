@@ -40,6 +40,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: ${{ github.event.head_commit.message }}
+          prerelease: true
 
       - name: Upload addon jar
         uses: actions/upload-release-asset@v1

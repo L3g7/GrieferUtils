@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinNetHandlerPlayClient {
 
 	@Inject(method = "addToSendQueue", at = @At("HEAD"), cancellable = true)
-	private void injectGetDisplayName(Packet<?> packet, CallbackInfo ci) {
+	private void injectPacketSendEvent(Packet<?> packet, CallbackInfo ci) {
 		if (!PacketSendEvent.shouldSendPacket(packet))
 			ci.cancel();
 	}

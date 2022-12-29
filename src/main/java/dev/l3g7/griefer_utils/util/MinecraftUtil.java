@@ -39,6 +39,8 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
+import java.util.UUID;
+
 /**
  * A utility class for simplified access to parts of Minecraft (and LabyMod).
  */
@@ -60,6 +62,10 @@ public class MinecraftUtil {
 
 	public static LabyMod         labyMod()        { return LabyMod.getInstance(); }
 	public static DrawUtils       drawUtils()      { return labyMod().getDrawUtils(); }
+
+	public static UUID uuid() {
+		return mc().getSession().getProfile().getId();
+	}
 
 	public static AxisAlignedBB axisAlignedBB(Vec3d a, Vec3d b) {
 		return new AxisAlignedBB(a.x, a.y, a.z, b.x, b.y, b.z);

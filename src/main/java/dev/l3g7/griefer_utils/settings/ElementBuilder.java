@@ -70,7 +70,11 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 	 * Sets the description of the setting to the given strings.
 	 */
 	default S description(String... description) {
-		((S) this).setDescriptionText(String.join("\n", description));
+		if (description.length == 0)
+			((S) this).setDescriptionText(null);
+		else
+			((S) this).setDescriptionText(String.join("\n", description));
+
 		return (S) this;
 	}
 
@@ -134,7 +138,7 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		subSettings(Arrays.asList(
 			new HeaderSetting("§r"),
 			new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-			new HeaderSetting("§e§l" + ((S) this).getDisplayName()).scale(.7),
+			new HeaderSetting("§e§l" + ((S) this).getDisplayName().replaceAll("§.", "")).scale(.7),
 			new HeaderSetting("§r").scale(.4).entryHeight(10)
 		));
 		return subSettings(Arrays.asList(settings));
@@ -146,6 +150,15 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 	default S subSettings(List<SettingsElement> settings) {
 		((S) this).getSubSettings().getElements().addAll(settings);
 		return (S) this;
+	}
+
+	default S settingsEnabled(boolean settingsEnabled) {
+		if(this instanceof ControlElement) {
+			((ControlElement) this).setSettingEnabled(settingsEnabled);
+			return (S) this;
+		}
+
+		throw new UnsupportedOperationException(this.getClass().getSimpleName() + "doesn't support settings!");
 	}
 
 	static Pair<SettingsElement, String> initMainElement(Object owner, String parentKey) {

@@ -22,10 +22,7 @@ import com.google.gson.*;
 import dev.l3g7.griefer_utils.util.misc.functions.TConsumer;
 import dev.l3g7.griefer_utils.util.misc.functions.TFunction;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -77,6 +74,33 @@ public class IOUtil {
 	 */
 	public static void writeJson(File file, JsonElement content) {
 		write(file, gson.toJson(content));
+	}
+
+	/**
+	 * Sends the given json to the URL using a POST request.
+	 */
+	public static void writeJson(String url, JsonElement json) {
+		Thread t = new Thread(() -> {
+			try {
+				HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+				conn.addRequestProperty("User-Agent", "GrieferUtils v" + AddonUtil.getVersion());
+				conn.setConnectTimeout(10000);
+				conn.setDoOutput(true);
+				conn.addRequestProperty("Content-Type", "application/json");
+				conn.setRequestMethod("POST");
+
+				try (OutputStream out = conn.getOutputStream()) {
+					out.write(json.toString().getBytes(UTF_8));
+					out.flush();
+				}
+				conn.getInputStream().close();
+				conn.disconnect();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		t.setPriority(Thread.MIN_PRIORITY);
+		t.start();
 	}
 
 	/**

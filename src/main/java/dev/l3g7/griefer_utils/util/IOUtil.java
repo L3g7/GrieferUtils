@@ -218,7 +218,7 @@ public class IOUtil {
 		 */
 		private <V> AsyncFailable readAsync(TFunction<InputStreamReader, V> parser, TConsumer<V> callback) {
 			AsyncFailable op = new AsyncFailable();
-			new Thread(() -> {
+			Thread t = new Thread(() -> {
 				try {
 					try (InputStreamReader in = new InputStreamReader(open(), UTF_8)) {
 						callback.accept(parser.apply(in));
@@ -228,7 +228,9 @@ public class IOUtil {
 					if (op.fallback != null)
 						op.fallback.accept(e);
 				}
-			}).start();
+			});
+			t.setPriority(Thread.MIN_PRIORITY);
+			t.start();
 			return op;
 		}
 

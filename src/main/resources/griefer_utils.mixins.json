@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.7.11",
   "mixins": [
+    "MixinChatRenderer",
     "MixinEntity",
     "MixinEntityPlayer",
     "MixinNetHandlerPlayClient"

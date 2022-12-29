@@ -104,7 +104,7 @@ public class FilterWebhooks extends Feature {
 	            JsonArray embeds = new JsonArray();
 				JsonObject embed = new JsonObject();
 				embed.add("title", sanitize(filter.getFilterName()));
-				embed.add("description", sanitize(event.getMessage()));
+				embed.add("description", sanitize(event.getMessage().replaceAll("§.", "")));
 				embed.add("footer", EMBED_FOOTER);
 				if (filter.isHighlightMessage())
 					embed.addProperty("color", ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff));

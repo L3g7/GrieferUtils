@@ -39,14 +39,12 @@ public class ClearLag extends Module {
 	private final BooleanSetting shorten = new BooleanSetting()
 		.name("Zeit kürzen")
 		.icon(Material.LEVER)
-		.config("modules.clear_lag.shorten")
-		.defaultValue(false);
+		.config("modules.clear_lag.shorten");
 
 	private final BooleanSetting warn = new BooleanSetting()
 		.name("Warnen")
 		.icon(Material.LEVER)
-		.config("modules.clear_lag.warn")
-		.defaultValue(false);
+		.config("modules.clear_lag.warn");
 
 	private long clearLagEnd = -1;
 

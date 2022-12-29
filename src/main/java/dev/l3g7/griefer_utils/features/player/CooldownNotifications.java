@@ -73,7 +73,6 @@ public class CooldownNotifications extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Cooldown-Benachrichtigungen")
 		.icon(Material.WATCH)
-		.defaultValue(false)
 		.config("features.cooldown_notifications.active")
 		.callback(v -> {
 			// If no data is found, open and close /cooldowns automatically

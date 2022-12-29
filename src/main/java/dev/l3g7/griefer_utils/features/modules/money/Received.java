@@ -55,7 +55,6 @@ public class Received extends Module {
 	private final BooleanSetting resetSetting = new BooleanSetting()
 		.name("Automatisch zurücksetzen")
 		.description("Ob automatisch um 04.00 das eingenommene Geld zurückgesetzt werden soll.")
-		.defaultValue(false)
 		.callback(b -> {
 			if (!b) {
 				nextReset = -1;

@@ -56,8 +56,7 @@ public class AutoUnnick extends Feature {
 		.description("Ob Spieler in der Tabliste entnickt werden sollen.")
 		.config("tweaks.auto_unnick.tab")
 		.icon("tab_list")
-		.callback(c -> updatePlayerInfoList())
-		.defaultValue(false);
+		.callback(c -> updatePlayerInfoList());
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()

@@ -36,8 +36,7 @@ public class OrbScoreboard extends ScoreboardHandler.ScoreboardMod {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Orbguthaben im Scoreboard")
-		.icon(Material.EXP_BOTTLE)
-		.defaultValue(true);
+		.icon(Material.EXP_BOTTLE);
 
 	public OrbScoreboard() {
 		super("Orbguthaben", 0);

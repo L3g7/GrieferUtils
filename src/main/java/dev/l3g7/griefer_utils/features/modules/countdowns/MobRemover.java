@@ -41,14 +41,12 @@ public class MobRemover extends Module {
 	private final BooleanSetting shorten = new BooleanSetting()
 		.name("Zeit kürzen")
 		.icon(Material.LEVER)
-		.config("modules.mob_remover.shorten")
-		.defaultValue(false);
+		.config("modules.mob_remover.shorten");
 
 	private final BooleanSetting warn = new BooleanSetting()
 		.name("Warnen")
 		.icon(Material.LEVER)
-		.config("modules.mob_remover.warn")
-		.defaultValue(false);
+		.config("modules.mob_remover.warn");
 
 	private long mobRemoverEnd = -1;
 

@@ -38,8 +38,7 @@ public class PortalCooldown extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Portal-Cooldown")
 		.description("Zeigt dir den 12s-Cooldown beim Betreten des Portalraums in der XP-Leiste an.")
-		.icon("hourglass")
-		.defaultValue(true);
+		.icon("hourglass");
 
 	private long timeoutEnd = 0;
 

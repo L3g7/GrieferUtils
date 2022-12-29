@@ -42,19 +42,19 @@ public class PortalCooldown extends Feature {
 
 	private long timeoutEnd = 0;
 
-	@SubscribeEvent
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessage(ClientChatReceivedEvent event) {
 		if (event.message.getFormattedText().equals("§r§8[§r§6GrieferGames§r§8] §r§fDu bist im §r§5Portalraum§r§f. Wähle deinen Citybuild aus.§r")) {
 			timeoutEnd = 12 * 20;
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerSwitchEvent event) {
 		timeoutEnd = 0;
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onServerQuit(ServerQuitEvent event) {
 		timeoutEnd = 0;
 	}

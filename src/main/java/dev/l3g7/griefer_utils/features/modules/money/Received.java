@@ -107,7 +107,7 @@ public class Received extends Module {
 		return reset;
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void onTick(TickEvent.ClientTickEvent tickEvent) {
 		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
 			nextReset = getNextReset();

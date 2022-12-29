@@ -135,7 +135,7 @@ public class OrbStats extends Module {
 		return new String[]{"?"};
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void onGuiOpen(GuiOpenEvent event) {
 		if (event.gui instanceof GuiChest)
 			lastScreen = ((GuiChest) event.gui);
@@ -160,7 +160,7 @@ public class OrbStats extends Module {
 		return uuidString.replaceFirst("^(.{8})(.{4})(.{4})(.{4})(.{12})$", "$1-$2-$3-$4-$5");
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void onTick(TickEvent.ClientTickEvent event) {
 		if (!isActive() || !ServerCheck.isOnCitybuild() || !(mc.currentScreen instanceof GuiChest))
 			return;

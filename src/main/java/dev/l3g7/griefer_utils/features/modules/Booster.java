@@ -93,7 +93,7 @@ public class Booster extends Module {
 		waitingForBoosterGUI = waitingForBoosterInfo = true;
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
 		if (!isOnGrieferGames())
 			return;

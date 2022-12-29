@@ -49,7 +49,7 @@ public abstract class Feature {
 		// Find package holding category meta
 		Package pkg = getClass().getPackage();
 		do {
-			if (pkg.isAnnotationPresent(Category.Meta.class))
+			if (pkg.isAnnotationPresent(Category.Meta.class) || pkg.isAnnotationPresent(Category.Uncategorized.class))
 				break;
 		} while ((pkg = Reflection.getParentPackage(pkg)) != null);
 

@@ -44,6 +44,12 @@ public class Category {
 	 * Creates a new category from the given package, using data from its meta annotation.
 	 */
 	private Category(Package pkg) {
+		if (pkg.isAnnotationPresent(Uncategorized.class)) {
+			setting = new BooleanSetting().set(true);
+			configKey = null;
+			return;
+		}
+
 		if (!pkg.isAnnotationPresent(Meta.class))
 			throw new IllegalStateException("Could not find category of " + pkg);
 
@@ -95,4 +101,7 @@ public class Category {
 
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.PACKAGE)
+	public @interface Uncategorized {}
 }

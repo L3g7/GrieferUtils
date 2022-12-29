@@ -27,10 +27,7 @@ import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.crash.CrashReport;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * The main page of the addon's settings.
@@ -55,12 +52,8 @@ public class MainPage {
 		// Load features
 		List<Feature> features = new ArrayList<>();
 		FileProvider.getClassesWithSuperClass(Feature.class).forEach(meta -> {
-			if (meta.isAbstract())
-				return;
-
-			Feature instance = FileProvider.getSingleton(meta.load());
-			instance.init();
-			features.add(instance);
+			if (!meta.isAbstract())
+				features.add(FileProvider.getSingleton(meta.load()));
 		});
 
 		features.sort(Comparator.comparing(f -> f.getMainElement().getDisplayName()));
@@ -69,7 +62,17 @@ public class MainPage {
 
 		// Add every category to the main page
 		Category.getCategories().stream()
+			.filter(c -> c.getConfigKey() != null)
 			.map(Category::getSetting)
+			.sorted(Comparator.comparing(SettingsElement::getDisplayName))
+			.forEach(settings::add);
+
+		settings.add(new HeaderSetting());
+
+		Category.getCategories()
+			.stream()
+			.filter(c -> c.getConfigKey() == null)
+			.flatMap(s -> s.getSetting().getSubSettings().getElements().stream())
 			.sorted(Comparator.comparing(SettingsElement::getDisplayName))
 			.forEach(settings::add);
 	}

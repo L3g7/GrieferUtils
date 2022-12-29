@@ -173,8 +173,9 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		SettingsElement mainElement = Reflection.get(owner, mainElementField);
 
 		// Load config key
-		String configKey = ownerClass.getSimpleName();
-		configKey = parentKey + "." + UPPER_CAMEL.to(LOWER_UNDERSCORE, configKey);
+		String configKey = UPPER_CAMEL.to(LOWER_UNDERSCORE, ownerClass.getSimpleName());
+		if (parentKey != null)
+			configKey = parentKey + "." + configKey;
 
 		// Load settings
 		if (mainElement instanceof ValueHolder<?, ?>)

@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.util.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import net.labymod.ingamegui.modules.ScoreboardModule;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -44,21 +45,13 @@ public class ScoreboardHandler {
 	private static final List<ScoreboardMod> info = new ArrayList<>();
 
 	@SuppressWarnings("unused") // Invoked via asm
-	public static boolean shouldNotUnlockScoreboard() {
-		return info.stream().noneMatch(Feature::isEnabled);
-	}
-
-	@SuppressWarnings("unused") // Invoked via asm
-	public static Collection<Score> filterScores(Collection<Score> scores) {
-		if (info.stream().noneMatch(Feature::isEnabled))
-			return scores;
-
-		// Skip the servers ip address
-		return Lists.newArrayList(Iterables.skip(scores, 3));
+	public static boolean shouldUnlockScoreboard() {
+		return ServerCheck.isOnGrieferGames() && info.stream().anyMatch(Feature::isEnabled);
 	}
 
 	Scoreboard sb;
 	ScoreObjective so;
+	private final List<Score> hiddenScores = new ArrayList<>();
 
 	@EventListener
 	public void onTick(TickEvent.ClientTickEvent tickEvent) {
@@ -98,6 +91,16 @@ public class ScoreboardHandler {
 		// Update the values
 		for (ScoreboardMod mod : activeInfoProvider)
 			sb.getTeam(mod.team).setNameSuffix(mod.getValue());
+
+		if (activeInfoProvider.isEmpty()) {
+			for (Score score : hiddenScores)
+				sb.getValueFromObjective(score.getPlayerName(), so).setScorePoints(score.getScorePoints());
+		} else {
+			sb.getSortedScores(so).stream().filter(x -> x.getScorePoints() < 3).forEach(s -> {
+				hiddenScores.add(s);
+				sb.removeObjectiveFromEntity(s.getPlayerName(), s.getObjective());
+			});
+		}
 	}
 
 	private void removeCustomScores(int highestScore) {

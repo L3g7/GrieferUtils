@@ -59,5 +59,17 @@
     "fields": {
       "blindness": "q"
     }
+  },
+  "net/minecraft/scoreboard/ScoreObjective": {
+    "notch": "auk"
+  },
+  "net/minecraft/client/gui/ScaledResolution": {
+    "notch": "avr"
+  },
+  "net/minecraft/client/gui/GuiIngame": {
+    "notch": "avo",
+    "methods": {
+      "renderScoreboard(Lnet/minecraft/scoreboard/ScoreObjective;Lnet/minecraft/client/gui/ScaledResolution;)V": "a"
+    }
   }
 }

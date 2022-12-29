@@ -41,7 +41,7 @@
   "net/minecraft/entity/EntityLivingBase": {
     "fields": {
       "resetPotionEffectMetadata": "func_175133_bi",
-      "updatePotionMetadata": "func_175135_B
+      "updatePotionMetadata": "func_175135_B"
     }
   },
   "net/minecraft/entity/Entity": {

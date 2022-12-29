@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ChatRenderer.class)
 public class MixinChatRenderer {
 
-	@Inject(method = "addChatLine", at = @At("HEAD"))
+	@Inject(method = "addChatLine", at = @At("HEAD"), remap = false)
 	private void injectGetDisplayName(String message, boolean secondChat, String room, Object component, int updateCounter, int chatLineId, Integer highlightColor, boolean refresh, CallbackInfo ci) {
 		if (!refresh)
 			ChatLineAddEvent.onLineAdd(message);

@@ -18,21 +18,26 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
+import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
@@ -45,6 +50,10 @@ public class PlayerHider extends Feature {
 
 	private boolean playingOwnSounds = false;
 
+	private final PlayerListSetting excludedPlayers = new PlayerListSetting()
+		.name("%s. Spieler")
+		.config("tweaks.player_hider.excluded_players");
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Spieler verstecken")
@@ -55,9 +64,14 @@ public class PlayerHider extends Feature {
 			if (isOnGrieferGames())
 				for (EntityPlayer player : world().playerEntities)
 					updatePlayer(player);
-		});
+		})
+		.subSettings(new HeaderSetting("Ausgenommene Spieler"), excludedPlayers);
 
-	@SubscribeEvent
+	{ excludedPlayers.setContainer(enabled); }
+
+	private final List<UUID> shownPlayers = new ArrayList<>();
+
+	@EventListener
 	public void onTick(TickEvent.ClientTickEvent event) {
 		if (!isOnGrieferGames())
 			return;
@@ -69,9 +83,9 @@ public class PlayerHider extends Feature {
 	/**
 	 * Handles the player model
 	 */
-	@SubscribeEvent
+	@EventListener
 	public void onEntityRender(RenderPlayerEvent.Pre event) {
-		if (!isOnGrieferGames() || event.entity == player())
+		if (!isOnGrieferGames() || showPlayer(event.entity))
 			return;
 
 		event.setCanceled(true);
@@ -80,16 +94,16 @@ public class PlayerHider extends Feature {
 	/**
 	 * Makes sure your own sounds are still played
 	 */
-	@SubscribeEvent
+	@EventListener
 	public void onSoundPlayAtEntity(PlaySoundAtEntityEvent event) {
-		if (event.entity.equals(player()))
+		if (showPlayer(event.entity))
 			playingOwnSounds = true;
 	}
 
 	/**
 	 * Cancels other players' sounds
 	 */
-	@SubscribeEvent
+	@EventListener
 	public void onSoundPlay(PlaySoundEvent event) {
 		if (!isOnGrieferGames())
 			return;
@@ -104,29 +118,42 @@ public class PlayerHider extends Feature {
 	}
 
 	private void updatePlayer(EntityPlayer player) {
-		if (player == player())
+		if (player.equals(player()) || shownPlayers.contains(player.getUniqueID()))
 			return;
 
+		boolean hide = isEnabled();
+
+		// Ensure player is shown when it was added while PlayerHider is active
+		if (excludedPlayers.get().contains(player.getUniqueID())) {
+			shownPlayers.add(player.getUniqueID());
+			hide = false;
+		}
+
 		// Shadows
-		if (player.isInvisible() != isEnabled())
-			player.setInvisible(isEnabled() || player.isPotionActive(Potion.invisibility));
+		if (player.isInvisible() != hide)
+			player.setInvisible(hide || player.isPotionActive(Potion.invisibility));
 
 		// Fire
-		if (player.isImmuneToFire() != isEnabled())
-			Reflection.set(player, isEnabled(), "isImmuneToFire");
+		if (player.isImmuneToFire() != hide)
+			Reflection.set(player, hide, "isImmuneToFire");
 
 		// Sprinting particles
-		player.setSprinting(!isEnabled());
+		if (hide)
+			player.setSprinting(false);
 
 		// Effect particles
-		if (isEnabled())
+		if (hide)
 			Reflection.invoke(player, "resetPotionEffectMetadata");
 		else
 			Reflection.invoke(player, "updatePotionMetadata");
 
-		player.setSilent(isEnabled());
+		player.setSilent(hide);
 		player.setEating(false);
 		player.clearItemInUse();
+	}
+
+	private boolean showPlayer(Entity player) {
+		return player.equals(player()) || excludedPlayers.get().contains(player.getUniqueID());
 	}
 
 }

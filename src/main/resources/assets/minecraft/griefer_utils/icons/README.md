@@ -18,6 +18,10 @@
     <td><a href="https://www.deviantart.com/ishmanallenlitchmore/art/chunk-of-minecraft-382711453">IshmanAllenLitchmore</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/cog.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/cog.png" height=16em width=16em/> cog.png</a></td>
+    <td><a href="https://www.dreamstime.com/pixel-icon-cogwheel-pixel-icon-cogwheel-three-variants-fully-editable-image123561946">Dreamstime (Starserfer)</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/cursor.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/cursor.png" height=16em width=16em/> cursor.png</a></td>
     <td><a href="https://stock.adobe.com/319860630">Adobe Stock</a></td>
   </tr>

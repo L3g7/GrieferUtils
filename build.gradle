@@ -78,12 +78,3 @@ task deobfJar(type: Jar) {
 	from sourceSets.main.output
 	archiveName = "griefer-utils-v${version}-api.jar"
 }
-
-// Test suite
-test {
-	useJUnitPlatform()
-}
-dependencies {
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
-}

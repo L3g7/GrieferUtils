@@ -154,6 +154,13 @@ public class IOUtil {
 		}
 
 		/**
+		 * Tries to read the input stream as a json object.
+		 */
+		public AsyncFailable asJsonObject(TConsumer<JsonObject> callback) {
+			return readAsync(in -> jsonParser.parse(in).getAsJsonObject(), callback);
+		}
+
+		/**
 		 * Tries to read the input stream using the given parser.
 		 * <br>
 		 * Example:

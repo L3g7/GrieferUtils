@@ -154,6 +154,7 @@
     <td>selfmade</td>
   </tr>
   <tr>
+	<!-- https://d1fdloi71mui9q.cloudfront.net/IBa9YlxRAOTxKwqdO1LA_zGa80ENAU97bC0AU -->
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/mysterymod.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/mysterymod.png" height=16em width=16em />&nbsp;&nbsp;mysterymod.png </a></td>
     <td><a href="https://linktr.ee/MysteryMod">Mysterymod</a></td>
   </tr>

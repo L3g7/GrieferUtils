@@ -47,7 +47,7 @@ public class TPS extends Module {
 	private int lastTripTime = 0;
 
 	public TPS() {
-		super("Server-TPS", "Zeigt eine (relativ genaue) Schätzung der aktuellen Server-TPS an.", "server-tps", new ControlElement.IconData(Material.COMMAND));
+		super("Server-TPS", "Zeigt eine (relativ genaue) Schätzung der aktuellen Server-TPS an.", "server-tps", new ControlElement.IconData("griefer_utils/icons/measurement_circle_thingy.png"));
 	}
 
 	@Override

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules;
+package dev.l3g7.griefer_utils.features.modules.orb_stats;
 
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.event.EventListener;
@@ -55,7 +55,7 @@ public class OrbBalance extends Module {
 	private static long balance = -1;
 
 	public OrbBalance() {
-		super("Orbguthaben", "Zeigt dir an, wie viele Orbs du hast.", "orb_balance", new ControlElement.IconData(Material.EXP_BOTTLE));
+		super("Orbguthaben", "Zeigt dir an, wie viele Orbs du hast.", "orb_balance", new ControlElement.IconData("griefer_utils/icons/orb.png"));
 	}
 
 	@EventListener

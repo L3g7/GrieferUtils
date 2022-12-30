@@ -35,7 +35,7 @@ import java.util.List;
 public class Earned extends Module {
 
 	public Earned() {
-		super("Verdient", "Zeigt dir, wie viel Geld du seit Minecraft-Start verdient hast", "earned", new IconData(Material.IRON_INGOT));
+		super("Verdient", "Zeigt dir, wie viel Geld du seit Minecraft-Start verdient hast", "earned", new IconData("griefer_utils/icons/coin_pile.png"));
 	}
 
 	@Override

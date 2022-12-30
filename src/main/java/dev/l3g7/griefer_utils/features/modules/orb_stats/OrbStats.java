@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules;
+package dev.l3g7.griefer_utils.features.modules.orb_stats;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -108,7 +108,7 @@ public class OrbStats extends Module {
 	private CompletableFuture<Void> guiInitBlock = null;
 
 	public OrbStats() {
-		super("OrbStatistik", "Zeigt dir an, wie oft das zuletzt abgegebene Item insgesamt abgegeben wurde.", "orb_stats", new ControlElement.IconData(Material.EXP_BOTTLE));
+		super("OrbStatistik", "Zeigt dir an, wie oft das zuletzt abgegebene Item insgesamt abgegeben wurde.", "orb_stats", new ControlElement.IconData("griefer_utils/icons/yellow_graph.png"));
 	}
 
 	public void loadSettings() {

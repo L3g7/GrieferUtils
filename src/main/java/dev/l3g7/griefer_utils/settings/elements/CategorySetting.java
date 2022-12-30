@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.chat_reactor;
+package dev.l3g7.griefer_utils.settings.elements;
 
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import net.labymod.settings.elements.ControlElement;

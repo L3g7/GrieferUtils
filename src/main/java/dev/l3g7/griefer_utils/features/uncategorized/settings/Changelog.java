@@ -20,7 +20,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.features.chat.chat_reactor.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.ChangelogScreen;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.TextSetting;

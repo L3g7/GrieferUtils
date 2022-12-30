@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.countdowns;
+package dev.l3g7.griefer_utils.features.modules.timers;
 
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
@@ -51,7 +51,7 @@ public class MobRemover extends Module {
 	private long mobRemoverEnd = -1;
 
 	public MobRemover() {
-		super("MobRemover", "Zeigt dir die Zeit bis zum nächsten MobRemover an", "mob_remover", new IconData(Material.LAVA_BUCKET));
+		super("MobRemover", "Zeigt dir die Zeit bis zum nächsten MobRemover an", "mob_remover", new IconData("griefer_utils/icons/skull_crossed_out.png"));
 	}
 
 	@Override

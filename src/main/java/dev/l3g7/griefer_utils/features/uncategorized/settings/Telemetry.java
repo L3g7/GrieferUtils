@@ -20,7 +20,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.features.chat.chat_reactor.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;

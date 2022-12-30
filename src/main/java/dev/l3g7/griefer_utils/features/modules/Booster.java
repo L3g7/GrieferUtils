@@ -75,7 +75,7 @@ public class Booster extends Module {
 	private boolean waitingForBoosterInfo = false;
 
 	public Booster() {
-		super("Booster", "Zeigt dir die momentan aktiven Booster an", "booster", new IconData(Material.FIREWORK));
+		super("Booster", "Zeigt dir die momentan aktiven Booster an", "booster", new IconData("griefer_utils/icons/rocket.png"));
 	}
 
 	@EventListener

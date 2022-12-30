@@ -30,9 +30,7 @@ import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.misc.ServerCheck;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.math.BigDecimal;
@@ -69,7 +67,7 @@ public class Received extends Module {
 		});
 
     public Received() {
-        super("Eingenommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast", "received", new IconData(Material.EMERALD));
+        super("Eingenommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast", "received", new IconData("griefer_utils/icons/wallet_ingoing.png"));
     }
 
 

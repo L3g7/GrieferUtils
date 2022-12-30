@@ -38,7 +38,7 @@ import java.util.List;
 public class HeadOwner extends Module {
 
     public HeadOwner() {
-        super("HeadOwner", "Zeigt dir den Spieler, dessen Kopf du ansiehst.", "head-owner", new IconData("griefer_utils/icons/info.png"));
+        super("HeadOwner", "Zeigt dir den Spieler, dessen Kopf du ansiehst.", "head-owner", new IconData("griefer_utils/icons/steve.png"));
     }
 
     @Override

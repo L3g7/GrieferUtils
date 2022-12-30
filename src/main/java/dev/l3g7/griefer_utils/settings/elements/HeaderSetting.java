@@ -19,26 +19,28 @@
 package dev.l3g7.griefer_utils.settings.elements;
 
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
-import net.labymod.settings.elements.HeaderElement;
+import net.labymod.main.LabyMod;
+import net.labymod.settings.elements.ControlElement;
+import net.labymod.settings.elements.SettingsElement;
 
 /**
  * A setting to display text.
  */
-public class HeaderSetting extends HeaderElement implements ElementBuilder<HeaderSetting> {
+public class HeaderSetting extends ControlElement implements ElementBuilder<HeaderSetting> {
 
-	private int entryHeight = super.getEntryHeight();
+	private int entryHeight = 22;
+	private double scale = 1;
 
 	public HeaderSetting() {
-		super("§c");
+		this("§c");
 	}
 
 	public HeaderSetting(String name) {
-		super(name);
+		super(name, null);
 	}
 
 	public HeaderSetting scale(double scale) {
-		Reflection.set(this, scale, "textSize");
+		this.scale = scale;
 		return this;
 	}
 
@@ -48,8 +50,18 @@ public class HeaderSetting extends HeaderElement implements ElementBuilder<Heade
 	}
 
 	@Override
+	public int getObjectWidth() {
+		return 9999999; // To suppress LabyMod focusing it when clicked
+	}
+
+	@Override
 	public int getEntryHeight() {
 		return entryHeight;
+	}
+
+	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+		this.mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
+		LabyMod.getInstance().getDrawUtils().drawCenteredString(getDisplayName(), x + (maxX - x) / 2d, y + 7, scale);
 	}
 
 }

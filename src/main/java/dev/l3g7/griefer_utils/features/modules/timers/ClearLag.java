@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.countdowns;
+package dev.l3g7.griefer_utils.features.modules.timers;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.event.EventListener;
@@ -49,7 +49,7 @@ public class ClearLag extends Module {
 	private long clearLagEnd = -1;
 
 	public ClearLag() {
-		super("Clearlag", "Zeigt dir die Zeit bis zum nächsten Clearlag an", "clearlag", new ControlElement.IconData(Material.LAVA_BUCKET));
+		super("Clearlag", "Zeigt dir die Zeit bis zum nächsten Clearlag an", "clearlag", new ControlElement.IconData("griefer_utils/icons/gold_ingot_crossed_out.png"));
 	}
 
 	@Override

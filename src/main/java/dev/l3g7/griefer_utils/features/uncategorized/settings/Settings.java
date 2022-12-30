@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.chat.chat_reactor.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.AutoUpdate;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;

@@ -54,6 +54,10 @@
     <td><a href="https://www.flaticon.com/free-icon/account_1738691">Flaticon (Freepik)</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/mob_icons/"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/mob_icons/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/* </a></td>
+    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest?cb=20221212235332&version=1670889213562&format=png">Minecraft Wiki</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/arrow_circle.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/arrow_circle.png" height=16em width=16em />&nbsp;&nbsp;arrow_circle.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>

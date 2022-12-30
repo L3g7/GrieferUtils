@@ -49,6 +49,12 @@ public abstract class Module extends SimpleTextModule {
 	public static void register() {
 		ModuleCategoryRegistry.loadCategory(CATEGORY);
 
+		FileProvider.getClassesWithSuperClass(Module.class).stream()
+			.map(meta -> (Module) FileProvider.getSingleton(meta.load()))
+			.sorted((a, b) -> (a.getClass().getPackage().getName() + a.getControlName()).compareToIgnoreCase((b.getClass().getPackage().getName() + b.getControlName()))) // Include package in sorting so the modules are grouped
+			.forEach(LabyMod.getInstance().getLabyModAPI()::registerModule);
+
+		// Inject headers
 		SimpleModule stylingModule = new SimpleModule(){
 			public String getDisplayName() { return ""; }
 			public String getDisplayValue() { return ""; }
@@ -61,21 +67,15 @@ public abstract class Module extends SimpleTextModule {
 			public boolean isEnabled(EnumDisplayType displayType) { return true; }
 		};
 
-		FileProvider.getClassesWithSuperClass(Module.class).stream()
-			.map(meta -> (Module) FileProvider.getSingleton(meta.load()))
-			.sorted((a, b) -> (a.getClass().getPackage().getName() + a.getControlName()).compareToIgnoreCase((b.getClass().getPackage().getName() + b.getControlName()))) // Include package in sorting so the modules are grouped
-			.forEach(LabyMod.getInstance().getLabyModAPI()::registerModule);
-
-		// Inject headers
 		List<SettingsElement> elems = CATEGORY.getCategoryElement().getSubSettings().getElements();
 
-		int o = 0;
-		elems.add(o++, new HeaderSetting().entryHeight(8));
-		elems.add(o++, new HeaderSetting("§r§l" + Constants.ADDON_NAME).scale(1.3));
-		elems.add(o++, new HeaderSetting("Geld-Statistiken"));
-		elems.add(3 + o++, new HeaderSetting("Orb-Statistiken"));
-		elems.add(5 + o++, new HeaderSetting("Countdowns"));
-		elems.add(7 + o  , new HeaderSetting("Misc"));
+		int offset = 0;
+		elems.add(offset++, new HeaderSetting().entryHeight(8));
+		elems.add(offset++, new HeaderSetting("§r§l" + Constants.ADDON_NAME).scale(1.3));
+		elems.add(offset++, new HeaderSetting("Geld-Statistiken"));
+		elems.add(3 + offset++, new HeaderSetting("Orb-Statistiken"));
+		elems.add(5 + offset++, new HeaderSetting("Countdowns"));
+		elems.add(7 + offset  , new HeaderSetting("Misc"));
 
 		for (SettingsElement elem : elems)
 			if (((ControlElement) elem).getModule() == null)
@@ -86,16 +86,6 @@ public abstract class Module extends SimpleTextModule {
 	private final String description;
 	private final String configKey;
 	private final ControlElement.IconData iconData;
-
-	@EventListener
-	public static void onGuiInit(GuiOpenEvent event) {
-		if (event.gui instanceof LabyModModuleEditorGui) {
-			ModuleGui moduleGui = Reflection.get(LabyModModuleEditorGui.class, "moduleGui");
-			System.out.println(moduleGui.getClickModuleListeners());
-			System.out.println(moduleGui.getMouseClickListeners());
-			System.out.println(moduleGui.getDoubleClickModuleListeners());
-		}
-	}
 
 	public Module(String name, String description, String configKey, ControlElement.IconData iconData) {
 		this.name = name;

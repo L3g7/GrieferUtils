@@ -37,21 +37,18 @@ public class Enlighten extends TextComponentTweak {
 
 	private final BooleanSetting enlightenLightGray = new BooleanSetting()
 		.name("Hellgrau aufhellen")
-		.config("tweaks.enlighten.light_gray")
 		.icon(new ItemStack(Blocks.wool, 1, 8))
 		.callback(c -> updatePlayerInfoList());
 
 	private final RadioSetting<GrayMode> enlightenGray = new RadioSetting<>(GrayMode.class)
 		.name("Grau zu ...")
 		.icon(new ItemStack(Blocks.wool, 1, 7))
-		.config("tweaks.enlighten.gray")
 		.defaultValue(GrayMode.GRAY)
 		.callback(c -> updatePlayerInfoList());
 
 	private final RadioSetting<BlackMode> enlightenBlack = new RadioSetting<>(BlackMode.class)
 		.name("Schwarz zu ...")
 		.icon(new ItemStack(Blocks.wool, 1, 15))
-		.config("tweaks.enlighten.black")
 		.defaultValue(BlackMode.BLACK)
 		.callback(c -> updatePlayerInfoList());
 
@@ -59,7 +56,6 @@ public class Enlighten extends TextComponentTweak {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Aufhellen")
 		.description("Hellt dunkle Texte auf.")
-		.config("tweaks.enlighten.active")
 		.icon("light_bulb")
 		.callback(c -> updatePlayerInfoList())
 		.subSettings(enlightenLightGray, enlightenGray, enlightenBlack,

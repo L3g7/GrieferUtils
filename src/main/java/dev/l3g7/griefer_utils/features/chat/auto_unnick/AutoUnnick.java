@@ -38,7 +38,10 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +57,6 @@ public class AutoUnnick extends Feature {
 	private final BooleanSetting tab = new BooleanSetting()
 		.name("In Tabliste")
 		.description("Ob Spieler in der Tabliste entnickt werden sollen.")
-		.config("tweaks.auto_unnick.tab")
 		.icon("tab_list")
 		.callback(c -> updatePlayerInfoList());
 

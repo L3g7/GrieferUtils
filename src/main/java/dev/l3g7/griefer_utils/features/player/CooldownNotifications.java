@@ -74,7 +74,6 @@ public class CooldownNotifications extends Feature {
 		.name("Cooldown-Benachrichtigungen")
 		.description("Zeigt die momentanen Cooldowns an.")
 		.icon(Material.WATCH)
-		.config("features.cooldown_notifications.active")
 		.callback(v -> {
 			// If no data is found, open and close /cooldowns automatically
 			if (v && endDates.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForCooldownGUI) {

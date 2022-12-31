@@ -51,8 +51,7 @@ public class PlayerHider extends Feature {
 	private boolean playingOwnSounds = false;
 
 	private final PlayerListSetting excludedPlayers = new PlayerListSetting()
-		.name("%s. Spieler")
-		.config("tweaks.player_hider.excluded_players");
+		.name("%s. Spieler");
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()

@@ -69,14 +69,14 @@ public class FilterWebhooks extends Feature {
         JsonObject data = new JsonObject();
         for (Map.Entry<String, String> entry : webhooks.entrySet())
             data.addProperty(entry.getKey(), entry.getValue());
-        Config.set("tweaks.webhooks.filter", data);
+        Config.set("chat.webhooks.filter", data);
         Config.save();
     }
 
     @OnEnable
     private void loadWebhooks() {
-        if (Config.has("tweaks.webhooks.filter"))
-            for (Map.Entry<String, JsonElement> entry : Config.get("tweaks.webhooks.filter").getAsJsonObject().entrySet()) {
+        if (Config.has("chat.webhooks.filter"))
+            for (Map.Entry<String, JsonElement> entry : Config.get("chat.webhooks.filter").getAsJsonObject().entrySet()) {
 				String value = entry.getValue().getAsString();
 				if (!value.trim().isEmpty())
 		            webhooks.put(entry.getKey(), entry.getValue().getAsString());

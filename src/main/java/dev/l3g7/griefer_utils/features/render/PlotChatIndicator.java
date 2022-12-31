@@ -81,7 +81,7 @@ public class PlotChatIndicator extends Feature {
 		if (!isOnGrieferGames())
 			return;
 
-		String path = "tweaks.plot_chat_indicator.states." + mc().getSession().getProfile().getId();
+		String path = "chat.plot_chat_indicator.states." + mc().getSession().getProfile().getId();
 		if (Config.has(path))
 			states = new StringBuilder(Config.get(path).getAsString());
 		else
@@ -115,7 +115,7 @@ public class PlotChatIndicator extends Feature {
 		if (event.message.getFormattedText().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
 			plotchatState = event.message.getFormattedText().contains(" aktiviert");
 			states.setCharAt(getIndex(server), plotchatState ? 'Y' : 'N');
-			Config.set("tweaks.plot_chat_indicator.states." + mc().getSession().getProfile().getId(), new JsonPrimitive(states.toString()));
+			Config.set("chat.plot_chat_indicator.states." + mc().getSession().getProfile().getId(), new JsonPrimitive(states.toString()));
 			Config.save();
 
 			if (waitingForPlotchatStatus) {

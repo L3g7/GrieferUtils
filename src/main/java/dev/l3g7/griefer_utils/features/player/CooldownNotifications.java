@@ -229,13 +229,13 @@ public class CooldownNotifications extends Feature {
 			o.addProperty(entry.getKey(), entry.getValue());
 
 		// Save end dates along with player uuid so no problems occur when using multiple accounts
-		Config.set("features.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId(), o);
+		Config.set("player.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId(), o);
 		Config.save();
 	}
 
 	@EventListener
 	public void loadCooldowns(ServerEvent.ServerJoinEvent event) {
-		String path = "features.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId();
+		String path = "player.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId();
 
 		if (Config.has(path)) {
 			endDates.clear();

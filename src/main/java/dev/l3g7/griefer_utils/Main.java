@@ -58,7 +58,11 @@ public class Main extends LabyModAddon {
 				return;
 
 			Feature instance = FileProvider.getSingleton(meta.load());
-			instance.init();
+			try {
+				instance.init();
+			} catch (RuntimeException t) {
+				MinecraftUtil.mc().displayCrashReport(new CrashReport("GrieferUtils konnte nicht geladen werden!", t));
+			}
 		});
 
 		try {

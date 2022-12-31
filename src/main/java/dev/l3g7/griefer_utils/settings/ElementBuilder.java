@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.settings;
 
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.util.Util;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.main.LabyMod;
@@ -210,10 +211,14 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 			String key = parentKey + "." + LOWER_CAMEL.to(LOWER_UNDERSCORE, field.getName());
 			loadSubSettings(owner, element, key);
 			if (element instanceof ValueHolder<?, ?>) {
-				if (hasSubSettings)
-					((ValueHolder<?, ?>) element).config(key + ".value");
-				else
-					((ValueHolder<?, ?>) element).config(key);
+				try {
+					if (hasSubSettings)
+						((ValueHolder<?, ?>) element).config(key + ".value");
+					else
+						((ValueHolder<?, ?>) element).config(key);
+				} catch (RuntimeException t) {
+					throw Util.addMessage(t, "loading config for %s.%s failed!", field.getDeclaringClass().getSimpleName(), field.getName());
+				}
 			}
 		}
 	}

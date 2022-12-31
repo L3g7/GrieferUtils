@@ -99,7 +99,7 @@ public class PrefixFinder {
 
 	@OnEnable
 	private static void init() {
-		IOUtil.read("https://grieferutils.l3g7.dev/repeating_prefixes/").asJsonArray(jsonArray -> {
+		IOUtil.read("https://grieferutils.l3g7.dev/v2/repeating_prefixes").asJsonArray(jsonArray -> {
 			String[] prefixes = new String[jsonArray.size()];
 
 			for (int i = 0; i < jsonArray.size(); i++)

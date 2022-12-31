@@ -48,7 +48,7 @@ public class AddonDescriptor {
 			updateDescription(YELLOW + "Verbinde mit GrieferUtils-Server ...");
 
 			// Load description from server, so it can be used as news board
-			IOUtil.read("https://grieferutils.l3g7.dev/addon_description/")
+			IOUtil.read("https://grieferutils.l3g7.dev/v2/addon_description")
 				.asJsonString(this::updateDescription)
 				.orElse(() -> updateDescription(YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :("));
 		}

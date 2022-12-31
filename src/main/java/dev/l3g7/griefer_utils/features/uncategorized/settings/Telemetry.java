@@ -80,7 +80,7 @@ public class Telemetry {
 		if (uuid.get())
 			data.addProperty("uuid", uuid().toString());
 
-		IOUtil.writeJson("https://grieferutils.l3g7.dev/telemetry/", data);
+		IOUtil.writeJson("https://grieferutils.l3g7.dev/v2/telemetry", data);
 	}
 
 }

@@ -98,7 +98,7 @@ public class AutoUpdate {
 			return;
 		}
 
-		IOUtil.read("https://grieferutils.l3g7.dev/v2_latest_release/").asJsonString(releaseId -> {
+		IOUtil.read("https://grieferutils.l3g7.dev/v2/latest_release").asJsonString(releaseId -> {
 			IOUtil.read("https://api.github.com/repos/L3g7/GrieferUtils/releases/" + releaseId).asJsonObject(latestRelease -> {
 				String tag = latestRelease.get("tag_name").getAsString().replaceFirst("v", "");
 				if (tag.equals(AddonUtil.getVersion())) {

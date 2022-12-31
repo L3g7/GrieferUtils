@@ -22,6 +22,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
+import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.misc.PlayerDataProvider;
 import dev.l3g7.griefer_utils.util.misc.PlayerDataProvider.PlayerData;
 import net.labymod.core.LabyModCore;
@@ -32,7 +33,6 @@ import net.labymod.settings.PreviewRenderer;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
-import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -150,33 +150,11 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 
 	}
 
-	private class PlayerAddSetting extends ControlElement {
+	private class PlayerAddSetting extends EntryAddSetting {
 
 		PlayerAddSetting() {
-			super("Spieler hinzufügen", new IconData("labymod/textures/settings/category/addons.png"));
-		}
-
-		@Override
-		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
-
-			drawUtils().drawRectangle(x, y, maxX, maxY, ModColor.toRGB(80, 80, 80, 60));
-			int iconWidth = iconData != null ? 25 : 2;
-			mc.getTextureManager().bindTexture(iconData.getTextureIcon());
-
-			if (mouseOver) {
-				drawUtils().drawTexture(x + 2, y + 2, 256.0, 256.0, 18, 18);
-				drawUtils().drawString(displayName, x + iconWidth + 1, (double) y + 7 - 0);
-			} else {
-				drawUtils().drawTexture(x + 3, y + 3, 256.0, 256.0, 16.0, 16.0);
-				drawUtils().drawString(displayName, x + iconWidth, (double) y + 7 - 0);
-			}
-		}
-
-		@Override
-		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-			if (mouseOver)
-				Minecraft.getMinecraft().displayGuiScreen(new AddPlayerGui(Minecraft.getMinecraft().currentScreen));
+			super("Spieler hinzufügen");
+			callback(() -> Minecraft.getMinecraft().displayGuiScreen(new AddPlayerGui(Minecraft.getMinecraft().currentScreen)));
 		}
 
 		private class AddPlayerGui extends GuiScreen {

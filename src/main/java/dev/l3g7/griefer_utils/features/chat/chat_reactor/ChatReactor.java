@@ -23,17 +23,17 @@ import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.ChatLineAddEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.misc.Config;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraft.client.Minecraft;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -42,25 +42,24 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 public class ChatReactor extends Feature {
 
 	private static boolean loaded = false;
-	private static final List<ChatReactorEntry> entries = new ArrayList<>();
 
-	private static final ButtonSetting newEntrySetting = new ButtonSetting()
-			.name("Neue Reaktion erstellen")
-			.callback(() -> {
-				ChatReactorEntry newEntry = new ChatReactorEntry();
-				((List<SettingsElement>) Reflection.get(mc().currentScreen, "path")).add(newEntry.getSetting());
-				entries.add(newEntry);
-				mc().currentScreen.initGui();
-			});
+	private static final EntryAddSetting newEntrySetting = new EntryAddSetting()
+		.name("Neue Reaktion erstellen")
+		.callback(() -> Minecraft.getMinecraft().displayGuiScreen(new AddChatReactionGui(null, Minecraft.getMinecraft().currentScreen)));
 
 	@MainElement(configureSubSettings = false)
 	private static final BooleanSetting enabled = new BooleanSetting()
 		.name("ChatReactor")
 		.description("Führt bei Chatnachrichten Befehle aus.")
 		.icon("cpu")
+		.subSettings(new HeaderSetting("Reaktionen"), newEntrySetting);
 
 	public ChatReactor() {
 		loadEntries();
+	}
+
+	private static List<SettingsElement> getPath() {
+		return Reflection.get(mc().currentScreen, "path");
 	}
 
 	public static void saveEntries() {
@@ -68,40 +67,13 @@ public class ChatReactor extends Feature {
 			return;
 
 		JsonArray array = new JsonArray();
-		for (ChatReactorEntry entry : entries)
-			if (entry.isValid())
-				array.add(entry.toJson());
+		for (SettingsElement element : enabled.getSubSettings().getElements()) {
+			if (element instanceof ReactionDisplaySetting)
+				array.add(((ReactionDisplaySetting) element).reaction.toJson());
+		}
 
 		Config.set("chat.chat_reactor.entries", array);
 		Config.save();
-	}
-
-	protected static void updateSettings() {
-		if (!loaded)
-			return;
-
-		List<SettingsElement> settings = new ArrayList<>();
-
-		for (ChatReactorEntry entry : entries) {
-			if (!entry.isValid())
-				continue;
-
-			SettingsElement setting = entry.getSetting();
-			setting.getSubSettings().add(new ButtonSetting()
-					.name("Reaktion entfernen")
-					.callback(() -> {
-						entries.remove(entry);
-						settings.remove(setting);
-						saveEntries();
-						updateSettings();
-						((List<SettingsElement>) Reflection.get(mc().currentScreen, "path")).remove(((List<SettingsElement>) Reflection.get(mc().currentScreen, "path")).size() - 1);
-						mc().currentScreen.initGui();
-					}));
-			settings.add(setting);
-		}
-
-		settings.add(newEntrySetting);
-		enabled.subSettings(settings.toArray(new SettingsElement[0]));
 	}
 
 	private void loadEntries() {
@@ -109,25 +81,22 @@ public class ChatReactor extends Feature {
 		String path = "chat.chat_reactor.entries";
 		if (Config.has(path)) {
 			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
-				ChatReactorEntry entry = ChatReactorEntry.fromJson(jsonElement.getAsJsonObject());
-
-				if (!entry.isValid())
-					continue;
-
-				entries.add(entry);
+				ChatReaction reaction = ChatReaction.fromJson(jsonElement.getAsJsonObject());
+				new ReactionDisplaySetting(reaction, enabled).icon(reaction.regEx ? "regex" : "yellow_t");
 			}
 		}
 
 		loaded = true;
-		updateSettings();
 	}
 
 	@EventListener
 	public void onMsg(ChatLineAddEvent event) {
-		if (mc().currentScreen instanceof LabyModAddonsGui && ((List<SettingsElement>) Reflection.get(mc().currentScreen, "path")).contains(getMainElement()))
+		if (mc().currentScreen instanceof LabyModAddonsGui && getPath().contains(getMainElement()))
 			return;
 
-		for (ChatReactorEntry entry : entries)
-			entry.checkMatch(event.getMessage());
+		for (SettingsElement element : enabled.getSubSettings().getElements()) {
+			if (element instanceof ReactionDisplaySetting)
+				((ReactionDisplaySetting) element).reaction.processMessage(event.getMessage());
+		}
 	}
 }

@@ -163,12 +163,16 @@
     <td><a href="https://linktr.ee/MysteryMod">Mysterymod</a></td>
   </tr>
   <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/one_player_plague.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/one_player_plague.png" height=16em width=16em />&nbsp;&nbsp;one_player_plague.png </a></td>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/one_player_plaque.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/one_player_plaque.png" height=16em width=16em />&nbsp;&nbsp;one_player_plaque.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/orb.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/orb.png" height=16em width=16em />&nbsp;&nbsp;orb.png </a></td>
     <td><a href="https://www.deviantart.com/bronzefish678/art/Pixel-orb-thing-245073608">DeviantArt (bronzefish678)</a></td>
+  </tr>
+  <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/pencil.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/pencil.png" height=16em width=16em />&nbsp;&nbsp;pencil.png </a></td>
+    <td><a href="https://www.pinterest.de/pin/151081762469399143/">Pinterest (Jason Robb)</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/player_menu.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/player_menu.png" height=16em width=16em />&nbsp;&nbsp;player_menu.png </a></td>
@@ -261,5 +265,9 @@
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_name.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_name.png" height=16em width=16em />&nbsp;&nbsp;yellow_name.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_t.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_t.png" height=16em width=16em />&nbsp;&nbsp;yellow_t.png </a></td>
+    <td>selfmade</td>
   </tr>
 </table>

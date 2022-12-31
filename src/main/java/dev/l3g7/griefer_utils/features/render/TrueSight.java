@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SliderSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
@@ -66,7 +67,7 @@ public class TrueSight extends Feature {
 		.name("TrueSight")
 		.description("Macht unsichtbare Entities sichtbar.")
 		.icon("blue_light_bulb")
-		.subSettings(opacity);
+		.subSettings(opacity, new HeaderSetting());
 
 	private final Map<Class<? extends Entity>, BooleanSetting> entities = new HashMap<>();
 

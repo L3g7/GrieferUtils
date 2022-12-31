@@ -22,38 +22,6 @@
     <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
   </tr>
   <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/chat.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/chat.png" height=16em width=16em />&nbsp;&nbsp;chat_menu/chat.png </a></td>
-    <td><a href="https://mysterymod.net/">MysteryMod asset</a></td>
-  </tr>
-  <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/chest.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/chest.png" height=16em width=16em />&nbsp;&nbsp;chat_menu/chest.png </a></td>
-    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/chest/normal.png">Minecraft asset</a></td>
-  </tr>
-  <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/copy.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/copy.png" height=16em width=16em />&nbsp;&nbsp;chat_menu/copy.png </a></td>
-    <td><a href="https://mysterymod.net/">MysteryMod asset</a></td>
-  </tr>
-  <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/ender_chest.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/ender_chest.png" height=16em width=16em />&nbsp;&nbsp;chat_menu/ender_chest.png </a></td>
-    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/chest/ender.png">Minecraft asset</a></td>
-  </tr>
-  <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/file.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/file.png" height=16em width=16em />&nbsp;&nbsp;chat_menu/file.png </a></td>
-    <td><a href="https://icon-icons.com/de/symbol/leer-file/122778">Icon-Icons (Butterflytronics)</a></td>
-  </tr>
-  <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/history.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/history.png" height=16em width=16em />&nbsp;&nbsp;chat_menu/history.png </a></td>
-    <td><a href="https://www.flaticon.com/free-icon/clock_2972431">Flaticon (Freepik)</a></td>
-  </tr>
-  <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/internet.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/internet.png" height=16em width=16em />&nbsp;&nbsp;chat_menu/internet.png </a></td>
-    <td><a href="https://www.flaticon.com/free-icon/internet_1011322">Flaticon (Freepik)</a></td>
-  </tr>
-  <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/profile.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chat_menu/profile.png" height=16em width=16em />&nbsp;&nbsp;chat_menu/profile.png </a></td>
-    <td><a href="https://www.flaticon.com/free-icon/account_1738691">Flaticon (Freepik)</a></td>
-  </tr>
-  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/mob_icons/"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/mob_icons/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/* </a></td>
     <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest?cb=20221212235332&version=1670889213562&format=png">Minecraft Wiki</a></td>
   </tr>
@@ -70,6 +38,10 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/mob_effect/blindness.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/blue_graph.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/blue_graph.png" height=16em width=16em />&nbsp;&nbsp;blue_graph.png </a></td>
+    <td><a href="https://www.vecteezy.com/vector-art/6470596-falling-chart-pixel-art-business-icon">Vectezzy (Dooder)</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/blue_light_bulb.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/blue_light_bulb.png" height=16em width=16em />&nbsp;&nbsp;blue_light_bulb.png </a></td>
     <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock (karpenko_ilia)</a></td>
   </tr>
@@ -82,12 +54,16 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/gui/container/stats_icons.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/bundle.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/bundle.png" height=16em width=16em />&nbsp;&nbsp;bundle.png </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/bundle_filled.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/calculator.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/calculator.png" height=16em width=16em />&nbsp;&nbsp;calculator.png </a></td>
     <td><a href="https://apps.apple.com/us/app/calculator/id1069511488">Apple calculator</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chest.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chest.png" height=16em width=16em />&nbsp;&nbsp;chest.png </a></td>
-    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/chest/normal.png">Minecraft asset</a></td>
+    <td><a href="https://stock.adobe.com/de/images/set-of-pixel-boxes/192886298?prev_url=detail">Adobe Stock (Markov)</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chunk.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chunk.png" height=16em width=16em />&nbsp;&nbsp;chunk.png </a></td>
@@ -102,8 +78,12 @@
     <td><a href="https://www.shutterstock.com/image-vector/pixel-art-golden-coin-retro-video-1024225483">Shutterstock (Gamegfx)</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/cpu.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/cpu.png" height=16em width=16em />&nbsp;&nbsp;cpu.png </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/electronics-pixel-art-icons-set-artificial-1508310176">Shutterstock (VectorPixelStar)</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/cursor.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/cursor.png" height=16em width=16em />&nbsp;&nbsp;cursor.png </a></td>
-    <td><a href="https://stock.adobe.com/319860630">Adobe Stock (soponyono)</a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/discord.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/discord.png" height=16em width=16em />&nbsp;&nbsp;discord.png </a></td>
@@ -116,6 +96,10 @@
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/earth.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/earth.png" height=16em width=16em />&nbsp;&nbsp;earth.png </a></td>
     <td><a href="https://www.dreamstime.com/129325507">Dreamstime (Tsipilevin)</a></td>
+  </tr>
+  <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/earth_grid.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/earth_grid.png" height=16em width=16em />&nbsp;&nbsp;earth_grid.png </a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/fading_steve.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/fading_steve.png" height=16em width=16em />&nbsp;&nbsp;fading_steve.png </a></td>
@@ -158,6 +142,10 @@
     <td><a href="https://www.freepik.com/premium-vector/vector-illustration-cute-pixel-art-icon-geek-lightning-element-style-90s-game_29366701.htm">Freepik (Olive Kitt)</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/magnifying_glass.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/magnifying_glass.png" height=16em width=16em />&nbsp;&nbsp;magnifying_glass.png </a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/light_bulb.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/light_bulb.png" height=16em width=16em />&nbsp;&nbsp;light_bulb.png </a></td>
     <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock (karpenko_ilia)</a></td>
   </tr>
@@ -175,8 +163,16 @@
     <td><a href="https://linktr.ee/MysteryMod">Mysterymod</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/one_player_plague.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/one_player_plague.png" height=16em width=16em />&nbsp;&nbsp;one_player_plague.png </a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/orb.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/orb.png" height=16em width=16em />&nbsp;&nbsp;orb.png </a></td>
     <td><a href="https://www.deviantart.com/bronzefish678/art/Pixel-orb-thing-245073608">DeviantArt (bronzefish678)</a></td>
+  </tr>
+  <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/player_menu.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/player_menu.png" height=16em width=16em />&nbsp;&nbsp;player_menu.png </a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/portal.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/portal.png" height=16em width=16em />&nbsp;&nbsp;portal.png </a></td>
@@ -211,10 +207,6 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/mob_effect/resistance.png">Minecraft asset</a></td>
   </tr>
   <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/siren.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/siren.png" height=16em width=16em />&nbsp;&nbsp;siren.png </a></td>
-    <td><a href="https://www.flaticon.com/free-icon/siren_2785693">Flaticon (Freepik)</a></td>
-  </tr>
-  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/skull_crossed_out.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/skull_crossed_out.png" height=16em width=16em />&nbsp;&nbsp;skull_crossed_out.png </a></td>
     <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
   </tr>
@@ -232,6 +224,10 @@
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/steve.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/steve.png" height=16em width=16em />&nbsp;&nbsp;steve.png </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/steve.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/steve_creeper.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/steve_creeper.png" height=16em width=16em />&nbsp;&nbsp;steve_creeper.png </a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/steve.png">Minecraft asset</a></td>
   </tr>
   <tr>
@@ -259,8 +255,8 @@
     <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
   </tr>
   <tr>
-    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_graph.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_graph.png" height=16em width=16em />&nbsp;&nbsp;yellow_graph.png </a></td>
-    <td><a href="https://www.vecteezy.com/vector-art/6470596-falling-chart-pixel-art-business-icon">Vectezzy (Dooder)</a></td>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/wooden_board.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/wooden_board.png" height=16em width=16em />&nbsp;&nbsp;wooden_board.png </a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_name.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/yellow_name.png" height=16em width=16em />&nbsp;&nbsp;yellow_name.png </a></td>

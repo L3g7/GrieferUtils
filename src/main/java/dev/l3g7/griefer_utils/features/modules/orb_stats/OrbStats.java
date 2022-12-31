@@ -108,7 +108,7 @@ public class OrbStats extends Module {
 	private CompletableFuture<Void> guiInitBlock = null;
 
 	public OrbStats() {
-		super("OrbStatistik", "Zeigt dir an, wie oft das zuletzt abgegebene Item insgesamt abgegeben wurde.", "orb_stats", new ControlElement.IconData("griefer_utils/icons/yellow_graph.png"));
+		super("OrbStatistik", "Zeigt dir an, wie oft das zuletzt abgegebene Item insgesamt abgegeben wurde.", "orb_stats", new ControlElement.IconData("griefer_utils/icons/blue_graph.png"));
 	}
 
 	public void loadSettings() {

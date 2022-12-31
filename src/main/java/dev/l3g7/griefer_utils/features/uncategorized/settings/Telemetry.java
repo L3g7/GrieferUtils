@@ -44,7 +44,7 @@ public class Telemetry {
 		.name("Ping")
 		.description("Ob der Telemetrie-Server angepingt werden soll, um zu signalisieren, dass GrieferUtils installiert ist.")
 		.config("settings.telemetry.ping")
-		.icon("info")
+		.icon("one_player_plaque")
 		.defaultValue(true)
 		.callback(v -> { if (!v) updateTelemetrySettings(); });
 
@@ -53,7 +53,7 @@ public class Telemetry {
 	public static final CategorySetting category = new CategorySetting()
 		.name("Telemetrie")
 		.description("GrieferUtils sammelt Nutzungsdaten, um die Benutzerfreundlichkeit zu verbessern. Da die Daten uns helfen, würde es uns freuen, wenn sie gesendet werden ^.^", "", "§7§oUm Spam vorzubeugen, wird zusätzlich zu den einstellbaren Daten ein Hash deiner IP gespeichert. Alle erhobenen Daten werden bis zu 365 Tage lang gespeichert. Falls du die erhobenen Daten erhalten oder löschen willst, melde dich bei einem Entwickler über Discord oder schreibe eine Email an grieferutils@l3g7.dev")
-		.icon("info")
+		.icon("magnifying_glass")
 		.subSettings(telemetrySettings.toArray(new BooleanSetting[0]))
 		.subSettings(Collections.singletonList(ping));
 

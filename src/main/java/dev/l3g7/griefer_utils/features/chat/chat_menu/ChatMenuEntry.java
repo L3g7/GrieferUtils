@@ -63,13 +63,13 @@ public class ChatMenuEntry {
 	}};
 
 	private static final Map<String, Object> DEFAULT_ICONS = new HashMap<String, Object>() {{
-		put("open_profile", "chat_menu/profile");
-		put("name_history", "chat_menu/history");
-		put("copy_name", "chat_menu/copy");
-		put("search_forum", "chat_menu/internet");
-		put("open_inv", "chat_menu/chest");
-		put("view_gear", Material.DIAMOND_CHESTPLATE);
-		put("open_ec", "chat_menu/ender_chest");
+		put("open_profile", "wooden_board");
+		put("name_history", "yellow_name");
+		put("copy_name", "yellow_name");
+		put("search_forum", "earth_grid");
+		put("open_inv", "bundle");
+		put("view_gear", Material.IRON_CHESTPLATE);
+		put("open_ec", "chest");
 	}};
 
 	private final AtomicReference<String> icon = new AtomicReference<>(); // Atomic reference so it can be set in lambdas

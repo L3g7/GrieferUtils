@@ -48,14 +48,14 @@ public class AutoUpdate {
 		.name("Changelog anzeigen")
 		.description("Ob der Changelog angezeigt werden soll, wenn GrieferUtils aktualisiert wurde.")
 		.config("settings.auto_update.show_changelog")
-		.icon(ItemUtil.createItem(Blocks.stained_glass_pane, 0, true))
+		.icon(ItemUtil.createItem(Blocks.stained_glass_pane, 12, true))
 		.defaultValue(true);
 
 	public static final BooleanSetting enabled = new BooleanSetting()
 		.name("Automatisch updaten")
 		.description("Updatet GrieferUtils automatisch auf die neuste Version.")
 		.config("settings.auto_update.enabled")
-		.icon("labymod:settings/settings/serverlistliveview")
+		.icon("arrow_circle")
 		.defaultValue(true)
 		.subSettings(showChangelog);
 

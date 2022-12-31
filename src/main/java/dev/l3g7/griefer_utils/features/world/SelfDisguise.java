@@ -80,7 +80,7 @@ public class SelfDisguise extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("SelfDisguise")
 		.description("Erlaubt das Sehen der derzeitigen Verkleidung im Third-Person-Modus.")
-		.icon("fading_steve")
+		.icon("steve_creeper")
 		.callback(v -> { if (!v) hideDisguise(); });
 
 	public void init() {

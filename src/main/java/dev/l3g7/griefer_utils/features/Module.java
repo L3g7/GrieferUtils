@@ -18,9 +18,7 @@
 
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.features.modules.money.Received;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.misc.Constants;
@@ -28,22 +26,50 @@ import dev.l3g7.griefer_utils.util.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.ingamegui.ModuleCategory;
 import net.labymod.ingamegui.ModuleCategoryRegistry;
-import net.labymod.ingamegui.ModuleGui;
 import net.labymod.ingamegui.enums.EnumDisplayType;
 import net.labymod.ingamegui.moduletypes.SimpleModule;
 import net.labymod.ingamegui.moduletypes.SimpleTextModule;
 import net.labymod.main.LabyMod;
-import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Consumer;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
 import java.util.List;
 
 public abstract class Module extends SimpleTextModule {
 
-	public static final ModuleCategory CATEGORY = new ModuleCategory(Constants.ADDON_NAME, true, new ControlElement.IconData("griefer_utils/icons/icon.png"));
+	public static final ModuleCategory CATEGORY = new ModuleCategory(Constants.ADDON_NAME, true, new ControlElement.IconData("griefer_utils/icons/icon.png")) {
+		@Override
+		public void createCategoryElement() {
+			super.createCategoryElement();
+
+			// Inject headers
+			SimpleModule stylingModule = new SimpleModule(){
+				public String getDisplayName() { return ""; }
+				public String getDisplayValue() { return ""; }
+				public String getDefaultValue() { return ""; }
+				public String getSettingName() { return ""; }
+				public String getDescription() { return null; }
+				public void loadSettings() {}
+				public int getSortingId() { return 0; }
+				public ControlElement.IconData getIconData() { return null; }
+				public boolean isEnabled(EnumDisplayType displayType) { return true; }
+			};
+
+			List<SettingsElement> elems = CATEGORY.getCategoryElement().getSubSettings().getElements();
+
+			int offset = 0;
+			elems.add(offset++, new HeaderSetting().entryHeight(8));
+			elems.add(offset++, new HeaderSetting("§r§l" + Constants.ADDON_NAME).scale(1.3));
+			elems.add(offset++, new HeaderSetting("Geld-Statistiken"));
+			elems.add(3 + offset++, new HeaderSetting("Orb-Statistiken"));
+			elems.add(5 + offset++, new HeaderSetting("Countdowns"));
+			elems.add(7 + offset  , new HeaderSetting("Misc"));
+
+			for (SettingsElement elem : elems)
+				if (((ControlElement) elem).getModule() == null)
+					Reflection.set(elem, stylingModule, "module");
+		}
+	};
 
 	@OnEnable
 	public static void register() {
@@ -53,33 +79,6 @@ public abstract class Module extends SimpleTextModule {
 			.map(meta -> (Module) FileProvider.getSingleton(meta.load()))
 			.sorted((a, b) -> (a.getClass().getPackage().getName() + a.getControlName()).compareToIgnoreCase((b.getClass().getPackage().getName() + b.getControlName()))) // Include package in sorting so the modules are grouped
 			.forEach(LabyMod.getInstance().getLabyModAPI()::registerModule);
-
-		// Inject headers
-		SimpleModule stylingModule = new SimpleModule(){
-			public String getDisplayName() { return ""; }
-			public String getDisplayValue() { return ""; }
-			public String getDefaultValue() { return ""; }
-			public String getSettingName() { return ""; }
-			public String getDescription() { return null; }
-			public void loadSettings() {}
-			public int getSortingId() { return 0; }
-			public ControlElement.IconData getIconData() { return null; }
-			public boolean isEnabled(EnumDisplayType displayType) { return true; }
-		};
-
-		List<SettingsElement> elems = CATEGORY.getCategoryElement().getSubSettings().getElements();
-
-		int offset = 0;
-		elems.add(offset++, new HeaderSetting().entryHeight(8));
-		elems.add(offset++, new HeaderSetting("§r§l" + Constants.ADDON_NAME).scale(1.3));
-		elems.add(offset++, new HeaderSetting("Geld-Statistiken"));
-		elems.add(3 + offset++, new HeaderSetting("Orb-Statistiken"));
-		elems.add(5 + offset++, new HeaderSetting("Countdowns"));
-		elems.add(7 + offset  , new HeaderSetting("Misc"));
-
-		for (SettingsElement elem : elems)
-			if (((ControlElement) elem).getModule() == null)
-				Reflection.set(elem, stylingModule, "module");
 	}
 
 	private final String name;

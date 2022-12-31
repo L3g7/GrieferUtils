@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import net.labymod.utils.Material;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
@@ -49,7 +49,7 @@ public class ChatMods extends Feature {
 		.icon(Material.BARRIER)
 		.defaultValue(true);
 
-	private final RadioSetting<NewsMode> news = new RadioSetting<>(NewsMode.class)
+	private final DropDownSetting<NewsMode> news = new DropDownSetting<>(NewsMode.class)
 		.name("News")
 		.icon("exclamation_mark")
 		.icon("labymod:buttons/exclamation_mark")
@@ -104,7 +104,7 @@ public class ChatMods extends Feature {
 
 	private enum NewsMode {
 
-		NONE("Versteckt"), COMPACT("Kompakt"), NORMAL("Normal");
+		NORMAL("Normal"), COMPACT("Kompakt"), NONE("Versteckt");
 
 		private final String name;
 		NewsMode(String name) {

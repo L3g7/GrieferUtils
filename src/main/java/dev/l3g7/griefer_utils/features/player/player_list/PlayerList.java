@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.features.player.player_list;
 
-import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.DisplayNameGetEvent;
@@ -27,7 +26,7 @@ import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
@@ -75,18 +74,18 @@ public abstract class PlayerList extends Feature {
 	private final List<String> names = new ArrayList<>();
 
 	// List settings
-	public final RadioSetting<MarkAction> tabAction = new RadioSetting<>(MarkAction.class)
+	public final DropDownSetting<MarkAction> tabAction = new DropDownSetting<>(MarkAction.class)
 		.name("in Tabliste")
 		.icon("tab_list")
 		.defaultValue(ICON)
 		.callback(a -> TabListEvent.updatePlayerInfoList());
 
-	public final RadioSetting<MarkAction> chatAction = new RadioSetting<>(MarkAction.class)
+	public final DropDownSetting<MarkAction> chatAction = new DropDownSetting<>(MarkAction.class)
 		.name("in Chat")
 		.icon("speech_bubble")
 		.defaultValue(ICON);
 
-	public final RadioSetting<MarkAction> displayNameAction = new RadioSetting<>(MarkAction.class)
+	public final DropDownSetting<MarkAction> displayNameAction = new DropDownSetting<>(MarkAction.class)
 		.name("Vor Nametag")
 		.icon("yellow_name")
 		.defaultValue(ICON);
@@ -226,9 +225,9 @@ public abstract class PlayerList extends Feature {
 
 	enum MarkAction {
 
-		DISABLED("Aus"),  // Don't mark an entry
+		TAG("Als Text"),  // Mark an entry using a tag,   e.g. [SCAMMER]
 		ICON("Als Icon"), // Mark an entry using an icon, e.g. [⚠]
-		TAG("Als Text");  // Mark an entry using a tag,   e.g. [SCAMMER]
+		DISABLED("Aus");  // Don't mark an entry
 
 		final String name;
 		MarkAction(String name) {

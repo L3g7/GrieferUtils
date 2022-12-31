@@ -21,8 +21,8 @@ package dev.l3g7.griefer_utils.features.chat.text_component_tweaks;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
@@ -40,13 +40,13 @@ public class Enlighten extends TextComponentTweak {
 		.icon(new ItemStack(Blocks.wool, 1, 8))
 		.callback(c -> updatePlayerInfoList());
 
-	private final RadioSetting<GrayMode> enlightenGray = new RadioSetting<>(GrayMode.class)
+	private final DropDownSetting<GrayMode> enlightenGray = new DropDownSetting<>(GrayMode.class)
 		.name("Grau zu ...")
 		.icon(new ItemStack(Blocks.wool, 1, 7))
 		.defaultValue(GrayMode.GRAY)
 		.callback(c -> updatePlayerInfoList());
 
-	private final RadioSetting<BlackMode> enlightenBlack = new RadioSetting<>(BlackMode.class)
+	private final DropDownSetting<BlackMode> enlightenBlack = new DropDownSetting<>(BlackMode.class)
 		.name("Schwarz zu ...")
 		.icon(new ItemStack(Blocks.wool, 1, 15))
 		.defaultValue(BlackMode.BLACK)
@@ -68,7 +68,7 @@ public class Enlighten extends TextComponentTweak {
 		if (!component.getUnformattedTextForChat().equals("\u2503 ")) {
 			if (component.getChatStyle().getColor() == BLACK)
 				component.setChatStyle(component.getChatStyle().setColor(enlightenBlack.get().formatting));
-			else if (component.getChatStyle().getColor() == DARK_GRAY)
+			else if (component.getChatStyle().getColor() == EnumChatFormatting.DARK_GRAY)
 				component.setChatStyle(component.getChatStyle().setColor(enlightenGray.get().formatting));
 			else if (component.getChatStyle().getColor() == GRAY)
 				component.setChatStyle(component.getChatStyle().setColor(enlightenLightGray.get() ? WHITE : GRAY));
@@ -106,7 +106,9 @@ public class Enlighten extends TextComponentTweak {
 
 	private enum GrayMode {
 
-		WHITE("Weiß", EnumChatFormatting.WHITE), LIGHT("Hellgrau", EnumChatFormatting.GRAY), GRAY("Grau", DARK_GRAY);
+		GRAY("Grau", EnumChatFormatting.DARK_GRAY),
+		LIGHT("Hellgrau", EnumChatFormatting.GRAY),
+		WHITE("Weiß", EnumChatFormatting.WHITE);
 
 		private final String name;
 		private final EnumChatFormatting formatting;
@@ -120,7 +122,10 @@ public class Enlighten extends TextComponentTweak {
 
 	private enum BlackMode {
 
-		WHITE("Weiß", EnumChatFormatting.WHITE), LIGHT("Hellgrau", EnumChatFormatting.GRAY), GRAY("Grau", DARK_GRAY), BLACK("Schwarz", EnumChatFormatting.BLACK);
+		BLACK("Schwarz", EnumChatFormatting.BLACK),
+		GRAY("Grau", EnumChatFormatting.DARK_GRAY),
+		LIGHT("Hellgrau", EnumChatFormatting.GRAY),
+		WHITE("Weiß", EnumChatFormatting.WHITE);
 
 		private final String name;
 		private final EnumChatFormatting formatting;

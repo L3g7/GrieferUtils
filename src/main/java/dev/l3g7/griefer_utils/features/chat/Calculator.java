@@ -26,9 +26,9 @@ import dev.l3g7.griefer_utils.features.render.scoreboard.BankScoreboard;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.misc.TickScheduler;
 import net.labymod.utils.Material;
@@ -54,7 +54,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 @Singleton
 public class Calculator extends Feature {
 
-	private final RadioSetting<WithdrawAction> autoWithdraw = new RadioSetting<>(WithdrawAction.class)
+	private final DropDownSetting<WithdrawAction> autoWithdraw = new DropDownSetting<>(WithdrawAction.class)
 		.name("Auto. abheben")
 		.icon("bank")
 		.defaultValue(WithdrawAction.SUGGEST);
@@ -243,7 +243,7 @@ public class Calculator extends Feature {
 
 	private enum WithdrawAction {
 
-		SEND("Senden"), SUGGEST("Vorschlagen"), NONE("Nein");
+		NONE("Nein"), SUGGEST("Vorschlagen"), SEND("Senden");
 
 		private final String name;
 		WithdrawAction(String name) {

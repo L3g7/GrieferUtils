@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.RadioSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.misc.Vec3d;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -61,7 +61,7 @@ import static org.lwjgl.util.glu.GLU.GLU_SILHOUETTE;
 public class Trajectories extends Feature {
 
 	@MainElement
-	private final RadioSetting<TrajectoryMode> mode = new RadioSetting<>(TrajectoryMode.class)
+	private final DropDownSetting<TrajectoryMode> mode = new DropDownSetting<>(TrajectoryMode.class)
 		.name("Trajectories")
 		.description("Zeigt dir die Flugbahn des gehaltenen Items an.")
 		.icon("labymod:settings/settings/marker")

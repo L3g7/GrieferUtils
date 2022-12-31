@@ -45,6 +45,7 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 	private final IconStorage iconStorage = new IconStorage();
 	private Function<E, String> stringProvider = Enum::toString;
 	private int dropDownWidth;
+	private int dropDownX;
 
 	public DropDownSetting(Class<E> enumClass) {
 		super("§cNo name set", null);
@@ -54,7 +55,16 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		storage = new Storage<>(e -> new JsonPrimitive(e.name()), s -> Enum.valueOf(enumClass, s.getAsString()), enumClass.getEnumConstants()[0]);
 
 		// Initialize menu
-		DropDownMenu<E> menu = new DropDownMenu<>("", 0, 0, 0, 0);
+		DropDownMenu<E> menu = new DropDownMenu<E>("", 0, 0, 0, 0) {
+			public void setWidth(int width) {
+				if (width == dropDownWidth) // Stop DropDownElement from updating the width
+					super.setWidth(width);
+			}
+			public void setX(int x) {
+				if (x == dropDownX) // Stop DropDownElement from updating x
+					super.setX(x);
+			}
+		};
 		menu.fill(enumClass.getEnumConstants());
 		Reflection.set(this, menu, "dropDownMenu");
 
@@ -99,9 +109,10 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		dropDownWidth = ((List<E>) Reflection.get(getDropDownMenu(), "list"))
 			.stream().mapToInt(e -> drawUtils.getStringWidth(function.apply(e)))
 			.max()
-			.orElse(0);
+			.orElse(0)
+			+ 26;
 
-		dropDownWidth = Math.max(dropDownWidth, 90);
+		getDropDownMenu().setWidth(dropDownWidth);
 
 		return this;
 	}
@@ -124,7 +135,9 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		// Reset selection, so selected value isn't rendered
 		Object selected = dropDownMenu.getSelected();
 		dropDownMenu.setSelected(null);
+		dropDownMenu.setWidth(dropDownWidth);
 
+		dropDownMenu.setX(dropDownX = maxX - dropDownWidth - 5);
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		drawIcon(x, y);
 
@@ -134,7 +147,7 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 
 		// Draw selected entry with fixed width
 		String trimmedEntry = drawUtils.trimStringToWidth(ModColor.cl("f") + stringProvider.apply((E) selected), 80);
-		drawUtils.drawString(trimmedEntry, maxX - 100, (y + 3) + height / 2f - 4);
+		drawUtils.drawString(trimmedEntry, dropDownX + 5, (y + 3) + height / 2f - 4);
 
 		// Draw gradient
 		drawUtils.drawGradientShadowRight(maxX - 21, y + 3, maxY - 3);
@@ -149,7 +162,6 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 
 		dropDownMenu.setWidth(dropDownWidth + 9);
 		dropDownMenu.drawMenuDirect(dropDownMenu.getX(), dropDownMenu.getY(), mouseX, mouseY);
-		dropDownMenu.setWidth(100);
 	}
 
 }

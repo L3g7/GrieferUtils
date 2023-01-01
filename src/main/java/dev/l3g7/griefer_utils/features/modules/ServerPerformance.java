@@ -22,8 +22,9 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import net.labymod.settings.elements.ControlElement;
+import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.Packet;
@@ -39,7 +40,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
  * Concept by <a href="https://github.com/Pleezon/ServerTPS/blob/bebc5e75e592fdc1bf9401b1a5d42454028227b0/src/main/java/de/techgamez/pleezon/Main.java">Pleezon/ServerTPS</a>
  */
 @Singleton
-public class TPS extends Module {
+public class ServerPerformance extends Module {
 
 	private Double currentTPS = null;
 	private Long lastWorldTime = null;
@@ -47,14 +48,15 @@ public class TPS extends Module {
 	private long lastMillis = 0;
 	private int lastTripTime = 0;
 
-	private final BooleanSetting displayAsPercent = new BooleanSetting()
-		.name("In Prozent anzeigen")
-		.description("Ob die Performance in Prozent angezeigt werden soll, anstatt in TPS.")
-		.config("modules.tps.display_as_percent")
-		.defaultValue(true);
+	private final DropDownSetting<DisplayMode> displayMode = new DropDownSetting<>(DisplayMode.class)
+		.name("Anzeigemodus")
+		.icon("wooden_board")
+		.description("Ob die Performance in Prozent angezeigt oder in TPS angezeigt werden soll.")
+		.config("modules.tps.display_mode")
+		.defaultValue(DisplayMode.PERCENT);
 
-	public TPS() {
-		super("Server-TPS", "Zeigt eine (relativ genaue) Schätzung der aktuellen Server-TPS an.", "server-tps", new ControlElement.IconData("griefer_utils/icons/measurement_circle_thingy.png"));
+	public ServerPerformance() {
+		super("Server-Performance", "Zeigt eine (relativ genaue) Schätzung der aktuellen Server-Performance an.", "server-performance", new IconData("griefer_utils/icons/measurement_circle_thingy.png"));
 	}
 
 	@Override
@@ -67,13 +69,13 @@ public class TPS extends Module {
 		if (currentTPS == null)
 			return getDefaultValues();
 
-		return new String[] {displayAsPercent.get() ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS)};
+		return new String[] { displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS)};
 	}
 
 	@Override
 	public void fillSubSettings(List<SettingsElement> list) {
 		super.fillSubSettings(list);
-		list.add(displayAsPercent);
+		list.add(displayMode);
 	}
 
 	@EventListener
@@ -127,4 +129,13 @@ public class TPS extends Module {
 		lastMillis = currentMillis;
 	}
 
+	private enum DisplayMode {
+		PERCENT("Prozent"),
+		TPS("TPS");
+
+		private final String name;
+		DisplayMode(String name) {
+			this.name = name;
+		}
+	}
 }

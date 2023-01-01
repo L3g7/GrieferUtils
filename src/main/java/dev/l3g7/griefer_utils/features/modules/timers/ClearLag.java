@@ -25,10 +25,10 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.Util;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -36,14 +36,15 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class ClearLag extends Module {
 
-	private final BooleanSetting shorten = new BooleanSetting()
-		.name("Zeit kürzen")
-		.icon(Material.LEVER)
-		.config("modules.clear_lag.shorten");
+	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
+		.name("Zeitformat")
+		.icon("hourglass")
+		.config("modules.mob_remover.shorten")
+		.defaultValue(TimeFormat.LONG);
 
 	private final BooleanSetting warn = new BooleanSetting()
 		.name("Warnen")
-		.icon(Material.LEVER)
+		.icon("labymod:buttons/exclamation_mark")
 		.config("modules.clear_lag.warn");
 
 	private long clearLagEnd = -1;
@@ -68,7 +69,7 @@ public class ClearLag extends Module {
 				title("§c§l" + s);
 		}
 
-		return new String[]{Util.formatTime(clearLagEnd, shorten.get())};
+		return new String[]{Util.formatTime(clearLagEnd, timeFormat.get() == TimeFormat.SHORT)};
 	}
 
 	@Override
@@ -95,7 +96,7 @@ public class ClearLag extends Module {
 	@Override
 	public void fillSubSettings(List<SettingsElement> list) {
 		super.fillSubSettings(list);
-		list.add(shorten);
+		list.add(timeFormat);
 		list.add(warn);
 	}
 
@@ -105,4 +106,13 @@ public class ClearLag extends Module {
 		mc.ingameGUI.displayTitle(null, null, 0, 2, 3);
 	}
 
+	private enum TimeFormat {
+		SHORT("Kurz"),
+		LONG("Lang");
+
+		private final String name;
+		TimeFormat(String name) {
+			this.name = name;
+		}
+	}
 }

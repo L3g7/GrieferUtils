@@ -21,9 +21,12 @@ package dev.l3g7.griefer_utils.features.modules.money;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
+import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.misc.ServerCheck;
 import net.labymod.main.LabyMod;
+import net.labymod.main.ModTextures;
+import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
@@ -55,10 +58,15 @@ public class Earned extends Module {
 
 	@Override
 	public void fillSubSettings(List<SettingsElement> list) {
-		list.add(new ButtonSetting().name("Zurücksetzen").callback(() -> {
-			Received.moneyReceived = BigDecimal.ZERO;
-			Spent.moneySpent = BigDecimal.ZERO;
-		}));
+		super.fillSubSettings(list);
+		list.add(new SmallButtonSetting()
+			.name("Zurücksetzen")
+			.icon("arrow_circle")
+			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
+			.callback(() -> {
+				Received.moneyReceived = BigDecimal.ZERO;
+				Spent.moneySpent = BigDecimal.ZERO;
+			}));
 	}
 
 }

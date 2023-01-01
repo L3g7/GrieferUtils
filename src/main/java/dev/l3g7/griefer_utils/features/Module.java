@@ -108,4 +108,14 @@ public abstract class Module extends SimpleTextModule {
 	public int getSortingId() { return 0; }
 	public ModuleCategory getCategory() { return CATEGORY; }
 
+
+	@Override
+	public void fillSubSettings(List<SettingsElement> list) {
+		list.add(new HeaderSetting().entryHeight(8));
+		list.add(new HeaderSetting("§r§l" + Constants.ADDON_NAME).scale(1.3));
+		list.add(new HeaderSetting(getControlName()));
+		super.fillSubSettings(list);
+		list.add(new HeaderSetting());
+	}
+
 }

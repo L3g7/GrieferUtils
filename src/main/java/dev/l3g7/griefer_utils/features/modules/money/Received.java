@@ -24,10 +24,11 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
+import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import dev.l3g7.griefer_utils.util.misc.Config;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.misc.ServerCheck;
+import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -53,6 +54,7 @@ public class Received extends Module {
 	private final BooleanSetting resetSetting = new BooleanSetting()
 		.name("Automatisch zurücksetzen")
 		.description("Ob automatisch um 04:00 das eingenommene Geld zurückgesetzt werden soll.")
+		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
 		.callback(b -> {
 			if (!b) {
 				nextReset = -1;
@@ -73,9 +75,19 @@ public class Received extends Module {
 
     @Override
     public void fillSubSettings(List<SettingsElement> list) {
+		super.fillSubSettings(list);
 		list.add(resetSetting);
-        list.add(new ButtonSetting().name("Zurücksetzen").callback(() -> setBalance(ZERO)));
-        list.add(new ButtonSetting().name("Alles zurücksetzen").callback(() -> setBalance(Spent.setBalance(ZERO))));
+	    list.add(new SmallButtonSetting()
+		    .name("Zurücksetzen")
+		    .icon("arrow_circle")
+		    .buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
+		    .callback(() -> setBalance(ZERO)));
+
+	    list.add(new SmallButtonSetting()
+		    .name("Alles zurücksetzen")
+		    .icon("arrow_circle")
+		    .buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
+		    .callback(() -> setBalance(Spent.setBalance(ZERO))));
     }
 
     @Override

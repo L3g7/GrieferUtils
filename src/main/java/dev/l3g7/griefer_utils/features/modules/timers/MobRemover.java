@@ -23,10 +23,10 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.Util;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.List;
@@ -38,14 +38,15 @@ public class MobRemover extends Module {
 
 	private static final Pattern MOB_REMOVER_PATTERN = Pattern.compile("§r§8\\[§r§6MobRemover§r§8] §r§4Achtung! §r§7In §r§e(?<minutes>\\d) Minuten §r§7werden alle Tiere gelöscht\\.§r");
 
-	private final BooleanSetting shorten = new BooleanSetting()
-		.name("Zeit kürzen")
-		.icon(Material.LEVER)
-		.config("modules.mob_remover.shorten");
+	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
+		.name("Zeitformat")
+		.icon("hourglass")
+		.config("modules.mob_remover.shorten")
+		.defaultValue(TimeFormat.LONG);
 
 	private final BooleanSetting warn = new BooleanSetting()
 		.name("Warnen")
-		.icon(Material.LEVER)
+		.icon("labymod:buttons/exclamation_mark")
 		.config("modules.mob_remover.warn");
 
 	private long mobRemoverEnd = -1;
@@ -70,7 +71,7 @@ public class MobRemover extends Module {
 				title("§c§l" + s);
 		}
 
-		return new String[]{Util.formatTime(mobRemoverEnd, shorten.get())};
+		return new String[]{Util.formatTime(mobRemoverEnd, timeFormat.get() == TimeFormat.SHORT)};
 	}
 
 	@Override
@@ -95,7 +96,7 @@ public class MobRemover extends Module {
 	@Override
 	public void fillSubSettings(List<SettingsElement> list) {
 		super.fillSubSettings(list);
-		list.add(shorten);
+		list.add(timeFormat);
 		list.add(warn);
 	}
 
@@ -105,4 +106,13 @@ public class MobRemover extends Module {
 		mc.ingameGUI.displayTitle(null, null, 0, 2, 3);
 	}
 
+	private enum TimeFormat {
+		SHORT("Kurz"),
+		LONG("Lang");
+
+		private final String name;
+		TimeFormat(String name) {
+			this.name = name;
+		}
+	}
 }

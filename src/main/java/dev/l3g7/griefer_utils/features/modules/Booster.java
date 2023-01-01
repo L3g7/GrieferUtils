@@ -58,8 +58,9 @@ public class Booster extends Module {
 	private final static Pattern BOOSTER_ACTIVATE_PATTERN = Pattern.compile("^\\[Booster] .* hat für die GrieferGames Community den (?<name>.*)-Booster für 15 Minuten aktiviert\\.$");
 
 	private final DropDownSetting<KeyMode> keyModeSetting = new DropDownSetting<>(KeyMode.class)
-		.name("Bezeichner")
-		.config("modules.booster.key_mode")
+		.name("Design")
+		.icon("wooden_board")
+		.config("modules.booster.design")
 		.defaultValue(KeyMode.TEXT_AND_ICON)
 		.stringProvider(KeyMode::getName);
 

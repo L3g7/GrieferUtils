@@ -56,8 +56,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class CooldownNotifications extends Feature {
@@ -78,7 +77,7 @@ public class CooldownNotifications extends Feature {
 			// If no data is found, open and close /cooldowns automatically
 			if (v && endDates.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForCooldownGUI) {
 				guiInitBlock = ChatQueue.sendBlocking("/cooldowns", () -> {
-					LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("§c§lFehler \u26A0", "§c" + "/cooldowns geht nicht!");
+					displayAchievement("§c§lFehler \u26A0", "§c/cooldowns geht nicht!");
 					resetWaitingForGUI();
 				});
 				waitingForCooldownGUI = true;
@@ -108,7 +107,7 @@ public class CooldownNotifications extends Feature {
 		// If no data is found, open and close /cooldowns automatically
 		if (endDates.isEmpty()) {
 			guiInitBlock = ChatQueue.sendBlocking("/cooldowns", () -> {
-				LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("§c§lFehler \u26A0", "§c" + "/cooldowns geht nicht!");
+				displayAchievement("§c§lFehler \u26A0", "§c/cooldowns geht nicht!");
 				resetWaitingForGUI();
 			});
 			waitingForCooldownGUI = true;
@@ -154,7 +153,7 @@ public class CooldownNotifications extends Feature {
 		// Display in chat if in game, if not display as achievement
 		Consumer<String> displayFunc = LabyMod.getInstance().isInGame()
 			? s -> display(Constants.ADDON_PREFIX + "§e%s ist nun §averfügbar§e!", s)
-			: s -> LabyMod.getInstance().getGuiCustomAchievement().displayAchievement(Constants.ADDON_NAME, "§e%s ist nun §averfügbar§e!", s);
+			: s -> displayAchievement(Constants.ADDON_NAME, String.format("§e%s ist nun §averfügbar§e!", s));
 
 		// Check if cooldown has become available
 		for (String command : endDates.keySet()) {

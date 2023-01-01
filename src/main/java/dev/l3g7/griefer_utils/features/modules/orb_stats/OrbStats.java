@@ -30,10 +30,8 @@ import dev.l3g7.griefer_utils.util.misc.ChatQueue;
 import dev.l3g7.griefer_utils.util.misc.Config;
 import dev.l3g7.griefer_utils.util.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
-import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.JsonParse;
-import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
@@ -46,7 +44,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.nio.ByteBuffer;
@@ -60,6 +57,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.misc.ServerCheck.isOnGrieferGames;
 
 @Singleton
@@ -116,7 +114,7 @@ public class OrbStats extends Module {
 			// If no data is found, open and close /stats automatically
 			if (v && stats.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForGUI) {
 				guiInitBlock = ChatQueue.sendBlocking("/stats", () -> {
-					LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("§c§lFehler \u26A0", "§c" + "/stats geht nicht!");
+					displayAchievement("§c§lFehler \u26A0", "§c" + "/stats geht nicht!");
 					resetWaitingForGUI();
 				});
 				waitingForGUI = true;
@@ -206,7 +204,7 @@ public class OrbStats extends Module {
 		// If no data is found, open and close /stats automatically
 		if (stats.isEmpty()) {
 			guiInitBlock = ChatQueue.sendBlocking("/stats", () -> {
-				LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("§c§lFehler \u26A0", "§c" + "/stats geht nicht!");
+				displayAchievement("§c§lFehler \u26A0", "§c" + "/stats geht nicht!");
 				resetWaitingForGUI();
 			});
 			waitingForGUI = true;

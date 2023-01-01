@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action.OPEN_URL;
 import static dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action.RUN_CMD;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.misc.Constants.*;
 
@@ -289,7 +289,7 @@ public class ChatMenu extends Feature {
 
 	private static void openNameHistory(String name) {
 		if (name.startsWith("!")) {
-			labyMod().getGuiCustomAchievement().displayAchievement("§eUngültiger Name", "§fVon Bedrock-Spielern kann kein Namensverlauf abgefragt werden.");
+			displayAchievement("§eUngültiger Name", "§fVon Bedrock-Spielern kann kein Namensverlauf abgefragt werden.");
 			return;
 		}
 
@@ -299,7 +299,7 @@ public class ChatMenu extends Feature {
 	private static void copyToClipboard(String text) {
 		StringSelection selection = new StringSelection(text);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
-		labyMod().getGuiCustomAchievement().displayAchievement("\"" + text + "\"",  "wurde in die Zwischenablage kopiert.");
+		displayAchievement("\"" + text + "\"",  "wurde in die Zwischenablage kopiert.");
 	}
 
 }

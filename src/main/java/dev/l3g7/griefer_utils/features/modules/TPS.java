@@ -50,6 +50,7 @@ public class TPS extends Module {
 	private final BooleanSetting displayAsPercent = new BooleanSetting()
 		.name("In Prozent anzeigen")
 		.description("Ob die Performance in Prozent angezeigt werden soll, anstatt in TPS.")
+		.config("modules.tps.display_as_percent")
 		.defaultValue(true);
 
 	public TPS() {

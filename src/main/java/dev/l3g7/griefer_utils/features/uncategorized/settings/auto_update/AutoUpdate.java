@@ -77,7 +77,7 @@ public class AutoUpdate {
 		Config.set("version", new JsonPrimitive(addonVersion));
 		Config.save();
 
-		if (showChangelog.get())
+		if (showChangelog.get() && Config.get("version").getAsString().startsWith("1."))
 			ChangelogScreen.trigger();
 	}
 

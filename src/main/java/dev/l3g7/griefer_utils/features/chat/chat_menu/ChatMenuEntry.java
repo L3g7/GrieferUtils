@@ -268,7 +268,7 @@ public class ChatMenuEntry {
 		if (isDefault || iconType == null /* Constructor hasn't finished */)
 			return setting;
 
-		List<SettingsElement> subSettings = new ArrayList<>(Arrays.asList(name, action, value, iconType));
+		List<SettingsElement> subSettings = new ArrayList<SettingsElement>(Arrays.asList(name, action, value, iconType));
 
 		switch (iconType.get()) {
 			case ITEM:

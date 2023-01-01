@@ -94,6 +94,14 @@ public class MinecraftUtil {
 		display(String.format(format, args));
 	}
 
+	public static void displayAchievement(String title, String description) {
+		displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", title, description);
+	}
+
+	public static void displayAchievement (String iconUrl, String title, String description) {
+		labyMod().getGuiCustomAchievement().displayAchievement(iconUrl, title, description);
+	}
+
 	public static void send(String message) {
 		ChatQueue.send(message);
 	}

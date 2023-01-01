@@ -79,7 +79,7 @@ public class ChatMenuEntry {
 			case IMAGE_FILE:
 				DynamicTexture t = (DynamicTexture) mc().getTextureManager().getTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
 				BufferedImage i = new BufferedImage(Reflection.get(t, "width"), Reflection.get(t, "height"), BufferedImage.TYPE_INT_ARGB);
-				i.getRGB(0, 0, i.getWidth(), i.getHeight(), t.getTextureData(), 0, i.getWidth());
+				i.setRGB(0, 0, i.getWidth(), i.getHeight(), t.getTextureData(), 0, i.getWidth());
 				ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 				try {
 					ImageIO.write(scale(i), "PNG", bytes);

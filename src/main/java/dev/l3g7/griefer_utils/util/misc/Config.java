@@ -90,10 +90,13 @@ public class Config {
 	 * Lazy loads the config if required and returns it.
 	 */
 	private static JsonObject getConfig() {
-		if (config == null)
+		if (config == null) {
 			config = IOUtil.read(configFile)
 				.asJsonObject()
 				.orElse(new JsonObject());
+
+			new ConfigPatcher(config).patch();
+		}
 
 		return config;
     }

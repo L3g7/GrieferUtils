@@ -39,7 +39,7 @@ public class ClearLag extends Module {
 	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
 		.name("Zeitformat")
 		.icon("hourglass")
-		.config("modules.mob_remover.shorten")
+		.config("modules.clear_lag.time_format")
 		.defaultValue(TimeFormat.LONG);
 
 	private final BooleanSetting warn = new BooleanSetting()

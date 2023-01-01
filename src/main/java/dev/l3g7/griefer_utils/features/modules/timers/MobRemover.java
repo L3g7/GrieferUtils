@@ -41,7 +41,7 @@ public class MobRemover extends Module {
 	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
 		.name("Zeitformat")
 		.icon("hourglass")
-		.config("modules.mob_remover.shorten")
+		.config("modules.mob_remover.time_format")
 		.defaultValue(TimeFormat.LONG);
 
 	private final BooleanSetting warn = new BooleanSetting()

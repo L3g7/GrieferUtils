@@ -45,7 +45,7 @@ public class ChatReaction {
 		JsonObject object = new JsonObject();
 
 		object.addProperty("is_regex", regEx);
-		object.addProperty("compare_everything", matchAll);
+		object.addProperty("match_all", matchAll);
 		object.addProperty("trigger", trigger);
 		object.addProperty("command", command);
 
@@ -55,7 +55,7 @@ public class ChatReaction {
 	public static ChatReaction fromJson(JsonObject object) {
 		ChatReaction reaction = new ChatReaction();
 		reaction.regEx = object.get("is_regex").getAsBoolean();
-		reaction.matchAll = object.get("compare_everything").getAsBoolean();
+		reaction.matchAll = object.get("match_all").getAsBoolean();
 		reaction.trigger = object.get("trigger").getAsString();
 		reaction.command = object.get("command").getAsString();
 		reaction.completed = true;

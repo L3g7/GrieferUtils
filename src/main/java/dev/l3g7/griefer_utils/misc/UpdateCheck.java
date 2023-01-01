@@ -66,7 +66,17 @@ public class UpdateCheck {
 		}
 
 		try (InputStreamReader in = new InputStreamReader(new URL("https://api.github.com/repos/L3g7/GrieferUtils/releases").openConnection().getInputStream(), StandardCharsets.UTF_8)) {
-			JsonObject latestRelease = new JsonParser().parse(in).getAsJsonArray().get(0).getAsJsonObject();
+			JsonObject latestRelease = null;
+			for (JsonElement element : new JsonParser().parse(in).getAsJsonArray()) {
+				JsonObject release = element.getAsJsonObject();
+				if (release.get("prerelease").getAsBoolean())
+					continue;
+
+				latestRelease = release;
+			}
+
+			if (latestRelease == null)
+				return;
 
 			String tag = latestRelease.get("tag_name").getAsString().replaceFirst("v", "");
 			if (tag.equals(getAddonVersion())) {

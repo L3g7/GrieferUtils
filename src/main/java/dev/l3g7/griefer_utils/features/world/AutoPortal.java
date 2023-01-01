@@ -79,7 +79,6 @@ public class AutoPortal extends Feature {
 	public void onServerJoin(ServerJoinEvent event) {
 		if (event.data.getIp().contains("griefergames"))
 			send("/portal");
-		enabled.icon(new ItemStack(Blocks.portal));
 	}
 
 	@OnStartupComplete

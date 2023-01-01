@@ -1,9 +1,8 @@
 package dev.l3g7.griefer_utils.features.misc.update_screen;
 
-import dev.l3g7.griefer_utils.features.misc.AutoUpdate;
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.features.features.chat_menu.ChatMenuEntry;
+import dev.l3g7.griefer_utils.util.IOUtil;
 import net.labymod.main.LabyMod;
-import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -14,57 +13,32 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.awt.*;
 import java.io.IOException;
 
-public class UpdateScreen extends GuiScreen {
+public class V2InfoScreen extends GuiScreen {
 
-	private static boolean triggered = false;
-	private static String version = null;
-	private static String changelog = null;
-
+	private final String text;
 	private TextList textList;
-	private GuiScreen previousScreen;
+	private GuiScreen previousScreen = Minecraft.getMinecraft().currentScreen;
+
+	public static void open() {
+		IOUtil.request("https://grieferutils.l3g7.dev/v2/release_screen_text")
+			.asString(text -> Minecraft.getMinecraft().displayGuiScreen(new V2InfoScreen(text)));
+	}
 
 	// Make sure the gui closes to the correct screen
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onGuiOpen(GuiOpenEvent event) {
-		if (event.isCanceled() || event.gui instanceof UpdateScreen)
+		if (event.isCanceled() || event.gui instanceof V2InfoScreen)
 			return;
 
 		previousScreen = event.gui;
 		event.setCanceled(true);
 	}
 
-	public static void trigger() {
-		triggered = true;
-
-		if (version == null)
-			return;
-
-		if (version.equals("v1.12.8"))
-			V2InfoScreen.open();
-		else
-			Minecraft.getMinecraft().displayGuiScreen(new UpdateScreen());
-	}
-
-	public static boolean hasData() {
-		return version != null;
-	}
-
-	public static void setData(String version, String changelog) {
-		UpdateScreen.version = version;
-		UpdateScreen.changelog = changelog;
-
-		if (!triggered)
-			return;
-
-		if (version.equals("v1.12.8"))
-			V2InfoScreen.open();
-		else
-			Minecraft.getMinecraft().displayGuiScreen(new UpdateScreen());
-	}
-
-	public UpdateScreen() {
+	public V2InfoScreen(String text) {
+		this.text = text;
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -72,11 +46,11 @@ public class UpdateScreen extends GuiScreen {
 		super.initGui();
 
 		textList = new TextList(mc, width, height, 64, height - 42, fontRendererObj);
-		textList.addEntries(changelog);
+		textList.addEntries(text);
 		textList.addEntry("");
 
 		buttonList.clear();
-		buttonList.add(new GuiButton(0, width / 2 + 4 + 75, height - 28, 150, 20, "Schließen"));
+		buttonList.add(new GuiButton(0, width / 2 + 4 + 75, height - 28, 150, 20, "Zum Discord"));
 	}
 
 	public void closeGui() {
@@ -85,27 +59,32 @@ public class UpdateScreen extends GuiScreen {
 	}
 
 	private boolean isLeftButtonHovered(int mouseX, int mouseY) {
-		return mouseX > this.width / 2 - 205 && mouseX < this.width / 2 - 54 && mouseY > this.height - 28 && mouseY < this.height - 8;
+		return mouseX > this.width / 2 - 205 && mouseX < this.width / 2 - 120 && mouseY > this.height - 28 && mouseY < this.height - 8;
 	}
 
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		drawBackground(0);
 		textList.drawScreen(mouseX, mouseY, partialTicks);
 
-		String text = "§nGrieferUtils - Changelog - " + version;
+		String text = "§nGrieferUtils v2 Open Beta";
+
+		int color = Color.HSBtoRGB(System.currentTimeMillis() % 2500 / 2500f, 0.5f, 1);
 
 		// Title
 		GlStateManager.scale(1.5, 1.5, 1.5);
-		drawCenteredString(fontRendererObj, text, width / 3, 15, 0xffffff);
+		drawCenteredString(fontRendererObj, text, width / 3, 15, color);
 		GlStateManager.scale(1/1.5, 1/1.5, 1/1.5);
 
 		// Icon
+		GlStateManager.pushMatrix();
+		GlStateManager.color(1, 1, 1);
 		int textWidth = fontRendererObj.getStringWidth(text);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/icon.png"));
-		LabyMod.getInstance().getDrawUtils().drawTexture(width / 2d - textWidth * 0.75 - 29, 18, 256, 256, 20, 20);
+		LabyMod.getInstance().getDrawUtils().drawRawTexture(width / 2d - textWidth * 0.75 - 29, 18, 256, 256, 20, 20);
+		GlStateManager.popMatrix();
 
 		// Left button
-		text = ModColor.cl(isLeftButtonHovered(mouseX, mouseY) ? 'c' : '7') + "Nicht nochmal anzeigen";
+		text = isLeftButtonHovered(mouseX, mouseY) ? "§fSchließen" : "§7Schließen";
 		LabyMod.getInstance().getDrawUtils().drawString(text, width / 2d - 186, height - 22);
 
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -118,7 +97,6 @@ public class UpdateScreen extends GuiScreen {
 
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		if (isLeftButtonHovered(mouseX, mouseY)) {
-			FileProvider.getSingleton(AutoUpdate.class).showUpdateScreen.set(false);
 			closeGui();
 			return;
 		}
@@ -138,6 +116,7 @@ public class UpdateScreen extends GuiScreen {
 
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		closeGui();
+		ChatMenuEntry.openWebsite("https://grieferutils.l3g7.dev");
 	}
+
 }

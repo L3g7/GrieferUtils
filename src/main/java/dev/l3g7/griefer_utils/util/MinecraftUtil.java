@@ -35,10 +35,10 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
+import java.io.File;
 import java.util.UUID;
 
 /**
@@ -51,6 +51,7 @@ public class MinecraftUtil {
 	public static String          name()           { return mc().getSession().getUsername(); }
 	public static GameSettings    settings()       { return mc().gameSettings; }
 	public static TextureManager  textureManager() { return mc().getTextureManager(); }
+	public static File            assetsDir()      { return Reflection.get(mc(), "fileAssets"); }
 	public static WorldClient     world()          { return mc().theWorld; }
 
 	public static ItemStack[]     armorInventory() { return inventory().armorInventory; }
@@ -116,11 +117,6 @@ public class MinecraftUtil {
 
 	public static void suggest(String format, Object... args) {
 		suggest(String.format(format, args));
-	}
-
-	public static String getServerFromScoreboard() {
-		ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
-		return team == null ? "" : team.getColorPrefix().replace("§.", "");
 	}
 
 }

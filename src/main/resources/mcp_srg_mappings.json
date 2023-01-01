@@ -1,4 +1,19 @@
 {
+  "net/minecraft/block/material/Material": {
+    "methods": {
+      "setBurning": "func_76226_g"
+    }
+  },
+  "net/minecraft/block/properties/PropertyDirection": {
+    "fields": {
+      "nameToValue": "field_177710_b"
+    }
+  },
+  "net/minecraft/block/properties/PropertyEnum": {
+    "fields": {
+      "nameToValue": "field_177710_b"
+    }
+  },
   "net/minecraft/client/gui/inventory/GuiChest": {
     "fields": {
       "lowerChestInventory": "field_147015_w"
@@ -30,7 +45,9 @@
   },
   "net/minecraft/client/Minecraft": {
     "fields": {
-      "timer": "field_71428_T"
+      "timer": "field_71428_T",
+      "defaultResourcePacks": "field_110449_ao",
+      "fileAssets": "field_110446_Y"
     }
   },
   "net/minecraft/entity/monster/EntitySlime": {
@@ -49,6 +66,11 @@
       "isImmuneToFire": "field_70178_ae"
     }
   },
+  "net/minecraft/item/Item": {
+    "fields": {
+      "BLOCK_TO_ITEM": "field_179220_a"
+    }
+  },
   "net/minecraft/network/play/server/S38PacketPlayerListItem$AddPlayerData": {
     "fields": {
       "displayName": "field_179965_e"
@@ -57,6 +79,16 @@
   "net/minecraft/scoreboard/Scoreboard": {
     "fields": {
       "entitiesScoreObjectives": "field_96544_c"
+    }
+  },
+  "net/minecraft/tileentity/TileEntityBeacon$BeamSegment": {
+    "fields": {
+      "colors": "field_177266_a"
+    }
+  },
+  "net/minecraft/world/IBlockAccess": {
+    "methods": {
+      "getBlockState": "func_180495_p"
     }
   }
 }

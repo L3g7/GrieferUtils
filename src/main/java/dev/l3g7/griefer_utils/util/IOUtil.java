@@ -185,6 +185,33 @@ public class IOUtil {
 		}
 
 		/**
+		 * Tries to write the input stream to the given file.
+		 */
+		public AsyncFailable asFile(File file, TConsumer<File> callback) {
+			AsyncFailable op = new AsyncFailable();
+			Thread t = new Thread(() -> {
+				try {
+					try (InputStream in = open(); FileOutputStream out = new FileOutputStream(file)) {
+						byte[] buffer = new byte[4096];
+
+						int n;
+						while ((n = in.read(buffer)) != -1)
+							out.write(buffer, 0, n);
+
+						callback.accept(file);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					if (op.fallback != null)
+						op.fallback.accept(e);
+				}
+			});
+			t.setPriority(Thread.MIN_PRIORITY);
+			t.start();
+			return op;
+		}
+
+		/**
 		 * Tries to read the input stream using the given parser.
 		 * <br>
 		 * Example:

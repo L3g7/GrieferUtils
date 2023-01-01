@@ -20,7 +20,9 @@ package dev.l3g7.griefer_utils.util.misc;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -65,4 +67,8 @@ public class Constants {
 	public static final Pattern PAYMENT_RECEIVE_PATTERN = Pattern.compile(String.format("^%s(?<!§f) §r§ahat dir \\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
 
 	public static final DecimalFormat DECIMAL_FORMAT_98 = new DecimalFormat("###,###." + Strings.repeat("#", 98), new DecimalFormatSymbols(Locale.GERMAN)); // max 98 decimal places
+
+	public static final File FURNITURE_RESOURCE_PACK_DIR = new File(MinecraftUtil.assetsDir(), "griefer_utils/furniture_resourcepack");
+	public static final String MM_ADDON_DOWNLOAD_URL = "http://server2.mysterymod.net:5200/api/v1/addons/download/download/%s/1_8_9/_";
+
 }

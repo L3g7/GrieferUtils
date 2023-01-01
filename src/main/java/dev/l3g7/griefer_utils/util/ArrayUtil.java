@@ -103,7 +103,7 @@ public class ArrayUtil {
 		return c(Arrays.stream(array)
 			.flatMap(Stream::of)
 			.collect(Collectors.toList())
-			.toArray(c(Array.newInstance(type, 0))));
+			.toArray((T[]) Array.newInstance(type, 0)));
 	}
 
 }

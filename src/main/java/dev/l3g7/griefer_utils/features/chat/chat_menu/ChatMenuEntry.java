@@ -20,8 +20,10 @@ package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.utils.Consumer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
@@ -75,9 +77,12 @@ public class ChatMenuEntry {
 				object.addProperty("icon", ((ItemStack) icon).serializeNBT().toString());
 				break;
 			case IMAGE_FILE:
+				DynamicTexture t = (DynamicTexture) mc().getTextureManager().getTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
+				BufferedImage i = new BufferedImage(Reflection.get(t, "width"), Reflection.get(t, "height"), BufferedImage.TYPE_INT_ARGB);
+				i.getRGB(0, 0, i.getWidth(), i.getHeight(), t.getTextureData(), 0, i.getWidth());
 				ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 				try {
-					ImageIO.write(scale(ImageIO.read((File) icon)), "PNG", bytes);
+					ImageIO.write(scale(i), "PNG", bytes);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

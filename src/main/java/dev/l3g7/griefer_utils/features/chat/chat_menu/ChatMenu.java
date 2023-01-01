@@ -77,7 +77,6 @@ public class ChatMenu extends Feature {
 	);
 
 	protected static ChatMenuRenderer renderer = null;
-	protected static boolean loaded = false;
 
 	protected static final EntryAddSetting newEntrySetting = new EntryAddSetting()
 			.name("Neuen Menüpunkt erstellen")
@@ -105,14 +104,20 @@ public class ChatMenu extends Feature {
 		settings.add(newEntrySetting);
 
 		enabled.subSettings(settings.toArray(new SettingsElement[0]));
+
+
+		String path = "chat.chat_menu.entries.custom";
+		if (Config.has(path)) {
+			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
+				new EntryDisplaySetting(ChatMenuEntry.fromJson(jsonElement.getAsJsonObject()), enabled);
+			}
+		}
+
 	}
 
 	public static void saveEntries() {
-		if (!loaded) // Don't save the config when starting
-			return;
-
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES)
-			Config.set("chat.chat_menu.entries." + entry, new JsonPrimitive(entry.enabled));
+			Config.set("chat.chat_menu.entries." + entry.name, new JsonPrimitive(entry.enabled));
 
 		JsonArray array = new JsonArray();
 		for (ChatMenuEntry customEntry : getCustom())
@@ -131,15 +136,6 @@ public class ChatMenu extends Feature {
 			if (Config.has(path))
 				entry.enabled = Config.get(path).getAsBoolean();
 		}
-
-		String path = "chat.chat_menu.entries.custom";
-		if (Config.has(path)) {
-			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
-				new EntryDisplaySetting(ChatMenuEntry.fromJson(jsonElement.getAsJsonObject()), enabled);
-			}
-		}
-
-		loaded = true;
 	}
 
 	@EventListener

@@ -69,7 +69,7 @@ public class ChatMenuEntry {
 		object.addProperty("name", name);
 		object.addProperty("action", action.name());
 		object.addProperty("command", (String) command);
-		object.addProperty("icon_type", iconType.name);
+		object.addProperty("icon_type", iconType.name());
 		switch (iconType) {
 			case ITEM:
 				object.addProperty("icon", ((ItemStack) icon).serializeNBT().toString());
@@ -93,7 +93,7 @@ public class ChatMenuEntry {
 		entry.name = object.get("name").getAsString();
 		entry.action = Action.valueOf(object.get("action").getAsString());
 		entry.command = object.get("command").getAsString();
-		entry.iconType = IconType.valueOf(object.get("iconType").getAsString());
+		entry.iconType = IconType.valueOf(object.get("icon_type").getAsString());
 		switch (entry.iconType) {
 			case ITEM:
 				try {

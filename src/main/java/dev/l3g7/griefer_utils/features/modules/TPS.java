@@ -22,8 +22,9 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.ControlElement;
-import net.labymod.utils.Material;
+import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
@@ -46,6 +47,11 @@ public class TPS extends Module {
 	private long lastMillis = 0;
 	private int lastTripTime = 0;
 
+	private final BooleanSetting displayAsPercent = new BooleanSetting()
+		.name("In Prozent anzeigen")
+		.description("Ob die Performance in Prozent angezeigt werden soll, anstatt in TPS.")
+		.defaultValue(true);
+
 	public TPS() {
 		super("Server-TPS", "Zeigt eine (relativ genaue) Schätzung der aktuellen Server-TPS an.", "server-tps", new ControlElement.IconData("griefer_utils/icons/measurement_circle_thingy.png"));
 	}
@@ -60,7 +66,13 @@ public class TPS extends Module {
 		if (currentTPS == null)
 			return getDefaultValues();
 
-		return new String[] {Math.round(currentTPS / .002) / 100 + "%"};
+		return new String[] {displayAsPercent.get() ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS)};
+	}
+
+	@Override
+	public void fillSubSettings(List<SettingsElement> list) {
+		super.fillSubSettings(list);
+		list.add(displayAsPercent);
 	}
 
 	@EventListener

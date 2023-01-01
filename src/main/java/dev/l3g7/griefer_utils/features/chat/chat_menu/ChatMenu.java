@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
@@ -28,14 +29,16 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
+import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.misc.Config;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.core.LabyModCore;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.settings.elements.SettingsElement;
+import net.labymod.utils.Consumer;
+import net.labymod.utils.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
@@ -49,14 +52,12 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action.OPEN_URL;
-import static dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action.RUN_CMD;
+import static dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action.*;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.misc.Constants.*;
@@ -65,31 +66,22 @@ import static dev.l3g7.griefer_utils.util.misc.Constants.*;
 public class ChatMenu extends Feature {
 
 	public static final String COMMAND = "/grieferutils_click_event_replace_suggest_msg ";
-	protected static final Map<ChatMenuEntry, String> DEFAULT_ENTRIES = new LinkedHashMap<ChatMenuEntry, String>() {{
-		put(new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %PLAYER%"), "open_profile");
-		put(new ChatMenuEntry("Namensverlauf", ChatMenu::openNameHistory), "name_history");
-		put(new ChatMenuEntry("Namen kopieren", ChatMenu::copyToClipboard), "copy_name");
-		put(new ChatMenuEntry("Im Forum suchen", OPEN_URL, "https://forum.griefergames.de/search/?q=%PLAYER%"), "search_forum");
-		put(new ChatMenuEntry("Inventar öffnen", RUN_CMD, "/invsee %PLAYER%"), "open_inv");
-		put(new ChatMenuEntry("Ausrüstung ansehen", RUN_CMD, "/view %PLAYER%"), "view_gear");
-		put(new ChatMenuEntry("EC öffnen", RUN_CMD, "/ec %PLAYER%"), "open_ec");
+	protected static final List<ChatMenuEntry> DEFAULT_ENTRIES = ImmutableList.of(
+		new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %name%", "wooden_board"),
+		new ChatMenuEntry("Namensverlauf", CONSUMER, (Consumer<String>) ChatMenu::openNameHistory, "yellow_name"),
+		new ChatMenuEntry("Namen kopieren", CONSUMER, (Consumer<String>) ChatMenu::copyToClipboard, "yellow_name"),
+		new ChatMenuEntry("Im Forum suchen", OPEN_URL, "https://forum.griefergames.de/search/?q=%name%", "earth_grid"),
+		new ChatMenuEntry("Inventar öffnen", RUN_CMD, "/invsee %name%", "bundle"),
+		new ChatMenuEntry("Ausrüstung ansehen", RUN_CMD, "/view %name%", Material.IRON_CHESTPLATE),
+		new ChatMenuEntry("EC öffnen", RUN_CMD, "/ec %name%", "chest")
+	);
 
-		for (ChatMenuEntry entry : keySet())
-			entry.enableDefault();
-	}};
-
-	protected static final List<ChatMenuEntry> customEntries = new ArrayList<>();
 	protected static ChatMenuRenderer renderer = null;
 	protected static boolean loaded = false;
 
-	protected static final ButtonSetting newEntrySetting = new ButtonSetting()
-			.name("Neue Option erstellen")
-			.callback(() -> {
-				ChatMenuEntry newEntry = new ChatMenuEntry();
-				((List<SettingsElement>) Reflection.get(mc().currentScreen, "path")).add(newEntry.getSetting());
-				customEntries.add(newEntry);
-				mc().currentScreen.initGui();
-			});
+	protected static final EntryAddSetting newEntrySetting = new EntryAddSetting()
+			.name("Neuen Menüpunkt erstellen")
+		.callback(() -> Minecraft.getMinecraft().displayGuiScreen(new AddChatMenuEntryGui(null, Minecraft.getMinecraft().currentScreen)));
 
 	@MainElement(configureSubSettings = false)
 	private static final BooleanSetting enabled = new BooleanSetting()
@@ -99,49 +91,15 @@ public class ChatMenu extends Feature {
 
 	public ChatMenu() {
 		loadEntries();
-	}
-
-	public static void saveEntries() {
-		if (!loaded) // Don't save the config when starting
-			return;
-
-		for (ChatMenuEntry entry : DEFAULT_ENTRIES.keySet())
-			Config.set("chat.chat_menu.entries." + DEFAULT_ENTRIES.get(entry), new JsonPrimitive(entry.isEnabled()));
-
-		JsonArray array = new JsonArray();
-		for (ChatMenuEntry customEntry : customEntries)
-			if (customEntry.isValid())
-				array.add(customEntry.toJson());
-
-		Config.set("chat.chat_menu.entries.custom", array);
-		Config.save();
-	}
-
-	protected static void updateSettings() {
-		if (!loaded)
-			return;
-
 		List<SettingsElement> settings = new ArrayList<>();
 
-		for (ChatMenuEntry entry : DEFAULT_ENTRIES.keySet())
-			settings.add(entry.getSetting());
-
-		for (ChatMenuEntry entry : customEntries) {
-			if (!entry.isValid())
-				continue;
-
-			SettingsElement setting = entry.getSetting();
-			setting.getSubSettings().add(new ButtonSetting()
-					.name("Option entfernen")
-					.callback(() -> {
-						customEntries.remove(entry);
-						settings.remove(setting);
-						updateSettings();
-						ArrayList<SettingsElement> list = Reflection.get(mc().currentScreen, "path");
-						list.remove(list.size() - 1);
-						mc().currentScreen.initGui();
-					}));
-			settings.add(setting);
+		for (ChatMenuEntry entry : DEFAULT_ENTRIES) {
+			settings.add(new BooleanSetting()
+				.name(entry.name)
+				.callback(v -> entry.enabled = v)
+				.defaultValue(entry.enabled)
+				.config("chat.chat_menu.entries." + entry.name)
+				.icon(entry.icon));
 		}
 
 		settings.add(newEntrySetting);
@@ -149,27 +107,39 @@ public class ChatMenu extends Feature {
 		enabled.subSettings(settings.toArray(new SettingsElement[0]));
 	}
 
+	public static void saveEntries() {
+		if (!loaded) // Don't save the config when starting
+			return;
+
+		for (ChatMenuEntry entry : DEFAULT_ENTRIES)
+			Config.set("chat.chat_menu.entries." + entry, new JsonPrimitive(entry.enabled));
+
+		JsonArray array = new JsonArray();
+		for (ChatMenuEntry customEntry : getCustom())
+			if (customEntry.completed)
+				array.add(customEntry.toJson());
+
+		Config.set("chat.chat_menu.entries.custom", array);
+		Config.save();
+	}
+
 	private void loadEntries() {
 
-		for (ChatMenuEntry entry : DEFAULT_ENTRIES.keySet()) {
-			String path = "chat.chat_menu.entries." + DEFAULT_ENTRIES.get(entry);
+		for (ChatMenuEntry entry : DEFAULT_ENTRIES) {
+			String path = "chat.chat_menu.entries." + entry.name;
 
 			if (Config.has(path))
-				entry.setEnabled(Config.get(path).getAsBoolean());
+				entry.enabled = Config.get(path).getAsBoolean();
 		}
 
 		String path = "chat.chat_menu.entries.custom";
 		if (Config.has(path)) {
 			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
-				ChatMenuEntry entry = ChatMenuEntry.fromJson(jsonElement.getAsJsonObject());
-
-				if (entry.isValid())
-					customEntries.add(entry);
+				new EntryDisplaySetting(ChatMenuEntry.fromJson(jsonElement.getAsJsonObject()), enabled);
 			}
 		}
 
 		loaded = true;
-		updateSettings();
 	}
 
 	@EventListener
@@ -215,8 +185,8 @@ public class ChatMenu extends Feature {
 			return;
 
 		List<ChatMenuEntry> entries = new ArrayList<>();
-		DEFAULT_ENTRIES.keySet().stream().filter(ChatMenuEntry::isEnabled).forEach(entries::add);
-		customEntries.stream().filter(e -> e.isEnabled() && e.isValid()).forEach(entries::add);
+		DEFAULT_ENTRIES.stream().filter(e -> e.enabled).forEach(entries::add);
+		getCustom().stream().filter(e -> e.completed).forEach(entries::add);
 
 		renderer = new ChatMenuRenderer(entries, value.substring(COMMAND.length(), value.length() - 1));
 		event.setCanceled(true);
@@ -302,4 +272,11 @@ public class ChatMenu extends Feature {
 		displayAchievement("\"" + text + "\"",  "wurde in die Zwischenablage kopiert.");
 	}
 
+	public static List<ChatMenuEntry> getCustom() {
+		return enabled.getSubSettings().getElements()
+			.stream()
+			.filter(e -> e instanceof EntryDisplaySetting)
+			.map(e -> ((EntryDisplaySetting) e).entry)
+			.collect(Collectors.toList());
+	}
 }

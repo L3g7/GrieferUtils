@@ -78,7 +78,7 @@ public class AddChatReactionGui extends GuiScreen {
 			PreviewRenderer.getInstance().init(AddChatReactionGui.class);
 
 		triggerInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 115, 240, 20);
-		triggerInput.setPlaceHolder("§8[GrieferUtil] [+] Zwiebackgesicht");
+		triggerInput.setPlaceHolder("§8[GrieferUtils] [+] Zwiebackgesicht");
 		triggerInput.setText(reaction.trigger);
 		triggerInput.setMaxStringLength(Integer.MAX_VALUE);
 

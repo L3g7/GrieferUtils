@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
+import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.util.misc.Config;
@@ -74,6 +75,13 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 		textField.setMaxStringLength(Integer.MAX_VALUE);
 	}
 
+	public void reset() {
+		iconData = new IconData();
+		itemIcon = MISSING_TEXTURE;
+		textField.setText("");
+		menu.setSelected(null);
+	}
+
 	@Override
 	public void init() {
 		menu.setOpen(false);
@@ -117,7 +125,8 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 	public ItemSetting set(ItemStack stack) {
 		currentValue = stack;
 		menu.setSelected(stack);
-		textField.setText(stack.getDisplayName());
+		if (stack != null)
+			textField.setText(stack.getDisplayName());
 		textField.setCursorPositionEnd();
 		filterItems();
 
@@ -125,7 +134,7 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 		itemIcon = stack;
 
 		if (configKey != null) {
-			Config.set(configKey, new JsonPrimitive(stack.serializeNBT().toString()));
+			Config.set(configKey, stack == null ? JsonNull.INSTANCE : new JsonPrimitive(stack.serializeNBT().toString()));
 			Config.save();
 		}
 		return this;
@@ -146,6 +155,10 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 
 		NBTTagCompound tag;
 		try {
+			if (Config.get(configKey).isJsonNull()) {
+				set(null);
+				return this;
+			}
 			tag = JsonToNBT.getTagFromJson(Config.get(configKey).getAsString());
 		} catch (NBTException e) {
 			throw new RuntimeException(e);
@@ -163,7 +176,7 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		mouseOver = menu.isMouseOver(mouseX, mouseY);
-		LabyMod.getInstance().getDrawUtils().drawItem(itemIcon, x + 5, y + 3, null);
+		LabyMod.getInstance().getDrawUtils().drawItem(itemIcon == null ? MISSING_TEXTURE : itemIcon, x + 5, y + 3, null);
 
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 
@@ -174,9 +187,6 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 		menu.setWidth(width);
 		menu.setHeight(maxY - y - 6);
 		menu.draw(mouseX, mouseY);
-
-		if (!textField.isFocused())
-			return;
 
 		textField.xPosition = menu.getX() + 5;
 		textField.yPosition = menu.getY() + 5;

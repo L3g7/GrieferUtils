@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.chat_reactor;
+package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import net.labymod.settings.elements.SettingsElement;
@@ -25,18 +25,23 @@ import net.minecraft.util.ResourceLocation;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
-public class ReactionDisplaySetting extends CategorySetting {
+public class EntryDisplaySetting extends CategorySetting {
 
 	private final SettingsElement parent;
 	private boolean editHovered = false;
-	public final ChatReaction reaction;
+	public final ChatMenuEntry entry;
 
-	public ReactionDisplaySetting(ChatReaction reaction, SettingsElement parent) {
+	public EntryDisplaySetting(ChatMenuEntry r, SettingsElement parent) {
 		name("§f");
 		this.parent = parent;
-		this.reaction = reaction;
+		this.entry = r;
 		int size = parent.getSubSettings().getElements().size();
-		int pos = reaction.pos = reaction.pos == -1 ? size - 1 : reaction.pos;
+		int pos;
+
+
+		pos = r.pos = r.pos == -1 ? size - 1 : r.pos;
+
+
 		parent.getSubSettings().getElements().add(pos, this);
 	}
 
@@ -44,8 +49,8 @@ public class ReactionDisplaySetting extends CategorySetting {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (editHovered) {
 			parent.getSubSettings().getElements().remove(this);
-			ChatReactor.saveEntries();
-			Minecraft.getMinecraft().displayGuiScreen(new AddChatReactionGui(reaction, Minecraft.getMinecraft().currentScreen));
+			ChatMenu.saveEntries();
+			Minecraft.getMinecraft().displayGuiScreen(new AddChatMenuEntryGui(entry, Minecraft.getMinecraft().currentScreen));
 		}
 	}
 
@@ -56,10 +61,11 @@ public class ReactionDisplaySetting extends CategorySetting {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		setDisplayName(displayName);
 
-		String trimmedTrigger = drawUtils().trimStringToWidth(reaction.trigger, maxX - x - 25 - 25);
-		String trimmedCommand = drawUtils().trimStringToWidth(reaction.command, maxX - x - 25 - 25);
-		drawUtils().drawString(trimmedTrigger + (trimmedTrigger.equals(reaction.trigger) ? "" : "…"), x + 25, y + 7 - 5);
-		drawUtils().drawString("§o➡ " + trimmedCommand + (trimmedCommand.equals(reaction.command) ? "" : "…"), x + 25, y + 7 + 5);
+		String trimmedTrigger = drawUtils().trimStringToWidth(entry.name, maxX - x - 25 - 25);
+		String trimmedCommand = drawUtils().trimStringToWidth((String) entry.command, maxX - x - 25 - 25);
+		drawUtils().drawString(trimmedTrigger + (trimmedTrigger.equals(entry.name) ? "" : "…"), x + 25, y + 7 - 5);
+		drawUtils().drawString("§o➡ " + trimmedCommand + (trimmedCommand.equals(entry.command) ? "" : "…"), x + 25, y + 7 + 5);
+		entry.drawIcon(x + 3, y + 3, 16, 16);
 
 		if (mouseOver) {
 			mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));

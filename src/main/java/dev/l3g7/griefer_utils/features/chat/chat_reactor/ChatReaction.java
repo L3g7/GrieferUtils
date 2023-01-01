@@ -58,6 +58,7 @@ public class ChatReaction {
 		reaction.matchAll = object.get("compare_everything").getAsBoolean();
 		reaction.trigger = object.get("trigger").getAsString();
 		reaction.command = object.get("command").getAsString();
+		reaction.completed = true;
 		return reaction;
 	}
 

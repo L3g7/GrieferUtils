@@ -239,6 +239,10 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/tree_file.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/tree_file.png" height=16em width=16em />&nbsp;&nbsp;tree_file.png </a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/twitch.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/twitch.png" height=16em width=16em />&nbsp;&nbsp;twitch.png </a></td>
     <td><a href="https://www.twitch.tv/p/press-center/">Twitch</a></td>
   </tr>

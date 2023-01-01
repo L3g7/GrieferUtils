@@ -19,12 +19,10 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import net.labymod.main.LabyMod;
+import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.utils.DrawUtils;
-import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.util.List;
@@ -90,7 +88,7 @@ public class ChatMenuRenderer {
 		currentY += 3;
 		for (int i = 0; i < entries.size(); i++) {
 			ChatMenuEntry entry = entries.get(i);
-			String name = entry.getName();
+			String name = entry.name;
 
 			if (getWidth(name) > boxWidth - 24) {
 				while (getWidth(name + "...") > boxWidth - 24)
@@ -100,21 +98,20 @@ public class ChatMenuRenderer {
 
 			drawString(name, x + 21, currentY += 15);
 
-			if (entry.getIcon() instanceof ItemStack) {
-				GlStateManager.scale(.75, .75, 1);
-				double inverseScale = 1 / 0.75d;
-				utils.drawItem(((ItemStack) entry.getIcon()), (x + 4) * inverseScale, (currentY - 2) * inverseScale, null);
-				GlStateManager.scale(inverseScale, inverseScale, 1);
-			} else if (entry.getIcon() instanceof ResourceLocation) {
-				mc.getTextureManager().bindTexture((ResourceLocation) entry.getIcon());
-				utils.drawTexture(x + 4, currentY - 2, 256, 256, 12, 12);
-			} else if (entry.getIcon() instanceof Material) {
-				GlStateManager.pushMatrix();
-				GlStateManager.scale(0.75, 0.75, 1.0);
-				double posMultiplier = 1 / 0.75;
-				LabyMod.getInstance().getDrawUtils().renderItemIntoGUI(((Material) entry.getIcon()).createItemStack(), (x + 4) * posMultiplier, (currentY - 2) * posMultiplier);
-				GlStateManager.popMatrix();
+			GlStateManager.pushMatrix();
+			GlStateManager.scale(0.75, 0.75, 1.0);
+			double posScale = 1 / 0.75;
+			if (entry.icon instanceof IconData) {
+				if (((IconData) entry.icon).hasMaterialIcon()) {
+					LabyMod.getInstance().getDrawUtils().renderItemIntoGUI(((IconData) entry.icon).getMaterialIcon().createItemStack(), (x + 4) * posScale, (currentY - 2) * posScale);
+				} else {
+					mc.getTextureManager().bindTexture(((IconData) entry.icon).getTextureIcon());
+					utils.drawTexture(x + 4, currentY - 2, 256, 256, 16, 16);
+				}
+			} else {
+				entry.drawIcon((int) ((x + 4) * posScale), (int) ((currentY - 2) * posScale), 12, 12);
 			}
+			GlStateManager.popMatrix();
 
 			// Draw frame if hovered
 			if (i == hoveredEntry)
@@ -144,7 +141,7 @@ public class ChatMenuRenderer {
 			return false;
 
 		// Trigger the consumer and close the gui
-		entries.get(hoveredEntry).getConsumer().accept(playerName);
+		entries.get(hoveredEntry).trigger(playerName);
 		return true;
 	}
 

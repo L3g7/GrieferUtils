@@ -62,6 +62,10 @@
     <td><a href="https://apps.apple.com/us/app/calculator/id1069511488">Apple calculator</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chair.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chair.png" height=16em width=16em />&nbsp;&nbsp;chair.png </a></td>
+    <td><a href="https://mrcrayfish.com/mods?id=cfm">MrCrayfish's Furniture Mod Asset</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/chest.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/chest.png" height=16em width=16em />&nbsp;&nbsp;chest.png </a></td>
     <td><a href="https://stock.adobe.com/de/images/set-of-pixel-boxes/192886298?prev_url=detail">Adobe Stock (Markov)</a></td>
   </tr>

@@ -41,7 +41,7 @@ public class ScoreboardModuleTransformer extends Transformer {
 
 				// shouldUnlockScoreboard
 				InsnList insertion = new InsnList();
-				insertion.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/render/scoreboard/ScoreboardHandler", "shouldUnlockScoreboard", "()Z", false));
+				insertion.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/player/scoreboard/ScoreboardHandler", "shouldUnlockScoreboard", "()Z", false));
 				insertion.add(new JumpInsnNode(IFNE, jumpNode.label));
 				method.instructions.insert(jumpNode, insertion);
 			}

@@ -51,7 +51,7 @@ public class Constants {
 	public static final Pattern FORMATTED_PLAYER_PATTERN = Pattern.compile(String.format("(?<player>%s ?%s %s)", FORMATTED_RANK_PATTERN, FORMATTED_DELIMITER_PATTERN, FORMATTED_PLAYER_NAME_PATTERN));
 
 	// Miscellaneous patterns
-	public static final Pattern FORMATTED_CLAN_TAG_PATTERN = Pattern.compile("(?<clantag>§r§6\\[[#$§\\-\\w]{2,}§r§6] )?");
+	public static final Pattern FORMATTED_CLAN_TAG_PATTERN = Pattern.compile("(?<clantag>§r§6\\[[ÄÖÜäöü#$§\\-\\w]{2,}§r§6] )?");
 	public static final Pattern CHAT_MESSAGE_PATTERN = Pattern.compile("(?<message>.*)§*r*");
 	public static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay %s (?<amount>[\\d,.]+)", UNFORMATTED_PLAYER_NAME_PATTERN));
 

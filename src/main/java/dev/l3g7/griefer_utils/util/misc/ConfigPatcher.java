@@ -41,12 +41,11 @@ public class ConfigPatcher {
 			return;
 
 		String version = config.get("version").getAsString();
-		if (version.startsWith("v1"))
+		if (version.startsWith("1"))
 			patch_v1();
 	}
 
 	private void patch_v1() {
-		rename("features.chat_menu", "chat.chat_menu");
 		rename("features.anti_command_choker.active", "chat.anti_command_choker.enabled");
 		rename("features.armor_break_warning.active", "player.armor_break_warning.enabled");
 		rename("features.auto_eat.trigger_mode", "player.auto_eat.trigger_mode");
@@ -64,14 +63,14 @@ public class ConfigPatcher {
 		rename("features.chat_time.format", "chat.chat_time.format");
 		rename("features.chat_time.active", "chat.chat_time.enabled");
 		rename("features.chat_menu.active", "chat.chat_menu.enabled");
-		rename("features.chat_menu.entries", "chat.chat_menu.entires");
-		rename("features.chat_menu.entries.open_profile", "chat.chat_menu.entires.Profil öffnen");
-		rename("features.chat_menu.entries.name_history", "chat.chat_menu.entires.Namensverlauf");
-		rename("features.chat_menu.entries.copy_name", "chat.chat_menu.entires.Namen kopieren");
-		rename("features.chat_menu.entries.search_forum", "chat.chat_menu.entires.Im Forum suchen");
-		rename("features.chat_menu.entries.open_inv", "chat.chat_menu.entires.Inventar öffnen");
-		rename("features.chat_menu.entries.view_gear", "chat.chat_menu.entires.Ausrüstung ansehen");
-		rename("features.chat_menu.entries.open_ec", "chat.chat_menu.entires.EC öffnen");
+		rename("features.chat_menu.entries", "chat.chat_menu.entries");
+		rename("features.chat_menu.entries.open_profile", "chat.chat_menu.entries.Profil öffnen");
+		rename("features.chat_menu.entries.name_history", "chat.chat_menu.entries.Namensverlauf");
+		rename("features.chat_menu.entries.copy_name", "chat.chat_menu.entries.Namen kopieren");
+		rename("features.chat_menu.entries.search_forum", "chat.chat_menu.entries.Im Forum suchen");
+		rename("features.chat_menu.entries.open_inv", "chat.chat_menu.entries.Inventar öffnen");
+		rename("features.chat_menu.entries.view_gear", "chat.chat_menu.entries.Ausrüstung ansehen");
+		rename("features.chat_menu.entries.open_ec", "chat.chat_menu.entries.EC öffnen");
 		patchObjectArray("features.chat_menu.entries.custom", "chat.chat_menu.entries.custom",
 			"action", _enum("action", "open_url", "OPEN_URL", "run", "RUN_CMD", "suggest", "SUGGEST_CMD"),
 			"value", "command",
@@ -176,8 +175,8 @@ public class ConfigPatcher {
 		for (Patcher patcher : patchers)
 			call(patcher, pParent, nParent, pParent.get(getKey(previousKey)));
 
-		if (patchers.length == 0 && pParent.get(getKey(newKey)) != null)
-			nParent.add(getKey(newKey), pParent.get(getKey(newKey)));
+		if (patchers.length == 0 && pParent.get(getKey(previousKey)) != null)
+			nParent.add(getKey(newKey), pParent.get(getKey(previousKey)));
 	}
 
 	private void patchObjectArray(String previousKey, String newKey, Object... changes) {
@@ -208,6 +207,9 @@ public class ConfigPatcher {
 	}
 
 	private void call(Object patch, JsonObject oldParent, JsonObject newParent, JsonElement element) {
+		if (element == null)
+			return;
+
 		if (patch instanceof Patcher)
 			((Patcher) patch).patch(oldParent, newParent, element);
 		else if (patch instanceof String)
@@ -243,12 +245,13 @@ public class ConfigPatcher {
 
 	private JsonObject getParent(String path) {
 		String[] parts = path.split("\\.");
+		JsonObject obj = config;
 		for (int i = 0; i < parts.length - 1; i++) {
-			if (!config.has(parts[i]) || !(config.get(parts[i]).isJsonObject()))
-				config.add(parts[i], new JsonObject());
-			config = config.get(parts[i]).getAsJsonObject();
+			if (!obj.has(parts[i]) || !(obj.get(parts[i]).isJsonObject()))
+				obj.add(parts[i], new JsonObject());
+			obj = obj.get(parts[i]).getAsJsonObject();
 		}
-		return config;
+		return obj;
 	}
 
 	private String getKey(String path) {

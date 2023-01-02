@@ -108,11 +108,11 @@ public class BetterSwitchCommand extends Feature {
 
 	@EventListener
 	public void onCityBuild(CityBuildJoinEvent event) {
-		if (command.isEmpty())
+		if (command == null)
 			return;
 
 		send(command);
-		command = "";
+		command = null;
 	}
 
 	private static class ServerAlias {

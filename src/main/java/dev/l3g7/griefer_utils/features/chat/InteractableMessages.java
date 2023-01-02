@@ -35,9 +35,8 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.util.misc.Constants.FORMATTED_PLAYER_PATTERN;
+import static dev.l3g7.griefer_utils.util.misc.Constants.STATUS_PATTERN;
 
 @Singleton
 public class InteractableMessages extends Feature {
@@ -48,10 +47,8 @@ public class InteractableMessages extends Feature {
 		.description("Macht TPAs, den CityBuild bei Globalchat-Nachrichten und den Status interagierbar.")
 		.icon("cursor");
 
-	private static final String COMMAND_PREFIX = "/griefer_utils_interactable_messages";
 	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
 	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
-	public static final Pattern STATUS_PATTERN = Pattern.compile(String.format("^%s§f (?<message>[^\u00bb]*)§*r*$", FORMATTED_PLAYER_PATTERN));
 	private static final Map<String, String> GLOBALCHAT_CB_TO_SWITCH = new HashMap<String, String>(){{
 		put("CBE", "cbevil");
 		put("WASSER", "farm1");

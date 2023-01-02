@@ -68,7 +68,7 @@ public class MessageSkulls extends Feature {
 	}
 
 	@SuppressWarnings("unused")
-	public static void renderSkull(ChatLine line, int y) {
+	public static void renderSkull(ChatLine line, int y, float alpha) {
 
 		IChatComponent component = (IChatComponent) line.getComponent();
 		String formattedText = component.getFormattedText();
@@ -103,8 +103,8 @@ public class MessageSkulls extends Feature {
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
 		drawUtils.bindTexture(playerInfo.getLocationSkin());
 		int x = drawUtils.getStringWidth(formattedText.substring(0, spaceIndex)) + (formattedText.startsWith("§r" + SPACE) ? 2 : 1);
-		drawUtils.drawTexture(x, y - 8, 32, 32, 32, 32, 8, 8); // First layer
-		drawUtils.drawTexture(x, y - 8, 160, 32, 32, 32, 8, 8); // Second layer
+		drawUtils.drawTexture(x, y - 8, 32, 32, 32, 32, 8, 8, alpha); // First layer
+		drawUtils.drawTexture(x, y - 8, 160, 32, 32, 32, 8, 8, alpha); // Second layer
 	}
 
 }

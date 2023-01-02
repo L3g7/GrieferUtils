@@ -23,9 +23,9 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
+import dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -35,8 +35,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.features.world.ChunkIndicator.TriggerMode.HOLD;
-import static dev.l3g7.griefer_utils.features.world.ChunkIndicator.TriggerMode.TOGGLE;
+import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static net.minecraft.init.Blocks.stained_hardened_clay;
 
@@ -46,18 +45,21 @@ import static net.minecraft.init.Blocks.stained_hardened_clay;
 @Singleton
 public class ChunkIndicator extends Feature {
 
-	private boolean toggled;
+	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
+		.callback(m -> {
+			if (getMainElement() != null)
+				((BooleanSetting) getMainElement()).set(false);
+		});
 
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
 		.icon("key")
-		.pressCallback(p -> { if (p) toggled = !toggled && isEnabled(); });
-
-	private final DropDownSetting<TriggerMode> triggerMode = new DropDownSetting<>(TriggerMode.class)
-		.name("Auslösung")
-		.icon("lightning")
-		.defaultValue(TOGGLE)
-		.callback(m -> toggled = false);
+		.pressCallback(p -> {
+			if (p || triggerMode.get() == HOLD) {
+				BooleanSetting enabled = ((BooleanSetting) getMainElement());
+				enabled.set(!enabled.get());
+			}
+		});
 
 	private final BooleanSetting yellow_lines = new BooleanSetting()
 		.name("Gelbe Linien", "(Alle 2 Blöcke)")
@@ -96,14 +98,6 @@ public class ChunkIndicator extends Feature {
 
 	@EventListener
 	public void onRender(RenderWorldLastEvent ignored) {
-		if (triggerMode.get() == HOLD) {
-			if (!key.isPressed())
-				return;
-		} else {
-			if (!toggled)
-				return;
-		}
-
 		List<RenderLine> lines = new ArrayList<>();
 		BlockPos chunkRoot = new BlockPos(player().chunkCoordX * 16, 0, player().chunkCoordZ * 16);
 
@@ -177,18 +171,6 @@ public class ChunkIndicator extends Feature {
 			this.startOffset = new BlockPos(x, 0, z);
 			this.endOffset = new BlockPos(x, 256, z);
 			this.color = color;
-		}
-
-	}
-
-	enum TriggerMode {
-
-		HOLD("halten"), TOGGLE("umschalten");
-
-		final String name;
-
-		TriggerMode(String name) {
-			this.name = name;
 		}
 
 	}

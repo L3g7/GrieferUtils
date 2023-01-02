@@ -27,6 +27,9 @@ import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.KeySetting;
+import dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.MouseEvent;
@@ -36,6 +39,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
@@ -48,11 +52,30 @@ public class ItemInfo extends Feature {
 		.map(ItemInfoSupplier.class::cast)
 		.collect(Collectors.toList());
 
+	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
+		.defaultValue(HOLD)
+		.callback(m -> {
+			if (getMainElement() != null)
+				((BooleanSetting) getMainElement()).set(false);
+		});
+
+	private final KeySetting key = new KeySetting()
+		.name("Taste")
+		.icon("key")
+		.triggersInContainers()
+		.pressCallback(p -> {
+			if (p || triggerMode.get() == HOLD) {
+				BooleanSetting enabled = ((BooleanSetting) getMainElement());
+				enabled.set(!enabled.get());
+			}
+		});
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Item-Infos")
 		.description("Zeigt unterschiedliche Informationen unter einem Item an.")
-		.icon("info");
+		.icon("info")
+		.subSettings(key, triggerMode, new HeaderSetting());
 
 	@Override
 	public void init() {
@@ -61,7 +84,7 @@ public class ItemInfo extends Feature {
 			supplier.init(getConfigKey());
 
 		infoSuppliers.sort(Comparator.comparing(f -> f.mainElement.getDisplayName()));
-		enabled.subSettings(infoSuppliers.stream().map(s -> s.mainElement).toArray(SettingsElement[]::new));
+		enabled.subSettings(infoSuppliers.stream().map(s -> s.mainElement).collect(Collectors.toList()));
 	}
 
 

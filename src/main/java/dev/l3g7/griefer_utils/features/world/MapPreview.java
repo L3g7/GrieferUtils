@@ -25,6 +25,8 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.KeySetting;
+import dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.FontRenderer;
@@ -44,6 +46,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
@@ -51,12 +54,30 @@ public class MapPreview extends Feature {
 
 	private List<String> tooltip = new ArrayList<>();
 
+	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
+		.defaultValue(HOLD)
+		.callback(m -> {
+			if (getMainElement() != null)
+				((BooleanSetting) getMainElement()).set(false);
+		});
+
+	private final KeySetting key = new KeySetting()
+		.name("Taste")
+		.icon("key")
+		.triggersInContainers()
+		.pressCallback(p -> {
+			if (p || triggerMode.get() == HOLD) {
+				BooleanSetting enabled = ((BooleanSetting) getMainElement());
+				enabled.set(!enabled.get());
+			}
+		});
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Karten Vorschau")
 		.description("Zeigt in der Beschreibung von Karten eine Vorschau an.")
 		.icon(Material.MAP)
-		.defaultValue(false);
+		.subSettings(key, triggerMode);
 
 	@EventListener(priority = EventPriority.LOWEST)
 	public void onTooltip(ItemTooltipEvent event) {

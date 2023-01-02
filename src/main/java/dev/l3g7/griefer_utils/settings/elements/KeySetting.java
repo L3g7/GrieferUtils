@@ -33,6 +33,7 @@ import net.labymod.settings.elements.StringElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -53,6 +54,7 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 	private final ModTextField previewField;
 	private final List<Consumer<Boolean>> pressCallbacks = new ArrayList<>();
 	private boolean pressed;
+	private boolean triggersInContainers = false;
 
 	private final IconStorage iconStorage = new IconStorage();
 	private final Storage<Set<Integer>> storage = new Storage<>(values -> {
@@ -96,6 +98,28 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 	public KeySetting pressCallback(Consumer<Boolean> callback) {
 		pressCallbacks.add(callback);
 		return this;
+	}
+
+	public KeySetting triggersInContainers() {
+		triggersInContainers = true;
+		return this;
+	}
+
+	@SubscribeEvent
+	public void onKeyPress(GuiScreenEvent.KeyboardInputEvent.Post event) {
+		if (Keyboard.isRepeatEvent() || !triggersInContainers)
+			return;
+
+
+		// Trigger callbacks if necessary
+		if (get().contains(Keyboard.getEventKey())) {
+			if (isPressed())
+				pressed = true;
+			else if (pressed)
+				pressed = false;
+
+			pressCallbacks.forEach(c -> c.accept(pressed));
+		}
 	}
 
 	@SubscribeEvent

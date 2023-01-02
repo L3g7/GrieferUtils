@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraft.entity.Entity;
@@ -53,6 +54,16 @@ public class PlayerHider extends Feature {
 	private final PlayerListSetting excludedPlayers = new PlayerListSetting()
 		.name("%s. Spieler");
 
+	private final KeySetting key = new KeySetting()
+		.name("Taste")
+		.icon("key")
+		.pressCallback(pressed -> {
+			if (pressed) {
+				BooleanSetting enabled = ((BooleanSetting) getMainElement());
+				enabled.set(!enabled.get());
+			}
+		});
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Spieler verstecken")
@@ -63,7 +74,7 @@ public class PlayerHider extends Feature {
 				for (EntityPlayer player : world().playerEntities)
 					updatePlayer(player);
 		})
-		.subSettings(new HeaderSetting("Ausgenommene Spieler"), excludedPlayers);
+		.subSettings(key, new HeaderSetting("Ausgenommene Spieler"), excludedPlayers);
 
 	{ excludedPlayers.setContainer(enabled); }
 
@@ -142,8 +153,6 @@ public class PlayerHider extends Feature {
 		// Effect particles
 		if (hide)
 			Reflection.invoke(player, "resetPotionEffectMetadata");
-		else
-			Reflection.invoke(player, "updatePotionMetadata");
 
 		player.setSilent(hide);
 		player.setEating(false);

@@ -18,11 +18,14 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.KeySetting;
+import dev.l3g7.griefer_utils.util.misc.Config;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -33,11 +36,36 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 @Singleton
 public class FullBright extends Feature {
 
+	private static final String GAMMA_PATH = "render.full_bright.old_gamma_value";
+
+	private final KeySetting key = new KeySetting()
+		.name("Taste")
+		.icon("key")
+		.pressCallback(pressed -> {
+			if (pressed) {
+				BooleanSetting enabled = ((BooleanSetting) getMainElement());
+				enabled.set(!enabled.get());
+			}
+		});
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("FullBright")
 		.description("Stellt den Gammawert auf 10.")
-		.icon("light_bulb");
+		.icon("light_bulb")
+		.subSettings(key)
+		.callback(active -> {
+			if (active) {
+				float gamma = mc().gameSettings.gammaSetting;
+				if (gamma <= 1)
+					Config.set(GAMMA_PATH, new JsonPrimitive(gamma));
+
+				return;
+			}
+
+			if (Config.has(GAMMA_PATH))
+				mc().gameSettings.gammaSetting = Config.get(GAMMA_PATH).getAsFloat();
+		});
 
 	@EventListener
 	public void onPlayerTick(TickEvent.ClientTickEvent event) {

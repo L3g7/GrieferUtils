@@ -16,7 +16,9 @@
   },
   "net/minecraft/client/gui/inventory/GuiChest": {
     "fields": {
-      "lowerChestInventory": "field_147015_w"
+      "lowerChestInventory": "field_147015_w",
+      "guiLeft": "field_147003_i",
+      "guiTop": "field_147009_r"
     }
   },
   "net/minecraft/client/gui/inventory/GuiContainer": {

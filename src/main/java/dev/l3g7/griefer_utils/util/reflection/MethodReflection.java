@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.util.misc.Mapping;
 import org.objectweb.asm.Type;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,8 @@ class MethodReflection {
 		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
 		String mappedName = Mapping.mapMethodName(SRG, Type.getInternalName(targetClass), name, "");
+		if (mappedName == null)
+			throw elevate(new NoSuchMethodException(), "Could not find srg mapping for %s.%s", Type.getInternalName(targetClass) + "#" + name);
 
 		Method method = resolveMethod(targetClass, mappedName, params);
 		if (method == null)
@@ -67,8 +70,9 @@ class MethodReflection {
 		try {
 			method.setAccessible(true);
 			return c(method.invoke(target, params));
+		} catch (InvocationTargetException e) {
+			throw elevate(e.getCause(), "Tried to invoke method '%s' with parameters '%s' in '%s'", method.getName(), ArrayUtil.toString(params, o -> o == null ? "<null>" : o.getClass().toString(), ", "), target == null ? "<null>" : target.toString());
 		} catch (Throwable e) {
-
 			throw elevate(e, "Tried to invoke method '%s' with parameters '%s' in '%s'", method.getName(), ArrayUtil.toString(params, o -> o == null ? "<null>" : o.getClass().toString(), ", "), target == null ? "<null>" : target.toString());
 		}
 	}

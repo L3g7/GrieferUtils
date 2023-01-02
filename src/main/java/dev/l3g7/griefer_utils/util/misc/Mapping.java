@@ -43,7 +43,7 @@ public class Mapping {
 			return descriptor;
 
 		descriptor = type.getInternalName();
-		if (!descriptor.startsWith("net/minecraft/"))
+		if (!descriptor.startsWith("net/minecraft/") || !descriptor.contains("/"))
 			return descriptor;
 		if (!target.mappings.containsKey(descriptor))
 			throw new NoClassDefFoundError("Could not find mapping for class " + descriptor);
@@ -55,7 +55,7 @@ public class Mapping {
 		if (!obfuscated)
 			return name;
 
-		if (!owner.startsWith("net/minecraft/"))
+		if (!owner.startsWith("net/minecraft/") || !owner.contains("/"))
 			return name;
 		if (!target.mappings.containsKey(owner))
 			throw new NoClassDefFoundError("Could not find mapping for class " + owner);
@@ -68,7 +68,7 @@ public class Mapping {
 		if (!obfuscated)
 			return name;
 
-		if (!owner.startsWith("net/minecraft/"))
+		if (!owner.startsWith("net/minecraft/") || !owner.contains("/"))
 			return name;
 		if (!target.mappings.containsKey(owner))
 			throw new NoClassDefFoundError("Could not find mapping for class " + owner);

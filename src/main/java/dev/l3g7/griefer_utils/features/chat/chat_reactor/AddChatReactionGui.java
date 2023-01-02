@@ -21,7 +21,6 @@ package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
-import net.labymod.addon.online.AddonInfoManager;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.gui.elements.ModTextField;
@@ -45,7 +44,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
-import static java.lang.Boolean.TRUE;
 
 public class AddChatReactionGui extends GuiScreen {
 
@@ -85,13 +83,13 @@ public class AddChatReactionGui extends GuiScreen {
 			PreviewRenderer.getInstance().init(AddChatReactionGui.class);
 
 		triggerInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 115, 240, 20);
-		triggerInput.setPlaceHolder("§8[GrieferUtils] [+] Zwiebackgesicht");
+		triggerInput.setPlaceHolder("§8[GrieferUtils] [+] SchlimmerScammer");
 		triggerInput.setText(reaction.trigger);
 		triggerInput.setMaxStringLength(Integer.MAX_VALUE);
 
 
 		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 98, 240, 20);
-		commandInput.setPlaceHolder("§8/startkick Zwiebackgesicht Scammer >:(");
+		commandInput.setPlaceHolder("§8/startkick SchlimmerScammer Scammer >:(");
 		commandInput.setText(reaction.command);
 		commandInput.setMaxStringLength(Integer.MAX_VALUE);
 

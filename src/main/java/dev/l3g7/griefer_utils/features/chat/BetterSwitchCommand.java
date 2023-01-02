@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.chat;
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -29,12 +30,15 @@ import dev.l3g7.griefer_utils.util.misc.Constants;
 import net.labymod.utils.Material;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class BetterSwitchCommand extends Feature {
+
+	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$");
 
 	private static final List<ServerAlias> SERVER_ALIASES = ImmutableList.of(
 		new ServerAlias("nature", "Nature", "n"),
@@ -43,6 +47,9 @@ public class BetterSwitchCommand extends Feature {
 		new ServerAlias("farm1", "Wasser", "w"),
 		new ServerAlias("nether1", "Lava", "l"),
 		new ServerAlias("eventserver", "Event", "v"));
+
+	private String command = "";
+	private boolean awaitingSendCommand = false;
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -54,18 +61,29 @@ public class BetterSwitchCommand extends Feature {
 	public void onMessageSend(MessageEvent.MessageSendEvent event) {
 		String msg = event.message;
 
-		if (msg.matches("^/(?:cb|switch) ?\\w+$")) {
-			String cb = msg.replaceAll("^/(?:cb|switch) ?(\\w+)$", "$1");
+		if (awaitingSendCommand) {
+			awaitingSendCommand = false;
+			return;
+		}
+
+		Matcher matcher = COMMAND_PATTERN.matcher(msg);
+
+		if (matcher.matches()) {
+			String cb = matcher.group(1);
 			event.setCanceled(true);
 
 			if (cb.matches("^\\d+$")) {
-				player().sendChatMessage("/switch " + cb);
+				command = matcher.group(2);
+				awaitingSendCommand = true;
+				send("/switch cb" + cb);
 				return;
 			}
 
 			for (ServerAlias alias : SERVER_ALIASES) {
 				if (alias.matches(cb)) {
-					player().sendChatMessage("/switch " + alias.targetCityBuild);
+					command = matcher.group(2);
+					awaitingSendCommand = true;
+					send("/switch " + alias.targetCityBuild);
 					return;
 				}
 			}
@@ -86,6 +104,15 @@ public class BetterSwitchCommand extends Feature {
 		display(Constants.ADDON_PREFIX + "§7Event: 'v'");
 
 		event.setCanceled(true);
+	}
+
+	@EventListener
+	public void onCityBuild(CityBuildJoinEvent event) {
+		if (command.isEmpty())
+			return;
+
+		send(command);
+		command = "";
 	}
 
 	private static class ServerAlias {

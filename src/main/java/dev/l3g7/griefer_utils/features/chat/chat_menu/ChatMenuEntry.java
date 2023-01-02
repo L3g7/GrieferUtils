@@ -65,6 +65,16 @@ public class ChatMenuEntry {
 		this.completed = true;
 	}
 
+	@Override
+	protected ChatMenuEntry clone() {
+		ChatMenuEntry entry = new ChatMenuEntry(name, action, command, icon);
+		entry.iconType = iconType;
+		entry.command = command;
+		entry.pos = pos;
+		entry.enabled = enabled;
+		return entry;
+	}
+
 	public JsonObject toJson() {
 		JsonObject object = new JsonObject();
 

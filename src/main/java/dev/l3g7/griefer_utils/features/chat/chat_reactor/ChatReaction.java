@@ -70,6 +70,7 @@ public class ChatReaction {
 		if (!COLOR_PATTERN.matcher(trigger).find())
 			text = text.replaceAll(COLOR_PATTERN.pattern(), "");
 
+		String command = this.command;
 		if (!regEx) {
 			if (matchAll ? trigger.equalsIgnoreCase(text) : text.toLowerCase().contains(trigger.toLowerCase()))
 				player().sendChatMessage(command);

@@ -63,6 +63,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 	private GuiButton cancelButton;
 	private GuiButton doneButton;
 	private final ChatMenuEntry entry;
+	private final ChatMenuEntry ogEntry;
 
 	private final List<ActionButton> actionButtons = new ArrayList<>();
 	private final List<IconTypeButton> iconTypeButtons = new ArrayList<>();
@@ -77,13 +78,14 @@ public class AddChatMenuEntryGui extends GuiScreen {
 
 	public AddChatMenuEntryGui(ChatMenuEntry entry, GuiScreen backgroundScreen) {
 		this.entry = entry == null ? new ChatMenuEntry() : entry;
+		this.ogEntry = this.entry;
 		this.backgroundScreen = backgroundScreen;
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public void initGui() {
 		super.initGui();
-		this.scrollbar.setPosition(this.width / 2 + 172 , 135, this.width / 2 + 172 + 4, this.height - 15);
+		this.scrollbar.setPosition(this.width / 2 + 172 , 50, this.width / 2 + 172 + 4, this.height - 15);
 		this.scrollbar.setSpeed(20);
 		this.scrollbar.init();
 
@@ -100,11 +102,13 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		nameInput.setText(entry.name);
 		nameInput.setMaxStringLength(Integer.MAX_VALUE);
 
+		buttonList.clear();
 		buttonList.add(cancelButton = new GuiButton(0, width / 2 - 105, y + 115, 100, 20, entry.completed ? "Löschen" : "Abbrechen"));
 		buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, y + 115, 100, 20, entry.completed ? "Speichern" : "Hinzufügen"));
 
 		int bgn = (width - 336) / 2;
 
+		actionButtons.clear();
 		int x = 0;
 		for (int i = 0; i < Action.values().length; i++) {
 			Action value = Action.values()[i];
@@ -120,6 +124,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 
 		bgn = (width - 240) / 2;
 
+		iconTypeButtons.clear();
 		x = 0;
 		for (int i = 0; i < IconType.values().length; i++) {
 			IconType value = IconType.values()[i];
@@ -159,10 +164,12 @@ public class AddChatMenuEntryGui extends GuiScreen {
 	}
 
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		GL11.glScissor(0, 0, 0, 0);
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		int height = (entry.action == null ? 228 : (entry.iconType != null && entry.iconType != IconType.DEFAULT ? 423 + 89 : 423)) + 20;
-		scrollbar.update(height - (int) scrollbar.getTop() + 70);
-
+		int height = (entry.action == null ? 228 : (entry.iconType != null && entry.iconType != IconType.DEFAULT ? 423 + 70 : 423)) + 40;
+		scrollbar.update(height - (int) scrollbar.getTop() + (entry.action == null ? 0 : entry.iconType != null && entry.iconType != IconType.DEFAULT ? 110 : 80));
 
 		GL11.glColorMask(false, false, false, false);
 		for (GuiButton guiButton : this.buttonList) guiButton.drawButton(this.mc, mouseX, mouseY);
@@ -172,23 +179,12 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		DrawUtils draw = LabyMod.getInstance().getDrawUtils();
 		draw.drawAutoDimmedBackground(scrollbar.getScrollY());
 
-		if (entry.iconType != null && entry.iconType != IconType.DEFAULT)
-			scrollbar.draw(mouseX, mouseY);
-		drawUtils().drawCenteredString("§e§l" + Constants.ADDON_NAME, width / 2f, 81, 1.3);
-		drawUtils().drawCenteredString("§e§lChatmenü", width / 2f, 105, .7);
-
-		if (entry.action != null) {
-			GL11.glEnable(GL11.GL_SCISSOR_TEST);
-			GL11.glScissor(0, 0, Display.getWidth(), Display.getHeight() - (int) (135 / new ScaledResolution(mc).getScaledHeight_double() * Display.getHeight()));
-		}
-
-		if (entry.iconType == null || entry.iconType == IconType.DEFAULT)
-			scrollbar.setScrollY(0);
-
+		scrollbar.draw(mouseX, mouseY);
+		drawUtils().drawCenteredString("§e§l" + Constants.ADDON_NAME, width / 2f, 81 + scrollbar.getScrollY(), 1.3);
+		drawUtils().drawCenteredString("§e§lChatmenü", width / 2f, 105 + scrollbar.getScrollY(), .7);
 
 		GL11.glTranslated(0, scrollbar.getScrollY(), 0);
 		mouseY -= scrollbar.getScrollY();
-
 		for (ActionButton actionButton : actionButtons) {
 			GuiButton button = actionButton.wrappedButton;
 			int x = button.xPosition;
@@ -209,9 +205,9 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		int x = width / 2 - 120;
 		drawUtils().drawString("Aktion", width / 2f - 168, (actionButtons.get(0).wrappedButton.yPosition) - fontRendererObj.FONT_HEIGHT - 8, 1.2);
 
-		doneButton.yPosition = cancelButton.yPosition = height - 20;
+		doneButton.yPosition = cancelButton.yPosition = height - 40;
 		doneButton.enabled = !commandInput.getText().isEmpty() && !nameInput.getText().isEmpty() && (entry.iconType == IconType.DEFAULT || entry.icon != null);
-		buttonBack.id = doneButton.enabled ? 1 : 0;
+		buttonBack.id = doneButton.enabled ? 1 : 7;
 		doneButton.drawButton(mc, mouseX, mouseY);
 		cancelButton.drawButton(mc, mouseX, mouseY);
 
@@ -285,15 +281,12 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		}
 
 		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
-		if (entry.action != null) {
-			GL11.glDisable(GL11.GL_SCISSOR_TEST);
-		}
 
 		draw.drawOverlayBackground(0, 45);
 		draw.drawGradientShadowTop(45, 0.0, this.width);
 		draw.drawOverlayBackground(this.height - 10, this.height);
 		draw.drawGradientShadowBottom((double) this.height - 10, 0.0, this.width);
-		buttonBack.drawButton(mc, mouseX, mouseY);
+		buttonBack.drawButton(mc, mouseX, mouseY + (int) scrollbar.getScrollY());
 
 		if (AddonInfoManager.getInstance().isLoaded()) {
 			AddonElement openedAddonSettings = Reflection.get(addonsGui, "openedAddonSettings");
@@ -307,6 +300,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		backgroundScreen.updateScreen();
 		commandInput.updateCursorCounter();
 		nameInput.updateCursorCounter();
+		itemSetting.updateScreen();
 	}
 
 	protected void actionPerformed(GuiButton button) throws IOException {
@@ -352,6 +346,14 @@ public class AddChatMenuEntryGui extends GuiScreen {
 					fileInput.setText(file.getName());
 				});
 				break;
+			case 7:
+				if (ogEntry.completed) { // Save original entry if making entry invalid and going back
+					new EntryDisplaySetting(ogEntry, FileProvider.getSingleton(ChatMenu.class).getMainElement());
+					ChatMenu.saveEntries();
+				}
+				Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
+				backgroundScreen.initGui(); // Update settings
+				break;
 			case 1:
 				entry.name = nameInput.getText();
 				entry.command = commandInput.getText();
@@ -369,6 +371,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		if (buttonBack.mousePressed(this.mc, mouseX, mouseY)) {
 			buttonBack.playPressSound(this.mc.getSoundHandler());
 			this.actionPerformed(buttonBack);
+			return;
 		}
 
 		super.mouseClicked(mouseX, mouseY -= (int) scrollbar.getScrollY(), mouseButton);
@@ -385,7 +388,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		super.mouseReleased(mouseX, mouseY, state);
+		super.mouseReleased(mouseX, mouseY -= scrollbar.getScrollY(), state);
 		textCompareDropDown.onRelease(mouseX, mouseY, state);
 		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.RELEASED);
 		if (entry.iconType == IconType.ITEM)
@@ -394,10 +397,9 @@ public class AddChatMenuEntryGui extends GuiScreen {
 
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
-		super.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
+		super.mouseClickMove(mouseX, mouseY -= scrollbar.getScrollY(), mouseButton, timeSinceLastClick);
 		textCompareDropDown.onDrag(mouseX, mouseY, mouseButton);
-		if (entry.iconType != null && entry.iconType != IconType.DEFAULT)
-			scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
+		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
 		if (entry.iconType == IconType.ITEM)
 			itemSetting.mouseClickMove(mouseX, mouseY, mouseButton);
 	}
@@ -415,8 +417,8 @@ public class AddChatMenuEntryGui extends GuiScreen {
 	@Override
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
-		if (entry.iconType != null && entry.iconType != IconType.DEFAULT)
-			scrollbar.mouseInput();
+		scrollbar.mouseInput();
+		itemSetting.onScrollDropDown();
 	}
 
 	private static class IconTypeButton {

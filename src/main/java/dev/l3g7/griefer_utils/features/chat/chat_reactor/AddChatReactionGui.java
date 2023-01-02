@@ -25,6 +25,7 @@ import net.labymod.addon.online.AddonInfoManager;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.gui.elements.ModTextField;
+import net.labymod.gui.elements.Scrollbar;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.LabyModModuleEditorGui;
@@ -44,6 +45,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
+import static java.lang.Boolean.TRUE;
 
 public class AddChatReactionGui extends GuiScreen {
 
@@ -61,6 +63,8 @@ public class AddChatReactionGui extends GuiScreen {
 	private GuiButton buttonBack;
 	private DropDownMenu<TextCompareMode> textCompareDropDown;
 
+	private final Scrollbar scrollbar = new Scrollbar(1);
+
 	public AddChatReactionGui(ChatReaction reaction, GuiScreen backgroundScreen) {
 		this.reaction = reaction == null ? new ChatReaction() : reaction;
 		if (reaction != null)
@@ -71,6 +75,9 @@ public class AddChatReactionGui extends GuiScreen {
 
 	public void initGui() {
 		super.initGui();
+		this.scrollbar.setPosition(this.width / 2 + 172 , 50, this.width / 2 + 172 + 4, this.height - 15);
+		this.scrollbar.setSpeed(20);
+		this.scrollbar.init();
 		backgroundScreen.width = width;
 		backgroundScreen.height = height;
 		int y = 50 + 80;
@@ -109,24 +116,16 @@ public class AddChatReactionGui extends GuiScreen {
 		GL11.glColorMask(false, false, false, false);
 		for (GuiButton guiButton : this.buttonList) guiButton.drawButton(this.mc, mouseX, mouseY);
 		GL11.glColorMask(true, true, true, true);
+		int height = regEx == null ? 22 + 80 + 115 + 8 : regEx ? 50 + 183 + 40 + 8 + 80 : 50 + 183 + 65 + 80 + 17 + 28;
+		scrollbar.update(height - (int) scrollbar.getTop() + (regEx == null ? 0 : regEx ? 100 : 120));
 
 
 		LabyModAddonsGui addonsGui = (LabyModAddonsGui) backgroundScreen;
 		DrawUtils draw = LabyMod.getInstance().getDrawUtils();
-		draw.drawAutoDimmedBackground(0);
+		draw.drawAutoDimmedBackground(scrollbar.getScrollY());
 
-		draw.drawOverlayBackground(0, 45);
-		draw.drawGradientShadowTop(45, 0.0, this.width);
-		draw.drawOverlayBackground(this.height - 10, this.height);
-		draw.drawGradientShadowBottom((double) this.height - 10, 0.0, this.width);
-
-		if (AddonInfoManager.getInstance().isLoaded()) {
-			AddonElement openedAddonSettings = Reflection.get(addonsGui, "openedAddonSettings");
-			draw.drawString(openedAddonSettings.getAddonInfo().getName(), this.width / 2f - 100 + 30, 25.0);
-			openedAddonSettings.drawIcon(this.width / 2 + 100 - 20, 20, 20, 20);
-		}
-		buttonBack.drawButton(mc, mouseX, mouseY);
-
+		GL11.glTranslated(0, scrollbar.getScrollY(), 0);
+		mouseY -= scrollbar.getScrollY();
 		drawUtils().drawCenteredString("§e§l" + Constants.ADDON_NAME, width / 2f, 81, 1.3);
 		drawUtils().drawCenteredString("§e§lChatReactor", width / 2f, 105, .7);
 
@@ -151,9 +150,8 @@ public class AddChatReactionGui extends GuiScreen {
 		drawUtils().drawString("Text-Form", x, (parseModeText.wrappedButton.yPosition) - fontRendererObj.FONT_HEIGHT - 8, 1.2);
 
 
-		int y = regEx == null ? 22 + 80 + 115 + 8 : regEx ? 50 + 183 + 40 + 8 + 80 : 50 + 183 + 65 + 80 + 17 + 28;
 
-		doneButton.yPosition = cancelButton.yPosition = y;
+		doneButton.yPosition = cancelButton.yPosition = height;
 		doneButton.enabled = regEx != null && !triggerInput.getText().isEmpty() && !commandInput.getText().isEmpty() && (!regEx || validRegEx);
 		buttonBack.id = doneButton.enabled ? 1 : 0;
 		doneButton.drawButton(mc, mouseX, mouseY);
@@ -178,6 +176,19 @@ public class AddChatReactionGui extends GuiScreen {
 					textCompareDropDown.drawMenuDirect(textCompareDropDown.getX(), textCompareDropDown.getY(), mouseX, mouseY);
 			}
 		}
+		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
+
+		draw.drawOverlayBackground(0, 45);
+		draw.drawGradientShadowTop(45, 0.0, this.width);
+		draw.drawOverlayBackground(this.height - 10, this.height);
+		draw.drawGradientShadowBottom((double) this.height - 10, 0.0, this.width);
+
+		scrollbar.draw(mouseX, mouseY);
+
+		AddonElement openedAddonSettings = Reflection.get(addonsGui, "openedAddonSettings");
+		draw.drawString(openedAddonSettings.getAddonInfo().getName(), this.width / 2f - 100 + 30, 25.0);
+		openedAddonSettings.drawIcon(this.width / 2 + 100 - 20, 20, 20, 20);
+		buttonBack.drawButton(mc, mouseX, mouseY + (int) scrollbar.getScrollY());
 	}
 
 	public void updateScreen() {
@@ -212,22 +223,36 @@ public class AddChatReactionGui extends GuiScreen {
 	}
 
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
+		if (buttonBack.mousePressed(this.mc, mouseX, mouseY)) {
+			buttonBack.playPressSound(this.mc.getSoundHandler());
+			this.actionPerformed(buttonBack);
+			return;
+		}
+
+		super.mouseClicked(mouseX, mouseY -= (int) scrollbar.getScrollY(), mouseButton);
 		textCompareDropDown.onClick(mouseX, mouseY, mouseButton);
 		triggerInput.mouseClicked(mouseX, mouseY, mouseButton);
 		commandInput.mouseClicked(mouseX, mouseY, mouseButton);
+		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
 	}
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		super.mouseReleased(mouseX, mouseY, state);
-		textCompareDropDown.onRelease(mouseX, mouseY, state);
+		super.mouseReleased(mouseX, mouseY -= scrollbar.getScrollY(), state);
+		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.RELEASED);
 	}
 
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
-		super.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
+		super.mouseClickMove(mouseX, mouseY -= scrollbar.getScrollY(), mouseButton, timeSinceLastClick);
 		textCompareDropDown.onDrag(mouseX, mouseY, mouseButton);
+		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
+	}
+
+	@Override
+	public void handleMouseInput() throws IOException {
+		super.handleMouseInput();
+		scrollbar.mouseInput();
 	}
 
 	protected void keyTyped(char typedChar, int keyCode) {

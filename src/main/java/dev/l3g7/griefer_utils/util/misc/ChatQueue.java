@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.file_provider.Singleton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.play.client.C01PacketChatMessage;
@@ -38,6 +39,7 @@ import java.util.concurrent.Future;
 /**
  * A queue for delaying outgoing chat messages.
  */
+@Singleton
 public class ChatQueue {
 
 	private static final int QUEUE_DELAY = 50; // 2.5s

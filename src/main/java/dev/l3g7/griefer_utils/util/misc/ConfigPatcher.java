@@ -86,12 +86,12 @@ public class ConfigPatcher {
 			"trigger", "trigger",
 			"command", "command",
 			"name", null);
-		rename("features.chest_search.active", "render.chest_search.enabled");
-		rename("features.chunk_indicator.red", "render.chunk_indicator.red_lines");
-		rename("features.chunk_indicator.yellow", "render.chunk_indicator.yellow_lines");
-		rename("features.chunk_indicator.cyan", "render.chunk_indicator.cyan_lines");
-		rename("features.chunk_indicator.blue", "render.chunk_indicator.blue_lines");
-		rename("features.chunk_indicator.toggle", "render.chunk_indicator.key");
+		rename("features.chest_search.active", "world.chest_search.enabled");
+		rename("features.chunk_indicator.red", "world.chunk_indicator.red_lines");
+		rename("features.chunk_indicator.yellow", "world.chunk_indicator.yellow_lines");
+		rename("features.chunk_indicator.cyan", "world.chunk_indicator.cyan_lines");
+		rename("features.chunk_indicator.blue", "world.chunk_indicator.blue_lines");
+		rename("features.chunk_indicator.toggle", "world.chunk_indicator.key");
 		rename("features.cooldown_notifications.active", "player.cooldown_notifications.enabled");
 		rename("features.cooldown_notifications.end_dates", "player.cooldown_notifications.end_dates");
 		rename("features.item_saver.bonze_saver.active", "item.sword_saver.enabled");
@@ -150,8 +150,8 @@ public class ConfigPatcher {
 		rename("tweaks.player_hider.active", "render.player_hider.enabled");
 		rename("tweaks.plot_chat_indicator.states", "chat.plot_chat_indicator.states");
 		rename("tweaks.portal_cooldown.active", "world.portal_cooldown.enabled");
-		rename("tweaks.bank_scoreboard.active", "render.bank_scoreboard.enabled");
-		rename("tweaks.orb_balance.active", "render.orb_scoreboard.enabled");
+		rename("tweaks.bank_scoreboard.active", "player.bank_scoreboard.enabled");
+		rename("tweaks.orb_balance.active", "player.orb_scoreboard.enabled");
 		rename("tweaks.showbarriers.active", "render.show_barriers.enabled");
 		rename("tweaks.enlighten.light_gray", "chat.enlighten.enlighten_light_gray");
 		rename("tweaks.enlighten.gray", "chat.enlighten.enlighten_gray");

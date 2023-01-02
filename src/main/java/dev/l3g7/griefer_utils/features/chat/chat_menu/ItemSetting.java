@@ -188,6 +188,9 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 		menu.setHeight(maxY - y - 6);
 		menu.draw(mouseX, mouseY);
 
+		if (!textField.isFocused())
+			return;
+
 		textField.xPosition = menu.getX() + 5;
 		textField.yPosition = menu.getY() + 5;
 		textField.width = width - 9;

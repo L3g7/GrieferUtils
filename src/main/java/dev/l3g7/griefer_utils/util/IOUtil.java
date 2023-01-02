@@ -80,6 +80,7 @@ public class IOUtil {
 	 * Sends the given json to the URL using a POST request.
 	 */
 	public static void writeJson(String url, JsonElement json) {
+		Throwable trigger = new Throwable("Invoker stack trace:");
 		Thread t = new Thread(() -> {
 			try {
 				HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -97,6 +98,7 @@ public class IOUtil {
 				conn.disconnect();
 			} catch (Exception e) {
 				e.printStackTrace();
+				trigger.printStackTrace();
 			}
 		});
 		t.setPriority(Thread.MIN_PRIORITY);
@@ -189,6 +191,7 @@ public class IOUtil {
 		 */
 		public AsyncFailable asFile(File file, TConsumer<File> callback) {
 			AsyncFailable op = new AsyncFailable();
+			Throwable trigger = new Throwable("Invoker stack trace:");
 			Thread t = new Thread(() -> {
 				try {
 					try (InputStream in = open(); FileOutputStream out = new FileOutputStream(file)) {
@@ -201,6 +204,7 @@ public class IOUtil {
 						callback.accept(file);
 					}
 				} catch (Exception e) {
+					trigger.printStackTrace();
 					e.printStackTrace();
 					if (op.fallback != null)
 						op.fallback.accept(e);
@@ -245,12 +249,14 @@ public class IOUtil {
 		 */
 		private <V> AsyncFailable readAsync(TFunction<InputStreamReader, V> parser, TConsumer<V> callback) {
 			AsyncFailable op = new AsyncFailable();
+			Throwable trigger = new Throwable("Invoker stack trace:");
 			Thread t = new Thread(() -> {
 				try {
 					try (InputStreamReader in = new InputStreamReader(open(), UTF_8)) {
 						callback.accept(parser.apply(in));
 					}
 				} catch (Exception e) {
+					trigger.printStackTrace();
 					e.printStackTrace();
 					if (op.fallback != null)
 						op.fallback.accept(e);

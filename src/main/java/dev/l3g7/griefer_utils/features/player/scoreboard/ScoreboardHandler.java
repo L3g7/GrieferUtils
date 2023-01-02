@@ -16,17 +16,14 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.render.scoreboard;
+package dev.l3g7.griefer_utils.features.player.scoreboard;
 
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.util.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
-import net.labymod.ingamegui.modules.ScoreboardModule;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;

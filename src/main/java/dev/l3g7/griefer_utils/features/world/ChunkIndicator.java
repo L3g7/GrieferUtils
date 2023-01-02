@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.render;
+package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -35,8 +35,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.features.render.ChunkIndicator.TriggerMode.HOLD;
-import static dev.l3g7.griefer_utils.features.render.ChunkIndicator.TriggerMode.TOGGLE;
+import static dev.l3g7.griefer_utils.features.world.ChunkIndicator.TriggerMode.HOLD;
+import static dev.l3g7.griefer_utils.features.world.ChunkIndicator.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static net.minecraft.init.Blocks.stained_hardened_clay;
 

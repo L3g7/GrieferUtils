@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.render.scoreboard;
+package dev.l3g7.griefer_utils.features.player.scoreboard;
 
 import dev.l3g7.griefer_utils.features.modules.orb_stats.OrbBalance;
 import dev.l3g7.griefer_utils.file_provider.Singleton;

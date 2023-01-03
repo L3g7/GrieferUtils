@@ -61,9 +61,6 @@ public abstract class Feature {
 		Pair<SettingsElement, String> data = ElementBuilder.initMainElement(this, category.getConfigKey());
 		mainElement = data.getLeft();
 		configKey = data.getRight();
-
-		// Register events
-		EventHandler.register(this);
 	}
 
 	public SettingsElement getMainElement() {

@@ -31,9 +31,6 @@ import net.minecraftforge.fml.common.eventhandler.ListenerList;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.lang.reflect.Method;
-import java.util.function.Predicate;
-
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 
 /**
@@ -73,54 +70,6 @@ public class EventHandler implements Opcodes {
 						Reflection.invoke(resolveOwner(method, isSingleton), method.load(), e);
 				}
 			});
-		}
-	}
-
-	/**
-	 * Registers all non-static methods annotated with {@link EventListener} to the {@link MinecraftForge#EVENT_BUS}.
-	 */
-	public static void register(Object obj) {
-		AnnotationEventHandler.register(obj);
-
-		Class<?> clazz = obj.getClass();
-		if (clazz.isAnnotationPresent(Singleton.class))
-			return;
-
-		for (Method method : Reflection.getAnnotatedMethods(clazz, EventListener.class)) {
-
-			// Skip static listeners
-			if ((method.getModifiers() & ACC_STATIC) != 0)
-				return;
-
-			Class<? extends Event> eventClass = getEventClass(new MethodMeta(null, method));
-			ListenerList listeners = Reflection.construct(eventClass).getListenerList();
-
-			// Get metadata
-			EventListener meta = method.getAnnotation(EventListener.class);
-			EventPriority priority = meta.priority();
-			boolean receiveCanceled = meta.receiveCanceled();
-			boolean triggerWhenDisabled = meta.triggerWhenDisabled();
-			boolean receiveSubclasses = meta.receiveSubclasses();
-
-			Predicate<Event> check = event ->
-				(receiveCanceled || !event.isCanceled()
-					&& (receiveSubclasses || event.getClass() == eventClass));
-
-			// Check if obj is Feature
-			if (obj instanceof Feature) {
-				// Check if feature is disabled
-				Feature feature = (Feature) obj;
-				listeners.register(BUS_ID, priority, event -> {
-					if (check.test(event) && (triggerWhenDisabled || feature.isEnabled()))
-						Reflection.invoke(obj, method, event);
-				});
-			} else {
-				// Don't check
-				listeners.register(BUS_ID, priority, event -> {
-					if (check.test(event))
-						Reflection.invoke(obj, method, event);
-				});
-			}
 		}
 	}
 

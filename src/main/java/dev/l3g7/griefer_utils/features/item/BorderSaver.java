@@ -19,11 +19,12 @@
 package dev.l3g7.griefer_utils.features.item;
 
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.world.ChestSearch;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -31,13 +32,14 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.MouseEvent;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import static dev.l3g7.griefer_utils.util.ItemUtil.createItem;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
-import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK;
+import static net.labymod.ingamegui.Module.mc;
+import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR;
 
 /**
  * Suppresses left clicks and dropping when holing a diamond sword enchanted with looting 21.
@@ -66,31 +68,37 @@ public class BorderSaver extends Feature {
 		inv.setInventorySlotContents(DECLINE_SLOT_ID, createItem(Items.dye, 1, "§cAbbrechen"));
 	}
 
-	private boolean clickedOnBlock = false;
+	@EventListener
+	public void onPacket(PacketEvent.PacketSendEvent event) {
+		if (event.packet instanceof C07PacketPlayerDigging) {
+			if (isHoldingBorder()) {
+				event.setCanceled(true);
+				displayScreen(() -> mc.getNetHandler().getNetworkManager().sendPacket(event.packet));
+			}
+		}
+	}
 
 	@EventListener
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		// For some reason, a RIGHT_CLICK_AIR PlayerInteractEvent is triggered right after the RIGHT_CLICK_BLOCK event
-		if (clickedOnBlock) {
-			clickedOnBlock = false;
-			event.setCanceled(true);
-			return;
-		}
-
-		if (event.action != RIGHT_CLICK_BLOCK)
+		if (!isHoldingBorder())
 			return;
 
+		event.setCanceled(true);
+		if (event.action != RIGHT_CLICK_AIR)
+			displayScreen(() -> mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld, mc.thePlayer.getHeldItem()));
+	}
+
+	private boolean isHoldingBorder() {
 		ItemStack heldItem = player().getHeldItem();
 
 		if (heldItem == null || !heldItem.hasTagCompound())
-			return;
+			return false;
 
 		// Check if it's a border
-		if (!heldItem.getTagCompound().getBoolean("wall_effect"))
-			return;
+		return heldItem.getTagCompound().getBoolean("wall_effect");
+	}
 
-		clickedOnBlock = true;
-		event.setCanceled(true);
+	private void displayScreen(Runnable callback) {
 		mc().displayGuiScreen(new GuiChest(player().inventory, inv) {
 
 			protected void handleMouseClick(Slot slot, int slotId, int btn, int type) {
@@ -103,9 +111,8 @@ public class BorderSaver extends Feature {
 				if (slotId != ACCEPT_SLOT_ID)
 					return;
 
-				mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld, mc.thePlayer.getHeldItem());
+				callback.run();
 				mc.displayGuiScreen(null);
-				clickedOnBlock = true;
 			}
 
 		});

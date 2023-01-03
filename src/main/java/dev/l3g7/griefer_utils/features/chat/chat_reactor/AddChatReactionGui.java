@@ -157,10 +157,10 @@ public class AddChatReactionGui extends GuiScreen {
 
 		if (regEx != null) {
 			drawUtils().drawString(regEx ? "Regulärer Ausdruck" : "Text", x, triggerInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-			triggerInput.setPlaceHolder(regEx ? "§8^\\[[^ ]+ \\┃ ([^ ]+) -> mir] (.*)$" : "§8[GrieferUtils] [+] Zwiebackgesicht");
+			triggerInput.setPlaceHolder(regEx ? "§8^\\[[^ ]+ \\┃ ([^ ]+) -> mir] (.*)$" : "§8[GrieferUtils] [+] SchlimmerScammer");
 			triggerInput.drawTextBox();
 
-			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/startkick Zwiebackgesicht Scammer");
+			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/startkick SchlimmerScammer Scammer");
 			drawUtils().drawString("Befehl", x, commandInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
 			commandInput.drawTextBox();
 

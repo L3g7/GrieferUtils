@@ -55,7 +55,7 @@ public class BorderSaver extends Feature {
 		.description("Fragt beim Einlösen eines Randes nach einer Bestätigung.")
 		.icon(createItem(Blocks.obsidian, 0, true));
 
-	private final IInventory inv = new InventoryBasic("§0Willst du den Rand einlösen?", false, 27);
+	private final IInventory inv = new InventoryBasic(ChestSearch.marker + "§0Willst du den Rand einlösen?", false, 27);
 
 	public BorderSaver() {
 		ItemStack grayGlassPane = createItem(Blocks.stained_glass_pane, 7, "§8");

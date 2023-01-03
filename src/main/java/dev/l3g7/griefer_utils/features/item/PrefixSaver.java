@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.item;
 
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.world.ChestSearch;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -51,7 +52,7 @@ public class PrefixSaver extends Feature {
 		.description("Fragt beim Einlösen eines Prefixes nach einer Bestätigung.")
 		.icon(createItem(Blocks.redstone_ore, 0, true));
 
-	private final IInventory inv = new InventoryBasic("§0Willst du den Prefix einlösen?", false, 27);
+	private final IInventory inv = new InventoryBasic(ChestSearch.marker + "§0Willst du den Rand einlösen?", false, 27);
 
 	public PrefixSaver() {
 		ItemStack grayGlassPane = createItem(Blocks.stained_glass_pane, 7, "§8");

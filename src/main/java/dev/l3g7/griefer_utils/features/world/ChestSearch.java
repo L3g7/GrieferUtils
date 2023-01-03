@@ -29,6 +29,7 @@ import net.labymod.gui.elements.ModTextField;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -41,6 +42,11 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
 public class ChestSearch extends Feature {
+
+	/**
+	 * An invisible marker to indicate guis where ChestSearch should be disabled
+	 */
+	public static final String marker = "§4§0§2§7§9§c§d§a§d§e§f§e§l§m§n§r";
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -59,6 +65,11 @@ public class ChestSearch extends Feature {
 		if (event.gui instanceof GuiChest) {
 			int guiLeft = Reflection.get(event.gui, "guiLeft");
 			int guiTop = Reflection.get(event.gui, "guiTop");
+
+			IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
+			if (lowerChestInventory.getDisplayName().getFormattedText().startsWith(marker))
+				return;
+
 			searchField = new ModTextField(0, mc().fontRendererObj, guiLeft + 82, guiTop + 6, 83, mc().fontRendererObj.FONT_HEIGHT);
 			searchField.setPlaceHolder("§oSuche...");
 			searchField.setTextColor(0xffffff);

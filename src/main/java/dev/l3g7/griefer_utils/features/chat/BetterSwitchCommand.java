@@ -48,7 +48,7 @@ public class BetterSwitchCommand extends Feature {
 		new ServerAlias("nether1", "Lava", "l"),
 		new ServerAlias("eventserver", "Event", "v"));
 
-	private String command = "";
+	private String command = null;
 	private boolean awaitingSendCommand = false;
 
 	@MainElement

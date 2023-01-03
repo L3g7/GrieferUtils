@@ -27,7 +27,6 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
-import dev.l3g7.griefer_utils.util.misc.Constants;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.DrawUtils;
@@ -40,13 +39,16 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.util.misc.Constants.MESSAGE_PATTERNS;
+import static dev.l3g7.griefer_utils.util.misc.Constants.*;
 
 @Singleton
 public class MessageSkulls extends Feature {
 
 	private static final String SPACE = "§m§e§s§s§a§g§e§s§k§u§l§l§s§r   ";
-	private static final ArrayList<Pattern> PATTERNS = new ArrayList<Pattern>(MESSAGE_PATTERNS) {{add(Constants.STATUS_PATTERN);}};
+	private static final ArrayList<Pattern> PATTERNS = new ArrayList<Pattern>(MESSAGE_PATTERNS) {{
+		remove(GLOBAL_CHAT_PATTERN);
+		add(STATUS_PATTERN);
+	}};
 
 	@ElementBuilder.MainElement
 	private final BooleanSetting enabled = new BooleanSetting()

@@ -169,7 +169,8 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 		int height = (entry.action == null ? 217 : (entry.iconType != null && entry.iconType != IconType.DEFAULT ? 403 + 60 : 403)) + 20;
 		int guiScale = new ScaledResolution(mc).getScaleFactor();
-		scrollbar.update(height - (int) scrollbar.getTop() + (entry.action == null ? 0 : entry.iconType != null && entry.iconType != IconType.DEFAULT ? (45 + (10 * guiScale)) : ((26 * guiScale) - 34)));
+
+		scrollbar.update(height - (int) scrollbar.getTop() + (entry.action == null ? 0 : entry.iconType != null && entry.iconType != IconType.DEFAULT ? getLowerSpacing(guiScale) : ((26 * guiScale) - 34)));
 
 		GL11.glColorMask(false, false, false, false);
 		for (GuiButton guiButton : this.buttonList) guiButton.drawButton(this.mc, mouseX, mouseY);
@@ -294,6 +295,15 @@ public class AddChatMenuEntryGui extends GuiScreen {
 			openedAddonSettings.drawIcon(this.width / 2 + 100 - 20, 20, 20, 20);
 		}
 
+	}
+
+	private int getLowerSpacing(int scale) {
+		switch (scale) {
+			case 1:
+			case 2: return 0;
+			case 3: return 75;
+			default: return 85;
+		}
 	}
 
 	public void updateScreen() {

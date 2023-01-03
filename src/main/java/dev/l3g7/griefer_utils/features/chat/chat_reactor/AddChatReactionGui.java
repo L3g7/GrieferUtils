@@ -67,6 +67,8 @@ public class AddChatReactionGui extends GuiScreen {
 		this.reaction = reaction == null ? new ChatReaction() : reaction;
 		if (reaction != null)
 			regEx = reaction.regEx;
+		if (reaction == null)
+			this.reaction.enabled = true;
 		this.backgroundScreen = backgroundScreen;
 		MinecraftForge.EVENT_BUS.register(this);
 	}
@@ -160,7 +162,7 @@ public class AddChatReactionGui extends GuiScreen {
 			triggerInput.setPlaceHolder(regEx ? "§8^\\[[^ ]+ \\┃ ([^ ]+) -> mir] (.*)$" : "§8[GrieferUtils] [+] SchlimmerScammer");
 			triggerInput.drawTextBox();
 
-			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/startkick SchlimmerScammer Scammer");
+			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/startkick SchlimmerScammer Scammer >:(");
 			drawUtils().drawString("Befehl", x, commandInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
 			commandInput.drawTextBox();
 

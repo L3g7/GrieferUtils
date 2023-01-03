@@ -32,6 +32,7 @@ public class ChatReaction {
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\\\(\\d+)");
 	private static final Pattern COLOR_PATTERN = Pattern.compile("(?<!\\\\)[§&][\\da-fk-or]");
 
+	boolean enabled;
 	Boolean regEx;
 	boolean matchAll;
 	String trigger = "";
@@ -44,6 +45,7 @@ public class ChatReaction {
 	public JsonObject toJson() {
 		JsonObject object = new JsonObject();
 
+		object.addProperty("enabled", enabled);
 		object.addProperty("is_regex", regEx);
 		object.addProperty("match_all", matchAll);
 		object.addProperty("trigger", trigger);
@@ -54,6 +56,7 @@ public class ChatReaction {
 
 	public static ChatReaction fromJson(JsonObject object) {
 		ChatReaction reaction = new ChatReaction();
+		reaction.enabled = object.get("enabled").getAsBoolean();
 		reaction.regEx = object.get("is_regex").getAsBoolean();
 		reaction.matchAll = object.get("match_all").getAsBoolean();
 		reaction.trigger = object.get("trigger").getAsString();
@@ -63,7 +66,7 @@ public class ChatReaction {
 	}
 
 	public void processMessage(String text) {
-		if (!completed)
+		if (!completed || !enabled)
 			return;
 
 		// Remove color if trigger doesn't have any

@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update;
 
-import dev.l3g7.griefer_utils.event.EventListener;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
@@ -31,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,9 +46,9 @@ public class ChangelogScreen extends GuiScreen {
 	private GuiScreen previousScreen;
 
 	// Make sure the gui closes to the correct screen
-	@EventListener(priority = EventPriority.LOWEST)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onGuiOpen(GuiOpenEvent event) {
-		if (event.isCanceled() || event.gui instanceof ChangelogScreen)
+		if (event.gui instanceof ChangelogScreen)
 			return;
 
 		previousScreen = event.gui;

@@ -42,7 +42,6 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
@@ -93,18 +92,18 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		backgroundScreen.height = height;
 		int y = 50 + 80;
 
-		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 115, 240, 20);
+		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 95, 240, 20);
 		commandInput.setText((String) entry.command);
 		commandInput.setMaxStringLength(Integer.MAX_VALUE);
 
 
-		nameInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 98, 240, 20);
+		nameInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 68, 240, 20);
 		nameInput.setText(entry.name);
 		nameInput.setMaxStringLength(Integer.MAX_VALUE);
 
 		buttonList.clear();
-		buttonList.add(cancelButton = new GuiButton(0, width / 2 - 105, y + 115, 100, 20, entry.completed ? "Löschen" : "Abbrechen"));
-		buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, y + 115, 100, 20, entry.completed ? "Speichern" : "Hinzufügen"));
+		buttonList.add(cancelButton = new GuiButton(0, width / 2 - 105, y + 95, 100, 20, entry.completed ? "Löschen" : "Abbrechen"));
+		buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, y + 95, 100, 20, entry.completed ? "Speichern" : "Hinzufügen"));
 
 		int bgn = (width - 336) / 2;
 
@@ -115,7 +114,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 			if(value == Action.CONSUMER)
 				continue;
 			int sLen = drawUtils().getStringWidth(value.name) + 29;
-			ActionButton btn = new ActionButton(100 + i, bgn + x, y + 45, sLen, 23, value);
+			ActionButton btn = new ActionButton(100 + i, bgn + x, y + 25, sLen, 23, value);
 			buttonList.add(btn.wrappedButton);
 			actionButtons.add(btn);
 			x += sLen + 4;
@@ -131,7 +130,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 			if(value == IconType.SYSTEM)
 				continue;
 			int sLen = drawUtils().getStringWidth(value.name) + 29 + 20;
-			IconTypeButton btn = new IconTypeButton(200 + i, bgn + x, y + 183 + 65 + 3, sLen, 23, value);
+			IconTypeButton btn = new IconTypeButton(200 + i, bgn + x, y + 183 + 25 + 3, sLen, 23, value);
 			buttonList.add(btn.wrappedButton);
 			iconTypeButtons.add(btn);
 			x += sLen + 4;
@@ -142,16 +141,16 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		textCompareDropDown.fill(Action.values());
 		textCompareDropDown.setSelected(entry.action);
 		textCompareDropDown.setEntryDrawer((o, ex, ey, trimmedEntry) -> drawUtils().drawString(((Action) o).name, ex, ey));
-		textCompareDropDown.setY(y + 183 + 65);
+		textCompareDropDown.setY(y + 183 + 45);
 		textCompareDropDown.setWidth(240);
 		textCompareDropDown.setHeight(17);
 
 
 
-		fileInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), bgn + 26, y + 183 + 108 + 30, 240 - 60 - 6 - 26, 20);
+		fileInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), bgn + 26, y + 183 + 88, 240 - 60 - 6 - 26, 20);
 		fileInput.setPlaceHolder("");
 		fileInput.setMaxStringLength(Integer.MAX_VALUE);
-		buttonList.add(fileButton = new GuiButton(4, this.width / 2 + 60, y + 183 + 108 + 30, 60, 20, "Auswählen"));
+		buttonList.add(fileButton = new GuiButton(4, this.width / 2 + 60, y + 183 + 88, 60, 20, "Auswählen"));
 
 		itemSetting = new ItemSetting()
 			.name("Item")
@@ -166,10 +165,11 @@ public class AddChatMenuEntryGui extends GuiScreen {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor(0, 0, 0, 0);
-		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		int height = (entry.action == null ? 228 : (entry.iconType != null && entry.iconType != IconType.DEFAULT ? 423 + 70 : 423)) + 40;
-		scrollbar.update(height - (int) scrollbar.getTop() + (entry.action == null ? 0 : entry.iconType != null && entry.iconType != IconType.DEFAULT ? 110 : 80));
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		int height = (entry.action == null ? 217 : (entry.iconType != null && entry.iconType != IconType.DEFAULT ? 403 + 60 : 403)) + 20;
+		int guiScale = new ScaledResolution(mc).getScaleFactor();
+		scrollbar.update(height - (int) scrollbar.getTop() + (entry.action == null ? 0 : entry.iconType != null && entry.iconType != IconType.DEFAULT ? (45 + (10 * guiScale)) : ((26 * guiScale) - 34)));
 
 		GL11.glColorMask(false, false, false, false);
 		for (GuiButton guiButton : this.buttonList) guiButton.drawButton(this.mc, mouseX, mouseY);
@@ -275,7 +275,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 				drawUtils().drawTexture(x, y, 256.0, 256.0, 20, 20);
 			} else if (entry.iconType == IconType.ITEM) {
 				x = (width / 2 - 120);
-				int y = 50 + 80 + 183 + 108 + 30;
+				int y = 50 + 80 + 183 + 88;
 				itemSetting.draw(x, y, x + 240, y + 23, mouseX, mouseY);
 			}
 		}

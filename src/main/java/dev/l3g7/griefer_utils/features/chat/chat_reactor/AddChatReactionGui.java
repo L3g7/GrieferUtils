@@ -36,6 +36,7 @@ import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
 
@@ -84,13 +85,13 @@ public class AddChatReactionGui extends GuiScreen {
 		if (backgroundScreen instanceof LabyModModuleEditorGui)
 			PreviewRenderer.getInstance().init(AddChatReactionGui.class);
 
-		triggerInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 115, 240, 20);
+		triggerInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 95, 240, 20);
 		triggerInput.setPlaceHolder("§8[GrieferUtils] [+] SchlimmerScammer");
 		triggerInput.setText(reaction.trigger);
 		triggerInput.setMaxStringLength(Integer.MAX_VALUE);
 
 
-		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 98, 240, 20);
+		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 78, 240, 20);
 		commandInput.setPlaceHolder("§8/startkick SchlimmerScammer Scammer >:(");
 		commandInput.setText(reaction.command);
 		commandInput.setMaxStringLength(Integer.MAX_VALUE);
@@ -99,15 +100,15 @@ public class AddChatReactionGui extends GuiScreen {
 		buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, y + 85, 100, 20, reaction.completed ? "Speichern" : "Hinzufügen"));
 
 		int bgn = (width - 240) / 2;
-		buttonList.add((parseModeText = new ImageButton(2, bgn, y + 45, 99, 23, "normaler Text", "yellow_t")).wrappedButton);
-		buttonList.add((parseModeRegEx = new ImageButton(3, bgn + 110, y + 45, 130, 23, "regulärer Ausdruck", "regex")).wrappedButton);
+		buttonList.add((parseModeText = new ImageButton(2, bgn, y + 25, 99, 23, "normaler Text", "yellow_t")).wrappedButton);
+		buttonList.add((parseModeRegEx = new ImageButton(3, bgn + 110, y + 25, 130, 23, "regulärer Ausdruck", "regex")).wrappedButton);
 		buttonList.add(buttonBack = new GuiButton(1, this.width / 2 - 100, 20, 22, 20, "<"));
 
 		textCompareDropDown = new DropDownMenu<>("", 0, 0, 0, 0);
 		textCompareDropDown.fill(TextCompareMode.values());
 		textCompareDropDown.setSelected(reaction.matchAll ? TextCompareMode.EQUALS : TextCompareMode.CONTAINS);
 		textCompareDropDown.setEntryDrawer((o, ex, ey, trimmedEntry) -> drawUtils().drawString(((TextCompareMode) o).name, ex, ey));
-		textCompareDropDown.setY(y + 183 + 65);
+		textCompareDropDown.setY(y + 183 + 45);
 		textCompareDropDown.setWidth(240);
 		textCompareDropDown.setHeight(17);
 	}
@@ -116,8 +117,9 @@ public class AddChatReactionGui extends GuiScreen {
 		GL11.glColorMask(false, false, false, false);
 		for (GuiButton guiButton : this.buttonList) guiButton.drawButton(this.mc, mouseX, mouseY);
 		GL11.glColorMask(true, true, true, true);
-		int height = regEx == null ? 22 + 80 + 115 + 8 : regEx ? 50 + 183 + 40 + 8 + 80 : 50 + 183 + 65 + 80 + 17 + 28;
-		scrollbar.update(height - (int) scrollbar.getTop() + (regEx == null ? 0 : regEx ? 100 : 120));
+		int height = regEx == null ? 205 : regEx ? 50 + 183 + 20 + 8 + 80 : 50 + 183 + 65 + 60 + 17 + 28;
+		int guiScale = new ScaledResolution(mc).getScaleFactor();
+		scrollbar.update(height - (int) scrollbar.getTop() + (regEx == null ? 0 : regEx ? -91 + (44 * guiScale) : (17 + (22 * guiScale))));
 
 
 		LabyModAddonsGui addonsGui = (LabyModAddonsGui) backgroundScreen;
@@ -151,7 +153,7 @@ public class AddChatReactionGui extends GuiScreen {
 
 
 
-		doneButton.yPosition = cancelButton.yPosition = height;
+		doneButton.yPosition = cancelButton.yPosition = height - 8;
 		doneButton.enabled = regEx != null && !triggerInput.getText().isEmpty() && !commandInput.getText().isEmpty() && (!regEx || validRegEx);
 		buttonBack.id = doneButton.enabled ? 1 : 0;
 		doneButton.drawButton(mc, mouseX, mouseY);

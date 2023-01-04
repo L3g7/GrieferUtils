@@ -182,7 +182,7 @@ public class ChatMenu extends Feature {
 
 		List<ChatMenuEntry> entries = new ArrayList<>();
 		DEFAULT_ENTRIES.stream().filter(e -> e.enabled).forEach(entries::add);
-		getCustom().stream().filter(e -> e.completed).forEach(entries::add);
+		getCustom().stream().filter(e -> e.completed && e.enabled).forEach(entries::add);
 
 		renderer = new ChatMenuRenderer(entries, value.substring(COMMAND.length(), value.length() - 1));
 		event.setCanceled(true);

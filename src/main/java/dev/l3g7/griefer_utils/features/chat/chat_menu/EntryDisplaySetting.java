@@ -18,14 +18,14 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
-import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
-public class EntryDisplaySetting extends CategorySetting {
+public class EntryDisplaySetting extends BooleanSetting {
 
 	private final SettingsElement parent;
 	private boolean editHovered = false;
@@ -36,13 +36,11 @@ public class EntryDisplaySetting extends CategorySetting {
 		this.parent = parent;
 		this.entry = r;
 		int size = parent.getSubSettings().getElements().size();
-		int pos;
-
-
-		pos = r.pos = r.pos == -1 ? size - 1 : r.pos;
-
+		int pos = r.pos = r.pos == -1 ? size - 1 : r.pos;
 
 		parent.getSubSettings().getElements().add(pos, this);
+		set(entry.enabled);
+		callback(enabled -> entry.enabled = enabled);
 	}
 
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
@@ -61,17 +59,16 @@ public class EntryDisplaySetting extends CategorySetting {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		setDisplayName(displayName);
 
-		String trimmedTrigger = drawUtils().trimStringToWidth(entry.name, maxX - x - 25 - 25);
-		String trimmedCommand = drawUtils().trimStringToWidth((String) entry.command, maxX - x - 25 - 25);
-		drawUtils().drawString(trimmedTrigger + (trimmedTrigger.equals(entry.name) ? "" : "…"), x + 25, y + 7 - 5);
+
+		String trimmedName = drawUtils().trimStringToWidth(entry.name, maxX - x - 25 - 79);
+		String trimmedCommand = drawUtils().trimStringToWidth(((String) entry.command), maxX - x - 25 - 79 - drawUtils().getStringWidth("➡ "));
+		drawUtils().drawString(trimmedName + (trimmedName.equals(entry.name) ? "" : "…"), x + 25, y + 7 - 5);
 		drawUtils().drawString("§o➡ " + trimmedCommand + (trimmedCommand.equals(entry.command) ? "" : "…"), x + 25, y + 7 + 5);
 		entry.drawIcon(x + 3, y + 3, 16, 16);
 
-		if (mouseOver) {
-			mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));
-			drawUtils().drawTexture( maxX - 16 - 3, y + 4.5, 256, 256, 14, 14);
-			editHovered = mouseX > maxX - 19 && mouseX < maxX - 6 && mouseY > y + 5 && mouseY < y + 18;
-		}
+		editHovered = mouseX > maxX - 70 && mouseX < maxX - 55 && mouseY > y + 4 && mouseY < y + 20;
+		mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));
+		drawUtils().drawTexture(maxX - 66 - (editHovered ? 4 : 3), y + (editHovered ? 3.5 : 4.5), 256, 256, editHovered ? 16 : 14, editHovered ? 16 : 14);
 	}
 
 }

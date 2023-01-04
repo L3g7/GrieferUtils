@@ -79,6 +79,7 @@ public class ChatMenuEntry {
 
 		object.addProperty("name", name);
 		object.addProperty("action", action.name());
+		object.addProperty("enabled", enabled);
 		object.addProperty("command", (String) command);
 		object.addProperty("icon_type", iconType.name());
 		switch (iconType) {
@@ -106,6 +107,7 @@ public class ChatMenuEntry {
 		ChatMenuEntry entry = new ChatMenuEntry();
 		entry.name = object.get("name").getAsString();
 		entry.action = Action.valueOf(object.get("action").getAsString());
+		entry.enabled = object.get("enabled").getAsBoolean();
 		entry.command = object.get("command").getAsString();
 		entry.iconType = IconType.valueOf(object.get("icon_type").getAsString());
 		switch (entry.iconType) {

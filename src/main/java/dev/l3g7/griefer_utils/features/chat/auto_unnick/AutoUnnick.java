@@ -99,6 +99,11 @@ public class AutoUnnick extends Feature {
 		String realName = event.profile.getName();
 		if (player().getUniqueID().equals(event.profile.getId()))
 			realName = player().getName();
+
+		if (realName == null) {
+			System.out.println(event.profile.getName() + " ; " + player().getName() + " ; " + IChatComponent.Serializer.componentToJson(event.component));
+		}
+
 		setNameWithPrefix(event.component, parts[0], parts[1], nickName, realName, true);
 	}
 
@@ -125,6 +130,9 @@ public class AutoUnnick extends Feature {
 			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 
 			if (matcher.matches()) {
+				if (PlayerUtil.unnick(name) == null) {
+					System.out.println("NAME: ::  " + name);
+				}
 				setNameWithPrefix(event.message, matcher.group("rank"), matcher.group("name"), name, PlayerUtil.unnick(name), false);
 				return;
 			}
@@ -160,10 +168,16 @@ public class AutoUnnick extends Feature {
 		String prefix = new PrefixFinder(rank, formattedName).getPrefix();
 
 		Collection<IChatComponent> name = getNameComponents(unnickedName, prefix, isTabList);
+		if (unnickedName == null) {
+			System.out.println("UNN: iChatComponent = " + iChatComponent + ", rank = " + rank + ", formattedName = " + formattedName + ", unformattedName = " + unformattedName + ", unnickedName = " + unnickedName + ", isTabList = " + isTabList);
+		}
 		ClickEvent clickEvent = parent.getChatStyle().getChatClickEvent();
 
 		ChatComponentText nickName = new ChatComponentText("");
 		getNameComponents(unformattedName, prefix, false).forEach(nickName::appendSibling);
+		if (unformattedName == null) {
+			System.out.println("UFN: iChatComponent = " + iChatComponent + ", rank = " + rank + ", formattedName = " + formattedName + ", unformattedName = " + unformattedName + ", unnickedName = " + unnickedName + ", isTabList = " + isTabList);
+		}
 
 		// Add the HoverEvent and make it italic
 		for (IChatComponent component : name) {

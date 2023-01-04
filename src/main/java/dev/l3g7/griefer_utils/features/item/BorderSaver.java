@@ -33,12 +33,14 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import static dev.l3g7.griefer_utils.util.ItemUtil.createItem;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.labymod.ingamegui.Module.mc;
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.START_DESTROY_BLOCK;
+import static net.minecraft.util.EnumFacing.UP;
 import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR;
 
 /**
@@ -47,7 +49,7 @@ import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.
 @Singleton
 public class BorderSaver extends Feature {
 
-	private static final int ACCEPT_SLOT_ID = 12, DECLINE_SLOT_ID = 14;
+	private static final int ACCEPT_SLOT_ID = 11, PREVIEW_SLOT_ID = 13, DECLINE_SLOT_ID = 15;
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -65,6 +67,7 @@ public class BorderSaver extends Feature {
 			inv.setInventorySlotContents(slot, grayGlassPane);
 
 		inv.setInventorySlotContents(ACCEPT_SLOT_ID, createItem(Items.dye, 10, "§aEinlösen"));
+		inv.setInventorySlotContents(PREVIEW_SLOT_ID, createItem(Items.ender_eye, 0, "§3Vorschau anzeigen"));
 		inv.setInventorySlotContents(DECLINE_SLOT_ID, createItem(Items.dye, 1, "§cAbbrechen"));
 	}
 
@@ -108,6 +111,11 @@ public class BorderSaver extends Feature {
 
 				if (slotId == DECLINE_SLOT_ID)
 					mc.thePlayer.closeScreenAndDropStack();
+
+				if (slotId == PREVIEW_SLOT_ID) {
+					send("/rand test");
+					mc.thePlayer.closeScreenAndDropStack();
+				}
 
 				if (slotId != ACCEPT_SLOT_ID)
 					return;

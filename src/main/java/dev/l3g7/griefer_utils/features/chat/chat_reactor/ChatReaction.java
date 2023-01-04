@@ -19,12 +19,10 @@
 package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.util.misc.Constants;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 public class ChatReaction {
@@ -87,17 +85,10 @@ public class ChatReaction {
 
 		Matcher replaceMatcher = PLACEHOLDER_PATTERN.matcher(command);
 
-		try {
-			while (replaceMatcher.find())
-				command = command.replaceFirst(PLACEHOLDER_PATTERN.pattern(), matcher.group(Integer.parseInt(replaceMatcher.group(1))));
-		} catch (Exception e) {
-			display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + command + "\" existiert nicht in \"" + trigger + "\"");
-			return;
-		}
+		while (replaceMatcher.find())
+			command = command.replaceFirst(PLACEHOLDER_PATTERN.pattern(), matcher.group(Integer.parseInt(replaceMatcher.group(1))));
 
 		command = command.replace('§', '&');
-
-
 		player().sendChatMessage(command);
 	}
 }

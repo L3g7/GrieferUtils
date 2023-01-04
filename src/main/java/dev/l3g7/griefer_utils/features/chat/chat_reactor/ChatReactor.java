@@ -29,6 +29,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.misc.Config;
+import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
@@ -36,6 +37,7 @@ import net.minecraft.client.Minecraft;
 
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
@@ -91,12 +93,22 @@ public class ChatReactor extends Feature {
 
 	@EventListener
 	public void onMsg(ChatLineAddEvent event) {
-		if (mc().currentScreen instanceof LabyModAddonsGui && getPath().contains(getMainElement()))
+		if ((mc().currentScreen instanceof LabyModAddonsGui && getPath().contains(getMainElement()))
+			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
 		for (SettingsElement element : enabled.getSubSettings().getElements()) {
-			if (element instanceof ReactionDisplaySetting)
-				((ReactionDisplaySetting) element).reaction.processMessage(event.getMessage());
+			if (!(element instanceof ReactionDisplaySetting))
+				continue;
+
+			ReactionDisplaySetting setting = (ReactionDisplaySetting) element;
+			ChatReaction reaction = setting.reaction;
+			try {
+				reaction.processMessage(event.getFormatted());
+			} catch (Exception e) {
+				display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
+				setting.set(false);
+			}
 		}
 	}
 }

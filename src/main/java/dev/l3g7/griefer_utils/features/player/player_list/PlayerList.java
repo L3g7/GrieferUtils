@@ -27,6 +27,8 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
@@ -95,6 +97,9 @@ public abstract class PlayerList extends Feature {
 		.icon("info")
 		.defaultValue(true);
 
+	public final PlayerListSetting customEntries = new PlayerListSetting()
+		.callback(l -> TabListEvent.updatePlayerInfoList());
+
 	@MainElement
 	public final BooleanSetting enabled = new BooleanSetting()
 		.callback(v -> TabListEvent.updatePlayerInfoList());
@@ -104,8 +109,11 @@ public abstract class PlayerList extends Feature {
 			.name(name + "liste")
 			.description("Markiert Spieler in der ScammerRadar-" + name + "liste.")
 			.icon(settingIcon)
-			.subSettings(tabAction, chatAction, displayNameAction, showInProfile);
+			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, new HeaderSetting(), new HeaderSetting("Eigene " + name), customEntries);
+
 		this.name = name;
+		customEntries.setContainer(enabled);
+
 		this.icon = chatIcon;
 		this.color = color;
 		this.paneType = paneType;
@@ -130,6 +138,12 @@ public abstract class PlayerList extends Feature {
 		getCategory().getSetting().addCallback(v -> TabListEvent.updatePlayerInfoList());
 	}
 
+	private List<UUID> getUUIDs() {
+		List<UUID> uuids = new ArrayList<>(this.uuids);
+		uuids.addAll(customEntries.get());
+		return uuids;
+	}
+
 	/**
 	 * The event listener handling display names.
 	 * @see PlayerList#displayNameAction
@@ -139,7 +153,7 @@ public abstract class PlayerList extends Feature {
 		if (displayNameAction.get() == DISABLED)
 			return;
 
-		if (uuids.contains(event.player.getUniqueID()) || names.contains(event.player.getName()))
+		if (getUUIDs().contains(event.player.getUniqueID()) || names.contains(event.player.getName()))
 			event.displayName = toComponent(displayNameAction.get()).appendSibling(event.displayName);
 	}
 
@@ -152,7 +166,7 @@ public abstract class PlayerList extends Feature {
 		if (tabAction.get() == DISABLED)
 			return;
 
-		if (uuids.contains(event.profile.getId()) || names.contains(event.profile.getName()))
+		if (getUUIDs().contains(event.profile.getId()) || names.contains(event.profile.getName()))
 			event.component = toComponent(tabAction.get()).appendSibling(event.component);
 	}
 
@@ -170,7 +184,7 @@ public abstract class PlayerList extends Feature {
 
 			// Check if player should be marked
 			String name = matcher.group("name").replaceAll("§.", "");
-			if (!uuids.contains(PlayerUtil.getUUID(name)) && !names.contains(PlayerUtil.unnick(name)))
+			if (!getUUIDs().contains(PlayerUtil.getUUID(name)) && !names.contains(PlayerUtil.unnick(name)))
 				return;
 
 			ChatStyle style = new ChatStyle();
@@ -208,7 +222,7 @@ public abstract class PlayerList extends Feature {
 
 		// Check if player should be marked
 		String name = matcher.group("name").replaceAll("§.", "");
-		if (!uuids.contains(PlayerUtil.getUUID(name)) && !names.contains(name))
+		if (!getUUIDs().contains(PlayerUtil.getUUID(name)) && !names.contains(name))
 			return;
 
 		// Construct item

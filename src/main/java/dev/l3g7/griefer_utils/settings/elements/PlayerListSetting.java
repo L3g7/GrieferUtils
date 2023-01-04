@@ -129,6 +129,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 				getSettings().remove(this);
 				get().remove(data.getUuid());
 				save();
+				getStorage().callbacks.forEach(c -> c.accept(get()));
 				mc.currentScreen.initGui(); // Update settings
 			}
 		}
@@ -217,6 +218,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 						getSettings().add(getSettings().indexOf(PlayerAddSetting.this), new PlayerDisplaySetting(uuid));
 						get().add(uuid);
 						save();
+						getStorage().callbacks.forEach(c -> c.accept(get()));
 						// Fall-through
 					case 0:
 						Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);

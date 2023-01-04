@@ -73,7 +73,8 @@ public class BorderSaver extends Feature {
 		if (event.packet instanceof C07PacketPlayerDigging) {
 			if (isHoldingBorder()) {
 				event.setCanceled(true);
-				displayScreen(() -> mc.getNetHandler().getNetworkManager().sendPacket(event.packet));
+				// Re-sending the original packet doesn't work, for some reason
+				displayScreen(() -> mc.getNetHandler().getNetworkManager().sendPacket(new C07PacketPlayerDigging(START_DESTROY_BLOCK, new BlockPos(player()), UP)));
 			}
 		}
 	}

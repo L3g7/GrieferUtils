@@ -171,13 +171,19 @@ public abstract class FileProvider {
 	 * @return all classes with the specified super class.
 	 */
 	public static Collection<ClassMeta> getClassesWithSuperClass(Class<?> superClass) {
+		return getClassesWithSuperClass(Type.getInternalName(superClass));
+	}
+
+	/**
+	 * @return all classes with the specified super class.
+	 */
+	public static Collection<ClassMeta> getClassesWithSuperClass(String superClass) {
 		List<ClassMeta> classes = new ArrayList<>();
-		String internalName = Type.getInternalName(superClass);
 
 		// Find classes
 		for (String file : getFiles(f -> f.endsWith(".class"))) {
 			ClassMeta meta = getClassMeta(file, false);
-			if (meta != null && meta.hasSuperClass(internalName))
+			if (meta != null && meta.hasSuperClass(superClass))
 				classes.add(meta);
 		}
 

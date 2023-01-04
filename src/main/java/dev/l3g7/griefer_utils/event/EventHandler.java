@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.file_provider.meta.AnnotationMeta;
+import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraftforge.common.MinecraftForge;
@@ -46,31 +47,46 @@ public class EventHandler implements Opcodes {
 	public static void init() {
 		AnnotationEventHandler.init();
 		for (MethodMeta method : FileProvider.getAnnotatedMethods(EventListener.class)) {
+			if (method.isStatic()) {
+				register(method, method.owner());
+				continue;
+			}
 
 			boolean isSingleton = method.owner().hasAnnotation(Singleton.class);
-			// Skip non-static listeners
-			if (!method.isStatic() && !isSingleton)
-				continue;
-
-			Class<? extends Event> eventClass = getEventClass(method);
-			ListenerList listeners = Reflection.construct(eventClass).getListenerList();
-
-			// Get metadata
-			AnnotationMeta meta = method.getAnnotation(EventListener.class);
-			EventPriority priority = meta.getValue("priority", true);
-			boolean triggerWhenDisabled = meta.getValue("triggerWhenDisabled", false);
-			boolean receiveCanceled = meta.getValue("receiveCanceled", false);
-			boolean receiveSubclasses = meta.getValue("receiveSubclasses", false);
-
-			listeners.register(BUS_ID, priority, e -> {
-				if ((receiveCanceled || !e.isCanceled())
-					&& (receiveSubclasses || e.getClass() == eventClass)) {
-					Object owner = resolveOwner(method, isSingleton);
-					if (triggerWhenDisabled || !(owner instanceof Feature) || ((Feature) owner).isEnabled())
-						Reflection.invoke(resolveOwner(method, isSingleton), method.load(), e);
-				}
-			});
+			if (isSingleton)
+				register(method, method.owner());
+			else {
+				for (ClassMeta classMeta : FileProvider.getClassesWithSuperClass(method.owner().name))
+					if (classMeta.hasAnnotation(Singleton.class))
+						register(method, classMeta);
+			}
 		}
+	}
+
+	private static void register(MethodMeta method, ClassMeta ownerClass) {
+		boolean isSingleton = ownerClass.hasAnnotation(Singleton.class);
+		Class<? extends Event> eventClass = getEventClass(method);
+		ListenerList listeners = Reflection.construct(eventClass).getListenerList();
+
+		// Get metadata
+		AnnotationMeta meta = method.getAnnotation(EventListener.class);
+		EventPriority priority = meta.getValue("priority", true);
+		boolean triggerWhenDisabled = meta.getValue("triggerWhenDisabled", false);
+		boolean receiveCanceled = meta.getValue("receiveCanceled", false);
+		boolean receiveSubclasses = meta.getValue("receiveSubclasses", false);
+
+		listeners.register(BUS_ID, priority, e -> {
+			if ((receiveCanceled || !e.isCanceled())
+				&& (receiveSubclasses || e.getClass() == eventClass)) {
+				Object owner = resolveOwner(ownerClass, isSingleton);
+				try {
+					if (triggerWhenDisabled || !(owner instanceof Feature) || ((Feature) owner).isEnabled())
+						Reflection.invoke(owner, method.load(), e);
+				} catch (NullPointerException e_) {
+					e_.printStackTrace();
+				}
+			}
+		});
 	}
 
 	/**
@@ -94,11 +110,11 @@ public class EventHandler implements Opcodes {
 	/**
 	 * @return the owner singleton if isSingleton is true, null otherwise.
 	 */
-	private static Object resolveOwner(MethodMeta method, boolean isSingleton) {
+	private static Object resolveOwner(ClassMeta owner, boolean isSingleton) {
 		if (!isSingleton)
 			return null;
 
-		return FileProvider.getSingleton(method.owner().load());
+		return FileProvider.getSingleton(owner.load());
 	}
 
 }

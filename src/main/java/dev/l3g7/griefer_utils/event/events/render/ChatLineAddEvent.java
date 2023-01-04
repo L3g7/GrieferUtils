@@ -18,40 +18,23 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
-import dev.l3g7.griefer_utils.util.misc.TickScheduler;
+import net.labymod.core.ChatComponent;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public class ChatLineAddEvent extends Event {
 
-	private static final List<String> lines = new ArrayList<>();
+	private final ChatComponent message;
 
-	private final String message;
-
-	public ChatLineAddEvent(String message) {
+	public ChatLineAddEvent(ChatComponent message) {
 		this.message = message;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getFormatted() {
+		return message.getFormattedText();
 	}
 
-	public static void onLineAdd(String message) {
-		if (lines.isEmpty()) {
-			TickScheduler.runAfterRenderTicks(() -> {
-				String msg = lines.stream().reduce(String::concat).orElseThrow(() -> new RuntimeException("wtf"));
-				msg = msg.replaceAll("§.", "");
-				EVENT_BUS.post(new ChatLineAddEvent(msg));
-
-				lines.clear();
-			}, 1);
-		}
-
-		lines.add(message);
+	public String getUnformatted() {
+		return message.getUnformattedText();
 	}
 
 }

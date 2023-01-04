@@ -34,12 +34,6 @@ import java.util.Iterator;
 @Mixin(ChatRenderer.class)
 public class MixinChatRenderer {
 
-	@Inject(method = "addChatLine", at = @At("HEAD"), remap = false)
-	private void injectGetDisplayName(String message, boolean secondChat, String room, Object component, int updateCounter, int chatLineId, Integer highlightColor, boolean refresh, CallbackInfo ci) {
-		if (!refresh)
-			ChatLineAddEvent.onLineAdd(message);
-	}
-
 	@Inject(method = "renderChat", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;enableBlend()V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT, remap = false)
 	private void injectRenderChat(int updateCounter, CallbackInfo ci, DrawUtils draw, int fontHeight, float scale, int chatLineCount, boolean chatOpen, float opacity, int width, int visibleMessages, double totalMessages, double animationSpeed, float lineHeight, double shift, double posX, double posY, int i, Iterator<ChatLine> chatLineIterator, ChatLine chatline, boolean firstLine, boolean lastLine, int updateCounterDifference, int alpha, int x, int y) {
 		MessageSkulls.renderSkull(chatline, y, alpha / 255f);

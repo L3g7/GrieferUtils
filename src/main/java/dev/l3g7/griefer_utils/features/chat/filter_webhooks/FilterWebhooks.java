@@ -92,7 +92,7 @@ public class FilterWebhooks extends Feature {
     @EventListener(priority = EventPriority.LOWEST)
     public void onMessageReceive(ChatLineAddEvent event) {
         // Check if filters match
-        String msg = event.getMessage().toLowerCase().replaceAll("§.", "");
+        String msg = event.getUnformatted().toLowerCase();
         for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
             if (webhooks.containsKey(filter.getFilterName())
 	                && !webhooks.get(filter.getFilterName()).trim().isEmpty()
@@ -105,7 +105,7 @@ public class FilterWebhooks extends Feature {
 	            JsonArray embeds = new JsonArray();
 				JsonObject embed = new JsonObject();
 				embed.add("title", sanitize(filter.getFilterName()));
-				embed.add("description", sanitize(event.getMessage().replaceAll("§.", "")));
+				embed.add("description", sanitize(event.getUnformatted()));
 				embed.add("footer", EMBED_FOOTER);
 				if (filter.isHighlightMessage())
 					embed.addProperty("color", ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff));

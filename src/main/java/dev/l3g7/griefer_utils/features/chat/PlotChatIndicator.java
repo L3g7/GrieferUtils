@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.render;
+package dev.l3g7.griefer_utils.features.chat;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;

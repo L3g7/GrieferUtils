@@ -87,14 +87,14 @@ public class AddChatReactionGui extends GuiScreen {
 
 		triggerInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 95, 240, 20);
 		triggerInput.setPlaceHolder("§8[GrieferUtils] [+] SchlimmerScammer");
-		triggerInput.setText(reaction.trigger);
 		triggerInput.setMaxStringLength(Integer.MAX_VALUE);
+		triggerInput.setText(reaction.trigger);
 
 
 		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 78, 240, 20);
 		commandInput.setPlaceHolder("§8/startkick SchlimmerScammer Scammer >:(");
-		commandInput.setText(reaction.command);
 		commandInput.setMaxStringLength(Integer.MAX_VALUE);
+		commandInput.setText(reaction.command);
 
 		buttonList.add(cancelButton = new GuiButton(0, width / 2 - 105, y + 85, 100, 20, reaction.completed ? "Löschen" : "Abbrechen"));
 		buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, y + 85, 100, 20, reaction.completed ? "Speichern" : "Hinzufügen"));
@@ -161,7 +161,7 @@ public class AddChatReactionGui extends GuiScreen {
 
 		if (regEx != null) {
 			drawUtils().drawString(regEx ? "Regulärer Ausdruck" : "Text", x, triggerInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-			triggerInput.setPlaceHolder(regEx ? "§8^\\[[^ ]+ \\┃ ([^ ]+) -> mir] (.*)$" : "§8[GrieferUtils] [+] SchlimmerScammer");
+			triggerInput.setPlaceHolder(regEx ? "§8^\\[[^ ]+ ┃ ([^ ]+) -> mir] (.*)$" : "§8[GrieferUtils] [+] SchlimmerScammer");
 			triggerInput.drawTextBox();
 
 			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/startkick SchlimmerScammer Scammer >:(");

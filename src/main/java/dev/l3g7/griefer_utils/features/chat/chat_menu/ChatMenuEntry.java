@@ -19,9 +19,11 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.Main;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.utils.Consumer;
+import net.labymod.utils.Material;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -136,17 +138,20 @@ public class ChatMenuEntry {
 
 	public void drawIcon(int x, int y, int w, int h) {
 		switch (iconType) {
+			case SYSTEM:
+				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + icon + ".png"));
+				break;
 			case DEFAULT:
 				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + action.defaultIcon + ".png"));
-				drawUtils().drawTexture(x, y, 256.0, 256.0, w, h);
 				break;
 			case IMAGE_FILE:
 				drawUtils().bindTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
-				drawUtils().drawTexture(x, y, 256.0, 256.0, w, h);
 				break;
 			case ITEM:
-				drawUtils().drawItem((ItemStack) icon, x, y, null);
+				drawUtils().drawItem(((ItemStack) icon), x, y, null);
+				return;
 		}
+		drawUtils().drawTexture(x, y, 256.0, 256.0, w, h);
 	}
 
 	enum Action {

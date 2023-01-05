@@ -18,21 +18,20 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
-import net.labymod.main.LabyMod;
-import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.utils.DrawUtils;
-import net.minecraft.client.Minecraft;
+import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 public class ChatMenuRenderer {
 
 	private final List<ChatMenuEntry> entries;
-	private final Minecraft mc;
 	private final String playerName;
 	private final String titleText;
 	private final DrawUtils utils = new DrawUtils();
@@ -43,12 +42,10 @@ public class ChatMenuRenderer {
 	private int y;
 	private int hoveredEntry = -1;
 
-
 	public ChatMenuRenderer(List<ChatMenuEntry> entries, String playerName) {
 		this.entries = entries;
 		this.playerName = playerName;
 		this.titleText = "ChatMenü §a" + playerName;
-		this.mc = Minecraft.getMinecraft();
 
 		// Box size
 		boxHeight = 16 + 15 * entries.size();
@@ -83,13 +80,14 @@ public class ChatMenuRenderer {
 		DrawUtils.drawRect(x, y + 16, x + boxWidth, y + boxHeight, 0xFF060606);
 
 		// Draw the entries
-		float currentY = y;
+		int currentY = y;
 		drawString(titleText, x + (boxWidth - getWidth(titleText)) / 2f, currentY += 4);
 		currentY += 3;
 		for (int i = 0; i < entries.size(); i++) {
 			ChatMenuEntry entry = entries.get(i);
 			String name = entry.name;
 
+			// Cut name if it's too long
 			if (getWidth(name) > boxWidth - 24) {
 				while (getWidth(name + "...") > boxWidth - 24)
 					name = name.substring(0, name.length() - 1);
@@ -97,26 +95,31 @@ public class ChatMenuRenderer {
 			}
 
 			drawString(name, x + 21, currentY += 15);
-
-			GlStateManager.pushMatrix();
-			GlStateManager.scale(0.75, 0.75, 1.0);
-			double posScale = 1 / 0.75;
-			if (entry.icon instanceof IconData) {
-				if (((IconData) entry.icon).hasMaterialIcon()) {
-					LabyMod.getInstance().getDrawUtils().renderItemIntoGUI(((IconData) entry.icon).getMaterialIcon().createItemStack(), (x + 4) * posScale, (currentY - 2) * posScale);
-				} else {
-					mc.getTextureManager().bindTexture(((IconData) entry.icon).getTextureIcon());
-					utils.drawTexture(x + 4, currentY - 2, 256, 256, 16, 16);
-				}
-			} else {
-				entry.drawIcon((int) ((x + 4) * posScale), (int) ((currentY - 2) * posScale), 12, 12);
-			}
-			GlStateManager.popMatrix();
+			drawIcon(entry, x + 4, currentY - 2);
 
 			// Draw frame if hovered
 			if (i == hoveredEntry)
 				utils.drawRectBorder(x + 2, currentY - 4, x + boxWidth - 4, currentY + 12, 0xFF00FF00, 1);
 		}
+	}
+
+	private void drawIcon(ChatMenuEntry entry, int x, int y) {
+		ItemStack stack;
+
+		if (entry.icon instanceof ItemStack) {
+			stack = ((ItemStack) entry.icon);
+		} else if (entry.icon instanceof Material) {
+			stack = ((Material) entry.icon).createItemStack();
+		} else {
+			entry.drawIcon(x, y, 12, 12);
+			return;
+		}
+
+		GlStateManager.pushMatrix();
+		GlStateManager.scale(0.75, 0.75, 1.0);
+		double posScale = 1 / 0.75;
+		drawUtils().drawItem(stack, x * posScale, y * posScale, null);
+		GlStateManager.popMatrix();
 	}
 
 	public boolean onMouse() {

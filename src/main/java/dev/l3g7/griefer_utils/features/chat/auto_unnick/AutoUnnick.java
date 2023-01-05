@@ -29,7 +29,10 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
+import dev.l3g7.griefer_utils.util.misc.NameCache;
+import dev.l3g7.griefer_utils.util.misc.PlayerDataProvider;
 import net.labymod.utils.Material;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
@@ -46,8 +49,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.event.events.network.TabListEvent.updatePlayerInfoList;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.suggest;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class AutoUnnick extends Feature {
@@ -96,15 +98,7 @@ public class AutoUnnick extends Feature {
 		String nickName = text.substring(text.indexOf('~'));
 		String[] parts = event.component.getFormattedText().split(" §r§8\u2503 §r");
 
-		String realName = event.profile.getName();
-		if (player().getUniqueID().equals(event.profile.getId()))
-			realName = player().getName();
-
-		if (realName == null) {
-			System.out.println(event.profile.getName() + " ; " + player().getName() + " ; " + IChatComponent.Serializer.componentToJson(event.component));
-		}
-
-		setNameWithPrefix(event.component, parts[0], parts[1], nickName, realName, true);
+		setNameWithPrefix(event.component, parts[0], parts[1], nickName, true);
 	}
 
 	@EventListener(priority = EventPriority.HIGH)
@@ -130,16 +124,13 @@ public class AutoUnnick extends Feature {
 			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 
 			if (matcher.matches()) {
-				if (PlayerUtil.unnick(name) == null) {
-					System.out.println("NAME: ::  " + name);
-				}
-				setNameWithPrefix(event.message, matcher.group("rank"), matcher.group("name"), name, PlayerUtil.unnick(name), false);
+				setNameWithPrefix(event.message, matcher.group("rank"), matcher.group("name"), name, false);
 				return;
 			}
 		}
 	}
 
-	private void setNameWithPrefix(IChatComponent iChatComponent, String rank, String formattedName, String unformattedName, String unnickedName, boolean isTabList) {
+	private void setNameWithPrefix(IChatComponent iChatComponent, String rank, String formattedName, String unformattedName, boolean isTabList) {
 		List<IChatComponent> everything = iChatComponent.getSiblings();
 		IChatComponent parent = everything.get(everything.size() - 1);
 
@@ -167,17 +158,11 @@ public class AutoUnnick extends Feature {
 
 		String prefix = new PrefixFinder(rank, formattedName).getPrefix();
 
-		Collection<IChatComponent> name = getNameComponents(unnickedName, prefix, isTabList);
-		if (unnickedName == null) {
-			System.out.println("UNN: iChatComponent = " + iChatComponent + ", rank = " + rank + ", formattedName = " + formattedName + ", unformattedName = " + unformattedName + ", unnickedName = " + unnickedName + ", isTabList = " + isTabList);
-		}
+		Collection<IChatComponent> name = getNameComponents(NameCache.getName(unformattedName), prefix, isTabList);
 		ClickEvent clickEvent = parent.getChatStyle().getChatClickEvent();
 
 		ChatComponentText nickName = new ChatComponentText("");
 		getNameComponents(unformattedName, prefix, false).forEach(nickName::appendSibling);
-		if (unformattedName == null) {
-			System.out.println("UFN: iChatComponent = " + iChatComponent + ", rank = " + rank + ", formattedName = " + formattedName + ", unformattedName = " + unformattedName + ", unnickedName = " + unnickedName + ", isTabList = " + isTabList);
-		}
 
 		// Add the HoverEvent and make it italic
 		for (IChatComponent component : name) {

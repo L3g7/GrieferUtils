@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.util.PlayerUtil;
+import dev.l3g7.griefer_utils.util.misc.NameCache;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.DrawUtils;
@@ -97,7 +97,7 @@ public class MessageSkulls extends Feature {
 			endIndex = msg.indexOf(' ', startIndex);
 
 		String name = msg.substring(startIndex, endIndex);
-		NetworkPlayerInfo playerInfo = MinecraftUtil.mc().getNetHandler().getPlayerInfo(PlayerUtil.unnick(name));
+		NetworkPlayerInfo playerInfo = MinecraftUtil.mc().getNetHandler().getPlayerInfo(NameCache.ensureRealName(name));
 		if (playerInfo == null)
 			return;
 

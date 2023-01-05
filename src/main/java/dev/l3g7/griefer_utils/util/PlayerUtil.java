@@ -21,7 +21,6 @@ package dev.l3g7.griefer_utils.util;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -30,20 +29,6 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
  * A utility class for minecraft player related methods.
  */
 public class PlayerUtil {
-
-	/**
-	 * @return the player's real name.
-	 */
-	public static String unnick(String nickedName) {
-		for(NetworkPlayerInfo info : new ArrayList<>(mc().getNetHandler().getPlayerInfoMap())) {
-			if(info.getDisplayName() != null) {
-				String[] parts = info.getDisplayName().getUnformattedText().split("\u2503");
-				if(parts.length > 1 && parts[1].trim().equals(nickedName))
-					return info.getGameProfile().getName();
-			}
-		}
-		return nickedName;
-	}
 
 	/**
 	 * @return the player's uuid.

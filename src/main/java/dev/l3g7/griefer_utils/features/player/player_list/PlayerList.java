@@ -32,6 +32,7 @@ import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
+import dev.l3g7.griefer_utils.util.misc.NameCache;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.ModColor;
@@ -184,13 +185,13 @@ public abstract class PlayerList extends Feature {
 
 			// Check if player should be marked
 			String name = matcher.group("name").replaceAll("§.", "");
-			if (!getUUIDs().contains(PlayerUtil.getUUID(name)) && !names.contains(PlayerUtil.unnick(name)))
+			if (!getUUIDs().contains(PlayerUtil.getUUID(name)) && !names.contains(NameCache.ensureRealName(name)))
 				return;
 
 			ChatStyle style = new ChatStyle();
 
 			// Add /profil command on click
-			style.setChatClickEvent(new ClickEvent(RUN_COMMAND, "/profil " + PlayerUtil.unnick(name)));
+			style.setChatClickEvent(new ClickEvent(RUN_COMMAND, "/profil " + NameCache.ensureRealName(name)));
 
 			// Add description
 			style.setChatHoverEvent(new HoverEvent(SHOW_TEXT, new ChatComponentText("§" + color.getColorChar() + "§l" + this.name)));

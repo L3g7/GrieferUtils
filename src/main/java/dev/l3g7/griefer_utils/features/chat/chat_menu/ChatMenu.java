@@ -31,8 +31,8 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.misc.Config;
+import dev.l3g7.griefer_utils.util.misc.NameCache;
 import net.labymod.core.LabyModCore;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.settings.elements.SettingsElement;
@@ -207,7 +207,7 @@ public class ChatMenu extends Feature {
 		if (name == null)
 			return;
 
-		name = PlayerUtil.unnick(name);
+		name = NameCache.ensureRealName(name);
 
 		setClickEvent(event.message, COMMAND + name);
 	}

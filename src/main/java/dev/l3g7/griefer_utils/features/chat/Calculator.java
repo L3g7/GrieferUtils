@@ -81,8 +81,8 @@ public class Calculator extends Feature {
 		.name("Nachkommastellen")
 		.description("Auf wie viele Nachkommastellen das Ergebnis gerundet werden soll")
 		.icon(Material.STONE_BUTTON)
-		.min(0).max(98)
-		.defaultValue(2);
+		.defaultValue(2)
+		.min(0).max(98);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()

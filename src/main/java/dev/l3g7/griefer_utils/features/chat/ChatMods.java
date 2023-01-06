@@ -59,7 +59,7 @@ public class ChatMods extends Feature {
 		.name("Streamer-Benachrichtigungen entfernen")
 		.icon("twitch");
 
-	private final BooleanSetting stfuMysteryMod = new BooleanSetting()
+	private final BooleanSetting muteMysteryMod = new BooleanSetting()
 		.name("Download-Benachrichtigungen entfernen")
 		.icon("mysterymod")
 		.defaultValue(true);
@@ -68,7 +68,7 @@ public class ChatMods extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("ChatMods")
 		.icon("speech_bubble")
-		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, stfuMysteryMod, news);
+		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, muteMysteryMod, news);
 
 
 	private boolean isNews = false;
@@ -99,7 +99,7 @@ public class ChatMods extends Feature {
 
 		// Remove MysteryMod download notification
 		if (!event.isCanceled())
-			event.setCanceled(stfuMysteryMod.get() && MYSTERY_MOD_DOWNLOAD_NOTIFICATION.contains(event.message.getFormattedText()));
+			event.setCanceled(muteMysteryMod.get() && MYSTERY_MOD_DOWNLOAD_NOTIFICATION.contains(event.message.getFormattedText()));
 	}
 
 	private enum NewsMode {

@@ -21,12 +21,18 @@ package dev.l3g7.griefer_utils.util.misc;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.util.ArrayUtil;
-import org.apache.commons.io.IOUtils;
 
-import java.io.FileInputStream;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.LinkedList;
 
 public class ConfigPatcher {
 
@@ -47,7 +53,7 @@ public class ConfigPatcher {
 
 	private void patch_v1() {
 		rename("features.anti_command_choker.active", "chat.anti_command_choker.enabled");
-		rename("features.armor_break_warning.active", "player.armor_break_warning.enabled");
+		rename("features.armor_break_warning.active", "player.armor_break_warning.threshold");
 		rename("features.auto_eat.trigger_mode", "player.auto_eat.trigger_mode");
 		rename("features.auto_eat.preferred_food", "player.auto_eat.preferred_food");
 		rename("features.auto_eat.active", "player.auto_eat.enabled");
@@ -57,13 +63,13 @@ public class ConfigPatcher {
 		rename("features.calculator.auto_withdraw", "chat.calculator.auto_withdraw");
 		rename("features.calculator.deposit_all", "chat.calculator.deposit_all");
 		rename("features.calculator.placeholder", "chat.calculator.placeholder");
+		rename("features.calculator.auto_equation_detect", "chat.calculator.auto_equation_detect");
 		rename("features.calculator.decimal_places", "chat.calculator.decimal_places");
 		rename("features.calculator.active", "chat.calculator.enabled");
 		rename("features.chat_time.style", "chat.chat_time.style");
 		rename("features.chat_time.format", "chat.chat_time.format");
 		rename("features.chat_time.active", "chat.chat_time.enabled");
 		rename("features.chat_menu.active", "chat.chat_menu.enabled");
-		rename("features.chat_menu.entries", "chat.chat_menu.entries");
 		rename("features.chat_menu.entries.open_profile", "chat.chat_menu.entries.Profil öffnen");
 		rename("features.chat_menu.entries.name_history", "chat.chat_menu.entries.Namensverlauf");
 		rename("features.chat_menu.entries.copy_name", "chat.chat_menu.entries.Namen kopieren");
@@ -72,11 +78,12 @@ public class ConfigPatcher {
 		rename("features.chat_menu.entries.view_gear", "chat.chat_menu.entries.Ausrüstung ansehen");
 		rename("features.chat_menu.entries.open_ec", "chat.chat_menu.entries.EC öffnen");
 		patchObjectArray("features.chat_menu.entries.custom", "chat.chat_menu.entries.custom",
-			"action", _enum("action", "open_url", "OPEN_URL", "run", "RUN_CMD", "suggest", "SUGGEST_CMD"),
+			"action", "action", enumPatch("open_url", "OPEN_URL", "run", "RUN_CMD", "suggest", "SUGGEST_CMD"),
 			"value", "command",
-			"icon_type", _enum("icon_type", "default", "DEFAULT", "item", "ITEM", "image", "IMAGE_FILE"),
-			"icon", chatMenuIconPatch,
-			"enabled", null
+			"icon_type", "icon_type", enumPatch("default", "DEFAULT", "item", "ITEM", "image", "IMAGE_FILE"),
+			"icon", "icon", chatMenuIconPatch,
+			"enabled", "enabled",
+			"name", "name"
 		);
 		rename("features.chat_reactor.active", "chat.chat_reactor.enabled");
 		patchObjectArray("features.chat_reactor.entries", "chat.chat_reactor.entries",
@@ -84,7 +91,7 @@ public class ConfigPatcher {
 			"compare_everything", "match_all",
 			"trigger", "trigger",
 			"command", "command",
-			"name", null);
+			new Constant("enabled", new JsonPrimitive(true)));
 		rename("features.chest_search.active", "world.chest_search.enabled");
 		rename("features.chunk_indicator.red", "world.chunk_indicator.red_lines");
 		rename("features.chunk_indicator.yellow", "world.chunk_indicator.yellow_lines");
@@ -96,8 +103,9 @@ public class ConfigPatcher {
 		rename("features.item_saver.bonze_saver.active", "item.sword_saver.enabled");
 		rename("features.item_saver.border_saver.active", "item.border_saver.enabled");
 		rename("features.item_saver.prefix_saver.active", "item.prefix_saver.enabled");
+		rename("features.item_saver.tool_saver.damage", "item.tool_saver.damage");
 		rename("features.tool_saver.save_non_repairable", "item.tool_saver.save_non_repairable");
-		rename("features.tool_saver.damage", "item.tool_saver.damage");
+		set("item.tool_saver.enabled", new JsonPrimitive(true));
 		rename("features.npc_ghost_hand.active", "world.n_p_c_entity_ghost_hand.enabled");
 		rename("features.npc_ghost_hand.active", "world.n_p_c_entity_ghost_hand.enabled");
 		rename("features.scammer_list.tab", "player.scammer_list.tab_action");
@@ -133,7 +141,8 @@ public class ConfigPatcher {
 		rename("tweaks.chat_mods.remove_supreme_spaces.active", "chat.chat_mods.remove_supreme_spaces");
 		rename("tweaks.chat_mods.news.mode", "chat.chat_mods.news");
 		rename("tweaks.chat_mods.remove_streamer.active", "chat.chat_mods.remove_streamer_notifications");
-		rename("tweaks.chat_mods.stfu_mysterymod.active", "chat.chat_mods.stfu_mystery_mod");
+		rename("tweaks.chat_mods.stfu_mysterymod.active", "chat.chat_mods.mute_mystery_mod");
+		set("chat.chat_mods.enabled", new JsonPrimitive(true));
 		rename("tweaks.clan_tags.active", "render.clan_tags.enabled");
 		rename("tweaks.command_logger.active", "chat.command_logger.enabled");
 		rename("tweaks.full_bright.active", "render.full_bright.enabled");
@@ -147,6 +156,7 @@ public class ConfigPatcher {
 		rename("tweaks.no_fog.lava", "render.no_fog.lava");
 		rename("tweaks.no_fog.active", "render.no_fog.enabled");
 		rename("tweaks.player_hider.active", "render.player_hider.enabled");
+		rename("tweaks.plot_chat_indicator.active", "chat.plot_chat_indicator.enabled");
 		rename("tweaks.plot_chat_indicator.states", "chat.plot_chat_indicator.states");
 		rename("tweaks.portal_cooldown.active", "world.portal_cooldown.enabled");
 		rename("tweaks.bank_scoreboard.active", "player.bank_scoreboard.enabled");
@@ -165,73 +175,133 @@ public class ConfigPatcher {
 		rename("tweaks.no_magic_text.item", "chat.no_magic_text.item");
 		rename("tweaks.true_sight.opacity", "render.true_sight.opacity");
 		rename("tweaks.true_sight.active", "render.true_sight.enabled");
+		rename("tweaks.true_sight.entities.entityarmorstand", "render.true_sight.entities.armorstand");
+		rename("tweaks.true_sight.entities.entitybat", "render.true_sight.entities.fledermaus");
+		rename("tweaks.true_sight.entities.entityblaze", "render.true_sight.entities.blaze");
+		rename("tweaks.true_sight.entities.entitycavespider", "render.true_sight.entities.höhlenspinne");
+		rename("tweaks.true_sight.entities.entitychicken", "render.true_sight.entities.huhn");
+		rename("tweaks.true_sight.entities.entitycow", "render.true_sight.entities.kuh");
+		rename("tweaks.true_sight.entities.entitycreeper", "render.true_sight.entities.creeper");
+		rename("tweaks.true_sight.entities.entitydragon", "render.true_sight.entities.enderdrache");
+		rename("tweaks.true_sight.entities.entityenderman", "render.true_sight.entities.enderman");
+		rename("tweaks.true_sight.entities.entityendermite", "render.true_sight.entities.endermite");
+		rename("tweaks.true_sight.entities.entityfallingblock", "render.true_sight.entities.falling_block");
+		rename("tweaks.true_sight.entities.entityghast", "render.true_sight.entities.ghast");
+		rename("tweaks.true_sight.entities.entitygiantzombie", "render.true_sight.entities.riese");
+		rename("tweaks.true_sight.entities.entityguardian", "render.true_sight.entities.guardian");
+		rename("tweaks.true_sight.entities.entityhorse", "render.true_sight.entities.pferd");
+		rename("tweaks.true_sight.entities.entityirongolem", "render.true_sight.entities.eisengolem");
+		rename("tweaks.true_sight.entities.entitymagmacube", "render.true_sight.entities.magmawürfel");
+		rename("tweaks.true_sight.entities.entitymooshroom", "render.true_sight.entities.pilzkuh");
+		rename("tweaks.true_sight.entities.entityocelot", "render.true_sight.entities.ozelot");
+		rename("tweaks.true_sight.entities.entitypig", "render.true_sight.entities.schwein");
+		rename("tweaks.true_sight.entities.entitypigzombie", "render.true_sight.entities.schweinezombie");
+		rename("tweaks.true_sight.entities.entityplayer", "render.true_sight.entities.spieler");
+		rename("tweaks.true_sight.entities.entityrabbit", "render.true_sight.entities.hase");
+		rename("tweaks.true_sight.entities.entitysheep", "render.true_sight.entities.schaf");
+		rename("tweaks.true_sight.entities.entitysilverfish", "render.true_sight.entities.silberfischchen");
+		rename("tweaks.true_sight.entities.entityskeleton", "render.true_sight.entities.skelett");
+		rename("tweaks.true_sight.entities.entityslime", "render.true_sight.entities.slime");
+		rename("tweaks.true_sight.entities.entitysnowman", "render.true_sight.entities.schneegolem");
+		rename("tweaks.true_sight.entities.entityspider", "render.true_sight.entities.spinne");
+		rename("tweaks.true_sight.entities.entitysquid", "render.true_sight.entities.tintenfisch");
+		rename("tweaks.true_sight.entities.entityvillager", "render.true_sight.entities.dorfbewohner");
+		rename("tweaks.true_sight.entities.entitywitch", "render.true_sight.entities.hexe");
+		rename("tweaks.true_sight.entities.entitywolf", "render.true_sight.entities.wolf");
+		rename("tweaks.true_sight.entities.entityzombie", "render.true_sight.entities.zombie");
 		rename("tweaks.webhooks.active", "chat.filter_webhooks.enabled");
 		rename("tweaks.webhooks.filter", "chat.filter_webhooks.filter");
+		rename("features.scammer_list.custom_entries", "player.scammer_list.custom_entries", playerListPatch);
+		rename("features.trusted_list.custom_entries", "player.trusted_list.custom_entries", playerListPatch);
+		rename("tweaks.player_hider.excluded_players", "render.player_hider.excluded_players", playerListPatch);
+		rename("features.show_joins.filter.data", "world.show_joins.players", playerListPatch);
+		rename("tweaks.message_skulls.active", "chat.message_skulls.enabled");
+		rename("features.map_preview.active", "world.map_preview.enabled");
 	}
 
-	private void rename(String previousKey, String newKey, Patcher... patchers) {
-		JsonObject pParent = getParent(previousKey);
-		JsonObject nParent = getParent(newKey);
+	private void rename(String oldKey, String newKey, Patcher... patchers) {
+		JsonObject oldParent = getParent(oldKey);
+		JsonObject newParent = getParent(newKey);
 		for (Patcher patcher : patchers)
-			call(patcher, pParent, nParent, pParent.get(getKey(previousKey)));
+			call(patcher, oldParent, newParent, oldKey, newKey);
 
-		if (patchers.length == 0 && pParent.get(getKey(previousKey)) != null)
-			nParent.add(getKey(newKey), pParent.get(getKey(previousKey)));
+		if (patchers.length == 0 && oldParent.get(getKey(oldKey)) != null)
+			newParent.add(getKey(newKey), oldParent.get(getKey(oldKey)));
 	}
 
-	private void patchObjectArray(String previousKey, String newKey, Object... changes) {
-		JsonObject pParent = getParent(previousKey);
-		JsonObject nParent = getParent(newKey);
-		if (pParent.has(getKey(previousKey))) {
+	private void patchObjectArray(String oldObjectKey, String newObjectKey, Object... changes) {
+		JsonObject oldParent = getParent(oldObjectKey);
+		JsonObject newParent = getParent(newObjectKey);
+		if (oldParent.has(getKey(oldObjectKey))) {
 			JsonArray nA = new JsonArray();
-			for (JsonElement e : pParent.get(getKey(previousKey)).getAsJsonArray()) {
-				JsonObject old = e.getAsJsonObject();
-				JsonObject nw = new JsonObject();
-				for (int i = 0; i < changes.length; i += 2)
-					call(changes[i + 1], pParent, nw, old.get((String) changes[0]));
-				nA.add(nw);
+			for (JsonElement entry : oldParent.get(getKey(oldObjectKey)).getAsJsonArray()) {
+				JsonObject oldEntry = entry.getAsJsonObject();
+				JsonObject newEntry = new JsonObject();
+				LinkedList<Object> lt = new LinkedList<>(Arrays.asList(changes));
+				while (!lt.isEmpty()) {
+					if (lt.peek() instanceof Constant) {
+						Constant constant = (Constant) lt.pop();
+						newEntry.add(constant.key, constant.value);
+						continue;
+					}
+
+					String oldEntryKey = (String) lt.pop();
+					String newEntryKey = (String) lt.pop();
+					call(lt.peek() instanceof Patcher ? lt.pop() : newEntryKey, oldEntry, newEntry, oldEntryKey, newEntryKey);
+				}
+				nA.add(newEntry);
 			}
-			nParent.add(getKey(newKey), nA);
+			newParent.add(getKey(newObjectKey), nA);
 		}
 	}
 
-	private Patcher _enum(String key, String... changes) {
-		return (parent, newParent, element) -> {
+	private Patcher enumPatch(String... changes) {
+		return (oldParent, newParent, oldKey, newKey) -> {
 			for (int i = 0; i < changes.length; i += 2) {
-				if (changes[i].equalsIgnoreCase(element.getAsString())) {
-					newParent.addProperty(key, changes[i + 1]);
+				if (changes[i].equalsIgnoreCase(oldParent.get(oldKey).getAsString())) {
+					newParent.addProperty(newKey, changes[i + 1]);
 					return;
 				}
 			}
 		};
 	}
 
-	private void call(Object patch, JsonObject oldParent, JsonObject newParent, JsonElement element) {
-		if (element == null)
+	private void call(Object patch, JsonObject oldParent, JsonObject newParent, String oldKey, String newKey) {
+		if (!oldParent.has(oldKey))
 			return;
 
 		if (patch instanceof Patcher)
-			((Patcher) patch).patch(oldParent, newParent, element);
+			((Patcher) patch).patch(oldParent, newParent, oldKey, newKey);
 		else if (patch instanceof String)
-			newParent.add((String) patch, element);
+			newParent.add((String) patch, oldParent.get(oldKey));
 	}
 
-	private final Patcher moduleTimerFormatPatch = (parent, newParent, element) -> {
-		if (element.getAsBoolean())
-			newParent.addProperty("time_format", "SHORT");
+	private final Patcher moduleTimerFormatPatch = (oldParent, newParent, oldKey, newKey) -> {
+		if (oldParent.get(oldKey).getAsBoolean())
+			newParent.addProperty(newKey, "SHORT");
 		else
-			newParent.addProperty("time_format", "LONG");
+			newParent.addProperty(newKey, "LONG");
 	};
 
-	private final Patcher chatMenuIconPatch = (parent, newParent, element) -> {
+	private final Patcher playerListPatch = (oldParent, newParent, oldKey, newKey) -> {
+		JsonArray a = new JsonArray();
+		for (JsonElement entry : oldParent.get(oldKey).getAsJsonArray())
+			a.add(new JsonPrimitive(entry.getAsJsonObject().get("uuid").getAsString().replaceAll(".{8}.{4}.{4}.{4}.{12}", "$1-$2-$3-$4-$5")));
+		newParent.add(newKey, a);
+	};
+
+	private final Patcher chatMenuIconPatch = (oldParent, newParent, oldKey, newKey) -> {
 		String newValue = null;
-		switch (parent.get("icon_type").getAsString()) {
+		switch (oldParent.get("icon_type").getAsString()) {
 			case "item":
-				newValue = element.getAsString();
+				newValue = oldParent.get(oldKey).getAsString();
 				break;
 			case "image":
 				try {
-					newValue = Base64.getEncoder().encodeToString(IOUtils.toByteArray(new FileInputStream(element.getAsString())));
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					ImageIO.write(scale(ImageIO.read(new File(oldParent.get(oldKey).getAsString()))), "PNG", out);
+					newValue = Base64.getEncoder().encodeToString(out.toByteArray());
+					newParent.addProperty("icon_name", new File(oldParent.get(oldKey).getAsString()).getName());
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
@@ -239,8 +309,31 @@ public class ConfigPatcher {
 		newParent.addProperty("icon", newValue);
 	};
 
+	private BufferedImage scale(BufferedImage img) {
+		if (img.getHeight() > 64 || img.getWidth() > 64) {
+			float scaleFactor = (64f / (float) Math.max(img.getHeight(), img.getWidth()));
+			Image scaledImg = (img.getScaledInstance((int) (img.getWidth() * scaleFactor), (int) (img.getHeight() * scaleFactor), Image.SCALE_DEFAULT));
+			img = new BufferedImage(scaledImg.getWidth(null), scaledImg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = img.createGraphics();
+			g.drawImage(scaledImg, 0, 0, null);
+			g.dispose();
+			return img;
+		}
+		return img;
+	}
+
 	private interface Patcher {
-		void patch(JsonObject oldParent, JsonObject newParent, JsonElement element);
+		void patch(JsonObject oldParent, JsonObject newParent, String oldKey, String newKey);
+	}
+
+	private static class Constant {
+		private final String key;
+		private final JsonElement value;
+
+		public Constant(String key, JsonElement value) {
+			this.key = key;
+			this.value = value;
+		}
 	}
 
 	private JsonObject getParent(String path) {
@@ -257,4 +350,9 @@ public class ConfigPatcher {
 	private String getKey(String path) {
 		return ArrayUtil.last(path.split("\\."));
 	}
+
+	private void set(String path, JsonElement value) {
+		getParent(path).add(getKey(path), value);
+	}
+
 }

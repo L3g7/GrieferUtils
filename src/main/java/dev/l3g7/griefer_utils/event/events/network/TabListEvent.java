@@ -161,6 +161,10 @@ public class TabListEvent extends Event {
 			if (packet.getAction() != REMOVE_PLAYER)
 				return;
 
+			// I don't know why it happens, but it does
+			if (packet.getEntries() == null)
+				return;
+
 			if (packet.getEntries().size() == mc().getNetHandler().getPlayerInfoMap().size())
 				// When whole TabList is affected, TabListClearEvent is posted instead
 				return;

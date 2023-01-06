@@ -25,7 +25,9 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 
 import static net.minecraft.init.Blocks.stained_glass_pane;
 
@@ -50,21 +52,34 @@ public class NoFog extends Feature {
 		.description("Deaktiviert die Lavatrübheit.")
 		.icon(new ItemStack(stained_glass_pane, 1, 1));
 
+	private final BooleanSetting fog = new BooleanSetting()
+		.name("Keinen Nebel")
+		.description("Deaktiviert den Nebel am Ende der Sichtweite.")
+		.icon(new ItemStack(stained_glass_pane, 1, 7));
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Kein Nebel")
 		.description("Entfernt einige Nebel-Effekte.")
 		.icon(new ItemStack(stained_glass_pane))
-		.subSettings(blindness, water, lava);
+		.subSettings(blindness, water, lava, fog);
 
 	@EventListener
-	public void onDisplayNameRender(SetupFogEvent event) {
+	public void onSetupFog(SetupFogEvent event) {
 		if (event.fogType == FogType.BLINDNESS)
 			event.setCanceled(blindness.get());
 		else if (event.fogType == FogType.WATER)
 			event.setCanceled(water.get());
 		else if (event.fogType == FogType.LAVA)
 			event.setCanceled(lava.get());
+	}
+
+	@EventListener
+	public void onFogRender(EntityViewRenderEvent.RenderFogEvent event) {
+		if (event.fogMode != -1) {
+			GlStateManager.setFogStart(event.farPlaneDistance * 1.5f);
+			GlStateManager.setFogEnd(event.farPlaneDistance * 2f);
+		}
 	}
 
 }

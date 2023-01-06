@@ -10,7 +10,6 @@
     "MixinEntityPlayer",
     "MixinIngameChatManager",
     "MixinNetHandlerPlayClient",
-
     "furniture.MixinWalkNodeProcessor",
     "furniture.block.MixinBlock",
     "furniture.block.MixinBlockBush",
@@ -27,6 +26,7 @@
     "furniture.world.MixinWorld"
   ],
   "client": [
+    "MixinChunkProviderClient",
     "MixinGuiChest",
     "MixinRenderTickListener"
   ]

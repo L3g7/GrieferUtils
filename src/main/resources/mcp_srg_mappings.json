@@ -45,6 +45,16 @@
       "renderPosZ": "field_78723_d"
     }
   },
+  "net/minecraft/client/multiplayer/ChunkProviderClient": {
+    "fields": {
+      "chunkMapping": "field_73236_b"
+    }
+  },
+  "net/minecraft/client/multiplayer/WorldClient": {
+    "fields": {
+      "clientChunkProvider": "field_73033_b"
+    }
+  },
   "net/minecraft/client/Minecraft": {
     "fields": {
       "timer": "field_71428_T",

@@ -161,13 +161,12 @@ public class TabListEvent extends Event {
 			if (packet.getAction() != REMOVE_PLAYER)
 				return;
 
-			try {
-				if (packet.getEntries().size() == mc().getNetHandler().getPlayerInfoMap().size())
-					// When whole TabList is affected, TabListClearEvent is posted instead
-					return;
-			} catch (NullPointerException ignored) {
-				// I don't know why this happens, so I just put a try catch around it
-			}
+			if (mc().getNetHandler() == null)
+				return;
+
+			if (packet.getEntries().size() == mc().getNetHandler().getPlayerInfoMap().size())
+				// When whole TabList is affected, TabListClearEvent is posted instead
+				return;
 
 			for (AddPlayerData data : packet.getEntries()) {
 				String name = PlayerDataProvider.get(data.getProfile().getId()).getName();
@@ -205,6 +204,9 @@ public class TabListEvent extends Event {
 
 			S38PacketPlayerListItem packet = (S38PacketPlayerListItem) event.packet;
 			if (packet.getAction() != REMOVE_PLAYER)
+				return;
+
+			if (mc().getNetHandler() == null)
 				return;
 
 			if (packet.getEntries().size() == mc().getNetHandler().getPlayerInfoMap().size())

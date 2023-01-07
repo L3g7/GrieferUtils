@@ -48,9 +48,9 @@ class FieldReflection {
 
 		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-		String mappedName = Mapping.mapField(SRG, Type.getInternalName(targetClass), name);
+		String mappedName = Mapping.mapField(SRG, targetClass, name);
 		if (mappedName == null)
-			throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(targetClass) + "#" + name);
+			throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(targetClass), name);
 
 		Field field = resolveField(targetClass, mappedName);
 
@@ -90,9 +90,9 @@ class FieldReflection {
 
 		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-		String mappedName = Mapping.mapField(SRG, Type.getInternalName(targetClass), name);
+		String mappedName = Mapping.mapField(SRG, targetClass, name);
 		if (mappedName == null)
-			throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(targetClass) + "#" + name);
+			throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(targetClass), name);
 
 		Field field = resolveField(targetClass, mappedName);
 

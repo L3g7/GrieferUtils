@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
+import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,9 +52,6 @@ public class PlayerHider extends Feature {
 
 	private boolean playingOwnSounds = false;
 
-	private final PlayerListSetting excludedPlayers = new PlayerListSetting()
-		.name("%s. Spieler");
-
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
 		.icon("key")
@@ -63,6 +61,13 @@ public class PlayerHider extends Feature {
 				enabled.set(!enabled.get());
 			}
 		});
+
+	private final BooleanSetting showNPCs = new BooleanSetting()
+		.name("NPCs zeigen")
+		.icon("steve");
+
+	private final PlayerListSetting excludedPlayers = new PlayerListSetting()
+		.name("%s. Spieler");
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -74,7 +79,7 @@ public class PlayerHider extends Feature {
 				for (EntityPlayer player : world().playerEntities)
 					updatePlayer(player);
 		})
-		.subSettings(key, new HeaderSetting("Ausgenommene Spieler"), excludedPlayers);
+		.subSettings(key, showNPCs, new HeaderSetting("Ausgenommene Spieler"), excludedPlayers);
 
 	{ excludedPlayers.setContainer(enabled); }
 
@@ -127,7 +132,7 @@ public class PlayerHider extends Feature {
 	}
 
 	private void updatePlayer(EntityPlayer player) {
-		if (player.equals(player()) || shownPlayers.contains(player.getUniqueID()))
+		if (player.equals(player()) || shownPlayers.contains(player.getUniqueID()) || (PlayerUtil.isNPC(player) && !showNPCs.get()))
 			return;
 
 		boolean hide = isEnabled();
@@ -137,6 +142,7 @@ public class PlayerHider extends Feature {
 			shownPlayers.add(player.getUniqueID());
 			hide = false;
 		}
+
 
 		// Shadows
 		if (player.isInvisible() != hide)
@@ -160,7 +166,7 @@ public class PlayerHider extends Feature {
 	}
 
 	private boolean showPlayer(Entity player) {
-		return player.equals(player()) || excludedPlayers.get().contains(player.getUniqueID());
+		return player.equals(player()) || excludedPlayers.get().contains(player.getUniqueID()) || (PlayerUtil.isNPC(player) && !showNPCs.get());
 	}
 
 }

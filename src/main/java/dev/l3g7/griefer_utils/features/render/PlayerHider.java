@@ -36,10 +36,8 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
@@ -49,8 +47,6 @@ import static dev.l3g7.griefer_utils.util.misc.ServerCheck.isOnGrieferGames;
 public class PlayerHider extends Feature {
 
 	private static final List<String> BLOCKED_SOUNDS = Arrays.asList("random.eat", "random.burp", "random.drink");
-
-	private boolean playingOwnSounds = false;
 
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
@@ -64,7 +60,13 @@ public class PlayerHider extends Feature {
 
 	private final BooleanSetting showNPCs = new BooleanSetting()
 		.name("NPCs zeigen")
-		.icon("steve");
+		.icon("steve")
+		.defaultValue(true)
+		.callback(isActive -> {
+			if (isOnGrieferGames())
+				for (EntityPlayer player : world().playerEntities)
+					updatePlayer(player);
+		});
 
 	private final PlayerListSetting excludedPlayers = new PlayerListSetting()
 		.name("%s. Spieler");
@@ -83,15 +85,11 @@ public class PlayerHider extends Feature {
 
 	{ excludedPlayers.setContainer(enabled); }
 
-	private final List<UUID> shownPlayers = new ArrayList<>();
-
 	@EventListener
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (!isOnGrieferGames())
-			return;
-
-		for (EntityPlayer player : world().playerEntities)
-			updatePlayer(player);
+		if (world() != null )
+			for (EntityPlayer player : world().playerEntities)
+				updatePlayer(player);
 	}
 
 	/**
@@ -99,11 +97,10 @@ public class PlayerHider extends Feature {
 	 */
 	@EventListener
 	public void onEntityRender(RenderPlayerEvent.Pre event) {
-		if (!isOnGrieferGames() || showPlayer(event.entity))
-			return;
-
-		event.setCanceled(true);
+		event.setCanceled(!showPlayer(event.entity));
 	}
+
+	private boolean playSound = false;
 
 	/**
 	 * Makes sure your own sounds are still played
@@ -111,7 +108,7 @@ public class PlayerHider extends Feature {
 	@EventListener
 	public void onSoundPlayAtEntity(PlaySoundAtEntityEvent event) {
 		if (showPlayer(event.entity))
-			playingOwnSounds = true;
+			playSound = true;
 	}
 
 	/**
@@ -119,11 +116,8 @@ public class PlayerHider extends Feature {
 	 */
 	@EventListener
 	public void onSoundPlay(PlaySoundEvent event) {
-		if (!isOnGrieferGames())
-			return;
-
-		if (playingOwnSounds) {
-			playingOwnSounds = false;
+		if (playSound) {
+			playSound = false;
 			return;
 		}
 
@@ -132,41 +126,28 @@ public class PlayerHider extends Feature {
 	}
 
 	private void updatePlayer(EntityPlayer player) {
-		if (player.equals(player()) || shownPlayers.contains(player.getUniqueID()) || (PlayerUtil.isNPC(player) && !showNPCs.get()))
-			return;
-
-		boolean hide = isEnabled();
-
-		// Ensure player is shown when it was added while PlayerHider is active
-		if (excludedPlayers.get().contains(player.getUniqueID())) {
-			shownPlayers.add(player.getUniqueID());
-			hide = false;
-		}
-
+		boolean hidden = isEnabled() && !showPlayer(player);
 
 		// Shadows
-		if (player.isInvisible() != hide)
-			player.setInvisible(hide || player.isPotionActive(Potion.invisibility));
+		if (player.isInvisible() != hidden)
+			player.setInvisible(hidden || player.isPotionActive(Potion.invisibility));
 
 		// Fire
-		if (player.isImmuneToFire() != hide)
-			Reflection.set(player, hide, "isImmuneToFire");
+		if (player.isImmuneToFire() != hidden)
+			Reflection.set(player, hidden, "isImmuneToFire");
 
-		// Sprinting particles
-		if (hide)
-			player.setSprinting(false);
+		if (hidden) {
+			player.setSprinting(false); // hide sprinting particles
+			Reflection.invoke(player, "resetPotionEffectMetadata");// hide effect particles
+			player.setEating(false); // hide eating particles
+			player.clearItemInUse();
+		}
 
-		// Effect particles
-		if (hide)
-			Reflection.invoke(player, "resetPotionEffectMetadata");
-
-		player.setSilent(hide);
-		player.setEating(false);
-		player.clearItemInUse();
+		player.setSilent(hidden);
 	}
 
 	private boolean showPlayer(Entity player) {
-		return player.equals(player()) || excludedPlayers.get().contains(player.getUniqueID()) || (PlayerUtil.isNPC(player) && !showNPCs.get());
+		return player.equals(player()) || excludedPlayers.get().contains(player.getUniqueID()) || (PlayerUtil.isNPC(player) && showNPCs.get());
 	}
 
 }

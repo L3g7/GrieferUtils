@@ -25,6 +25,7 @@ import net.labymod.core.asm.LabyModCoreMod;
 import org.objectweb.asm.Type;
 
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.util.Util.elevate;
@@ -139,8 +140,8 @@ public class Mapping {
 
 	private static class MappingClass {
 		String notch;
-		Map<String, String> methods;
-		Map<String, String> fields;
+		Map<String, String> methods = new HashMap<>();
+		Map<String, String> fields = new HashMap<>();
 	}
 
 	public enum MappingTarget {

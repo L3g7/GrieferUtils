@@ -18,7 +18,9 @@
 
 package dev.l3g7.griefer_utils.util;
 
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.IChatComponent;
 
 import java.util.UUID;
@@ -65,4 +67,9 @@ public class PlayerUtil {
 	public static String getName() {
 		return mc().getSession().getUsername();
 	}
+
+	public static boolean isNPC(Entity entity) {
+		return entity instanceof EntityOtherPlayerMP && entity.getCustomNameTag().isEmpty();
+	}
+
 }

@@ -18,12 +18,12 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
-import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
@@ -57,7 +57,7 @@ public class NPCEntityGhostHand extends Feature {
 			return;
 
 		// Don't intercept if targeted entity is a NPC
-		if (isNPC(mc().pointedEntity))
+		if (PlayerUtil.isNPC(mc().pointedEntity))
 			return;
 
 		float reachDistance = mc().playerController.getBlockReachDistance();
@@ -76,7 +76,7 @@ public class NPCEntityGhostHand extends Feature {
 				continue;
 
 			// Skip if entity isn't a NPC
-			if (!isNPC(entity))
+			if (!PlayerUtil.isNPC(entity))
 				continue;
 
 			// Check if entity is hit
@@ -95,15 +95,4 @@ public class NPCEntityGhostHand extends Feature {
 		}
 	}
 
-	/**
-	 * @return whether the entity is a NPC.
-	 */
-	private boolean isNPC(Entity entity) {
-		if (!(entity instanceof EntityOtherPlayerMP))
-			return false;
-
-		EntityOtherPlayerMP npc = ((EntityOtherPlayerMP) entity);
-		GameProfile gp = npc.getGameProfile();
-		return gp.getName().startsWith("§") && mc().getNetHandler().getPlayerInfo(gp.getId()) != null;
-	}
 }

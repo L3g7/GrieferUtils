@@ -76,9 +76,9 @@ public abstract class Transformer implements Opcodes {
 				assert args.length == 3;
 				FieldInsnNode insn = (FieldInsnNode) node;
 				return
-					insn.owner.equals(Type.getType(Mapping.mapClass(NOTCH, Type.getObjectType((String) args[0]).getDescriptor())).getInternalName()) &&
+					insn.owner.equals(Mapping.mapClass(NOTCH, Type.getObjectType((String) args[0])).getInternalName()) &&
 					insn.name.equals(Mapping.mapField(NOTCH, (String) args[0], (String) args[1])) &&
-					insn.desc.equals(Mapping.mapClass(NOTCH, (String) args[2]));
+					insn.desc.equals(Mapping.mapClass(NOTCH, Type.getType((String) args[2])).getDescriptor());
 			}
 			case INVOKEINTERFACE:
 			case INVOKESTATIC:
@@ -86,7 +86,7 @@ public abstract class Transformer implements Opcodes {
 				assert args.length == 3;
 				MethodInsnNode insn = (MethodInsnNode) node;
 				return
-					insn.owner.equals(Type.getType(Mapping.mapClass(NOTCH, Type.getObjectType((String) args[0]).getDescriptor())).getInternalName()) &&
+					insn.owner.equals(Mapping.mapClass(NOTCH, Type.getObjectType((String) args[0])).getInternalName()) &&
 					insn.name.equals(Mapping.mapMethodName(NOTCH, (String) args[0], (String) args[1], (String) args[2])) &&
 					insn.desc.equals(Mapping.mapMethodDesc(NOTCH, (String) args[2]));
 			}

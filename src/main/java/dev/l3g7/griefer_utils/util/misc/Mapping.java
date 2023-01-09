@@ -25,6 +25,7 @@ import net.labymod.core.asm.LabyModCoreMod;
 import org.objectweb.asm.Type;
 
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,21 +38,20 @@ public class Mapping {
 
 	private static final boolean obfuscated = LabyModCoreMod.isObfuscated();
 
-	public static String mapClass(MappingTarget target, String descriptor) {
-		Type type = Type.getType(descriptor);
+	public static Type mapClass(MappingTarget target, Type type) {
 		if (type.getSort() != Type.OBJECT)
-			return descriptor;
+			return type;
 
 		if (!obfuscated)
-			return descriptor;
+			return type;
 
-		descriptor = type.getInternalName();
+		String descriptor = type.getInternalName();
 		if (!descriptor.startsWith("net/minecraft/") || !descriptor.contains("/"))
-			return descriptor;
+			return type;
 		if (!target.mappings.containsKey(descriptor))
 			throw new NoClassDefFoundError("Could not find mapping for class " + descriptor);
 
-		return Type.getObjectType(target.mappings.get(descriptor).notch).getDescriptor();
+		return Type.getObjectType(target.mappings.get(descriptor).notch);
 	}
 
 	public static String mapField(MappingTarget target, String owner, String name) {
@@ -128,14 +128,12 @@ public class Mapping {
 		if (!obfuscated)
 			return desc;
 
-		StringBuilder mappedDesc = new StringBuilder("(");
-		for (Type type : Type.getArgumentTypes(desc))
-			mappedDesc.append(mapClass(target, type.getDescriptor()));
+		Type returnType = mapClass(target, Type.getReturnType(desc));
+		Type[] argumentTypes = Arrays.stream(Type.getArgumentTypes(desc))
+			.map(type -> mapClass(target, type))
+			.toArray(Type[]::new);
 
-		mappedDesc.append(")");
-		Type type = Type.getReturnType(desc);
-		mappedDesc.append(mapClass(target, type.getDescriptor()));
-		return mappedDesc.toString();
+		return Type.getMethodDescriptor(returnType, argumentTypes);
 	}
 
 	private static class MappingClass {

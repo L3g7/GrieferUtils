@@ -39,7 +39,7 @@ public class Mapping {
 	private static final boolean obfuscated = LabyModCoreMod.isObfuscated();
 
 	public static Type mapClass(MappingTarget target, Type type) {
-		if (type.getSort() != Type.OBJECT)
+		if (type.getSort() != Type.OBJECT || target != MappingTarget.NOTCH)
 			return type;
 
 		if (!obfuscated)

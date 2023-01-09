@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.world.furniture.block.version_specific;
 
-import dev.l3g7.griefer_utils.features.world.furniture.OptifineBlockAccess;
+import dev.l3g7.griefer_utils.features.world.furniture.optifine_patches.OptifineBlockAccess;
 import dev.l3g7.griefer_utils.features.world.furniture.block.FurnitureHorizontalBlock;
 import dev.l3g7.griefer_utils.features.world.furniture.block.ModBlock;
 import dev.l3g7.griefer_utils.features.world.furniture.block.plants.LogBlock;

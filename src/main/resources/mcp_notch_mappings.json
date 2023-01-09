@@ -24,6 +24,19 @@
       "doVoidFogParticles(III)V": "b"
     }
   },
+  "net/minecraft/client/resources/model/IBakedModel": {
+    "notch": "boq",
+    "methods": {
+      "getFaceQuads(Lnet/minecraft/util/EnumFacing;)Ljava/util/List;": "a"
+    }
+  },
+  "net/minecraft/client/renderer/BlockModelRenderer": {
+    "notch": "bgf",
+    "methods": {
+      "renderModelSmooth(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/resources/model/IBakedModel;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/BlockPos;Lnet/minecraft/client/renderer/WorldRenderer;Z)Z": "renderModelSmooth",
+      "renderModelFlat(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/resources/model/IBakedModel;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/BlockPos;Lnet/minecraft/client/renderer/WorldRenderer;Z)Z" : "renderModelFlat"
+    }
+  },
   "net/minecraft/client/renderer/EntityRenderer": {
     "notch": "bfk",
     "methods": {
@@ -41,6 +54,9 @@
     "methods": {
       "renderModel(Lnet/minecraft/entity/EntityLivingBase;FFFFFF)V": "a"
     }
+  },
+  "net/minecraft/client/renderer/WorldRenderer": {
+    "notch": "bfd"
   },
   "net/minecraft/entity/EntityLivingBase": {
     "notch": "pr",
@@ -63,6 +79,12 @@
   "net/minecraft/scoreboard/ScoreObjective": {
     "notch": "auk"
   },
+  "net/minecraft/util/BlockPos": {
+    "notch": "cj"
+  },
+  "net/minecraft/util/EnumFacing": {
+    "notch": "cq"
+  },
   "net/minecraft/client/gui/ScaledResolution": {
     "notch": "avr"
   },
@@ -71,5 +93,8 @@
     "methods": {
       "renderScoreboard(Lnet/minecraft/scoreboard/ScoreObjective;Lnet/minecraft/client/gui/ScaledResolution;)V": "a"
     }
+  },
+  "net/minecraft/world/IBlockAccess": {
+    "notch": "adq"
   }
 }

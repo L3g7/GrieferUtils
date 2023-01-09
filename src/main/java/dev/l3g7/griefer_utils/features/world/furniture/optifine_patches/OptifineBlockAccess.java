@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.world.furniture;
+package dev.l3g7.griefer_utils.features.world.furniture.optifine_patches;
 
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraft.block.state.IBlockState;

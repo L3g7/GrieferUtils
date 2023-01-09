@@ -56,11 +56,4 @@ public class FurnitureLoader {
 		loaded = true;
 	}
 
-	/**
-	 * TODO:
-	 * - Check todos
-	 * - Dfun (v.a. Mixins)
-	 * - MS adden
-	 */
-
 }

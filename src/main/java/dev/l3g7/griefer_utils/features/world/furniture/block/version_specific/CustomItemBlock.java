@@ -73,7 +73,7 @@ public class CustomItemBlock extends ItemBlock {
 			|| !worldIn.canBlockBePlaced(block, pos, false, side, null, stack))
 			return false;
 
-		IBlockState state = block.onBlockPlaced(worldIn, pos, side, hitX, hitY, hitZ, getMetadata(stack.getMetadata()), playerIn);
+		IBlockState state = versionBlock.onBlockPlaced(worldIn, pos, side, hitX, hitY, hitZ, getMetadata(stack.getMetadata()), playerIn);
 		if (!versionBlock.getModBlock().isValidPosition(state, worldIn, pos))
 			return false;
 

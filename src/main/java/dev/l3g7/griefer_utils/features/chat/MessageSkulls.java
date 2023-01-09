@@ -23,7 +23,7 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.misc.NameCache;
@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.misc.Constants.*;
 
 @Singleton
@@ -50,7 +51,7 @@ public class MessageSkulls extends Feature {
 		add(STATUS_PATTERN);
 	}};
 
-	@ElementBuilder.MainElement
+	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Kopf vor Nachrichten")
 		.description("Zeigt den Kopf des Autors vor Nachrichten an.")
@@ -62,7 +63,6 @@ public class MessageSkulls extends Feature {
 			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 
 			if (matcher.matches()) {
-
 				event.message = new ChatComponentText(SPACE).appendSibling(event.message);
 				return;
 			}
@@ -95,6 +95,12 @@ public class MessageSkulls extends Feature {
 			endIndex = msg.indexOf(']');
 		else
 			endIndex = msg.indexOf(' ', startIndex);
+
+		if ((endIndex - startIndex) < 0) {
+			System.err.println(startIndex + " " + endIndex + " | " + IChatComponent.Serializer.componentToJson(component));
+			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
+			return;
+		}
 
 		String name = msg.substring(startIndex, endIndex);
 		NetworkPlayerInfo playerInfo = MinecraftUtil.mc().getNetHandler().getPlayerInfo(NameCache.ensureRealName(name));

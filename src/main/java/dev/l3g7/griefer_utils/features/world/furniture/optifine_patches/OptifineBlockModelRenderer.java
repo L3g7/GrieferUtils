@@ -22,10 +22,8 @@ public class OptifineBlockModelRenderer {
 		if (iBakedModel instanceof BlockBakedModel)
 			return ((BlockBakedModel) iBakedModel).getQuads(block.getActualState(state, world(), pos), facing);
 
-		if (block instanceof VersionBlock) {
-			System.out.println(state);
+		if (block instanceof VersionBlock)
 			return mc().getBlockRendererDispatcher().getModelFromBlockState(block.getActualState(state, world(), pos), world(), pos).getFaceQuads(facing);
-		}
 
 		return quads;
 	}

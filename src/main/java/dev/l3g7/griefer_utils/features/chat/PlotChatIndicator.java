@@ -53,7 +53,7 @@ public class PlotChatIndicator extends Feature {
 
 
 	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event");
-	private StringBuilder states; // A StringBuilder is used since it has .setChatAt, and with HashMaps you'd have 26 entries per account in the config)
+	private StringBuilder states; // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
 	private String server;
 
 	private Boolean plotchatState = null;
@@ -82,10 +82,16 @@ public class PlotChatIndicator extends Feature {
 			return;
 
 		String path = "chat.plot_chat_indicator.states." + mc().getSession().getProfile().getId();
-		if (Config.has(path))
-			states = new StringBuilder(Config.get(path).getAsString());
-		else
-			states = new StringBuilder(Strings.repeat("?", 26));
+		if (Config.has(path)) {
+			try {
+				states = new StringBuilder(Config.get(path).getAsString());
+				return;
+			} catch (UnsupportedOperationException ignored) {
+				// Fix for old configs
+			}
+		}
+
+		states = new StringBuilder(Strings.repeat("?", 26));
 	}
 
 	@EventListener(triggerWhenDisabled = true)

@@ -58,6 +58,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/griefer-utils-${{ steps.get_version.outputs.VERSION }}-unobf.jar
-          asset_name: griefer-utils-${{ steps.get_version.outputs.VERSION }}-unobf.jar
+          asset_path: ./build/libs/griefer-utils-${{ steps.get_version.outputs.VERSION }}-api.jar
+          asset_name: griefer-utils-${{ steps.get_version.outputs.VERSION }}-api.jar
           asset_content_type: application/java-archive

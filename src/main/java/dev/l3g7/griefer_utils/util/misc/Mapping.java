@@ -78,7 +78,7 @@ public class Mapping {
 		boolean isMinecraftClass = false;
 
 		while (lookupClass != Object.class) {
-			if (lookupName.startsWith("net/minecraft/") && lookupName.contains("/"))
+			if (lookupName.startsWith("net/minecraft/") || !lookupName.contains("/"))
 				isMinecraftClass = true;
 
 			if (target.mappings.containsKey(lookupName) && target.mappings.get(lookupName).fields.containsKey(name))
@@ -88,7 +88,7 @@ public class Mapping {
 		}
 
 		if (isMinecraftClass)
-			throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(lookupClass), name);
+			throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(owner), name);
 
 		return name;
 	}
@@ -119,7 +119,7 @@ public class Mapping {
 		boolean isMinecraftClass = false;
 
 		while (lookupClass != Object.class) {
-			if (lookupName.startsWith("net/minecraft/") && lookupName.contains("/"))
+			if (lookupName.startsWith("net/minecraft/") || !lookupName.contains("/"))
 				isMinecraftClass = true;
 
 			if (target.mappings.containsKey(lookupName) && target.mappings.get(lookupName).methods.containsKey(name + desc))

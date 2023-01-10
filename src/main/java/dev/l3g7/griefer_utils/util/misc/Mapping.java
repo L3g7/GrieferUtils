@@ -73,18 +73,24 @@ public class Mapping {
 		if (!obfuscated)
 			return name;
 
-		String ownerName = Type.getInternalName(owner);
-		if (!ownerName.startsWith("net/minecraft/") || !ownerName.contains("/"))
-			return name;
-
+		String lookupName = Type.getInternalName(owner);
 		Class<?> lookupClass = owner;
-		while (lookupClass != Object.class) {
-			if (target.mappings.containsKey(ownerName) && target.mappings.get(ownerName).fields.containsKey(name))
-				return target.mappings.get(ownerName).fields.get(name);
+		boolean isMinecraftClass = false;
 
-			ownerName = Type.getInternalName(lookupClass = lookupClass.getSuperclass());
+		while (lookupClass != Object.class) {
+			if (lookupName.startsWith("net/minecraft/") && lookupName.contains("/"))
+				isMinecraftClass = true;
+
+			if (target.mappings.containsKey(lookupName) && target.mappings.get(lookupName).fields.containsKey(name))
+				return target.mappings.get(lookupName).fields.get(name);
+
+			lookupName = Type.getInternalName(lookupClass = lookupClass.getSuperclass());
 		}
-		throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(lookupClass), name);
+
+		if (isMinecraftClass)
+			throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(lookupClass), name);
+
+		return name;
 	}
 
 	public static String mapMethodName(MappingTarget target, String owner, String name, String desc) {
@@ -105,23 +111,27 @@ public class Mapping {
 	}
 
 	public static String mapMethodName(MappingTarget target, Class<?> owner, String name, String desc) {
-		String lookupName = Type.getInternalName(owner);
-		lookupName = lookupName.replace('.', '/');
 		if (!obfuscated)
 			return name;
 
-		if (!lookupName.startsWith("net/minecraft/") || !lookupName.contains("/"))
-			return name;
-
+		String lookupName = Type.getInternalName(owner);
 		Class<?> lookupClass = owner;
+		boolean isMinecraftClass = false;
+
 		while (lookupClass != Object.class) {
+			if (lookupName.startsWith("net/minecraft/") && lookupName.contains("/"))
+				isMinecraftClass = true;
+
 			if (target.mappings.containsKey(lookupName) && target.mappings.get(lookupName).methods.containsKey(name + desc))
 				return target.mappings.get(lookupName).methods.get(name + desc);
 
 			lookupName = Type.getInternalName(lookupClass = lookupClass.getSuperclass());
 		}
 
-		throw elevate(new NoSuchMethodException(), "Could not find srg mapping for %s.%s %s", Type.getInternalName(owner), name, desc);
+		if (isMinecraftClass)
+			throw elevate(new NoSuchMethodException(), "Could not find srg mapping for %s.%s %s", Type.getInternalName(owner), name, desc);
+
+		return name;
 	}
 
 	public static String mapMethodDesc(MappingTarget target, String desc) {

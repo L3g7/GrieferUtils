@@ -73,6 +73,7 @@ public class UpdateCheck {
 					continue;
 
 				latestRelease = release;
+				break;
 			}
 
 			if (latestRelease == null)

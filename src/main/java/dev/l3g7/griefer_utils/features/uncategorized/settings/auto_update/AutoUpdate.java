@@ -18,17 +18,12 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update;
 
-import com.google.gson.*;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.util.IOUtil;
-import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.misc.Config;
 import net.labymod.addon.AddonLoader;
-import net.minecraft.init.Blocks;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,20 +39,12 @@ import static java.nio.file.StandardOpenOption.CREATE;
 
 public class AutoUpdate {
 
-	public static final BooleanSetting showChangelog = new BooleanSetting()
-		.name("Changelog anzeigen")
-		.description("Ob der Changelog angezeigt werden soll, wenn GrieferUtils aktualisiert wurde.")
-		.config("settings.auto_update.show_changelog")
-		.icon(ItemUtil.createItem(Blocks.stained_glass_pane, 12, true))
-		.defaultValue(true);
-
 	public static final BooleanSetting enabled = new BooleanSetting()
 		.name("Automatisch updaten")
 		.description("Updatet GrieferUtils automatisch auf die neuste Version.")
 		.config("settings.auto_update.enabled")
 		.icon("arrow_circle")
-		.defaultValue(true)
-		.subSettings(showChangelog);
+		.defaultValue(true);
 
 	public static void checkForUpdate(UUID addonUuid) {
 		String addonVersion = AddonUtil.getVersion();
@@ -76,9 +63,6 @@ public class AutoUpdate {
 
 		Config.set("version", new JsonPrimitive(addonVersion));
 		Config.save();
-
-		if (showChangelog.get() && Config.get("version").getAsString().startsWith("1."))
-			ChangelogScreen.trigger();
 	}
 
 	private static boolean triggeredShutdownHook = false;
@@ -98,60 +82,36 @@ public class AutoUpdate {
 			return;
 		}
 
-		IOUtil.read("https://grieferutils.l3g7.dev/v2/latest_release").asJsonString(releaseId -> {
-			if (releaseId.isEmpty())
+		IOUtil.read("https://grieferutils.l3g7.dev/v2/latest_release/version").asJsonString(latestVersion -> {
+			if (latestVersion.isEmpty())
 				return;
 
-			IOUtil.read("https://api.github.com/repos/L3g7/GrieferUtils/releases/" + releaseId).asJsonObject(latestRelease -> {
-				String tag = latestRelease.get("tag_name").getAsString().replaceFirst("v", "");
-				if (tag.equals(AddonUtil.getVersion())) {
-					if (!triggeredShutdownHook) {
-						Runtime.getRuntime().addShutdownHook(new Thread(() -> check(addonUuid)));
-						triggeredShutdownHook = true;
-					}
-					return;
+			if (latestVersion.equalsIgnoreCase(AddonUtil.getVersion())) {
+				if (!triggeredShutdownHook) {
+					Runtime.getRuntime().addShutdownHook(new Thread(() -> check(addonUuid)));
+					triggeredShutdownHook = true;
 				}
+				return;
+			}
 
-				// Get latest addon asset
-				JsonArray assets = latestRelease.get("assets").getAsJsonArray();
-				JsonObject asset = null;
+			try  {
+				// Download new version
+				HttpURLConnection conn = (HttpURLConnection) new URL("https://grieferutils.l3g7.dev/v2/latest_release/jar").openConnection();
+				conn.addRequestProperty("User-Agent", "GrieferUtils");
 
-				for (JsonElement jsonElement : assets) {
-					JsonObject currentAsset = jsonElement.getAsJsonObject();
-					if (currentAsset.get("name").getAsString().equals("griefer-utils-v" + tag + ".jar")) {
-						asset = currentAsset;
-						break;
-					}
-				}
+				File newAddonJar = new File(AddonLoader.getAddonsDirectory(), "griefer-utils-v" + latestVersion + ".jar");
+				Files.copy(conn.getInputStream(), newAddonJar.toPath(), REPLACE_EXISTING);
 
-				if (asset == null) {
-					System.err.println("No correct GrieferUtils release could be found");
-					return;
-				}
+				// Add old version to LabyMod's .delete
+				Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();
+				String deleteLine = currentAddonJar.getName() + System.lineSeparator();
+				Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
 
-				String downloadUrl = asset.get("browser_download_url").getAsString();
+				isUpToDate = false;
 
-				HttpURLConnection conn;
-
-				try {
-					// Download new version
-					conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
-					conn.addRequestProperty("User-Agent", "GrieferUtils");
-
-					File newAddonJar = new File(AddonLoader.getAddonsDirectory(), asset.get("name").getAsString());
-					Files.copy(conn.getInputStream(), newAddonJar.toPath(), REPLACE_EXISTING);
-
-					// Add old version to LabyMod's .delete
-					Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();
-					String deleteLine = currentAddonJar.getName() + System.lineSeparator();
-					Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
-
-					isUpToDate = false;
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		});
 	}
 

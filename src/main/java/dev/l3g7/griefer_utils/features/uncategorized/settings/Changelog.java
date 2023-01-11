@@ -21,7 +21,6 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.ChangelogScreen;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.TextSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
@@ -41,21 +40,17 @@ public class Changelog {
 		.description("§eVerbindet...")
 		.icon("white_scroll")
 		.settingsEnabled(false)
-		.subSettings();
+		.subSettings(
+			new CategorySetting()
+				.name(" §lv2.0-BETA")
+				.description("Changelog-Informationen sind für die Beta-Version nicht verfügbar.", "Der v2-Changelog kann auf Discord gefunden werden."),
+			new HeaderSetting());
 
 	static {
 		IOUtil.read("https://api.github.com/repos/L3g7/GrieferUtils/releases").asJsonArray(releases -> {
 			List<SettingsElement> entries = new ArrayList<>();
 			for (JsonElement releaseElement : releases) {
 				JsonObject release = releaseElement.getAsJsonObject();
-
-				if (!ChangelogScreen.hasData()) {
-					ChangelogScreen.setData(
-						release.get("tag_name").getAsString(),
-						release.get("body").getAsString().substring("Changelog:\r".length())
-					);
-				}
-
 				String title = "§l" + release.get("tag_name").getAsString();
 
 				entries.add(new CategorySetting()

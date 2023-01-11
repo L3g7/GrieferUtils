@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.features.misc.update_screen;
 
 import dev.l3g7.griefer_utils.features.features.chat_menu.ChatMenuEntry;
+import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import dev.l3g7.griefer_utils.util.IOUtil;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.Minecraft;
@@ -117,6 +118,23 @@ public class V2InfoScreen extends GuiScreen {
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
 		ChatMenuEntry.openWebsite("https://grieferutils.l3g7.dev");
+	}
+
+	public static class V2ChangelogSetting extends SmallButtonSetting {
+
+		public V2ChangelogSetting() {
+			name("§h§i");
+			callback(V2InfoScreen::open);
+		}
+
+		@Override
+		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+			super.draw(x, y, maxX, maxY, mouseX, mouseY);
+
+			int color = Color.HSBtoRGB(System.currentTimeMillis() % 2500 / 2500f, 0.5f, 1);
+			Minecraft.getMinecraft().fontRendererObj.drawString(" §lv2.0-BETA", x + 2, y + 7, color, true);
+		}
+
 	}
 
 }

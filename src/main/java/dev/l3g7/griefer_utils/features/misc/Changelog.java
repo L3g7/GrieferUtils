@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.misc.update_screen.UpdateScreen;
+import dev.l3g7.griefer_utils.features.misc.update_screen.V2InfoScreen;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.Constants;
 import dev.l3g7.griefer_utils.misc.VersionComparator;
@@ -25,12 +26,7 @@ public class Changelog extends Feature {
 			.description("§eVerbindet...")
 			.icon("white_scroll")
 			.settingsEnabled(false)
-			.subSettings(
-					new HeaderSetting("§r"),
-					new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-					new HeaderSetting("§f§lChangelog").scale(.7).entryHeight(7),
-					new HeaderSetting("§r").scale(.4).entryHeight(10)
-			);
+			.subSettingsWithHeader("Changelog");
 
 	public Changelog() {
 		super(Category.MISC);
@@ -60,6 +56,10 @@ public class Changelog extends Feature {
 			}
 
 			entries.sort(Comparator.comparing(SettingsElement::getDisplayName, new VersionComparator()));
+
+			entries.add(0, new HeaderSetting(""));
+			entries.add(0, new V2InfoScreen.V2ChangelogSetting());
+
 			element.subSettings(entries);
 
 			element .name("§y§fChangelog")

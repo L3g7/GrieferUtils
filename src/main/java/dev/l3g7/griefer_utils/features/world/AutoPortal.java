@@ -34,8 +34,7 @@ import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -89,12 +88,15 @@ public class AutoPortal extends Feature {
 		if (join.get())
 			mc().displayGuiScreen(new GuiConnecting(new GuiMainMenu(), mc(), new ServerData("GrieferGames", "griefergames.net", false)));
 
-		if (Platform.isWindows() && maximize.get()) {
-			// Source: com.sun.jna.platform.WindowUtils.W32WindowUtils.getHWnd(Component)
-			HWND hwnd = new HWND(new Pointer(invoke(Reflection.invoke(Display.class, "getImplementation"), "getHwnd")));
-			ShowWindow(hwnd, WinUser.SW_SHOWMAXIMIZED);
-			SetForegroundWindow(hwnd);
-			SetActiveWindow(hwnd);
+		if (maximize.get()) {
+			if (Platform.isWindows()) {
+				// Source: com.sun.jna.platform.WindowUtils.W32WindowUtils.getHWnd(Component)
+				HWND hwnd = new HWND(new Pointer(invoke(Reflection.invoke(Display.class, "getImplementation"), "getHwnd")));
+				ShowWindow(hwnd, WinUser.SW_SHOWMAXIMIZED);
+				SetForegroundWindow(hwnd);
+				SetActiveWindow(hwnd);
+			}
+			Mouse.setGrabbed(true);
 		}
 	}
 

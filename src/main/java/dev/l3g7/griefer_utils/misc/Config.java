@@ -82,10 +82,14 @@ public class Config {
 	 * Resets OrbStats if config is under v1.12
 	 */
 	private static void patchConfig() {
-		if (!config.has("version") || config.get("version").getAsString().equals("DEBUG"))
+		if (!config.has("version"))
 			return;
 
-		String[] parts = config.get("version").getAsString().substring(1).split("\\.");
+		String version = config.get("version").getAsString();
+		if (!version.startsWith("1.")) // Don't try to patch v2 or debug configs
+			return;
+
+		String[] parts = version.substring(1).split("\\.");
 		if (Integer.parseInt(parts[1]) >= 12)
 			return;
 

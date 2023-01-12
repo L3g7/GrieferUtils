@@ -28,7 +28,6 @@ import dev.l3g7.griefer_utils.util.misc.Config;
 import dev.l3g7.griefer_utils.util.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.settings.elements.ControlElement;
-import net.labymod.utils.Material;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemSkull;
@@ -77,7 +76,7 @@ public class OrbBalance extends Module {
 		if (skull == null
 			|| !(skull.getItem() instanceof ItemSkull)
 			|| !skull.getDisplayName().equals("§6Deine Orbs")
-			|| !ItemUtil.getLore(skull).isEmpty())
+			|| ItemUtil.getLore(skull).isEmpty())
 			return;
 
 		Matcher matcher = SKULL_PATTERN.matcher(ItemUtil.getLastLore(skull));

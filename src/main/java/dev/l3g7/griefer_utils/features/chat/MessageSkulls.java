@@ -94,12 +94,7 @@ public class MessageSkulls extends Feature {
 		if (idStart == -1)
 			return;
 
-		String id = formattedText.substring(idStart, formattedText.indexOf(" ", idStart) + 3);
-
-		if (!ID_TO_MESSAGE_MAP.containsKey(id))
-			throw new RuntimeException();
-
-		String msg = ID_TO_MESSAGE_MAP.get(id);
+		String msg = ID_TO_MESSAGE_MAP.get(formattedText.substring(idStart, formattedText.indexOf(" ", idStart) + 3));
 
 		int startIndex = msg.indexOf('\u2503') + 2;
 		int endIndex;

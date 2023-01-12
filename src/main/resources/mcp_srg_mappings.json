@@ -38,6 +38,11 @@
       "defaultInputFieldText": "field_146409_v"
     }
   },
+  "net/minecraft/client/gui/GuiTextField": {
+    "methods": {
+      "drawCursorVertical": "func_146188_c"
+    }
+  },
   "net/minecraft/client/renderer/entity/RenderManager": {
     "fields": {
       "renderPosX": "field_78725_b",

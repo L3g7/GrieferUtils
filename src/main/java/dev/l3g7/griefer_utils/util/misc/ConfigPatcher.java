@@ -79,7 +79,7 @@ public class ConfigPatcher {
 		rename("features.chat_menu.entries.open_ec", "chat.chat_menu.entries.EC öffnen");
 		patchObjectArray("features.chat_menu.entries.custom", "chat.chat_menu.entries.custom",
 			"action", "action", enumPatch("open_url", "OPEN_URL", "run", "RUN_CMD", "suggest", "SUGGEST_CMD"),
-			"value", "command",
+			"value", "command", chatMenuCommandPatch,
 			"icon_type", "icon_type", enumPatch("default", "DEFAULT", "item", "ITEM", "image", "IMAGE_FILE"),
 			"icon", "icon", chatMenuIconPatch,
 			"enabled", "enabled",
@@ -288,6 +288,11 @@ public class ConfigPatcher {
 		for (JsonElement entry : oldParent.get(oldKey).getAsJsonArray())
 			a.add(new JsonPrimitive(entry.getAsJsonObject().get("uuid").getAsString().replaceAll(".{8}.{4}.{4}.{4}.{12}", "$1-$2-$3-$4-$5")));
 		newParent.add(newKey, a);
+	};
+
+	private final Patcher chatMenuCommandPatch = (oldParent, newParent, oldKey, newKey) -> {
+		String command = oldParent.get("value").getAsString().replaceAll("(?i)%player%", "%name%");
+		newParent.addProperty("command", command);
 	};
 
 	private final Patcher chatMenuIconPatch = (oldParent, newParent, oldKey, newKey) -> {

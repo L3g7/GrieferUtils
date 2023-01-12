@@ -30,22 +30,24 @@ import dev.l3g7.griefer_utils.util.misc.NameCache;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.DrawUtils;
-import net.labymod.utils.ModColor;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.misc.Constants.*;
 
 @Singleton
 public class MessageSkulls extends Feature {
 
-	private static final String SPACE = "§m§e§s§s§a§g§e§s§k§u§l§l§s§r   ";
+	private static final Random RANDOM = new Random();
+	private static final HashMap<String, String> ID_TO_MESSAGE_MAP = new HashMap<>();
 	private static final ArrayList<Pattern> PATTERNS = new ArrayList<Pattern>(MESSAGE_PATTERNS) {{
 		remove(GLOBAL_CHAT_PATTERN);
 		add(STATUS_PATTERN);
@@ -61,12 +63,24 @@ public class MessageSkulls extends Feature {
 	public void onMsgReceive(MessageEvent.MessageModifyEvent event) {
 		for (Pattern pattern : PATTERNS) {
 			Matcher matcher = pattern.matcher(event.message.getFormattedText());
+			if (!matcher.matches())
+				continue;
 
-			if (matcher.matches()) {
-				event.message = new ChatComponentText(SPACE).appendSibling(event.message);
-				return;
-			}
+			String id;
+			do id = getId();
+			while (ID_TO_MESSAGE_MAP.containsKey(id));
+
+			ID_TO_MESSAGE_MAP.put(id, event.message.getUnformattedText());
+			event.message = new ChatComponentText(id).appendSibling(event.message);
+			return;
 		}
+	}
+
+	private String getId() {
+		return "§m§s" + RANDOM.ints(10, 0, 7)
+			.mapToObj(String::valueOf)
+			.collect(Collectors.joining())
+			.replace("", "§") + "r   ";
 	}
 
 	@SuppressWarnings("unused")
@@ -74,12 +88,18 @@ public class MessageSkulls extends Feature {
 
 		IChatComponent component = (IChatComponent) line.getComponent();
 		String formattedText = component.getFormattedText();
-		int spaceIndex = formattedText.indexOf(SPACE);
 
-		if (spaceIndex == -1)
+		int idStart = formattedText.indexOf("§m§s");
+
+		if (idStart == -1)
 			return;
 
-		String msg = ModColor.removeColor(formattedText.substring(spaceIndex + SPACE.length()));
+		String id = formattedText.substring(idStart, formattedText.indexOf(" ", idStart) + 3);
+
+		if (!ID_TO_MESSAGE_MAP.containsKey(id))
+			throw new RuntimeException();
+
+		String msg = ID_TO_MESSAGE_MAP.get(id);
 
 		int startIndex = msg.indexOf('\u2503') + 2;
 		int endIndex;
@@ -96,21 +116,14 @@ public class MessageSkulls extends Feature {
 		else
 			endIndex = msg.indexOf(' ', startIndex);
 
-		if ((endIndex - startIndex) < 0) {
-			System.err.println(startIndex + " " + endIndex + " | " + IChatComponent.Serializer.componentToJson(component));
-			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
-			return;
-		}
-
 		String name = msg.substring(startIndex, endIndex);
 		NetworkPlayerInfo playerInfo = MinecraftUtil.mc().getNetHandler().getPlayerInfo(NameCache.ensureRealName(name));
 		if (playerInfo == null)
 			return;
 
-
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
 		drawUtils.bindTexture(playerInfo.getLocationSkin());
-		int x = drawUtils.getStringWidth(formattedText.substring(0, spaceIndex)) + (formattedText.startsWith("§r" + SPACE) ? 2 : 1);
+		int x = drawUtils.getStringWidth(formattedText.substring(0, idStart)) + (formattedText.startsWith("§r§m§s") ? 2 : 1);
 		drawUtils.drawTexture(x, y - 8, 32, 32, 32, 32, 8, 8, alpha); // First layer
 		drawUtils.drawTexture(x, y - 8, 160, 32, 32, 32, 8, 8, alpha); // Second layer
 	}

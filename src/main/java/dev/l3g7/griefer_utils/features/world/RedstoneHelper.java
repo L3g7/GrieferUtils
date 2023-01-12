@@ -108,7 +108,7 @@ public class RedstoneHelper extends Feature {
 		for (int cx = (px >> 4) - 2; cx < chunkXEnd; cx++) {
 			for (int cz = (pz >> 4) - 2; cz < chunkZEnd; cz++) {
 				Chunk chunk = Minecraft.getMinecraft().theWorld.getChunkProvider().provideChunk(cx, cz);
-				int chunkYEnd = (py >>> 4) + 2;
+				int chunkYEnd = Math.min((py >>> 4) + 2, 15);
 				for (int cy = (py >>> 4) - 2; cy < chunkYEnd; cy++) {
 					if (cy < 0) cy = 0;
 					ExtendedBlockStorage ebs = chunk.getBlockStorageArray()[cy];

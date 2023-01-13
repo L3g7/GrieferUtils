@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.ingamegui.ModuleCategory;
 import net.labymod.ingamegui.ModuleCategoryRegistry;
 import net.labymod.ingamegui.enums.EnumDisplayType;
+import net.labymod.ingamegui.enums.EnumModuleFormatting;
 import net.labymod.ingamegui.moduletypes.SimpleModule;
 import net.labymod.ingamegui.moduletypes.SimpleTextModule;
 import net.labymod.main.LabyMod;
@@ -107,7 +108,7 @@ public abstract class Module extends SimpleTextModule {
 	public void loadSettings() {}
 	public int getSortingId() { return 0; }
 	public ModuleCategory getCategory() { return CATEGORY; }
-
+	public EnumModuleFormatting getDisplayFormatting() { return super.getDisplayFormatting(); }
 
 	@Override
 	public void fillSubSettings(List<SettingsElement> list) {

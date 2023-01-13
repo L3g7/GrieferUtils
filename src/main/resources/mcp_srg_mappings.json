@@ -72,6 +72,11 @@
       "setSlimeSize": "func_70799_a"
     }
   },
+  "net/minecraft/entity/item/EntityFallingBlock": {
+    "fields": {
+      "fallTile": "field_175132_d"
+    }
+  },
   "net/minecraft/entity/EntityLivingBase": {
     "methods": {
       "resetPotionEffectMetadata": "func_175133_bi",

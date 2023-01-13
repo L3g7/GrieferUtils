@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.modules;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
@@ -33,12 +34,10 @@ import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
@@ -49,6 +48,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.util.misc.ServerCheck.isOnGrieferGames;
+import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @Singleton
 public class Booster extends Module {
@@ -180,7 +180,7 @@ public class Booster extends Module {
 		// Get names (and counts) as Strings
 		List<String> keys = boosters.values().stream()
 			.filter(d -> !d.isExpired())
-			.map(d -> d.getDisplayName(keyModeSetting.get()))
+			.map(BoosterData::getDisplayName)
 			.collect(Collectors.toList());
 
 		keys.add(0, "Booster");
@@ -200,7 +200,7 @@ public class Booster extends Module {
 		// Get expirations dates as Strings
 		List<String> values = boosters.values().stream()
 			.filter(d -> !d.isExpired())
-			.map(d -> Util.formatTime(d.expirationDates.stream().mapToLong(Long::longValue).min().orElse(0)))
+			.map(BoosterData::getFormattedTime)
 			.collect(Collectors.toList());
 
 		if (values.isEmpty())
@@ -216,7 +216,7 @@ public class Booster extends Module {
 	public void draw(double x, double y, double rightX) {
 		super.draw(x, y, rightX);
 
-		if (keyModeSetting.get() == KeyMode.TEXT)
+		if (keyModeSetting.get() == KeyMode.TEXT || !keyVisible)
 			return;
 
 		List<BoosterData> data = boosters.values().stream()
@@ -226,21 +226,44 @@ public class Booster extends Module {
 		if (data.isEmpty())
 			return;
 
+		double singum = Math.signum(rightX);
 		int fontHeight = mc.fontRendererObj.FONT_HEIGHT;
-		int bracketWidth = mc.fontRendererObj.getCharWidth('[');
-		x += bracketWidth;
+
+		double xDiff = 0;
+
+		if (getDisplayFormatting() == SQUARE_BRACKETS)
+			xDiff -= singum * mc.fontRendererObj.getStringWidth(new Text("[", 0, bold, italic, underline).getText());
 
 		if (keyModeSetting.get() == KeyMode.ICON)
-			x += .5;
+			xDiff += .5;
+
+		// Add padding
+		y += padding;
+		if (rightX == -1)
+			xDiff += padding;
+
+		xDiff *= -singum;
 
 		for (BoosterData d : data) {
 			y += fontHeight + 1;
+
+			double actualX = rightX == -1 ? x : rightX - getDisplayTextWidth(d);
+			actualX += xDiff;
+
 			mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/booster/" + d.displayName.toLowerCase() + ".png"));
-			LabyMod.getInstance().getDrawUtils().drawTexture(x, y, 256, 256, 7, 7);
+			LabyMod.getInstance().getDrawUtils().drawTexture(actualX, y, 256, 256, 7, 7);
 		}
+
 	}
 
-	private static class BoosterData {
+	private double getDisplayTextWidth(BoosterData d) {
+		List<Text> texts = getDisplayFormatting().getTexts(d.getDisplayName(), ImmutableList.of(new Text(d.getFormattedTime(), 0)), 0, 0, 0, keyVisible, bold, italic, underline);
+		String text = texts.stream().map(Text::getText).reduce(String::concat).orElseThrow(() -> new RuntimeException("BoosterData has no text"));
+
+		return mc.fontRendererObj.getStringWidth(text);
+	}
+
+	private class BoosterData {
 
 		private final String displayName;
 		private final boolean stackable;
@@ -258,7 +281,14 @@ public class Booster extends Module {
 			return expirationDates.isEmpty();
 		}
 
-		private String getDisplayName(KeyMode mode) {
+		private String getFormattedTime() {
+			return Util.formatTime(expirationDates.stream()
+				.mapToLong(Long::longValue)
+				.min().orElse(0));
+		}
+
+		private String getDisplayName() {
+			KeyMode mode = keyModeSetting.get();
 			String name = "";
 
 			if (mode != KeyMode.TEXT)

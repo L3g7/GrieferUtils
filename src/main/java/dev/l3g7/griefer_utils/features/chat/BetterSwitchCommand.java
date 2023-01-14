@@ -38,7 +38,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 @Singleton
 public class BetterSwitchCommand extends Feature {
 
-	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$");
+	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", Pattern.CASE_INSENSITIVE);
 
 	private static final List<ServerAlias> SERVER_ALIASES = ImmutableList.of(
 		new ServerAlias("nature", "Nature", "n"),

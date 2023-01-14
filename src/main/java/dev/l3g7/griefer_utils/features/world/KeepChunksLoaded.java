@@ -19,63 +19,19 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
-import net.labymod.main.ModTextures;
-import net.labymod.settings.elements.ControlElement;
-import net.minecraft.client.multiplayer.ChunkProviderClient;
-import net.minecraft.util.LongHashMap;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.WorldProviderSurface;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import dev.l3g7.griefer_utils.util.misc.ChunkCache;
+import dev.l3g7.griefer_utils.util.misc.ServerCheck;
+import net.minecraft.client.gui.GuiDownloadTerrain;
+import net.minecraftforge.client.event.GuiOpenEvent;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 
 @Singleton
 public class KeepChunksLoaded extends Feature {
-
-	private static final List<ChunkCoordIntPair> loadedChunks = new ArrayList<>();
-	private static final List<ChunkCoordIntPair> unloadedChunks = new ArrayList<>();
-
-	public static boolean keepChunkLoaded(int x, int z) {
-		if (FileProvider.getSingleton(KeepChunksLoaded.class).isEnabled()) {
-			if (shouldChunkBeLoaded(x, z, false))
-				loadedChunks.add(new ChunkCoordIntPair(x, z));
-			else
-				unloadedChunks.add(new ChunkCoordIntPair(x, z));
-			return true;
-		}
-
-		return false;
-	}
-
-	private static boolean shouldChunkBeLoaded(int x, int z, boolean capRenderDistance) {
-		int renderDistance = mc().gameSettings.renderDistanceChunks;
-		if (renderDistance < 5 || capRenderDistance)
-			renderDistance = 5;
-
-		return Math.abs(x - player().chunkCoordX) <= renderDistance
-			&& Math.abs(z - player().chunkCoordZ) <= renderDistance;
-	}
-
-	private final SmallButtonSetting unloadButton = new SmallButtonSetting()
-		.name("Unsichtbare Chunks entladen")
-		.description("Entlädt alle Chunks außerhalb der derzeitigen Sichtweite.")
-		.icon("arrow_circle")
-		.buttonIcon(new ControlElement.IconData(ModTextures.BUTTON_TRASH))
-		.callback(() -> unloadChunks(false));
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -83,73 +39,19 @@ public class KeepChunksLoaded extends Feature {
 		.description("Lässt Chunks nicht entladen."
 			+ "\nErmöglicht Sichtweiten von > 5 Chunks.")
 		.icon("chunk")
-		.subSettings(unloadButton)
 		.callback(enabled -> {
-			if (!enabled)
-				unloadChunks(true);
+			if (enabled || !ServerCheck.isOnGrieferGames())
+				return;
+
+			ChunkCache cache = ((ChunkCache) world().getChunkProvider());
+			cache.reset();
+			cache.clearCaches();
 		});
 
 	@EventListener
-	public void onCBSwitch(CityBuildJoinEvent event) {
-		loadedChunks.clear();
-		unloadedChunks.clear();
-	}
-
-	@EventListener
-	public void onServerQuit(ServerEvent.ServerQuitEvent event) {
-		loadedChunks.clear();
-		unloadedChunks.clear();
-	}
-
-	@EventListener
-	private void updateChunks(TickEvent.ClientTickEvent event) {
-		if (world() == null)
-			return;
-
-		ChunkProviderClient provider = Reflection.get(world(), "clientChunkProvider");
-		LongHashMap<Chunk> chunkMapping = Reflection.get(provider, "chunkMapping");
-
-		List<ChunkCoordIntPair> unloadedChunksCopy = new ArrayList<>(unloadedChunks);
-		unloadChunks(false);
-
-		for (ChunkCoordIntPair c : unloadedChunksCopy) {
-			if (!shouldChunkBeLoaded(c.chunkXPos, c.chunkZPos, false))
-				continue;
-
-			world().markBlockRangeForRenderUpdate(c.getXStart(), 0, c.getZStart(), c.getXEnd(), 256, c.getZEnd());
-			if (!(world().provider instanceof WorldProviderSurface)) {
-				Chunk chunk = chunkMapping.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(c.chunkXPos, c.chunkZPos));
-				if (chunk != null)
-					chunk.resetRelightChecks();
-			}
-
-			unloadedChunks.remove(c);
-			loadedChunks.add(c);
-		}
-	}
-
-	private void unloadChunks(boolean capRenderDistance) {
-		if (world() == null)
-			return;
-
-		ChunkProviderClient provider = Reflection.get(world(), "clientChunkProvider");
-		LongHashMap<Chunk> chunkMapping = Reflection.get(provider, "chunkMapping");
-
-		// Unload chunks
-		Iterator<ChunkCoordIntPair> iterator = loadedChunks.iterator();
-		long startTime = System.currentTimeMillis();
-		while (iterator.hasNext()) {
-			ChunkCoordIntPair c = iterator.next();
-
-			if (shouldChunkBeLoaded(c.chunkXPos, c.chunkZPos, capRenderDistance))
-				continue;
-
-			Chunk chunk = chunkMapping.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(c.chunkXPos, c.chunkZPos));
-			if (chunk != null)
-				chunk.func_150804_b(System.currentTimeMillis() - startTime > 5L);
-			iterator.remove();
-			unloadedChunks.add(c);
-		}
+	public void onGuiOpen(GuiOpenEvent event) {
+		if (event.gui instanceof GuiDownloadTerrain)
+			((ChunkCache) world().getChunkProvider()).clearCaches();
 	}
 
 }

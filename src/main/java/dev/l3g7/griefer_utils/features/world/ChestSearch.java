@@ -67,7 +67,8 @@ public class ChestSearch extends Feature {
 			int guiTop = Reflection.get(event.gui, "guiTop");
 
 			IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
-			if (lowerChestInventory.getDisplayName().getFormattedText().startsWith(marker))
+			String title = lowerChestInventory.getDisplayName().getFormattedText();
+			if (title.startsWith(marker) || title.startsWith("§6Profil") || title.equals("§6Lotterie§r"))
 				return;
 
 			searchField = new ModTextField(0, mc().fontRendererObj, guiLeft + 82, guiTop + 6, 83, mc().fontRendererObj.FONT_HEIGHT);

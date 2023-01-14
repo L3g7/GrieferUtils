@@ -86,7 +86,7 @@ public class OrbBalance extends Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(ClientChatReceivedEvent event) {
 		if (!ServerCheck.isOnCitybuild())
 			return;
@@ -117,7 +117,7 @@ public class OrbBalance extends Module {
 		return new String[]{"Bitte öffne den Orb-Händler / Orb-Verkäufer."};
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void loadBalance(ServerJoinEvent ignored) {
 		if (!ServerCheck.isOnGrieferGames())
 			return;

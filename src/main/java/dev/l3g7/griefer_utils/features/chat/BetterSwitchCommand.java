@@ -89,7 +89,7 @@ public class BetterSwitchCommand extends Feature {
 			}
 		}
 
-		if (!msg.startsWith("/cb") && !msg.startsWith("/switch"))
+		if ((!msg.startsWith("/cb") && !msg.startsWith("/switch")) || msg.equals("/switch"))
 			return;
 
 		display(Constants.ADDON_PREFIX + "Syntax: '/switch <CB> [text]', '/cb <CB> [text]' oder '/cb<CB> [text]'.");

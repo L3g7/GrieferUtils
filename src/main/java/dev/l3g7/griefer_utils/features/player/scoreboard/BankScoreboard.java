@@ -44,7 +44,7 @@ public class BankScoreboard extends ScoreboardHandler.ScoreboardMod {
 		super("Bankguthaben", 1);
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMMCustomPayload(MysteryModPayloadEvent event) {
 		if (event.channel.equals("bank"))
 			bankBalance = event.payload.getAsJsonObject().get("amount").getAsLong();

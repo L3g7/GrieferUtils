@@ -43,9 +43,7 @@ public class KeepChunksLoaded extends Feature {
 			if (enabled || !ServerCheck.isOnGrieferGames())
 				return;
 
-			ChunkCache cache = ((ChunkCache) world().getChunkProvider());
-			cache.reset();
-			cache.clearCaches();
+			((ChunkCache) world().getChunkProvider()).reset();
 		});
 
 	@EventListener

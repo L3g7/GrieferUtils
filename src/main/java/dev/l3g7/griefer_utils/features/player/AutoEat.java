@@ -94,7 +94,8 @@ public class AutoEat extends Feature {
 		// Wait some ticks to finish eating, maybe because of NCP?
 		TickScheduler.runAfterClientTicks(() -> {
 			KeyBinding.setKeyBindState(settings().keyBindUseItem.getKeyCode(), false);
-			TickScheduler.runAfterClientTicks(() -> inventory().currentItem = previousHotbarSlot, 1);
+			int prevHotbarSlot = previousHotbarSlot;
+			TickScheduler.runAfterClientTicks(() -> inventory().currentItem = prevHotbarSlot, 1);
 			previousHotbarSlot = -1;
 			finishing = false;
 		}, 5);

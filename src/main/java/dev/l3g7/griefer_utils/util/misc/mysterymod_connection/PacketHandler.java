@@ -66,7 +66,6 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 			} catch (AuthenticationException e) {
 				e.printStackTrace();
 				MysteryModConnection.setState(ctx, State.INVALID_SESSION);
-				System.out.println("Login using " + session.getProfile() + " " + session.getToken() + " was invalid!");
 			}
 		}
 

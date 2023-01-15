@@ -63,7 +63,7 @@ public class Config {
 	 * @return the parent object of the given path.
 	 */
     private static JsonObject getPath(String[] parts) {
-        JsonObject o = getConfig();
+        JsonObject o = get();
         for (int i = 0; i < parts.length - 1; i++) {
             if (!o.has(parts[i]) || !(o.get(parts[i]).isJsonObject()))
                 o.add(parts[i], new JsonObject());
@@ -89,7 +89,7 @@ public class Config {
 	/**
 	 * Lazy loads the config if required and returns it.
 	 */
-	private static JsonObject getConfig() {
+	public static JsonObject get() {
 		if (config == null) {
 			config = IOUtil.read(configFile)
 				.asJsonObject()

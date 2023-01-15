@@ -54,6 +54,10 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/gui/container/stats_icons.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/bug.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/bug.png" height=16em width=16em />&nbsp;&nbsp;bug.png </a></td>
+    <td><a href="https://www.freepik.com/premium-vector/insects-pixel-art-set-bugs-beetles-collection-8-bit-sprite_27501189.htm">Freepik (cadmium_red)</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/bundle.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/bundle.png" height=16em width=16em />&nbsp;&nbsp;bundle.png </a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/bundle_filled.png">Minecraft asset</a></td>
   </tr>

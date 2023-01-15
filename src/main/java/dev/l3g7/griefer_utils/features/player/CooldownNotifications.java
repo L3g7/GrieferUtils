@@ -90,7 +90,7 @@ public class CooldownNotifications extends Feature {
 			endDates.put("/grieferboost", System.currentTimeMillis() + 1000 * 3600 * 24 * 14);
 		else if (event.message.getUnformattedText().equals("[CaseOpening] Du hast 2 Kisten erhalten."))
 			endDates.put("/freekiste", System.currentTimeMillis() + 1000 * 3600 * 24 * 14);
-		else if (event.message.getUnformattedText().matches("^\\[Kopf] Du hast einen .+ Kopf erhalten[!.]$"))
+		else if (event.message.getUnformattedText().matches("^\\[Kopf] Du hast einen .+[ -]Kopf erhalten[!.]$"))
 			endDates.put("/kopf", System.currentTimeMillis() + 1000 * 3600 * 24 * (PlayerUtil.getRank(PlayerUtil.getName()).equals("Titan") ? 14 : 7));
 		else if (event.message.getUnformattedText().matches("^Du hast .+ den Premium Rang aktiviert\\.$"))
 			endDates.put("/premium", System.currentTimeMillis() + 1000 * 3600 * 24 * 7);

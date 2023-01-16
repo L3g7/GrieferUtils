@@ -31,6 +31,6 @@ public class KeepChunksLoaded extends Feature {
 		.name("Chunks geladen lassen")
 		.icon("chunk")
 		.description("Lässt Chunks nicht entladen."
-			+ "\nKann aufgrund von vielen geladenen Chunks zu Lags führen.");
+			+ "\nKann zu erhöhtem RAM Verbrauch führen.");
 
 }

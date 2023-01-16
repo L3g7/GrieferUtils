@@ -150,6 +150,10 @@
     <td><a href="https://www.freepik.com/premium-vector/vector-illustration-cute-pixel-art-icon-geek-lightning-element-style-90s-game_29366701.htm">Freepik (Olive Kitt)</a></td>
   </tr>
   <tr>
+    <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/lock.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/lock.png" height=16em width=16em />&nbsp;&nbsp;lock.png </a></td>
+    <td><a href="https://www.freepik.com/premium-vector/door-lock-pixel-art-set-secure-lock-made-gold-steel-locked-unlocked-collection-8bit_25184624.htm">Freepik (cadmium_red)</a></td>
+  </tr>
+  <tr>
     <td><a href="/src/main/resources/assets/minecraft/griefer_utils/icons/magnifying_glass.png"><img src="/src/main/resources/assets/minecraft/griefer_utils/icons/magnifying_glass.png" height=16em width=16em />&nbsp;&nbsp;magnifying_glass.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>

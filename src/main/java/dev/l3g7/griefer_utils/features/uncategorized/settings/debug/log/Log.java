@@ -19,19 +19,32 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log;
 
 import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.log_entries.*;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import net.labymod.settings.elements.ControlElement;
+import sun.awt.datatransfer.TransferableProxy;
 
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.zip.Deflater;
-import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipOutputStream;
 
 public class Log {
@@ -49,11 +62,21 @@ public class Log {
 
 	private static final LogEntry log = new LogFileEntry();
 
+	private static final BooleanSetting encrypt = new BooleanSetting()
+		.name("Log verschlüsseln")
+		.config("settings.debug.log.encrypt")
+		.defaultValue(true)
+		.custom("Ja", "Nein")
+		.icon("lock");
+
 	private static final SmallButtonSetting save = new SmallButtonSetting()
 		.name("Speichern")
 		.icon("white_scroll")
 		.buttonIcon(new ControlElement.IconData("labymod/textures/buttons/download.png"))
-		.callback(Log::save);
+		.callback(() -> {
+			Log.save();
+			MinecraftUtil.displayAchievement("Log wurde kopiert.", "");
+		});
 
 	public static final CategorySetting category = new CategorySetting()
 		.name("Log")
@@ -77,24 +100,64 @@ public class Log {
 			new HeaderSetting(),
 			log.getSetting(),
 			new HeaderSetting(),
+			encrypt,
 			save
 		));
 
 	private static void save() {
 		try {
-			OutputStream fileOut = Files.newOutputStream(Paths.get("D:/dump.zip"));
-			ZipOutputStream zip = new ZipOutputStream(fileOut);
-			zip.setComment("GrieferUtils log bundle");
-			zip.setLevel(Deflater.BEST_COMPRESSION);
+			Path path = Paths.get(System.getProperty("java.io.tmpdir"), "griefer_utils_log_bundle.zip");
+			OutputStream fileOut = Files.newOutputStream(path);
 
-			for (LogEntry entry : Arrays.asList(modMetadata, modConfig, grieferUtilsConfig, labyModConfig, widgetConfig, minecraftConfig, playerMetadata, worldMetadata, clientMetadata, log)) {
-				entry.addEntry(zip);
-			}
+			if (encrypt.get()) {
+				ByteArrayOutputStream content = new ByteArrayOutputStream();
+				bundle(content);
+				Encryption.INSTANCE.encrypt(content.toByteArray(), fileOut);
+			} else
+				bundle(fileOut);
 
-			zip.close();
 			fileOut.close();
-		} catch (IOException e) {
+
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new FileTransferable(Collections.singletonList(path.toFile())), null);
+		} catch (IOException | GeneralSecurityException e) {
 			e.printStackTrace();
 		}
 	}
+
+	private static void bundle(OutputStream out) throws IOException {
+		ZipOutputStream zip = new ZipOutputStream(out);
+		zip.setComment("GrieferUtils log bundle");
+		zip.setLevel(Deflater.BEST_COMPRESSION);
+
+		for (LogEntry entry : Arrays.asList(modMetadata, modConfig, grieferUtilsConfig, labyModConfig, widgetConfig, minecraftConfig, playerMetadata, worldMetadata, clientMetadata, log)) {
+			entry.addEntry(zip);
+		}
+
+		zip.close();
+	}
+
+	private static class FileTransferable implements Transferable {
+
+		private final List<File> listOfFiles;
+
+		public FileTransferable(List<File> listOfFiles) {
+			this.listOfFiles = listOfFiles;
+		}
+
+		@Override
+		public DataFlavor[] getTransferDataFlavors() {
+			return new DataFlavor[]{DataFlavor.javaFileListFlavor};
+		}
+
+		@Override
+		public boolean isDataFlavorSupported(DataFlavor flavor) {
+			return DataFlavor.javaFileListFlavor.equals(flavor);
+		}
+
+		@Override
+		public Object getTransferData(DataFlavor flavor) {
+			return listOfFiles;
+		}
+	}
+
 }

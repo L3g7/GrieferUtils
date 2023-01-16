@@ -53,7 +53,11 @@ public class Encryption {
 		Cipher aesCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
 
-		out.write(rsaCipher.doFinal(aesKey.getEncoded()));
+		int aesKeyLength = aesKey.getEncoded().length;
+		byte[] aesData = new byte[aesKeyLength + aesCipher.getIV().length];
+		System.arraycopy(aesKey.getEncoded(), 0, aesData, 0, aesKeyLength);
+		System.arraycopy(aesCipher.getIV(), 0, aesData, aesKeyLength, aesCipher.getIV().length);
+		out.write(rsaCipher.doFinal(aesData));
 		out.write(aesCipher.doFinal(in));
 	}
 

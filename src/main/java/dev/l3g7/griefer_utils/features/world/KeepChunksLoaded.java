@@ -18,17 +18,10 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.misc.ChunkCache;
-import dev.l3g7.griefer_utils.util.misc.ServerCheck;
-import net.minecraft.client.gui.GuiDownloadTerrain;
-import net.minecraftforge.client.event.GuiOpenEvent;
-
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 
 @Singleton
 public class KeepChunksLoaded extends Feature {
@@ -36,20 +29,8 @@ public class KeepChunksLoaded extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Chunks geladen lassen")
-		.description("Lässt Chunks nicht entladen."
-			+ "\nErmöglicht Sichtweiten von > 5 Chunks.")
 		.icon("chunk")
-		.callback(enabled -> {
-			if (enabled || !ServerCheck.isOnGrieferGames())
-				return;
-
-			((ChunkCache) world().getChunkProvider()).reset();
-		});
-
-	@EventListener
-	public void onGuiOpen(GuiOpenEvent event) {
-		if (event.gui instanceof GuiDownloadTerrain)
-			((ChunkCache) world().getChunkProvider()).clearCaches();
-	}
+		.description("Lässt Chunks nicht entladen."
+			+ "\nKann aufgrund von vielen geladenen Chunks zu Lags führen.");
 
 }

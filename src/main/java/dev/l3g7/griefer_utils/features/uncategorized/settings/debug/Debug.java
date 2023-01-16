@@ -24,9 +24,9 @@ import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 public class Debug {
 
 	public static final CategorySetting category = new CategorySetting()
-		.name("Debug")
-		.description("Eine Sammlung an Werkzeugen zum Analysieren von Fehlern.")
+		.name("Debug-Log")
+		.description("Eine Sammlung an Informationen zum Analysieren von Fehlern.")
 		.icon("bug")
-		.subSettings(Log.category);
+		.subSettings(Log.category.getSubSettings().getElements());
 
 }

@@ -72,7 +72,6 @@ public class Log {
 
 	public static final CategorySetting category = new CategorySetting()
 		.name("Log")
-		.description("GrieferUtils sammelt Nutzungsdaten, um die Benutzerfreundlichkeit zu verbessern. Da die Daten uns helfen, würde es uns freuen, wenn sie gesendet werden ^.^", "", "§7§oUm Spam vorzubeugen, wird zusätzlich zu den einstellbaren Daten ein Hash deiner IP gespeichert. Alle erhobenen Daten werden bis zu 365 Tage lang gespeichert. Falls du die erhobenen Daten erhalten oder löschen willst, melde dich bei einem Entwickler über Discord oder schreibe eine Email an grieferutils@l3g7.dev")
 		.icon("white_scroll")
 		.subSettings(Arrays.asList(
 			new HeaderSetting("§r"),

@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log;
 
+import com.sun.jna.Platform;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.log_entries.*;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
@@ -26,28 +27,22 @@ import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import net.labymod.settings.elements.ControlElement;
-import sun.awt.datatransfer.TransferableProxy;
+import net.minecraft.client.Minecraft;
 
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.zip.Deflater;
 import java.util.zip.ZipOutputStream;
 
 public class Log {
+
+	private static final String showInExplorerCommand;
+	private static final File file = new File(new File(Minecraft.getMinecraft().mcDataDir, "logs"), "griefer_utils_log_bundle.zip");
 
 	private static final LogEntry modMetadata = new ModAddonMetadataEntry();
 	private static final LogEntry modConfig = new ModAddonConfigEntry();
@@ -73,10 +68,7 @@ public class Log {
 		.name("Speichern")
 		.icon("white_scroll")
 		.buttonIcon(new ControlElement.IconData("labymod/textures/buttons/download.png"))
-		.callback(() -> {
-			Log.save();
-			MinecraftUtil.displayAchievement("Log wurde kopiert.", "");
-		});
+		.callback(Log::save);
 
 	public static final CategorySetting category = new CategorySetting()
 		.name("Log")
@@ -106,8 +98,7 @@ public class Log {
 
 	private static void save() {
 		try {
-			Path path = Paths.get(System.getProperty("java.io.tmpdir"), "griefer_utils_log_bundle.zip");
-			OutputStream fileOut = Files.newOutputStream(path);
+			OutputStream fileOut = Files.newOutputStream(file.toPath());
 
 			if (encrypt.get()) {
 				ByteArrayOutputStream content = new ByteArrayOutputStream();
@@ -118,7 +109,18 @@ public class Log {
 
 			fileOut.close();
 
-			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new FileTransferable(Collections.singletonList(path.toFile())), null);
+			// Open in explorer
+			if (showInExplorerCommand == null) {
+				MinecraftUtil.displayAchievement("Log wurde gespeichert.", "Pfad: " + file.getAbsolutePath());
+				return;
+			}
+
+			try {
+				Runtime.getRuntime().exec(showInExplorerCommand + (Platform.isLinux() ? file.getParentFile() : file).getAbsolutePath());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
 		} catch (IOException | GeneralSecurityException e) {
 			e.printStackTrace();
 		}
@@ -136,28 +138,16 @@ public class Log {
 		zip.close();
 	}
 
-	private static class FileTransferable implements Transferable {
-
-		private final List<File> listOfFiles;
-
-		public FileTransferable(List<File> listOfFiles) {
-			this.listOfFiles = listOfFiles;
-		}
-
-		@Override
-		public DataFlavor[] getTransferDataFlavors() {
-			return new DataFlavor[]{DataFlavor.javaFileListFlavor};
-		}
-
-		@Override
-		public boolean isDataFlavorSupported(DataFlavor flavor) {
-			return DataFlavor.javaFileListFlavor.equals(flavor);
-		}
-
-		@Override
-		public Object getTransferData(DataFlavor flavor) {
-			return listOfFiles;
-		}
+	static {
+		// Determine right command for platform
+		if (Platform.isWindows())
+			showInExplorerCommand = "explorer /select, ";
+		else if (Platform.isLinux())
+			showInExplorerCommand = "xdg-open ";
+		else if (Platform.isMac())
+			showInExplorerCommand = "open -R ";
+		else
+			showInExplorerCommand = null;
 	}
 
 }

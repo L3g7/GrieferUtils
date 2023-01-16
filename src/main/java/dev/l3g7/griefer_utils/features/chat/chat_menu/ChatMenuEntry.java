@@ -19,11 +19,9 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.Main;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.utils.Consumer;
-import net.labymod.utils.Material;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -86,7 +84,7 @@ public class ChatMenuEntry {
 		object.addProperty("icon_type", iconType.name());
 		switch (iconType) {
 			case ITEM:
-				object.addProperty("icon", ((ItemStack) icon).serializeNBT().toString());
+				object.addProperty("icon", getIconAsItemStack().serializeNBT().toString());
 				break;
 			case IMAGE_FILE:
 				DynamicTexture t = (DynamicTexture) mc().getTextureManager().getTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
@@ -148,10 +146,14 @@ public class ChatMenuEntry {
 				drawUtils().bindTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
 				break;
 			case ITEM:
-				drawUtils().drawItem(((ItemStack) icon), x, y, null);
+				drawUtils().drawItem(getIconAsItemStack(), x, y, null);
 				return;
 		}
 		drawUtils().drawTexture(x, y, 256.0, 256.0, w, h);
+	}
+
+	private ItemStack getIconAsItemStack() {
+		return icon != null ? (ItemStack) icon : ItemSetting.MISSING_TEXTURE;
 	}
 
 	enum Action {

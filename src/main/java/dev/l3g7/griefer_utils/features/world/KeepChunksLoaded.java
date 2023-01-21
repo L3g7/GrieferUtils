@@ -28,9 +28,11 @@ public class KeepChunksLoaded extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Chunks geladen lassen")
+		.name("Chunks geladen lassen"
+			+ "\n§eInstabil \u26A0")
 		.icon("chunk")
 		.description("Lässt Chunks nicht entladen."
-			+ "\nKann zu erhöhtem RAM Verbrauch führen.");
+			+ "\nKann zu erhöhtem RAM Verbrauch führen."
+			+ "\n\n§eKann zu unsichtbaren Entities führen!");
 
 }

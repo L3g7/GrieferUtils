@@ -38,8 +38,10 @@ public class Furniture extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Möbel")
-		.description("Fügt die MysteryMod-Möbel hinzu.")
+		.name("Möbel"
+			+ "\n§eInstabil \u26A0")
+		.description("Fügt die MysteryMod-Möbel hinzu."
+			+ "\n\n§eKann nicht startendem Minecraft führen!")
 		.icon("chair")
 		.callback(active -> {
 			if (!active) {

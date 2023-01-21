@@ -64,7 +64,7 @@ dependencies.implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.1
 // Compile options
 java.sourceCompatibility = java.targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = "UTF-8"
-jar.archiveName = "griefer-utils-v${version}.jar"
+jar.archiveFileName = "griefer-utils-v${version}.jar"
 reobf.jar.mappingType = "NOTCH"
 
 // addon.json's version
@@ -72,9 +72,11 @@ processResources.from(sourceSets.main.resources.srcDirs) {
 	include 'addon.json'
 	expand 'version': version
 }
-// Unobfuscated jar creation
-tasks.build.dependsOn('deobfJar')
-task deobfJar(type: Jar) {
+
+// api jar creation
+tasks.build.dependsOn('apiJar')
+tasks.register('apiJar', Jar) {
 	from sourceSets.main.output
-	archiveName = "griefer-utils-v${version}-api.jar"
+	archiveFileName = "griefer-utils-v${project.version}-api.jar"
+}
 }

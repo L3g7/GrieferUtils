@@ -24,8 +24,11 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
+import dev.l3g7.griefer_utils.util.ArrayUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
+import dev.l3g7.griefer_utils.util.misc.crypto.AESCipher;
+import dev.l3g7.griefer_utils.util.misc.crypto.RSACipher;
 import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.Minecraft;
 
@@ -99,10 +102,18 @@ public class Log {
 		try {
 			OutputStream fileOut = Files.newOutputStream(file.toPath());
 
-			if (encrypt.get()) {
+			bundle:
+			if (encrypt.get() && RSACipher.isAvailable()) {
+				AESCipher aesCipher = AESCipher.generateNew();
+				if (!aesCipher.isAvailable()) {
+					bundle(fileOut);
+					break bundle;
+				}
+
 				ByteArrayOutputStream content = new ByteArrayOutputStream();
 				bundle(content);
-				Encryption.INSTANCE.encrypt(content.toByteArray(), fileOut);
+				fileOut.write(RSACipher.encode(aesCipher.getKeyIvBundle()));
+				fileOut.write(aesCipher.encode(content.toByteArray()));
 			} else
 				bundle(fileOut);
 

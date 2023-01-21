@@ -34,10 +34,12 @@ import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
@@ -74,6 +76,7 @@ public class Booster extends Module {
 
 	private boolean waitingForBoosterGUI = false;
 	private boolean waitingForBoosterInfo = false;
+	private GuiScreen previousScreen = null;
 
 	public Booster() {
 		super("Booster", "Zeigt dir die momentan aktiven Booster an", "booster", new IconData("griefer_utils/icons/rocket.png"));
@@ -95,6 +98,11 @@ public class Booster extends Module {
 	}
 
 	@EventListener
+	public void onGuiOpen(GuiOpenEvent event) {
+		previousScreen = mc.currentScreen;
+	}
+
+	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
 		if (!isOnGrieferGames())
 			return;
@@ -108,7 +116,7 @@ public class Booster extends Module {
 			return;
 
 		if (waitingForBoosterGUI && isActive()) {
-			mc.displayGuiScreen(null);
+			mc.displayGuiScreen(previousScreen);
 			waitingForBoosterGUI = false;
 		}
 	}

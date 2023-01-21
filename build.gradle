@@ -23,8 +23,11 @@ buildscript {
 		classpath 'com.github.xcfrg:mixingradle:ae2a80e' // Makes MixinGradle work with ForgeGradle 2.1 (Minecraft 1.8)
 	}
 }
-plugins { id "java" }
 
+plugins {
+	id "java"
+	id "de.undercouch.download" version "5.3.0"
+}
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'org.spongepowered.mixin'
 
@@ -79,4 +82,16 @@ tasks.register('apiJar', Jar) {
 	from sourceSets.main.output
 	archiveFileName = "griefer-utils-v${project.version}-api.jar"
 }
+
+// LabyMod api download
+tasks.build.dependsOn('downloadFile')
+tasks.register('downloadFile') {
+	mkdir "libs"
+
+	download.run {
+		src "https://dl.labymod.net/latest/api/files/lm_api_mc1.8.9.jar"
+		dest 'libs/'
+		onlyIfModified true
+		quiet true
+	}
 }

@@ -111,7 +111,7 @@ public class BetterSwitchCommand extends Feature {
 		if (command == null)
 			return;
 
-		send(command);
+		player().sendChatMessage(command);
 		command = null;
 	}
 

@@ -30,6 +30,7 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.misc.Config;
+import dev.l3g7.griefer_utils.util.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.utils.ModColor;
@@ -65,7 +66,7 @@ public class PlotChatIndicator extends Feature {
 		.description("Zeichnet einen orangen Rahmen um die Chateingabe, wenn der Plotchat aktiviert ist.")
 		.icon("speech_bubble")
 		.callback(enabled -> {
-			if (enabled && isOnCityBuild() && plotchatState == null && !waitingForPlotchatStatus) {
+			if (enabled && ServerCheck.isOnCitybuild() && plotchatState == null && !waitingForPlotchatStatus) {
 				waitingForPlotchatStatus = true;
 				send("/p chat");
 			}

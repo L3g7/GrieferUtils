@@ -41,7 +41,7 @@ public class Furniture extends Feature {
 		.name("Möbel"
 			+ "\n§eInstabil \u26A0")
 		.description("Fügt die MysteryMod-Möbel hinzu."
-			+ "\n\n§eKann nicht startendem Minecraft führen!")
+			+ "\n\n§eKann zu langen Startzeiten und hohem Ramverbrauch führen!")
 		.icon("chair")
 		.callback(active -> {
 			if (!active) {

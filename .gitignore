@@ -1,18 +1,9 @@
-# gradle
-build
-.gradle
+# Addon
 
-# run
+.gradle
+.idea
+build
+libs
 logs
 out
 run
-
-# idea
-*.iml
-*.ipr
-*.iws
-.idea
-
-# other
-eclipse
-.gitattributes

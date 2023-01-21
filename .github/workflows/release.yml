@@ -26,9 +26,11 @@ jobs:
           java-version: 1.8
 
       - name: Grant execute permission for gradlew
+        working-directory: ./addon
         run: chmod +x gradlew
 
       - name: Build with Gradle
+        working-directory: ./addon
         run: ./gradlew build
 
       - name: Create Release
@@ -43,6 +45,7 @@ jobs:
           prerelease: true
 
       - name: Upload addon jar
+        working-directory: ./addon
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,6 +56,7 @@ jobs:
           asset_content_type: application/java-archive
 
       - name: Upload unobf addon jar
+        working-directory: ./addon
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

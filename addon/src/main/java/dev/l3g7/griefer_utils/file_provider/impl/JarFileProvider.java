@@ -20,32 +20,22 @@ package dev.l3g7.griefer_utils.file_provider.impl;
 
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLDecoder;
-import java.nio.file.NoSuchFileException;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.jar.JarFile;
 
-import static dev.l3g7.griefer_utils.util.Util.elevate;
-
 /**
- * An implementation for providing files if the addon was loaded from a jar file.
+ * An implementation for providing files from a jar file.
  */
 public class JarFileProvider extends FileProvider {
 
 	public static final JarFileProvider INSTANCE = new JarFileProvider();
 
-	private final HashMap<String, JarFile> entries = new HashMap<>();
-
 	private JarFileProvider() {}
 
 	/**
-	 * Loads the jar file containing the passed class.
+	 * Adds the content of the jar file containing the given class to the cache.
 	 * @return the error if one occurred, null otherwise
 	 */
-	@Override
 	protected Throwable update0(Class<?> refClass) {
 		try {
 			String jarPath = refClass.getProtectionDomain().getCodeSource().getLocation().getFile();
@@ -58,39 +48,15 @@ public class JarFileProvider extends FileProvider {
 
 			// Read entries
 			JarFile jarFile = new JarFile(jarPath);
-			jarFile.stream().forEach(entry -> entries.put(entry.getName(), jarFile));
 
 			if (jarFile.size() == 0)
 				return new IllegalStateException("Empty jar file: " + jarPath);
 
+			jarFile.stream().forEach(entry -> fileCache.put(entry.getName(), () -> jarFile.getInputStream(entry)));
 		} catch (Exception e) {
 			return e;
 		}
 		return null;
-	}
-
-	/**
-	 * @return a list of all known files.
-	 */
-	@Override
-	protected Collection<String> getFiles0() {
-		return entries.keySet();
-	}
-
-	/**
-	 * @return an InputStream containing the given file's contents
-	 */
-	@Override
-	protected InputStream getData0(String file) {
-		if (!entries.containsKey(file))
-			throw elevate(new NoSuchFileException(file));
-
-		try {
-			JarFile jarFile = entries.get(file);
-			return jarFile.getInputStream(jarFile.getJarEntry(file));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 }

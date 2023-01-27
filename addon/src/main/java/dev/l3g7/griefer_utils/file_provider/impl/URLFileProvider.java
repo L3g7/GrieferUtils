@@ -20,28 +20,25 @@ package dev.l3g7.griefer_utils.file_provider.impl;
 
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.nio.file.Files;
 
 import static dev.l3g7.griefer_utils.util.Util.addMessage;
-import static dev.l3g7.griefer_utils.util.Util.elevate;
 
 /**
- * An implementation for providing files if the addon was loaded using an URLClassLoader.
+ * An implementation for providing files loaded using an URLClassLoader.
  */
 public class URLFileProvider extends FileProvider {
 
 	public static final URLFileProvider INSTANCE = new URLFileProvider();
 
-	private final Set<String> entries = new HashSet<>();
-	private final Map<String, File> files = new HashMap<>();
-
 	private URLFileProvider() {}
 
 	/**
-	 * Loads all files known by the system class loader.
+	 * Adds all files known by the system class loader to the cache.
 	 * @return the error if one occurred, null otherwise
 	 */
 	@Override
@@ -68,31 +65,7 @@ public class URLFileProvider extends FileProvider {
 		else if (file != root) {
 			// Strip root path and normalize string
 			String path = file.getCanonicalPath().substring(root.getCanonicalPath().length() + 1).replace('\\', '/');
-			files.put(path, file);
-			entries.add(path);
-		}
-	}
-
-	/**
-	 * @return a list of all known files.
-	 */
-	@Override
-	protected Collection<String> getFiles0() {
-		return entries;
-	}
-
-	/**
-	 * @return an InputStream containing the given file's contents
-	 */
-	@Override
-	protected InputStream getData0(String file) {
-		if (files.get(file) == null)
-			throw elevate(new FileNotFoundException(file));
-
-		try {
-			return new FileInputStream(files.get(file));
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
+			fileCache.put(path, () -> Files.newInputStream(file.toPath()));
 		}
 	}
 

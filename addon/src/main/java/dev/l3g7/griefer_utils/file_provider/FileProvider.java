@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.file_provider.impl.URLFileProvider;
 import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.util.Util;
+import dev.l3g7.griefer_utils.util.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
@@ -36,7 +37,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.util.Util.elevate;
 import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
 import static org.objectweb.asm.ClassReader.SKIP_CODE;
 
@@ -46,61 +46,49 @@ import static org.objectweb.asm.ClassReader.SKIP_CODE;
 public abstract class FileProvider {
 
 	/**
-	 * Updates the known files using refClass.
+	 * Updates the cached files using refClass.
 	 * @return the error if one occurred, null otherwise
 	 */
 	protected abstract Throwable update0(Class<?> refClass);
 
-	/**
-	 * @return a list of all known files.
-	 */
-	protected abstract Collection<String> getFiles0();
-
-	/**
-	 * @return an InputStream containing the given file's contents
-	 */
-	protected abstract InputStream getData0(String file);
-
-
+	protected static final Map<String, Supplier<InputStream>> fileCache = new HashMap<>();
+	private static final Set<FileProvider> providers = new HashSet<>();
 
 	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>(); // file -> class meta
 	private static final Map<Class<?>, Object> singletonInstances = new HashMap<>();
-	private static FileProvider provider = null;
 
 	/**
-	 * Lazy loads the implementation if required and returns it.
+	 * Lazy loads all providers if required and returns them.
 	 */
-	private static FileProvider getProvider() {
-		if (provider == null) {
-			List<Throwable> errors = new ArrayList<>();
-
-			// Test possible providers
-			for (FileProvider possibleProvider : new FileProvider[]{JarFileProvider.INSTANCE, URLFileProvider.INSTANCE}) {
-				Throwable error = possibleProvider.update0(FileProvider.class);
-				if (error == null)
-					return provider = possibleProvider;
-
-				// Only throw errors if no implementation could load
-				errors.add(error);
-			}
-
-			// If this point is reached, no implementation could be loaded -> throw errors
-			errors.forEach(Throwable::printStackTrace);
-			throw new RuntimeException("No available file provider could be found!");
+	private static Set<FileProvider> getProviders() {
+		if (providers.isEmpty()) {
+			providers.add(JarFileProvider.INSTANCE);
+			providers.add(URLFileProvider.INSTANCE);
+			update(FileProvider.class);
 		}
 
-		return provider;
+		return providers;
 	}
 
 	/**
-	 * Updates the current provider using the given class.
-	 * Currently unused, makes possible extensions of GrieferUtils easier.
+	 * Triggers an update from all providers using the given class.
 	 */
-	@SuppressWarnings("unused")
 	public static void update(Class<?> refClass) {
-		Throwable error = getProvider().update0(refClass);
-		if (error != null)
-			throw elevate(error);
+		List<Throwable> errors = new ArrayList<>();
+
+		// Trigger all providers
+		for (FileProvider provider : getProviders()) {
+			Throwable error = provider.update0(refClass);
+			if (error != null)
+				// Only throw errors if no provider was able to update
+				errors.add(error);
+		}
+
+		if (errors.size() == providers.size()) {
+			// If this point is reached, no provider was able to update -> throw errors
+			errors.forEach(Throwable::printStackTrace);
+			throw new RuntimeException("No available file provider could be found!");
+		}
 	}
 
 
@@ -109,7 +97,7 @@ public abstract class FileProvider {
 	 * @return all known files.
 	 */
 	public static Collection<String> getFiles() {
-		return getProvider().getFiles0();
+		return fileCache.keySet();
 	}
 
 	/**
@@ -123,7 +111,7 @@ public abstract class FileProvider {
 	 * @return the content of a file as an InputStream.
 	 */
 	public static InputStream getData(String file) {
-		return getProvider().getData0(file);
+		return fileCache.get(file).get();
 	}
 
 	/**

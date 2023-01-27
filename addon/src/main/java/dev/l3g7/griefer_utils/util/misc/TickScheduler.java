@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.util.misc;
 
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.util.misc.functions.TRunnable;
+import dev.l3g7.griefer_utils.util.misc.functions.Runnable;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 
@@ -34,13 +34,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TickScheduler {
 
-	private static final Map<TRunnable, AtomicInteger> clientTickTasks = new HashMap<>();
-	private static final Map<TRunnable, AtomicInteger> renderTickTasks = new HashMap<>();
+	private static final Map<Runnable, AtomicInteger> clientTickTasks = new HashMap<>();
+	private static final Map<Runnable, AtomicInteger> renderTickTasks = new HashMap<>();
 
 	/**
 	 * Runs the given runnable after the given delay in client ticks.
 	 */
-	public static void runAfterClientTicks(TRunnable runnable, int delay) {
+	public static void runAfterClientTicks(Runnable runnable, int delay) {
 		synchronized (clientTickTasks) {
 			clientTickTasks.put(runnable, new AtomicInteger(delay));
 		}
@@ -49,7 +49,7 @@ public class TickScheduler {
 	/**
 	 * Runs the given runnable after the given delay in render ticks.
 	 */
-	public static void runAfterRenderTicks(TRunnable runnable, int delay) {
+	public static void runAfterRenderTicks(Runnable runnable, int delay) {
 		synchronized (renderTickTasks) {
 			renderTickTasks.put(runnable, new AtomicInteger(delay));
 		}
@@ -72,11 +72,11 @@ public class TickScheduler {
 	/**
 	 * Decreases the ticks after which the task should run and runs it if ticks = 0.
 	 */
-	private static void updateTasks(Map<TRunnable, AtomicInteger> tasks) {
-		Iterator<Entry<TRunnable, AtomicInteger>> it = tasks.entrySet().iterator();
+	private static void updateTasks(Map<Runnable, AtomicInteger> tasks) {
+		Iterator<Entry<Runnable, AtomicInteger>> it = tasks.entrySet().iterator();
 		while (it.hasNext()) {
 			// Decrease time, run if 0
-			Entry<TRunnable, AtomicInteger> entry = it.next();
+			Entry<Runnable, AtomicInteger> entry = it.next();
 			if (entry.getValue().decrementAndGet() == 0) {
 				it.remove();
 				entry.getKey().run();

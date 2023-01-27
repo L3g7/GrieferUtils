@@ -20,19 +20,17 @@ package dev.l3g7.griefer_utils.util.misc.functions;
 
 import dev.l3g7.griefer_utils.util.Util;
 
-import java.util.function.Function;
-
 /**
- * Like {@link Function}, but able to throw exceptions.
+ * Like {@link java.util.function.Consumer}, but able to throw exceptions.
  */
 @FunctionalInterface
-public interface TFunction<T, R> extends Function<T, R> {
+public interface Consumer<T> extends java.util.function.Consumer<T> {
 
-    R applyWithException(T t) throws Exception;
+    void acceptWithException(T t) throws Exception;
 
-	default R apply(T t) {
+	default void accept(T t) {
 		try {
-			return applyWithException(t);
+			acceptWithException(t);
 		} catch (Exception e) {
 			throw Util.elevate(e);
 		}

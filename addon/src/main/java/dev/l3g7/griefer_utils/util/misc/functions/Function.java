@@ -21,16 +21,16 @@ package dev.l3g7.griefer_utils.util.misc.functions;
 import dev.l3g7.griefer_utils.util.Util;
 
 /**
- * Like {@link Runnable}, but able to throw exceptions.
+ * Like {@link java.util.function.Function}, but able to throw exceptions.
  */
 @FunctionalInterface
-public interface TRunnable extends Runnable {
+public interface Function<T, R> extends java.util.function.Function<T, R> {
 
-    void runWithException() throws Exception;
+    R applyWithException(T t) throws Exception;
 
-	default void run() {
+	default R apply(T t) {
 		try {
-			runWithException();
+			return applyWithException(t);
 		} catch (Exception e) {
 			throw Util.elevate(e);
 		}

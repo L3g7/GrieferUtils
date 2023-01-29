@@ -54,20 +54,20 @@ public abstract class FileProvider {
 	protected static final Map<String, Supplier<InputStream>> fileCache = new HashMap<>();
 	private static final Set<FileProvider> providers = new HashSet<>();
 
-	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>(); // file -> class meta
+	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>();
 	private static final Map<Class<?>, Object> singletonInstances = new HashMap<>();
 
 	/**
-	 * Lazy loads all providers if required and returns them.
+	 * Lazy loads all files if required and returns them.
 	 */
-	private static Set<FileProvider> getProviders() {
+	private static Map<String, Supplier<InputStream>> getFileCache() {
 		if (providers.isEmpty()) {
 			providers.add(JarFileProvider.INSTANCE);
 			providers.add(URLFileProvider.INSTANCE);
 			update(FileProvider.class);
 		}
 
-		return providers;
+		return fileCache;
 	}
 
 	/**
@@ -76,8 +76,15 @@ public abstract class FileProvider {
 	public static void update(Class<?> refClass) {
 		List<Throwable> errors = new ArrayList<>();
 
+		// Initialize providers
+		if (providers.isEmpty()) {
+			providers.add(JarFileProvider.INSTANCE);
+			providers.add(URLFileProvider.INSTANCE);
+			update(FileProvider.class);
+		}
+
 		// Trigger all providers
-		for (FileProvider provider : getProviders()) {
+		for (FileProvider provider : providers) {
 			Throwable error = provider.update0(refClass);
 			if (error != null)
 				// Only throw errors if no provider was able to update
@@ -97,7 +104,7 @@ public abstract class FileProvider {
 	 * @return all known files.
 	 */
 	public static Collection<String> getFiles() {
-		return fileCache.keySet();
+		return getFileCache().keySet();
 	}
 
 	/**
@@ -111,7 +118,7 @@ public abstract class FileProvider {
 	 * @return the content of a file as an InputStream.
 	 */
 	public static InputStream getData(String file) {
-		return fileCache.get(file).get();
+		return getFileCache().get(file).get();
 	}
 
 	/**

@@ -27,12 +27,9 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.misc.NameCache;
-import dev.l3g7.griefer_utils.util.misc.PlayerDataProvider;
 import net.labymod.utils.Material;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
@@ -49,7 +46,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.event.events.network.TabListEvent.updatePlayerInfoList;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.suggest;
 
 @Singleton
 public class AutoUnnick extends Feature {
@@ -97,6 +95,13 @@ public class AutoUnnick extends Feature {
 
 		String nickName = text.substring(text.indexOf('~'));
 		String[] parts = event.component.getFormattedText().split(" §r§8\u2503 §r");
+
+		if (parts.length != 2) {
+			System.err.println(event.component.getUnformattedText());
+			System.out.println(event.profile);
+			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
+			return;
+		}
 
 		setNameWithPrefix(event.component, parts[0], parts[1], nickName, true);
 	}

@@ -69,9 +69,6 @@ public class Constants {
 
 	public static final DecimalFormat DECIMAL_FORMAT_98 = new DecimalFormat("###,###." + Strings.repeat("#", 98), new DecimalFormatSymbols(Locale.GERMAN)); // max 98 decimal places
 
-	public static final File FURNITURE_RESOURCE_PACK_DIR = new File(MinecraftUtil.assetsDir(), "griefer_utils/furniture_resourcepack");
-	public static final String MM_ADDON_DOWNLOAD_URL = "http://server2.mysterymod.net:5200/api/v1/addons/download/download/%s/1_8_9/_";
-
 	public static final String RSA_PUBLIC_KEY_4096 = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAiFR9WaKX2/452JkUHAEkhHnOWO1VItNO0ggHqQsgb54P78uCd2KX+mC63V0leI4th7l9iYlhBXJz76oLLbdqqJPGGmuZfPGQ2che9cWKRki3E/0bYpcBzhwnasfl7+GA8ZoLE363n8NNAC+GCr89Wd/4+GuSQD7rytRYr0n6DtYnsvwOnZjv2Pq8Sx3ARjhdM1U+S9Ys6favNws9b2x0KTgNwznuhrAgwPMKCRZh6FmJSqdIqWFvRWE0h6SW6if/eB9bcMFuCmpVL8+n36DElZHPMgYuznnPGvZJpxud16BoIGpScy8aih1DUHdmMPMaFZa2ZFnkv/Cc3vMM7cIxUQxgY4Den7WMcpJYLMdeWsaiazMe+IRHHBBPy/YTpdCDHfBc/klufc78wqS3DRrGsBiQlP4CofaXCQJ5Koia4/6PKTCJ24y8ahNrjlAEfx1ptH1ucQpCofkmU5Y0IR+B3C6sjZgVB4t6PDsigrqKjXd8qnFMhHnzqFeflC7l8mvxvv8klOfeYjsV2qA0TgZFv70SPj56vfucKAFGvpj9RonZaPSvHhFk/Z8hy/Du91zztcW1yfrENndHZ3PSDjEBDPlcjPzVr8iXdLMqn7ojMprPArz51a67ubz/lPVPzh0Iz3Nn09kbKnC9kMIi3CEZC54Q2jbHPpIZSgfaX71hk+8CAwEAAQ==";
 	public static final String RSA_PUBLIC_KEY_2048 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArD/Idp8KR2HEqUe4rHAsSFbOq+21Tt7twnXcoKarDUTfiMN92gJw9tZjMVCokisT5t9BASpXb0Q0NfxM2AFPftq7SePXnVSIzvjolvV4lvbIlaeYHLfJ4scJerHdO5Eq8JAM2zOZnsNnwTnkuzyqaAoUhC9WjybXXMCj27JeGwGxemSfuJ25LYkrQMHuBTqSAiOqYI+mVmzXR/mz+56A8TWonJ2ako2BoQ6XSLpGpfCALmJZK+VyFkQ4zEN3bNjxOYQgFxCzPZgBdbmEuVLU0Z321CE11fzNMSd4bO81KTjgl4C25N2XC7PQaew4VRMOAh/FkYsTyvn4lripKZatiwIDAQAB";
 

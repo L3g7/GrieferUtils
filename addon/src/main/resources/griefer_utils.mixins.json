@@ -11,21 +11,7 @@
     "MixinIngameChatManager",
     "MixinNetHandlerPlayClient",
     "MixinRenderTickListener",
-    "MixinWorld",
-    "furniture.MixinWalkNodeProcessor",
-    "furniture.block.MixinBlock",
-    "furniture.block.MixinBlockBush",
-    "furniture.block.MixinBlockPistonBase",
-    "furniture.entity.MixinEntityLivingBase",
-    "furniture.entitytile.MixinBeaconTileEntity",
-    "furniture.item.MixinRenderItem",
-    "furniture.model.MixinBlockModelRenderer",
-    "furniture.model.MixinForgeBlockModelRenderer",
-    "furniture.model.MixinModelBakery",
-    "furniture.model.MixinModelBlockDefinition",
-    "furniture.model.MixinModelBlockDefinitionDeserializer",
-    "furniture.model.MixinModelManager",
-    "furniture.world.MixinWorld"
+    "MixinWorld"
   ],
   "client": [
     "MixinChunkProviderClient",

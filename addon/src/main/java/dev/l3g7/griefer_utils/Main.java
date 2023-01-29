@@ -50,6 +50,8 @@ public class Main extends LabyModAddon {
 
 	@Override
 	public void onEnable() {
+		System.out.println("GrieferUtils enabling");
+		long begin = System.currentTimeMillis();
 		if (!LabyModCoreMod.isForge())
 			return;
 
@@ -71,7 +73,7 @@ public class Main extends LabyModAddon {
 		} catch (Throwable t) {
 			MinecraftUtil.mc().displayCrashReport(new CrashReport("GrieferUtils konnte nicht geladen werden!", t));
 		}
-
+		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}
 
 	@Override

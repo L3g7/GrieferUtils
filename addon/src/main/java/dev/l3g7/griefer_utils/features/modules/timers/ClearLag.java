@@ -24,8 +24,8 @@ import dev.l3g7.griefer_utils.event.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.Util;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
@@ -42,10 +42,10 @@ public class ClearLag extends Module {
 		.config("modules.clear_lag.time_format")
 		.defaultValue(TimeFormat.LONG);
 
-	private final BooleanSetting warn = new BooleanSetting()
-		.name("Warnen")
+	private final NumberSetting warnTime = new NumberSetting()
+		.name("Warn-Zeit (s)")
 		.icon("labymod:buttons/exclamation_mark")
-		.config("modules.clear_lag.warn");
+		.config("modules.clear_lag.warn_time");
 
 	private long clearLagEnd = -1;
 
@@ -62,8 +62,8 @@ public class ClearLag extends Module {
 		if (diff < 0)
 			return getDefaultValues();
 
-		// Warn if clearlag is less than 20s away
-		if (warn.get() && diff < 20 * 1000) {
+		// Warn if clearlag is less than the set amount of seconds away
+		if (diff < warnTime.get() * 1000) {
 			String s = Util.formatTime(clearLagEnd, true);
 			if (!s.equals("0s"))
 				title("§c§l" + s);
@@ -97,7 +97,7 @@ public class ClearLag extends Module {
 	public void fillSubSettings(List<SettingsElement> list) {
 		super.fillSubSettings(list);
 		list.add(timeFormat);
-		list.add(warn);
+		list.add(warnTime);
 	}
 
 	private void title(String title) {

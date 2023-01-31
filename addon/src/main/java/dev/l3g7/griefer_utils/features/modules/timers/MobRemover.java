@@ -22,8 +22,8 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.Util;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
@@ -44,10 +44,10 @@ public class MobRemover extends Module {
 		.config("modules.mob_remover.time_format")
 		.defaultValue(TimeFormat.LONG);
 
-	private final BooleanSetting warn = new BooleanSetting()
-		.name("Warnen")
+	private final NumberSetting warnTime = new NumberSetting()
+		.name("Warn-Zeit (s)")
 		.icon("labymod:buttons/exclamation_mark")
-		.config("modules.mob_remover.warn");
+		.config("modules.mob_remover.warn_time");
 
 	private long mobRemoverEnd = -1;
 
@@ -64,8 +64,8 @@ public class MobRemover extends Module {
 		if (diff < 0)
 			return getDefaultValues();
 
-		// Warn if mob remover is less than 20s away
-		if (warn.get() && diff < 20 * 1000) {
+		// Warn if mob remover is less than the set amount of seconds away
+		if (diff < warnTime.get() * 1000) {
 			String s = Util.formatTime(mobRemoverEnd, true);
 			if (!s.equals("0s"))
 				title("§c§l" + s);
@@ -97,7 +97,7 @@ public class MobRemover extends Module {
 	public void fillSubSettings(List<SettingsElement> list) {
 		super.fillSubSettings(list);
 		list.add(timeFormat);
-		list.add(warn);
+		list.add(warnTime);
 	}
 
 	private void title(String title) {

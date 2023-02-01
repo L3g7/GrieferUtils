@@ -22,6 +22,8 @@ import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
+import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
@@ -39,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static net.minecraft.enchantment.EnchantmentHelper.getEnchantments;
 
 @Singleton
 public class ItemCounter extends ItemInfo.ItemInfoSupplier {
@@ -48,12 +51,24 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		.description("Ignoriert den Schaden / die Sub-IDs der Items beim Zählen der Anzahl.")
 		.icon("broken_pickaxe");
 
+	private final BooleanSetting ignoreEnchants = new BooleanSetting()
+		.name("Verzauberungen ignorieren")
+		.description("Ignoriert die Verzauberungen der Items beim Zählen der Anzahl.")
+		.icon(Material.ENCHANTED_BOOK)
+		.defaultValue(true);
+
+	private final BooleanSetting ignoreLore = new BooleanSetting()
+		.name("Beschreibungen ignorieren")
+		.description("Ignoriert die Beschreibungen der Items beim Zählen der Anzahl.")
+		.icon(Material.PAPER)
+		.defaultValue(true);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Item-Zähler")
 		.description("Zeigt unter einem Item an, wie viele von dem Typ in dem derzeitigen Inventar vorhanden sind.")
 		.icon("spyglass")
-		.subSettings(ignoreDamage);
+		.subSettings(ignoreDamage, ignoreEnchants, ignoreLore);
 
 	@Override
 	public List<String> getToolTip(ItemStack itemStack) {
@@ -138,7 +153,9 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 
 			ItemStack itemStack = slot.getStack();
 			if (itemStack.getItem().equals(searchedItem.getItem())
-				&& (ignoreDamage.get() || itemStack.getItemDamage() == searchedItem.getItemDamage()))
+				&& (ignoreDamage.get() || itemStack.getItemDamage() == searchedItem.getItemDamage())
+				&& (ignoreEnchants.get() || getEnchantments(itemStack).equals(getEnchantments(searchedItem)))
+				&& (ignoreLore.get() || ItemUtil.getLore(itemStack).equals(ItemUtil.getLore(searchedItem))))
 				amount += getAmount(itemStack);
 		}
 

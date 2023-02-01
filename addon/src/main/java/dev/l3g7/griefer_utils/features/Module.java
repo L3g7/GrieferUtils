@@ -64,7 +64,7 @@ public abstract class Module extends SimpleTextModule {
 			elems.add(offset++, new HeaderSetting("Geld-Statistiken"));
 			elems.add(3 + offset++, new HeaderSetting("Orb-Statistiken"));
 			elems.add(5 + offset++, new HeaderSetting("Countdowns"));
-			elems.add(7 + offset  , new HeaderSetting("Misc"));
+			elems.add(8 + offset  , new HeaderSetting("Misc"));
 
 			for (SettingsElement elem : elems)
 				if (((ControlElement) elem).getModule() == null)

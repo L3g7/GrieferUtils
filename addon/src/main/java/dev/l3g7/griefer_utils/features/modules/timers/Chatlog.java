@@ -44,7 +44,7 @@ public class Chatlog extends Module {
 
 	@Override
 	public String[] getDefaultValues() {
-		return new String[]{"0s"};
+		return new String[]{timeFormat.get() == TimeFormat.SHORT ? "0s" : "0 Sekunden"};
 	}
 
 	@Override

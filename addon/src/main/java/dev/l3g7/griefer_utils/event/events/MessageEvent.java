@@ -20,9 +20,9 @@ package dev.l3g7.griefer_utils.event.events;
 
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import net.labymod.api.events.MessageModifyChatEvent;
-import net.labymod.api.events.MessageSendEvent;
 import net.labymod.main.LabyMod;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
@@ -59,17 +59,13 @@ public class MessageEvent extends Event {
 	/**
 	 * A forge event for LabyMod's {@link net.labymod.api.events.MessageSendEvent}.
 	 */
+	@Cancelable
 	public static class MessageSendEvent extends MessageEvent {
 
 		public final String message;
 
 		public MessageSendEvent(String message) {
 			this.message = message;
-		}
-
-		@Override
-		public boolean isCancelable() {
-			return true;
 		}
 
 		@OnEnable

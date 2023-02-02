@@ -19,16 +19,11 @@
 package dev.l3g7.griefer_utils.event.events.render;
 
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * An event being posted when {@link WorldClient#doVoidFogParticles(int, int, int)} checks whether barriers should be rendered.
  */
-public class RenderBarrierCheckEvent extends Event {
-
-	@Override
-	public boolean isCancelable() {
-		return true;
-	}
-
-}
+@Cancelable
+public class RenderBarrierCheckEvent extends Event {}

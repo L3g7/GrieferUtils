@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.injection.mixin.MixinNetHandlerPlayClient;
 import net.labymod.main.LabyMod;
 import net.minecraft.network.Packet;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
@@ -48,12 +49,8 @@ public class PacketEvent extends Event {
 
 	}
 
+	@Cancelable
 	public static class PacketSendEvent extends PacketEvent {
-
-		@Override
-		public boolean isCancelable() {
-			return true;
-		}
 
 		public PacketSendEvent(Packet<?> packet) {
 			super(packet);

@@ -18,22 +18,19 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * An event being posted when EntityRenderer#setupFog is called.
  */
+@Cancelable
 public class SetupFogEvent extends Event {
 
 	public final FogType fogType;
 
 	public SetupFogEvent(FogType fogType) {
 		this.fogType = fogType;
-	}
-
-	@Override
-	public boolean isCancelable() {
-		return true;
 	}
 
 	public enum FogType {

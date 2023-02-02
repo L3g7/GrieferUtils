@@ -19,8 +19,10 @@
 package dev.l3g7.griefer_utils.event.events.render;
 
 import dev.l3g7.griefer_utils.util.misc.Vec3d;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+@Cancelable
 public class ParticleSpawnEvent extends Event {
 
 	public final int particleID;
@@ -35,11 +37,6 @@ public class ParticleSpawnEvent extends Event {
 		this.position = position;
 		this.offset = offset;
 		this.args = args;
-	}
-
-	@Override
-	public boolean isCancelable() {
-		return true;
 	}
 
 }

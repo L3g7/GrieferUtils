@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.ChatLogModifyEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
@@ -29,7 +30,6 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
-import dev.l3g7.griefer_utils.util.misc.ChatLogModifier;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.misc.PlayerDataProvider;
 import dev.l3g7.griefer_utils.util.misc.TickScheduler;
@@ -70,15 +70,7 @@ public class ShowJoins extends Feature {
 			new HeaderSetting("§e§lSpieler").scale(.7),
 			players);
 
-	{
-		players.setContainer(enabled);
-		ChatLogModifier.addModifier(msg -> {
-			if (!log.get() && !msg.contains("\u2503") && (msg.contains("[GrieferUtils] [+] ") || msg.contains("[GrieferUtils] [-] ")))
-				return null;
-
-			return msg;
-		});
-	}
+	{ players.setContainer(enabled); }
 
 	private boolean onServer = false;
 
@@ -120,6 +112,12 @@ public class ShowJoins extends Feature {
 		String name = event.cachedName;
 		if (shouldShowJoin(name))
 			TickScheduler.runAfterClientTicks(() -> display(Constants.ADDON_PREFIX + "§8[§c-§8] §r" + name), 1);
+	}
+
+	@EventListener
+	public void onChatLogModify(ChatLogModifyEvent event) {
+		if (!log.get() && !event.message.contains("\u2503") && (event.message.contains("[GrieferUtils] [+] ") || event.message.contains("[GrieferUtils] [-] ")))
+			event.setCanceled(true);
 	}
 
 }

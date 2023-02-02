@@ -29,6 +29,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
+import dev.l3g7.griefer_utils.util.misc.ChatLogModifier;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.misc.PlayerDataProvider;
 import dev.l3g7.griefer_utils.util.misc.TickScheduler;
@@ -54,17 +55,30 @@ public class ShowJoins extends Feature {
 		.name("Joins beim Betreten des Servers anzeigen")
 		.icon(Material.LEVER);
 
+	private final BooleanSetting log = new BooleanSetting()
+		.name("Joins im Log speichern")
+		.defaultValue(true)
+		.icon(Material.BOOK_AND_QUILL);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Joins anzeigen")
 		.description("Zeigt dir an, wenn (bestimmte) Spieler den Server betreten / verlassen.")
 		.icon("radar")
-		.subSettings(showOnJoin, filter,
+		.subSettings(showOnJoin, log, filter,
 			new HeaderSetting("§r").scale(.4).entryHeight(10),
 			new HeaderSetting("§e§lSpieler").scale(.7),
 			players);
 
-	{ players.setContainer(enabled); }
+	{
+		players.setContainer(enabled);
+		ChatLogModifier.addModifier(msg -> {
+			if (!log.get() && !msg.contains("\u2503") && (msg.contains("[GrieferUtils] [+] ") || msg.contains("[GrieferUtils] [-] ")))
+				return null;
+
+			return msg;
+		});
+	}
 
 	private boolean onServer = false;
 

@@ -15,6 +15,7 @@
   ],
   "client": [
     "MixinChunkProviderClient",
+    "MixinGuiChatAdapter",
     "MixinGuiChest"
   ]
 }

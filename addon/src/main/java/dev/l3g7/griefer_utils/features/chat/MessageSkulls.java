@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.util.misc.ChatLogModifier;
 import dev.l3g7.griefer_utils.util.misc.NameCache;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.main.LabyMod;
@@ -121,6 +122,18 @@ public class MessageSkulls extends Feature {
 		int x = drawUtils.getStringWidth(formattedText.substring(0, idStart)) + (formattedText.startsWith("§r§m§s") ? 2 : 1);
 		drawUtils.drawTexture(x, y - 8, 32, 32, 32, 32, 8, 8, alpha); // First layer
 		drawUtils.drawTexture(x, y - 8, 160, 32, 32, 32, 8, 8, alpha); // Second layer
+	}
+
+	static {
+		ChatLogModifier.addModifier(s -> {
+			int idStart = s.indexOf("§m§s");
+			if (idStart == -1)
+				return s;
+
+			String start = s.substring(0, idStart + 4);
+			String end = s.substring(s.indexOf(" ", idStart) + 3);
+			return start + end;
+		});
 	}
 
 }

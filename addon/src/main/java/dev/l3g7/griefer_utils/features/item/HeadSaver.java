@@ -48,7 +48,7 @@ public class HeadSaver extends Feature {
 			inv.setInventorySlotContents(slot, grayGlassPane);
 
 		inv.setInventorySlotContents(ACCEPT_SLOT_ID, createItem(Items.dye, 10, "§aEinlösen"));
-		inv.setInventorySlotContents(PREVIEW_SLOT_ID, createItem(Items.skull, 0, "§3Vorschau anzeigen"));
+		inv.setInventorySlotContents(PREVIEW_SLOT_ID, createItem(Items.skull, 0, "§3Vorscha"));
 		inv.setInventorySlotContents(DECLINE_SLOT_ID, createItem(Items.dye, 1, "§cAbbrechen"));
 	}
 

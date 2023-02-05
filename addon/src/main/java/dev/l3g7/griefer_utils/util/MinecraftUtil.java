@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.util.misc.ChatQueue;
 import dev.l3g7.griefer_utils.util.misc.Vec3d;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.main.LabyMod;
+import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -39,6 +40,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -46,23 +48,24 @@ import java.util.UUID;
  */
 public class MinecraftUtil {
 
-	public static Minecraft       mc()             { return Minecraft.getMinecraft(); }
-	public static EntityPlayerSP  player()         { return mc().thePlayer; }
-	public static String          name()           { return mc().getSession().getUsername(); }
-	public static GameSettings    settings()       { return mc().gameSettings; }
-	public static TextureManager  textureManager() { return mc().getTextureManager(); }
-	public static File            assetsDir()      { return Reflection.get(mc(), "fileAssets"); }
-	public static WorldClient     world()          { return mc().theWorld; }
+	public static Minecraft       mc()              { return Minecraft.getMinecraft(); }
+	public static EntityPlayerSP  player()          { return mc().thePlayer; }
+	public static String          name()            { return mc().getSession().getUsername(); }
+	public static GameSettings    settings()        { return mc().gameSettings; }
+	public static TextureManager  textureManager()  { return mc().getTextureManager(); }
+	public static ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }
+	public static File            assetsDir()       { return Reflection.get(mc(), "fileAssets"); }
+	public static WorldClient     world()           { return mc().theWorld; }
 
-	public static ItemStack[]     armorInventory() { return inventory().armorInventory; }
-	public static InventoryPlayer inventory()      { return player().inventory; }
+	public static ItemStack[]     armorInventory()  { return inventory().armorInventory; }
+	public static InventoryPlayer inventory()       { return player().inventory; }
 
-	public static int             screenWidth()    { return new ScaledResolution(mc()).getScaledWidth(); }
-	public static int             screenHeight()   { return new ScaledResolution(mc()).getScaledHeight(); }
-	public static float           partialTicks()   { return labyMod().getPartialTicks(); }
+	public static int             screenWidth()     { return new ScaledResolution(mc()).getScaledWidth(); }
+	public static int             screenHeight()    { return new ScaledResolution(mc()).getScaledHeight(); }
+	public static float           partialTicks()    { return labyMod().getPartialTicks(); }
 
-	public static LabyMod         labyMod()        { return LabyMod.getInstance(); }
-	public static DrawUtils       drawUtils()      { return labyMod().getDrawUtils(); }
+	public static LabyMod         labyMod()         { return LabyMod.getInstance(); }
+	public static DrawUtils       drawUtils()       { return labyMod().getDrawUtils(); }
 
 	public static UUID uuid() {
 		return mc().getSession().getProfile().getId();

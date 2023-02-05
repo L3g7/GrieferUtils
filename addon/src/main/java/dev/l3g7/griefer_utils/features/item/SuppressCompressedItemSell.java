@@ -55,7 +55,7 @@ public class SuppressCompressedItemSell extends Feature {
 
 	@EventListener
 	public void onMouseGui(GuiScreenEvent.MouseInputEvent.Pre event) {
-		if (!(mc().currentScreen instanceof GuiChest))
+		if (!(event.gui instanceof GuiChest))
 			return;
 
 		IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");

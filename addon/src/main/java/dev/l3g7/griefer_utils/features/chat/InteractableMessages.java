@@ -69,7 +69,7 @@ public class InteractableMessages extends Feature {
 	}
 
 	private static void modifyGlobalChats(MessageModifyEvent event) {
-		String unformattedText = event.message.getUnformattedText();
+		String unformattedText = event.original.getUnformattedText();
 		if (!unformattedText.startsWith("@["))
 			return;
 
@@ -91,7 +91,7 @@ public class InteractableMessages extends Feature {
 	}
 
 	private static void modifyStatuses(MessageModifyEvent event) {
-		String formattedText = event.message.getFormattedText();
+		String formattedText = event.original.getFormattedText();
 		Matcher matcher = STATUS_PATTERN.matcher(formattedText);
 		if (!matcher.matches())
 			return;
@@ -106,7 +106,7 @@ public class InteractableMessages extends Feature {
 	}
 
 	private static void modifyTps(MessageModifyEvent event) {
-		String msg = event.message.getUnformattedText();
+		String msg = event.original.getUnformattedText();
 
 		if (!msg.equals(TP_ACCEPT) && !msg.equals(TP_DENY))
 			return;

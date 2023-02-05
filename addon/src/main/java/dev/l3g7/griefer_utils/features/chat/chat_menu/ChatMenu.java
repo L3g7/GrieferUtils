@@ -196,7 +196,7 @@ public class ChatMenu extends Feature {
 		String name = null;
 
 		for (Pattern p : MESSAGE_PATTERNS) {
-			Matcher m = p.matcher(event.message.getFormattedText());
+			Matcher m = p.matcher(event.original.getFormattedText());
 
 			if (m.find()) {
 				name = m.group("name").replaceAll("§.", "");

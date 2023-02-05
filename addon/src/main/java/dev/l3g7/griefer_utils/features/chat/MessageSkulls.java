@@ -63,7 +63,7 @@ public class MessageSkulls extends Feature {
 	@EventListener
 	public void onMsgReceive(MessageEvent.MessageModifyEvent event) {
 		for (Pattern pattern : PATTERNS) {
-			Matcher matcher = pattern.matcher(event.message.getFormattedText());
+			Matcher matcher = pattern.matcher(event.original.getFormattedText());
 			if (!matcher.matches())
 				continue;
 
@@ -71,7 +71,7 @@ public class MessageSkulls extends Feature {
 			do id = getId();
 			while (ID_TO_MESSAGE_MAP.containsKey(id));
 
-			ID_TO_MESSAGE_MAP.put(id, event.message.getUnformattedText());
+			ID_TO_MESSAGE_MAP.put(id, event.original.getUnformattedText());
 			event.message = new ChatComponentText(id).appendSibling(event.message);
 			return;
 		}

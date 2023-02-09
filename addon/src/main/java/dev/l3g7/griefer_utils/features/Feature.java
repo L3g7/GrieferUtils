@@ -18,10 +18,6 @@
 
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.event.EventHandler;
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
@@ -33,8 +29,6 @@ import org.apache.commons.lang3.tuple.Pair;
  * The base class for features.
  */
 public abstract class Feature {
-
-	private static boolean onCityBuild;
 
 	private Category category;
 	private SettingsElement mainElement;
@@ -87,20 +81,6 @@ public abstract class Feature {
 
 	public String getConfigKey() {
 		return configKey;
-	}
-
-	public boolean isOnCityBuild() {
-		return onCityBuild;
-	}
-
-	@EventListener
-	private static void _onServerJoin(ServerJoinEvent event) {
-		onCityBuild = true;
-	}
-
-	@EventListener
-	private static void _onServerSwitch(ServerSwitchEvent event) {
-		onCityBuild = false;
 	}
 
 }

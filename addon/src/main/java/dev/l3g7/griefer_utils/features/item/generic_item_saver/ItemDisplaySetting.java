@@ -6,7 +6,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.misc.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -18,7 +18,6 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 	public final BooleanSetting leftclick;
 	public final BooleanSetting rightclick;
 
-	private final GuiButton button = new GuiButton(-2, 0, 0, 20, 20, "");
 	private final IconStorage iconStorage = new IconStorage();
 	private final ItemStack stack;
 	private boolean hoveringDelete = false;
@@ -71,7 +70,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
 		if (hoveringEdit) {
-			button.playPressSound(mc.getSoundHandler());
+			mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 			mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> FileProvider.getSingleton(GenericItemSaver.class).onChange(), this));
 			return;
 		}
@@ -79,7 +78,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 		if (!hoveringDelete)
 			return;
 
-		button.playPressSound(mc.getSoundHandler());
+		mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 		GenericItemSaver gis = FileProvider.getSingleton(GenericItemSaver.class);
 		gis.getMainElement().getSubSettings().getElements().remove(this);
 		gis.onChange();

@@ -27,7 +27,6 @@ import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.gui.elements.Scrollbar;
-import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.DropDownElement;
 import net.labymod.utils.DrawUtils;
 import net.labymod.utils.ModColor;
@@ -43,6 +42,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
 // Has to be a DropDownElement, otherwise onClickDropDown won't be triggered
 public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implements ElementBuilder<ItemSetting> {
@@ -167,13 +168,12 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		mouseOver = menu.isMouseOver(mouseX, mouseY);
-		LabyMod.getInstance().getDrawUtils().drawItem(itemIcon == null ? MISSING_TEXTURE : itemIcon, x + 5, y + 3, null);
+		drawUtils().drawItem(itemIcon == null ? MISSING_TEXTURE : itemIcon, x + 5, y + 3, null);
 
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 
-		LabyMod.getInstance().getDrawUtils().drawRectangle(x - 1, y, x, maxY, ModColor.toRGB(120, 120, 120, 120));
-		LabyMod.getInstance().getDrawUtils().drawRectangle(x, y, maxX, maxY, 0x80FF0000);
-		int width = 125;
+		drawUtils().drawRectangle(x - 1, y, x, maxY, ModColor.toRGB(120, 120, 120, 120));
+		int width = Math.min(125, 165 - drawUtils().getStringWidth(getDisplayName()));
 		menu.setX(maxX - width - 5);
 		menu.setY(y + 3);
 		menu.setWidth(width);

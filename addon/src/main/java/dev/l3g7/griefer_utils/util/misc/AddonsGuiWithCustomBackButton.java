@@ -38,6 +38,14 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 		super.actionPerformed(button);
 	}
 
+	@Override
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		if (keyCode == 1)
+			onBack.run();
+
+		super.keyTyped(typedChar, keyCode);
+	}
+
 	static {
 		Tabs.getTabUpdateListener().add(m -> {
 

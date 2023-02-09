@@ -36,6 +36,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
@@ -120,6 +121,11 @@ public class MinecraftUtil {
 
 	public static void suggest(String format, Object... args) {
 		suggest(String.format(format, args));
+	}
+
+	public static String getServerFromScoreboard() {
+		ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
+		return team == null ? "" : team.getColorPrefix().replaceAll("§.", "");
 	}
 
 }

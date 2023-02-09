@@ -110,12 +110,12 @@ public class ItemUtil {
 
 		CB_ITEMS.add(createItem(Items.nether_star, 0, "Jeder CB"));
 
-		Block[] blocks = new Block[] {diamond_block, emerald_block, gold_block, lapis_block, coal_block, emerald_ore, redstone_ore, diamond_ore, gold_ore, iron_ore, coal_ore, lapis_ore, bedrock, gravel, obsidian, barrier, iron_block, barrier, prismarine, mossy_cobblestone, brick_block};
+		Block[] blocks = new Block[] {diamond_block, emerald_block, gold_block, redstone_block, lapis_block, coal_block, emerald_ore, redstone_ore, diamond_ore, gold_ore, iron_ore, coal_ore, lapis_ore, bedrock, gravel, obsidian, barrier, iron_block, barrier, prismarine, mossy_cobblestone, brick_block};
 		for (int i = 0; i < blocks.length; i++)
-			CB_ITEMS.add(createItem(blocks[i], 0, "CB" + i));
+			CB_ITEMS.add(createItem(blocks[i], 0, "CB" + (i + 1)));
 
-		CB_ITEMS.set(16, createItem(stone, 6, "CB17"));
-		CB_ITEMS.set(18, createItem(prismarine, 2, "CB19"));
+		CB_ITEMS.set(17, createItem(stone, 6, "CB17"));
+		CB_ITEMS.set(19, createItem(prismarine, 2, "CB19"));
 		CB_ITEMS.add(createItem(sapling, 5, "Nature"));
 		CB_ITEMS.add(createItem(sapling, 3, "Extreme"));
 		CB_ITEMS.add(createItem(netherrack, 0, "CBE"));

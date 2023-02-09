@@ -62,6 +62,7 @@ public class ChestSearch extends Feature {
 		if (searchField != null)
 			previousSearch = searchField.getText();
 
+		searchField = null;
 		if (event.gui instanceof GuiChest) {
 			int guiLeft = Reflection.get(event.gui, "guiLeft");
 			int guiTop = Reflection.get(event.gui, "guiTop");
@@ -76,8 +77,7 @@ public class ChestSearch extends Feature {
 			searchField.setTextColor(0xffffff);
 			searchField.setText(previousSearch);
 			searchField.setEnableBackgroundDrawing(false);
-		} else
-			searchField = null;
+		}
 	}
 
 	@EventListener

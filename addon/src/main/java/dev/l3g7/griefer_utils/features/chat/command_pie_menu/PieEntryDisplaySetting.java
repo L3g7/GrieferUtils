@@ -43,7 +43,7 @@ public class PieEntryDisplaySetting extends ControlElement implements ElementBui
 
 		this.cityBuild = new ItemSetting(ItemUtil.CB_ITEMS, false)
 			.name("CityBuild")
-			.defaultValue(defaultCityBuild = cityBuild);
+			.defaultValue((defaultCityBuild = cityBuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCityBuild);
 
 		if (cityBuild != null)
 			icon(cityBuild);

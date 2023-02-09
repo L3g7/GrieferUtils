@@ -21,6 +21,8 @@ package dev.l3g7.griefer_utils.features.chat.chat_menu;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.IconType;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.addon.online.AddonInfoManager;
@@ -152,7 +154,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 		fileInput.setMaxStringLength(Integer.MAX_VALUE);
 		buttonList.add(fileButton = new GuiButton(4, this.width / 2 + 60, y + 183 + 88, 60, 20, "Auswählen"));
 
-		itemSetting = new ItemSetting()
+		itemSetting = new ItemSetting(ItemUtil.ALL_ITEMS, true)
 			.name("Item")
 			.description("Die ID / der Namespace des Items / Blocks, das als Icon angezeigt werden soll")
 			.callback(stack -> entry.icon = stack);

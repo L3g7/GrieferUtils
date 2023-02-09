@@ -19,18 +19,27 @@
 package dev.l3g7.griefer_utils.util;
 
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+
+import static net.minecraft.init.Blocks.*;
 
 /**
  * A utility class for item processing.
  */
 public class ItemUtil {
+
+	public static final List<ItemStack> ALL_ITEMS = new ArrayList<>();
+	public static final List<ItemStack> CB_ITEMS = new ArrayList<>();
 
 	public static List<String> getLore(ItemStack itemStack) {
 		List<String> lore = new ArrayList<>();
@@ -84,6 +93,35 @@ public class ItemUtil {
 			stack.setStackDisplayName(name);
 
 		return stack;
+	}
+
+	static {
+		for (Item item : Item.itemRegistry) {
+			if (item == null
+				|| item == Item.getItemFromBlock(Blocks.farmland) // Has no model
+				|| item == Item.getItemFromBlock(Blocks.lit_furnace)) // Has no model
+				continue;
+
+			item.getSubItems(item, CreativeTabs.tabAllSearch, ALL_ITEMS);
+		}
+
+		ALL_ITEMS.add(new ItemStack(Items.potionitem));
+		ALL_ITEMS.sort(Comparator.comparing(ItemStack::getDisplayName));
+
+		CB_ITEMS.add(createItem(Items.nether_star, 0, "Jeder CB"));
+
+		Block[] blocks = new Block[] {diamond_block, emerald_block, gold_block, lapis_block, coal_block, emerald_ore, redstone_ore, diamond_ore, gold_ore, iron_ore, coal_ore, lapis_ore, bedrock, gravel, obsidian, barrier, iron_block, barrier, prismarine, mossy_cobblestone, brick_block};
+		for (int i = 0; i < blocks.length; i++)
+			CB_ITEMS.add(createItem(blocks[i], 0, "CB" + i));
+
+		CB_ITEMS.set(16, createItem(stone, 6, "CB17"));
+		CB_ITEMS.set(18, createItem(prismarine, 2, "CB19"));
+		CB_ITEMS.add(createItem(sapling, 5, "Nature"));
+		CB_ITEMS.add(createItem(sapling, 3, "Extreme"));
+		CB_ITEMS.add(createItem(netherrack, 0, "CBE"));
+		CB_ITEMS.add(createItem(Items.water_bucket, 0, "Wasser"));
+		CB_ITEMS.add(createItem(Items.lava_bucket, 0, "Lava"));
+		CB_ITEMS.add(createItem(beacon, 0, "Event"));
 	}
 
 }

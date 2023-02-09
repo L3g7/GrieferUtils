@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.utils.Consumer;

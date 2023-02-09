@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.chat_menu;
+package dev.l3g7.griefer_utils.settings.elements;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
@@ -32,10 +32,7 @@ import net.labymod.settings.elements.DropDownElement;
 import net.labymod.utils.DrawUtils;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
@@ -50,20 +47,18 @@ import java.util.stream.Collectors;
 // Has to be a DropDownElement, otherwise onClickDropDown won't be triggered
 public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implements ElementBuilder<ItemSetting> {
 
-	private static final List<ItemStack> allItems = new ArrayList<>();
 	public static ItemStack MISSING_TEXTURE = new ItemStack(Blocks.stone, 1, 10000);
 	private final DropDownMenu<ItemStack> menu = new DropDownMenu<>(null, 0, 0, 0, 0);
 	private final ModTextField textField = new ModTextField(-2, LabyModCore.getMinecraft().getFontRenderer(), 50, 0, 116, 20);
+	private final List<ItemStack> allItems;
 	private final ArrayList<ItemStack> items = Reflection.get(menu, "list");
 	private final List<Consumer<ItemStack>> callbacks = new ArrayList<>();
+	private final boolean sorted;
 	private String configKey = null;
 	private ItemStack currentValue = null;
 	private ItemStack itemIcon;
 
-	private boolean initialized = false;
-
-
-	public ItemSetting() {
+	public ItemSetting(List<ItemStack> items, boolean sorted) {
 		super("§cNo name set", new DropDownMenu<DummyEnum>(null, 0, 0, 0, 0) {
 			@Override
 			public void draw(int mouseX, int mouseY) {}
@@ -73,24 +68,10 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 		itemIcon = MISSING_TEXTURE;
 		textField.setEnableBackgroundDrawing(false);
 		textField.setMaxStringLength(Integer.MAX_VALUE);
-	}
 
-	public void reset() {
-		iconData = new IconData();
-		itemIcon = MISSING_TEXTURE;
-		textField.setText("");
-		menu.setSelected(null);
-	}
-
-	@Override
-	public void init() {
-		menu.setOpen(false);
-
-		if (initialized)
-			return;
-
-		if (textField.getText().isEmpty())
-			items.addAll(allItems);
+		this.sorted = sorted;
+		this.allItems = items;
+		this.items.addAll(allItems);
 
 		menu.setEntryDrawer((o, x, y, trimmedEntry) -> {
 			boolean isSelected = (menu.getY() + menu.getHeight() / 2 - 4) == y;
@@ -114,8 +95,18 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 			draw.drawItem(stack, scaledX, scaledY, null);
 			GlStateManager.popMatrix();
 		});
+	}
 
-		initialized = true;
+	public void reset() {
+		iconData = new IconData();
+		itemIcon = MISSING_TEXTURE;
+		textField.setText("");
+		menu.setSelected(null);
+	}
+
+	@Override
+	public void init() {
+		menu.setOpen(false);
 	}
 
 	public ItemStack get() {
@@ -181,6 +172,7 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 
 		LabyMod.getInstance().getDrawUtils().drawRectangle(x - 1, y, x, maxY, ModColor.toRGB(120, 120, 120, 120));
+		LabyMod.getInstance().getDrawUtils().drawRectangle(x, y, maxX, maxY, 0x80FF0000);
 		int width = 125;
 		menu.setX(maxX - width - 5);
 		menu.setY(y + 3);
@@ -247,8 +239,10 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 	public void filterItems() {
 		List<ItemStack> filteredItems = allItems.stream()
 			.filter(i -> i.getDisplayName().toLowerCase().contains(textField.getText().toLowerCase()))
-			.sorted(Comparator.comparing(ItemStack::getDisplayName))
 			.collect(Collectors.toList());
+
+		if (sorted)
+			filteredItems.sort(Comparator.comparing(ItemStack::getDisplayName));
 		items.clear();
 		items.addAll(filteredItems);
 
@@ -282,20 +276,5 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 	public void setChangeListener(net.labymod.utils.Consumer<DummyEnum> changeListener) {}
 
 	public enum DummyEnum {}
-
-	static {
-		// Register all items
-		for (Item item : Item.itemRegistry) {
-			if (item == null
-				|| item == Item.getItemFromBlock(Blocks.farmland) // Has no model
-				|| item == Item.getItemFromBlock(Blocks.lit_furnace)) // Has no model
-				continue;
-
-			item.getSubItems(item, CreativeTabs.tabAllSearch, allItems);
-		}
-
-		allItems.add(new ItemStack(Items.potionitem));
-		allItems.sort(Comparator.comparing(ItemStack::getDisplayName));
-	}
 
 }

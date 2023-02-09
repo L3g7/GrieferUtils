@@ -17,7 +17,6 @@ import net.labymod.core.WorldRendererAdapter;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,7 +24,6 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraftforge.client.event.MouseEvent;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -82,10 +80,8 @@ public class GenericItemSaver extends Feature {
 		if (getSetting(event.stack) == null)
 			return;
 
-//		Gui.drawRect(event.x, event.y, event.x + 10, event.y + 10, 0xFFFF0000);
 		float zLevel = Reflection.get(drawUtils(), "zLevel");
-		zLevel += 1000;
-		Reflection.set(drawUtils(), Float.MAX_VALUE, "zLevel");
+		zLevel += 500;
 
 		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
@@ -100,57 +96,16 @@ public class GenericItemSaver extends Feature {
 		x *= 1 / scale;
 		y *= 1 / scale;
 
-		float f = 1;
-		float f1 = 1;
-		Tessellator tessellator = Tessellator.getInstance();
 		WorldRendererAdapter worldrenderer = LabyModCore.getWorldRenderer();
 		worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
 		worldrenderer.pos(x, y + height, zLevel).tex(0, height).endVertex();
 		worldrenderer.pos(x + width, y + height, zLevel).tex(width, height).endVertex();
 		worldrenderer.pos(x + width, y, zLevel).tex(width, 0).endVertex();
 		worldrenderer.pos(x, y, zLevel).tex(0, 0).endVertex();
-		tessellator.draw();
+		Tessellator.getInstance().draw();
 		GlStateManager.popMatrix();
 
-		Reflection.set(drawUtils(), 0, "zLevel");
-//		draw(event.renderItem.zLevel + 200, Tessellator.getInstance().getWorldRenderer(), event.x, event.y, 16, 16, 0xFF, 0x00, 0x00, 0xFF);
-	}
-
-//	private void drawText() {
-//		GL11.glPushMatrix();
-//		double sizeWidth = maxWidth / imageWidth;
-//		double sizeHeight = maxHeight / imageHeight;
-//		GL11.glScaled(sizeWidth, sizeHeight, 0.0);
-//		if (alpha <= 1.0F) {
-//			GlStateManager.enableAlpha();
-//			GlStateManager.enableBlend();
-//			GlStateManager.color(1.0F, 1.0F, 1.0F, alpha);
-//		}
-//
-//		this.drawUVTexture(x / sizeWidth, y / sizeHeight, texturePosX, texturePosY, x / sizeWidth + imageWidth - x / sizeWidth, y / sizeHeight + imageHeight - y / sizeHeight);
-//		if (alpha <= 1.0F) {
-//			GlStateManager.disableAlpha();
-//			GlStateManager.disableBlend();
-//		}
-//
-//		GL11.glPopMatrix();
-//	}
-
-	private void draw(float z, WorldRenderer renderer, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
-		Tessellator tessellator = Tessellator.getInstance();
-		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-		GlStateManager.enableBlend();
-		GlStateManager.disableTexture2D();
-		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		GlStateManager.color(red, green, blue, alpha);
-		worldrenderer.begin(7, DefaultVertexFormats.POSITION);
-		worldrenderer.pos((double)x, (double)y + height, z).endVertex();
-		worldrenderer.pos((double)x + width, (double)y + height, z).endVertex();
-		worldrenderer.pos((double)x + width, (double)y, z).endVertex();
-		worldrenderer.pos((double)x, (double)y, z).endVertex();
-		tessellator.draw();
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableBlend();
+		zLevel -= 500;
 	}
 
 	@EventListener

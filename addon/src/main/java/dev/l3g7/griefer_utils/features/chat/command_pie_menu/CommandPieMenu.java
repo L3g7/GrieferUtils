@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.misc.Config;
 import dev.l3g7.griefer_utils.util.misc.ServerCheck;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class CommandPieMenu extends Feature {
 	private final BooleanSetting animation = new BooleanSetting()
 		.name("Animation")
 		.description("Ob die Öffnen-Animation abgespielt werden soll")
-		.icon("labymod:settings/settings/playermenuanimation")
+		.icon("command_pie_menu")
 		.defaultValue(true);
 
 	private final KeySetting key = new KeySetting()
@@ -71,7 +70,7 @@ public class CommandPieMenu extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Befehlsradialmenü")
 		.description("Ein Radialmenü zum schnellen Ausführen von Citybuild-bezogenen Befehlen.")
-		.icon(Material.COMMAND)
+		.icon("command_pie_menu")
 		.subSettings(key, animation, newEntrySetting);
 
 	@Override

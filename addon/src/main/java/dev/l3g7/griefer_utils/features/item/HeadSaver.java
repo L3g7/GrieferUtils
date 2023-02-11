@@ -54,7 +54,7 @@ public class HeadSaver extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("KopfSaver")
 		.description("Fragt beim Einlösen von /kopf nach einer Bestätigung.")
-		.icon(createItem(Items.skull, 3, false));
+		.icon("steve");
 
 	private final IInventory inv = new InventoryBasic(ChestSearch.marker + "§0Willst du /kopf einlösen?", false, 27);
 

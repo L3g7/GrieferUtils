@@ -39,7 +39,7 @@ public class CommandPieMenu extends Feature {
 		.icon("key")
 		.triggersInContainers()
 		.pressCallback(p -> {
-			if (mc().currentScreen != null && !isEnabled() || !ServerCheck.isOnGrieferGames())
+			if (mc().currentScreen != null || !isEnabled() || !ServerCheck.isOnGrieferGames())
 				return;
 
 			// Open

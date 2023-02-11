@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.features.item.generic_item_saver;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.util.misc.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
@@ -14,6 +15,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
 public class ItemDisplaySetting extends ControlElement implements ElementBuilder<ItemDisplaySetting> {
 
+	public final StringSetting name;
 	public final BooleanSetting drop;
 	public final BooleanSetting leftclick;
 	public final BooleanSetting rightclick;
@@ -29,6 +31,13 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 		this.stack = stack;
 		icon(stack);
 		name(stack.getDisplayName());
+
+		name = new StringSetting()
+			.name("Anzeigename")
+			.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretten Items")
+			.defaultValue(stack.getDisplayName())
+			.callback(this::name)
+			.icon(Material.BOOK_AND_QUILL);
 
 		drop = new BooleanSetting()
 			.name("Droppen unterbinden")
@@ -48,7 +57,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 			.defaultValue(!stack.isItemStackDamageable())
 			.icon(Material.BOW);
 
-		subSettings(drop, leftclick, rightclick);
+		subSettings(name, drop, leftclick, rightclick);
 	}
 
 	@Override

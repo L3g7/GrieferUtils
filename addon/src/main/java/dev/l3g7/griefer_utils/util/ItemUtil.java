@@ -71,7 +71,7 @@ public class ItemUtil {
 	}
 
 	public static boolean canBeRepaired(ItemStack itemStack) {
-		// The repair cost of the item (Source: ContainerRepair.updateRepairOutput())
+		// The repair cost of the item (Source: ContainerRepair#updateRepairOutput()).
 		// If the item is only damaged 1/4, you can repair it with a single material of the same type (i.e. a diamond), thus costing only 1 level
 		// more than the repair value. Otherwise, it can be repaired with another item of the same type (i.e. a diamond sword), costing 2 levels more.
 		int xpCost = itemStack.getRepairCost() + (itemStack.getItemDamage() >= itemStack.getMaxDamage() / 4 ? 1 : 2);

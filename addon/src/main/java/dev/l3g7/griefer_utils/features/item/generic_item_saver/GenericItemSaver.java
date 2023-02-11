@@ -22,13 +22,13 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraftforge.client.event.MouseEvent;
 
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Objects;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.RELEASE_USE_ITEM;
@@ -36,11 +36,14 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.RE
 @Singleton
 public class GenericItemSaver extends Feature {
 
+	private static final String BONZE_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
+	private static final String BIRTH_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:2s,id:20s},2:{lvl:5s,id:61s},3:{lvl:21s,id:21s}],display:{Name:\"§4B§aI§3R§2T§eH §4§lKlinge\"}},Damage:0s}";
+
 	private String entryKey;
 
 	private final EntryAddSetting newEntrySetting = new EntryAddSetting()
 		.name("Item hinzufügen")
-		.callback(this::openSelectGui);
+		.callback(() -> ItemSelectGui.open(this::addItem));
 
 	@MainElement(configureSubSettings = false)
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -55,8 +58,15 @@ public class GenericItemSaver extends Feature {
 
 		entryKey = getConfigKey() + ".entries";
 
-		if (!Config.has(entryKey))
+		if (!Config.has(entryKey)) {
+			try {
+				addItem(ItemStack.loadItemStackFromNBT(JsonToNBT.getTagFromJson(BONZE_NBT)));
+				addItem(ItemStack.loadItemStackFromNBT(JsonToNBT.getTagFromJson(BIRTH_NBT)));
+			} catch (NBTException e) {
+				throw new RuntimeException(e);
+			}
 			return;
+		}
 
 		JsonObject entries = Config.get(entryKey).getAsJsonObject();
 		for (Map.Entry<String, JsonElement> entry : entries.entrySet()) {
@@ -65,6 +75,7 @@ public class GenericItemSaver extends Feature {
 				JsonObject data = entry.getValue().getAsJsonObject();
 
 				ItemDisplaySetting setting = new ItemDisplaySetting(stack);
+				setting.name.set(data.get("name").getAsString());
 				setting.drop.set(data.get("drop").getAsBoolean());
 				setting.leftclick.set(data.get("leftclick").getAsBoolean());
 				setting.rightclick.set(data.get("rightclick").getAsBoolean());
@@ -104,8 +115,6 @@ public class GenericItemSaver extends Feature {
 		worldrenderer.pos(x, y, zLevel).tex(0, 0).endVertex();
 		Tessellator.getInstance().draw();
 		GlStateManager.popMatrix();
-
-		zLevel -= 500;
 	}
 
 	@EventListener
@@ -158,44 +167,63 @@ public class GenericItemSaver extends Feature {
 			if (!stack.isItemStackDamageable() && settingStack.getMetadata() != stack.getMetadata())
 				continue;
 
-			if (Objects.equals(stack.getTagCompound(), settingStack.getTagCompound()))
+			if (areTagsEqual(stack.getTagCompound(), settingStack.getTagCompound()))
 				return setting;
 		}
 
 		return null;
 	}
 
-	private void openSelectGui() {
-		ItemSelectGui.open(stack -> {
-			ItemStack is = stack.copy();
+	private boolean areTagsEqual(NBTTagCompound stackNBT, NBTTagCompound settingNBT) {
+		if (stackNBT == null)
+			return settingNBT == null;
 
-			if (is.isItemStackDamageable())
-				is.setItemDamage(0);
+		NBTTagCompound cleanedStackNBT = (NBTTagCompound) stackNBT.copy();
+		cleanedStackNBT.removeTag("display");
+		cleanedStackNBT.removeTag("RepairCost");
 
-			is.stackSize = 1;
+		return cleanedStackNBT.equals(settingNBT);
+	}
 
-			ListIterator<SettingsElement> iterator = getMainElement().getSubSettings().getElements().listIterator();
-			String nbt = is.serializeNBT().toString();
+	private void addItem(ItemStack stack) {
+		ItemStack is = stack.copy();
 
-			while (iterator.hasNext()) {
-				SettingsElement element = iterator.next();
+		if (is.isItemStackDamageable())
+			is.setItemDamage(0);
 
-				if (element instanceof ItemDisplaySetting)
-					if (nbt.equals(((ItemDisplaySetting) element).getStack().serializeNBT().toString()))
-						return;
+		String name = is.getDisplayName();
 
-				if (element instanceof EntryAddSetting)
-					break;
-			}
+		if (is.hasTagCompound()) {
+			is.getTagCompound().removeTag("display");
+			is.getTagCompound().removeTag("RepairCost");
+		}
 
-			iterator.previous();
-			iterator.add(new ItemDisplaySetting(is));
-			onChange();
-		});
+		is.stackSize = 1;
+
+		ListIterator<SettingsElement> iterator = getMainElement().getSubSettings().getElements().listIterator();
+		String nbt = is.serializeNBT().toString();
+
+		while (iterator.hasNext()) {
+			SettingsElement element = iterator.next();
+
+			if (element instanceof ItemDisplaySetting)
+				if (nbt.equals(((ItemDisplaySetting) element).getStack().serializeNBT().toString()))
+					return;
+
+			if (element instanceof EntryAddSetting)
+				break;
+		}
+
+		iterator.previous();
+		ItemDisplaySetting setting = new ItemDisplaySetting(is);
+		setting.name.set(name);
+		iterator.add(setting);
+		onChange();
 	}
 
 	public void onChange() {
-		mc().currentScreen.initGui();
+		if (mc().currentScreen != null)
+			mc().currentScreen.initGui();
 
 		JsonObject object = new JsonObject();
 		for (SettingsElement element : enabled.getSubSettings().getElements()) {
@@ -205,6 +233,7 @@ public class GenericItemSaver extends Feature {
 			ItemDisplaySetting itemDisplaySetting = (ItemDisplaySetting) element;
 
 			JsonObject entry = new JsonObject();
+			entry.addProperty("name", itemDisplaySetting.name.get());
 			entry.addProperty("drop", itemDisplaySetting.drop.get());
 			entry.addProperty("leftclick", itemDisplaySetting.leftclick.get());
 			entry.addProperty("rightclick", itemDisplaySetting.rightclick.get());

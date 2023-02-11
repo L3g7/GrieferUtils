@@ -52,8 +52,10 @@ public class ConfigPatcher {
 
 		VersionComparator cmp = new VersionComparator();
 
-		// patch city_build added to reactions in 2.0-BETA-6
+
 		if (cmp.compare("2.0-BETA-6", version) < 0) {
+
+			// patch city_build added to reactions in 2.0-BETA-6
 			JsonObject chatReactor = getParent("chat.chat_reactor.entries");
 			if (chatReactor.has("entries")) {
 				for (JsonElement entry : chatReactor.get("entries").getAsJsonArray()) {
@@ -62,6 +64,9 @@ public class ConfigPatcher {
 						reaction.addProperty("city_build", "Jeder CB");
 				}
 			}
+
+			// patch BonzeSaver
+			rename("item.sword_saver.enabled", "item.generic_item_saver.enabled");
 		}
 	}
 

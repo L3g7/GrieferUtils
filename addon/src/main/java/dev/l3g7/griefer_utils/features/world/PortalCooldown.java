@@ -25,8 +25,8 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
@@ -44,8 +44,13 @@ public class PortalCooldown extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessage(ClientChatReceivedEvent event) {
-		if (event.message.getFormattedText().equals("§r§8[§r§6GrieferGames§r§8] §r§fDu bist im §r§5Portalraum§r§f. Wähle deinen Citybuild aus.§r")) {
+		String msg = event.message.getFormattedText();
+
+		if (msg.equals("§r§8[§r§6GrieferGames§r§8] §r§fDu bist im §r§5Portalraum§r§f. Wähle deinen Citybuild aus.§r")) {
 			timeoutEnd = 12 * 20;
+		} else if (msg.startsWith("§r§cKicked whilst connecting") && !msg.contains("Du hast dich zu schnell wieder eingeloggt.")) {
+			if (MinecraftUtil.getServerFromScoreboard().equals("Portal"))
+				timeoutEnd = 12 * 20;
 		}
 	}
 

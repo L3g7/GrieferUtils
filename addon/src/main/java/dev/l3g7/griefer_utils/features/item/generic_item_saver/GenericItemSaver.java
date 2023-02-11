@@ -61,7 +61,14 @@ public class GenericItemSaver extends Feature {
 
 	private final EntryAddSetting newEntrySetting = new EntryAddSetting()
 		.name("Item hinzufügen")
-		.callback(() -> ItemSelectGui.open(this::addItem));
+		.callback(() -> {
+			if (mc().thePlayer == null) {
+				displayAchievement("§e§lFehler \u26A0", "§eHinzufügen von Items ist nur Ingame möglich!");
+				return;
+			}
+
+			ItemSelectGui.open(this::addItem);
+		});
 
 	@MainElement(configureSubSettings = false)
 	private final BooleanSetting enabled = new BooleanSetting()

@@ -52,7 +52,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 
 		name = new StringSetting()
 			.name("Anzeigename")
-			.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretten Items")
+			.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretten Items.")
 			.defaultValue(stack.getDisplayName())
 			.callback(this::name)
 			.icon(Material.BOOK_AND_QUILL);

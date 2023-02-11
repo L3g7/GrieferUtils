@@ -117,9 +117,6 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 	public ItemSetting set(ItemStack stack) {
 		currentValue = stack;
 		menu.setSelected(stack);
-		if (stack != null)
-			textField.setText(stack.getDisplayName());
-		textField.setCursorPositionEnd();
 		filterItems();
 
 		callbacks.forEach(c -> c.accept(stack));
@@ -202,6 +199,8 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 			textField.setFocused(menu.isOpen());
 			if (menu.getSelected() != currentValue)
 				set(menu.getSelected());
+			textField.setText("");
+			filterItems();
 			return true;
 		}
 

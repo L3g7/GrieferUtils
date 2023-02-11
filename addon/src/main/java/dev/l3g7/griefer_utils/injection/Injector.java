@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.LogHook;
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.injection.transformer.Transformer;
+import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -52,7 +53,8 @@ public class Injector implements IClassTransformer {
 	private static final Map<String, Transformer> transformers = new HashMap<>();
 
 	public Injector() throws ReflectiveOperationException, IOException {
-		LogHook.hook();
+		if (Constants.DEBUG)
+			LogHook.hook();
 		loadMixin();
 		loadTransformers();
 	}

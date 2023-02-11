@@ -23,7 +23,6 @@ import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.LogHook;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipOutputStream;
 
@@ -39,7 +38,6 @@ public class LogFileEntry extends LogEntry {
 
 	@Override
 	public void addEntry(ZipOutputStream zip) throws IOException {
-		LogHook.flush();
 		includeFile(zip, LogHook.FILE.toFile(), "log.txt");
 	}
 }

@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.util.misc.Constants;
 
 @Singleton
 public class Settings extends Feature {
@@ -33,6 +34,13 @@ public class Settings extends Feature {
 	private final CategorySetting element = new CategorySetting()
 		.name("§yEinstellungen")
 		.icon("cog")
-		.subSettings(AutoUpdate.enabled, Changelog.category, new HeaderSetting(), Telemetry.category, new HeaderSetting(), Debug.category);
+		.subSettings(AutoUpdate.enabled, Changelog.category, new HeaderSetting(), Telemetry.category);
+
+	{
+		if (Constants.DEBUG) {
+			element.getSubSettings().add(new HeaderSetting());
+			element.getSubSettings().add(Debug.category);
+		}
+	}
 
 }

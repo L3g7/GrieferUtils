@@ -27,23 +27,26 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.zip.GZIPOutputStream;
+
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
 
 public class LogHook {
 
 	public static final Path FILE = Paths.get(System.getProperty("java.io.tmpdir"), "griefer_utils_debug_log.txt");
-	private static OutputStream fileOut;
 
 	public static void hook() {
 		try {
-			fileOut = Files.newOutputStream(FILE);
 			OutputStream sOut = findLowestStream();
 			OutputStream out = Reflection.get(sOut, "out");
+
+			Files.deleteIfExists(FILE);
+
 			Reflection.set(sOut, new OutputStream() {
-				public void write(int b) throws IOException {
+				public void write(int b) {
 					try {
 						out.write(b);
-						fileOut.write(b);
+						Files.write(FILE, new byte[] {((byte) b)}, APPEND, CREATE);
 					} catch (Throwable t) {
 						t.printStackTrace(new PrintStream(sOut));
 						throw new RuntimeException(t);
@@ -67,11 +70,4 @@ public class LogHook {
 		return sOut;
 	}
 
-	public static void flush() {
-		try {
-			fileOut.flush();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
 }

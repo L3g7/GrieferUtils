@@ -20,9 +20,7 @@ package dev.l3g7.griefer_utils.util.misc;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -32,6 +30,8 @@ import java.util.regex.Pattern;
  * Constant variables for the addon.
  */
 public class Constants {
+
+	public static final boolean DEBUG = System.getProperty("ebug") != null; // -Debug :>
 
 	public static final String ADDON_NAME = "GrieferUtils";
 	public static final String ADDON_PREFIX = "§8[§r§f§l" + ADDON_NAME + "§r§8] §r§f";

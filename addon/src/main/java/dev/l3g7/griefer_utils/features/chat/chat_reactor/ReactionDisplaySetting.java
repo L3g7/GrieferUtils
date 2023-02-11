@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -59,10 +60,14 @@ public class ReactionDisplaySetting extends BooleanSetting {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		setDisplayName(displayName);
 
+		String cb = "§e[" + MinecraftUtil.getCityBuildAbreviation(reaction.cityBuild) + "] ";
+		int cbWidth = drawUtils().getStringWidth(cb);
+
 		String trimmedTrigger = drawUtils().trimStringToWidth(reaction.trigger, maxX - x - 25 - 79);
-		String trimmedCommand = drawUtils().trimStringToWidth(reaction.command, maxX - x - 25 - 79 - drawUtils().getStringWidth("➡ "));
+		String trimmedCommand = drawUtils().trimStringToWidth(reaction.command, maxX - x - 25 - 79 - drawUtils().getStringWidth("➡ ") - cbWidth);
 		drawUtils().drawString(trimmedTrigger + (trimmedTrigger.equals(reaction.trigger) ? "" : "…"), x + 25, y + 7 - 5);
-		drawUtils().drawString("§o➡ " + trimmedCommand + (trimmedCommand.equals(reaction.command) ? "" : "…"), x + 25, y + 7 + 5);
+		drawUtils().drawString("§o➡ " + trimmedCommand + (trimmedCommand.equals(reaction.command) ? "" : "…"), x + 25 + cbWidth, y + 7 + 5);
+		drawUtils().drawString(cb, x + 25, y + 7 + 5);
 
 		editHovered = mouseX > maxX - 70 && mouseX < maxX - 55 && mouseY > y + 4 && mouseY < y + 20;
 		mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));

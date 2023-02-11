@@ -128,4 +128,19 @@ public class MinecraftUtil {
 		return team == null ? "" : team.getColorPrefix().replaceAll("§.", "");
 	}
 
+	public static String getCityBuildAbreviation(String citybuild) {
+		if (citybuild.startsWith("CB"))
+			return citybuild.substring(2);
+
+		switch (citybuild) {
+			case "Nature": return "N";
+			case "Extreme": return "X";
+			case "CBE": return "E";
+			case "Wasser": return "W";
+			case "Lava": return "L";
+			case "Event": return "V";
+			default: return "*";
+		}
+	}
+
 }

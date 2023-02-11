@@ -129,6 +129,10 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 		return this;
 	}
 
+	public boolean isOpen() {
+		return menu.isOpen();
+	}
+
 	public ItemSetting defaultValue(ItemStack defaultValue) {
 		if (currentValue == null) {
 			set(defaultValue);

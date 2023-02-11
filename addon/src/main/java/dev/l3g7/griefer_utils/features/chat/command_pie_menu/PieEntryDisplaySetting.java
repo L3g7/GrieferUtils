@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.misc.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
@@ -63,8 +64,7 @@ public class PieEntryDisplaySetting extends ControlElement implements ElementBui
 			.name("CityBuild")
 			.defaultValue((defaultCityBuild = cityBuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCityBuild);
 
-		if (cityBuild != null)
-			icon(cityBuild);
+		icon("command_pie_menu");
 
 		subSettings(this.name, this.command, this.cityBuild);
 		setSettingEnabled(false);
@@ -81,7 +81,6 @@ public class PieEntryDisplaySetting extends ControlElement implements ElementBui
 		defaultCityBuild = cityBuild.get();
 		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
 			if (!name.get().isEmpty() && !command.get().isEmpty() && cityBuild.get() != null) {
-				icon(cityBuild.get());
 				triggerOnChange();
 				return;
 			}
@@ -134,11 +133,14 @@ public class PieEntryDisplaySetting extends ControlElement implements ElementBui
 		drawIcon(x, y);
 
 		mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
+		String cb = "§e[" + MinecraftUtil.getCityBuildAbreviation(cityBuild.get().getDisplayName()) + "] ";
+		int cbWidth = drawUtils().getStringWidth(cb);
 
-		String trimmedName = drawUtils().trimStringToWidth(name.get(), maxX - x - 25 - 79);
-		String trimmedCommand = drawUtils().trimStringToWidth(command.get(), maxX - x - 25 - 79 - drawUtils().getStringWidth("➡ "));
+		String trimmedName = drawUtils().trimStringToWidth(name.get(), maxX - x - 25 - 48);
+		String trimmedCommand = drawUtils().trimStringToWidth(command.get(), maxX - x - 25 - 48 - drawUtils().getStringWidth("➡ ") - cbWidth);
 		drawUtils().drawString(trimmedName + (trimmedName.equals(name.get()) ? "" : "…"), x + 25, y + 7 - 5);
-		drawUtils().drawString("§o➡ " + trimmedCommand + (trimmedCommand.equals(command.get()) ? "" : "…"), x + 25, y + 7 + 5);
+		drawUtils().drawString("§o➡ " + trimmedCommand + (trimmedCommand.equals(command.get()) ? "" : "…"), x + 25 + cbWidth, y + 7 + 5);
+		drawUtils().drawString(cb, x + 25, y + 7 + 5);
 
 		int xPosition = maxX - 20;
 		double yPosition = y + 4.5;

@@ -232,6 +232,8 @@ public class AddChatReactionGui extends GuiScreen {
 				regEx = true;
 				break;
 			case 1:
+				if (cityBuildSetting.isOpen())
+					return;
 				reaction.regEx = regEx;
 				reaction.matchAll = textCompareDropDown.getSelected() == TextCompareMode.EQUALS;
 				reaction.trigger = triggerInput.getText();
@@ -243,6 +245,8 @@ public class AddChatReactionGui extends GuiScreen {
 				ChatReactor.saveEntries();
 				// Fall-through
 			case 0:
+				if (cityBuildSetting.isOpen())
+					return;
 				Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
 				backgroundScreen.initGui(); // Update settings
 		}
@@ -282,8 +286,9 @@ public class AddChatReactionGui extends GuiScreen {
 	@Override
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
-		scrollbar.mouseInput();
 		cityBuildSetting.onScrollDropDown();
+		if (!cityBuildSetting.isOpen())
+			scrollbar.mouseInput();
 	}
 
 	protected void keyTyped(char typedChar, int keyCode) {

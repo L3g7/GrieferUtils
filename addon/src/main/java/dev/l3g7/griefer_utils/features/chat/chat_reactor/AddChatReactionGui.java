@@ -19,6 +19,8 @@
 package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
 import net.labymod.core.LabyModCore;
@@ -37,6 +39,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
 
@@ -61,6 +64,8 @@ public class AddChatReactionGui extends GuiScreen {
 	private ImageButton parseModeRegEx;
 	private GuiButton buttonBack;
 	private DropDownMenu<TextCompareMode> textCompareDropDown;
+
+	private ItemSetting cityBuildSetting;
 
 	private final Scrollbar scrollbar = new Scrollbar(1);
 
@@ -111,15 +116,29 @@ public class AddChatReactionGui extends GuiScreen {
 		textCompareDropDown.setY(y + 183 + 45);
 		textCompareDropDown.setWidth(240);
 		textCompareDropDown.setHeight(17);
+
+		// 50 + 80 + 183 + 45
+		cityBuildSetting = new ItemSetting(ItemUtil.CB_ITEMS, false)
+			.name("CityBuild")
+			.description("Die ID / der Namespace des Items / Blocks, das als Icon angezeigt werden soll");
+
+		for (ItemStack cb : ItemUtil.CB_ITEMS) {
+			if (cb.getDisplayName().equals(reaction.cityBuild)) {
+				cityBuildSetting.defaultValue(cb);
+				break;
+			}
+		}
+
+		cityBuildSetting.init();
 	}
 
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		GL11.glColorMask(false, false, false, false);
 		for (GuiButton guiButton : this.buttonList) guiButton.drawButton(this.mc, mouseX, mouseY);
 		GL11.glColorMask(true, true, true, true);
-		int height = regEx == null ? 205 : regEx ? 50 + 183 + 20 + 8 + 80 : 50 + 183 + 65 + 60 + 17 + 28;
+		int height = regEx == null ? 205 : regEx ? 50 + 183 + 20 + 8 + 80 + 42 : 50 + 183 + 65 + 60 + 17 + 28 + 42;
 		int guiScale = new ScaledResolution(mc).getScaleFactor();
-		scrollbar.update(height - (int) scrollbar.getTop() + (regEx == null ? 0 : regEx ? -91 + (44 * guiScale) : (17 + (22 * guiScale))));
+		scrollbar.update(height - (int) scrollbar.getTop() + (regEx == null ? 0 : regEx ? -91 + (80 * guiScale) : (17 + (50 * guiScale))));
 
 
 		LabyModAddonsGui addonsGui = (LabyModAddonsGui) backgroundScreen;
@@ -168,6 +187,9 @@ public class AddChatReactionGui extends GuiScreen {
 			drawUtils().drawString("Befehl", x, commandInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
 			commandInput.drawTextBox();
 
+			int y = regEx ? 50 + 80 + 183 + 20 : 50 + 80 + 183 + 82;
+			cityBuildSetting.draw(x, y, x + 240, y + 23, mouseX, mouseY);
+
 			if (!regEx) {
 				textCompareDropDown.setX(x);
 				textCompareDropDown.draw(mouseX, mouseY);
@@ -197,6 +219,7 @@ public class AddChatReactionGui extends GuiScreen {
 		backgroundScreen.updateScreen();
 		triggerInput.updateCursorCounter();
 		commandInput.updateCursorCounter();
+		cityBuildSetting.updateScreen();
 	}
 
 	protected void actionPerformed(GuiButton button) throws IOException {
@@ -213,6 +236,7 @@ public class AddChatReactionGui extends GuiScreen {
 				reaction.matchAll = textCompareDropDown.getSelected() == TextCompareMode.EQUALS;
 				reaction.trigger = triggerInput.getText();
 				reaction.command = commandInput.getText();
+				reaction.cityBuild = cityBuildSetting.get().getDisplayName();
 				reaction.completed = true;
 				new ReactionDisplaySetting(reaction, FileProvider.getSingleton(ChatReactor.class).getMainElement())
 					.icon(regEx ? parseModeRegEx.image.getTextureIcon() : parseModeText.image.getTextureIcon());
@@ -236,12 +260,15 @@ public class AddChatReactionGui extends GuiScreen {
 		triggerInput.mouseClicked(mouseX, mouseY, mouseButton);
 		commandInput.mouseClicked(mouseX, mouseY, mouseButton);
 		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
+		cityBuildSetting.mouseClicked(mouseX, mouseY, mouseButton);
+		cityBuildSetting.onClickDropDown(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
 		super.mouseReleased(mouseX, mouseY -= scrollbar.getScrollY(), state);
 		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.RELEASED);
+		cityBuildSetting.mouseRelease(mouseX, mouseY, state);
 	}
 
 	@Override
@@ -249,12 +276,14 @@ public class AddChatReactionGui extends GuiScreen {
 		super.mouseClickMove(mouseX, mouseY -= scrollbar.getScrollY(), mouseButton, timeSinceLastClick);
 		textCompareDropDown.onDrag(mouseX, mouseY, mouseButton);
 		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
+		cityBuildSetting.mouseClickMove(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 		scrollbar.mouseInput();
+		cityBuildSetting.onScrollDropDown();
 	}
 
 	protected void keyTyped(char typedChar, int keyCode) {
@@ -271,6 +300,7 @@ public class AddChatReactionGui extends GuiScreen {
 			}
 		}
 		commandInput.textboxKeyTyped(typedChar, keyCode);
+		cityBuildSetting.keyTyped(typedChar, keyCode);
 	}
 
 	private static class ImageButton {

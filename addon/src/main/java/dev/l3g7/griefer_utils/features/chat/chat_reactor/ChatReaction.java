@@ -35,6 +35,7 @@ public class ChatReaction {
 	boolean matchAll;
 	String trigger = "";
 	String command = "";
+	String cityBuild = "Jeder CB";
 	boolean completed;
 	int pos = -1;
 
@@ -48,6 +49,7 @@ public class ChatReaction {
 		object.addProperty("match_all", matchAll);
 		object.addProperty("trigger", trigger);
 		object.addProperty("command", command);
+		object.addProperty("city_build", cityBuild);
 
 		return object;
 	}
@@ -59,6 +61,7 @@ public class ChatReaction {
 		reaction.matchAll = object.get("match_all").getAsBoolean();
 		reaction.trigger = object.get("trigger").getAsString();
 		reaction.command = object.get("command").getAsString();
+		reaction.cityBuild = object.get("city_build").getAsString();
 		reaction.completed = true;
 		return reaction;
 	}

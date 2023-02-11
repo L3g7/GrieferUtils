@@ -49,6 +49,20 @@ public class ConfigPatcher {
 		String version = config.get("version").getAsString();
 		if (version.startsWith("1"))
 			patch_v1();
+
+		VersionComparator cmp = new VersionComparator();
+
+		// patch city_build added to reactions in 2.0-BETA-6
+		if (cmp.compare("2.0-BETA-6", version) < 0) {
+			JsonObject chatReactor = getParent("chat.chat_reactor.entries");
+			if (chatReactor.has("entries")) {
+				for (JsonElement entry : chatReactor.get("entries").getAsJsonArray()) {
+					JsonObject reaction = entry.getAsJsonObject();
+					if (!reaction.has("city_build"))
+						reaction.addProperty("city_build", "Jeder CB");
+				}
+			}
+		}
 	}
 
 	private void patch_v1() {

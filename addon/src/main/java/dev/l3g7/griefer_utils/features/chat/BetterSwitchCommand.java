@@ -28,6 +28,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import net.labymod.utils.Material;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -111,7 +112,8 @@ public class BetterSwitchCommand extends Feature {
 		if (command == null)
 			return;
 
-		player().sendChatMessage(command);
+		if (!MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(command)))
+			player().sendChatMessage(command);
 		command = null;
 	}
 

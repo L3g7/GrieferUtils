@@ -28,6 +28,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.misc.Config;
 import dev.l3g7.griefer_utils.util.misc.Constants;
 import dev.l3g7.griefer_utils.util.reflection.Reflection;
@@ -97,12 +98,18 @@ public class ChatReactor extends Feature {
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
+		String srv = MinecraftUtil.getServerFromScoreboard();
+
 		for (SettingsElement element : enabled.getSubSettings().getElements()) {
 			if (!(element instanceof ReactionDisplaySetting))
 				continue;
 
 			ReactionDisplaySetting setting = (ReactionDisplaySetting) element;
 			ChatReaction reaction = setting.reaction;
+
+			if (!reaction.cityBuild.equals("Jeder CB") && !srv.equals(reaction.cityBuild))
+				continue;
+
 			try {
 				reaction.processMessage(event.getFormatted());
 			} catch (Exception e) {

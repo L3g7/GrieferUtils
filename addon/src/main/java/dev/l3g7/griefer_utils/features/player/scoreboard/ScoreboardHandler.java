@@ -21,9 +21,9 @@ package dev.l3g7.griefer_utils.features.player.scoreboard;
 
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.util.misc.ServerCheck;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;

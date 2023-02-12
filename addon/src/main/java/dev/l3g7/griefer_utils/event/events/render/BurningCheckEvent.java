@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
-import dev.l3g7.griefer_utils.injection.mixin.MixinEntity;
+import dev.l3g7.griefer_utils.core.injection.mixin.MixinEntity;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;

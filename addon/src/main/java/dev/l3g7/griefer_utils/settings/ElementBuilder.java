@@ -19,9 +19,9 @@
 package dev.l3g7.griefer_utils.settings;
 
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.util.Util;
-import dev.l3g7.griefer_utils.util.misc.Constants;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.util.Util;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static com.google.common.base.CaseFormat.*;
-import static dev.l3g7.griefer_utils.util.Util.elevate;
+import static dev.l3g7.griefer_utils.core.util.Util.elevate;
 
 /**
  * An interface for builder-like setting creation.

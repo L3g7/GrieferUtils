@@ -20,10 +20,10 @@ package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
-import dev.l3g7.griefer_utils.util.misc.Vec3d;
+import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;

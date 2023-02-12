@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
-import dev.l3g7.griefer_utils.injection.mixin.MixinGuiChest;
+import dev.l3g7.griefer_utils.core.injection.mixin.MixinGuiChest;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;

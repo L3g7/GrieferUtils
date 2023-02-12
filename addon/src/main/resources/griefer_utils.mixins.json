@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "dev.l3g7.griefer_utils.injection.mixin",
+  "package": "dev.l3g7.griefer_utils.core.injection.mixin",
   "refmap": "griefer_utils.mixins.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.7",

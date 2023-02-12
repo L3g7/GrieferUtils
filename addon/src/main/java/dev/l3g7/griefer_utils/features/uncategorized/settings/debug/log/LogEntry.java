@@ -20,7 +20,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log;
 
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;

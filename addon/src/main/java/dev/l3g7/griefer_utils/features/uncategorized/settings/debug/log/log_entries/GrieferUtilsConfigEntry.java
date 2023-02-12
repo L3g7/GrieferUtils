@@ -21,7 +21,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.log_ent
 import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.LogEntry;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.Config;
 
 import java.io.IOException;
 import java.util.zip.ZipEntry;

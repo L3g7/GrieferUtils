@@ -20,9 +20,9 @@ package dev.l3g7.griefer_utils.settings;
 
 import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.util.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.crash.CrashReport;

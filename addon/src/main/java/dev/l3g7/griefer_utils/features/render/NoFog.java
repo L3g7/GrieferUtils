@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent.FogType;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.item.ItemStack;

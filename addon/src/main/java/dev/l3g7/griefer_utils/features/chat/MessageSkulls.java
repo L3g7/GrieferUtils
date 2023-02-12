@@ -23,11 +23,11 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.ChatLogModifyEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.util.misc.NameCache;
+import dev.l3g7.griefer_utils.misc.NameCache;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.DrawUtils;
@@ -42,7 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.util.misc.Constants.*;
+import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 
 @Singleton
 public class MessageSkulls extends Feature {

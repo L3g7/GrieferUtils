@@ -24,12 +24,12 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
-import dev.l3g7.griefer_utils.util.misc.ChatQueue;
-import dev.l3g7.griefer_utils.util.misc.Config;
-import dev.l3g7.griefer_utils.util.misc.ServerCheck;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.misc.ChatQueue;
+import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.JsonParse;
 import net.minecraft.client.gui.GuiScreen;
@@ -58,7 +58,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
-import static dev.l3g7.griefer_utils.util.misc.ServerCheck.isOnGrieferGames;
+import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
 
 @Singleton
 public class OrbStats extends Module {

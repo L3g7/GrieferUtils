@@ -18,11 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.item.generic_item_saver;
 
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
-import dev.l3g7.griefer_utils.util.misc.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.misc.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.audio.PositionedSoundRecord;

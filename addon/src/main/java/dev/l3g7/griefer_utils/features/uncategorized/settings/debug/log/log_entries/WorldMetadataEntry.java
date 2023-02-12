@@ -19,22 +19,16 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.log_entries;
 
 import com.google.gson.JsonObject;
-import com.mojang.authlib.properties.PropertyMap;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.LogEntry;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import net.minecraft.client.multiplayer.ChunkProviderClient;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.Session;
 import net.minecraft.world.chunk.IChunkProvider;
 
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static dev.l3g7.griefer_utils.util.JsonUtil.jsonObject;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.core.util.JsonUtil.jsonObject;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 import static java.nio.charset.StandardCharsets.UTF_8;
 

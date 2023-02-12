@@ -18,11 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import dev.l3g7.griefer_utils.util.misc.Constants;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.gui.elements.ModTextField;

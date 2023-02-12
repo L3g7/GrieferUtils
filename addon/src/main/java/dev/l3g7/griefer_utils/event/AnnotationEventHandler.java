@@ -21,10 +21,10 @@ package dev.l3g7.griefer_utils.event;
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.meta.MethodMeta;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import org.objectweb.asm.Opcodes;
@@ -32,7 +32,7 @@ import org.objectweb.asm.Opcodes;
 import java.lang.annotation.Annotation;
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.util.reflection.Reflection.invoke;
+import static dev.l3g7.griefer_utils.core.reflection.Reflection.invoke;
 
 /**
  * Handles the logic for triggering methods annotated with {@link OnEnable} and {@link OnStartupComplete}.

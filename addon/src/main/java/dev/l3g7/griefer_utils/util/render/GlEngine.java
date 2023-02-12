@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.util.render;
 
-import dev.l3g7.griefer_utils.util.misc.Vec3d;
+import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;

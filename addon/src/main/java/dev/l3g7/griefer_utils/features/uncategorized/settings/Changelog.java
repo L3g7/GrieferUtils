@@ -23,9 +23,9 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.TextSetting;
-import dev.l3g7.griefer_utils.util.IOUtil;
-import dev.l3g7.griefer_utils.util.misc.Constants;
-import dev.l3g7.griefer_utils.util.misc.VersionComparator;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.VersionComparator;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.ArrayList;

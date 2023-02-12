@@ -23,16 +23,16 @@ import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMP
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.util.misc.Constants;
-import dev.l3g7.griefer_utils.util.misc.mysterymod_connection.MysteryModConnection;
-import dev.l3g7.griefer_utils.util.misc.mysterymod_connection.MysteryModConnection.State;
-import dev.l3g7.griefer_utils.util.misc.mysterymod_connection.packets.transactions.RequestTransactionsPacket;
-import dev.l3g7.griefer_utils.util.misc.mysterymod_connection.packets.transactions.Transaction;
-import dev.l3g7.griefer_utils.util.misc.mysterymod_connection.packets.transactions.TransactionsPacket;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
+import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection.State;
+import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.RequestTransactionsPacket;
+import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.Transaction;
+import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.TransactionsPacket;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.text.SimpleDateFormat;

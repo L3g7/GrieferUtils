@@ -20,10 +20,10 @@ package dev.l3g7.griefer_utils.settings;
 
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.AutoUpdate;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.util.AddonUtil;
-import dev.l3g7.griefer_utils.util.IOUtil;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.addon.online.info.AddonInfo;
 
 import static net.labymod.utils.ModColor.YELLOW;

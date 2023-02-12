@@ -19,17 +19,14 @@
 package dev.l3g7.griefer_utils.features.modules.money;
 
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.elements.ButtonSetting;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
-import dev.l3g7.griefer_utils.util.misc.Constants;
-import dev.l3g7.griefer_utils.util.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
-import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 
 import java.math.BigDecimal;
 import java.util.List;

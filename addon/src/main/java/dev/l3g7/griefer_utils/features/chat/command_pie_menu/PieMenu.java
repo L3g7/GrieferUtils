@@ -20,7 +20,7 @@ package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.user.gui.UserActionGui;

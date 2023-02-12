@@ -21,7 +21,7 @@ package dev.l3g7.griefer_utils.settings.elements;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.DropDownElement;
@@ -33,7 +33,7 @@ import net.minecraft.client.gui.Gui;
 import java.util.List;
 import java.util.function.Function;
 
-import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
 
 /**
  * A setting to select enums using a dropdown.

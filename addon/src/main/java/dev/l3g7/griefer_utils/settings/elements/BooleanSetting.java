@@ -22,7 +22,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.settings.elements.BooleanElement;
 import net.labymod.utils.Consumer;
 

@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
 import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;

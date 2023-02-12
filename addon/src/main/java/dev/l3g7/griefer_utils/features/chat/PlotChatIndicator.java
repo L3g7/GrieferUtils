@@ -26,12 +26,12 @@ import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.misc.Config;
-import dev.l3g7.griefer_utils.util.misc.ServerCheck;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.GuiChat;
@@ -44,7 +44,7 @@ import java.lang.reflect.Array;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
-import static dev.l3g7.griefer_utils.util.misc.ServerCheck.isOnGrieferGames;
+import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
 
 /**
  * Draws an orange frame around the chat input box if plot chat is activated.

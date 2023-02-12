@@ -25,7 +25,6 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.addon.AddonLoader;
 import net.labymod.addon.online.AddonInfoManager;
 import net.labymod.addon.online.info.AddonInfo;
-import net.labymod.settings.LabyModAddonsGui;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
@@ -35,7 +34,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static dev.l3g7.griefer_utils.util.JsonUtil.jsonObject;
+import static dev.l3g7.griefer_utils.core.util.JsonUtil.jsonObject;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ModAddonMetadataEntry extends LogEntry {

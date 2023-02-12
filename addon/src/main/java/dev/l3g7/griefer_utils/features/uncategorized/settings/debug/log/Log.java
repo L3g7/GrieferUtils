@@ -24,11 +24,10 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
-import dev.l3g7.griefer_utils.util.ArrayUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.util.misc.Constants;
-import dev.l3g7.griefer_utils.util.misc.crypto.AESCipher;
-import dev.l3g7.griefer_utils.util.misc.crypto.RSACipher;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.crypto.AESCipher;
+import dev.l3g7.griefer_utils.core.misc.crypto.RSACipher;
 import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.Minecraft;
 

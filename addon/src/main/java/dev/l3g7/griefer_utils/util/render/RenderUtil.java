@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.util.render;
 
-import dev.l3g7.griefer_utils.util.misc.Vec3d;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.misc.Vec3d;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.WorldRenderer;

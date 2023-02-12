@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.features.chat.auto_unnick;
 
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.util.IOUtil;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 
 public class PrefixFinder {
 	public static String[] prefixes = null;

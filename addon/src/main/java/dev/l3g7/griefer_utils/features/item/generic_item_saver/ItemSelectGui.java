@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.item.generic_item_saver;
 
-import dev.l3g7.griefer_utils.util.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiInventory;

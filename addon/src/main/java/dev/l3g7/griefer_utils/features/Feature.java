@@ -21,7 +21,7 @@ package dev.l3g7.griefer_utils.features;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 import org.apache.commons.lang3.tuple.Pair;
 

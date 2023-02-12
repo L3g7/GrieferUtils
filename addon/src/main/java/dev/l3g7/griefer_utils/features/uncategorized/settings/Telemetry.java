@@ -23,7 +23,7 @@ import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.IOUtil;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 
 import java.util.Collections;
 import java.util.List;

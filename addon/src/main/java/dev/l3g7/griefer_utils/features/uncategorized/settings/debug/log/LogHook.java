@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log;
 
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;

@@ -34,7 +34,7 @@ import java.lang.management.ManagementFactory;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static dev.l3g7.griefer_utils.util.JsonUtil.jsonObject;
+import static dev.l3g7.griefer_utils.core.util.JsonUtil.jsonObject;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static java.nio.charset.StandardCharsets.UTF_8;
 

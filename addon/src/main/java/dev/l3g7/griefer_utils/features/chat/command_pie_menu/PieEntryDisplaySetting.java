@@ -18,13 +18,13 @@
 
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.util.misc.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.misc.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.audio.PositionedSoundRecord;

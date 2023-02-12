@@ -25,14 +25,14 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
-import dev.l3g7.griefer_utils.util.misc.Constants;
-import dev.l3g7.griefer_utils.util.misc.PlayerDataProvider;
-import dev.l3g7.griefer_utils.util.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.misc.PlayerDataProvider;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import net.labymod.utils.Material;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;

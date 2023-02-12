@@ -19,12 +19,12 @@
 package dev.l3g7.griefer_utils.event;
 
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
-import dev.l3g7.griefer_utils.file_provider.meta.AnnotationMeta;
-import dev.l3g7.griefer_utils.file_provider.meta.ClassMeta;
-import dev.l3g7.griefer_utils.file_provider.meta.MethodMeta;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.meta.AnnotationMeta;
+import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
+import dev.l3g7.griefer_utils.core.file_provider.meta.MethodMeta;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -32,7 +32,7 @@ import net.minecraftforge.fml.common.eventhandler.ListenerList;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import static dev.l3g7.griefer_utils.util.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
 
 /**
  * Handles the logic for registering methods annotated with {@link EventListener} to the {@link MinecraftForge#EVENT_BUS}.

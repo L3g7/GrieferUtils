@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.event.events.network;
 
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.injection.mixin.MixinNetHandlerPlayClient;
+import dev.l3g7.griefer_utils.core.injection.mixin.MixinNetHandlerPlayClient;
 import net.labymod.main.LabyMod;
 import net.minecraft.network.Packet;
 import net.minecraftforge.common.MinecraftForge;

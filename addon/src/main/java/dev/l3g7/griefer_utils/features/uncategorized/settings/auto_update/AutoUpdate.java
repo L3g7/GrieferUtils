@@ -21,8 +21,8 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
-import dev.l3g7.griefer_utils.util.IOUtil;
-import dev.l3g7.griefer_utils.util.misc.Config;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.core.misc.Config;
 import net.labymod.addon.AddonLoader;
 
 import java.io.File;

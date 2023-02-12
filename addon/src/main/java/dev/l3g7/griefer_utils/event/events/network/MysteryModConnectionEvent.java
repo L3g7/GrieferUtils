@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.event.events.network;
 
-import dev.l3g7.griefer_utils.util.misc.mysterymod_connection.MysteryModConnection;
-import dev.l3g7.griefer_utils.util.misc.mysterymod_connection.packets.Packet;
+import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
+import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.Packet;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraftforge.fml.common.eventhandler.Event;
 

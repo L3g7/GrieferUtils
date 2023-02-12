@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.filter_webhooks;
 
-import dev.l3g7.griefer_utils.util.IOUtil;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.Scrollbar;
 import net.labymod.ingamechat.GuiChatCustom;

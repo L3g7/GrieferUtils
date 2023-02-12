@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.util;
 
 import dev.l3g7.griefer_utils.Main;
-import dev.l3g7.griefer_utils.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import net.labymod.addon.AddonLoader;
 import net.labymod.addon.online.AddonInfoManager;
 import net.labymod.addon.online.info.AddonInfo;

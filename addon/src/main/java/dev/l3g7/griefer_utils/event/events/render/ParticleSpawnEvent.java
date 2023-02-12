@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
-import dev.l3g7.griefer_utils.util.misc.Vec3d;
+import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 

@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.player.player_list;
 
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 
 import static net.labymod.utils.ModColor.RED;
 

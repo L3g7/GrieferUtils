@@ -20,14 +20,14 @@ package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
-import dev.l3g7.griefer_utils.util.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
@@ -41,7 +41,7 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
-import static dev.l3g7.griefer_utils.util.misc.ServerCheck.isOnGrieferGames;
+import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
 
 @Singleton
 public class PlayerHider extends Feature {

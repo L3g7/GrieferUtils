@@ -17,6 +17,7 @@
     "MixinChunkProviderClient",
     "MixinGuiChatAdapter",
     "MixinGuiChest",
+    "MixinPlayerControllerMP",
     "MixinRenderItem"
   ]
 }

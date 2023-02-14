@@ -20,16 +20,17 @@ package dev.l3g7.griefer_utils.features.item.generic_item_saver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
-import dev.l3g7.griefer_utils.core.misc.Config;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.core.LabyModCore;
 import net.labymod.core.WorldRendererAdapter;
 import net.labymod.settings.elements.SettingsElement;
@@ -49,7 +50,8 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
-import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.RELEASE_USE_ITEM;
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ALL_ITEMS;
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
 
 @Singleton
 public class GenericItemSaver extends Feature {
@@ -71,7 +73,7 @@ public class GenericItemSaver extends Feature {
 		});
 
 	@MainElement(configureSubSettings = false)
-	private final BooleanSetting enabled = new BooleanSetting()
+	private final CategorySetting enabled = new CategorySetting()
 		.name("Generischer ItemSaver")
 		.description("Deaktiviert Klicks und Dropping bei einstellbaren Items.")
 		.icon("shield_with_sword")
@@ -163,11 +165,25 @@ public class GenericItemSaver extends Feature {
 	}
 
 	@EventListener
+	public void onWindowClick(WindowClickEvent event) {
+		if (event.mode != 4)
+			return;
+
+		ItemDisplaySetting setting = getSetting(event.itemStack);
+		if (setting == null)
+			return;
+
+		if (setting.drop.get())
+			event.setCanceled(true);
+	}
+
+	@EventListener
 	private void onPacketSend(PacketEvent.PacketSendEvent event) {
 		if (!(event.packet instanceof C07PacketPlayerDigging))
 			return;
 
-		if (((C07PacketPlayerDigging) event.packet).getStatus() == RELEASE_USE_ITEM)
+		C07PacketPlayerDigging.Action action = ((C07PacketPlayerDigging) event.packet).getStatus();
+		if (action != DROP_ITEM && action != DROP_ALL_ITEMS)
 			return;
 
 		ItemDisplaySetting setting = getSetting(player().getHeldItem());

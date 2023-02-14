@@ -6,7 +6,7 @@
   "addonVersion": "${version}",
 
   "mainClass": "dev.l3g7.griefer_utils.Main",
-  "transformerClass": "dev.l3g7.griefer_utils.injection.Injector",
+  "transformerClass": "dev.l3g7.griefer_utils.core.injection.Injector",
 
   "category": 3,
   "uuid": "%uuid%"

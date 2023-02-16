@@ -64,9 +64,6 @@ public class ConfigPatcher {
 						reaction.addProperty("city_build", "Jeder CB");
 				}
 			}
-
-			// patch BonzeSaver
-			rename("item.sword_saver.enabled", "item.generic_item_saver.enabled");
 		}
 	}
 

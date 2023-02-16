@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
-import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -33,6 +33,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagEnd;
 import net.minecraft.nbt.NBTTagString;
 
@@ -163,7 +164,11 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 	}
 
 	private int getAmount(ItemStack itemStack) {
-		NBTBase base = itemStack.serializeNBT().getCompoundTag("tag").getCompoundTag("display").getTagList("Lore", 8).get(0);
+		NBTTagCompound tag = itemStack.serializeNBT().getCompoundTag("tag");
+		if (!tag.hasKey("stackSize"))
+			return itemStack.stackSize;
+
+		NBTBase base = tag.getCompoundTag("display").getTagList("Lore", 8).get(0);
 		if (base instanceof NBTTagEnd) // Item didn't have lore
 			return itemStack.stackSize;
 

@@ -24,6 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+import java.util.List;
+
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Cancelable
@@ -43,7 +45,10 @@ public class WindowClickEvent extends Event {
 
 		if (mc().currentScreen instanceof GuiContainer) {
 			GuiContainer currentScreen = (GuiContainer) mc().currentScreen;
-			Slot slot = currentScreen.inventorySlots.inventorySlots.get(slotId);
+			List<Slot> slots = currentScreen.inventorySlots.inventorySlots;
+			if (slotId >= slots.size() || slotId < 0)
+				return;
+			Slot slot = slots.get(slotId);
 			itemStack = slot.getStack();
 		}
 	}

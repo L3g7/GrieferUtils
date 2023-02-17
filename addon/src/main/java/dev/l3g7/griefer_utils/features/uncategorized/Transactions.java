@@ -67,7 +67,7 @@ public class Transactions extends Feature {
 	public void onMMPacket(MMPacketReceiveEvent event) {
 		if (event.packet instanceof TransactionsPacket) {
 			transactions = ((TransactionsPacket) event.packet).transactions;
-			Collections.reverse(transactions); // Reverse, so the newest entry is first
+			transactions.sort((a, b) -> Integer.compare(b.id, a.id)); // Sort by id
 			updateSettings();
 		}
 	}

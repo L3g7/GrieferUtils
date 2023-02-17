@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -56,13 +57,19 @@ public class HeadOwner extends Module {
 			return getDefaultValues();
         }
 
-		EntityArmorStand armorStand = rayTraceArmorStand();
+		Entity entity = rayTraceEntity();
 
 		// Source: ItemSkull.getItemStackDisplayName(ItemStack stack)
-	    if (armorStand == null)
+	    if (entity == null)
 			return getDefaultValues();
 
-	    ItemStack item = armorStand.getCurrentArmor(3);
+		ItemStack item;
+
+		if (entity instanceof EntityArmorStand)
+	        item = ((EntityArmorStand) entity).getCurrentArmor(3);
+		else
+			item = ((EntityItemFrame) entity).getDisplayedItem();
+
 		if (item == null || !(item.getItem() instanceof ItemSkull))
 			return getDefaultValues();
 
@@ -86,7 +93,7 @@ public class HeadOwner extends Module {
 
     @Override
     public boolean isShown() {
-        return super.isShown() && (rayTraceTileEntity() instanceof TileEntitySkull || rayTraceArmorStand() != null);
+        return super.isShown() && (rayTraceTileEntity() instanceof TileEntitySkull || rayTraceEntity() != null);
     }
 
     private TileEntity rayTraceTileEntity() {
@@ -104,7 +111,7 @@ public class HeadOwner extends Module {
 	/**
 	 * Source: EntityRenderer.getMouseOver(float partialTicks)
 	 */
-	private EntityArmorStand rayTraceArmorStand() {
+	private Entity rayTraceEntity() {
 
 		Entity pointedEntity = null;
 
@@ -122,15 +129,15 @@ public class HeadOwner extends Module {
 		List<Entity> loadedEntities = mc.theWorld.loadedEntityList;
 
 		for (Entity entity : loadedEntities) {
-			if (!(entity instanceof EntityArmorStand))
+			if (!(entity instanceof EntityArmorStand) && !(entity instanceof EntityItemFrame))
 				continue;
 
 			float borderSize = entity.getCollisionBorderSize();
 			AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand(borderSize, borderSize, borderSize);
 
-			// Player is inside an armor stand
+			// Player is inside a searched entity
 			if (axisalignedbb.isVecInside(eyes))
-				return (EntityArmorStand) entity;
+				return entity;
 
 			MovingObjectPosition position = axisalignedbb.calculateIntercept(eyes, maxEyes);
 
@@ -147,7 +154,7 @@ public class HeadOwner extends Module {
 			}
 		}
 
-		return (EntityArmorStand) pointedEntity;
+		return pointedEntity;
 	}
 
 }

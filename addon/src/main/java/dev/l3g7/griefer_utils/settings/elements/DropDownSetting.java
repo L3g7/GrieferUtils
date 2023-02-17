@@ -29,6 +29,8 @@ import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
+import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.function.Function;
@@ -110,7 +112,7 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 			.stream().mapToInt(e -> drawUtils.getStringWidth(function.apply(e)))
 			.max()
 			.orElse(0)
-			+ 26;
+			+ 9;
 
 		getDropDownMenu().setWidth(dropDownWidth);
 
@@ -135,6 +137,8 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		// Reset selection, so selected value isn't rendered
 		Object selected = dropDownMenu.getSelected();
 		dropDownMenu.setSelected(null);
+		int realWidth = dropDownWidth;
+		dropDownWidth = Math.min(dropDownWidth, 90);
 		dropDownMenu.setWidth(dropDownWidth);
 
 		dropDownMenu.setX(dropDownX = maxX - dropDownWidth - 5);
@@ -146,8 +150,13 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		int height = maxY - y - 6;
 
 		// Draw selected entry with fixed width
-		String trimmedEntry = drawUtils.trimStringToWidth(ModColor.cl("f") + stringProvider.apply((E) selected), 80);
+		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		GL11.glScissor(0,0, (int) ((maxX - 21) / new ScaledResolution(mc).getScaledWidth_double() * mc.displayWidth), mc.displayHeight);
+
+		String trimmedEntry = drawUtils.trimStringToWidth(ModColor.cl("f") + stringProvider.apply((E) selected), dropDownWidth - 10);
 		drawUtils.drawString(trimmedEntry, dropDownX + 5, (y + 3) + height / 2f - 4);
+
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
 		// Draw gradient
 		drawUtils.drawGradientShadowRight(maxX - 21, y + 3, maxY - 3);
@@ -157,10 +166,11 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		Gui.drawRect(maxX - 21, maxY - 13, maxX - 20, maxY - 3, 0xFF000000);
 
 		// Draw dropdown with fixed width
+		dropDownWidth = realWidth;
 		if (!dropDownMenu.isOpen())
 			return;
 
-		dropDownMenu.setWidth(dropDownWidth + 9);
+		dropDownMenu.setWidth(dropDownWidth);
 		dropDownMenu.drawMenuDirect(dropDownMenu.getX(), dropDownMenu.getY(), mouseX, mouseY);
 	}
 

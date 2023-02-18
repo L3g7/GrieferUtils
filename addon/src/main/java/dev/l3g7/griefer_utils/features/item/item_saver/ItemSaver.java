@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.generic_item_saver;
+package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -54,7 +54,7 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DR
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
 
 @Singleton
-public class GenericItemSaver extends Feature {
+public class ItemSaver extends Feature {
 
 	private static final String BONZE_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
 	private static final String BIRTH_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:2s,id:20s},2:{lvl:5s,id:61s},3:{lvl:21s,id:21s}],display:{Name:\"§4B§aI§3R§2T§eH §4§lKlinge\"}},Damage:0s}";
@@ -74,7 +74,7 @@ public class GenericItemSaver extends Feature {
 
 	@MainElement(configureSubSettings = false)
 	private final CategorySetting enabled = new CategorySetting()
-		.name("Generischer ItemSaver")
+		.name("ItemSaver")
 		.description("Deaktiviert Klicks und Dropping bei einstellbaren Items.")
 		.icon("shield_with_sword")
 		.subSettings(newEntrySetting);
@@ -103,13 +103,16 @@ public class GenericItemSaver extends Feature {
 
 				ItemDisplaySetting setting = new ItemDisplaySetting(stack);
 				setting.name.set(data.get("name").getAsString());
+				setting.extremeDrop.set(data.get("extreme_drop").getAsBoolean());
 				setting.drop.set(data.get("drop").getAsBoolean());
 				setting.leftclick.set(data.get("leftclick").getAsBoolean());
 				setting.rightclick.set(data.get("rightclick").getAsBoolean());
 
 				List<SettingsElement> settings = enabled.getSubSettings().getElements();
 				settings.add(settings.size() - 1, setting);
-			} catch (NBTException ignored) {}
+			} catch (NBTException | NullPointerException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -166,14 +169,16 @@ public class GenericItemSaver extends Feature {
 
 	@EventListener
 	public void onWindowClick(WindowClickEvent event) {
-		if (event.mode != 4)
-			return;
-
 		ItemDisplaySetting setting = getSetting(event.itemStack);
 		if (setting == null)
 			return;
 
-		if (setting.drop.get())
+		if (setting.extremeDrop.get()) {
+			if (event.mode == 0 || event.mode == 6)
+				event.setCanceled(true);
+		}
+
+		if (setting.drop.get() && event.mode == 4)
 			event.setCanceled(true);
 	}
 
@@ -276,6 +281,7 @@ public class GenericItemSaver extends Feature {
 			JsonObject entry = new JsonObject();
 			entry.addProperty("name", itemDisplaySetting.name.get());
 			entry.addProperty("drop", itemDisplaySetting.drop.get());
+			entry.addProperty("extreme_drop", itemDisplaySetting.extremeDrop.get());
 			entry.addProperty("leftclick", itemDisplaySetting.leftclick.get());
 			entry.addProperty("rightclick", itemDisplaySetting.rightclick.get());
 

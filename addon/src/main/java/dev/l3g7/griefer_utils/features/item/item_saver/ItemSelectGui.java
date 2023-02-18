@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.generic_item_saver;
+package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import net.minecraft.client.gui.GuiScreen;

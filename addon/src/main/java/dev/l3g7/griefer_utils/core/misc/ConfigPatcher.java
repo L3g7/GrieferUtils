@@ -65,6 +65,10 @@ public class ConfigPatcher {
 				}
 			}
 		}
+
+		if (cmp.compare("2.0-BETA-7", version) < 0) {
+			rename("item.generic_item_saver", "item.item_saver");
+		}
 	}
 
 	private void patch_v1() {

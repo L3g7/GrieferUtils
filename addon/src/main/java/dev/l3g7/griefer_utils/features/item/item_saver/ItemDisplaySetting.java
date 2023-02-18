@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.generic_item_saver;
+package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
@@ -35,6 +35,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 
 	public final StringSetting name;
 	public final BooleanSetting drop;
+	public final BooleanSetting extremeDrop;
 	public final BooleanSetting leftclick;
 	public final BooleanSetting rightclick;
 
@@ -63,6 +64,15 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 			.defaultValue(true)
 			.icon(Material.DROPPER);
 
+		extremeDrop = new BooleanSetting()
+			.name("Droppen unterbinden (extrem)")
+			.description("Ob das Aufnehmen des Items in den Mouse-Cursor unterbunden werden soll.")
+			.icon("shield_with_sword")
+			.defaultValue(false)
+			.callback(b -> { if (b) drop.set(true); });
+
+		drop.callback(b -> { if (!b) extremeDrop.set(false); });
+
 		leftclick = new BooleanSetting()
 			.name("Linksklicks unterbinden")
 			.description("Ob Linksklicks mit diesem Item unterbunden werden soll.")
@@ -75,7 +85,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 			.defaultValue(!stack.isItemStackDamageable())
 			.icon(Material.BOW);
 
-		subSettings(name, drop, leftclick, rightclick);
+		subSettings(name, drop, extremeDrop, leftclick, rightclick);
 	}
 
 	@Override
@@ -98,7 +108,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 
 		if (hoveringEdit) {
 			mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-			mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> FileProvider.getSingleton(GenericItemSaver.class).onChange(), this));
+			mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> FileProvider.getSingleton(ItemSaver.class).onChange(), this));
 			return;
 		}
 
@@ -106,7 +116,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 			return;
 
 		mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-		GenericItemSaver gis = FileProvider.getSingleton(GenericItemSaver.class);
+		ItemSaver gis = FileProvider.getSingleton(ItemSaver.class);
 		gis.getMainElement().getSubSettings().getElements().remove(this);
 		gis.onChange();
 	}

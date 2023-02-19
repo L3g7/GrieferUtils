@@ -68,6 +68,16 @@ public class ConfigPatcher {
 
 		if (cmp.compare("2.0-BETA-7", version) < 0) {
 			rename("item.generic_item_saver", "item.item_saver");
+
+			// patch extreme_drop added to ItemSaver in 2.0-BETA-7
+			JsonObject itemSaver = getParent("item.item_saver.entries");
+			if (itemSaver.has("entries")) {
+				for (JsonElement entry : itemSaver.get("entries").getAsJsonArray()) {
+					JsonObject item = entry.getAsJsonObject();
+					if (!item.has("extreme_drop"))
+						item.addProperty("extreme_drop", false);
+				}
+			}
 		}
 	}
 

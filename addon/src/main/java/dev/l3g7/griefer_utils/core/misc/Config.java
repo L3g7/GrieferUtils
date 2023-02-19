@@ -73,7 +73,7 @@ public class Config {
     }
 
 	// .minecraft/config/GrieferUtils.json
-    private static final File configFile = new File(new File(Minecraft.getMinecraft().mcDataDir, "config"), "GrieferUtils.json");
+    private static final File configFile = new File(new File("config"), "GrieferUtils.json");
     private static JsonObject config = null;
 
 	/**

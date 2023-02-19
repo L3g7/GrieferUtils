@@ -66,7 +66,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 
 		extremeDrop = new BooleanSetting()
 			.name("Droppen unterbinden (extrem)")
-			.description("Ob das Aufnehmen des Items in den Mouse-Cursor unterbunden werden soll.")
+			.description("Ob das Aufnehmen des Items in den Maus-Cursor unterbunden werden soll.")
 			.icon("shield_with_sword")
 			.defaultValue(false)
 			.callback(b -> { if (b) drop.set(true); });

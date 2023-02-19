@@ -57,7 +57,7 @@ public class AutoTool extends Feature {
 
 	private final BooleanSetting switchBack = new BooleanSetting()
 		.name("Zurück wechseln")
-		.description("Ob nach dem Abbauen auf den ürsprünglichen Slot zurück gewechselt werden soll.")
+		.description("Ob nach dem Abbauen auf den ursprünglichen Slot zurück gewechselt werden soll.")
 		.icon(Material.WOOD_PICKAXE)
 		.defaultValue(true);
 

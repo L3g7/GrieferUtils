@@ -103,7 +103,8 @@ public class ItemSaver extends Feature {
 
 				ItemDisplaySetting setting = new ItemDisplaySetting(stack);
 				setting.name.set(data.get("name").getAsString());
-				setting.extremeDrop.set(data.get("extreme_drop").getAsBoolean());
+				if (data.has("extreme_drop"))
+					setting.extremeDrop.set(data.get("extreme_drop").getAsBoolean());
 				setting.drop.set(data.get("drop").getAsBoolean());
 				setting.leftclick.set(data.get("leftclick").getAsBoolean());
 				setting.rightclick.set(data.get("rightclick").getAsBoolean());

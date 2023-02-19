@@ -41,14 +41,14 @@ public class EntityRendererTransformer extends Transformer {
 		ListIterator<AbstractInsnNode> it = method.instructions.iterator();
 		while (it.hasNext()) {
 			AbstractInsnNode node = it.next();
-			if (matches(node, GETSTATIC, "net/minecraft/potion/Potion", "blindness", "Lnet/minecraft/potion/Potion;")
+			if (matches(node, GETSTATIC, "net/minecraft/potion/Potion", "blindness")
 				&& matches(it.next(), INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "isPotionActive", "(Lnet/minecraft/potion/Potion;)Z"))
 				inject(method, it.next(), ICONST_0);
 			else if (matches(node, INVOKEVIRTUAL, "net/minecraft/block/Block", "getMaterial", "()Lnet/minecraft/block/material/Material;")) {
 				AbstractInsnNode comparison = it.next();
-				if (matches(comparison, GETSTATIC, "net/minecraft/block/material/Material", "water", "Lnet/minecraft/block/material/Material;"))
+				if (matches(comparison, GETSTATIC, "net/minecraft/block/material/Material", "water"))
 					inject(method, it.next(), ICONST_1);
-				else if (matches(comparison, GETSTATIC, "net/minecraft/block/material/Material", "lava", "Lnet/minecraft/block/material/Material;"))
+				else if (matches(comparison, GETSTATIC, "net/minecraft/block/material/Material", "lava"))
 					inject(method, it.next(), ICONST_2);
 			}
 		}

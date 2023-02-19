@@ -41,7 +41,7 @@ public class WorldClientTransformer extends Transformer {
 		while (it.hasNext()) {
 			AbstractInsnNode node = it.next();
 			if (matches(node, INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", "getBlock", "()Lnet/minecraft/block/Block;")
-				&& matches(node.getNext(), GETSTATIC, "net/minecraft/init/Blocks", "barrier", "Lnet/minecraft/block/Block;")) {
+				&& matches(node.getNext(), GETSTATIC, "net/minecraft/init/Blocks", "barrier")) {
 				AbstractInsnNode jumpNode =
 					node           // iblockstate.getBlock()
 					.getPrevious() // flag

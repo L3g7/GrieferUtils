@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.core.injection;
 
+import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.LogHook;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
@@ -55,6 +56,8 @@ public class Injector implements IClassTransformer {
 	public Injector() throws ReflectiveOperationException, IOException {
 		if (Constants.DEBUG)
 			LogHook.hook();
+
+		Mapper.loadMappings("1.8.9", "22");
 		loadMixin();
 		loadTransformers();
 	}

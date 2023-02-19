@@ -18,9 +18,8 @@
 
 package dev.l3g7.griefer_utils.core.reflection;
 
+import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.util.ArrayUtil;
-import dev.l3g7.griefer_utils.core.misc.Mapping;
-import org.objectweb.asm.Type;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -28,9 +27,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.util.Util.elevate;
-import static dev.l3g7.griefer_utils.core.misc.Mapping.MappingTarget.SRG;
+import static dev.l3g7.griefer_utils.core.mapping.Mapping.SEARGE;
+import static dev.l3g7.griefer_utils.core.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.util.Util.elevate;
 
 /**
  * Field related reflection.
@@ -41,31 +41,13 @@ class FieldReflection {
 	 * @return the value of a field.
 	 */
 	static <V> V get(Object target, String name) {
-
-		// Check target
-		if (target == null)
-			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", name);
-
-		// Get field
-		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-		String mappedName = Mapping.mapField(SRG, targetClass, name);
-		if (mappedName == null)
-			throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(targetClass), name);
-
-		Field field = resolveField(targetClass, mappedName);
-
-		// Check field
-		if (field == null)
-			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", mappedName, targetClass.getName());
-
-		return get(target, field);
+		return get(target, getField(target, name));
 	}
 
 	/**
 	 * @return the value of a field.
 	 */
 	static <V> V get(Object target, Field field) {
-
 		// Check target
 		if (target == null)
 			throw elevate(new IllegalArgumentException(), "Tried to get null field");
@@ -83,45 +65,58 @@ class FieldReflection {
 	 * Sets the value of a field.
 	 */
 	static void set(Object target, Object value, String name) {
+		try {
+			Field field = getField(target, name);
+			field.setAccessible(true);
+			field.set(target, value);
+		} catch (Throwable e) {
+			Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
+			throw elevate(e, "Tried to access field '%s' in '%s'", name, targetClass.getName());
+		}
+	}
 
+	private static Field getField(Object target, String name) {
+		Field field = resolveField(target, name);
+
+		// Check field
+		if (field == null) {
+			Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
+			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", name, targetClass.getName());
+		}
+
+		return field;
+	}
+
+	/**
+	 * Gets the field matching the fieldName or its obfuscated equivalent in the targetClass or its super classes.
+	 */
+	static Field resolveField(Object target, String name) {
 		// Check target
 		if (target == null)
 			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", name);
 
-		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-		String mappedName = Mapping.mapField(SRG, targetClass, name);
-		if (mappedName == null)
-			throw elevate(new NoSuchFieldException(), "Could not find srg mapping for %s.%s", Type.getInternalName(targetClass), name);
 
-		Field field = resolveField(targetClass, mappedName);
-
-		// Check field
-		if (field == null) {
-			throw elevate(new NoSuchFieldException(), "Could not find field '%s' / '%s' in '%s'", name, mappedName, targetClass.getName());
-		}
-
-		// Get value
-		try {
-			field.setAccessible(true);
-			field.set(target, value);
-		} catch (Throwable e) {
-			throw elevate(e, "Tried to access field '%s' / '%s' in '%s'", name, mappedName, targetClass.getName());
-		}
-	}
-
-	/**
-	 * Gets the field matching the fieldName in the targetClass or its super classes.
-	 */
-	static Field resolveField(Class<?> targetClass, String fieldName) {
-		while (targetClass != null) {
+		// Get field
+		Field field = null;
+		Class<?> currentClass = targetClass;
+		while (currentClass != null) {
 			try {
-				return targetClass.getDeclaredField(fieldName);
+				String lookupName = name;
+
+				// Map name
+				if (Mapper.isObfuscated())
+					lookupName = Mapper.mapField(currentClass, name, UNOBFUSCATED, SEARGE);
+
+				// Lookup field
+				field = currentClass.getDeclaredField(lookupName);
+				break;
 			} catch (NoSuchFieldException ignored) {
-				targetClass = targetClass.getSuperclass();
+				currentClass = currentClass.getSuperclass();
 			}
 		}
-		return null;
+
+		return field;
 	}
 
 	/**

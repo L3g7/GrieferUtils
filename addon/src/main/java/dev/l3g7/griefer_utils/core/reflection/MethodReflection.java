@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.core.reflection;
 
+import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.util.ArrayUtil;
-import dev.l3g7.griefer_utils.core.misc.Mapping;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -27,9 +27,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.util.Util.elevate;
-import static dev.l3g7.griefer_utils.core.misc.Mapping.MappingTarget.SRG;
+import static dev.l3g7.griefer_utils.core.mapping.Mapping.SEARGE;
+import static dev.l3g7.griefer_utils.core.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.util.Util.elevate;
 
 /**
  * Method related reflection.
@@ -45,13 +46,37 @@ class MethodReflection {
 		if (target == null)
 			throw elevate(new IllegalArgumentException(), "Tried to invoke null");
 
-		// Get field
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-		String mappedName = Mapping.mapMethodName(SRG, targetClass, name, "");
 
-		Method method = resolveMethod(targetClass, mappedName, params);
+		// Find method
+		Method method = null;
+		Class<?> currentClass = targetClass;
+
+		methodSearch:
+		while (currentClass != null) {
+			for (Method m : currentClass.getDeclaredMethods()) {
+				String targetName = m.getName();
+
+				// Map name
+				if (Mapper.isObfuscated())
+					targetName = Mapper.mapMethodName(m, SEARGE, UNOBFUSCATED);
+
+				// Compare name
+				if (!targetName.equals(name))
+					continue;
+
+				// Compare parameters
+				if (ArrayUtil.equals(m.getParameterTypes(), params, ClassReflection::isApplicable)) {
+					method = m;
+					break methodSearch;
+				}
+			}
+
+			currentClass = currentClass.getSuperclass();
+		}
+
 		if (method == null)
-			throw elevate(new NoSuchMethodException(), "Could not find method '%s' with parameters '%s' in '%s'", name, ArrayUtil.toString(params, o -> o.getClass().toString(), ", "), targetClass.getName());
+			throw elevate(new NoSuchMethodException(), "Could not find method '%s' with parameters '%s' in '%s'", name, ArrayUtil.toString(params, o -> o.getClass().toString(), ", "), target);
 
 		return invoke(target, method, params);
 	}

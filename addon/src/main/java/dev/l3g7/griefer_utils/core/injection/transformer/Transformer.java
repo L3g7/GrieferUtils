@@ -18,16 +18,16 @@
 
 package dev.l3g7.griefer_utils.core.injection.transformer;
 
-import dev.l3g7.griefer_utils.core.misc.Mapping;
+import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Objects;
 
-import static dev.l3g7.griefer_utils.core.misc.Mapping.MappingTarget.NOTCH;
+import static dev.l3g7.griefer_utils.core.mapping.Mapping.OBFUSCATED;
+import static dev.l3g7.griefer_utils.core.mapping.Mapping.UNOBFUSCATED;
 
 /**
  * A Bytecode transformer.
@@ -49,12 +49,17 @@ public abstract class Transformer implements Opcodes {
 	protected abstract void process();
 
 	protected MethodNode getMethod(String name, String desc) {
-		String mappedName = Mapping.mapMethodName(NOTCH, target, name, desc);
-		String mappedDesc = Mapping.mapMethodDesc(NOTCH, desc);
+		String targetMethod;
+
+		if (Mapper.isObfuscated())
+			targetMethod = Mapper.mapMethod(target.replace('.', '/'), name, desc, UNOBFUSCATED, OBFUSCATED);
+		else
+			targetMethod = name + desc;
+
 		return classNode.methods.stream()
-			.filter(m -> m.name.equals(mappedName) && m.desc.equals(mappedDesc))
+			.filter(m -> targetMethod.equals(m.name + m.desc))
 			.findFirst()
-			.orElseThrow(() -> new NoSuchMethodError("Could not find " + name + desc + " / " + mappedName + mappedDesc + "!"));
+			.orElseThrow(() -> new NoSuchMethodError("Could not find " + name + desc + " / " + targetMethod + "!"));
 	}
 
 	protected static boolean matches(AbstractInsnNode node, int opcode, Object... args) {
@@ -75,19 +80,27 @@ public abstract class Transformer implements Opcodes {
 			case GETSTATIC: {
 				assert args.length == 3;
 				FieldInsnNode insn = (FieldInsnNode) node;
-				return
-					insn.owner.equals(Mapping.mapClass(NOTCH, Type.getObjectType((String) args[0])).getInternalName()) &&
-					insn.name.equals(Mapping.mapField(NOTCH, (String) args[0], (String) args[1]));
+
+				if (Mapper.isObfuscated())
+					return insn.owner.equals(Mapper.mapClass((String) args[0], UNOBFUSCATED, OBFUSCATED))
+						&& insn.name.equals(Mapper.mapField((String) args[0], (String) args[1], UNOBFUSCATED, OBFUSCATED));
+
+				return insn.owner.equals(args[0])
+					&& insn.name.equals(args[1]);
 			}
 			case INVOKEINTERFACE:
 			case INVOKESTATIC:
 			case INVOKEVIRTUAL: {
 				assert args.length == 3;
 				MethodInsnNode insn = (MethodInsnNode) node;
-				return
-					insn.owner.equals(Mapping.mapClass(NOTCH, Type.getObjectType((String) args[0])).getInternalName()) &&
-					insn.name.equals(Mapping.mapMethodName(NOTCH, (String) args[0], (String) args[1], (String) args[2])) &&
-					insn.desc.equals(Mapping.mapMethodDesc(NOTCH, (String) args[2]));
+
+				if (Mapper.isObfuscated())
+					return insn.owner.equals(Mapper.mapClass((String) args[0], UNOBFUSCATED, OBFUSCATED))
+						&& (insn.name + insn.desc).equals(Mapper.mapMethod((String) args[0], (String) args[1], (String) args[2], UNOBFUSCATED, OBFUSCATED));
+
+				return insn.owner.equals(args[0])
+					&& insn.name.equals(args[1])
+					&& insn.desc.equals(args[2]);
 			}
 			default:
 				throw new UnsupportedOperationException("matches for " + opcode + " not implemented!");

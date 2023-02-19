@@ -187,6 +187,18 @@ public class IOUtil {
 		}
 
 		/**
+		 * Tries to open an input stream.
+		 */
+		public Optional<InputStream> getStream() {
+			try {
+				return Optional.of(open());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return Optional.empty();
+			}
+		}
+
+		/**
 		 * Tries to write the input stream to the given file.
 		 */
 		public AsyncFailable asFile(File file, Consumer<File> callback) {

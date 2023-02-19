@@ -19,19 +19,16 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.VersionComparator;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.UpdateScreen;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.TextSetting;
-import dev.l3g7.griefer_utils.core.util.IOUtil;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.misc.VersionComparator;
 import net.labymod.settings.elements.SettingsElement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Changelog {
 
@@ -40,18 +37,21 @@ public class Changelog {
 		.description("§eVerbindet...")
 		.icon("white_scroll")
 		.settingsEnabled(false)
-		.subSettings(
-			new CategorySetting()
-				.name(" §lv2.0-BETA")
-				.description("Changelog-Informationen sind für die Beta-Version nicht verfügbar.", "Der v2-Changelog kann auf Discord gefunden werden."),
-			new HeaderSetting());
+		.subSettings();
 
 	static {
-		IOUtil.read("https://api.github.com/repos/L3g7/GrieferUtils/releases").asJsonArray(releases -> {
+		IOUtil.read("https://grieferutils.l3g7.dev/v2/changelog").asJsonObject(releases -> {
 			List<SettingsElement> entries = new ArrayList<>();
-			for (JsonElement releaseElement : releases) {
-				JsonObject release = releaseElement.getAsJsonObject();
-				String title = "§l" + release.get("tag_name").getAsString();
+			for (Map.Entry<String, JsonElement> entry : releases.entrySet()) {
+
+				if (!UpdateScreen.hasData()) {
+					UpdateScreen.setData(
+						entry.getKey(),
+						entry.getValue().getAsString().substring("Changelog:".length())
+					);
+				}
+
+				String title = "§l" + entry.getKey();
 
 				entries.add(new CategorySetting()
 					.name(" " + title)
@@ -59,7 +59,7 @@ public class Changelog {
 						new HeaderSetting("§r"),
 						new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
 						new HeaderSetting("§e§lChangelog - " + title).scale(.7),
-						new TextSetting(release.get("body").getAsString().replace("\r", ""))
+						new TextSetting(entry.getValue().getAsString().replace("\r", ""))
 					)));
 			}
 

@@ -23,7 +23,9 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.addon.AddonLoader;
+import net.minecraft.init.Blocks;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,12 +41,20 @@ import static java.nio.file.StandardOpenOption.CREATE;
 
 public class AutoUpdate {
 
+	public static final BooleanSetting showUpdateScreen = new BooleanSetting()
+		.name("Update-Screen anzeigen")
+		.description("Ob ein Update-Screen angezeigt werden soll, wenn GrieferUtils geupdatet wurde.")
+		.config("settings.auto_update.show_screen")
+		.icon(ItemUtil.createItem(Blocks.stained_glass_pane, 0, true))
+		.defaultValue(true);
+
 	public static final BooleanSetting enabled = new BooleanSetting()
 		.name("Automatisch updaten")
 		.description("Updatet GrieferUtils automatisch auf die neuste Version.")
 		.config("settings.auto_update.enabled")
 		.icon("arrow_circle")
-		.defaultValue(true);
+		.defaultValue(true)
+		.subSettings(showUpdateScreen);
 
 	public static void checkForUpdate(UUID addonUuid) {
 		String addonVersion = AddonUtil.getVersion();
@@ -63,6 +73,9 @@ public class AutoUpdate {
 
 		Config.set("version", new JsonPrimitive(addonVersion));
 		Config.save();
+
+		if (showUpdateScreen.get())
+			UpdateScreen.trigger();
 	}
 
 	private static boolean triggeredShutdownHook = false;

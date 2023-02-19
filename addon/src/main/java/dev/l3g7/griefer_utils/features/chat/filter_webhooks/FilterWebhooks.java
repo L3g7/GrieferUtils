@@ -19,17 +19,17 @@
 package dev.l3g7.griefer_utils.features.chat.filter_webhooks;
 
 import com.google.gson.*;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.render.ChatLineAddEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
-import dev.l3g7.griefer_utils.core.misc.Config;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.main.LabyMod;
@@ -128,6 +128,8 @@ public class FilterWebhooks extends Feature {
 			                stream.write(root.toString().getBytes(StandardCharsets.UTF_8));
 			                stream.flush();
 		                }
+
+						conn.getInputStream().close();
 	                } catch (Throwable e) {
 		                e.printStackTrace();
 	                }

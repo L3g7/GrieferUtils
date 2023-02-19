@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class ConfigPatcher {
 
@@ -72,8 +73,8 @@ public class ConfigPatcher {
 			// patch extreme_drop added to ItemSaver in 2.0-BETA-7
 			JsonObject itemSaver = getParent("item.item_saver.entries");
 			if (itemSaver.has("entries")) {
-				for (JsonElement entry : itemSaver.get("entries").getAsJsonArray()) {
-					JsonObject item = entry.getAsJsonObject();
+				for (Map.Entry<String, JsonElement> entry : itemSaver.get("entries").getAsJsonObject().entrySet()) {
+					JsonObject item = entry.getValue().getAsJsonObject();
 					if (!item.has("extreme_drop"))
 						item.addProperty("extreme_drop", false);
 				}

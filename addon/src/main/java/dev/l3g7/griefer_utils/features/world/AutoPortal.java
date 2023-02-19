@@ -23,23 +23,22 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinUser;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import static dev.l3g7.griefer_utils.core.reflection.Reflection.invoke;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
-import static dev.l3g7.griefer_utils.core.reflection.Reflection.invoke;
 
 /**
  * Automatically sprints when walking.
@@ -76,7 +75,7 @@ public class AutoPortal extends Feature {
 
 	@EventListener
 	public void onServerJoin(ServerJoinEvent event) {
-		if (event.data.getIp().contains("griefergames"))
+		if (event.data.getIp().toLowerCase().contains("griefergames"))
 			send("/portal");
 	}
 
@@ -96,7 +95,6 @@ public class AutoPortal extends Feature {
 				SetForegroundWindow(hwnd);
 				SetActiveWindow(hwnd);
 			}
-			Mouse.setGrabbed(true);
 		}
 	}
 

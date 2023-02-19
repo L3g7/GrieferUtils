@@ -216,8 +216,8 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 						((ValueHolder<?, ?>) element).config(key + ".value");
 					else
 						((ValueHolder<?, ?>) element).config(key);
-				} catch (RuntimeException t) {
-					throw Util.addMessage(t, "loading config for %s.%s failed!", field.getDeclaringClass().getSimpleName(), field.getName());
+				} catch (Throwable t) {
+					throw Util.elevate(t, "loading config for %s.%s failed!", field.getDeclaringClass().getSimpleName(), field.getName());
 				}
 			}
 		}

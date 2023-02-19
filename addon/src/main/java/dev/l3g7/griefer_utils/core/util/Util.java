@@ -45,17 +45,17 @@ public class Util {
 	 * Elevates a Throwable to a RuntimeException without modifying the stack trace.
 	 */
 	public static RuntimeException elevate(Throwable throwable) {
-		return Reflection.construct(RuntimeException.class, null, throwable, true, false);
+		return new RuntimeException(null, throwable, true, false) {};
 	}
 
 	/**
 	 * Elevates a Throwable and adds a message.
 	 *
-	 * @see Util#addMessage(Throwable, String, Object...)
 	 * @see Util#elevate(Throwable)
 	 */
 	public static RuntimeException elevate(Throwable throwable, String message, Object... args) {
-		return addMessage(elevate(throwable), message, args);
+		String formattedMessage = args.length == 0 ? message : String.format(message, args);
+		return new RuntimeException(formattedMessage, throwable, true, false) {};
 	}
 
 	/**

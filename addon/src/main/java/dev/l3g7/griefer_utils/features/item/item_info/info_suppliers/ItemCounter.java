@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiScreen;
@@ -30,6 +31,7 @@ import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -64,18 +66,34 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		.icon(Material.PAPER)
 		.defaultValue(true);
 
+	private final BooleanSetting adventureTools = new BooleanSetting()
+		.name("Fehlende Adventure-Items")
+		.description("Zeigt unter Adventure-Items an, wie viel noch fehlt.")
+		.icon(ItemUtil.createItem(Items.diamond_shovel, 0, true))
+		.defaultValue(false);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Item-Zähler")
 		.description("Zeigt unter einem Item an, wie viele von dem Typ in dem derzeitigen Inventar vorhanden sind.")
 		.icon("spyglass")
-		.subSettings(ignoreDamage, ignoreEnchants, ignoreLore);
+		.subSettings(ignoreDamage, ignoreEnchants, ignoreLore, new HeaderSetting(), adventureTools);
 
 	@Override
 	public List<String> getToolTip(ItemStack itemStack) {
 		GuiScreen screen = mc().currentScreen;
 		if (!(screen instanceof GuiContainer))
 			return Collections.emptyList();
+
+		if (adventureTools.get()) {
+			try {
+				List<String> adventureToolTip = checkForAdventure(itemStack);
+				if (adventureToolTip != null)
+					return adventureToolTip;
+			} catch (NumberFormatException nfe) {
+				System.out.println(nfe.getMessage());
+			}
+		}
 
 		// Sort slots
 		List<Slot> playerSlots = new ArrayList<>();
@@ -117,7 +135,44 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		return toolTip;
 	}
 
+	private List<String> checkForAdventure(ItemStack itemStack) {
+		NBTTagCompound tag = itemStack.getTagCompound();
+
+		List<String> toolTip = new ArrayList<>();
+		toolTip.add("§r");
+
+		if (tag != null && tag.hasKey("adventure")) {
+			NBTTagCompound adventureTag = tag.getCompoundTag("adventure");
+			int missingItems = adventureTag.getInteger("adventure.req_amount") - adventureTag.getInteger("adventure.amount");
+
+			toolTip.add("Fehlende Items: " + formatAmount(missingItems, 64));
+			return toolTip;
+		}
+
+		List<String> lore = ItemUtil.getLore(itemStack);
+
+		if (lore.size() != 8 && lore.size() != 9)
+			return null;
+
+		if (!lore.get(0).startsWith("§7Status: "))
+			return null;
+
+		String task = lore.get(4);
+		String searchedText = lore.size() == 8 ? "§7Baue mit dem Werkzeug §e" : "§7Liefere §e";
+
+		if (!task.startsWith(searchedText))
+			return null;
+
+		String amount = task.substring(searchedText.length());
+		amount = amount.substring(0, amount.indexOf('§'));
+		toolTip.add("Benötigte Items: " + formatAmount(Integer.parseInt(amount), 64));
+		return toolTip;
+	}
+
 	private String formatAmount(int amount, int stackSize) {
+		if (amount == 0)
+			return "0 Stück";
+
 		int pieces = amount % stackSize;
 		int stacks = amount / stackSize % 54;
 		int dks = amount / stackSize / 54;

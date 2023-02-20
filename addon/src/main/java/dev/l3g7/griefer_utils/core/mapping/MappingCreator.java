@@ -59,7 +59,10 @@ public class MappingCreator {
 		ZipEntry entry;
 
 		// Load searge mappings
-		try (ZipInputStream in = new ZipInputStream(IOUtil.read(String.format("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/%s/mcp-%s-srg.zip", minecraftVersion, minecraftVersion))
+
+		// MinecraftForge uses Let's Encrypt, which is not supported in 8u51, the default java version in Minecraft.
+		// As a result, when using HTTPS, the secure connection cannot be established.
+		try (ZipInputStream in = new ZipInputStream(IOUtil.read(String.format("http://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/%s/mcp-%s-srg.zip", minecraftVersion, minecraftVersion))
 			.getStream()
 			.orElseThrow(IOException::new))) {
 			while ((entry = in.getNextEntry()) != null) {
@@ -88,7 +91,7 @@ public class MappingCreator {
 		}
 
 		// Load unobfuscated mappings
-		String unobfMappingURL = String.format("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/%s-%s/mcp_stable-%s-%s.zip", mappingVersion, minecraftVersion, mappingVersion, minecraftVersion);
+		String unobfMappingURL = String.format("http://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/%s-%s/mcp_stable-%s-%s.zip", mappingVersion, minecraftVersion, mappingVersion, minecraftVersion);
 		try (ZipInputStream in = new ZipInputStream(IOUtil.read(unobfMappingURL)
 			.getStream()
 			.orElseThrow(IOException::new))) {

@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.security.GeneralSecurityException;
 import java.util.Collection;
 
 public class Mapper {
@@ -48,8 +49,12 @@ public class Mapper {
 			if (mappings.exists()) {
 				// Load mappings from file
 				// noinspection UnstableApiUsage // TypeToken is marked as @Beta
-				mappedClasses = IOUtil.gson.fromJson(new FileReader(mappings), new TypeToken<Collection<MappedClass>>() {
-				}.getType());
+				mappedClasses = IOUtil.gson.fromJson(new FileReader(mappings), new TypeToken<Collection<MappedClass>>() {}.getType());
+				if (mappedClasses.isEmpty()) {
+					// Probably invalid download, overwrite
+					mappedClasses = new MappingCreator().createMappings("1.8.9", "22");
+					IOUtil.write(mappings, new Gson().toJson(mappedClasses));
+				}
 			} else {
 				// Create and store mappings
 				mappedClasses = new MappingCreator().createMappings("1.8.9", "22");
@@ -59,7 +64,7 @@ public class Mapper {
 			classes.addAll(mappedClasses);
 			classes.create();
 
-		} catch (IOException e) {
+		} catch (IOException | GeneralSecurityException e) {
 			throw Util.elevate(e, "Could not load mappings!");
 		}
 	}

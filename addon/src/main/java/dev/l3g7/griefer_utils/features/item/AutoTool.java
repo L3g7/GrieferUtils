@@ -23,6 +23,8 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.item.item_saver.ItemDisplaySetting;
+import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaver;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -97,6 +99,9 @@ public class AutoTool extends Feature {
 		if (packet.getStatus() != START_DESTROY_BLOCK)
 			return;
 
+		if (ItemSaver.getSetting(player().getHeldItem()) != null)
+			return;
+
 		BlockPos pos = packet.getPosition();
 		Block block = world().getBlockState(pos).getBlock();
 
@@ -128,6 +133,10 @@ public class AutoTool extends Feature {
 	}
 
 	public double getScore(ItemStack itemStack, Block block) {
+		ItemDisplaySetting setting = ItemSaver.getSetting(itemStack);
+		if (setting != null)
+			return Integer.MIN_VALUE;
+
 		if (!isTool(itemStack)) {
 
 			if (itemStack == null || !itemStack.isItemStackDamageable())

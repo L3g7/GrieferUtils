@@ -59,9 +59,9 @@ public class ItemSaver extends Feature {
 	private static final String BONZE_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
 	private static final String BIRTH_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:2s,id:20s},2:{lvl:5s,id:61s},3:{lvl:21s,id:21s}],display:{Name:\"§4B§aI§3R§2T§eH §4§lKlinge\"}},Damage:0s}";
 
-	private String entryKey;
+	private static String entryKey;
 
-	private final EntryAddSetting newEntrySetting = new EntryAddSetting()
+	private static final EntryAddSetting newEntrySetting = new EntryAddSetting()
 		.name("Item hinzufügen")
 		.callback(() -> {
 			if (mc().thePlayer == null) {
@@ -69,15 +69,50 @@ public class ItemSaver extends Feature {
 				return;
 			}
 
-			ItemSelectGui.open(this::addItem);
+			ItemSelectGui.open(ItemSaver::addItem);
 		});
 
 	@MainElement(configureSubSettings = false)
-	private final CategorySetting enabled = new CategorySetting()
+	private static final CategorySetting enabled = new CategorySetting()
 		.name("ItemSaver")
 		.description("Deaktiviert Klicks und Dropping bei einstellbaren Items.")
 		.icon("shield_with_sword")
 		.subSettings(newEntrySetting);
+
+	public static ItemDisplaySetting getSetting(ItemStack stack) {
+		if (stack == null)
+			return null;
+
+		for (SettingsElement element : enabled.getSubSettings().getElements()) {
+			if (!(element instanceof ItemDisplaySetting))
+				continue;
+
+			ItemDisplaySetting setting = (ItemDisplaySetting) element;
+
+			ItemStack settingStack = setting.getStack();
+			if (settingStack.getItem() != stack.getItem())
+				continue;
+
+			if (!stack.isItemStackDamageable() && settingStack.getMetadata() != stack.getMetadata())
+				continue;
+
+			if (areTagsEqual(stack.getTagCompound(), settingStack.getTagCompound()))
+				return setting;
+		}
+
+		return null;
+	}
+
+	private static boolean areTagsEqual(NBTTagCompound stackNBT, NBTTagCompound settingNBT) {
+		if (stackNBT == null)
+			return settingNBT == null;
+
+		NBTTagCompound cleanedStackNBT = (NBTTagCompound) stackNBT.copy();
+		cleanedStackNBT.removeTag("display");
+		cleanedStackNBT.removeTag("RepairCost");
+
+		return cleanedStackNBT.equals(settingNBT);
+	}
 
 	@Override
 	public void init() {
@@ -196,42 +231,7 @@ public class ItemSaver extends Feature {
 			event.setCanceled(true);
 	}
 
-	private ItemDisplaySetting getSetting(ItemStack stack) {
-		if (stack == null)
-			return null;
-
-		for (SettingsElement element : enabled.getSubSettings().getElements()) {
-			if (!(element instanceof ItemDisplaySetting))
-				continue;
-
-			ItemDisplaySetting setting = (ItemDisplaySetting) element;
-
-			ItemStack settingStack = setting.getStack();
-			if (settingStack.getItem() != stack.getItem())
-				continue;
-
-			if (!stack.isItemStackDamageable() && settingStack.getMetadata() != stack.getMetadata())
-				continue;
-
-			if (areTagsEqual(stack.getTagCompound(), settingStack.getTagCompound()))
-				return setting;
-		}
-
-		return null;
-	}
-
-	private boolean areTagsEqual(NBTTagCompound stackNBT, NBTTagCompound settingNBT) {
-		if (stackNBT == null)
-			return settingNBT == null;
-
-		NBTTagCompound cleanedStackNBT = (NBTTagCompound) stackNBT.copy();
-		cleanedStackNBT.removeTag("display");
-		cleanedStackNBT.removeTag("RepairCost");
-
-		return cleanedStackNBT.equals(settingNBT);
-	}
-
-	private void addItem(ItemStack stack) {
+	private static void addItem(ItemStack stack) {
 		ItemStack is = stack.copy();
 
 		if (is.isItemStackDamageable())
@@ -246,7 +246,7 @@ public class ItemSaver extends Feature {
 
 		is.stackSize = 1;
 
-		ListIterator<SettingsElement> iterator = getMainElement().getSubSettings().getElements().listIterator();
+		ListIterator<SettingsElement> iterator = enabled.getSubSettings().getElements().listIterator();
 		String nbt = is.serializeNBT().toString();
 
 		while (iterator.hasNext()) {
@@ -267,7 +267,7 @@ public class ItemSaver extends Feature {
 		onChange();
 	}
 
-	public void onChange() {
+	public static void onChange() {
 		if (mc().currentScreen != null)
 			mc().currentScreen.initGui();
 

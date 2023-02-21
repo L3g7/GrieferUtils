@@ -108,7 +108,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 
 		if (hoveringEdit) {
 			mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-			mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> FileProvider.getSingleton(ItemSaver.class).onChange(), this));
+			mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(ItemSaver::onChange, this));
 			return;
 		}
 
@@ -118,7 +118,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 		mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 		ItemSaver gis = FileProvider.getSingleton(ItemSaver.class);
 		gis.getMainElement().getSubSettings().getElements().remove(this);
-		gis.onChange();
+		ItemSaver.onChange();
 	}
 
 	@Override

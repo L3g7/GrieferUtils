@@ -37,7 +37,6 @@ import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -106,7 +105,7 @@ public class Transactions extends Feature {
 		// Add filter
 		list.add(new StringSetting()
 			.name("Suche")
-			.icon(Material.HOPPER)
+			.icon("magnifying_glass")
 			.callback(filter -> TickScheduler.runAfterRenderTicks(() -> {
 				List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "listedElementsStored");
 				listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);

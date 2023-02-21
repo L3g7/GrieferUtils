@@ -36,6 +36,7 @@ import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.text.SimpleDateFormat;
@@ -84,7 +85,7 @@ public class Transactions extends Feature {
 				.description()
 				.settingsEnabled(true);
 
-			// Send Transaction packet every 10s
+			// Send Transaction packet every 3s
 			MysteryModConnection.eventLoopGroup.scheduleAtFixedRate(() -> event.ctx.writeAndFlush(new RequestTransactionsPacket(uuid())), 0, 3, TimeUnit.SECONDS);
 		} else {
 			setting.name("§c§mTransaktionen")
@@ -157,6 +158,16 @@ public class Transactions extends Feature {
 
 			list.add(new CategorySetting().name(" " + title).subSettings(subSettings));
 		}
+
+		// Update
+		TickScheduler.runAfterRenderTicks(() -> {
+			if (!(mc().currentScreen instanceof LabyModAddonsGui))
+				return;
+
+			List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "listedElementsStored");
+			listedElementsStored.clear();
+			listedElementsStored.addAll(list);
+		}, 1);
 	}
 
 	private enum Direction {

@@ -18,27 +18,32 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection.State;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.RequestTransactionsPacket;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.Transaction;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.TransactionsPacket;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.StringSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.settings.elements.SettingsElement;
+import net.labymod.utils.Material;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.uuid;
 
 @Singleton
@@ -97,6 +102,27 @@ public class Transactions extends Feature {
 		// Add transactions count
 		list.add(new HeaderSetting("Insgesamt " + (transactions.size() == 1 ? "eine Transaktion" : transactions.size() + " Transaktionen")));
 		list.add(new HeaderSetting("§r").scale(.4).entryHeight(10));
+
+		// Add filter
+		list.add(new StringSetting()
+			.name("Suche")
+			.icon(Material.HOPPER)
+			.callback(filter -> TickScheduler.runAfterRenderTicks(() -> {
+				List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "listedElementsStored");
+				listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
+
+				getMainElement().getSubSettings().getElements().stream()
+					.filter(setting -> {
+						if (!(setting instanceof CategorySetting))
+							return false;
+
+						return setting.getDisplayName().toLowerCase()
+							.replaceAll("§.", "")
+							.contains(filter.toLowerCase());
+					})
+					.forEach(listedElementsStored::add);
+			}, 1)));
+		list.add(new HeaderSetting("§r").entryHeight(10));
 
 		// Add transactions
 		for (Transaction t : transactions) {

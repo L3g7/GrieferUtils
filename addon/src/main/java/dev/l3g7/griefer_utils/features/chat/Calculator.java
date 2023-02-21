@@ -136,6 +136,9 @@ public class Calculator extends Feature {
 
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
+		if (world() == null)
+			return;
+
 		// Save payment (for auto-withdraw)
 		Matcher paymentMatcher = Constants.PAYMENT_COMMAND_PATTERN.matcher(event.message);
 		if (paymentMatcher.matches()) {

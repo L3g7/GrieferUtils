@@ -43,8 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.uuid;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class Transactions extends Feature {
@@ -162,6 +161,9 @@ public class Transactions extends Feature {
 		// Update
 		TickScheduler.runAfterRenderTicks(() -> {
 			if (!(mc().currentScreen instanceof LabyModAddonsGui))
+				return;
+
+			if (path().size() == 0 || path().get(path().size() - 1) != setting)
 				return;
 
 			List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "listedElementsStored");

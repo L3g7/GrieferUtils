@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -108,6 +109,9 @@ public class Calculator extends Feature {
 
 	@EventListener
 	public void onMessageReceive(ClientChatReceivedEvent event) {
+		if (!ServerCheck.isOnGrieferGames())
+			return;
+
 		/* ************* *
 		 * Auto-Withdraw *
 		 * ************* */
@@ -136,7 +140,7 @@ public class Calculator extends Feature {
 
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
-		if (world() == null)
+		if (!ServerCheck.isOnGrieferGames() || world() == null)
 			return;
 
 		// Save payment (for auto-withdraw)

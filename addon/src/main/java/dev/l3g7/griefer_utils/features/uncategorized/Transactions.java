@@ -164,7 +164,6 @@ public class Transactions extends Feature {
 			listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
 
 			String filter = ((StringSetting) listedElementsStored.get(7)).get();
-			System.out.println("Filtering with " + filter);
 
 			getMainElement().getSubSettings().getElements().stream()
 				.filter(setting -> {

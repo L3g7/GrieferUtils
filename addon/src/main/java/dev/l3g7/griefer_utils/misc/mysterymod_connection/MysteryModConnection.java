@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.misc.mysterymod_connection;
 
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
@@ -51,6 +52,7 @@ public class MysteryModConnection {
 	public static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(4, new DefaultThreadFactory("GrieferUtils' MysteryMod-Connection", false, Thread.MIN_PRIORITY));
 
 	private static State currentState = NOT_CONNECTED;
+	private static NioSocketChannel channel;
 
 	public static State getState() {
 		return currentState;
@@ -71,6 +73,7 @@ public class MysteryModConnection {
 			.channel(NioSocketChannel.class)
 			.handler(new ChannelInitializer<NioSocketChannel>() {
 				protected void initChannel(NioSocketChannel ch) {
+					channel = ch;
 					ch.pipeline()
 						.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4))
 						.addLast(new PacketDecoder())
@@ -79,7 +82,6 @@ public class MysteryModConnection {
 						.addLast(new PacketHandler());
 				}
 			});
-
 		try {
 			bootstrap.connect(SERVER_HOST).get();
 		} catch (NullPointerException e) {
@@ -93,6 +95,14 @@ public class MysteryModConnection {
 	public static void onServerJoin(ServerEvent.ServerJoinEvent event) {
 		if (getState() != CONNECTED)
 			connect();
+	}
+
+	@EventListener
+	public static void onAccountSwitch(AccountSwitchEvent event) {
+		if (getState() == CONNECTED)
+			channel.close();
+
+		connect();
 	}
 
 	public enum State {

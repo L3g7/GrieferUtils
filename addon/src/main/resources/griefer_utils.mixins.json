@@ -9,6 +9,7 @@
     "MixinEntity",
     "MixinEntityPlayer",
     "MixinIngameChatManager",
+    "MixinLabyMod",
     "MixinNetHandlerPlayClient",
     "MixinRenderTickListener",
     "MixinWorld"

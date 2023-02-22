@@ -103,24 +103,12 @@ public class Transactions extends Feature {
 		list.add(new HeaderSetting("§r").scale(.4).entryHeight(10));
 
 		// Add filter
-		list.add(new StringSetting()
+		StringSetting filter = new StringSetting()
 			.name("Suche")
 			.icon("magnifying_glass")
-			.callback(filter -> TickScheduler.runAfterRenderTicks(() -> {
-				List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "listedElementsStored");
-				listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
+			.callback(s -> updateFilter());
 
-				getMainElement().getSubSettings().getElements().stream()
-					.filter(setting -> {
-						if (!(setting instanceof CategorySetting))
-							return false;
-
-						return setting.getDisplayName().toLowerCase()
-							.replaceAll("§.", "")
-							.contains(filter.toLowerCase());
-					})
-					.forEach(listedElementsStored::add);
-			}, 1)));
+		list.add(filter);
 		list.add(new HeaderSetting("§r").entryHeight(10));
 
 		// Add transactions
@@ -166,9 +154,28 @@ public class Transactions extends Feature {
 			if (path().size() == 0 || path().get(path().size() - 1) != setting)
 				return;
 
+			updateFilter();
+		}, 1);
+	}
+
+	private void updateFilter() {
+		TickScheduler.runAfterRenderTicks(() -> {
 			List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "listedElementsStored");
-			listedElementsStored.clear();
-			listedElementsStored.addAll(list);
+			listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
+
+			String filter = ((StringSetting) listedElementsStored.get(7)).get();
+			System.out.println("Filtering with " + filter);
+
+			getMainElement().getSubSettings().getElements().stream()
+				.filter(setting -> {
+					if (!(setting instanceof CategorySetting))
+						return false;
+
+					return setting.getDisplayName().toLowerCase()
+						.replaceAll("§.", "")
+						.contains(filter.toLowerCase());
+				})
+				.forEach(listedElementsStored::add);
 		}, 1);
 	}
 

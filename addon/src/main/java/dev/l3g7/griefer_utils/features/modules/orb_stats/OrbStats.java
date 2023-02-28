@@ -286,7 +286,9 @@ public class OrbStats extends Module {
 
 	private void saveConfig() {
 		String path = "modules.orb_stats.stats." + mc.getSession().getProfile().getId();
-		Config.set(path + ".last", new JsonPrimitive(lastItem));
+
+		if (lastItem != null)
+			Config.set(path + ".last", new JsonPrimitive(lastItem));
 		Config.set(path + ".data", new JsonPrimitive(HashMapSerializer.toString(stats)));
 		Config.save();
 	}

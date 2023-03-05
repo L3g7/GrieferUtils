@@ -112,7 +112,7 @@ public class SuppressCompressedItemSell extends Feature {
 		}
 
 		if (title.equals("§cGeblockt!§r")) {
-			Slot slot = ((GuiContainer) mc().currentScreen).getSlotUnderMouse();
+			Slot slot = ((GuiContainer) event.gui).getSlotUnderMouse();
 			event.setCanceled(slot != null && slot.getSlotIndex() != 45);
 		}
 	}
@@ -145,7 +145,7 @@ public class SuppressCompressedItemSell extends Feature {
 
 		}
 
-		Slot slot = ((GuiContainer) mc().currentScreen).getSlotUnderMouse();
+		Slot slot = ((GuiContainer) event.gui).getSlotUnderMouse();
 		event.setCanceled(slot != null && slot.getHasStack() && slot.getStack() == blocked);
 
 	}

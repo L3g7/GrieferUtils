@@ -18,17 +18,16 @@
 
 package dev.l3g7.griefer_utils.core.mapping;
 
+import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.util.ArrayUtil;
 import org.apache.commons.io.IOUtils;
 
-import javax.net.ssl.*;
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -63,7 +62,7 @@ public class MappingCreator {
 		ZipEntry entry;
 
 		// Load searge mappings
-		try (ZipInputStream in = readZipUnsecure(String.format("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/%s/mcp-%s-srg.zip", minecraftVersion, minecraftVersion))) {
+		try (ZipInputStream in = getZipInputStream(String.format("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/%s/mcp-%s-srg.zip", minecraftVersion, minecraftVersion))) {
 			while ((entry = in.getNextEntry()) != null) {
 				if (entry.getName().equals("joined.srg")) {
 					for (String line : new String(IOUtils.toByteArray(in), StandardCharsets.UTF_8).split("\r\n")) {
@@ -91,7 +90,7 @@ public class MappingCreator {
 
 		// Load unobfuscated mappings
 		String unobfMappingURL = String.format("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/%s-%s/mcp_stable-%s-%s.zip", mappingVersion, minecraftVersion, mappingVersion, minecraftVersion);
-		try (ZipInputStream in = readZipUnsecure(unobfMappingURL)) {
+		try (ZipInputStream in = getZipInputStream(unobfMappingURL)) {
 			while ((entry = in.getNextEntry()) != null) {
 				if (entry.getName().equals("fields.csv"))
 					loadUnobfMapping(in, "field", srgFields, (f, u) -> f.unobfName = u);
@@ -104,24 +103,14 @@ public class MappingCreator {
 	}
 
 	/**
-	 * Reads a zip file from the given URL without validating SSL certificates.
+	 * Reads a zip file from the given URL using the CustomSSLSocketFactory.<br>
 	 * This is required because MinecraftForge uses LetsEncrypt, which is not supported in 8u51, the default java version in Minecraft.
-	 * As a result, the SSL certificate cannot be validated. When trying to open an unsecured connection, the server redirects to HTTPS.
+	 * As a result, the SSL certificate cannot be validated using the native certificates.
+	 * @see CustomSSLSocketFactoryProvider
 	 */
-	private ZipInputStream readZipUnsecure(String url) throws GeneralSecurityException, IOException {
-		// Create ssl context without certificate check
-		SSLContext context = SSLContext.getInstance("TLS");
-		context.init(new KeyManager[0], new TrustManager[] {new X509TrustManager() {
-			public void checkClientTrusted(X509Certificate[] chain, String authType) {}
-			public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-			public X509Certificate[] getAcceptedIssuers() {
-				return new X509Certificate[0];
-			}
-		} }, SecureRandom.getInstanceStrong());
-
-		// Open connection
+	private ZipInputStream getZipInputStream(String url) throws IOException {
 		HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
-		conn.setSSLSocketFactory(context.getSocketFactory());
+		conn.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
 
 		return new ZipInputStream(conn.getInputStream());
 	}

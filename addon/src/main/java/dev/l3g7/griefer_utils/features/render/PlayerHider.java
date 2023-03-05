@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
-import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
+import dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraft.entity.Entity;
@@ -147,7 +147,7 @@ public class PlayerHider extends Feature {
 	}
 
 	private boolean showPlayer(Entity player) {
-		return player.equals(player()) || excludedPlayers.get().contains(player.getUniqueID()) || (PlayerUtil.isNPC(player) && showNPCs.get());
+		return player.equals(player()) || excludedPlayers.contains(player.getName(), player.getUniqueID()) || (PlayerUtil.isNPC(player) && showNPCs.get());
 	}
 
 }

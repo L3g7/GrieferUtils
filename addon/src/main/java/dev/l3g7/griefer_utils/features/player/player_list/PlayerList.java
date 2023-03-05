@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.PlayerListSetting;
+import dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListSetting;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.core.misc.Constants;
@@ -139,12 +139,6 @@ public abstract class PlayerList extends Feature {
 		getCategory().getSetting().addCallback(v -> TabListEvent.updatePlayerInfoList());
 	}
 
-	private List<UUID> getUUIDs() {
-		List<UUID> uuids = new ArrayList<>(this.uuids);
-		uuids.addAll(customEntries.get());
-		return uuids;
-	}
-
 	/**
 	 * The event listener handling display names.
 	 * @see PlayerList#displayNameAction
@@ -154,7 +148,7 @@ public abstract class PlayerList extends Feature {
 		if (displayNameAction.get() == DISABLED)
 			return;
 
-		if (getUUIDs().contains(event.player.getUniqueID()) || names.contains(event.player.getName()))
+		if (uuids.contains(event.player.getUniqueID()) || names.contains(event.player.getName()) || customEntries.contains(event.player.getName(), event.player.getUniqueID()))
 			event.displayName = toComponent(displayNameAction.get()).appendSibling(event.displayName);
 	}
 
@@ -167,7 +161,7 @@ public abstract class PlayerList extends Feature {
 		if (tabAction.get() == DISABLED)
 			return;
 
-		if (getUUIDs().contains(event.profile.getId()) || names.contains(event.profile.getName()))
+		if (uuids.contains(event.profile.getId()) || names.contains(event.profile.getName()) || customEntries.contains(event.profile.getName(), event.profile.getId()))
 			event.component = toComponent(tabAction.get()).appendSibling(event.component);
 	}
 
@@ -184,8 +178,9 @@ public abstract class PlayerList extends Feature {
 		Constants.MESSAGE_PATTERNS.stream().map(p -> p.matcher(event.original.getFormattedText())).filter(Matcher::matches).findFirst().ifPresent(matcher -> {
 
 			// Check if player should be marked
-			String name = matcher.group("name").replaceAll("§.", "");
-			if (!getUUIDs().contains(PlayerUtil.getUUID(name)) && !names.contains(NameCache.ensureRealName(name)))
+			String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
+			UUID uuid = name.contains("~") ? NameCache.getUUID(name) : PlayerUtil.getUUID(name);
+			if (!uuids.contains(uuid) && !names.contains(name) && !customEntries.contains(name, uuid))
 				return;
 
 			ChatStyle style = new ChatStyle();
@@ -222,8 +217,9 @@ public abstract class PlayerList extends Feature {
 			return;
 
 		// Check if player should be marked
-		String name = matcher.group("name").replaceAll("§.", "");
-		if (!getUUIDs().contains(PlayerUtil.getUUID(name)) && !names.contains(name))
+		String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
+		UUID uuid = name.contains("~") ? NameCache.getUUID(name) : PlayerUtil.getUUID(name);
+		if (!uuids.contains(uuid) && !names.contains(name) && !customEntries.contains(name, uuid))
 			return;
 
 		// Construct item

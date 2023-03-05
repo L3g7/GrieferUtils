@@ -110,7 +110,7 @@ public abstract class FileProvider {
 	/**
 	 * @return all files matching the filter.
 	 */
-	private static Collection<String> getFiles(Predicate<String> filter) {
+	public static Collection<String> getFiles(Predicate<String> filter) {
 		return getFiles().stream().filter(filter).collect(Collectors.toList());
 	}
 

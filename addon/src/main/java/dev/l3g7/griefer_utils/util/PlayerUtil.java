@@ -50,7 +50,7 @@ public class PlayerUtil {
 	}
 
 	public static boolean isValid(String name) {
-		return name != null && name.matches("^\\w{3,}$");
+		return name != null && (name.matches("^\\w{3,}$") || name.startsWith("!"));
 	}
 
 	public static String getRank(String name) {

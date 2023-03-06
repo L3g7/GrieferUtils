@@ -22,12 +22,4 @@ public class XboxProfile {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "XboxProfile{" +
-				"id='" + id + '\'' +
-				", displayName='" + displayName + '\'' +
-				", avatar='" + avatar + '\'' +
-				'}';
-	}
 }

@@ -75,7 +75,7 @@ public class Authorization {
 				"refresh_token", oauth2Token.refreshToken,
 				"client_id", oauth2Token.msaClientId
 		);
-//		KeyStore.getInstance().
+
 		OAuth2Token newToken = GSON.fromJson(Requests.post("https://login.live.com/oauth20_token.srf", strMap(), data), OAuth2Token.class);
 		if (newToken.issued == null)
 			newToken.issued = new DateTime();

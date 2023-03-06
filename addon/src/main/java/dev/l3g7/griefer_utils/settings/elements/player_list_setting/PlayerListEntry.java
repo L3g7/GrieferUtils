@@ -94,14 +94,4 @@ public class PlayerListEntry {
 		}).start();
 	}
 
-
-	@Override
-	public String toString() {
-		return "PlayerListEntry{" +
-			"name='" + name + '\'' +
-			", id='" + id + '\'' +
-			", loaded=" + loaded +
-			", exists=" + exists +
-			'}';
-	}
 }

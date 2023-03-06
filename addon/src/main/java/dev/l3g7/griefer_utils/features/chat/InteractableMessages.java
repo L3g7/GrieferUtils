@@ -45,7 +45,7 @@ public class InteractableMessages extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Interagierbare Nachrichten")
 		.description("Macht TPAs, den CityBuild bei Globalchat-Nachrichten und den Status interagierbar.")
-		.icon("cursor");
+		.icon("left_click");
 
 	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
 	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";

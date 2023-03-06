@@ -45,7 +45,7 @@ public class NPCEntityGhostHand extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("NPC-Klick-Helfer")
 		.description("Ermöglicht das Klicken auf NPCs durch Entities.")
-		.icon("cursor");
+		.icon("left_click");
 
 	@EventListener
 	public void onClick(MouseEvent event) {

@@ -19,6 +19,7 @@
     "MixinGuiChatAdapter",
     "MixinGuiChest",
     "MixinGuiIngame",
+    "MixinMinecraft",
     "MixinPlayerControllerMP",
     "MixinRenderItem"
   ]

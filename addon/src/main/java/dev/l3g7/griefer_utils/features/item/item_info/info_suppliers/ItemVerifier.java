@@ -35,7 +35,7 @@ public class ItemVerifier extends ItemInfo.ItemInfoSupplier {
 
 	private static final String BAUMEISTER_PICKE_LORE = "Gut geeignet für Tunnelsysteme...";
 	private static final String ABRISSSCHAUFEL_LORE = "Diese Schaufel kann ganze Hügel abtragen...";
-	private static final ImmutableList<String> VERIFIED_ITEM_LORE = ImmutableList.of("§aDiese Item ist echt ✔");
+	private static final ImmutableList<String> VERIFIED_ITEM_LORE = ImmutableList.of("§aDieses Item ist echt ✔");
 	private static final int PREFIX_LENGTH = "§7Signiert von §a".length();
 
 	@MainElement

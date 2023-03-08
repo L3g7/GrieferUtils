@@ -19,21 +19,20 @@
 package dev.l3g7.griefer_utils.core.injection.mixin;
 
 import dev.l3g7.griefer_utils.features.world.KeepChunksLoaded;
-import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
-import net.minecraft.client.multiplayer.ChunkProviderClient;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.ClassInheritanceMultiMap;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(ChunkProviderClient.class)
-public abstract class MixinChunkProviderClient {
+@Mixin(RenderGlobal.class)
+public class MixinRenderGlobal {
 
-	@Inject(method = "unloadChunk", at = @At("HEAD"), cancellable = true)
-	public void injectUnloadChunkHead(int x, int z, CallbackInfo ci) {
-		if (FileProvider.getSingleton(KeepChunksLoaded.class).isEnabled() && ServerCheck.isOnGrieferGames())
-			ci.cancel();
+	@Redirect(method = "renderEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/Chunk;getEntityLists()[Lnet/minecraft/util/ClassInheritanceMultiMap;"))
+	private ClassInheritanceMultiMap<Entity>[] getFilledEntityLists(Chunk chunk) {
+		return KeepChunksLoaded.getFilledEntityLists(chunk);
 	}
 
 }

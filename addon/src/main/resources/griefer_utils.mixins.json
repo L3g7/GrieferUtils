@@ -11,16 +11,17 @@
     "MixinIngameChatManager",
     "MixinLabyMod",
     "MixinNetHandlerPlayClient",
+    "MixinNetworkManager",
     "MixinRenderTickListener",
     "MixinWorld"
   ],
   "client": [
-    "MixinChunkProviderClient",
     "MixinGuiChatAdapter",
     "MixinGuiChest",
     "MixinGuiIngame",
     "MixinMinecraft",
     "MixinPlayerControllerMP",
+    "MixinRenderGlobal",
     "MixinRenderItem"
   ]
 }

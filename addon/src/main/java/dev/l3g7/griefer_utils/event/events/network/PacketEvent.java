@@ -18,15 +18,12 @@
 
 package dev.l3g7.griefer_utils.event.events.network;
 
-import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.injection.mixin.MixinNetHandlerPlayClient;
-import net.labymod.main.LabyMod;
+import dev.l3g7.griefer_utils.core.injection.mixin.MixinNetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public class PacketEvent extends Event {
 
@@ -36,15 +33,18 @@ public class PacketEvent extends Event {
 		this.packet = packet;
 	}
 
+	@Cancelable
 	public static class PacketReceiveEvent extends PacketEvent {
 
 		private PacketReceiveEvent(Packet<?> packet) {
 			super(packet);
 		}
 
-		@OnEnable
-		private static void register() {
-			LabyMod.getInstance().getEventManager().registerOnIncomingPacket(p -> EVENT_BUS.post(new PacketReceiveEvent((Packet<?>) p)));
+		/**
+		 * Triggered by {@link MixinNetworkManager}.
+		 */
+		public static boolean shouldReceivePacket(Packet<?> packet) {
+			return !MinecraftForge.EVENT_BUS.post(new PacketReceiveEvent(packet));
 		}
 
 	}

@@ -22,4 +22,4 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
-public class RenderPortalDistorionEvent extends Event {}
+public class RenderPortalDistortionEvent extends Event {}

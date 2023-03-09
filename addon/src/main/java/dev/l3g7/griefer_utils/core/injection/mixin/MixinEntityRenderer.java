@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.core.injection.mixin;
 
-import dev.l3g7.griefer_utils.event.events.render.RenderPortalDistorionEvent;
+import dev.l3g7.griefer_utils.event.events.render.RenderPortalDistortionEvent;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,8 +29,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class MixinEntityRenderer {
 
 	@ModifyVariable(method = "setupCameraTransform", at = @At("STORE"), ordinal = 2)
-	public float setPortalDistorion(float distortion) {
-		return MinecraftForge.EVENT_BUS.post(new RenderPortalDistorionEvent()) ? 0 : distortion;
+	public float setPortalDistortion(float distortion) {
+		return MinecraftForge.EVENT_BUS.post(new RenderPortalDistortionEvent()) ? 0 : distortion;
 	}
 
 }

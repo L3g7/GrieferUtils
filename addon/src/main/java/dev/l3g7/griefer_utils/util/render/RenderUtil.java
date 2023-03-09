@@ -20,8 +20,10 @@ package dev.l3g7.griefer_utils.util.render;
 
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import net.labymod.settings.elements.ControlElement.IconData;
+import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -34,7 +36,10 @@ import net.minecraftforge.client.ForgeHooksClient;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.List;
+import java.util.function.BiConsumer;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.pos;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.util.render.GlEngine.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -68,17 +73,6 @@ public class RenderUtil {
 		finish();
 	}
 
-	public static void renderIconData(IconData iconData, int x, int y) {
-		if (iconData == null)
-			return;
-
-		if (iconData.hasTextureIcon()) {
-			textureManager().bindTexture(iconData.getTextureIcon());
-			drawUtils().drawTexture(x + 3, y + 3, 256, 256, 16, 16);
-		} else if (iconData.hasMaterialIcon())
-			drawUtils().drawItem(iconData.getMaterialIcon().createItemStack(), x + 3, y + 2, null);
-	}
-
 	public static void drawLine(BlockPos start, BlockPos end, Color color) {
 		drawLine(start.getX(), start.getY(), start.getZ(), end.getX(), end.getY(), end.getZ(), color);
 	}
@@ -95,7 +89,6 @@ public class RenderUtil {
 		Vec3d cam = prevPos.add(pos(entity).subtract(prevPos).scale(partialTicks()));
 
 		// Update line width
-//		float oldLineWidth = glGetFloat(GL_LINE_WIDTH);
 		GL11.glLineWidth(1.5f);
 		GlStateManager.disableTexture2D();
 
@@ -110,8 +103,111 @@ public class RenderUtil {
 		GlEngine.finish();
 
 		// Reset line width
-//		GL11.glLineWidth(oldLineWidth);
 		GlStateManager.enableTexture2D();
+	}
+
+	public static void drawGradientRect(double left, double top, double right, double bottom, double zLevel, int startColor, int endColor) {
+		float f = (startColor >> 24 & 255) / 255f;
+		float f1 = (startColor >> 16 & 255) / 255f;
+		float f2 = (startColor >> 8 & 255) / 255f;
+		float f3 = (startColor & 255) / 255f;
+		float f4 = (endColor >> 24 & 255) / 255f;
+		float f5 = (endColor >> 16 & 255) / 255f;
+		float f6 = (endColor >> 8 & 255) / 255f;
+		float f7 = (endColor & 255) / 255f;
+
+		GlStateManager.disableTexture2D();
+		GlStateManager.enableBlend();
+		GlStateManager.disableAlpha();
+		GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+		GlStateManager.shadeModel(GL_SMOOTH);
+
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+		worldrenderer.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+		worldrenderer.pos(right, top, zLevel).color(f1, f2, f3, f).endVertex();
+		worldrenderer.pos(left, top, zLevel).color(f1, f2, f3, f).endVertex();
+		worldrenderer.pos(left, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
+		worldrenderer.pos(right, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
+		tessellator.draw();
+
+		GlStateManager.shadeModel(GL_FLAT);
+		GlStateManager.disableBlend();
+		GlStateManager.enableAlpha();
+		GlStateManager.enableTexture2D();
+	}
+
+	public static void renderToolTipWithLeftPadding(RenderToolTipEvent event, float padding, BiConsumer<Float, Float> paddingContentRenderer) {
+		List<String> textLines = event.stack.getTooltip(player(), settings().advancedItemTooltips);
+		for (int i = 0; i < textLines.size(); ++i)
+			textLines.set(i, (i == 0 ? event.stack.getRarity().rarityColor : "§7") + textLines.get(i));
+
+		if (textLines.isEmpty())
+			return;
+
+		event.setCanceled(true);
+
+		GlStateManager.disableRescaleNormal();
+		GlStateManager.disableBlend();
+		GlStateManager.disableRescaleNormal();
+		RenderHelper.disableStandardItemLighting();
+		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+
+		int maxLineWidth = 0;
+		for (String line : textLines) {
+			int width = drawUtils().getStringWidth(line);
+			if (width > maxLineWidth)
+				maxLineWidth = width;
+		}
+
+		float mouseOffset = padding + 12;
+		float drawX = event.x + mouseOffset;
+		float drawY = event.y - 12;
+		float defaultHeight = textLines.size() == 1 ? 14.5f : 8;
+		if (textLines.size() > 1)
+			defaultHeight += 2 + (textLines.size() - 1) * 10;
+		defaultHeight = Math.max(padding, defaultHeight);
+
+		if (drawX + maxLineWidth > event.screen.width)
+			drawX -= mouseOffset + maxLineWidth;
+		if (drawY + defaultHeight + 6 > event.screen.height)
+			drawY = event.screen.height - defaultHeight - 6;
+
+		int color = 0xF0100010;
+		float y = drawY + defaultHeight + 3;
+		float x = drawX + maxLineWidth + 3;
+		float paddedX = drawX - 5 - padding;
+		drawY -= 3;
+		drawGradientRect(paddedX    , drawY - 1, x        , drawY, 0, color, color);
+		drawGradientRect(paddedX    , y        , x        , y + 1, 0, color, color);
+		drawGradientRect(drawX - 3  , drawY    , x        , y    , 0, color, color);
+		drawGradientRect(x          , drawY    , x + 1    , y    , 0, color, color);
+		drawGradientRect(paddedX - 1, drawY    , drawX - 3, y    , 0, color, color);
+
+		int startColor = 0x505000FF;
+		int endColor = (startColor & 0xFEFEFE) >> 1 | (startColor & 0xFF000000);
+		drawGradientRect(paddedX, drawY + 1, paddedX + 1, y - 1    , 0, startColor, endColor);
+		drawGradientRect(x - 1  , drawY + 1, x          , y - 1    , 0, startColor, endColor);
+		drawGradientRect(paddedX, drawY    , x          , drawY + 1, 0, startColor, startColor);
+		drawGradientRect(paddedX, y - 1    , x          , y        , 0, endColor  , endColor);
+		drawY += 3;
+
+		float rectTop = drawY;
+		for (int i = 0; i < textLines.size(); ++i) {
+			String line = textLines.get(i);
+			drawUtils().drawStringWithShadow(line, drawX, drawY, -1);
+			if (i == 0)
+				drawY += 2;
+			drawY += 10;
+		}
+
+		GlStateManager.enableBlend();
+		GlStateManager.enableDepth();
+		GlStateManager.enableRescaleNormal();
+		GlStateManager.pushMatrix();
+		paddingContentRenderer.accept(paddedX + 2, rectTop);
+		GlStateManager.popMatrix();
 	}
 
 }

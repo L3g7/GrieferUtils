@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
-
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
@@ -26,56 +25,44 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
-import net.labymod.utils.Material;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemMap;
-import net.minecraft.world.storage.MapData;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
-public class MapPreview extends Feature {
+public class SkullPreview extends Feature {
 
 	private final NumberSetting size = new NumberSetting()
 		.name("Vergrößerungs-Faktor")
-		.description("Um wie viel die Karte in der Vorschau vergrößert werden soll.")
+		.description("Um wie viel der Kopf in der Vorschau vergrößert werden soll.")
 		.icon("magnifying_glass")
-		.defaultValue(3)
+		.defaultValue(4)
 		.min(2)
 		.max(16);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Karten Vorschau")
-		.description("Zeigt in der Beschreibung von Karten eine Vorschau an.")
-		.icon(Material.MAP)
+		.name("Kopf Vorschau")
+		.description("Zeigt in der Beschreibung von Kopf eine vergrößerte Version an.")
+		.icon("steve")
 		.subSettings(size);
 
 	@EventListener
 	public void onTooltipRender(RenderToolTipEvent event) {
-		if (!(event.stack.getItem() instanceof ItemMap))
+		if (event.stack.getItem() != Items.skull || event.stack.getMetadata() != 3)
 			return;
 
-		MapData mapData = Items.filled_map.getMapData(event.stack, MinecraftUtil.world());
-		if (mapData == null)
-			return;
-
-		RenderUtil.renderToolTipWithLeftPadding(event, 17 * size.get(), (left, top) -> {
-			GlStateManager.translate(left + (size.get() / 2f), top + (size.get() / 2f), 750);
-			EntityRenderer renderer = mc().entityRenderer;
-
-			double mapScale = (16 * size.get()) / 128d;
-			GlStateManager.scale(mapScale, mapScale, 1);
-
-			// Enable lighting (otherwise it's darker than it should be)
-			renderer.enableLightmap();
-			renderer.getMapItemRenderer().renderMap(mapData, false);
-			renderer.disableLightmap();
+		RenderUtil.renderToolTipWithLeftPadding(event, 12 * size.get(), (left, top) -> {
+			GlStateManager.translate(left - (size.get() * 2), top - (size.get() * 2), 1);
+			RenderHelper.enableGUIStandardItemLighting();
+			GlStateManager.scale(size.get(), size.get(), 1);
+			mc().getRenderItem().zLevel = 750;
+			mc().getRenderItem().renderItemAndEffectIntoGUI(event.stack, 0, 0);
 		});
+
 	}
 
 }

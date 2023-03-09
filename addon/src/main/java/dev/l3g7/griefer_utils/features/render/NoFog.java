@@ -18,11 +18,12 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.render.RenderPortalDistorionEvent;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent.FogType;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.item.ItemStack;
@@ -50,12 +51,17 @@ public class NoFog extends Feature {
 		.description("Deaktiviert die Lavatrübheit.")
 		.icon(new ItemStack(stained_glass_pane, 1, 1));
 
+	private final BooleanSetting nausea = new BooleanSetting()
+		.name("Keine Übelkeit")
+		.description("Deaktiviert die Übelkeit.")
+		.icon(new ItemStack(stained_glass_pane, 1, 13));
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Kein Nebel")
 		.description("Entfernt einige Nebel-Effekte.")
 		.icon(new ItemStack(stained_glass_pane))
-		.subSettings(blindness, water, lava);
+		.subSettings(blindness, water, lava, nausea);
 
 	@EventListener
 	public void onDisplayNameRender(SetupFogEvent event) {
@@ -65,6 +71,11 @@ public class NoFog extends Feature {
 			event.setCanceled(water.get());
 		else if (event.fogType == FogType.LAVA)
 			event.setCanceled(lava.get());
+	}
+
+	@EventListener
+	public void onPortalDistortionRender(RenderPortalDistorionEvent event) {
+		event.setCanceled(nausea.get());
 	}
 
 }

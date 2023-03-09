@@ -16,6 +16,7 @@
     "MixinWorld"
   ],
   "client": [
+    "MixinEntityRenderer",
     "MixinGuiChatAdapter",
     "MixinGuiChest",
     "MixinGuiIngame",

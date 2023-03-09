@@ -65,6 +65,11 @@ public class TabListEvent extends Event {
 		return cachedNames.get(uuid);
 	}
 
+	@EventListener
+	public static void onServerLeave(ServerEvent.ServerQuitEvent event) {
+		cachedNames.clear();
+	}
+
 	/**
 	 * An event being posted when a tab list entry updates its name.
 	 */
@@ -194,7 +199,6 @@ public class TabListEvent extends Event {
 			}
 
 			this.entries = ImmutableMap.copyOf(namedEntries);
-			// Caused by: java.lang.NullPointerException: null value in entry: AddPlayerData{latency=0, gameMode=null, profile=com.mojang.authlib.GameProfile@69e35b4b[id=b48451cf-7ded-3811-9fe5-01793d0ce246,name=<null>,properties={},legacy=false], displayName=null}=null
 		}
 
 		@EventListener

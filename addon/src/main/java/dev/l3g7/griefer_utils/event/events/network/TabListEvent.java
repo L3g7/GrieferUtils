@@ -54,6 +54,9 @@ public class TabListEvent extends Event {
 		for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
 			IChatComponent originalComponent = cachedNames.get(info.getGameProfile().getId());
 
+			if (originalComponent == null)
+				return;
+
 			// create full deep-copy of component
 			TabListNameUpdateEvent event = new TabListNameUpdateEvent(info.getGameProfile(), originalComponent);
 			EVENT_BUS.post(event);

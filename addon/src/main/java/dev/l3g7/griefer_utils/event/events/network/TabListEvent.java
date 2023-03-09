@@ -55,7 +55,7 @@ public class TabListEvent extends Event {
 			IChatComponent originalComponent = cachedNames.get(info.getGameProfile().getId());
 
 			if (originalComponent == null)
-				return;
+				continue;
 
 			// create full deep-copy of component
 			TabListNameUpdateEvent event = new TabListNameUpdateEvent(info.getGameProfile(), originalComponent);

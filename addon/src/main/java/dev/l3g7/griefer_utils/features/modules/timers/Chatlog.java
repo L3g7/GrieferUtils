@@ -47,7 +47,7 @@ public class Chatlog extends Module {
 		.name("Verstecken, wenn fertig")
 		.description("Ob das Modul versteckt werden soll, wenn derzeit kein Cooldown existiert.")
 		.icon("blindness")
-		.config("moduels.chatlog.hide");
+		.config("modules.chatlog.hide");
 
 	private long chatlogEnd = -1;
 

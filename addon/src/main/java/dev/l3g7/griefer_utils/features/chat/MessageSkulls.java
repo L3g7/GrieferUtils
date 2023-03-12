@@ -19,16 +19,16 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.ChatLogModifyEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.event.events.render.RenderChatEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.misc.NameCache;
-import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.DrawUtils;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -95,10 +95,10 @@ public class MessageSkulls extends Feature {
 			.replace("", "§") + "r   ";
 	}
 
-	@SuppressWarnings("unused")
-	public static void renderSkull(ChatLine line, int y, float alpha) {
+	@EventListener
+	public void renderSkull(RenderChatEvent event) {
 
-		IChatComponent component = (IChatComponent) line.getComponent();
+		IChatComponent component = (IChatComponent) event.chatLine.getComponent();
 		String formattedText = component.getFormattedText();
 
 		int idStart = formattedText.indexOf("§m§s");
@@ -107,6 +107,8 @@ public class MessageSkulls extends Feature {
 			return;
 
 		String msg = ID_TO_MESSAGE_MAP.get(formattedText.substring(idStart, formattedText.indexOf(" ", idStart) + 3));
+		if (msg == null)
+			return;
 
 		int startIndex = msg.indexOf('\u2503') + 2;
 		int endIndex;
@@ -131,8 +133,8 @@ public class MessageSkulls extends Feature {
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
 		drawUtils.bindTexture(playerInfo.getLocationSkin());
 		int x = drawUtils.getStringWidth(formattedText.substring(0, idStart)) + (formattedText.startsWith("§r§m§s") ? 2 : 1);
-		drawUtils.drawTexture(x, y - 8, 32, 32, 32, 32, 8, 8, alpha); // First layer
-		drawUtils.drawTexture(x, y - 8, 160, 32, 32, 32, 8, 8, alpha); // Second layer
+		drawUtils.drawTexture(x, event.y - 8, 32, 32, 32, 32, 8, 8, event.alpha); // First layer
+		drawUtils.drawTexture(x, event.y - 8, 160, 32, 32, 32, 8, 8, event.alpha); // Second layer
 	}
 
 }

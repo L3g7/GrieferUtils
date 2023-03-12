@@ -37,12 +37,12 @@ public class PlayerUtil {
 	 */
 	public static UUID getUUID(String name) {
 		for(NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
-			if(info.getGameProfile().getName().equals(name))
+			if(info.getGameProfile().getName().equalsIgnoreCase(name))
 				return info.getGameProfile().getId();
 
 			if(info.getDisplayName() != null) {
 				String[] parts = info.getDisplayName().getUnformattedText().split("\u2503");
-				if(parts.length > 1 && parts[1].trim().equals(name))
+				if(parts.length > 1 && parts[1].trim().equalsIgnoreCase(name))
 					return info.getGameProfile().getId();
 			}
 		}

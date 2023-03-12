@@ -18,10 +18,11 @@
 
 package dev.l3g7.griefer_utils.core.injection.mixin;
 
-import dev.l3g7.griefer_utils.features.chat.MessageSkulls;
+import dev.l3g7.griefer_utils.event.events.render.RenderChatEvent;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.labymod.utils.DrawUtils;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -35,7 +36,7 @@ public class MixinChatRenderer {
 
 	@Inject(method = "renderChat", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/DrawUtils;drawStringWithShadow(Ljava/lang/String;DDI)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILEXCEPTION, remap = false)
 	private void injectRenderChat(int updateCounter, CallbackInfo ci, DrawUtils draw, int fontHeight, float scale, int chatLineCount, boolean chatOpen, float opacity, int width, int visibleMessages, double totalMessages, double animationSpeed, float lineHeight, double shift, double posX, double posY, int i, Iterator<ChatLine> chatLineIterator, ChatLine chatline, boolean firstLine, boolean lastLine, int updateCounterDifference, int alpha, int x, int y) {
-		MessageSkulls.renderSkull(chatline, y, alpha / 255f);
+		MinecraftForge.EVENT_BUS.post(new RenderChatEvent(chatline, y, alpha / 255f));
 	}
 
 }

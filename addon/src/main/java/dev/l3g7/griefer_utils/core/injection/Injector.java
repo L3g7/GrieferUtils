@@ -18,13 +18,14 @@
 
 package dev.l3g7.griefer_utils.core.injection;
 
-import dev.l3g7.griefer_utils.core.mapping.Mapper;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.LogHook;
+import com.mojang.realmsclient.util.Pair;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.injection.transformer.Transformer;
+import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.LogHook;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
@@ -58,32 +59,42 @@ public class Injector implements IClassTransformer {
 			LogHook.hook();
 
 		Mapper.loadMappings("1.8.9", "22");
-		loadMixin();
+		loadLibraries();
+		initMixin();
 		loadTransformers();
 	}
 
-	private void loadMixin() throws ReflectiveOperationException, IOException {
-		File mixinLibrary = new File("libraries/org/spongepowered/mixin/0.7.11/mixin-0.7.11.jar");
-		if (!mixinLibrary.exists()) {
-			// Download library
-			mixinLibrary.getParentFile().mkdirs();
-			HttpsURLConnection c = (HttpsURLConnection) new URL("https://repo.spongepowered.org/repository/maven-public/org/spongepowered/mixin/0.7.11-SNAPSHOT/mixin-0.7.11-20180703.121122-1.jar").openConnection();
-			c.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");
-			Files.copy(c.getInputStream(), mixinLibrary.toPath());
-		}
-
-		// Add jar file to parent of LaunchClassLoader
-		Field parent = Launch.classLoader.getClass().getDeclaredField("parent");
-		parent.setAccessible(true);
-		Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-		addURL.setAccessible(true);
-		addURL.invoke(parent.get(Launch.classLoader), mixinLibrary.toURI().toURL());
-		addURL.invoke(Launch.classLoader, mixinLibrary.toURI().toURL());
-
-		// Initialize Mixin
+	private void initMixin() {
 		MixinBootstrap.init();
 		Mixins.addConfiguration(MIXIN_CONFIG);
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
+	}
+
+	private void loadLibraries() throws ReflectiveOperationException, IOException {
+		Pair<String, String>[] libs = new Pair[] {
+			Pair.of("org/spongepowered/mixin/0.7.11/mixin-0.7.11.jar", "https://repo.spongepowered.org/repository/maven-public/org/spongepowered/mixin/0.7.11-SNAPSHOT/mixin-0.7.11-20180703.121122-1.jar"),
+			Pair.of("org/whispersystems/curve25519-android/0.5.0/curve25519-android-0.5.0.jar", "https://repo1.maven.org/maven2/org/whispersystems/curve25519-java/0.5.0/curve25519-java-0.5.0.jar"),
+		};
+
+		for (Pair<String, String> lib : libs) {
+			File libFile = new File("libraries/" + lib.first());
+
+			if (!libFile.exists()) {
+				// Download library
+				libFile.getParentFile().mkdirs();
+				HttpsURLConnection c = (HttpsURLConnection) new URL(lib.second()).openConnection();
+				c.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");
+				Files.copy(c.getInputStream(), libFile.toPath());
+			}
+
+			// Add jar file to parent of LaunchClassLoader
+			Field parent = Launch.classLoader.getClass().getDeclaredField("parent");
+			parent.setAccessible(true);
+			Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+			addURL.setAccessible(true);
+			addURL.invoke(parent.get(Launch.classLoader), libFile.toURI().toURL());
+			addURL.invoke(Launch.classLoader, libFile.toURI().toURL());
+		}
 	}
 
 	private void loadTransformers() {

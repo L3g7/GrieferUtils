@@ -113,8 +113,10 @@ public class ChatQueue {
 				currentQueueDelay = QUEUE_DELAY;
 			}
 
-			if (MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(msg)))
+			if (MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(msg))) {
+				currentQueueDelay = 0;
 				return;
+			}
 
 			Minecraft.getMinecraft().thePlayer.sendChatMessage(msg);
 			lastMessageSentTimestamp = System.currentTimeMillis();

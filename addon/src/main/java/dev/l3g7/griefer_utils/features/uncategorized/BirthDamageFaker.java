@@ -44,23 +44,33 @@ public class BirthDamageFaker {
 			return;
 
 		for (ItemStack itemStack : player().inventory.mainInventory) {
-			if (itemStack == null)
-				return;
+			process(itemStack);
+		}
 
-			NBTTagCompound tag = itemStack.getTagCompound();
-			if (tag != null && tag.hasKey("display", 10)) {
-				NBTTagCompound nbttagcompound = tag.getCompoundTag("display");
-
-				if (nbttagcompound.hasKey("Lore", 9)) {
-					NBTTagList list = nbttagcompound.getTagList("Lore", 8);
-					if (list.tagCount() >= 2) {
-						NBTTagString str = (NBTTagString) list.get(1);
-						if (str.getString().equals("§6Edle Klinge von §c§lM§6§lo§e§lo§a§ls§b§lL§d§le§c§li§6§lt§e§lu§a§ln§b§lg"))
-							itemStack.setItemDamage(itemStack.getMaxDamage());
-					}
-				}
+		if (player().openContainer != null) {
+			for (ItemStack itemStack : player().openContainer.getInventory()) {
+				process(itemStack);
 			}
 		}
 	}
 
+	private static void process(ItemStack itemStack) {
+		if (itemStack == null) {
+			return;
+		}
+
+		NBTTagCompound tag = itemStack.getTagCompound();
+		if (tag != null && tag.hasKey("display", 10)) {
+			NBTTagCompound nbttagcompound = tag.getCompoundTag("display");
+
+			if (nbttagcompound.hasKey("Lore", 9)) {
+				NBTTagList list = nbttagcompound.getTagList("Lore", 8);
+				if (list.tagCount() >= 2) {
+					NBTTagString str = (NBTTagString) list.get(1);
+					if (str.getString().equals("§6Edle Klinge von §c§lM§6§lo§e§lo§a§ls§b§lL§d§le§c§li§6§lt§e§lu§a§ln§b§lg"))
+						itemStack.setItemDamage(0);
+				}
+			}
+		}
+	}
 }

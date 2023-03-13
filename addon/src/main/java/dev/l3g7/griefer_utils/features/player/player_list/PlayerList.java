@@ -45,6 +45,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -55,7 +56,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.features.player.player_list.PlayerList.MarkAction.*;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 
@@ -179,6 +180,18 @@ public abstract class PlayerList extends Feature {
 
 			// Check if player should be marked
 			String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
+			if (name == null) {
+				display(Constants.ADDON_PREFIX + "§cEin Fehler ist aufgetreten. Bitte melde dich beim Team");
+				displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
+				System.err.println("Original: " + IChatComponent.Serializer.componentToJson(event.original));
+				System.err.println("Message: " + IChatComponent.Serializer.componentToJson(event.message));
+
+				String nickedName = matcher.group("name").replaceAll("§.", "");
+				System.err.println(nickedName);
+				System.err.println(NameCache.getUUID(nickedName));
+				return;
+			}
+
 			UUID uuid = name.contains("~") ? NameCache.getUUID(name) : PlayerUtil.getUUID(name);
 			if (!uuids.contains(uuid) && !names.contains(name) && !customEntries.contains(name, uuid))
 				return;

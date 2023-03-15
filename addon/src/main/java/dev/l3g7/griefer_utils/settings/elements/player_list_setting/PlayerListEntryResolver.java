@@ -68,7 +68,7 @@ public class PlayerListEntryResolver {
 		entry.loaded = true;
 	}
 
-	public static void loadFromXbox(PlayerListEntry entry) {
+	public static void loadFromXbox(PlayerListEntry entry) throws IOException {
 		if (!XboxProfileResolver.isAvailable())
 			return;
 

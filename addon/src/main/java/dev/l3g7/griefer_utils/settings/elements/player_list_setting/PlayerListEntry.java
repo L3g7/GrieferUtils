@@ -65,8 +65,13 @@ public class PlayerListEntry {
 			new Thread(() -> {
 				if (!exists || !XboxProfileResolver.isAvailable())
 					PlayerListEntryResolver.loadFromPlayerDB(this);
-				if (exists)
-					PlayerListEntryResolver.loadFromXbox(this);
+				if (exists) {
+					try {
+						PlayerListEntryResolver.loadFromXbox(this);
+					} catch (IOException e) {
+						PlayerListEntryResolver.loadFromPlayerDB(this);
+					}
+				}
 			}).start();
 			return;
 		}

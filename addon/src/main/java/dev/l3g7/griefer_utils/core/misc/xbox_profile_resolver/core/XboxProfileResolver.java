@@ -10,12 +10,16 @@ import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.util.Requests;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.util.Util.strMap;
 
 public class XboxProfileResolver {
 
 	private static boolean available = false;
+
+	private static final List<Long> requestSendTimes = new ArrayList<>();
 
 	public static final Gson GSON = new GsonBuilder()
 			.registerTypeAdapter(DateTime.class, (JsonSerializer<DateTime>) (src, type, ctx) -> new JsonPrimitive(src.toString()))
@@ -28,15 +32,20 @@ public class XboxProfileResolver {
 		return available;
 	}
 
-	public static XboxProfile getProfileByXUID(String xuid) {
+	public static XboxProfile getProfileByXUID(String xuid) throws IOException {
 		return getProfile("xuid", xuid);
 	}
 
-	public static XboxProfile getProfileByGamerTag(String gamerTag) {
+	public static XboxProfile getProfileByGamerTag(String gamerTag) throws IOException {
 		return getProfile("gt", gamerTag);
 	}
 
-	private static XboxProfile getProfile(String key, String value) {
+	private static XboxProfile getProfile(String key, String value) throws IOException {
+		requestSendTimes.removeIf(time -> System.currentTimeMillis() - time > 15_000);
+		if (requestSendTimes.size() >= 10)
+			throw new IOException("Request would be ratelimited");
+
+		requestSendTimes.add(System.currentTimeMillis());
 		try {
 			return GSON.fromJson(Requests.get("https://profile.xboxlive.com/users/" + key + "(" + value + ")/profile/settings?settings=GameDisplayName%2CGameDisplayPicRaw", strMap(
 				"x-xbl-contract-version", "3",
@@ -48,10 +57,6 @@ public class XboxProfileResolver {
 			)).getAsJsonObject().get("profileUsers").getAsJsonArray().get(0), XboxProfile.class);
 		} catch (FileNotFoundException e) {
 			// User not found
-			return null;
-		} catch (IOException e) {
-			System.err.println("Error white getting " + value);
-			e.printStackTrace();
 			return null;
 		}
 	}

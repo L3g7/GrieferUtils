@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 public class VersionComparator implements Comparator<String> {
 
-	private final Pattern VERSION_PATTERN = Pattern.compile("v?(?<version>(?:\\d+\\.)*\\d+)(?:-(?<meta>[\\w.+-]+))?");
+	private final Pattern VERSION_PATTERN = Pattern.compile("^v?(?<version>(?:\\d+\\.)*\\d+)(?:-(?<meta>[\\w.+-]+?)(?<metaid>[\\d.]*))?$");
 
 	@Override
 	public int compare(String o1, String o2) {
@@ -46,13 +46,27 @@ public class VersionComparator implements Comparator<String> {
 		if (i != m2Parts.length)
 			return 1;
 
-		// Compare meta
+		// Compare meta tag
 		if (m1.group("meta") == null)
 			return m2.group("meta") == null ? 0 : -1;
 		else if (m2.group("meta") == null)
 			return 1;
 
-		return -m1.group("meta").compareToIgnoreCase(m2.group("meta"));
+		int metaCmp = -m1.group("meta").compareToIgnoreCase(m2.group("meta"));
+		if (metaCmp != 0)
+			return metaCmp;
+
+		// Compare meta id
+		if (m1.group("metaid").isEmpty()) {
+			if (m2.group("metaid").isEmpty())
+				return 0;
+			return 1;
+		}
+		if (m2.group("metaid").isEmpty()) {
+			return -1;
+		}
+
+		return compare(m1.group("metaid"), m2.group("metaid"));
 	}
 
 }

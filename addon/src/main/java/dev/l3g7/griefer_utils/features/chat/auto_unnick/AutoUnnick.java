@@ -110,7 +110,7 @@ public class AutoUnnick extends Feature {
 	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
 		String text = event.message.getUnformattedText();
 
-		if (!text.contains("\u2503") || !text.contains("~"))
+		if (!text.contains("\u2503") || !text.contains("~") || text.startsWith("@"))
 			return;
 
 		String name = text.substring(text.indexOf('\u2503') + 2);

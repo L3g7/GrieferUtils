@@ -19,21 +19,21 @@
 package dev.l3g7.griefer_utils.features.player.player_list;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.DisplayNameGetEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListSetting;
-import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.misc.NameCache;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -45,7 +45,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
-import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -56,7 +55,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.features.player.player_list.PlayerList.MarkAction.*;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 
@@ -180,17 +179,8 @@ public abstract class PlayerList extends Feature {
 
 			// Check if player should be marked
 			String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
-			if (name == null) {
-				display(Constants.ADDON_PREFIX + "§cEin Fehler ist aufgetreten. Bitte melde dich beim Team");
-				displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
-				System.err.println("Original: " + IChatComponent.Serializer.componentToJson(event.original));
-				System.err.println("Message: " + IChatComponent.Serializer.componentToJson(event.message));
-
-				String nickedName = matcher.group("name").replaceAll("§.", "");
-				System.err.println(nickedName);
-				System.err.println(NameCache.getUUID(nickedName));
+			if (name == null) // Nicked player in global chat
 				return;
-			}
 
 			UUID uuid = name.contains("~") ? NameCache.getUUID(name) : PlayerUtil.getUUID(name);
 			if (!uuids.contains(uuid) && !names.contains(name) && !customEntries.contains(name, uuid))

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedList;
-import java.util.Map;
 
 public class ConfigPatcher {
 
@@ -53,32 +52,10 @@ public class ConfigPatcher {
 
 		VersionComparator cmp = new VersionComparator();
 
-
-		if (cmp.compare("2.0-BETA-6", version) < 0) {
-
-			// patch city_build added to reactions in 2.0-BETA-6
-			JsonObject chatReactor = getParent("chat.chat_reactor.entries");
-			if (chatReactor.has("entries")) {
-				for (JsonElement entry : chatReactor.get("entries").getAsJsonArray()) {
-					JsonObject reaction = entry.getAsJsonObject();
-					if (!reaction.has("city_build"))
-						reaction.addProperty("city_build", "Jeder CB");
-				}
-			}
-		}
-
-		if (cmp.compare("2.0-BETA-7", version) < 0) {
-			rename("item.generic_item_saver", "item.item_saver");
-
-			// patch extreme_drop added to ItemSaver in 2.0-BETA-7
+		if (cmp.compare("2.0-BETA-10", version) < 0) {
 			JsonObject itemSaver = getParent("item.item_saver.entries");
-			if (itemSaver.has("entries")) {
-				for (Map.Entry<String, JsonElement> entry : itemSaver.get("entries").getAsJsonObject().entrySet()) {
-					JsonObject item = entry.getValue().getAsJsonObject();
-					if (!item.has("extreme_drop"))
-						item.addProperty("extreme_drop", false);
-				}
-			}
+			if (!itemSaver.has("enabled"))
+				itemSaver.addProperty("enabled", true);
 		}
 	}
 

@@ -29,7 +29,7 @@ import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.core.WorldRendererAdapter;
@@ -73,7 +73,7 @@ public class ItemSaver extends Feature {
 		});
 
 	@MainElement(configureSubSettings = false)
-	private static final CategorySetting enabled = new CategorySetting()
+	private static final BooleanSetting enabled = new BooleanSetting()
 		.name("ItemSaver")
 		.description("Deaktiviert Klicks und Dropping bei einstellbaren Items.")
 		.icon("shield_with_sword")

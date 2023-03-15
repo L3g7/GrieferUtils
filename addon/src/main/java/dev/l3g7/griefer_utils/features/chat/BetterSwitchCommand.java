@@ -18,19 +18,18 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
-import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.core.misc.Constants;
 import net.labymod.utils.Material;
 import net.minecraftforge.common.MinecraftForge;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,15 +40,7 @@ public class BetterSwitchCommand extends Feature {
 
 	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", Pattern.CASE_INSENSITIVE);
 
-	private static final List<ServerAlias> SERVER_ALIASES = ImmutableList.of(
-		new ServerAlias("nature", "Nature", "n"),
-		new ServerAlias("extreme", "Extreme", "x"),
-		new ServerAlias("cbevil", "Evil", "e"),
-		new ServerAlias("farm1", "Wasser", "w"),
-		new ServerAlias("nether1", "Lava", "l"),
-		new ServerAlias("eventserver", "Event", "v"));
-
-	private String command = null;
+	private static String command = null;
 	private boolean awaitingSendCommand = false;
 
 	@MainElement
@@ -70,23 +61,14 @@ public class BetterSwitchCommand extends Feature {
 		Matcher matcher = COMMAND_PATTERN.matcher(msg);
 
 		if (matcher.matches()) {
-			String cb = matcher.group(1);
 			event.setCanceled(true);
 
-			if (cb.matches("^\\d+$")) {
+			Citybuild cb = Citybuild.getCitybuild(matcher.group(1));
+			if (cb.exists()) {
+				cb.join();
 				command = matcher.group(2);
 				awaitingSendCommand = true;
-				send("/switch cb" + cb);
 				return;
-			}
-
-			for (ServerAlias alias : SERVER_ALIASES) {
-				if (alias.matches(cb)) {
-					command = matcher.group(2);
-					awaitingSendCommand = true;
-					send("/switch " + alias.targetCityBuild);
-					return;
-				}
 			}
 		}
 
@@ -107,7 +89,7 @@ public class BetterSwitchCommand extends Feature {
 		event.setCanceled(true);
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onCityBuild(CityBuildJoinEvent event) {
 		if (command == null)
 			return;
@@ -117,29 +99,18 @@ public class BetterSwitchCommand extends Feature {
 		command = null;
 	}
 
-	private static class ServerAlias {
+	public static void sendOnCityBuild(String command, String cityBuild) {
+		Citybuild cb = Citybuild.getCitybuild(cityBuild);
+		if (!cb.exists())
+			return;
 
-		private final String targetCityBuild;
-		private final String displayName;
-		private final String[] aliases;
-
-		public ServerAlias(String targetCityBuild, String displayName, String... aliases) {
-			this.targetCityBuild = targetCityBuild;
-			this.displayName = displayName;
-			this.aliases = aliases;
+		if (cb.isOnCb()) {
+			send(command);
+			return;
 		}
 
-		public boolean matches(Object obj) {
-			if (!(obj instanceof String))
-				return false;
-
-			for (String alias : aliases)
-				if (alias.equalsIgnoreCase((String) obj))
-					return true;
-
-			return displayName.equalsIgnoreCase((String) obj) || targetCityBuild.equalsIgnoreCase((String) obj);
-		}
-
+		cb.join();
+		BetterSwitchCommand.command = command;
 	}
 
 }

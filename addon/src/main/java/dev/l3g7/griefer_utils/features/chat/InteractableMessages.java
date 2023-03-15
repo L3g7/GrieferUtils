@@ -18,11 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.ModColor;
@@ -32,8 +32,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 
 import static dev.l3g7.griefer_utils.core.misc.Constants.STATUS_PATTERN;
@@ -49,23 +47,12 @@ public class InteractableMessages extends Feature {
 
 	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
 	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
-	private static final Map<String, String> GLOBALCHAT_CB_TO_SWITCH = new HashMap<String, String>(){{
-		put("CBE", "cbevil");
-		put("WASSER", "farm1");
-		put("LAVA", "nether1");
-		put("EVENT", "eventserver");
-	}};
 
 	@EventListener(priority = EventPriority.LOW)
 	public void modifyMessage(MessageModifyEvent event) {
 		modifyGlobalChats(event);
 		modifyStatuses(event);
 		modifyTps(event);
-	}
-
-	@EventListener(triggerWhenDisabled = true)
-	public void onSend(MessageEvent.MessageSendEvent event) {
-
 	}
 
 	private static void modifyGlobalChats(MessageModifyEvent event) {
@@ -82,7 +69,7 @@ public class InteractableMessages extends Feature {
 				continue;
 
 			sibling.getChatStyle()
-				.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/switch " + GLOBALCHAT_CB_TO_SWITCH.getOrDefault(cb, cb)))
+				.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/switch " + Citybuild.getCitybuild(cb).getSwitchTarget()))
 				.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§6Klicke, um auf den CB zu wechseln")));
 			break;
 		}

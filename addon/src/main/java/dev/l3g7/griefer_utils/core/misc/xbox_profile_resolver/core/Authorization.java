@@ -45,7 +45,7 @@ public class Authorization {
 			throw new IllegalStateException("Not authorized");
 
 		XToken xstsToken = currentAuthorization.xstsToken;
-		return "XBL3.0 x=" + xstsToken.getUHS() + ";{" + xstsToken.token + "}";
+		return "XBL3.0 x=" + xstsToken.getUHS() + ";" + xstsToken.token;
 	}
 
 	public boolean validate() {

@@ -28,8 +28,14 @@ public class VersionComparator implements Comparator<String> {
 
 	@Override
 	public int compare(String o1, String o2) {
-		Matcher m1 = VERSION_PATTERN.matcher(o1); m1.find();
-		Matcher m2 = VERSION_PATTERN.matcher(o2); m2.find();
+		Matcher m1 = VERSION_PATTERN.matcher(o1);
+		if (!m1.find())
+			return 0;
+
+		Matcher m2 = VERSION_PATTERN.matcher(o2);
+		if (!m2.find())
+			return 0;
+
 		String[] m1Parts = m1.group("version").split("\\.");
 		String[] m2Parts = m2.group("version").split("\\.");
 

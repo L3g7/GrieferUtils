@@ -39,6 +39,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -95,7 +96,7 @@ public class AutoTool extends Feature {
 	 */
 	@EventListener(priority = EventPriority.HIGH)
 	public void onMouse(MouseEvent event) {
-		if ((event.button != 0 && event.button != 1) || !event.buttonstate)
+		if ((event.button != 0 && event.button != 1) || !event.buttonstate || mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
 			return;
 
 		switchToTool(mc().objectMouseOver.getBlockPos());

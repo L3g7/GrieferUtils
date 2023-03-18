@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.item;
 
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
@@ -38,10 +39,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
-import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.START_DESTROY_BLOCK;
 
 /**
  * Allowed on GrieferGames, as per <a href="https://forum.griefergames.de/faq/85-modifikationen/#entry-85">the list of recommended modifications</a>.<br>
@@ -49,6 +51,8 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.ST
  */
 @Singleton
 public class AutoTool extends Feature {
+
+	private final ToolSaver toolSaver = FileProvider.getSingleton(ToolSaver.class);
 
 	private final DropDownSetting<EnchantPreference> preference = new DropDownSetting<>(EnchantPreference.class)
 		.name("Bevorzugte Verzauberung")
@@ -75,7 +79,7 @@ public class AutoTool extends Feature {
 
 
 	@EventListener
-	public void onTick(TickEvent.PlayerTickEvent event) {
+	public void onTick(ClientTickEvent event) {
 		if (world() == null || player() == null)
 			return;
 
@@ -86,26 +90,36 @@ public class AutoTool extends Feature {
 		previousSlot = -1;
 	}
 
-	@EventListener
-	public void onPacketSend(PacketEvent.PacketSendEvent event) {
-		if (world() == null || player() == null)
+	/**
+	 * Required for compatability with {@link ToolSaver}
+	 */
+	@EventListener(priority = EventPriority.HIGH)
+	public void onMouse(MouseEvent event) {
+		if ((event.button != 0 && event.button != 1) || !event.buttonstate)
 			return;
 
+		switchToTool(mc().objectMouseOver.getBlockPos());
+	}
+
+	@EventListener
+	public void onPacket(PacketEvent.PacketSendEvent event) {
 		if (!(event.packet instanceof C07PacketPlayerDigging))
 			return;
 
 		C07PacketPlayerDigging packet = (C07PacketPlayerDigging) event.packet;
-
-		if (packet.getStatus() != START_DESTROY_BLOCK)
+		if (packet.getStatus() != C07PacketPlayerDigging.Action.START_DESTROY_BLOCK)
 			return;
 
+		switchToTool(packet.getPosition());
+	}
+
+	private void switchToTool(BlockPos targetedBlock) {
 		if (ItemSaver.getSetting(player().getHeldItem()) != null)
 			return;
 
-		BlockPos pos = packet.getPosition();
-		Block block = world().getBlockState(pos).getBlock();
+		Block block = world().getBlockState(targetedBlock).getBlock();
 
-		if (block.getBlockHardness(world(), pos) < 0) // Block can't be broken
+		if (block.getBlockHardness(world(), targetedBlock) < 0) // Block can't be broken
 			return;
 
 		double bestScore = -1;
@@ -136,6 +150,10 @@ public class AutoTool extends Feature {
 		ItemDisplaySetting setting = ItemSaver.getSetting(itemStack);
 		if (setting != null)
 			return Integer.MIN_VALUE;
+
+		if (toolSaver.isEnabled())
+			if (toolSaver.shouldCancel(itemStack))
+				return Integer.MIN_VALUE;
 
 		if (!isTool(itemStack)) {
 

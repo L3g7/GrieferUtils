@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.item;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
@@ -62,7 +62,7 @@ public class ToolSaver extends Feature {
 		if ((event.button != 0 && event.button != 1) || !event.buttonstate)
 			return;
 
-		if (shouldCancel())
+		if (player() == null || shouldCancel(player().getHeldItem()))
 			event.setCanceled(true);
 	}
 
@@ -70,19 +70,14 @@ public class ToolSaver extends Feature {
 	// is only triggered once, but the held item can be damaged multiple times
 	@EventListener
 	public void onTick(ClientTickEvent event) {
-		if (!shouldCancel())
+		if (player() == null || !shouldCancel(player().getHeldItem()))
 			return;
 
 		KeyBinding.setKeyBindState(mc().gameSettings.keyBindUseItem.getKeyCode(), false);
 		KeyBinding.setKeyBindState(mc().gameSettings.keyBindAttack.getKeyCode(), false);
 	}
 
-	private boolean shouldCancel() {
-		if (player() == null)
-			return false;
-
-		ItemStack heldItem = player().getHeldItem();
-
+	public boolean shouldCancel(ItemStack heldItem) {
 		if (heldItem == null || !heldItem.isItemStackDamageable())
 			return false;
 

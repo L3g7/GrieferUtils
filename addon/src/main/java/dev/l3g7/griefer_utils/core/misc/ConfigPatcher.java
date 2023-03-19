@@ -56,6 +56,8 @@ public class ConfigPatcher {
 			JsonObject itemSaver = getParent("item.item_saver.entries");
 			if (!itemSaver.has("enabled"))
 				itemSaver.addProperty("enabled", true);
+
+			rename("item.item_info.item_counter.adventure_tools", "world.better_adventurer.enabled");
 		}
 	}
 

@@ -52,7 +52,7 @@ public class PrefixSaver extends Feature {
 		.description("Fragt beim Einlösen eines Prefixes nach einer Bestätigung.")
 		.icon(createItem(Blocks.redstone_ore, 0, true));
 
-	private final IInventory inv = new InventoryBasic(ChestSearch.marker + "§0Willst du den Rand einlösen?", false, 27);
+	private final IInventory inv = new InventoryBasic(ChestSearch.marker + "§0Willst du den Prefix einlösen?", false, 27);
 
 	public PrefixSaver() {
 		ItemStack grayGlassPane = createItem(Blocks.stained_glass_pane, 7, "§8");

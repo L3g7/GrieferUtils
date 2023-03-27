@@ -22,17 +22,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Config;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.core.misc.Config;
-import dev.l3g7.griefer_utils.misc.NameCache;
 import net.labymod.core.LabyModCore;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.settings.elements.SettingsElement;
@@ -57,14 +57,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 import static dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action.*;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 
 @Singleton
 public class ChatMenu extends Feature {
 
+	private static final List<Pattern> PATTERNS = new ArrayList<Pattern>(MESSAGE_PATTERNS) {{add(STATUS_PATTERN);}};
 	public static final String COMMAND = "/grieferutils_click_event_replace_suggest_msg ";
 	protected static final List<ChatMenuEntry> DEFAULT_ENTRIES = ImmutableList.of(
 		new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %name%", "wooden_board"),
@@ -149,7 +150,7 @@ public class ChatMenu extends Feature {
 	public void onMsg(ClientChatReceivedEvent event) {
 		String text = event.message.getFormattedText();
 
-		for (Pattern p : new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN}) {
+		for (Pattern p : new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN}) {
 			Matcher matcher = p.matcher(text);
 			if (!matcher.find())
 				continue;
@@ -195,7 +196,7 @@ public class ChatMenu extends Feature {
 
 		String name = null;
 
-		for (Pattern p : MESSAGE_PATTERNS) {
+		for (Pattern p : PATTERNS) {
 			Matcher m = p.matcher(event.original.getFormattedText());
 
 			if (m.find()) {

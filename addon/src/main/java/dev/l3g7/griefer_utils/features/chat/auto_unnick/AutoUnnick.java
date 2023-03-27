@@ -75,6 +75,7 @@ public class AutoUnnick extends Feature {
 		String[] parts = event.component.getFormattedText().split(" §r§8\u2503 §r");
 
 		if (parts.length != 2) {
+			System.err.println("AutoUnnick error");
 			System.err.println(IChatComponent.Serializer.componentToJson(event.component));
 			System.out.println(event.profile);
 			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");

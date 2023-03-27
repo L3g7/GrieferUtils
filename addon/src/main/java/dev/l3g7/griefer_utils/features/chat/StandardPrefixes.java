@@ -103,6 +103,7 @@ public class StandardPrefixes extends Feature {
 		String[] parts = event.component.getUnformattedText().split(" \u2503 ");
 
 		if (parts.length != 2) {
+			System.err.println("StandardPrefixes error:");
 			System.err.println(IChatComponent.Serializer.componentToJson(event.component));
 			System.out.println(event.profile);
 			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");

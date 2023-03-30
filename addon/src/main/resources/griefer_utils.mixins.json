@@ -21,6 +21,7 @@
     "MixinGuiChest",
     "MixinGuiIngame",
     "MixinGuiScreen",
+    "MixinLayerCustomHead",
     "MixinMinecraft",
     "MixinPlayerControllerMP",
     "MixinRenderGlobal",

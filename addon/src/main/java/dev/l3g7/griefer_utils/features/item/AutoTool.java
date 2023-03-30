@@ -96,7 +96,7 @@ public class AutoTool extends Feature {
 	 */
 	@EventListener(priority = EventPriority.HIGH)
 	public void onMouse(MouseEvent event) {
-		if ((event.button != 0 && event.button != 1) || !event.buttonstate || mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+		if (event.button != 0 || !event.buttonstate || mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
 			return;
 
 		switchToTool(mc().objectMouseOver.getBlockPos());

@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -80,7 +81,7 @@ public class ItemSaver extends Feature {
 		.subSettings(newEntrySetting);
 
 	public static ItemDisplaySetting getSetting(ItemStack stack) {
-		if (stack == null)
+		if (stack == null || !FileProvider.getSingleton(ItemSaver.class).isEnabled())
 			return null;
 
 		for (SettingsElement element : enabled.getSubSettings().getElements()) {

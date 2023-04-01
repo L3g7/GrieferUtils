@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.encrypted_messages;
 
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -26,6 +27,7 @@ import dev.l3g7.griefer_utils.event.events.ChatLogModifyEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderChatEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.chat.SplitLongMessages;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -252,7 +254,8 @@ public class EncryptedMessages extends Feature {
 		}
 
 		if (!text.startsWith("/emsg ")) {
-			inputField.setMaxStringLength(100);
+			if (!FileProvider.getSingleton(SplitLongMessages.class).isEnabled())
+				inputField.setMaxStringLength(100);
 			return;
 		}
 

@@ -10,6 +10,7 @@
     "MixinEntityPlayer",
     "MixinIngameChatManager",
     "MixinLabyMod",
+    "MixinForgeHooks",
     "MixinNetHandlerPlayClient",
     "MixinNetworkManager",
     "MixinRenderTickListener",
@@ -22,7 +23,6 @@
     "MixinGuiIngame",
     "MixinGuiScreen",
     "MixinLayerCustomHead",
-    "MixinMinecraft",
     "MixinPlayerControllerMP",
     "MixinRenderGlobal",
     "MixinRenderItem"

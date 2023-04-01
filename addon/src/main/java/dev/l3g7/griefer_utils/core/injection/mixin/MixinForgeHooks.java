@@ -20,31 +20,30 @@ package dev.l3g7.griefer_utils.core.injection.mixin;
 
 import dev.l3g7.griefer_utils.event.events.BlockPickEvent;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+@Mixin(ForgeHooks.class)
+public class MixinForgeHooks {
 
-@Mixin(Minecraft.class)
-public class MixinMinecraft {
-
-	@Inject(method = "middleClickMouse", at = @At("HEAD"), cancellable = true)
-	private void injectMiddleClickMouse(CallbackInfo ci) {
-		MovingObjectPosition target = mc().objectMouseOver;
+	@Inject(method = "onPickBlock", at = @At("HEAD"), remap = false, cancellable = true)
+	private static void inject(MovingObjectPosition target, EntityPlayer player, World world, CallbackInfoReturnable<Boolean> cir) {
 		if (target == null || target.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
 			return;
 
-		Block block = world().getBlockState(target.getBlockPos()).getBlock();
-		if (block.isAir(world(), target.getBlockPos()))
+		Block block = world.getBlockState(target.getBlockPos()).getBlock();
+		if (block.isAir(world, target.getBlockPos()))
 			return;
 
-		if (MinecraftForge.EVENT_BUS.post(new BlockPickEvent(block.getPickBlock(target, world(), target.getBlockPos(), player()))))
-			ci.cancel();
+		if (MinecraftForge.EVENT_BUS.post(new BlockPickEvent(block.getPickBlock(target, world, target.getBlockPos(), player))))
+			cir.setReturnValue(true);
 	}
 
 }

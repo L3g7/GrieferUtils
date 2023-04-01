@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
@@ -50,7 +51,11 @@ public class SplitLongMessages extends Feature {
 			return;
 
 		GuiTextField inputField = Reflection.get(event.gui, "inputField");
-		inputField.width = 563;
+		inputField.width = 626;
+		if (event.gui instanceof GuiChatCustom) {
+			Object[] chatButtons = Reflection.get(event.gui, "chatButtons");
+			inputField.width -= chatButtons.length * 14;
+		}
 
 		String text = inputField.getText();
 		if (!(text.startsWith("/msg ") || text.startsWith("/r ") || !text.startsWith("/"))) {

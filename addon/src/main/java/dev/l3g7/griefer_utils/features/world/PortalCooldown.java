@@ -40,28 +40,28 @@ public class PortalCooldown extends Feature {
 		.description("Zeigt dir den 12s-Cooldown beim Betreten des Portalraums in der XP-Leiste an.")
 		.icon("hourglass");
 
-	private long timeoutEnd = 0;
+	private long timeoutEnd = -1;
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessage(ClientChatReceivedEvent event) {
 		String msg = event.message.getFormattedText();
 
 		if (msg.equals("§r§8[§r§6GrieferGames§r§8] §r§fDu bist im §r§5Portalraum§r§f. Wähle deinen Citybuild aus.§r")) {
-			timeoutEnd = 12 * 20;
+			timeoutEnd = System.currentTimeMillis() + 12_000;
 		} else if (msg.startsWith("§r§cKicked whilst connecting") && !msg.contains("Du hast dich zu schnell wieder eingeloggt.")) {
 			if (MinecraftUtil.getServerFromScoreboard().equals("Portal"))
-				timeoutEnd = 12 * 20;
+				timeoutEnd = System.currentTimeMillis() + 12_000;
 		}
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerSwitchEvent event) {
-		timeoutEnd = 0;
+		timeoutEnd = -1;
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onServerQuit(ServerQuitEvent event) {
-		timeoutEnd = 0;
+		timeoutEnd = -1;
 	}
 
 	@EventListener
@@ -69,11 +69,13 @@ public class PortalCooldown extends Feature {
 		if (player() == null || event.phase == TickEvent.Phase.START)
 			return;
 
-		if (timeoutEnd >= 0) {
-			player().experienceLevel = (int) Math.ceil(timeoutEnd / 20f);
-			player().experience = timeoutEnd / 240f;
-			timeoutEnd--;
-		}
+		if (timeoutEnd < 0)
+			return;
+
+		long diff = timeoutEnd - System.currentTimeMillis();
+
+		player().experienceLevel = (int) Math.ceil(diff / 1000f);
+		player().experience = diff / 12_000f;
 	}
 
 }

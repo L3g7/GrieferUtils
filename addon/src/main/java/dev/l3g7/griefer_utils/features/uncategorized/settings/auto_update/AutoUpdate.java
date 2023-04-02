@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update;
 
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
@@ -27,6 +28,7 @@ import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.addon.AddonLoader;
 import net.minecraft.init.Blocks;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -111,6 +113,8 @@ public class AutoUpdate {
 				// Download new version
 				HttpURLConnection conn = (HttpURLConnection) new URL("https://grieferutils.l3g7.dev/v2/latest_release/jar").openConnection();
 				conn.addRequestProperty("User-Agent", "GrieferUtils");
+				if (conn instanceof HttpsURLConnection)
+					((HttpsURLConnection) conn).setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
 
 				File newAddonJar = new File(AddonLoader.getAddonsDirectory(), "griefer-utils-v" + latestVersion + ".jar");
 				Files.copy(conn.getInputStream(), newAddonJar.toPath(), REPLACE_EXISTING);

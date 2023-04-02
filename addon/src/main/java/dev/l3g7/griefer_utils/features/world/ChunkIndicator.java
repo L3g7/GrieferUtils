@@ -120,7 +120,7 @@ public class ChunkIndicator extends Feature {
 				continue;
 
 			for (int side = 0; side < 4; side++)
-				RenderUtil.drawLine(chunkRoot.add(rotate(line.startOffset, side)), chunkRoot.add(rotate(line.endOffset, side)), line.color);
+				RenderUtil.drawLine(chunkRoot.add(rotate(line.startOffset, side)), chunkRoot.add(rotate(line.endOffset, side)), line.color, 1.5f);
 		}
 	}
 

@@ -31,6 +31,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.ForgeHooksClient;
 import org.lwjgl.opengl.GL11;
@@ -73,14 +74,38 @@ public class RenderUtil {
 		finish();
 	}
 
-	public static void drawLine(BlockPos start, BlockPos end, Color color) {
-		drawLine(start.getX(), start.getY(), start.getZ(), end.getX(), end.getY(), end.getZ(), color);
+	public static void drawBoxOutlines(AxisAlignedBB bb, Color color, float width) {
+		drawBoxOutlines((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ, color, width);
+	}
+
+	public static void drawBoxOutlines(float startX, float startY, float startZ, float endX, float endY, float endZ, Color color, float width) {
+		// Lower rectangle
+		drawLine(startX,	startY,	startZ,	startX,	startY,	endZ,	color,	width);
+		drawLine(startX,	startY,	startZ,	endX,	startY,	startZ,	color,	width);
+		drawLine(endX,		startY,	startZ,	endX,	startY,	endZ,	color,	width);
+		drawLine(startX,	startY,	endZ,	endX,	startY,	endZ,	color,	width);
+
+		// upper rectangle
+		drawLine(startX,	endY,	startZ,	startX,	endY,	endZ,	color,	width);
+		drawLine(startX,	endY,	startZ,	endX,	endY,	startZ,	color,	width);
+		drawLine(endX,		endY,	startZ,	endX,	endY,	endZ,	color,	width);
+		drawLine(startX,	endY,	endZ,	endX,	endY,	endZ,	color,	width);
+
+		// connecting lines
+		drawLine(startX,	startY,	startZ,	startX,	endY,	startZ,	color,	width);
+		drawLine(startX,	startY,	endZ,	startX,	endY,	endZ,	color,	width);
+		drawLine(endX,		startY,	startZ,	endX,	endY,	startZ,	color,	width);
+		drawLine(endX,		startY,	endZ,	endX,	endY,	endZ,	color,	width);
+	}
+
+	public static void drawLine(BlockPos start, BlockPos end, Color color, float width) {
+		drawLine(start.getX(), start.getY(), start.getZ(), end.getX(), end.getY(), end.getZ(), color, width);
 	}
 
 	/**
 	 * Based on <a href="https://github.com/CCBlueX/LiquidBounce/blob/5419a2894b4665b7695d0443180275a70f13607a/src/main/java/net/ccbluex/liquidbounce/utils/render/RenderUtils.java#L82">LiquidBounce's RenderUtils#drawBlockBox</a>
 	 */
-	public static void drawLine(float startX, float startY, float startZ, float endX, float endY, float endZ, Color color) {
+	public static void drawLine(float startX, float startY, float startZ, float endX, float endY, float endZ, Color color, float width) {
 		Entity entity = mc().getRenderViewEntity();
 
 		// Get cam pos
@@ -89,7 +114,7 @@ public class RenderUtil {
 		Vec3d cam = prevPos.add(pos(entity).subtract(prevPos).scale(partialTicks()));
 
 		// Update line width
-		GL11.glLineWidth(1.5f);
+		GL11.glLineWidth(width);
 		GlStateManager.disableTexture2D();
 
 		// Draw lines
@@ -103,6 +128,74 @@ public class RenderUtil {
 		GlEngine.finish();
 
 		// Reset line width
+		GlStateManager.enableTexture2D();
+	}
+
+	public static void drawFilledBox(AxisAlignedBB bb, Color color) {
+		Entity entity = mc().getRenderViewEntity();
+		Vec3d prevPos = new Vec3d(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
+		Vec3d cam = prevPos.add(pos(entity).subtract(prevPos).scale(partialTicks()));
+		bb = bb.offset(-cam.x, -cam.y, -cam.z);
+
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+		worldRenderer.begin(GL_QUADS, DefaultVertexFormats.POSITION);
+
+		GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+		GlStateManager.enableBlend();
+		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.disableTexture2D();
+
+		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
+		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+		tessellator.draw();
+		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();
 	}
 

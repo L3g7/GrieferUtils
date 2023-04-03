@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -14,6 +15,7 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.util.AxisAlignedBB;
@@ -60,6 +62,10 @@ public class BetterHopperVisualisation extends Feature {
 
 		C0EPacketClickWindow packet = (C0EPacketClickWindow) event.packet;
 		if (packet.getSlotId() != 16 || packet.getMode() == 3)
+			return;
+
+		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
+		if (!inv.getName().equals("§6Trichter-Einstellungen"))
 			return;
 
 		Container slots = ((GuiChest) mc().currentScreen).inventorySlots;

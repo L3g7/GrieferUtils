@@ -1,7 +1,6 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -24,7 +23,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 
@@ -50,7 +48,7 @@ public class BetterHopperVisualisation extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Bessere optische Trichter Anzeige")
+		.name("Bessere optische Trichter-Anzeige")
 		.description("Ersetzt die Partikel der optischen Trichter Anzeige durch Boxen / Linien.")
 		.icon(Material.HOPPER)
 		.subSettings(displayTime, fillBoxes);
@@ -72,9 +70,6 @@ public class BetterHopperVisualisation extends Feature {
 		target = EnchantmentHelper.getEnchantments(targetStack).isEmpty() ? null : getBlockPos(targetStack);
 		displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
 
-		if (target == null && borderSize < 2)
-			display(Constants.ADDON_PREFIX + "Es gibt nichts zum Anzeigen...");
-
 		mc().displayGuiScreen(null);
 		event.setCanceled(true);
 	}
@@ -93,12 +88,17 @@ public class BetterHopperVisualisation extends Feature {
 
 		GL11.glDisable(GL_DEPTH_TEST);
 
-		if (borderSize > 1) {
-			AxisAlignedBB collectionBox = new AxisAlignedBB(hopper.add(borderSize, borderSize / 2, borderSize), hopper.add(-borderSize, borderSize / -2, -borderSize));
-			if (fillBoxes.get())
-				RenderUtil.drawFilledBox(collectionBox, new Color(0x1A880088, true));
-			RenderUtil.drawBoxOutlines(collectionBox, new Color(0x880088), 1.5f);
-		}
+		AxisAlignedBB collectionBox;
+		if (borderSize > 1)
+			collectionBox = new AxisAlignedBB(hopper.add(borderSize, borderSize / 2, borderSize), hopper.add(-borderSize, borderSize / -2, -borderSize));
+		else if (borderSize == 1)
+			collectionBox = new AxisAlignedBB(hopper, hopper.add(1, 1, 1));
+		else
+			collectionBox = new AxisAlignedBB(hopper, hopper).expand(0.125, 0.125, 0.125).offset(0.5, 0.5, 0.5);
+
+		if (fillBoxes.get())
+			RenderUtil.drawFilledBox(collectionBox, new Color(0x1A880088, true));
+		RenderUtil.drawBoxOutlines(collectionBox, new Color(0x880088), 1.5f);
 
 		if (target != null) {
 			AxisAlignedBB targetBox = new AxisAlignedBB(target, target.add(1, 1, 1));

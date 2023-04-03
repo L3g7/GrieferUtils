@@ -4,7 +4,6 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.NameCache;
@@ -61,14 +60,6 @@ public class SlowChatCooldown extends Feature {
 				if (name.equals(player().getName()))
 					timeoutEnd = System.currentTimeMillis() + 10_000;
 			}
-		}
-	}
-
-	@EventListener
-	public void onMsgSend(MessageEvent.MessageSendEvent event) {
-		if (event.message.equals("//scct")) {
-			timeoutEnd = System.currentTimeMillis() + 10_000;
-			event.setCanceled(true);
 		}
 	}
 

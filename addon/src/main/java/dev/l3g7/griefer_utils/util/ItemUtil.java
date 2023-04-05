@@ -26,8 +26,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -68,6 +70,26 @@ public class ItemUtil {
 	public static String getLastLore(ItemStack itemStack) {
 		List<String> lore = getLore(itemStack);
 		return lore.size() > 0 ? lore.get(lore.size() - 1) : "";
+	}
+
+	public static void setLore(ItemStack itemStack, String... lore) {
+		setLore(itemStack, Arrays.asList(lore));
+	}
+
+	public static void setLore(ItemStack itemStack, List<String> lore) {
+		NBTTagCompound tag = itemStack.getTagCompound();
+		if (tag == null)
+			tag = new NBTTagCompound();
+
+		NBTTagCompound display = tag.getCompoundTag("display");
+		NBTTagList loreTag = new NBTTagList();
+
+		for (String s : lore)
+			loreTag.appendTag(new NBTTagString(s));
+
+		display.setTag("Lore", loreTag);
+		tag.setTag("display", display);
+		itemStack.setTagCompound(tag);
 	}
 
 	public static boolean canBeRepaired(ItemStack itemStack) {

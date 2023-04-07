@@ -19,14 +19,13 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.utils.Consumer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.util.ResourceLocation;
 
 import javax.imageio.ImageIO;
@@ -113,11 +112,7 @@ public class ChatMenuEntry {
 		entry.iconType = IconType.valueOf(object.get("icon_type").getAsString());
 		switch (entry.iconType) {
 			case ITEM:
-				try {
-					entry.icon = ItemStack.loadItemStackFromNBT(JsonToNBT.getTagFromJson(object.get("icon").getAsString()));
-				} catch (NBTException e) {
-					throw new RuntimeException(e);
-				}
+				entry.icon = ItemUtil.fromNBT(object.get("icon").getAsString());
 				break;
 			case IMAGE_FILE:
 				entry.icon = new File(object.get("icon_name").getAsString());

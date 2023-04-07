@@ -32,6 +32,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.core.LabyModCore;
 import net.labymod.core.WorldRendererAdapter;
 import net.labymod.settings.elements.SettingsElement;
@@ -40,8 +41,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraftforge.client.event.MouseEvent;
@@ -122,19 +121,15 @@ public class ItemSaver extends Feature {
 		entryKey = getConfigKey() + ".entries";
 
 		if (!Config.has(entryKey)) {
-			try {
-				addItem(ItemStack.loadItemStackFromNBT(JsonToNBT.getTagFromJson(BONZE_NBT)));
-				addItem(ItemStack.loadItemStackFromNBT(JsonToNBT.getTagFromJson(BIRTH_NBT)));
-			} catch (NBTException e) {
-				throw new RuntimeException(e);
-			}
+			addItem(ItemUtil.fromNBT(BONZE_NBT));
+			addItem(ItemUtil.fromNBT(BIRTH_NBT));
 			return;
 		}
 
 		JsonObject entries = Config.get(entryKey).getAsJsonObject();
 		for (Map.Entry<String, JsonElement> entry : entries.entrySet()) {
 			try {
-				ItemStack stack = ItemStack.loadItemStackFromNBT(JsonToNBT.getTagFromJson(entry.getKey()));
+				ItemStack stack = ItemUtil.fromNBT(entry.getKey());
 				JsonObject data = entry.getValue().getAsJsonObject();
 
 				ItemDisplaySetting setting = new ItemDisplaySetting(stack);
@@ -146,7 +141,7 @@ public class ItemSaver extends Feature {
 
 				List<SettingsElement> settings = enabled.getSubSettings().getElements();
 				settings.add(settings.size() - 1, setting);
-			} catch (NBTException | NullPointerException e) {
+			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
 		}

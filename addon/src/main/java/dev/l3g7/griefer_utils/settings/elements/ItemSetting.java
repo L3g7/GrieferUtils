@@ -20,9 +20,10 @@ package dev.l3g7.griefer_utils.settings.elements;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.core.misc.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.gui.elements.ModTextField;
@@ -33,9 +34,6 @@ import net.labymod.utils.ModColor;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -146,18 +144,12 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 		if (!Config.has(configKey))
 			return this;
 
-		NBTTagCompound tag;
-		try {
-			if (Config.get(configKey).isJsonNull()) {
-				set(null);
-				return this;
-			}
-			tag = JsonToNBT.getTagFromJson(Config.get(configKey).getAsString());
-		} catch (NBTException e) {
-			throw new RuntimeException(e);
+		if (Config.get(configKey).isJsonNull()) {
+			set(null);
+			return this;
 		}
 
-		set(ItemStack.loadItemStackFromNBT(tag));
+		set(ItemUtil.fromNBT(Config.get(configKey).getAsString()));
 
 		return this;
 	}

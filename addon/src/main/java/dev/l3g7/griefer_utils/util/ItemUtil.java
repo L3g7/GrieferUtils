@@ -24,9 +24,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +40,15 @@ public class ItemUtil {
 
 	public static final List<ItemStack> ALL_ITEMS = new ArrayList<>();
 	public static final List<ItemStack> CB_ITEMS = new ArrayList<>();
+
+	public static ItemStack fromNBT(String nbt) {
+		try {
+			return ItemStack.loadItemStackFromNBT(JsonToNBT.getTagFromJson(nbt));
+		} catch (NBTException e) {
+			e.printStackTrace();
+			return createItem(barrier, 0, "§4Fehler");
+		}
+	}
 
 	public static List<String> getLore(ItemStack itemStack) {
 		List<String> lore = new ArrayList<>();

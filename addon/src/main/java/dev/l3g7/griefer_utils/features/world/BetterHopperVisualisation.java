@@ -99,6 +99,7 @@ public class BetterHopperVisualisation extends Feature {
 		if ((packet.getSlotId() != 34 && packet.getSlotId() != 15) || packet.getMode() == 3)
 			return;
 
+		filteredConnections.clear();
 		Container slots = ((GuiChest) mc().currentScreen).inventorySlots;
 		borderSize = slots.getSlot(31).getStack().stackSize;
 		hopper = getBlockPos(slots.getSlot(13).getStack());
@@ -107,7 +108,6 @@ public class BetterHopperVisualisation extends Feature {
 		mainConnection = EnchantmentHelper.getEnchantments(targetStack).isEmpty() ? null : getBlockPos(targetStack);
 
 		if (packet.getSlotId() == 34) {
-			filteredConnections.clear();
 			displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
 			mc().displayGuiScreen(null);
 			event.setCanceled(true);

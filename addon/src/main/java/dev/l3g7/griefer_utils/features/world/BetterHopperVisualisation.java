@@ -90,10 +90,11 @@ public class BetterHopperVisualisation extends Feature {
 			return;
 
 		C0EPacketClickWindow packet = (C0EPacketClickWindow) event.packet;
+		int slot = packet.getSlotId();
 
 		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
 		if (inv.getName().equals("§6Trichter-Mehrfach-Verbindungen")) {
-			if (packet.getSlotId() != 52 || packet.getMode() == 3)
+			if ((slot != 52 && slot != 50) || packet.getMode() == 3)
 				return;
 
 			for (int i = 0; i < 44; i++) {
@@ -106,15 +107,17 @@ public class BetterHopperVisualisation extends Feature {
 				filteredConnections.put(pos, entityItem);
 			}
 
-			displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
-			mc().displayGuiScreen(null);
-			event.setCanceled(true);
+			if (slot == 52) {
+				displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
+				mc().displayGuiScreen(null);
+				event.setCanceled(true);
+			}
 		}
 
 		if (!inv.getName().equals("§6Trichter-Einstellungen"))
 			return;
 
-		if ((packet.getSlotId() != 34 && packet.getSlotId() != 15) || packet.getMode() == 3)
+		if ((slot != 34 && slot != 15) || packet.getMode() == 3)
 			return;
 
 		filteredConnections.clear();
@@ -125,7 +128,7 @@ public class BetterHopperVisualisation extends Feature {
 		ItemStack targetStack = slots.getSlot(16).getStack();
 		mainConnection = EnchantmentHelper.getEnchantments(targetStack).isEmpty() ? null : getBlockPos(targetStack);
 
-		if (packet.getSlotId() == 34) {
+		if (slot == 34) {
 			displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
 			mc().displayGuiScreen(null);
 			event.setCanceled(true);

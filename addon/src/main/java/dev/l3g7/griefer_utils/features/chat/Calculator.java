@@ -151,7 +151,7 @@ public class Calculator extends Feature {
 		Matcher paymentMatcher = Constants.PAYMENT_COMMAND_PATTERN.matcher(event.message);
 		if (paymentMatcher.matches()) {
 			lastPaymentReceiver = paymentMatcher.group("player");
-			lastPayment = new BigDecimal(paymentMatcher.group("amount").replace(".", "").replace(",", "."));
+			lastPayment = new BigDecimal(paymentMatcher.group("amount").replace(",", "."));
 		}
 
 		// If /bank abheben with the exact difference was sent and withdraw is SUGGEST

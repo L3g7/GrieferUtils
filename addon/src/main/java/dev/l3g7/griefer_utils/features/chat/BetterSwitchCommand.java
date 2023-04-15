@@ -41,12 +41,12 @@ public class BetterSwitchCommand extends Feature {
 	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", Pattern.CASE_INSENSITIVE);
 
 	private static String command = null;
-	private boolean awaitingSendCommand = false;
+	private static boolean awaitingSendCommand = false;
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Besseres /switch")
-		.description("Verbessert den '/switch <cb>' Befehl durch Aliasse und einem optionalem Join-Text. (Siehe '/cb')", "", "Der Join-Text wird nach dem Beitreten automatisch in den Chat geschrieben")
+		.description("Verbessert den '/switch <cb>' Befehl durch Aliasse und einem optionalem Join-Text. (z.B. '/cbe Hallo')", "", "Der Join-Text wird nach dem Beitreten automatisch in den Chat geschrieben")
 		.icon(Material.COMPASS);
 
 	@EventListener
@@ -76,9 +76,8 @@ public class BetterSwitchCommand extends Feature {
 			return;
 
 		display(Constants.ADDON_PREFIX + "Syntax: '/switch <CB> [text]', '/cb <CB> [text]' oder '/cb<CB> [text]'.");
-		display(Constants.ADDON_PREFIX + "§f§nAliases:");
+		display(Constants.ADDON_PREFIX + "§f§nAliasse:");
 
-		display(Constants.ADDON_PREFIX + "§fExtreme: 'x'");
 		display(Constants.ADDON_PREFIX + "§7Nature: 'n'");
 		display(Constants.ADDON_PREFIX + "§7Extreme: 'x'");
 		display(Constants.ADDON_PREFIX + "§7Evil: 'e'");
@@ -110,6 +109,7 @@ public class BetterSwitchCommand extends Feature {
 		}
 
 		cb.join();
+		awaitingSendCommand = true;
 		BetterSwitchCommand.command = command;
 	}
 

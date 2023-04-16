@@ -27,7 +27,7 @@ public interface TokenProvider {
 	default boolean load() {
 		try {
 			return loadWithException();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}

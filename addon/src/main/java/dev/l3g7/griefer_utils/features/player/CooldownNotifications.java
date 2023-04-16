@@ -71,7 +71,7 @@ public class CooldownNotifications extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Cooldown-Benachrichtigungen")
-		.description("Zeigt die momentanen Cooldowns an.")
+		.description("Zeigt die momentanen Cooldowns beim ersten Beitritt eines Citybuilds an.")
 		.icon(Material.WATCH)
 		.callback(v -> {
 			// If no data is found, open and close /cooldowns automatically

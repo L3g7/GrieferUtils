@@ -46,7 +46,7 @@ public class SkullPreview extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Kopf Vorschau")
-		.description("Zeigt in der Beschreibung von Kopf eine vergrößerte Version an.")
+		.description("Zeigt in der Beschreibung von Köpfen eine vergrößerte Version an.")
 		.icon("steve")
 		.subSettings(size);
 

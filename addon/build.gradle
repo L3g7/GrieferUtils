@@ -95,4 +95,11 @@ tasks.register('downloadFile') {
 		onlyIfModified true
 		quiet true
 	}
+
+	download.run {
+		src "https://mediafilez.forgecdn.net/files/2279/149/Schematica-1.8.9-1.7.7.143-api.jar"
+		dest 'libs/'
+		onlyIfModified true
+		quiet true
+	}
 }

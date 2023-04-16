@@ -6,6 +6,7 @@
   "minVersion": "0.7",
   "mixins": [
     "MixinChatRenderer",
+    "MixinChunk",
     "MixinEntity",
     "MixinEntityPlayer",
     "MixinIngameChatManager",

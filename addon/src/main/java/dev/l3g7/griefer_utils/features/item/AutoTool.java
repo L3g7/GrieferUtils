@@ -175,8 +175,8 @@ public class AutoTool extends Feature {
 		score += itemStack.getItem().getStrVsBlock(itemStack, state.getBlock()) * 1000; // Main mining speed
 
 		if (score != 1000) { // Only test for these enchantments if the tool actually is fast
-			score += EnchantmentHelper.getEnchantmentLevel(efficiency.effectId, itemStack); // Efficiency
-			score += EnchantmentHelper.getEnchantmentLevel(unbreaking.effectId, itemStack); // Unbreaking
+			score += EnchantmentHelper.getEnchantmentLevel(efficiency.effectId, itemStack);
+			score += EnchantmentHelper.getEnchantmentLevel(unbreaking.effectId, itemStack);
 
 			score += EnchantmentHelper.getEnchantmentLevel(fortune.effectId, itemStack) * (preference.get() != EnchantPreference.SILK_TOUCH ? 10 : 1);
 			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * (preference.get() != EnchantPreference.FORTUNE ? 10 : 1);

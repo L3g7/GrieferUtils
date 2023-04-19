@@ -31,7 +31,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemShears;
@@ -69,13 +69,18 @@ public class AutoTool extends Feature {
 		.icon(Material.WOOD_PICKAXE)
 		.defaultValue(true);
 
+	private final BooleanSetting enforceSilkTouch = new BooleanSetting()
+		.name("Behutsamkeit erzwingen")
+		.description("Wenn Behutsamkeit einen Effekt auf den abgebaute Block hat, werden §nimmer§r Items mit Behutsamkeit bevorzugt")
+		.icon(Material.GRASS);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("AutoTool")
 		.description("Wechselt beim Abbauen eines Blocks automatisch auf das beste Werkzeug in der Hotbar.")
 		.icon(ItemUtil.createItem(Items.diamond_pickaxe, 0, true))
 		.defaultValue(false)
-		.subSettings(preference, switchBack);
+		.subSettings(preference, switchBack, enforceSilkTouch);
 
 	private int previousSlot = -1;
 
@@ -119,9 +124,9 @@ public class AutoTool extends Feature {
 		if (ItemSaver.getSetting(player().getHeldItem()) != null)
 			return;
 
-		Block block = world().getBlockState(targetedBlock).getBlock();
+		IBlockState state = world().getBlockState(targetedBlock);
 
-		if (block.getBlockHardness(world(), targetedBlock) < 0) // Block can't be broken
+		if (state.getBlock().getBlockHardness(world(), targetedBlock) < 0) // Block can't be broken
 			return;
 
 		double bestScore = -1;
@@ -130,7 +135,7 @@ public class AutoTool extends Feature {
 		// Get best slot
 		for (int i = 0; i < 9; i++) {
 			ItemStack stack = player().inventory.getStackInSlot(i);
-			double currentScore = getScore(stack, block);
+			double currentScore = getScore(stack, state);
 
 			if (bestScore < currentScore) {
 				bestScore = currentScore;
@@ -139,7 +144,7 @@ public class AutoTool extends Feature {
 		}
 
 		// Switch to the best slot, if it isn't the current one
-		if (bestSlot != -1 && bestScore > getScore(player().inventory.getCurrentItem(), block)) {
+		if (bestSlot != -1 && bestScore > getScore(player().inventory.getCurrentItem(), state)) {
 
 			if (switchBack.get() && previousSlot == -1)
 				previousSlot = player().inventory.currentItem;
@@ -148,7 +153,7 @@ public class AutoTool extends Feature {
 		}
 	}
 
-	public double getScore(ItemStack itemStack, Block block) {
+	public double getScore(ItemStack itemStack, IBlockState state) {
 		ItemDisplaySetting setting = ItemSaver.getSetting(itemStack);
 		if (setting != null)
 			return Integer.MIN_VALUE;
@@ -167,7 +172,7 @@ public class AutoTool extends Feature {
 
 		double score = 0;
 
-		score += itemStack.getItem().getStrVsBlock(itemStack, block) * 1000; // Main mining speed
+		score += itemStack.getItem().getStrVsBlock(itemStack, state.getBlock()) * 1000; // Main mining speed
 
 		if (score != 1000) { // Only test for these enchantments if the tool actually is fast
 			score += EnchantmentHelper.getEnchantmentLevel(efficiency.effectId, itemStack); // Efficiency
@@ -176,6 +181,9 @@ public class AutoTool extends Feature {
 			score += EnchantmentHelper.getEnchantmentLevel(fortune.effectId, itemStack) * (preference.get() != EnchantPreference.SILK_TOUCH ? 10 : 1);
 			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * (preference.get() != EnchantPreference.FORTUNE ? 10 : 1);
 		}
+
+		if (enforceSilkTouch.get() && state.getBlock().canSilkHarvest(world(), null, state, player()))
+			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * 10000;
 
 		return score;
 	}

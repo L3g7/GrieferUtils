@@ -52,12 +52,8 @@ public class ConfigPatcher {
 
 		VersionComparator cmp = new VersionComparator();
 
-		if (cmp.compare("2.0-BETA-10", version) < 0) {
-			JsonObject itemSaver = getParent("item.item_saver.entries");
-			if (!itemSaver.has("enabled"))
-				itemSaver.addProperty("enabled", true);
-
-			rename("item.item_info.item_counter.adventure_tools", "world.better_adventurer.enabled");
+		if (cmp.compare("2.0-BETA-12", version) < 0) {
+			rename("world.inventory_block_selection", "item.inventory_tweaks.inventory_block_selection");
 		}
 	}
 

@@ -23,6 +23,7 @@
     "MixinGuiChest",
     "MixinGuiIngame",
     "MixinGuiScreen",
+    "MixinItemStack",
     "MixinLayerCustomHead",
     "MixinPlayerControllerMP",
     "MixinRenderGlobal",

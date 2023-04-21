@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.world;
+package dev.l3g7.griefer_utils.features.item.inventory_tweaks.tweaks;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.BlockPickEvent;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaver;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -34,7 +34,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 @Singleton
-public class InventoryBlockSelection extends Feature {
+public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 
 	private final BooleanSetting compressed = new BooleanSetting()
 		.name("Komprimierte Items")
@@ -50,6 +50,9 @@ public class InventoryBlockSelection extends Feature {
 
 	@EventListener
 	public void onBlockPick(BlockPickEvent event) {
+		if (!enabled.get())
+			return;
+
 		InventoryPlayer inv = player().inventory;
 
 		// If possible, the stack is put in an empty slot
@@ -103,6 +106,5 @@ public class InventoryBlockSelection extends Feature {
 		String line = ItemUtil.getLore(stack).get(0);
 		return Integer.parseInt(line.substring(12).replace(".", ""));
 	}
-
 
 }

@@ -50,7 +50,7 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onPacketReceive(PacketEvent.PacketReceiveEvent event) {
-		if (expectedStack == null)
+		if (expectedStack == null || player() == null)
 			return;
 
 		if (!(event.packet instanceof S2FPacketSetSlot))

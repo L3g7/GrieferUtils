@@ -18,11 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
@@ -30,6 +30,7 @@ import dev.l3g7.griefer_utils.settings.elements.SliderSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityFallingBlock;
@@ -68,51 +69,58 @@ public class TrueSight extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		add(EntityArmorStand.class, "Armorstand", "mob_icons/armor_stand");
-		add(EntityBat.class, "Fledermaus", "mob_icons/bat");
-		add(EntityBlaze.class, "Blaze", "mob_icons/blaze");
-		add(EntityCaveSpider.class, "Höhlenspinne", "mob_icons/cave_spider");
-		add(EntityChicken.class, "Huhn", "mob_icons/chicken");
-		add(EntityCow.class, "Kuh", "mob_icons/cow");
-		add(EntityCreeper.class, "Creeper", "mob_icons/creeper");
-		add(EntityDragon.class, "Enderdrache", "mob_icons/ender_dragon");
-		add(EntityEnderman.class, "Enderman", "mob_icons/ender_man");
-		add(EntityEndermite.class, "Endermite", "mob_icons/ender_mite");
-		add(EntityFallingBlock.class, "FallingBlock", Material.STONE);
-		add(EntityGhast.class, "Ghast", "mob_icons/ghast");
-		add(EntityGiantZombie.class, "Riese", "mob_icons/zombie");
-		add(EntityGuardian.class, "Guardian", "mob_icons/guardian");
-		add(EntityHorse.class, "Pferd", "mob_icons/horse");
-		add(EntityIronGolem.class, "Eisengolem", "mob_icons/iron_golem");
-		add(EntityMagmaCube.class, "Magmawürfel", "mob_icons/lava_slime");
-		add(EntityMooshroom.class, "Pilzkuh", "mob_icons/mushroom_cow");
-		add(EntityOcelot.class, "Ozelot", "mob_icons/ocelot");
-		add(EntityPig.class, "Schwein", "mob_icons/pig");
-		add(EntityPigZombie.class, "Schweinezombie", "mob_icons/pig_zombie");
-		add(EntityPlayer.class, "Spieler", "steve");
-		add(EntityRabbit.class, "Hase", "mob_icons/rabbit");
-		add(EntitySheep.class, "Schaf", "mob_icons/sheep");
-		add(EntitySilverfish.class, "Silberfischchen", "mob_icons/silverfish");
-		add(EntitySkeleton.class, "Skelett", "mob_icons/skeleton");
-		add(EntitySlime.class, "Slime", "mob_icons/slime");
-		add(EntitySnowman.class, "Schneegolem", "mob_icons/snow_golem");
-		add(EntitySpider.class, "Spinne", "mob_icons/spider");
-		add(EntitySquid.class, "Tintenfisch", "mob_icons/squid");
-		add(EntityVillager.class, "Dorfbewohner", "mob_icons/villager");
-		add(EntityWitch.class, "Hexe", "mob_icons/witch");
-		add(EntityWolf.class, "Wolf", "mob_icons/wolf");
-		add(EntityZombie.class, "Zombie", "mob_icons/zombie");
+		add(EntityArmorStand.class, "Armorstand");
+		add(EntityBat.class, "Fledermaus");
+		add(EntityBlaze.class, "Blaze");
+		add(EntityCaveSpider.class, "Höhlenspinne");
+		add(EntityChicken.class, "Huhn");
+		add(EntityCow.class, "Kuh");
+		add(EntityCreeper.class, "Creeper");
+		add(EntityDragon.class, "Enderdrache");
+		add(EntityEnderman.class, "Enderman");
+		add(EntityEndermite.class, "Endermite");
+		entities.put(EntityFallingBlock.class, new BooleanSetting()
+			.name("FallingBlock")
+			.config(getConfigKey() + ".entities.falling_block")
+			.icon(Material.STONE));
+		add(EntityGhast.class, "Ghast");
+		add(EntityGiantZombie.class, "Riese");
+		add(EntityGuardian.class, "Guardian");
+		add(EntityHorse.class, "Pferd");
+		add(EntityIronGolem.class, "Eisengolem");
+		add(EntityMagmaCube.class, "Magmawürfel");
+		add(EntityMooshroom.class, "Pilzkuh");
+		add(EntityOcelot.class, "Ozelot");
+		add(EntityPig.class, "Schwein");
+		add(EntityPigZombie.class, "Schweinezombie");
+		add(EntityPlayer.class, "Spieler");
+		add(EntityRabbit.class, "Hase");
+		add(EntitySheep.class, "Schaf");
+		add(EntitySilverfish.class, "Silberfischchen");
+		add(EntitySkeleton.class, "Skelett");
+		add(EntitySlime.class, "Slime");
+		add(EntitySnowman.class, "Schneegolem");
+		add(EntitySpider.class, "Spinne");
+		add(EntitySquid.class, "Tintenfisch");
+		add(EntityVillager.class, "Dorfbewohner");
+		add(EntityWitch.class, "Hexe");
+		add(EntityWolf.class, "Wolf");
+		add(EntityZombie.class, "Zombie");
 
 		List<SettingsElement> settings = new ArrayList<>(entities.values());
 		settings.sort(Comparator.comparing(SettingsElement::getDisplayName));
 		enabled.subSettings(settings);
 	}
 
-	private void add(Class<? extends Entity> entity, String name, Object icon) {
+	private void add(Class<? extends Entity> entity, String name) {
+		String key = EntityList.classToStringMapping.getOrDefault(entity, "../glitch_question_mark");
+		if (entity == EntityPlayer.class)
+			key = "../steve";
+
 		entities.put(entity, new BooleanSetting()
 			.name(name)
 			.config(getConfigKey() + ".entities." + UPPER_CAMEL.to(LOWER_UNDERSCORE, name))
-			.icon(icon)
+			.icon("mob_icons/" + key)
 			.defaultValue(entity == EntityPlayer.class));
 	}
 

@@ -160,6 +160,9 @@ public class Transactions extends Feature {
 
 	private void updateFilter() {
 		TickScheduler.runAfterRenderTicks(() -> {
+			if (!(mc().currentScreen instanceof LabyModAddonsGui))
+				return;
+
 			List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "listedElementsStored");
 			listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
 

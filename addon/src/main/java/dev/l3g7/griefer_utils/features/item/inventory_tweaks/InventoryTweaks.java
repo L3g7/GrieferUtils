@@ -44,6 +44,7 @@ public class InventoryTweaks extends Feature {
 	@MainElement
 	private final CategorySetting enabled = new CategorySetting()
 		.name("Inventarverbesserungen")
+		.description("Verbessert Interaktionen mit dem Inventar.")
 		.icon("wrench_screwdriver")
 		.subSettings();
 

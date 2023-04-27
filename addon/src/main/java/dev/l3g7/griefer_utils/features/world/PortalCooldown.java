@@ -74,6 +74,9 @@ public class PortalCooldown extends Feature {
 
 		long diff = timeoutEnd - System.currentTimeMillis();
 
+		if (diff < 0)
+			return;
+
 		player().experienceLevel = (int) Math.ceil(diff / 1000f);
 		player().experience = diff / 12_000f;
 	}

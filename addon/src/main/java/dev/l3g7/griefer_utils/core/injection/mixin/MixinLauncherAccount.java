@@ -32,11 +32,15 @@ public class MixinLauncherAccount {
 	@Inject(method = "getAccessToken", at = @At("RETURN"), cancellable = true, remap = false)
 	public void injectGetAccessToken(CallbackInfoReturnable<String> cir) {
 		String accessToken = cir.getReturnValue();
-		if (!FileProvider.getSingleton(LabyModSwitcherFix.class).isEnabled() || accessToken.startsWith("ey"))
+		if (accessToken == null || accessToken.startsWith("ey") || !FileProvider.getSingleton(LabyModSwitcherFix.class).isEnabled())
 			return;
 
-		if (accessToken.startsWith("8E184B2C-7E2D-4517-A905-623B1BE84B5700000001ffffffffffffffffey"))
+		if (accessToken.startsWith("8E184B2C-7E2D-4517-A905-623B1BE84B5700000001ffffffffffffffffey")) {
 			cir.setReturnValue(accessToken.substring(60));
+			return;
+		}
+
+		cir.setReturnValue(accessToken.split("\\.")[0]);
 	}
 
 }

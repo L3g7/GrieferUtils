@@ -18,11 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
@@ -74,8 +74,7 @@ public class PortalCooldown extends Feature {
 
 		long diff = timeoutEnd - System.currentTimeMillis();
 
-		if (diff < 0)
-			return;
+		diff = Math.max(diff, 0);
 
 		player().experienceLevel = (int) Math.ceil(diff / 1000f);
 		player().experience = diff / 12_000f;

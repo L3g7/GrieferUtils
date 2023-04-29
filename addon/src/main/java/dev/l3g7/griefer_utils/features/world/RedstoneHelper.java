@@ -185,9 +185,9 @@ public class RedstoneHelper extends Feature {
 
 		schematicasRROs.clear();
 		previousSchematic = schematic;
-		previousSchematicPos = position.up().down();
+		previousSchematicPos = position == null ? null : position.up().down();
 
-		if (schematic == null)
+		if (schematic == null || position == null)
 			return;
 
 		for (int dX = 0; dX < schematic.getWidth(); dX++) {

@@ -52,7 +52,7 @@ public class HeadSaver extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("KopfSaver")
+		.name("/kopf Vorschau")
 		.description("Fragt beim Einlösen von /kopf nach einer Bestätigung und zeigt dabei eine Vorschau des Kopfes an.")
 		.icon("steve");
 

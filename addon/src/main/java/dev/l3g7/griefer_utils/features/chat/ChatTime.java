@@ -75,7 +75,7 @@ public class ChatTime extends Feature {
 				IOUtil.read(configFile).asJsonObject().ifPresent(obj -> {
 					JsonObject cfg = obj.get("config").getAsJsonObject();
 					format.defaultValue(cfg.has("chatData") ? cfg.get("chatData").getAsString() : "HH:mm:ss");
-					style.defaultValue(cfg.has("chatData2") ? cfg.get("chatData2").getAsString().replace("%time%", "%s") : "&4[&e%s&4a]");
+					style.defaultValue(cfg.has("chatData2") ? cfg.get("chatData2").getAsString().replace("%time%", "%s") : "&4[&e%s&4] ");
 				});
 			}
 		}

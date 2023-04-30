@@ -41,6 +41,11 @@ public class TickScheduler {
 	 * Runs the given runnable after the given delay in client ticks.
 	 */
 	public static void runAfterClientTicks(Runnable runnable, int delay) {
+		if (delay == 0) {
+			runnable.run();
+			return;
+		}
+
 		synchronized (clientTickTasks) {
 			clientTickTasks.put(runnable, new AtomicInteger(delay));
 		}

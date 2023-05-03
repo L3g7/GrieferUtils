@@ -68,9 +68,9 @@ public class AutoPortal extends Feature {
 		if (Platform.isWindows())
 			Native.register("user32");
 		else
-			join.name("§c§o§m" + join.getDisplayName())
+			maximize.name("§c§o§m" + maximize.getDisplayName())
 				.description("§c§oMaximierung ist für " + System.getProperty("os.name") + " nicht implementiert.")
-				.callback(v -> { if (v) join.set(false); });
+				.callback(v -> { if (v) maximize.set(false); });
 	}
 
 	@EventListener

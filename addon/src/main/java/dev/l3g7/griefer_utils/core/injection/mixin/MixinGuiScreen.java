@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.core.injection.mixin;
 
+import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -34,6 +35,11 @@ public class MixinGuiScreen {
 	public void injectRenderTooltip(ItemStack stack, int x, int y, CallbackInfo ci) {
 		if (MinecraftForge.EVENT_BUS.post(new RenderToolTipEvent(stack, (GuiScreen) (Object) this, x, y)))
 			ci.cancel();
+	}
+
+	@Inject(method = "initGui", at = @At("HEAD"))
+	public void injectInitGui(CallbackInfo ci) {
+		MinecraftForge.EVENT_BUS.post(new GuiInitEvent((GuiScreen) (Object) this));
 	}
 
 }

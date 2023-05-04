@@ -18,6 +18,15 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class LabyModAddonsGuiInitEvent extends Event {}
+public class GuiInitEvent extends Event {
+
+	public final GuiScreen screen;
+
+	public GuiInitEvent(GuiScreen screen) {
+		this.screen = screen;
+	}
+
+}

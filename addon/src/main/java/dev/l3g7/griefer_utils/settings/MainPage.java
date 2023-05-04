@@ -23,7 +23,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.LabyModAddonsGuiInitEvent;
+import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
 import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
@@ -119,7 +119,10 @@ public class MainPage {
 	}
 
 	@EventListener
-	private static void onGuiInit(LabyModAddonsGuiInitEvent event) {
+	private static void onGuiInit(GuiInitEvent event) {
+		if (!(event.screen instanceof LabyModAddonsGui))
+			return;
+
 		filter.getStorage().value = "";
 
 		Reflection.set(filter, "", "currentValue");

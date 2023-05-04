@@ -78,7 +78,7 @@ public class TickScheduler {
 	 * Decreases the ticks after which the task should run and runs it if ticks = 0.
 	 */
 	private static void updateTasks(Map<Runnable, AtomicInteger> tasks) {
-		Iterator<Entry<Runnable, AtomicInteger>> it = tasks.entrySet().iterator();
+		Iterator<Entry<Runnable, AtomicInteger>> it = new HashMap<>(tasks).entrySet().iterator();
 		while (it.hasNext()) {
 			// Decrease time, run if 0
 			Entry<Runnable, AtomicInteger> entry = it.next();

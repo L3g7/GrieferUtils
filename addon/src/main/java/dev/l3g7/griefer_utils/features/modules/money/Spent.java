@@ -64,7 +64,7 @@ public class Spent extends Module {
 		});
 
     public Spent() {
-        super("Ausgegeben", "Zeigt dir, wie viel Geld du seit Minecraft-Start ausgegeben hast", "spent", new IconData("griefer_utils/icons/griefer_info/wallet_outgoing.png"));
+        super("Ausgegeben", "Zeigt dir, wie viel Geld du seit Minecraft-Start ausgegeben hast", "spent", new IconData("griefer_utils/icons/wallet_outgoing.png"));
     }
 
     @Override

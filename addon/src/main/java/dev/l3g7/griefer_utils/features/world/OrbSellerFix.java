@@ -53,7 +53,7 @@ public class OrbSellerFix extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Orb-Händler fixen")
-		.description("Fixt, dass der Orbhändler nicht sichtbar ist, wenn man sich mit einem Home zu ihm teleportiert.")
+		.description("Behebt, dass der Orb-Händler nicht sichtbar ist, wenn man sich mit einem Home zu ihm teleportiert.")
 		.icon("orbseller");
 
 	@Override
@@ -142,7 +142,7 @@ public class OrbSellerFix extends Feature {
 		EntityOtherPlayerMP player = new EntityOtherPlayerMP(world(), gp);
 		player.setEntityId(id);
 		float yaw = (float) Math.toDegrees(Math.atan2(player().posZ + 41.5, player().posX - 172.5));
-		yaw = (yaw - 90);
+		yaw -= 90;
 		player.setPositionAndRotation(172.5, 26, -41.5, yaw, 0);
 		new S0CPacketSpawnPlayer(player).processPacket(mc().getNetHandler());
 		world().getEntityByID(id).setRotationYawHead(yaw);

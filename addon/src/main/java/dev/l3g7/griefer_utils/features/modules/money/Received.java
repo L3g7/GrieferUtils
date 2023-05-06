@@ -62,7 +62,7 @@ public class Received extends Module {
 		});
 
     public Received() {
-        super("Eingenommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast", "received", new IconData("griefer_utils/icons/griefer_info/wallet_ingoing.png"));
+        super("Eingenommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast", "received", new IconData("griefer_utils/icons/wallet_ingoing.png"));
     }
 
 

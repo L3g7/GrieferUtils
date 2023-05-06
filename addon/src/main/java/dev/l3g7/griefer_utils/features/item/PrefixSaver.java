@@ -18,10 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.item;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.world.ChestSearch;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -32,7 +33,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.MouseEvent;
 
 import static dev.l3g7.griefer_utils.util.ItemUtil.createItem;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -66,10 +66,7 @@ public class PrefixSaver extends Feature {
 	}
 
 	@EventListener
-	public void onMouseClick(MouseEvent event) {
-		if (event.button != 1 || !event.buttonstate)
-			return;
-
+	public void onMouseClick(MouseClickEvent.RightClickEvent event) {
 		if (!"§fVergibt §aein Farbrecht§f! (Rechtsklick)".equals(ItemUtil.getLastLore(mc().thePlayer.getHeldItem())))
 			return;
 

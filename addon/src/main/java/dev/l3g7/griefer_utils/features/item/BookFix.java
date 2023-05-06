@@ -18,9 +18,10 @@
 
 package dev.l3g7.griefer_utils.features.item;
 
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
@@ -36,7 +37,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.MouseEvent;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -61,11 +61,11 @@ public class BookFix extends Feature {
 	 * Fixes direct book interactions.
 	 */
 	@EventListener
-	public void onMouse(MouseEvent event) {
-		if (!event.buttonstate || player() == null || mc().currentScreen != null)
+	public void onMouse(MouseClickEvent.RightClickEvent event) {
+		if (player() == null || mc().currentScreen != null)
 			return;
 
-		event.setCanceled(processClick(player().getHeldItem(), event.button == 1));
+		event.setCanceled(processClick(player().getHeldItem(), true));
 	}
 
 	/**

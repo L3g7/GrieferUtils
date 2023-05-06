@@ -18,20 +18,20 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Timer;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.client.event.MouseEvent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
@@ -48,12 +48,8 @@ public class NPCEntityGhostHand extends Feature {
 		.icon("left_click");
 
 	@EventListener
-	public void onClick(MouseEvent event) {
+	public void onClick(MouseClickEvent.RightClickEvent event) {
 		if (world() == null)
-			return;
-
-		// Only intercept right clicks
-		if (event.isCanceled() || !event.buttonstate || event.button != 1)
 			return;
 
 		// Don't intercept if targeted entity is a NPC

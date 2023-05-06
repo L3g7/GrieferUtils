@@ -26,6 +26,7 @@
     "MixinGuiScreen",
     "MixinItemStack",
     "MixinLayerCustomHead",
+    "MixinMinecraft",
     "MixinModPlayerTabOverlay",
     "MixinPlayerControllerMP",
     "MixinRenderGlobal",

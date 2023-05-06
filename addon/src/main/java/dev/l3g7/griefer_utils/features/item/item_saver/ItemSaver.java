@@ -25,6 +25,9 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.event.events.MouseClickEvent.LeftClickEvent;
+import dev.l3g7.griefer_utils.event.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
@@ -43,7 +46,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
-import net.minecraftforge.client.event.MouseEvent;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -179,10 +181,7 @@ public class ItemSaver extends Feature {
 	}
 
 	@EventListener
-	private void onMouse(MouseEvent event) {
-		if (!event.buttonstate)
-			return;
-
+	private void onMouse(MouseClickEvent event) {
 		if (player() == null)
 			return;
 
@@ -194,7 +193,7 @@ public class ItemSaver extends Feature {
 		if (setting == null)
 			return;
 
-		if ((event.button == 0 && setting.leftclick.get()) || (event.button == 1 && setting.rightclick.get()))
+		if ((event instanceof LeftClickEvent && setting.leftclick.get()) || (event instanceof RightClickEvent && setting.rightclick.get()))
 			event.setCanceled(true);
 	}
 

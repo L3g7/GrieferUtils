@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemDisplaySetting;
@@ -40,7 +41,6 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 
@@ -101,8 +101,8 @@ public class AutoTool extends Feature {
 	 * Required for compatability with {@link ToolSaver}
 	 */
 	@EventListener(priority = EventPriority.HIGH)
-	public void onMouse(MouseEvent event) {
-		if (event.button != 0 || !event.buttonstate || mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+	public void onMouse(MouseClickEvent.LeftClickEvent event) {
+		if (mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
 			return;
 
 		switchToTool(mc().objectMouseOver.getBlockPos());

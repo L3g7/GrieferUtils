@@ -18,12 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.item.item_info;
 
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.RepairValueViewer;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -32,7 +31,6 @@ import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 import java.util.Comparator;
@@ -40,8 +38,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 @Singleton
 public class ItemInfo extends Feature {
@@ -94,17 +90,6 @@ public class ItemInfo extends Feature {
 			if (infoSupplier.isEnabled())
 				e.toolTip.addAll(infoSupplier.getToolTip(e.itemStack));
 		}
-	}
-
-	/**
-	 * Fixes direct book interactions.
-	 */
-	@EventListener
-	public void onMouse(MouseEvent event) {
-		if (!event.buttonstate || player() == null || mc().currentScreen != null)
-			return;
-
-		new RepairValueViewer().init("");
 	}
 
 	public static abstract class ItemInfoSupplier {

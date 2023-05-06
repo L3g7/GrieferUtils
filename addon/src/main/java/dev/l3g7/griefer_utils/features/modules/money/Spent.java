@@ -39,15 +39,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getNextServerRestart;
 import static java.math.BigDecimal.ZERO;
 
-/*
- * Not the cleanest code, but it will be redone in v2 anyway :P
- */
 @Singleton
 public class Spent extends Module {
 
-	private static final int HOUR = 60 * 60 * 1000; // An hour, in milliseconds.
 	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s§r§a \\$(?<amount>[\\d.,]+) gegeben\\.§r$", Constants.FORMATTED_PLAYER_PATTERN));
 
     static BigDecimal moneySpent = BigDecimal.ZERO;
@@ -58,20 +55,16 @@ public class Spent extends Module {
 		.description("Ob automatisch um 04:00 das eingenommene Geld zurückgesetzt werden soll.")
 		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
 		.callback(b -> {
-			if (!b) {
+			if (!b)
 				nextReset = -1;
-			} else {
-				if (nextReset == -1)
-					nextReset = getNextReset();
-				else
-					nextReset = Math.min(nextReset, getNextReset());
-			}
+			else
+				nextReset = getNextServerRestart();
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
 			Config.save();
 		});
 
     public Spent() {
-        super("Ausgegeben", "Zeigt dir, wie viel Geld du seit Minecraft-Start ausgegeben hast", "spent", new IconData("griefer_utils/icons/wallet_outgoing.png"));
+        super("Ausgegeben", "Zeigt dir, wie viel Geld du seit Minecraft-Start ausgegeben hast", "spent", new IconData("griefer_utils/icons/griefer_info/wallet_outgoing.png"));
     }
 
     @Override
@@ -88,7 +81,7 @@ public class Spent extends Module {
 		    .name("Alles zurücksetzen")
 		    .icon("arrow_circle")
 		    .buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-		    .callback(() -> setBalance(Spent.setBalance(ZERO))));
+		    .callback(() -> setBalance(Received.setBalance(ZERO))));
     }
 
     @Override
@@ -108,20 +101,10 @@ public class Spent extends Module {
 			setBalance(moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
 	}
 
-	private long getNextReset() {
-		long time = System.currentTimeMillis();
-		long reset = time - time % (24 * HOUR) + (2 * HOUR); // Get timestamp for 02:00 UTC on the current day
-
-		if (System.currentTimeMillis() > reset)
-			reset += 24 * HOUR; // When it's already after 02:00 UTC, the next reset is 24h later
-
-		return reset;
-	}
-
 	@EventListener
 	public void onTick(TickEvent.ClientTickEvent tickEvent) {
 		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
-			nextReset = getNextReset();
+			nextReset = getNextServerRestart();
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
 			setBalance(ZERO);
 			Config.save();

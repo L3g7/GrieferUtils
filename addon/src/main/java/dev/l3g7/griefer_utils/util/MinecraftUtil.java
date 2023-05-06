@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.util;
 
-import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.misc.ChatQueue;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
@@ -31,7 +31,6 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -40,7 +39,6 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -49,13 +47,13 @@ import java.util.UUID;
  */
 public class MinecraftUtil {
 
+	private static final int HOUR = 60 * 60 * 1000; // An hour, in milliseconds.
+
 	public static Minecraft       mc()              { return Minecraft.getMinecraft(); }
 	public static EntityPlayerSP  player()          { return mc().thePlayer; }
 	public static String          name()            { return mc().getSession().getUsername(); }
 	public static GameSettings    settings()        { return mc().gameSettings; }
-	public static TextureManager  textureManager()  { return mc().getTextureManager(); }
 	public static ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }
-	public static File            assetsDir()       { return Reflection.get(mc(), "fileAssets"); }
 	public static WorldClient     world()           { return mc().theWorld; }
 
 	public static ItemStack[]     armorInventory()  { return inventory().armorInventory; }
@@ -135,12 +133,22 @@ public class MinecraftUtil {
 		switch (citybuild) {
 			case "Nature": return "N";
 			case "Extreme": return "X";
-			case "CBE": return "E";
+			case "Evil": return "E";
 			case "Wasser": return "W";
 			case "Lava": return "L";
 			case "Event": return "V";
 			default: return "*";
 		}
+	}
+
+	public static long getNextServerRestart() {
+		long time = System.currentTimeMillis();
+		long reset = time - time % (24 * HOUR) + (2 * HOUR); // Get timestamp for 02:00 UTC on the current day
+
+		if (System.currentTimeMillis() > reset)
+			reset += 24 * HOUR; // When it's already after 02:00 UTC, the next reset is 24h later
+
+		return reset;
 	}
 
 }

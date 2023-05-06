@@ -40,9 +40,6 @@ import java.util.regex.Matcher;
 
 import static java.math.BigDecimal.ZERO;
 
-/*
- * Not the cleanest code, but it will be redone in v2 anyway :P
- */
 @Singleton
 public class Received extends Module {
 
@@ -56,20 +53,16 @@ public class Received extends Module {
 		.description("Ob automatisch um 04:00 das eingenommene Geld zurückgesetzt werden soll.")
 		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
 		.callback(b -> {
-			if (!b) {
+			if (!b)
 				nextReset = -1;
-			} else {
-				if (nextReset == -1)
-					nextReset = getNextReset();
-				else
-					nextReset = Math.min(nextReset, getNextReset());
-			}
+			else
+				nextReset = getNextReset();
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
 			Config.save();
 		});
 
     public Received() {
-        super("Eingenommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast", "received", new IconData("griefer_utils/icons/wallet_ingoing.png"));
+        super("Eingenommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast", "received", new IconData("griefer_utils/icons/griefer_info/wallet_ingoing.png"));
     }
 
 

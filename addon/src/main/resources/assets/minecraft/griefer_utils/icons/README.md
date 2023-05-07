@@ -191,7 +191,7 @@
     <td><a href="https://www.deviantart.com/bronzefish678/art/Pixel-orb-thing-245073608">DeviantArt (bronzefish678)</a></td>
   </tr>
   <tr>
-    <td><a href="orb.png"><img src="orbseller.png" height=16em width=16em />&nbsp;&nbsp;orbseller.png </a></td>
+    <td><a href="orbseller.png"><img src="orbseller.png" height=16em width=16em />&nbsp;&nbsp;orbseller.png </a></td>
     <td><a href="https://textures.minecraft.net/texture/ef686fbf016e1458f7f9a9850f38ef7fd6ae1d28bc241ac0c0686f77fdbb4b61">Minecraft Skin</a></td>
   </tr>
   <tr>

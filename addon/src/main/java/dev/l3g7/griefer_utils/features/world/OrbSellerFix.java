@@ -25,6 +25,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
@@ -69,10 +70,12 @@ public class OrbSellerFix extends Feature {
 
 		new Timer().schedule(new TimerTask() {
 			public void run() {
-				cbToId.clear();
-				saveIds();
+				TickScheduler.runAfterRenderTicks(() -> {
+					cbToId.clear();
+					saveIds();
+				}, 1);
 			}
-		}, new Date(Config.get(key + "reset").getAsLong()));
+		}, new Date(Config.get(key + "reset").getAsLong()), 24 * 3600 * 1000);
 	}
 
 	@EventListener

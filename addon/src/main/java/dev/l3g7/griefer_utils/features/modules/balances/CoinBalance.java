@@ -21,23 +21,42 @@ package dev.l3g7.griefer_utils.features.modules.balances;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.network.MysteryModPayloadEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.settings.elements.ControlElement;
+import net.minecraft.network.play.server.S3EPacketTeams;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 
 @Singleton
 public class CoinBalance extends Module {
 
-	private static long coins = -1;
+	private static double coins = -1;
+
+	public static double getCoinBalance() {
+		return coins;
+	}
 
 	public CoinBalance() {
 		super("Kontostand", "Zeigt den Kontostand an.", "coins", new ControlElement.IconData("griefer_utils/icons/coin_pile.png"));
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onMMCustomPayload(MysteryModPayloadEvent event) {
-		if (event.channel.equals("coins"))
-			coins = event.payload.getAsJsonObject().get("amount").getAsLong();
+	public void onPacket(PacketEvent.PacketReceiveEvent event) {
+		if (!(event.packet instanceof S3EPacketTeams) || world() == null)
+			return;
+
+		S3EPacketTeams packet = (S3EPacketTeams) event.packet;
+		if (!packet.getName().equals("money_value") || packet.getAction() != 2 || MinecraftUtil.getServerFromScoreboard().equals("Portal"))
+			return;
+
+		String money = packet.getPrefix();
+		if (!money.endsWith("$")) // Still loading
+			return;
+
+		money = money.substring(0, money.length() - 1).replace(".", "").replace(",", ".");
+		coins = Double.parseDouble(money);
 	}
 
 	@Override

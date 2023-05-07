@@ -34,15 +34,12 @@ public abstract class MixinMinecraft {
 	public void injectClickMouse(CallbackInfo ci) {
 		if (MinecraftForge.EVENT_BUS.post(new MouseClickEvent.LeftClickEvent()))
 			ci.cancel();
-
-		System.out.println("p lc");
 	}
 
 	@Inject(method = "rightClickMouse", at = @At("HEAD"), cancellable = true)
 	public void injectRightClickMouse(CallbackInfo ci) {
 		if (MinecraftForge.EVENT_BUS.post(new MouseClickEvent.RightClickEvent()))
 			ci.cancel();
-		System.out.println("p rc");
 	}
 
 	@ModifyArg(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;sendClickBlockToController(Z)V"))

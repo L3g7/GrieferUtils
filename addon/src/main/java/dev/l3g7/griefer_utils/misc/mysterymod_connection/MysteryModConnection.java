@@ -102,7 +102,7 @@ public class MysteryModConnection {
 		if (getState() == CONNECTED)
 			channel.close();
 
-		connect();
+		new Thread(MysteryModConnection::connect).start();
 	}
 
 	public enum State {

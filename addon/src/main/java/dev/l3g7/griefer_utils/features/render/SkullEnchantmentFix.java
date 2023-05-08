@@ -47,8 +47,8 @@ public class SkullEnchantmentFix extends Feature {
 	private static final ItemStack ICON = ItemUtil.createItem(Items.skull, 0, true);
 
 	@SuppressWarnings("unchecked, deprecation")
-	private static final IBakedModel ibakedmodel = new IBakedModel() {
-		private final List<BakedQuad>[] bakedQuads = new List[] {
+	private static final IBakedModel cubeModel = new IBakedModel() {
+		private final List<BakedQuad>[] bakedQuads = new List[] { // Data was copied from the IBakedModel of a standard dirt block
 			ImmutableList.of(new BakedQuad(new int[] {0, 0, 1065353216, -8421505, 1048576655, 1044383007, 33024, 0, 0, 0, -8421505, 1048576655, 1046477537, 33024, 1065353216, 0, 0, -8421505, 1049623921, 1046477537, 33024, 1065353216, 0, 1065353216, -8421505, 1049623921, 1044383007, 33024}, -1, EnumFacing.DOWN)),
 			ImmutableList.of(new BakedQuad(new int[] {0, 1065353216, 0, -1, 1048576655, 1044383007, 32512, 0, 1065353216, 1065353216, -1, 1048576655, 1046477537, 32512, 1065353216, 1065353216, 1065353216, -1, 1049623921, 1046477537, 32512, 1065353216, 1065353216, 0, -1, 1049623921, 1044383007, 32512}, -1, EnumFacing.UP)),
 			ImmutableList.of(new BakedQuad(new int[] {1065353216, 1065353216, 0, -3355444, 1048576655, 1044383007, 8454144, 1065353216, 0, 0, -3355444, 1048576655, 1046477537, 8454144, 0, 0, 0, -3355444, 1049623921, 1046477537, 8454144, 0, 1065353216, 0, -3355444, 1049623921, 1044383007, 8454144}, -1, EnumFacing.NORTH)),
@@ -76,7 +76,7 @@ public class SkullEnchantmentFix extends Feature {
 		.icon(ICON);
 
 	public static void setDepthFunc(IBakedModel ibakedModel) {
-		if (ibakedModel == ibakedmodel)
+		if (ibakedModel == cubeModel)
 			GlStateManager.depthFunc(GL11.GL_ALWAYS);
 	}
 
@@ -88,7 +88,7 @@ public class SkullEnchantmentFix extends Feature {
 			return;
 
 		if (stack.hasEffect())
-			Reflection.invoke(mc().getRenderItem(), "renderEffect", ibakedmodel);
+			Reflection.invoke(mc().getRenderItem(), "renderEffect", cubeModel);
 	}
 
 }

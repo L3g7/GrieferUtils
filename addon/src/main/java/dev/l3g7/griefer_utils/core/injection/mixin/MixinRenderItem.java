@@ -19,9 +19,11 @@
 package dev.l3g7.griefer_utils.core.injection.mixin;
 
 import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
+import dev.l3g7.griefer_utils.features.render.SkullEnchantmentFix;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,6 +41,16 @@ public abstract class MixinRenderItem {
 	@Inject(method = "renderItemOverlayIntoGUI", at = @At("TAIL"))
 	public void injectRenderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text, CallbackInfo ci) {
 		MinecraftForge.EVENT_BUS.post(new RenderItemOverlayEvent((RenderItem) (Object) this, stack, xPosition, yPosition));
+	}
+
+	@Inject(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/resources/model/IBakedModel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer;renderByItem(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+	public void injectRenderItem(ItemStack stack, IBakedModel model, CallbackInfo ci) {
+		SkullEnchantmentFix.renderEffect(stack);
+	}
+
+	@Inject(method = "renderEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;disableLighting()V"))
+	public void injectRenderEffect(IBakedModel model, CallbackInfo ci) {
+		SkullEnchantmentFix.setDepthFunc(model);
 	}
 
 }

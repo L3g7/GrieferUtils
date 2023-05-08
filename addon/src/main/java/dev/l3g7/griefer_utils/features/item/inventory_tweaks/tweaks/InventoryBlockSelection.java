@@ -28,7 +28,12 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
@@ -55,10 +60,22 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 
 		InventoryPlayer inv = player().inventory;
 
-		// If possible, the stack is put in an empty slot
-		int targetSlot = inv.getFirstEmptyStack();
-		if (targetSlot == -1 || targetSlot >= 9)
-			targetSlot = inv.currentItem;
+		int targetSlot = -1;
+
+		for(Supplier<Integer> slotSupplier : new Supplier[] {
+			() -> getHotbarSlot(false, Objects::isNull), // Empty slot
+			() -> getHotbarSlot(true, is -> is.getItem() instanceof ItemBlock), // Block
+			() -> getHotbarSlot(true, is -> !is.isItemStackDamageable()), // Not a tool
+			() -> getHotbarSlot(true, is -> true), // Not in the ItemSaver
+			() -> getHotbarSlot(false, is -> !ItemSaver.getSetting(is).extremeDrop.get())}) { // Doesn't have extreme drop enabled
+			targetSlot = slotSupplier.get();
+			if (targetSlot != -1)
+				break;
+		}
+
+		// All items had extreme drop enabled
+		if (targetSlot == -1)
+			return;
 
 		int bestSlot = 0;
 		int bestScore = -1;
@@ -105,6 +122,19 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 
 		String line = ItemUtil.getLore(stack).get(0);
 		return Integer.parseInt(line.substring(12).replace(".", ""));
+	}
+
+	private int getHotbarSlot(boolean prefilter, Predicate<ItemStack> filter) {
+		ItemStack[] stacks = player().inventory.mainInventory;
+		for (int i = 0; i < 9; i++) {
+			if (prefilter && (stacks[i] == null || ItemSaver.getSetting(stacks[i]) != null))
+				continue;
+
+			if (filter.test(stacks[i]))
+				return i;
+		}
+
+		return -1;
 	}
 
 }

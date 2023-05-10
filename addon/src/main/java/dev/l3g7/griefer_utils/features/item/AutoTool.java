@@ -188,7 +188,7 @@ public class AutoTool extends Feature {
 		return score;
 	}
 
-	private boolean isTool(ItemStack itemStack) {
+	public static boolean isTool(ItemStack itemStack) {
 		if (itemStack == null)
 			return false;
 

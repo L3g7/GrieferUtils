@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.item.AutoTool;
 import dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -143,7 +144,7 @@ public class BetterAdventurer extends Feature {
 
 		String amount = task.substring(searchedText.length());
 		amount = amount.substring(0, amount.indexOf('§'));
-		toolTip.add("Benötigte Items: " + ItemCounter.formatAmount(Integer.parseInt(amount), 64));
+		toolTip.add("Benötigte Items: " + ItemCounter.formatAmount(Integer.parseInt(amount), AutoTool.isTool(itemStack) ? 64 : itemStack.getMaxStackSize()));
 		return toolTip;
 	}
 }

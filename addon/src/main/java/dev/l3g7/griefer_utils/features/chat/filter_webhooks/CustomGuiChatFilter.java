@@ -18,7 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.chat.filter_webhooks;
 
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.features.chat.UnlockChatFilters;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.Scrollbar;
 import net.labymod.ingamechat.GuiChatCustom;
@@ -94,6 +96,16 @@ public class CustomGuiChatFilter extends GuiChatCustom {
         markSoundNameRed = false;
         markWebhookRed = false;
         selectedFilter = null;
+
+		if (!FileProvider.getSingleton(UnlockChatFilters.class).isEnabled())
+			return;
+
+	    textFieldFilterName.setMaxStringLength(Integer.MAX_VALUE);
+	    textFieldFilterContains.setMaxStringLength(Integer.MAX_VALUE);
+	    textFieldFilterContainsNot.setMaxStringLength(Integer.MAX_VALUE);
+	    textFieldFilterSoundfile.setMaxStringLength(Integer.MAX_VALUE);
+	    textFieldFilterRoom.setMaxStringLength(Integer.MAX_VALUE);
+	    textFieldFilterWebhook.setMaxStringLength(Integer.MAX_VALUE);
     }
 
     @Override

@@ -21,6 +21,7 @@
   "client": [
     "MixinEntityRenderer",
     "MixinGuiChatAdapter",
+    "MixinGuiChatFilter",
     "MixinGuiChest",
     "MixinGuiIngame",
     "MixinGuiScreen",

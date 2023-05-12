@@ -25,7 +25,6 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiChat;
@@ -34,6 +33,8 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
 
 @Singleton
 public class SplitLongMessages extends Feature {
@@ -79,7 +80,8 @@ public class SplitLongMessages extends Feature {
 		String message = text.substring(index);
 		String prefix = text.substring(0, index);
 
-		cutUp(message, 100 - prefix.length()).stream().map(s -> prefix + s).forEach(MinecraftUtil::send);
+		for (String s : cutUp(message, 100 - prefix.length()))
+			send(prefix + s);
 		event.setCanceled(true);
 	}
 

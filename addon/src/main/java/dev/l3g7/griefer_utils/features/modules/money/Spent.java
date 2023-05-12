@@ -19,25 +19,27 @@
 package dev.l3g7.griefer_utils.features.modules.money;
 
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.Config;
-import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
+import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getNextServerRestart;
 import static java.math.BigDecimal.ZERO;
 
 @Singleton
@@ -45,58 +47,68 @@ public class Spent extends Module {
 
 	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s§r§a \\$(?<amount>[\\d.,]+) gegeben\\.§r$", Constants.FORMATTED_PLAYER_PATTERN));
 
-    static BigDecimal moneySpent = ZERO;
-
-	private final BooleanSetting onlyPayed = new BooleanSetting()
-		.name("Nur Zahlungen mit einbeziehen")
-		.description("Ob nur Zahlungen von anderen Spielern mit einbezogen werden sollen, oder alle Geldeinnahmen.")
-		.icon("coin_pile");
+	static BigDecimal moneySpent = BigDecimal.ZERO;
+	private long nextReset = -1;
 
 	private final BooleanSetting resetSetting = new BooleanSetting()
 		.name("Automatisch zurücksetzen")
 		.description("Ob automatisch um 04:00 das eingenommene Geld zurückgesetzt werden soll.")
-		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS);
+		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
+		.callback(b -> {
+			if (!b)
+				nextReset = -1;
+			else
+				nextReset = getNextServerRestart();
+			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
+			Config.save();
+		});
 
-    public Spent() {
-        super("Ausgegeben", "Zeigt dir, wie viel Geld du seit Minecraft-Start ausgegeben hast", "spent", new IconData("griefer_utils/icons/wallet_outgoing.png"));
-    }
+	public Spent() {
+		super("Ausgegeben", "Zeigt dir, wie viel Geld du seit Minecraft-Start ausgegeben hast", "spent", new IconData("griefer_utils/icons/wallet_outgoing.png"));
+	}
 
-    @Override
-    public void fillSubSettings(List<SettingsElement> list) {
-	    super.fillSubSettings(list);
-		list.add(onlyPayed);
-	    list.add(resetSetting);
-	    list.add(new SmallButtonSetting()
-		    .name("Zurücksetzen")
-		    .icon("arrow_circle")
-		    .buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-		    .callback(() -> setBalance(ZERO)));
+	@Override
+	public void fillSubSettings(List<SettingsElement> list) {
+		super.fillSubSettings(list);
+		list.add(resetSetting);
+		list.add(new SmallButtonSetting()
+			.name("Zurücksetzen")
+			.icon("arrow_circle")
+			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
+			.callback(() -> setBalance(ZERO)));
 
-	    list.add(new SmallButtonSetting()
-		    .name("Alles zurücksetzen")
-		    .icon("arrow_circle")
-		    .buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-		    .callback(() -> setBalance(Received.setBalance(ZERO))));
-    }
+		list.add(new SmallButtonSetting()
+			.name("Alles zurücksetzen")
+			.icon("arrow_circle")
+			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
+			.callback(() -> setBalance(Received.setBalance(ZERO))));
+	}
 
-    @Override
-    public String[] getValues() {
-        return new String[]{Constants.DECIMAL_FORMAT_98.format(moneySpent) + "$"};
-    }
+	@Override
+	public String[] getValues() {
+		return new String[]{Constants.DECIMAL_FORMAT_98.format(moneySpent) + "$"};
+	}
 
-    @Override
-    public String[] getDefaultValues() {
-        return new String[]{"0$"};
-    }
+	@Override
+	public String[] getDefaultValues() {
+		return new String[]{"0$"};
+	}
 
 	@EventListener
 	public void onMessageReceive(ClientChatReceivedEvent event) {
-		if (!onlyPayed.get())
-			return;
-
 		Matcher matcher = PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
 			setBalance(moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
+	}
+
+	@EventListener
+	public void onTick(TickEvent.ClientTickEvent tickEvent) {
+		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
+			nextReset = getNextServerRestart();
+			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
+			setBalance(ZERO);
+			Config.save();
+		}
 	}
 
 	@EventListener
@@ -104,18 +116,21 @@ public class Spent extends Module {
 		if (!ServerCheck.isOnGrieferGames())
 			return;
 
-		String key = "modules.money.balances." + mc.getSession().getProfile().getId() + ".spent";
+		String path = "modules.money.balances." + mc.getSession().getProfile().getId() + ".";
 
-		if (Config.has(key))
-			setBalance(BigDecimal.valueOf(Config.get(key).getAsLong()));
+		if (Config.has(path + "spent"))
+			setBalance(BigDecimal.valueOf(Config.get(path + "spent").getAsLong()));
+		if (Config.has(path + "next_reset")) {
+			nextReset = Config.get(path + "next_reset").getAsLong();
+			resetSetting.set(nextReset != -1);
+		}
 	}
 
-	static BigDecimal setBalance(BigDecimal newValue) {
+	protected static BigDecimal setBalance(BigDecimal newValue) {
 		moneySpent = newValue;
 		// Save balance along with player uuid so no problems occur when using multiple accounts
 		Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));
 		Config.save();
 		return newValue;
 	}
-
 }

@@ -20,19 +20,19 @@ package dev.l3g7.griefer_utils.features.player;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.ChatQueue;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
-import dev.l3g7.griefer_utils.misc.ChatQueue;
-import dev.l3g7.griefer_utils.core.misc.Config;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.Material;
 import net.labymod.utils.ModColor;
@@ -87,7 +87,7 @@ public class CooldownNotifications extends Feature {
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(ClientChatReceivedEvent event) {
 		if (event.message.getUnformattedText().matches("^Du hast .+-Booster erhalten\\. Danke für deine Unterstützung von GrieferGames!$"))
-			endDates.put("/grieferboost", System.currentTimeMillis() + 1000 * 3600 * 24 * 14);
+			endDates.put("/grieferboost", System.currentTimeMillis() + 1000 * 3600 * (24 * 14 - 1));
 		else if (event.message.getUnformattedText().equals("[CaseOpening] Du hast 2 Kisten erhalten."))
 			endDates.put("/freekiste", System.currentTimeMillis() + 1000 * 3600 * 24 * 14);
 		else if (event.message.getUnformattedText().matches("^\\[Kopf] Du hast einen .+[ -]Kopf erhalten[!.]$"))

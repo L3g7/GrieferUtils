@@ -163,7 +163,7 @@ public class Transactions extends Feature {
 			if (!(mc().currentScreen instanceof LabyModAddonsGui))
 				return;
 
-			List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "listedElementsStored");
+			List<SettingsElement> listedElementsStored = new ArrayList<>(Reflection.get(mc().currentScreen, "listedElementsStored"));
 			listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
 
 			String filter = ((StringSetting) listedElementsStored.get(7)).get();
@@ -178,6 +178,7 @@ public class Transactions extends Feature {
 						.contains(filter.toLowerCase());
 				})
 				.forEach(listedElementsStored::add);
+			Reflection.set(mc().currentScreen, listedElementsStored, "listedElementsStored");
 		}, 1);
 	}
 

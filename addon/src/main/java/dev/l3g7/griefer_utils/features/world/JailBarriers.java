@@ -97,6 +97,9 @@ public class JailBarriers extends Feature {
 
 	@EventListener
 	private void onPacketSend(PacketEvent.PacketSendEvent event) {
+		if (armorStandId == -1)
+			return;
+
 		if (event.packet instanceof C08PacketPlayerBlockPlacement) {
 			C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
 			if (world().getBlockState(packet.getPosition()).equals(Blocks.barrier.getDefaultState()))

@@ -227,6 +227,10 @@
     <td><a href="https://www.redbubble.com/de/i/sticker/Pixel-Raketenschiff-auf-Wei%C3%9F-von-Rocket-To-Pluto/53450460.EJUG5">Rocket-To-Pluto</a></td>
   </tr>
   <tr>
+    <td><a href="ruler.png"><img src="ruler.png" height=16em width=16em />&nbsp;&nbsp;ruler.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><a href="scroll.png"><img src="scroll.png" height=16em width=16em />&nbsp;&nbsp;scroll.png </a></td>
     <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
   </tr>

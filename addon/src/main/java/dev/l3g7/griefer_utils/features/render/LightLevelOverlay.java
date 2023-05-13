@@ -31,6 +31,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.FontRenderer;
@@ -290,10 +291,7 @@ public class LightLevelOverlay extends Feature {
 				GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				GlStateManager.disableTexture2D();
 
-				worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-				worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-				worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-				worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
+				RenderUtil.drawFace(bb, EnumFacing.UP, false, false);
 				tessellator.draw();
 			}
 

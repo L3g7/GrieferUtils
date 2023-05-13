@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.world;
+package dev.l3g7.griefer_utils.features.world.better_hopper;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -43,6 +43,7 @@ import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.opengl.GL11;
@@ -55,7 +56,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static org.lwjgl.opengl.GL11.*;
 
 @Singleton
-public class BetterHopperVisualisation extends Feature {
+public class BetterHopper extends Feature {
 
 	private static final String ENABLE_VISUALISATION_NBT = "{id:\"minecraft:ender_eye\",Count:1b,tag:{display:{Lore:[0:\"§7Zeigt für §e%d Sekunden§7 %s und den Sammelradius optisch an.\",1:\"§7 \",2:\"§7Klicke, um die Anzeige zu starten.\"],Name:\"§6Optische Anzeige\"}},Damage:0s}";
 
@@ -64,6 +65,7 @@ public class BetterHopperVisualisation extends Feature {
 	private BlockPos mainConnection;
 	private int borderSize;
 	private long displayEnd = -1;
+	private BlockyRenderSphere blockyRenderSphere = null;
 
 	private final BooleanSetting fillBoxes = new BooleanSetting()
 		.name("Anzeigeboxen füllen")
@@ -77,12 +79,23 @@ public class BetterHopperVisualisation extends Feature {
 		.icon("hourglass")
 		.defaultValue(10);
 
-	@MainElement
-	private final BooleanSetting enabled = new BooleanSetting()
+	private final BooleanSetting betterVisualisation = new BooleanSetting()
 		.name("Bessere optische Trichter-Anzeige")
 		.description("Ersetzt die Partikel der optischen Trichter Anzeige durch Boxen / Linien.")
-		.icon(Material.HOPPER)
+		.icon(Material.EYE_OF_ENDER)
 		.subSettings(displayTime, fillBoxes);
+
+	private final BooleanSetting showRange = new BooleanSetting()
+		.name("Trichterreichweite anzeigen")
+		.description("Zeigt die Trichterreichtweite an.")
+		.icon("ruler");
+
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Bessere Trichter")
+		.description("Verbessert Trichter.")
+		.icon(Material.HOPPER)
+		.subSettings(betterVisualisation, showRange);
 
 	@EventListener
 	public void onPacketSend(PacketEvent.PacketSendEvent event) {
@@ -90,11 +103,19 @@ public class BetterHopperVisualisation extends Feature {
 			return;
 
 		C0EPacketClickWindow packet = (C0EPacketClickWindow) event.packet;
+		if (packet.getMode() == 3)
+			return;
+
 		int slot = packet.getSlotId();
 
 		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
 		if (inv.getName().equals("§6Trichter-Mehrfach-Verbindungen")) {
-			if ((slot != 52 && slot != 50) || packet.getMode() == 3)
+			if (slot == 53) {
+				blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
+				return;
+			}
+
+			if ((slot != 52 && slot != 50))
 				return;
 
 			for (int i = 0; i < 44; i++) {
@@ -117,13 +138,18 @@ public class BetterHopperVisualisation extends Feature {
 		if (!inv.getName().equals("§6Trichter-Einstellungen"))
 			return;
 
-		if ((slot != 34 && slot != 15) || packet.getMode() == 3)
+		if (slot != 15 && (slot != 34 || !betterVisualisation.get()) && (slot != 16 || !showRange.get()))
 			return;
 
 		filteredConnections.clear();
 		Container slots = ((GuiChest) mc().currentScreen).inventorySlots;
 		borderSize = slots.getSlot(31).getStack().stackSize;
 		hopper = getBlockPos(slots.getSlot(13).getStack());
+
+		if (slot == 16) {
+			blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
+			return;
+		}
 
 		ItemStack targetStack = slots.getSlot(16).getStack();
 		mainConnection = EnchantmentHelper.getEnchantments(targetStack).isEmpty() ? null : getBlockPos(targetStack);
@@ -143,8 +169,8 @@ public class BetterHopperVisualisation extends Feature {
 	}
 
 	@EventListener
-	public void onRenderTicK(TickEvent.RenderTickEvent event) {
-		if (event.phase != TickEvent.Phase.START || !(mc().currentScreen instanceof GuiChest))
+	public void onRenderTick(TickEvent.RenderTickEvent event) {
+		if (!betterVisualisation.get() || event.phase != TickEvent.Phase.START || !(mc().currentScreen instanceof GuiChest))
 			return;
 
 		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
@@ -159,8 +185,20 @@ public class BetterHopperVisualisation extends Feature {
 	}
 
 	@EventListener
+	public void onMessageReceive(ClientChatReceivedEvent event) {
+		String text = event.message.getUnformattedText();
+		if (text.equals("[Trichter] Der Trichter wurde erfolgreich verbunden.")
+			|| text.equals("[Trichter] Der Verbindungsmodus wurde beendet.")
+			|| text.equals("[Trichter] Der Startpunkt ist zu weit entfernt. Bitte starte erneut."))
+			blockyRenderSphere = null;
+	}
+
+	@EventListener
 	public void onRenderWorldLast(RenderWorldLastEvent event) {
-		if (displayEnd < System.currentTimeMillis())
+		if (blockyRenderSphere != null)
+			blockyRenderSphere.render();
+
+		if (displayEnd < System.currentTimeMillis()) // Visualisation
 			return;
 
 		GL11.glDisable(GL_DEPTH_TEST);
@@ -179,8 +217,11 @@ public class BetterHopperVisualisation extends Feature {
 			collectionBox = new AxisAlignedBB(hopper, hopper).expand(0.125, 0.125, 0.125).offset(0.5, 0.5, 0.5);
 
 		if (fillBoxes.get())
-			RenderUtil.drawFilledBox(collectionBox, new Color(0x1A880088, true));
+			RenderUtil.drawFilledBox(collectionBox, new Color(0x1A880088, true), true);
 		RenderUtil.drawBoxOutlines(collectionBox, new Color(0x880088), 1.5f);
+		GlStateManager.enableBlend();
+		GlStateManager.enableBlend();
+		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		GL11.glEnable(GL_DEPTH_TEST);
 	}
@@ -233,7 +274,7 @@ public class BetterHopperVisualisation extends Feature {
 	private void drawConnection(BlockPos target, int color) {
 		AxisAlignedBB targetBox = new AxisAlignedBB(target, target.add(1, 1, 1));
 		if (fillBoxes.get())
-			RenderUtil.drawFilledBox(targetBox, new Color(0x1A000000 | color, true));
+			RenderUtil.drawFilledBox(targetBox, new Color(0x1A000000 | color, true), true);
 		RenderUtil.drawBoxOutlines(targetBox, new Color(color), 1.5f);
 		RenderUtil.drawLine(hopper.getX() + 0.5f, hopper.getY() + 0.5f, hopper.getZ() + 0.5f, target.getX() + 0.5f, target.getY() + 0.5f, target.getZ() + 0.5f, new Color(color), 1.5f);
 	}

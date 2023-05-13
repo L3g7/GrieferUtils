@@ -33,16 +33,20 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.ForgeHooksClient;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.pos;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.util.render.GlEngine.*;
+import static net.minecraft.util.EnumFacing.*;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -131,7 +135,7 @@ public class RenderUtil {
 		GlStateManager.enableTexture2D();
 	}
 
-	public static void drawFilledBox(AxisAlignedBB bb, Color color) {
+	public static void drawFilledBox(AxisAlignedBB bb, Color color, boolean drawInside) {
 		Entity entity = mc().getRenderViewEntity();
 		Vec3d prevPos = new Vec3d(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
 		Vec3d cam = prevPos.add(pos(entity).subtract(prevPos).scale(partialTicks()));
@@ -146,57 +150,84 @@ public class RenderUtil {
 		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.disableTexture2D();
 
-		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-		worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+		drawFace(bb, UP, drawInside, false);
+		drawFace(bb, DOWN, drawInside, false);
+		drawFace(bb, NORTH, drawInside, false);
+		drawFace(bb, SOUTH, drawInside, false);
+		drawFace(bb, WEST, drawInside, false);
+		drawFace(bb, EAST, drawInside, false);
+
 		tessellator.draw();
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();
+	}
+
+	/**
+	 * WARNING: Assumes rendering has already begun!
+	 */
+	public static void drawFace(AxisAlignedBB bb, EnumFacing face, boolean bothSides, boolean tex) {
+		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
+		if (bothSides) {
+			bb = new AxisAlignedBB(
+				face == EAST ? bb.maxX : bb.minX,
+				face == UP ? bb.maxY : bb.minY,
+				face == SOUTH ? bb.maxZ : bb.minZ,
+				face == WEST ? bb.minX : bb.maxX,
+				face == DOWN ? bb.minY : bb.maxY,
+				face == NORTH ? bb.minZ : bb.maxZ
+			);
+		}
+
+		if (face.getAxis() == EnumFacing.Axis.Y) {
+			if (face == UP || bothSides) {
+				wr.pos(bb.minX, bb.maxY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
+				wr.pos(bb.maxX, bb.maxY, bb.maxZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
+				wr.pos(bb.maxX, bb.maxY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+				wr.pos(bb.minX, bb.maxY, bb.minZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
+			}
+
+			if (face == DOWN || bothSides) {
+				wr.pos(bb.maxX, bb.minY, bb.maxZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
+				wr.pos(bb.minX, bb.minY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
+				wr.pos(bb.minX, bb.minY, bb.minZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
+				wr.pos(bb.maxX, bb.minY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+			}
+			return;
+		}
+
+//		if (true)
+//			return;
+
+		if (face.getAxis() == EnumFacing.Axis.X) {
+			if (face == EAST || bothSides) {
+				wr.pos(bb.maxX, bb.maxY, bb.maxZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
+				wr.pos(bb.maxX, bb.minY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
+				wr.pos(bb.maxX, bb.minY, bb.minZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
+				wr.pos(bb.maxX, bb.maxY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+			}
+
+			if (face == WEST || bothSides) {
+				wr.pos(bb.minX, bb.minY, bb.maxZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
+				wr.pos(bb.minX, bb.maxY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
+				wr.pos(bb.minX, bb.maxY, bb.minZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
+				wr.pos(bb.minX, bb.minY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+			}
+			return;
+		}
+
+		if (face == SOUTH || bothSides) {
+			wr.pos(bb.maxX, bb.maxY, bb.maxZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
+			wr.pos(bb.minX, bb.maxY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
+			wr.pos(bb.minX, bb.minY, bb.maxZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
+			wr.pos(bb.maxX, bb.minY, bb.maxZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+		}
+
+		if (face == NORTH || bothSides) {
+			wr.pos(bb.minX, bb.maxY, bb.minZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
+			wr.pos(bb.maxX, bb.maxY, bb.minZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
+			wr.pos(bb.maxX, bb.minY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+			wr.pos(bb.minX, bb.minY, bb.minZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
+		}
 	}
 
 	public static void drawGradientRect(double left, double top, double right, double bottom, double zLevel, int startColor, int endColor) {
@@ -301,6 +332,77 @@ public class RenderUtil {
 		GlStateManager.pushMatrix();
 		paddingContentRenderer.accept(paddedX + 2, rectTop);
 		GlStateManager.popMatrix();
+	}
+
+	public static Pair<Integer, Integer> getTooltipTranslation(List<String> textLines, int mouseX, int mouseY, int width, int height) {
+		if (textLines.isEmpty())
+			throw new IllegalArgumentException("textLines can't be empty!");
+
+		int tooltipTextWidth = 0;
+
+		for (String textLine : textLines) {
+			int textLineWidth = mc().fontRendererObj.getStringWidth(textLine);
+
+			if (textLineWidth > tooltipTextWidth) {
+				tooltipTextWidth = textLineWidth;
+			}
+		}
+
+		boolean needsWrap = false;
+
+		int titleLinesCount = 1;
+		int tooltipX = mouseX + 12;
+		if (tooltipX + tooltipTextWidth + 4 > width) {
+			tooltipX = mouseX - 16 - tooltipTextWidth;
+			if (tooltipX < 4) { // if the tooltip doesn't fit on the screen
+				if (mouseX > width / 2)
+					tooltipTextWidth = mouseX - 12 - 8;
+				else
+					tooltipTextWidth = width - 16 - mouseX;
+				needsWrap = true;
+			}
+		}
+
+		if (needsWrap) {
+			int wrappedTooltipWidth = 0;
+			List<String> wrappedTextLines = new ArrayList<>();
+			for (int i = 0; i < textLines.size(); i++) {
+				String textLine = textLines.get(i);
+				List<String> wrappedLine = mc().fontRendererObj.listFormattedStringToWidth(textLine, tooltipTextWidth);
+				if (i == 0) {
+					titleLinesCount = wrappedLine.size();
+				}
+
+				for (String line : wrappedLine) {
+					int lineWidth = mc().fontRendererObj.getStringWidth(line);
+					if (lineWidth > wrappedTooltipWidth) {
+						wrappedTooltipWidth = lineWidth;
+					}
+					wrappedTextLines.add(line);
+				}
+			}
+			tooltipTextWidth = wrappedTooltipWidth;
+			textLines = wrappedTextLines;
+
+			if (mouseX > width / 2)
+				tooltipX = mouseX - 16 - tooltipTextWidth;
+			else
+				tooltipX = mouseX + 12;
+		}
+
+		int tooltipY = mouseY - 12;
+		int tooltipHeight = 8;
+
+		if (textLines.size() > 1) {
+			tooltipHeight += (textLines.size() - 1) * 10;
+			if (textLines.size() > titleLinesCount)
+				tooltipHeight += 2; // gap between title lines and next lines
+		}
+
+		if (tooltipY + tooltipHeight + 6 > height)
+			tooltipY = height - tooltipHeight - 6;
+
+		return Pair.of(tooltipX, tooltipY);
 	}
 
 }

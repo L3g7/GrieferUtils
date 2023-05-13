@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.AutoUpdate;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.badges.Badges;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.Debug;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -34,7 +35,7 @@ public class Settings extends Feature {
 	private final CategorySetting element = new CategorySetting()
 		.name("§yEinstellungen")
 		.icon("cog")
-		.subSettings(AutoUpdate.enabled, Changelog.category, new HeaderSetting(), Telemetry.category);
+		.subSettings(AutoUpdate.enabled, Changelog.category, Badges.enabled, new HeaderSetting(), Telemetry.category, EasterEggs.button);
 
 	{
 		if (Constants.DEBUG) {

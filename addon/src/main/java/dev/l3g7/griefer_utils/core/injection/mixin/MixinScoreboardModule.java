@@ -16,17 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.injection.transformer.transformers;
+package dev.l3g7.griefer_utils.core.injection.mixin;
 
-import dev.l3g7.griefer_utils.core.injection.transformer.Transformer;
-import dev.l3g7.griefer_utils.core.injection.transformer.Transformer.Target;
+import dev.l3g7.griefer_utils.features.player.scoreboard.ScoreboardHandler;
+import net.labymod.ingamegui.modules.ScoreboardModule;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-@Target("net.minecraft.client.gui.GuiIngame")
-public class GuiIngameTransformer extends Transformer {
+@Mixin(ScoreboardModule.class)
+public class MixinScoreboardModule {
 
-	@Override
-	protected void process() {
-		ScoreboardModuleTransformer.injectShouldUnlockScoreboard(getMethod("renderScoreboard", "(Lnet/minecraft/scoreboard/ScoreObjective;Lnet/minecraft/client/gui/ScaledResolution;)V"));
+	@ModifyConstant(method = "renderScoreboard", constant = @Constant(intValue = 15), remap = false)
+	private int modifyMaxScoreboardSize(int listSize) {
+		if (ScoreboardHandler.shouldUnlockScoreboard())
+			return Integer.MAX_VALUE;
+
+		return listSize;
 	}
 
 }

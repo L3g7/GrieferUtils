@@ -171,12 +171,12 @@ public class LightLevelOverlay extends Feature {
 
 	private void enqueueChunkUpdate(ChunkCoordIntPair ccip) {
 		if (queuedChunkChecks.isEmpty()) {
-			TickScheduler.runAfterClientTicks(() -> new Thread(() -> {
+			TickScheduler.runAfterClientTicks(() -> {
 				for (ChunkCoordIntPair pair : queuedChunkChecks)
 					updateChunk(world().getChunkFromChunkCoords(pair.chunkXPos, pair.chunkZPos));
 
 				queuedChunkChecks.clear();
-			}).start(), updateDelay.get());
+			}, updateDelay.get());
 		}
 
 		queuedChunkChecks.add(ccip);
@@ -290,13 +290,10 @@ public class LightLevelOverlay extends Feature {
 				GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				GlStateManager.disableTexture2D();
 
-				worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
 				worldRenderer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
 				worldRenderer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
 				worldRenderer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-				worldRenderer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-				worldRenderer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-				worldRenderer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+				worldRenderer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
 				tessellator.draw();
 			}
 

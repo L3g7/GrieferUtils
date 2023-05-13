@@ -26,10 +26,12 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.server.S0EPacketSpawnObject;
+import net.minecraft.network.play.server.S13PacketDestroyEntities;
 import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.util.BlockPos;
@@ -39,13 +41,19 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 @Singleton
 public class JailBarriers extends Feature {
 
-	private boolean wentToJail = false;
+	private Block targetBlock = Blocks.barrier;
+	private Block placedBlock = Blocks.air;
+	private int armorStandId = -1;
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Jail-Barrieren")
 		.icon(Material.IRON_FENCE)
-		.description("Fügt beim Jail Projektil-durchlässige Barrieren hinzu, um das Reinfallen zu verhindern.");
+		.description("Fügt beim Jail Projektil-durchlässige Barrieren hinzu, um das Reinfallen zu verhindern.")
+		.callback(b -> {
+			targetBlock = b ? Blocks.barrier: Blocks.air;
+			checkIfChunksAreLoaded();
+		});
 
 	@EventListener
 	private void onPacket(PacketEvent.PacketReceiveEvent event) {
@@ -54,6 +62,18 @@ public class JailBarriers extends Feature {
 
 		if (event.packet instanceof S26PacketMapChunkBulk)
 			checkIfChunksAreLoaded();
+
+		// Detect going away from the jail
+		if (event.packet instanceof S13PacketDestroyEntities) {
+			S13PacketDestroyEntities packet = (S13PacketDestroyEntities) event.packet;
+			for (int entityID : packet.getEntityIDs()) {
+				if (armorStandId == entityID) {
+					armorStandId = -1;
+					placedBlock = Blocks.air;
+					break;
+				}
+			}
+		}
 
 		// Detect going to the jail
 		if (event.packet instanceof S0EPacketSpawnObject) {
@@ -70,7 +90,8 @@ public class JailBarriers extends Feature {
 			if (p.getYaw() != -1 || p.getPitch() != 35)
 				return;
 
-			wentToJail = true;
+			armorStandId = p.getEntityID();
+			checkIfChunksAreLoaded();
 		}
 	}
 
@@ -90,7 +111,7 @@ public class JailBarriers extends Feature {
 	}
 
 	private void checkIfChunksAreLoaded() {
-		if (!wentToJail)
+		if (armorStandId == -1 || placedBlock == targetBlock)
 			return;
 
 		TickScheduler.runAfterRenderTicks(() -> {
@@ -100,7 +121,6 @@ public class JailBarriers extends Feature {
 						return;
 
 			placeBarriers();
-			wentToJail = false;
 		}, 1);
 	}
 
@@ -131,13 +151,14 @@ public class JailBarriers extends Feature {
 
 		cuboid(265, 25, 107, 265, 32, 107);
 		cuboid(294, 28, 105, 294, 31, 109);
+		placedBlock = targetBlock;
 	}
 
-	private static void column(int x, int z) {
+	private void column(int x, int z) {
 		wall(x, z, x, z);
 	}
 
-	private static void wall(int x1, int z1, int x2, int z2) {
+	private void wall(int x1, int z1, int x2, int z2) {
 		int minX = Math.min(x1, x2);
 		int maxX = Math.max(x1, x2);
 		int minZ = Math.min(z1, z2);
@@ -151,11 +172,11 @@ public class JailBarriers extends Feature {
 		cuboid(minX, 25, flippedZ2, maxX, 32, flippedZ1);
 	}
 
-	private static void cuboid(int x1, int y1, int z1, int x2, int y2, int z2) {
+	private void cuboid(int x1, int y1, int z1, int x2, int y2, int z2) {
 		for (int x = x1; x <= x2; x++)
 			for (int y = y1; y <= y2; y++)
 				for (int z = z1; z <= z2; z++)
-					world().setBlockState(new BlockPos(x, y, z), Blocks.barrier.getDefaultState(), 2);
+					world().setBlockState(new BlockPos(x, y, z), targetBlock.getDefaultState(), 2);
 	}
 
 }

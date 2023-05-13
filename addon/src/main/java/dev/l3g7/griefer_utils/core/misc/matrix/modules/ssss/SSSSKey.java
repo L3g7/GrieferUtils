@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.core.misc.matrix.modules.ssss;
 
 
-import at.favre.lib.hkdf.HKDF;
+import at.favre.lib.crypto.HKDF;
 import dev.l3g7.griefer_utils.core.misc.Base58;
 import dev.l3g7.griefer_utils.core.misc.Watchable;
 

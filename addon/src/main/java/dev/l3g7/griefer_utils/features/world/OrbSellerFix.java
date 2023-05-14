@@ -91,11 +91,11 @@ public class OrbSellerFix extends Feature {
 				return;
 
 			// Check position
-			if (p.getX() != 5490 || p.getY() != 839 || p.getZ() != -1357)
+			if (p.getX() != 5443 || p.getY() != 787 || p.getZ() != -1194)
 				return;
 
 			// Check position
-			if (p.getYaw() != 41 || p.getPitch() != 37)
+			if (p.getYaw() != 88 || p.getPitch() != 24)
 				return;
 
 			Integer orbSellerId = cbToId.get(getServerFromScoreboard());

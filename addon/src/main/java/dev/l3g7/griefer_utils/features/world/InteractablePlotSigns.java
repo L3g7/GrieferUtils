@@ -37,7 +37,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 @Singleton
 public class InteractablePlotSigns extends Feature {
 
-	private static final Pattern PLOT_ID_PATTERN = Pattern.compile("ID: (\\d+);(\\d+)");
+	private static final Pattern PLOT_ID_PATTERN = Pattern.compile("ID: (-?\\d+);(-?\\d+)");
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()

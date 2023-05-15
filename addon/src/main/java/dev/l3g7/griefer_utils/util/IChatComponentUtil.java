@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.suggest;
 
 /**
@@ -65,7 +66,7 @@ public class IChatComponentUtil {
 			String text = iterator.next().getUnformattedTextForChat();
 
 			if (playerIndex == -1) {
-				if (text.equals("\u2503 "))
+				if (text.matches(" ?\u2503 "))
 					playerIndex = iterator.nextIndex();
 				continue;
 			}
@@ -74,6 +75,15 @@ public class IChatComponentUtil {
 				break;
 			else
 				iterator.remove();
+		}
+
+		if (playerIndex == -1) {
+			new Throwable().printStackTrace();
+			System.err.println("IChatComponentUtil error:");
+			System.err.println(IChatComponent.Serializer.componentToJson(iChatComponent));
+			System.err.println("name = " + name + ", realName = " + realName + ", prefix = " + prefix + ", isTabList = " + isTabList);
+			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
+			return;
 		}
 
 		Collection<IChatComponent> nameComponents = getComponents(realName, prefix, isTabList);

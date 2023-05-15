@@ -72,12 +72,12 @@ public class AutoUnnick extends Feature {
 			return;
 
 		String nickName = text.substring(text.indexOf('~'));
-		String[] parts = event.component.getFormattedText().split(" §r§8\u2503 §r");
+		String[] parts = event.component.getFormattedText().split(" ?§r§8§*l* ?\u2503 §r");
 
 		if (parts.length != 2) {
-			System.err.println("AutoUnnick error");
+			System.err.println("AutoUnnick error:");
 			System.err.println(IChatComponent.Serializer.componentToJson(event.component));
-			System.out.println(event.profile);
+			System.err.println(event.profile);
 			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
 			return;
 		}

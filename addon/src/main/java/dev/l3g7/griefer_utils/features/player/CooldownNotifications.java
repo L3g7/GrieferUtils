@@ -57,6 +57,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static java.util.concurrent.TimeUnit.DAYS;
+import static java.util.concurrent.TimeUnit.HOURS;
 
 @Singleton
 public class CooldownNotifications extends Feature {
@@ -87,15 +89,15 @@ public class CooldownNotifications extends Feature {
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(ClientChatReceivedEvent event) {
 		if (event.message.getUnformattedText().matches("^Du hast .+-Booster erhalten\\. Danke für deine Unterstützung von GrieferGames!$"))
-			endDates.put("/grieferboost", System.currentTimeMillis() + 1000 * 3600 * (24 * 14 - 1));
+			endDates.put("/grieferboost", System.currentTimeMillis() + HOURS.toMillis(24 * 14 - 1) + 1000);
 		else if (event.message.getUnformattedText().equals("[CaseOpening] Du hast 2 Kisten erhalten."))
-			endDates.put("/freekiste", System.currentTimeMillis() + 1000 * 3600 * 24 * 14);
+			endDates.put("/freekiste", System.currentTimeMillis() + DAYS.toMillis(14) + 1000);
 		else if (event.message.getUnformattedText().matches("^\\[Kopf] Du hast einen .+[ -]Kopf erhalten[!.]$"))
-			endDates.put("/kopf", System.currentTimeMillis() + 1000 * 3600 * 24 * (PlayerUtil.getRank(PlayerUtil.getName()).equals("Titan") ? 14 : 7));
+			endDates.put("/kopf", System.currentTimeMillis() + DAYS.toMillis(PlayerUtil.getRank(PlayerUtil.getName()).equals("Titan") ? 14 : 7));
 		else if (event.message.getUnformattedText().matches("^Du hast .+ den Premium Rang aktiviert\\.$"))
-			endDates.put("/premium", System.currentTimeMillis() + 1000 * 3600 * 24 * 7);
+			endDates.put("/premium", System.currentTimeMillis() + DAYS.toMillis(7));
 		else if (event.message.getUnformattedText().equals("[StartKick] Ersteller: " + PlayerUtil.getName()))
-			endDates.put("/startkick", System.currentTimeMillis() + 1000 * 3600 * 12);
+			endDates.put("/startkick", System.currentTimeMillis() + HOURS.toMillis(12));
 		else
 			return;
 

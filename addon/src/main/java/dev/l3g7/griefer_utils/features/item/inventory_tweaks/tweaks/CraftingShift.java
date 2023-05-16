@@ -55,6 +55,9 @@ public class CraftingShift extends InventoryTweaks.InventoryTweak {
 			return;
 
 		GuiCrafting screen = (GuiCrafting) mc().currentScreen;
+		if (screen.getSlotUnderMouse() == null)
+			return;
+
 		ItemStack movedStack = screen.getSlotUnderMouse().getStack();
 		if (movedStack == null)
 			return;

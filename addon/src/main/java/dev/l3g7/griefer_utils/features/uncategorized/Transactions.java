@@ -167,15 +167,20 @@ public class Transactions extends Feature {
 			listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
 
 			String filter = ((StringSetting) listedElementsStored.get(7)).get();
+			boolean dotMode = filter.contains(".");
 
 			getMainElement().getSubSettings().getElements().stream()
 				.filter(setting -> {
 					if (!(setting instanceof CategorySetting))
 						return false;
 
-					return setting.getDisplayName().toLowerCase()
-						.replaceAll("§.", "")
-						.contains(filter.toLowerCase());
+					String text = setting.getDisplayName().toLowerCase()
+						.replaceAll("§.", "");
+
+					if (!dotMode)
+						text = text.replace(".", "");
+
+					return text.contains(filter.toLowerCase());
 				})
 				.forEach(listedElementsStored::add);
 			Reflection.set(mc().currentScreen, listedElementsStored, "listedElementsStored");

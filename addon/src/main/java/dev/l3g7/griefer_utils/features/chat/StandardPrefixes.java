@@ -44,6 +44,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 public class StandardPrefixes extends Feature {
 
 	private static final Map<String, String> DEFAULT_PREFIXES = new HashMap<String, String>() {{
+		put("Helfer", "2");
 		put("Supreme", "dl");
 		put("Griefer", "4l");
 		put("Titan", "9");
@@ -100,7 +101,9 @@ public class StandardPrefixes extends Feature {
 		if (!tab.get() || !event.component.getUnformattedText().contains("\u2503"))
 			return;
 
-		String[] parts = event.component.getUnformattedText().split(" \u2503 ");
+		String unformatted = event.component.getUnformattedText().replaceAll("§.", "");
+
+		String[] parts = unformatted.split(" \u2503 ");
 
 		if (parts.length != 2) {
 			System.err.println("StandardPrefixes error:");

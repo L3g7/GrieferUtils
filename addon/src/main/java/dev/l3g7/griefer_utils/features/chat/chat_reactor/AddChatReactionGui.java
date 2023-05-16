@@ -97,7 +97,7 @@ public class AddChatReactionGui extends GuiScreen {
 
 
 		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 78, 240, 20);
-		commandInput.setPlaceHolder("§8/gu:runoncb /freekiste");
+		commandInput.setPlaceHolder("§8/gu:run_on_cb /freekiste");
 		commandInput.setMaxStringLength(Integer.MAX_VALUE);
 		commandInput.setText(reaction.command);
 
@@ -183,7 +183,7 @@ public class AddChatReactionGui extends GuiScreen {
 			triggerInput.setPlaceHolder(regEx ? "§8^\\[[^ ]+ ┃ ([^ ]+) -> mir] (.*)$" : "§8[GrieferUtils] /freekiste ist nun verfügbar!");
 			triggerInput.drawTextBox();
 
-			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/gu:runoncb /freekiste");
+			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/gu:run_on_cb /freekiste");
 			drawUtils().drawString("Befehl", x, commandInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
 			commandInput.drawTextBox();
 

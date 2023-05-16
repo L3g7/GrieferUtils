@@ -53,9 +53,9 @@ public class Commands {
 	}
 
 	private static String processCommand(String command, String argsString) {
-		if (command.equalsIgnoreCase("runoncb")) {
+		if (command.equalsIgnoreCase("run_on_cb")) {
 			if (argsString.isEmpty())
-				return "Syntax: /gu:runoncb <Text>";
+				return "Syntax: /gu:run_on_cb <Text>";
 
 			if (ServerCheck.isOnCitybuild()) {
 				if (!MinecraftForge.EVENT_BUS.post(new MessageSendEvent(command)))

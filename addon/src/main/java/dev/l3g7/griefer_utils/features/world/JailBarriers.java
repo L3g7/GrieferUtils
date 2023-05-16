@@ -41,6 +41,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 @Singleton
 public class JailBarriers extends Feature {
 
+	private static final BlockPos LEAVES_POS = new BlockPos(255, 37, 115);
 	private Block targetBlock = Blocks.barrier;
 	private Block placedBlock = Blocks.air;
 	private int armorStandId = -1;
@@ -97,7 +98,7 @@ public class JailBarriers extends Feature {
 
 	@EventListener
 	private void onPacketSend(PacketEvent.PacketSendEvent event) {
-		if (armorStandId == -1)
+		if (!isNearJail())
 			return;
 
 		if (event.packet instanceof C08PacketPlayerBlockPlacement) {
@@ -114,10 +115,13 @@ public class JailBarriers extends Feature {
 	}
 
 	private void checkIfChunksAreLoaded() {
-		if (armorStandId == -1 || placedBlock == targetBlock)
+		if (!isNearJail() || placedBlock == targetBlock)
 			return;
 
 		TickScheduler.runAfterRenderTicks(() -> {
+			if (world() == null)
+				return;
+
 			for (int dX = 0; dX < 3; dX++)
 				for (int dY = 0; dY < 3; dY++)
 					if (!world().getChunkFromChunkCoords(16 + dX, 5 + dY).isLoaded())
@@ -125,6 +129,20 @@ public class JailBarriers extends Feature {
 
 			placeBarriers();
 		}, 1);
+	}
+
+	private boolean isNearJail() {
+		if (armorStandId != -1)
+			return true;
+
+		if (world() == null)
+			return false;
+
+		// Since the armor stand was unloaded when on the other side of the jail, grass on top of leaves is being checked for instead.
+		if (world().getBlockState(LEAVES_POS).getBlock() != Blocks.leaves)
+			return false;
+
+		return world().getBlockState(LEAVES_POS.up()).getBlock() == Blocks.tallgrass;
 	}
 
 	private void placeBarriers() {

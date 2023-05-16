@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.item;
 
+import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -32,8 +33,10 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
@@ -44,6 +47,12 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.google.common.collect.ImmutableList.of;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.minecraft.enchantment.Enchantment.*;
 
@@ -53,6 +62,14 @@ import static net.minecraft.enchantment.Enchantment.*;
  */
 @Singleton
 public class AutoTool extends Feature {
+
+	private static final Pattern CUTTER_PATTERN = Pattern.compile("§7Klick §e(?<block>[^ ]+) §7abbauen\\.");
+	private static final Map<String, List<Block>> CUTTERS = ImmutableMap.of(
+		"Leuchtfeuer", of(Blocks.beacon),
+		"Dracheneier", of(Blocks.dragon_egg),
+		"Glasblöcke", of(Blocks.glass, Blocks.stained_glass, Blocks.glass_pane, Blocks.stained_glass),
+		"Köpfe", of(Blocks.skull)
+	);
 
 	private final ToolSaver toolSaver = FileProvider.getSingleton(ToolSaver.class);
 
@@ -174,6 +191,9 @@ public class AutoTool extends Feature {
 
 		score += itemStack.getItem().getStrVsBlock(itemStack, state.getBlock()) * 1000; // Main mining speed
 
+		if (isValidCutter(itemStack, state.getBlock()))
+			score += 2500;
+
 		if (score != 1000) { // Only test for these enchantments if the tool actually is fast
 			score += EnchantmentHelper.getEnchantmentLevel(efficiency.effectId, itemStack);
 			score += EnchantmentHelper.getEnchantmentLevel(unbreaking.effectId, itemStack);
@@ -186,6 +206,26 @@ public class AutoTool extends Feature {
 			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * 10000;
 
 		return score;
+	}
+
+	private static boolean isValidCutter(ItemStack stack, Block block) {
+		if (stack.getItem() != Items.shears)
+			return false;
+
+		List<String> lore = ItemUtil.getLore(stack);
+		if (lore.size() < 2)
+			return false;
+
+		if (stack.getTagCompound().getInteger("current") == 0)
+			return false;
+
+		String secondLine = lore.get(1);
+		Matcher matcher = CUTTER_PATTERN.matcher(secondLine);
+		if (!matcher.matches())
+			return false;
+
+		List<Block> blocks = CUTTERS.getOrDefault(matcher.group("block"), of());
+		return blocks.contains(block);
 	}
 
 	public static boolean isTool(ItemStack itemStack) {

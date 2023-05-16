@@ -91,13 +91,13 @@ public class AddChatReactionGui extends GuiScreen {
 			PreviewRenderer.getInstance().init(AddChatReactionGui.class);
 
 		triggerInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 95, 240, 20);
-		triggerInput.setPlaceHolder("§8[GrieferUtils] [+] 1Plugin");
+		triggerInput.setPlaceHolder("§8[GrieferUtils] /freekiste ist nun verfügbar!");
 		triggerInput.setMaxStringLength(Integer.MAX_VALUE);
 		triggerInput.setText(reaction.trigger);
 
 
 		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 78, 240, 20);
-		commandInput.setPlaceHolder("§8/startkick 1Plugin Scammer >:(");
+		commandInput.setPlaceHolder("§8/gu:runoncb /freekiste");
 		commandInput.setMaxStringLength(Integer.MAX_VALUE);
 		commandInput.setText(reaction.command);
 
@@ -180,10 +180,10 @@ public class AddChatReactionGui extends GuiScreen {
 
 		if (regEx != null) {
 			drawUtils().drawString(regEx ? "Regulärer Ausdruck" : "Text", x, triggerInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-			triggerInput.setPlaceHolder(regEx ? "§8^\\[[^ ]+ ┃ ([^ ]+) -> mir] (.*)$" : "§8[GrieferUtils] [+] 1Plugin");
+			triggerInput.setPlaceHolder(regEx ? "§8^\\[[^ ]+ ┃ ([^ ]+) -> mir] (.*)$" : "§8[GrieferUtils] /freekiste ist nun verfügbar!");
 			triggerInput.drawTextBox();
 
-			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/startkick 1Plugin Scammer >:(");
+			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/gu:runoncb /freekiste");
 			drawUtils().drawString("Befehl", x, commandInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
 			commandInput.drawTextBox();
 

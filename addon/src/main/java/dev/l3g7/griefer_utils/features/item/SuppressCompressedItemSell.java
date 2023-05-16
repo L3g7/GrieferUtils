@@ -51,7 +51,7 @@ public class SuppressCompressedItemSell extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Abgeben komprimierter Items deaktivieren")
-		.description("Deaktiviert Orb-Verkäufe von komprimierten Items.")
+		.description("Deaktiviert Orb- und Adventurer-Verkäufe von komprimierten Items.")
 		.icon(ItemUtil.createItem(Blocks.gold_block, 0, true));
 
 	@EventListener(triggerWhenDisabled = true)

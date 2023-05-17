@@ -75,7 +75,7 @@ public class PotionTimer extends Module {
 	);
 
 	public PotionTimer() {
-		super("Orbtränke", "Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.", "potion-timer", new ControlElement.IconData(Material.FEATHER));
+		super("Orbtrank-Timer", "Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.", "potion-timer", new ControlElement.IconData(Material.FEATHER));
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class PotionTimer extends Module {
 	@Override
 	public String[] getKeys() {
 		if (!ServerCheck.isOnCitybuild())
-			return getDefaultValues();
+			return new String[] {"Orbtränke"};
 
 		// Get names as Strings
 		List<String> keys = potions.values().stream()

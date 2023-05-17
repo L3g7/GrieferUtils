@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.world;
 
 import com.github.lunatrius.schematica.api.ISchematic;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
@@ -71,7 +72,6 @@ public class RedstoneHelper extends Feature {
 
 	private static final Map<ChunkCoordIntPair, Map<BlockPos, RedstoneRenderObject>> redstoneRenderObjects = new HashMap<>();
 	private static final Map<BlockPos, RedstoneRenderObject> schematicasRROs = new HashMap<>();
-	private static final Class<?> clientProxyClass;
 
 	private static final int REDSTONE_PARTICLE_ID = EnumParticleTypes.REDSTONE.getParticleID();
 	private static Object previousSchematic = null;
@@ -175,7 +175,7 @@ public class RedstoneHelper extends Feature {
 	}
 
 	private void updateSchematic() {
-		Object schematicWorld = Reflection.get(clientProxyClass, "schematic");
+		Object schematicWorld = Reflection.get(Constants.SCHEMATICA_CLIENT_PROXY, "schematic");
 
 		ISchematic schematic = schematicWorld == null ? null : Reflection.get(schematicWorld, "schematic");
 		BlockPos position = schematicWorld == null ? null : Reflection.get(schematicWorld, "position");
@@ -218,7 +218,7 @@ public class RedstoneHelper extends Feature {
 		if (!showPower.get() && !showDirection.get() || (redstoneRenderObjects.isEmpty() && schematicasRROs.isEmpty()))
 			return;
 
-		if (clientProxyClass != null)
+		if (Constants.SCHEMATICA_CLIENT_PROXY != null)
 			updateSchematic();
 
 		GlStateManager.disableDepth();
@@ -372,16 +372,6 @@ public class RedstoneHelper extends Feature {
 				GlStateManager.popMatrix();
 			}
 		}
-	}
-
-	static {
-		Class<?> tempClientProxyClass;
-		try {
-			tempClientProxyClass = Class.forName("com.github.lunatrius.schematica.proxy.ClientProxy");
-		} catch (ClassNotFoundException cnfe) {
-			tempClientProxyClass = null;
-		}
-		clientProxyClass = tempClientProxyClass;
 	}
 
 }

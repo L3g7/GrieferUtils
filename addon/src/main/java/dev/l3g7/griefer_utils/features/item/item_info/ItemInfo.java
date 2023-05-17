@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.modules.BlockInfo;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -86,6 +87,9 @@ public class ItemInfo extends Feature {
 
 	@EventListener
 	public void onTooltip(ItemTooltipEvent e) {
+		if (BlockInfo.gettingTooltip)
+			return;
+
 		for (ItemInfoSupplier infoSupplier : infoSuppliers) {
 			if (infoSupplier.isEnabled())
 				e.toolTip.addAll(infoSupplier.getToolTip(e.itemStack));

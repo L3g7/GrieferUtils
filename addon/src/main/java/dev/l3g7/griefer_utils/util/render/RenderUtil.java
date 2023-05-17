@@ -270,7 +270,10 @@ public class RenderUtil {
 			return;
 
 		event.setCanceled(true);
+		renderToolTipWithPadding(textLines, event.x, event.y, event.screen.width, event.screen.height, padding, 0, padding, paddingContentRenderer);
+	}
 
+	public static void renderToolTipWithPadding(List<String> textLines, int mouseX, int mouseY, int width, int height, float leftPadding, float otherPadding, float minHeight, BiConsumer<Float, Float> paddingContentRenderer) {
 		GlStateManager.disableRescaleNormal();
 		GlStateManager.disableBlend();
 		GlStateManager.disableRescaleNormal();
@@ -280,28 +283,28 @@ public class RenderUtil {
 
 		int maxLineWidth = 0;
 		for (String line : textLines) {
-			int width = drawUtils().getStringWidth(line);
-			if (width > maxLineWidth)
-				maxLineWidth = width;
+			int lineWidth = drawUtils().getStringWidth(line);
+			if (lineWidth > maxLineWidth)
+				maxLineWidth = lineWidth;
 		}
 
-		float mouseOffset = padding + 12;
-		float drawX = event.x + mouseOffset;
-		float drawY = event.y - 12;
+		float mouseOffset = leftPadding + 12;
+		float drawX = mouseX + mouseOffset;
+		float drawY = mouseY - 12;
 		float defaultHeight = textLines.size() == 1 ? 14.5f : 8;
 		if (textLines.size() > 1)
 			defaultHeight += 2 + (textLines.size() - 1) * 10;
-		defaultHeight = Math.max(padding, defaultHeight);
+		defaultHeight = Math.max(minHeight, defaultHeight);
 
-		if (drawX + maxLineWidth > event.screen.width)
+		if (drawX + maxLineWidth > width)
 			drawX -= mouseOffset + maxLineWidth;
-		if (drawY + defaultHeight + 6 > event.screen.height)
-			drawY = event.screen.height - defaultHeight - 6;
+		if (drawY + defaultHeight + 6 > height)
+			drawY = height - defaultHeight - 6;
 
 		int color = 0xF0100010;
-		float y = drawY + defaultHeight + 3;
-		float x = drawX + maxLineWidth + 3;
-		float paddedX = drawX - 5 - padding;
+		float y = drawY + defaultHeight + 3 + otherPadding * 2;
+		float x = drawX + maxLineWidth + 3 + otherPadding;
+		float paddedX = drawX - 5 - leftPadding;
 		drawY -= 3;
 		drawGradientRect(paddedX    , drawY - 1, x        , drawY, 0, color, color);
 		drawGradientRect(paddedX    , y        , x        , y + 1, 0, color, color);
@@ -315,7 +318,7 @@ public class RenderUtil {
 		drawGradientRect(x - 1  , drawY + 1, x          , y - 1    , 0, startColor, endColor);
 		drawGradientRect(paddedX, drawY    , x          , drawY + 1, 0, startColor, startColor);
 		drawGradientRect(paddedX, y - 1    , x          , y        , 0, endColor  , endColor);
-		drawY += 3;
+		drawY += 3 + otherPadding;
 
 		float rectTop = drawY;
 		for (int i = 0; i < textLines.size(); ++i) {

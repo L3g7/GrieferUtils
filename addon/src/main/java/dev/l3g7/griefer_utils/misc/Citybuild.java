@@ -32,7 +32,7 @@ public class Citybuild {
 	private static final List<Citybuild> CITYBUILDS = ImmutableList.of(
 		new Citybuild("nature", "Nature", "n"),
 		new Citybuild("extreme", "Extreme", "x"),
-		new Citybuild("cbevil", "Evil", "e", "cbe"),
+		new Citybuild("cbevil", "Evil", "e", "cbe", "CB Evil"),
 		new Citybuild("farm1", "Wasser", "w"),
 		new Citybuild("nether1", "Lava", "l"),
 		new Citybuild("eventserver", "Event", "v")
@@ -41,7 +41,7 @@ public class Citybuild {
 	public static Citybuild getCitybuild(String cb) {
 		cb = cb.toLowerCase();
 		if (cb.startsWith("cb"))
-			cb = cb.substring(2);
+			cb = cb.substring(2).trim();
 
 		if (StringUtils.isNumeric(cb))
 			return new Citybuild("cb" + cb, "CB" + cb);
@@ -89,7 +89,11 @@ public class Citybuild {
 		return switchTarget;
 	}
 
-	private boolean matches(String  cb) {
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public boolean matches(String  cb) {
 		if (cb == null)
 			return false;
 

@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -55,6 +56,11 @@ public class JailBarriers extends Feature {
 			targetBlock = b ? Blocks.barrier: Blocks.air;
 			checkIfChunksAreLoaded();
 		});
+
+	@EventListener
+	private void onCBSwitch(ServerSwitchEvent event) {
+		placedBlock = Blocks.air;
+	}
 
 	@EventListener
 	private void onPacket(PacketEvent.PacketReceiveEvent event) {

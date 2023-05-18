@@ -29,7 +29,6 @@
     "MixinItemStack",
     "MixinLayerCustomHead",
     "MixinMinecraft",
-    "MixinModPlayerTabOverlay",
     "MixinPlayerControllerMP",
     "MixinRendererLivingEntity",
     "MixinRenderGlobal",

@@ -52,9 +52,9 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -70,8 +70,8 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 @Singleton
 public class RedstoneHelper extends Feature {
 
-	private static final Map<ChunkCoordIntPair, Map<BlockPos, RedstoneRenderObject>> redstoneRenderObjects = new HashMap<>();
-	private static final Map<BlockPos, RedstoneRenderObject> schematicasRROs = new HashMap<>();
+	private static final Map<ChunkCoordIntPair, Map<BlockPos, RedstoneRenderObject>> redstoneRenderObjects = new ConcurrentHashMap<>();
+	private static final Map<BlockPos, RedstoneRenderObject> schematicasRROs = new ConcurrentHashMap<>();
 
 	private static final int REDSTONE_PARTICLE_ID = EnumParticleTypes.REDSTONE.getParticleID();
 	private static Object previousSchematic = null;
@@ -225,11 +225,11 @@ public class RedstoneHelper extends Feature {
 		GlStateManager.disableCull();
 		GlStateManager.disableTexture2D();
 
-		for (Map<BlockPos, RedstoneRenderObject> map : new HashSet<>(redstoneRenderObjects.values()))
+		for (Map<BlockPos, RedstoneRenderObject> map : redstoneRenderObjects.values())
 			for (Map.Entry<BlockPos, RedstoneRenderObject> entry : map.entrySet())
 				entry.getValue().render(entry.getKey(), event.partialTicks);
 
-		for (Map.Entry<BlockPos, RedstoneRenderObject> entry : new HashSet<>(schematicasRROs.entrySet()))
+		for (Map.Entry<BlockPos, RedstoneRenderObject> entry : schematicasRROs.entrySet())
 			entry.getValue().render(entry.getKey(), event.partialTicks);
 
 		GlStateManager.disableLighting();

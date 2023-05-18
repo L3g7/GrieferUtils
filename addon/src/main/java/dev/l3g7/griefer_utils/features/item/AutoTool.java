@@ -28,6 +28,7 @@ import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemDisplaySetting;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaver;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -139,6 +140,9 @@ public class AutoTool extends Feature {
 
 	private void switchToTool(BlockPos targetedBlock) {
 		if (ItemSaver.getSetting(player().getHeldItem()) != null)
+			return;
+
+		if (!ServerCheck.isOnGrieferGames() && player().getHeldItem() != null && player().getHeldItem().getItem() == Items.wooden_axe)
 			return;
 
 		IBlockState state = world().getBlockState(targetedBlock);

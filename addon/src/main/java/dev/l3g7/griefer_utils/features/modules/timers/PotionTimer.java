@@ -125,7 +125,7 @@ public class PotionTimer extends Module {
 	@Override
 	public String[] getKeys() {
 		if (!ServerCheck.isOnCitybuild())
-			return new String[] {"Orbtränke"};
+			return new String[] {"Orbtrank-Timer"};
 
 		// Get names as Strings
 		List<String> keys = potions.values().stream()
@@ -133,7 +133,7 @@ public class PotionTimer extends Module {
 			.map(PotionData::getDisplayName)
 			.collect(Collectors.toList());
 
-		keys.add(0, "Orbtränke");
+		keys.add(0, "Orbtrank-Timer");
 		return keys.toArray(new String[0]);
 	}
 

@@ -160,7 +160,7 @@ public class Calculator extends Feature {
 		}
 
 		// If /bank abheben with the exact difference was sent and withdraw is SUGGEST
-		if (lastPaymentReceiver != null) {
+		if (lastPaymentReceiver != null && event.message.startsWith("/bank abheben")) {
 			BigDecimal moneyRequired = lastPayment.subtract(getCurrentBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
 			if (event.message.equals(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == WithdrawAction.SUGGEST) {
 				// Wait 1 tick (chat screen still open)

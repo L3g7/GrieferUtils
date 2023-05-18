@@ -105,7 +105,11 @@ public class Calculator extends Feature {
 	 * Get the current balance based on the scoreboard value
 	 */
 	private BigDecimal getCurrentBalance() {
-		return new BigDecimal(world().getScoreboard().getTeam("money_value").getColorPrefix().replaceAll("[$.]", "").replace(",", "."));
+		try {
+			return new BigDecimal(world().getScoreboard().getTeam("money_value").getColorPrefix().replaceAll("[$.]", "").replace(",", "."));
+		} catch (NumberFormatException e) {
+			return BigDecimal.ZERO;
+		}
 	}
 
 	@EventListener

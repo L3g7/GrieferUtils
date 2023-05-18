@@ -96,7 +96,7 @@ public class BlockInfo extends Module {
 	public void draw(double x, double y, double rightX) {
 		updateObjectMouseOver();
 
-		if (data == null)
+		if (data == null || data.getRight() == null)
 			return;
 
 		gettingTooltip = true; // Prevents ItemInfo from triggering

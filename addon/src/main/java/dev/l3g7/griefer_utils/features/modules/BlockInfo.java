@@ -96,7 +96,7 @@ public class BlockInfo extends Module {
 	public void draw(double x, double y, double rightX) {
 		updateObjectMouseOver();
 
-		if (data == null || data.getRight() == null)
+		if (data == null || data.getRight() == null || data.getRight().getItem() == null)
 			return;
 
 		gettingTooltip = true; // Prevents ItemInfo from triggering
@@ -121,7 +121,8 @@ public class BlockInfo extends Module {
 			if (mop != null && mop.typeOfHit == BLOCK) {
 				WorldClient wc = Reflection.get(Constants.SCHEMATICA_CLIENT_PROXY, "schematic");
 				IBlockState state = wc.getBlockState(mop.getBlockPos());
-				data = Pair.of(mop.getBlockPos(), state.getBlock().getPickBlock(mop, wc, mop.getBlockPos(), player()));
+				ItemStack pickedStack = state.getBlock().getPickBlock(mop, wc, mop.getBlockPos(), player());
+				data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
 				return;
 			}
 		}
@@ -133,7 +134,8 @@ public class BlockInfo extends Module {
 		}
 
 		IBlockState state = world().getBlockState(mop.getBlockPos());
-		data = Pair.of(mop.getBlockPos(), state.getBlock().getPickBlock(mop, world(), mop.getBlockPos(), player()));
+		ItemStack pickedStack = state.getBlock().getPickBlock(mop, world(), mop.getBlockPos(), player());
+		data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
 	}
 
 }

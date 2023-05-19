@@ -28,7 +28,6 @@ import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -93,16 +92,11 @@ public class BetterSwitchCommand extends Feature {
 		if (command == null)
 			return;
 
-		if (!MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(command)))
-			player().sendChatMessage(command);
+		player().sendChatMessage(command);
 		command = null;
 	}
 
-	public static void sendOnCityBuild(String command, String cityBuild) {
-		Citybuild cb = Citybuild.getCitybuild(cityBuild);
-		if (!cb.exists())
-			return;
-
+	public static void sendOnCityBuild(String command, Citybuild cb) {
 		if (cb.isOnCb()) {
 			send(command);
 			return;

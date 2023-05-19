@@ -18,11 +18,11 @@
 
 package dev.l3g7.griefer_utils.misc;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.play.client.C01PacketChatMessage;
@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 /**
  * A queue for delaying outgoing chat messages.
@@ -113,12 +115,12 @@ public class ChatQueue {
 				currentQueueDelay = QUEUE_DELAY;
 			}
 
-			if (MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(msg))) {
+			if (MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(msg, true))) {
 				currentQueueDelay = 0;
 				return;
 			}
 
-			Minecraft.getMinecraft().thePlayer.sendChatMessage(msg);
+			player().sendChatMessage(msg);
 			lastMessageSentTimestamp = System.currentTimeMillis();
 
 			// Force 60t delay if the last 3 messages were without delay

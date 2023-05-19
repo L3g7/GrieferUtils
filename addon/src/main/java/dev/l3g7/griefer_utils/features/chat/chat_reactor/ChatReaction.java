@@ -19,11 +19,10 @@
 package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 public class ChatReaction {
 
@@ -77,7 +76,7 @@ public class ChatReaction {
 		String command = this.command;
 		if (!regEx) {
 			if (matchAll ? trigger.equalsIgnoreCase(text) : text.toLowerCase().contains(trigger.toLowerCase()))
-				player().sendChatMessage(command);
+				MinecraftUtil.send(command);
 			return;
 		}
 
@@ -92,6 +91,6 @@ public class ChatReaction {
 			command = command.replaceFirst(PLACEHOLDER_PATTERN.pattern(), matcher.group(Integer.parseInt(replaceMatcher.group(1))));
 
 		command = command.replace('§', '&');
-		player().sendChatMessage(command);
+		MinecraftUtil.send(command);
 	}
 }

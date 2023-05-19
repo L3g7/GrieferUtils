@@ -108,7 +108,7 @@ public class HandShaker {
 		if (isStart)
 			sendHandShakeMessage(uuid, iv);
 		else
-			MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(message));
+			MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(message, false));
 
 		RANDOMS.remove(uuid);
 		displayFeedback(true, "Die verschlüsselte Verbindung zu " + NameCache.getName(uuid) + " wurde erfolgreich aufgebaut.");

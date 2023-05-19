@@ -22,7 +22,6 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +57,7 @@ public class Commands {
 				return "Syntax: /gu:run_on_cb <Text>";
 
 			if (ServerCheck.isOnCitybuild()) {
-				if (!MinecraftForge.EVENT_BUS.post(new MessageSendEvent(command)))
-					player().sendChatMessage(argsString);
+				player().sendChatMessage(argsString);
 			} else {
 				onCbCommands.add(argsString);
 			}
@@ -75,8 +73,7 @@ public class Commands {
 			return;
 
 		for (String command : onCbCommands)
-			if (!MinecraftForge.EVENT_BUS.post(new MessageSendEvent(command)))
-				player().sendChatMessage(command);
+			player().sendChatMessage(command);
 
 		onCbCommands.clear();
 	}

@@ -18,9 +18,12 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import net.labymod.api.events.MessageModifyChatEvent;
 import net.labymod.main.LabyMod;
+import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -62,15 +65,28 @@ public class MessageEvent extends Event {
 	@Cancelable
 	public static class MessageSendEvent extends MessageEvent {
 
+		private static boolean ignoreNextPacket = false;
+
 		public final String message;
 
-		public MessageSendEvent(String message) {
+		public MessageSendEvent(String message, boolean ignoreNextPacket) {
 			this.message = message;
+			MessageSendEvent.ignoreNextPacket = ignoreNextPacket;
 		}
 
-		@OnEnable
-		private static void register() {
-			LabyMod.getInstance().getEventManager().register((net.labymod.api.events.MessageSendEvent) s -> EVENT_BUS.post(new MessageSendEvent(s)));
+		@EventListener
+		private static void onPacketSend(PacketEvent.PacketSendEvent event) {
+			if (!(event.packet instanceof C01PacketChatMessage))
+				return;
+
+			if (ignoreNextPacket) {
+				ignoreNextPacket = false;
+				return;
+			}
+
+			C01PacketChatMessage packet = (C01PacketChatMessage) event.packet;
+			if (EVENT_BUS.post(new MessageSendEvent(packet.getMessage(), false)))
+				event.setCanceled(true);
 		}
 
 	}

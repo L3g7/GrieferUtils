@@ -52,7 +52,8 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 import static org.lwjgl.opengl.GL11.*;
 
 @Singleton
@@ -147,7 +148,8 @@ public class BetterHopper extends Feature {
 		hopper = getBlockPos(slots.getSlot(13).getStack());
 
 		if (slot == 16) {
-			blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
+			if (packet.getMode() != 1)
+				blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
 			return;
 		}
 

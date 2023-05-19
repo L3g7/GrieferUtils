@@ -73,7 +73,7 @@ public class SkullEnchantmentFix extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Kopf-Verzauberung fixen")
 		.description("Behebt, dass Verzauberungen von Köpfe nicht angezeigt werden.")
-		.icon(ICON);
+		.icon("enchanted_skull");
 
 	public static void setDepthFunc(IBakedModel ibakedModel) {
 		if (ibakedModel == cubeModel)

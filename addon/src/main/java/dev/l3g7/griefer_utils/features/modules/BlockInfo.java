@@ -116,6 +116,11 @@ public class BlockInfo extends Module {
 	}
 
 	private void updateObjectMouseOver() {
+		if (world() == null) {
+			data = mc.currentScreen instanceof LabyModModuleEditorGui ? DEFAULT_DATA : null;
+			return;
+		}
+
 		if (Constants.SCHEMATICA_CLIENT_PROXY != null) {
 			MovingObjectPosition mop = Reflection.get(Constants.SCHEMATICA_CLIENT_PROXY, "movingObjectPosition");
 			if (mop != null && mop.typeOfHit == BLOCK) {

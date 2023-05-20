@@ -27,6 +27,7 @@ import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
@@ -74,7 +75,7 @@ public class MessageEvent extends Event {
 			MessageSendEvent.ignoreNextPacket = ignoreNextPacket;
 		}
 
-		@EventListener
+		@EventListener(priority = EventPriority.HIGHEST)
 		private static void onPacketSend(PacketEvent.PacketSendEvent event) {
 			if (!(event.packet instanceof C01PacketChatMessage))
 				return;

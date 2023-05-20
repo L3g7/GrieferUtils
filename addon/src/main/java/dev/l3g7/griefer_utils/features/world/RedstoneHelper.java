@@ -51,7 +51,6 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -104,7 +103,7 @@ public class RedstoneHelper extends Feature {
 
 	@EventListener
 	public void onChunkFilled(ChunkFilledEvent event) {
-		Map<BlockPos, RedstoneRenderObject> renderObjects = new HashMap<>();
+		Map<BlockPos, RedstoneRenderObject> renderObjects = new ConcurrentHashMap<>();
 		ChunkCoordIntPair coords = new ChunkCoordIntPair(event.getChunk().xPosition, event.getChunk().zPosition);
 
 		for (ExtendedBlockStorage ebs : event.getChunk().getBlockStorageArray()) {
@@ -160,7 +159,7 @@ public class RedstoneHelper extends Feature {
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
 
 		if (redstoneRenderObject != null) {
-			Map<BlockPos, RedstoneRenderObject> map = redstoneRenderObjects.computeIfAbsent(pair, k -> new HashMap<>());
+			Map<BlockPos, RedstoneRenderObject> map = redstoneRenderObjects.computeIfAbsent(pair, k -> new ConcurrentHashMap<>());
 			map.put(pos, RedstoneRenderObject.fromState(state));
 			return;
 		}

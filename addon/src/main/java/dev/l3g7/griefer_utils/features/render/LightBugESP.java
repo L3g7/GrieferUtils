@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
+import io.netty.util.internal.ConcurrentSet;
 import net.labymod.utils.Material;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -34,8 +35,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
@@ -45,7 +45,7 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 @Singleton
 public class LightBugESP extends Feature {
 
-	private final List<BlockPos> lightBugs = new ArrayList<>();
+	private final Set<BlockPos> lightBugs = new ConcurrentSet<>();
 	private int passedTicks = 0;
 
 	private final NumberSetting range = new NumberSetting()

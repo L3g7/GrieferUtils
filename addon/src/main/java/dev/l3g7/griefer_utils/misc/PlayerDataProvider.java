@@ -23,10 +23,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.authlib.properties.Property;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.core.util.IOUtil.URLReadOperation;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.labymod.utils.JsonParse;
 import net.minecraft.client.Minecraft;
@@ -109,7 +109,7 @@ public class PlayerDataProvider {
 		data.name = event.data.getProfile().getName();
 		for (Map.Entry<String, Collection<Property>> entry : event.data.getProfile().getProperties().asMap().entrySet()) {
 			for (Property property : entry.getValue()) {
-				if (property.getName().equals("textures")) {
+				if (property.getName().equals("textures") && !property.getValue().isEmpty()) {
 					String url = JsonParse.parse(new String(Base64.getDecoder().decode(property.getValue()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
 					Thread loadTextureThread = new Thread(() -> {
 						try {

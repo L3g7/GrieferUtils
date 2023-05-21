@@ -96,7 +96,7 @@ public class Calculator extends Feature {
 			autoWithdraw, depositAll, placeholder, autoEquationDetect);
 
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
-	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?<= )(?<equation>\\d+(?:(?: *[*k+\\-:/^,e]+ *\\d+k?)+|k+))(?:(?= )|$)");
+	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?<= )(?<equation>[\\d.]+(?:(?: *[*k+\\-:/^,e]+ *[\\d.]+k?)+|k+))(?:(?= )|$)");
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 	private BigDecimal lastPayment = BigDecimal.ZERO;
 	private String lastPaymentReceiver;

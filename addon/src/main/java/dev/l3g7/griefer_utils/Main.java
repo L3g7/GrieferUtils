@@ -18,20 +18,27 @@
 
 package dev.l3g7.griefer_utils;
 
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.event.AnnotationEventHandler;
 import dev.l3g7.griefer_utils.event.EventHandler;
+import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.AutoUpdate;
-import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import net.labymod.addon.AddonLoader;
+import net.labymod.addon.online.AddonInfoManager;
+import net.labymod.addon.online.info.AddonInfo;
 import net.labymod.api.LabyModAddon;
 import net.labymod.core.asm.LabyModCoreMod;
+import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.crash.CrashReport;
+import net.minecraftforge.client.event.GuiOpenEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The main class.
@@ -74,6 +81,30 @@ public class Main extends LabyModAddon {
 			MinecraftUtil.mc().displayCrashReport(new CrashReport("GrieferUtils konnte nicht geladen werden!", t));
 		}
 		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
+	}
+
+	/**
+	 * Ensures GrieferUtils is shown in the {@link LabyModAddonsGui}.<br>
+	 * Fixes an incompatibility with HDSkins (wtf)
+	 */
+	@EventListener
+	private static void onGuiOpen(GuiOpenEvent event) {
+		if (!(event.gui instanceof LabyModAddonsGui))
+			return;
+
+		UUID uuid = Main.getInstance().about.uuid;
+		for (AddonInfo addonInfo : AddonInfoManager.getInstance().getAddonInfoList())
+			if (addonInfo.getUuid().equals(uuid))
+				return;
+
+		for (AddonInfo offlineAddon : AddonLoader.getOfflineAddons()) {
+			if (offlineAddon.getUuid().equals(uuid)) {
+				AddonInfoManager.getInstance().getAddonInfoList().add(offlineAddon);
+				return;
+			}
+		}
+
+		throw new RuntimeException("GrieferUtils couldn't be loaded");
 	}
 
 	@Override

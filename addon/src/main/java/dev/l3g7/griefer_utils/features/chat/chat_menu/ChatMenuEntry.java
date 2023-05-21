@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
@@ -35,8 +36,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Base64;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
@@ -200,11 +199,7 @@ public class ChatMenuEntry {
 				((Consumer<String>) command).accept(name);
 				break;
 			case OPEN_URL:
-				try {
-					Desktop.getDesktop().browse(new URI(((String) command).replaceAll("(?i)%name%", name)));
-				} catch (IOException | URISyntaxException e) {
-					throw new RuntimeException(e);
-				}
+				Util.openWebsite(((String) command).replaceAll("(?i)%name%", name));
 				break;
 			case RUN_CMD:
 				MinecraftUtil.send(((String )command).replaceAll("(?i)%name%", name));

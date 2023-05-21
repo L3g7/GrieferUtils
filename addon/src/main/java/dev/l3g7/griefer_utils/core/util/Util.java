@@ -21,6 +21,10 @@ package dev.l3g7.griefer_utils.core.util;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 
 /**
@@ -99,4 +103,13 @@ public class Util {
 		result += shorten ? seconds + "s" : seconds == 1L ? "eine Sekunde" : seconds + " Sekunden";
 		return result;
 	}
+
+	public static void openWebsite(String url) {
+		try {
+			Desktop.getDesktop().browse(new URI(url));
+		} catch (IOException | URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

@@ -23,13 +23,13 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import static net.labymod.utils.ModColor.GREEN;
 
 /**
- * An indicator for players on the <a href="https://scammer-radar.de/">ScammerRadar</a> trusted list.
+ * An indicator for players on verbvllert_'s trusted list.
  */
 @Singleton
 public class TrustedList extends PlayerList {
 
 	public TrustedList() {
-		super("Trusted", "✰", "green_scroll", GREEN, 5, "http://newh1ve.de:8080/mm/middlemans");
+		super("Trusted", "Markiert Spieler in verbvllert_s Trusted-MM-Liste.", "✰", "green_scroll", GREEN, 5, "https://grieferutils.l3g7.dev/v2/trusted_mms");
 	}
 
 }

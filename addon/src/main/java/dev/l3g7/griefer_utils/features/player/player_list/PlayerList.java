@@ -61,12 +61,9 @@ import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 
 /**
  * An indicator for players on a <a href="https://scammer-radar.de/">ScammerRadar</a> list.
- * @see ScammerList
  * @see TrustedList
  */
 public abstract class PlayerList extends Feature {
-
-	public static final boolean enforce = System.getProperty("enforceSR") != null;
 
 	private static final Pattern PROFILE_TITLE_PATTERN = Pattern.compile(String.format("^§6Profil von §e%s§r$", Constants.FORMATTED_PLAYER_NAME_PATTERN));
 
@@ -104,27 +101,14 @@ public abstract class PlayerList extends Feature {
 		.callback(l -> TabListEvent.updatePlayerInfoList());
 
 	@MainElement
-	public final BooleanSetting enabled = new BooleanSetting() {
+	public final BooleanSetting enabled = new BooleanSetting()
+		.callback(v -> TabListEvent.updatePlayerInfoList());
 
-		@Override
-		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			if (enforce)
-				super.draw(x, y, maxX, maxY, mouseX, mouseY);
-		}
-
-		@Override
-		public int getEntryHeight() {
-			return enforce ? super.getEntryHeight() : 0;
-		}
-
-	};
-
-	public PlayerList(String name, String chatIcon, Object settingIcon, ModColor color, int paneType, String url) {
+	public PlayerList(String name, String description, String chatIcon, Object settingIcon, ModColor color, int paneType, String url) {
 		enabled
 			.name(name + "liste")
-			.description("Markiert Spieler in der ScammerRadar-" + name + "liste.")
+			.description(description)
 			.icon(settingIcon)
-			.callback(v -> TabListEvent.updatePlayerInfoList())
 			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, new HeaderSetting(), new HeaderSetting("Eigene " + name), customEntries);
 
 		this.name = name;
@@ -152,8 +136,6 @@ public abstract class PlayerList extends Feature {
 	public void init() {
 		super.init();
 		getCategory().getSetting().addCallback(v -> TabListEvent.updatePlayerInfoList());
-		if (!enforce)
-			enabled.set(false);
 	}
 
 	/**

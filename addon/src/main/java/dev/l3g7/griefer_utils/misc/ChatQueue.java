@@ -20,11 +20,11 @@ package dev.l3g7.griefer_utils.misc;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -52,8 +52,8 @@ public class ChatQueue {
 	private static Pair<Future<Void>, Runnable> currentBlock = null;
 
 	@EventListener
-	public void onPacketSend(MessageEvent.MessageSendEvent event) {
-		if (event.isCanceled())
+	public void onPacketSend(PacketSendEvent event) {
+		if (!(event.packet instanceof C01PacketChatMessage))
 			return;
 
 		if (blockingMessages.isEmpty()) {
@@ -111,11 +111,6 @@ public class ChatQueue {
 				msg = queuedMessages.remove(0);
 				messagesSentWithoutDelay = 0;
 				currentQueueDelay = QUEUE_DELAY;
-			}
-
-			if (MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(msg, true))) {
-				currentQueueDelay = 0;
-				return;
 			}
 
 			player().sendChatMessage(msg);

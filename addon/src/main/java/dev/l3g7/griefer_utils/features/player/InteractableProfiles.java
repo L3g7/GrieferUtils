@@ -26,7 +26,6 @@ import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
@@ -37,6 +36,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 @Singleton
 public class InteractableProfiles extends Feature {
@@ -74,7 +74,7 @@ public class InteractableProfiles extends Feature {
 			if (clan.equals("Kein Clan"))
 				return;
 
-			MinecraftUtil.send("/clan info " + clan);
+			player().sendChatMessage("/clan info " + clan);
 			mc().displayGuiScreen(null);
 		}
 

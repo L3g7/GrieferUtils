@@ -19,10 +19,13 @@
 package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 public class ChatReaction {
 
@@ -91,6 +94,7 @@ public class ChatReaction {
 			command = command.replaceFirst(PLACEHOLDER_PATTERN.pattern(), matcher.group(Integer.parseInt(replaceMatcher.group(1))));
 
 		command = command.replace('§', '&');
-		MinecraftUtil.send(command);
+		if (!MessageEvent.MessageSendEvent.post(command))
+			player().sendChatMessage(command);
 	}
 }

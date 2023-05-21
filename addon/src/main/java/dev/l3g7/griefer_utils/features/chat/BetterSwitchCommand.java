@@ -92,11 +92,15 @@ public class BetterSwitchCommand extends Feature {
 		if (command == null)
 			return;
 
-		player().sendChatMessage(command);
+		if (!MessageEvent.MessageSendEvent.post(command))
+			player().sendChatMessage(command);
 		command = null;
 	}
 
 	public static void sendOnCityBuild(String command, Citybuild cb) {
+		if (!cb.exists())
+			return;
+
 		if (cb.isOnCb()) {
 			send(command);
 			return;

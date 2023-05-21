@@ -23,11 +23,10 @@ import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.util.Util;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.common.MinecraftForge;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
 
@@ -108,7 +107,7 @@ public class HandShaker {
 		if (isStart)
 			sendHandShakeMessage(uuid, iv);
 		else
-			MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageSendEvent(message, false));
+			MessageSendEvent.postGUOnly(message);
 
 		RANDOMS.remove(uuid);
 		displayFeedback(true, "Die verschlüsselte Verbindung zu " + NameCache.getName(uuid) + " wurde erfolgreich aufgebaut.");

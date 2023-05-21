@@ -88,22 +88,21 @@ tasks.register('apiJar', Jar) {
 	archiveFileName = "griefer-utils-v${project.version}-api.jar"
 }
 
-// LabyMod api download
-tasks.build.dependsOn('downloadFile')
-tasks.register('downloadFile') {
+// download libraries
+tasks.build.dependsOn('downloadLibs')
+tasks.register('downloadLibs') {
 	mkdir "libs"
 
-	download.run {
-		src "https://dl.labymod.net/latest/api/files/lm_api_mc1.8.9.jar"
-		dest 'libs/'
-		onlyIfModified true
-		quiet true
-	}
-
-	download.run {
-		src "https://mediafilez.forgecdn.net/files/2279/149/Schematica-1.8.9-1.7.7.143-api.jar"
-		dest 'libs/'
-		onlyIfModified true
-		quiet true
+	for (String url : [
+		"https://dl.labymod.net/latest/api/files/lm_api_mc1.8.9.jar", // LabyMod
+		"https://mediafilez.forgecdn.net/files/2279/149/Schematica-1.8.9-1.7.7.143-api.jar", // Schematica
+		"https://labyaddons.de/download?q=8f645692-0be5-4d49-8f51-999a11943017" // EmoteChat
+	]) {
+		download.run {
+			src url
+			dest 'libs/'
+			onlyIfModified true
+			quiet true
+		}
 	}
 }

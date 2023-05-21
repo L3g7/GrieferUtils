@@ -32,6 +32,7 @@ import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.DrawUtils;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
@@ -97,7 +98,9 @@ public class MessageSkulls extends Feature {
 
 	@EventListener
 	public void renderSkull(RenderChatEvent event) {
-
+		GlStateManager.enableBlend();
+		GlStateManager.enableAlpha();
+		GlStateManager.disableLighting();
 		IChatComponent component = (IChatComponent) event.chatLine.getComponent();
 		String formattedText = component.getFormattedText();
 
@@ -135,6 +138,8 @@ public class MessageSkulls extends Feature {
 		int x = drawUtils.getStringWidth(formattedText.substring(0, idStart)) + (formattedText.startsWith("§r§m§s") ? 2 : 1);
 		drawUtils.drawTexture(x, event.y - 8, 32, 32, 32, 32, 8, 8, event.alpha); // First layer
 		drawUtils.drawTexture(x, event.y - 8, 160, 32, 32, 32, 8, 8, event.alpha); // Second layer
+		GlStateManager.disableBlend();
+		GlStateManager.disableAlpha();
 	}
 
 }

@@ -8,6 +8,8 @@
     "MixinC01PacketChatMessage",
     "MixinChatRenderer",
     "MixinChunk",
+    "MixinEmoteChatRenderer",
+    "MixinEmoteSuggestionsMenu",
     "MixinEntity",
     "MixinEntityPlayer",
     "MixinForgeHooks",

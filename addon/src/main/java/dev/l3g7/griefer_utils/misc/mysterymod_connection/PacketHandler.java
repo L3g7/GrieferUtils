@@ -29,6 +29,7 @@ import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.keep_alive.Keep
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.util.CryptUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraft.util.Session;
 
 import javax.crypto.SecretKey;
@@ -64,7 +65,8 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 				e.printStackTrace();
 				MysteryModConnection.setState(ctx, State.SESSION_SERVERS_UNAVAILABLE);
 			} catch (AuthenticationException e) {
-				e.printStackTrace();
+				if (LabyModCoreMod.isObfuscated())
+					e.printStackTrace();
 				MysteryModConnection.setState(ctx, State.INVALID_SESSION);
 				System.out.println("Login using " + session.getProfile() + " was invalid!");
 			}

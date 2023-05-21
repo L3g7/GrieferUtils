@@ -18,11 +18,14 @@
 
 package dev.l3g7.griefer_utils.misc;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 
 @Singleton
 public class ServerCheck {
@@ -31,11 +34,11 @@ public class ServerCheck {
 	private static boolean onCitybuild;
 
 	public static boolean isOnGrieferGames() {
-		return onGrieferGames;
+		return onGrieferGames || (!LabyModCoreMod.isObfuscated() && world() != null);
 	}
 
 	public static boolean isOnCitybuild() {
-		return onCitybuild;
+		return onCitybuild || (!LabyModCoreMod.isObfuscated() && world() != null);
 	}
 
 	@EventListener(priority = EventPriority.HIGHEST)

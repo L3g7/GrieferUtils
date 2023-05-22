@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.AutoUpdate;
+import dev.l3g7.griefer_utils.misc.MissingForgeErrorGui;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.addon.AddonLoader;
@@ -59,8 +60,10 @@ public class Main extends LabyModAddon {
 	public void onEnable() {
 		System.out.println("GrieferUtils enabling");
 		long begin = System.currentTimeMillis();
-		if (!LabyModCoreMod.isForge())
+		if (!LabyModCoreMod.isForge()) {
+			MissingForgeErrorGui.open();
 			return;
+		}
 
 		FileProvider.getClassesWithSuperClass(Feature.class).forEach(meta -> {
 			if (meta.isAbstract())

@@ -18,12 +18,13 @@
 
 package dev.l3g7.griefer_utils.core.injection;
 
-import com.mojang.realmsclient.util.Pair;
 import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.LogHook;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
@@ -45,6 +46,9 @@ public class Injector implements IClassTransformer {
 	private static final String MIXIN_CONFIG = "griefer_utils.mixins.json";
 
 	public Injector() throws ReflectiveOperationException, IOException {
+		if (!LabyModCoreMod.isForge())
+			return;
+
 		if (Constants.DEBUG)
 			LogHook.hook();
 
@@ -66,12 +70,12 @@ public class Injector implements IClassTransformer {
 		};
 
 		for (Pair<String, String> lib : libs) {
-			File libFile = new File("libraries/" + lib.first());
+			File libFile = new File("libraries/" + lib.getLeft());
 
 			if (!libFile.exists()) {
 				// Download library
 				libFile.getParentFile().mkdirs();
-				HttpsURLConnection c = (HttpsURLConnection) new URL(lib.second()).openConnection();
+				HttpsURLConnection c = (HttpsURLConnection) new URL(lib.getRight()).openConnection();
 				c.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");
 				Files.copy(c.getInputStream(), libFile.toPath());
 			}

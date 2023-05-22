@@ -22,8 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -38,6 +37,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -47,6 +47,22 @@ public class LightLevelOverlay extends Feature {
 
 	private final Map<BlockPos, Integer> lightPositions = new ConcurrentHashMap<>();
 	private int passedTicks = 0;
+
+	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
+		.callback(m -> {
+			if (getMainElement() != null)
+				((BooleanSetting) getMainElement()).set(false);
+		});
+
+	private final KeySetting key = new KeySetting()
+		.name("Taste")
+		.icon("key")
+		.pressCallback(p -> {
+			if (p || triggerMode.get() == HOLD) {
+				BooleanSetting enabled = ((BooleanSetting) getMainElement());
+				enabled.set(!enabled.get());
+			}
+		});
 
 	private final NumberSetting range = new NumberSetting()
 		.name("Radius)")
@@ -65,7 +81,7 @@ public class LightLevelOverlay extends Feature {
 		.name("Lichtlevel anzeigen")
 		.description("Zeigt das Lichtlevel auf Blöcken an")
 		.icon("light_bulb")
-		.subSettings(range, updateDelay);
+		.subSettings(key, triggerMode, new HeaderSetting(), range, updateDelay);
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {

@@ -22,8 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.settings.elements.*;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.utils.Material;
@@ -37,6 +36,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.Set;
 
+import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 import static net.minecraft.world.EnumSkyBlock.BLOCK;
@@ -47,6 +47,22 @@ public class LightBugESP extends Feature {
 
 	private final Set<BlockPos> lightBugs = new ConcurrentSet<>();
 	private int passedTicks = 0;
+
+	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
+		.callback(m -> {
+			if (getMainElement() != null)
+				((BooleanSetting) getMainElement()).set(false);
+		});
+
+	private final KeySetting key = new KeySetting()
+		.name("Taste")
+		.icon("key")
+		.pressCallback(p -> {
+			if (p || triggerMode.get() == HOLD) {
+				BooleanSetting enabled = ((BooleanSetting) getMainElement());
+				enabled.set(!enabled.get());
+			}
+		});
 
 	private final NumberSetting range = new NumberSetting()
 		.name("Radius")
@@ -65,7 +81,7 @@ public class LightBugESP extends Feature {
 		.name("Lichtbugs anzeigen")
 		.description("Zeigt Lichtbugs an, auch durch Wände.")
 		.icon("glitch_light_bulb")
-		.subSettings(range, updateDelay);
+		.subSettings(key, triggerMode, new HeaderSetting(), range, updateDelay);
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {

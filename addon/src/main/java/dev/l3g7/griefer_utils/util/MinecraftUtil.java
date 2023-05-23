@@ -98,7 +98,7 @@ public class MinecraftUtil {
 	}
 
 	public static void displayAchievement(String title, String description) {
-		displayAchievement("https://grieferutils.l3g7.dev/icon/64x64/", title, description);
+		displayAchievement("https://i.imgur.com/tWfT5Y8.png", title, description);
 	}
 
 	public static void displayAchievement (String iconUrl, String title, String description) {

@@ -18,17 +18,17 @@
 
 package dev.l3g7.griefer_utils.core.misc.matrix.types;
 
-import dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.structures.OlmAccount;
-import dev.l3g7.griefer_utils.core.misc.matrix.requests.WhoamiRequest;
 import dev.l3g7.griefer_utils.core.misc.matrix.requests.keys.KeysUploadRequest;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.Curve25519Keys;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.KeyStore;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class Session {
 
@@ -57,13 +57,6 @@ public class Session {
 	}
 
 	@Deprecated
-	public CompletableFuture<Void> updateUsingWhoami() {
-		return new WhoamiRequest().sendAsync(this).thenAccept(whoamiResponse -> {
-			userId = whoamiResponse.user_id;
-			deviceId = whoamiResponse.device_id;
-		});
-	}
-
 	public void uploadOneTimeKeys(int count) {
 		olmAccount.generateOneTimeKeys(count);
 		Map<String, Curve25519Keys.SignedCurve25519Key> oneTimeKeys = olmAccount.getOneTimeKeys().sign(this, false);
@@ -72,9 +65,10 @@ public class Session {
 		save();
 	}
 
+	@Deprecated
 	public void save() {
 		try (FileWriter w = new FileWriter("matrix_account.json")) {
-			w.write(MatrixUtil.GSON.toJson(this));
+			w.write(IOUtil.gson.toJson(this));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -19,12 +19,12 @@
 package dev.l3g7.griefer_utils.core.misc.matrix.events.room.encrypted;
 
 import com.google.gson.annotations.SerializedName;
-import dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil;
 import dev.l3g7.griefer_utils.core.misc.matrix.events.Event;
 import dev.l3g7.griefer_utils.core.misc.matrix.events.Event.EventContent;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.structures.OlmSession;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.Ed25519Key;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.Ed25519Key;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class OlmEncryptedEvent extends EventContent {
 		senderKey = session.olmAccount.getIdentityKeys().curve25519;
 
 		int type = olmSession.getNextMessageType();
-		String ciphertext = olmSession.encrypt(MatrixUtil.GSON.toJson(new OlmEncryptionPayload(
+		String ciphertext = olmSession.encrypt(IOUtil.gson.toJson(new OlmEncryptionPayload(
 			content.getClass().getAnnotation(Event.class).key(), content,
 			session.userId, session.olmAccount.getIdentityKeys().ed25519,
 			recipientDeviceKey, recipientUserId

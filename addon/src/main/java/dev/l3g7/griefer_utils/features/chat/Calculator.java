@@ -26,7 +26,6 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.chat.encrypted_messages.EncryptedMessages;
 import dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -151,9 +150,6 @@ public class Calculator extends Feature {
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
 		if (!ServerCheck.isOnGrieferGames() || world() == null || world().getScoreboard().getTeam("money_value") == null)
-			return;
-
-		if (event.message.contains(EncryptedMessages.MESSAGE_SUFFIX) || event.message.contains(EncryptedMessages.HANDSHAKE_START_SUFFIX))
 			return;
 
 		// Save payment (for auto-withdraw)

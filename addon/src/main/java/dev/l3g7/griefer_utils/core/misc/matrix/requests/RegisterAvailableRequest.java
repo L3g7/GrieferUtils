@@ -19,27 +19,26 @@
 package dev.l3g7.griefer_utils.core.misc.matrix.requests;
 
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.PostRequest.PutRequest;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.GetRequest;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response;
-import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response.ErrorResponse;
 
-public class AccountDataPutRequest extends PutRequest<Void> {
+public class RegisterAvailableRequest extends GetRequest<Boolean> {
 
-	private final Object content;
-
-	public AccountDataPutRequest(String userId, String type, Object content) {
-		super("/_matrix/client/r0/user/" + userId + "/account_data/" + type);
-		this.content = content;
+	public RegisterAvailableRequest(String username) {
+		super("/_matrix/client/v3/register/available?username=" + username);
 	}
 
 	@Override
-	protected String serialize() {
-		return IOUtil.gson.toJson(content);
-	}
+	protected Boolean parseResponse(Session session, Response response) throws Throwable {
+		if (response.statusCode() == 200)
+			return true;
 
-	@Override
-	protected Void parseResponse(Session session, Response response) {
-		return null;
+		ErrorResponse res = response.convertTo(ErrorResponse.class);
+		if (res.errorCode.equals("M_USER_IN_USE"))
+			return false;
+
+		return null; // Return null to indicate username is invalid
 	}
 
 }

@@ -16,9 +16,10 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.matrix.types;
+package dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography;
 
 import dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -18,28 +18,35 @@
 
 package dev.l3g7.griefer_utils.core.misc.matrix.requests;
 
+import com.google.gson.annotations.SerializedName;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.PostRequest.PutRequest;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.GetRequest;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response;
-import dev.l3g7.griefer_utils.core.util.IOUtil;
 
-public class AccountDataPutRequest extends PutRequest<Void> {
+public class WellKnownRequest extends GetRequest<String> {
 
-	private final Object content;
-
-	public AccountDataPutRequest(String userId, String type, Object content) {
-		super("/_matrix/client/r0/user/" + userId + "/account_data/" + type);
-		this.content = content;
+	public WellKnownRequest() {
+		super("/.well-known/matrix/client");
 	}
 
 	@Override
-	protected String serialize() {
-		return IOUtil.gson.toJson(content);
+	protected String parseResponse(Session session, Response response) throws Throwable {
+		if (response.statusCode() != 200)
+			return session.host;
+
+		return response.convertTo(WellKnownResponse.class).homeServer.baseUrl;
 	}
 
-	@Override
-	protected Void parseResponse(Session session, Response response) {
-		return null;
-	}
+	private static class WellKnownResponse {
 
+		@SerializedName("m.homeserver")
+		private HomeServer homeServer;
+
+		private static class HomeServer {
+
+			@SerializedName("base_url")
+			private String baseUrl;
+
+		}
+	}
 }

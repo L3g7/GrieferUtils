@@ -59,7 +59,7 @@ public class JNAUtil {
 	}
 
 	/**
-	 * Reads a string from the given memory.
+	 * Reads a string from the given memory, using the memory's size as end indicator.
 	 */
 	public static String getString(Memory memory) {
 		return new String(memory.getByteArray(0, (int) memory.size()));

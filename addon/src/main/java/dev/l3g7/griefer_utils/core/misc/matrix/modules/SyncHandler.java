@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.core.misc.matrix.modules;
 
+import dev.l3g7.griefer_utils.core.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.misc.matrix.events.Event.EventContent;
 import dev.l3g7.griefer_utils.core.misc.matrix.events.Event.EventRegistry;
 import dev.l3g7.griefer_utils.core.misc.matrix.events.room.RoomEventContent;
@@ -27,20 +28,44 @@ import dev.l3g7.griefer_utils.core.misc.matrix.requests.sync.SyncResponse;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Room;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
 
-import java.util.concurrent.CompletableFuture;
+import java.io.IOException;
 
 public class SyncHandler {
 
-	public static CompletableFuture<String> sync(Session session, String nextBatch) {
-		return new SyncRequest(nextBatch == null ? 5000 : 30000, nextBatch).sendAsync(session).thenApply(res -> {
-			handle(session, res);
-			session.save();
-			System.out.println("Saved!");
-			return res.nextBatch;
-		});
+	private final Session session;
+	private volatile boolean shouldStop = false;
+
+	public SyncHandler(Session session) {
+		this.session = session;
 	}
 
-	public static void handle(Session session, SyncResponse res) {
+	public void stop() {
+		if (shouldStop)
+			throw new IllegalStateException("Synchronization handler has already been stopped!");
+		shouldStop = true;
+	}
+
+	public void start() throws IOException {
+		if (shouldStop)
+			throw new IllegalStateException("Synchronization handler has already been stopped!");
+
+		sync(null);
+	}
+
+	private void sync(String nextBatch) throws IOException {
+		SyncResponse res = new SyncRequest(nextBatch == null ? 5000 : 30000, nextBatch).send(session);
+		handle(session, res);
+
+		if (shouldStop)
+			return;
+
+		// Start new thread to let old die
+		Thread syncThread = new Thread((Runnable) () -> sync(res.nextBatch), "Matrix synchronization thread");
+		syncThread.setPriority(Thread.MIN_PRIORITY);
+		syncThread.start();
+	}
+
+	private void handle(Session session, SyncResponse res) {
 		// Handle account data
 		for (SyncResponse.RawEvent event : res.accountData.events) {
 			EventContent content = EventRegistry.getContent(event);
@@ -51,11 +76,11 @@ public class SyncHandler {
 		}
 
 		// Handle one time keys
-		int existingOneTimeKeys = res.deviceOneTimeKeysCount.getOrDefault("signed_curve25519", 0);
+/*		int existingOneTimeKeys = res.deviceOneTimeKeysCount.getOrDefault("signed_curve25519", 0);
 		int maxOneTimeKeys = session.olmAccount.getMaxOneTimeKeys();
 
 		if (maxOneTimeKeys > existingOneTimeKeys) // TODO unreliable, initial sync often says 0 | wait until initial sync is over?
-			session.uploadOneTimeKeys(maxOneTimeKeys - existingOneTimeKeys);
+			session.uploadOneTimeKeys(maxOneTimeKeys - existingOneTimeKeys);*/
 
 		// Handle rooms
 		res.rooms.join.forEach((roomId, joinedRoom) -> {

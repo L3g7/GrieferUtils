@@ -18,6 +18,8 @@
 
 package dev.l3g7.griefer_utils.core.misc;
 
+import dev.l3g7.griefer_utils.core.misc.functions.Runnable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +28,7 @@ import java.util.function.Consumer;
 
 public class Watchable<T> {
 
-	private T value = null;
+	private volatile T value = null;
 	private transient final List<Consumer<T>> listeners = Collections.synchronizedList(new ArrayList<>());
 
 	public T get() {

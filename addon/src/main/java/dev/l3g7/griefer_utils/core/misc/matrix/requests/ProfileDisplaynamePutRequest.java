@@ -18,27 +18,23 @@
 
 package dev.l3g7.griefer_utils.core.misc.matrix.requests;
 
+import com.google.gson.annotations.SerializedName;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.PostRequest.PutRequest;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response;
-import dev.l3g7.griefer_utils.core.util.IOUtil;
 
-public class AccountDataPutRequest extends PutRequest<Void> {
+public class ProfileDisplaynamePutRequest extends PutRequest<Void> {
 
-	private final Object content;
+	@SerializedName("displayname")
+	public String displayName;
 
-	public AccountDataPutRequest(String userId, String type, Object content) {
-		super("/_matrix/client/r0/user/" + userId + "/account_data/" + type);
-		this.content = content;
+	public ProfileDisplaynamePutRequest(String userId, String displayName) {
+		super("/_matrix/client/v3/profile/" + userId + "/displayname");
+		this.displayName = displayName;
 	}
 
 	@Override
-	protected String serialize() {
-		return IOUtil.gson.toJson(content);
-	}
-
-	@Override
-	protected Void parseResponse(Session session, Response response) {
+	protected Void parseResponse(Session session, Response response) throws Throwable {
 		return null;
 	}
 

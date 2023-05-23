@@ -20,23 +20,16 @@ package dev.l3g7.griefer_utils.core.misc.matrix.jna.structures;
 
 import com.sun.jna.Memory;
 import com.sun.jna.PointerType;
-import dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil;
-import dev.l3g7.griefer_utils.core.misc.matrix.events.Event.EventContent;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.LibOlm;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.util.Buffer;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.util.JNAUtil;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.util.size_t;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
-
-import java.nio.charset.StandardCharsets;
 
 import static dev.l3g7.griefer_utils.core.misc.matrix.jna.LibOlm.LIB_OLM;
 import static dev.l3g7.griefer_utils.core.misc.matrix.jna.util.JNAUtil.malloc;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class OlmSession extends PointerType {
-
-	public String encryptionKeyId = null;
 
 	/**
 	 * Has no references once set, only used to prevent the Memory object from being garbage
@@ -70,41 +63,7 @@ public class OlmSession extends PointerType {
 		if (errorCode.equals(LIB_OLM.olm_error()))
 			throw new LibOlm.OlmInvokationException("olm_create_outbound_session", LIB_OLM.olm_session_last_error(session));
 
-		session.encryptionKeyId = account.encryptionKeyId;
 		return session;
-	}
-
-	public static OlmSession deserialize(String encryptionKeyId, String data) {
-		OlmSession session = allocateSession();
-		String key = MatrixUtil.ENCRYPTION_KEYS.get(encryptionKeyId);
-
-		// Allocate memory
-		Buffer keyBuffer = malloc(key.getBytes(UTF_8));
-		Buffer dataBuffer = malloc(data.getBytes(UTF_8));
-
-		// Deserialize session
-		size_t errorCode = LIB_OLM.olm_unpickle_session(session, keyBuffer, keyBuffer.size(), dataBuffer, dataBuffer.size());
-		if (errorCode.equals(LIB_OLM.olm_error()))
-			throw new LibOlm.OlmInvokationException("olm_unpickle_session", LIB_OLM.olm_session_last_error(session));
-
-		session.encryptionKeyId = encryptionKeyId;
-		return session;
-	}
-
-	public String serialize() {
-		String encryptionKey = MatrixUtil.ENCRYPTION_KEYS.get(encryptionKeyId);
-
-		// Allocate memory
-		size_t pickledLength = LIB_OLM.olm_pickle_session_length(this);
-		Memory pickledBuffer = malloc(pickledLength);
-		Buffer keyBuffer = malloc(encryptionKey.getBytes(UTF_8));
-
-		// serialize session
-		size_t errorCode = LIB_OLM.olm_pickle_session(this, keyBuffer, keyBuffer.size(), pickledBuffer, pickledLength);
-		if (errorCode.equals(LIB_OLM.olm_error()))
-			throw new LibOlm.OlmInvokationException("olm_pickle_session", LIB_OLM.olm_session_last_error(this));
-
-		return JNAUtil.getString(pickledBuffer);
 	}
 
 	public int getNextMessageType() {
@@ -136,7 +95,7 @@ public class OlmSession extends PointerType {
 
 	@Override
 	protected void finalize() throws Throwable {
-		LIB_OLM.olm_clear_session(this);
+		allocatedMemory.clear();
 		super.finalize();
 	}
 

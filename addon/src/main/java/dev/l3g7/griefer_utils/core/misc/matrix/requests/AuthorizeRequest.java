@@ -26,23 +26,15 @@ import dev.l3g7.griefer_utils.core.misc.matrix.types.AuthData;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.PostRequest;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response.ErrorResponse.TooManyRequestsResponse;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import static dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil.HTTP_TOO_MANY_REQUESTS;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 public abstract class AuthorizeRequest extends PostRequest<AuthData> {
 
-	private static final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1);
-
 	@SerializedName("auth")
 	public AuthenticationMethod authMethod;
-	private final PlayerKeyPair playerKeyPair;
+	private transient final PlayerKeyPair playerKeyPair;
 
 	protected AuthorizeRequest(String path, PlayerKeyPair playerKeyPair) {
 		super(path);
@@ -63,13 +55,6 @@ public abstract class AuthorizeRequest extends PostRequest<AuthData> {
 				// Retry
 				return send(session);
 
-			case HTTP_TOO_MANY_REQUESTS:
-				TooManyRequestsResponse response = rawResponse.convertTo(TooManyRequestsResponse.class);
-
-				// Retry after delay
-				return EXECUTOR.schedule(() -> send(session),
-					response.retryAfterMs, TimeUnit.MILLISECONDS).get();
-
 			default:
 				throw new UnsupportedOperationException("Unknown response code " + rawResponse.statusCode());
 		}
@@ -80,16 +65,15 @@ public abstract class AuthorizeRequest extends PostRequest<AuthData> {
 		public final String username, password;
 
 		@SerializedName("initial_device_display_name")
-		public final String deviceDisplayName;
+		public final String deviceDisplayName = "GrieferUtils";
 
 		@SerializedName("refresh_token")
 		public final boolean refreshToken = true;
 
-		public RegisterRequest(String username, String password, String deviceDisplayName, PlayerKeyPair playerKeyPair) {
+		public RegisterRequest(String username, String password, PlayerKeyPair playerKeyPair) {
 			super("/_matrix/client/v3/register", playerKeyPair);
 			this.username = username;
 			this.password = password;
-			this.deviceDisplayName = deviceDisplayName;
 		}
 
 	}

@@ -20,21 +20,18 @@ package dev.l3g7.griefer_utils.core.misc.matrix.jna.structures;
 
 import com.sun.jna.Memory;
 import com.sun.jna.PointerType;
-import dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.LibOlm;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.util.Buffer;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.util.JNAUtil;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.util.size_t;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.Curve25519Keys;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.IdentityKeys;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.Curve25519Keys;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.IdentityKeys;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 
 import static dev.l3g7.griefer_utils.core.misc.matrix.jna.LibOlm.LIB_OLM;
 import static dev.l3g7.griefer_utils.core.misc.matrix.jna.util.JNAUtil.malloc;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class OlmAccount extends PointerType {
-
-	public String encryptionKeyId = null;
 
 	/**
 	 * Has no references once set, only used to prevent the Memory object from being garbage
@@ -54,7 +51,7 @@ public class OlmAccount extends PointerType {
 		return account;
 	}
 
-	public static OlmAccount create(String encryptionKeyId) {
+	public static OlmAccount create() {
 		OlmAccount account = allocateAccount();
 
 		// Create random data
@@ -66,41 +63,7 @@ public class OlmAccount extends PointerType {
 		if (errorCode.equals(LIB_OLM.olm_error()))
 			throw new LibOlm.OlmInvokationException("olm account creation", LIB_OLM.olm_account_last_error(account));
 
-		account.encryptionKeyId = encryptionKeyId;
 		return account;
-	}
-
-	public static OlmAccount deserialize(String encryptionKeyId, String data) {
-		OlmAccount account = allocateAccount();
-		String key = MatrixUtil.ENCRYPTION_KEYS.get(encryptionKeyId);
-
-		// Allocate memory
-		Buffer keyBuffer = malloc(key.getBytes(UTF_8));
-		Buffer dataBuffer = malloc(data.getBytes(UTF_8));
-
-		// Deserialize account
-		size_t errorCode = LIB_OLM.olm_unpickle_account(account, keyBuffer, keyBuffer.size(), dataBuffer, dataBuffer.size());
-		if (errorCode.equals(LIB_OLM.olm_error()))
-			throw new LibOlm.OlmInvokationException("olm_unpickle_account", LIB_OLM.olm_account_last_error(account));
-
-		account.encryptionKeyId = encryptionKeyId;
-		return account;
-	}
-
-	public String serialize() {
-		String encryptionKey = MatrixUtil.ENCRYPTION_KEYS.get(encryptionKeyId);
-
-		// Allocate memory
-		size_t pickledLength = LIB_OLM.olm_pickle_account_length(this);
-		Memory pickledBuffer = malloc(pickledLength);
-		Buffer keyBuffer = malloc(encryptionKey.getBytes(UTF_8));
-
-		// serialize account
-		size_t errorCode = LIB_OLM.olm_pickle_account(this, keyBuffer, keyBuffer.size(), pickledBuffer, pickledLength);
-		if (errorCode.equals(LIB_OLM.olm_error()))
-			throw new LibOlm.OlmInvokationException("olm_pickle_account", LIB_OLM.olm_account_last_error(this));
-
-		return JNAUtil.getString(pickledBuffer);
 	}
 
 	public IdentityKeys getIdentityKeys() {
@@ -114,7 +77,7 @@ public class OlmAccount extends PointerType {
 			throw new LibOlm.OlmInvokationException("olm_account_identity_keys", LIB_OLM.olm_account_last_error(this));
 
 		// Parse response
-		return MatrixUtil.GSON.fromJson(JNAUtil.getString(keyBuffer), IdentityKeys.class);
+		return IOUtil.gson.fromJson(JNAUtil.getString(keyBuffer), IdentityKeys.class);
 	}
 
 	public int getMaxOneTimeKeys() {
@@ -147,8 +110,8 @@ public class OlmAccount extends PointerType {
 			throw new LibOlm.OlmInvokationException("olm_account_one_time_keys", LIB_OLM.olm_account_last_error(this));
 
 		String jsonBuffer = JNAUtil.getString(keyBuffer);
-		System.out.println(jsonBuffer);
-		return MatrixUtil.GSON.fromJson(jsonBuffer, Curve25519Keys.class);
+		System.out.println(jsonBuffer); // TODO remove these
+		return IOUtil.gson.fromJson(jsonBuffer, Curve25519Keys.class);
 	}
 
 	public void generateFallbackKey() {
@@ -172,7 +135,7 @@ public class OlmAccount extends PointerType {
 		if (errorCode.equals(LIB_OLM.olm_error()))
 			throw new LibOlm.OlmInvokationException("olm_account_unpublished_fallback_key", LIB_OLM.olm_account_last_error(this));
 
-		return MatrixUtil.GSON.fromJson(JNAUtil.getString(keyBuffer), Curve25519Keys.class);
+		return IOUtil.gson.fromJson(JNAUtil.getString(keyBuffer), Curve25519Keys.class);
 	}
 
 	public void markKeysAsPublished() {
@@ -199,7 +162,7 @@ public class OlmAccount extends PointerType {
 
 	@Override
 	protected void finalize() throws Throwable {
-		LIB_OLM.olm_clear_account(this);
+		allocatedMemory.clear();
 		super.finalize();
 	}
 

@@ -35,7 +35,7 @@ public class UiaaHandler {
 		// Parse and validate response
 		UiaaFlow.UiaaFlowResponse uiaaResponse = rawResponse.convertTo(UiaaFlow.UiaaFlowResponse.class);
 		if (uiaaResponse.flows.stream().noneMatch(flow -> Arrays.equals(flow.stages, SUPPORTED_UIAA_FLOW)))
-			throw new UnsupportedOperationException("Server does not supported minecraft auth flow!");
+			throw new UnsupportedOperationException("Server does not support minecraft auth flow!");
 
 		// Create authentication signature
 		UiaaMinecraftAuthFlowResponse response = rawResponse.convertTo(UiaaMinecraftAuthFlowResponse.class);
@@ -43,7 +43,7 @@ public class UiaaHandler {
 
 		// Sign nonce
 		Signature sign = Signature.getInstance("SHA256withRSA");
-		sign.initSign(playerKeyPair.privateKey);
+		sign.initSign(playerKeyPair.getPrivateKey());
 		sign.update(nonce);
 		byte[] signature = sign.sign();
 

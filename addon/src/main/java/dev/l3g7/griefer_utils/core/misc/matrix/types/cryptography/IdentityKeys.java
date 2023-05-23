@@ -16,28 +16,11 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.matrix.types;
+package dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography;
 
-import com.google.gson.annotations.SerializedName;
+public class IdentityKeys {
 
-import java.util.Map;
-
-public class DeviceKeys {
-
-	public String[] algorithms;
-	@SerializedName("device_id")
-	public String deviceId;
-	public Map<String, String> keys;
-	public Map<String, Map<String, String>> signatures; // TODO validate signatures
-	@SerializedName("user_id")
-	public String userId;
-	public Unsigned unsigned;
-
-	public static class Unsigned {
-
-		@SerializedName("device_display_name")
-		public String deviceDisplayName;
-
-	}
+	public String curve25519;
+	public String ed25519;
 
 }

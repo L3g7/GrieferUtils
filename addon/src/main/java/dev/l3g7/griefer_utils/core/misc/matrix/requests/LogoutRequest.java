@@ -16,11 +16,21 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.matrix.types;
+package dev.l3g7.griefer_utils.core.misc.matrix.requests;
 
-public class IdentityKeys {
+import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.PostRequest;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response;
 
-	public String curve25519;
-	public String ed25519;
+public class LogoutRequest extends PostRequest<Void> {
+
+	public LogoutRequest() {
+		super("/_matrix/client/v3/logout");
+	}
+
+	@Override
+	protected Void parseResponse(Session session, Response response) throws Throwable {
+		return null;
+	}
 
 }

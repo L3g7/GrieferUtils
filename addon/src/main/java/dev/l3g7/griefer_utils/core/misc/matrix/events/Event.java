@@ -20,16 +20,14 @@ package dev.l3g7.griefer_utils.core.misc.matrix.events;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
-import dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil;
 import dev.l3g7.griefer_utils.core.misc.matrix.requests.sync.SyncResponse;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
 import java.util.Map;
-
-import static dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil.GSON;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Event {
@@ -69,7 +67,7 @@ public @interface Event {
 
 			Class<? extends EventContent> contentClass = contentClassMeta.load();
 			Object content = contentClass.getAnnotation(Event.class).asContentType() ? event.content : event;
-			return GSON.fromJson(GSON.toJson(content), contentClass);
+			return IOUtil.gson.fromJson(IOUtil.gson.toJson(content), contentClass);
 		}
 
 	}

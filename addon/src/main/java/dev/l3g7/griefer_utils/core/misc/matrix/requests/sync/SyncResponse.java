@@ -34,7 +34,7 @@ public class SyncResponse {
 	public EventList accountData = new EventList();
 
 	@SerializedName("device_one_time_keys_count")
-	public Map<String, Integer> deviceOneTimeKeysCount;
+	public Map<String, Integer> deviceOneTimeKeysCount = new HashMap<>();
 
 	public Rooms rooms = new Rooms();
 

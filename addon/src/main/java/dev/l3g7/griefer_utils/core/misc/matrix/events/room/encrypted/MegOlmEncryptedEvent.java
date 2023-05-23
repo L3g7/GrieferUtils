@@ -19,10 +19,10 @@
 package dev.l3g7.griefer_utils.core.misc.matrix.events.room.encrypted;
 
 import com.google.gson.annotations.SerializedName;
-import dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil;
 import dev.l3g7.griefer_utils.core.misc.matrix.events.Event;
 import dev.l3g7.griefer_utils.core.misc.matrix.events.room.RoomEventContent;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.structures.OlmOutboundGroupSession;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 
 /**
  * A room event, encrypted using MegOlm.
@@ -45,7 +45,7 @@ public class MegOlmEncryptedEvent {
 	public void createCiphertext(OlmOutboundGroupSession megolmSession, String roomId, RoomEventContent content) {
 		String eventType = content.getClass().getAnnotation(Event.class).key();
 		MegolmEncryptionPayload payload = new MegolmEncryptionPayload(eventType, content, roomId);
-		ciphertext = megolmSession.encrypt(MatrixUtil.GSON.toJson(payload));
+		ciphertext = megolmSession.encrypt(IOUtil.gson.toJson(payload));
 	}
 
 	private static class MegolmEncryptionPayload {

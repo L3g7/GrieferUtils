@@ -18,20 +18,74 @@
 
 package dev.l3g7.griefer_utils.core.misc.matrix.modules.uiaa;
 
+import com.google.gson.annotations.SerializedName;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.Instant;
+import java.util.Base64;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 public class PlayerKeyPair {
 
-	public final PrivateKey privateKey;
-	public final String publicKey;
-	public final String keySignature;
-	public final long expirationTime;
+	private KeyPair keyPair;
 
-	public PlayerKeyPair(PrivateKey privateKey, String publicKey, String keySignature, long expirationTime) {
-		this.privateKey = privateKey;
-		this.publicKey = publicKey;
-		this.keySignature = keySignature;
-		this.expirationTime = expirationTime;
+	@SerializedName("publicKeySignatureV2")
+	private String publicKeySignature;
+
+	@SerializedName("expiresAt")
+	private String expirationTime;
+
+	public static CompletableFuture<PlayerKeyPair> getPlayerKeyPair(String authToken) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				HttpURLConnection c = (HttpURLConnection) URI.create("https://api.minecraftservices.com/player/certificates").toURL().openConnection();
+				c.setRequestMethod("POST");
+				c.setRequestProperty("Content-Length", "0");
+				c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+				c.setRequestProperty("Authorization", "Bearer " + authToken);
+				c.setDoOutput(true);
+					c.getOutputStream().close();
+					return IOUtil.gson.fromJson(new InputStreamReader(c.getInputStream()), PlayerKeyPair.class);
+			} catch (IOException e) {
+				throw new CompletionException(e);
+			}
+		});
+	}
+
+	public PrivateKey getPrivateKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+		return KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(getRawPrivateKey()));
+	}
+
+	public byte[] getRawPrivateKey() {
+		String privateKey = keyPair.privateKey.replaceAll("^-----BEGIN RSA PRIVATE KEY-----|-----END RSA PRIVATE KEY-----$|\r|\n", "");
+		return Base64.getMimeDecoder().decode(privateKey);
+	}
+
+	public String getPublicKey() {
+		return keyPair.publicKey.replaceAll("^-----BEGIN RSA PUBLIC KEY-----|-----END RSA PUBLIC KEY-----$|\r|\n", "");
+	}
+
+	public String getPublicKeySignature() {
+		return publicKeySignature;
+	}
+
+	public long getExpirationTime() {
+		return Instant.parse(expirationTime).toEpochMilli();
+	}
+
+	private static class KeyPair {
+		private String privateKey;
+		private String publicKey;
 	}
 
 }

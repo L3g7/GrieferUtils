@@ -57,9 +57,9 @@ public class MinecraftAuthentication {
 		public MinecraftAuthenticationMethod(String session, String signature, PlayerKeyPair playerKeyPair) {
 			super("dev.l3g7.minecraft_auth.auth.minecraft", session);
 			this.signature = signature;
-			this.publicKey = playerKeyPair.publicKey;
-			this.keySignature = playerKeyPair.keySignature;
-			this.expirationTime = playerKeyPair.expirationTime;
+			this.publicKey = playerKeyPair.getPublicKey();
+			this.keySignature = playerKeyPair.getPublicKeySignature();
+			this.expirationTime = playerKeyPair.getExpirationTime();
 		}
 
 	}

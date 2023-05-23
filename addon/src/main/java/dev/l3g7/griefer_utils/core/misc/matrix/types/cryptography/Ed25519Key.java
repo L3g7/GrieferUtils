@@ -16,34 +16,17 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.matrix.types;
+package dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.HashMap;
+public class Ed25519Key {
 
-public class User {
+	@SerializedName("ed25519")
+	public String ed25519Key;
 
-	@SerializedName("user_id")
-	public final String userId;
-
-	@SerializedName("display_name")
-	public String displayName;
-
-	private User(String userId) {
-		this.userId = userId;
-	}
-
-	public static User get(Session session, String userId) {
-		if (session.users == null)
-			session.users = new HashMap<>();
-
-		return session.users.computeIfAbsent(userId, User::new);
-	}
-
-	@Override
-	public String toString() {
-		return userId;
+	public Ed25519Key(String ed25519Key) {
+		this.ed25519Key = ed25519Key;
 	}
 
 }

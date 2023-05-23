@@ -16,11 +16,12 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.matrix.types;
+package dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography;
 
 import dev.l3g7.griefer_utils.core.misc.Watchable;
 import dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil;
 import dev.l3g7.griefer_utils.core.misc.matrix.modules.ssss.SSSSKey;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;

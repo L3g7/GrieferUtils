@@ -20,21 +20,27 @@ package dev.l3g7.griefer_utils.misc.badges;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.misc.matrix.MatrixClient;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.user.User;
 import net.labymod.user.group.LabyGroup;
+import net.minecraft.util.Util;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static net.minecraft.util.Util.EnumOS.OSX;
+import static net.minecraft.util.Util.EnumOS.WINDOWS;
 
 public class GrieferUtilsUserManager {
 
@@ -82,12 +88,12 @@ public class GrieferUtilsUserManager {
 	}
 
 	private static void requestQueuedUsers() {
-		if (queuedUsers.isEmpty())
+		if (queuedUsers.isEmpty() || (Util.getOSType() != WINDOWS && Util.getOSType() != OSX))
 			return;
 
 		lastRequest = System.currentTimeMillis();
 
-		requestUsers(queuedUsers).thenAccept(uuids -> {
+		CompletableFuture.supplyAsync((Supplier<List<UUID>>) () -> MatrixClient.get().getOnlineUsers(queuedUsers)).thenAccept(uuids -> {
 			for (UUID uuid : uuids) {
 				if (mc().getNetHandler().getPlayerInfo(uuid) == null)
 					continue;
@@ -119,19 +125,6 @@ public class GrieferUtilsUserManager {
 				specialBadges.put(UUID.fromString(entry.getKey()), new GrieferUtilsGroup(color_with_labymod, color_without_labymod, title));
 			}
 		});
-	}
-
-	private static CompletableFuture<List<UUID>> requestUsers(Collection<UUID> uuids) {
-		CompletableFuture<List<UUID>> future = new CompletableFuture<>();
-		new Timer().schedule(new TimerTask() {
-			private final List<UUID> uuidCopy = new ArrayList<>(uuids);
-
-			@Override
-			public void run() {
-				future.complete(uuidCopy);
-			}
-		}, 150);
-		return future;
 	}
 
 }

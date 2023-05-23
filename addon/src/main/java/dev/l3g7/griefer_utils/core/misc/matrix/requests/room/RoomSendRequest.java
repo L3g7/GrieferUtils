@@ -18,10 +18,10 @@
 
 package dev.l3g7.griefer_utils.core.misc.matrix.requests.room;
 
-import dev.l3g7.griefer_utils.core.misc.matrix.MatrixUtil;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.PostRequest.PutRequest;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 
 public class RoomSendRequest extends PutRequest<Void> {
 
@@ -34,7 +34,7 @@ public class RoomSendRequest extends PutRequest<Void> {
 
 	@Override
 	public String serialize() {
-		return MatrixUtil.GSON.toJson(payload);
+		return IOUtil.gson.toJson(payload);
 	}
 
 	@Override

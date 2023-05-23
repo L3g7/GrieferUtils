@@ -16,37 +16,40 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.matrix.requests.keys;
+package dev.l3g7.griefer_utils.core.misc.matrix.requests;
 
 import com.google.gson.annotations.SerializedName;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.DeviceKeys;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.User;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.PostRequest;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-public class KeysQueryRequest extends PostRequest<Map<String, Map<String, DeviceKeys>>> {
+/**
+ * A custom search route. It's similar to
+ * <a href="https://spec.matrix.org/v1.6/client-server-api/#post_matrixclientv3user_directorysearch">/_matrix/client/v3/user_directory/search</a>
+ * with the exception that all users are searched.
+ */
+public class FullSearchRequest extends PostRequest<List<User>> {
 
-	@SerializedName("device_keys")
-	private final Map<String, String[]> deviceKeys = new HashMap<>();
+	@SerializedName("search_term")
+	public String searchTerm;
 
-	public KeysQueryRequest(Iterable<String> users) {
-		super("/_matrix/client/r0/keys/query");
-		for (String user : users)
-			deviceKeys.put(user, new String[0]);
+	public FullSearchRequest(String searchTerm) {
+		super("/_matrix/client/v3/full_search");
+		this.searchTerm = searchTerm;
 	}
 
 	@Override
-	protected Map<String, Map<String, DeviceKeys>> parseResponse(Session session, Response response) {
-		return response.convertTo(KeysQueryResponse.class).deviceKeys;
+	protected List<User> parseResponse(Session session, Response response) throws Throwable {
+		return response.convertTo(SearchResponse.class).results;
 	}
 
-	private static class KeysQueryResponse {
+	private static class SearchResponse {
 
-		@SerializedName("device_keys")
-		private Map<String, Map<String, DeviceKeys>> deviceKeys; // userId -> deviceId -> DeviceKeys
+		List<User> results;
 
 	}
+
 }

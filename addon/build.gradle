@@ -93,16 +93,20 @@ tasks.build.dependsOn('downloadLibs')
 tasks.register('downloadLibs') {
 	mkdir "libs"
 
-	for (String url : [
-		"https://dl.labymod.net/latest/api/files/lm_api_mc1.8.9.jar", // LabyMod
-		"https://mediafilez.forgecdn.net/files/2279/149/Schematica-1.8.9-1.7.7.143-api.jar", // Schematica
-		"https://cdn.discordapp.com/attachments/764859008556990475/1109828671683960862/EmoteChat.jar" // EmoteChat
-	]) {
-		download.run {
-			src url
-			dest 'libs/'
-			onlyIfModified true
-			quiet true
-		}
+	download.run {
+		src ([
+			"https://dl.labymod.net/latest/api/files/lm_api_mc1.8.9.jar", // LabyMod
+			"https://mediafilez.forgecdn.net/files/2279/149/Schematica-1.8.9-1.7.7.143-api.jar" // Schematica
+		])
+		dest 'libs/'
+		onlyIfModified true
+		quiet true
+	}
+
+	download.run {
+		src "https://dl.labymod.net/latest/?file=8f645692-0be5-4d49-8f51-999a11943017&a=1" // EmoteChat
+		dest new File(projectDir, "libs/EmoteChat.jar")
+		onlyIfModified true
+		quiet true
 	}
 }

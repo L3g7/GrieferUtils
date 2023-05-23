@@ -48,12 +48,12 @@ public class InteractableMessages extends Feature {
 
 	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
 	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
-	private static final Pattern P_H_PATTERN = Pattern.compile("^.*(?<command>/p h [^ ]+).*$");
+	private static final Pattern P_H_PATTERN = Pattern.compile("^.*(?<command>/p h [^ ]+).*$", Pattern.CASE_INSENSITIVE);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Interagierbare Nachrichten")
-		.description("Macht TPAs, den CityBuild bei Globalchat-Nachrichten, den Status sowie \"/p h\"s in Nachrichten interagierbar.")
+		.description("Macht TPAs, den CityBuild bei Globalchat-Nachrichten, den Status sowie \"/p h\" in Nachrichten interagierbar.")
 		.icon("left_click");
 
 	@EventListener(priority = EventPriority.LOW)

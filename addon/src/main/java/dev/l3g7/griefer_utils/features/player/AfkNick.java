@@ -65,12 +65,12 @@ public class AfkNick extends Feature {
 		.icon("labymod:settings/modules/afk_timer")
 		.subSettings(nickName, new HeaderSetting(), minutes, seconds);
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onInput(InputEvent event) {
 		lastEvent = System.currentTimeMillis();
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent event) {
 		lastEvent = System.currentTimeMillis();
 	}

@@ -183,6 +183,9 @@ public class AutoTool extends Feature {
 			if (toolSaver.shouldCancel(itemStack))
 				return Integer.MIN_VALUE;
 
+		if (!ServerCheck.isOnGrieferGames() && player().getHeldItem() != null && player().getHeldItem().getItem() == Items.wooden_axe)
+			return Integer.MIN_VALUE;
+
 		if (!isTool(itemStack)) {
 
 			if (itemStack == null || !itemStack.isItemStackDamageable())

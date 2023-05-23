@@ -101,8 +101,8 @@ public class GrieferUtilsUserManager {
 				users.put(uuid, user(uuid).getGroup());
 				user(uuid).setGroup(specialBadges.getOrDefault(uuid, new GrieferUtilsGroup()));
 			}
+			queuedUsers.clear();
 		});
-		queuedUsers.clear();
 	}
 
 	static {

@@ -19,6 +19,7 @@
     "MixinNetworkManager",
     "MixinRenderTickListener",
     "MixinScoreboardModule",
+    "MixinUser",
     "MixinWorld"
   ],
   "client": [
@@ -31,6 +32,7 @@
     "MixinItemStack",
     "MixinLayerCustomHead",
     "MixinMinecraft",
+    "MixinModPlayerTabOverlay",
     "MixinPlayerControllerMP",
     "MixinRendererLivingEntity",
     "MixinRenderGlobal",

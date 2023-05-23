@@ -40,7 +40,6 @@ public class BetterSwitchCommand extends Feature {
 	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", Pattern.CASE_INSENSITIVE);
 
 	private static String command = null;
-	private static boolean awaitingSendCommand = false;
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -52,11 +51,6 @@ public class BetterSwitchCommand extends Feature {
 	public void onMessageSend(MessageEvent.MessageSendEvent event) {
 		String msg = event.message;
 
-		if (awaitingSendCommand) {
-			awaitingSendCommand = false;
-			return;
-		}
-
 		Matcher matcher = COMMAND_PATTERN.matcher(msg);
 
 		if (matcher.matches()) {
@@ -66,7 +60,6 @@ public class BetterSwitchCommand extends Feature {
 			if (cb.exists()) {
 				cb.join();
 				command = matcher.group(2);
-				awaitingSendCommand = true;
 				return;
 			}
 		}
@@ -107,7 +100,6 @@ public class BetterSwitchCommand extends Feature {
 		}
 
 		cb.join();
-		awaitingSendCommand = true;
 		BetterSwitchCommand.command = command;
 	}
 

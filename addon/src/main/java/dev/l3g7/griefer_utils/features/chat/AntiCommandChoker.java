@@ -18,13 +18,14 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import com.google.common.collect.ImmutableMap;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.core.misc.Constants;
 import net.labymod.ingamechat.IngameChatManager;
 import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.minecraft.event.ClickEvent;
@@ -35,6 +36,8 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 
+import java.util.Map;
+
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
@@ -43,10 +46,15 @@ public class AntiCommandChoker extends Feature {
 	private static final String COMMAND = "/grieferutils_anti_command_choker ";
 	private static final IngameChatManager ICM = IngameChatManager.INSTANCE;
 
+	private static final Map<String, Integer> FAIL_TO_START = ImmutableMap.of(
+		"7", 1,
+		"w/", 2
+	);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("AntiCommandChoker")
-		.description("Verhindert das Senden von Nachrichten, die mit \"7\" beginnen.")
+		.description("Verhindert das Senden von falsch geschriebenen Befehlen.")
 		.icon(new ItemStack(Blocks.barrier, 7));
 
 	@EventListener
@@ -74,21 +82,24 @@ public class AntiCommandChoker extends Feature {
 			return;
 		}
 
-		if (msg.startsWith("7")) {
+		for (Map.Entry<String, Integer> fail : FAIL_TO_START.entrySet()) {
+			if (!msg.startsWith(fail.getKey()) || msg.substring(fail.getKey().length()).startsWith(" "))
+				continue;
 
-			String command = msg.substring(1);
 			int id = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+			String fixedCommand = msg.substring(fail.getValue());
 
-			IChatComponent question = new ChatComponentText(Constants.ADDON_PREFIX + String.format("Meintest du /%s? ", msg.split(" ")[0].substring(1)));
+			IChatComponent question = new ChatComponentText(Constants.ADDON_PREFIX + String.format("Meintest du /%s? ", fixedCommand.split(" ")[0]));
 
 			IChatComponent yes = new ChatComponentText("§a[§l\u2714§r§a] ").setChatStyle(new ChatStyle()
-				.setChatClickEvent(getClickEvent("/" + command, id)));
+				.setChatClickEvent(getClickEvent("/" + fixedCommand, id)));
 
 			IChatComponent no = new ChatComponentText("§c[\u2716]").setChatStyle(new ChatStyle()
-				.setChatClickEvent(getClickEvent("7" + command, id)));
+				.setChatClickEvent(getClickEvent(msg, id)));
 
 			mc().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(question.appendSibling(yes).appendSibling(no), id);
 			event.setCanceled(true);
+			return;
 		}
 	}
 

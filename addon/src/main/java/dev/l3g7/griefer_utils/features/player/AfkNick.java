@@ -19,20 +19,25 @@
 package dev.l3g7.griefer_utils.features.player;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
+import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.utils.Material;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
+import java.util.regex.Matcher;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class AfkNick extends Feature {
@@ -58,25 +63,47 @@ public class AfkNick extends Feature {
 		.description("Nach wie vielen Sekunden du als AFK eingestuft werden sollst.")
 		.icon(Material.WATCH);
 
+	private final StringSetting messageReplay = new StringSetting()
+		.name("Nachricht-\nbeantworter")
+		.description("Mit welcher Nachricht geantwortet wird, wenn dir jemand eine /msg schreibt, während du AFK bist."
+			+ "\n(Leerlassen zum deaktivieren)")
+		.icon(Material.BOOK_AND_QUILL);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("AFK Nick")
 		.description("Nickt dich, wenn du eine bestimmte, einstellbare Zeit AFK bist.")
 		.icon("labymod:settings/modules/afk_timer")
-		.subSettings(nickName, new HeaderSetting(), minutes, seconds);
+		.subSettings(nickName, new HeaderSetting(), minutes, seconds, new HeaderSetting(), messageReplay);
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onInput(InputEvent event) {
+	private void onInput(InputEvent event) {
 		lastEvent = System.currentTimeMillis();
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent event) {
+	private void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent event) {
 		lastEvent = System.currentTimeMillis();
 	}
 
 	@EventListener
-	public void onTick(TickEvent.ClientTickEvent event) {
+	private void onMsg(ClientChatReceivedEvent event) {
+		if (!isAFK || messageReplay.get().isEmpty())
+			return;
+
+		Matcher matcher = Constants.MESSAGE_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
+		if (!matcher.matches())
+			return;
+
+		String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
+		if (name.equals(player().getName()))
+			return;
+
+		send("/msg " + name + " " + messageReplay.get());
+	}
+
+	@EventListener
+	private void onTick(TickEvent.ClientTickEvent event) {
 		if (player() == null)
 			return;
 
@@ -84,6 +111,13 @@ public class AfkNick extends Feature {
 			lastEvent = System.currentTimeMillis();
 			return;
 		}
+
+		if (lastEvent == 0 || (minutes.get() == 0 && seconds.get() == 0))
+			return;
+
+		// Check settings are currently being edited
+		if (mc().currentScreen instanceof LabyModAddonsGui && !path().isEmpty() && path().get(path().size() - 1) == enabled)
+			return;
 
 		long diff = System.currentTimeMillis() - lastEvent;
 

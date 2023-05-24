@@ -24,7 +24,6 @@ import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.misc.matrix.MatrixClient;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.user.User;
@@ -32,7 +31,6 @@ import net.labymod.user.group.LabyGroup;
 import net.minecraft.util.Util;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,11 +63,6 @@ public class GrieferUtilsUserManager {
 
 	private static User user(UUID uuid) {
 		return labyMod().getUserManager().getUser(uuid);
-	}
-
-	@EventListener
-	private static void onJoin(ServerEvent.ServerSwitchEvent event) {
-		lastRequest = System.currentTimeMillis();
 	}
 
 	@EventListener

@@ -45,23 +45,21 @@ jobs:
           prerelease: true
 
       - name: Upload addon jar
-        working-directory: ./addon
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/griefer-utils-${{ steps.get_version.outputs.VERSION }}.jar
+          asset_path: ./addon/build/libs/griefer-utils-${{ steps.get_version.outputs.VERSION }}.jar
           asset_name: griefer-utils-${{ steps.get_version.outputs.VERSION }}.jar
           asset_content_type: application/java-archive
 
       - name: Upload unobf addon jar
-        working-directory: ./addon
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/griefer-utils-${{ steps.get_version.outputs.VERSION }}-api.jar
+          asset_path: ./addon/build/libs/griefer-utils-${{ steps.get_version.outputs.VERSION }}-api.jar
           asset_name: griefer-utils-${{ steps.get_version.outputs.VERSION }}-api.jar
           asset_content_type: application/java-archive

@@ -47,8 +47,8 @@ public class AntiCommandChoker extends Feature {
 	private static final IngameChatManager ICM = IngameChatManager.INSTANCE;
 
 	private static final Map<String, Integer> FAIL_TO_START = ImmutableMap.of(
-		"7", 1,
-		"w/", 2
+		"^7[^ ].*", 1,
+		"^\\w/[^ ].*", 2
 	);
 
 	@MainElement
@@ -83,7 +83,7 @@ public class AntiCommandChoker extends Feature {
 		}
 
 		for (Map.Entry<String, Integer> fail : FAIL_TO_START.entrySet()) {
-			if (!msg.startsWith(fail.getKey()) || msg.substring(fail.getKey().length()).startsWith(" "))
+			if (!msg.matches(fail.getKey()))
 				continue;
 
 			int id = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);

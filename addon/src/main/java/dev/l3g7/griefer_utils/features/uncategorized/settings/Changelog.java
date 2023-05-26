@@ -59,7 +59,7 @@ public class Changelog {
 						new HeaderSetting("§r"),
 						new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
 						new HeaderSetting("§e§lChangelog - " + title).scale(.7),
-						new TextSetting(entry.getValue().getAsString().replace("\r", ""))
+						new TextSetting(393).addText(entry.getValue().getAsString().replace("\r", ""))
 					)));
 			}
 

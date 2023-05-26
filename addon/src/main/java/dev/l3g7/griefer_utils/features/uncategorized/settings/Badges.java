@@ -56,6 +56,9 @@ public class Badges {
 				return;
 			}
 
+			if (mc().getNetHandler() == null)
+				return;
+
 			for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap())
 				GrieferUtilsUserManager.queueUser(info.getGameProfile().getId());
 		});

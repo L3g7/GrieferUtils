@@ -18,9 +18,13 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
@@ -33,16 +37,24 @@ import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.Tr
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.TransactionsPacket;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
+import net.labymod.utils.Material;
 
+import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static dev.l3g7.griefer_utils.features.uncategorized.Transactions.ExportFormat.NO_SELECTION;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
@@ -101,6 +113,27 @@ public class Transactions extends Feature {
 		// Add transactions count
 		list.add(new HeaderSetting("Insgesamt " + (transactions.size() == 1 ? "eine Transaktion" : transactions.size() + " Transaktionen")));
 		list.add(new HeaderSetting("§r").scale(.4).entryHeight(10));
+
+		// Add export setting
+		DropDownSetting<ExportFormat> export = new DropDownSetting<>(ExportFormat.class, 1)
+			.name("Transaktionen exporierten")
+			.defaultValue(NO_SELECTION)
+			.icon(Material.BOOK_AND_QUILL);
+
+		export.callback(format -> {
+			if (format == NO_SELECTION)
+				return;
+
+			try {
+				export(format);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+			export.set(NO_SELECTION);
+		});
+
+		list.add(export);
 
 		// Add filter
 		StringSetting filter = new StringSetting()
@@ -166,7 +199,7 @@ public class Transactions extends Feature {
 			List<SettingsElement> listedElementsStored = new ArrayList<>(Reflection.get(mc().currentScreen, "listedElementsStored"));
 			listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
 
-			String filter = ((StringSetting) listedElementsStored.get(7)).get();
+			String filter = ((StringSetting) listedElementsStored.get(8)).get();
 			boolean dotMode = filter.contains(".");
 
 			getMainElement().getSubSettings().getElements().stream()
@@ -187,6 +220,41 @@ public class Transactions extends Feature {
 		}, 1);
 	}
 
+	private void export(ExportFormat format) throws IOException {
+		File grieferUtilsDir = new File("GrieferUtils");
+		if (!grieferUtilsDir.exists()) grieferUtilsDir.createNewFile();
+
+		File file = new File("Transaktionen." + format.fileSuffix);
+
+		List<Transaction> transactions = new ArrayList<>(this.transactions);
+
+		try (FileWriter writer = new FileWriter(file)) {
+			switch (format) {
+				case TEXT:
+					for (Transaction t : transactions) {
+						String date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(t.timestamp));
+						String typeString = t.username.equals(MinecraftUtil.name()) ? "gezahlt an " + t.recipientname : "bekommen von " + t.username;
+						String amount = String.valueOf(t.amount).replaceFirst("\\.0*$|(\\.\\d*?)0+$", "$1");
+						writer.write(String.format("[%s] $%s %s%n", date, amount, typeString));
+					}
+					break;
+
+				case CSV:
+					writer.write("Id;Sender;Receiver;SenderId;ReceiverId;Amount;Timestamp\n");
+					for (Transaction t : transactions)
+						writer.write(String.format("%s;%s;%s;%s;%s;%s;%s%n", t.id, t.username, t.recipientname, t.userId, t.recipientId, t.amount, t.timestamp));
+					break;
+
+				case JSON:
+					Gson gson = new GsonBuilder().setPrettyPrinting().create();
+					writer.write(gson.toJson(transactions));
+					break;
+			}
+		}
+
+		Desktop.getDesktop().open(file);
+	}
+
 	private enum Direction {
 
 		SENT, RECEIVED, SELF;
@@ -200,4 +268,39 @@ public class Transactions extends Feature {
 				return RECEIVED;
 		}
 	}
+
+	enum ExportFormat {
+
+		NO_SELECTION("", null, null),
+		TEXT("Text", "txt", t -> {
+			String date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(t.timestamp));
+			String typeString = t.username.equals(MinecraftUtil.name()) ? "gezahlt an " + t.recipientname : "bekommen von " + t.username;
+			return String.format("[%s] $%s %s", date, String.valueOf(t.amount).replaceFirst("\\.0*$|(\\.\\d*?)0+$", "$1"), typeString);
+		}),
+		JSON("JSON", "json", t -> {
+			JsonObject object = new JsonObject();
+			object.addProperty("id", t.id);
+			object.addProperty("sender", t.username);
+			object.addProperty("receiver", t.recipientname);
+			object.addProperty("sender_id", t.userId);
+			object.addProperty("receiver_id", t.recipientId);
+			object.addProperty("amount", t.amount);
+			object.addProperty("timestamp", t.timestamp);
+			return object;
+		}),
+		CSV("CSV", "csv", t -> String.format("%s;%s;%s;%s;%s;%s;%s", t.id, t.username, t.recipientname, t.userId, t.recipientId, t.amount, t.timestamp));
+
+		final String name;
+		final String fileSuffix;
+		private final Function<Transaction, Object> convertFunction;
+
+
+		ExportFormat(String name, String fileSuffix, Function<Transaction, Object> convertFunction) {
+			this.name = name;
+			this.fileSuffix = fileSuffix;
+			this.convertFunction = convertFunction;
+		}
+
+	}
+
 }

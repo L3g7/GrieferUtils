@@ -32,6 +32,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -50,6 +51,10 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 	private int dropDownX;
 
 	public DropDownSetting(Class<E> enumClass) {
+		this(enumClass, 0);
+	}
+
+	public DropDownSetting(Class<E> enumClass, int skippedEntries) {
 		super("§cNo name set", null);
 		setChangeListener(this::set);
 
@@ -67,7 +72,8 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 					super.setX(x);
 			}
 		};
-		menu.fill(enumClass.getEnumConstants());
+		E[] constants = enumClass.getEnumConstants();
+		menu.fill(Arrays.copyOfRange(constants, skippedEntries, constants.length));
 		Reflection.set(this, menu, "dropDownMenu");
 
 		// Use name field as default stringProvider

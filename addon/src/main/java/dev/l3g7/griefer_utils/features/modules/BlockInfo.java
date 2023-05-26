@@ -93,6 +93,11 @@ public class BlockInfo extends Module {
 	}
 
 	@Override
+	public boolean isShown() {
+		return true;
+	}
+
+	@Override
 	public void draw(double x, double y, double rightX) {
 		updateObjectMouseOver();
 

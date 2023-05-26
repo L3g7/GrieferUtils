@@ -48,7 +48,8 @@ public class AntiCommandChoker extends Feature {
 
 	private static final Map<String, Integer> FAIL_TO_START = ImmutableMap.of(
 		"^7[^ ].*", 1,
-		"^\\w/[^ ].*", 2
+		"^\\w/[^ ].*", 2,
+		"^\\([^)]+$", 1
 	);
 
 	@MainElement

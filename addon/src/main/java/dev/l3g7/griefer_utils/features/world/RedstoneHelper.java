@@ -25,7 +25,6 @@ import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.ChunkFilledEvent;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.event.events.render.ParticleSpawnEvent;
@@ -55,7 +54,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.labymod.utils.Material.COMPASS;
 import static net.labymod.utils.Material.REDSTONE;
@@ -203,9 +201,6 @@ public class RedstoneHelper extends Feature {
 		}
 	}
 
-	// hide Redstone dust
-	// Repeater delay
-
 	@EventListener
 	public void onParticleSpawn(ParticleSpawnEvent event) {
 		if (event.particleID == REDSTONE_PARTICLE_ID && hideRedstoneParticles.get())
@@ -235,14 +230,6 @@ public class RedstoneHelper extends Feature {
 		GlStateManager.enableTexture2D();
 		GlStateManager.enableDepth();
 		GlStateManager.enableCull();
-	}
-
-	@EventListener
-	public void onMsgs(MessageEvent.MessageSendEvent event) {
-		if (event.message.equals("//rh")) {
-			display(schematicasRROs.size() + "");
-			event.setCanceled(true);
-		}
 	}
 
 	private abstract static class RedstoneRenderObject {
@@ -322,6 +309,9 @@ public class RedstoneHelper extends Feature {
 			}
 
 			public void render(BlockPos pos, float partialTicks) {
+				if (!showDirection.get())
+					return;
+
 				prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
 
 				switch (dir) {

@@ -24,10 +24,7 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import dev.l3g7.griefer_utils.settings.elements.StringSetting;
+import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.utils.Material;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -43,6 +40,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 public class AfkNick extends Feature {
 
 	private long lastEvent = 0;
+	private boolean manuallyAFK = false;
 	private boolean isAFK = false;
 
 	private final StringSetting nickName = new StringSetting()
@@ -51,6 +49,19 @@ public class AfkNick extends Feature {
 			"\n%name% wird mit deinem Namen ersetzt.")
 		.defaultValue("AFK_%name%")
 		.icon(Material.BOOK_AND_QUILL);
+
+	private final KeySetting triggerAfk = new KeySetting()
+		.name("Hotkey")
+		.icon("key")
+		.description("Markiert dich automatisch als AFK, wenn diese Taste gedrück wird.")
+		.pressCallback(b -> {
+			if (!b)
+				return;
+
+			isAFK = manuallyAFK = true;
+			lastEvent = 0;
+			send("/nick " + nickName.get().replace("%name%", player().getName()));
+		});
 
 	private final NumberSetting minutes = new NumberSetting()
 		.name("Minuten")
@@ -74,16 +85,18 @@ public class AfkNick extends Feature {
 		.name("AFK Nick")
 		.description("Nickt dich, wenn du eine bestimmte, einstellbare Zeit AFK bist.")
 		.icon("labymod:settings/modules/afk_timer")
-		.subSettings(nickName, new HeaderSetting(), minutes, seconds, new HeaderSetting(), messageReplay);
+		.subSettings(nickName, messageReplay, triggerAfk, new HeaderSetting(), minutes, seconds);
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onInput(InputEvent event) {
-		lastEvent = System.currentTimeMillis();
+		if (!manuallyAFK)
+			lastEvent = System.currentTimeMillis();
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent event) {
-		lastEvent = System.currentTimeMillis();
+		if (!manuallyAFK)
+			lastEvent = System.currentTimeMillis();
 	}
 
 	@EventListener
@@ -133,7 +146,7 @@ public class AfkNick extends Feature {
 		if (!isAFK)
 			return;
 
-		isAFK = false;
+		isAFK = manuallyAFK = false;
 		send("/unnick");
 	}
 

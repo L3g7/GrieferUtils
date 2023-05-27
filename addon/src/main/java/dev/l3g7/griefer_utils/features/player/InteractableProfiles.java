@@ -27,7 +27,6 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -79,7 +78,7 @@ public class InteractableProfiles extends Feature {
 		}
 
 		slot = gui.inventorySlots.getSlot(32);
-		if (slot != gui.getSlotUnderMouse() || !slot.getHasStack())
+		if (slot != gui.getSlotUnderMouse() || !slot.getHasStack() || !slot.getStack().hasTagCompound())
 			return;
 
 		// CityBuild is not visible
@@ -87,7 +86,7 @@ public class InteractableProfiles extends Feature {
 			return;
 
 		// Player is offline
-		if (EnchantmentHelper.getEnchantments(slot.getStack()).isEmpty())
+		if (!slot.getStack().getTagCompound().hasKey("ench"))
 			return;
 
 		String citybuild = ItemUtil.getLastLore(slot.getStack());

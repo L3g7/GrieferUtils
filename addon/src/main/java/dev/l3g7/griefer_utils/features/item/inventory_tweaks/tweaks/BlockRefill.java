@@ -29,6 +29,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 
 import java.util.Objects;
@@ -94,6 +95,11 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 	@EventListener
 	public void onItemUse(ItemUseEvent event) {
 		if (!refillBlocks.get() || !(event.getStackBeforeUse().getItem() instanceof ItemBlock))
+			return;
+
+		ItemStack previousStack = event.getStackBeforeUse();
+		NBTTagCompound tag = previousStack.getTagCompound();
+		if (tag != null && tag.hasKey("currentAmount") && tag.getInteger("currentAmount") != 1)
 			return;
 
 		if (!event.getStackBeforeUse().isItemEqual(event.getStackAfteruse())) {

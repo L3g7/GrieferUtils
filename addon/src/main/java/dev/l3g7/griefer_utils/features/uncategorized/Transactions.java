@@ -20,11 +20,13 @@ package dev.l3g7.griefer_utils.features.uncategorized;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonWriter;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
@@ -46,15 +48,19 @@ import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import static dev.l3g7.griefer_utils.features.uncategorized.Transactions.ExportFormat.NO_SELECTION;
+import static dev.l3g7.griefer_utils.features.uncategorized.Transactions.ExportFormat.PPTX;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
@@ -116,7 +122,7 @@ public class Transactions extends Feature {
 
 		// Add export setting
 		DropDownSetting<ExportFormat> export = new DropDownSetting<>(ExportFormat.class, 1)
-			.name("Transaktionen exporierten")
+			.name("Transaktionen exportierten")
 			.defaultValue(NO_SELECTION)
 			.icon(Material.BOOK_AND_QUILL);
 
@@ -220,41 +226,6 @@ public class Transactions extends Feature {
 		}, 1);
 	}
 
-	private void export(ExportFormat format) throws IOException {
-		File grieferUtilsDir = new File("GrieferUtils");
-		if (!grieferUtilsDir.exists()) grieferUtilsDir.createNewFile();
-
-		File file = new File("Transaktionen." + format.fileSuffix);
-
-		List<Transaction> transactions = new ArrayList<>(this.transactions);
-
-		try (FileWriter writer = new FileWriter(file)) {
-			switch (format) {
-				case TEXT:
-					for (Transaction t : transactions) {
-						String date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(t.timestamp));
-						String typeString = t.username.equals(MinecraftUtil.name()) ? "gezahlt an " + t.recipientname : "bekommen von " + t.username;
-						String amount = String.valueOf(t.amount).replaceFirst("\\.0*$|(\\.\\d*?)0+$", "$1");
-						writer.write(String.format("[%s] $%s %s%n", date, amount, typeString));
-					}
-					break;
-
-				case CSV:
-					writer.write("Id;Sender;Receiver;SenderId;ReceiverId;Amount;Timestamp\n");
-					for (Transaction t : transactions)
-						writer.write(String.format("%s;%s;%s;%s;%s;%s;%s%n", t.id, t.username, t.recipientname, t.userId, t.recipientId, t.amount, t.timestamp));
-					break;
-
-				case JSON:
-					Gson gson = new GsonBuilder().setPrettyPrinting().create();
-					writer.write(gson.toJson(transactions));
-					break;
-			}
-		}
-
-		Desktop.getDesktop().open(file);
-	}
-
 	private enum Direction {
 
 		SENT, RECEIVED, SELF;
@@ -269,36 +240,164 @@ public class Transactions extends Feature {
 		}
 	}
 
+	// TODO beautify this mess
+	// maybe remove in next update?
+
+	private final Gson PRETTY_PRINTING_GSON = new GsonBuilder().setPrettyPrinting().create();
+
+	private void export(ExportFormat format) throws IOException {
+		File file = new File("GrieferUtils", "Transaktionen." + format.fileSuffix);
+		file.getParentFile().mkdirs();
+		if (file.exists())
+			file.delete();
+		file.createNewFile();
+
+		List<Transaction> transactions = new ArrayList<>(this.transactions);
+
+		if (format == PPTX)
+			try (OutputStream out = Files.newOutputStream(file.toPath())) {
+				exportPptx(out);
+			}
+		else {
+			try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()))) {
+				switch (format) {
+					case TEXT:
+						for (Transaction t : transactions) {
+							String date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(t.timestamp));
+							String typeString = t.username.equals(MinecraftUtil.name()) ? t.username.equals(t.recipientname) ? "an dich selbst gezahlt" : "an " + t.recipientname + " gezahlt" : "von " + t.username + " bekommen";
+							String amount = String.valueOf(t.amount).replaceFirst("\\.0*$|(\\.\\d*?)0+$", "$1");
+							writer.write(String.format("[%s] $%s %s%n", date, amount, typeString));
+						}
+						break;
+
+					case CSV:
+						writer.write("Transaktionsid;Sender;Empfänger;Sender-Id;Empfänger-Id;Betrag;Zeitpunkt\n");
+						for (Transaction t : transactions)
+							writer.write(String.format("%s;%s;%s;%s;%s;%s;%s%n", t.id, t.username, t.recipientname, t.userId, t.recipientId, t.amount, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(t.timestamp))));
+						break;
+
+					case JSON:
+						JsonArray beautifiedTransactions = new JsonArray();
+						for (Transaction t : transactions) {
+							JsonObject object = new JsonObject();
+							object.addProperty("transaction_id", t.id);
+							object.addProperty("sender_name", t.username);
+							object.addProperty("receiver_name", t.recipientname);
+							object.addProperty("sender_uuid", t.userId);
+							object.addProperty("receiver_uuid", t.recipientId);
+							object.addProperty("amount", t.amount);
+							object.addProperty("unix_timestamp", t.timestamp);
+							beautifiedTransactions.add(object);
+						}
+
+						try (JsonWriter jsonWriter = new JsonWriter(writer)) {
+							jsonWriter.setIndent("\t");
+							PRETTY_PRINTING_GSON.toJson(beautifiedTransactions, jsonWriter);
+						}
+						break;
+				}
+			}
+		}
+
+		Desktop.getDesktop().open(file);
+	}
+
+	// TODO beautify this mess
+	// boilerplate, hardcoded, ineffective, ugly
+	private void exportPptx(OutputStream fileOut) throws IOException {
+		int transactionCount = transactions.size();
+		ZipOutputStream out = new ZipOutputStream(fileOut);
+
+		// Prepare strings for injection
+		StringBuilder injectContentTypes = new StringBuilder();
+		for (int i = 0; i < transactionCount; i++)
+			injectContentTypes.append("<Override PartName=\"/ppt/slides/slide").append(i + 3).append(".xml\" ContentType=\"application/vnd.openxmlformats-officedocument.presentationml.slide+xml\"/>");
+		StringBuilder injectPresentationSldIdLst = new StringBuilder();
+		for (int i = 0; i < transactionCount; i++)
+			injectPresentationSldIdLst.append("<p:sldId id=\"").append(i + 1000).append("\" r:id=\"rId").append(i + 13).append("\"/>");
+		StringBuilder injectPresentationRels = new StringBuilder();
+		for (int i = 0; i < transactionCount; i++)
+			injectPresentationRels.append("<Relationship Id=\"rId").append(i + 13).append("\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide\" Target=\"slides/slide").append(i + 3).append(".xml\"/>");
+		double received = transactions.stream().filter(t->Direction.get(t)==Direction.RECEIVED).mapToDouble(t->t.amount).sum();
+		double spent = transactions.stream().filter(t->Direction.get(t)==Direction.SENT).mapToDouble(t->t.amount).sum();
+		String receivedStr = format(received);
+		String spentStr = format(spent);
+		String earned = format(received-spent);
+
+		int maxLen = Math.max(receivedStr.length(), Math.max(spentStr.length(), earned.length()));
+
+		// Create zip (copy from template and inject)
+		ZipInputStream in = new ZipInputStream(FileProvider.getData("assets/minecraft/griefer_utils/transactions_export_template"));
+		ZipEntry entry;
+		while ((entry = in.getNextEntry()) != null) {
+			out.putNextEntry(new ZipEntry(entry.getName()));
+			byte[] buffer = new byte[4096];
+			int bytesRead;
+
+			// Inject
+			if (entry.getName().endsWith("[Content_Types].xml") ||
+				entry.getName().endsWith("presentation.xml") ||
+				entry.getName().endsWith("presentation.xml.rels") ||
+				entry.getName().endsWith("slide1.xml") ||
+				entry.getName().endsWith("slide2.xml")) {
+				ByteArrayOutputStream b = new ByteArrayOutputStream();
+				while ((bytesRead = in.read(buffer, 0, 4096)) != -1)
+					b.write(buffer, 0, bytesRead);
+				String s = b.toString();
+				s = s.replace("{InjectContentTypes}", injectContentTypes)
+					.replace("{InjectPresentationSldIdLst}", injectPresentationSldIdLst)
+					.replace("{InjectPresentationRels}", injectPresentationRels)
+					.replace("{InjectFrontSlideName}", MinecraftUtil.name())
+					.replace("{InjectSummarySlideReceived}", leftPad(receivedStr, maxLen) + "$")
+					.replace("{InjectSummarySlideSpent}", " " + leftPad(spentStr, maxLen) + "$")
+					.replace("{InjectSummarySlideEarned}", "   " + leftPad(earned, maxLen) + "$");
+				out.write(s.getBytes());
+			} else
+				while ((bytesRead = in.read(buffer, 0, 4096)) != -1)
+					out.write(buffer, 0, bytesRead);
+		}
+
+		// Create slides
+		int i = 0;
+		for (Transaction transaction : transactions) {
+			out.putNextEntry(new ZipEntry("ppt/slides/slide" + (i + 3) + ".xml"));
+			out.write((String.format("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><p:sld xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:p=\"http://schemas.openxmlformats.org/presentationml/2006/main\"><p:cSld><p:spTree><p:nvGrpSpPr><p:cNvPr id=\"1\" name=\"\"/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/><a:chOff x=\"0\" y=\"0\"/><a:chExt cx=\"0\" cy=\"0\"/></a:xfrm></p:grpSpPr><p:sp><p:nvSpPr><p:cNvPr id=\"2\" name=\"Titel 1\"><a:extLst><a:ext uri=\"{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}\"><a16:creationId xmlns:a16=\"http://schemas.microsoft.com/office/drawing/2014/main\" id=\"{75010B25-D580-DF75-8D9E-34616B09724D}\"/></a:ext></a:extLst></p:cNvPr><p:cNvSpPr><a:spLocks noGrp=\"1\"/></p:cNvSpPr><p:nvPr><p:ph type=\"title\"/></p:nvPr></p:nvSpPr><p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:r><a:rPr lang=\"de-DE\" dirty=\"0\"/><a:t>Transaktion #%d</a:t></a:r></a:p></p:txBody></p:sp><mc:AlternateContent xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"><mc:Choice xmlns:a14=\"http://schemas.microsoft.com/office/drawing/2010/main\" Requires=\"a14\"><p:sp><p:nvSpPr><p:cNvPr id=\"3\" name=\"Inhaltsplatzhalter 2\"><a:extLst><a:ext uri=\"{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}\"><a16:creationId xmlns:a16=\"http://schemas.microsoft.com/office/drawing/2014/main\" id=\"{36686E2E-EC35-D61C-06BA-609DC6AF0E37}\"/></a:ext></a:extLst></p:cNvPr><p:cNvSpPr><a:spLocks noGrp=\"1\"/></p:cNvSpPr><p:nvPr><p:ph idx=\"1\"/></p:nvPr></p:nvSpPr><p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:pPr marL=\"0\" indent=\"0\"><a:buNone/></a:pPr><a:r><a:rPr lang=\"de-DE\" dirty=\"0\"/><a:t>%s </a:t></a:r><a14:m><m:oMath xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\"><m:r><a:rPr lang=\"de-DE\" i=\"1\" dirty=\"0\" smtClean=\"0\"><a:latin typeface=\"Cambria Math\" panose=\"02040503050406030204\" pitchFamily=\"18\" charset=\"0\"/></a:rPr><m:t>→</m:t></m:r></m:oMath></a14:m><a:r><a:rPr lang=\"de-DE\" dirty=\"0\"/><a:t> %s</a:t></a:r></a:p><a:p><a:pPr marL=\"0\" indent=\"0\"><a:buNone/></a:pPr><a:r><a:rPr lang=\"de-DE\" dirty=\"0\"/><a:t>Betrag: %s$</a:t></a:r></a:p><a:p><a:pPr marL=\"0\" indent=\"0\"><a:buNone/></a:pPr><a:r><a:rPr lang=\"de-DE\" dirty=\"0\"/><a:t>Zeitpunkt: </a:t></a:r><a:r><a:rPr lang=\"de-DE\"/><a:t>%s</a:t></a:r><a:endParaRPr lang=\"de-DE\" dirty=\"0\"/></a:p></p:txBody></p:sp></mc:Choice><mc:Fallback><p:sp><p:nvSpPr><p:cNvPr id=\"3\" name=\"Inhaltsplatzhalter 2\"><a:extLst><a:ext uri=\"{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}\"><a16:creationId xmlns:a16=\"http://schemas.microsoft.com/office/drawing/2014/main\" id=\"{36686E2E-EC35-D61C-06BA-609DC6AF0E37}\"/></a:ext></a:extLst></p:cNvPr><p:cNvSpPr><a:spLocks noGrp=\"1\" noRot=\"1\" noChangeAspect=\"1\" noMove=\"1\" noResize=\"1\" noEditPoints=\"1\" noAdjustHandles=\"1\" noChangeArrowheads=\"1\" noChangeShapeType=\"1\" noTextEdit=\"1\"/></p:cNvSpPr><p:nvPr><p:ph idx=\"1\"/></p:nvPr></p:nvSpPr><p:spPr><a:blipFill><a:blip r:embed=\"rId3\"/><a:stretch><a:fillRect l=\"-1217\" t=\"-2241\"/></a:stretch></a:blipFill></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:r><a:rPr lang=\"de-DE\"><a:noFill/></a:rPr><a:t> </a:t></a:r></a:p></p:txBody></p:sp></mc:Fallback></mc:AlternateContent></p:spTree><p:extLst><p:ext uri=\"{BB962C8B-B14F-4D97-AF65-F5344CB8AC3E}\"><p14:creationId xmlns:p14=\"http://schemas.microsoft.com/office/powerpoint/2010/main\" val=\"1776503031\"/></p:ext></p:extLst></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr><mc:AlternateContent xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"><mc:Choice xmlns:p14=\"http://schemas.microsoft.com/office/powerpoint/2010/main\" Requires=\"p14\"><p:transition p14:dur=\"250\"><p:fade/></p:transition></mc:Choice><mc:Fallback><p:transition><p:fade/></p:transition></mc:Fallback></mc:AlternateContent></p:sld>", transaction.id, transaction.username, transaction.recipientname, transaction.amount, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(transaction.timestamp)))).getBytes());
+			out.putNextEntry(new ZipEntry("ppt/slides/_rels/slide" + (i + 3) + ".xml.rels"));
+			out.write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/image5.png\"/><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout\" Target=\"../slideLayouts/slideLayout2.xml\"/></Relationships>").getBytes());
+			i++;
+		}
+		out.closeEntry();
+		out.close();
+
+	}
+
+	private String format(double value) {
+		String s = new BigDecimal(String.valueOf(value)).toPlainString();
+		if (s.length() == s.indexOf(".") + 2)
+			s += "0";
+		return s.replace('.', ',');
+	}
+	private String leftPad(String str, int targetLen) {
+		StringBuilder strBuilder = new StringBuilder(str);
+		while (strBuilder.length() < targetLen)
+			strBuilder.insert(0, " ");
+		return strBuilder.toString();
+	}
+
 	enum ExportFormat {
 
-		NO_SELECTION("", null, null),
-		TEXT("Text", "txt", t -> {
-			String date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(t.timestamp));
-			String typeString = t.username.equals(MinecraftUtil.name()) ? "gezahlt an " + t.recipientname : "bekommen von " + t.username;
-			return String.format("[%s] $%s %s", date, String.valueOf(t.amount).replaceFirst("\\.0*$|(\\.\\d*?)0+$", "$1"), typeString);
-		}),
-		JSON("JSON", "json", t -> {
-			JsonObject object = new JsonObject();
-			object.addProperty("id", t.id);
-			object.addProperty("sender", t.username);
-			object.addProperty("receiver", t.recipientname);
-			object.addProperty("sender_id", t.userId);
-			object.addProperty("receiver_id", t.recipientId);
-			object.addProperty("amount", t.amount);
-			object.addProperty("timestamp", t.timestamp);
-			return object;
-		}),
-		CSV("CSV", "csv", t -> String.format("%s;%s;%s;%s;%s;%s;%s", t.id, t.username, t.recipientname, t.userId, t.recipientId, t.amount, t.timestamp));
+		NO_SELECTION("§7-", null),
+		TEXT("Text", "txt"),
+		JSON("JSON", "json"),
+		CSV("CSV", "csv"),
+		PPTX("PPTX", "pptx");
 
 		final String name;
 		final String fileSuffix;
-		private final Function<Transaction, Object> convertFunction;
 
-
-		ExportFormat(String name, String fileSuffix, Function<Transaction, Object> convertFunction) {
+		ExportFormat(String name, String fileSuffix) {
 			this.name = name;
 			this.fileSuffix = fileSuffix;
-			this.convertFunction = convertFunction;
 		}
 
 	}

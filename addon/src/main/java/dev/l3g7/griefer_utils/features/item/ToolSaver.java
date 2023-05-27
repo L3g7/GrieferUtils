@@ -41,8 +41,10 @@ public class ToolSaver extends Feature {
 
 	private final NumberSetting damage = new NumberSetting()
 		.name("Min. Haltbarkeit")
+		.description("Wenn ein Werkzeug diese Haltbarkeit erreicht hat, werden Klicks damit verhindert."
+			+ "\nEs wird ein Wert von §nmindestens§r 1 empfohlen, damit das Item auch bei Lags nicht zerstört wird.")
 		.icon("shield_with_sword")
-		.min(1);
+		.defaultValue(1);
 
 	private final BooleanSetting saveNonRepairable = new BooleanSetting()
 		.name("Irreparables retten")
@@ -53,7 +55,7 @@ public class ToolSaver extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("ToolSaver")
-		.description("Deaktiviert Klicks, sobald das in der Hand gehaltene Werkzeug die eingestellte Haltbarkeit unterschreitet.")
+		.description("Verhindert Klicks, sobald das in der Hand gehaltene Werkzeug die eingestellte Haltbarkeit unterschreitet.")
 		.icon("broken_pickaxe")
 		.subSettings(damage, saveNonRepairable);
 
@@ -81,6 +83,6 @@ public class ToolSaver extends Feature {
 		if  (!ItemUtil.canBeRepaired(heldItem) && !saveNonRepairable.get())
 			return false;
 
-		return damage.get() > heldItem.getMaxDamage() - heldItem.getItemDamage();
+		return damage.get() >= heldItem.getMaxDamage() - heldItem.getItemDamage();
 	}
 }

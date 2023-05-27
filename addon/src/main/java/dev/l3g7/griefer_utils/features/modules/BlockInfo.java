@@ -29,11 +29,15 @@ import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
+import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import org.apache.commons.lang3.tuple.Pair;
@@ -145,6 +149,16 @@ public class BlockInfo extends Module {
 
 		IBlockState state = world().getBlockState(mop.getBlockPos());
 		ItemStack pickedStack = state.getBlock().getPickBlock(mop, world(), mop.getBlockPos(), player());
+		if (state.getBlock() instanceof BlockSkull) {
+			TileEntitySkull tes = (TileEntitySkull) world().getTileEntity(mop.getBlockPos());
+			NBTTagCompound tag = new NBTTagCompound();
+			NBTTagCompound nbttagcompound = new NBTTagCompound();
+
+			NBTUtil.writeGameProfile(nbttagcompound, tes.getPlayerProfile());
+			tag.setTag("SkullOwner", nbttagcompound);
+			pickedStack.setTagCompound(tag);
+		}
+
 		data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
 	}
 

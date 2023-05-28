@@ -21,10 +21,10 @@ package dev.l3g7.griefer_utils.features.chat;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.ChatLogModifyEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderChatEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.ChatLineUtil;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -37,19 +37,14 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 
 @Singleton
 public class MessageSkulls extends Feature {
 
-	private static final Random RANDOM = new Random();
-	private static final HashMap<String, String> ID_TO_MESSAGE_MAP = new HashMap<>();
 	private static final ArrayList<Pattern> PATTERNS = new ArrayList<Pattern>(MESSAGE_PATTERNS) {{
 		remove(GLOBAL_CHAT_PATTERN);
 		add(STATUS_PATTERN);
@@ -68,32 +63,10 @@ public class MessageSkulls extends Feature {
 			if (!matcher.matches())
 				continue;
 
-			String id;
-			do id = getId();
-			while (ID_TO_MESSAGE_MAP.containsKey(id));
-
-			ID_TO_MESSAGE_MAP.put(id, event.original.getUnformattedText());
+			String id = "§c   §r";
 			event.message = new ChatComponentText(id).appendSibling(event.message);
 			return;
 		}
-	}
-
-	@EventListener
-	public void onChatLogModify(ChatLogModifyEvent event) {
-		int idStart = event.message.indexOf("§m§s");
-		if (idStart == -1)
-			return;
-
-		String start = event.message.substring(0, idStart + 4);
-		String end = event.message.substring(event.message.indexOf(" ", idStart) + 3);
-		event.message = start + end;
-	}
-
-	private String getId() {
-		return "§m§s" + RANDOM.ints(10, 0, 7)
-			.mapToObj(String::valueOf)
-			.collect(Collectors.joining())
-			.replace("", "§") + "r   ";
 	}
 
 	@EventListener
@@ -104,18 +77,19 @@ public class MessageSkulls extends Feature {
 		IChatComponent component = (IChatComponent) event.chatLine.getComponent();
 		String formattedText = component.getFormattedText();
 
-		int idStart = formattedText.indexOf("§m§s");
-
+		int idStart = formattedText.indexOf("§c   ");
 		if (idStart == -1)
 			return;
 
-		String msg = ID_TO_MESSAGE_MAP.get(formattedText.substring(idStart, formattedText.indexOf(" ", idStart) + 3));
-		if (msg == null)
-			return;
+		IChatComponent wholeComponent = ChatLineUtil.getComponentFromLine(event.chatLine);
+		String msg = wholeComponent.getUnformattedText();
 
 		int startIndex = msg.indexOf('\u2503') + 2;
 		int endIndex;
 		int arrowIndex = msg.indexOf('\u00bb');
+
+		if (idStart > startIndex)
+			return;
 
 		if (arrowIndex != -1)
 			endIndex = arrowIndex - 1;

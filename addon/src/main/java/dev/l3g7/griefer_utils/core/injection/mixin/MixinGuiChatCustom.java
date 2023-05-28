@@ -18,24 +18,20 @@
 
 package dev.l3g7.griefer_utils.core.injection.mixin;
 
-import dev.l3g7.griefer_utils.event.events.render.ChatLineAddEvent;
-import net.labymod.core.ChatComponent;
-import net.labymod.ingamechat.IngameChatManager;
-import net.labymod.ingamechat.renderer.MessageData;
-import net.labymod.servermanager.ChatDisplayAction;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenu;
+import net.labymod.ingamechat.GuiChatCustom;
+import net.labymod.main.ModSettings;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
+@Mixin(value = GuiChatCustom.class, remap = false)
+public class MixinGuiChatCustom {
 
-@Mixin(IngameChatManager.class)
-public class MixinIngameChatManager {
-
-	@Inject(method = "handleSwap", at = @At("HEAD"), remap = false)
-	public void injectHandleSwap(ChatDisplayAction chatDisplayAction, ChatComponent chatComponent, CallbackInfoReturnable<MessageData> cir) {
-		EVENT_BUS.post(new ChatLineAddEvent(chatComponent));
+	@Redirect(method = "drawScreen", at = @At(value = "FIELD", target = "Lnet/labymod/main/ModSettings;hoverNameHistory:Z"))
+	public boolean redirectHoverNameHistory(ModSettings instance) {
+		return instance.hoverNameHistory && !FileProvider.getSingleton(ChatMenu.class).isEnabled();
 	}
 
 }

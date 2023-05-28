@@ -25,14 +25,11 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Config;
 import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
-import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.NameCache;
+import dev.l3g7.griefer_utils.misc.ChatLineUtil;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.core.LabyModCore;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.settings.elements.SettingsElement;
@@ -40,11 +37,8 @@ import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.event.ClickEvent;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -65,8 +59,8 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 @Singleton
 public class ChatMenu extends Feature {
 
-	private static final List<Pattern> PATTERNS = new ArrayList<Pattern>(MESSAGE_PATTERNS) {{add(STATUS_PATTERN);}};
-	public static final String COMMAND = "/grieferutils_click_event_replace_suggest_msg ";
+	protected static final CopyTextEntry COPY_TEXT_ENTRY = new CopyTextEntry();
+
 	protected static final List<ChatMenuEntry> DEFAULT_ENTRIES = ImmutableList.of(
 		new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %name%", "wooden_board"),
 		new ChatMenuEntry("Namensverlauf", CONSUMER, (Consumer<String>) ChatMenu::openNameHistory, "yellow_name"),
@@ -102,6 +96,7 @@ public class ChatMenu extends Feature {
 				.icon(entry.icon));
 		}
 
+		settings.add(COPY_TEXT_ENTRY.getSetting());
 		settings.add(newEntrySetting);
 
 		enabled.subSettings(settings.toArray(new SettingsElement[0]));
@@ -178,59 +173,16 @@ public class ChatMenu extends Feature {
 			return;
 
 		String value = LabyModCore.getMinecraft().getClickEventValue(Mouse.getX(), Mouse.getY());
-		if (value == null || !value.startsWith(COMMAND))
+		if (value == null || !value.startsWith("/msg "))
 			return;
 
 		List<ChatMenuEntry> entries = new ArrayList<>();
-		DEFAULT_ENTRIES.stream().filter(e -> e.enabled).forEach(entries::add);
-		getCustom().stream().filter(e -> e.completed && e.enabled).forEach(entries::add);
+		DEFAULT_ENTRIES.forEach(e -> { if (e.enabled) entries.add(e); });
+		if (COPY_TEXT_ENTRY.enabled) entries.add(COPY_TEXT_ENTRY);
+		getCustom().forEach(e -> { if (e.enabled) entries.add(e); });
 
-		renderer = new ChatMenuRenderer(entries, value.substring(COMMAND.length(), value.length() - 1));
+		renderer = new ChatMenuRenderer(entries, value.substring("/msg ".length()), ChatLineUtil.getHoveredComponent());
 		event.setCanceled(true);
-	}
-
-	@EventListener(priority = EventPriority.HIGHEST)
-	public void modifyMessage(MessageModifyEvent event) {
-		// Replaces all /msg click-events
-		replaceMsgClickEvents(event.message);
-
-		String name = null;
-
-		for (Pattern p : PATTERNS) {
-			Matcher m = p.matcher(event.original.getFormattedText());
-
-			if (m.find()) {
-				name = m.group("name").replaceAll("§.", "");
-				break;
-			}
-		}
-
-		if (name == null)
-			return;
-
-		name = NameCache.ensureRealName(name);
-
-		setClickEvent(event.message, COMMAND + name);
-	}
-
-
-	private static void replaceMsgClickEvents(IChatComponent component) {
-		for (IChatComponent msg : component.getSiblings()) {
-			ChatStyle style = msg.getChatStyle();
-			ClickEvent event;
-
-			if (style != null && (event = style.getChatClickEvent()) != null) {
-				String value = event.getValue();
-
-				if (value.startsWith("/msg "))
-					setClickEvent(msg, COMMAND + value.substring(5));
-			}
-		}
-
-	}
-
-	private static void setClickEvent(IChatComponent msg, String command) {
-		msg.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
 	}
 
 	@EventListener
@@ -246,14 +198,6 @@ public class ChatMenu extends Feature {
 		mc().dispatchKeypresses();
 	}
 
-	@EventListener(triggerWhenDisabled = true)
-	public void onMessageSend(MessageEvent.MessageSendEvent event) {
-		if (event.message.startsWith(COMMAND)) {
-			MinecraftUtil.suggest("/msg " + event.message.substring(COMMAND.length()));
-			event.setCanceled(true);
-		}
-	}
-
 	private static void openNameHistory(String name) {
 		if (name.startsWith("!")) {
 			displayAchievement("§eUngültiger Name", "§fVon Bedrock-Spielern kann kein Namensverlauf abgefragt werden.");
@@ -263,7 +207,7 @@ public class ChatMenu extends Feature {
 		mc().displayGuiScreen(new GuiChatNameHistory("", name));
 	}
 
-	private static void copyToClipboard(String text) {
+	static void copyToClipboard(String text) {
 		StringSelection selection = new StringSelection(text);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
 		displayAchievement("\"" + text + "\"",  "wurde in die Zwischenablage kopiert.");

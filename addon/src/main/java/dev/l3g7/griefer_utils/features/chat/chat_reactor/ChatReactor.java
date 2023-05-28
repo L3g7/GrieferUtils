@@ -20,21 +20,22 @@ package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.render.ChatLineAddEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.core.misc.Config;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.List;
 
@@ -92,10 +93,10 @@ public class ChatReactor extends Feature {
 		loaded = true;
 	}
 
-	@EventListener
-	public void onMsg(ChatLineAddEvent event) {
+	@EventListener(priority = EventPriority.LOWEST)
+	public void onMsg(ClientChatReceivedEvent event) {
 		if ((mc().currentScreen instanceof LabyModAddonsGui && getPath().contains(getMainElement()))
-			|| mc().currentScreen instanceof AddChatReactionGui)
+			|| mc().currentScreen instanceof AddChatReactionGui || event.type == 2)
 			return;
 
 		String srv = MinecraftUtil.getServerFromScoreboard();
@@ -111,7 +112,7 @@ public class ChatReactor extends Feature {
 				continue;
 
 			try {
-				reaction.processMessage(event.getFormatted());
+				reaction.processMessage(event.message.getFormattedText());
 			} catch (Exception e) {
 				display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
 				setting.set(false);

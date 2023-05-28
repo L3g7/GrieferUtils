@@ -18,12 +18,14 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.injection.mixin.MixinGuiChatAdapter;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import net.labymod.api.events.MessageModifyChatEvent;
 import net.labymod.main.LabyMod;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
@@ -58,14 +60,23 @@ public class MessageEvent extends Event {
 	}
 
 	/**
+	 * Posted in {@link MixinGuiChatAdapter#postMessageModifiedEvent(IChatComponent, int, int, boolean, boolean, String, Integer, CallbackInfo)}
+	 */
+	public static class MessageModifiedEvent extends MessageEvent {
+
+		public final IChatComponent component;
+
+		public MessageModifiedEvent(IChatComponent component) {
+			this.component = component;
+		}
+
+	}
+
+	/**
 	 * A forge event for LabyMod's {@link net.labymod.api.events.MessageSendEvent}.
 	 */
 	@Cancelable
 	public static class MessageSendEvent extends MessageEvent {
-
-		public static boolean postGUOnly(String message) {
-			return EVENT_BUS.post(new MessageSendEvent(message));
-		}
 
 		public static boolean post(String message) {
 			if (!EVENT_BUS.post(new MessageSendEvent(message))) {

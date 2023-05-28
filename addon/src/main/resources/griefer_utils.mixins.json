@@ -12,7 +12,6 @@
     "MixinEntity",
     "MixinEntityPlayer",
     "MixinForgeHooks",
-    "MixinIngameChatManager",
     "MixinLabyMod",
     "MixinLauncherAccount",
     "MixinNetHandlerPlayClient",
@@ -25,6 +24,7 @@
   "client": [
     "MixinEntityRenderer",
     "MixinGuiChatAdapter",
+    "MixinGuiChatCustom",
     "MixinGuiChatFilter",
     "MixinGuiChest",
     "MixinGuiIngame",

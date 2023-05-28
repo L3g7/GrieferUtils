@@ -25,7 +25,6 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.event.events.render.ChatLineAddEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -33,6 +32,7 @@ import dev.l3g7.griefer_utils.util.AddonUtil;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.main.LabyMod;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
@@ -90,9 +90,12 @@ public class FilterWebhooks extends Feature {
     }
 
     @EventListener(priority = EventPriority.LOWEST)
-    public void onMessageReceive(ChatLineAddEvent event) {
+    public void onMessageReceive(ClientChatReceivedEvent event) {
+		if (event.type == 2)
+			return;
+
         // Check if filters match
-        String msg = event.getUnformatted().toLowerCase();
+        String msg = event.message.getUnformattedText().toLowerCase();
         for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
             if (webhooks.containsKey(filter.getFilterName())
 	                && !webhooks.get(filter.getFilterName()).trim().isEmpty()
@@ -105,7 +108,7 @@ public class FilterWebhooks extends Feature {
 	            JsonArray embeds = new JsonArray();
 				JsonObject embed = new JsonObject();
 				embed.add("title", sanitize(filter.getFilterName()));
-				embed.add("description", sanitize(event.getUnformatted()));
+				embed.add("description", sanitize(event.message.getUnformattedText()));
 				embed.add("footer", EMBED_FOOTER);
 				if (filter.isHighlightMessage())
 					embed.addProperty("color", ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff));

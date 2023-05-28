@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.utils.Consumer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 
 import javax.imageio.ImageIO;
@@ -61,16 +62,6 @@ public class ChatMenuEntry {
 		this.iconType = IconType.SYSTEM;
 		this.icon = icon;
 		this.completed = true;
-	}
-
-	@Override
-	protected ChatMenuEntry clone() {
-		ChatMenuEntry entry = new ChatMenuEntry(name, action, command, icon);
-		entry.iconType = iconType;
-		entry.command = command;
-		entry.pos = pos;
-		entry.enabled = enabled;
-		return entry;
 	}
 
 	public JsonObject toJson() {
@@ -193,7 +184,7 @@ public class ChatMenuEntry {
 		return img;
 	}
 
-	public void trigger(String name) {
+	public void trigger(String name, IChatComponent entireText) {
 		switch (action) {
 			case CONSUMER:
 				((Consumer<String>) command).accept(name);
@@ -209,4 +200,5 @@ public class ChatMenuEntry {
 				break;
 		}
 	}
+
 }

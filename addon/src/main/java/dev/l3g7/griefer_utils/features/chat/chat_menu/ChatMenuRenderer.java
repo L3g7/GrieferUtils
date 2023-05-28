@@ -22,6 +22,7 @@ import net.labymod.utils.DrawUtils;
 import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 import org.lwjgl.input.Mouse;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class ChatMenuRenderer {
 
 	private final List<ChatMenuEntry> entries;
 	private final String playerName;
+	private final IChatComponent entireText;
 	private final String titleText;
 	private final DrawUtils utils = new DrawUtils();
 
@@ -42,10 +44,11 @@ public class ChatMenuRenderer {
 	private int y;
 	private int hoveredEntry = -1;
 
-	public ChatMenuRenderer(List<ChatMenuEntry> entries, String playerName) {
+	public ChatMenuRenderer(List<ChatMenuEntry> entries, String playerName, IChatComponent entireText) {
 		this.entries = entries;
 		this.playerName = playerName;
 		this.titleText = "ChatMenü §a" + playerName;
+		this.entireText = entireText;
 
 		// Box size
 		boxHeight = 16 + 15 * entries.size();
@@ -144,7 +147,7 @@ public class ChatMenuRenderer {
 			return false;
 
 		// Trigger the consumer and close the gui
-		entries.get(hoveredEntry).trigger(playerName);
+		entries.get(hoveredEntry).trigger(playerName, entireText);
 		return true;
 	}
 

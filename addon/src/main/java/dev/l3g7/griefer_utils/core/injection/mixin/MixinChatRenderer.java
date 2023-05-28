@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.core.injection.mixin;
 
+import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderChatEvent;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.ingamechat.renderer.ChatRenderer;
@@ -26,10 +27,12 @@ import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Iterator;
+import java.util.List;
 
 @Mixin(ChatRenderer.class)
 public class MixinChatRenderer {
@@ -37,6 +40,12 @@ public class MixinChatRenderer {
 	@Inject(method = "renderChat", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/DrawUtils;drawStringWithShadow(Ljava/lang/String;DDI)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILEXCEPTION, remap = false)
 	private void injectRenderChat(int updateCounter, CallbackInfo ci, DrawUtils draw, int fontHeight, float scale, int chatLineCount, boolean chatOpen, float opacity, int width, int visibleMessages, double totalMessages, double animationSpeed, float lineHeight, double shift, double posX, double posY, int i, Iterator<ChatLine> chatLineIterator, ChatLine chatline, boolean firstLine, boolean lastLine, int updateCounterDifference, int alpha, int x, int y) {
 		MinecraftForge.EVENT_BUS.post(new RenderChatEvent(chatline, y, alpha / 255f));
+	}
+
+	@Redirect(method = "addChatLine", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V"), remap = false)
+	public void postChatLineAddEvent(List<Object> instance, int i, Object e) {
+		MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineAddEvent((ChatLine) e));
+		instance.add(i, e);
 	}
 
 }

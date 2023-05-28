@@ -65,7 +65,7 @@ public class LightLevelOverlay extends Feature {
 		});
 
 	private final NumberSetting range = new NumberSetting()
-		.name("Radius)")
+		.name("Radius")
 		.description("Der Radius um den Spieler in Blöcken, in dem das Lichtlevel angezeigt wird.")
 		.defaultValue(20)
 		.icon(Material.COMPASS);

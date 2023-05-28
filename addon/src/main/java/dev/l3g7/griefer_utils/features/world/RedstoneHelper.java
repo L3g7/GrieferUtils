@@ -32,6 +32,9 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import net.labymod.utils.Material;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockRedstoneWire;
@@ -55,6 +58,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static net.labymod.utils.Material.COMPASS;
 import static net.labymod.utils.Material.REDSTONE;
 import static net.minecraft.init.Blocks.*;
@@ -88,6 +92,15 @@ public class RedstoneHelper extends Feature {
 		.description("Zeigt die Richtung von Werfern / Spendern und Trichtern.")
 		.icon(COMPASS);
 
+	private static final NumberSetting range = new NumberSetting()
+		.name("Radius")
+		.description("Der Radius um den Spieler in Chunks, in dem die Informationen angezeigt werden."
+			+ "\n(-1 ist unendlich)"
+			+ "\n(Betrifft nicht Schematics)")
+		.defaultValue(-1)
+		.min(-1)
+		.icon(Material.COMPASS);
+
 	private static final BooleanSetting hideRedstoneParticles = new BooleanSetting()
 		.name("Redstone-Partikel verstecken")
 		.icon(REDSTONE)
@@ -97,7 +110,7 @@ public class RedstoneHelper extends Feature {
 	private final CategorySetting enabled = new CategorySetting()
 		.name("Redstone")
 		.icon(REDSTONE)
-		.subSettings(showPower, showDirection, hideRedstoneParticles);
+		.subSettings(showPower, showDirection, range, new HeaderSetting(), hideRedstoneParticles);
 
 	@EventListener
 	public void onChunkFilled(ChunkFilledEvent event) {
@@ -219,9 +232,11 @@ public class RedstoneHelper extends Feature {
 		GlStateManager.disableCull();
 		GlStateManager.disableTexture2D();
 
-		for (Map<BlockPos, RedstoneRenderObject> map : redstoneRenderObjects.values())
-			for (Map.Entry<BlockPos, RedstoneRenderObject> entry : map.entrySet())
-				entry.getValue().render(entry.getKey(), event.partialTicks);
+		for (Map.Entry<ChunkCoordIntPair, Map<BlockPos, RedstoneRenderObject>> entry : redstoneRenderObjects.entrySet())
+			if (range.get() == -1 || (Math.abs(entry.getKey().chunkXPos - player().chunkCoordX) <= range.get()
+				&& Math.abs(entry.getKey().chunkZPos - player().chunkCoordZ) <= range.get()))
+				for (Map.Entry<BlockPos, RedstoneRenderObject> chunkEntry : entry.getValue().entrySet())
+					chunkEntry.getValue().render(chunkEntry.getKey(), event.partialTicks);
 
 		for (Map.Entry<BlockPos, RedstoneRenderObject> entry : schematicasRROs.entrySet())
 			entry.getValue().render(entry.getKey(), event.partialTicks);

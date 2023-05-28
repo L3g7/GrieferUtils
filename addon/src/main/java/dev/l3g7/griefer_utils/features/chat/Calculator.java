@@ -95,7 +95,7 @@ public class Calculator extends Feature {
 			autoWithdraw, depositAll, placeholder, autoEquationDetect);
 
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
-	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?<= )(?<equation>[\\d.]+(?:(?: *[*k+\\-:/^,e]+ *[\\d.]+k?)+|k+))(?:(?= )|$)");
+	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?k* *[+\\-/*^ek] *[+-]?\\d+(?:[.,]\\d+)?k*|[+-]?\\d+(?:[.,]\\d+)?k+)(?:(?= )|$)");
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 	private BigDecimal lastPayment = BigDecimal.ZERO;
 	private String lastPaymentReceiver;
@@ -200,6 +200,13 @@ public class Calculator extends Feature {
 				if (equation.isEmpty()) {
 					display(Constants.ADDON_PREFIX + "§r§4⚠ §cLeere Gleichung! §4⚠§r");
 					return true;
+				}
+
+				// Don't calculate if equation is "24/7"
+				if (equation.equals("24/7")
+					&& !(event.message.startsWith("/pay ") || event.message.startsWith("/bank ")) // Calculate 24/7 in /pay and /bank
+					&& pattern != PLACEHOLDER_PATTERN) { // Calculate 24/7 if specified in placeholder
+					return false;
 				}
 
 				// Calculate

@@ -78,6 +78,9 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 			if (!expectedStack.isItemStackDamageable() && expectedStack.getItemDamage() != itemStack.getItemDamage())
 				continue;
 
+			if (itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("stackSize"))
+				continue;
+
 			// Compare NBT
 			if (!Objects.equals(expectedStack.getTagCompound(), itemStack.getTagCompound()))
 				continue;

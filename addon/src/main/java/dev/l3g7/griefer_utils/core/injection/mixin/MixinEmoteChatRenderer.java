@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.core.injection.mixin;
 
 import de.emotechat.addon.gui.chat.render.EmoteChatRenderer;
+import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderChatEvent;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.minecraft.client.gui.FontRenderer;
@@ -26,7 +27,10 @@ import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(value = EmoteChatRenderer.class, remap = false)
 public class MixinEmoteChatRenderer {
@@ -35,5 +39,12 @@ public class MixinEmoteChatRenderer {
 	public void injectDrawLine(FontRenderer font, ChatLine chatLine, float x, float y, int width, int alpha, int mouseX, int mouseY, CallbackInfo ci) {
 		MinecraftForge.EVENT_BUS.post(new RenderChatEvent(chatLine, (int) y + 8, alpha / 255f));
 	}
+
+	@Redirect(method = "addChatLine", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V"), remap = false)
+	public void postChatLineAddEvent(List<Object> instance, int i, Object e) {
+		MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineAddEvent((ChatLine) e));
+		instance.add(i, e);
+	}
+
 
 }

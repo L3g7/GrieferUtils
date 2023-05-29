@@ -82,6 +82,9 @@ public class MessageSkulls extends Feature {
 			return;
 
 		IChatComponent wholeComponent = ChatLineUtil.getComponentFromLine(event.chatLine);
+		if (wholeComponent == null)
+			return;
+
 		String msg = wholeComponent.getUnformattedText();
 
 		int startIndex = msg.indexOf('\u2503') + 2;

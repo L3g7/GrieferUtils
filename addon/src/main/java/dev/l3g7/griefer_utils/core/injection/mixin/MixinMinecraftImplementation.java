@@ -20,18 +20,19 @@ package dev.l3g7.griefer_utils.core.injection.mixin;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenu;
-import net.labymod.ingamechat.GuiChatCustom;
-import net.labymod.main.ModSettings;
+import net.labymod.core_implementation.mc18.MinecraftImplementation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = GuiChatCustom.class, remap = false)
-public class MixinGuiChatCustom {
+@Mixin(value = MinecraftImplementation.class, remap = false)
+public class MixinMinecraftImplementation {
 
-	@Redirect(method = "drawScreen", at = @At(value = "FIELD", target = "Lnet/labymod/main/ModSettings;hoverNameHistory:Z"))
-	public boolean redirectHoverNameHistory(ModSettings instance) {
-		return instance.hoverNameHistory && !FileProvider.getSingleton(ChatMenu.class).isEnabled();
+	@Inject(method = "getClickEventValue", at = @At("HEAD"), cancellable = true)
+	public void injectGetClickEventValue(int x, int y, CallbackInfoReturnable<String> cir) {
+		if (FileProvider.getSingleton(ChatMenu.class).isEnabled())
+			cir.setReturnValue(null);
 	}
 
 }

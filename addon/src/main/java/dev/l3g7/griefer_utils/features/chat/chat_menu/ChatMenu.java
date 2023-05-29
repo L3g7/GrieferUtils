@@ -30,13 +30,13 @@ import dev.l3g7.griefer_utils.misc.ChatLineUtil;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
-import net.labymod.core.LabyModCore;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.event.ClickEvent;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -172,8 +172,12 @@ public class ChatMenu extends Feature {
 		if (Mouse.getEventButton() != 1)
 			return;
 
-		String value = LabyModCore.getMinecraft().getClickEventValue(Mouse.getX(), Mouse.getY());
-		if (value == null || !value.startsWith("/msg "))
+		IChatComponent icc = mc().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
+		if (icc == null || icc.getChatStyle() == null || icc.getChatStyle().getChatClickEvent() == null)
+			return;
+
+		String value = icc.getChatStyle().getChatClickEvent().getValue();
+		if (!value.startsWith("/msg "))
 			return;
 
 		List<ChatMenuEntry> entries = new ArrayList<>();

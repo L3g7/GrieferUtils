@@ -24,7 +24,7 @@
   "client": [
     "MixinEntityRenderer",
     "MixinGuiChatAdapter",
-    "MixinGuiChatCustom",
+    "MixinMinecraftImplementation",
     "MixinGuiChatFilter",
     "MixinGuiChest",
     "MixinGuiIngame",

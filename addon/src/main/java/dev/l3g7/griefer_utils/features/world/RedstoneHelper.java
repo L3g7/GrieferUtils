@@ -19,12 +19,14 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import com.github.lunatrius.schematica.api.ISchematic;
+import com.github.lunatrius.schematica.client.world.SchematicWorld;
+import com.github.lunatrius.schematica.proxy.ClientProxy;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.ChunkFilledEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.event.events.render.ParticleSpawnEvent;
@@ -57,8 +59,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.labymod.utils.Material.COMPASS;
 import static net.labymod.utils.Material.REDSTONE;
 import static net.minecraft.init.Blocks.*;
@@ -185,10 +186,9 @@ public class RedstoneHelper extends Feature {
 	}
 
 	private void updateSchematic() {
-		Object schematicWorld = Reflection.get(Constants.SCHEMATICA_CLIENT_PROXY, "schematic");
-
-		ISchematic schematic = schematicWorld == null ? null : Reflection.get(schematicWorld, "schematic");
-		BlockPos position = schematicWorld == null ? null : Reflection.get(schematicWorld, "position");
+		SchematicWorld schematicWorld = ClientProxy.schematic;
+		ISchematic schematic = schematicWorld == null ? null : schematicWorld.getSchematic();
+		BlockPos position = schematicWorld == null ? null : schematicWorld.position;
 
 		if (previousSchematic == schematic && Objects.equals(previousSchematicPos, position))
 			return;
@@ -225,7 +225,7 @@ public class RedstoneHelper extends Feature {
 		if (!showPower.get() && !showDirection.get() || (redstoneRenderObjects.isEmpty() && schematicasRROs.isEmpty()))
 			return;
 
-		if (Constants.SCHEMATICA_CLIENT_PROXY != null)
+		if (Constants.SCHEMATICA)
 			updateSchematic();
 
 		GlStateManager.disableDepth();
@@ -238,13 +238,41 @@ public class RedstoneHelper extends Feature {
 				for (Map.Entry<BlockPos, RedstoneRenderObject> chunkEntry : entry.getValue().entrySet())
 					chunkEntry.getValue().render(chunkEntry.getKey(), event.partialTicks);
 
-		for (Map.Entry<BlockPos, RedstoneRenderObject> entry : schematicasRROs.entrySet())
-			entry.getValue().render(entry.getKey(), event.partialTicks);
+		if (Constants.SCHEMATICA)
+			renderSchematicasRROs(event.partialTicks);
 
 		GlStateManager.disableLighting();
 		GlStateManager.enableTexture2D();
 		GlStateManager.enableDepth();
 		GlStateManager.enableCull();
+	}
+
+	@EventListener
+	private static void idk(MessageEvent.MessageSendEvent event) {
+		if (event.message.equalsIgnoreCase("//rhCheck")) {
+			display("" + schematicasRROs.size());
+			display((ClientProxy.schematic == null) + "");
+			if (ClientProxy.schematic != null) {
+				display("" + ClientProxy.schematic.isRendering);
+				display("" + ClientProxy.schematic.isRenderingLayer);
+				display("" + ClientProxy.schematic.renderingLayer);
+				display(">" + ClientProxy.schematic.position);
+				for (Map.Entry<BlockPos, RedstoneRenderObject> blockPosRedstoneRenderObjectEntry : schematicasRROs.entrySet()) {
+					display(blockPosRedstoneRenderObjectEntry.getKey() + "");
+				}
+			}
+			event.setCanceled(true);
+		}
+	}
+
+	private void renderSchematicasRROs(float partialTicks) {
+		SchematicWorld world = ClientProxy.schematic;
+		if (world == null || !world.isRendering)
+			return;
+
+		for (Map.Entry<BlockPos, RedstoneRenderObject> entry : schematicasRROs.entrySet())
+			if (!world.isRenderingLayer || entry.getKey().getY() == world.renderingLayer + world.position.field_177960_b)
+				entry.getValue().render(entry.getKey(), partialTicks);
 	}
 
 	private abstract static class RedstoneRenderObject {

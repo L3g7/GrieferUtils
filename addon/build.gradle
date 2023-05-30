@@ -96,7 +96,8 @@ tasks.register('downloadLibs') {
 	download.run {
 		src ([
 			"https://dl.labymod.net/latest/api/files/lm_api_mc1.8.9.jar", // LabyMod
-			"https://mediafilez.forgecdn.net/files/2279/149/Schematica-1.8.9-1.7.7.143-api.jar" // Schematica
+			"https://mediafilez.forgecdn.net/files/2279/147/Schematica-1.8.9-1.7.7.143-universal.jar", // Schematica
+			"https://mediafilez.forgecdn.net/files/2272/942/LunatriusCore-1.8.9-1.1.2.32-universal.jar" // LunatriusCore
 		])
 		dest 'libs/'
 		onlyIfModified true

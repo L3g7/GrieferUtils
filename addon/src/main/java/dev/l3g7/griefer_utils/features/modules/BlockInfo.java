@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.modules;
 
 
+import com.github.lunatrius.schematica.proxy.ClientProxy;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -130,16 +131,9 @@ public class BlockInfo extends Module {
 			return;
 		}
 
-		if (Constants.SCHEMATICA_CLIENT_PROXY != null) {
-			MovingObjectPosition mop = Reflection.get(Constants.SCHEMATICA_CLIENT_PROXY, "movingObjectPosition");
-			if (mop != null && mop.typeOfHit == BLOCK) {
-				WorldClient wc = Reflection.get(Constants.SCHEMATICA_CLIENT_PROXY, "schematic");
-				IBlockState state = wc.getBlockState(mop.getBlockPos());
-				ItemStack pickedStack = state.getBlock().getPickBlock(mop, wc, mop.getBlockPos(), player());
-				data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
+		if (Constants.SCHEMATICA)
+			if (updateObjectMouseOverFromSchematica())
 				return;
-			}
-		}
 
 		MovingObjectPosition mop = mc().objectMouseOver;
 		if (mop == null || mop.typeOfHit != BLOCK) {
@@ -163,6 +157,27 @@ public class BlockInfo extends Module {
 		}
 
 		data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
+	}
+
+	private boolean updateObjectMouseOverFromSchematica() {
+		if (ClientProxy.schematic == null || !ClientProxy.schematic.isRendering)
+			return false;
+
+		try {
+			MovingObjectPosition mop = ClientProxy.movingObjectPosition;
+			if (mop == null || mop.typeOfHit != BLOCK)
+				return false;
+
+			Class<?> clazz = Class.forName("com.github.lunatrius.schematica.proxy.ClientProxy");
+			WorldClient wc = Reflection.get(clazz, "schematic");
+			IBlockState state = wc.getBlockState(mop.getBlockPos());
+			ItemStack pickedStack = state.getBlock().getPickBlock(mop, wc, mop.getBlockPos(), player());
+
+			data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
+			return true;
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

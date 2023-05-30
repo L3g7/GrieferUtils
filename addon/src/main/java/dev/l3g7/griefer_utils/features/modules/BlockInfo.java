@@ -151,12 +151,15 @@ public class BlockInfo extends Module {
 		ItemStack pickedStack = state.getBlock().getPickBlock(mop, world(), mop.getBlockPos(), player());
 		if (state.getBlock() instanceof BlockSkull) {
 			TileEntitySkull tes = (TileEntitySkull) world().getTileEntity(mop.getBlockPos());
-			NBTTagCompound tag = new NBTTagCompound();
-			NBTTagCompound nbttagcompound = new NBTTagCompound();
+			pickedStack.setItemDamage(tes.getSkullType());
+			if (tes.getSkullType() == 3) {
+				NBTTagCompound tag = new NBTTagCompound();
+				NBTTagCompound nbttagcompound = new NBTTagCompound();
 
-			NBTUtil.writeGameProfile(nbttagcompound, tes.getPlayerProfile());
-			tag.setTag("SkullOwner", nbttagcompound);
-			pickedStack.setTagCompound(tag);
+				NBTUtil.writeGameProfile(nbttagcompound, tes.getPlayerProfile());
+				tag.setTag("SkullOwner", nbttagcompound);
+				pickedStack.setTagCompound(tag);
+			}
 		}
 
 		data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);

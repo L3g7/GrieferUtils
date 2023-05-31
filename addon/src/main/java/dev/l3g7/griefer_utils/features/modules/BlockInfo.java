@@ -19,12 +19,11 @@
 package dev.l3g7.griefer_utils.features.modules;
 
 
-import com.github.lunatrius.schematica.proxy.ClientProxy;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.SchematicaUtil;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.elements.ControlElement;
@@ -32,7 +31,6 @@ import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -160,24 +158,18 @@ public class BlockInfo extends Module {
 	}
 
 	private boolean updateObjectMouseOverFromSchematica() {
-		if (ClientProxy.schematic == null || !ClientProxy.schematic.isRendering)
+		if (SchematicaUtil.dontRender())
 			return false;
 
-		try {
-			MovingObjectPosition mop = ClientProxy.movingObjectPosition;
-			if (mop == null || mop.typeOfHit != BLOCK)
-				return false;
+		MovingObjectPosition mop = SchematicaUtil.getMovingObjectPosition();
+		if (mop == null || mop.typeOfHit != BLOCK)
+			return false;
 
-			Class<?> clazz = Class.forName("com.github.lunatrius.schematica.proxy.ClientProxy");
-			WorldClient wc = Reflection.get(clazz, "schematic");
-			IBlockState state = wc.getBlockState(mop.getBlockPos());
-			ItemStack pickedStack = state.getBlock().getPickBlock(mop, wc, mop.getBlockPos(), player());
+		IBlockState state = SchematicaUtil.getWorld().getBlockState(mop.getBlockPos());
+		ItemStack pickedStack = state.getBlock().getPickBlock(mop, SchematicaUtil.getWorld(), mop.getBlockPos(), player());
 
-			data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
-			return true;
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
+		data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
+		return true;
 	}
 
 }

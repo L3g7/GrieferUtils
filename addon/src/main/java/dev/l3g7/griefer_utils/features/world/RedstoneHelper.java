@@ -19,14 +19,11 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import com.github.lunatrius.schematica.api.ISchematic;
-import com.github.lunatrius.schematica.client.world.SchematicWorld;
-import com.github.lunatrius.schematica.proxy.ClientProxy;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.ChunkFilledEvent;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.event.events.render.ParticleSpawnEvent;
@@ -36,6 +33,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.util.SchematicaUtil;
 import net.labymod.utils.Material;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
@@ -59,7 +57,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static net.labymod.utils.Material.COMPASS;
 import static net.labymod.utils.Material.REDSTONE;
 import static net.minecraft.init.Blocks.*;
@@ -186,9 +185,8 @@ public class RedstoneHelper extends Feature {
 	}
 
 	private void updateSchematic() {
-		SchematicWorld schematicWorld = ClientProxy.schematic;
-		ISchematic schematic = schematicWorld == null ? null : schematicWorld.getSchematic();
-		BlockPos position = schematicWorld == null ? null : schematicWorld.position;
+		ISchematic schematic = SchematicaUtil.getWorld() == null ? null : SchematicaUtil.getSchematic();
+		BlockPos position = SchematicaUtil.getWorld() == null ? null : SchematicaUtil.getPosition();
 
 		if (previousSchematic == schematic && Objects.equals(previousSchematicPos, position))
 			return;
@@ -247,31 +245,12 @@ public class RedstoneHelper extends Feature {
 		GlStateManager.enableCull();
 	}
 
-	@EventListener
-	private static void idk(MessageEvent.MessageSendEvent event) {
-		if (event.message.equalsIgnoreCase("//rhCheck")) {
-			display("" + schematicasRROs.size());
-			display((ClientProxy.schematic == null) + "");
-			if (ClientProxy.schematic != null) {
-				display("" + ClientProxy.schematic.isRendering);
-				display("" + ClientProxy.schematic.isRenderingLayer);
-				display("" + ClientProxy.schematic.renderingLayer);
-				display(">" + ClientProxy.schematic.position);
-				for (Map.Entry<BlockPos, RedstoneRenderObject> blockPosRedstoneRenderObjectEntry : schematicasRROs.entrySet()) {
-					display(blockPosRedstoneRenderObjectEntry.getKey() + "");
-				}
-			}
-			event.setCanceled(true);
-		}
-	}
-
 	private void renderSchematicasRROs(float partialTicks) {
-		SchematicWorld world = ClientProxy.schematic;
-		if (world == null || !world.isRendering)
+		if (SchematicaUtil.dontRender())
 			return;
 
 		for (Map.Entry<BlockPos, RedstoneRenderObject> entry : schematicasRROs.entrySet())
-			if (!world.isRenderingLayer || entry.getKey().getY() == world.renderingLayer + world.position.field_177960_b)
+			if (SchematicaUtil.shouldLayerBeRendered(entry.getKey().getY()))
 				entry.getValue().render(entry.getKey(), partialTicks);
 	}
 

@@ -73,7 +73,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 	}
 
 	private enum CopyFormat {
-		UNFORMATTED("Unformattiert", IChatComponent::getUnformattedText),
+		UNFORMATTED("Unformattiert", icc -> icc.getUnformattedText().replaceAll("§.", "")),
 		FORMATTED("Formattiert", IChatComponent::getFormattedText),
 		JSON("JSON", IChatComponent.Serializer::componentToJson);
 

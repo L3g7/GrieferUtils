@@ -52,9 +52,9 @@ public class ConfigPatcher {
 
 		VersionComparator cmp = new VersionComparator();
 
-		if (cmp.compare("2.0-BETA-12", version) < 0) {
+		if (cmp.compare("2.0-BETA-13", version) < 0) {
 			rename("world.inventory_block_selection", "item.inventory_tweaks.inventory_block_selection");
-			rename("world.better_hopper_visualisation.enabled", "world.better_hopper.better_visualisation.value");
+			config.getAsJsonObject("world").getAsJsonObject("redstone_helper").addProperty("enabled", true);
 		}
 	}
 

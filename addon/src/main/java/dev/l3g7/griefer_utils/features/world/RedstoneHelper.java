@@ -30,16 +30,13 @@ import dev.l3g7.griefer_utils.event.events.render.ParticleSpawnEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.SchematicaUtil;
-import net.labymod.utils.Material;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -52,6 +49,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.world.NoteBlockEvent;
 
 import java.util.Map;
 import java.util.Objects;
@@ -59,8 +57,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
-import static net.labymod.utils.Material.COMPASS;
-import static net.labymod.utils.Material.REDSTONE;
+import static net.labymod.utils.Material.*;
 import static net.minecraft.init.Blocks.*;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -92,6 +89,12 @@ public class RedstoneHelper extends Feature {
 		.description("Zeigt die Richtung von Werfern / Spendern und Trichtern.")
 		.icon(COMPASS);
 
+	private static final BooleanSetting showNoteBlockPitch = new BooleanSetting()
+		.name("Notenblock-Höhe anzeigen")
+		.description("An, welche Tonhöhe bei Notenblöcken eingestellt ist."
+			+ "\nDafür muss von diesem Block ein Ton abgespielt worden sein.")
+		.icon(NOTE_BLOCK);
+
 	private static final NumberSetting range = new NumberSetting()
 		.name("Radius")
 		.description("Der Radius um den Spieler in Chunks, in dem die Informationen angezeigt werden."
@@ -99,7 +102,7 @@ public class RedstoneHelper extends Feature {
 			+ "\n(Betrifft nicht Schematics)")
 		.defaultValue(-1)
 		.min(-1)
-		.icon(Material.COMPASS);
+		.icon(COMPASS);
 
 	private static final BooleanSetting hideRedstoneParticles = new BooleanSetting()
 		.name("Redstone-Partikel verstecken")
@@ -107,10 +110,11 @@ public class RedstoneHelper extends Feature {
 		.defaultValue(true);
 
 	@MainElement
-	private final CategorySetting enabled = new CategorySetting()
-		.name("Redstone")
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Redstone Helfer")
+		.description("Hilft beim Arbeiten mit Redstone.")
 		.icon(REDSTONE)
-		.subSettings(showPower, showDirection, range, new HeaderSetting(), hideRedstoneParticles);
+		.subSettings(showPower, showDirection, showNoteBlockPitch, range, new HeaderSetting(), hideRedstoneParticles);
 
 	@EventListener
 	public void onChunkFilled(ChunkFilledEvent event) {
@@ -179,7 +183,9 @@ public class RedstoneHelper extends Feature {
 		if (map == null)
 			return;
 
-		map.remove(pos);
+		if (state.getBlock() != noteblock || !showNoteBlockPitch.get())
+			map.remove(pos);
+
 		if (map.isEmpty())
 			redstoneRenderObjects.remove(pair);
 	}
@@ -216,6 +222,14 @@ public class RedstoneHelper extends Feature {
 	public void onParticleSpawn(ParticleSpawnEvent event) {
 		if (event.particleID == REDSTONE_PARTICLE_ID && hideRedstoneParticles.get())
 			event.setCanceled(true);
+	}
+
+	@EventListener
+	private void onNoteBlock(NoteBlockEvent.Play event) {
+		BlockPos pos = event.pos;
+		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
+		Map<BlockPos, RedstoneRenderObject> map = redstoneRenderObjects.computeIfAbsent(pair, k -> new ConcurrentHashMap<>());
+		map.put(pos, new RedstoneRenderObject.NoteBlock(event.getVanillaNoteId()));
 	}
 
 	@EventListener
@@ -275,7 +289,7 @@ public class RedstoneHelper extends Feature {
 
 		private static void prepareRender(Vec3d loc, float partialTicks) {
 			GlStateManager.pushMatrix();
-			Entity viewer = Minecraft.getMinecraft().getRenderViewEntity();
+			Entity viewer = mc().getRenderViewEntity();
 			double viewerX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * partialTicks;
 			double viewerY = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * partialTicks;
 			double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * partialTicks;
@@ -364,25 +378,78 @@ public class RedstoneHelper extends Feature {
 				if (isHopper) {
 					GlStateManager.translate(0, 6.9, 0);
 					GlStateManager.rotate(90, 1, 0, 0);
-					Minecraft.getMinecraft().fontRendererObj.drawString("⬅", 0, 0, 0xFFFFFF);
+					mc().fontRendererObj.drawString("⬅", 0, 0, 0xFFFFFF);
 				} else {
-					Minecraft.getMinecraft().fontRendererObj.drawString("⬅", 0, 0, 0);
+					mc().fontRendererObj.drawString("⬅", 0, 0, 0);
 
 					GlStateManager.translate(0, 0, 10.2);
 
-					Minecraft.getMinecraft().fontRendererObj.drawString("⬅", 0, 0, 0);
+					mc().fontRendererObj.drawString("⬅", 0, 0, 0);
 					GlStateManager.translate(0, 10.2, -10.35);
 
 					GlStateManager.rotate(90, 1, 0, 0);
-					Minecraft.getMinecraft().fontRendererObj.drawString("⬅", 0, 0, 0);
+					mc().fontRendererObj.drawString("⬅", 0, 0, 0);
 
 					GlStateManager.translate(0, 0, 10.5);
-					Minecraft.getMinecraft().fontRendererObj.drawString("⬅", 0, 0, 0);
+					mc().fontRendererObj.drawString("⬅", 0, 0, 0);
 				}
 
 				GlStateManager.popMatrix();
 			}
 		}
+
+		private static class NoteBlock extends RedstoneRenderObject {
+
+			private final int pitch;
+
+			private NoteBlock(int pitch) {
+				this.pitch = pitch;
+			}
+
+			@Override
+			public void render(BlockPos pos, float partialTicks) {
+				if (!showNoteBlockPitch.get())
+					return;
+
+				prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
+
+				GlStateManager.translate(-0.025, 0.675, -0.51);
+				GlStateManager.scale(-0.05, -0.05, 0.05);
+
+				String text = String.valueOf(pitch);
+				int x = -mc().fontRendererObj.getStringWidth(text) / 2;
+
+				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
+
+				GlStateManager.translate(-1, 0, 20.4);
+				GlStateManager.scale(-1, 1, 1);
+
+				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
+				GlStateManager.translate(9.7, 0, -10.75);
+
+				GlStateManager.rotate(90, 0, 1, 0);
+				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
+
+				GlStateManager.translate(-1, 0, -20.7);
+				GlStateManager.scale(-1, 1, 1);
+				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
+
+				GlStateManager.scale(-1, 1, 1);
+				GlStateManager.translate(1, -6.7, 7);
+
+				GlStateManager.rotate(90, 1, 0, 0);
+				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
+
+				GlStateManager.translate(-1, 0, -20.5);
+				GlStateManager.scale(-1, 1, 1);
+
+				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
+
+				GlStateManager.popMatrix();
+			}
+
+		}
+
 	}
 
 }

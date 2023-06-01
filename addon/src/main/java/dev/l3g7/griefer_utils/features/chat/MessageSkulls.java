@@ -94,14 +94,20 @@ public class MessageSkulls extends Feature {
 		if (idStart > startIndex)
 			return;
 
+		IChatComponent unmodified = ChatLineUtil.getUnmodifiedIChatComponent(wholeComponent);
+		if (unmodified == null)
+			return;
+
+		String uMsg = unmodified.getUnformattedText();
+
 		if (arrowIndex != -1)
 			endIndex = arrowIndex - 1;
-		else if (msg.startsWith("[Plot-Chat]"))
-			endIndex = msg.indexOf(':') - 1;
-		else if (msg.startsWith("[") && msg.contains(" -> mir]"))
-			endIndex = msg.indexOf('-') - 1;
-		else if (msg.startsWith("[mir -> "))
-			endIndex = msg.indexOf(']');
+		else if (uMsg.startsWith("[Plot-Chat]"))
+			endIndex = msg.indexOf(':', startIndex) - 1;
+		else if (uMsg.startsWith("[") && uMsg.contains(" -> mir]"))
+			endIndex = msg.indexOf('-', startIndex) - 1;
+		else if (uMsg.startsWith("[mir -> "))
+			endIndex = msg.indexOf(']', startIndex);
 		else
 			endIndex = msg.indexOf(' ', startIndex);
 

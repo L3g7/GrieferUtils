@@ -120,7 +120,7 @@ public class AutoTool extends Feature {
 	 */
 	@EventListener(priority = EventPriority.HIGH)
 	public void onMouse(MouseClickEvent.LeftClickEvent event) {
-		if (mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+		if (mc().objectMouseOver == null || mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
 			return;
 
 		switchToTool(mc().objectMouseOver.getBlockPos());

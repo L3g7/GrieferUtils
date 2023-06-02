@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import com.github.lunatrius.schematica.api.ISchematic;
+import com.google.common.base.Strings;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
@@ -89,11 +90,18 @@ public class RedstoneHelper extends Feature {
 		.description("Zeigt die Richtung von Werfern / Spendern und Trichtern.")
 		.icon(COMPASS);
 
+	private static final BooleanSetting showNoteId = new BooleanSetting()
+		.name("Ton-ID anzeigen")
+		.description("Ob der Name des Tons oder die ID angezeigt werden soll.")
+		.icon(NOTE_BLOCK)
+		.defaultValue(true);
+
 	private static final BooleanSetting showNoteBlockPitch = new BooleanSetting()
 		.name("Notenblock-Höhe anzeigen")
 		.description("An, welche Tonhöhe bei Notenblöcken eingestellt ist."
 			+ "\nDafür muss von diesem Block ein Ton abgespielt worden sein.")
-		.icon(NOTE_BLOCK);
+		.icon(NOTE_BLOCK)
+		.subSettings(showNoteId);
 
 	private static final NumberSetting range = new NumberSetting()
 		.name("Radius")
@@ -229,7 +237,9 @@ public class RedstoneHelper extends Feature {
 		BlockPos pos = event.pos;
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
 		Map<BlockPos, RedstoneRenderObject> map = redstoneRenderObjects.computeIfAbsent(pair, k -> new ConcurrentHashMap<>());
-		map.put(pos, new RedstoneRenderObject.NoteBlock(event.getVanillaNoteId()));
+		String name = event.getNote().name().replace("_SHARP", "is");
+		name += Strings.repeat("'", event.getOctave().ordinal() + 1);
+		map.put(pos, new RedstoneRenderObject.NoteBlock(event.getVanillaNoteId(), name));
 	}
 
 	@EventListener
@@ -400,10 +410,12 @@ public class RedstoneHelper extends Feature {
 
 		private static class NoteBlock extends RedstoneRenderObject {
 
-			private final int pitch;
+			private final String id;
+			private final String name;
 
-			private NoteBlock(int pitch) {
-				this.pitch = pitch;
+			private NoteBlock(int pitch, String name) {
+				this.id = String.valueOf(pitch);
+				this.name = name;
 			}
 
 			@Override
@@ -413,35 +425,36 @@ public class RedstoneHelper extends Feature {
 
 				prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
 
-				GlStateManager.translate(-0.025, 0.675, -0.51);
-				GlStateManager.scale(-0.05, -0.05, 0.05);
+				GlStateManager.translate(-0.0175, 0.63, -0.51);
+				GlStateManager.scale(-0.035, -0.035, 0.035);
 
-				String text = String.valueOf(pitch);
+				String text = showNoteId.get() ? id : name;
 				int x = -mc().fontRendererObj.getStringWidth(text) / 2;
 
 				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
 
-				GlStateManager.translate(-1, 0, 20.4);
+				GlStateManager.translate(-1, 0, 29);
 				GlStateManager.scale(-1, 1, 1);
 
 				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
-				GlStateManager.translate(9.7, 0, -10.75);
+				GlStateManager.translate(14, 0, -15);
 
 				GlStateManager.rotate(90, 0, 1, 0);
 				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
 
-				GlStateManager.translate(-1, 0, -20.7);
+				GlStateManager.translate(-1, 0, -29);
 				GlStateManager.scale(-1, 1, 1);
 				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
 
 				GlStateManager.scale(-1, 1, 1);
-				GlStateManager.translate(1, -6.7, 7);
+				GlStateManager.translate(4, -11, 15);
 
 				GlStateManager.rotate(90, 1, 0, 0);
+				GlStateManager.rotate(90, 0, 0, 1);
 				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
 
-				GlStateManager.translate(-1, 0, -20.5);
-				GlStateManager.scale(-1, 1, 1);
+				GlStateManager.translate(0, 7.1, -29.1);
+				GlStateManager.scale(1, -1, 1);
 
 				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
 

@@ -29,16 +29,15 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.utils.Material;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.mariuszgromada.math.mxparser.Expression;
 
 import javax.net.ssl.HttpsURLConnection;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -67,6 +66,13 @@ public class Calculator extends Feature {
 		.icon("bank")
 		.defaultValue(true);
 
+	private final StringSetting prefix = new StringSetting()
+		.name("Präfix")
+		.description("Der Präfix für Berechnungen ohne abgeschickter Chatnachricht."
+			+ "\nDas Ergebnis wird automatisch in die Zwischenablage kopiert")
+		.icon(Material.NAME_TAG)
+		.defaultValue("/c ");
+
 	private final BooleanSetting placeholder = new BooleanSetting()
 		.name("Placeholder in Nachrichten")
 		.description("Ermöglicht in einer Nachricht eingebettete Gleichungen, indem sie mit {} eingerahmt werden.")
@@ -92,7 +98,7 @@ public class Calculator extends Feature {
 		.description("Ein Rechner in Nachrichten.")
 		.icon("calculator")
 		.subSettings(decimalPlaces, new HeaderSetting(),
-			autoWithdraw, depositAll, placeholder, autoEquationDetect);
+			autoWithdraw, depositAll, placeholder, autoEquationDetect, prefix);
 
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
 	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?k* *[+\\-/*^ek] *[+-]?\\d+(?:[.,]\\d+)?k*|[+-]?\\d+(?:[.,]\\d+)?k+)(?:(?= )|$)");
@@ -149,6 +155,20 @@ public class Calculator extends Feature {
 
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
+		if (event.message.startsWith(prefix.get())) {
+			event.setCanceled(true);
+
+			double exp = calculate(event.message.substring(prefix.get().length()));
+			if (Double.isNaN(exp))
+				return;
+
+			String text = Constants.DECIMAL_FORMAT_98.format(exp);
+			display(Constants.ADDON_PREFIX + "Ergebnis: " + text);
+			StringSelection sel = new StringSelection(text.replace(".", ""));
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
+			return;
+		}
+
 		if (!ServerCheck.isOnGrieferGames() || world() == null || world().getScoreboard().getTeam("money_value") == null)
 			return;
 
@@ -209,25 +229,9 @@ public class Calculator extends Feature {
 					return false;
 				}
 
-				// Calculate
-				equation = equation.replace("k", " * 1000").replace(",", ".");
-				Expression exp = new Expression(equation);
-				if (!exp.checkSyntax()) {
-					display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);
-					display("§c" + exp.getErrorMessage().trim());
+				double expResult = calculate(equation);
+				if (Double.isNaN(expResult))
 					return true;
-				}
-				double expResult = exp.calculate();
-
-				// Check if result is valid
-				if (Double.isInfinite(expResult)) {
-					display(Constants.ADDON_PREFIX + "§r§4⚠ §c\"%s\" ist unendlich! §4⚠§r", equation);
-					return true;
-				}
-				if (Double.isNaN(expResult)) {
-					display(Constants.ADDON_PREFIX + "§r§4⚠ §c\"%s\" ist ungültig! §4⚠§r", equation);
-					return true;
-				}
 
 				// Replace value
 				msg = msg.substring(0, matcher.start()) + Constants.DECIMAL_FORMAT_98.format(new BigDecimal(expResult).setScale(decimalPlaces.get(), RoundingMode.HALF_UP)) + msg.substring(matcher.end());
@@ -242,6 +246,32 @@ public class Calculator extends Feature {
 			return true;
 		}
 		return false;
+	}
+
+	private double calculate(String equation) {
+		equation = equation.replace("k", " * 1000").replace(",", ".");
+		Expression exp = new Expression(equation);
+
+		if (!exp.checkSyntax()) {
+			display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);
+			display("§c" + exp.getErrorMessage().trim());
+			return Double.NaN;
+		}
+
+		double expResult = exp.calculate();
+
+		// Check if result is valid
+		if (Double.isInfinite(expResult)) {
+			display(Constants.ADDON_PREFIX + "§r§4⚠ §c\"%s\" ist unendlich! §4⚠§r", equation);
+			return Double.NaN;
+		}
+
+		if (Double.isNaN(expResult)) {
+			display(Constants.ADDON_PREFIX + "§r§4⚠ §c\"%s\" ist ungültig! §4⚠§r", equation);
+			return Double.NaN;
+		}
+
+		return expResult;
 	}
 
 	@OnEnable

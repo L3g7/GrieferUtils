@@ -18,11 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.item;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.world.ChestSearch;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -37,7 +37,9 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import static dev.l3g7.griefer_utils.util.ItemUtil.createItem;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
 import static net.labymod.ingamegui.Module.mc;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.START_DESTROY_BLOCK;
 import static net.minecraft.util.EnumFacing.UP;
@@ -74,6 +76,10 @@ public class BorderSaver extends Feature {
 	@EventListener
 	public void onPacket(PacketEvent.PacketSendEvent event) {
 		if (event.packet instanceof C07PacketPlayerDigging) {
+			C07PacketPlayerDigging.Action action = ((C07PacketPlayerDigging) event.packet).getStatus();
+			if (action == C07PacketPlayerDigging.Action.DROP_ITEM || action == C07PacketPlayerDigging.Action.DROP_ALL_ITEMS)
+				return;
+
 			if (isHoldingBorder()) {
 				event.setCanceled(true);
 				// Re-sending the original packet doesn't work, for some reason

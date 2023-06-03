@@ -18,13 +18,13 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.DrawGuiContainerForegroundLayerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.gui.elements.ModTextField;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -128,12 +128,22 @@ public class ChestSearch extends Feature {
 				int sX = x + (18 * (i % 9));
 				int sY = y + (18 * (i / 9));
 
-				if (items.get(i) == null || !items.get(i).getDisplayName().toLowerCase().contains(text))
+				if (shouldHide(items.get(i), text))
 					GuiScreen.drawRect(sX, sY, sX + 18, sY + 18, 0xAA000000);
 			}
 		}
 
 		GlStateManager.translate(guiLeft, guiTop, -300);
+	}
+
+	private boolean shouldHide(ItemStack stack, String text) {
+		if (stack == null)
+			return true;
+
+		if (stack.getDisplayName().toLowerCase().contains(text))
+			return false;
+
+		return !stack.getItem().getItemStackDisplayName(stack).toLowerCase().contains(text);
 	}
 
 }

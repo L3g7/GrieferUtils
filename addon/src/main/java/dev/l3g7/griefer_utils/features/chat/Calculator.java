@@ -176,7 +176,12 @@ public class Calculator extends Feature {
 		Matcher paymentMatcher = Constants.PAYMENT_COMMAND_PATTERN.matcher(event.message);
 		if (paymentMatcher.matches()) {
 			lastPaymentReceiver = paymentMatcher.group("player");
-			lastPayment = new BigDecimal(paymentMatcher.group("amount").replace(",", ""));
+			try {
+				lastPayment = new BigDecimal(paymentMatcher.group("amount").replace(",", ""));
+			} catch (NumberFormatException e) {
+				// Ignore command - GrieferGames will display an error, so we don't have to
+				return;
+			}
 		}
 
 		// If /bank abheben with the exact difference was sent and withdraw is SUGGEST

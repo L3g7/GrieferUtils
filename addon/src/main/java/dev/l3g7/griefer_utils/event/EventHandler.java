@@ -25,6 +25,8 @@ import dev.l3g7.griefer_utils.core.file_provider.meta.AnnotationMeta;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -82,8 +84,10 @@ public class EventHandler implements Opcodes {
 				try {
 					if (triggerWhenDisabled || !(owner instanceof Feature) || ((Feature) owner).isEnabled())
 						Reflection.invoke(owner, method.load(), e);
-				} catch (NullPointerException e_) {
-					e_.printStackTrace();
+				} catch (Throwable t) {
+					t.printStackTrace();
+					MinecraftUtil.displayAchievement("§cGrieferUtils", "§cEs gab einen Fehler :(");
+					BugReporter.reportError(t);
 				}
 			}
 		});

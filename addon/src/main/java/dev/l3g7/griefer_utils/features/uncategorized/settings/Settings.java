@@ -34,7 +34,7 @@ public class Settings extends Feature {
 	private final CategorySetting element = new CategorySetting()
 		.name("§yEinstellungen")
 		.icon("cog")
-		.subSettings(AutoUpdate.enabled, Changelog.category, Badges.enabled, new HeaderSetting(), Telemetry.category, BugReporter.enabled);
+		.subSettings(AutoUpdate.enabled, Changelog.category, Badges.enabled, new HeaderSetting(), BugReporter.enabled);
 
 	{
 		if (Constants.DEBUG) {

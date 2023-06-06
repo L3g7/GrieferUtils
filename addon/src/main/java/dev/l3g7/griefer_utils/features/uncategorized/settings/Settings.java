@@ -19,10 +19,8 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.AutoUpdate;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.Debug;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
@@ -35,12 +33,5 @@ public class Settings extends Feature {
 		.name("§yEinstellungen")
 		.icon("cog")
 		.subSettings(AutoUpdate.enabled, Changelog.category, Badges.enabled, new HeaderSetting(), BugReporter.enabled);
-
-	{
-		if (Constants.DEBUG) {
-			element.getSubSettings().add(new HeaderSetting());
-			element.getSubSettings().add(Debug.category);
-		}
-	}
 
 }

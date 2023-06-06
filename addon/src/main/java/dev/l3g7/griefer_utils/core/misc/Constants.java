@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
  */
 public class Constants {
 
-	public static final boolean DEBUG = System.getProperty("ebug") != null; // -Debug :>
 	public static final boolean OPTIFINE = Reflection.doesClassExist("optifine.OptiFineForgeTweaker");
 	public static boolean SCHEMATICA;
 

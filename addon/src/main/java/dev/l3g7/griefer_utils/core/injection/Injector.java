@@ -19,8 +19,6 @@
 package dev.l3g7.griefer_utils.core.injection;
 
 import dev.l3g7.griefer_utils.core.mapping.Mapper;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.debug.log.LogHook;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -48,9 +46,6 @@ public class Injector implements IClassTransformer {
 	public Injector() throws ReflectiveOperationException, IOException {
 		if (!LabyModCoreMod.isForge())
 			return;
-
-		if (Constants.DEBUG)
-			LogHook.hook();
 
 		Mapper.loadMappings("1.8.9", "22");
 		loadLibraries();

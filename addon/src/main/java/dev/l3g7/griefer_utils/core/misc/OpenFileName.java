@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.chat_menu;
+package dev.l3g7.griefer_utils.core.misc;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;

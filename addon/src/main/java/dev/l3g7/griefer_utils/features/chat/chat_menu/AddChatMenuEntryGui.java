@@ -18,13 +18,14 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.FileSelection;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.IconType;
-import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.addon.online.AddonInfoManager;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.DropDownMenu;
@@ -356,7 +357,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 
 					entry.icon = file;
 					fileInput.setText(file.getName());
-				});
+				}, "Bild", ImageIO.getReaderFileSuffixes());
 				break;
 			case 7:
 				if (ogEntry.completed) { // Save original entry if making entry invalid and going back

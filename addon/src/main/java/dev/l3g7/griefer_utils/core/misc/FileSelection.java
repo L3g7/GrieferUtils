@@ -16,15 +16,19 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.chat_menu;
+package dev.l3g7.griefer_utils.core.misc;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
+import com.sun.jna.WString;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.io.File;
+import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * description missing.
@@ -38,7 +42,7 @@ public class FileSelection {
 	public static native boolean GetOpenFileNameW(OpenFileName params);
 	public static native int CommDlgExtendedError();
 
-	public static void chooseFile(Consumer<File> fileConsumer) {
+	public static void chooseFile(Consumer<File> fileConsumer, String filterName, String... allowedFileTypes) {
 		/*
 		 * Swing file chooser
 		 */
@@ -48,8 +52,30 @@ public class FileSelection {
 				fc.setMultiSelectionEnabled(false);
 				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
+				if (filterName != null) {
+					fc.addChoosableFileFilter(new FileFilter() {
+						@Override
+						public boolean accept(File f) {
+							if (f.isDirectory())
+								return true;
+
+							for (String allowedFileType : allowedFileTypes)
+								if (f.getName().endsWith("." + allowedFileType))
+									return true;
+
+							return false;
+						}
+
+						@Override
+						public String getDescription() {
+							return filterName;
+						}
+					});
+				}
+
 				fileConsumer.accept(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION ? fc.getSelectedFile() : null);
 			}).start();
+			return;
 		}
 
 		/*
@@ -59,6 +85,9 @@ public class FileSelection {
 		params.lpstrFile = new Memory(1041);
 		params.lpstrFile.clear(1041);
 		params.nMaxFile = 260;
+		if (filterName != null)
+			params.lpstrFilter = new WString(filterName + "\0" + Arrays.stream(allowedFileTypes).map(f -> "*." + f).collect(Collectors.joining(";")) + "\0\0");
+
 
 		if (GetOpenFileNameW(params)) {
 			fileConsumer.accept(new File(params.lpstrFile.getString(0, true)));

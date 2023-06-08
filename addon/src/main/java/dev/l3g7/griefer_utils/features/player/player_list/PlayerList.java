@@ -72,8 +72,8 @@ public abstract class PlayerList extends Feature {
 	private final int paneType; // The glass pane color in /profil
 
 	// List entries
-	private final List<UUID> uuids = new ArrayList<>();
-	private final List<String> names = new ArrayList<>();
+	final List<UUID> uuids = new ArrayList<>();
+	final List<String> names = new ArrayList<>();
 
 	// List settings
 	public final DropDownSetting<MarkAction> tabAction = new DropDownSetting<>(MarkAction.class)
@@ -104,12 +104,12 @@ public abstract class PlayerList extends Feature {
 	public final BooleanSetting enabled = new BooleanSetting()
 		.callback(v -> TabListEvent.updatePlayerInfoList());
 
-	public PlayerList(String name, String description, String chatIcon, Object settingIcon, ModColor color, int paneType, String url) {
+	public PlayerList(String name, String description, String chatIcon, Object settingIcon, String ownDescription, ModColor color, int paneType, String url) {
 		enabled
 			.name(name + "liste")
 			.description(description)
 			.icon(settingIcon)
-			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, new HeaderSetting(), new HeaderSetting("Eigene " + name), customEntries);
+			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, new HeaderSetting(), new HeaderSetting(ownDescription), customEntries);
 
 		this.name = name;
 		customEntries.setContainer(enabled);
@@ -118,18 +118,20 @@ public abstract class PlayerList extends Feature {
 		this.color = color;
 		this.paneType = paneType;
 
-		// Read entries from url
-		IOUtil.read(url)
-			.asJsonArray(entries -> entries.forEach(e -> {
-				JsonObject entry = e.getAsJsonObject();
-				uuids.add(UUID.fromString(entry.get("uuid").getAsString()));
-				names.add(entry.get("name").getAsString());
-			}))
-			.orElse(() -> {
-				SettingsElement setting = getMainElement();
-				setting.setDisplayName("§c§o" + setting.getDisplayName());
-				setting.setDescriptionText(setting.getDisplayName() + " konnte nicht geladen werden!");
-			});
+		if (url != null) {
+			// Read entries from url
+			IOUtil.read(url)
+				.asJsonArray(entries -> entries.forEach(e -> {
+					JsonObject entry = e.getAsJsonObject();
+					uuids.add(UUID.fromString(entry.get("uuid").getAsString()));
+					names.add(entry.get("name").getAsString());
+				}))
+				.orElse(() -> {
+					SettingsElement setting = getMainElement();
+					setting.setDisplayName("§c§o" + setting.getDisplayName());
+					setting.setDescriptionText(setting.getDisplayName() + " konnte nicht geladen werden!");
+				});
+		}
 	}
 
 	@Override

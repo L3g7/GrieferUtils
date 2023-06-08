@@ -122,6 +122,9 @@ public class MinecraftUtil {
 	}
 
 	public static String getServerFromScoreboard() {
+		if (world() == null)
+			return "";
+
 		ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
 		return team == null ? "" : team.getColorPrefix().replaceAll("§.", "");
 	}

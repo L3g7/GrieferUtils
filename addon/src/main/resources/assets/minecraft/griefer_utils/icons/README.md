@@ -78,6 +78,10 @@
     <td><a href="https://www.deviantart.com/ishmanallenlitchmore/art/chunk-of-minecraft-382711453">DeviantArt (IshmanAllenLitchmore)</a></td>
   </tr>
   <tr>
+    <td><a href="crosshair.png"><img src="crosshair.png" height=16em width=16em />&nbsp;&nbsp;crosshair.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><a href="cog.png"><img src="cog.png" height=16em width=16em />&nbsp;&nbsp;cog.png </a></td>
     <td><a href="https://www.dreamstime.com/pixel-icon-cogwheel-pixel-icon-cogwheel-three-variants-fully-editable-image123561946">Dreamstime (Starserfer)</a></td>
   </tr>
@@ -110,12 +114,28 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
+    <td><a href="enchanted_skull.png"><img src="enchanted_skull.png" height=16em width=16em />&nbsp;&nbsp;enchanted_skull.png </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.20/assets/minecraft/textures/entity/skeleton/skeleton.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="explorer.png"><img src="explorer.png" height=16em width=16em />&nbsp;&nbsp;explorer.png </a></td>
+    <td><a href="https://www.curseforge.com/minecraft/texture-packs/faithless">Faithless Resource Pack Asset</a></td>
+  </tr>
+  <tr>
     <td><a href="fading_steve.png"><img src="fading_steve.png" height=16em width=16em />&nbsp;&nbsp;fading_steve.png </a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/steve.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="file.png"><img src="file.png" height=16em width=16em />&nbsp;&nbsp;file.png </a></td>
+    <td><a href="https://stock.adobe.com/de/images/pixel-art-icon-document-file-illustration-vector/445483743">Adobe Stock</a></td>
+  </tr>
+  <tr>
     <td><a href="fire.png"><img src="fire.png" height=16em width=16em />&nbsp;&nbsp;fire.png </a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/block/fire_0.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="glitch_light_bulb.png"><img src="glitch_light_bulb.png" height=16em width=16em />&nbsp;&nbsp;glitch_light_bulb.png </a></td>
+    <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock (karpenko_ilia)</a></td>
   </tr>
   <tr>
     <td><a href="gold_ingot.png"><img src="gold_ingot.png" height=16em width=16em />&nbsp;&nbsp;gold_ingot.png </a></td>
@@ -164,6 +184,10 @@
   <tr>
     <td><a href="light_bulb.png"><img src="light_bulb.png" height=16em width=16em />&nbsp;&nbsp;light_bulb.png </a></td>
     <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock (karpenko_ilia)</a></td>
+  </tr>
+  <tr>
+    <td><a href="matrix.png"><img src="matrix.png" height=16em width=16em />&nbsp;&nbsp;matrix.png </a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><a href="maximize.png"><img src="maximize.png" height=16em width=16em />&nbsp;&nbsp;maximize.png </a></td>

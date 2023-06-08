@@ -18,12 +18,12 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
@@ -62,9 +62,9 @@ public class Trajectories extends Feature {
 
 	@MainElement
 	private final DropDownSetting<TrajectoryMode> mode = new DropDownSetting<>(TrajectoryMode.class)
-		.name("Trajectories")
+		.name("Flugbahn anzeigen")
 		.description("Zeigt dir die Flugbahn des gehaltenen Items an.")
-		.icon("labymod:settings/settings/marker")
+		.icon("crosshair")
 		.defaultValue(DISABLED);
 
 	private final Disk circle = new Disk();
@@ -176,10 +176,10 @@ public class Trajectories extends Feature {
 	}
 
 	private MovingObjectPosition checkForEntityCollision(AxisAlignedBB arrowBox, float size, Vec3d posBefore, Vec3d posAfter) {
-		int chunkMinX = (int) ((arrowBox.minX - 2) / 16);
-		int chunkMaxX = (int) ((arrowBox.maxX + 2) / 16);
-		int chunkMinZ = (int) ((arrowBox.minZ - 2) / 16);
-		int chunkMaxZ = (int) ((arrowBox.maxZ + 2) / 16);
+		int chunkMinX = (int) Math.floor((arrowBox.minX - 2) / 16);
+		int chunkMaxX = (int) Math.floor((arrowBox.maxX + 2) / 16);
+		int chunkMinZ = (int) Math.floor((arrowBox.minZ - 2) / 16);
+		int chunkMaxZ = (int) Math.floor((arrowBox.maxZ + 2) / 16);
 
 		List<Entity> collidedEntities = new ArrayList<>();
 
@@ -244,7 +244,7 @@ public class Trajectories extends Feature {
 	@SuppressWarnings("unused")
 	enum TrajectoryMode {
 
-		DISABLED("Aus"), TRAIL("Flugbahn"), DOT("Punkt");
+		DISABLED("Aus"), TRAIL("An"), DOT("Nur Ziel");
 
 		final String name;
 

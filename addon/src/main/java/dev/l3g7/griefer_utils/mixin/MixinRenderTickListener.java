@@ -16,26 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event.events.render;
+package dev.l3g7.griefer_utils.mixin;
 
-import dev.l3g7.griefer_utils.mixin.MixinGuiChest;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.labymod.main.LabyMod;
+import net.labymod.main.listeners.RenderTickListener;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-public class DrawGuiContainerForegroundLayerEvent extends Event {
-
-	public final GuiChest chest;
-
-	private DrawGuiContainerForegroundLayerEvent(GuiChest chest) {
-		this.chest = chest;
-	}
+@Mixin(RenderTickListener.class)
+public class MixinRenderTickListener {
 
 	/**
-	 * Triggered by {@link MixinGuiChest}
+	 * Fix custom achievements not being rendered when in a gui in game.
 	 */
-	public static void post(GuiChest chest) {
-		MinecraftForge.EVENT_BUS.post(new DrawGuiContainerForegroundLayerEvent(chest));
+	@Redirect(method = "drawMenuOverlay", at = @At(value = "INVOKE", target = "Lnet/labymod/main/LabyMod;isInGame()Z"), remap = false)
+	public boolean redirectIsInGame(LabyMod instance) {
+		return false;
 	}
 
 }

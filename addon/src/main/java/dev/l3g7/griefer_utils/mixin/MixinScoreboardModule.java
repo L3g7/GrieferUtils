@@ -16,26 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event.events.render;
+package dev.l3g7.griefer_utils.mixin;
 
-import dev.l3g7.griefer_utils.mixin.MixinGuiChest;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import dev.l3g7.griefer_utils.features.player.scoreboard.ScoreboardHandler;
+import net.labymod.ingamegui.modules.ScoreboardModule;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-public class DrawGuiContainerForegroundLayerEvent extends Event {
+@Mixin(ScoreboardModule.class)
+public class MixinScoreboardModule {
 
-	public final GuiChest chest;
+	@ModifyConstant(method = "renderScoreboard", constant = @Constant(intValue = 15), remap = false)
+	private int modifyMaxScoreboardSize(int listSize) {
+		if (ScoreboardHandler.shouldUnlockScoreboard())
+			return Integer.MAX_VALUE;
 
-	private DrawGuiContainerForegroundLayerEvent(GuiChest chest) {
-		this.chest = chest;
-	}
-
-	/**
-	 * Triggered by {@link MixinGuiChest}
-	 */
-	public static void post(GuiChest chest) {
-		MinecraftForge.EVENT_BUS.post(new DrawGuiContainerForegroundLayerEvent(chest));
+		return listSize;
 	}
 
 }

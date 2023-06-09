@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
-import dev.l3g7.griefer_utils.core.injection.mixin.MixinChatRenderer;
-import dev.l3g7.griefer_utils.core.injection.mixin.MixinGuiChatAdapter;
+import dev.l3g7.griefer_utils.mixin.MixinChatRenderer;
+import dev.l3g7.griefer_utils.mixin.MixinGuiChatAdapter;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.Event;

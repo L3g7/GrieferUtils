@@ -16,26 +16,21 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event.events.render;
+package dev.l3g7.griefer_utils.mixin;
 
-import dev.l3g7.griefer_utils.mixin.MixinGuiChest;
+import dev.l3g7.griefer_utils.event.events.render.DrawGuiContainerForegroundLayerEvent;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class DrawGuiContainerForegroundLayerEvent extends Event {
+@Mixin(GuiChest.class)
+public class MixinGuiChest {
 
-	public final GuiChest chest;
-
-	private DrawGuiContainerForegroundLayerEvent(GuiChest chest) {
-		this.chest = chest;
-	}
-
-	/**
-	 * Triggered by {@link MixinGuiChest}
-	 */
-	public static void post(GuiChest chest) {
-		MinecraftForge.EVENT_BUS.post(new DrawGuiContainerForegroundLayerEvent(chest));
+	@Inject(method = "drawGuiContainerForegroundLayer", at = @At("HEAD"))
+	private void injectGetDisplayName(int mouseX, int mouseY, CallbackInfo ci) {
+		DrawGuiContainerForegroundLayerEvent.post(((GuiChest) (Object) this));
 	}
 
 }

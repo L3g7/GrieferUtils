@@ -16,32 +16,22 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event.events.render;
+package dev.l3g7.griefer_utils.mixin;
 
-import dev.l3g7.griefer_utils.mixin.MixinEntity;
-import net.minecraft.entity.Entity;
+import dev.l3g7.griefer_utils.event.events.ChunkFilledEvent;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * An event being posted when {@link Entity#isBurning()} is called.
- */
-@Cancelable
-public class BurningCheckEvent extends Event {
+@Mixin(Chunk.class)
+public class MixinChunk {
 
-	public final Entity entity;
-
-	private BurningCheckEvent(Entity entity) {
-		this.entity = entity;
-	}
-
-	/**
-	 * Triggered by {@link MixinEntity}
-	 */
-	public static boolean isBurning(Entity entity) {
-		BurningCheckEvent event = new BurningCheckEvent(entity);
-		return !MinecraftForge.EVENT_BUS.post(event);
+	@Inject(method = "fillChunk", at = @At("TAIL"))
+	public void injectfillChunk(byte[] p_177439_1_, int p_177439_2_, boolean p_177439_3_, CallbackInfo ci) {
+		MinecraftForge.EVENT_BUS.post(new ChunkFilledEvent((Chunk) (Object) this));
 	}
 
 }

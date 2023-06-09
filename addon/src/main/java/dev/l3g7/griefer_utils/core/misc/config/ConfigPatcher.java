@@ -16,12 +16,13 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc;
+package dev.l3g7.griefer_utils.core.misc.config;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.util.ArrayUtil;
 
 import javax.imageio.ImageIO;

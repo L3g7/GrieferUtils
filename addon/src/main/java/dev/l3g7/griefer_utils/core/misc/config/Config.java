@@ -16,12 +16,11 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc;
+package dev.l3g7.griefer_utils.core.misc.config;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
-import net.minecraft.client.Minecraft;
 
 import java.io.File;
 

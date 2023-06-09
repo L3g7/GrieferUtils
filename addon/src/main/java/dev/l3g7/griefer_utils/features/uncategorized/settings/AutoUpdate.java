@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.misc.gui.ChangelogScreen;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
-import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.addon.AddonLoader;
 import net.minecraft.init.Blocks;

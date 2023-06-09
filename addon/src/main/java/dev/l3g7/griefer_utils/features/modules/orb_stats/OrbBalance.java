@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.settings.elements.ControlElement;

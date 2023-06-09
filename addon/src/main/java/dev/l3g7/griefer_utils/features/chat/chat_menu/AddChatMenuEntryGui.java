@@ -20,7 +20,7 @@ package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.misc.FileSelection;
+import dev.l3g7.griefer_utils.core.misc.os.FileSelection;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.IconType;

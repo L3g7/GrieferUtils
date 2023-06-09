@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.settings;
 
 import com.google.gson.JsonElement;
-import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 
 import java.util.ArrayList;

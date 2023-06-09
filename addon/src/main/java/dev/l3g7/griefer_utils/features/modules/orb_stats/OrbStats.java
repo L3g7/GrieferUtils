@@ -27,7 +27,7 @@ import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
-import dev.l3g7.griefer_utils.core.misc.Config;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.settings.elements.ControlElement;

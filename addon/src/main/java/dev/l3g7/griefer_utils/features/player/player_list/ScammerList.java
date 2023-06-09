@@ -2,7 +2,7 @@ package dev.l3g7.griefer_utils.features.player.player_list;
 
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.FileSelection;
+import dev.l3g7.griefer_utils.core.misc.os.FileSelection;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;

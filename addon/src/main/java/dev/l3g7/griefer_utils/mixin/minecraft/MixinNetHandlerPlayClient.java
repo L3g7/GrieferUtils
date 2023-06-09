@@ -16,25 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
-import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
-import net.minecraft.client.multiplayer.PlayerControllerMP;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.network.Packet;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PlayerControllerMP.class)
-public class MixinPlayerControllerMP {
+@Mixin(NetHandlerPlayClient.class)
+public class MixinNetHandlerPlayClient {
 
-	@Inject(method = "windowClick", at = @At("HEAD"), cancellable = true)
-	public void injectWindowClick(int windowId, int slotId, int mouseButtonClicked, int mode, EntityPlayer playerIn, CallbackInfoReturnable<ItemStack> cir) {
-		if (MinecraftForge.EVENT_BUS.post(new WindowClickEvent(windowId, slotId, mouseButtonClicked, mode)))
-			cir.cancel();
+	@Inject(method = "addToSendQueue", at = @At("HEAD"), cancellable = true)
+	private void injectPacketSendEvent(Packet<?> packet, CallbackInfo ci) {
+		if (!PacketSendEvent.shouldSendPacket(packet))
+			ci.cancel();
 	}
 
 }

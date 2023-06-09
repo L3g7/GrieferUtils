@@ -16,30 +16,21 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
-import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
-import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
+import dev.l3g7.griefer_utils.event.events.render.DrawGuiContainerForegroundLayerEvent;
+import net.minecraft.client.gui.inventory.GuiChest;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(GuiScreen.class)
-public class MixinGuiScreen {
+@Mixin(GuiChest.class)
+public class MixinGuiChest {
 
-	@Inject(method = "renderToolTip", at = @At("HEAD"), cancellable = true)
-	public void injectRenderTooltip(ItemStack stack, int x, int y, CallbackInfo ci) {
-		if (MinecraftForge.EVENT_BUS.post(new RenderToolTipEvent(stack, (GuiScreen) (Object) this, x, y)))
-			ci.cancel();
-	}
-
-	@Inject(method = "initGui", at = @At("HEAD"))
-	public void injectInitGui(CallbackInfo ci) {
-		MinecraftForge.EVENT_BUS.post(new GuiInitEvent((GuiScreen) (Object) this));
+	@Inject(method = "drawGuiContainerForegroundLayer", at = @At("HEAD"))
+	private void injectGetDisplayName(int mouseX, int mouseY, CallbackInfo ci) {
+		DrawGuiContainerForegroundLayerEvent.post(((GuiChest) (Object) this));
 	}
 
 }

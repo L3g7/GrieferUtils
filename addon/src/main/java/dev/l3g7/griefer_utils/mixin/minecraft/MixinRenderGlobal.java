@@ -16,23 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
-import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.features.chat.UnlockChatFilters;
-import net.labymod.ingamechat.tabs.GuiChatFilter;
+import dev.l3g7.griefer_utils.features.world.KeepChunksLoaded;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.ClassInheritanceMultiMap;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-import static java.lang.Integer.MAX_VALUE;
+@Mixin(RenderGlobal.class)
+public class MixinRenderGlobal {
 
-@Mixin(GuiChatFilter.class)
-public class MixinGuiChatFilter {
-
-	@ModifyArg(method = "drawElementTextField", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiTextField;setMaxStringLength(I)V"))
-	public int injectInitGui(int previousLength) {
-		return FileProvider.getSingleton(UnlockChatFilters.class).isEnabled() ? MAX_VALUE : previousLength;
+	@Redirect(method = "renderEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/Chunk;getEntityLists()[Lnet/minecraft/util/ClassInheritanceMultiMap;"))
+	private ClassInheritanceMultiMap<Entity>[] getFilledEntityLists(Chunk chunk) {
+		return KeepChunksLoaded.getFilledEntityLists(chunk);
 	}
 
 }

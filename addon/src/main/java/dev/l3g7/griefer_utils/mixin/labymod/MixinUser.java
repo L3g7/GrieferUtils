@@ -16,23 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.labymod;
 
-import dev.l3g7.griefer_utils.event.events.render.ParticleSpawnEvent;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
-import net.minecraft.world.World;
+import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
+import net.labymod.user.User;
+import net.labymod.user.group.LabyGroup;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(World.class)
-public class MixinWorld {
+@Mixin(value = User.class, remap = false)
+public class MixinUser {
 
-	@Inject(method = "spawnParticle(IZDDDDDD[I)V", at = @At("HEAD"), cancellable = true)
-	private void injectIsBurning(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int[] args, CallbackInfo ci) {
-		if (MinecraftForge.EVENT_BUS.post(new ParticleSpawnEvent(particleID, ignoreRange, new Vec3d(xCoord, yCoord, zCoord), new Vec3d(xOffset, yOffset, zOffset), args)))
+	@Inject(method = "setGroup", at = @At("HEAD"), cancellable = true)
+	public void injectSetGroup(LabyGroup group, CallbackInfo ci) {
+		if (MinecraftForge.EVENT_BUS.post(new UserSetGroupEvent((User) (Object) this, group)))
 			ci.cancel();
 	}
 

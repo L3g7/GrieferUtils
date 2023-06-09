@@ -16,23 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.labymod;
 
-import net.labymod.main.LabyMod;
-import net.labymod.main.listeners.RenderTickListener;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenu;
+import net.labymod.core_implementation.mc18.MinecraftImplementation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(RenderTickListener.class)
-public class MixinRenderTickListener {
+@Mixin(value = MinecraftImplementation.class, remap = false)
+public class MixinMinecraftImplementation {
 
-	/**
-	 * Fix custom achievements not being rendered when in a gui in game.
-	 */
-	@Redirect(method = "drawMenuOverlay", at = @At(value = "INVOKE", target = "Lnet/labymod/main/LabyMod;isInGame()Z"), remap = false)
-	public boolean redirectIsInGame(LabyMod instance) {
-		return false;
+	@Inject(method = "getClickEventValue", at = @At("HEAD"), cancellable = true)
+	public void injectGetClickEventValue(int x, int y, CallbackInfoReturnable<String> cir) {
+		if (FileProvider.getSingleton(ChatMenu.class).isEnabled())
+			cir.setReturnValue(null);
 	}
 
 }

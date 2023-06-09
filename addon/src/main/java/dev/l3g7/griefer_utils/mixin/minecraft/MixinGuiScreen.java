@@ -16,23 +16,30 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
-import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.network.Packet;
+import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
+import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(NetHandlerPlayClient.class)
-public class MixinNetHandlerPlayClient {
+@Mixin(GuiScreen.class)
+public class MixinGuiScreen {
 
-	@Inject(method = "addToSendQueue", at = @At("HEAD"), cancellable = true)
-	private void injectPacketSendEvent(Packet<?> packet, CallbackInfo ci) {
-		if (!PacketSendEvent.shouldSendPacket(packet))
+	@Inject(method = "renderToolTip", at = @At("HEAD"), cancellable = true)
+	public void injectRenderTooltip(ItemStack stack, int x, int y, CallbackInfo ci) {
+		if (MinecraftForge.EVENT_BUS.post(new RenderToolTipEvent(stack, (GuiScreen) (Object) this, x, y)))
 			ci.cancel();
+	}
+
+	@Inject(method = "initGui", at = @At("HEAD"))
+	public void injectInitGui(CallbackInfo ci) {
+		MinecraftForge.EVENT_BUS.post(new GuiInitEvent((GuiScreen) (Object) this));
 	}
 
 }

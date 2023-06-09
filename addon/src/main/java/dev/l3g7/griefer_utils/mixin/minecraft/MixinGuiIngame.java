@@ -16,16 +16,31 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.features.player.scoreboard.ScoreboardHandler;
-import net.labymod.ingamegui.modules.ScoreboardModule;
+import dev.l3g7.griefer_utils.features.render.HideScoreboardInF3;
+import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.scoreboard.ScoreObjective;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ScoreboardModule.class)
-public class MixinScoreboardModule {
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+
+@Mixin(GuiIngame.class)
+public class MixinGuiIngame {
+
+	@Inject(method = "renderScoreboard", at = @At("HEAD"), cancellable = true)
+	public void injectRenderScoreboard(ScoreObjective objective, ScaledResolution scaledRes, CallbackInfo ci) {
+		if (mc().gameSettings.showDebugInfo && FileProvider.getSingleton(HideScoreboardInF3.class).isEnabled())
+			ci.cancel();
+	}
 
 	@ModifyConstant(method = "renderScoreboard", constant = @Constant(intValue = 15), remap = false)
 	private int modifyMaxScoreboardSize(int listSize) {

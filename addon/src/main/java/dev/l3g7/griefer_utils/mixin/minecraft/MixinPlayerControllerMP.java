@@ -16,24 +16,25 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
-import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
-import net.labymod.user.User;
-import net.labymod.user.group.LabyGroup;
+import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = User.class, remap = false)
-public class MixinUser {
+@Mixin(PlayerControllerMP.class)
+public class MixinPlayerControllerMP {
 
-	@Inject(method = "setGroup", at = @At("HEAD"), cancellable = true)
-	public void injectSetGroup(LabyGroup group, CallbackInfo ci) {
-		if (MinecraftForge.EVENT_BUS.post(new UserSetGroupEvent((User) (Object) this, group)))
-			ci.cancel();
+	@Inject(method = "windowClick", at = @At("HEAD"), cancellable = true)
+	public void injectWindowClick(int windowId, int slotId, int mouseButtonClicked, int mode, EntityPlayer playerIn, CallbackInfoReturnable<ItemStack> cir) {
+		if (MinecraftForge.EVENT_BUS.post(new WindowClickEvent(windowId, slotId, mouseButtonClicked, mode)))
+			cir.cancel();
 	}
 
 }

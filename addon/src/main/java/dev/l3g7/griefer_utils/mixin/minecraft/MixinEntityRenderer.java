@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
 import dev.l3g7.griefer_utils.event.events.render.RenderPortalDistortionEvent;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent;

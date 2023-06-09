@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.labymod;
 
 import dev.l3g7.griefer_utils.features.uncategorized.settings.Badges;
 import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsGroup;

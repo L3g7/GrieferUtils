@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.labymod;
 
 import dev.l3g7.griefer_utils.event.events.ChatLogModifyEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;

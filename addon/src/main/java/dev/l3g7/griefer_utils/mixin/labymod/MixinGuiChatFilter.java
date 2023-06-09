@@ -16,23 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.labymod;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenu;
-import net.labymod.core_implementation.mc18.MinecraftImplementation;
+import dev.l3g7.griefer_utils.features.chat.UnlockChatFilters;
+import net.labymod.ingamechat.tabs.GuiChatFilter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-@Mixin(value = MinecraftImplementation.class, remap = false)
-public class MixinMinecraftImplementation {
+import static java.lang.Integer.MAX_VALUE;
 
-	@Inject(method = "getClickEventValue", at = @At("HEAD"), cancellable = true)
-	public void injectGetClickEventValue(int x, int y, CallbackInfoReturnable<String> cir) {
-		if (FileProvider.getSingleton(ChatMenu.class).isEnabled())
-			cir.setReturnValue(null);
+@Mixin(GuiChatFilter.class)
+public class MixinGuiChatFilter {
+
+	@ModifyArg(method = "drawElementTextField", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiTextField;setMaxStringLength(I)V"))
+	public int injectInitGui(int previousLength) {
+		return FileProvider.getSingleton(UnlockChatFilters.class).isEnabled() ? MAX_VALUE : previousLength;
 	}
 
 }

@@ -16,23 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.labymod;
 
-import dev.l3g7.griefer_utils.features.render.TrueSight;
-import net.minecraft.client.renderer.entity.RendererLivingEntity;
+import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
+import net.labymod.accountmanager.storage.account.Account;
+import net.labymod.main.LabyMod;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * Injects {@link TrueSight#getRenderModelAlpha()} into {@link RendererLivingEntity}.
- */
-@Mixin(RendererLivingEntity.class)
-public class MixinRendererLivingEntity {
+@Mixin(LabyMod.class)
+public class MixinLabyMod {
 
-	@ModifyArg(method = "renderModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V"), index = 3)
-	private float overwriteAlpha(float alpha) {
-		return TrueSight.getRenderModelAlpha();
+	@Inject(method = "setSession", at = @At("TAIL"), remap = false)
+	public void injectSetSession(Account account, CallbackInfo ci) {
+		MinecraftForge.EVENT_BUS.post(new AccountSwitchEvent());
 	}
 
 }

@@ -16,21 +16,24 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
-import dev.l3g7.griefer_utils.event.events.render.DrawGuiContainerForegroundLayerEvent;
-import net.minecraft.client.gui.inventory.GuiChest;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(GuiChest.class)
-public class MixinGuiChest {
+@Mixin(NetworkManager.class)
+public class MixinNetworkManager {
 
-	@Inject(method = "drawGuiContainerForegroundLayer", at = @At("HEAD"))
-	private void injectGetDisplayName(int mouseX, int mouseY, CallbackInfo ci) {
-		DrawGuiContainerForegroundLayerEvent.post(((GuiChest) (Object) this));
+	@Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/Packet;)V", at = @At("HEAD"), cancellable = true)
+	public void injectChannelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
+		if (!PacketEvent.PacketReceiveEvent.shouldReceivePacket(packet))
+			ci.cancel();
 	}
 
 }

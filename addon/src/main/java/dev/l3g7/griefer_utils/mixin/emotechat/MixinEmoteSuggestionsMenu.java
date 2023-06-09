@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.emotechat;
 
 import de.emotechat.addon.gui.chat.suggestion.EmoteSuggestionsMenu;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;

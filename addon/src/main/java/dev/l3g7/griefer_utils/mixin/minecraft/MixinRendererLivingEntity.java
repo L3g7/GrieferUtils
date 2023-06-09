@@ -16,23 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
-import dev.l3g7.griefer_utils.features.world.KeepChunksLoaded;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ClassInheritanceMultiMap;
-import net.minecraft.world.chunk.Chunk;
+import dev.l3g7.griefer_utils.features.render.TrueSight;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-@Mixin(RenderGlobal.class)
-public class MixinRenderGlobal {
+/**
+ * Injects {@link TrueSight#getRenderModelAlpha()} into {@link RendererLivingEntity}.
+ */
+@Mixin(RendererLivingEntity.class)
+public class MixinRendererLivingEntity {
 
-	@Redirect(method = "renderEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/Chunk;getEntityLists()[Lnet/minecraft/util/ClassInheritanceMultiMap;"))
-	private ClassInheritanceMultiMap<Entity>[] getFilledEntityLists(Chunk chunk) {
-		return KeepChunksLoaded.getFilledEntityLists(chunk);
+	@ModifyArg(method = "renderModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V"), index = 3)
+	private float overwriteAlpha(float alpha) {
+		return TrueSight.getRenderModelAlpha();
 	}
 
 }

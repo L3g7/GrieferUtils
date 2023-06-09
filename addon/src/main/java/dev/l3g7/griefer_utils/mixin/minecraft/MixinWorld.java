@@ -16,23 +16,24 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.mixin;
+package dev.l3g7.griefer_utils.mixin.minecraft;
 
-import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
-import net.labymod.accountmanager.storage.account.Account;
-import net.labymod.main.LabyMod;
+import dev.l3g7.griefer_utils.event.events.render.ParticleSpawnEvent;
+import dev.l3g7.griefer_utils.core.misc.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(LabyMod.class)
-public class MixinLabyMod {
+@Mixin(World.class)
+public class MixinWorld {
 
-	@Inject(method = "setSession", at = @At("TAIL"), remap = false)
-	public void injectSetSession(Account account, CallbackInfo ci) {
-		MinecraftForge.EVENT_BUS.post(new AccountSwitchEvent());
+	@Inject(method = "spawnParticle(IZDDDDDD[I)V", at = @At("HEAD"), cancellable = true)
+	private void injectIsBurning(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int[] args, CallbackInfo ci) {
+		if (MinecraftForge.EVENT_BUS.post(new ParticleSpawnEvent(particleID, ignoreRange, new Vec3d(xCoord, yCoord, zCoord), new Vec3d(xOffset, yOffset, zOffset), args)))
+			ci.cancel();
 	}
 
 }

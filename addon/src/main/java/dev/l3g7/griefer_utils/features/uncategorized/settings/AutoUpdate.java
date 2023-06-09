@@ -16,10 +16,11 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update;
+package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
+import dev.l3g7.griefer_utils.misc.gui.ChangelogScreen;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
@@ -77,7 +78,7 @@ public class AutoUpdate {
 		Config.save();
 
 		if (showUpdateScreen.get())
-			UpdateScreen.trigger();
+			ChangelogScreen.trigger();
 	}
 
 	private static boolean triggeredShutdownHook = false;

@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
  * Copyright 2020-2023 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.misc;
+package dev.l3g7.griefer_utils.misc.gui;
 
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;

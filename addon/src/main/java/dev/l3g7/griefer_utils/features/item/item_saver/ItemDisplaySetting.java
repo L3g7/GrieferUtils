@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
-import dev.l3g7.griefer_utils.misc.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.misc.gui.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.audio.PositionedSoundRecord;

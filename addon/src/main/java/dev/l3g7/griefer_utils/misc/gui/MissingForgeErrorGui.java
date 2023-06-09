@@ -16,10 +16,9 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.misc;
+package dev.l3g7.griefer_utils.misc.gui;
 
 
-import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.TextList;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;

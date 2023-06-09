@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update;
+package dev.l3g7.griefer_utils.misc.gui;
 
 
 import net.labymod.main.LabyMod;

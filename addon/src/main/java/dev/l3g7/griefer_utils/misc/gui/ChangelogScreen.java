@@ -16,9 +16,10 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update;
+package dev.l3g7.griefer_utils.misc.gui;
 
 
+import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdate;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
@@ -35,7 +36,7 @@ import java.io.IOException;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
-public class UpdateScreen extends GuiScreen {
+public class ChangelogScreen extends GuiScreen {
 
 	private static boolean triggered = false;
 	private static String version = null;
@@ -47,7 +48,7 @@ public class UpdateScreen extends GuiScreen {
 	// Make sure the gui closes to the correct screen
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onGuiOpen(GuiOpenEvent event) {
-		if (event.isCanceled() || event.gui instanceof UpdateScreen)
+		if (event.isCanceled() || event.gui instanceof ChangelogScreen)
 			return;
 
 		previousScreen = event.gui;
@@ -60,7 +61,7 @@ public class UpdateScreen extends GuiScreen {
 		if (version == null)
 			return;
 
-		mc().displayGuiScreen(new UpdateScreen());
+		mc().displayGuiScreen(new ChangelogScreen());
 	}
 
 	public static boolean hasData() {
@@ -68,16 +69,16 @@ public class UpdateScreen extends GuiScreen {
 	}
 
 	public static void setData(String version, String changelog) {
-		UpdateScreen.version = version;
-		UpdateScreen.changelog = changelog;
+		ChangelogScreen.version = version;
+		ChangelogScreen.changelog = changelog;
 
 		if (!triggered)
 			return;
 
-		mc().displayGuiScreen(new UpdateScreen());
+		mc().displayGuiScreen(new ChangelogScreen());
 	}
 
-	public UpdateScreen() {
+	public ChangelogScreen() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 

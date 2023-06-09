@@ -22,7 +22,7 @@ import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.auto_update.UpdateScreen;
+import dev.l3g7.griefer_utils.misc.gui.ChangelogScreen;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.TextSetting;
@@ -44,8 +44,8 @@ public class Changelog {
 			List<SettingsElement> entries = new ArrayList<>();
 			for (Map.Entry<String, JsonElement> entry : releases.entrySet()) {
 
-				if (!UpdateScreen.hasData()) {
-					UpdateScreen.setData(
+				if (!ChangelogScreen.hasData()) {
+					ChangelogScreen.setData(
 						entry.getKey(),
 						entry.getValue().getAsString().substring("Changelog:".length())
 					);

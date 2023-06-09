@@ -65,7 +65,7 @@ public class URLFileProvider extends FileProvider {
 		else if (file != root) {
 			// Strip root path and normalize string
 			String path = file.getCanonicalPath().substring(root.getCanonicalPath().length() + 1).replace('\\', '/');
-			fileCache.put(path, () -> Files.newInputStream(file.toPath()));
+			fileCache.putIfAbsent(path, () -> Files.newInputStream(file.toPath()));
 		}
 	}
 

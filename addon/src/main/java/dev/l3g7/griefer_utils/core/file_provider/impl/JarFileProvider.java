@@ -52,7 +52,7 @@ public class JarFileProvider extends FileProvider {
 			if (jarFile.size() == 0)
 				return new IllegalStateException("Empty jar file: " + jarPath);
 
-			jarFile.stream().forEach(entry -> fileCache.put(entry.getName(), () -> jarFile.getInputStream(entry)));
+			jarFile.stream().forEach(entry -> fileCache.putIfAbsent(entry.getName(), () -> jarFile.getInputStream(entry)));
 		} catch (Exception e) {
 			return e;
 		}

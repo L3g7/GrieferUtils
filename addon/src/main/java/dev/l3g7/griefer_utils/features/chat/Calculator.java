@@ -23,7 +23,6 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard;
@@ -31,22 +30,13 @@ import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.utils.Material;
-import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.mariuszgromada.math.mxparser.Expression;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -277,26 +267,6 @@ public class Calculator extends Feature {
 		}
 
 		return expResult;
-	}
-
-	@OnEnable
-	private void loadLibrary() throws IOException, ReflectiveOperationException {
-		File mixinLibrary = new File("libraries/org/mariuszgromada/math/MathParser.org-mXparser/5.1.0/MathParser.org-mXparser-5.1.0.jar");
-		if (!mixinLibrary.exists()) {
-			// Download library
-			mixinLibrary.getParentFile().mkdirs();
-			HttpsURLConnection c = (HttpsURLConnection) new URL("https://repo1.maven.org/maven2/org/mariuszgromada/math/MathParser.org-mXparser/5.1.0/MathParser.org-mXparser-5.1.0.jar").openConnection();
-			c.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");
-			Files.copy(c.getInputStream(), mixinLibrary.toPath());
-		}
-
-		// Add jar file to parent of LaunchClassLoader
-		Field parent = Launch.classLoader.getClass().getDeclaredField("parent");
-		parent.setAccessible(true);
-		Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-		addURL.setAccessible(true);
-		addURL.invoke(parent.get(Launch.classLoader), mixinLibrary.toURI().toURL());
-		addURL.invoke(Launch.classLoader, mixinLibrary.toURI().toURL());
 	}
 
 	private enum WithdrawAction {

@@ -185,7 +185,7 @@ public class ChatMenu extends Feature {
 		if (COPY_TEXT_ENTRY.enabled) entries.add(COPY_TEXT_ENTRY);
 		getCustom().forEach(e -> { if (e.enabled) entries.add(e); });
 
-		renderer = new ChatMenuRenderer(entries, value.substring("/msg ".length()), ChatLineUtil.getHoveredComponent());
+		renderer = new ChatMenuRenderer(entries, value.substring("/msg ".length()).trim(), ChatLineUtil.getHoveredComponent());
 		event.setCanceled(true);
 	}
 

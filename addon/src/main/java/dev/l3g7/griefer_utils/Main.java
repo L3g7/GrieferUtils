@@ -24,7 +24,6 @@ import dev.l3g7.griefer_utils.event.EventHandler;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdate;
 import dev.l3g7.griefer_utils.misc.gui.MissingForgeErrorGui;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
@@ -111,9 +110,7 @@ public class Main extends LabyModAddon {
 	}
 
 	@Override
-	public void loadConfig() {
-		AutoUpdate.checkForUpdate(about.uuid);
-	}
+	public void loadConfig() {}
 
 	@Override
 	protected void fillSettings(List<SettingsElement> list) {

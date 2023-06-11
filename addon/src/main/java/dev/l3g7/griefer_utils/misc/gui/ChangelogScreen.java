@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.misc.gui;
 
 
-import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdate;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdateSettings;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
@@ -133,7 +133,7 @@ public class ChangelogScreen extends GuiScreen {
 
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		if (isLeftButtonHovered(mouseX, mouseY)) {
-			AutoUpdate.showUpdateScreen.set(false);
+			AutoUpdateSettings.showUpdateScreen.set(false);
 			closeGui();
 			return;
 		}

@@ -31,6 +31,6 @@ public class Settings extends Feature {
 	private final CategorySetting element = new CategorySetting()
 		.name("§yEinstellungen")
 		.icon("cog")
-		.subSettings(AutoUpdate.enabled, Changelog.category, Badges.enabled, new HeaderSetting(), BugReporter.enabled);
+		.subSettings(Badges.enabled, AutoUpdateSettings.enabled, Changelog.category,  new HeaderSetting(), BugReporter.enabled);
 
 }

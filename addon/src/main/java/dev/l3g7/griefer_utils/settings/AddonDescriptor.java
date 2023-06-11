@@ -19,7 +19,6 @@
 package dev.l3g7.griefer_utils.settings;
 
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdate;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
@@ -39,11 +38,6 @@ public class AddonDescriptor {
 		AddonInfo addonInfo = AddonUtil.getInfo();
 		if (addonInfo != null) {
 			Reflection.set(addonInfo, "L3g7, L3g73 \u2503 v" + AddonUtil.getVersion(), "author");
-
-			if(!AutoUpdate.isUpToDate()) {
-				Reflection.set(addonInfo, "\u00A7e\u00A7lGrieferUtils wurde aktualisiert!\nBitte starte Minecraft neu.", "description");
-				return;
-			}
 
 			updateDescription(YELLOW + "Verbinde mit GrieferUtils-Server ...");
 

@@ -19,17 +19,24 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import com.google.gson.JsonElement;
+import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
+import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.misc.gui.ChangelogScreen;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.TextSetting;
+import dev.l3g7.griefer_utils.util.AddonUtil;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.*;
 
+@Singleton
 public class Changelog {
 
 	public static final CategorySetting category = new CategorySetting()
@@ -39,7 +46,7 @@ public class Changelog {
 		.settingsEnabled(false)
 		.subSettings();
 
-	static {
+	public Changelog() {
 		IOUtil.read("https://grieferutils.l3g7.dev/v2/changelog").asJsonObject(releases -> {
 			List<SettingsElement> entries = new ArrayList<>();
 			for (Map.Entry<String, JsonElement> entry : releases.entrySet()) {
@@ -74,5 +81,20 @@ public class Changelog {
 				.description("§cEs gab einen Fehler.")
 				.settingsEnabled(false)
 		);
+	}
+
+	@OnEnable
+	public void onEnable() {
+		if (AutoUpdater.hasUpdated) {
+			if (AutoUpdateSettings.releaseChannel.get() == ReleaseInfo.ReleaseChannel.BETA) {
+				// Get changelog for beta version
+				IOUtil.read("https://grieferutils.l3g7.dev/v2/changelog/beta").asJsonString(changelog -> {
+					ChangelogScreen.setData(AddonUtil.getVersion(), changelog.substring("Changelog:".length()));
+					ChangelogScreen.trigger();
+				});
+			} else
+				// Show changelog for stable version
+				ChangelogScreen.trigger();
+		}
 	}
 }

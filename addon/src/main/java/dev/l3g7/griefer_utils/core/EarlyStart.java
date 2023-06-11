@@ -21,16 +21,15 @@ package dev.l3g7.griefer_utils.core;
 import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.misc.LibLoader;
 import net.labymod.core.asm.LabyModCoreMod;
-import net.minecraft.launchwrapper.IClassTransformer;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.IOException;
 
-public class EarlyStart implements IClassTransformer {
+public class EarlyStart {
 
-	public EarlyStart() throws ReflectiveOperationException, IOException {
+	public static void start() throws ReflectiveOperationException, IOException {
 		if (!LabyModCoreMod.isForge())
 			return;
 
@@ -45,8 +44,5 @@ public class EarlyStart implements IClassTransformer {
 		Mixins.addConfiguration("griefer_utils.mixins.json");
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
 	}
-
-	@Override
-	public byte[] transform(String name, String transformedName, byte[] basicClass) { return basicClass; }
 
 }

@@ -33,6 +33,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -46,9 +47,8 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 
 	private final Storage<E> storage;
 	private final IconStorage iconStorage = new IconStorage();
+	private final FixedDropDownMenu<E> menu = new FixedDropDownMenu<>();
 	private Function<E, String> stringProvider = Enum::toString;
-	private int dropDownWidth;
-	private int dropDownX;
 
 	public DropDownSetting(Class<E> enumClass) {
 		this(enumClass, 0);
@@ -62,16 +62,6 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		storage = new Storage<>(e -> new JsonPrimitive(e.name()), s -> Enum.valueOf(enumClass, s.getAsString()), enumClass.getEnumConstants()[0]);
 
 		// Initialize menu
-		DropDownMenu<E> menu = new DropDownMenu<E>("", 0, 0, 0, 0) {
-			public void setWidth(int width) {
-				if (width == dropDownWidth) // Stop DropDownElement from updating the width
-					super.setWidth(width);
-			}
-			public void setX(int x) {
-				if (x == dropDownX) // Stop DropDownElement from updating x
-					super.setX(x);
-			}
-		};
 		E[] constants = enumClass.getEnumConstants();
 		menu.fill(Arrays.copyOfRange(constants, skippedEntries, constants.length));
 		Reflection.set(this, menu, "dropDownMenu");
@@ -80,22 +70,48 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		stringProvider(e -> Reflection.get(e, "name"));
 	}
 
+	/**
+	 * A dropdown menu with overwritten setWidth and setX methods to prevent LabyMod from
+	 * changing the bounds when rendering.
+	 */
+	private static class FixedDropDownMenu<E> extends DropDownMenu<E> {
+
+		public FixedDropDownMenu() {
+			super("", 0, 0, 0, 0);
+		}
+
+		@Override
+		public void setWidth(int width) {}
+
+		@Override
+		public void setX(int x) {}
+
+		public void doSetWidth(int width) {
+			super.setWidth(width);
+		}
+
+		public void doSetX(int x) {
+			super.setX(x);
+		}
+
+	}
+
 	@Override
 	public DropDownSetting<E> name(String name) {
 		if (getIconData() == null)
-			getDropDownMenu().setTitle(name);
+			menu.setTitle(name);
 		return ElementBuilder.super.name(name);
 	}
 
 	@Override
 	public DropDownSetting<E> icon(Object icon) {
-		getDropDownMenu().setTitle("");
+		menu.setTitle("");
 		return ElementBuilder.super.icon(icon);
 	}
 
 	@Override
 	public DropDownSetting<E> set(E value) {
-		getDropDownMenu().setSelected(c(value));
+		menu.setSelected(c(value));
 		return ValueHolder.super.set(value);
 	}
 
@@ -113,14 +129,14 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 	public DropDownSetting<E> stringProvider(Function<E, String> function) {
 		stringProvider = function;
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
-		getDropDownMenu().setEntryDrawer((o, x, y, trimmedEntry) -> drawUtils.drawString(function.apply((E) o), x, y));
-		dropDownWidth = ((List<E>) Reflection.get(getDropDownMenu(), "list"))
+		menu.setEntryDrawer((o, x, y, trimmedEntry) -> drawUtils.drawString(function.apply((E) o), x, y));
+		int width = ((List<E>) Reflection.get(menu, "list"))
 			.stream().mapToInt(e -> drawUtils.getStringWidth(function.apply(e)))
 			.max()
 			.orElse(0)
 			+ 9;
 
-		getDropDownMenu().setWidth(dropDownWidth);
+		menu.doSetWidth(width + 15); // 15px for arrow
 
 		return this;
 	}
@@ -137,21 +153,27 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-		DropDownMenu<?> dropDownMenu = getDropDownMenu();
+
+		// Adapt dropdown width to name
+		int originalWidth = menu.getWidth();
+		String name = getDisplayName();
+		if (name.contains(" "))
+			name = Arrays.stream(name.split(" ")).max(Comparator.comparingInt(String::length)).orElse("§c");
+
+		menu.doSetWidth(Math.min(menu.getWidth(), maxX - x - 35 - mc.fontRendererObj.getStringWidth(name))); // dropdown width - 35px for icon and padding - name
+
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
 
 		// Reset selection, so selected value isn't rendered
-		Object selected = dropDownMenu.getSelected();
-		dropDownMenu.setSelected(null);
-		int realWidth = dropDownWidth;
-		dropDownWidth = Math.min(dropDownWidth, 90);
-		dropDownMenu.setWidth(dropDownWidth);
+		E selected = c(menu.getSelected());
+		menu.setSelected(null);
+		int width = menu.getWidth();
 
-		dropDownMenu.setX(dropDownX = maxX - dropDownWidth - 5);
+		menu.doSetX(maxX - width - 5);
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		drawIcon(x, y);
 
-		dropDownMenu.setSelected(c(selected));
+		menu.setSelected(selected);
 
 		int height = maxY - y - 6;
 
@@ -159,8 +181,8 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor(0,0, (int) ((maxX - 21) / new ScaledResolution(mc).getScaledWidth_double() * mc.displayWidth), mc.displayHeight);
 
-		String trimmedEntry = drawUtils.trimStringToWidth(ModColor.cl("f") + stringProvider.apply((E) selected), dropDownWidth - 10);
-		drawUtils.drawString(trimmedEntry, dropDownX + 5, (y + 3) + height / 2f - 4);
+		String trimmedEntry = drawUtils.trimStringToWidth(ModColor.cl("f") + stringProvider.apply(selected), width - 10);
+		drawUtils.drawString(trimmedEntry, menu.getX() + 5, (y + 3) + height / 2f - 4);
 
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
@@ -172,12 +194,11 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 		Gui.drawRect(maxX - 21, maxY - 13, maxX - 20, maxY - 3, 0xFF000000);
 
 		// Draw dropdown with fixed width
-		dropDownWidth = realWidth;
-		if (!dropDownMenu.isOpen())
+		if (!menu.isOpen())
 			return;
 
-		dropDownMenu.setWidth(dropDownWidth);
-		dropDownMenu.drawMenuDirect(dropDownMenu.getX(), dropDownMenu.getY(), mouseX, mouseY);
+		menu.doSetWidth(originalWidth);
+		menu.drawMenuDirect(menu.getX(), menu.getY(), mouseX, mouseY);
 	}
 
 }

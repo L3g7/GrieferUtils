@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.util;
 
 import com.github.lunatrius.schematica.api.ISchematic;
+import com.github.lunatrius.schematica.client.renderer.RenderSchematic;
 import com.github.lunatrius.schematica.proxy.ClientProxy;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.BlockPos;
@@ -32,6 +33,10 @@ public class SchematicaUtil {
 
 	public static boolean shouldLayerBeRendered(int y) {
 		return !schematic.isRenderingLayer || schematic.renderingLayer + schematic.position.field_177960_b == y;
+	}
+
+	public static void refresh() {
+		RenderSchematic.INSTANCE.refresh();
 	}
 
 }

@@ -1,10 +1,11 @@
 {
   "required": true,
-  "package": "dev.l3g7.griefer_utils.mixin",
+  "package": "dev.l3g7.griefer_utils.injection.mixin",
   "refmap": "griefer_utils.mixins.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.7",
   "mixins": [
+    "MixinForgeHooks",
     "emotechat.MixinEmoteChatRenderer",
     "emotechat.MixinEmoteSuggestionsMenu",
     "labymod.MixinChatRenderer",
@@ -34,7 +35,6 @@
     "minecraft.MixinRenderGlobal",
     "minecraft.MixinRenderItem",
     "minecraft.MixinWorld",
-    "minecraft.MixinWorldClient",
-    "MixinForgeHooks"
+    "minecraft.MixinWorldClient"
   ]
 }

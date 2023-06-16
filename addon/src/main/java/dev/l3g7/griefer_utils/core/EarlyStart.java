@@ -20,12 +20,14 @@ package dev.l3g7.griefer_utils.core;
 
 import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.misc.LibLoader;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.core.asm.LabyModCoreMod;
-import org.spongepowered.asm.launch.MixinBootstrap;
-import org.spongepowered.asm.mixin.MixinEnvironment;
-import org.spongepowered.asm.mixin.Mixins;
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.fml.common.asm.ASMTransformerWrapper;
 
 import java.io.IOException;
+import java.util.List;
 
 public class EarlyStart {
 
@@ -39,10 +41,12 @@ public class EarlyStart {
 		// Load and inject libraries
 		LibLoader.loadLibraries();
 
-		// Initialize Mixin
-		MixinBootstrap.init();
-		Mixins.addConfiguration("griefer_utils.mixins.json");
-		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
+		// Add Injector as transformer
+		List<IClassTransformer> transformers = Reflection.get(Launch.classLoader, "transformers");
+		transformers.add(new ASMTransformerWrapper.TransformerWrapper() {
+			protected String getParentClass() { return "dev.l3g7.griefer_utils.injection.Injector"; }
+			protected String getCoreMod() { return "net.labymod.core.asm.LabyModCoreMod"; }
+		});
 	}
 
 }

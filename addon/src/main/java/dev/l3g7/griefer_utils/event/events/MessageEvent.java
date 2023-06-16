@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
-import dev.l3g7.griefer_utils.mixin.labymod.MixinGuiChatAdapter;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.injection.mixin.labymod.MixinGuiChatAdapter;
 import net.labymod.api.events.MessageModifyChatEvent;
 import net.labymod.main.LabyMod;
 import net.minecraft.util.IChatComponent;

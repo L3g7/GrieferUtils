@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.event.events.network;
 
-import dev.l3g7.griefer_utils.mixin.minecraft.MixinNetHandlerPlayClient;
-import dev.l3g7.griefer_utils.mixin.minecraft.MixinNetworkManager;
+import dev.l3g7.griefer_utils.injection.mixin.minecraft.MixinNetHandlerPlayClient;
+import dev.l3g7.griefer_utils.injection.mixin.minecraft.MixinNetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;

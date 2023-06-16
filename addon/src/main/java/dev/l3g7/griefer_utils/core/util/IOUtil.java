@@ -24,7 +24,9 @@ import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.misc.functions.Function;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 
+import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -56,6 +58,18 @@ public class IOUtil {
 	 */
 	public static URLReadOperation read(String url) {
 		return new URLReadOperation(url);
+	}
+
+	public static BufferedImage readImage(String url) throws IOException {
+		System.out.println("Reading img from " + url);
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+
+		if (conn instanceof HttpsURLConnection)
+			((HttpsURLConnection) conn).setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
+
+		conn.addRequestProperty("User-Agent", "GrieferUtils v" + AddonUtil.getVersion() + " | github.com/L3g7/GrieferUtils");
+		conn.setConnectTimeout(10000);
+		return ImageIO.read(conn.getInputStream());
 	}
 
 	/**
@@ -167,6 +181,7 @@ public class IOUtil {
 				return -1;
 			}
 		}
+
 	}
 
 	public abstract static class ReadOperation {

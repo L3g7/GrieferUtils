@@ -21,7 +21,6 @@ package dev.l3g7.griefer_utils.settings.elements.player_list_setting;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.core.XboxProfile;
 import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.core.XboxProfileResolver;
@@ -30,11 +29,9 @@ import net.labymod.utils.JsonParse;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
 import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,9 +81,7 @@ public class PlayerListEntryResolver {
 		entry.loaded = true;
 
 		try {
-			HttpsURLConnection conn = (HttpsURLConnection) new URL(profile.avatar + "&height=128&width=128").openConnection();
-			conn.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
-			BufferedImage img = ImageIO.read(conn.getInputStream());
+			BufferedImage img = IOUtil.readImage(profile.avatar + "&height=128&width=128");
 
 			TickScheduler.runAfterRenderTicks(() -> {
 				entry.skin = new DynamicTexture(img);
@@ -134,7 +129,7 @@ public class PlayerListEntryResolver {
 				continue;
 
 			String url = JsonParse.parse(new String(Base64.getDecoder().decode(property.get("value").getAsString()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
-			BufferedImage img = ImageIO.read(new URL(url));
+			BufferedImage img = IOUtil.readImage(url);
 			entry.slim = img.getHeight() == 32;
 
 			TickScheduler.runAfterRenderTicks(() -> {

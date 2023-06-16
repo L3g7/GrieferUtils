@@ -38,7 +38,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -113,7 +112,7 @@ public class PlayerDataProvider {
 					String url = JsonParse.parse(new String(Base64.getDecoder().decode(property.getValue()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
 					Thread loadTextureThread = new Thread(() -> {
 						try {
-							BufferedImage img = ImageIO.read(new URL(url));
+							BufferedImage img = IOUtil.readImage(url);
 							data.slim = img.getHeight() == 32;
 
 							TickScheduler.runAfterRenderTicks(() -> {
@@ -243,7 +242,7 @@ public class PlayerDataProvider {
 					continue;
 
 				String url = JsonParse.parse(new String(Base64.getDecoder().decode(property.get("value").getAsString()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
-				BufferedImage img = ImageIO.read(new URL(url));
+				BufferedImage img = IOUtil.readImage(url);
 				slim = img.getHeight() == 32;
 
 				TickScheduler.runAfterRenderTicks(() -> {

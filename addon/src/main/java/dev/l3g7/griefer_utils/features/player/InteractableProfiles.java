@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -92,6 +93,15 @@ public class InteractableProfiles extends Feature {
 		String citybuild = ItemUtil.getLastLore(slot.getStack());
 		citybuild = citybuild.substring(citybuild.lastIndexOf(' ') + 1).replaceAll("§.", "");
 		citybuild = citybuild.substring(0, citybuild.length() - 1);
+
+		// Account for hub servers
+		for (String hubName : new String[]{"portal", "lobby"}) {
+			if (citybuild.equalsIgnoreCase(hubName)) {
+				if (!MinecraftUtil.getServerFromScoreboard().equalsIgnoreCase(hubName))
+					MinecraftUtil.send("/" + hubName);
+				return;
+			}
+		}
 
 		Citybuild cb = Citybuild.getCitybuild(citybuild);
 

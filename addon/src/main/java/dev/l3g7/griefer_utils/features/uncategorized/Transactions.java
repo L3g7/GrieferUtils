@@ -71,7 +71,7 @@ public class Transactions extends Feature {
 		new HeaderSetting("§c§nDie Beträge sind abgerundet§c!").scale(.7)
 	);
 
-	private List<Transaction> transactions = Collections.emptyList();
+	private final Set<Transaction> transactions = new HashSet<>();
 	private final Gson PRETTY_PRINTING_GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	@MainElement
@@ -85,8 +85,7 @@ public class Transactions extends Feature {
 	@EventListener
 	public void onMMPacket(MMPacketReceiveEvent event) {
 		if (event.packet instanceof TransactionsPacket) {
-			transactions = ((TransactionsPacket) event.packet).transactions;
-			transactions.sort((a, b) -> Integer.compare(b.id, a.id)); // Sort by id
+			transactions.addAll(((TransactionsPacket) event.packet).transactions);
 			updateSettings();
 		}
 	}

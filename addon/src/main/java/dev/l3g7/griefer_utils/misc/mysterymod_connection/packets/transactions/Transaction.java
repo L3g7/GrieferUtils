@@ -40,4 +40,15 @@ public class Transaction {
 			", timestamp=" + timestamp +
 			'}';
 	}
+
+	@Override
+	public int hashCode() {
+		return id;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Transaction && id == ((Transaction) obj).id;
+	}
+
 }

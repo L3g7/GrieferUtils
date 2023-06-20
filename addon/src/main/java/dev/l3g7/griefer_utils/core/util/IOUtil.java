@@ -61,7 +61,6 @@ public class IOUtil {
 	}
 
 	public static BufferedImage readImage(String url) throws IOException {
-		System.out.println("Reading img from " + url);
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
 		if (conn instanceof HttpsURLConnection)

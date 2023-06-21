@@ -26,6 +26,7 @@ import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.*;
 
@@ -52,7 +53,7 @@ public class ChatLineUtil {
 		MODIFIED_COMPONENTS.add(event.component);
 	}
 
-	@EventListener
+	@EventListener(priority = EventPriority.HIGHEST)
 	private static void onMessageModified(ChatLineEvent.ChatLineInitEvent event) {
 		int width = INSTANCE.getMain().getVisualWidth();
 		List<IChatComponent> components = GuiUtilRenderComponents.splitText(event.component, width, mc().fontRendererObj, false, false);
@@ -61,7 +62,7 @@ public class ChatLineUtil {
 		currentComponent = event.component;
 	}
 
-	@EventListener
+	@EventListener(priority = EventPriority.HIGHEST)
 	private static void onChatLineAdd(ChatLineEvent.ChatLineAddEvent event) {
 		if (passedLines++ >= expectedLines)
 			return;

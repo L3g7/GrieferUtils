@@ -36,5 +36,8 @@
     "minecraft.MixinRenderItem",
     "minecraft.MixinWorld",
     "minecraft.MixinWorldClient"
+  ],
+  "client": [
+    "minecraft.MixinEntityPlayerSP"
   ]
 }

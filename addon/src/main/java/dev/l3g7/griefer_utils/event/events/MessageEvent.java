@@ -103,4 +103,15 @@ public class MessageEvent extends Event {
 
 	}
 
+	@Cancelable
+	public static class MessageAboutToBeSentEvent extends MessageEvent {
+
+		public final String message;
+
+		public MessageAboutToBeSentEvent(String message) {
+			this.message = message;
+		}
+
+	}
+
 }

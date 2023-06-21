@@ -49,11 +49,17 @@ public class InteractableMessages extends Feature {
 	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
 	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
 	private static final Pattern P_H_PATTERN = Pattern.compile("^.*(?<command>/p h [^ ]+).*$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern CLAN_INFO_PATTERN = Pattern.compile("^» (?<name>[^ ]+) \\((?:offline|online)\\)$");
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Interagierbare Nachrichten")
-		.description("Macht TPAs, den CityBuild bei Globalchat-Nachrichten, den Status sowie \"/p h\" in Nachrichten interagierbar.")
+		.description("Macht Folgenes interagierbar:"
+			+ "\n- TPAs"
+			+ "\n- Den Citybuild bei Globalchat-Nachrichten"
+			+ "\n- Den Status"
+			+ "\n- \"/p h\" in Nachrichten"
+			+ "\n- Spielernamen bei /clan info")
 		.icon("left_click");
 
 	@EventListener(priority = EventPriority.LOW)
@@ -62,6 +68,7 @@ public class InteractableMessages extends Feature {
 		modifyStatuses(event);
 		modifyTps(event);
 		modifyPHs(event);
+		modifyClanInfo(event);
 	}
 
 	private void modifyGlobalChats(MessageModifyEvent event) {
@@ -176,5 +183,19 @@ public class InteractableMessages extends Feature {
 		}
 	}
 
+	private void modifyClanInfo(MessageModifyEvent event) {
+		String unformattedText = event.original.getUnformattedText();
+		Matcher matcher = CLAN_INFO_PATTERN.matcher(unformattedText);
+		if (!matcher.matches())
+			return;
+
+		String name = matcher.group("name");
+		IChatComponent message = event.message;
+
+		for (IChatComponent part : message.getSiblings())
+			part.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, String.format("/profil %s ", name)));
+
+		event.message = message;
+	}
 
 }

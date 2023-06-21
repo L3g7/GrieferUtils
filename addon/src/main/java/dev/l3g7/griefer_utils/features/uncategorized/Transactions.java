@@ -71,7 +71,7 @@ public class Transactions extends Feature {
 		new HeaderSetting("§c§nDie Beträge sind abgerundet§c!").scale(.7)
 	);
 
-	private final Set<Transaction> transactions = new HashSet<>();
+	private final Set<Transaction> transactions = new TreeSet<>();
 	private final Gson PRETTY_PRINTING_GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	@MainElement

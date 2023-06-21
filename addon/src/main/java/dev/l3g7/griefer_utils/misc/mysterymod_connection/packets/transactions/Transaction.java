@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions;
 
-public class Transaction {
+public class Transaction implements Comparable<Transaction> {
 
 	public int id;
 	public String username;
@@ -51,4 +51,8 @@ public class Transaction {
 		return obj instanceof Transaction && id == ((Transaction) obj).id;
 	}
 
+	@Override
+	public int compareTo(Transaction o) {
+		return Long.compare(o.timestamp, timestamp);
+	}
 }

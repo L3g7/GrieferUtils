@@ -25,7 +25,6 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.*;
@@ -40,6 +39,7 @@ import java.math.RoundingMode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard.getBankBalance;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
@@ -51,8 +51,8 @@ public class Calculator extends Feature {
 		.defaultValue(WithdrawAction.SUGGEST);
 
 	private final BooleanSetting depositAll = new BooleanSetting()
-		.name("* einzahlen")
-		.description("Aktiviert den * Placeholder, mit dem sich das gesamte Guthaben einzahlen lässt.")
+		.name("* einzahlen / abheben")
+		.description("Aktiviert den * Placeholder, mit dem sich das gesamte Guthaben einzahlen oder abheben lässt.")
 		.icon("bank")
 		.defaultValue(true);
 
@@ -123,7 +123,7 @@ public class Calculator extends Feature {
 		if (event.message.getFormattedText().equals("§r§cFehler:§r§4 §r§4Du hast nicht genug Guthaben.§r")) {
 			event.setCanceled(true);
 			BigDecimal moneyRequired = lastPayment.subtract(getCurrentBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
-			BigDecimal difference = moneyRequired.subtract(new BigDecimal(BankScoreboard.getBankBalance()));
+			BigDecimal difference = moneyRequired.subtract(new BigDecimal(getBankBalance()));
 
 			// Bank balance is smaller than money required, unable to withdraw
 			if (difference.compareTo(BigDecimal.ZERO) > 0) {
@@ -188,10 +188,17 @@ public class Calculator extends Feature {
 		 *  Deposit all  *
 		 * ************* */
 		if (event.message.equalsIgnoreCase("/bank einzahlen *") && depositAll.get()) {
-			if (getCurrentBalance().compareTo(THOUSAND) < 0) {
+			if (getCurrentBalance().compareTo(THOUSAND) < 0)
 				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getCurrentBalance()).toPlainString());
-			} else
+			else
 				send("/bank einzahlen %d", getCurrentBalance().setScale(0, RoundingMode.FLOOR).toBigInteger());
+			event.setCanceled(true);
+			return;
+		} else if (event.message.equalsIgnoreCase("/bank abheben *") && depositAll.get()) {
+			if (getBankBalance() < 1000)
+				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", (1000 - getBankBalance()));
+			else
+				send("/bank abheben %d", getBankBalance());
 			event.setCanceled(true);
 			return;
 		}

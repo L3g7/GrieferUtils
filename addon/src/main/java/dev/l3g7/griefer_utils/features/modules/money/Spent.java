@@ -19,15 +19,15 @@
 package dev.l3g7.griefer_utils.features.modules.money;
 
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
@@ -52,7 +52,7 @@ public class Spent extends Module {
 
 	private final BooleanSetting resetSetting = new BooleanSetting()
 		.name("Automatisch zurücksetzen")
-		.description("Ob automatisch um 04:00 das eingenommene Geld zurückgesetzt werden soll.")
+		.description("Ob automatisch um 04:00 das ausgegebene Geld zurückgesetzt werden soll.")
 		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
 		.callback(b -> {
 			if (!b)

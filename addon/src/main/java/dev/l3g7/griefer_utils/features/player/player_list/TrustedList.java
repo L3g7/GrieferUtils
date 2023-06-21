@@ -29,7 +29,7 @@ import static net.labymod.utils.ModColor.GREEN;
 public class TrustedList extends PlayerList {
 
 	public TrustedList() {
-		super("Trusted", "Markiert Spieler in verbvllert_s Trusted-MM-Liste.", "✰", "green_scroll", "Eigene Trusted", GREEN, 5, "https://grieferutils.l3g7.dev/v2/trusted_mms");
+		super("Trusted", "Markiert Spieler in verbvllert_s Trusted-MM-Liste.", "✰", "green_scroll", "Eigene Trusted", GREEN, 5, "§a§lTrusted", "https://grieferutils.l3g7.dev/v2/trusted_mms");
 	}
 
 }

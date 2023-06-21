@@ -66,7 +66,7 @@ import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 public abstract class PlayerList extends Feature {
 
 	private static final Pattern PROFILE_TITLE_PATTERN = Pattern.compile(String.format("^§6Profil von §e%s§r$", Constants.FORMATTED_PLAYER_NAME_PATTERN));
-
+	private final String message;
 	private final String name, icon;
 	private final ModColor color;
 	private final int paneType; // The glass pane color in /profil
@@ -104,7 +104,7 @@ public abstract class PlayerList extends Feature {
 	public final BooleanSetting enabled = new BooleanSetting()
 		.callback(v -> TabListEvent.updatePlayerInfoList());
 
-	public PlayerList(String name, String description, String chatIcon, Object settingIcon, String ownDescription, ModColor color, int paneType, String url) {
+	public PlayerList(String name, String description, String chatIcon, Object settingIcon, String ownDescription, ModColor color, int paneType, String message, String url) {
 		enabled
 			.name(name + "liste")
 			.description(description)
@@ -114,6 +114,7 @@ public abstract class PlayerList extends Feature {
 		this.name = name;
 		customEntries.setContainer(enabled);
 
+		this.message = message;
 		this.icon = chatIcon;
 		this.color = color;
 		this.paneType = paneType;
@@ -193,7 +194,7 @@ public abstract class PlayerList extends Feature {
 			style.setChatClickEvent(new ClickEvent(RUN_COMMAND, "/profil " + NameCache.ensureRealName(name)));
 
 			// Add description
-			style.setChatHoverEvent(new HoverEvent(SHOW_TEXT, new ChatComponentText("§" + color.getColorChar() + "§l" + this.name)));
+			style.setChatHoverEvent(new HoverEvent(SHOW_TEXT, new ChatComponentText(this.message)));
 
 			// Update message
 			event.message.getSiblings().add(0,  toComponent(chatAction.get()).setChatStyle(style));
@@ -228,7 +229,7 @@ public abstract class PlayerList extends Feature {
 
 		// Construct item
 		ItemStack indicatorPane = new ItemStack(Blocks.stained_glass_pane, 1, paneType);
-		indicatorPane.setStackDisplayName("§" + color.getColorChar() + "§l" + this.name);
+		indicatorPane.setStackDisplayName(this.message);
 
 		// Replace every glass pane with indicatorPane
 		for (int i = 0; i < inventory.getSizeInventory(); i++) {

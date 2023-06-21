@@ -63,11 +63,28 @@ public class Calculator extends Feature {
 		.icon(Material.NAME_TAG)
 		.defaultValue("/c ");
 
+	private final StringSetting placeholderStart = (StringSetting) new StringSetting()
+		.name("Placeholder Anfang")
+		.description("Welches Zeichen den Anfang des Placeholders markieren soll.")
+		.icon("regex")
+		.defaultValue("{")
+		.callback(s -> this.updatePlaceholderPattern())
+		.maxLength(1);
+
+	private final StringSetting placeholderEnd = (StringSetting) new StringSetting()
+		.name("Placeholder Ende")
+		.description("Welches Zeichen das Ende des Placeholders markieren soll.")
+		.icon("regex")
+		.defaultValue("}")
+		.callback(s -> this.updatePlaceholderPattern())
+		.maxLength(1);
+
 	private final BooleanSetting placeholder = new BooleanSetting()
 		.name("Placeholder in Nachrichten")
 		.description("Ermöglicht in einer Nachricht eingebettete Gleichungen, indem sie mit {} eingerahmt werden.")
 		.icon("regex")
-		.defaultValue(true);
+		.defaultValue(true)
+		.subSettings(placeholderStart, placeholderEnd);
 
 	private final BooleanSetting autoEquationDetect = new BooleanSetting()
 		.name("Automatische Gleichungserkennung")
@@ -90,11 +107,20 @@ public class Calculator extends Feature {
 		.subSettings(decimalPlaces, new HeaderSetting(),
 			autoWithdraw, depositAll, placeholder, autoEquationDetect, prefix);
 
-	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
+	private static Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
 	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?k* *[+\\-/*^ek] *[+-]?\\d+(?:[.,]\\d+)?k*|[+-]?\\d+(?:[.,]\\d+)?k+)(?:(?= )|$)");
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 	private BigDecimal lastPayment = BigDecimal.ZERO;
 	private String lastPaymentReceiver;
+
+	private void updatePlaceholderPattern() {
+		if (placeholderStart.get().isEmpty() || placeholderEnd.get().isEmpty())
+			return;
+
+		String start = Pattern.quote(placeholderStart.get());
+		String end = Pattern.quote(placeholderEnd.get());
+		PLACEHOLDER_PATTERN = Pattern.compile(String.format("%s(?<equation>[^%s]*)%s", start, end, end));
+	}
 
 	/**
 	 * Get the current balance based on the scoreboard value

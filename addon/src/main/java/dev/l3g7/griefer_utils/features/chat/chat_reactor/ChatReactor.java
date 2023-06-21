@@ -21,11 +21,13 @@ package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.ChatLineUtil;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
@@ -34,7 +36,7 @@ import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.List;
@@ -45,6 +47,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 @Singleton
 public class ChatReactor extends Feature {
 
+	private static IChatComponent checkedComponent = null;
 	private static boolean loaded = false;
 
 	private static final EntryAddSetting newEntrySetting = new EntryAddSetting()
@@ -94,12 +97,25 @@ public class ChatReactor extends Feature {
 	}
 
 	@EventListener(priority = EventPriority.LOWEST)
-	public void onMsg(ClientChatReceivedEvent event) {
+	public void onMsg(ChatLineEvent.ChatLineAddEvent event) {
 		if ((mc().currentScreen instanceof LabyModAddonsGui && getPath().contains(getMainElement()))
-			|| mc().currentScreen instanceof AddChatReactionGui || event.type == 2)
+			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
-		String srv = MinecraftUtil.getServerFromScoreboard();
+		IChatComponent icc = ChatLineUtil.getComponentFromLine(event.chatLine);
+		if (icc == null)
+			throw new RuntimeException("ChatLine could not me assigned to a component! " + event.chatLine.getMessage());
+
+		icc = ChatLineUtil.getUnmodifiedIChatComponent(icc);
+		if (icc == null)
+			throw new RuntimeException("ChatLine could not me assigned to a component2! " + event.chatLine.getMessage());
+
+		if (checkedComponent == icc)
+			return;
+
+		checkedComponent = icc;
+
+		String server = MinecraftUtil.getServerFromScoreboard();
 
 		for (SettingsElement element : enabled.getSubSettings().getElements()) {
 			if (!(element instanceof ReactionDisplaySetting))
@@ -108,11 +124,11 @@ public class ChatReactor extends Feature {
 			ReactionDisplaySetting setting = (ReactionDisplaySetting) element;
 			ChatReaction reaction = setting.reaction;
 
-			if (!reaction.cityBuild.equals("Jeder CB") && !srv.equals(reaction.cityBuild))
+			if (!reaction.cityBuild.equals("Jeder CB") && !server.equals(reaction.cityBuild))
 				continue;
 
 			try {
-				reaction.processMessage(event.message.getFormattedText());
+				reaction.processMessage(icc.getUnformattedText());
 			} catch (Exception e) {
 				display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
 				setting.set(false);

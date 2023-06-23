@@ -19,13 +19,12 @@
 package dev.l3g7.griefer_utils.event;
 
 import com.google.common.collect.ImmutableList;
-import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import net.minecraft.client.gui.GuiMainMenu;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import org.objectweb.asm.Opcodes;
 
@@ -95,7 +94,7 @@ public class AnnotationEventHandler implements Opcodes {
 	 */
 	@EventListener
 	private void onGuiOpen(GuiOpenEvent event) {
-		if (startupComplete || !(event.gui instanceof GuiMainMenu))
+		if (startupComplete)
 			return;
 
 		// Call all methods annotated with @OnStartupComplete

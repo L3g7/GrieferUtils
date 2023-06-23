@@ -19,17 +19,17 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.main.LabyMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -66,6 +66,7 @@ public class SelfDisguise extends Feature {
 		put("horse", "EntityHorse");
 		put("iron_golem", "VillagerGolem");
 		put("magma_cube", "LavaSlime");
+		put("cat", "Ozelot");
 		put("ocelot", "Ozelot");
 		put("snowman", "SnowMan");
 		put("falling_block", "FallingSand");

@@ -144,7 +144,11 @@ public class BetterHopper extends Feature {
 
 		filteredConnections.clear();
 		Container slots = ((GuiChest) mc().currentScreen).inventorySlots;
-		borderSize = slots.getSlot(31).getStack().stackSize;
+		ItemStack stack = slots.getSlot(31).getStack();
+		if (stack == null)
+			return;
+
+		borderSize = stack.stackSize;
 		hopper = getBlockPos(slots.getSlot(13).getStack());
 
 		if (slot == 16) {

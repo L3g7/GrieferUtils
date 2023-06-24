@@ -138,7 +138,7 @@ public class ItemUtil {
 		ALL_ITEMS.add(new ItemStack(Items.potionitem));
 		ALL_ITEMS.sort(Comparator.comparing(ItemStack::getDisplayName));
 
-		CB_ITEMS.add(createItem(Items.nether_star, 0, "Jeder CB"));
+		CB_ITEMS.add(createItem(Items.nether_star, 0, "Egal"));
 
 		Block[] blocks = new Block[] {diamond_block, emerald_block, gold_block, redstone_block, lapis_block, coal_block, emerald_ore, redstone_ore, diamond_ore, gold_ore, iron_ore, coal_ore, lapis_ore, bedrock, gravel, obsidian, barrier, iron_block, barrier, prismarine, mossy_cobblestone, brick_block};
 		for (int i = 0; i < blocks.length; i++)

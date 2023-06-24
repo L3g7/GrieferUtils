@@ -124,7 +124,7 @@ public class ChatReactor extends Feature {
 			ReactionDisplaySetting setting = (ReactionDisplaySetting) element;
 			ChatReaction reaction = setting.reaction;
 
-			if (!reaction.cityBuild.equals("Jeder CB") && !server.equals(reaction.cityBuild))
+			if (!reaction.cityBuild.equals("Egal") && !server.equals(reaction.cityBuild))
 				continue;
 
 			try {

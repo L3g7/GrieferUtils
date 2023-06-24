@@ -37,7 +37,7 @@ public class ChatReaction {
 	boolean matchAll;
 	String trigger = "";
 	String command = "";
-	String cityBuild = "Jeder CB";
+	String cityBuild = "Egal";
 	boolean completed;
 	int pos = -1;
 

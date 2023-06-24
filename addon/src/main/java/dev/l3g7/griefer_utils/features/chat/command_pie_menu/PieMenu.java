@@ -19,8 +19,8 @@
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
 import com.mojang.authlib.GameProfile;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.user.gui.UserActionGui;
@@ -59,7 +59,7 @@ public class PieMenu {
 			PieEntryDisplaySetting entry = (PieEntryDisplaySetting) element;
 			String cb = entry.cityBuild.get().getDisplayName();
 			String srv = MinecraftUtil.getServerFromScoreboard();
-			if (cb.equals("Jeder CB") || srv.equals(cb))
+			if (cb.equals("Egal") || srv.equals(cb))
 				actionEntries.add(new UserActionEntry(entry.name.get(), RUN_COMMAND, entry.command.get(), null));
 		}
 	}

@@ -24,8 +24,8 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
@@ -54,7 +54,8 @@ public class OrbSellerFix extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Orb-Händler fixen")
-		.description("Behebt, dass der Orb-Händler nicht sichtbar ist, wenn man sich mit einem Home zu ihm teleportiert.")
+		.description("Behebt, dass der Orb-Händler nicht sichtbar ist, wenn man sich mit einem Home zu ihm teleportiert."
+			 + "\n§8(Der Orbhändler auf dem Citybuild muss dafür seit dem letzten Server-Neustart gesehen worden sein.)")
 		.icon("orbseller");
 
 	@Override

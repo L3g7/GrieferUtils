@@ -21,17 +21,19 @@ package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.GuiOpenEvent;
 
 import java.util.List;
 
@@ -143,6 +145,14 @@ public class CommandPieMenu extends Feature {
 
 		Config.set(entryKey, array);
 		Config.save();
+	}
+
+	@EventListener
+	private void onGuiOpen(GuiOpenEvent event) {
+		if (isOpen) {
+			pieMenu.close();
+			isOpen = false;
+		}
 	}
 
 }

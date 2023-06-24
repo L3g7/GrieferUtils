@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.modules.BlockInfo;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiBigChest;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
 public class ItemInfo extends Feature {
@@ -88,6 +90,9 @@ public class ItemInfo extends Feature {
 	@EventListener
 	public void onTooltip(ItemTooltipEvent e) {
 		if (BlockInfo.gettingTooltip)
+			return;
+
+		if (mc().currentScreen instanceof GuiBigChest)
 			return;
 
 		for (ItemInfoSupplier infoSupplier : infoSuppliers) {

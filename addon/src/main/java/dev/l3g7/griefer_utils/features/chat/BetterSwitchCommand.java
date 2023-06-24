@@ -39,6 +39,7 @@ public class BetterSwitchCommand extends Feature {
 
 	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", Pattern.CASE_INSENSITIVE);
 
+	private static Citybuild targetCitybuild = null;
 	private static String command = null;
 
 	@MainElement
@@ -59,6 +60,7 @@ public class BetterSwitchCommand extends Feature {
 			Citybuild cb = Citybuild.getCitybuild(matcher.group(1));
 			if (cb.exists()) {
 				cb.join();
+				targetCitybuild = cb;
 				command = matcher.group(2);
 				return;
 			}
@@ -85,6 +87,12 @@ public class BetterSwitchCommand extends Feature {
 		if (command == null)
 			return;
 
+		if (!targetCitybuild.matches(getServerFromScoreboard())) {
+			command = null;
+			targetCitybuild = null;
+			return;
+		}
+
 		if (!MessageEvent.MessageSendEvent.post(command))
 			player().sendChatMessage(command);
 		command = null;
@@ -100,6 +108,7 @@ public class BetterSwitchCommand extends Feature {
 		}
 
 		cb.join();
+		targetCitybuild = cb;
 		BetterSwitchCommand.command = command;
 	}
 

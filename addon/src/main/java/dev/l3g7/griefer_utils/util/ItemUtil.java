@@ -79,11 +79,11 @@ public class ItemUtil {
 		return lore.size() > 0 ? lore.get(lore.size() - 1) : "";
 	}
 
-	public static void setLore(ItemStack itemStack, String... lore) {
-		setLore(itemStack, Arrays.asList(lore));
+	public static ItemStack setLore(ItemStack itemStack, String... lore) {
+		return setLore(itemStack, Arrays.asList(lore));
 	}
 
-	public static void setLore(ItemStack itemStack, List<String> lore) {
+	public static ItemStack setLore(ItemStack itemStack, List<String> lore) {
 		NBTTagCompound tag = itemStack.getTagCompound();
 		if (tag == null)
 			tag = new NBTTagCompound();
@@ -97,6 +97,7 @@ public class ItemUtil {
 		display.setTag("Lore", loreTag);
 		tag.setTag("display", display);
 		itemStack.setTagCompound(tag);
+		return itemStack;
 	}
 
 	public static boolean canBeRepaired(ItemStack itemStack) {

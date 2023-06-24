@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.misc;
 
 import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,6 +43,9 @@ public class Citybuild {
 		cb = cb.toLowerCase();
 		if (cb.startsWith("cb"))
 			cb = cb.substring(2).trim();
+
+		if (cb.startsWith("citybuild"))
+			cb = cb.substring("citybuild".length()).trim();
 
 		if (StringUtils.isNumeric(cb))
 			return new Citybuild("cb" + cb, "CB" + cb);
@@ -81,6 +85,17 @@ public class Citybuild {
 	public void join() {
 		if (!exists())
 			throw new IllegalStateException("This citybuild does not exist");
+
+		if (!ServerCheck.isOnGrieferGames()) {
+			MinecraftUtil.display(Constants.ADDON_PREFIX + "§fBitte betrete GrieferGames.");
+			return;
+		}
+
+		String cb = MinecraftUtil.getServerFromScoreboard();
+		if (cb.equals("Portal") || cb.equals("Lobby")) {
+			MinecraftUtil.display(Constants.ADDON_PREFIX + "§fBitte betrete einen Citybuild.");
+			return;
+		}
 
 		MinecraftUtil.send("/switch " + switchTarget);
 	}

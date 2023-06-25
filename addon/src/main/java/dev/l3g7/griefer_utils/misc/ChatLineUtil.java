@@ -55,7 +55,7 @@ public class ChatLineUtil {
 
 	@EventListener(priority = EventPriority.HIGHEST)
 	private static void onMessageModified(ChatLineEvent.ChatLineInitEvent event) {
-		int width = INSTANCE.getMain().getVisualWidth();
+		int width = (event.secondChat ? INSTANCE.getSecond() : INSTANCE.getMain()).getVisualWidth();
 		List<IChatComponent> components = GuiUtilRenderComponents.splitText(event.component, width, mc().fontRendererObj, false, false);
 		expectedLines = components.size();
 		passedLines = 0;

@@ -44,7 +44,7 @@ public class MixinGuiChatAdapter {
 
 	@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
 	public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-		MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineInitEvent(component));
+		MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineInitEvent(component, secondChat));
 	}
 
 	@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"))

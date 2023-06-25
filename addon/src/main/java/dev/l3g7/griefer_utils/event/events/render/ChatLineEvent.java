@@ -35,9 +35,11 @@ public abstract class ChatLineEvent extends Event {
 	public static class ChatLineInitEvent extends ChatLineEvent {
 
 		public final IChatComponent component;
+		public final boolean secondChat;
 
-		public ChatLineInitEvent(IChatComponent component) {
+		public ChatLineInitEvent(IChatComponent component, boolean secondChat) {
 			this.component = component;
+			this.secondChat = secondChat;
 		}
 	}
 

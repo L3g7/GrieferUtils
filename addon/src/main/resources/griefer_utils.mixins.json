@@ -19,6 +19,7 @@
     "labymod.MixinScoreboardModule",
     "labymod.MixinUser",
     "minecraft.MixinChunk",
+    "minecraft.MixinChunkProviderClient",
     "minecraft.MixinEntity",
     "minecraft.MixinEntityPlayer",
     "minecraft.MixinEntityRenderer",
@@ -32,7 +33,6 @@
     "minecraft.MixinNetworkManager",
     "minecraft.MixinPlayerControllerMP",
     "minecraft.MixinRendererLivingEntity",
-    "minecraft.MixinRenderGlobal",
     "minecraft.MixinRenderItem",
     "minecraft.MixinWorld",
     "minecraft.MixinWorldClient"

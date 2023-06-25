@@ -20,7 +20,6 @@ package dev.l3g7.griefer_utils.core.misc;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -32,7 +31,6 @@ import java.util.regex.Pattern;
  */
 public class Constants {
 
-	public static final boolean OPTIFINE = Reflection.doesClassExist("optifine.OptiFineForgeTweaker");
 	public static boolean SCHEMATICA = false;
 
 	public static final String ADDON_NAME = "GrieferUtils";

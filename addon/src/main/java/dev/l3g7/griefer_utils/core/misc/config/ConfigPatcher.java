@@ -58,9 +58,11 @@ public class ConfigPatcher {
 			config.getAsJsonObject("world").getAsJsonObject("redstone_helper").addProperty("enabled", true);
 
 			JsonObject calculator = config.getAsJsonObject("chat").getAsJsonObject("calculator");
-			JsonObject placeholder = new JsonObject();
-			placeholder.addProperty("value", calculator.get("placeholder").getAsBoolean());
-			calculator.add("placeholder", placeholder);
+			if (calculator.has("placeholder") && calculator.get("placeholder").isJsonPrimitive()) {
+				JsonObject placeholder = new JsonObject();
+				placeholder.addProperty("value", calculator.get("placeholder").getAsBoolean());
+				calculator.add("placeholder", placeholder);
+			}
 		}
 	}
 

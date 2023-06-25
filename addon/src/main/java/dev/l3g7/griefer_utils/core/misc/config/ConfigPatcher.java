@@ -56,6 +56,11 @@ public class ConfigPatcher {
 		if (cmp.compare("2.0-BETA-13", version) < 0) {
 			rename("world.inventory_block_selection", "item.inventory_tweaks.inventory_block_selection");
 			config.getAsJsonObject("world").getAsJsonObject("redstone_helper").addProperty("enabled", true);
+
+			JsonObject calculator = config.getAsJsonObject("chat").getAsJsonObject("calculator");
+			JsonObject placeholder = new JsonObject();
+			placeholder.addProperty("value", calculator.get("placeholder").getAsBoolean());
+			calculator.add("placeholder", placeholder);
 		}
 	}
 

@@ -19,9 +19,12 @@
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiScreen;
@@ -47,6 +50,12 @@ import static net.minecraft.enchantment.EnchantmentHelper.getEnchantments;
 @Singleton
 public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 
+	private final DropDownSetting<FormatMode> formatting = new DropDownSetting<>(FormatMode.class)
+		.name("Formattierung")
+		.description("Zeigt die Anzahl unformattiert an.")
+		.icon(Material.BOOK_AND_QUILL)
+		.defaultValue(FormatMode.FORMATTED);
+
 	private final BooleanSetting ignoreDamage = new BooleanSetting()
 		.name("Schaden / Sub-IDs ignorieren")
 		.description("Ignoriert den Schaden / die Sub-IDs der Items beim Zählen der Anzahl.")
@@ -69,7 +78,7 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		.name("Item-Zähler")
 		.description("Zeigt unter einem Item an, wie viele von dem Typ in dem derzeitigen Inventar vorhanden sind.")
 		.icon("spyglass")
-		.subSettings(ignoreDamage, ignoreEnchants, ignoreLore);
+		.subSettings(formatting, new HeaderSetting(), ignoreDamage, ignoreEnchants, ignoreLore);
 
 	@Override
 	public List<String> getToolTip(ItemStack itemStack) {
@@ -106,15 +115,24 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		List<String> toolTip = new ArrayList<>();
 
 		toolTip.add("§r");
-		toolTip.add("Insgesamt: " + formatAmount(containerAmount + playerAmount, stackSize));
+		toolTip.add("Insgesamt: " + getFormattedAmount(containerAmount + playerAmount, stackSize));
 
 		if (containerAmount == 0 || playerAmount == 0)
 			return toolTip;
 
-		toolTip.add(String.format("├ %s§r§7: %s", containerName, formatAmount(containerAmount, stackSize)));
-		toolTip.add("└ Inventar: " + formatAmount(playerAmount, stackSize));
+		toolTip.add(String.format("├ %s§r§7: %s", containerName, getFormattedAmount(containerAmount, stackSize)));
+		toolTip.add("└ Inventar: " + getFormattedAmount(playerAmount, stackSize));
 
 		return toolTip;
+	}
+
+	private String getFormattedAmount(int amount, int stackSize) {
+		String formatString = "";
+		if (formatting.get() != FormatMode.UNFORMATTED) formatString += formatAmount(amount, stackSize);
+		if (formatting.get() == FormatMode.BOTH) formatString += " / ";
+		if (formatting.get() != FormatMode.FORMATTED) formatString += Constants.DECIMAL_FORMAT_98.format(amount);
+
+		return formatString;
 	}
 
 	public static String formatAmount(int amount, int stackSize) {
@@ -179,6 +197,18 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		return amount.startsWith("§7Anzahl: §e")
 			? Integer.parseInt(amount.substring(12).replace(".", "")) * itemStack.stackSize
 			: itemStack.stackSize;
+	}
+
+	@SuppressWarnings("unused")
+	enum FormatMode {
+
+		FORMATTED("Formattiert"), UNFORMATTED("Unformattiert"), BOTH("Beides");
+
+		final String name;
+
+		FormatMode(String name) {
+			this.name = name;
+		}
 	}
 
 }

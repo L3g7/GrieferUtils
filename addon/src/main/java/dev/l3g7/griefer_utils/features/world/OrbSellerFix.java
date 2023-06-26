@@ -114,6 +114,8 @@ public class OrbSellerFix extends Feature {
 			for (S38PacketPlayerListItem.AddPlayerData entry : packet.getEntries()) {
 				if ("§6Händler".equals(entry.getProfile().getName())) {
 					orbSellerUUID = entry.getProfile().getId();
+					if (cbToId.containsKey(getServerFromScoreboard()))
+						world().removeEntityFromWorld(cbToId.get(getServerFromScoreboard()));
 					return;
 				}
 			}

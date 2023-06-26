@@ -151,7 +151,7 @@ public class ChatMenu extends Feature {
 				continue;
 
 			String name = matcher.group("name").replaceAll("§.", "");
-			event.message.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/msg %s ", name)));
+			event.message.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", name)));
 			return;
 		}
 	}

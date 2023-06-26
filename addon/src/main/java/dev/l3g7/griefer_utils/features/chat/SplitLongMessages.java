@@ -58,8 +58,8 @@ public class SplitLongMessages extends Feature {
 			inputField.width -= chatButtons.length * 14;
 		}
 
-		String text = inputField.getText();
-		if (!(text.startsWith("/msg ") || text.startsWith("/r ") || !text.startsWith("/"))) {
+		String text = inputField.getText().toLowerCase();
+		if (!(text.startsWith("/msg ") || text.startsWith("/r ") || !text.startsWith("/") || !text.startsWith("@"))) {
 			inputField.setMaxStringLength(100);
 			return;
 		}
@@ -74,8 +74,8 @@ public class SplitLongMessages extends Feature {
 		if (text.length() <= 100)
 			return;
 
-		int index = text.startsWith("/msg ") ? text.indexOf(' ') + 1 : 0;
-		index = text.startsWith("/") ? text.indexOf(' ', index) + 1 : 0;
+		int index = text.toLowerCase().startsWith("/msg ") ? text.indexOf(' ') + 1 : 0;
+		index = text.toLowerCase().startsWith("/") ? text.indexOf(' ', index) + 1 : 0;
 
 		String message = text.substring(index);
 		String prefix = text.substring(0, index);

@@ -6,12 +6,12 @@ import dev.l3g7.griefer_utils.event.events.ShiftAirCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.settings.elements.SliderSetting;
 
 @Singleton
 public class SaferSneak extends Feature {
 
-	private final NumberSetting minFallDistance = new NumberSetting()
+	private final SliderSetting minFallDistance = new SliderSetting()
 		.name("Minimale Falldistanz")
 		.description("Die minimale Differenz zwischen dir und dem Block unter dir, in Prozent einer Block-Höhe."
 			+ "\n\n§7Referenz-Höhen:"

@@ -18,12 +18,12 @@
 
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.ingamegui.ModuleCategory;
 import net.labymod.ingamegui.ModuleCategoryRegistry;
 import net.labymod.ingamegui.enums.EnumDisplayType;
@@ -62,10 +62,10 @@ public abstract class Module extends SimpleTextModule {
 			elems.add(offset++, new HeaderSetting().entryHeight(8));
 			elems.add(offset++, new HeaderSetting("§r§l" + Constants.ADDON_NAME).scale(1.3));
 			elems.add(offset++, new HeaderSetting("Geld-Informationen"));
-			elems.add(2 + offset++, new HeaderSetting("Geld-Statistiken"));
-			elems.add(5 + offset++, new HeaderSetting("Orb-Statistiken"));
-			elems.add(7 + offset++, new HeaderSetting("Countdowns"));
-			elems.add(10 + offset  , new HeaderSetting("Misc"));
+			elems.add(3 + offset++, new HeaderSetting("Geld-Statistiken"));
+			elems.add(6 + offset++, new HeaderSetting("Orb-Statistiken"));
+			elems.add(8 + offset++, new HeaderSetting("Countdowns"));
+			elems.add(11 + offset  , new HeaderSetting("Misc"));
 
 			for (SettingsElement elem : elems)
 				if (((ControlElement) elem).getModule() == null)

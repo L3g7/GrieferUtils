@@ -16,8 +16,9 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.item_saver;
+package dev.l3g7.griefer_utils.misc.gui;
 
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -42,13 +43,17 @@ public class ItemSelectGui extends GuiInventory {
 	public static void open(Consumer<ItemStack> stackConsumer) {
 		GuiScreen screen = new ItemSelectGui(stackConsumer);
 
-		mc().setIngameNotInFocus();
-		ScaledResolution scaledresolution = new ScaledResolution(mc());
-		int i = scaledresolution.getScaledWidth();
-		int j = scaledresolution.getScaledHeight();
-		screen.setWorldAndResolution(mc(), i, j);
-		mc().currentScreen = screen;
-		mc().skipRenderWorld = false;
+		mc().displayGuiScreen(null);
+
+		TickScheduler.runAfterRenderTicks(() -> {
+			mc().setIngameNotInFocus();
+			ScaledResolution scaledresolution = new ScaledResolution(mc());
+			int w = scaledresolution.getScaledWidth();
+			int h = scaledresolution.getScaledHeight();
+			screen.setWorldAndResolution(mc(), w, h);
+			mc().currentScreen = screen;
+			mc().skipRenderWorld = false;
+		}, 1);
 	}
 
 	private ItemSelectGui(Consumer<ItemStack> stackConsumer) {
@@ -64,7 +69,6 @@ public class ItemSelectGui extends GuiInventory {
 					continue;
 
 				stackConsumer.accept(slot.getStack());
-				mc().displayGuiScreen(previousScreen);
 			}
 		}
 	}

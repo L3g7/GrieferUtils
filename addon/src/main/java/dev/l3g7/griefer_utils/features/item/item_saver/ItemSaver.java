@@ -32,6 +32,7 @@ import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.gui.ItemSelectGui;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
@@ -39,6 +40,7 @@ import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.core.LabyModCore;
 import net.labymod.core.WorldRendererAdapter;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -71,7 +73,11 @@ public class ItemSaver extends Feature {
 				return;
 			}
 
-			ItemSelectGui.open(ItemSaver::addItem);
+			GuiScreen screen = mc().currentScreen;
+			ItemSelectGui.open(stack -> {
+				ItemSaver.addItem(stack);
+				mc().displayGuiScreen(screen);
+			});
 		});
 
 	@MainElement(configureSubSettings = false)

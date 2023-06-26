@@ -63,7 +63,7 @@ public class InventoryValue extends Module {
 		.icon(Material.GOLD_INGOT);
 
 	public InventoryValue() {
-		super("Inventar-Wert", "Zeigt dir an, wie viel ein Inventar wert ist.", "inventory_value", new ControlElement.IconData("griefer_utils/icons/coin_pile.png"));
+		super("Inventar-Wert", "Zeigt dir an, wie viel ein Inventar wert ist.", "inventory_value", new ControlElement.IconData("griefer_utils/icons/chest.png"));
 	}
 
 	@Override

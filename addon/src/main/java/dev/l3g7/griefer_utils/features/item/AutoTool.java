@@ -197,6 +197,8 @@ public class AutoTool extends Feature {
 		double score = 0;
 
 		score += itemStack.getItem().getStrVsBlock(itemStack, state.getBlock()) * 1000; // Main mining speed
+		if (itemStack.getItem() == Items.shears && state.getBlock() == Blocks.vine)
+			score = 2000;
 
 		if (isValidCutter(itemStack, state.getBlock()))
 			score += 2500;

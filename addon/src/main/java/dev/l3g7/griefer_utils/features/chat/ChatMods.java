@@ -77,7 +77,7 @@ public class ChatMods extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("ChatMods")
+		.name("Chat aufräumen")
 		.icon("speech_bubble")
 		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeMysteryMod, removeLuckyBlock, removeCaseOpening, news);
 

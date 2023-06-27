@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.BlockPickEvent;
 import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
-import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaver;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemSaver;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;

@@ -44,7 +44,7 @@ public class Badges {
 		.defaultValue(true);
 
 	static final BooleanSetting enabled = new BooleanSetting()
-		.name("GrieferUtils Nutzer-Anzeige")
+		.name("GrieferUtils-Nutzer-Anzeige")
 		.description("Zeigt vor den Namen von Spielern ein GrieferUtils-Icon an, wenn sie das Addon benutzen")
 		.config("settings.badges")
 		.icon("icon")

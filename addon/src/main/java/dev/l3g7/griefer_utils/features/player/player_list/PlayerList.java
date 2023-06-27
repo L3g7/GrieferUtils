@@ -106,7 +106,7 @@ public abstract class PlayerList extends Feature {
 
 	public PlayerList(String name, String description, String chatIcon, Object settingIcon, String ownDescription, ModColor color, int paneType, String message, String url) {
 		enabled
-			.name(name + "liste")
+			.name(name)
 			.description(description)
 			.icon(settingIcon)
 			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, new HeaderSetting(), new HeaderSetting(ownDescription), customEntries);

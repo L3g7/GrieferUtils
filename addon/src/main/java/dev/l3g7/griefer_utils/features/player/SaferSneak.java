@@ -42,7 +42,7 @@ public class SaferSneak extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Erweitertes Sneaken")
+		.name("Sichereres Sneaken")
 		.description("Verringert die minimale Falldistanz, bei der Sneaken das Fallen verhindert.")
 		.icon("sneaking")
 		.subSettings(minFallDistance);

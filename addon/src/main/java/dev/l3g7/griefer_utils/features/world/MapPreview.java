@@ -50,7 +50,7 @@ public class MapPreview extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Karten Vorschau")
+		.name("Karten-Vorschau")
 		.description("Zeigt in der Beschreibung von Karten eine Vorschau an.")
 		.icon(Material.MAP)
 		.subSettings(size);

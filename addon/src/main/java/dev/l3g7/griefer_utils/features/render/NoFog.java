@@ -37,28 +37,32 @@ import static net.minecraft.init.Blocks.stained_glass_pane;
 public class NoFog extends Feature {
 
 	private final BooleanSetting blindness = new BooleanSetting()
-		.name("Keine Blindheit")
+		.name("Blindheit entfernen")
 		.description("Deaktiviert den Blindheits-Effekt.")
-		.icon(new ItemStack(stained_glass_pane, 1, 15));
+		.icon(new ItemStack(stained_glass_pane, 1, 15))
+		.defaultValue(true);
 
 	private final BooleanSetting water = new BooleanSetting()
-		.name("Keine Wassertrübheit")
+		.name("Wassertrübheit entfernen")
 		.description("Deaktiviert die Wassertrübheit.")
-		.icon(new ItemStack(stained_glass_pane, 1, 3));
+		.icon(new ItemStack(stained_glass_pane, 1, 3))
+		.defaultValue(true);
 
 	private final BooleanSetting lava = new BooleanSetting()
-		.name("Keine Lavatrübheit")
+		.name("Lavatrübheit entfernen")
 		.description("Deaktiviert die Lavatrübheit.")
-		.icon(new ItemStack(stained_glass_pane, 1, 1));
+		.icon(new ItemStack(stained_glass_pane, 1, 1))
+		.defaultValue(true);
 
 	private final BooleanSetting nausea = new BooleanSetting()
-		.name("Keine Übelkeit")
+		.name("Übelkeit entfernen")
 		.description("Deaktiviert die Übelkeit.")
-		.icon(new ItemStack(stained_glass_pane, 1, 13));
+		.icon(new ItemStack(stained_glass_pane, 1, 13))
+		.defaultValue(true);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Kein Nebel")
+		.name("Nebel entfernen")
 		.description("Entfernt einige Nebel-Effekte.")
 		.icon(new ItemStack(stained_glass_pane))
 		.subSettings(blindness, water, lava, nausea);

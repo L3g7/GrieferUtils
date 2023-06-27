@@ -16,54 +16,77 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.inventory_tweaks;
+package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import net.labymod.settings.elements.SettingsElement;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
-public class InventoryTweaks extends Feature {
+public class ItemSaverCategory extends Feature {
 
-	private final List<InventoryTweak> tweaks = FileProvider.getClassesWithSuperClass(InventoryTweak.class).stream()
-		.map(ClassMeta::load)
-		.map(FileProvider::getSingleton)
-		.map(InventoryTweak.class::cast)
-		.collect(Collectors.toList());
+	private final List<Class<?>> savers = Arrays.asList(
+		dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemSaver.class,
+		BorderSaver.class,
+		ParticleSaver.class,
+		PrefixSaver.class,
+		ToolSaver.class,
+		ArmorBreakWarning.class
+	);
 
 	@MainElement
-	private final CategorySetting enabled = new CategorySetting()
-		.name("Inventar verbessern")
-		.description("Verbessert Interaktionen mit dem Inventar.")
-		.icon("chest")
+	private final CategorySetting category = new CategorySetting()
+		.name("Item-Schutz")
+		.description("Schützt Items vor unabsichtlicher Zerstörung.")
+		.icon("shield_with_sword")
 		.subSettings();
 
 	@Override
 	public void init() {
 		super.init();
-		for (InventoryTweak tweak : tweaks)
-			tweak.init(getConfigKey());
 
-		tweaks.sort(Comparator.comparing(f -> f.mainElement.getDisplayName()));
-		enabled.subSettings(tweaks.stream().map(s -> s.mainElement).collect(Collectors.toList()));
+		// Get savers
+		List<ItemSaver> savers = this.savers.stream()
+				.map(FileProvider::getSingleton)
+				.map(ItemSaver.class::cast)
+				.collect(Collectors.toList());
+
+		// Add savers to category
+		category.subSettings(savers.stream()
+			.map(saver -> saver.init(getCategory().getConfigKey()))
+			.sorted(Comparator.comparing(SettingsElement::getDisplayName))
+			.collect(Collectors.toList()));
 	}
 
-	public static abstract class InventoryTweak {
+	public static abstract class ItemSaver {
 
 		protected SettingsElement mainElement;
+		protected String configKey;
+
+		protected void init() {}
+
+		protected String getConfigKey() {
+			return configKey;
+		}
 
 		protected SettingsElement init(String parentConfigKey) {
-			return mainElement = ElementBuilder.initMainElement(this, parentConfigKey).getLeft();
+			Pair<SettingsElement, String> data = ElementBuilder.initMainElement(this, parentConfigKey);
+			mainElement = data.getLeft();
+			configKey = data.getRight();
+
+			init();
+			return mainElement;
 		}
 
 		public boolean isEnabled() {

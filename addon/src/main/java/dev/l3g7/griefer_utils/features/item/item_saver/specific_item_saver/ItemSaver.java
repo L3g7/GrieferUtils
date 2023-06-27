@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.item_saver;
+package dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -31,7 +31,7 @@ import dev.l3g7.griefer_utils.event.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory;
 import dev.l3g7.griefer_utils.misc.gui.ItemSelectGui;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -58,7 +58,7 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DR
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
 
 @Singleton
-public class ItemSaver extends Feature {
+public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	private static final String BONZE_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
 	private static final String BIRTH_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:2s,id:20s},2:{lvl:5s,id:61s},3:{lvl:21s,id:21s}],display:{Name:\"§4B§aI§3R§2T§eH §4§lKlinge\"}},Damage:0s}";
@@ -81,8 +81,8 @@ public class ItemSaver extends Feature {
 		});
 
 	@MainElement(configureSubSettings = false)
-	private static final BooleanSetting enabled = new BooleanSetting()
-		.name("ItemSaver")
+	static final BooleanSetting enabled = new BooleanSetting()
+		.name("Spezifischer Item-Saver")
 		.description("Deaktiviert Klicks und Dropping bei einstellbaren Items.")
 		.icon("shield_with_sword")
 		.subSettings(newEntrySetting);

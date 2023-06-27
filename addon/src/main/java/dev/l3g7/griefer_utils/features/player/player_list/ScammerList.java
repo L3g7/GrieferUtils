@@ -61,7 +61,7 @@ public class ScammerList extends PlayerList {
 		});
 
 	public ScammerList() {
-		super("§zLokale Scammer", "Markiert lokal hinzugefügte Scammer.", "⚠", "red_scroll", "Scammer", RED, 14, "§c§lScammer", null);
+		super("§zLokale Scammerliste", "Markiert lokal hinzugefügte Scammer.", "⚠", "red_scroll", "Scammer", RED, 14, "§c§lScammer", null);
 	}
 
 	@Override

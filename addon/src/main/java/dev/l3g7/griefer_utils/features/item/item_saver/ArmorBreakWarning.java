@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.player;
+package dev.l3g7.griefer_utils.features.item.item_saver;
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.RenderWorldEvent;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
@@ -40,7 +40,7 @@ import static net.labymod.utils.Material.DIAMOND_CHESTPLATE;
  * (0 to disable)
  */
 @Singleton
-public class ArmorBreakWarning extends Feature {
+public class ArmorBreakWarning extends ItemSaver {
 
 	private final FontRenderer font = mc().fontRendererObj;
 
@@ -50,7 +50,7 @@ public class ArmorBreakWarning extends Feature {
 
 	@MainElement
 	private final NumberSetting threshold = new NumberSetting()
-		.name("ArmorBreakWarning")
+		.name("Bei Rüstungsschaden warnen")
 		.description("Zeigt eine Warnung an, sobald eine angezogene Rüstung die eingestellte Haltbarkeit unterschreitet.", "(0 zum Deaktivieren)")
 		.icon(DIAMOND_CHESTPLATE);
 

@@ -54,14 +54,14 @@ public class BetterAdventurer extends Feature {
 		.defaultValue(true);
 
 	private final BooleanSetting coinAmount = new BooleanSetting()
-		.name("Coin Anzeige fixen")
+		.name("Coin-Anzeige fixen")
 		.description("Setzt die Anzahl des Coin-Anzeige-Items auf die Anzahl der Coins.")
 		.icon(ItemUtil.createItem(new ItemStack(Items.fire_charge, 128, 0), true, null))
 		.defaultValue(true);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Besserer Adventurer")
+		.name("Adventurer verbessern")
 		.description("Verbessert den Adventurer.")
 		.icon(ItemUtil.createItem(Items.fire_charge, 0, true))
 		.subSettings(displayCount, coinAmount);

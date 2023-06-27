@@ -93,8 +93,8 @@ public class BetterHopper extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Bessere Trichter")
-		.description("Verbessert Trichter.")
+		.name("Trichteranzeige verbessern")
+		.description("Verbessert die Anzeige von Trichtern.")
 		.icon(Material.HOPPER)
 		.subSettings(betterVisualisation, showRange);
 

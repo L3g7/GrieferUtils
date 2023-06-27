@@ -119,7 +119,7 @@ public class RedstoneHelper extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Redstone Helfer")
+		.name("Redstone-Helfer")
 		.description("Hilft beim Arbeiten mit Redstone.")
 		.icon(REDSTONE)
 		.subSettings(showPower, showDirection, showNoteBlockPitch, range, new HeaderSetting(), hideRedstoneParticles);

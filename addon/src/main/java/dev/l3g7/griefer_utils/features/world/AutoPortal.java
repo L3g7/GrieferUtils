@@ -58,7 +58,7 @@ public class AutoPortal extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("AutoPortal")
+		.name("Automatisch /portal")
 		.description("Betritt automatisch den Portalraum.")
 		.icon("portal")
 		.subSettings(join, maximize);

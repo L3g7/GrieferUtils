@@ -44,7 +44,7 @@ public class BetterSchematica extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Besseres Schematica")
+		.name("Schematica verbessern")
 		.description("Erleichtert das Arbeiten mit Schematica.")
 		.icon("litematica/litematica")
 		.subSettings(highlightBlocks, savePosition);

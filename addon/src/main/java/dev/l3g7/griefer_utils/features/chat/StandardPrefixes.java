@@ -80,7 +80,7 @@ public class StandardPrefixes extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Standard Prefixe")
+		.name("Standard-Prefixe")
 		.description("Setzt die Prefixe jeder Person auf den standard Prefix des jeweiligen Ranges.")
 		.icon(Material.NAME_TAG)
 		.callback(c -> updatePlayerInfoList())

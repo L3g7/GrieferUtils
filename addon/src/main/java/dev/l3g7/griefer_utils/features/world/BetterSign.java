@@ -51,7 +51,7 @@ public class BetterSign extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Bessere Schilder")
+		.name("Schilder verbessern")
 		.description("Fügt Unterstützung für Cursorbewegung, Auswahl und Copy & Paste bei Schildern hinzu.")
 		.icon(Material.SIGN);
 

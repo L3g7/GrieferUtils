@@ -48,7 +48,7 @@ public class RealMoney extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("RealMoney")
+		.name("Echtgeld- Erkennung") // Spacing to allow word wrap
 		.description("Fügt einen Tag zu eingehenden Bezahlungen hinzu.")
 		.icon("coin_pile")
 		.subSettings(tag, position);

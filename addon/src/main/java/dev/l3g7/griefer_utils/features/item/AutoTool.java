@@ -26,8 +26,9 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.item.item_saver.ItemDisplaySetting;
-import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaver;
+import dev.l3g7.griefer_utils.features.item.item_saver.ToolSaver;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemDisplaySetting;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemSaver;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -94,7 +95,7 @@ public class AutoTool extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("AutoTool")
+		.name("Automatische Werkzeugauswahl")
 		.description("Wechselt beim Abbauen eines Blocks automatisch auf das beste Werkzeug in der Hotbar.")
 		.icon(ItemUtil.createItem(Items.diamond_pickaxe, 0, true))
 		.defaultValue(false)

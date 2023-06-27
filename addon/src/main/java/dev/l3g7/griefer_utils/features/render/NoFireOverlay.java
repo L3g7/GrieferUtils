@@ -35,7 +35,7 @@ public class NoFireOverlay extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Kein Feuer-Overlay")
+		.name("Feuer-Overlay entfernen")
 		.description("§r§fDeaktiviert den Feuer-Effekt im First-Person-Modus.", "§l§nNur benutzen, wenn man Feuerresistenz besitzt!")
 		.icon("fire");
 

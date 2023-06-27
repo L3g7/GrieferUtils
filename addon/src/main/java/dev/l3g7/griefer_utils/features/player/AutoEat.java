@@ -57,7 +57,7 @@ public class AutoEat extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("AutoEat")
+		.name("Automatisch essen")
 		.description("Isst automatisch, wenn man Hunger hat.")
 		.icon(COOKED_BEEF)
 		.subSettings(triggerMode, preferredFood);

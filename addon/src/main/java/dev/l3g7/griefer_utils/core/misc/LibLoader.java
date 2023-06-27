@@ -63,6 +63,9 @@ public class LibLoader {
 		// mXparser: for evaluating expressions (Calculator)
 		loadLibrary("org/mariuszgromada/math/MathParser.org-mXparser/5.1.0/MathParser.org-mXparser-5.1.0.jar", "https://repo1.maven.org/maven2/org/mariuszgromada/math/MathParser.org-mXparser/5.1.0/MathParser.org-mXparser-5.1.0.jar");
 
+		// ZXing: for reading qr codes (QRCodeScanner)
+		LibLoader.loadLibrary("com/google/zxing/core/3.5.1/core-3.5.1.jar", "https://repo1.maven.org/maven2/com/google/zxing/core/3.5.1/core-3.5.1.jar");
+
 		// Mixin: for modifying other classes (see core.injection.mixin package)
 		LibLoader.loadLibrary("org/spongepowered/mixin/0.7.11/mixin-0.7.11.jar", "https://repo.spongepowered.org/repository/maven-public/org/spongepowered/mixin/0.7.11-SNAPSHOT/mixin-0.7.11-20180703.121122-1.jar");
 	}

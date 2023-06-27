@@ -68,6 +68,9 @@ dependencies.implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.1
 dependencies.implementation 'at.favre.lib:hkdf:1.1.0'
 dependencies.implementation 'net.i2p.crypto:eddsa:0.3.0'
 
+// ZXing (QR Code Reader)
+dependencies.implementation 'com.google.zxing:core:3.5.1'
+
 // Compile options
 java.sourceCompatibility = java.targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = "UTF-8"

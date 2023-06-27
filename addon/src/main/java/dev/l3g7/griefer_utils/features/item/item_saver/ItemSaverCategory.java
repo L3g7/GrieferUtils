@@ -42,6 +42,7 @@ public class ItemSaverCategory extends Feature {
 		ParticleSaver.class,
 		PrefixSaver.class,
 		ToolSaver.class,
+		HeadSaver.class,
 		ArmorBreakWarning.class
 	);
 

@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
 import dev.l3g7.griefer_utils.features.world.ChestSearch;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -47,7 +47,7 @@ import static dev.l3g7.griefer_utils.util.ItemUtil.createItem;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
-public class HeadSaver extends Feature {
+public class HeadSaver extends ItemSaver {
 
 	private static final int ACCEPT_SLOT_ID = 11, PREVIEW_SLOT_ID = 13, DECLINE_SLOT_ID = 15;
 

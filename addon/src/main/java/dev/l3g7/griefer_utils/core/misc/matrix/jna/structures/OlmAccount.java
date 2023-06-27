@@ -160,10 +160,4 @@ public class OlmAccount extends PointerType {
 		return OlmSession.createOutbound(this, theirIdentityKey, theirOneTimeKey);
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		allocatedMemory.clear();
-		super.finalize();
-	}
-
 }

@@ -107,10 +107,4 @@ public class OlmOutboundGroupSession extends PointerType {
 		return s;
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		allocatedMemory.clear();
-		super.finalize();
-	}
-
 }

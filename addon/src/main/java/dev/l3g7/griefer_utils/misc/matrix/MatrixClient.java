@@ -23,10 +23,14 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.matrix.Matrix;
 import dev.l3g7.griefer_utils.core.misc.matrix.requests.LogoutRequest;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
 import net.minecraft.util.Session;
 
 import java.io.IOException;
 
+import static dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection.State.CONNECTED;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
@@ -38,6 +42,11 @@ public class MatrixClient extends Matrix {
 
 	public static MatrixClient get() {
 		return FileProvider.getSingleton(MatrixClient.class);
+	}
+
+	@EventListener
+	public void onAccountSwitch(AccountSwitchEvent event) throws IOException {
+		authorize();
 	}
 
 	public void authorize() throws IOException {

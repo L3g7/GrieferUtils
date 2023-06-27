@@ -36,7 +36,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.util.Util.EnumOS.OSX;
 import static net.minecraft.util.Util.EnumOS.WINDOWS;
 
@@ -86,15 +85,15 @@ public class GrieferUtilsUserManager {
 
 		lastRequest = System.currentTimeMillis();
 
-		CompletableFuture.supplyAsync((Supplier<List<UUID>>) () -> MatrixClient.get().getOnlineUsers(queuedUsers)).thenAccept(uuids -> {
-			for (UUID uuid : uuids) {
-				if (mc().getNetHandler().getPlayerInfo(uuid) == null)
-					continue;
+		Set<UUID> requestedUsers = new ConcurrentSet<>();
+		requestedUsers.addAll(queuedUsers);
+		queuedUsers.removeAll(requestedUsers);
 
+		CompletableFuture.supplyAsync((Supplier<List<UUID>>) () -> MatrixClient.get().getOnlineUsers(requestedUsers)).thenAccept(uuids -> {
+			for (UUID uuid : uuids) {
 				users.put(uuid, user(uuid).getGroup());
 				user(uuid).setGroup(specialBadges.getOrDefault(uuid, new GrieferUtilsGroup()));
 			}
-			queuedUsers.clear();
 		});
 	}
 

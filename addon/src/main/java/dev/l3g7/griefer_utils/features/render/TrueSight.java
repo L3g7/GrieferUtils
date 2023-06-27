@@ -80,7 +80,7 @@ public class TrueSight extends Feature {
 		add(EntityEnderman.class, "Enderman", "enderman");
 		add(EntityEndermite.class, "Endermite", "endermite");
 		entities.put(EntityFallingBlock.class, new BooleanSetting()
-			.name("FallingBlock")
+			.name("Block")
 			.config(getConfigKey() + ".entities.falling_block")
 			.icon("stone"));
 		add(EntityGhast.class, "Ghast", "ghast");

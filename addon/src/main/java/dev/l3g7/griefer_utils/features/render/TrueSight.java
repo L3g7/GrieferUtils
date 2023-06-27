@@ -69,58 +69,54 @@ public class TrueSight extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		add(EntityArmorStand.class, "Armorstand");
-		add(EntityBat.class, "Fledermaus");
-		add(EntityBlaze.class, "Blaze");
-		add(EntityCaveSpider.class, "Höhlenspinne");
-		add(EntityChicken.class, "Huhn");
-		add(EntityCow.class, "Kuh");
-		add(EntityCreeper.class, "Creeper");
-		add(EntityDragon.class, "Enderdrache");
-		add(EntityEnderman.class, "Enderman");
-		add(EntityEndermite.class, "Endermite");
+		add(EntityArmorStand.class, "Armorstand", "armor_stand");
+		add(EntityBat.class, "Fledermaus", "bat");
+		add(EntityBlaze.class, "Blaze", "blaze");
+		add(EntityCaveSpider.class, "Höhlenspinne", "cave_spider");
+		add(EntityChicken.class, "Huhn", "chicken");
+		add(EntityCow.class, "Kuh", "cow");
+		add(EntityCreeper.class, "Creeper", "creeper");
+		add(EntityDragon.class, "Enderdrache", "ender_dragon");
+		add(EntityEnderman.class, "Enderman", "enderman");
+		add(EntityEndermite.class, "Endermite", "endermite");
 		entities.put(EntityFallingBlock.class, new BooleanSetting()
 			.name("FallingBlock")
 			.config(getConfigKey() + ".entities.falling_block")
-			.icon(Material.STONE));
-		add(EntityGhast.class, "Ghast");
-		add(EntityGiantZombie.class, "Riese");
-		add(EntityGuardian.class, "Guardian");
-		add(EntityHorse.class, "Pferd");
-		add(EntityIronGolem.class, "Eisengolem");
-		add(EntityMagmaCube.class, "Magmawürfel");
-		add(EntityMooshroom.class, "Pilzkuh");
-		add(EntityOcelot.class, "Ozelot");
-		add(EntityPig.class, "Schwein");
-		add(EntityPigZombie.class, "Schweinezombie");
-		add(EntityPlayer.class, "Spieler");
-		add(EntityRabbit.class, "Hase");
-		add(EntitySheep.class, "Schaf");
-		add(EntitySilverfish.class, "Silberfischchen");
-		add(EntitySkeleton.class, "Skelett");
-		add(EntitySlime.class, "Slime");
-		add(EntitySnowman.class, "Schneegolem");
-		add(EntitySpider.class, "Spinne");
-		add(EntitySquid.class, "Tintenfisch");
-		add(EntityVillager.class, "Dorfbewohner");
-		add(EntityWitch.class, "Hexe");
-		add(EntityWolf.class, "Wolf");
-		add(EntityZombie.class, "Zombie");
+			.icon("stone"));
+		add(EntityGhast.class, "Ghast", "ghast");
+		add(EntityGiantZombie.class, "Riese", "zombie");
+		add(EntityGuardian.class, "Guardian", "guardian");
+		add(EntityHorse.class, "Pferd", "horse");
+		add(EntityIronGolem.class, "Eisengolem", "iron_golem");
+		add(EntityMagmaCube.class, "Magmawürfel", "magma_cube");
+		add(EntityMooshroom.class, "Pilzkuh", "mooshroom");
+		add(EntityOcelot.class, "Ozelot", "ocelot");
+		add(EntityPig.class, "Schwein", "pig");
+		add(EntityPigZombie.class, "Schweinezombie", "pig_zombie");
+		add(EntityPlayer.class, "Spieler", "../steve");
+		add(EntityRabbit.class, "Hase", "rabbit");
+		add(EntitySheep.class, "Schaf", "sheep");
+		add(EntitySilverfish.class, "Silberfischchen", "silverfish");
+		add(EntitySkeleton.class, "Skelett", "skeleton");
+		add(EntitySlime.class, "Slime", "slime");
+		add(EntitySnowman.class, "Schneegolem", "snow_golem");
+		add(EntitySpider.class, "Spinne", "spider");
+		add(EntitySquid.class, "Tintenfisch", "squid");
+		add(EntityVillager.class, "Dorfbewohner", "villager");
+		add(EntityWitch.class, "Hexe", "witch");
+		add(EntityWolf.class, "Wolf", "wolf");
+		add(EntityZombie.class, "Zombie", "zombie");
 
 		List<SettingsElement> settings = new ArrayList<>(entities.values());
 		settings.sort(Comparator.comparing(SettingsElement::getDisplayName));
 		enabled.subSettings(settings);
 	}
 
-	private void add(Class<? extends Entity> entity, String name) {
-		String key = EntityList.classToStringMapping.getOrDefault(entity, "../glitch_question_mark");
-		if (entity == EntityPlayer.class)
-			key = "../steve";
-
+	private void add(Class<? extends Entity> entity, String name, String texture) {
 		entities.put(entity, new BooleanSetting()
 			.name(name)
 			.config(getConfigKey() + ".entities." + UPPER_CAMEL.to(LOWER_UNDERSCORE, name))
-			.icon("mob_icons/" + key)
+			.icon("mob_icons/" + texture)
 			.defaultValue(entity == EntityPlayer.class));
 	}
 

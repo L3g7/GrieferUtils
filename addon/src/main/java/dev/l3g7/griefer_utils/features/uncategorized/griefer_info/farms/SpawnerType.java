@@ -36,42 +36,42 @@ public class SpawnerType {
 
 			{ setId("qj202x5w"); } // Cobblestone's id is missing from the metadata response :/
 		});
-		add("Creeper", "Creeper");
-		add("Dorfbewohner", "Villager");
-		add("Eisengolem", "VillagerGolem");
-		add("Enderdrache", "EnderDragon");
-		add("Enderman", "Enderman");
-		add("Endermilbe", "Endermite");
-		add("Fledermaus", "Bat");
-		add("Ghast", "Ghast");
-		add("Hexe", "Witch");
-		add("Höhlenspinne", "CaveSpider");
-		add("Huhn", "Chicken");
-		add("Kaninchen", "Rabbit");
-		add("Kuh", "Cow");
-		add("Lohe", "Blaze");
-		add("Magmaschleim", "LavaSlime");
-		add("Ozelot", "Ozelot");
-		add("Pferd", "EntityHorse");
-		add("Pilzkuh", "MushroomCow");
-		add("Riese", "Giant");
-		add("Schaf", "Sheep");
-		add("Schleim", "Slime");
-		add("Schneegolem", "SnowMan");
-		add("Schwein", "Pig");
-		add("Silberfischchen", "Silverfish");
-		add("Skelett", "Skeleton");
-		add("Spinne", "Spider");
-		add("Tintenfisch", "Squid");
-		add("Wächter", "Guardian");
-		add("Wither", "WitherBoss");
-		add("Wolf", "Wolf");
-		add("Zombie", "Zombie");
-		add("Zombie Pigman", "PigZombie");
+		add("Creeper", "Creeper", "creeper");
+		add("Dorfbewohner", "Villager", "villager");
+		add("Eisengolem", "VillagerGolem", "iron_golem");
+		add("Enderdrache", "EnderDragon", "ender_dragon");
+		add("Enderman", "Enderman", "enderman");
+		add("Endermilbe", "Endermite", "endermite");
+		add("Fledermaus", "Bat", "bat");
+		add("Ghast", "Ghast", "ghast");
+		add("Hexe", "Witch", "witch");
+		add("Höhlenspinne", "CaveSpider", "cave_spider");
+		add("Huhn", "Chicken", "chicken");
+		add("Kaninchen", "Rabbit", "rabbit");
+		add("Kuh", "Cow", "cow");
+		add("Lohe", "Blaze", "blaze");
+		add("Magmaschleim", "LavaSlime", "magma_cube");
+		add("Ozelot", "Ozelot", "ocelot");
+		add("Pferd", "EntityHorse", "horse");
+		add("Pilzkuh", "MushroomCow", "mooshroom");
+		add("Riese", "Giant", "zombie");
+		add("Schaf", "Sheep", "sheep");
+		add("Schleim", "Slime", "slime");
+		add("Schneegolem", "SnowMan", "snow_golem");
+		add("Schwein", "Pig", "pig");
+		add("Silberfischchen", "Silverfish", "silverfish");
+		add("Skelett", "Skeleton", "skeleton");
+		add("Spinne", "Spider", "spider");
+		add("Tintenfisch", "Squid", "squid");
+		add("Wächter", "Guardian", "guardian");
+		add("Wither", "WitherBoss", "wither");
+		add("Wolf", "Wolf", "wolf");
+		add("Zombie", "Zombie", "zombie");
+		add("Zombie Pigman", "PigZombie", "pig_zombie");
 	}
 
-	private static void add(String name, String translationKey) {
-		SPAWNER_TYPES.put(name, new SpawnerType(name, "entity." + translationKey, "mob_icons/" + translationKey));
+	private static void add(String name, String translationKey, String texture) {
+		SPAWNER_TYPES.put(name, new SpawnerType(name, "entity." + translationKey, "mob_icons/" + texture));
 	}
 
 	public final String germanName;

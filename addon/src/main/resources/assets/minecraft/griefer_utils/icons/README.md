@@ -23,7 +23,7 @@
   </tr>
   <tr>
     <td><a href="mob_icons/"><img src="mob_icons/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/* </a></td>
-    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest?cb=20221212235332&version=1670889213562&format=png">Minecraft Wiki</a></td>
+    <td><a href="https://www.curseforge.com/minecraft/texture-packs/faithless">StitchSprites</a></td>
   </tr>
   <tr>
     <td><a href="arrow_circle.png"><img src="arrow_circle.png" height=16em width=16em />&nbsp;&nbsp;arrow_circle.png </a></td>

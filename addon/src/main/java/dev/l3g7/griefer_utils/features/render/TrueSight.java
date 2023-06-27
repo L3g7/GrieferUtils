@@ -59,7 +59,7 @@ public class TrueSight extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("TrueSight")
+		.name("Unsichtbare Entities anzeigen")
 		.description("Macht unsichtbare Entities sichtbar.")
 		.icon("blue_light_bulb")
 		.subSettings(opacity, new HeaderSetting());

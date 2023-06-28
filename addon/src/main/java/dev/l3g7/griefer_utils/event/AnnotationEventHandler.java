@@ -98,8 +98,8 @@ public class AnnotationEventHandler implements Opcodes {
 			return;
 
 		// Call all methods annotated with @OnStartupComplete
-		triggerEvent(OnStartupComplete.class);
 		startupComplete = true;
+		triggerEvent(OnStartupComplete.class);
 	}
 
 	/**

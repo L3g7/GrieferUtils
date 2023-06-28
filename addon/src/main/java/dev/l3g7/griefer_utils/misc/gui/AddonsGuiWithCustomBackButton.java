@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.misc.gui;
 
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.gui.elements.Tabs;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.AddonElement;
@@ -35,10 +35,11 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 
 	private final Runnable onBack;
+	private final GuiScreen previousScreen = mc().currentScreen;
 
 	public AddonsGuiWithCustomBackButton(Runnable onBack, SettingsElement element) {
 		this.onBack = onBack;
-		ArrayList<SettingsElement> path = MinecraftUtil.path();
+		ArrayList<SettingsElement> path = new ArrayList<>(MinecraftUtil.path());
 		if (element != null)
 			path.add(element);
 
@@ -50,8 +51,10 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
-		if (button == Reflection.get(this, "buttonBack"))
+		if (button == Reflection.get(this, "buttonBack")) {
 			onBack.run();
+			mc().displayGuiScreen(previousScreen);
+		}
 
 		super.actionPerformed(button);
 	}

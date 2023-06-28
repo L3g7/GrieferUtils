@@ -59,27 +59,43 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 	}
 
 	private SettingsElement container = this;
+	private StringAddSetting stringAddSetting = null;
 
 	@Override
 	public Storage<List<String>> getStorage() {
 		return storage;
 	}
 
-	public void setContainer(SettingsElement container) {
+	public StringListSetting setContainer(SettingsElement container) {
 		this.container = container;
+		return this;
 	}
 
 	@Override
 	public StringListSetting config(String configKey) {
 		ValueHolder.super.config(configKey);
+		return initList();
+	}
 
+	public StringListSetting initList() {
 		ArrayList<SettingsElement> settings = new ArrayList<>();
 		for (String entry : get())
 			settings.add(new StringDisplaySetting(entry));
 
-		settings.add(new StringAddSetting());
+		settings.add(stringAddSetting = new StringAddSetting());
 		getSettings().remove(this);
 		container.getSubSettings().addAll(settings);
+		return this;
+	}
+
+	@Override
+	public StringListSetting set(List<String> value) {
+		ValueHolder.super.set(value);
+		getSettings().removeIf(se -> se instanceof StringDisplaySetting);
+
+		if (getSettings().contains(stringAddSetting))
+			for (String s : value)
+				getSettings().add(getSettings().indexOf(stringAddSetting), new StringDisplaySetting(s));
 
 		return this;
 	}
@@ -129,7 +145,7 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 	private class StringAddSetting extends EntryAddSetting {
 
 		StringAddSetting() {
-			super("Text hinzufügen");
+			super(StringListSetting.this.displayName);
 			callback(() -> Minecraft.getMinecraft().displayGuiScreen(new StringAddSetting.AddPlayerGui(Minecraft.getMinecraft().currentScreen)));
 		}
 
@@ -177,6 +193,7 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 					case 1:
 						getSettings().add(getSettings().indexOf(StringAddSetting.this), new StringDisplaySetting(inputField.getText()));
 						get().add(inputField.getText());
+
 						save();
 						getStorage().callbacks.forEach(c -> c.accept(get()));
 						// Fall-through

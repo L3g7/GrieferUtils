@@ -20,12 +20,15 @@ package dev.l3g7.griefer_utils.core.util;
 
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Everything that doesn't fit into the other utility classes.
@@ -110,6 +113,13 @@ public class Util {
 		} catch (IOException | URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static String formatKeys(Collection<Integer> keys) {
+		if (keys.isEmpty())
+			return "NONE";
+
+		return keys.stream().map(Keyboard::getKeyName).collect(Collectors.joining(" + "));
 	}
 
 }

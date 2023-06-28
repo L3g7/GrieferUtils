@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.settings.elements;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import net.labymod.gui.elements.ModTextField;
@@ -91,7 +92,7 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 
 	@Override
 	public KeySetting set(Set<Integer> value) {
-		previewField.setText(format(value));
+		previewField.setText(Util.formatKeys(value));
 		return ValueHolder.super.set(value);
 	}
 
@@ -140,16 +141,6 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 
 	public boolean isPressed() {
 		return get().stream().allMatch(Keyboard::isKeyDown);
-	}
-
-	/**
-	 * Formats the given keys.
-	 */
-	private String format(Set<Integer> keys) {
-		if (keys.isEmpty())
-			return "NONE";
-
-		return keys.stream().map(Keyboard::getKeyName).collect(Collectors.joining(" + "));
 	}
 
 	/**
@@ -249,7 +240,7 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 
 				// Add button to keys
 				selectedKeys.add(keyCode);
-				selectionField.setText(format(selectedKeys));
+				selectionField.setText(Util.formatKeys(selectedKeys));
 				selectionField.setCursorPositionEnd();
 			}
 			else
@@ -270,7 +261,7 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 				// Reset button
 				selectedKeys.clear();
 				pressedKeys.clear();
-				selectionField.setText(format(selectedKeys));
+				selectionField.setText(Util.formatKeys(selectedKeys));
 				selectionField.setCursorPositionEnd();
 			} else if (button.id == 2)
 				// Save button

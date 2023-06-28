@@ -93,8 +93,10 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 	default S save() {
 		Storage<V> s = getStorage();
 
-		Config.set(s.configKey, s.encodeFunc.apply(get()));
-		Config.save();
+		if (s.configKey != null) {
+			Config.set(s.configKey, s.encodeFunc.apply(get()));
+			Config.save();
+		}
 
 		return (S) this;
 	}

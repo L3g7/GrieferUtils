@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
  * Copyright 2020-2023 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -16,81 +16,46 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
+package dev.l3g7.griefer_utils.features.chat.multi_hotkey;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
-import java.util.List;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
-public class CommandPieMenu extends Feature {
+public class MultiHotkey extends Feature {
 
 	private String entryKey;
 
-	private final PieMenu pieMenu = new PieMenu();
-	private boolean isOpen = false;
-
-	private final BooleanSetting animation = new BooleanSetting()
-		.name("Animation")
-		.description("Ob die Öffnen-Animation abgespielt werden soll")
-		.icon("command_pie_menu")
-		.defaultValue(true);
-
-	private final KeySetting key = new KeySetting()
-		.name("Taste")
-		.icon("key")
-		.pressCallback(p -> {
-			if (mc().currentScreen != null || !isEnabled() || !ServerCheck.isOnGrieferGames())
-				return;
-
-			// Open
-			if (p) {
-				if (!isOpen) {
-					pieMenu.open(animation.get(), getMainElement());
-					isOpen = true;
-				}
-				return;
-			}
-
-			// Close
-			if (isOpen) {
-				pieMenu.close();
-				isOpen = false;
-			}
-		});
-
-	private final EntryAddSetting newEntrySetting = new EntryAddSetting()
-		.name("Eintrag hinzufügen")
+	private final EntryAddSetting entryAddSetting = new EntryAddSetting()
+		.name("Hotkey hinzufügen")
 		.callback(() -> {
 			List<SettingsElement> settings = getMainElement().getSubSettings().getElements();
-			PieEntryDisplaySetting setting = new PieEntryDisplaySetting("", "", null);
-			settings.add(settings.size() - 1, setting);
+			HotkeyDisplaySetting setting = new HotkeyDisplaySetting("", new HashSet<>(), new ArrayList<>(), null);
 			setting.openSettings();
+			settings.add(settings.size() - 1, setting);
 		});
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Befehlsradialmenü")
-		.description("Ein Radialmenü zum schnellen Ausführen von Citybuild-bezogenen Befehlen.")
-		.icon("command_pie_menu")
-		.subSettings(key, animation, newEntrySetting);
+		.name("Multi-Hotkey")
+		.description("Erlaubt das Ausführen von mehreren sequenziellen Befehlen auf Tastendruck.")
+		.icon("labymod:chat/autotext")
+		.subSettings(entryAddSetting);
 
 	@Override
 	public void init() {
@@ -105,6 +70,12 @@ public class CommandPieMenu extends Feature {
 		for (JsonElement entry : entries) {
 			JsonObject data = entry.getAsJsonObject();
 
+			Set<Integer> keys = new LinkedHashSet<>();
+			data.get("keys").getAsJsonArray().forEach(e -> keys.add(e.getAsInt()));
+
+			List<String> commands = new ArrayList<>();
+			data.get("commands").getAsJsonArray().forEach(e -> commands.add(e.getAsString()));
+
 			ItemStack stack = ItemUtil.CB_ITEMS.get(0);
 			for (ItemStack cb : ItemUtil.CB_ITEMS) {
 				if (cb.getDisplayName().equals(data.get("cb").getAsString())) {
@@ -113,14 +84,15 @@ public class CommandPieMenu extends Feature {
 				}
 			}
 
-			PieEntryDisplaySetting pieEntry = new PieEntryDisplaySetting(
+			HotkeyDisplaySetting hotKey = new HotkeyDisplaySetting(
 				data.get("name").getAsString(),
-				data.get("command").getAsString(),
+				keys,
+				commands,
 				stack
-			);
+			).icon(stack);
 
 			List<SettingsElement> settings = enabled.getSubSettings().getElements();
-			settings.add(settings.size() - 1, pieEntry);
+			settings.add(settings.size() - 1, hotKey);
 		}
 	}
 
@@ -129,29 +101,29 @@ public class CommandPieMenu extends Feature {
 
 		JsonArray array = new JsonArray();
 		for (SettingsElement element : enabled.getSubSettings().getElements()) {
-			if (!(element instanceof PieEntryDisplaySetting))
+			if (!(element instanceof HotkeyDisplaySetting))
 				continue;
 
-			PieEntryDisplaySetting pieEntry = (PieEntryDisplaySetting) element;
+			HotkeyDisplaySetting hotkey = (HotkeyDisplaySetting) element;
 
 			JsonObject entry = new JsonObject();
-			entry.addProperty("name", pieEntry.name.get());
-			entry.addProperty("command", pieEntry.command.get());
-			entry.addProperty("cb", pieEntry.cityBuild.get().getDisplayName());
+			entry.addProperty("name", hotkey.name.get());
+
+			JsonArray keys = new JsonArray();
+			hotkey.keys.get().forEach(key -> keys.add(new JsonPrimitive(key)));
+			entry.add("keys", keys);
+
+			JsonArray commands = new JsonArray();
+			hotkey.commands.get().forEach(key -> commands.add(new JsonPrimitive(key)));
+			entry.add("commands", commands);
+
+			entry.addProperty("cb", hotkey.cityBuild.get().getDisplayName());
 
 			array.add(entry);
 		}
 
 		Config.set(entryKey, array);
 		Config.save();
-	}
-
-	@EventListener
-	private void onGuiOpen(GuiOpenEvent event) {
-		if (isOpen) {
-			pieMenu.close();
-			isOpen = false;
-		}
 	}
 
 }

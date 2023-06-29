@@ -20,12 +20,12 @@ static NOTIFICATION_ROLES: Map<&'static str, NotificationRole> = phf_map! {
 	},
     "1123611104510222408" => NotificationRole {
 		title: "Bei neuen Versionen",
-		description: Some("Diese Versionen sind die empfohlene Versionen für die meisten Nutzer."),
+		description: Some("Diese Versionen enthalten wenig Bugs."),
 		emoji: 1121159814383419524u64
 	},
     "1123611140652535878" => NotificationRole {
 		title: "Bei neuen Testversionen",
-		description: Some("Diese Versionen enthalten unveröffentlichte Features, können aber mehr Bugs beinhalten."),
+		description: Some("Diese Versionen enthalten unveröffentlichte Features."),
 		emoji: 1121159814383419524u64
 	},
     "1123611182507491359" => NotificationRole {

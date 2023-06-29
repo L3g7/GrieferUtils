@@ -20,70 +20,43 @@ package dev.l3g7.griefer_utils.misc.gui;
 
 
 import net.labymod.main.LabyMod;
+import net.labymod.utils.DrawUtils;
+import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MissingForgeErrorGui extends GuiScreen {
 
-	private final String text;
-	private TextList textList;
-
 	public static void open() {
-		new MissingForgeErrorGui("\nGrieferUtils benötigt Minecraft Forge, um aktiviert werden zu können.\nBitte installiere Forge, um fortzufahren.");
-	}
-
-	private MissingForgeErrorGui(String text) {
-		this.text = text;
-
+		GuiScreen gui = new MissingForgeErrorGui(Minecraft.getMinecraft().currentScreen);
 		// Ensure it can't be closed
 		// There are no events that can be used, so a timer is used instead (I can't be bothered to transform)
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
 				if (!(Minecraft.getMinecraft().currentScreen instanceof MissingForgeErrorGui))
-					Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(MissingForgeErrorGui.this));
+					Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(gui));
 			}
 		}, 0, 50);
 	}
 
-	public void initGui() {
-		super.initGui();
+	private final GuiScreen previousScreen;
 
-		textList = new TextList(mc, width, height, 64, height - 42, fontRendererObj);
-		textList.addEntries(text);
-		textList.addEntry("");
-
-		buttonList.clear();
-		buttonList.add(new GuiButton(0, width / 2 + 4 + 75, height - 28, 150, 20, "Minecraft schließen"));
+	public MissingForgeErrorGui(GuiScreen previousScreen) {
+		this.previousScreen = previousScreen;
 	}
 
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		drawBackground(0);
-		textList.drawScreen(mouseX, mouseY, partialTicks);
-
-		String text = "§nGrieferUtils benötigt Forge!";
-
-		// Title
-		GlStateManager.scale(1.5, 1.5, 1.5);
-		drawCenteredString(fontRendererObj, text, width / 3, 15, 0xFF4444);
-		GlStateManager.scale(1/1.5, 1/1.5, 1/1.5);
-
-		// Icon
-		GlStateManager.pushMatrix();
-		GlStateManager.color(1, 1, 1);
-		int textWidth = fontRendererObj.getStringWidth(text);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/icon.png"));
-		LabyMod.getInstance().getDrawUtils().drawRawTexture(width / 2d - textWidth * 0.75 - 29, 18, 256, 256, 20, 20);
-		GlStateManager.popMatrix();
-
-		super.drawScreen(mouseX, mouseY, partialTicks);
+	public void initGui() {
+		super.initGui();
+		this.buttonList.clear();
+		this.buttonList.add(new GuiButton(1, this.width / 2 + 5, this.height / 2 + 24, 125, 20, "Minecraft schließen"));
 	}
 
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
@@ -91,19 +64,38 @@ public class MissingForgeErrorGui extends GuiScreen {
 			super.keyTyped(typedChar, keyCode);
 	}
 
-	public void handleMouseInput() throws IOException {
-		super.handleMouseInput();
-		textList.handleMouseInput();
-	}
-
-	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		super.mouseReleased(mouseX, mouseY, state);
-		textList.mouseReleased(mouseX, mouseY, state);
-	}
-
 	protected void actionPerformed(GuiButton button) throws IOException {
-		super.actionPerformed(button);
-		Minecraft.getMinecraft().shutdown();
+		if (button.id == 1)
+			Minecraft.getMinecraft().shutdown();
+		else
+			super.actionPerformed(button);
 	}
 
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		this.drawBackground(0);
+
+		DrawUtils draw = LabyMod.getInstance().getDrawUtils();
+		draw.drawString("§c§nGrieferUtils benötigt Forge!", (double) this.width / 2 - 150, (double) this.height / 2 - 80, 1.5);
+		String message = "GrieferUtils benötigt Minecraft Forge, um aktiviert werden zu können.\n\nBitte installiere Forge, um fortzufahren.";
+		List<String> list = draw.listFormattedStringToWidth(message, 203);
+
+		double y = 0;
+		for (String text : list) {
+			draw.drawString(text, (double) this.width / 2 - 150, (double) this.height / 2 - 50 + y, 1.2);
+			y += 10*1.2;
+		}
+
+		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/icon.png"));
+		draw.drawTexture((double) this.width / 2 + 150 - 60, (double) this.height / 2 - 95, 256.0, 256.0, 60.0, 60.0);
+		boolean mouseOver = mouseX > this.width / 2 - 150 && mouseX < this.width / 2 && mouseY > this.height / 2 + 24 && mouseY < this.height / 2 + 44;
+		draw.drawString(ModColor.cl(mouseOver ? 'c' : '7') + "Ohne GrieferUtils spielen", (double) this.width / 2 - 150, (double) this.height / 2 + 30);
+		super.drawScreen(mouseX, mouseY, partialTicks);
+	}
+
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+		if (mouseX > this.width / 2 - 150 && mouseX < this.width / 2 && mouseY > this.height / 2 + 24 && mouseY < this.height / 2 + 44)
+			Minecraft.getMinecraft().displayGuiScreen(this.previousScreen);
+		else
+			super.mouseClicked(mouseX, mouseY, mouseButton);
+	}
 }

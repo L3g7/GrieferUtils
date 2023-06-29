@@ -32,7 +32,7 @@ public class BigChestUtil {
 		Map<Integer, ItemStack> cbs = new HashMap<>();
 
 		for (int i = 0; i < 25; i++) {
-			ItemStack itemStack = ItemUtil.CB_ITEMS.get(i + 1);
+			ItemStack itemStack = ItemUtil.CB_ITEMS.get(i + 1).copy();
 			itemStack.setStackDisplayName("§6§n" + (itemStack.getDisplayName().equals("CBE") ? "CB Evil" : itemStack.getDisplayName()));
 			if (i < 22)
 				itemStack.stackSize = i + 1;

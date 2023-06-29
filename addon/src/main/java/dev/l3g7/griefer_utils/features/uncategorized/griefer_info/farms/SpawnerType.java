@@ -71,7 +71,7 @@ public class SpawnerType {
 	}
 
 	private static void add(String name, String translationKey, String texture) {
-		SPAWNER_TYPES.put(name, new SpawnerType(name, "entity." + translationKey, "mob_icons/" + texture));
+		SPAWNER_TYPES.put(name, new SpawnerType(name, "entity." + translationKey, "griefer_info/mob_icons/" + texture));
 	}
 
 	public final String germanName;

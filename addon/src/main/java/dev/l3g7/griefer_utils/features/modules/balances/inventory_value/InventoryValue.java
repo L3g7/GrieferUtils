@@ -221,8 +221,6 @@ public class InventoryValue extends Module {
 					try {
 						return Long.parseLong(result);
 					} catch (NumberFormatException ignored) {}
-				} else {
-					System.out.println("wat");
 				}
 			}
 		}

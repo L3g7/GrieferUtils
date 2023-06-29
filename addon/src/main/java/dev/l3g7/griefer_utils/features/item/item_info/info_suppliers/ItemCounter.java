@@ -43,6 +43,7 @@ import net.minecraft.nbt.NBTTagString;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.enchantment.EnchantmentHelper.getEnchantments;
@@ -103,8 +104,8 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		if (screen instanceof GuiContainerCreative)
 			containerName = I18n.format(CreativeTabs.creativeTabArray[((GuiContainerCreative) screen).getSelectedTabIndex()].getTranslatedTabLabel());
 
-		int containerAmount = getAmount(chestSlots, itemStack);
-		int playerAmount = getAmount(playerSlots, itemStack);
+		int containerAmount = getAmountFromSlots(chestSlots, itemStack);
+		int playerAmount = getAmountFromSlots(playerSlots, itemStack);
 
 		// Don't add if the item is not compressed and the only one in the inv
 		if (playerAmount + containerAmount == itemStack.stackSize)
@@ -166,19 +167,22 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		return formattedString.trim();
 	}
 
-	private int getAmount(List<Slot> items, ItemStack searchedItem) {
+	private int getAmountFromSlots(List<Slot> items, ItemStack searchedItem) {
+		return getAmount(items.stream().map(Slot::getStack).collect(Collectors.toList()), searchedItem);
+	}
+
+	public int getAmount(List<ItemStack> items, ItemStack searchedItem) {
 		int amount = 0;
 
-		for (Slot slot : items) {
-			if (!slot.getHasStack())
+		for (ItemStack stack : items) {
+			if (stack == null)
 				continue;
 
-			ItemStack itemStack = slot.getStack();
-			if (itemStack.getItem().equals(searchedItem.getItem())
-				&& (ignoreDamage.get() || itemStack.getItemDamage() == searchedItem.getItemDamage())
-				&& (ignoreEnchants.get() || getEnchantments(itemStack).equals(getEnchantments(searchedItem)))
-				&& (ignoreLore.get() || ItemUtil.getLore(itemStack).equals(ItemUtil.getLore(searchedItem))))
-				amount += getAmount(itemStack);
+			if (stack.getItem().equals(searchedItem.getItem())
+				&& (ignoreDamage.get() || stack.getItemDamage() == searchedItem.getItemDamage())
+				&& (ignoreEnchants.get() || getEnchantments(stack).equals(getEnchantments(searchedItem)))
+				&& (ignoreLore.get() || ItemUtil.getLore(stack).equals(ItemUtil.getLore(searchedItem))))
+				amount += getAmount(stack);
 		}
 
 		return amount;

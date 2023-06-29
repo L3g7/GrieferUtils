@@ -108,7 +108,7 @@ public class AutoUnnick extends Feature {
 			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 
 			if (matcher.matches()) {
-				IChatComponentUtil.setNameWithPrefix(event.message, name, NameCache.getName(name), new PrefixFinder(matcher.group("rank"), matcher.group("name")).getPrefix(), true);
+				IChatComponentUtil.setNameWithPrefix(event.message, name, NameCache.getName(name), new PrefixFinder(matcher.group("rank"), matcher.group("name")).getPrefix(), false);
 				return;
 			}
 		}

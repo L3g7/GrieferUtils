@@ -44,8 +44,12 @@ public class ServerCheck {
 	@EventListener(priority = EventPriority.HIGHEST)
 	public void onServerJoin(ServerEvent.ServerJoinEvent event) {
 		String server = event.data.getIp().toLowerCase();
-		if (server.endsWith("griefergames.net") || server.endsWith("griefergames.de")) {
-			onGrieferGames = true;
+
+		for (String s : new String[]{"net", "de", "com", "live"}) {
+			if (server.endsWith("griefergames." + s)) {
+				onGrieferGames = true;
+				break;
+			}
 		}
 	}
 

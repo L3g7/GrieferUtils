@@ -35,9 +35,7 @@ import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.event.ClickEvent;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
@@ -47,11 +45,8 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 import static dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action.*;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -138,22 +133,6 @@ public class ChatMenu extends Feature {
 	public void onRender(TickEvent.RenderTickEvent event) {
 		if (renderer != null)
 			renderer.render();
-	}
-
-	// Add the /msg clickevent to plotchat- and private messages
-	@EventListener
-	public void onMsg(ClientChatReceivedEvent event) {
-		String text = event.message.getFormattedText();
-
-		for (Pattern p : new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN}) {
-			Matcher matcher = p.matcher(text);
-			if (!matcher.find())
-				continue;
-
-			String name = matcher.group("name").replaceAll("§.", "");
-			event.message.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", name)));
-			return;
-		}
 	}
 
 	@EventListener

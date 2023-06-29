@@ -26,7 +26,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import net.labymod.utils.ModColor;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
@@ -40,7 +39,7 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.core.misc.Constants.STATUS_PATTERN;
+import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 
 @Singleton
@@ -57,7 +56,7 @@ public class InteractableMessages extends Feature {
 		.description("Macht Folgenes interagierbar:"
 			+ "\n- TPAs"
 			+ "\n- Den Citybuild bei Globalchat-Nachrichten"
-			+ "\n- Den Status"
+			+ "\n- Den Status, Msgs, und Plotchat-Nachrichten"
 			+ "\n- \"/p h\" in Nachrichten"
 			+ "\n- Spielernamen bei /clan info")
 		.icon("left_click");
@@ -65,10 +64,10 @@ public class InteractableMessages extends Feature {
 	@EventListener(priority = EventPriority.LOW)
 	public void modifyMessage(MessageModifyEvent event) {
 		modifyGlobalChats(event);
-		modifyStatuses(event);
 		modifyTps(event);
 		modifyPHs(event);
 		modifyClanInfo(event);
+		addMsgSuggestions(event);
 	}
 
 	private void modifyGlobalChats(MessageModifyEvent event) {
@@ -89,21 +88,6 @@ public class InteractableMessages extends Feature {
 				.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§6Klicke, um auf den CB zu wechseln")));
 			break;
 		}
-
-		event.message = message;
-	}
-
-	private void modifyStatuses(MessageModifyEvent event) {
-		String formattedText = event.original.getFormattedText();
-		Matcher matcher = STATUS_PATTERN.matcher(formattedText);
-		if (!matcher.matches())
-			return;
-
-		String name = matcher.group("name");
-		IChatComponent message = event.message;
-
-		for (IChatComponent part : message.getSiblings())
-			part.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", ModColor.removeColor(name))));
 
 		event.message = message;
 	}
@@ -196,6 +180,20 @@ public class InteractableMessages extends Feature {
 			part.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, String.format("/profil %s ", name)));
 
 		event.message = message;
+	}
+
+	public void addMsgSuggestions(MessageModifyEvent event) {
+		String text = event.original.getFormattedText();
+
+		for (Pattern p : new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN}) {
+			Matcher matcher = p.matcher(text);
+			if (!matcher.find())
+				continue;
+
+			String name = matcher.group("name").replaceAll("§.", "");
+			event.message.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", name)));
+			return;
+		}
 	}
 
 }

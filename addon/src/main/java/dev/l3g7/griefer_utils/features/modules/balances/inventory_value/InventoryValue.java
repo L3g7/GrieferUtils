@@ -24,8 +24,9 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.misc.gui.ItemSelectGui;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -54,6 +55,7 @@ public class InventoryValue extends Module {
 
 	private static final Pattern VALUE_PATTERN = Pattern.compile("(\\d[\\d,.k]*)");
 	public static String entryKey = "modules.inventory_value.entries";
+	private GuiScreen previousScreen = null;
 
 	private static final BooleanSetting auto = new BooleanSetting()
 		.name("Wert automatisch bestimmen")
@@ -64,6 +66,16 @@ public class InventoryValue extends Module {
 
 	public InventoryValue() {
 		super("Inventar-Wert", "Zeigt dir an, wie viel ein Inventar wert ist.", "inventory_value", new ControlElement.IconData("griefer_utils/icons/chest.png"));
+	}
+
+	@EventListener
+	private void onAddItem(WindowClickEvent event) {
+		if (previousScreen == null || event.itemStack == null)
+			return;
+
+		mc().displayGuiScreen(new EnterItemValueGui(value -> addItem(event.itemStack, value), previousScreen, getValue(event.itemStack)));
+		previousScreen = null;
+		event.setCanceled(true);
 	}
 
 	@Override
@@ -86,8 +98,9 @@ public class InventoryValue extends Module {
 					return;
 				}
 
-				GuiScreen guiScreen = mc().currentScreen;
-				ItemSelectGui.open(stack -> mc().displayGuiScreen(new EnterItemValueGui(value -> addItem(stack, value), guiScreen, getValue(stack))));
+				previousScreen = mc().currentScreen;
+				display(Constants.ADDON_PREFIX + "Bitte klicke das Item an, das du hinzufügen möchtest.");
+				mc().displayGuiScreen(null);
 			}));
 	}
 

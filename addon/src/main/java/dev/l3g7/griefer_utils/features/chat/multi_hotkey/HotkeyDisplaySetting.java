@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.chat.multi_hotkey;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.util.Util;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.misc.gui.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.*;
@@ -35,8 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 public class HotkeyDisplaySetting extends ControlElement implements ElementBuilder<HotkeyDisplaySetting> {
 
@@ -86,7 +86,15 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 				if (!cb.equals("Egal") && !cb.equals(MinecraftUtil.getServerFromScoreboard()))
 					return;
 
-				player().sendChatMessage(this.commands.get().get(amountsTriggered %= this.commands.get().size()));
+				if (this.commands.get().size() == 0) {
+					displayAchievement("§cFehler", "§cBitte füge den Eintrag neu hinzu.");
+					return;
+				}
+
+				String command = this.commands.get().get(amountsTriggered %= this.commands.get().size());
+				if (!MessageEvent.MessageSendEvent.post(command))
+					player().sendChatMessage(command);
+
 				amountsTriggered++;
 			});
 

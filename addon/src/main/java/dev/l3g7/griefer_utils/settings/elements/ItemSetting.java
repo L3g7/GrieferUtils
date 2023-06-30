@@ -23,6 +23,7 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.FocusableSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.DropDownMenu;
@@ -44,7 +45,7 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
 // Has to be a DropDownElement, otherwise onClickDropDown won't be triggered
-public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implements ElementBuilder<ItemSetting> {
+public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implements ElementBuilder<ItemSetting>, FocusableSetting {
 
 	public static ItemStack MISSING_TEXTURE = new ItemStack(Blocks.stone, 1, 10000);
 	private final DropDownMenu<ItemStack> menu = new DropDownMenu<>(null, 0, 0, 0, 0);
@@ -238,6 +239,7 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 
 		if (sorted)
 			filteredItems.sort(Comparator.comparing(ItemStack::getDisplayName));
+
 		items.clear();
 		items.addAll(filteredItems);
 
@@ -269,6 +271,21 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 
 	@Override
 	public void setChangeListener(net.labymod.utils.Consumer<DummyEnum> changeListener) {}
+
+	@Override
+	public void setFocused(boolean focused) {
+		textField.setFocused(focused);
+		textField.setCursorPositionEnd();
+		menu.setOpen(focused);
+
+		if (focused)
+			filterItems();
+	}
+
+	@Override
+	public boolean isFocused() {
+		return menu.isOpen();
+	}
 
 	public enum DummyEnum {}
 

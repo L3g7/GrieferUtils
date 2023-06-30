@@ -19,10 +19,10 @@
 package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
-import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.gui.elements.ModTextField;
@@ -292,7 +292,7 @@ public class AddChatReactionGui extends GuiScreen {
 	}
 
 	protected void keyTyped(char typedChar, int keyCode) {
-		if (keyCode == 1) // ESC
+		if (keyCode == 1 || typedChar == '\b') // ESC / BACK
 			Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
 
 		if (triggerInput.textboxKeyTyped(typedChar, keyCode) && regEx != null && regEx) {
@@ -306,6 +306,24 @@ public class AddChatReactionGui extends GuiScreen {
 		}
 		commandInput.textboxKeyTyped(typedChar, keyCode);
 		cityBuildSetting.keyTyped(typedChar, keyCode);
+
+		if (typedChar != '\t')
+			return;
+
+		if (triggerInput.isFocused()) {
+			triggerInput.setFocused(false);
+			commandInput.setFocused(true);
+		} else if (commandInput.isFocused()) {
+			commandInput.setFocused(false);
+			if (regEx) cityBuildSetting.setFocused(true);
+			else textCompareDropDown.setOpen(true);
+		} else if (textCompareDropDown.isOpen()) {
+			textCompareDropDown.setOpen(false);
+			cityBuildSetting.setFocused(true);
+		} else {
+			cityBuildSetting.setFocused(false);
+			triggerInput.setFocused(true);
+		}
 	}
 
 	private static class ImageButton {

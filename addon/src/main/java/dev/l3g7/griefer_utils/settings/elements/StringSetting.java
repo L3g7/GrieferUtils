@@ -20,16 +20,18 @@ package dev.l3g7.griefer_utils.settings.elements;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
-import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.FocusableSetting;
+import dev.l3g7.griefer_utils.settings.ValueHolder;
+import net.labymod.gui.elements.ModTextField;
 import net.labymod.settings.elements.StringElement;
 import net.labymod.utils.Consumer;
 
 /**
  * A setting holding a string, represented in-game by a text input.
  */
-public class StringSetting extends StringElement implements ElementBuilder<StringSetting>, ValueHolder<StringSetting, String> {
+public class StringSetting extends StringElement implements ElementBuilder<StringSetting>, ValueHolder<StringSetting, String>, FocusableSetting {
 
 	private final Storage<String> storage = new Storage<>(JsonPrimitive::new, JsonElement::getAsString, "");
 	private final IconStorage iconStorage = new IconStorage();
@@ -57,6 +59,19 @@ public class StringSetting extends StringElement implements ElementBuilder<Strin
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		drawIcon(x, y);
+	}
+
+	@Override
+	public void setFocused(boolean focused) {
+		ModTextField textField = Reflection.get(this, "textField");
+		textField.setCursorPositionEnd();
+		textField.setFocused(focused);
+	}
+
+	@Override
+	public boolean isFocused() {
+		ModTextField textField = Reflection.get(this, "textField");
+		return textField.isFocused();
 	}
 
 }

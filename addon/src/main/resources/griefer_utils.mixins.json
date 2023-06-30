@@ -38,6 +38,7 @@
     "minecraft.MixinWorldClient"
   ],
   "client": [
+    "labymod.MixinLabyModAddonsGui",
     "minecraft.MixinEntityPlayerSP"
   ]
 }

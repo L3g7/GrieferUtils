@@ -20,14 +20,17 @@ package dev.l3g7.griefer_utils.settings.elements;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.FocusableSetting;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import net.labymod.settings.elements.NumberElement;
+import net.minecraft.client.gui.GuiTextField;
 
 /**
  * A setting holding an integer.
  */
-public class NumberSetting extends NumberElement implements ElementBuilder<NumberSetting>, ValueHolder<NumberSetting, Integer> {
+public class NumberSetting extends NumberElement implements ElementBuilder<NumberSetting>, ValueHolder<NumberSetting, Integer>, FocusableSetting {
 
 	private final IconStorage iconStorage = new IconStorage();
 	private final Storage<Integer> storage = new Storage<>(JsonPrimitive::new, JsonElement::getAsInt, 0);
@@ -69,6 +72,19 @@ public class NumberSetting extends NumberElement implements ElementBuilder<Numbe
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		drawIcon(x, y);
+	}
+
+	@Override
+	public void setFocused(boolean focused) {
+		GuiTextField textField = Reflection.get(this, "textField");
+		textField.setCursorPositionEnd();
+		textField.setFocused(focused);
+	}
+
+	@Override
+	public boolean isFocused() {
+		GuiTextField textField = Reflection.get(this, "textField");
+		return textField.isFocused();
 	}
 
 }

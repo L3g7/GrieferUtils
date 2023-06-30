@@ -19,9 +19,10 @@
 package dev.l3g7.griefer_utils.settings.elements;
 
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
-import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.FocusableSetting;
+import dev.l3g7.griefer_utils.settings.ValueHolder;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.DropDownElement;
@@ -43,7 +44,7 @@ import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
  * A setting to select enums using a dropdown.
  */
 @SuppressWarnings("unchecked")
-public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> implements ElementBuilder<DropDownSetting<E>>, ValueHolder<DropDownSetting<E>, E> {
+public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> implements ElementBuilder<DropDownSetting<E>>, ValueHolder<DropDownSetting<E>, E>, FocusableSetting {
 
 	private final Storage<E> storage;
 	private final IconStorage iconStorage = new IconStorage();
@@ -68,6 +69,16 @@ public class DropDownSetting<E extends Enum<E>> extends DropDownElement<E> imple
 
 		// Use name field as default stringProvider
 		stringProvider(e -> Reflection.get(e, "name"));
+	}
+
+	@Override
+	public void setFocused(boolean focused) {
+		menu.setOpen(focused);
+	}
+
+	@Override
+	public boolean isFocused() {
+		return menu.isOpen();
 	}
 
 	/**

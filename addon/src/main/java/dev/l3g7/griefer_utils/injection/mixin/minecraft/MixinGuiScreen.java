@@ -18,18 +18,37 @@
 
 package dev.l3g7.griefer_utils.injection.mixin.minecraft;
 
+import dev.l3g7.griefer_utils.Main;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
+import dev.l3g7.griefer_utils.settings.FocusableSetting;
+import net.labymod.settings.LabyModAddonsGui;
+import net.labymod.settings.elements.AddonElement;
+import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(GuiScreen.class)
-public class MixinGuiScreen {
+public abstract class MixinGuiScreen {
+
+	@Shadow
+	public abstract void initGui();
+
+	@Shadow
+	protected abstract void actionPerformed(GuiButton button) throws IOException;
 
 	@Inject(method = "renderToolTip", at = @At("HEAD"), cancellable = true)
 	public void injectRenderTooltip(ItemStack stack, int x, int y, CallbackInfo ci) {
@@ -40,6 +59,56 @@ public class MixinGuiScreen {
 	@Inject(method = "initGui", at = @At("HEAD"))
 	public void injectInitGui(CallbackInfo ci) {
 		MinecraftForge.EVENT_BUS.post(new GuiInitEvent((GuiScreen) (Object) this));
+	}
+
+	@Inject(method = "keyTyped", at = @At("HEAD"), cancellable = true)
+	public void injectKeyTyped(char typedChar, int keyCode, CallbackInfo ci) {
+		if (!((Object) this instanceof LabyModAddonsGui))
+			return;
+
+		AddonElement openedAddonSettings = Reflection.get(this, "openedAddonSettings");
+
+		if (openedAddonSettings == null || openedAddonSettings.getAddonInfo().getUuid() != Main.getInstance().about.uuid) // Check if GrieferUtils is open
+			return;
+
+		if (typedChar != '\t' && typedChar != '\b')
+			return;
+
+		ci.cancel();
+
+		if (typedChar == '\b') {
+			try {
+				actionPerformed(Reflection.get(this, "buttonBack"));
+			} catch (IOException e) {
+				throw Util.elevate(e);
+			}
+			return;
+		}
+
+		List<SettingsElement> tempElementsStored = Reflection.get(this, "tempElementsStored");
+
+		List<FocusableSetting> settings = new ArrayList<>();
+		for (SettingsElement setting : tempElementsStored)
+			if (setting instanceof FocusableSetting)
+				settings.add((FocusableSetting) setting);
+
+		if (settings.isEmpty())
+			return;
+
+		int focusedTextField = 0;
+		for (FocusableSetting setting : settings) {
+			if (setting.isFocused()) {
+				if (settings.size() == 1)
+					return;
+
+				setting.setFocused(false);
+				break;
+			}
+
+			focusedTextField++;
+		}
+
+		settings.get(focusedTextField == settings.size() ? 0 : (focusedTextField + 1) % settings.size()).setFocused(true);
 	}
 
 }

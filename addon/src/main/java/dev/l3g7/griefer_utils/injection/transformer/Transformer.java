@@ -19,11 +19,14 @@
 package dev.l3g7.griefer_utils.injection.transformer;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ListIterator;
 
 public abstract class Transformer implements Opcodes {
 
@@ -48,6 +51,20 @@ public abstract class Transformer implements Opcodes {
 			.filter(m -> targetMethod.equals(m.name + m.desc))
 			.findFirst()
 			.orElseThrow(() -> new NoSuchMethodError("Could not find " + name + desc + " / " + targetMethod + "!"));
+	}
+
+	protected static ListIterator<AbstractInsnNode> getInstructionsAtLine(MethodNode methodNode, int line) {
+		return gotoLine(methodNode.instructions.iterator(), line);
+	}
+
+	protected static ListIterator<AbstractInsnNode> gotoLine(ListIterator<AbstractInsnNode> iterator, int line) {
+		while (iterator.hasNext()) {
+			AbstractInsnNode node = iterator.next();
+			if (node instanceof LineNumberNode && ((LineNumberNode) node).line == line)
+				return iterator;
+		}
+
+		throw new IllegalStateException("Could not find line " + line + " in method!");
 	}
 
 	public String getTarget() {

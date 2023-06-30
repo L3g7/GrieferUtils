@@ -19,12 +19,17 @@
 package dev.l3g7.griefer_utils.features.chat.filter_webhooks;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.features.chat.UnlockChatFilters;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.GuiChatFilterWithTemplates;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.Scrollbar;
 import net.labymod.ingamechat.GuiChatCustom;
+import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.FilterChatManager;
+import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.ingamechat.tools.filter.Filters.Filter;
 import net.labymod.main.LabyMod;
 import net.labymod.main.lang.LanguageManager;
@@ -48,11 +53,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Copied and modified from net.minecraft.client.gui.inventory.GuiEditSign
- * TODO: beautify (ASM?)
+ * Copied and modified from {@link GuiChatFilter}
  */
 @SuppressWarnings("unchecked")
 public class CustomGuiChatFilter extends GuiChatCustom {
+
+	// TODO: Inject into open gui instead of overwriting
+	// TODO: replace numbers with constants
 
     private static final Pattern HOOK_URL_PATTERN = Pattern.compile("^https://(?:\\w+\\.)?discord(?:app)?\\.com/api/webhooks/(\\d{18}\\d?/[\\w-]{68})$");
 
@@ -72,9 +79,20 @@ public class CustomGuiChatFilter extends GuiChatCustom {
     private String editStartName = "";
     private boolean canScroll;
     private static final List<String> soundNames = new ArrayList<>();
+	private final GuiChatFilterWithTemplates templatesRenderer;
 
     public CustomGuiChatFilter(String defaultText) {
         super(defaultText);
+
+		if (FileProvider.getSingleton(ChatFilterTemplates.class).isEnabled())
+			templatesRenderer = new GuiChatFilterWithTemplates("") {
+				@Override
+				public void loadTemplate(ChatFilterTemplates.FilterTemplate template) {
+					Reflection.invoke(CustomGuiChatFilter.this, "loadFilter", new Filters.Filter(template.name, template.contains, template.containsNot, false, "note.harp", false, (short) 200, (short) 200, (short) 50, false, false, false, "Global"));
+				}
+			};
+		else
+			templatesRenderer = null;
     }
 
     @Override
@@ -147,9 +165,11 @@ public class CustomGuiChatFilter extends GuiChatCustom {
             CustomGuiChatFilter.drawRect(width - 7, (int) scrollbar.getTop(), width - 4, (int) (scrollbar.getTop() + scrollbar.getBarLength()), Integer.MAX_VALUE);
         }
         if (selectedFilter == null) {
-            boolean hover = mouseX > width - 165 && mouseX < width - 152 && mouseY > height - 235 && mouseY < height - 222;
-            CustomGuiChatFilter.drawRect(width - 165, height - 235, width - 152, height - 222, hover ? Integer.MAX_VALUE : Integer.MIN_VALUE);
-            drawCenteredString(LabyModCore.getMinecraft().getFontRenderer(), "+", width - 158, height - 217 - 15, hover ? ModColor.toRGB(50, 220, 120, 210) : Integer.MAX_VALUE);
+			if (templatesRenderer == null || !templatesRenderer.templatesOpen) {
+				boolean hover = mouseX > width - 165 && mouseX < width - 152 && mouseY > height - 235 && mouseY < height - 222;
+				CustomGuiChatFilter.drawRect(width - 165, height - 235, width - 152, height - 222, hover ? Integer.MAX_VALUE : Integer.MIN_VALUE);
+				drawCenteredString(LabyModCore.getMinecraft().getFontRenderer(), "+", width - 158, height - 217 - 15, hover ? ModColor.toRGB(50, 220, 120, 210) : Integer.MAX_VALUE);
+			}
         } else {
             StringBuilder hint;
             int count;
@@ -245,14 +265,25 @@ public class CustomGuiChatFilter extends GuiChatCustom {
         if (sliderDrag != -1) {
             mouseClickMove(mouseX, mouseY, 0, 0L);
         }
+
+		if (templatesRenderer != null && selectedFilter == null) {
+			templatesRenderer.width = width;
+			templatesRenderer.height = height - 15;
+			templatesRenderer.renderTemplates(mouseX, mouseY);
+		}
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+		if (templatesRenderer != null)
+			if (selectedFilter == null && !templatesRenderer.handleTemplateClick(mouseX, mouseY))
+				return;
+
         super.mouseClicked(mouseX, mouseY, mouseButton);
         scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
         if (selectedFilter == null && mouseX > width - 165 && mouseX < width - 152 && mouseY > height - 235 && mouseY < height - 222) {
-            loadFilter(new Filter("", new String[0], new String[0], false, "note.harp", true, (short) 200, (short) 200, (short) 50, false, false, false, "Global"));
+			if (templatesRenderer == null || !templatesRenderer.templatesOpen)
+	            loadFilter(new Filter("", new String[0], new String[0], false, "note.harp", true, (short) 200, (short) 200, (short) 50, false, false, false, "Global"));
         }
         if (selectedFilter == null) {
             int row = 0;

@@ -25,11 +25,11 @@ import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.token_providers.Mu
 import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.token_providers.TokenProvider;
 import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.util.DateTime;
 import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.util.Requests;
+import io.netty.util.internal.ConcurrentSet;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.util.Util.strMap;
 
@@ -37,7 +37,7 @@ public class XboxProfileResolver {
 
 	private static boolean available = false;
 
-	private static final List<Long> requestSendTimes = new ArrayList<>();
+	private static final Set<Long> requestSendTimes = new ConcurrentSet<>();
 
 	public static final Gson GSON = new GsonBuilder()
 			.registerTypeAdapter(DateTime.class, (JsonSerializer<DateTime>) (src, type, ctx) -> new JsonPrimitive(src.toString()))

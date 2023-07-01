@@ -37,7 +37,7 @@ public class ChatFilterTemplates extends Feature {
 		new FilterTemplate("Ausgehende MSG").contains("[mir ->").containsNot("»"),
 		new FilterTemplate("Plotchat").contains("[Plot-Chat]").containsNot("»"),
 		new FilterTemplate("Einkommende Zahlung").contains("[✔]").containsNot("»", "->", ":"),
-		new FilterTemplate("Ausgehende Zahlung").contains("Du hast").containsNot("»", "->", ":"),
+		new FilterTemplate("Ausgehende Zahlung").contains("Du hast").containsNot("»", "->", ":", "[GrieferGames]"),
 		new FilterTemplate("MobRemover").contains("[MobRemover]").containsNot("»", "->", ":"),
 		new FilterTemplate("Clearlag").contains("auf dem Boden liegende Items entfernt!", "[GrieferGames] Warnung! Die auf dem Boden liegenden Items werden in").containsNot("»", "->", ":"),
 	};

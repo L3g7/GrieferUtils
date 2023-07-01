@@ -62,8 +62,8 @@ public class ChatFilterTemplates extends Feature {
 	public static class FilterTemplate {
 
 		public final String name;
-		public String[] contains;
-		public String[] containsNot;
+		public String[] contains = new String[0];
+		public String[] containsNot = new String[0];
 
 		private FilterTemplate(String name) {
 			this.name = name;

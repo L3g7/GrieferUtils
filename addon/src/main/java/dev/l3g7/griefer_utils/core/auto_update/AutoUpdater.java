@@ -186,6 +186,9 @@ public class AutoUpdater {
 
 	private static boolean isEnabled() throws IOException {
 		Path configPath = new File("config", "GrieferUtils.json").toPath();
+		if (!Files.exists(configPath))
+			return true;
+		
 		JsonObject config = new JsonParser().parse(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ))).getAsJsonObject();
 		if (!config.has("settings"))
 			return true;

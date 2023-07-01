@@ -18,10 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.ChecksumException;
-import com.google.zxing.FormatException;
-import com.google.zxing.NotFoundException;
+import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
@@ -86,15 +83,24 @@ public class QRCodeScanner extends Feature {
 			}
 
 			try {
-				BinaryBitmap data = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(img)));
-				display(ADDON_PREFIX + "QR-Code-Text: " + new QRCodeReader().decode(data).getText());
-			} catch (NotFoundException e) {
-				display(ADDON_PREFIX + "§cEs konnte kein QR-Code gefunden werden.");
+				BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(img);
+				if (scan(source) && scan(source.invert())) // Adding DecodeHintType.ALSO_INVERTED doesn't suffice, for some reason
+					display(ADDON_PREFIX + "§cEs konnte kein QR-Code gefunden werden.");
 			} catch (ChecksumException e) {
 				display(ADDON_PREFIX + "§cDie Prüfsumme des QR-Codes ist ungültig.");
 			} catch (FormatException e) {
 				display(ADDON_PREFIX + "§cDas Format des QR-Codes ist ungültig.");
 			}
 		});
+
+	private static boolean scan(LuminanceSource source) throws ChecksumException, FormatException {
+		BinaryBitmap data = new BinaryBitmap(new HybridBinarizer(source));
+		try {
+			display(ADDON_PREFIX + "QR-Code-Text: " + new QRCodeReader().decode(data).getText());
+			return false;
+		} catch (NotFoundException e) {
+			return true;
+		}
+	}
 
 }

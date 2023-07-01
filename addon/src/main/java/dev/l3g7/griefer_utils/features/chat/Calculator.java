@@ -171,15 +171,16 @@ public class Calculator extends Feature {
 
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
-		if (event.message.startsWith(prefix.get().trim())) {
+		if (event.message.equalsIgnoreCase(prefix.get().trim())) {
+			event.setCanceled(true);
+			display(Constants.ADDON_PREFIX + "§cSyntax: " + prefix.get().trim() + " [Rechnung]");
+			return;
+		}
+
+		if (event.message.toLowerCase().startsWith(prefix.get().trim().toLowerCase() + " ")) {
 			event.setCanceled(true);
 
 			String message = event.message.substring(prefix.get().trim().length()).trim();
-			if (message.isEmpty()) {
-				display(Constants.ADDON_PREFIX + "§cSyntax: " + prefix.get() + "[Rechnung]");
-				return;
-			}
-
 			double exp = calculate(message);
 			if (Double.isNaN(exp))
 				return;

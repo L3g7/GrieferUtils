@@ -28,9 +28,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SliderSetting;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityFallingBlock;
@@ -94,6 +92,10 @@ public class TrueSight extends Feature {
 		add(EntityPig.class, "Schwein", "pig");
 		add(EntityPigZombie.class, "Schweinezombie", "pig_zombie");
 		add(EntityPlayer.class, "Spieler", "../steve");
+		entities.put(EntityPlayer.class, new BooleanSetting()
+			.name("Spieler")
+			.config(getConfigKey() + ".entities.spieler")
+			.icon("steve"));
 		add(EntityRabbit.class, "Hase", "rabbit");
 		add(EntitySheep.class, "Schaf", "sheep");
 		add(EntitySilverfish.class, "Silberfischchen", "silverfish");

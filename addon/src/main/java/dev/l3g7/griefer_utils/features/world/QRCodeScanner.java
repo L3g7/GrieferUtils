@@ -93,7 +93,7 @@ public class QRCodeScanner extends Feature {
 			} catch (ChecksumException e) {
 				display(ADDON_PREFIX + "§cDie Prüfsumme des QR-Codes ist ungültig.");
 			} catch (FormatException e) {
-				display(ADDON_PREFIX + "§cEs konnte kein QR-Codea gefunden werden.");
+				display(ADDON_PREFIX + "§cDas Format des QR-Codes ist ungültig.");
 			}
 		});
 

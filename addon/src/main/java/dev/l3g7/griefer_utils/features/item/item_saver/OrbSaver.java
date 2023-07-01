@@ -60,7 +60,7 @@ public class OrbSaver extends ItemSaver {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Orb-Saver")
-		.description("Deaktiviert unerwünschtes Abgeben beim Orbhändler.")
+		.description("Deaktiviert Abgeben von zu vielen Items beim Orbhändler.")
 		.icon(ItemUtil.createItem(Blocks.gold_block, 0, true))
 		.subSettings(onPriceFall);
 

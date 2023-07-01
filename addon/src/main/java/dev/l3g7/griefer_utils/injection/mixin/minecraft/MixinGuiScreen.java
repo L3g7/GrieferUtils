@@ -75,8 +75,13 @@ public abstract class MixinGuiScreen {
 			return;
 
 		ci.cancel();
+		List<SettingsElement> tempElementsStored = Reflection.get(this, "tempElementsStored");
 
 		if (typedChar == '\b') {
+			for (SettingsElement setting : tempElementsStored)
+				if (setting instanceof FocusableSetting && ((FocusableSetting) setting).isFocused())
+					return;
+
 			try {
 				actionPerformed(Reflection.get(this, "buttonBack"));
 			} catch (IOException e) {
@@ -84,8 +89,6 @@ public abstract class MixinGuiScreen {
 			}
 			return;
 		}
-
-		List<SettingsElement> tempElementsStored = Reflection.get(this, "tempElementsStored");
 
 		List<FocusableSetting> settings = new ArrayList<>();
 		for (SettingsElement setting : tempElementsStored)

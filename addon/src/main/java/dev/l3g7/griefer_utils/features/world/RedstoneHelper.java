@@ -244,7 +244,7 @@ public class RedstoneHelper extends Feature {
 
 	@EventListener
 	public void onRenderWorldLast(RenderWorldLastEvent event) {
-		if (!showPower.get() && !showDirection.get() || (redstoneRenderObjects.isEmpty() && schematicasRROs.isEmpty()))
+		if (!showPower.get() && !showDirection.get() && !showNoteBlockPitch.get() || (redstoneRenderObjects.isEmpty() && schematicasRROs.isEmpty()))
 			return;
 
 		if (Constants.SCHEMATICA)

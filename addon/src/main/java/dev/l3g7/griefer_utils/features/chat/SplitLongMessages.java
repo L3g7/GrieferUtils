@@ -23,12 +23,14 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
 
 @Singleton
 public class SplitLongMessages extends Feature {
+
+	private static final List<String> lastParts = new ArrayList<>();
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -68,8 +72,21 @@ public class SplitLongMessages extends Feature {
 	}
 
 	@EventListener
+	private void onMessageReceive(ClientChatReceivedEvent event) {
+		if (lastParts.isEmpty() || !event.message.getUnformattedText().equals("Fehler: Spieler nicht gefunden."))
+			return;
+
+		lastParts.forEach(ChatQueue::remove);
+	}
+
+	@EventListener
 	public void onSend(MessageEvent.MessageAboutToBeSentEvent event) {
 		String text = event.message;
+
+		if (!lastParts.isEmpty() && text.equals(lastParts.get(lastParts.size() - 1))) {
+			lastParts.clear();
+			return;
+		}
 
 		if (text.length() <= 100)
 			return;
@@ -80,8 +97,10 @@ public class SplitLongMessages extends Feature {
 		String message = text.substring(index);
 		String prefix = text.substring(0, index);
 
-		for (String s : cutUp(message, 100 - prefix.length()))
+		for (String s : cutUp(message, 100 - prefix.length())) {
 			send(prefix + s);
+			lastParts.add(prefix + s);
+		}
 		event.setCanceled(true);
 	}
 

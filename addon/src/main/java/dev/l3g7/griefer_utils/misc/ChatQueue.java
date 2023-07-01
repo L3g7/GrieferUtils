@@ -128,6 +128,10 @@ public class ChatQueue {
 		queuedMessages.add(message);
 	}
 
+	public static void remove(String message) {
+		queuedMessages.remove(message);
+	}
+
 	/**
 	 * Sends a message and blocks movement until the future is completed.
 	 */

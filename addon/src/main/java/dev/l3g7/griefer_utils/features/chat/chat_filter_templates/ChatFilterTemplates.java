@@ -33,10 +33,11 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 public class ChatFilterTemplates extends Feature {
 
 	static final FilterTemplate[] TEMPLATES = new FilterTemplate[] {
-		new FilterTemplate("Einkommende MSG").contains("-> mir]").containsNot("»"),
+		new FilterTemplate("Eingehende MSG").contains("-> mir]").containsNot("»"),
 		new FilterTemplate("Ausgehende MSG").contains("[mir ->").containsNot("»"),
+		new FilterTemplate("Globalchat").contains("@["),
 		new FilterTemplate("Plotchat").contains("[Plot-Chat]").containsNot("»"),
-		new FilterTemplate("Einkommende Zahlung").contains("[✔]").containsNot("»", "->", ":"),
+		new FilterTemplate("Eingehende Zahlung").contains("[✔]").containsNot("»", "->", ":"),
 		new FilterTemplate("Ausgehende Zahlung").contains("Du hast").containsNot("»", "->", ":", "[GrieferGames]"),
 		new FilterTemplate("MobRemover").contains("[MobRemover]").containsNot("»", "->", ":"),
 		new FilterTemplate("Clearlag").contains("auf dem Boden liegende Items entfernt!", "[GrieferGames] Warnung! Die auf dem Boden liegenden Items werden in").containsNot("»", "->", ":"),

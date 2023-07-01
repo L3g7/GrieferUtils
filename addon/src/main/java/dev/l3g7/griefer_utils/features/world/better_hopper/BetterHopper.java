@@ -154,6 +154,9 @@ public class BetterHopper extends Feature {
 		if (slot == 16) {
 			if (packet.getMode() != 1)
 				blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
+
+			mainConnection = null;
+			displayEnd = -1;
 			return;
 		}
 

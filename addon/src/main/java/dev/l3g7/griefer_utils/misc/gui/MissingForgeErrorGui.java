@@ -34,6 +34,8 @@ import java.util.TimerTask;
 
 public class MissingForgeErrorGui extends GuiScreen {
 
+	private static boolean closed = false;
+
 	public static void open() {
 		GuiScreen gui = new MissingForgeErrorGui(Minecraft.getMinecraft().currentScreen);
 		// Ensure it can't be closed
@@ -41,7 +43,7 @@ public class MissingForgeErrorGui extends GuiScreen {
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
-				if (!(Minecraft.getMinecraft().currentScreen instanceof MissingForgeErrorGui))
+				if (!closed && !(Minecraft.getMinecraft().currentScreen instanceof MissingForgeErrorGui))
 					Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(gui));
 			}
 		}, 0, 50);
@@ -93,9 +95,11 @@ public class MissingForgeErrorGui extends GuiScreen {
 	}
 
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		if (mouseX > this.width / 2 - 150 && mouseX < this.width / 2 && mouseY > this.height / 2 + 24 && mouseY < this.height / 2 + 44)
+		if (mouseX > this.width / 2 - 150 && mouseX < this.width / 2 && mouseY > this.height / 2 + 24 && mouseY < this.height / 2 + 44) {
+			closed = true;
 			Minecraft.getMinecraft().displayGuiScreen(this.previousScreen);
-		else
+		} else {
 			super.mouseClicked(mouseX, mouseY, mouseButton);
+		}
 	}
 }

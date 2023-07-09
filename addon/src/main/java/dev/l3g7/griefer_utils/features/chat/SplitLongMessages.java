@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
@@ -35,6 +36,8 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
 
@@ -42,6 +45,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
 public class SplitLongMessages extends Feature {
 
 	private static final List<String> lastParts = new ArrayList<>();
+	private static String lastRecipient = null;
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -63,7 +67,7 @@ public class SplitLongMessages extends Feature {
 		}
 
 		String text = inputField.getText().toLowerCase();
-		if (!(text.startsWith("/msg ") || text.startsWith("/r ") || !text.startsWith("/") || !text.startsWith("@"))) {
+		if (!(text.startsWith("/msg ") || text.startsWith("/r ") || !(text.startsWith("/") || text.startsWith("@")))) {
 			inputField.setMaxStringLength(100);
 			return;
 		}
@@ -73,10 +77,22 @@ public class SplitLongMessages extends Feature {
 
 	@EventListener
 	private void onMessageReceive(ClientChatReceivedEvent event) {
-		if (lastParts.isEmpty() || !event.message.getUnformattedText().equals("Fehler: Spieler nicht gefunden."))
+		if (lastParts.isEmpty())
 			return;
 
-		lastParts.forEach(ChatQueue::remove);
+		if (event.message.getUnformattedText().equals("Fehler: Spieler nicht gefunden.")) {
+			lastParts.forEach(ChatQueue::remove);
+			return;
+		}
+
+		for (Pattern pattern : new Pattern[] {Constants.MESSAGE_RECEIVE_PATTERN, Constants.MESSAGE_SEND_PATTERN}) {
+			Matcher matcher = pattern.matcher(event.message.getFormattedText());
+			if (!matcher.matches())
+				continue;
+
+			lastRecipient = matcher.group("name").replaceAll("§.", "");
+			return;
+		}
 	}
 
 	@EventListener
@@ -90,6 +106,9 @@ public class SplitLongMessages extends Feature {
 
 		if (text.length() <= 100)
 			return;
+
+		if (text.startsWith("/r ") && lastRecipient != null)
+			text = String.format("/msg %s %s", lastRecipient, text.substring(3));
 
 		int index = text.toLowerCase().startsWith("/msg ") ? text.indexOf(' ') + 1 : 0;
 		index = text.toLowerCase().startsWith("/") ? text.indexOf(' ', index) + 1 : 0;

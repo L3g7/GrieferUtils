@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.player;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -89,6 +90,12 @@ public class AfkNick extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onInput(InputEvent event) {
+		if (!manuallyAFK)
+			lastEvent = System.currentTimeMillis();
+	}
+
+	@EventListener(triggerWhenDisabled = true)
+	private void onInput(ServerSwitchEvent event) {
 		if (!manuallyAFK)
 			lastEvent = System.currentTimeMillis();
 	}

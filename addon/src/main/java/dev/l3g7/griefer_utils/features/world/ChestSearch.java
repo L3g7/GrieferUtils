@@ -54,7 +54,7 @@ public class ChestSearch extends Feature {
 		.description("Fügt eine Item-Suche innerhalb von Kisten hinzu.")
 		.icon("chest");
 
-	private ModTextField searchField = null;
+	public ModTextField searchField = null;
 	private String previousSearch = "";
 
 	@EventListener(triggerWhenDisabled = true)

@@ -21,11 +21,13 @@ package dev.l3g7.griefer_utils.features.world;
 import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.BufferedImageLuminanceSource;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
+import net.labymod.gui.elements.ModTextField;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -59,6 +61,10 @@ public class QRCodeScanner extends Feature {
 			ItemStack stack;
 
 			if (mc().currentScreen != null) {
+				ModTextField mtf = FileProvider.getSingleton(ChestSearch.class).searchField;
+				if (mtf != null && mtf.isFocused())
+					return;
+
 				Slot slot = ((GuiContainer) mc().currentScreen).getSlotUnderMouse();
 				if (slot == null || !slot.getHasStack() || (stack = slot.getStack()).getItem() != Items.filled_map) {
 					display(ADDON_PREFIX + "Bitte hovere eine Karte.");

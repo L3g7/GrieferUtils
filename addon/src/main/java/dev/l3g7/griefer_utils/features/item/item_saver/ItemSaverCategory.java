@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
+import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import net.labymod.settings.elements.SettingsElement;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -95,7 +96,11 @@ public class ItemSaverCategory extends Feature {
 			if (!FileProvider.getSingleton(ItemSaverCategory.class).isEnabled())
 				return false;
 
-			return ((BooleanSetting) mainElement).get();
+			if (mainElement instanceof BooleanSetting)
+				return ((BooleanSetting) mainElement).get();
+			if (mainElement instanceof NumberSetting)
+				return ((NumberSetting) mainElement).get() != 0;
+			return true;
 		}
 
 	}

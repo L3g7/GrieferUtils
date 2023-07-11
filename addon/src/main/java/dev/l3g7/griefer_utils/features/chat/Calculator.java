@@ -50,9 +50,9 @@ public class Calculator extends Feature {
 		.icon("bank")
 		.defaultValue(WithdrawAction.SUGGEST);
 
-	private final BooleanSetting depositAll = new BooleanSetting()
-		.name("* einzahlen / abheben")
-		.description("Aktiviert den * Placeholder, mit dem sich das gesamte Guthaben einzahlen oder abheben lässt.")
+	private final BooleanSetting starPlaceholder = new BooleanSetting()
+		.name("\"*\"-Placeholder")
+		.description("Aktiviert den * Placeholder, mit dem sich das gesamte Guthaben einzahlen, abheben oder überweisen lässt.")
 		.icon("bank")
 		.defaultValue(true);
 
@@ -105,7 +105,7 @@ public class Calculator extends Feature {
 		.description("Ein Rechner in Nachrichten.")
 		.icon("calculator")
 		.subSettings(decimalPlaces, new HeaderSetting(),
-			autoWithdraw, depositAll, placeholder, autoEquationDetect, prefix);
+			autoWithdraw, starPlaceholder, placeholder, autoEquationDetect, prefix);
 
 	private static Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
 	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?k* *[+\\-/*^ek] *[+-]?\\d+(?:[.,]\\d+)?k*|[+-]?\\d+(?:[.,]\\d+)?k+)(?:(?= )|$)");
@@ -217,23 +217,30 @@ public class Calculator extends Feature {
 			}
 		}
 
-		/* ************* *
-		 *  Deposit all  *
-		 * ************* */
-		if (event.message.equalsIgnoreCase("/bank einzahlen *") && depositAll.get()) {
+		/* ****************** *
+		 *  Star placeholder  *
+		 * ****************** */
+		if (event.message.equalsIgnoreCase("/bank einzahlen *") && starPlaceholder.get()) {
 			if (getCurrentBalance().compareTo(THOUSAND) < 0)
 				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getCurrentBalance()).toPlainString());
 			else
 				send("/bank einzahlen %d", getCurrentBalance().setScale(0, RoundingMode.FLOOR).toBigInteger());
 			event.setCanceled(true);
 			return;
-		} else if (event.message.equalsIgnoreCase("/bank abheben *") && depositAll.get()) {
+		} else if (event.message.equalsIgnoreCase("/bank abheben *") && starPlaceholder.get()) {
 			if (getBankBalance() < 1000)
 				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", (1000 - getBankBalance()));
 			else
 				send("/bank abheben %d", getBankBalance());
 			event.setCanceled(true);
 			return;
+		} else if (starPlaceholder.get()) {
+			Matcher matcher = Pattern.compile(String.format("/pay %s \\*", Constants.UNFORMATTED_PLAYER_NAME_PATTERN)).matcher(event.message);
+			if (matcher.matches()) {
+				send("/pay %s %d", matcher.group("player"), getCurrentBalance().longValue());
+				event.setCanceled(true);
+				return;
+			}
 		}
 
 		/* ************* *

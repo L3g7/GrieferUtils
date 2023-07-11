@@ -292,7 +292,7 @@ public class AddChatReactionGui extends GuiScreen {
 	}
 
 	protected void keyTyped(char typedChar, int keyCode) {
-		if (keyCode == 1 || typedChar == '\b') // ESC / BACK
+		if (keyCode == 1 || (typedChar == '\b' && !(triggerInput.isFocused() || commandInput.isFocused() || cityBuildSetting.isFocused()))) // ESC / BACK
 			Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
 
 		if (triggerInput.textboxKeyTyped(typedChar, keyCode) && regEx != null && regEx) {

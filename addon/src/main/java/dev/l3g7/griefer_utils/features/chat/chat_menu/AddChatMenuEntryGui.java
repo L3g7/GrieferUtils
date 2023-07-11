@@ -418,7 +418,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 	}
 
 	protected void keyTyped(char typedChar, int keyCode) {
-		if (keyCode == 1 || typedChar == '\b') // ESC / BACK
+		if (keyCode == 1 || (typedChar == '\b' && !(commandInput.isFocused() || nameInput.isFocused() || itemSetting.isFocused()))) // ESC / BACK
 			Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
 
 		commandInput.textboxKeyTyped(typedChar, keyCode);

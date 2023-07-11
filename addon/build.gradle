@@ -80,7 +80,7 @@ reobf.jar.mappingType = "NOTCH"
 // addon.json's version
 processResources.from(sourceSets.main.resources.srcDirs) {
 	include 'addon.json'
-	expand 'version': version
+	expand 'version': version, 'debug': debug
 }
 
 // api jar creation

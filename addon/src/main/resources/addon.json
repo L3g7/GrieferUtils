@@ -4,6 +4,7 @@
   "icon": "https://i.imgur.com/tWfT5Y8.png",
   "author": "L3g7, L3g73",
   "addonVersion": "${version}",
+  "debug": "${debug}",
 
   "mainClass": "dev.l3g7.griefer_utils.Main",
   "transformerClass": "dev.l3g7.griefer_utils.core.PreStart",

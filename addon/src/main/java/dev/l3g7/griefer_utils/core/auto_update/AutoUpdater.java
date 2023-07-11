@@ -24,10 +24,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel;
-import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.util.IOUtil;
 import net.labymod.addon.AddonLoader;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -52,6 +48,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.zip.ZipOutputStream;
 
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
@@ -63,11 +61,15 @@ import static java.nio.file.StandardOpenOption.CREATE;
  * the classloader with the new jar, and deletes the old file on shutdown.
  * <p>
  * As loading any class would prevent it from being updated, this class contains code also found in
- * {@link Config}, {@link CustomSSLSocketFactoryProvider}, {@link IOUtil} and {@link Reflection}.
+ * {@link dev.l3g7.griefer_utils.core.misc.config.Config},
+ * {@link dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider},
+ * {@link dev.l3g7.griefer_utils.core.util.IOUtil} and
+ * {@link dev.l3g7.griefer_utils.core.reflection.Reflection}.
  */
 public class AutoUpdater {
 
-	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+	private static final JsonParser PARSER = new JsonParser();
 	public static boolean hasUpdated = false;
 
 	public static void update() throws IOException, NoSuchAlgorithmException, InterruptedException, ReflectiveOperationException {
@@ -81,7 +83,7 @@ public class AutoUpdater {
 		// Get info about the latest release
 		InputStream in = read("https://grieferutils.l3g7.dev/v2/latest_release");
 		@SuppressWarnings("UnstableApiUsage")
-		Map<String, ReleaseInfo> releases = gson.fromJson(new InputStreamReader(in), new TypeToken<Map<String, ReleaseInfo>>(){}.getType());
+		Map<String, ReleaseInfo> releases = GSON.fromJson(new InputStreamReader(in), new TypeToken<Map<String, ReleaseInfo>>(){}.getType());
 		in.close();
 
 		// Get preferred release channel
@@ -92,10 +94,17 @@ public class AutoUpdater {
 		String ownJarUrl = getOwnJar();
 		File jarFile = new File(ownJarUrl.substring(5)); // Remove protocol from jar path
 
-		// Check if hashes match
-		if (hash(jarFile).equals(preferredRelease.hash))
-			// Already up-to-date
-			return;
+		// If addon has debug mode enabled, compare versions
+		JsonObject addonJson = getAddonJson();
+		if (addonJson.has("debug") && addonJson.get("debug").getAsBoolean()) {
+			// Compare current version with latest version
+			if (addonJson.get("addonVersion").getAsString().equals(preferredRelease.version))
+				return;
+		} else {
+			// Compare hash of own file with latest file hash
+			if (hash(jarFile).equals(preferredRelease.hash))
+				return;
+		}
 
 		String version = preferredRelease.version;
 		String downloadUrl = preferredChannel.downloadURL.replace("{version}", version);
@@ -169,7 +178,7 @@ public class AutoUpdater {
 
 	private static ReleaseChannel getPreferredChannel() throws IOException {
 		Path configPath = new File("config", "GrieferUtils.json").toPath();
-		JsonObject config = new JsonParser().parse(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ))).getAsJsonObject();
+		JsonObject config = PARSER.parse(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ))).getAsJsonObject();
 		if (!config.has("settings"))
 			return STABLE;
 
@@ -188,8 +197,8 @@ public class AutoUpdater {
 		Path configPath = new File("config", "GrieferUtils.json").toPath();
 		if (!Files.exists(configPath))
 			return true;
-		
-		JsonObject config = new JsonParser().parse(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ))).getAsJsonObject();
+
+		JsonObject config = PARSER.parse(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ))).getAsJsonObject();
 		if (!config.has("settings"))
 			return true;
 
@@ -269,7 +278,7 @@ public class AutoUpdater {
 	}
 
 	/**
-	 * @see IOUtil
+	 * @see dev.l3g7.griefer_utils.core.util.IOUtil
 	 */
 	public static InputStream read(String url) throws IOException {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -285,7 +294,7 @@ public class AutoUpdater {
 	private static SSLSocketFactory customFactory = null;
 
 	/**
-	 * @see CustomSSLSocketFactoryProvider
+	 * @see dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider
 	 */
 	private static SSLSocketFactory getCustomFactory() {
 		if (customFactory != null)
@@ -321,6 +330,32 @@ public class AutoUpdater {
 		} catch (GeneralSecurityException | IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	/**
+	 * Searches the addon's addon.json file and returns the json content.
+	 * @see dev.l3g7.griefer_utils.core.file_provider.impl.JarFileProvider
+	 */
+	private static JsonObject getAddonJson() throws IOException {
+		String jarPath = AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+		if (!jarPath.contains(".jar"))
+			throw new IllegalStateException("Invalid code source location: " + jarPath);
+
+		// Sanitize jarPath
+		jarPath = jarPath.substring(5, jarPath.lastIndexOf("!")); // remove protocol and class
+		jarPath = URLDecoder.decode(jarPath, "UTF-8");
+
+		// Read entries
+		try (JarFile jarFile = new JarFile(jarPath)) {
+			if (jarFile.size() == 0)
+				throw new IllegalStateException("Empty jar file: " + jarPath);
+
+			Optional<JarEntry> addonJson = jarFile.stream().filter(entry -> entry.getName().equals("addon.json")).findFirst();
+			if (addonJson.isPresent())
+				return PARSER.parse(new InputStreamReader(jarFile.getInputStream(addonJson.get()))).getAsJsonObject();
+		}
+
+		throw new FileNotFoundException("addon.json");
 	}
 
 }

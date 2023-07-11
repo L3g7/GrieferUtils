@@ -36,7 +36,8 @@ import java.util.stream.Collectors;
 public class FileSelection {
 
 	static {
-		Native.register("comdlg32");
+		if (Platform.isWindows())
+			Native.register("comdlg32");
 	}
 
 	public static native boolean GetOpenFileNameW(OpenFileName params);

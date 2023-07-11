@@ -349,7 +349,9 @@ public class AddChatMenuEntryGui extends GuiScreen {
 
 					try {
 						BufferedImage img = ImageIO.read(file);
-						mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
+						mc().addScheduledTask(() -> {
+							mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
+						});
 					} catch (IOException | NullPointerException e) {
 						labyMod().getGuiCustomAchievement().displayAchievement("§e§l§nFehlerhafte Datei", "§eDie Datei konnte nicht als Bild geladen werden.");
 						return;

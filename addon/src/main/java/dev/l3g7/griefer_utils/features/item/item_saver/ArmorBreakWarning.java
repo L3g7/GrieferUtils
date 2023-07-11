@@ -57,6 +57,9 @@ public class ArmorBreakWarning extends ItemSaver {
 
 	@EventListener
 	public void onPlayerTick(PlayerTickEvent event) {
+		if (!isEnabled())
+			return;
+
 		currentWarnItem = null;
 
 		// Go through armor
@@ -79,6 +82,9 @@ public class ArmorBreakWarning extends ItemSaver {
 
 	@EventListener
 	public void onRenderWorld(RenderWorldEvent event) {
+		if (!isEnabled())
+			return;
+
 		ItemStack warnItem = this.currentWarnItem; // Avoid concurrent modifications
 		if (warnItem == null)
 			return;

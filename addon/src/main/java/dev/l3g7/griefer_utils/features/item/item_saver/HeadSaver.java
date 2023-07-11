@@ -75,7 +75,7 @@ public class HeadSaver extends ItemSaver {
 
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
-		if (!event.message.startsWith("/kopf "))
+		if (!isEnabled() || !event.message.startsWith("/kopf "))
 			return;
 
 		if (accepted) {

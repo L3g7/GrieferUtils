@@ -61,7 +61,7 @@ public class ToolSaver extends ItemSaver {
 
 	@EventListener
 	public void onMouse(MouseClickEvent event) {
-		if (player() == null || shouldCancel(player().getHeldItem()))
+		if (isEnabled() && player() == null || shouldCancel(player().getHeldItem()))
 			event.setCanceled(true);
 	}
 
@@ -69,7 +69,7 @@ public class ToolSaver extends ItemSaver {
 	// is only triggered once, but the held item can be damaged multiple times
 	@EventListener
 	public void onTick(ClientTickEvent event) {
-		if (player() == null || !shouldCancel(player().getHeldItem()))
+		if (!isEnabled() || player() == null || !shouldCancel(player().getHeldItem()))
 			return;
 
 		KeyBinding.setKeyBindState(mc().gameSettings.keyBindUseItem.getKeyCode(), false);

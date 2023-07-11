@@ -92,6 +92,9 @@ public class ItemSaverCategory extends Feature {
 		}
 
 		public boolean isEnabled() {
+			if (!FileProvider.getSingleton(ItemSaverCategory.class).isEnabled())
+				return false;
+
 			return ((BooleanSetting) mainElement).get();
 		}
 

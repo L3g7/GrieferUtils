@@ -66,7 +66,7 @@ public class OrbSaver extends ItemSaver {
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onWindowClick(WindowClickEvent event) {
-		if (!(mc().currentScreen instanceof GuiChest))
+		if (!isEnabled() || !(mc().currentScreen instanceof GuiChest))
 			return;
 
 		if (event.itemStack == null || !event.itemStack.hasTagCompound())
@@ -85,7 +85,7 @@ public class OrbSaver extends ItemSaver {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMouseGui(GuiScreenEvent.MouseInputEvent.Pre event) {
-		if (!(event.gui instanceof GuiChest))
+		if (!isEnabled() || !(event.gui instanceof GuiChest))
 			return;
 
 		suppressOrbs(event);

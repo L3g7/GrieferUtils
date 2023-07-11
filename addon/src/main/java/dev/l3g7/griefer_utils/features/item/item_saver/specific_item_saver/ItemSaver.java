@@ -156,7 +156,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	@EventListener
 	public void onGuiDraw(RenderItemOverlayEvent event) {
-		if (getSetting(event.stack) == null)
+		if (!isEnabled() || getSetting(event.stack) == null)
 			return;
 
 		float zLevel = Reflection.get(drawUtils(), "zLevel");
@@ -187,7 +187,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	@EventListener
 	private void onMouse(MouseClickEvent event) {
-		if (player() == null)
+		if (!isEnabled() || player() == null)
 			return;
 
 		InventoryPlayer inv = player().inventory;
@@ -204,6 +204,9 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	@EventListener
 	public void onWindowClick(WindowClickEvent event) {
+		if (!isEnabled())
+			return;
+
 		ItemDisplaySetting setting = getSetting(event.itemStack);
 		if (setting == null)
 			return;
@@ -219,7 +222,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	@EventListener
 	private void onAddItem(WindowClickEvent event) {
-		if (previousScreen == null || event.itemStack == null)
+		if (!isEnabled() || previousScreen == null || event.itemStack == null)
 			return;
 
 		mc().displayGuiScreen(previousScreen);
@@ -230,7 +233,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	@EventListener
 	private void onPacketSend(PacketEvent.PacketSendEvent event) {
-		if (!(event.packet instanceof C07PacketPlayerDigging))
+		if (!isEnabled() || !(event.packet instanceof C07PacketPlayerDigging))
 			return;
 
 		C07PacketPlayerDigging.Action action = ((C07PacketPlayerDigging) event.packet).getStatus();

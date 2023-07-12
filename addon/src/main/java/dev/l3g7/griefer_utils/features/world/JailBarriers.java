@@ -133,6 +133,9 @@ public class JailBarriers extends Feature {
 					if (!world().getChunkFromChunkCoords(16 + dX, 5 + dY).isLoaded())
 						return;
 
+			if (!world().getChunkFromChunkCoords(19, 7).isLoaded() || !world().getChunkFromChunkCoords(19, 8).isLoaded())
+				return;
+
 			placeBarriers();
 		}, 1);
 	}
@@ -177,7 +180,8 @@ public class JailBarriers extends Feature {
 		column(265, 106);
 
 		cuboid(265, 25, 107, 265, 32, 107);
-		cuboid(294, 28, 105, 294, 31, 109);
+		cuboid(294, 28, 105, 294, 50, 109);
+		cuboid(317, 16, 122, 317, 17, 134);
 		placedBlock = targetBlock;
 	}
 

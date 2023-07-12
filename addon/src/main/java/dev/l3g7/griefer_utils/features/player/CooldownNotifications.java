@@ -21,8 +21,8 @@ package dev.l3g7.griefer_utils.features.player;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
@@ -187,13 +187,7 @@ public class CooldownNotifications extends Feature {
 					if (name.startsWith("/clan") || name.equals("Riesige GS überschreiben") || name.equals("/premium"))
 						continue;
 
-					try {
-						endDates.put(name, getAvailability(s));
-					} catch (ParseException e) {
-						// Ignore item
-						e.printStackTrace();
-						continue;
-					}
+					endDates.put(name, getAvailability(s));
 					foundAny = true;
 				}
 
@@ -255,7 +249,7 @@ public class CooldownNotifications extends Feature {
 	 * 0: available
 	 * >0: unix time when available
 	 */
-	private static long getAvailability(ItemStack i) throws ParseException {
+	private static long getAvailability(ItemStack i) {
 		NBTTagList lore = i.serializeNBT().getCompoundTag("tag").getCompoundTag("display").getTagList("Lore", NBT.TAG_STRING);
 		if (lore.tagCount() == 1) {
 			if (lore.getStringTagAt(0).equals("§aVerfügbar"))
@@ -267,7 +261,11 @@ public class CooldownNotifications extends Feature {
 				.replace("§7am §e§e", "")
 				.replace(" §7um§e ", " ")
 				.replace(" §7frei.", "");
-			return DATE_FORMAT.parse(dateStr).getTime();
+			try {
+				return DATE_FORMAT.parse(dateStr).getTime();
+			} catch (ParseException e) {
+				return -1;
+			}
 		}
 		return -2;
 	}

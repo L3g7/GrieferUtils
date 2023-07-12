@@ -19,11 +19,13 @@
 package dev.l3g7.griefer_utils.injection.mixin.minecraft;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.event.events.render.RenderPortalCheckEvent;
 import dev.l3g7.griefer_utils.features.player.scoreboard.ScoreboardHandler;
 import dev.l3g7.griefer_utils.features.render.HideScoreboardInF3;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -48,6 +50,12 @@ public class MixinGuiIngame {
 			return Integer.MAX_VALUE;
 
 		return listSize;
+	}
+
+	@Inject(method = "renderPortal", at = @At("HEAD"), cancellable = true)
+	public void injectRenderPortal(float timeInPortal, ScaledResolution scaledRes, CallbackInfo ci) {
+		if (MinecraftForge.EVENT_BUS.post(new RenderPortalCheckEvent()))
+			ci.cancel();
 	}
 
 }

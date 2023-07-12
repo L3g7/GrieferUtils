@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.render.RenderPortalCheckEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderPortalDistortionEvent;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent.FogType;
@@ -60,12 +61,18 @@ public class NoFog extends Feature {
 		.icon(new ItemStack(stained_glass_pane, 1, 13))
 		.defaultValue(true);
 
+	private final BooleanSetting portal = new BooleanSetting()
+		.name("Portal-Effekt entfernen")
+		.description("Deaktiviert den Portal-Effekt.")
+		.icon(new ItemStack(stained_glass_pane, 1, 2))
+		.defaultValue(true);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Nebel entfernen")
 		.description("Entfernt einige Nebel-Effekte.")
 		.icon(new ItemStack(stained_glass_pane))
-		.subSettings(blindness, water, lava, nausea);
+		.subSettings(blindness, water, lava, nausea, portal);
 
 	@EventListener
 	public void onDisplayNameRender(SetupFogEvent event) {
@@ -80,6 +87,12 @@ public class NoFog extends Feature {
 	@EventListener
 	public void onPortalDistortionRender(RenderPortalDistortionEvent event) {
 		event.setCanceled(nausea.get());
+	}
+
+	@EventListener
+	private void onPortalRender(RenderPortalCheckEvent event) {
+		if (portal.get())
+			event.setCanceled(true);
 	}
 
 }

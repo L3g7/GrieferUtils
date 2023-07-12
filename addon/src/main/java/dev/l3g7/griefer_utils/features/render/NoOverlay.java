@@ -32,10 +32,10 @@ import net.minecraft.item.ItemStack;
 import static net.minecraft.init.Blocks.stained_glass_pane;
 
 /**
- * Deactivates some fogs.
+ * Deactivates some overlays.
  */
 @Singleton
-public class NoFog extends Feature {
+public class NoOverlay extends Feature {
 
 	private final BooleanSetting blindness = new BooleanSetting()
 		.name("Blindheit entfernen")
@@ -69,13 +69,13 @@ public class NoFog extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Nebel entfernen")
-		.description("Entfernt einige Nebel-Effekte.")
+		.name("Overlays entfernen")
+		.description("Entfernt einige Overlays.")
 		.icon(new ItemStack(stained_glass_pane))
 		.subSettings(blindness, water, lava, nausea, portal);
 
 	@EventListener
-	public void onDisplayNameRender(SetupFogEvent event) {
+	private void onDisplayNameRender(SetupFogEvent event) {
 		if (event.fogType == FogType.BLINDNESS)
 			event.setCanceled(blindness.get());
 		else if (event.fogType == FogType.WATER)

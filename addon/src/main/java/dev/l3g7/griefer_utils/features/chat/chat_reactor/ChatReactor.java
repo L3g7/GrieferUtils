@@ -27,11 +27,11 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.ChatLineUtil;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
+import dev.l3g7.griefer_utils.util.ChatLineUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
@@ -102,13 +102,9 @@ public class ChatReactor extends Feature {
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
-		IChatComponent icc = ChatLineUtil.getComponentFromLine(event.chatLine);
+		IChatComponent icc = ChatLineUtil.getUnmodifiedIChatComponent(ChatLineUtil.getComponentFromLine(event.chatLine));
 		if (icc == null)
 			throw new RuntimeException("ChatLine could not me assigned to a component! " + event.chatLine.getMessage());
-
-		icc = ChatLineUtil.getUnmodifiedIChatComponent(icc);
-		if (icc == null)
-			throw new RuntimeException("ChatLine could not me assigned to a component2! " + event.chatLine.getMessage());
 
 		if (checkedComponent == icc)
 			return;

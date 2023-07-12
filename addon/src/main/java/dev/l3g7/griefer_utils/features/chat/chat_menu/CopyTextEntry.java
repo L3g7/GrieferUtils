@@ -19,9 +19,9 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import dev.l3g7.griefer_utils.core.misc.functions.Function;
-import dev.l3g7.griefer_utils.misc.ChatLineUtil;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.util.ChatLineUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.util.IChatComponent;

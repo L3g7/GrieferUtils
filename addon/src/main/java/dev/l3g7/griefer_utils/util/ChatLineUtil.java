@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.misc;
+package dev.l3g7.griefer_utils.util;
 
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
@@ -75,6 +75,9 @@ public class ChatLineUtil {
 	}
 
 	public static IChatComponent getUnmodifiedIChatComponent(IChatComponent iChatComponent) {
+		if (iChatComponent == null)
+			return null;
+
 		int index = MODIFIED_COMPONENTS.indexOf(iChatComponent);
 
 		if (index == -1)

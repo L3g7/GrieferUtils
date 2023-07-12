@@ -26,10 +26,10 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.ChatLineUtil;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
+import dev.l3g7.griefer_utils.util.ChatLineUtil;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Consumer;
@@ -45,8 +45,11 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 import static dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action.*;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -151,12 +154,22 @@ public class ChatMenu extends Feature {
 		if (Mouse.getEventButton() != 1)
 			return;
 
-		IChatComponent icc = mc().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-		if (icc == null || icc.getChatStyle() == null || icc.getChatStyle().getChatClickEvent() == null)
-			return;
+		IChatComponent icc = ChatLineUtil.getUnmodifiedIChatComponent(ChatLineUtil.getHoveredComponent());
+		if (icc == null)
+			throw new RuntimeException("ChatLine could not me assigned to a component! " + ChatLineUtil.getHoveredComponent());
 
-		String value = icc.getChatStyle().getChatClickEvent().getValue();
-		if (!value.startsWith("/msg "))
+		String name = null;
+
+		for (Pattern p : new Pattern[] {GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN, GLOBAL_CHAT_PATTERN}) {
+			Matcher matcher = p.matcher(icc.getFormattedText());
+			if (!matcher.find())
+				continue;
+
+			name = matcher.group("name").replaceAll("§.", "");
+			break;
+		}
+
+		if (name == null)
 			return;
 
 		List<ChatMenuEntry> entries = new ArrayList<>();
@@ -164,7 +177,7 @@ public class ChatMenu extends Feature {
 		if (COPY_TEXT_ENTRY.enabled) entries.add(COPY_TEXT_ENTRY);
 		getCustom().forEach(e -> { if (e.enabled) entries.add(e); });
 
-		renderer = new ChatMenuRenderer(entries, value.substring("/msg ".length()).trim(), ChatLineUtil.getHoveredComponent());
+		renderer = new ChatMenuRenderer(entries, name.replaceAll("§.", ""), ChatLineUtil.getHoveredComponent());
 		event.setCanceled(true);
 	}
 

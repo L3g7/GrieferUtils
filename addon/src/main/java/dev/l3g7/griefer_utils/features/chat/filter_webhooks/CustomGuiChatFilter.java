@@ -88,7 +88,7 @@ public class CustomGuiChatFilter extends GuiChatCustom {
 			templatesRenderer = new GuiChatFilterWithTemplates("") {
 				@Override
 				public void loadTemplate(ChatFilterTemplates.FilterTemplate template) {
-					Reflection.invoke(CustomGuiChatFilter.this, "loadFilter", new Filters.Filter(template.name, template.contains, template.containsNot, false, "note.harp", false, (short) 200, (short) 200, (short) 50, false, false, false, "Global"));
+					Reflection.invoke(CustomGuiChatFilter.this, "loadFilter", new Filters.Filter(template.name, template.contains, template.containsNot, false, "note.harp", false, (short) 200, (short) 200, (short) 50, false, true, false, "Global"));
 				}
 			};
 		else

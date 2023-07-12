@@ -28,9 +28,11 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.inventory.GuiCrafting;
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import org.lwjgl.input.Keyboard;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
@@ -47,7 +49,7 @@ public class CraftingShift extends InventoryTweaks.InventoryTweak {
 	private int windowId = 0;
 
 	@EventListener
-	public void onWindowClick(WindowClickEvent event) {
+	public void onGuiCraftingClick(WindowClickEvent event) {
 		if (!craftingShift.get() || !(mc().currentScreen instanceof GuiCrafting))
 			return;
 
@@ -67,6 +69,42 @@ public class CraftingShift extends InventoryTweaks.InventoryTweak {
 
 		int targetSlot = -1;
 		for (int i = 1; i < 10; i++) {
+			Slot slot = screen.inventorySlots.getSlot(i);
+			if (!slot.getHasStack()) {
+				targetSlot = i;
+				break;
+			}
+		}
+
+		if (targetSlot == -1)
+			return;
+
+		mc().playerController.windowClick(event.windowId, event.slotId, 0, 0, player());
+		int finalTargetSlot = targetSlot;
+		TickScheduler.runAfterClientTicks(() -> click(finalTargetSlot), requiresDelay(movedStack) ? 4 : 0);
+	}
+
+	@EventListener
+	public void onWindowClick(WindowClickEvent event) {
+		if (!craftingShift.get() || !(mc().currentScreen instanceof GuiInventory))
+			return;
+
+		if (event.mode != 1 || event.slotId <= 5 || ! Keyboard.isKeyDown(Keyboard.KEY_LMENU))
+			return;
+
+		GuiInventory screen = (GuiInventory) mc().currentScreen;
+		if (screen.getSlotUnderMouse() == null)
+			return;
+
+		ItemStack movedStack = screen.getSlotUnderMouse().getStack();
+		if (movedStack == null)
+			return;
+
+		windowId = event.windowId;
+		event.setCanceled(true);
+
+		int targetSlot = -1;
+		for (int i = 1; i < 5; i++) {
 			Slot slot = screen.inventorySlots.getSlot(i);
 			if (!slot.getHasStack()) {
 				targetSlot = i;

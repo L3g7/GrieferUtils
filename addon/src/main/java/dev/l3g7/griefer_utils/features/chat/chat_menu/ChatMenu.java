@@ -35,6 +35,7 @@ import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -151,7 +152,7 @@ public class ChatMenu extends Feature {
 		if (renderer != null && renderer.outOfBox())
 			renderer = null;
 
-		if (Mouse.getEventButton() != 1)
+		if (Mouse.getEventButton() != 1 || !(mc().currentScreen instanceof GuiChat))
 			return;
 
 		IChatComponent icc = ChatLineUtil.getUnmodifiedIChatComponent(ChatLineUtil.getHoveredComponent());

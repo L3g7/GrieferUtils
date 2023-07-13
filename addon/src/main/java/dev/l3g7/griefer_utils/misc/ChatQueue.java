@@ -88,6 +88,9 @@ public class ChatQueue {
 
 				// Block motion
 				Entity e = Minecraft.getMinecraft().thePlayer;
+				if (e == null)
+					return;
+
 				e.motionX = e.motionY = e.motionZ = 0;
 				e.onGround = true;
 
@@ -100,7 +103,7 @@ public class ChatQueue {
 		}
 
 		// Process messages
-		if (currentQueueDelay <= 0 && (!queuedMessages.isEmpty() || !blockingMessages.isEmpty())) {
+		if (currentQueueDelay <= 0 && (!queuedMessages.isEmpty() || !blockingMessages.isEmpty()) && player() != null) {
 			String msg;
 			if (!blockingMessages.isEmpty()) { // Prioritize blocking messages
 				++messagesSentWithoutDelay;

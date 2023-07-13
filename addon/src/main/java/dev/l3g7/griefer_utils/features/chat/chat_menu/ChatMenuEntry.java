@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.chat.chat_menu;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
@@ -193,10 +194,11 @@ public class ChatMenuEntry {
 				Util.openWebsite(((String) command).replaceAll("(?i)%name%", name));
 				break;
 			case RUN_CMD:
-				MinecraftUtil.send(((String )command).replaceAll("(?i)%name%", name));
+				if (!MessageEvent.MessageSendEvent.post((String) command))
+					MinecraftUtil.send(((String) command).replaceAll("(?i)%name%", name));
 				break;
 			case SUGGEST_CMD:
-				MinecraftUtil.suggest(((String )command).replaceAll("(?i)%name%", name));
+				MinecraftUtil.suggest(((String) command).replaceAll("(?i)%name%", name));
 				break;
 		}
 	}

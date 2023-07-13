@@ -21,17 +21,17 @@ package dev.l3g7.griefer_utils.features.chat;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.GuiChat;
@@ -43,15 +43,14 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import java.lang.reflect.Array;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 /**
  * Draws an orange frame around the chat input box if plot chat is activated.
  */
 @Singleton
 public class PlotChatIndicator extends Feature {
-
 
 	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event");
 	private StringBuilder states; // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)

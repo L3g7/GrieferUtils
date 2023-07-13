@@ -40,6 +40,7 @@ public class ConfigPatcher {
 
 		if (cmp.compare("2.0-BETA-13.1", version) < 0) {
 			rename("render.no_fog", "render.no_overlay");
+			rename("render.no_fire_overlay.enabled", "render.no_overlay.fire");
 		}
 	}
 

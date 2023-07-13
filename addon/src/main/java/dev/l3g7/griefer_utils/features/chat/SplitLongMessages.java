@@ -77,10 +77,7 @@ public class SplitLongMessages extends Feature {
 
 	@EventListener
 	private void onMessageReceive(ClientChatReceivedEvent event) {
-		if (lastParts.isEmpty())
-			return;
-
-		if (event.message.getUnformattedText().equals("Fehler: Spieler nicht gefunden.")) {
+		if (!lastParts.isEmpty() && event.message.getUnformattedText().equals("Fehler: Spieler nicht gefunden.")) {
 			lastParts.forEach(ChatQueue::remove);
 			return;
 		}

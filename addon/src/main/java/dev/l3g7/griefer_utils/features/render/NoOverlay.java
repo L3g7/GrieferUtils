@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.render.BurningCheckEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderPortalCheckEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderPortalDistortionEvent;
 import dev.l3g7.griefer_utils.event.events.render.SetupFogEvent;
@@ -29,6 +30,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.item.ItemStack;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.init.Blocks.stained_glass_pane;
 
 /**
@@ -67,12 +69,17 @@ public class NoOverlay extends Feature {
 		.icon(new ItemStack(stained_glass_pane, 1, 2))
 		.defaultValue(true);
 
+	private final BooleanSetting fire = new BooleanSetting()
+		.name("Feuer-Overlay entfernen")
+		.description("§r§fDeaktiviert den Feuer-Effekt im First-Person-Modus.", "§l§nNur benutzen, wenn man Feuerresistenz besitzt!")
+		.icon("fire");
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Overlays entfernen")
 		.description("Entfernt einige Overlays.")
 		.icon(new ItemStack(stained_glass_pane))
-		.subSettings(blindness, water, lava, nausea, portal);
+		.subSettings(blindness, water, lava, nausea, portal, fire);
 
 	@EventListener
 	private void onDisplayNameRender(SetupFogEvent event) {
@@ -92,6 +99,13 @@ public class NoOverlay extends Feature {
 	@EventListener
 	private void onPortalRender(RenderPortalCheckEvent event) {
 		if (portal.get())
+			event.setCanceled(true);
+	}
+
+	@EventListener
+	public void onDisplayNameRender(BurningCheckEvent event) {
+		// Only hide if in first person
+		if (mc().gameSettings.thirdPersonView == 0 && fire.get())
 			event.setCanceled(true);
 	}
 

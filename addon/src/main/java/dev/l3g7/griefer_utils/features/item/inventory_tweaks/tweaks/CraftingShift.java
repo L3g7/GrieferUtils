@@ -43,7 +43,8 @@ public class CraftingShift extends InventoryTweaks.InventoryTweak {
 	@MainElement
 	private final BooleanSetting craftingShift = new BooleanSetting()
 		.name("Ins Crafting Feld shiften")
-		.description("Ermöglicht das Verschieben von Items mit \"Shift + Klick\" direkt in die Crafting-Eingabe")
+		.description("Ermöglicht das Verschieben von Items mit \"Shift + Klick\" direkt in die Crafting-Eingabe."
+			+ "\nZum Verschieben in die Crafting-Eingabe des Spieler-Inventares, nutze \"Shift + Alt + Klick\".")
 		.icon(Material.WORKBENCH);
 
 	private int windowId = 0;

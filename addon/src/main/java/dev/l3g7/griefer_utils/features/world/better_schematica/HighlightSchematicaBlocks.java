@@ -21,6 +21,9 @@ package dev.l3g7.griefer_utils.features.world.better_schematica;
 import com.github.lunatrius.core.client.renderer.GeometryTessellator;
 import com.github.lunatrius.schematica.api.ISchematic;
 import com.github.lunatrius.schematica.client.renderer.RenderSchematic;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.SchematicaUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -42,6 +45,7 @@ public class HighlightSchematicaBlocks {
 	private static final Map<Item, List<ItemStack>> requiredItems = new HashMap<>();
 	private static ISchematic schematic = null;
 	private static ItemStack heldItem = null;
+	private static int fails = 0;
 
 	@SuppressWarnings("unused")
 	public static void drawCuboid(WorldRenderer worldRenderer, BlockPos pos, int sides, int argb) {
@@ -123,7 +127,20 @@ public class HighlightSchematicaBlocks {
 					if (block == Blocks.air)
 						continue;
 
-					ItemStack stack = block.getPickBlock(mc().objectMouseOver, SchematicaUtil.getWorld(), pos, player());
+					ItemStack stack;
+					try {
+						stack = block.getPickBlock(mc().objectMouseOver, SchematicaUtil.getWorld(), pos, player());
+					} catch (Throwable t) {
+						if (++fails == 5) {
+							fails = 0;
+							BugReporter.reportError(t);
+							MinecraftUtil.displayAchievement("§cGrieferUtils", "§cEs gab einen Fehler :(");
+							return;
+						}
+
+						TickScheduler.runAfterRenderTicks(HighlightSchematicaBlocks::updateItemList, 5);
+						return;
+					}
 
 					if (stack == null)
 						continue;
@@ -138,6 +155,8 @@ public class HighlightSchematicaBlocks {
 				}
 			}
 		}
+
+		fails = 0;
 	}
 
 }

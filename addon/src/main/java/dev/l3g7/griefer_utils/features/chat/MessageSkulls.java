@@ -83,7 +83,7 @@ public class MessageSkulls extends Feature {
 
 		IChatComponent wholeComponent = ChatLineUtil.getComponentFromLine(event.chatLine);
 		if (wholeComponent == null)
-			return;
+			throw new RuntimeException("ChatLine could not be assigned to a component! " + event.chatLine);
 
 		String msg = wholeComponent.getUnformattedText();
 
@@ -96,7 +96,7 @@ public class MessageSkulls extends Feature {
 
 		IChatComponent unmodified = ChatLineUtil.getUnmodifiedIChatComponent(wholeComponent);
 		if (unmodified == null)
-			return;
+			throw new RuntimeException("ChatLine could not be unmodified! " + wholeComponent);
 
 		String uMsg = unmodified.getUnformattedText();
 

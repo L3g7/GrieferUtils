@@ -156,8 +156,8 @@ public class ChatMenu extends Feature {
 			return;
 
 		IChatComponent icc = ChatLineUtil.getUnmodifiedIChatComponent(ChatLineUtil.getHoveredComponent());
-		if (icc == null)
-			throw new RuntimeException("ChatLine could not me assigned to a component! " + ChatLineUtil.getHoveredComponent());
+		if (icc == null) // Didn't click on a line
+			return;
 
 		String name = null;
 
@@ -203,6 +203,7 @@ public class ChatMenu extends Feature {
 
 		mc().displayGuiScreen(new GuiChatNameHistory("", name));
 	}
+
 
 	static void copyToClipboard(String text) {
 		StringSelection selection = new StringSelection(text);

@@ -85,7 +85,7 @@ public class AutoPortal extends Feature {
 			return;
 
 		if (join.get())
-			mc().displayGuiScreen(new GuiConnecting(new GuiMainMenu(), mc(), new ServerData("GrieferGames", "griefergames.net", false)));
+			mc().addScheduledTask(() -> mc().displayGuiScreen(new GuiConnecting(new GuiMainMenu(), mc(), new ServerData("GrieferGames", "griefergames.net", false))));
 
 		if (maximize.get()) {
 			if (Platform.isWindows()) {

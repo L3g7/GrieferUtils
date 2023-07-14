@@ -153,7 +153,11 @@ public class SelfDisguise extends Feature {
 		if (currentDisguise != null)
 			world().removeEntity(currentDisguise);
 
-		loadDisguise(lastSentDisguiseCommand);
+		try {
+			loadDisguise(lastSentDisguiseCommand);
+		} catch (Throwable t) {
+			throw new RuntimeException("Error when disguising with command: \"" + lastSentDisguiseCommand + "\"", t);
+		}
 		lastSentDisguiseCommand = null;
 	}
 

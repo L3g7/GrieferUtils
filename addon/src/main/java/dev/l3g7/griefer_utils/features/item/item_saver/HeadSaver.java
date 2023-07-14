@@ -51,8 +51,6 @@ public class HeadSaver extends ItemSaver {
 
 	private static final int ACCEPT_SLOT_ID = 11, PREVIEW_SLOT_ID = 13, DECLINE_SLOT_ID = 15;
 
-	private boolean accepted = false;
-
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("§z/kopf Vorschau")
@@ -78,11 +76,6 @@ public class HeadSaver extends ItemSaver {
 		if (!isEnabled() || !event.message.startsWith("/kopf "))
 			return;
 
-		if (accepted) {
-			accepted = false;
-			return;
-		}
-
 		String name = event.message.substring("/kopf ".length());
 		TickScheduler.runAfterRenderTicks(() -> displayScreen(name), 1);
 		event.setCanceled(true);
@@ -101,7 +94,6 @@ public class HeadSaver extends ItemSaver {
 				if (slotId != ACCEPT_SLOT_ID)
 					return;
 
-				accepted = true;
 				send("/kopf " + name);
 				mc.thePlayer.closeScreenAndDropStack();
 			}

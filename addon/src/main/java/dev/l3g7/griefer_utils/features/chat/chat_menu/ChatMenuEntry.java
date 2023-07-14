@@ -40,8 +40,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.function.Consumer;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 public class ChatMenuEntry {
 
@@ -191,7 +190,12 @@ public class ChatMenuEntry {
 				((Consumer<String>) command).accept(name);
 				break;
 			case OPEN_URL:
-				Util.openWebsite(((String) command).replaceAll("(?i)%name%", name));
+				try {
+					Util.openWebsite(((String) command).replaceAll("(?i)%name%", name));
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+					displayAchievement("§c§lFehlerhafte URL \u26A0", "§fDie URL, die geöffnet werden soll, ist ungültig.");
+				}
 				break;
 			case RUN_CMD:
 				String cmd = ((String) command).replaceAll("(?i)%name%", name);

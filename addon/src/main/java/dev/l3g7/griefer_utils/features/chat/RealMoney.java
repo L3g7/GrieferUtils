@@ -27,11 +27,12 @@ import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import net.labymod.utils.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
-
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 @Singleton
 public class RealMoney extends Feature {
@@ -58,10 +59,14 @@ public class RealMoney extends Feature {
 		if (Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText()).matches()) {
 			String text = "§r" + tag.get().replace('&', '§') + "§r";
 
+			IChatComponent message;
 			if (position.get() == TagPosition.BEFORE)
-				player().addChatMessage(new ChatComponentText(text).appendSibling(event.message));
+				message = new ChatComponentText(text).appendSibling(event.message);
 			else
-				player().addChatMessage(event.message.appendText(text));
+				message = event.message.appendText(text);
+
+			// Feed new message into packet pipeline to allow reprocessing
+			Minecraft.getMinecraft().getNetHandler().handleChat(new S02PacketChat(message));
 
 			event.setCanceled(true);
 		}

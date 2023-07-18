@@ -71,7 +71,7 @@ public class Transactions extends Feature {
 		new HeaderSetting("§c§nDie Beträge sind abgerundet§c!").scale(.7)
 	);
 
-	private final Set<Transaction> transactions = new TreeSet<>();
+	private final Set<Transaction> transactions = Collections.synchronizedSet(new TreeSet<>());
 	private final Gson PRETTY_PRINTING_GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	@MainElement
@@ -147,6 +147,7 @@ public class Transactions extends Feature {
 		list.add(new HeaderSetting("§r").entryHeight(10));
 
 		// Add transactions
+		List<Transaction> transactions = new ArrayList<>(this.transactions);
 		for (Transaction t : transactions) {
 			Direction direction = Direction.get(t);
 

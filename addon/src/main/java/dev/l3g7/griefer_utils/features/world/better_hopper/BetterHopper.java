@@ -149,7 +149,11 @@ public class BetterHopper extends Feature {
 			return;
 
 		borderSize = stack.stackSize;
-		hopper = getBlockPos(slots.getSlot(13).getStack());
+
+		ItemStack hopperStack = slots.getSlot(13).getStack();
+		if (ItemUtil.getLore(hopperStack).isEmpty())
+			return;
+		hopper = getBlockPos(hopperStack);
 
 		if (slot == 16) {
 			if (packet.getMode() != 1)

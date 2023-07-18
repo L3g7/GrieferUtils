@@ -109,7 +109,15 @@ public class PlayerDataProvider {
 		for (Map.Entry<String, Collection<Property>> entry : event.data.getProfile().getProperties().asMap().entrySet()) {
 			for (Property property : entry.getValue()) {
 				if (property.getName().equals("textures") && !property.getValue().isEmpty()) {
-					String url = JsonParse.parse(new String(Base64.getDecoder().decode(property.getValue()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+					String url;
+					try {
+						url = JsonParse.parse(new String(Base64.getDecoder().decode(property.getValue()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+					} catch (NullPointerException e) {
+						// URL couldn't be extracted
+						// TODO: why?
+						return;
+					}
+
 					Thread loadTextureThread = new Thread(() -> {
 						try {
 							BufferedImage img = IOUtil.readImage(url);

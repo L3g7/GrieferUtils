@@ -42,8 +42,17 @@ public class AutoSprint extends Feature {
 
 	@EventListener
 	public void onPlayerTick(PlayerTickEvent event) {
-		if (settings().keyBindForward.isKeyDown())
-			player().setSprinting(true);
+		if (settings().keyBindForward.isKeyDown()) {
+			try {
+				player().setSprinting(true);
+			} catch (IllegalArgumentException e) {
+				if (e.getMessage().equals("Modifier is already applied on this attribute!"))
+					// Ignore this error, caused by asynchronous access to player's attribute modifiers
+					return;
+
+				throw e;
+			}
+		}
 	}
 
 }

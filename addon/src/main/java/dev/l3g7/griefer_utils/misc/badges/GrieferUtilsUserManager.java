@@ -75,7 +75,11 @@ public class GrieferUtilsUserManager {
 		if (!users.containsKey(event.user.getUuid()) || event.group instanceof GrieferUtilsGroup)
 			return;
 
-		users.put(event.user.getUuid(), event.group);
+		if (event.group == null)
+			users.remove(event.user.getUuid());
+		else
+			users.put(event.user.getUuid(), event.group);
+
 		event.setCanceled(true);
 	}
 

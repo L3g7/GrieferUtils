@@ -86,6 +86,16 @@ public class EventHandler implements Opcodes {
 						Reflection.invoke(owner, method.load(), e);
 				} catch (Throwable t) {
 					t.printStackTrace();
+
+					// Don't report OutOfMemoryErrors
+					if (t instanceof OutOfMemoryError) {
+						MinecraftUtil.displayAchievement("§eGrieferUtils", "§eZu wenig RAM!");
+						try {
+							System.gc();
+						} catch (Throwable ignored) {}
+						return;
+					}
+
 					MinecraftUtil.displayAchievement("§cGrieferUtils", "§cEs gab einen Fehler :(");
 					BugReporter.reportError(t);
 				}

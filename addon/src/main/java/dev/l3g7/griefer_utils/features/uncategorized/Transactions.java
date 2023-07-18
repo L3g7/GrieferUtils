@@ -201,7 +201,12 @@ public class Transactions extends Feature {
 			List<SettingsElement> listedElementsStored = new ArrayList<>(Reflection.get(mc().currentScreen, "listedElementsStored"));
 			listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
 
-			String filter = ((StringSetting) listedElementsStored.get(8)).get();
+			StringSetting filterSetting = listedElementsStored.stream()
+				.filter(s -> s instanceof StringSetting)
+				.map(s -> (StringSetting) s)
+				.findFirst().orElse(null);
+
+			String filter = filterSetting == null ? "" : filterSetting.get();
 			boolean dotMode = filter.contains(".");
 
 			getMainElement().getSubSettings().getElements().stream()

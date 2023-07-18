@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.misc.functions.Function;
 import dev.l3g7.griefer_utils.util.AddonUtil;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
@@ -77,9 +78,16 @@ public class IOUtil {
 	public static void write(File file, String content) {
 		file.getParentFile().mkdirs();
 
+		byte[] payload = content.getBytes(UTF_8);
 		try {
-			Files.write(file.toPath(), content.getBytes(UTF_8));
+			Files.write(file.toPath(), payload);
 		} catch (IOException e) {
+			// Check if error was caused due to not enough space
+			if (file.getUsableSpace() < payload.length + 4096L) {
+				MinecraftUtil.displayAchievement("§cGrieferUtils", "§cZu wenig Speicherplatz!");
+				return;
+			}
+
 			throw elevate(e);
 		}
 	}

@@ -254,7 +254,10 @@ public class SelfDisguise extends Feature {
 					blockCoordinates = true;
 				}
 				if (args.containsKey("material")) {
-					IBlockState block = Block.getBlockFromName(args.remove("material")).getDefaultState();
+					String material = args.remove("material");
+					if (material == null)
+						return;
+					IBlockState block = Block.getBlockFromName(material).getDefaultState();
 					Reflection.set(currentDisguise, block, "fallTile"); // , "field_175132_d", "d"
 				}
 			} else if (currentDisguise instanceof EntityHorse) {

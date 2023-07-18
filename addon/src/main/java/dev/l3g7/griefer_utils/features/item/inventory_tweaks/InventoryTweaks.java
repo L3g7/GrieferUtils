@@ -67,7 +67,7 @@ public class InventoryTweaks extends Feature {
 		}
 
 		public boolean isEnabled() {
-			return ((BooleanSetting) mainElement).get();
+			return FileProvider.getSingleton(InventoryTweaks.class).isEnabled() && ((BooleanSetting) mainElement).get();
 		}
 
 	}

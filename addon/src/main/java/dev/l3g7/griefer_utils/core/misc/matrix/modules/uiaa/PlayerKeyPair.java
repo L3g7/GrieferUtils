@@ -54,8 +54,13 @@ public class PlayerKeyPair {
 				c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 				c.setRequestProperty("Authorization", "Bearer " + authToken);
 				c.setDoOutput(true);
-					c.getOutputStream().close();
-					return IOUtil.gson.fromJson(new InputStreamReader(c.getInputStream()), PlayerKeyPair.class);
+				c.getOutputStream().close();
+
+				// Check if request failed (e.g. 401 Unauthorized, 429 Too Many Requests)
+				if (c.getResponseCode() >= 400)
+					return null;
+
+				return IOUtil.gson.fromJson(new InputStreamReader(c.getInputStream()), PlayerKeyPair.class);
 			} catch (IOException e) {
 				throw new CompletionException(e);
 			}

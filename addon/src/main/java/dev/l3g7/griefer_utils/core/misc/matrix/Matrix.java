@@ -83,6 +83,10 @@ public abstract class Matrix {
 			return;
 
 		PlayerKeyPair keyPair = keyPairRequest.join();
+
+		if (keyPair == null)
+			return;
+
 		if (available) {
 			// Derive password from private key and username
 			String password = new String(HKDF.fromHmacSha512().extractAndExpand(SALT, keyPair.getRawPrivateKey(), username.getBytes(UTF_8), 32), UTF_8);

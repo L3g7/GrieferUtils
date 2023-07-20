@@ -20,12 +20,13 @@ package dev.l3g7.griefer_utils.event.events;
 
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.injection.mixin.labymod.MixinGuiChatAdapter;
-import net.labymod.api.events.MessageModifyChatEvent;
+import dev.l3g7.griefer_utils.injection.mixin.labymod.MixinTagManager;
 import net.labymod.main.LabyMod;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
@@ -36,7 +37,7 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 public class MessageEvent extends Event {
 
 	/**
-	 * A forge event for LabyMod's {@link MessageModifyChatEvent}.
+	 * Posted in {@link MixinTagManager#injectTagComponent(Object, CallbackInfoReturnable)}
 	 */
 	public static class MessageModifyEvent extends MessageEvent {
 
@@ -46,15 +47,6 @@ public class MessageEvent extends Event {
 		public MessageModifyEvent(IChatComponent original) {
 			this.original = original;
 			message = original.createCopy();
-		}
-
-		@OnEnable
-		private static void register() {
-			LabyMod.getInstance().getEventManager().register((MessageModifyChatEvent) o -> {
-				MessageModifyEvent event = new MessageModifyEvent((IChatComponent) o);
-				EVENT_BUS.post(event);
-				return event.message;
-			});
 		}
 
 	}

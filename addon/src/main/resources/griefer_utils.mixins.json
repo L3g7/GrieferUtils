@@ -17,6 +17,7 @@
     "labymod.MixinModPlayerTabOverlay",
     "labymod.MixinRenderTickListener",
     "labymod.MixinScoreboardModule",
+    "labymod.MixinTagManager",
     "labymod.MixinUser",
     "minecraft.MixinChunk",
     "minecraft.MixinChunkProviderClient",

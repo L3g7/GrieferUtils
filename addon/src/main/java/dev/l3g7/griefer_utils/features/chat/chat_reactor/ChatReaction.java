@@ -78,7 +78,7 @@ public class ChatReaction {
 
 		String command = this.command;
 		if (!regEx) {
-			if (matchAll ? trigger.equalsIgnoreCase(text) : text.toLowerCase().contains(trigger.toLowerCase()))
+			if (matchAll ? trigger.equalsIgnoreCase(text) : text.toLowerCase().contains(trigger.toLowerCase()) && !MessageEvent.MessageSendEvent.post(command))
 				MinecraftUtil.send(command);
 			return;
 		}
@@ -97,4 +97,5 @@ public class ChatReaction {
 		if (!MessageEvent.MessageSendEvent.post(command))
 			player().sendChatMessage(command);
 	}
+
 }

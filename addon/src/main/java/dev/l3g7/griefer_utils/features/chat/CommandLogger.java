@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
 import net.minecraft.network.play.client.C01PacketChatMessage;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,7 +41,7 @@ public class CommandLogger extends Feature {
 
 	private final Logger logger = LogManager.getLogger("CommandLogger");
 
-	@EventListener
+	@EventListener(priority = EventPriority.LOWEST)
 	private void onMessageSend(PacketEvent.PacketSendEvent event) {
 		if (!(event.packet instanceof C01PacketChatMessage))
 			return;

@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.event.EventHandler;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.gui.MissingForgeErrorGui;
+import dev.l3g7.griefer_utils.misc.gui.guis.MissingForgeErrorGui;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.addon.AddonLoader;

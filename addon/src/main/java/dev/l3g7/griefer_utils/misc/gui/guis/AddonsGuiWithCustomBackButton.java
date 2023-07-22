@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.misc.gui;
+package dev.l3g7.griefer_utils.misc.gui.guis;
 
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;

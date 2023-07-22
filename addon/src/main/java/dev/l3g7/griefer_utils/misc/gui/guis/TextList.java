@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.misc.gui;
+package dev.l3g7.griefer_utils.misc.gui.guis;
 
 
 import net.labymod.main.LabyMod;

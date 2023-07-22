@@ -20,328 +20,170 @@ package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
-import dev.l3g7.griefer_utils.util.ItemUtil;
-import net.labymod.core.LabyModCore;
-import net.labymod.gui.elements.DropDownMenu;
-import net.labymod.gui.elements.ModTextField;
-import net.labymod.gui.elements.Scrollbar;
-import net.labymod.main.LabyMod;
-import net.labymod.settings.LabyModAddonsGui;
+import dev.l3g7.griefer_utils.misc.gui.elements.Button;
+import dev.l3g7.griefer_utils.misc.gui.elements.Gui;
+import dev.l3g7.griefer_utils.misc.gui.elements.SelectButtonGroup;
+import dev.l3g7.griefer_utils.misc.gui.elements.TextField;
+import dev.l3g7.griefer_utils.util.AddonUtil;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.PreviewRenderer;
-import net.labymod.settings.elements.AddonElement;
-import net.labymod.settings.elements.ControlElement;
-import net.labymod.utils.DrawUtils;
-import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+// TODO: support for tab, scrolling, citybuild, matchAll, editing, disable saveButton if incomplete
+public class AddChatReactionGui extends Gui {
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
-
-public class AddChatReactionGui extends GuiScreen {
+	private static final int RENDER_GROUP_POST = 1; // Drawable objects rendered after everything else
+	private static final int RENDER_GROUP_SELECTED = 2; // Rendered if a text type is selected
 
 	private final GuiScreen backgroundScreen;
-	private ModTextField triggerInput;
-	private ModTextField commandInput;
-	private GuiButton cancelButton;
-	private GuiButton doneButton;
-	private Boolean regEx;
-	private boolean validRegEx = true;
-	private final ChatReaction reaction;
 
-	private ImageButton parseModeText;
-	private ImageButton parseModeRegEx;
-	private GuiButton buttonBack;
-	private DropDownMenu<TextCompareMode> textCompareDropDown;
+	private SelectButtonGroup<TextType> textTypeInput;
+	private TextField triggerInput;
+	private TextField commandInput;
 
-	private ItemSetting cityBuildSetting;
+	private Button cancelButton;
+	private Button saveButton;
 
-	private final Scrollbar scrollbar = new Scrollbar(1);
-
+	@SuppressWarnings("unused")
 	public AddChatReactionGui(ChatReaction reaction, GuiScreen backgroundScreen) {
-		this.reaction = reaction == null ? new ChatReaction() : reaction;
-		if (reaction != null)
-			regEx = reaction.regEx;
-		if (reaction == null)
-			this.reaction.enabled = true;
 		this.backgroundScreen = backgroundScreen;
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public void initGui() {
 		super.initGui();
-		this.scrollbar.setPosition(this.width / 2 + 172 , 50, this.width / 2 + 172 + 4, this.height - 15);
-		this.scrollbar.setSpeed(20);
-		this.scrollbar.init();
 		backgroundScreen.width = width;
 		backgroundScreen.height = height;
-		int y = 50 + 80;
 		if (backgroundScreen instanceof LabyModModuleEditorGui)
 			PreviewRenderer.getInstance().init(AddChatReactionGui.class);
 
-		triggerInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 95, 240, 20);
-		triggerInput.setPlaceHolder("§8[GrieferUtils] /freekiste ist nun verfügbar!");
-		triggerInput.setMaxStringLength(Integer.MAX_VALUE);
-		triggerInput.setText(reaction.trigger);
+		int center = width / 2;
+		int top = 50 + 80; // 50px header + 80px breadcrumb
+		int padding = 35; // 35px between inputs
 
+		// Header and breadcrumb
+		createCenteredText("§e§l" + Constants.ADDON_NAME, 1.3).pos(center, 81);
+		createCenteredText("§e§lChatReactor", .7).pos(center, 105);
+		createButton("<") // Back button
+			.pos(center - 100, 20)
+			.size(22, 20)
+			.renderGroup(RENDER_GROUP_POST)
+			.callback(this::close);
 
-		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 78, 240, 20);
-		commandInput.setPlaceHolder("§8/gu:run_on_cb /freekiste");
-		commandInput.setMaxStringLength(Integer.MAX_VALUE);
-		commandInput.setText(reaction.command);
+		// cancel and save button
+		int buttonWidth = 100;
+		cancelButton = createButton("Abbrechen")
+			.x(center - buttonWidth - 5) // 2 * 5px padding between buttons
+			.size(buttonWidth, 20)
+			.callback(this::close);
+		saveButton = createButton("Hinzufügen")
+			.x(center + 5) // 2 * 5px padding between buttons
+			.size(buttonWidth, 20)
+			.callback(this::save);
 
-		buttonList.add(cancelButton = new GuiButton(0, width / 2 - 105, y + 85, 100, 20, reaction.completed ? "Löschen" : "Abbrechen"));
-		buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, y + 85, 100, 20, reaction.completed ? "Speichern" : "Hinzufügen"));
+		// Text type selection
+		textTypeInput = createSelectGroup(TextType.NONE, "Text-Form")
+			.y(top);
 
-		int bgn = (width - 240) / 2;
-		buttonList.add((parseModeText = new ImageButton(2, bgn, y + 25, 99, 23, "normaler Text", "yellow_t")).wrappedButton);
-		buttonList.add((parseModeRegEx = new ImageButton(3, bgn + 110, y + 25, 130, 23, "regulärer Ausdruck", "regex")).wrappedButton);
-		buttonList.add(buttonBack = new GuiButton(1, this.width / 2 - 100, 20, 22, 20, "<"));
+		int width = textTypeInput.width();
+		int x = center - width / 2;
 
-		textCompareDropDown = new DropDownMenu<>("", 0, 0, 0, 0);
-		textCompareDropDown.fill(TextCompareMode.values());
-		textCompareDropDown.setSelected(reaction.matchAll ? TextCompareMode.EQUALS : TextCompareMode.CONTAINS);
-		textCompareDropDown.setEntryDrawer((o, ex, ey, trimmedEntry) -> drawUtils().drawString(((TextCompareMode) o).name, ex, ey));
-		textCompareDropDown.setY(y + 183 + 45);
-		textCompareDropDown.setWidth(240);
-		textCompareDropDown.setHeight(17);
+		// Trigger input
+		triggerInput = createTextField("<Von Auswahl abhängiges Label>")
+			.pos(x, textTypeInput.bottom() + padding)
+			.width(width)
+			.renderGroup(RENDER_GROUP_SELECTED);
 
-		// 50 + 80 + 183 + 45
-		cityBuildSetting = new ItemSetting(ItemUtil.CB_ITEMS, false)
-			.name("CityBuild")
-			.description("Die ID / der Namespace des Items / Blocks, das als Icon angezeigt werden soll");
-
-		for (ItemStack cb : ItemUtil.CB_ITEMS) {
-			if (cb.getDisplayName().equals(reaction.cityBuild)) {
-				cityBuildSetting.defaultValue(cb);
-				break;
-			}
-		}
-
-		cityBuildSetting.init();
+		// Command input
+		commandInput = createTextField("Befehl")
+			.pos(x, triggerInput.bottom() + padding)
+			.width(width)
+			.renderGroup(RENDER_GROUP_SELECTED);
 	}
 
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		GL11.glColorMask(false, false, false, false);
-		for (GuiButton guiButton : this.buttonList) guiButton.drawButton(this.mc, mouseX, mouseY);
-		GL11.glColorMask(true, true, true, true);
-		int height = regEx == null ? 205 : regEx ? 50 + 183 + 20 + 8 + 80 + 42 : 50 + 183 + 65 + 60 + 17 + 28 + 42;
-		int guiScale = new ScaledResolution(mc).getScaleFactor();
-		scrollbar.update(height - (int) scrollbar.getTop() + (regEx == null ? 0 : regEx ? -91 + (80 * guiScale) : (17 + (50 * guiScale))));
+		// Draw background
+		drawUtils.drawAutoDimmedBackground(0);
 
-
-		LabyModAddonsGui addonsGui = (LabyModAddonsGui) backgroundScreen;
-		DrawUtils draw = LabyMod.getInstance().getDrawUtils();
-		draw.drawAutoDimmedBackground(scrollbar.getScrollY());
-
-		GL11.glTranslated(0, scrollbar.getScrollY(), 0);
-		mouseY -= scrollbar.getScrollY();
-		drawUtils().drawCenteredString("§e§l" + Constants.ADDON_NAME, width / 2f, 81, 1.3);
-		drawUtils().drawCenteredString("§e§lChatReactor", width / 2f, 105, .7);
-
-		for (ImageButton imgButton : new ImageButton[] {parseModeText, parseModeRegEx}) {
-			GuiButton button = imgButton.wrappedButton;
-			int x = button.xPosition;
-			int y = button.yPosition;
-			drawUtils().drawRectangle(x, y, x + button.width, y + button.height, ModColor.toRGB(80, 80, 80, 60));
-			mc.getTextureManager().bindTexture(imgButton.image.getTextureIcon());
-			boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + button.width && mouseY < y + button.height;
-
-			if (hovered || (regEx != null && regEx == (imgButton == parseModeRegEx))) {
-				drawUtils().drawTexture(x + 2, y + 2, 256.0, 256.0, 18, 18);
-				drawUtils().drawString(button.displayString, x + 25, (double) y + 7);
-			} else {
-				drawUtils().drawTexture(x + 3, y + 3, 256.0, 256.0, 16.0, 16.0);
-				int r = 180;
-				drawUtils().drawString(fontRendererObj, button.displayString, x + 24, y + 7, ModColor.toRGB(r, r, r, 0));
-			}
-		}
-		int x = width / 2 - 120;
-		drawUtils().drawString("Text-Form", x, (parseModeText.wrappedButton.yPosition) - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-
-
-
-		doneButton.yPosition = cancelButton.yPosition = height - 8;
-		doneButton.enabled = regEx != null && !triggerInput.getText().isEmpty() && !commandInput.getText().isEmpty() && (!regEx || validRegEx);
-		buttonBack.id = doneButton.enabled ? 1 : 0;
-		doneButton.drawButton(mc, mouseX, mouseY);
-		cancelButton.drawButton(mc, mouseX, mouseY);
-
-		if (regEx != null) {
-			drawUtils().drawString(regEx ? "Regulärer Ausdruck" : "Text", x, triggerInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-			triggerInput.setPlaceHolder(regEx ? "§8^\\[[^ ]+ ┃ ([^ ]+) -> mir] (.*)$" : "§8[GrieferUtils] /freekiste ist nun verfügbar!");
-			triggerInput.drawTextBox();
-
-			commandInput.setPlaceHolder(regEx ? "§8/msg MainAcc \\1: \\2" : "§8/gu:run_on_cb /freekiste");
-			drawUtils().drawString("Befehl", x, commandInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-			commandInput.drawTextBox();
-
-			int y = regEx ? 50 + 80 + 183 + 20 : 50 + 80 + 183 + 82;
-			cityBuildSetting.draw(x, y, x + 240, y + 23, mouseX, mouseY);
-
-			if (!regEx) {
-				textCompareDropDown.setX(x);
-				textCompareDropDown.draw(mouseX, mouseY);
-				drawUtils().drawString("Auslösen", x, textCompareDropDown.getY() - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-
-				// Draw dropdown with fixed width
-				if (textCompareDropDown.isOpen())
-					textCompareDropDown.drawMenuDirect(textCompareDropDown.getX(), textCompareDropDown.getY(), mouseX, mouseY);
-			}
-		}
-		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
-
-		draw.drawOverlayBackground(0, 45);
-		draw.drawGradientShadowTop(45, 0.0, this.width);
-		draw.drawOverlayBackground(this.height - 10, this.height);
-		draw.drawGradientShadowBottom((double) this.height - 10, 0.0, this.width);
-
-		scrollbar.draw(mouseX, mouseY);
-
-		AddonElement openedAddonSettings = Reflection.get(addonsGui, "openedAddonSettings");
-		draw.drawString(openedAddonSettings.getAddonInfo().getName(), this.width / 2f - 100 + 30, 25.0);
-		openedAddonSettings.drawIcon(this.width / 2 + 100 - 20, 20, 20, 20);
-		buttonBack.drawButton(mc, mouseX, mouseY + (int) scrollbar.getScrollY());
-	}
-
-	public void updateScreen() {
-		backgroundScreen.updateScreen();
-		triggerInput.updateCursorCounter();
-		commandInput.updateCursorCounter();
-		cityBuildSetting.updateScreen();
-	}
-
-	protected void actionPerformed(GuiButton button) throws IOException {
-		super.actionPerformed(button);
-		switch (button.id) {
-			case 2:
-				regEx = false;
-				break;
-			case 3:
-				regEx = true;
-				break;
-			case 1:
-				if (cityBuildSetting.isOpen())
-					return;
-				reaction.regEx = regEx;
-				reaction.matchAll = textCompareDropDown.getSelected() == TextCompareMode.EQUALS;
-				reaction.trigger = triggerInput.getText();
-				reaction.command = commandInput.getText();
-				reaction.cityBuild = cityBuildSetting.get().getDisplayName();
-				reaction.completed = true;
-				new ReactionDisplaySetting(reaction, FileProvider.getSingleton(ChatReactor.class).getMainElement())
-					.icon(regEx ? parseModeRegEx.image.getTextureIcon() : parseModeText.image.getTextureIcon());
-				ChatReactor.saveEntries();
-				// Fall-through
-			case 0:
-				if (cityBuildSetting.isOpen())
-					return;
-				Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
-				backgroundScreen.initGui(); // Update settings
-		}
-	}
-
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		if (buttonBack.mousePressed(this.mc, mouseX, mouseY)) {
-			buttonBack.playPressSound(this.mc.getSoundHandler());
-			this.actionPerformed(buttonBack);
-			return;
-		}
-
-		super.mouseClicked(mouseX, mouseY -= (int) scrollbar.getScrollY(), mouseButton);
-		textCompareDropDown.onClick(mouseX, mouseY, mouseButton);
-		triggerInput.mouseClicked(mouseX, mouseY, mouseButton);
-		commandInput.mouseClicked(mouseX, mouseY, mouseButton);
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
-		cityBuildSetting.mouseClicked(mouseX, mouseY, mouseButton);
-		cityBuildSetting.onClickDropDown(mouseX, mouseY, mouseButton);
-	}
-
-	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		super.mouseReleased(mouseX, mouseY -= scrollbar.getScrollY(), state);
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.RELEASED);
-		cityBuildSetting.mouseRelease(mouseX, mouseY, state);
-	}
-
-	@Override
-	protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
-		super.mouseClickMove(mouseX, mouseY -= scrollbar.getScrollY(), mouseButton, timeSinceLastClick);
-		textCompareDropDown.onDrag(mouseX, mouseY, mouseButton);
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
-		cityBuildSetting.mouseClickMove(mouseX, mouseY, mouseButton);
-	}
-
-	@Override
-	public void handleMouseInput() throws IOException {
-		super.handleMouseInput();
-		cityBuildSetting.onScrollDropDown();
-		if (!cityBuildSetting.isOpen())
-			scrollbar.mouseInput();
-	}
-
-	protected void keyTyped(char typedChar, int keyCode) {
-		if (keyCode == 1 || (typedChar == '\b' && !(triggerInput.isFocused() || commandInput.isFocused() || cityBuildSetting.isFocused()))) // ESC / BACK
-			Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
-
-		if (triggerInput.textboxKeyTyped(typedChar, keyCode) && regEx != null && regEx) {
-			doneButton.enabled = !commandInput.getText().isEmpty();
-			try {
-				Pattern.compile(triggerInput.getText());
-				validRegEx = true;
-			} catch (PatternSyntaxException e) {
-				validRegEx = false;
-			}
-		}
-		commandInput.textboxKeyTyped(typedChar, keyCode);
-		cityBuildSetting.keyTyped(typedChar, keyCode);
-
-		if (typedChar != '\t')
-			return;
-
-		if (triggerInput.isFocused()) {
-			triggerInput.setFocused(false);
-			commandInput.setFocused(true);
-		} else if (commandInput.isFocused()) {
-			commandInput.setFocused(false);
-			if (regEx) cityBuildSetting.setFocused(true);
-			else textCompareDropDown.setOpen(true);
-		} else if (textCompareDropDown.isOpen()) {
-			textCompareDropDown.setOpen(false);
-			cityBuildSetting.setFocused(true);
+		if (textTypeInput.getSelected() == TextType.NONE) {
+			cancelButton.yPosition = saveButton.yPosition = (int) textTypeInput.bottom() + 35; // 35px padding (as in initGui)
 		} else {
-			cityBuildSetting.setFocused(false);
-			triggerInput.setFocused(true);
+			if (textTypeInput.getSelected() == TextType.TEXT) {
+				triggerInput.label("Text").placeholder("[GrieferUtils] /freekiste ist nun verfügbar!");
+				commandInput.placeholder("/gu:run_on_cb /freekiste");
+			} else {
+				triggerInput.label("Regulärer Ausdruck").placeholder("§8^\\[[^ ]+ ┃ ([^ ]+) -> mir] (.*)$");
+				commandInput.placeholder("§8/msg MainAcc \\1: \\2");
+			}
+
+			cancelButton.yPosition = saveButton.yPosition = (int) commandInput.bottom() + 35; // 35px padding (as in initGui)
+			draw(mouseX, mouseY, RENDER_GROUP_SELECTED);
 		}
+
+
+		// Draw content
+		draw(mouseX, mouseY);
+
+		// Draw header
+		int headerSize = 45;
+		drawUtils.drawOverlayBackground(0, headerSize); // header background
+		drawUtils.drawGradientShadowTop(headerSize, 0.0, this.width); // header gradient
+
+		// Draw currently open addon
+		int actionSize = 100;
+		drawUtils.drawString("GrieferUtils", width / 2d - actionSize + 30, 25);
+		int addonIconSize = 20;
+		drawUtils.drawImageUrl(AddonUtil.getInfo().getImageURL(), width / 2d + actionSize - addonIconSize, 20, 256, 256, addonIconSize, addonIconSize);
+
+		// Draw footer
+		int footerSize = 10;
+		drawUtils.drawOverlayBackground(height - footerSize, height); // footer background
+		drawUtils.drawGradientShadowBottom(height - footerSize, 0, width); // footer gradient
+
+		// Draw post
+		draw(mouseX, mouseY, RENDER_GROUP_POST);
 	}
 
-	private static class ImageButton {
-		private final GuiButton wrappedButton;
-		private final ControlElement.IconData image;
-
-		public ImageButton(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText, String image) {
-			this.wrappedButton = new GuiButton(buttonId, x, y, widthIn, heightIn, buttonText);
-			this.image = new ControlElement.IconData("griefer_utils/icons/" + image + ".png");
-		}
+	private void close() {
+		backgroundScreen.initGui();
+		Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
 	}
 
-	private enum TextCompareMode {
-		CONTAINS("Wenn die Nachricht den Text beinhaltet"), EQUALS("Wenn die Nachricht dem Text entspricht");
-		private final String name;
-		TextCompareMode(String name) {
+	private void save() {
+		ChatReaction reaction = new ChatReaction();
+		reaction.regEx = textTypeInput.getSelected() == TextType.REGEX;
+		reaction.trigger = triggerInput.getText();
+		reaction.command = commandInput.getText();
+		reaction.completed = true;
+
+		new ReactionDisplaySetting(reaction, FileProvider.getSingleton(ChatReactor.class).getMainElement())
+			.icon(textTypeInput.getSelected().getIcon());
+
+		ChatReactor.saveEntries();
+		close();
+	}
+
+	private enum TextType implements SelectButtonGroup.Selectable {
+
+		NONE("", ""), TEXT("normaler Text", "yellow_t"), REGEX("regulärer Ausdruck", "regex");
+
+		private final String name, icon;
+
+		TextType(String name, String icon) {
 			this.name = name;
+			this.icon = icon;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String getIcon() {
+			return icon;
 		}
 	}
-
 }

@@ -85,7 +85,7 @@ public class BetterAdventurer extends Feature {
 
 	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
-		if (!(mc().currentScreen instanceof GuiChest))
+		if (!(mc().currentScreen instanceof GuiChest) || !coinAmount.get())
 			return;
 
 		GuiChest screen = (GuiChest) mc().currentScreen;

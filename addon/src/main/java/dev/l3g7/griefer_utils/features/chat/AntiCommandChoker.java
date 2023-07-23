@@ -47,7 +47,7 @@ public class AntiCommandChoker extends Feature {
 
 	private static final String COMMAND = "/grieferutils_anti_command_choker ";
 	private static final IngameChatManager ICM = IngameChatManager.INSTANCE;
-	private static final Pattern FAIL_PATTERN = Pattern.compile("^[&(7](?=[a-zA-Z])|^[\\w&(][/(&]");
+	private static final Pattern FAIL_PATTERN = Pattern.compile("^[(7](?=[a-zA-Z])|^[\\w(][/(]");
 
 	private final StringListSetting customEntries = new StringListSetting()
 		.name("Eigene Einträge")

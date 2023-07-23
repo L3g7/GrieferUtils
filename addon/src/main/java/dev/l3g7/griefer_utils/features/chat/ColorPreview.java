@@ -1,0 +1,71 @@
+/*
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
+ *
+ * Copyright 2020-2023 L3g7
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dev.l3g7.griefer_utils.features.chat;
+
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import net.labymod.ingamechat.GuiChatCustom;
+import net.labymod.utils.ModColor;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraftforge.client.event.GuiScreenEvent;
+
+import java.lang.reflect.Array;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+
+@Singleton
+public class ColorPreview extends Feature {
+
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Farb-Vorschau")
+		.description("Zeigt eine gefärbte Vorschau des im Chat eingegebenen Textes an.")
+		.icon("labymod:settings/settings/tabping_colored");
+
+	@EventListener
+	public void onRender(GuiScreenEvent.DrawScreenEvent.Pre event) {
+		if (!(event.gui.getClass() == GuiChat.class || event.gui.getClass() == GuiChatCustom.class))
+			return;
+
+		GuiChat gui = (GuiChat) event.gui;
+		int buttonWidth = gui instanceof GuiChatCustom ? Array.getLength(Reflection.get(gui, "chatButtons")) * 14 : 0;
+		GuiTextField field = Reflection.get(gui, "inputField");
+		String text = field.getText();
+
+		// Check if color is present
+		if (ModColor.createColors(text).equals(text))
+			return;
+
+		int offset = Reflection.get(field, "lineScrollOffset");
+		// The text that is currently visible
+		String currentText = mc().fontRendererObj.trimStringToWidth(field.getText().substring(offset), field.getWidth());
+		// All the color codes that were before it
+		String previousColors = field.getText().substring(0, offset).replaceAll("(?<!&)[^&]*", "");
+
+		GuiScreen.drawRect(2, gui.height - 27, gui.width - 2 - buttonWidth, gui.height - 15, Integer.MIN_VALUE);
+		mc().fontRendererObj.drawStringWithShadow(ModColor.createColors("§r" + previousColors + currentText), 4, gui.height - 25, 0xFFFFFF);
+	}
+
+}

@@ -154,8 +154,6 @@ public class PlotChatIndicator extends Feature {
 		int color = 0xFFFFA126;
 
 		// Render frame
-		GuiScreen.drawRect(2, gcc.height - 14, gcc.width - 2 - buttonWidth, gcc.height - 2, 100 << 24);
-
 		GuiScreen.drawRect(1, gcc.height - 15, gcc.width - 1 - buttonWidth, gcc.height - 14, color);
 		GuiScreen.drawRect(1, gcc.height - 2, gcc.width - 1 - buttonWidth, gcc.height - 1, color);
 		GuiScreen.drawRect(1, gcc.height - 15, 2, gcc.height - 1, color);

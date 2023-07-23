@@ -38,9 +38,8 @@ public class ConfigPatcher {
 		String version = config.get("version").getAsString();
 		VersionComparator cmp = new VersionComparator();
 
-		if (cmp.compare("2.0-BETA-13.1", version) < 0) {
-			rename("render.no_fog", "render.no_overlay");
-			rename("render.no_fire_overlay.enabled", "render.no_overlay.fire");
+		if (cmp.compare("2.0-BETA-13.2", version) < 0) {
+			rename("item.inventory_tweaks.crafting_shift.craftingShift", "item.inventory_tweaks.better_shift.enabled");
 		}
 	}
 

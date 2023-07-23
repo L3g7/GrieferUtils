@@ -37,8 +37,7 @@ import java.util.*;
 
 import static dev.l3g7.griefer_utils.event.events.network.TabListEvent.updatePlayerInfoList;
 import static dev.l3g7.griefer_utils.util.IChatComponentUtil.getComponents;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class StandardPrefixes extends Feature {
@@ -113,7 +112,7 @@ public class StandardPrefixes extends Feature {
 			return;
 		}
 
-		if (!self.get() && player() != null && player().getName().equals(NameCache.ensureRealName(parts[1])))
+		if (!self.get() && player() != null && name().equals(NameCache.ensureRealName(parts[1])))
 			return;
 
 		String prefix = DEFAULT_PREFIXES.get(parts[0]);
@@ -143,7 +142,7 @@ public class StandardPrefixes extends Feature {
 
 		name = name.substring(0, Math.min(spaceIndex, bracketIndex));
 
-		if (!self.get() && player().getName().equals(NameCache.ensureRealName(name)))
+		if (!self.get() && name().equals(NameCache.ensureRealName(name)))
 			return;
 
 		String rank = text.substring(0, text.indexOf('\u2503') - 1);

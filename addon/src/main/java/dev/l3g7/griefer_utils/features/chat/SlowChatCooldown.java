@@ -34,8 +34,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class SlowChatCooldown extends Feature {
@@ -75,7 +74,7 @@ public class SlowChatCooldown extends Feature {
 					continue;
 
 				String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
-				if (name.equals(player().getName()))
+				if (name.equals(name()))
 					timeoutEnd = System.currentTimeMillis() + 10_000;
 			}
 		}

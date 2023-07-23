@@ -61,7 +61,7 @@ public class AfkNick extends Feature {
 
 			isAFK = manuallyAFK = true;
 			lastEvent = 0;
-			send("/nick " + nickName.get().replace("%name%", player().getName()));
+			send("/nick " + nickName.get().replace("%name%", name()));
 		});
 
 	private final NumberSetting minutes = new NumberSetting()
@@ -116,7 +116,7 @@ public class AfkNick extends Feature {
 			return;
 
 		String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
-		if (name.equals(player().getName()))
+		if (name.equals(name()))
 			return;
 
 		send("/msg " + name + " " + messageReplay.get());
@@ -146,7 +146,7 @@ public class AfkNick extends Feature {
 				return;
 
 			isAFK = true;
-			send("/nick " + nickName.get().replace("%name%", player().getName()));
+			send("/nick " + nickName.get().replace("%name%", name()));
 			return;
 		}
 

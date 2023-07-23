@@ -96,6 +96,9 @@ public class PlotChatIndicator extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onCityBuildJoin(CityBuildJoinEvent event) {
+		if (world() == null || world().getScoreboard() == null)
+			return;
+
 		ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
 		server = team == null ? "" : ModColor.removeColor(team.getColorPrefix());
 

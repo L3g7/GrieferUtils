@@ -139,6 +139,9 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 				ItemStack stack = ItemUtil.fromNBT(entry.getKey());
 				JsonObject data = entry.getValue().getAsJsonObject();
 
+				if (stack == null)
+					continue;
+
 				ItemDisplaySetting setting = new ItemDisplaySetting(stack);
 				setting.name.set(data.get("name").getAsString());
 				setting.extremeDrop.set(data.get("extreme_drop").getAsBoolean());

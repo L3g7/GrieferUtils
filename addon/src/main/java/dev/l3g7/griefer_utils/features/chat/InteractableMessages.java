@@ -84,7 +84,7 @@ public class InteractableMessages extends Feature {
 				continue;
 
 			sibling.getChatStyle()
-				.setChatClickEvent(new ClickEvent(RUN_COMMAND, "/switch " + Citybuild.getCitybuild(cb).getSwitchTarget()))
+				.setChatClickEvent(new ClickEvent(RUN_COMMAND, "/switch " + Citybuild.getCitybuild(cb).getInternalName()))
 				.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§6Klicke, um auf den CB zu wechseln")));
 			break;
 		}

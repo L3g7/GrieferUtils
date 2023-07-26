@@ -18,26 +18,82 @@
 
 package dev.l3g7.griefer_utils.misc;
 
-import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
+import static net.minecraft.init.Blocks.*;
+import static net.minecraft.init.Items.*;
 
-/**
- * A helper class since the citybuilds have multiple names
- */
-public class Citybuild {
+public enum Citybuild {
 
-	private static final List<Citybuild> CITYBUILDS = ImmutableList.of(
-		new Citybuild("nature", "Nature", "n"),
-		new Citybuild("extreme", "Extreme", "x"),
-		new Citybuild("cbevil", "Evil", "e", "cbe", "CB Evil"),
-		new Citybuild("farm1", "Wasser", "w"),
-		new Citybuild("nether1", "Lava", "l"),
-		new Citybuild("eventserver", "Event", "v")
-	);
+	ANY(nether_star, null,"Egal"),
+
+	CB1(diamond_block, 1),
+	CB2(emerald_block, 2),
+	CB3(gold_block, 3),
+	CB4(redstone_block, 4),
+	CB5(lapis_block, 5),
+	CB6(coal_block, 6),
+	CB7(emerald_ore, 7),
+	CB8(redstone_ore, 8),
+	CB9(diamond_ore, 9),
+	CB10(gold_ore, 10),
+	CB11(iron_ore, 11),
+	CB12(coal_ore, 12),
+	CB13(lapis_ore, 13),
+	CB14(bedrock, 14),
+	CB15(gravel, 15),
+	CB16(obsidian, 16),
+	CB17(stone, 6, 17),
+	CB18(iron_block, 18),
+	CB19(prismarine, 2, 19),
+	CB20(prismarine, 20),
+	CB21(mossy_cobblestone, 21),
+	CB22(brick_block, 22),
+
+	NATURE(sapling, 5, "nature", "Nature", "n"),
+	EXTREME(sapling, 3, "extreme", "Extreme", "x"),
+	CBE(netherrack, "cbevil", "Evil", "e", "cbe", "CB Evil"),
+
+	WATER(water_bucket, "farm1", "Wasser", "w"),
+	LAVA(lava_bucket, "nether1", "Lava", "l"),
+	EVENT(beacon, "eventserver", "Event", "v");
+
+	Citybuild(Block block, int cityBuildId) {
+		this(block, "cb" + cityBuildId, "Citybuild " + cityBuildId);
+	}
+
+	Citybuild(Block block, int meta, int cityBuildId) {
+		this(block, meta, "cb" + cityBuildId, "Citybuild " + cityBuildId);
+	}
+
+	Citybuild(Item item, String internalName, String displayName, String... aliases) {
+		this(new ItemStack(item), internalName, displayName, aliases);
+	}
+
+	Citybuild(Block block, String internalName, String displayName, String... aliases) {
+		this(block, 0, internalName, displayName, aliases);
+	}
+
+	Citybuild(Block block, int meta, String internalName, String displayName, String... aliases) {
+		this(new ItemStack(block, 1, meta), internalName, displayName, aliases);
+	}
+
+	private final ItemStack stack;
+	private final String internalName;
+	private final String displayName;
+	private final String[] aliases;
+
+	Citybuild(ItemStack stack, String internalName, String displayName, String[] aliases) {
+		this.stack = stack;
+		this.internalName = internalName;
+		this.displayName = displayName;
+		this.aliases = aliases;
+	}
 
 	public static Citybuild getCitybuild(String cb) {
 		cb = cb.toLowerCase();
@@ -48,42 +104,29 @@ public class Citybuild {
 			cb = cb.substring("citybuild".length()).trim();
 
 		if (StringUtils.isNumeric(cb))
-			return new Citybuild("cb" + cb, "CB" + cb);
+			return valueOf("CB" + cb);
 
-		for (Citybuild citybuild : CITYBUILDS)
+		for (Citybuild citybuild : values()) {
 			if (citybuild.matches(cb))
 				return citybuild;
+		}
 
-		return new Citybuild(null, null) {
-			public boolean exists() {
-				return false;
-			}
-		};
+		return Citybuild.ANY;
 	}
 
-	private final String switchTarget;
-	private final String displayName;
-	private final String[] aliases;
-
-	private Citybuild(String switchTarget, String displayName, String... aliases) {
-		this.switchTarget = switchTarget;
-		this.displayName = displayName;
-		this.aliases = aliases;
-	}
-
-	public boolean exists() {
-		return true;
+	public String getInternalName() {
+		return this.internalName;
 	}
 
 	public boolean isOnCb() {
-		if (!exists())
+		if (internalName == null)
 			throw new IllegalStateException("This citybuild does not exist");
 
 		return matches(MinecraftUtil.getServerFromScoreboard());
 	}
 
 	public void join() {
-		if (!exists())
+		if (internalName == null)
 			throw new IllegalStateException("This citybuild does not exist");
 
 		if (!ServerCheck.isOnGrieferGames()) {
@@ -97,18 +140,14 @@ public class Citybuild {
 			return;
 		}
 
-		MinecraftUtil.send("/switch " + switchTarget);
-	}
-
-	public String getSwitchTarget() {
-		return switchTarget;
+		MinecraftUtil.send("/switch " + internalName);
 	}
 
 	public String getDisplayName() {
 		return displayName;
 	}
 
-	public boolean matches(String  cb) {
+	public boolean matches(String cb) {
 		if (cb == null)
 			return false;
 
@@ -116,7 +155,7 @@ public class Citybuild {
 			if (alias.equalsIgnoreCase(cb))
 				return true;
 
-		return displayName.equalsIgnoreCase(cb) || switchTarget.equalsIgnoreCase(cb);
+		return displayName.equalsIgnoreCase(cb) || internalName.equalsIgnoreCase(cb);
 	}
 
 }

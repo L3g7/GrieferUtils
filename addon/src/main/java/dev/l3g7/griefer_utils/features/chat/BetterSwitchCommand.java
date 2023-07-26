@@ -58,7 +58,7 @@ public class BetterSwitchCommand extends Feature {
 			event.setCanceled(true);
 
 			Citybuild cb = Citybuild.getCitybuild(matcher.group(1));
-			if (cb.exists()) {
+			if (cb != Citybuild.ANY) {
 				cb.join();
 				targetCitybuild = cb;
 				command = matcher.group(2);
@@ -99,7 +99,7 @@ public class BetterSwitchCommand extends Feature {
 	}
 
 	public static void sendOnCityBuild(String command, Citybuild cb) {
-		if (!cb.exists())
+		if (cb == Citybuild.ANY)
 			return;
 
 		if (cb.isOnCb()) {

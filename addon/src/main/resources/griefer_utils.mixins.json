@@ -23,6 +23,7 @@
     "minecraft.MixinChunk",
     "minecraft.MixinChunkProviderClient",
     "minecraft.MixinEntity",
+    "minecraft.MixinEntityEgg",
     "minecraft.MixinEntityPlayer",
     "minecraft.MixinEntityRenderer",
     "minecraft.MixinGuiChest",

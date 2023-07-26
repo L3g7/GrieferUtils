@@ -18,21 +18,21 @@
 
 package dev.l3g7.griefer_utils.injection.mixin.minecraft;
 
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
-import dev.l3g7.griefer_utils.event.events.render.ParticleSpawnEvent;
-import net.minecraft.world.World;
+import dev.l3g7.griefer_utils.event.events.EggImpactEvent;
+import net.minecraft.entity.projectile.EntityEgg;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(World.class)
-public class MixinWorld {
+@Mixin(EntityEgg.class)
+public class MixinEntityEgg {
 
-	@Inject(method = "spawnParticle(IZDDDDDD[I)V", at = @At("HEAD"), cancellable = true)
-	private void injectSpawnParticle(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int[] args, CallbackInfo ci) {
-		if (MinecraftForge.EVENT_BUS.post(new ParticleSpawnEvent(particleID, ignoreRange, new Vec3d(xCoord, yCoord, zCoord), new Vec3d(xOffset, yOffset, zOffset), args)))
+	@Inject(method = "onImpact", at = @At("HEAD"), cancellable = true)
+	public void injectOnImpact(MovingObjectPosition p_70184_1_, CallbackInfo ci) {
+		if (MinecraftForge.EVENT_BUS.post(new EggImpactEvent(p_70184_1_)))
 			ci.cancel();
 	}
 

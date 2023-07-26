@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.Module;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
@@ -60,16 +61,19 @@ public class MissingAdventurerBlocks extends Module {
 	}
 
 	private int getMissingBlocks() {
-		if (player() == null || player().getHeldItem() == null)
+		return player() == null ? -1 : getMissingBlocks(player().getHeldItem());
+	}
+
+	public static int getMissingBlocks(ItemStack stack) {
+		if (stack == null)
 			return -1;
 
-		NBTTagCompound tag = player().getHeldItem().getTagCompound();
+		NBTTagCompound tag = stack.getTagCompound();
 		if (tag == null || !tag.hasKey("adventure"))
 			return -1;
 
 		NBTTagCompound adventureTag = tag.getCompoundTag("adventure");
 		return adventureTag.getInteger("adventure.req_amount") - adventureTag.getInteger("adventure.amount");
-
 	}
 
 }

@@ -29,6 +29,8 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.ToolSaver;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemDisplaySetting;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemSaver;
+import dev.l3g7.griefer_utils.features.modules.MissingAdventurerBlocks;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -43,6 +45,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
@@ -51,6 +54,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -187,8 +191,10 @@ public class AutoTool extends Feature {
 		if (!ServerCheck.isOnGrieferGames() && player().getHeldItem() != null && player().getHeldItem().getItem() == Items.wooden_axe)
 			return Integer.MIN_VALUE;
 
-		if (!isTool(itemStack)) {
+		if (isAdventureToolApplicable(itemStack, state))
+			return Integer.MAX_VALUE;
 
+		if (!isTool(itemStack)) {
 			if (itemStack == null || !itemStack.isItemStackDamageable())
 				return 1000.1; // If no good tool was found, something without damage should be chosen
 
@@ -245,17 +251,40 @@ public class AutoTool extends Feature {
 		return itemStack.getItem() instanceof ItemTool || itemStack.getItem() instanceof ItemShears;
 	}
 
+	private boolean isAdventureToolApplicable(ItemStack stack, IBlockState state) {
+		if (stack == null || !stack.hasTagCompound())
+			return false;
+
+		// Not an adventure tool
+		NBTTagCompound adv = stack.getTagCompound().getCompoundTag("adventure");
+		if (adv.hasNoTags())
+			return false;
+
+		// Finished
+		if (MissingAdventurerBlocks.getMissingBlocks(stack) <= 0)
+			return false;
+
+		// Not owned by the player
+		if (!player().getUniqueID().equals(UUID.fromString(adv.getString("adventure.player"))))
+			return false;
+
+		String material = adv.getString("adventure.material").toLowerCase();
+		int data = adv.getInteger("adventure.data");
+		Block block = Block.getBlockFromName(material);
+		if (block == null) {
+			BugReporter.reportError(new Throwable("Adventure tool breaks unknown block: " + material + " from " + stack.serializeNBT()));
+			return false;
+		}
+
+		if (block != state.getBlock())
+			return false;
+
+		return data == -1 || data == block.getMetaFromState(state);
+	}
+
 	private void switchToSlot(int id) {
 		player().inventory.currentItem = id;
-		try {
-			Reflection.invoke(mc().playerController, "syncCurrentPlayItem"); // Send switch packet
-		} catch (RuntimeException e) {
-			try {
-				Reflection.invoke(mc().playerController, "func_78750_j"); // Send switch packet
-			} catch (RuntimeException e2) {
-				Reflection.invoke(mc().playerController, "n"); // Send switch packet
-			}
-		}
+		Reflection.invoke(mc().playerController, "syncCurrentPlayItem"); // Send switch packet
 	}
 
 	private enum EnchantPreference {

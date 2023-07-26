@@ -35,6 +35,7 @@ import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.SchematicaUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
@@ -55,6 +56,7 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
@@ -103,6 +105,10 @@ public class RedstoneHelper extends Feature {
 		.icon(NOTE_BLOCK)
 		.subSettings(showNoteId);
 
+	private static final BooleanSetting showCauldronLevel = new BooleanSetting()
+		.name("Kessel-Füllstand anzeigen")
+		.icon(CAULDRON_ITEM);
+
 	private static final NumberSetting range = new NumberSetting()
 		.name("Radius")
 		.description("Der Radius um den Spieler in Chunks, in dem die Informationen angezeigt werden."
@@ -122,7 +128,7 @@ public class RedstoneHelper extends Feature {
 		.name("Redstone-Helfer")
 		.description("Hilft beim Arbeiten mit Redstone.")
 		.icon(REDSTONE)
-		.subSettings(showPower, showDirection, showNoteBlockPitch, range, new HeaderSetting(), hideRedstoneParticles);
+		.subSettings(showPower, showDirection, showNoteBlockPitch, showCauldronLevel, range, new HeaderSetting(), hideRedstoneParticles);
 
 	@EventListener
 	public void onChunkFilled(ChunkFilledEvent event) {
@@ -239,7 +245,8 @@ public class RedstoneHelper extends Feature {
 		Map<BlockPos, RedstoneRenderObject> map = redstoneRenderObjects.computeIfAbsent(pair, k -> new ConcurrentHashMap<>());
 		String name = event.getNote().name().replace("_SHARP", "is");
 		name += Strings.repeat("'", event.getOctave().ordinal() + 1);
-		map.put(pos, new RedstoneRenderObject.NoteBlock(event.getVanillaNoteId(), name));
+		String finalName = name;
+		map.put(pos, new RedstoneRenderObject.TextRRO(showNoteBlockPitch, () -> showNoteId.get() ? String.valueOf(event.getVanillaNoteId()) : finalName));
 	}
 
 	@EventListener
@@ -284,6 +291,9 @@ public class RedstoneHelper extends Feature {
 			Block block = state.getBlock();
 			if (block == redstone_wire)
 				return new Wire(state.getValue(BlockRedstoneWire.POWER));
+
+			if (block == cauldron)
+				return new TextRRO(showCauldronLevel, () -> state.getValue(BlockCauldron.LEVEL));
 
 			boolean isHopper = block == hopper;
 			if (!isHopper && block != dropper && block != dispenser)
@@ -408,19 +418,19 @@ public class RedstoneHelper extends Feature {
 			}
 		}
 
-		private static class NoteBlock extends RedstoneRenderObject {
+		private static class TextRRO extends RedstoneRenderObject {
 
-			private final String id;
-			private final String name;
+			private final BooleanSetting setting;
+			private final Supplier<Object> textSupplier;
 
-			private NoteBlock(int pitch, String name) {
-				this.id = String.valueOf(pitch);
-				this.name = name;
+			private TextRRO(BooleanSetting setting, Supplier<Object> textSupplier) {
+				this.textSupplier = textSupplier;
+				this.setting = setting;
 			}
 
 			@Override
 			public void render(BlockPos pos, float partialTicks) {
-				if (!showNoteBlockPitch.get())
+				if (!setting.get())
 					return;
 
 				prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
@@ -428,7 +438,7 @@ public class RedstoneHelper extends Feature {
 				GlStateManager.translate(-0.0175, 0.63, -0.51);
 				GlStateManager.scale(-0.035, -0.035, 0.035);
 
-				String text = showNoteId.get() ? id : name;
+				String text = String.valueOf(textSupplier.get());
 				int x = -mc().fontRendererObj.getStringWidth(text) / 2;
 
 				mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);

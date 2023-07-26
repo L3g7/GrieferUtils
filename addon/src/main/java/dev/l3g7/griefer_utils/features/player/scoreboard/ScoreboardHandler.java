@@ -19,15 +19,16 @@
 package dev.l3g7.griefer_utils.features.player.scoreboard;
 
 
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.*;
@@ -41,7 +42,6 @@ public class ScoreboardHandler {
 
 	private static final List<ScoreboardMod> info = new ArrayList<>();
 
-	@SuppressWarnings("unused") // Invoked via asm
 	public static boolean shouldUnlockScoreboard() {
 		return ServerCheck.isOnGrieferGames() && info.stream().anyMatch(Feature::isEnabled);
 	}
@@ -51,7 +51,7 @@ public class ScoreboardHandler {
 	private final List<Score> hiddenScores = new ArrayList<>();
 
 	@EventListener
-	public void onTick(TickEvent.ClientTickEvent tickEvent) {
+	private void onTick(TickEvent.ClientTickEvent tickEvent) {
 		if (!ServerCheck.isOnGrieferGames() || world() == null)
 			return;
 
@@ -98,6 +98,11 @@ public class ScoreboardHandler {
 				sb.removeObjectiveFromEntity(s.getPlayerName(), s.getObjective());
 			});
 		}
+	}
+
+	@EventListener
+	private void onWorldLeave(WorldEvent.Unload event) {
+		hiddenScores.clear();
 	}
 
 	private void removeCustomScores(int highestScore) {

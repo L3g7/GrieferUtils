@@ -120,20 +120,17 @@ public class Spent extends Module {
 		String path = "modules.money.balances." + mc.getSession().getProfile().getId() + ".";
 
 		if (Config.has(path + "spent"))
-			setBalance(BigDecimal.valueOf(Config.get(path + "spent").getAsLong()), "loaded from config");
+			setBalance(BigDecimal.valueOf(Config.get(path + "spent").getAsLong()), "loaded from config: " + path + ": " + Config.get(path + "spent").toString());
 		if (Config.has(path + "next_reset")) {
 			nextReset = Config.get(path + "next_reset").getAsLong();
 			resetSetting.set(nextReset != -1);
 		}
 	}
 
-	// Temporary, used to debug why the money modules are hallucinating
 	protected static BigDecimal setBalance(BigDecimal newValue, String log) {
-		System.out.printf("Sent value changed from %f to %f : (%s) %n", moneySpent.doubleValue(), newValue.doubleValue(), log);
-		return setBalance0(newValue);
-	}
+		// Temporary, used to debug why the money modules are hallucinating
+		System.out.printf("Spent value changed from %f to %f : (%s) %n", moneySpent.doubleValue(), newValue.doubleValue(), log);
 
-	private static BigDecimal setBalance0(BigDecimal newValue) {
 		moneySpent = newValue;
 		// Save balance along with player uuid so no problems occur when using multiple accounts
 		Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));

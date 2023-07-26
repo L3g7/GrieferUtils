@@ -53,7 +53,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 @Singleton
 public class InventoryValue extends Module {
 
-	private static final Pattern VALUE_PATTERN = Pattern.compile("(\\d[\\d,.k]*)");
+	private static final Pattern VALUE_PATTERN = Pattern.compile("\\b(\\d+)\\b");
 	public static String entryKey = "modules.inventory_value.entries";
 	private GuiScreen previousScreen = null;
 
@@ -212,17 +212,22 @@ public class InventoryValue extends Module {
 			return -1;
 
 		for(String string : new String[] {lore.get(lore.size() - 2), stack.getDisplayName()}) {
+			string = string.toLowerCase()
+				.replaceAll("§.|[,.]", "")
+				.replaceAll(" ?mio", "m")
+				.replace("m", "kk")
+				.replace("k", "000");
+
 			Matcher matcher = VALUE_PATTERN.matcher(string.replaceAll("§.", ""));
 			if (matcher.find()) {
 				String result = matcher.group(1);
 				if (!matcher.find()) { // Cancel if multiple numbers are found
-					result = result.replaceAll("[,.]", "");
-					result = result.replace("k", "000");
 					try {
 						return Long.parseLong(result);
 					} catch (NumberFormatException ignored) {}
 				}
 			}
+
 		}
 
 		// No value was found

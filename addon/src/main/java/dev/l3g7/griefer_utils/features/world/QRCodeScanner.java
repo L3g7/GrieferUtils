@@ -30,6 +30,7 @@ import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import net.labymod.gui.elements.ModTextField;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
@@ -55,7 +56,8 @@ public class QRCodeScanner extends Feature {
 			if (!pressed)
 				return;
 
-			if (mc().currentScreen != null && !(mc().currentScreen instanceof GuiContainer))
+			boolean isInGui = mc().currentScreen instanceof GuiContainer && !(mc().currentScreen instanceof GuiContainerCreative);
+			if (mc().currentScreen != null && !isInGui)
 				return;
 
 			ItemStack stack;

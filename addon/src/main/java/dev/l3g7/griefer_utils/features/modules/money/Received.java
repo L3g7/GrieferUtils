@@ -19,18 +19,19 @@
 package dev.l3g7.griefer_utils.features.modules.money;
 
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -74,13 +75,13 @@ public class Received extends Module {
 			.name("Zurücksetzen")
 			.icon("arrow_circle")
 			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-			.callback(() -> setBalance(ZERO)));
+			.callback(() -> setBalance(ZERO, "single reset")));
 
 		list.add(new SmallButtonSetting()
 			.name("Alles zurücksetzen")
 			.icon("arrow_circle")
 			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-			.callback(() -> setBalance(Spent.setBalance(ZERO))));
+			.callback(() -> setBalance(Spent.setBalance(ZERO, "multi reset from received"), "multi reset from received")));
 	}
 
 	@Override
@@ -97,7 +98,7 @@ public class Received extends Module {
 	public void onMessageReceive(ClientChatReceivedEvent event) {
 		Matcher matcher = Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
-			setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
+			setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))), "msg: " + IChatComponent.Serializer.componentToJson(event.message));
 	}
 
 	private long getNextReset() {
@@ -115,7 +116,7 @@ public class Received extends Module {
 		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
 			nextReset = getNextReset();
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
-			setBalance(ZERO);
+			setBalance(ZERO, "reset");
 			Config.save();
 		}
 	}
@@ -128,14 +129,20 @@ public class Received extends Module {
 		String path = "modules.money.data." + mc.getSession().getProfile().getId() + ".";
 
 		if (Config.has(path + "received"))
-			setBalance(BigDecimal.valueOf(Config.get(path + "received").getAsLong()));
+			setBalance(BigDecimal.valueOf(Config.get(path + "received").getAsLong()), "loaded from config");
 		if (Config.has(path + "next_reset")) {
 			nextReset = Config.get(path + "next_reset").getAsLong();
 			resetSetting.set(nextReset != -1);
 		}
 	}
 
-	protected static BigDecimal setBalance(BigDecimal newValue) {
+	// Temporary, used to debug why the money modules are hallucinating
+	protected static BigDecimal setBalance(BigDecimal newValue, String log) {
+		System.out.printf("Received value changed from %f to %f : (%s) %n", moneyReceived.doubleValue(), newValue.doubleValue(), log);
+		return setBalance0(newValue);
+	}
+
+	private static BigDecimal setBalance0(BigDecimal newValue) {
 		moneyReceived = newValue;
 		Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".received", new JsonPrimitive(moneyReceived));
 		Config.save();

@@ -31,6 +31,7 @@ import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -75,13 +76,13 @@ public class Spent extends Module {
 			.name("Zurücksetzen")
 			.icon("arrow_circle")
 			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-			.callback(() -> setBalance(ZERO)));
+			.callback(() -> setBalance(ZERO, "single reset")));
 
 		list.add(new SmallButtonSetting()
 			.name("Alles zurücksetzen")
 			.icon("arrow_circle")
 			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-			.callback(() -> setBalance(Received.setBalance(ZERO))));
+			.callback(() -> setBalance(Received.setBalance(ZERO, "multi reset from spent"), "multi reset from spent")));
 	}
 
 	@Override
@@ -98,7 +99,7 @@ public class Spent extends Module {
 	public void onMessageReceive(ClientChatReceivedEvent event) {
 		Matcher matcher = PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
-			setBalance(moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
+			setBalance(moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", ""))), "msg: " + IChatComponent.Serializer.componentToJson(event.message));
 	}
 
 	@EventListener
@@ -106,7 +107,7 @@ public class Spent extends Module {
 		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
 			nextReset = getNextServerRestart();
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
-			setBalance(ZERO);
+			setBalance(ZERO, "reset");
 			Config.save();
 		}
 	}
@@ -119,14 +120,20 @@ public class Spent extends Module {
 		String path = "modules.money.balances." + mc.getSession().getProfile().getId() + ".";
 
 		if (Config.has(path + "spent"))
-			setBalance(BigDecimal.valueOf(Config.get(path + "spent").getAsLong()));
+			setBalance(BigDecimal.valueOf(Config.get(path + "spent").getAsLong()), "loaded from config");
 		if (Config.has(path + "next_reset")) {
 			nextReset = Config.get(path + "next_reset").getAsLong();
 			resetSetting.set(nextReset != -1);
 		}
 	}
 
-	protected static BigDecimal setBalance(BigDecimal newValue) {
+	// Temporary, used to debug why the money modules are hallucinating
+	protected static BigDecimal setBalance(BigDecimal newValue, String log) {
+		System.out.printf("Sent value changed from %f to %f : (%s) %n", moneySpent.doubleValue(), newValue.doubleValue(), log);
+		return setBalance0(newValue);
+	}
+
+	private static BigDecimal setBalance0(BigDecimal newValue) {
 		moneySpent = newValue;
 		// Save balance along with player uuid so no problems occur when using multiple accounts
 		Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));

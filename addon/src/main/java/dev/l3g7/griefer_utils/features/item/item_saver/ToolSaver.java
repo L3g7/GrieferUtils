@@ -42,9 +42,9 @@ public class ToolSaver extends ItemSaver {
 	private final NumberSetting damage = new NumberSetting()
 		.name("Min. Haltbarkeit")
 		.description("Wenn ein Werkzeug diese Haltbarkeit erreicht hat, werden Klicks damit verhindert."
-			+ "\nEs wird ein Wert von §nmindestens§r 1 empfohlen, damit das Item auch bei Lags nicht zerstört wird.")
+			+ "\nEs wird ein Wert von §nmindestens§r 3 empfohlen, damit das Item auch bei starken Lags nicht zerstört wird.")
 		.icon("shield_with_sword")
-		.defaultValue(1);
+		.defaultValue(3);
 
 	private final BooleanSetting saveNonRepairable = new BooleanSetting()
 		.name("Irreparables retten")

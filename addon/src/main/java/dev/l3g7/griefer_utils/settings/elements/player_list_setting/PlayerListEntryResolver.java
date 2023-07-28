@@ -97,7 +97,7 @@ public class PlayerListEntryResolver {
 		if (entry.id == null) {
 			IOUtil.URLReadOperation op = IOUtil.read("https://api.mojang.com/users/profiles/minecraft/" + entry.name);
 			// API returns 204 when an unknown user is requested.
-			if (op.getResponseCode() == 204) {
+			if (op.getResponseCode() == 404) {
 				entry.exists = false;
 				LOOKUP_MAP.put(entry.name, entry);
 				return;

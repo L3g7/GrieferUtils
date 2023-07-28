@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -26,7 +25,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 @Cancelable
 public class WindowClickEvent extends Event {
@@ -35,7 +34,7 @@ public class WindowClickEvent extends Event {
 	public final int slotId;
 	public final int mouseButtonClicked;
 	public final int mode;
-	public ItemStack itemStack = null;
+	public ItemStack itemStack;
 
 	public WindowClickEvent(int windowId, int slotId, int mouseButtonClicked, int mode) {
 		this.windowId = windowId;
@@ -43,14 +42,14 @@ public class WindowClickEvent extends Event {
 		this.mouseButtonClicked = mouseButtonClicked;
 		this.mode = mode;
 
-		if (mc().currentScreen instanceof GuiContainer) {
-			GuiContainer currentScreen = (GuiContainer) mc().currentScreen;
-			List<Slot> slots = currentScreen.inventorySlots.inventorySlots;
-			if (slotId >= slots.size() || slotId < 0)
-				return;
-			Slot slot = slots.get(slotId);
-			itemStack = slot.getStack();
-		}
+		if (slotId == -999)
+			return;
+
+		List<Slot> slots = player().openContainer.inventorySlots;
+		if (slotId < 0 || slotId >= slots.size())
+			return;
+
+		itemStack = slots.get(slotId).getStack();
 	}
 
 }

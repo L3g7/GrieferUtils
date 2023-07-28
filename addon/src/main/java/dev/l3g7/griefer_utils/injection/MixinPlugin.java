@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.injection;
 
 import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.mapping.Mapping;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.lib.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -31,7 +32,8 @@ import java.util.Set;
 public class MixinPlugin implements IMixinConfigPlugin {
 
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		targetClassName = Mapper.mapClass(targetClassName.replace('.', '/'), Mapping.UNOBFUSCATED, Mapping.OBFUSCATED);
+		if (LabyModCoreMod.isObfuscated())
+			targetClassName = Mapper.mapClass(targetClassName.replace('.', '/'), Mapping.UNOBFUSCATED, Mapping.OBFUSCATED);
 		return Launch.classLoader.findResource(targetClassName.replace('.', '/') + ".class") != null;
 	}
 

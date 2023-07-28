@@ -32,7 +32,6 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ChatLineUtil;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
@@ -111,8 +110,6 @@ public class ChatReactor extends Feature {
 
 		checkedComponent = icc;
 
-		String server = MinecraftUtil.getServerFromScoreboard();
-
 		for (SettingsElement element : enabled.getSubSettings().getElements()) {
 			if (!(element instanceof ReactionDisplaySetting))
 				continue;
@@ -120,7 +117,7 @@ public class ChatReactor extends Feature {
 			ReactionDisplaySetting setting = (ReactionDisplaySetting) element;
 			ChatReaction reaction = setting.reaction;
 
-			if (!reaction.cityBuild.equals("Egal") && !server.equals(reaction.cityBuild))
+			if (!reaction.cityBuild.isOnCb())
 				continue;
 
 			try {

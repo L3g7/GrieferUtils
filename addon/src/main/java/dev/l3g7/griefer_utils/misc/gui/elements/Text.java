@@ -11,6 +11,7 @@ public class Text implements Drawable {
 	private final int stringWidth;
 	private double x, y;
 	private final double size;
+	private int renderGroup = 0;
 
 	Text(String text, double size, boolean centered) {
 		this.text = text;
@@ -41,8 +42,16 @@ public class Text implements Drawable {
 		return stringWidth * size;
 	}
 
+	public Text renderGroup(int group) {
+		renderGroup = group;
+		return this;
+	}
+
 	@Override
 	public void draw(int mouseX, int mouseY, int renderGroup) {
+		if (this.renderGroup != renderGroup)
+			return;
+
 		if (centered)
 			drawUtils().drawCenteredString(text, x, y, size);
 		else

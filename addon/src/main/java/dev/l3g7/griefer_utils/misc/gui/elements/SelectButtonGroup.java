@@ -69,8 +69,15 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 		return selected;
 	}
 
+	public void select(E value) {
+		selected = value;
+	}
+
 	@Override
 	public void draw(int mouseX, int mouseY, int renderGroup) {
+		if (renderGroup != 0)
+			return;
+
 		drawUtils.drawString(label, x, y, 1.2);
 		for (Button button : buttons)
 			button.draw(mouseX, mouseY, renderGroup);

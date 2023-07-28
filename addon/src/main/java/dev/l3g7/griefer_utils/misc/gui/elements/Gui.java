@@ -15,9 +15,9 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 public class Gui extends GuiScreen {
 
 	protected static final DrawUtils drawUtils = drawUtils();
-	private final List<Clickable> clickables = new ArrayList<>();
-	private final List<Drawable> drawables = new ArrayList<>();
-	private final List<TextField> textFields = new ArrayList<>();
+	protected final List<Clickable> clickables = new ArrayList<>();
+	protected final List<Drawable> drawables = new ArrayList<>();
+	protected final List<TextField> textFields = new ArrayList<>();
 
 	private <T> T create(T obj) {
 		if (obj instanceof Clickable)
@@ -45,10 +45,26 @@ public class Gui extends GuiScreen {
 		return create(new SelectButtonGroup<>(placeholder, label, width));
 	}
 
+	public <E extends Enum<E>> DropDown<E> createDropDown(E placeholder, String label) {
+		return create(new DropDown<>(placeholder, label, width));
+	}
+
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		for (Clickable button : clickables)
-			button.mousePressed(mouseX, mouseY, mouseButton);
+		for (Clickable clickable : clickables)
+			clickable.mousePressed(mouseX, mouseY, mouseButton);
+	}
+
+	@Override
+	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+		for (Clickable clickable : clickables)
+			clickable.mouseRelease(mouseX, mouseY, mouseButton);
+	}
+
+	@Override
+	protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
+		for (Clickable clickable : clickables)
+			clickable.mouseClickMove(mouseX, mouseY, mouseButton);
 	}
 
 	@Override

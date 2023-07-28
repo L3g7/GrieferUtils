@@ -89,7 +89,7 @@ public class ChatReactor extends Feature {
 		if (Config.has(path)) {
 			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
 				ChatReaction reaction = ChatReaction.fromJson(jsonElement.getAsJsonObject());
-				new ReactionDisplaySetting(reaction, enabled).icon(reaction.regEx ? "regex" : "yellow_t");
+				new ReactionDisplaySetting(reaction, enabled);
 			}
 		}
 

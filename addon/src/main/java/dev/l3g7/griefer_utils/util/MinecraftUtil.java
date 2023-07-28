@@ -133,6 +133,8 @@ public class MinecraftUtil {
 	public static String getCityBuildAbbreviation(String citybuild) {
 		if (citybuild.startsWith("CB"))
 			return citybuild.substring(2);
+		if (citybuild.startsWith("Citybuild "))
+			return citybuild.substring(10);
 
 		switch (citybuild) {
 			case "Nature": return "N";

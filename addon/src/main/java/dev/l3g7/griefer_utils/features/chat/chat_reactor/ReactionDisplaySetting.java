@@ -24,6 +24,8 @@ import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.List;
+
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
 public class ReactionDisplaySetting extends BooleanSetting {
@@ -36,31 +38,34 @@ public class ReactionDisplaySetting extends BooleanSetting {
 		name("§f");
 		this.parent = parent;
 		this.reaction = reaction;
-		int size = parent.getSubSettings().getElements().size();
-		int pos = reaction.pos = reaction.pos == -1 ? size - 1 : reaction.pos;
 
-		parent.getSubSettings().getElements().add(pos, this);
+		List<SettingsElement> reactions = parent.getSubSettings().getElements();
+		reactions.add(reactions.size() - 1, this);
 		set(reaction.enabled);
 		callback(enabled -> reaction.enabled = enabled);
 	}
 
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (editHovered) {
-			parent.getSubSettings().getElements().remove(this);
-			ChatReactor.saveEntries();
-			Minecraft.getMinecraft().displayGuiScreen(new AddChatReactionGui(reaction, Minecraft.getMinecraft().currentScreen));
-		}
+		if (editHovered)
+			Minecraft.getMinecraft().displayGuiScreen(new AddChatReactionGui(this, Minecraft.getMinecraft().currentScreen));
+	}
+
+	public void delete() {
+		parent.getSubSettings().getElements().remove(this);
+		ChatReactor.saveEntries();
 	}
 
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+		icon(reaction.regEx ? "regex" : "yellow_t");
+
 		String displayName = getDisplayName();
 		setDisplayName("§f");
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		setDisplayName(displayName);
 
-		String cb = "§e[" + MinecraftUtil.getCityBuildAbbreviation(reaction.cityBuild) + "] ";
+		String cb = "§e[" + MinecraftUtil.getCityBuildAbbreviation(reaction.cityBuild.getDisplayName()) + "] ";
 		int cbWidth = drawUtils().getStringWidth(cb);
 
 		String trimmedTrigger = drawUtils().trimStringToWidth(reaction.trigger, maxX - x - 25 - 79);

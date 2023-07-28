@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.misc.Citybuild;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,9 +37,8 @@ public class ChatReaction {
 	boolean matchAll;
 	String trigger = "";
 	String command = "";
-	String cityBuild = "Egal";
+	Citybuild cityBuild = Citybuild.ANY;
 	boolean completed;
-	int pos = -1;
 
 	public ChatReaction() {}
 
@@ -50,7 +50,7 @@ public class ChatReaction {
 		object.addProperty("match_all", matchAll);
 		object.addProperty("trigger", trigger);
 		object.addProperty("command", command);
-		object.addProperty("city_build", cityBuild);
+		object.addProperty("city_build", cityBuild.getInternalName());
 
 		return object;
 	}
@@ -62,7 +62,7 @@ public class ChatReaction {
 		reaction.matchAll = object.get("match_all").getAsBoolean();
 		reaction.trigger = object.get("trigger").getAsString();
 		reaction.command = object.get("command").getAsString();
-		reaction.cityBuild = object.get("city_build").getAsString();
+		reaction.cityBuild = Citybuild.getCitybuild(object.get("city_build").getAsString());
 		reaction.completed = true;
 		return reaction;
 	}

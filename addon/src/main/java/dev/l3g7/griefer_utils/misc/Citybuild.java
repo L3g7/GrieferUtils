@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.misc;
 
 import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.misc.gui.elements.DropDown;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -28,9 +29,9 @@ import org.apache.commons.lang3.StringUtils;
 import static net.minecraft.init.Blocks.*;
 import static net.minecraft.init.Items.*;
 
-public enum Citybuild {
+public enum Citybuild implements DropDown.ItemEnum {
 
-	ANY(nether_star, null,"Egal"),
+	ANY(nether_star, "Egal","Egal"),
 
 	CB1(diamond_block, 1),
 	CB2(emerald_block, 2),
@@ -118,9 +119,14 @@ public enum Citybuild {
 		return this.internalName;
 	}
 
+	@Override
+	public ItemStack getItem() {
+		return stack;
+	}
+
 	public boolean isOnCb() {
-		if (internalName == null)
-			throw new IllegalStateException("This citybuild does not exist");
+		if (this == ANY)
+			return true;
 
 		return matches(MinecraftUtil.getServerFromScoreboard());
 	}
@@ -155,7 +161,7 @@ public enum Citybuild {
 			if (alias.equalsIgnoreCase(cb))
 				return true;
 
-		return displayName.equalsIgnoreCase(cb) || internalName.equalsIgnoreCase(cb);
+		return cb.equalsIgnoreCase(displayName) || cb.equalsIgnoreCase(internalName) || name().equalsIgnoreCase(cb);
 	}
 
 }

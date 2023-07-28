@@ -20,26 +20,26 @@ package dev.l3g7.griefer_utils.features.modules;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.core.util.Util;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
@@ -50,6 +50,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @Singleton
@@ -76,7 +77,7 @@ public class Booster extends Module {
 
 	private boolean waitingForBoosterGUI = false;
 	private boolean waitingForBoosterInfo = false;
-	private GuiScreen previousScreen = null;
+	private String chatInput = null;
 
 	public Booster() {
 		super("Booster", "Zeigt dir die momentan aktiven Booster an", "booster", new IconData("griefer_utils/icons/rocket.png"));
@@ -95,11 +96,14 @@ public class Booster extends Module {
 
 		MinecraftUtil.send("/booster");
 		waitingForBoosterGUI = waitingForBoosterInfo = true;
-	}
 
-	@EventListener
-	public void onGuiOpen(GuiOpenEvent event) {
-		previousScreen = mc.currentScreen;
+		if (!(mc().currentScreen instanceof GuiChat)) {
+			chatInput = null;
+			return;
+		}
+
+		GuiTextField input = Reflection.get(mc().currentScreen, "inputField");
+		chatInput = input.getText();
 	}
 
 	@EventListener
@@ -116,7 +120,8 @@ public class Booster extends Module {
 			return;
 
 		if (waitingForBoosterGUI && isActive()) {
-			mc.displayGuiScreen(previousScreen);
+			mc.displayGuiScreen(chatInput != null ? new GuiChat(chatInput) : null);
+			chatInput = null;
 			waitingForBoosterGUI = false;
 		}
 	}

@@ -119,7 +119,9 @@ public class Util {
 		if (keys.isEmpty())
 			return "NONE";
 
-		return keys.stream().map(Keyboard::getKeyName).collect(Collectors.joining(" + "));
+		return keys.stream()
+			.map(i -> i > 0 ? Keyboard.getKeyName(i) : "MOUSE " + -i)
+			.collect(Collectors.joining(" + "));
 	}
 
 }

@@ -39,6 +39,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.*;
@@ -107,40 +108,39 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 	}
 
 	@SubscribeEvent
-	public void onKeyPress(GuiScreenEvent.KeyboardInputEvent.Post event) {
-		if (Keyboard.isRepeatEvent() || !triggersInContainers)
-			return;
+	public void onGuiKeyPress(GuiScreenEvent.KeyboardInputEvent.Post event) {
+		if (!Keyboard.isRepeatEvent() && triggersInContainers)
+			onPress(Keyboard.getEventKey());
+	}
 
-
-		// Trigger callbacks if necessary
-		if (get().contains(Keyboard.getEventKey())) {
-			if (isPressed())
-				pressed = true;
-			else if (pressed)
-				pressed = false;
-
-			pressCallbacks.forEach(c -> c.accept(pressed));
-		}
+	@SubscribeEvent
+	public void onGuiMousePress(GuiScreenEvent.MouseInputEvent.Post event) {
+		if (triggersInContainers)
+			onPress(-Mouse.getEventButton());
 	}
 
 	@SubscribeEvent
 	public void onKeyPress(InputEvent.KeyInputEvent event) {
-		if (Keyboard.isRepeatEvent())
+		if (!Keyboard.isRepeatEvent())
+			onPress(Keyboard.getEventKey());
+	}
+
+	@SubscribeEvent
+	public void onMousePress(InputEvent.MouseInputEvent event) {
+		if (Mouse.getEventButton() != -1)
+			onPress(-Mouse.getEventButton());
+	}
+
+	private void onPress(int code) {
+		if (!get().contains(code))
 			return;
 
-		// Trigger callbacks if necessary
-		if (get().contains(Keyboard.getEventKey())) {
-			if (isPressed())
-				pressed = true;
-			else if (pressed)
-				pressed = false;
-
-			pressCallbacks.forEach(c -> c.accept(pressed));
-		}
+		pressed = isPressed();
+		pressCallbacks.forEach(c -> c.accept(pressed));
 	}
 
 	public boolean isPressed() {
-		return get().stream().allMatch(Keyboard::isKeyDown);
+		return get().stream().allMatch(i -> i > 0 ? Keyboard.isKeyDown(i) : Mouse.isButtonDown(-i));
 	}
 
 	/**
@@ -228,23 +228,50 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 			}
 
 			// process selection
-			if (Keyboard.getEventKeyState()) {
-				if (!selectionField.isFocused())
-					return;
-
-				// If no keys have been pressed before, begin new input
-				if (pressedKeys.isEmpty())
-					selectedKeys.clear();
-
-				pressedKeys.add(keyCode);
-
-				// Add button to keys
-				selectedKeys.add(keyCode);
-				selectionField.setText(Util.formatKeys(selectedKeys));
-				selectionField.setCursorPositionEnd();
-			}
-			else
+			if (!Keyboard.getEventKeyState()) {
 				pressedKeys.remove(keyCode);
+				return;
+			}
+
+			// If no keys have been pressed before, begin new input
+			if (pressedKeys.isEmpty())
+				selectedKeys.clear();
+
+			pressedKeys.add(keyCode);
+
+			// Add button to keys
+			selectedKeys.add(keyCode);
+			selectionField.setText(Util.formatKeys(selectedKeys));
+			selectionField.setCursorPositionEnd();
+		}
+
+		@Override
+		public void handleMouseInput() throws IOException {
+			super.handleMouseInput();
+
+			int keyCode = -Mouse.getEventButton();
+
+			// only capture special buttons
+			if (keyCode == 0 || keyCode == -1)
+				return;
+
+
+			// process selection
+			if (!Mouse.getEventButtonState()) {
+				pressedKeys.remove(keyCode);
+				return;
+			}
+
+			// If no keys have been pressed before, begin new input
+			if (pressedKeys.isEmpty())
+				selectedKeys.clear();
+
+			pressedKeys.add(keyCode);
+
+			// Add button to keys
+			selectedKeys.add(keyCode);
+			selectionField.setText(Util.formatKeys(selectedKeys));
+			selectionField.setCursorPositionEnd();
 		}
 
 		@Override
@@ -252,9 +279,6 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 			backgroundScreen.updateScreen();
 		}
 
-		/**
-		 * Processes clicks on the "Done" button.
-		 */
 		@Override
 		protected void actionPerformed(GuiButton button) {
 			if (button.id == 1) {

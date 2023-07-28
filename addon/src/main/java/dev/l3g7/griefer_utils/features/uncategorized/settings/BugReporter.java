@@ -24,13 +24,18 @@ import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 
 import javax.net.ssl.HttpsURLConnection;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BugReporter {
 
@@ -49,11 +54,31 @@ public class BugReporter {
 		.defaultValue(true)
 		.subSettings(uuid);
 
+	private static final Set<String> reportedBugs = new HashSet<>();
+
 	public static void reportError(Throwable error) {
 		if (!enabled.get())
 			return;
 
 		Thread t = new Thread(() -> {
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+				// Get stacktrace
+				error.printStackTrace(new PrintStream(out));
+				MessageDigest digest = MessageDigest.getInstance("SHA-256");
+				String stackTrace = new String(out.toByteArray(), StandardCharsets.UTF_8);
+
+				// Remove object hash codes
+				stackTrace = stackTrace.replaceAll("\\$\\$Lambda[\\d/$]*\\.(\\w+)(?=\\()", "$$Lambda").replaceAll("@[\\da-f]+", "");
+
+				// Don't report if already reported
+				String hash = Base64.getEncoder().encodeToString(digest.digest(stackTrace.getBytes()));
+				if (!reportedBugs.add(hash))
+					return;
+			} catch (IOException | NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+
+			// Report bug
 			try {
 				HttpURLConnection conn = (HttpURLConnection) new URL("https://grieferutils.l3g7.dev/v2/bug_report").openConnection();
 

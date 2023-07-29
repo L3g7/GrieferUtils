@@ -56,10 +56,10 @@ public class AutoUnnick extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Automatisch entnicken")
-		.description("Zeigt statt Nicks immer den echten Namen in Chatnachrichten.")
+		.description("Zeigt statt Nicks den echten Namen an.")
 		.icon(Material.NAME_TAG)
 		.callback(c -> updatePlayerInfoList())
-		.subSettings(tab);
+		.subSettings(chat, tab);
 
 	@Override
 	public void init() {

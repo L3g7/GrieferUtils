@@ -56,7 +56,13 @@ public class AntiCommandChoker extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("AntiCommandChoker")
-		.description("Verhindert das Senden von falsch geschriebenen Befehlen.")
+		.description("Verhindert das Senden von falsch geschriebenen Befehlen." +
+			"\nBefehle, die standardmäßig abgefangen werden (Beispiele):" +
+			"\n7p h" +
+			"\n(p h" +
+			"\n&p h" +
+			"\nt/p h" +
+			"\nt(p h")
 		.icon(new ItemStack(Blocks.barrier, 7))
 		.subSettings(new HeaderSetting("§e§lEigene Einträge").scale(0.7), customEntries);
 

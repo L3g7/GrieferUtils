@@ -30,9 +30,9 @@ import net.labymod.settings.PreviewRenderer;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.io.IOException;
@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 public class StringListSetting extends ControlElement implements ElementBuilder<StringListSetting>, ValueHolder<StringListSetting, List<String>> {
 
@@ -106,8 +107,9 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 
 	private class StringDisplaySetting extends ControlElement {
 
-		private final String data;
-		private boolean deleteHovered = false;
+		private String data;
+		private boolean hoveringDelete = false;
+		private boolean hoveringEdit = false;
 
 		public StringDisplaySetting(String entry) {
 			super("§cUnknown name", new IconData(Material.PAPER));
@@ -116,7 +118,13 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 
 		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 			super.mouseClicked(mouseX, mouseY, mouseButton);
-			if (!deleteHovered)
+
+			if (hoveringEdit) {
+				mc().displayGuiScreen(stringAddSetting.new AddStringGui(mc().currentScreen, this));
+				return;
+			}
+
+			if (!hoveringDelete)
 				return;
 
 			getSettings().remove(this);
@@ -132,12 +140,25 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
 			drawUtils().drawRectangle(x - 1, y, x, maxY, 0x78787878);
 
+			mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
+
+			int xPosition = maxX - 20;
+			double yPosition = y + 4.5;
+
+			hoveringDelete = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
+
+			xPosition -= 20;
+
+			hoveringEdit = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
+
 			if (!mouseOver)
 				return;
 
-			mc.getTextureManager().bindTexture(new IconData("labymod/textures/misc/blocked.png").getTextureIcon());
-			deleteHovered = mouseX > maxX - 19 && mouseX < maxX - 6 && mouseY > y + 5 && mouseY < y + 18;
-			drawUtils().drawTexture(maxX - 16 - (deleteHovered ? 4 : 3), y + (deleteHovered ? 3.5 : 4.5), 256, 256, deleteHovered ? 16 : 14, deleteHovered ? 16 : 14);
+			mc.getTextureManager().bindTexture(new ResourceLocation("labymod/textures/misc/blocked.png"));
+			drawUtils().drawTexture(maxX - (hoveringDelete ? 20 : 19), y + (hoveringDelete ? 3.5 : 4.5), 256, 256, hoveringDelete ? 16 : 14, hoveringDelete ? 16 : 14);
+
+			mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));
+			drawUtils().drawTexture(maxX - (hoveringEdit ? 40 : 39), y + (hoveringEdit ? 3.5 : 4.5), 256, 256, hoveringEdit ? 16 : 14, hoveringEdit ? 16 : 14);
 		}
 
 	}
@@ -146,16 +167,18 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 
 		StringAddSetting() {
 			super(StringListSetting.this.displayName);
-			callback(() -> Minecraft.getMinecraft().displayGuiScreen(new StringAddSetting.AddPlayerGui(Minecraft.getMinecraft().currentScreen)));
+			callback(() -> mc().displayGuiScreen(new AddStringGui(mc().currentScreen, null)));
 		}
 
-		private class AddPlayerGui extends GuiScreen {
+		private class AddStringGui extends GuiScreen {
 
 			private final GuiScreen backgroundScreen;
+			private final StringDisplaySetting setting;
 			private ModTextField inputField;
 
-			public AddPlayerGui(GuiScreen backgroundScreen) {
+			public AddStringGui(GuiScreen backgroundScreen, StringDisplaySetting setting) {
 				this.backgroundScreen = backgroundScreen;
+				this.setting = setting;
 				MinecraftForge.EVENT_BUS.register(this);
 			}
 
@@ -164,13 +187,18 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 				backgroundScreen.width = width;
 				backgroundScreen.height = height;
 				if (backgroundScreen instanceof LabyModModuleEditorGui)
-					PreviewRenderer.getInstance().init(StringAddSetting.AddPlayerGui.class);
+					PreviewRenderer.getInstance().init(AddStringGui.class);
 
 				inputField = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 150, height / 4 + 45, 300, 20);
 				inputField.setFocused(true);
 				inputField.setMaxStringLength(100);
+				if (setting != null) {
+					inputField.setText(setting.data);
+					inputField.setCursorPositionEnd();
+				}
+
 				buttonList.add(new GuiButton(0, width / 2 - 105, height / 4 + 85, 100, 20, "Abbrechen"));
-				buttonList.add(new GuiButton(1, width / 2 + 5, height / 4 + 85, 100, 20, "Hinzufügen"));
+				buttonList.add(new GuiButton(1, width / 2 + 5, height / 4 + 85, 100, 20, setting == null ? "Hinzufügen" : "Bearbeiten"));
 			}
 
 			public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -191,14 +219,22 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 				super.actionPerformed(button);
 				switch (button.id) {
 					case 1:
-						getSettings().add(getSettings().indexOf(StringAddSetting.this), new StringDisplaySetting(inputField.getText()));
-						get().add(inputField.getText());
+						int lastIndex = getSettings().indexOf(StringAddSetting.this);
+						if (setting == null) {
+							getSettings().add(lastIndex, new StringDisplaySetting(inputField.getText()));
+							get().add(inputField.getText());
+						} else {
+							setting.data = inputField.getText();
+							int settingIndex = getSettings().indexOf(setting);
+							int listIndex = get().size() - (lastIndex - settingIndex);
+							get().set(listIndex, inputField.getText());
+						}
 
 						save();
 						getStorage().callbacks.forEach(c -> c.accept(get()));
 						// Fall-through
 					case 0:
-						Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
+						mc().displayGuiScreen(backgroundScreen);
 						backgroundScreen.initGui(); // Update settings
 				}
 			}
@@ -210,7 +246,7 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 
 			protected void keyTyped(char typedChar, int keyCode) {
 				if (keyCode == 1) // ESC
-					Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
+					mc().displayGuiScreen(backgroundScreen);
 
 				inputField.textboxKeyTyped(typedChar, keyCode);
 			}

@@ -157,7 +157,7 @@ public class AddChatMenuEntryGui extends GuiScreen {
 
 		itemSetting = new ItemSetting(ItemUtil.ALL_ITEMS, true)
 			.name("Item")
-			.description("Die ID / der Namespace des Items / Blocks, das als Icon angezeigt werden soll")
+			.description("Die ID / der Namespace des Items / Blocks, das als Icon angezeigt werden soll.")
 			.callback(stack -> entry.icon = stack);
 
 		itemSetting.init();

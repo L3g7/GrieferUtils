@@ -46,7 +46,7 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 	@MainElement
 	private final BooleanSetting refillBlocks = new BooleanSetting()
 		.name("Verbrauchte Blöcke nachziehen")
-		.description("Ob Blöcke, die verbraucht wurden, mit gleichen aufgefüllt werden sollen")
+		.description("Ob Blöcke, die verbraucht wurden, mit gleichen aufgefüllt werden sollen.")
 		.icon(new ItemStack(Blocks.stone, 0));
 
 	@EventListener

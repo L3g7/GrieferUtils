@@ -42,7 +42,7 @@ public class InteractablePlotSigns extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Interagierbare Plot-Schilder")
-		.description("Führt /p i aus, wenn du ein Plot-Schild angeklickt wird.")
+		.description("Führt bei Klick auf ein Plot-Schild /p i aus.")
 		.icon("wooden_board");
 
 	@EventListener

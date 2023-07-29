@@ -44,7 +44,9 @@ public class InteractableProfiles extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Interagierbare Profile")
-		.description("Macht den Kopf eines Spielers in seinem Profil sowie die Citybuild-Anzeige interagierbar.")
+		.description("Macht Folgendes interagierbar:"
+			+ "\n- Den Kopf des Spielers (Öffnet Claninfos)"
+			+ "\n- Die Citybuild-Anzeige (Switcht zum CB)")
 		.icon("left_click");
 
 	@EventListener

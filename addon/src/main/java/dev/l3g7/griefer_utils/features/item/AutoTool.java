@@ -94,7 +94,7 @@ public class AutoTool extends Feature {
 
 	private final BooleanSetting enforceSilkTouch = new BooleanSetting()
 		.name("Behutsamkeit erzwingen")
-		.description("Wenn Behutsamkeit einen Effekt auf den abgebaute Block hat, werden §nimmer§r Items mit Behutsamkeit bevorzugt")
+		.description("Wenn Behutsamkeit einen Effekt auf den abgebaute Block hat, werden §nimmer§r Items mit Behutsamkeit bevorzugt.")
 		.icon(Material.GRASS);
 
 	@MainElement

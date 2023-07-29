@@ -59,7 +59,7 @@ public class Calculator extends Feature {
 	private final StringSetting prefix = new StringSetting()
 		.name("Präfix")
 		.description("Der Präfix für Berechnungen ohne abgeschickter Chatnachricht."
-			+ "\nDas Ergebnis wird automatisch in die Zwischenablage kopiert")
+			+ "\nDas Ergebnis wird automatisch in die Zwischenablage kopiert.")
 		.icon(Material.NAME_TAG)
 		.defaultValue("/c ");
 
@@ -94,7 +94,7 @@ public class Calculator extends Feature {
 
 	private final NumberSetting decimalPlaces = new NumberSetting()
 		.name("Nachkommastellen")
-		.description("Auf wie viele Nachkommastellen das Ergebnis gerundet werden soll")
+		.description("Auf wie viele Nachkommastellen das Ergebnis gerundet werden soll.")
 		.icon(Material.STONE_BUTTON)
 		.defaultValue(2)
 		.min(0).max(98);

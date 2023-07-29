@@ -38,14 +38,14 @@ public class Badges {
 
 	static final BooleanSetting showPercentage = new BooleanSetting()
 		.name("Nutzer-Prozentsatz anzeigen")
-		.description("Zeigt über der Tabliste an, wie viel Prozent der Spieler GrieferUtils benutzen")
+		.description("Zeigt über der Tabliste an, wie viel Prozent der Spieler GrieferUtils benutzen.")
 		.config("settings.badges")
 		.icon("icon")
 		.defaultValue(true);
 
 	static final BooleanSetting enabled = new BooleanSetting()
 		.name("GrieferUtils-Nutzer-Anzeige")
-		.description("Zeigt vor den Namen von Spielern ein GrieferUtils-Icon an, wenn sie das Addon benutzen")
+		.description("Zeigt vor den Namen von Spielern ein GrieferUtils-Icon an, wenn sie das Addon benutzen.")
 		.config("settings.badges")
 		.icon("icon")
 		.defaultValue(true)

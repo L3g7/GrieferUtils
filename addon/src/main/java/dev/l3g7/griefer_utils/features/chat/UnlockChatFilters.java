@@ -29,7 +29,7 @@ public class UnlockChatFilters extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Chat-Filter-Länge entsperren")
-		.description("Erhöht die maximale Länge von Chat Filtern")
+		.description("Erhöht die maximale Länge von Chat Filtern.")
 		.icon("long_speech_bubble");
 
 }

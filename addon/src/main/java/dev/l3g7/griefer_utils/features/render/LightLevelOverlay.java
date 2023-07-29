@@ -79,7 +79,7 @@ public class LightLevelOverlay extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Lichtlevel anzeigen")
-		.description("Zeigt das Lichtlevel auf Blöcken an")
+		.description("Zeigt das Lichtlevel auf Blöcken an.")
 		.icon("light_bulb")
 		.subSettings(key, triggerMode, new HeaderSetting(), range, updateDelay);
 

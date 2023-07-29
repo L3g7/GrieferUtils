@@ -53,12 +53,12 @@ public class InteractableMessages extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Interagierbare Nachrichten")
-		.description("Macht Folgenes interagierbar:"
-			+ "\n- TPAs"
-			+ "\n- Den Citybuild bei Globalchat-Nachrichten"
-			+ "\n- Den Status, Msgs, und Plotchat-Nachrichten"
-			+ "\n- \"/p h\" in Nachrichten"
-			+ "\n- Spielernamen bei /clan info")
+		.description("Macht Folgendes interagierbar:"
+			+ "\n- TPAs (§a/tpaccept§r und §c/tpdeny§r)"
+			+ "\n- Den Citybuild bei Globalchat-Nachrichten (Switcht zum CB)"
+			+ "\n- Den Status, Msgs, und Plotchat-Nachrichten (Schlägt /msg vor)"
+			+ "\n- \"/p h\" in Nachrichten (Teleportiert zum Plot)"
+			+ "\n- Spielernamen bei /clan info (Öffnet das Profil)")
 		.icon("left_click");
 
 	@EventListener(priority = EventPriority.LOW)

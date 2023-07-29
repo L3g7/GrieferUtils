@@ -49,7 +49,7 @@ public class CommandPieMenu extends Feature {
 
 	private final BooleanSetting animation = new BooleanSetting()
 		.name("Animation")
-		.description("Ob die Öffnen-Animation abgespielt werden soll")
+		.description("Ob die Öffnen-Animation abgespielt werden soll.")
 		.icon("command_pie_menu")
 		.defaultValue(true);
 

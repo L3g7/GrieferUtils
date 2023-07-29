@@ -45,7 +45,7 @@ public class BetterSwitchCommand extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("/switch verbessern")
-		.description("Verbessert den '/switch <cb>' Befehl durch Aliasse und einem optionalem Join-Text. (z.B. '/cbe Hallo')", "", "Der Join-Text wird nach dem Beitreten automatisch in den Chat geschrieben")
+		.description("Verbessert den '/switch <cb>' Befehl durch Aliasse und einem optionalem Join-Text. (z.B. '/cbe Hallo')", "Der Join-Text wird nach dem Beitreten automatisch in den Chat geschrieben.", "", "Für Hilfe gib '/cb' ein.")
 		.icon(Material.COMPASS);
 
 	@EventListener

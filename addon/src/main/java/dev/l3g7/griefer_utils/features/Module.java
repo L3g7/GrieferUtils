@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.ingamegui.ModuleCategory;
@@ -81,6 +82,16 @@ public abstract class Module extends SimpleTextModule {
 			.map(meta -> (Module) FileProvider.getSingleton(meta.load()))
 			.sorted((a, b) -> (a.getClass().getPackage().getName() + a.getControlName()).compareToIgnoreCase((b.getClass().getPackage().getName() + b.getControlName()))) // Include package in sorting so the modules are grouped
 			.forEach(LabyMod.getInstance().getLabyModAPI()::registerModule);
+	}
+
+	@OnStartupComplete
+	public static void fixMissingCategory() {
+		// Fix bug where category doesn't appear in module gui
+		if (!ModuleCategoryRegistry.getCategories().contains(CATEGORY))
+			ModuleCategoryRegistry.getCategories().add(CATEGORY);
+
+		if (!ModuleCategoryRegistry.ADDON_CATEGORY_LIST.contains(CATEGORY))
+			ModuleCategoryRegistry.ADDON_CATEGORY_LIST.add(CATEGORY);
 	}
 
 	private final String name;

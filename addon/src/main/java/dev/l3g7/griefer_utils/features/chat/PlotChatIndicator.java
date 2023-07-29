@@ -120,7 +120,7 @@ public class PlotChatIndicator extends Feature {
 	@EventListener(triggerWhenDisabled = true)
 	public void onReceive(ClientChatReceivedEvent event) {
 		// Check if server is known
-		if (server.isEmpty())
+		if (server == null || server.isEmpty())
 			return;
 
 		// Update plot chat state

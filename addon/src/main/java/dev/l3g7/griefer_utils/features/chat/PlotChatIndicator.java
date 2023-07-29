@@ -119,6 +119,9 @@ public class PlotChatIndicator extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onReceive(ClientChatReceivedEvent event) {
+		// Check if server is known
+		if (server.isEmpty())
+			return;
 
 		// Update plot chat state
 		if (event.message.getFormattedText().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {

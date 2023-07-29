@@ -178,6 +178,9 @@ public class AutoUpdater {
 
 	private static ReleaseChannel getPreferredChannel() throws IOException {
 		Path configPath = new File("config", "GrieferUtils.json").toPath();
+		if (!Files.exists(configPath))
+			return STABLE;
+
 		JsonObject config = PARSER.parse(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ))).getAsJsonObject();
 		if (!config.has("settings"))
 			return STABLE;

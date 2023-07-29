@@ -42,7 +42,7 @@ public class PlotGreetingWarning extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Plot-Greeting-Warnung")
 		.description("Fügt einen Tag zu Nachrichten hinzu, die von einem Plot-Greeting kommen.")
-		.icon("coin_pile");
+		.icon("labymod:buttons/exclamation_mark");
 
 	@EventListener
 	public void onMessageModify(MessageModifyEvent event) {

@@ -47,6 +47,12 @@ public class AutoUnnick extends Feature {
 		.icon("tab_list")
 		.callback(c -> updatePlayerInfoList());
 
+	private final BooleanSetting chat = new BooleanSetting()
+		.name("In Chat")
+		.description("Ob Spieler im Chat entnickt werden sollen.")
+		.icon("speech_bubble")
+		.defaultValue(true);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Automatisch entnicken")
@@ -87,6 +93,9 @@ public class AutoUnnick extends Feature {
 
 	@EventListener(priority = EventPriority.HIGH)
 	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
+		if (!chat.get())
+			return;
+
 		String text = event.message.getUnformattedText();
 
 		if (!text.contains("\u2503") || !text.contains("~") || text.startsWith("@"))

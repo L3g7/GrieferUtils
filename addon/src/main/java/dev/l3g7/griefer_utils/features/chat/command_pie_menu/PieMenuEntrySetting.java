@@ -18,22 +18,17 @@
 
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
-import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
-public class PieEntryDisplaySetting extends ControlElement implements ElementBuilder<PieEntryDisplaySetting> {
+public class PieMenuEntrySetting extends PieMenuSetting {
 
 	public final StringSetting name;
 	public final StringSetting command;
@@ -43,13 +38,7 @@ public class PieEntryDisplaySetting extends ControlElement implements ElementBui
 	private String defaultCommand;
 	private ItemStack defaultCityBuild;
 
-	private final IconStorage iconStorage = new IconStorage();
-	private boolean hoveringDelete = false;
-	private boolean hoveringEdit = false;
-
-	public PieEntryDisplaySetting(String name, String command, ItemStack cityBuild) {
-		super("§f", null);
-
+	public PieMenuEntrySetting(String name, String command, ItemStack cityBuild) {
 		this.name = new StringSetting()
 			.name("Name")
 			.defaultValue(defaultName = name)
@@ -65,14 +54,12 @@ public class PieEntryDisplaySetting extends ControlElement implements ElementBui
 			.defaultValue((defaultCityBuild = cityBuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCityBuild);
 
 		icon("command_pie_menu");
-
 		subSettings(this.name, this.command, this.cityBuild);
-		setSettingEnabled(false);
 	}
 
 	@Override
-	public IconStorage getIconStorage() {
-		return iconStorage;
+	protected void onChange() {
+		PieMenuPageSetting.triggerOnChange();
 	}
 
 	public void openSettings() {
@@ -81,7 +68,7 @@ public class PieEntryDisplaySetting extends ControlElement implements ElementBui
 		defaultCityBuild = cityBuild.get();
 		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
 			if (!name.get().isEmpty() && !command.get().isEmpty() && cityBuild.get() != null) {
-				triggerOnChange();
+				onChange();
 				return;
 			}
 
@@ -96,43 +83,14 @@ public class PieEntryDisplaySetting extends ControlElement implements ElementBui
 				command.set(defaultCommand);
 			if (cityBuild.get() == null)
 				cityBuild.set(defaultCityBuild);
-			triggerOnChange();
+			onChange();
 		}, this));
 	}
 
 	@Override
-	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
-
-		if (hoveringEdit) {
-			mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-			openSettings();
-			return;
-		}
-
-		if (!hoveringDelete)
-			return;
-
-		mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-		remove();
-	}
-
-	private void remove() {
-		FileProvider.getSingleton(CommandPieMenu.class).getMainElement().getSubSettings().getElements().remove(this);
-		triggerOnChange();
-	}
-
-	private void triggerOnChange() {
-		FileProvider.getSingleton(CommandPieMenu.class).onChange();
-	}
-
-	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-		hideSubListButton();
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
-		drawIcon(x, y);
 
-		mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
 		String cb = "§e[" + MinecraftUtil.getCityBuildAbbreviation(cityBuild.get().getDisplayName()) + "] ";
 		int cbWidth = drawUtils().getStringWidth(cb);
 
@@ -141,26 +99,6 @@ public class PieEntryDisplaySetting extends ControlElement implements ElementBui
 		drawUtils().drawString(trimmedName + (trimmedName.equals(name.get()) ? "" : "…"), x + 25, y + 7 - 5);
 		drawUtils().drawString("§o➡ " + trimmedCommand + (trimmedCommand.equals(command.get()) ? "" : "…"), x + 25 + cbWidth, y + 7 + 5);
 		drawUtils().drawString(cb, x + 25, y + 7 + 5);
-
-		int xPosition = maxX - 20;
-		double yPosition = y + 4.5;
-
-		hoveringDelete = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
-		xPosition -= 20;
-		hoveringEdit = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
-
-		if (!mouseOver)
-			return;
-
-		mc.getTextureManager().bindTexture(new ResourceLocation("labymod/textures/misc/blocked.png"));
-		drawUtils().drawTexture(maxX - (hoveringDelete ? 20 : 19), y + (hoveringDelete ? 3.5 : 4.5), 256, 256, hoveringDelete ? 16 : 14, hoveringDelete ? 16 : 14);
-
-		mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));
-		drawUtils().drawTexture(maxX - (hoveringEdit ? 40 : 39), y + (hoveringEdit ? 3.5 : 4.5), 256, 256, hoveringEdit ? 16 : 14, hoveringEdit ? 16 : 14);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
 }

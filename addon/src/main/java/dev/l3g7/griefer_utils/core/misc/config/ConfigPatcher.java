@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.core.misc.config;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
@@ -40,6 +41,26 @@ public class ConfigPatcher {
 
 		if (cmp.compare("2.0-BETA-13.2", version) < 0) {
 			rename("item.inventory_tweaks.crafting_shift.craftingShift", "item.inventory_tweaks.better_shift.enabled");
+		}
+
+		if (cmp.compare("2.0-BETA-14", version) <= 0) {
+			String oldPath = "chat.command_pie_menu.entries";
+			JsonArray entries = getParent(oldPath).getAsJsonArray("entries");
+			if (entries != null) {
+				JsonObject parent = getParent("chat.command_pie_menu.pages");
+				JsonArray pages = new JsonArray();
+				JsonObject page = new JsonObject();
+				page.addProperty("name", "Unbenannte Seite");
+
+				for (JsonElement entry : entries) {
+					JsonObject obj = entry.getAsJsonObject();
+					obj.addProperty("command", "/" + obj.get("command").getAsString());
+				}
+
+				page.add("entries", entries);
+				pages.add(page);
+				parent.add("pages", pages);
+			}
 		}
 	}
 

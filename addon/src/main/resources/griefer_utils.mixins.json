@@ -41,6 +41,7 @@
     "minecraft.MixinWorldClient"
   ],
   "client": [
-    "minecraft.MixinEntityPlayerSP"
+    "minecraft.MixinEntityPlayerSP",
+    "minecraft.MixinScaledResolution"
   ]
 }

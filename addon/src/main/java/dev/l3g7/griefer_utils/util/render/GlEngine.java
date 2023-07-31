@@ -159,7 +159,7 @@ public class GlEngine {
 	 * @param alpha 0-255
 	 */
 	public static void color(Color color, float alpha) {
-		glColor4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 255f * alpha);
+		glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f * alpha);
 	}
 
 	/**

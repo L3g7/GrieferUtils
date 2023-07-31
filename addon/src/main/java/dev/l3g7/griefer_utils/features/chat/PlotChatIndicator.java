@@ -102,6 +102,9 @@ public class PlotChatIndicator extends Feature {
 		ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
 		server = team == null ? "" : ModColor.removeColor(team.getColorPrefix());
 
+		if (server.isEmpty())
+			return;
+
 		if (server.equals("Lava") || server.equals("Wasser")) {
 			plotchatState = false;
 			return;

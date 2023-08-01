@@ -54,7 +54,11 @@ public class PlayerUtil {
 	}
 
 	public static String getRank(String name) {
-		IChatComponent component = mc().getNetHandler().getPlayerInfo(name).getDisplayName();
+		NetworkPlayerInfo info = mc().getNetHandler().getPlayerInfo(name);
+		if (info == null)
+			return "";
+
+		IChatComponent component = info.getDisplayName();
 		if (component != null) {
 			String[] parts = component.getUnformattedText().split("\u2503");
 			if (parts.length > 1) {

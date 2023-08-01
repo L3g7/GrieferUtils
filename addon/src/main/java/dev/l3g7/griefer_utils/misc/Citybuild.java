@@ -104,8 +104,13 @@ public enum Citybuild implements DropDown.ItemEnum {
 		if (cb.startsWith("citybuild"))
 			cb = cb.substring("citybuild".length()).trim();
 
-		if (StringUtils.isNumeric(cb))
-			return valueOf("CB" + cb);
+		if (StringUtils.isNumeric(cb)) {
+			try {
+				return valueOf("CB" + cb);
+			} catch (IllegalArgumentException ignored) {
+				return Citybuild.ANY;
+			}
+		}
 
 		for (Citybuild citybuild : values()) {
 			if (citybuild.matches(cb))

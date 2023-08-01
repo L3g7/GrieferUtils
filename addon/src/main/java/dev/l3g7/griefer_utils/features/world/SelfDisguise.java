@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.world;
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
@@ -47,8 +48,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
@@ -75,6 +75,7 @@ public class SelfDisguise extends Feature {
 	public Entity currentDisguise = null;
 	private boolean blockCoordinates = false;
 	private String lastSentDisguiseCommand = null;
+	private String[] unknownArgs = null;
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -133,7 +134,8 @@ public class SelfDisguise extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onReceive(ClientChatReceivedEvent event) {
-		if (event.message.getUnformattedText().equals("[GrieferGames] Verwandlungen sind auf diesem Grundstück deaktiviert. Deine aktuelle Verwandlung wurde aufgehoben.")) {
+		String text = event.message.getUnformattedText();
+		if (text.equals("[GrieferGames] Verwandlungen sind auf diesem Grundstück deaktiviert. Deine aktuelle Verwandlung wurde aufgehoben.")) {
 			resetDisguise();
 			return;
 		}
@@ -142,23 +144,29 @@ public class SelfDisguise extends Feature {
 			return;
 
 		// Return if the entity doesn't exist
-		if (event.message.getUnformattedText().startsWith("Falsche Benutzung: ")) {
-			lastSentDisguiseCommand = null;
+		if (text.startsWith("Falsche Benutzung: ") && text.endsWith(" sind unbekannte Argumente.")) {
+//			lastSentDisguiseCommand = null;
+			String args = text.substring("Falsche Benutzung: ".length(), text.length() - " sind unbekannte Argumente.".length());
+			unknownArgs = args.replace('-', '_').split(", ");
 			return;
 		}
 
-		if (!event.message.getUnformattedText().startsWith("Du bist nun als "))
+		if (!text.startsWith("Du bist nun als "))
 			return;
 
+		unknownArgs = null;
 		if (currentDisguise != null)
 			world().removeEntity(currentDisguise);
 
-		try {
-			loadDisguise(lastSentDisguiseCommand);
-		} catch (Throwable t) {
-			throw new RuntimeException("Error when disguising with command: \"" + lastSentDisguiseCommand + "\"", t);
-		}
-		lastSentDisguiseCommand = null;
+		TickScheduler.runAfterClientTicks(() -> {
+			try {
+				loadDisguise(lastSentDisguiseCommand);
+			} catch (Throwable t) {
+				throw new RuntimeException("Error when disguising with command: \"" + lastSentDisguiseCommand + "\" " + t.getClass().getSimpleName()  + " : " + t.getMessage());
+			}
+			unknownArgs = null;
+			lastSentDisguiseCommand = null;
+		}, 1);
 	}
 
 	@EventListener(priority = LOWEST)
@@ -190,7 +198,10 @@ public class SelfDisguise extends Feature {
 
 	private void loadDisguise(String command) {
 		command = command.replace('-', '_');
-		String[] arguments = command.split(" ");
+		List<String> commandArgs = new ArrayList<>(Arrays.asList(command.split(" ")));
+		if (unknownArgs != null)
+			commandArgs.removeAll(Arrays.asList(unknownArgs));
+		String[] arguments = commandArgs.toArray(new String[0]);
 
 		// Special entities
 		currentDisguise = null;
@@ -257,8 +268,13 @@ public class SelfDisguise extends Feature {
 					String material = args.remove("material");
 					if (material == null)
 						return;
-					IBlockState block = Block.getBlockFromName(material).getDefaultState();
-					Reflection.set(currentDisguise, block, "fallTile"); // , "field_175132_d", "d"
+
+					Block block = Block.getBlockFromName(material);
+					if (block == null)
+						return;
+
+					IBlockState blockState = Block.getBlockFromName(material).getDefaultState();
+					Reflection.set(currentDisguise, blockState, "fallTile"); // , "field_175132_d", "d"
 				}
 			} else if (currentDisguise instanceof EntityHorse) {
 				if (args.remove("saddled", null))

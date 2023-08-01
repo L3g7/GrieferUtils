@@ -49,7 +49,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 		.name("Besseres Shiften")
 		.description("Ermöglicht das Verschieben von Items \"Shift + Klick\" in einigen Eingaben."
 			+ "\n- Werkbank"
-			+ "\n- Spieler-Crafting §o(Shift + Alt + Klick)"
+			+ "\n- Spieler-Crafting §o(Shift + Alt + Klick)§r"
 			+ "\n- Dorfbewohner")
 		.icon(Material.WORKBENCH);
 

@@ -40,6 +40,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.passive.*;
@@ -261,21 +262,19 @@ public class SelfDisguise extends Feature {
 				if (args.remove("powered", null))
 					currentDisguise.getDataWatcher().updateObject(17, (byte) 1);
 			} else if (currentDisguise instanceof EntityFallingBlock) {
-				if (args.remove("block_coordinates", null)) {
+				if (args.remove("block_coordinates", null))
 					blockCoordinates = true;
-				}
-				if (args.containsKey("material")) {
-					String material = args.remove("material");
-					if (material == null)
-						return;
 
-					Block block = Block.getBlockFromName(material);
-					if (block == null)
-						return;
+				String material = args.remove("material");
+				if (material == null)
+					return;
 
-					IBlockState blockState = Block.getBlockFromName(material).getDefaultState();
-					Reflection.set(currentDisguise, blockState, "fallTile"); // , "field_175132_d", "d"
-				}
+				Block block = Block.getBlockFromName(material);
+				if (block == null)
+					return;
+
+				IBlockState blockState = Block.getBlockFromName(material).getDefaultState();
+				Reflection.set(currentDisguise, blockState, "fallTile"); // , "field_175132_d", "d"
 			} else if (currentDisguise instanceof EntityHorse) {
 				if (args.remove("saddled", null))
 					((EntityHorse) currentDisguise).setHorseSaddled(true);
@@ -311,6 +310,17 @@ public class SelfDisguise extends Feature {
 					((EntityWolf) currentDisguise).setTamed(true);
 				else if (args.remove("angry", null))
 					((EntityWolf) currentDisguise).setAngry(true);
+			} else if (currentDisguise instanceof EntityEnderman) {
+				String blockType = args.remove("block");
+				if (blockType == null)
+					return;
+
+				Block block = Block.getBlockFromName(blockType);
+				if (block == null)
+					return;
+
+				IBlockState blockState = Block.getBlockFromName(blockType).getDefaultState();
+				((EntityEnderman) currentDisguise).setHeldBlockState(blockState);
 			}
 
 			if (!args.isEmpty())

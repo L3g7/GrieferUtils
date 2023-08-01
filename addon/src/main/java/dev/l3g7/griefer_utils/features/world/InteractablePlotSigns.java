@@ -52,13 +52,14 @@ public class InteractablePlotSigns extends Feature {
 
 		C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
 		TileEntity te = world().getTileEntity(packet.getPosition());
-		if (te == null)
-			return;
 
 		if (!(te instanceof TileEntitySign))
 			return;
 
 		TileEntitySign tes = (TileEntitySign) te;
+		if (tes.signText[0] == null)
+			return;
+
 		String txt = tes.signText[0].getUnformattedText();
 		Matcher matcher = PLOT_ID_PATTERN.matcher(txt);
 		if (!matcher.matches())

@@ -19,6 +19,8 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 
+import de.emotechat.addon.gui.ChatLineEntry;
+import de.emotechat.addon.gui.chat.render.EmoteChatLine;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
@@ -82,8 +84,9 @@ public class MessageSkulls extends Feature {
 			return;
 
 		IChatComponent wholeComponent = ChatLineUtil.getComponentFromLine(event.chatLine);
+		// Part of an emote chat line
 		if (wholeComponent == null)
-			throw new RuntimeException("ChatLine could not be assigned to a component! " + event.chatLine);
+			return;
 
 		String msg = wholeComponent.getUnformattedText();
 
@@ -116,11 +119,19 @@ public class MessageSkulls extends Feature {
 		if (playerInfo == null)
 			return;
 
+		int y = event.y;
+
+		if (event.chatLine instanceof EmoteChatLine) {
+			boolean isEmote = ((EmoteChatLine) event.chatLine).getEntries().stream().anyMatch(ChatLineEntry::isLoadedEmote);
+			if (isEmote)
+				y += 4.5;
+		}
+
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
 		drawUtils.bindTexture(playerInfo.getLocationSkin());
 		int x = drawUtils.getStringWidth(formattedText.substring(0, idStart)) + (formattedText.startsWith("§r§m§s") ? 2 : 1);
-		drawUtils.drawTexture(x, event.y - 8, 32, 32, 32, 32, 8, 8, event.alpha); // First layer
-		drawUtils.drawTexture(x, event.y - 8, 160, 32, 32, 32, 8, 8, event.alpha); // Second layer
+		drawUtils.drawTexture(x, y - 8, 32, 32, 32, 32, 8, 8, event.alpha); // First layer
+		drawUtils.drawTexture(x, y - 8, 160, 32, 32, 32, 8, 8, event.alpha); // Second layer
 		GlStateManager.disableBlend();
 		GlStateManager.disableAlpha();
 	}

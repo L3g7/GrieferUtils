@@ -144,7 +144,8 @@ public class AutoTool extends Feature {
 	}
 
 	private void switchToTool(BlockPos targetedBlock) {
-		if (ItemSaver.getSetting(player().getHeldItem()) != null)
+		ItemDisplaySetting ids = ItemSaver.getSetting(player().getHeldItem());
+		if (ids != null && ids.leftclick.get())
 			return;
 
 		if (!ServerCheck.isOnGrieferGames() && player().getHeldItem() != null && player().getHeldItem().getItem() == Items.wooden_axe)

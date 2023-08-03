@@ -93,8 +93,10 @@ public class AntiCommandChoker extends Feature {
 			mc().getNetHandler().addToSendQueue(new C01PacketChatMessage(command));
 
 			// Edit the sent message
-			ICM.getSentMessages().remove(ICM.getSentMessages().size() - 1);
-			ICM.addToSentMessages(command);
+			if (!ICM.getSentMessages().isEmpty()) {
+				ICM.getSentMessages().remove(ICM.getSentMessages().size() - 1);
+				ICM.addToSentMessages(command);
+			}
 
 			return;
 		}

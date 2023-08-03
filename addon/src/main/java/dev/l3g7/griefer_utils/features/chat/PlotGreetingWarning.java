@@ -109,6 +109,9 @@ public class PlotGreetingWarning extends Feature {
 			return 0;
 
 		ChannelHandler timeoutHandler = mc().getNetHandler().getNetworkManager().channel().pipeline().get("timeout");
+		if (timeoutHandler == null)
+			return 0;
+
 		return Reflection.get(timeoutHandler, "lastReadTime");
 	}
 

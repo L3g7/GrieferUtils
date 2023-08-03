@@ -31,6 +31,7 @@ import net.minecraft.event.HoverEvent;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -88,7 +89,7 @@ public class PlotGreetingWarning extends Feature {
 
 			// Check if message contains illegal characters
 			String textMessage = message.getUnformattedText();
-			if (!textMessage.equals(ChatAllowedCharacters.filterAllowedCharacters(textMessage)))
+			if (!textMessage.equals(ChatAllowedCharacters.filterAllowedCharacters(textMessage)) || textMessage.contains("»") || textMessage.contains("┃"))
 				return;
 
 			// Message seems to be part of a greeting
@@ -97,7 +98,8 @@ public class PlotGreetingWarning extends Feature {
 	}
 
 	private void addWarning(IChatComponent message, boolean sure) {
-		IChatComponent icc = new ChatComponentText("§e [⚠]");
+		IChatComponent icc = new ChatComponentText(" [⚠]");
+		icc.getChatStyle().setColor(EnumChatFormatting.YELLOW);
 		icc.getChatStyle().setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§eDiese Nachricht stammt " + (sure ? "" : "wahrscheinlich ") + "von einem Plot-Greeting.")));
 		message.appendSibling(icc);
 	}

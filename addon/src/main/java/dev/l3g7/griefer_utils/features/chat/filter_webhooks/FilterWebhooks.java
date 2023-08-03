@@ -20,19 +20,21 @@ package dev.l3g7.griefer_utils.features.chat.filter_webhooks;
 
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
+import dev.l3g7.griefer_utils.util.ChatLineUtil;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.main.LabyMod;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
@@ -90,12 +92,13 @@ public class FilterWebhooks extends Feature {
     }
 
     @EventListener(priority = EventPriority.LOWEST)
-    public void onMessageReceive(ClientChatReceivedEvent event) {
-		if (event.type == 2)
+    public void onMessageReceive(ChatLineEvent.ChatLineAddEvent event) {
+	    IChatComponent icc = ChatLineUtil.getComponentFromLine(event.chatLine);
+		if (icc == null)
 			return;
 
         // Check if filters match
-        String msg = event.message.getUnformattedText().toLowerCase().replaceAll("§.", "");
+        String msg = icc.getUnformattedText().toLowerCase().replaceAll("§.", "");
         for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
             if (webhooks.containsKey(filter.getFilterName())
 	                && !webhooks.get(filter.getFilterName()).trim().isEmpty()
@@ -108,7 +111,7 @@ public class FilterWebhooks extends Feature {
 	            JsonArray embeds = new JsonArray();
 				JsonObject embed = new JsonObject();
 				embed.add("title", sanitize(filter.getFilterName()));
-				embed.add("description", sanitize(event.message.getUnformattedText().replaceAll("§.", "")));
+				embed.add("description", sanitize(icc.getUnformattedText().replaceAll("§.", "")));
 				embed.add("footer", EMBED_FOOTER);
 				if (filter.isHighlightMessage())
 					embed.addProperty("color", ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff));

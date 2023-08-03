@@ -18,10 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.player;
 
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -30,6 +31,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.common.registry.GameData;
 
 import java.util.function.BiPredicate;
 
@@ -116,7 +118,14 @@ public class AutoEat extends Feature {
 			if (item == null || item.getItem() == null || !(item.getItem() instanceof ItemFood))
 				continue;
 
-			int itemSaturation = ((ItemFood) item.getItem()).getHealAmount(item);
+			ItemFood food = (ItemFood) item.getItem();
+
+			// Check if the food causes bad potion effects
+			int potionId = Reflection.get(food, "potionId");
+			if (potionId > 0 && GameData.getPotionRegistry().getObjectById(potionId).isBadEffect())
+				continue;
+
+			int itemSaturation = food.getHealAmount(item);
 
 			// Check if food found better than current food
 			if (currentIndex == -1 || preferredFood.get().compare(currentSaturation, itemSaturation)) {

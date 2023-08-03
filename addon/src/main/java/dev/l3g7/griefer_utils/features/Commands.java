@@ -22,11 +22,13 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.misc.Constants.ADDON_PREFIX;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
@@ -49,13 +51,13 @@ public class Commands {
 		String[] parts = msg.split(" ");
 		String response = processCommand(parts[0], msg.substring(parts[0].length()).trim());
 		if (response != null)
-			display("§c" + response);
+			display(ADDON_PREFIX + "§c" + response);
 	}
 
 	private static String processCommand(String command, String argsString) {
 		if (command.equalsIgnoreCase("run_on_cb")) {
 			if (argsString.isEmpty())
-				return "Syntax: /gu:run_on_cb <Text>";
+				return "Usage: /gu:run_on_cb <text>";
 
 			if (ServerCheck.isOnCitybuild()) {
 				if (!MessageEvent.MessageSendEvent.post(command))
@@ -66,7 +68,23 @@ public class Commands {
 			return null;
 		}
 
-		return "Unbekannter Befehl";
+		if (command.equalsIgnoreCase("queue")) {
+			if (argsString.isEmpty())
+				return "Usage: /gu:queue <text>";
+
+			ChatQueue.send(argsString);
+			return null;
+		}
+
+		if (command.equalsIgnoreCase("help")) {
+			display(ADDON_PREFIX + "Befehle:");
+			display(ADDON_PREFIX + "/gu:help");
+			display(ADDON_PREFIX + "/gu:run_on_cb <text>");
+			display(ADDON_PREFIX + "/gu:queue <text>");
+			return null;
+		}
+
+		return "Unbekannter Befehl. (Siehe /gu:help)";
 	}
 
 	@EventListener

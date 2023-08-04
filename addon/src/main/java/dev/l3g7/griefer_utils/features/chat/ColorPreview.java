@@ -46,7 +46,7 @@ public class ColorPreview extends Feature {
 
 	@EventListener
 	public void onRender(GuiScreenEvent.DrawScreenEvent.Pre event) {
-		if (!(event.gui.getClass() == GuiChat.class || event.gui.getClass() == GuiChatCustom.class))
+		if (event.gui == null || !(event.gui.getClass() == GuiChat.class || event.gui.getClass() == GuiChatCustom.class))
 			return;
 
 		GuiChat gui = (GuiChat) event.gui;

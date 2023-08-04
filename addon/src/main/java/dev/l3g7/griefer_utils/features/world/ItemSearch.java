@@ -26,33 +26,48 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.gui.elements.ModTextField;
+import net.labymod.utils.Material;
+import net.minecraft.client.gui.GuiHopper;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.inventory.GuiDispenser;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.util.List;
-
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 @Singleton
-public class ChestSearch extends Feature {
+public class ItemSearch extends Feature {
 
 	/**
-	 * An invisible marker to indicate guis where ChestSearch should be disabled
+	 * An invisible marker to indicate guis where ItemSearch should be disabled
 	 */
 	public static final String marker = "§4§0§2§7§9§c§d§a§d§e§f§e§l§m§n§r";
 
+	private final BooleanSetting dispenser = new BooleanSetting()
+		.name("Spender / Werfer")
+		.description("Ob die Item-Suche auch bei Spendern / Werfern hinzugefügt werden soll")
+		.icon(Material.DISPENSER);
+
+	private final BooleanSetting hopper = new BooleanSetting()
+		.name("Tricher")
+		.description("Ob die Item-Suche auch bei Trichtern hinzugefügt werden soll")
+		.icon(Material.HOPPER);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Kisten-Suche")
+		.name("Item-Suche")
 		.description("Fügt eine Item-Suche innerhalb von Kisten hinzu.")
-		.icon("chest");
+		.icon("chest")
+		.subSettings(dispenser, hopper);
 
 	public ModTextField searchField = null;
 	private String previousSearch = "";
@@ -63,21 +78,23 @@ public class ChestSearch extends Feature {
 			previousSearch = searchField.getText();
 
 		searchField = null;
-		if (event.gui instanceof GuiChest) {
-			int guiLeft = Reflection.get(event.gui, "guiLeft");
-			int guiTop = Reflection.get(event.gui, "guiTop");
+		if (!(event.gui instanceof GuiChest ||
+			(dispenser.get() && event.gui instanceof GuiDispenser) ||
+			(hopper.get() && event.gui instanceof GuiHopper)))
+			return;
 
+		if (event.gui instanceof GuiChest) {
 			IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
 			String title = lowerChestInventory.getDisplayName().getFormattedText();
-			if (title.startsWith(marker) || title.startsWith("§6Profil") || title.equals("§6Lotterie§r"))
+			if (title.startsWith(marker) || title.startsWith("§6Profil") || title.startsWith("§6Lottoschein "))
 				return;
-
-			searchField = new ModTextField(0, mc().fontRendererObj, guiLeft + 82, guiTop + 6, 83, mc().fontRendererObj.FONT_HEIGHT);
-			searchField.setPlaceHolder("§oSuche...");
-			searchField.setTextColor(0xffffff);
-			searchField.setText(previousSearch);
-			searchField.setEnableBackgroundDrawing(false);
 		}
+
+		searchField = new ModTextField(0, mc().fontRendererObj, 82, 6, 83, mc().fontRendererObj.FONT_HEIGHT);
+		searchField.setPlaceHolder("§oSuche...");
+		searchField.setTextColor(0xffffff);
+		searchField.setText(previousSearch);
+		searchField.setEnableBackgroundDrawing(false);
 	}
 
 	@EventListener
@@ -94,8 +111,15 @@ public class ChestSearch extends Feature {
 	@EventListener
 	public void onMousePress(GuiScreenEvent.MouseInputEvent.Post event) {
 		if (searchField != null && Mouse.getEventButton() != -1) {
-			int x = Mouse.getEventX() * event.gui.width / mc().displayWidth;
-			int y = event.gui.height - Mouse.getEventY() * event.gui.height / mc().displayHeight - 1;
+			int guiLeft = Reflection.get(event.gui, "guiLeft");
+			int guiTop = Reflection.get(event.gui, "guiTop");
+
+			int scale = new ScaledResolution(mc()).getScaleFactor();
+			int x = Mouse.getEventX() / scale;
+			int y = (mc().displayHeight - Mouse.getEventY()) / scale;
+
+			x -= guiLeft;
+			y -= guiTop;
 
 			searchField.mouseClicked(x, y, Mouse.getEventButton());
 		}
@@ -106,34 +130,30 @@ public class ChestSearch extends Feature {
 		if (searchField == null)
 			return;
 
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-		int guiLeft = Reflection.get(event.chest, "guiLeft");
-		int guiTop = Reflection.get(event.chest, "guiTop");
-		GlStateManager.translate(-guiLeft, -guiTop, 300);
+		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.translate(-1, -1, 300);
 
 		// Draw search background
 		mc().getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/creative_inventory/tab_item_search.png"));
-		event.chest.drawTexturedModalRect(guiLeft + 80, guiTop + 4, 80, 4, 90, 12);
+		event.container.drawTexturedModalRect(80, 4, 80, 4, 90, 12);
 
 		searchField.drawTextBox();
 
 		// Draw search
 		String text = searchField.getText().toLowerCase();
-		if (!text.isEmpty()) {
-			List<ItemStack> items = event.chest.inventorySlots.getInventory();
-			int x = guiLeft + 7;
-			int y = guiTop + 17;
-			for (int i = 0; i < items.size() - 36; i++) {
-				int sX = x + (18 * (i % 9));
-				int sY = y + (18 * (i / 9));
 
-				if (shouldHide(items.get(i), text))
-					GuiScreen.drawRect(sX, sY, sX + 18, sY + 18, 0xAA000000);
+		// the maximum slot id before it is in the player's inventory
+		if (!text.isEmpty()) {
+			for (Slot slot : event.container.inventorySlots.inventorySlots) {
+				if (slot.inventory == player().inventory)
+					break;
+
+				if (shouldHide(slot.getStack(), text))
+					GuiScreen.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 18, slot.yDisplayPosition + 18, 0xAA000000);
 			}
 		}
 
-		GlStateManager.translate(guiLeft, guiTop, -300);
+		GlStateManager.translate(1, 1, -300);
 	}
 
 	private boolean shouldHide(ItemStack stack, String text) {

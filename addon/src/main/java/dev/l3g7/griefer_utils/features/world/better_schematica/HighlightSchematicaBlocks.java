@@ -127,6 +127,7 @@ public class HighlightSchematicaBlocks {
 					try {
 						stack = block.getPickBlock(mc().objectMouseOver, SchematicaUtil.getWorld(), pos, player());
 					} catch (Throwable t) {
+						System.err.println(t.getMessage());
 						// idk why this happens (Cannot get property [...] as is does not exist in minecraft:air)
 						return;
 					}

@@ -18,24 +18,15 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
-import dev.l3g7.griefer_utils.injection.mixin.minecraft.MixinGuiChest;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class DrawGuiContainerForegroundLayerEvent extends Event {
 
-	public final GuiChest chest;
+	public final GuiContainer container;
 
-	private DrawGuiContainerForegroundLayerEvent(GuiChest chest) {
-		this.chest = chest;
-	}
-
-	/**
-	 * Triggered by {@link MixinGuiChest}
-	 */
-	public static void post(GuiChest chest) {
-		MinecraftForge.EVENT_BUS.post(new DrawGuiContainerForegroundLayerEvent(chest));
+	public DrawGuiContainerForegroundLayerEvent(GuiContainer container) {
+		this.container = container;
 	}
 
 }

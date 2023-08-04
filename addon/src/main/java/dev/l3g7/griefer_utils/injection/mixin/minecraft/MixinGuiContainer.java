@@ -19,18 +19,19 @@
 package dev.l3g7.griefer_utils.injection.mixin.minecraft;
 
 import dev.l3g7.griefer_utils.event.events.render.DrawGuiContainerForegroundLayerEvent;
-import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(GuiChest.class)
-public class MixinGuiChest {
+@Mixin(GuiContainer.class)
+public class MixinGuiContainer {
 
-	@Inject(method = "drawGuiContainerForegroundLayer", at = @At("HEAD"))
-	private void injectGetDisplayName(int mouseX, int mouseY, CallbackInfo ci) {
-		DrawGuiContainerForegroundLayerEvent.post(((GuiChest) (Object) this));
+	@Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/inventory/GuiContainer;drawGuiContainerForegroundLayer(II)V"))
+	public void injectDrawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+		MinecraftForge.EVENT_BUS.post(new DrawGuiContainerForegroundLayerEvent((GuiContainer) (Object) this));
 	}
 
 }

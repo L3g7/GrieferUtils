@@ -63,7 +63,7 @@ public class QRCodeScanner extends Feature {
 			ItemStack stack;
 
 			if (mc().currentScreen != null) {
-				ModTextField mtf = FileProvider.getSingleton(ChestSearch.class).searchField;
+				ModTextField mtf = FileProvider.getSingleton(ItemSearch.class).searchField;
 				if (mtf != null && mtf.isFocused())
 					return;
 

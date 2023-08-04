@@ -61,6 +61,8 @@ public class ConfigPatcher {
 				pages.add(page);
 				parent.add("pages", pages);
 			}
+
+			rename("world.chest_search", "world.item_search");
 		}
 	}
 

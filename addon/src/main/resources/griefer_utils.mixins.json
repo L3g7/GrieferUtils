@@ -26,7 +26,6 @@
     "minecraft.MixinEntityEgg",
     "minecraft.MixinEntityPlayer",
     "minecraft.MixinEntityRenderer",
-    "minecraft.MixinGuiChest",
     "minecraft.MixinGuiIngame",
     "minecraft.MixinGuiScreen",
     "minecraft.MixinItemStack",
@@ -42,6 +41,7 @@
   ],
   "client": [
     "minecraft.MixinEntityPlayerSP",
+    "minecraft.MixinGuiContainer",
     "minecraft.MixinScaledResolution"
   ]
 }

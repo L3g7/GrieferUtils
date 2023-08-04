@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
-import dev.l3g7.griefer_utils.features.world.ChestSearch;
+import dev.l3g7.griefer_utils.features.world.ItemSearch;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -52,7 +52,7 @@ public class ParticleSaver extends ItemSaver {
 		.description("Fragt beim Einlösen eines Partikel-Effekts nach einer Bestätigung.")
 		.icon(createItem(Items.dye, 10, true));
 
-	private final IInventory inv = new InventoryBasic(ChestSearch.marker + "§0Willst du den Effekt einlösen?", false, 27);
+	private final IInventory inv = new InventoryBasic(ItemSearch.marker + "§0Willst du den Effekt einlösen?", false, 27);
 
 	public ParticleSaver() {
 		ItemStack grayGlassPane = createItem(Blocks.stained_glass_pane, 7, "§8");

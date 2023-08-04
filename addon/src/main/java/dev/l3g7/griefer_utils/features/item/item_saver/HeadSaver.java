@@ -27,7 +27,7 @@ import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
-import dev.l3g7.griefer_utils.features.world.ChestSearch;
+import dev.l3g7.griefer_utils.features.world.ItemSearch;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -57,7 +57,7 @@ public class HeadSaver extends ItemSaver {
 		.description("Fragt beim Einlösen von /kopf nach einer Bestätigung und zeigt dabei eine Vorschau des Kopfes an.")
 		.icon("steve");
 
-	private final IInventory inv = new InventoryBasic(ChestSearch.marker + "§0Willst du /kopf einlösen?", false, 27);
+	private final IInventory inv = new InventoryBasic(ItemSearch.marker + "§0Willst du /kopf einlösen?", false, 27);
 
 	public HeadSaver() {
 		ItemStack grayGlassPane = createItem(Blocks.stained_glass_pane, 7, "§8");

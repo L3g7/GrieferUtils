@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
@@ -85,6 +86,9 @@ public class BookFix extends Feature {
 	 * @return {@code true} if the click should be canceled.
 	 */
 	private boolean processClick(ItemStack item, boolean openBook) {
+		if (!ServerCheck.isOnGrieferGames())
+			return false;
+
 		if (item == null || (item.getItem() != Items.writable_book && item.getItem() != Items.written_book))
 			return false;
 

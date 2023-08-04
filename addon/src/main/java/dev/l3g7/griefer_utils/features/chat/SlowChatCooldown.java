@@ -74,7 +74,7 @@ public class SlowChatCooldown extends Feature {
 					continue;
 
 				String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
-				if (name.equals(name()))
+				if (name().equals(name))
 					timeoutEnd = System.currentTimeMillis() + 10_000;
 			}
 		}

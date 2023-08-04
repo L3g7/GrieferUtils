@@ -22,6 +22,7 @@ import com.github.lunatrius.core.client.renderer.GeometryTessellator;
 import com.github.lunatrius.schematica.api.ISchematic;
 import com.github.lunatrius.schematica.client.renderer.RenderSchematic;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.util.SchematicaUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -30,6 +31,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IWorldAccess;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -47,6 +50,7 @@ public class HighlightSchematicaBlocks {
 	private static final Map<Item, List<ItemStack>> requiredItems = new HashMap<>();
 	private static ISchematic schematic = null;
 	private static ItemStack heldItem = null;
+	private static boolean placedCompressedBlock = false;
 
 	private static boolean triggeredFromBlockUpdate = false;
 	private static final IWorldAccess WORLD_ACCESS = new IWorldAccess() {
@@ -77,7 +81,7 @@ public class HighlightSchematicaBlocks {
 
 	@SuppressWarnings("unused")
 	public static void drawCuboid(WorldRenderer worldRenderer, BlockPos pos, int sides, int argb) {
-		GeometryTessellator.drawCuboid(worldRenderer, pos, sides, isHoldingRequiredItem(pos) ? 0x7F00FF00 : 0x3F000000 | argb);
+		GeometryTessellator.drawCuboid(worldRenderer, pos, sides, isHoldingRequiredItem(pos) || placedCompressedBlock ? 0x7F00FF00 : 0x3F000000 | argb);
 	}
 
 	private static boolean isHoldingRequiredItem(BlockPos pos) {
@@ -95,7 +99,7 @@ public class HighlightSchematicaBlocks {
 		return stack.isItemEqual(player().getHeldItem());
 	}
 
-	public static void onRenderTick(TickEvent.RenderTickEvent event) {
+	static void onRenderTick(TickEvent.RenderTickEvent event) {
 		if (event.phase == TickEvent.Phase.END || player() == null)
 			return;
 
@@ -112,9 +116,17 @@ public class HighlightSchematicaBlocks {
 			getWorld().addWorldAccess(WORLD_ACCESS);
 		}
 
+		if (placedCompressedBlock) {
+			if (player().getHeldItem() != null)
+				placedCompressedBlock = false;
+
+			return;
+		}
+
 		if (heldItem == null && player().getHeldItem() == null || player().getHeldItem() == heldItem)
 			return;
 
+		// Switched from air to a block or the other way around
 		if (heldItem == null || player().getHeldItem() == null) {
 			if (isHeldItemRequired(heldItem) || isHeldItemRequired(player().getHeldItem()))
 				RenderSchematic.INSTANCE.refresh();
@@ -130,6 +142,25 @@ public class HighlightSchematicaBlocks {
 
 		heldItem = player().getHeldItem();
 		RenderSchematic.INSTANCE.refresh();
+	}
+
+	static void onPacketSend(PacketEvent.PacketSendEvent event) {
+		if (!(event.packet instanceof C08PacketPlayerBlockPlacement))
+			return;
+
+		C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
+		if (packet.getPlacedBlockDirection() == 255 || packet.getStack() == null)
+			return;
+
+		NBTTagCompound tag = packet.getStack().getTagCompound();
+		if (tag == null || !tag.hasKey("stackSize"))
+			return;
+
+		if (!isHeldItemRequired(packet.getStack()))
+			return;
+
+		placedCompressedBlock = true;
+		heldItem = packet.getStack();
 	}
 
 	private static boolean isHeldItemRequired(ItemStack heldItem) {

@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -84,6 +85,12 @@ public class BetterSchematica extends Feature {
 	public void onRenderTick(TickEvent.RenderTickEvent event) {
 		if (Constants.SCHEMATICA && highlightBlocks.get())
 			HighlightSchematicaBlocks.onRenderTick(event);
+	}
+
+	@EventListener
+	public void onPacketSend(PacketEvent.PacketSendEvent event) {
+		if (Constants.SCHEMATICA && highlightBlocks.get())
+			HighlightSchematicaBlocks.onPacketSend(event);
 	}
 
 	static boolean isHighlightBlocksEnabled() {

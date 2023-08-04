@@ -70,12 +70,6 @@ public class Trajectories extends Feature {
 	private final Disk circle = new Disk();
 	{ circle.setDrawStyle(GLU_SILHOUETTE); }
 
-	/**
-	 * Copyright (C) LiquidBounce 2020, GNU General Public License v3.0<br>
-	 * See <a href="https://github.com/CCBlueX/LiquidBounce/blob/9c546f0598843e315f26f35c6e0c31d211f55276/shared/main/java/net/ccbluex/liquidbounce/features/module/modules/render/Projectiles.kt">Projectiles.kt</a>
-	 * <p>
-	 * converted to java, integrated into GrieferUtils (rendering & checks)
-	 */
 	@EventListener
 	public void onRender(RenderWorldLastEvent event) {
 		if (mode.get() == TrajectoryMode.DISABLED || player() == null)

@@ -106,9 +106,6 @@ public class RenderUtil {
 		drawLine(start.getX(), start.getY(), start.getZ(), end.getX(), end.getY(), end.getZ(), color, width);
 	}
 
-	/**
-	 * Based on <a href="https://github.com/CCBlueX/LiquidBounce/blob/5419a2894b4665b7695d0443180275a70f13607a/src/main/java/net/ccbluex/liquidbounce/utils/render/RenderUtils.java#L82">LiquidBounce's RenderUtils#drawBlockBox</a>
-	 */
 	public static void drawLine(float startX, float startY, float startZ, float endX, float endY, float endZ, Color color, float width) {
 		Entity entity = mc().getRenderViewEntity();
 
@@ -194,9 +191,6 @@ public class RenderUtil {
 			}
 			return;
 		}
-
-//		if (true)
-//			return;
 
 		if (face.getAxis() == EnumFacing.Axis.X) {
 			if (face == EAST || bothSides) {

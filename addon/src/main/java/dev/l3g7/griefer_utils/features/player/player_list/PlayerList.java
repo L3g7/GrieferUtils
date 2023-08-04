@@ -59,10 +59,6 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 
-/**
- * An indicator for players on a <a href="https://scammer-radar.de/">ScammerRadar</a> list.
- * @see TrustedList
- */
 public abstract class PlayerList extends Feature {
 
 	private static final Pattern PROFILE_TITLE_PATTERN = Pattern.compile(String.format("^§6Profil von §e%s§r$", Constants.FORMATTED_PLAYER_NAME_PATTERN));

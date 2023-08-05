@@ -53,7 +53,7 @@ public class IChatComponentUtil {
 
 	public static void setNameWithPrefix(IChatComponent iChatComponent, String name, String realName, String prefix, boolean isTabList) {
 		List<IChatComponent> everything = iChatComponent.getSiblings();
-		IChatComponent parent = everything.get(everything.size() - 1);
+		IChatComponent parent = everything.size() > 0 ? everything.get(everything.size() - 1) : iChatComponent;
 
 		if (parent.getSiblings().isEmpty())
 			parent = iChatComponent;

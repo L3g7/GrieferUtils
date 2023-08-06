@@ -113,11 +113,15 @@ public class AutoUnnick extends Feature {
 		if (!name.contains("~"))
 			return;
 
+		String realName = NameCache.getName(name);
+		if (realName == null)
+			return;
+
 		for (Pattern pattern : Constants.MESSAGE_PATTERNS) {
 			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 
 			if (matcher.matches()) {
-				IChatComponentUtil.setNameWithPrefix(event.message, name, NameCache.getName(name), new PrefixFinder(matcher.group("rank"), matcher.group("name")).getPrefix(), false);
+				IChatComponentUtil.setNameWithPrefix(event.message, name, realName, new PrefixFinder(matcher.group("rank"), matcher.group("name")).getPrefix(), false);
 				return;
 			}
 		}

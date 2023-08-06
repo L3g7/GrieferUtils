@@ -47,6 +47,10 @@ public class GrieferUtilsUserManager {
 	private static final Map<UUID, GrieferUtilsGroup> specialBadges = new HashMap<>();
 	private static final Set<UUID> queuedUsers = new ConcurrentSet<>();
 
+	public static boolean isSpecial(String uuid) {
+		return specialBadges.containsKey(UUID.fromString(uuid));
+	}
+
 	public static void queueUser(UUID uuid) {
 		queuedUsers.add(uuid);
 	}

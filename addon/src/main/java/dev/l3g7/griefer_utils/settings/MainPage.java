@@ -48,7 +48,7 @@ public class MainPage {
 	private static final StringSetting filter = new StringSetting()
 		.name("Suche")
 		.icon("magnifying_glass")
-		.callback(MainPage::onSearch);
+		.callback(s -> MainPage.onSearch());
 
 	public static final List<SettingsElement> settings = new ArrayList<>(Arrays.asList(
 		new HeaderSetting("§r"),
@@ -95,14 +95,14 @@ public class MainPage {
 			.forEach(settings::add);
 	}
 
-	private static void onSearch(String query) {
+	private static void onSearch() {
 		TickScheduler.runAfterRenderTicks(() -> {
 			if (!(mc().currentScreen instanceof LabyModAddonsGui))
 				return;
 
 			List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "tempElementsStored");
 
-			if (query.isEmpty()) {
+			if (filter.get().isEmpty()) {
 				listedElementsStored.clear();
 				listedElementsStored.addAll(settings);
 				return;
@@ -113,7 +113,7 @@ public class MainPage {
 				listedElementsStored.remove(startIndex);
 
 			features.stream()
-				.filter(f -> f.getMainElement().getDisplayName().replaceAll("§.", "").toLowerCase().contains(query.toLowerCase()))
+				.filter(f -> f.getMainElement().getDisplayName().replaceAll("§.", "").toLowerCase().contains(filter.get().toLowerCase()))
 				.forEach(f -> listedElementsStored.add(f.getMainElement()));
 		}, 1);
 	}

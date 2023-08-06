@@ -21,6 +21,7 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 
 	private final int x, width;
 	private double y;
+	private int renderGroup = 0;
 
 	SelectButtonGroup(E placeholder, String label, int screenWidth) {
 		selected = placeholder;
@@ -29,7 +30,7 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 
 		// Create buttons
 		for (E value : placeholder.getDeclaringClass().getEnumConstants()) {
-			if (value == placeholder)
+			if (value.getName() == null || value.getName().isEmpty())
 				continue;
 
 			Button button = new IconButton(value);
@@ -57,6 +58,14 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 		return this;
 	}
 
+	public SelectButtonGroup<E> renderGroup(int renderGroup) {
+		this.renderGroup = renderGroup;
+		for (Button button : buttons)
+			button.renderGroup(renderGroup);
+
+		return this;
+	}
+
 	public int width() {
 		return width;
 	}
@@ -75,7 +84,7 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 
 	@Override
 	public void draw(int mouseX, int mouseY, int renderGroup) {
-		if (renderGroup != 0)
+		if (this.renderGroup != renderGroup)
 			return;
 
 		drawUtils.drawString(label, x, y, 1.2);

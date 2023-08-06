@@ -18,451 +18,343 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
+import com.labymedia.connect.api.CachedObject;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.misc.os.FileSelection;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.IconType;
-import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
+import dev.l3g7.griefer_utils.features.chat.chat_reactor.ChatReactor;
+import dev.l3g7.griefer_utils.misc.gui.elements.*;
+import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import net.labymod.addon.online.AddonInfoManager;
-import net.labymod.core.LabyModCore;
-import net.labymod.gui.elements.DropDownMenu;
-import net.labymod.gui.elements.ModTextField;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.gui.elements.Scrollbar;
-import net.labymod.main.LabyMod;
-import net.labymod.settings.LabyModAddonsGui;
-import net.labymod.settings.elements.AddonElement;
+import net.labymod.settings.LabyModModuleEditorGui;
+import net.labymod.settings.PreviewRenderer;
 import net.labymod.settings.elements.ControlElement;
-import net.labymod.utils.DrawUtils;
-import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
-import static net.labymod.main.ModTextures.MISC_HEAD_QUESTION;
+public class AddChatMenuEntryGui extends Gui {
 
-public class AddChatMenuEntryGui extends GuiScreen {
+	private static final int RENDER_GROUP_POST = 1; // Drawable objects rendered after everything else
+	private static final int RENDER_GROUP_SELECTED = 2; // Rendered if a type is selected
+	private static final int RENDER_GROUP_ITEM_ICON = 3; // Rendered if the icon type "item" is selected
+	private static final int RENDER_GROUP_ITEM_ICON_MENU = 4;
+	private static final int RENDER_GROUP_FILE_ICON = 5; // Rendered if the icon type "file" is selected
+
+	private static final int PADDING = 35; // 35px between inputs
+	private static final int HEADER_HEIGHT = 50;
 
 	private final GuiScreen backgroundScreen;
-	private ModTextField commandInput;
-	private ModTextField nameInput;
-	private GuiButton cancelButton;
-	private GuiButton doneButton;
-	private final ChatMenuEntry entry;
-	private final ChatMenuEntry ogEntry;
+	private final EntryDisplaySetting editedEntry;
 
-	private final List<ActionButton> actionButtons = new ArrayList<>();
-	private final List<IconTypeButton> iconTypeButtons = new ArrayList<>();
-	private GuiButton buttonBack;
-	private DropDownMenu<Action> textCompareDropDown;
+	// Input fields
+	private SelectButtonGroup<Action> actionTypeInput;
+	private TextField actionInput;
+	private TextField nameInput;
+	private SelectButtonGroup<IconType> iconInput;
+	private DropDown<ItemStack> itemIconInput;
+	private ImageSelection fileIconInput;
 
-	private ModTextField fileInput;
-	private GuiButton fileButton;
-	private ItemSetting itemSetting;
+	private Scrollbar scrollbar;
+	private Button backButton;
+	private Button cancelButton;
+	private Button saveButton;
 
-	private final Scrollbar scrollbar = new Scrollbar(1);
-
-	public AddChatMenuEntryGui(ChatMenuEntry entry, GuiScreen backgroundScreen) {
-		this.entry = entry == null ? new ChatMenuEntry() : entry;
-		this.ogEntry = this.entry;
+	public AddChatMenuEntryGui(EntryDisplaySetting entry, GuiScreen backgroundScreen) {
 		this.backgroundScreen = backgroundScreen;
+		editedEntry = entry;
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public void initGui() {
 		super.initGui();
-		this.scrollbar.setPosition(this.width / 2 + 172 , 50, this.width / 2 + 172 + 4, this.height - 15);
-		this.scrollbar.setSpeed(20);
-		this.scrollbar.init();
-
 		backgroundScreen.width = width;
 		backgroundScreen.height = height;
-		int y = 50 + 80;
+		if (backgroundScreen instanceof LabyModModuleEditorGui)
+			PreviewRenderer.getInstance().init(AddChatMenuEntryGui.class);
 
-		commandInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 95, 240, 20);
-		commandInput.setText((String) entry.command);
-		commandInput.setMaxStringLength(Integer.MAX_VALUE);
+		int center = width / 2;
+		int top = HEADER_HEIGHT + 80; // 80px for breadcrumb
 
+		// Header and breadcrumb
+		createCenteredText("§e§l" + Constants.ADDON_NAME, 1.3).pos(center, 81);
+		createCenteredText("§e§lChatmenü", .7).pos(center, 105);
+		backButton = createButton("<") // Back button
+			.pos(center - 100, 20)
+			.size(22, 20)
+			.renderGroup(RENDER_GROUP_POST)
+			.callback(this::close);
 
-		nameInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 120, y + 85 + 68, 240, 20);
+		// cancel and save button
+		int buttonWidth = 100;
+		cancelButton = createButton(editedEntry == null ? "Abbrechen" : "Löschen")
+			.x(center - buttonWidth - 5) // 2 * 5px padding between buttons
+			.size(buttonWidth, 20)
+			.callback(() -> {
+				if (editedEntry != null)
+					editedEntry.delete();
+				close();
+			});
+
+		saveButton = createButton(editedEntry == null ? "Hinzufügen" : "Bearbeiten")
+			.x(center + 5) // 2 * 5px padding between buttons
+			.size(buttonWidth, 20)
+			.callback(this::save);
+
+		// Action selection
+		actionTypeInput = createSelectGroup(Action.CONSUMER, "Aktion")
+			.y(top);
+
+		int width = actionTypeInput.width();
+		int x = center - width / 2;
+
+		// Scrollbar
+		int guiRightEdge = (this.width - width) / 2 + width;
+		scrollbar = new Scrollbar(1);
+		scrollbar.setPosition(guiRightEdge + 4, 50, guiRightEdge + 8, this.height - 15);
+		scrollbar.setSpeed(20);
+		scrollbar.init();
+
+		// Trigger input
+		actionInput = createTextField("<Von Auswahl abhängiges Label>")
+			.pos(x, actionTypeInput.bottom() + PADDING)
+			.width(width)
+			.renderGroup(RENDER_GROUP_SELECTED);
+
+		// Command input
+		nameInput = createTextField("Befehl")
+			.pos(x, actionInput.bottom() + PADDING)
+			.width(width)
+			.renderGroup(RENDER_GROUP_SELECTED);
+
+		iconInput = createSelectGroup(IconType.DEFAULT, "Icon")
+			.y(nameInput.bottom() + PADDING)
+			.renderGroup(RENDER_GROUP_SELECTED);
+
+		width = iconInput.width();
+
+		itemIconInput = createDropDown(new ItemStack(Blocks.stone), ItemUtil.ALL_ITEMS, "")
+			.y(iconInput.bottom())
+			.width(width)
+			.renderGroup(RENDER_GROUP_ITEM_ICON)
+			.menuRenderGroup(RENDER_GROUP_ITEM_ICON_MENU);
+
+		fileIconInput = createImageSelection("")
+			.pos((this.width - width) / 2d, iconInput.bottom())
+			.width(width)
+			.renderGroup(RENDER_GROUP_FILE_ICON);
+
+		if (editedEntry == null)
+			return;
+
+		// Initialize inputs with default values
+		ChatMenuEntry entry = editedEntry.entry;
 		nameInput.setText(entry.name);
-		nameInput.setMaxStringLength(Integer.MAX_VALUE);
-
-		buttonList.clear();
-		buttonList.add(cancelButton = new GuiButton(0, width / 2 - 105, y + 95, 100, 20, entry.completed ? "Löschen" : "Abbrechen"));
-		buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, y + 95, 100, 20, entry.completed ? "Speichern" : "Hinzufügen"));
-
-		int bgn = (width - 336) / 2;
-
-		actionButtons.clear();
-		int x = 0;
-		for (int i = 0; i < Action.values().length; i++) {
-			Action value = Action.values()[i];
-			if(value == Action.CONSUMER)
-				continue;
-			int sLen = drawUtils().getStringWidth(value.name) + 29;
-			ActionButton btn = new ActionButton(100 + i, bgn + x, y + 25, sLen, 23, value);
-			buttonList.add(btn.wrappedButton);
-			actionButtons.add(btn);
-			x += sLen + 4;
+		actionTypeInput.select(entry.action);
+		actionInput.setText((String) entry.command);
+		iconInput.select(entry.iconType);
+		switch (entry.iconType) {
+			case ITEM:
+				itemIconInput.setSelected((ItemStack) entry.icon);
+				break;
+			case IMAGE_FILE:
+				fileIconInput.select((File) entry.icon);
+				break;
 		}
-		buttonList.add(buttonBack = new GuiButton(1, this.width / 2 - 100, 20, 22, 20, "<"));
-
-		bgn = (width - 240) / 2;
-
-		iconTypeButtons.clear();
-		x = 0;
-		for (int i = 0; i < IconType.values().length; i++) {
-			IconType value = IconType.values()[i];
-			if(value == IconType.SYSTEM)
-				continue;
-			int sLen = drawUtils().getStringWidth(value.name) + 29 + 20;
-			IconTypeButton btn = new IconTypeButton(200 + i, bgn + x, y + 183 + 25 + 3, sLen, 23, value);
-			buttonList.add(btn.wrappedButton);
-			iconTypeButtons.add(btn);
-			x += sLen + 4;
-		}
-		buttonList.add(buttonBack = new GuiButton(1, this.width / 2 - 100, 20, 22, 20, "<"));
-
-		textCompareDropDown = new DropDownMenu<>("", 0, 0, 0, 0);
-		textCompareDropDown.fill(Action.values());
-		textCompareDropDown.setSelected(entry.action);
-		textCompareDropDown.setEntryDrawer((o, ex, ey, trimmedEntry) -> drawUtils().drawString(((Action) o).name, ex, ey));
-		textCompareDropDown.setY(y + 183 + 45);
-		textCompareDropDown.setWidth(240);
-		textCompareDropDown.setHeight(17);
-
-
-
-		fileInput = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), bgn + 26, y + 183 + 88, 240 - 60 - 6 - 26, 20);
-		fileInput.setPlaceHolder("");
-		fileInput.setMaxStringLength(Integer.MAX_VALUE);
-		buttonList.add(fileButton = new GuiButton(4, this.width / 2 + 60, y + 183 + 88, 60, 20, "Auswählen"));
-
-		itemSetting = new ItemSetting(ItemUtil.ALL_ITEMS, true)
-			.name("Item")
-			.description("Die ID / der Namespace des Items / Blocks, das als Icon angezeigt werden soll.")
-			.callback(stack -> entry.icon = stack);
-
-		itemSetting.init();
-		if (entry.iconType == IconType.ITEM)
-			itemSetting.set((ItemStack) entry.icon);
 	}
 
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(0, 0, 0, 0);
-		super.drawScreen(mouseX, mouseY, partialTicks);
-		GL11.glDisable(GL11.GL_SCISSOR_TEST);
-		int height = (entry.action == null ? 217 : (entry.iconType != null && entry.iconType != IconType.DEFAULT ? 403 + 60 : 403)) + 20;
-		int guiScale = new ScaledResolution(mc).getScaleFactor();
-
-		scrollbar.update(height - (int) scrollbar.getTop() + (entry.action == null ? 0 : entry.iconType != null && entry.iconType != IconType.DEFAULT ? getLowerSpacing(guiScale) : ((26 * guiScale) - 34)));
-
-		GL11.glColorMask(false, false, false, false);
-		for (GuiButton guiButton : this.buttonList) guiButton.drawButton(this.mc, mouseX, mouseY);
-		GL11.glColorMask(true, true, true, true);
-
-		LabyModAddonsGui addonsGui = (LabyModAddonsGui) backgroundScreen;
-		DrawUtils draw = LabyMod.getInstance().getDrawUtils();
-		draw.drawAutoDimmedBackground(scrollbar.getScrollY());
-
+		// Draw background
+		drawUtils.drawAutoDimmedBackground(scrollbar.getScrollY());
 		scrollbar.draw(mouseX, mouseY);
-		drawUtils().drawCenteredString("§e§l" + Constants.ADDON_NAME, width / 2f, 81 + scrollbar.getScrollY(), 1.3);
-		drawUtils().drawCenteredString("§e§lChatmenü", width / 2f, 105 + scrollbar.getScrollY(), .7);
 
 		GL11.glTranslated(0, scrollbar.getScrollY(), 0);
-		mouseY -= scrollbar.getScrollY();
-		for (ActionButton actionButton : actionButtons) {
-			GuiButton button = actionButton.wrappedButton;
-			int x = button.xPosition;
-			int y = button.yPosition;
-			drawUtils().drawRectangle(x, y, x + button.width, y + button.height, ModColor.toRGB(80, 80, 80, 60));
-			mc.getTextureManager().bindTexture(actionButton.image.getTextureIcon());
-			boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + button.width && mouseY < y + button.height;
 
-			if (hovered || (entry.action == actionButton.action)) {
-				drawUtils().drawTexture(x + 2, y + 2, 256.0, 256.0, 18, 18);
-				drawUtils().drawString(button.displayString, x + 25, (double) y + 7);
-			} else {
-				drawUtils().drawTexture(x + 3, y + 3, 256.0, 256.0, 16.0, 16.0);
-				int r = 180;
-				drawUtils().drawString(fontRendererObj, button.displayString, x + 24, y + 7, ModColor.toRGB(r, r, r, 0));
-			}
-		}
-		int x = width / 2 - 120;
-		drawUtils().drawString("Aktion", width / 2f - 168, (actionButtons.get(0).wrappedButton.yPosition) - fontRendererObj.FONT_HEIGHT - 8, 1.2);
+		// Configure content
+		saveButton.enabled = !actionInput.getText().isEmpty() && !nameInput.getText().isEmpty();
 
-		doneButton.yPosition = cancelButton.yPosition = height - 40;
-		doneButton.enabled = !commandInput.getText().isEmpty() && !nameInput.getText().isEmpty() && (entry.iconType == IconType.DEFAULT || entry.icon != null);
-		buttonBack.id = doneButton.enabled ? 1 : 7;
-		doneButton.drawButton(mc, mouseX, mouseY);
-		cancelButton.drawButton(mc, mouseX, mouseY);
-
-		if (entry.action != null) {
-			String cmdTitle = "";
-			switch (entry.action) {
+		if (actionTypeInput.getSelected() == Action.CONSUMER)
+			cancelButton.yPosition = saveButton.yPosition = (int) actionTypeInput.bottom() + PADDING;
+		else {
+			switch (actionTypeInput.getSelected()) {
 				case OPEN_URL:
-					cmdTitle = "URL";
-					nameInput.setPlaceHolder("§8NameMC öffnen");
-					commandInput.setPlaceHolder("§8https://namemc.com/search?q=%name%");
+					actionInput.label("URL").placeholder("https://namemc.com/search?q=%name%");
+					nameInput.placeholder("NameMC öffnen");
 					break;
 				case RUN_CMD:
-					cmdTitle = "Befehl";
-					nameInput.setPlaceHolder("§8Spieler kicken");
-					commandInput.setPlaceHolder("§8/startkick %name%");
+					actionInput.label("Befehl").placeholder("/startkick %name%");
+					nameInput.placeholder("Spieler kicken");
 					break;
 				case SUGGEST_CMD:
-					cmdTitle = "Befehl";
-					nameInput.setPlaceHolder("§8MSG an Spieler");
-					commandInput.setPlaceHolder("§8/msg %name% ");
+					actionInput.label("Befehl").placeholder("§8/msg %name%");
+					nameInput.placeholder("MSG an Spieler");
 					break;
 			}
-			drawUtils().drawString(cmdTitle, x, commandInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-			commandInput.drawTextBox();
 
-			drawUtils().drawString("Name", x, nameInput.yPosition - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-			nameInput.drawTextBox();
-
-			for (IconTypeButton iconTypeButton : iconTypeButtons) {
-				GuiButton button = iconTypeButton.wrappedButton;
-				x = button.xPosition + 10;
-				int y = button.yPosition;
-				drawUtils().drawRectangle(x - 10, y, x - 10 + button.width, y + button.height, ModColor.toRGB(80, 80, 80, 60));
-				if (iconTypeButton.type == IconType.DEFAULT)
-					mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + entry.action.defaultIcon + ".png"));
-				else
-					mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + iconTypeButton.type.defaultIcon + ".png"));
-				boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + button.width && mouseY < y + button.height;
-
-				if (hovered || (entry.iconType == iconTypeButton.type)) {
-					drawUtils().drawTexture(x + 2, y + 2, 256.0, 256.0, 18, 18);
-					drawUtils().drawString(button.displayString, x + 25, (double) y + 7);
-				} else {
-					drawUtils().drawTexture(x + 3, y + 3, 256.0, 256.0, 16.0, 16.0);
-					int r = 180;
-					drawUtils().drawString(fontRendererObj, button.displayString, x + 24, y + 7, ModColor.toRGB(r, r, r, 0));
-				}
+			List<Button> buttons = Reflection.get(iconInput, "buttons");
+			Reflection.set(buttons.get(0), new ControlElement.IconData("griefer_utils/icons/" + actionTypeInput.getSelected().getIcon() + ".png"), "icon");
+			double bottom;
+			switch (iconInput.getSelected()) {
+				case ITEM:
+					bottom = itemIconInput.bottom();
+					break;
+				case IMAGE_FILE:
+					bottom = fileIconInput.bottom();
+					saveButton.enabled &= fileIconInput.getSelection() != null;
+					break;
+				default:
+					bottom = iconInput.bottom();
 			}
-			x = width / 2 - 120;
-			drawUtils().drawString("Icon", x, (iconTypeButtons.get(0).wrappedButton.yPosition) - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-
-
-			if (entry.iconType == IconType.IMAGE_FILE) {
-				int y = fileInput.yPosition;
-				drawUtils().drawString("Datei", x, y - fontRendererObj.FONT_HEIGHT - 8, 1.2);
-				if (entry.iconType == IconType.IMAGE_FILE) {
-					if (entry.icon == null)
-						fileInput.setText("§8Wähle eine Datei aus");
-					else
-						fileInput.setText(((File) entry.icon).getName());
-				}
-				fileInput.drawTextBox();
-				fileButton.drawButton(mc, mouseX, mouseY);
-				drawUtils().bindTexture(entry.icon == null ? MISC_HEAD_QUESTION : new ResourceLocation("griefer_utils/user_content/" + entry.icon.hashCode()));
-				drawUtils().drawTexture(x, y, 256.0, 256.0, 20, 20);
-			} else if (entry.iconType == IconType.ITEM) {
-				x = (width / 2 - 120);
-				int y = 50 + 80 + 183 + 88;
-				itemSetting.draw(x, y, x + 240, y + 23, mouseX, mouseY);
-			}
+			cancelButton.yPosition = saveButton.yPosition = (int) bottom + PADDING;
+			scrollbar.update(saveButton.height + saveButton.yPosition - HEADER_HEIGHT);
 		}
+
+		mouseY -= scrollbar.getScrollY();
+
+		// Draw content
+		draw(mouseX, mouseY);
+
+		if (actionTypeInput.getSelected() != Action.CONSUMER)
+			draw(mouseX, mouseY, RENDER_GROUP_SELECTED);
+
+		if (iconInput.getSelected() == IconType.ITEM)
+			draw(mouseX, mouseY, RENDER_GROUP_ITEM_ICON);
+		else if (iconInput.getSelected() == IconType.IMAGE_FILE)
+			draw(mouseX, mouseY, RENDER_GROUP_FILE_ICON);
 
 		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
 
-		draw.drawOverlayBackground(0, 45);
-		draw.drawGradientShadowTop(45, 0.0, this.width);
-		draw.drawOverlayBackground(this.height - 10, this.height);
-		draw.drawGradientShadowBottom((double) this.height - 10, 0.0, this.width);
-		buttonBack.drawButton(mc, mouseX, mouseY + (int) scrollbar.getScrollY());
+		// Draw header
+		int headerSize = 45;
+		drawUtils.drawOverlayBackground(0, headerSize); // header background
+		drawUtils.drawGradientShadowTop(headerSize, 0.0, this.width); // header gradient
 
-		if (AddonInfoManager.getInstance().isLoaded()) {
-			AddonElement openedAddonSettings = Reflection.get(addonsGui, "openedAddonSettings");
-			draw.drawString(openedAddonSettings.getAddonInfo().getName(), this.width / 2f - 100 + 30, 25.0);
-			openedAddonSettings.drawIcon(this.width / 2 + 100 - 20, 20, 20, 20);
-		}
+		// Draw currently open addon
+		int actionSize = 100;
+		drawUtils.drawString("GrieferUtils", width / 2d - actionSize + 30, 25);
+		int addonIconSize = 20;
+		drawUtils.drawImageUrl(AddonUtil.getInfo().getImageURL(), width / 2d + actionSize - addonIconSize, 20, 256, 256, addonIconSize, addonIconSize);
 
-	}
+		// Draw footer
+		int footerSize = 10;
+		drawUtils.drawOverlayBackground(height - footerSize, height); // footer background
+		drawUtils.drawGradientShadowBottom(height - footerSize, 0, width); // footer gradient
 
-	private int getLowerSpacing(int scale) {
-		switch (scale) {
-			case 1:
-			case 2: return 0;
-			case 3: return 75;
-			default: return 85;
-		}
-	}
+		// Draw citybuild menu over footer
+		GL11.glTranslated(0, scrollbar.getScrollY(), 0);
+		itemIconInput.setScreenHeight(MinecraftUtil.screenHeight() - scrollbar.getScrollY());
+		draw(mouseX, mouseY, RENDER_GROUP_ITEM_ICON_MENU);
+		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
 
-	public void updateScreen() {
-		backgroundScreen.updateScreen();
-		commandInput.updateCursorCounter();
-		nameInput.updateCursorCounter();
-		itemSetting.updateScreen();
-	}
-
-	protected void actionPerformed(GuiButton button) throws IOException {
-		super.actionPerformed(button);
-		if (button.id / 100 == 1) {
-			entry.action = actionButtons.get(button.id - 101).action;
-			return;
-		}
-		else if (button.id / 100 == 2) {
-			IconType oldType = entry.iconType;
-			entry.iconType = iconTypeButtons.get(button.id - 201).type;
-			if (entry.iconType != oldType) {
-				entry.icon = null;
-				itemSetting.reset();
-			}
-			fileButton.enabled = entry.iconType == IconType.IMAGE_FILE;
-			return;
-		}
-
-		switch (button.id) {
-			case 2:
-				entry.iconType = IconType.DEFAULT;
-				break;
-			case 3:
-				entry.iconType = IconType.ITEM;
-				break;
-			case 4:
-				FileSelection.chooseFile(file -> {
-					if (file == null)
-						return;
-
-					ResourceLocation location = new ResourceLocation("griefer_utils/user_content/" + file.hashCode());
-
-					try {
-						BufferedImage img = ImageIO.read(file);
-						mc().addScheduledTask(() -> {
-							mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
-						});
-					} catch (IOException | NullPointerException e) {
-						labyMod().getGuiCustomAchievement().displayAchievement("§e§l§nFehlerhafte Datei", "§eDie Datei konnte nicht als Bild geladen werden.");
-						return;
-					}
-
-					entry.icon = file;
-					fileInput.setText(file.getName());
-				}, "Bild", ImageIO.getReaderFileSuffixes());
-				break;
-			case 7:
-				if (ogEntry.completed) { // Save original entry if making entry invalid and going back
-					new EntryDisplaySetting(ogEntry, FileProvider.getSingleton(ChatMenu.class).getMainElement());
-					ChatMenu.saveEntries();
-				}
-				Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
-				backgroundScreen.initGui(); // Update settings
-				break;
-			case 1:
-				entry.name = nameInput.getText();
-				entry.command = commandInput.getText();
-				entry.completed = true;
-				new EntryDisplaySetting(entry, FileProvider.getSingleton(ChatMenu.class).getMainElement());
-				ChatMenu.saveEntries();
-				// Fall-through
-			case 0:
-				Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
-				backgroundScreen.initGui(); // Update settings
-		}
-	}
-
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		if (buttonBack.mousePressed(this.mc, mouseX, mouseY)) {
-			buttonBack.playPressSound(this.mc.getSoundHandler());
-			this.actionPerformed(buttonBack);
-			return;
-		}
-
-		super.mouseClicked(mouseX, mouseY -= (int) scrollbar.getScrollY(), mouseButton);
-
-		textCompareDropDown.onClick(mouseX, mouseY, mouseButton);
-		commandInput.mouseClicked(mouseX, mouseY, mouseButton);
-		nameInput.mouseClicked(mouseX, mouseY, mouseButton);
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
-		if (entry.iconType == IconType.ITEM) {
-			itemSetting.mouseClicked(mouseX, mouseY, mouseButton);
-			itemSetting.onClickDropDown(mouseX, mouseY, mouseButton);
-		}
+		// Draw post
+		draw(mouseX, (int) (mouseY + scrollbar.getScrollY()), RENDER_GROUP_POST);
 	}
 
 	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		super.mouseReleased(mouseX, mouseY -= scrollbar.getScrollY(), state);
-		textCompareDropDown.onRelease(mouseX, mouseY, state);
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+		backButton.mousePressed(mouseX, mouseY, mouseButton); // Back button is not affect by scroll
+
+		// Ignore clicks in header
+		if (mouseY < HEADER_HEIGHT - 5) // allow click in gradient (5px)
+			return;
+
+		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
+		mouseY -= scrollbar.getScrollY();
+
+		// prioritize cityBuild as it overlaps with the save and close buttons
+		if (iconInput.getSelected() == IconType.ITEM && itemIconInput.onClick(mouseX, mouseY, mouseButton))
+			return;
+
+		for (Clickable clickable : clickables)
+			if (clickable != backButton // Don't handle backButton, as it's already handled
+			&& clickable != itemIconInput) // Don't handle itemIconInput, as it's already handled
+				clickable.mousePressed(mouseX, mouseY, mouseButton);
+	}
+
+	@Override
+	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+		mouseY -= scrollbar.getScrollY();
 		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.RELEASED);
-		if (entry.iconType == IconType.ITEM)
-			itemSetting.mouseRelease(mouseX, mouseY, state);
+		super.mouseReleased(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
-		super.mouseClickMove(mouseX, mouseY -= scrollbar.getScrollY(), mouseButton, timeSinceLastClick);
-		textCompareDropDown.onDrag(mouseX, mouseY, mouseButton);
+		mouseY -= scrollbar.getScrollY();
 		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
-		if (entry.iconType == IconType.ITEM)
-			itemSetting.mouseClickMove(mouseX, mouseY, mouseButton);
-	}
-
-	protected void keyTyped(char typedChar, int keyCode) {
-		if (keyCode == 1 || (typedChar == '\b' && !(commandInput.isFocused() || nameInput.isFocused() || itemSetting.isFocused()))) // ESC / BACK
-			Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
-
-		commandInput.textboxKeyTyped(typedChar, keyCode);
-		nameInput.textboxKeyTyped(typedChar, keyCode);
-		if (entry.iconType == IconType.ITEM)
-			itemSetting.keyTyped(typedChar, keyCode);
-
-		if (typedChar != '\t')
-			return;
-
-		boolean enableName = commandInput.isFocused();
-		commandInput.setFocused(!enableName);
-		nameInput.setFocused(enableName);
+		super.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
 	}
 
 	@Override
 	public void handleMouseInput() throws IOException {
+		if (itemIconInput.getHoverSelected() == null)
+			scrollbar.mouseInput();
+		else
+			itemIconInput.onScroll();
 		super.handleMouseInput();
-		scrollbar.mouseInput();
-		itemSetting.onScrollDropDown();
 	}
 
-	private static class IconTypeButton {
-		private final GuiButton wrappedButton;
-		private final IconType type;
+	@Override
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		if (!actionInput.isFocused() && !nameInput.isFocused())
+			if (keyCode == 1 || typedChar == '\b') // ESC / Back
+				close();
 
-		public IconTypeButton(int buttonId, int x, int y, int widthIn, int heightIn, IconType type) {
-			this.wrappedButton = new GuiButton(buttonId, x, y, widthIn, heightIn, type.name);
-			this.type = type;
+		if (typedChar == '\t') {
+			// Trigger -> Command
+			if (actionInput.isFocused()) {
+				actionInput.setFocused(false);
+				nameInput.setFocused(true);
+			}
+
+			// Command -> Trigger / Item icon
+			else if (nameInput.isFocused()) {
+				nameInput.setFocused(false);
+				if (iconInput.getSelected() == IconType.ITEM)
+					itemIconInput.onClick(itemIconInput.getX(), itemIconInput.getY(), 0); // Use onClick so scrollbar is initialized
+				else
+					actionInput.setFocused(true);
+			}
+
+			// CityBuild -> Trigger
+			else if (itemIconInput.isOpen()) {
+				itemIconInput.setOpen(false);
+				actionInput.setFocused(true);
+			}
 		}
+		super.keyTyped(typedChar, keyCode);
 	}
 
-	private static class ActionButton {
-		private final GuiButton wrappedButton;
-		private final Action action;
-		private final ControlElement.IconData image;
+	private void close() {
+		backgroundScreen.initGui();
+		Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
+	}
 
-		public ActionButton(int buttonId, int x, int y, int widthIn, int heightIn, Action action) {
-			this.wrappedButton = new GuiButton(buttonId, x, y, widthIn, heightIn, action.name);
-			this.image = new ControlElement.IconData("griefer_utils/icons/" + action.defaultIcon + ".png");
-			this.action = action;
-		}
+	private void save() {
+		ChatMenuEntry entry = editedEntry != null ? editedEntry.entry : new ChatMenuEntry();
+		entry.name = nameInput.getText();
+		entry.action = actionTypeInput.getSelected();
+		entry.command = actionInput.getText();
+		entry.iconType = iconInput.getSelected();
+		entry.icon = iconInput.getSelected() == IconType.ITEM ? itemIconInput.getSelected() : fileIconInput.getSelection();
+		entry.completed = true;
+
+		if (editedEntry == null)
+			// Add entry
+			new EntryDisplaySetting(entry, FileProvider.getSingleton(ChatMenu.class).getMainElement());
+
+		close();
 	}
 
 }

@@ -12,8 +12,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class DropDown<E extends Enum<E>> extends DropDownMenu<E> implements Drawable, Clickable {
+public class DropDown<T> extends DropDownMenu<T> implements Drawable, Clickable {
 
 	protected static final DrawUtils drawUtils = MinecraftUtil.drawUtils();
 	private static final double LABEL_HEIGHT = 9 * 1.2;
@@ -25,53 +26,70 @@ public class DropDown<E extends Enum<E>> extends DropDownMenu<E> implements Draw
 	private int y;
 	private int renderGroup = 0, menuRenderGroup = 0;
 
-	DropDown(E placeholder, String label, int screenWidth) {
+	private DropDown(String label, int screenWidth) {
 		super("", 0, 0, 0, 20);
+
 		this.label = label;
 		this.screenWidth = screenWidth;
-
-		setSelected(placeholder);
-		setEntryDrawer((e, x, y, trimmed) -> drawUtils.drawString(Reflection.get(e, "name"), x, y));
-		for (E e : placeholder.getDeclaringClass().getEnumConstants())
-			addOption(e);
-
-		if (placeholder instanceof ItemEnum) {
-			setEntryDrawer((o, x, y, trimmedEntry) -> {
-				boolean isSelected = (getY() + getHeight() / 2 - 4) == y;
-
-				drawUtils.drawString(((Citybuild) o).getDisplayName(), x + 9, y);
-
-				GlStateManager.pushMatrix();
-				double scale = 10 / 16d;
-				double inverseScale = 1 / scale;
-				double scaledX = (x - 3) * inverseScale;
-				double scaledY = (y - (isSelected ? 1 : 2)) * inverseScale;
-				GlStateManager.scale(scale, scale, scale);
-				drawUtils.drawItem(((ItemEnum) o).getItem(), scaledX, scaledY, null);
-
-				GlStateManager.popMatrix();
-			});
-		}
 	}
 
-	public DropDown<E> width(double guiWidth) {
+	static <T extends Enum<T>> DropDown<T> fromEnum(T placeholder, String label, int screenWidth) {
+		DropDown<T> dropDown = new DropDown<>(label, screenWidth);
+
+		dropDown.setSelected(placeholder);
+		dropDown.setEntryDrawer((e, x, y, trimmed) -> drawUtils.drawString(Reflection.get(e, "name"), x, y));
+
+		for (T value : placeholder.getDeclaringClass().getEnumConstants())
+			dropDown.addOption(value);
+
+		if (placeholder instanceof ItemEnum) {
+			dropDown.setEntryDrawer((o, x, y, trimmedEntry) -> {
+				boolean isSelected = (dropDown.getY() + dropDown.getHeight() / 2 - 4) == y;
+
+				drawUtils.drawString(((Citybuild) o).getDisplayName(), x + 9, y);
+				dropDown.drawItemScaled(x, y, isSelected, ((ItemEnum) o).getItem());
+			});
+		}
+		return dropDown;
+	}
+
+	static <T extends ItemStack> DropDown<T> fromItemStack(T placeholder, List<T> options, String label, int screenWidth) {
+		DropDown<T> dropDown = new DropDown<>(label, screenWidth);
+
+		dropDown.setSelected(placeholder);
+		dropDown.setEntryDrawer((e, x, y, trimmed) -> drawUtils.drawString(Reflection.get(e, "name"), x, y));
+		for (T option : options)
+			dropDown.addOption(option);
+
+		dropDown.setEntryDrawer((o, x, y, trimmedEntry) -> {
+			ItemStack stack = (ItemStack) o;
+			boolean isSelected = (dropDown.getY() + dropDown.getHeight() / 2 - 4) == y;
+
+			drawUtils.drawString(stack.getDisplayName(), x + 9, y);
+			dropDown.drawItemScaled(x, y, isSelected, stack);
+		});
+
+		return dropDown;
+	}
+
+	public DropDown<T> width(double guiWidth) {
 		setX((int) ((screenWidth - guiWidth) / 2) + 1); // rendering of menu is offset by 1px
 		setWidth((int) guiWidth);
 		return this;
 	}
 
-	public DropDown<E> y(double y) {
+	public DropDown<T> y(double y) {
 		this.y = (int) y;
 		setY((int) (y + LABEL_HEIGHT + 5));
 		return this;
 	}
 
-	public DropDown<E> renderGroup(int renderGroup) {
+	public DropDown<T> renderGroup(int renderGroup) {
 		this.renderGroup = renderGroup;
 		return this;
 	}
 
-	public DropDown<E> menuRenderGroup(int menuRenderGroup) {
+	public DropDown<T> menuRenderGroup(int menuRenderGroup) {
 		this.menuRenderGroup = menuRenderGroup;
 		return this;
 	}
@@ -82,6 +100,20 @@ public class DropDown<E extends Enum<E>> extends DropDownMenu<E> implements Draw
 
 	public void setScreenHeight(double height) {
 		this.screenHeight = (int) height;
+	}
+
+	private void drawItemScaled(int x, int y, boolean isSelected, ItemStack stack) {
+		GlStateManager.pushMatrix();
+
+		double scale = 10 / 16d;
+		double inverseScale = 1 / scale;
+		double scaledX = (x - 3) * inverseScale;
+		double scaledY = (y - (isSelected ? 1 : 2)) * inverseScale;
+		GlStateManager.scale(scale, scale, scale);
+
+		drawUtils.drawItem(stack, scaledX, scaledY, null);
+
+		GlStateManager.popMatrix();
 	}
 
 	@Override
@@ -109,7 +141,7 @@ public class DropDown<E extends Enum<E>> extends DropDownMenu<E> implements Draw
 
 		// Extract data
 		int height = getHeight();
-		ArrayList<E> list = Reflection.get(this, "list");
+		ArrayList<T> list = Reflection.get(this, "list");
 		int x = getX();
 		int y = getY();
 		int width = getWidth();
@@ -130,7 +162,7 @@ public class DropDown<E extends Enum<E>> extends DropDownMenu<E> implements Draw
 		}
 
 		// Draw entries
-		for (E option : list) {
+		for (T option : list) {
 			if (scrollbar == null || entryY > y + 8 && entryY + entryHeight < scrollbar.getPosBottom() + 2) {
 				boolean hover = mouseX > x && mouseX < x + width && mouseY > entryY && mouseY <= entryY + entryHeight;
 				if (hover)

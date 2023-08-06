@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.misc.gui.elements.SelectButtonGroup;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
@@ -50,7 +51,6 @@ public class ChatMenuEntry {
 	IconType iconType = null;
 	Object icon = null;
 	boolean completed = false;
-	int pos = -1;
 	boolean enabled = true;
 
 	public ChatMenuEntry() {}
@@ -142,7 +142,7 @@ public class ChatMenuEntry {
 		return icon != null ? (ItemStack) icon : ItemSetting.MISSING_TEXTURE;
 	}
 
-	enum Action {
+	enum Action implements SelectButtonGroup.Selectable {
 		CONSUMER(null, null),
 		OPEN_URL("Url öffnen", "earth_grid"),
 		RUN_CMD("Befehl ausführen", "cpu"),
@@ -154,9 +154,19 @@ public class ChatMenuEntry {
 			this.name = name;
 			this.defaultIcon = defaultIcon;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String getIcon() {
+			return defaultIcon;
+		}
 	}
 
-	enum IconType {
+	enum IconType implements SelectButtonGroup.Selectable {
 		SYSTEM(null, null),
 		DEFAULT("Standard", null),
 		ITEM("Item", "gold_ingot"),
@@ -169,6 +179,15 @@ public class ChatMenuEntry {
 			this.defaultIcon = defaultIcon;
 		}
 
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String getIcon() {
+			return defaultIcon;
+		}
 	}
 
 	private BufferedImage scale(BufferedImage img) {

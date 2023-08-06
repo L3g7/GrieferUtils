@@ -18,10 +18,13 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
+import dev.l3g7.griefer_utils.features.chat.chat_reactor.ChatReactor;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
@@ -35,21 +38,23 @@ public class EntryDisplaySetting extends BooleanSetting {
 		name("§f");
 		this.parent = parent;
 		this.entry = r;
-		int size = parent.getSubSettings().getElements().size();
-		int pos = r.pos = r.pos == -1 ? size - 1 : r.pos;
 
-		parent.getSubSettings().getElements().add(pos, this);
+		List<SettingsElement> entries = parent.getSubSettings().getElements();
+		entries.add(entries.size() - 1, this);
 		set(entry.enabled);
 		callback(enabled -> entry.enabled = enabled);
+		ChatMenu.saveEntries();
 	}
 
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (editHovered) {
-			parent.getSubSettings().getElements().remove(this);
-			ChatMenu.saveEntries();
-			Minecraft.getMinecraft().displayGuiScreen(new AddChatMenuEntryGui(entry, Minecraft.getMinecraft().currentScreen));
-		}
+		if (editHovered)
+			Minecraft.getMinecraft().displayGuiScreen(new AddChatMenuEntryGui(this, Minecraft.getMinecraft().currentScreen));
+	}
+
+	public void delete() {
+		parent.getSubSettings().getElements().remove(this);
+		ChatReactor.saveEntries();
 	}
 
 	@Override

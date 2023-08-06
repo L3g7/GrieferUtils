@@ -4,6 +4,7 @@ import dev.l3g7.griefer_utils.misc.gui.elements.SelectButtonGroup.Selectable;
 import net.labymod.utils.DrawUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.item.ItemStack;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,12 +42,20 @@ public class Gui extends GuiScreen {
 		return create(new TextField(label));
 	}
 
+	public ImageSelection createImageSelection(String label) {
+		return create(new ImageSelection(label));
+	}
+
 	public <E extends Enum<E> & Selectable> SelectButtonGroup<E> createSelectGroup(E placeholder, String label) {
 		return create(new SelectButtonGroup<>(placeholder, label, width));
 	}
 
-	public <E extends Enum<E>> DropDown<E> createDropDown(E placeholder, String label) {
-		return create(new DropDown<>(placeholder, label, width));
+	public <T extends Enum<T>> DropDown<T> createDropDown(T placeholder, String label) {
+		return create(DropDown.fromEnum(placeholder, label, width));
+	}
+
+	public <T extends ItemStack> DropDown<T> createDropDown(T placeholder, List<T> values, String label) {
+		return create(DropDown.fromItemStack(placeholder, values, label, width));
 	}
 
 	@Override

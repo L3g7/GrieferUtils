@@ -144,7 +144,6 @@ public class AddChatReactionGui extends Gui {
 		// Initialize inputs with default values
 		ChatReaction reaction = editedReaction.reaction;
 		textTypeInput.select(reaction.regEx ? TextType.REGEX : TextType.TEXT);
-		System.out.println("RegEx: " + reaction.regEx);
 		triggerInput.setText(reaction.trigger);
 		commandInput.setText(reaction.command);
 		compareModeInput.setSelected(reaction.matchAll ? TextCompareMode.EQUALS : TextCompareMode.CONTAINS);

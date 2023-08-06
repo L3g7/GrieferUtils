@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /**
  * description missing.
  */
-public class FileSelection {
+public class FileSelectionDialog {
 
 	static {
 		if (Platform.isWindows())
@@ -41,47 +41,49 @@ public class FileSelection {
 	}
 
 	public static native boolean GetOpenFileNameW(OpenFileName params);
+
 	public static native int CommDlgExtendedError();
 
 	public static void chooseFile(Consumer<File> fileConsumer, String filterName, String... allowedFileTypes) {
-		/*
-		 * Swing file chooser
-		 */
-		if (!Platform.isWindows()) {
-			new Thread(() -> {
-				final JFileChooser fc = new JFileChooser((File) null);
-				fc.setMultiSelectionEnabled(false);
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		new Thread(() -> {
+			if (Platform.isWindows())
+				windowsFileChooser(fileConsumer, filterName, allowedFileTypes);
+			else
+				swingFileChooser(fileConsumer, filterName, allowedFileTypes);
+		}).start();
 
-				if (filterName != null) {
-					fc.addChoosableFileFilter(new FileFilter() {
-						@Override
-						public boolean accept(File f) {
-							if (f.isDirectory())
-								return true;
+	}
 
-							for (String allowedFileType : allowedFileTypes)
-								if (f.getName().endsWith("." + allowedFileType))
-									return true;
+	private static void swingFileChooser(Consumer<File> fileConsumer, String filterName, String[] allowedFileTypes) {
+		JFileChooser fc = new JFileChooser((File) null);
+		fc.setMultiSelectionEnabled(false);
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-							return false;
-						}
+		if (filterName != null) {
+			fc.addChoosableFileFilter(new FileFilter() {
+				@Override
+				public boolean accept(File f) {
+					if (f.isDirectory())
+						return true;
 
-						@Override
-						public String getDescription() {
-							return filterName;
-						}
-					});
+					for (String allowedFileType : allowedFileTypes)
+						if (f.getName().endsWith("." + allowedFileType))
+							return true;
+
+					return false;
 				}
 
-				fileConsumer.accept(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION ? fc.getSelectedFile() : null);
-			}).start();
-			return;
+				@Override
+				public String getDescription() {
+					return filterName;
+				}
+			});
 		}
 
-		/*
-		 * Windows file chooser
-		 */
+		fileConsumer.accept(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION ? fc.getSelectedFile() : null);
+	}
+
+	private static void windowsFileChooser(Consumer<File> fileConsumer, String filterName, String[] allowedFileTypes) {
 		OpenFileName params = new OpenFileName();
 		params.lpstrFile = new Memory(1041);
 		params.lpstrFile.clear(1041);
@@ -101,5 +103,4 @@ public class FileSelection {
 
 		fileConsumer.accept(null);
 	}
-
 }

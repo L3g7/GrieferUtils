@@ -77,6 +77,12 @@ public class AutoTool extends Feature {
 		"Köpfe", of(Blocks.skull)
 	);
 
+	private static final Map<String, Block> RENAMED_BLOCKS = ImmutableMap.of(
+		"stained_clay", Blocks.stained_hardened_clay,
+		"leaves_2", Blocks.leaves2,
+		"mycel", Blocks.mycelium
+	);
+
 	private final ToolSaver toolSaver = FileProvider.getSingleton(ToolSaver.class);
 
 	private final DropDownSetting<EnchantPreference> preference = new DropDownSetting<>(EnchantPreference.class)
@@ -271,9 +277,9 @@ public class AutoTool extends Feature {
 
 		String material = adv.getString("adventure.material").toLowerCase();
 		int data = adv.getInteger("adventure.data");
-		Block block = Block.getBlockFromName(material);
+		Block block = RENAMED_BLOCKS.getOrDefault(material, Block.getBlockFromName(material));
 		if (block == null) {
-			BugReporter.reportError(new Throwable("Adventure tool breaks unknown block: " + material + " from " + stack.serializeNBT()));
+			BugReporter.reportError(new Throwable("Adventure tool breaks unknown block: " + material));
 			return false;
 		}
 

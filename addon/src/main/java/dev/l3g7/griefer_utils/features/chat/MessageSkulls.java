@@ -19,9 +19,8 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 
-import de.emotechat.addon.gui.ChatLineEntry;
-import de.emotechat.addon.gui.chat.render.EmoteChatLine;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderChatEvent;
@@ -30,6 +29,7 @@ import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ChatLineUtil;
+import dev.l3g7.griefer_utils.util.EmoteChatUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.DrawUtils;
@@ -121,11 +121,8 @@ public class MessageSkulls extends Feature {
 
 		int y = event.y;
 
-		if (event.chatLine instanceof EmoteChatLine) {
-			boolean isEmote = ((EmoteChatLine) event.chatLine).getEntries().stream().anyMatch(ChatLineEntry::isLoadedEmote);
-			if (isEmote)
-				y += 4.5;
-		}
+		if (Constants.EMOTECHAT && EmoteChatUtil.isEmote(event.chatLine))
+			y += 4.5;
 
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
 		drawUtils.bindTexture(playerInfo.getLocationSkin());

@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.injection.mixin.emotechat;
 
 import de.emotechat.addon.gui.chat.render.EmoteChatRenderer;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderChatEvent;
 import net.labymod.ingamechat.renderer.ChatLine;
@@ -35,6 +36,10 @@ import java.util.List;
 @Mixin(value = EmoteChatRenderer.class, remap = false)
 public class MixinEmoteChatRenderer {
 
+	public MixinEmoteChatRenderer() {
+		Constants.EMOTECHAT = true;
+	}
+
 	@Inject(method = "drawLine", at = @At("TAIL"))
 	@SuppressWarnings("InvalidInjectorMethodSignature") // Library is obfuscated, so method parameters are as well
 	public void injectDrawLine(FontRenderer font, ChatLine chatLine, float x, float y, int width, int alpha, int mouseX, int mouseY, CallbackInfo ci) {
@@ -46,6 +51,5 @@ public class MixinEmoteChatRenderer {
 		MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineAddEvent((ChatLine) e));
 		instance.add(i, e);
 	}
-
 
 }

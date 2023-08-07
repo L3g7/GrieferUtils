@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 public class Constants {
 
 	public static boolean SCHEMATICA = false;
+	public static boolean EMOTECHAT = false;
 
 	public static final String ADDON_NAME = "GrieferUtils";
 	public static final String ADDON_PREFIX = "§8[§r§f§l" + ADDON_NAME + "§r§8] §r§f";

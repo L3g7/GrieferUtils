@@ -39,7 +39,7 @@ public class Credits {
 		.name("Credits")
 		.icon("labymod:settings/tabs/multiplayer")
 		.subSettings(
-			new Credits.IconSetting("Lizensiert unter Apache License 2.0", "../scroll"),
+			new Credits.IconSetting("Lizensiert unter Apache License 2.0", "scroll"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Entwickler"),
@@ -55,7 +55,7 @@ public class Credits {
 			new HeaderSetting("Code-Credits"),
 			new Credits.TextSetting("core.misc.Base58", "Encodierung der SSSS-Schlüssel", "Aus org.bitcoinj", "© 2011 Google Inc., © 2018 Andreas Schildbach", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("core.misc.BufferedImageLuminanceSource", "Umwandlung von Bilder in Licht-Bitmaps", "Aus com.google.zxing", "© 2009 ZXing authors", "Apache License 2.0"),
+			new Credits.TextSetting("core.misc.BufferedImageLuminanceSource", "Umwandlung von Bildern in Licht-Bitmaps", "Aus com.google.zxing", "© 2009 ZXing authors", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(5),
 			new Credits.TextSetting("features.modules.ServerPerformance", "Konzept basiert auf Pleezons ServerTPS").noLicense(),
 			new HeaderSetting().entryHeight(11),

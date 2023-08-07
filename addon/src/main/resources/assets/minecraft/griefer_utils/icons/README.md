@@ -2,24 +2,72 @@
 
 <table>
   <tr>
-    <td><a href="booster/break.png"><img src="booster/break.png" height=16em width=16em />&nbsp;&nbsp;booster/break.png </a></td>
+    <td><a href="booster/"><img src="booster/drop.png" height=16em width=16em />&nbsp;&nbsp;booster/* </a></td>
     <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
   </tr>
   <tr>
-    <td><a href="booster/drop.png"><img src="booster/drop.png" height=16em width=16em />&nbsp;&nbsp;booster/drop.png </a></td>
-    <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
+    <td><a href="credits/"><img src="credits/l3g7.png" height=16em width=16em />&nbsp;&nbsp;credits/* </a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
-    <td><a href="booster/fly.png"><img src="booster/fly.png" height=16em width=16em />&nbsp;&nbsp;booster/fly.png </a></td>
-    <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
+    <td><a href="griefer_info/mob_icons/"><img src="griefer_info/mob_icons/creeper.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/mob_icons/* </a></td>
+    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest?cb=20221212235332&version=1670889213562&format=png">Minecraft Wiki</a></td>
   </tr>
   <tr>
-    <td><a href="booster/mob.png"><img src="booster/mob.png" height=16em width=16em />&nbsp;&nbsp;booster/mob.png </a></td>
-    <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
+    <td><a href="griefer_info/chest.png"><img src="griefer_info/chest.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/chest.png </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/chest/normal.png">Minecraft asset</a></td>
   </tr>
   <tr>
-    <td><a href="booster/xp.png"><img src="booster/xp.png" height=16em width=16em />&nbsp;&nbsp;booster/xp.png </a></td>
-    <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
+    <td><a href="griefer_info/chest_gray.png"><img src="griefer_info/chest_gray.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/chest_gray.png </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/chest/normal.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="griefer_info/diamond_sword.png"><img src="griefer_info/diamond_sword.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/diamond_sword.png </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/diamond_sword.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="griefer_info/gray_sword.png"><img src="griefer_info/gray_sword.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/gray_sword.png  </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/diamond_sword.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="griefer_info/spawner.png"><img src="griefer_info/spawner.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/spawner.png  </a></td>
+    <td><a href="https://static.wikia.nocookie.net/minecraft_de_gamepedia/images/f/f4/Spawner_mit_Feuer.png/revision/latest?cb=20200309165109">Minecraft Wiki</a></td>
+  </tr>
+  <tr>
+    <td><a href="griefer_info/spawner_gray.png"><img src="griefer_info/spawner_gray.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/spawner_gray.png  </a></td>
+    <td><a href="https://static.wikia.nocookie.net/minecraft_de_gamepedia/images/4/4f/Spawner_Beta_1.9-pre1.png/revision/latest?cb=20221005111405">Minecraft Wiki</a></td>
+  </tr>
+  <tr>
+    <td><a href="griefer_info/wallet_ingoing.png"><img src="griefer_info/wallet_ingoing.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_ingoing.png  </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
+  </tr>
+  <tr>
+    <td><a href="griefer_info/wallet_ingoing_gray.png"><img src="griefer_info/wallet_ingoing_gray.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_ingoing_gray.png  </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
+  </tr>
+  <tr>
+    <td><a href="griefer_info/wallet_inoutgoing.png"><img src="griefer_info/wallet_inoutgoing.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_inoutgoing.png  </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
+  </tr>
+  <tr>
+    <td><a href="griefer_info/wallet_outgoing.png"><img src="griefer_info/wallet_inoutgoing.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_outgoing.png  </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
+  </tr>
+  <tr>
+    <td><a href="griefer_info/wallet_outgoing_gray.png"><img src="griefer_info/wallet_outgoing_gray.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_outgoing_gray.png  </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
+  </tr>
+  <tr>
+    <td><a href="litematica/axes.png"><img src="litematica/axes.png" height=16em width=16em />&nbsp;&nbsp;litematica/axes.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><a href="litematica/green_highlight.png"><img src="litematica/green_highlight.png" height=16em width=16em />&nbsp;&nbsp;litematica/green_highlight.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><a href="litematica/litematica.png"><img src="litematica/litematica.png" height=16em width=16em />&nbsp;&nbsp;litematica/litematica.png </a></td>
+    <td><a href="https://github.com/maruohon/litematica/blob/54343aa6a4eaf71fb7a6ab38dd5c72ed3bf1b897/src/main/resources/assets/litematica/icon.png">Litematica (SuperDragonite2172)</a></td>
   </tr>
   <tr>
     <td><a href="mob_icons/"><img src="mob_icons/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/* </a></td>
@@ -78,8 +126,8 @@
     <td><a href="https://www.deviantart.com/ishmanallenlitchmore/art/chunk-of-minecraft-382711453">DeviantArt (IshmanAllenLitchmore)</a></td>
   </tr>
   <tr>
-    <td><a href="crosshair.png"><img src="crosshair.png" height=16em width=16em />&nbsp;&nbsp;crosshair.png </a></td>
-    <td>selfmade</td>
+    <td><a href="clipboard.png"><img src="clipboard.png" height=16em width=16em />&nbsp;&nbsp;clipboard.png </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/clipboard-icon-notes-clean-sheet-paper-1044834838?irclickid=UI71-xzgtxyPTyXQdGTcA0UnUkF1D9zJFXwjR40&irgwc=1">Shutterstock (VectorPixelStar)</a></td>
   </tr>
   <tr>
     <td><a href="cog.png"><img src="cog.png" height=16em width=16em />&nbsp;&nbsp;cog.png </a></td>
@@ -96,6 +144,10 @@
   <tr>
     <td><a href="cpu.png"><img src="cpu.png" height=16em width=16em />&nbsp;&nbsp;cpu.png </a></td>
     <td><a href="https://www.shutterstock.com/image-vector/electronics-pixel-art-icons-set-artificial-1508310176">Shutterstock (VectorPixelStar)</a></td>
+  </tr>
+  <tr>
+    <td><a href="crosshair.png"><img src="crosshair.png" height=16em width=16em />&nbsp;&nbsp;crosshair.png </a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><a href="discord.png"><img src="discord.png" height=16em width=16em />&nbsp;&nbsp;discord.png </a></td>
@@ -138,6 +190,10 @@
     <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock (karpenko_ilia)</a></td>
   </tr>
   <tr>
+    <td><a href="glitch_question_mark.png"><img src="glitch_question_mark.png" height=16em width=16em />&nbsp;&nbsp;glitch_question_mark.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><a href="gold_ingot.png"><img src="gold_ingot.png" height=16em width=16em />&nbsp;&nbsp;gold_ingot.png </a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/gold_ingot.png">Minecraft asset</a></td>
   </tr>
@@ -150,8 +206,16 @@
     <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
   </tr>
   <tr>
+    <td><a href="griefer_info.png"><img src="griefer_info.png" height=16em width=16em />&nbsp;&nbsp;griefer_info.png </a></td>
+    <td><a href="https://www.griefer.info/img/block.png">GrieferInfo</a></td>
+  </tr>
+  <tr>
     <td><a href="hourglass.png"><img src="hourglass.png" height=16em width=16em />&nbsp;&nbsp;hourglass.png </a></td>
     <td><a href="https://stock.adobe.com/de/310886492">Adobe Stock (Ksenia)</a></td>
+  </tr>
+  <tr>
+    <td><a href="icon.png"><img src="icon.png" height=16em width=16em />&nbsp;&nbsp;icon.png </a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><a href="info.png"><img src="info.png" height=16em width=16em />&nbsp;&nbsp;info.png </a></td>
@@ -170,6 +234,10 @@
     <td><a href="https://www.shutterstock.com/image-vector/772538452">Shutterstock (VectorPixelStar)</a></td>
   </tr>
   <tr>
+    <td><a href="light_bulb.png"><img src="light_bulb.png" height=16em width=16em />&nbsp;&nbsp;light_bulb.png </a></td>
+    <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock (karpenko_ilia)</a></td>
+  </tr>
+  <tr>
     <td><a href="lightning.png"><img src="lightning.png" height=16em width=16em />&nbsp;&nbsp;lightning.png </a></td>
     <td><a href="https://www.freepik.com/premium-vector/vector-illustration-cute-pixel-art-icon-geek-lightning-element-style-90s-game_29366701.htm">Freepik (Olive Kitt)</a></td>
   </tr>
@@ -178,12 +246,12 @@
     <td><a href="https://www.freepik.com/premium-vector/door-lock-pixel-art-set-secure-lock-made-gold-steel-locked-unlocked-collection-8bit_25184624.htm">Freepik (cadmium_red)</a></td>
   </tr>
   <tr>
-    <td><a href="magnifying_glass.png"><img src="magnifying_glass.png" height=16em width=16em />&nbsp;&nbsp;magnifying_glass.png </a></td>
-    <td><a href="https://labymod.net">LabyMod asset</a></td>
+    <td><a href="long_speech_bubble.png"><img src="long_speech_bubble.png" height=16em width=16em />&nbsp;&nbsp;long_speech_bubble.png </a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
-    <td><a href="light_bulb.png"><img src="light_bulb.png" height=16em width=16em />&nbsp;&nbsp;light_bulb.png </a></td>
-    <td><a href="https://www.istockphoto.com/de/vektor/472679974-63963289">iStock (karpenko_ilia)</a></td>
+    <td><a href="magnifying_glass.png"><img src="magnifying_glass.png" height=16em width=16em />&nbsp;&nbsp;magnifying_glass.png </a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
     <td><a href="matrix.png"><img src="matrix.png" height=16em width=16em />&nbsp;&nbsp;matrix.png </a></td>
@@ -194,11 +262,11 @@
     <td>selfmade</td>
   </tr>
   <tr>
-    <td><a href="middle_click.png"><img src="middle_click.png" height=16em width=16em />&nbsp;&nbsp;middle_click.png </a></td>
+    <td><a href="measurement_circle_thingy.png"><img src="measurement_circle_thingy.png" height=16em width=16em />&nbsp;&nbsp;measurement_circle_thingy.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
-    <td><a href="measurement_circle_thingy.png"><img src="measurement_circle_thingy.png" height=16em width=16em />&nbsp;&nbsp;measurement_circle_thingy.png </a></td>
+    <td><a href="middle_click.png"><img src="middle_click.png" height=16em width=16em />&nbsp;&nbsp;middle_click.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
@@ -229,6 +297,10 @@
   <tr>
     <td><a href="portal.png"><img src="portal.png" height=16em width=16em />&nbsp;&nbsp;portal.png </a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/block/nether_portal.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="qr_code.png"><img src="qr_code.png" height=16em width=16em />&nbsp;&nbsp;qr_code.png </a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><a href="radar.png"><img src="radar.png" height=16em width=16em />&nbsp;&nbsp;radar.png </a></td>
@@ -267,6 +339,10 @@
     <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
   </tr>
   <tr>
+    <td><a href="sneaking.png"><img src="sneaking.png" height=16em width=16em />&nbsp;&nbsp;sneaking.png </a></td>
+    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e8/Sneaking_Alex.png/revision/latest?cb=20230325080117">Minecraft Wiki (Duowan channel)</a></td>
+  </tr>
+  <tr>
     <td><a href="speech_bubble.png"><img src="speech_bubble.png" height=16em width=16em />&nbsp;&nbsp;speech_bubble.png </a></td>
     <td>selfmade</td>
   </tr>
@@ -287,8 +363,16 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/steve.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="stone.png"><img src="stone.png" height=16em width=16em />&nbsp;&nbsp;stone.png </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/block/stone.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
     <td><a href="tab_list.png"><img src="tab_list.png" height=16em width=16em />&nbsp;&nbsp;tab_list.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="thonk.png"><img src="thonk.png" height=16em width=16em />&nbsp;&nbsp;thonk.png  </a></td>
+    <td><a href="https://cdn.discordapp.com/emojis/1075141032284524564.webp?size=128&quality=lossless">Discord emoji</a></td>
   </tr>
   <tr>
     <td><a href="tree_file.png"><img src="tree_file.png" height=16em width=16em />&nbsp;&nbsp;tree_file.png </a></td>
@@ -311,12 +395,20 @@
     <td><a href="https://de.cleanpng.com/png-agix7q">Cleanpng</a></td>
   </tr>
   <tr>
+    <td><a href="white_griefer_info.png"><img src="white_griefer_info.png" height=16em width=16em />&nbsp;&nbsp;white_griefer_info.png </a></td>
+    <td><a href="https://www.griefer.info/img/block.png">GrieferInfo</a></td>
+  </tr>****
+  <tr>
     <td><a href="white_scroll.png"><img src="white_scroll.png" height=16em width=16em />&nbsp;&nbsp;white_scroll.png </a></td>
     <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
   </tr>
   <tr>
     <td><a href="wooden_board.png"><img src="wooden_board.png" height=16em width=16em />&nbsp;&nbsp;wooden_board.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="wrench_screwdriver.png"><img src="wrench_screwdriver.png" height=16em width=16em />&nbsp;&nbsp;wrench_screwdriver.png </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/wrench-screwdriver-pixel-art-settings-icon-773305213">Shutterstock (VectorPixelStar)</a></td>
   </tr>
   <tr>
     <td><a href="yellow_name.png"><img src="yellow_name.png" height=16em width=16em />&nbsp;&nbsp;yellow_name.png </a></td>

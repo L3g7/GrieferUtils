@@ -55,8 +55,11 @@ public class BugReporter {
 		.subSettings(uuid);
 
 	private static final Set<String> reportedBugs = new HashSet<>();
+	private static long timestampOfLastReport = 0;
 
 	public static boolean shouldReportError(Throwable error) {
+		if (System.currentTimeMillis() - timestampOfLastReport < 10_000)
+			return false; // Last report less than 10s ago, don't report
 
 		// Don't report OutOfMemoryErrors
 		if (error instanceof OutOfMemoryError) {
@@ -74,6 +77,7 @@ public class BugReporter {
 		if (!enabled.get())
 			return;
 
+		timestampOfLastReport = System.currentTimeMillis();
 		Thread t = new Thread(() -> {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				// Get stacktrace

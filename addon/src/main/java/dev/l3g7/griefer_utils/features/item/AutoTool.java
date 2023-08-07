@@ -151,10 +151,6 @@ public class AutoTool extends Feature {
 	}
 
 	private void switchToTool(BlockPos targetedBlock) {
-		ItemDisplaySetting ids = ItemSaver.getSetting(player().getHeldItem());
-		if (ids != null && ids.leftclick.get())
-			return;
-
 		if (!ServerCheck.isOnGrieferGames() && player().getHeldItem() != null && player().getHeldItem().getItem() == Items.wooden_axe)
 			return;
 
@@ -188,8 +184,8 @@ public class AutoTool extends Feature {
 	}
 
 	public double getScore(ItemStack itemStack, IBlockState state) {
-		ItemDisplaySetting setting = ItemSaver.getSetting(itemStack);
-		if (setting != null)
+		ItemDisplaySetting ids = ItemSaver.getSetting(itemStack);
+		if (ids != null && ids.leftclick.get())
 			return Integer.MIN_VALUE;
 
 		if (toolSaver.isEnabled())

@@ -35,6 +35,7 @@ import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.core.LabyModCore;
@@ -66,6 +67,12 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	private static String entryKey;
 	private static GuiScreen previousScreen = null;
 
+	private static final BooleanSetting displayIcon = new BooleanSetting()
+		.name("Icon anzeigen")
+		.description("Ob Items im ItemSaver mit einem Icon markiert werden sollen.")
+		.icon("shield_with_sword")
+		.defaultValue(true);
+
 	private static final EntryAddSetting newEntrySetting = new EntryAddSetting()
 		.name("Item hinzufügen")
 		.callback(() -> {
@@ -84,7 +91,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		.name("Spezifischer Item-Saver")
 		.description("Deaktiviert Klicks und Dropping bei einstellbaren Items.")
 		.icon("shield_with_sword")
-		.subSettings(newEntrySetting);
+		.subSettings(displayIcon, new HeaderSetting(), newEntrySetting);
 
 	public static ItemDisplaySetting getSetting(ItemStack stack) {
 		if (stack == null || !FileProvider.getSingleton(ItemSaver.class).isEnabled())
@@ -159,7 +166,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	@EventListener
 	public void onGuiDraw(RenderItemOverlayEvent event) {
-		if (!isEnabled() || getSetting(event.stack) == null)
+		if (!isEnabled() || !displayIcon.get() || getSetting(event.stack) == null)
 			return;
 
 		float zLevel = Reflection.get(drawUtils(), "zLevel");

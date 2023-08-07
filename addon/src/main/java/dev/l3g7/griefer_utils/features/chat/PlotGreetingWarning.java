@@ -46,7 +46,7 @@ public class PlotGreetingWarning extends Feature {
 		.name("Max. Zeitabstand (µs)")
 		.description("Wie viel Zeit (in Mikrosekunden) maximal zwischen zwei Plot-Greeting-Nachrichten vergehen darf.")
 		.icon("hourglass")
-		.defaultValue(256);
+		.defaultValue(512);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()

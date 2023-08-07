@@ -56,6 +56,20 @@ public class BugReporter {
 
 	private static final Set<String> reportedBugs = new HashSet<>();
 
+	public static boolean shouldReportError(Throwable error) {
+
+		// Don't report OutOfMemoryErrors
+		if (error instanceof OutOfMemoryError) {
+			try {
+				System.gc();
+			} catch (Throwable ignored) {}
+			return false;
+		}
+
+		// Check cause
+		return error.getCause() == null || !shouldReportError(error.getCause());
+	}
+
 	public static void reportError(Throwable error) {
 		if (!enabled.get())
 			return;

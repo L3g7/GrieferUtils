@@ -54,7 +54,10 @@ public class ConfigPatcher {
 
 				for (JsonElement entry : entries) {
 					JsonObject obj = entry.getAsJsonObject();
-					obj.addProperty("command", "/" + obj.get("command").getAsString());
+					String command = obj.get("command").getAsString();
+					if (!command.startsWith("/"))
+						command = "/" + command;
+					obj.addProperty("command", command);
 				}
 
 				page.add("entries", entries);

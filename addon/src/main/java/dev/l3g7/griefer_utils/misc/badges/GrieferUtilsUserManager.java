@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.Credits;
 import dev.l3g7.griefer_utils.misc.matrix.MatrixClient;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.user.User;
@@ -121,6 +122,7 @@ public class GrieferUtilsUserManager {
 
 				specialBadges.put(UUID.fromString(entry.getKey()), new GrieferUtilsGroup(color_with_labymod, color_without_labymod, title));
 			}
+			Credits.addTeam();
 		});
 	}
 

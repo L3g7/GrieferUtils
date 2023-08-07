@@ -28,7 +28,6 @@ import net.labymod.utils.ModColor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -46,28 +45,8 @@ public class Credits {
 			new HeaderSetting("Entwickler"),
 			new Credits.IconSetting("L3g7", "l3g7"),
 			new Credits.IconSetting("L3g73", "l3g7"),
-			new HeaderSetting().entryHeight(11)
-		);
+			new HeaderSetting().entryHeight(11),
 
-	static {
-		List<SettingsElement> elements = new ArrayList<>();
-		List<String> supporter = new ArrayList<>();
-
-		if (GrieferUtilsUserManager.isSpecial("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db"))
-			supporter.add("MoosLeitung");
-		if (GrieferUtilsUserManager.isSpecial("bc1f3d61-0878-4006-ba46-fb479fc37a1e"))
-			supporter.add("0001EnderGirlLP");
-
-		if (!supporter.isEmpty()) {
-			elements.add(new HeaderSetting("Supporter"));
-
-			for (String sup : supporter)
-				elements.add(new Credits.IconSetting(sup, sup.toLowerCase()));
-
-			elements.add(new HeaderSetting().entryHeight(11));
-		}
-
-		elements.addAll(Arrays.asList(
 			new HeaderSetting("Special Thanks"),
 			new Credits.IconSetting("TuxFRI", "tuxfri"),
 			new Credits.IconSetting("CobbleShop", "cobbleshop"),
@@ -104,12 +83,35 @@ public class Credits {
 			new HeaderSetting("Und Du <3"),
 			new Credits.UserSetting(),
 			new HeaderSetting().entryHeight(22)
-		));
+		);
 
-		category.subSettings(elements);
+	public static void addTeam() {
+		List<String> supporter = new ArrayList<>();
+		List<SettingsElement> elements = new ArrayList<>();
+
+		if (GrieferUtilsUserManager.isSpecial("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db"))
+			supporter.add("MoosLeitung");
+		if (GrieferUtilsUserManager.isSpecial("bc1f3d61-0878-4006-ba46-fb479fc37a1e"))
+			supporter.add("0001EnderGirlLP");
+
+		if (!supporter.isEmpty()) {
+			elements.add(new HeaderSetting("Supporter"));
+
+			for (String sup : supporter)
+				elements.add(new Credits.IconSetting(sup, sup.toLowerCase()));
+
+			elements.add(new HeaderSetting().entryHeight(11));
+		}
+
+		category.getSubSettings().getElements().addAll(10, elements);
 	}
 
-	public static class IconSetting extends ControlElement {
+	static {
+		// Load class
+		GrieferUtilsUserManager.clearUsers();
+	}
+
+	private static class IconSetting extends ControlElement {
 
 		public IconSetting(String displayName, String icon) {
 			super(displayName, new IconData("griefer_utils/icons/credits/" + icon + ".png"));
@@ -117,9 +119,9 @@ public class Credits {
 
 	}
 
-	public static class UserSetting extends ControlElement {
+	private static class UserSetting extends ControlElement {
 
-		public UserSetting() {
+		private UserSetting() {
 			super("Vielen Dank für das Nutzen von GrieferUtils!", null);
 		}
 
@@ -131,11 +133,11 @@ public class Credits {
 
 	}
 
-	public static class TextSetting extends HeaderSetting {
+	private static class TextSetting extends HeaderSetting {
 
 		private final String[] lines;
 
-		public TextSetting(String... text) {
+		private TextSetting(String... text) {
 			super();
 			lines = text;
 			entryHeight(lines.length * 10 + 3);
@@ -147,7 +149,7 @@ public class Credits {
 			lines[i] = "  - Lizenziert unter " + lines[i];
 		}
 
-		public TextSetting noLicense() {
+		private TextSetting noLicense() {
 			int i = lines.length - 1;
 			lines[i] = "  - " + lines[i].substring("  - Lizenziert unter ".length());
 
@@ -170,7 +172,7 @@ public class Credits {
 
 	public static class CookieSetting extends TextSetting {
 
-		public CookieSetting(String... text) {
+		private CookieSetting(String... text) {
 			super(text);
 		}
 

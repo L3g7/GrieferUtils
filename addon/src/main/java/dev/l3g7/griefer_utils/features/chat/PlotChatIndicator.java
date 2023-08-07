@@ -53,7 +53,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 public class PlotChatIndicator extends Feature {
 
 	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event");
-	private StringBuilder states; // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
+	private StringBuilder states = new StringBuilder(Strings.repeat("?", 26));; // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
 	private String server;
 
 	private Boolean plotchatState = null;

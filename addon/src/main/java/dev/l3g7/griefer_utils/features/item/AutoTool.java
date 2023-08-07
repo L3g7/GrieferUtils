@@ -79,6 +79,7 @@ public class AutoTool extends Feature {
 
 	private static final Map<String, Block> RENAMED_BLOCKS = ImmutableMap.of(
 		"stained_clay", Blocks.stained_hardened_clay,
+		"hard_clay", Blocks.hardened_clay,
 		"leaves_2", Blocks.leaves2,
 		"mycel", Blocks.mycelium
 	);

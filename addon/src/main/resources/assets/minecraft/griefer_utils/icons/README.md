@@ -6,6 +6,10 @@
     <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
   </tr>
   <tr>
+    <td><a href="credits/scroll.png"><img src="credits/scroll.png" height=16em width=16em />&nbsp;&nbsp;credits/scroll.png </a></td>
+    <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
+  </tr>
+  <tr>
     <td><a href="credits/"><img src="credits/l3g7.png" height=16em width=16em />&nbsp;&nbsp;credits/* </a></td>
     <td>selfmade</td>
   </tr>

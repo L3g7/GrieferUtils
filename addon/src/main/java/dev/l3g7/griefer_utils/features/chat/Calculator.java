@@ -25,17 +25,22 @@ import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.utils.Material;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.mariuszgromada.math.mxparser.Expression;
+import org.mariuszgromada.math.mxparser.mXparser;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
+import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.MessageDigest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -292,7 +297,36 @@ public class Calculator extends Feature {
 
 	private double calculate(String equation) {
 		equation = equation.replace("k", " * 1000").replace(",", ".");
-		Expression exp = new Expression(equation);
+		Expression exp;
+		try {
+			exp = new Expression(equation);
+		} catch (NoSuchMethodError e) {
+			// Sometimes, the constructor cannot be found.
+			// I have no idea why so here's a bit of logging to find out more.
+			display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);
+			display("§cDie Bibliothek konnte nicht geladen werden.");
+
+			StringBuilder builder = new StringBuilder();
+			try {
+				builder.append("mXparser metadata:\nVersion: ").append(mXparser.VERSION).append("\nMethods:");
+				for (Method method : Expression.class.getDeclaredMethods())
+					builder.append("\n").append(method.toString());
+
+				MessageDigest m = MessageDigest.getInstance("SHA-256");
+				byte[] buffer = new byte[4096];
+				try (InputStream content = Expression.class.getClassLoader().getResource(Expression.class.getName().replace('.', '/') + ".class").openStream()) {
+					int size;
+					while ((size = content.read(buffer)) != -1)
+						m.update(buffer, 0, size);
+					builder.append("\nClass-Hash: ").append(m);
+				}
+			} catch (Throwable ex) {
+				builder.append("\nError while analysing: ").append(ex);
+			}
+
+			BugReporter.reportError(new Throwable(builder.toString(), e));
+			return Double.NaN;
+		}
 
 		if (!exp.checkSyntax()) {
 			display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);

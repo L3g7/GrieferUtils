@@ -397,7 +397,7 @@
   <tr>
     <td><a href="white_griefer_info.png"><img src="white_griefer_info.png" height=16em width=16em />&nbsp;&nbsp;white_griefer_info.png </a></td>
     <td><a href="https://www.griefer.info/img/block.png">GrieferInfo</a></td>
-  </tr>****
+  </tr>
   <tr>
     <td><a href="white_scroll.png"><img src="white_scroll.png" height=16em width=16em />&nbsp;&nbsp;white_scroll.png </a></td>
     <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>

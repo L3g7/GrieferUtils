@@ -28,7 +28,6 @@ import dev.l3g7.griefer_utils.misc.matrix.MatrixClient;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.user.User;
 import net.labymod.user.group.LabyGroup;
-import net.minecraft.util.Util;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.*;
@@ -36,8 +35,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
-import static net.minecraft.util.Util.EnumOS.OSX;
-import static net.minecraft.util.Util.EnumOS.WINDOWS;
 
 public class GrieferUtilsUserManager {
 
@@ -88,7 +85,7 @@ public class GrieferUtilsUserManager {
 	}
 
 	private static void requestQueuedUsers() {
-		if (queuedUsers.isEmpty() || (Util.getOSType() != WINDOWS && Util.getOSType() != OSX))
+		if (queuedUsers.isEmpty() || !MatrixClient.isAvailable())
 			return;
 
 		lastRequest = System.currentTimeMillis();

@@ -22,6 +22,7 @@ import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.matrix.Matrix;
+import dev.l3g7.griefer_utils.core.misc.matrix.jna.util.LibOlmLoader;
 import dev.l3g7.griefer_utils.core.misc.matrix.requests.LogoutRequest;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
@@ -44,9 +45,14 @@ public class MatrixClient extends Matrix {
 		return FileProvider.getSingleton(MatrixClient.class);
 	}
 
+	public static boolean isAvailable() {
+		return LibOlmLoader.getPath() != null;
+	}
+
 	@EventListener
 	public void onAccountSwitch(AccountSwitchEvent event) throws IOException {
-		authorize();
+		if (isAvailable())
+			authorize();
 	}
 
 	public void authorize() throws IOException {

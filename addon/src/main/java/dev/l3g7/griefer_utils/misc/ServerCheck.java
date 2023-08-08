@@ -21,9 +21,13 @@ package dev.l3g7.griefer_utils.misc;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import net.labymod.core.asm.LabyModCoreMod;
+import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
+
+import java.nio.charset.StandardCharsets;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 
@@ -42,15 +46,16 @@ public class ServerCheck {
 	}
 
 	@EventListener(priority = EventPriority.HIGHEST)
-	public void onServerJoin(ServerEvent.ServerJoinEvent event) {
-		String server = event.data.getIp().toLowerCase();
+	public void onPacketReceive(PacketEvent.PacketReceiveEvent event) {
+		if (!(event.packet instanceof S3FPacketCustomPayload))
+			return;
 
-		for (String s : new String[]{"net", "de", "com", "live"}) {
-			if (server.endsWith("griefergames." + s)) {
-				onGrieferGames = true;
-				break;
-			}
-		}
+		S3FPacketCustomPayload packet = (S3FPacketCustomPayload) event.packet;
+		if (!packet.getChannelName().equals("MC|Brand"))
+			return;
+
+		if (packet.getBufferData().toString(StandardCharsets.UTF_8).startsWith("GrieferGames"))
+			onGrieferGames = true;
 	}
 
 	@EventListener

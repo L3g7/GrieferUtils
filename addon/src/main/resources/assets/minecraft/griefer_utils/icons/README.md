@@ -122,6 +122,10 @@
     <td><a href="https://apps.apple.com/us/app/calculator/id1069511488">Apple calculator</a></td>
   </tr>
   <tr>
+    <td><a href="crossed_out_camera.png"><img src="crossed_out_camera.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_camera.png </a></td>
+    <td><a href="https://www.shutterstock.com/de/image-vector/movie-camera-pixel-art-32-bit-2191871743">Shutterstock (pixelpnj)</a></td>
+  </tr>
+  <tr>
     <td><a href="chest.png"><img src="chest.png" height=16em width=16em />&nbsp;&nbsp;chest.png </a></td>
     <td><a href="https://stock.adobe.com/de/images/set-of-pixel-boxes/192886298?prev_url=detail">Adobe Stock (Markov)</a></td>
   </tr>

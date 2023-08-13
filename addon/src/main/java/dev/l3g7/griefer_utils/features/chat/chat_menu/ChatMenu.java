@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.EventListener;
@@ -30,6 +31,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ChatLineUtil;
+import net.labymod.core_implementation.mc18.MinecraftImplementation;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
@@ -40,6 +42,10 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
@@ -218,4 +224,16 @@ public class ChatMenu extends Feature {
 			.map(e -> ((EntryDisplaySetting) e).entry)
 			.collect(Collectors.toList());
 	}
+
+	@Mixin(value = MinecraftImplementation.class, remap = false)
+	private static class MixinMinecraftImplementation {
+
+		@Inject(method = "getClickEventValue", at = @At("HEAD"), cancellable = true)
+		public void injectGetClickEventValue(int x, int y, CallbackInfoReturnable<String> cir) {
+			if (FileProvider.getSingleton(ChatMenu.class).isEnabled())
+				cir.setReturnValue(null);
+		}
+
+	}
+
 }

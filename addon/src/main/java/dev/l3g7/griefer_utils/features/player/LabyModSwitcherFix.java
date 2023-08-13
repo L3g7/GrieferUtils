@@ -18,10 +18,16 @@
 
 package dev.l3g7.griefer_utils.features.player;
 
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import net.labymod.accountmanager.storage.loader.microsoft.model.LauncherAccount;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Singleton
 public class LabyModSwitcherFix extends Feature {
@@ -31,5 +37,24 @@ public class LabyModSwitcherFix extends Feature {
 		.name("LabyMod-Switcher fixen")
 		.description("Behebt, dass LabyMod Account-Sitzungen als gültig anzeigt, das Betreten eines Servers mit diesem Account jedoch aufgrund einer ungültigen Sitzung fehltschlägt.")
 		.icon("labymod:labymod_logo");
+
+	@Mixin(LauncherAccount.class)
+	private static class MixinLauncherAccount {
+
+		@Inject(method = "getAccessToken", at = @At("RETURN"), cancellable = true, remap = false)
+		public void injectGetAccessToken(CallbackInfoReturnable<String> cir) {
+			String accessToken = cir.getReturnValue();
+			if (accessToken == null || accessToken.startsWith("ey") || !FileProvider.getSingleton(LabyModSwitcherFix.class).isEnabled())
+				return;
+
+			if (accessToken.startsWith("8E184B2C-7E2D-4517-A905-623B1BE84B5700000001ffffffffffffffffey")) {
+				cir.setReturnValue(accessToken.substring(60));
+				return;
+			}
+
+			cir.setReturnValue(accessToken.split("\\.")[0]);
+		}
+
+	}
 
 }

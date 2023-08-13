@@ -19,7 +19,12 @@
 package dev.l3g7.griefer_utils.event.events.render;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public class DrawGuiContainerForegroundLayerEvent extends Event {
 
@@ -28,5 +33,16 @@ public class DrawGuiContainerForegroundLayerEvent extends Event {
 	public DrawGuiContainerForegroundLayerEvent(GuiContainer container) {
 		this.container = container;
 	}
+
+	@Mixin(GuiContainer.class)
+	private static class MixinGuiContainer {
+
+		@Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/inventory/GuiContainer;drawGuiContainerForegroundLayer(II)V"))
+		public void injectDrawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+			MinecraftForge.EVENT_BUS.post(new DrawGuiContainerForegroundLayerEvent((GuiContainer) (Object) this));
+		}
+
+	}
+
 
 }

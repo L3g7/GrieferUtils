@@ -18,12 +18,15 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
-import dev.l3g7.griefer_utils.injection.mixin.minecraft.MixinEntity;
-import dev.l3g7.griefer_utils.injection.mixin.minecraft.MixinEntityPlayer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * An event being posted when {@link Entity#isBurning()} is called.
@@ -37,12 +40,31 @@ public class InvisibilityCheckEvent extends Event {
 		this.entity = entity;
 	}
 
-	/**
-	 * Triggered by {@link MixinEntity} and {@link MixinEntityPlayer}.
-	 */
 	public static boolean isInvisible(Entity entity) {
-		InvisibilityCheckEvent event = new InvisibilityCheckEvent(entity);
-		return !MinecraftForge.EVENT_BUS.post(event);
+		return !MinecraftForge.EVENT_BUS.post(new InvisibilityCheckEvent(entity));
+	}
+
+	@Mixin(Entity.class)
+	private static class MixinEntity {
+
+		@Inject(method = "isInvisibleToPlayer", at = @At("RETURN"), cancellable = true)
+		private void injectIsInvisibleToPlayer(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+			if (cir.getReturnValueZ())
+				cir.setReturnValue(InvisibilityCheckEvent.isInvisible((Entity) (Object) this));
+		}
+
+	}
+
+	@Mixin(EntityPlayer.class)
+	private static class MixinEntityPlayer {
+
+		@Inject(method = "isInvisibleToPlayer", at = @At("RETURN"), cancellable = true)
+		private void injectIsInvisibleToPlayer(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+			if (cir.getReturnValueZ()) {
+				cir.setReturnValue(InvisibilityCheckEvent.isInvisible((Entity) (Object) this));
+			}
+		}
+
 	}
 
 }

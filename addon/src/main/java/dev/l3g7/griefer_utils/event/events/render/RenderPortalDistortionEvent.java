@@ -18,8 +18,25 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Cancelable
-public class RenderPortalDistortionEvent extends Event {}
+public class RenderPortalDistortionEvent extends Event {
+
+	@Mixin(EntityRenderer.class)
+	private static class MixinEntityRenderer {
+
+		@ModifyVariable(method = "setupCameraTransform", at = @At("STORE"), ordinal = 2)
+		public float setPortalDistortion(float distortion) {
+			return MinecraftForge.EVENT_BUS.post(new RenderPortalDistortionEvent()) ? 0 : distortion;
+		}
+
+	}
+
+}

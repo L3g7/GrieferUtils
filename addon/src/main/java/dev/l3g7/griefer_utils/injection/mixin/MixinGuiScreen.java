@@ -16,21 +16,17 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.injection.mixin.minecraft;
+package dev.l3g7.griefer_utils.injection.mixin;
 
 import dev.l3g7.griefer_utils.Main;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
-import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
-import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
 import dev.l3g7.griefer_utils.settings.FocusableSetting;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.AddonElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -49,17 +45,6 @@ public abstract class MixinGuiScreen {
 
 	@Shadow
 	protected abstract void actionPerformed(GuiButton button) throws IOException;
-
-	@Inject(method = "renderToolTip", at = @At("HEAD"), cancellable = true)
-	public void injectRenderTooltip(ItemStack stack, int x, int y, CallbackInfo ci) {
-		if (MinecraftForge.EVENT_BUS.post(new RenderToolTipEvent(stack, (GuiScreen) (Object) this, x, y)))
-			ci.cancel();
-	}
-
-	@Inject(method = "initGui", at = @At("HEAD"))
-	public void injectInitGui(CallbackInfo ci) {
-		MinecraftForge.EVENT_BUS.post(new GuiInitEvent((GuiScreen) (Object) this));
-	}
 
 	@Inject(method = "keyTyped", at = @At("HEAD"), cancellable = true)
 	public void injectKeyTyped(char typedChar, int keyCode, CallbackInfo ci) {

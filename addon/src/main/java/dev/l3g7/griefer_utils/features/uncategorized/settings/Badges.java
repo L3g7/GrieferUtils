@@ -26,9 +26,22 @@ import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerRem
 import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsGroup;
 import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsUserManager;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import net.labymod.core_implementation.mc18.gui.ModPlayerTabOverlay;
 import net.labymod.main.LabyMod;
+import net.labymod.main.ModSettings;
+import net.labymod.user.User;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.Util;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.minecraft.util.Util.EnumOS.OSX;
@@ -124,6 +137,37 @@ public class Badges {
 		drawUtils().bindTexture("griefer_utils/icons/icon.png");
 		x -= drawUtils().getStringWidth(text) * 0.7;
 		drawUtils().drawTexture(x - 8, 2.25, 256, 256, 7, 7);
+	}
+
+	@Mixin(value = ModPlayerTabOverlay.class, remap = false)
+	private static class MixinModPlayerTabOverlay {
+
+		private int left = -1;
+
+		@Redirect(method = "newTabOverlay", at = @At(value = "FIELD", target = "Lnet/labymod/main/ModSettings;revealFamiliarUsers:Z", ordinal = 1), remap = false)
+		private boolean redirectRevealFamiliarUsers(ModSettings instance) {
+			return instance.revealFamiliarUsers || showBadges();
+		}
+
+		@Redirect(method = "newTabOverlay", at = @At(value = "INVOKE", target = "Lnet/labymod/user/User;isFamiliar()Z"), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/labymod/core_implementation/mc18/gui/ModPlayerTabOverlay;drawRect(IIIII)V", ordinal = 0)))
+		private boolean redirectIsFamiliar(User instance) {
+			if (showBadges() && instance.getGroup() instanceof GrieferUtilsGroup)
+				return true;
+
+			return LabyMod.getSettings().revealFamiliarUsers && instance.isFamiliar();
+		}
+
+		@Redirect(method = "newTabOverlay", at = @At(value = "INVOKE", target = "Lnet/labymod/core_implementation/mc18/gui/ModPlayerTabOverlay;drawRect(IIIII)V", ordinal = 1), require = 1, remap = true)
+		private void redirectDrawRect(int left, int top, int right, int bottom, int color) {
+			this.left = left + 1;
+			Gui.drawRect(left, top, right, bottom, color);
+		}
+
+		@Inject(method = "newTabOverlay", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD, remap = false)
+		public void injectNewTabOverlay(int width, Scoreboard scoreboardIn, ScoreObjective scoreObjectiveIn, CallbackInfo ci) {
+			renderUserPercentage(left, width);
+		}
+
 	}
 
 }

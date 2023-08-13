@@ -16,23 +16,17 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.injection.mixin.minecraft;
+package dev.l3g7.griefer_utils.injection.mixin;
 
-import dev.l3g7.griefer_utils.features.render.TrueSight;
-import net.minecraft.client.renderer.entity.RendererLivingEntity;
+import de.emotechat.addon.EmoteChatAddon;
+import dev.l3g7.griefer_utils.core.misc.Constants;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-/**
- * Injects {@link TrueSight#getRenderModelAlpha()} into {@link RendererLivingEntity}.
- */
-@Mixin(RendererLivingEntity.class)
-public class MixinRendererLivingEntity {
+@Mixin(EmoteChatAddon.class)
+public class MixinEmoteChatAddon {
 
-	@ModifyArg(method = "renderModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V"), index = 3)
-	private float overwriteAlpha(float alpha) {
-		return TrueSight.getRenderModelAlpha();
+	public MixinEmoteChatAddon() {
+		Constants.EMOTECHAT = true;
 	}
 
 }

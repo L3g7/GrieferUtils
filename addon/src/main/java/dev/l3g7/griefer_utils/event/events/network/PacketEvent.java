@@ -18,12 +18,17 @@
 
 package dev.l3g7.griefer_utils.event.events.network;
 
-import dev.l3g7.griefer_utils.injection.mixin.minecraft.MixinNetHandlerPlayClient;
-import dev.l3g7.griefer_utils.injection.mixin.minecraft.MixinNetworkManager;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public class PacketEvent extends Event {
 
@@ -36,15 +41,19 @@ public class PacketEvent extends Event {
 	@Cancelable
 	public static class PacketReceiveEvent extends PacketEvent {
 
-		private PacketReceiveEvent(Packet<?> packet) {
+		public PacketReceiveEvent(Packet<?> packet) {
 			super(packet);
 		}
 
-		/**
-		 * Triggered by {@link MixinNetworkManager}.
-		 */
-		public static boolean shouldReceivePacket(Packet<?> packet) {
-			return !MinecraftForge.EVENT_BUS.post(new PacketReceiveEvent(packet));
+		@Mixin(NetworkManager.class)
+		private static class MixinNetworkManager {
+
+			@Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/Packet;)V", at = @At("HEAD"), cancellable = true)
+			public void injectChannelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
+				if (MinecraftForge.EVENT_BUS.post(new PacketReceiveEvent(packet)))
+					ci.cancel();
+			}
+
 		}
 
 	}
@@ -56,12 +65,17 @@ public class PacketEvent extends Event {
 			super(packet);
 		}
 
-		/**
-		 * Triggered by {@link MixinNetHandlerPlayClient}.
-		 */
-		public static boolean shouldSendPacket(Packet<?> packet) {
-			return !MinecraftForge.EVENT_BUS.post(new PacketSendEvent(packet));
+		@Mixin(NetHandlerPlayClient.class)
+		private static class MixinNetHandlerPlayClient {
+
+			@Inject(method = "addToSendQueue", at = @At("HEAD"), cancellable = true)
+			private void injectPacketSendEvent(Packet<?> packet, CallbackInfo ci) {
+				if (MinecraftForge.EVENT_BUS.post(new PacketSendEvent(packet)))
+					ci.cancel();
+			}
+
 		}
+
 	}
 
 }

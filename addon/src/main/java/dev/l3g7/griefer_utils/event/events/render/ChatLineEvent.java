@@ -18,20 +18,24 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
-import dev.l3g7.griefer_utils.injection.mixin.labymod.MixinChatRenderer;
-import dev.l3g7.griefer_utils.injection.mixin.labymod.MixinGuiChatAdapter;
+import de.emotechat.addon.gui.chat.render.EmoteChatRenderer;
+import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.ingamechat.renderer.ChatLine;
+import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
 public abstract class ChatLineEvent extends Event {
 
-	/**
-	 * Posted in {@link MixinGuiChatAdapter#postChatLineInitEvent(IChatComponent, int, int, boolean, boolean, String, Integer, CallbackInfo)}
-	 */
 	public static class ChatLineInitEvent extends ChatLineEvent {
 
 		public final IChatComponent component;
@@ -41,17 +45,62 @@ public abstract class ChatLineEvent extends Event {
 			this.component = component;
 			this.secondChat = secondChat;
 		}
+
+		@Mixin(value = GuiChatAdapter.class, remap = false)
+		private static class MixinGuiChatAdapter {
+
+			@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
+			public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
+				MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineInitEvent(component, secondChat));
+			}
+
+		}
+
 	}
 
-	/**
-	 * Posted in {@link MixinChatRenderer#postChatLineAddEvent(List, int, Object)}
-	 */
 	public static class ChatLineAddEvent extends ChatLineEvent {
 
 		public final ChatLine chatLine;
 
 		public ChatLineAddEvent(ChatLine chatLine) {
 			this.chatLine = chatLine;
+		}
+
+		@Mixin(value = EmoteChatRenderer.class, remap = false)
+		private static class MixinEmoteChatRenderer {
+
+			boolean refreshing;
+
+			@Redirect(method = "addChatLine", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V"), remap = false)
+			public void postChatLineAddEvent(List<Object> instance, int i, Object e) {
+				if (!refreshing)
+					MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineAddEvent((ChatLine) e));
+				instance.add(i, e);
+			}
+
+			@Inject(method = "addChatLine", at = @At("HEAD"))
+			public void injectAddChatLine(String message, boolean secondChat, String room, Object component, int updateCounter, int chatLineId, Integer highlightColor, boolean refresh, CallbackInfoReturnable<Boolean> cir) {
+				refreshing = refresh;
+			}
+		}
+
+		@Mixin(value = ChatRenderer.class, remap = false)
+		private static class MixinChatRenderer {
+
+			private boolean refreshing = false;
+
+			@Redirect(method = "addChatLine", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V"))
+			public void postChatLineAddEvent(List<Object> instance, int i, Object e) {
+				if (!refreshing)
+					MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineAddEvent((ChatLine) e));
+				instance.add(i, e);
+			}
+
+			@Inject(method = "addChatLine", at = @At("HEAD"))
+			public void injectAddChatLine(String message, boolean secondChat, String room, Object component, int updateCounter, int chatLineId, Integer highlightColor, boolean refresh, CallbackInfo ci) {
+				refreshing = refresh;
+			}
+
 		}
 
 	}

@@ -16,24 +16,23 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.injection.mixin.minecraft;
+package dev.l3g7.griefer_utils.injection.mixin;
 
-import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
+import net.labymod.main.LabyMod;
+import net.labymod.main.listeners.RenderTickListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(NetworkManager.class)
-public class MixinNetworkManager {
+@Mixin(RenderTickListener.class)
+public class MixinRenderTickListener {
 
-	@Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/Packet;)V", at = @At("HEAD"), cancellable = true)
-	public void injectChannelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
-		if (!PacketEvent.PacketReceiveEvent.shouldReceivePacket(packet))
-			ci.cancel();
+	/**
+	 * Fix custom achievements not being rendered when in a gui in game.
+	 */
+	@Redirect(method = "drawMenuOverlay", at = @At(value = "INVOKE", target = "Lnet/labymod/main/LabyMod;isInGame()Z"), remap = false)
+	public boolean redirectIsInGame(LabyMod instance) {
+		return false;
 	}
 
 }

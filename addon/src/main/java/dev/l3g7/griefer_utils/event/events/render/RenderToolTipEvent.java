@@ -20,8 +20,13 @@ package dev.l3g7.griefer_utils.event.events.render;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Cancelable
 public class RenderToolTipEvent extends Event {
@@ -36,6 +41,17 @@ public class RenderToolTipEvent extends Event {
 		this.screen = screen;
 		this.x = x;
 		this.y = y;
+	}
+
+	@Mixin(GuiScreen.class)
+	private static class MixinGuiScreen {
+
+		@Inject(method = "renderToolTip", at = @At("HEAD"), cancellable = true)
+		public void injectRenderTooltip(ItemStack stack, int x, int y, CallbackInfo ci) {
+			if (MinecraftForge.EVENT_BUS.post(new RenderToolTipEvent(stack, (GuiScreen) (Object) this, x, y)))
+				ci.cancel();
+		}
+
 	}
 
 }

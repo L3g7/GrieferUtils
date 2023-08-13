@@ -19,14 +19,19 @@
 package dev.l3g7.griefer_utils.event.events;
 
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.injection.mixin.labymod.MixinGuiChatAdapter;
-import dev.l3g7.griefer_utils.injection.mixin.labymod.MixinTagManager;
+import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.main.LabyMod;
+import net.labymod.utils.manager.TagManager;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
@@ -36,9 +41,6 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
  */
 public class MessageEvent extends Event {
 
-	/**
-	 * Posted in {@link MixinTagManager#injectTagComponent(Object, CallbackInfoReturnable)}
-	 */
 	public static class MessageModifyEvent extends MessageEvent {
 
 		public final IChatComponent original;
@@ -49,17 +51,36 @@ public class MessageEvent extends Event {
 			message = original.createCopy();
 		}
 
+		@Mixin(value = TagManager.class, remap = false)
+		private static class MixinTagManager {
+
+			@ModifyVariable(method = "tagComponent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+			private static Object injectTagComponent(Object value) {
+				MessageModifyEvent event = new MessageModifyEvent((IChatComponent) value);
+				MinecraftForge.EVENT_BUS.post(event);
+				return event.message;
+			}
+
+		}
+
 	}
 
-	/**
-	 * Posted in {@link MixinGuiChatAdapter#postMessageModifiedEvent(IChatComponent, int, int, boolean, boolean, String, Integer, CallbackInfo)}
-	 */
 	public static class MessageModifiedEvent extends MessageEvent {
 
 		public final IChatComponent component;
 
 		public MessageModifiedEvent(IChatComponent component) {
 			this.component = component;
+		}
+
+		@Mixin(value = GuiChatAdapter.class, remap = false)
+		private static class MixinGuiChatAdapter {
+
+			@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"))
+			public void postMessageModifiedEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
+				MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageModifiedEvent(component));
+			}
+
 		}
 
 	}
@@ -102,6 +123,17 @@ public class MessageEvent extends Event {
 
 		public MessageAboutToBeSentEvent(String message) {
 			this.message = message;
+		}
+
+		@Mixin(EntityPlayerSP.class)
+		private static class MixinEntityPlayerSP {
+
+			@Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
+			public void injectSendChatMessage(String message, CallbackInfo ci) {
+				if (MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageAboutToBeSentEvent(message)))
+					ci.cancel();
+			}
+
 		}
 
 	}

@@ -24,12 +24,17 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import net.labymod.ingamegui.modules.ScoreboardModule;
+import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -183,6 +188,32 @@ public class ScoreboardHandler {
 		}
 
 		protected abstract String getValue();
+
+	}
+
+	@Mixin(value = ScoreboardModule.class, remap = false)
+	private static class MixinScoreboardModule {
+
+		@ModifyConstant(method = "renderScoreboard", constant = @Constant(intValue = 15), remap = false)
+		private int modifyMaxScoreboardSize(int listSize) {
+			if (shouldUnlockScoreboard())
+				return Integer.MAX_VALUE;
+
+			return listSize;
+		}
+
+	}
+
+	@Mixin(GuiIngame.class)
+	private static class MixinGuiIngame {
+
+		@ModifyConstant(method = "renderScoreboard", constant = @Constant(intValue = 15))
+		private int modifyMaxScoreboardSize(int listSize) {
+			if (shouldUnlockScoreboard())
+				return Integer.MAX_VALUE;
+
+			return listSize;
+		}
 
 	}
 

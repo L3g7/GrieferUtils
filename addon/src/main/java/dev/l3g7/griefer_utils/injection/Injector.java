@@ -30,18 +30,21 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
+import org.spongepowered.asm.mixin.transformer.Config;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Injector implements IClassTransformer {
 
+	static Config mixinConfig;
 	private static final Map<String, Transformer> transformers = new HashMap<>();
 
 	public Injector() {
 		// Initialize Mixin
 		MixinBootstrap.init();
-		Mixins.addConfiguration("griefer_utils.mixins.json");
+		mixinConfig = Config.create("griefer_utils.mixins.json");
+		Reflection.invoke(Mixins.class, "registerConfiguration", mixinConfig);
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
 
 		// Load transformers

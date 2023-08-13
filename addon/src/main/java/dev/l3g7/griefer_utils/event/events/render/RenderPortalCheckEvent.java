@@ -18,8 +18,28 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Cancelable
-public class RenderPortalCheckEvent extends Event {}
+public class RenderPortalCheckEvent extends Event {
+
+	@Mixin(GuiIngame.class)
+	private static class MixinGuiIngame {
+
+		@Inject(method = "renderPortal", at = @At("HEAD"), cancellable = true)
+		public void injectRenderPortal(float timeInPortal, ScaledResolution scaledRes, CallbackInfo ci) {
+			if (MinecraftForge.EVENT_BUS.post(new RenderPortalCheckEvent()))
+				ci.cancel();
+		}
+
+	}
+
+}

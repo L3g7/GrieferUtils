@@ -18,7 +18,14 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
 
 public class ShiftAirCheckEvent extends Event {
 
@@ -26,6 +33,20 @@ public class ShiftAirCheckEvent extends Event {
 
 	public ShiftAirCheckEvent(double boundingBoxOffset) {
 		this.boundingBoxOffset = boundingBoxOffset;
+	}
+
+	@Mixin(Entity.class)
+	private static class MixinEntity {
+
+		@Redirect(method = "moveEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/AxisAlignedBB;offset(DDD)Lnet/minecraft/util/AxisAlignedBB;"), slice = @Slice(
+			from = @At(value = "INVOKE:FIRST", target = "Lnet/minecraft/profiler/Profiler;startSection(Ljava/lang/String;)V"),
+			to = @At(value = "INVOKE:FIRST", target = "Lnet/minecraft/util/AxisAlignedBB;addCoord(DDD)Lnet/minecraft/util/AxisAlignedBB;")))
+		public AxisAlignedBB injectMoveEntity(AxisAlignedBB instance, double x, double y, double z) {
+			ShiftAirCheckEvent event = new ShiftAirCheckEvent(y);
+			MinecraftForge.EVENT_BUS.post(event);
+			return instance.offset(x, event.boundingBoxOffset, z);
+		}
+
 	}
 
 }

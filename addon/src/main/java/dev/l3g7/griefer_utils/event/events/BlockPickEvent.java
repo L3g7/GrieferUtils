@@ -18,9 +18,19 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Cancelable
 public class BlockPickEvent extends Event {
@@ -30,5 +40,24 @@ public class BlockPickEvent extends Event {
 	public BlockPickEvent(ItemStack requiredStack) {
 		this.requiredStack = requiredStack;
 	}
+
+	@Mixin(ForgeHooks.class)
+	private static class MixinForgeHooks {
+
+		@Inject(method = "onPickBlock", at = @At("HEAD"), remap = false, cancellable = true)
+		private static void inject(MovingObjectPosition target, EntityPlayer player, World world, CallbackInfoReturnable<Boolean> cir) {
+			if (target == null || target.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+				return;
+
+			Block block = world.getBlockState(target.getBlockPos()).getBlock();
+			if (block.isAir(world, target.getBlockPos()))
+				return;
+
+			if (MinecraftForge.EVENT_BUS.post(new BlockPickEvent(block.getPickBlock(target, world, target.getBlockPos(), player))))
+				cir.setReturnValue(true);
+		}
+
+	}
+
 
 }

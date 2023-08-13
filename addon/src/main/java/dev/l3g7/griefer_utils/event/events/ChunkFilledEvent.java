@@ -19,8 +19,13 @@
 package dev.l3g7.griefer_utils.event.events;
 
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Cancelable
 public class ChunkFilledEvent extends Event {
@@ -33,6 +38,16 @@ public class ChunkFilledEvent extends Event {
 
 	public Chunk getChunk() {
 		return chunk;
+	}
+
+	@Mixin(Chunk.class)
+	private static class MixinChunk {
+
+		@Inject(method = "fillChunk", at = @At("TAIL"))
+		public void injectFillChunk(byte[] p_177439_1_, int p_177439_2_, boolean p_177439_3_, CallbackInfo ci) {
+			MinecraftForge.EVENT_BUS.post(new ChunkFilledEvent((Chunk) (Object) this));
+		}
+
 	}
 
 }

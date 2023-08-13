@@ -18,10 +18,17 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import net.labymod.ingamechat.tabs.GuiChatFilter;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+
+import static java.lang.Integer.MAX_VALUE;
 
 @Singleton
 public class UnlockChatFilters extends Feature {
@@ -31,5 +38,15 @@ public class UnlockChatFilters extends Feature {
 		.name("Chat-Filter-Länge entsperren")
 		.description("Erhöht die maximale Länge von Chat Filtern.")
 		.icon("long_speech_bubble");
+
+	@Mixin(GuiChatFilter.class)
+	private static class MixinGuiChatFilter {
+
+		@ModifyArg(method = "drawElementTextField", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiTextField;setMaxStringLength(I)V"))
+		public int injectInitGui(int previousLength) {
+			return FileProvider.getSingleton(UnlockChatFilters.class).isEnabled() ? MAX_VALUE : previousLength;
+		}
+
+	}
 
 }

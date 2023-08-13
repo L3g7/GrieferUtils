@@ -18,10 +18,17 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -50,6 +57,17 @@ public class WindowClickEvent extends Event {
 			return;
 
 		itemStack = slots.get(slotId).getStack();
+	}
+
+	@Mixin(PlayerControllerMP.class)
+	private static class MixinPlayerControllerMP {
+
+		@Inject(method = "windowClick", at = @At("HEAD"), cancellable = true)
+		public void injectWindowClick(int windowId, int slotId, int mouseButtonClicked, int mode, EntityPlayer playerIn, CallbackInfoReturnable<ItemStack> cir) {
+			if (MinecraftForge.EVENT_BUS.post(new WindowClickEvent(windowId, slotId, mouseButtonClicked, mode)))
+				cir.cancel();
+		}
+
 	}
 
 }

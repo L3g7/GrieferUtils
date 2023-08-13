@@ -18,6 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import de.emotechat.addon.gui.chat.suggestion.EmoteSuggestionsMenu;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -33,6 +35,11 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,5 +178,34 @@ public class SplitLongMessages extends Feature {
 
 		return stringBuilder.length() + 1;
 	}
+
+	@Mixin(value = EmoteSuggestionsMenu.class, remap = false)
+	private static class MixinEmoteSuggestionsMenu {
+
+		@Shadow
+		private GuiTextField textField;
+		@Shadow
+		private int minecraftTextFieldLength;
+
+		private int textFieldLength;
+
+		@Inject(method = "adjustTextFieldLength", at = @At("HEAD"), remap = false)
+		public void injectAdjustTextFieldLength(CallbackInfo ci) {
+			textFieldLength = minecraftTextFieldLength;
+			String text = textField.getText();
+
+			if (FileProvider.getSingleton(SplitLongMessages.class).isEnabled() && text.startsWith("/msg ") || text.startsWith("/r ") || !text.startsWith("/"))
+				minecraftTextFieldLength = Integer.MAX_VALUE;
+			else
+				minecraftTextFieldLength = textFieldLength;
+		}
+
+		@Inject(method = "adjustTextFieldLength", at = @At("TAIL"), remap = false)
+		public void injectAdjustTextFieldLengthTail(CallbackInfo ci) {
+			minecraftTextFieldLength = textFieldLength;
+		}
+
+	}
+
 
 }

@@ -23,11 +23,11 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.util.ArrayUtil.map;
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.util.ArrayUtil.map;
 
 /**
  * Meta information of a class.
@@ -53,7 +53,9 @@ public class ClassMeta implements IMeta {
 		this.modifiers = node.access;
 		this.signature = node.signature;
 		this.methods = map(node.methods, m -> new MethodMeta(this, m));
-		this.annotations = node.visibleAnnotations == null ? Collections.emptyList() : map(node.visibleAnnotations, AnnotationMeta::new);
+		this.annotations = node.visibleAnnotations == null ? new ArrayList<>() : map(node.visibleAnnotations, AnnotationMeta::new);
+		if (node.invisibleAnnotations != null)
+			this.annotations.addAll(map(node.invisibleAnnotations, AnnotationMeta::new));
 
 		this.asmNode = node;
 	}

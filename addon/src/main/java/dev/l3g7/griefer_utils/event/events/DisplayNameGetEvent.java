@@ -18,11 +18,14 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
-import dev.l3g7.griefer_utils.injection.mixin.minecraft.MixinEntityPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * An event being posted when a player's display name is read.
@@ -32,18 +35,21 @@ public class DisplayNameGetEvent extends Event {
 	public final EntityPlayer player;
 	public IChatComponent displayName;
 
-	private DisplayNameGetEvent(EntityPlayer player, IChatComponent displayName) {
+	public DisplayNameGetEvent(EntityPlayer player, IChatComponent displayName) {
 		this.player = player;
 		this.displayName = displayName;
 	}
 
-	/**
-	 * Triggered by {@link MixinEntityPlayer}
-	 */
-	public static IChatComponent post(EntityPlayer player, IChatComponent displayName) {
-		DisplayNameGetEvent event = new DisplayNameGetEvent(player, displayName);
-		MinecraftForge.EVENT_BUS.post(event);
-		return event.displayName;
+	@Mixin(EntityPlayer.class)
+	private static class MixinEntityPlayer {
+
+		@Inject(method = "getDisplayName", at = @At("RETURN"), cancellable = true)
+		private void injectGetDisplayName(CallbackInfoReturnable<IChatComponent> cir) {
+			DisplayNameGetEvent event = new DisplayNameGetEvent((EntityPlayer) (Object) this, cir.getReturnValue());
+			MinecraftForge.EVENT_BUS.post(event);
+			cir.setReturnValue(event.displayName);
+		}
+
 	}
 
 }

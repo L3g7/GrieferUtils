@@ -29,12 +29,17 @@ import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +49,10 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 @Singleton
 public class SkullEnchantmentFix extends Feature {
 
-	private static final ItemStack ICON = ItemUtil.createItem(Items.skull, 0, true);
+	public static final ItemStack ICON = ItemUtil.createItem(Items.skull, 0, true);
 
 	@SuppressWarnings("unchecked, deprecation")
-	private static final IBakedModel cubeModel = new IBakedModel() {
+	public static final IBakedModel cubeModel = new IBakedModel() {
 		private final List<BakedQuad>[] bakedQuads = new List[] { // Data was copied from the IBakedModel of a standard dirt block
 			ImmutableList.of(new BakedQuad(new int[] {0, 0, 1065353216, -8421505, 1048576655, 1044383007, 33024, 0, 0, 0, -8421505, 1048576655, 1046477537, 33024, 1065353216, 0, 0, -8421505, 1049623921, 1046477537, 33024, 1065353216, 0, 1065353216, -8421505, 1049623921, 1044383007, 33024}, -1, EnumFacing.DOWN)),
 			ImmutableList.of(new BakedQuad(new int[] {0, 1065353216, 0, -1, 1048576655, 1044383007, 32512, 0, 1065353216, 1065353216, -1, 1048576655, 1046477537, 32512, 1065353216, 1065353216, 1065353216, -1, 1049623921, 1046477537, 32512, 1065353216, 1065353216, 0, -1, 1049623921, 1044383007, 32512}, -1, EnumFacing.UP)),
@@ -75,20 +80,27 @@ public class SkullEnchantmentFix extends Feature {
 		.description("Behebt, dass Verzauberungen von Köpfe nicht angezeigt werden.")
 		.icon("enchanted_skull");
 
-	public static void setDepthFunc(IBakedModel ibakedModel) {
-		if (ibakedModel == cubeModel)
-			GlStateManager.depthFunc(GL11.GL_ALWAYS);
-	}
+	@Mixin(RenderItem.class)
+	private static class MixinRenderItem {
 
-	public static void renderEffect(ItemStack stack) {
-		if (stack.getItem() != Items.skull)
-			return;
+		@Inject(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/resources/model/IBakedModel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer;renderByItem(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+		public void injectRenderItem(ItemStack stack, IBakedModel model, CallbackInfo ci) {
+			if (stack.getItem() != Items.skull)
+				return;
 
-		if (!FileProvider.getSingleton(SkullEnchantmentFix.class).isEnabled() && stack != ICON)
-			return;
+			if (!FileProvider.getSingleton(SkullEnchantmentFix.class).isEnabled() && stack != ICON)
+				return;
 
-		if (stack.hasEffect())
-			Reflection.invoke(mc().getRenderItem(), "renderEffect", cubeModel);
+			if (stack.hasEffect())
+				Reflection.invoke(mc().getRenderItem(), "renderEffect", cubeModel);
+		}
+
+		@Inject(method = "renderEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;disableLighting()V"))
+		public void injectRenderEffect(IBakedModel iBakedModel, CallbackInfo ci) {
+			if (!FileProvider.getSingleton(SkullEnchantmentFix.class).isEnabled() && iBakedModel == cubeModel)
+				GlStateManager.depthFunc(GL11.GL_ALWAYS);
+		}
+
 	}
 
 }

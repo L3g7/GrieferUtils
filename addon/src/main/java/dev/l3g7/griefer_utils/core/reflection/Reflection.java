@@ -127,15 +127,10 @@ public class Reflection {
 	}
 
 	/**
-	 * @return whether the specified class exists, without loading it.
+	 * Tries to find a .class file for the given class.
 	 */
-	public static boolean doesClassExist(String className) {
-		try {
-			Class.forName(className, false, Reflection.class.getClassLoader());
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
+	public static boolean exists(String name) {
+		return ClassReflection.exists(name);
 	}
 
 }

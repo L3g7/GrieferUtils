@@ -19,7 +19,12 @@
 package dev.l3g7.griefer_utils.event.events;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public class GuiInitEvent extends Event {
 
@@ -27,6 +32,16 @@ public class GuiInitEvent extends Event {
 
 	public GuiInitEvent(GuiScreen screen) {
 		this.screen = screen;
+	}
+
+	@Mixin(GuiScreen.class)
+	private static class MixinGuiScreen {
+
+		@Inject(method = "initGui", at = @At("HEAD"))
+		public void injectInitGui(CallbackInfo ci) {
+			MinecraftForge.EVENT_BUS.post(new GuiInitEvent((GuiScreen) (Object) this));
+		}
+
 	}
 
 }

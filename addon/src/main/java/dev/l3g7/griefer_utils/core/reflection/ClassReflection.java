@@ -20,8 +20,10 @@ package dev.l3g7.griefer_utils.core.reflection;
 
 import org.apache.commons.lang3.ClassUtils;
 
-import static dev.l3g7.griefer_utils.core.util.Util.elevate;
+import java.net.URLClassLoader;
+
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.util.Util.elevate;
 
 /**
  * Class related reflection.
@@ -47,6 +49,14 @@ class ClassReflection {
 			return targetClass.isAssignableFrom((Class<?>) object);
 
 		return (!targetClass.isPrimitive() && object == null) || targetClass.isInstance(object) || ClassUtils.primitiveToWrapper(targetClass).isInstance(object);
+	}
+
+	/**
+	 * Tries to find a .class file for the given class.
+	 */
+	static boolean exists(String name) {
+		URLClassLoader cl = ((URLClassLoader) ClassReflection.class.getClassLoader());
+		return cl.findResource(name.replace('.', '/') + ".class") != null;
 	}
 
 }

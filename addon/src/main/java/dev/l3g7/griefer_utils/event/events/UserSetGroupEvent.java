@@ -20,8 +20,13 @@ package dev.l3g7.griefer_utils.event.events;
 
 import net.labymod.user.User;
 import net.labymod.user.group.LabyGroup;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Cancelable
 public class UserSetGroupEvent extends Event {
@@ -32,6 +37,17 @@ public class UserSetGroupEvent extends Event {
 	public UserSetGroupEvent(User user, LabyGroup group) {
 		this.user = user;
 		this.group = group;
+	}
+
+	@Mixin(value = User.class, remap = false)
+	private static class MixinUser {
+
+		@Inject(method = "setGroup", at = @At("HEAD"), cancellable = true)
+		public void injectSetGroup(LabyGroup group, CallbackInfo ci) {
+			if (MinecraftForge.EVENT_BUS.post(new UserSetGroupEvent((User) (Object) this, group)))
+				ci.cancel();
+		}
+
 	}
 
 }

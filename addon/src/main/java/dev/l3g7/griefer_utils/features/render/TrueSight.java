@@ -28,6 +28,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SliderSetting;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -35,6 +36,9 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import java.util.*;
 
@@ -138,6 +142,16 @@ public class TrueSight extends Feature {
 			return 0.15f;
 
 		return 0.01f * (100f - INSTANCE.opacity.get());
+	}
+
+	@Mixin(RendererLivingEntity.class)
+	private static class MixinRendererLivingEntity {
+
+		@ModifyArg(method = "renderModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V"), index = 3)
+		private float overwriteAlpha(float alpha) {
+			return getRenderModelAlpha();
+		}
+
 	}
 
 }

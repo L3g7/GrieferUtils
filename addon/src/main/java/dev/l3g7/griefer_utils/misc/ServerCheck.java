@@ -54,7 +54,7 @@ public class ServerCheck {
 		if (!packet.getChannelName().equals("MC|Brand"))
 			return;
 
-		if (packet.getBufferData().toString(StandardCharsets.UTF_8).startsWith("GrieferGames"))
+		if (packet.getBufferData().toString(StandardCharsets.UTF_8).contains("GrieferGames"))
 			onGrieferGames = true;
 	}
 

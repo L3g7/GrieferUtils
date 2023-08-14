@@ -21,6 +21,8 @@ package dev.l3g7.griefer_utils.features.world;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.ItemTooltipEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
 import dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter;
@@ -35,8 +37,6 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.chat;
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -28,7 +29,6 @@ import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
 import net.minecraft.init.Blocks;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.List;
 
@@ -85,7 +85,7 @@ public class ChatMods extends Feature {
 	private boolean isNews = false;
 
 	@EventListener
-	public void onMessageReceive(ClientChatReceivedEvent event) {
+	public void onMessageReceive(MessageReceiveEvent event) {
 		boolean isNewsLine = event.message.getFormattedText().equals("§r§f§m------------§r§8 [ §r§6News§r§8 ] §r§f§m------------§r");
 		if (isNewsLine)
 			isNews = !isNews;

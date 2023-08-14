@@ -20,6 +20,8 @@ package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.RenderWorldLastEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.*;
@@ -29,8 +31,6 @@ import net.labymod.utils.Material;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -85,7 +85,7 @@ public class LightBugESP extends Feature {
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {
-		if (event.phase != TickEvent.Phase.END || player() == null)
+		if (player() == null)
 			return;
 
 		if (passedTicks++ % Math.max(updateDelay.get(), 1) != 0)

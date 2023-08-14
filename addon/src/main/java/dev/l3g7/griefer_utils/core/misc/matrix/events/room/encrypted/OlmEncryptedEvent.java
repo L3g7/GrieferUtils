@@ -22,8 +22,8 @@ import com.google.gson.annotations.SerializedName;
 import dev.l3g7.griefer_utils.core.misc.matrix.events.Event;
 import dev.l3g7.griefer_utils.core.misc.matrix.events.Event.EventContent;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.structures.OlmSession;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.Ed25519Key;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.Ed25519Key;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 
 import java.util.HashMap;

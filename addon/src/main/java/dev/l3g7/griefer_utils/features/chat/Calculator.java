@@ -20,17 +20,17 @@ package dev.l3g7.griefer_utils.features.chat;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.utils.Material;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.mariuszgromada.math.mxparser.Expression;
 import org.mariuszgromada.math.mxparser.mXparser;
 
@@ -144,7 +144,7 @@ public class Calculator extends Feature {
 	}
 
 	@EventListener
-	public void onMessageReceive(ClientChatReceivedEvent event) {
+	public void onMessageReceive(MessageReceiveEvent event) {
 		if (!ServerCheck.isOnGrieferGames())
 			return;
 
@@ -217,7 +217,7 @@ public class Calculator extends Feature {
 			BigDecimal moneyRequired = lastPayment.subtract(getCurrentBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
 			if (event.message.equals(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == WithdrawAction.SUGGEST) {
 				// Wait 1 tick (chat screen still open)
-				TickScheduler.runAfterClientTicks(() -> suggest("/pay %s %s", lastPaymentReceiver, lastPayment.toPlainString()), 1);
+				TickScheduler.runAfterRenderTicks(() -> suggest("/pay %s %s", lastPaymentReceiver, lastPayment.toPlainString()), 1);
 				return;
 			}
 		}

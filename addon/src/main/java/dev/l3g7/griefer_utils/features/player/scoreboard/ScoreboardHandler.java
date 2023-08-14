@@ -22,6 +22,8 @@ package dev.l3g7.griefer_utils.features.player.scoreboard;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
+import dev.l3g7.griefer_utils.event.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import net.labymod.ingamegui.modules.ScoreboardModule;
@@ -30,8 +32,6 @@ import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
@@ -106,7 +106,7 @@ public class ScoreboardHandler {
 	}
 
 	@EventListener
-	private void onWorldLeave(WorldEvent.Unload event) {
+	private void onWorldLeave(WorldUnloadEvent event) {
 		hiddenScores.clear();
 	}
 

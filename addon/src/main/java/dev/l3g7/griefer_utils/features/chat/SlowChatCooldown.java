@@ -22,14 +22,14 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,7 +51,7 @@ public class SlowChatCooldown extends Feature {
 		.icon("hourglass");
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onMessage(ClientChatReceivedEvent event) {
+	public void onMessage(MessageReceiveEvent event) {
 		if (event.type == 2 && timeoutEnd > 0) {
 			originalDisplayEnd = System.currentTimeMillis() + 3_000;
 			originalMessage = event.message;
@@ -94,7 +94,7 @@ public class SlowChatCooldown extends Feature {
 
 	@EventListener
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (player() == null || event.phase == TickEvent.Phase.START || !isSlowChatEnabled)
+		if (player() == null || !isSlowChatEnabled)
 			return;
 
 		if (timeoutEnd < 0)

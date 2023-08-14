@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.render;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -33,7 +34,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.util.glu.Disk;
 
 import java.util.ArrayList;

@@ -18,11 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.modules.money;
 
-import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;

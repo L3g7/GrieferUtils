@@ -20,9 +20,9 @@ package dev.l3g7.griefer_utils.core.misc.matrix.requests.keys;
 
 import com.google.gson.annotations.SerializedName;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.Session;
-import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.PostRequest;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.Curve25519Keys.SignedCurve25519Key;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.cryptography.DeviceKeys;
+import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.PostRequest;
 import dev.l3g7.griefer_utils.core.misc.matrix.types.requests.Response;
 
 import java.util.Map;

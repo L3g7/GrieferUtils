@@ -19,21 +19,21 @@
 package dev.l3g7.griefer_utils.features.modules.orb_stats;
 
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.util.ItemUtil;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -87,7 +87,7 @@ public class OrbBalance extends Module {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onMessageReceive(ClientChatReceivedEvent event) {
+	public void onMessageReceive(MessageReceiveEvent event) {
 		if (!ServerCheck.isOnCitybuild())
 			return;
 

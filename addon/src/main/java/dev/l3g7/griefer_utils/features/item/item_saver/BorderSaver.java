@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.BlockInteractEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
 import dev.l3g7.griefer_utils.features.world.ItemSearch;
@@ -34,7 +35,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import static dev.l3g7.griefer_utils.util.ItemUtil.createItem;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -43,7 +43,6 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
 import static net.labymod.ingamegui.Module.mc;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.START_DESTROY_BLOCK;
 import static net.minecraft.util.EnumFacing.UP;
-import static net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR;
 
 /**
  * Suppresses left clicks and dropping when holing a diamond sword enchanted with looting 21.
@@ -89,13 +88,12 @@ public class BorderSaver extends ItemSaver {
 	}
 
 	@EventListener
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	public void onPlayerInteract(BlockInteractEvent event) {
 		if (!isEnabled() || !isHoldingBorder())
 			return;
 
 		event.setCanceled(true);
-		if (event.action != RIGHT_CLICK_AIR)
-			displayScreen(() -> mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld, mc.thePlayer.getHeldItem()));
+		displayScreen(() -> mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld, mc.thePlayer.getHeldItem()));
 	}
 
 	private boolean isHoldingBorder() {

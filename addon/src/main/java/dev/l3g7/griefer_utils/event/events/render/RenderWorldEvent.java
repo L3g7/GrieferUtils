@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.event.events.render;
 
 import dev.l3g7.griefer_utils.event.EventListener;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent.RenderTickEvent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
@@ -27,16 +27,16 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 /**
  * A RenderTickEvent called when no gui is opened.
  */
-public class RenderWorldEvent extends TickEvent.RenderTickEvent {
+public class RenderWorldEvent extends RenderTickEvent {
 
-	private RenderWorldEvent(Phase phase, float renderTickTime) {
-		super(phase, renderTickTime);
+	public RenderWorldEvent(float renderTickTime) {
+		super(renderTickTime);
 	}
 
 	@EventListener(receiveSubclasses = false)
-	private static void onRenderTick(TickEvent.RenderTickEvent event) {
+	private static void onRenderTick(RenderTickEvent event) {
 		if (mc().currentScreen == null)
-			EVENT_BUS.post(new RenderWorldEvent(event.phase, event.renderTickTime));
+			EVENT_BUS.post(new RenderWorldEvent(event.renderTickTime));
 	}
 
 }

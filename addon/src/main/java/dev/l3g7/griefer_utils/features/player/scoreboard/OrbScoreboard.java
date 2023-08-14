@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.player.scoreboard;
 
-import dev.l3g7.griefer_utils.features.modules.orb_stats.OrbBalance;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.features.modules.orb_stats.OrbBalance;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 

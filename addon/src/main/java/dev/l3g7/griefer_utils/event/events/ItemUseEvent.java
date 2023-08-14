@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -71,5 +72,19 @@ public class ItemUseEvent extends Event {
 		}
 
 	}
+
+	public static class Finish extends Event {
+
+		@Mixin(EntityPlayer.class)
+		private static class MixinEntityPlayer {
+			@Redirect(method = "onItemUseFinish", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;onItemUseFinish(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/item/ItemStack;"))
+			public ItemStack redirectOnItemUseFinish(ItemStack instance, World worldIn, EntityPlayer playerIn) {
+				MinecraftForge.EVENT_BUS.post(new Finish());
+				return instance.onItemUseFinish(worldIn, playerIn);
+			}
+		}
+
+	}
+
 
 }

@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.item;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -37,7 +38,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;

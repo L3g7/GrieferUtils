@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.world;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.render.DrawGuiContainerForegroundLayerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -37,7 +38,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -73,7 +73,7 @@ public class ItemSearch extends Feature {
 	private String previousSearch = "";
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post event) {
+	public void onGuiInit(GuiScreenEvent.InitGuiEvent event) {
 		if (searchField != null)
 			previousSearch = searchField.getText();
 

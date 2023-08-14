@@ -22,7 +22,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
-import net.labymod.settings.elements.NumberElement;
 import net.labymod.settings.elements.SliderElement;
 
 /**

@@ -21,6 +21,9 @@ package dev.l3g7.griefer_utils.features.world.better_hopper;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.RenderWorldLastEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -43,9 +46,6 @@ import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -183,7 +183,7 @@ public class BetterHopper extends Feature {
 
 	@EventListener
 	public void onRenderTick(TickEvent.RenderTickEvent event) {
-		if (!betterVisualisation.get() || event.phase != TickEvent.Phase.START || !(mc().currentScreen instanceof GuiChest))
+		if (!betterVisualisation.get() || !(mc().currentScreen instanceof GuiChest))
 			return;
 
 		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
@@ -198,7 +198,7 @@ public class BetterHopper extends Feature {
 	}
 
 	@EventListener
-	public void onMessageReceive(ClientChatReceivedEvent event) {
+	public void onMessageReceive(MessageReceiveEvent event) {
 		String text = event.message.getUnformattedText();
 		if (text.equals("[Trichter] Der Trichter wurde erfolgreich verbunden.")
 			|| text.equals("[Trichter] Der Verbindungsmodus wurde beendet.")

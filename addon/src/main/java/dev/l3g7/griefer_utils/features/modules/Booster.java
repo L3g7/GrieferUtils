@@ -21,14 +21,16 @@ package dev.l3g7.griefer_utils.features.modules;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.main.LabyMod;
@@ -39,8 +41,6 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +127,7 @@ public class Booster extends Module {
 	}
 
 	@EventListener
-	public void onMsg(ClientChatReceivedEvent event) {
+	public void onMsg(MessageReceiveEvent event) {
 		String msg = event.message.getUnformattedText();
 
 		if (waitingForBoosterInfo && msg.equals("Folgende Booster sind auf diesem Server aktiv:")) {

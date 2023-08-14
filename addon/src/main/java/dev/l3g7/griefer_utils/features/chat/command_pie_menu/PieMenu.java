@@ -20,6 +20,8 @@ package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.event.events.MouseEvent;
+import dev.l3g7.griefer_utils.event.events.RenderGameOverlayEvent;
 import dev.l3g7.griefer_utils.event.events.render.ScaledResolutionInitEvent;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.render.GlEngine;
@@ -31,8 +33,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.client.event.MouseEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -124,8 +124,8 @@ public class PieMenu extends Gui {
 	}
 
 	@SubscribeEvent
-	public void render(RenderGameOverlayEvent.Post event) {
-		if (!open || event.type != RenderGameOverlayEvent.ElementType.ALL)
+	public void render(RenderGameOverlayEvent event) {
+		if (!open)
 			return;
 
 		if (player() == null || player().getUniqueID() == null || player().hurtTime != 0) {

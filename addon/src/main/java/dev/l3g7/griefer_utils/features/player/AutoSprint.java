@@ -18,12 +18,12 @@
 
 package dev.l3g7.griefer_utils.features.player;
 
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.settings;
@@ -41,17 +41,18 @@ public class AutoSprint extends Feature {
 		.icon("speed");
 
 	@EventListener
-	public void onPlayerTick(PlayerTickEvent event) {
-		if (settings().keyBindForward.isKeyDown()) {
-			try {
-				player().setSprinting(true);
-			} catch (IllegalArgumentException e) {
-				if (e.getMessage().equals("Modifier is already applied on this attribute!"))
-					// Ignore this error, caused by asynchronous access to player's attribute modifiers
-					return;
+	public void onClientTick(TickEvent.ClientTickEvent event) {
+		if (player() == null || !settings().keyBindForward.isKeyDown())
+			return;
 
-				throw e;
-			}
+		try {
+			player().setSprinting(true);
+		} catch (IllegalArgumentException e) {
+			if (e.getMessage().equals("Modifier is already applied on this attribute!"))
+				// Ignore this error, caused by asynchronous access to player's attribute modifiers
+				return;
+
+			throw e;
 		}
 	}
 

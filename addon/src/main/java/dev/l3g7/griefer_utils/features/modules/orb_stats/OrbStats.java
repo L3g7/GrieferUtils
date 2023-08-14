@@ -20,16 +20,19 @@ package dev.l3g7.griefer_utils.features.modules.orb_stats;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.util.PlayerUtil;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
-import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.JsonParse;
 import net.minecraft.client.gui.GuiScreen;
@@ -42,9 +45,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
@@ -57,8 +57,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 
 @Singleton
 public class OrbStats extends Module {
@@ -213,7 +213,7 @@ public class OrbStats extends Module {
 
 	public static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>[\\S ]+) für (?<orbs>[\\d.]+) Orbs verkauft\\.$");
 	@EventListener
-	public void onMsgReceive(ClientChatReceivedEvent event) {
+	public void onMsgReceive(MessageReceiveEvent event) {
 		Matcher matcher = ORB_SELL_PATTERN.matcher(event.message.getUnformattedText());
 		if (!matcher.matches())
 			return;

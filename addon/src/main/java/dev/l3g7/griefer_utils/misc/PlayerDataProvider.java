@@ -22,7 +22,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.authlib.properties.Property;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.core.util.IOUtil.URLReadOperation;
 import dev.l3g7.griefer_utils.event.EventListener;

@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static dev.l3g7.griefer_utils.core.util.Util.elevate;
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.util.Util.elevate;
 
 /**
  * Meta information of an annotation.

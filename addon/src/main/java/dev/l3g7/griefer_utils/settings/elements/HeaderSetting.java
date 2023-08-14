@@ -21,7 +21,6 @@ package dev.l3g7.griefer_utils.settings.elements;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
-import net.labymod.settings.elements.SettingsElement;
 
 /**
  * A setting to display text.

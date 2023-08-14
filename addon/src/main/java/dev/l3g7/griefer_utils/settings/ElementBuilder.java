@@ -18,10 +18,10 @@
 
 package dev.l3g7.griefer_utils.settings;
 
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.util.Util;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;

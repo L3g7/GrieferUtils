@@ -20,11 +20,11 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsGroup;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Keyboard;
 
 import java.nio.charset.StandardCharsets;

@@ -21,10 +21,10 @@ package dev.l3g7.griefer_utils.settings.elements.player_list_setting;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.core.XboxProfile;
 import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.core.XboxProfileResolver;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import net.labymod.utils.JsonParse;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 

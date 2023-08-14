@@ -18,13 +18,15 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.manager.TagManager;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
@@ -57,7 +59,7 @@ public class MessageEvent extends Event {
 			@ModifyVariable(method = "tagComponent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 			private static Object injectTagComponent(Object value) {
 				MessageModifyEvent event = new MessageModifyEvent((IChatComponent) value);
-				MinecraftForge.EVENT_BUS.post(event);
+				EVENT_BUS.post(event);
 				return event.message;
 			}
 
@@ -78,7 +80,7 @@ public class MessageEvent extends Event {
 
 			@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"))
 			public void postMessageModifiedEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-				MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageModifiedEvent(component));
+				EVENT_BUS.post(new MessageEvent.MessageModifiedEvent(component));
 			}
 
 		}
@@ -130,10 +132,33 @@ public class MessageEvent extends Event {
 
 			@Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
 			public void injectSendChatMessage(String message, CallbackInfo ci) {
-				if (MinecraftForge.EVENT_BUS.post(new MessageEvent.MessageAboutToBeSentEvent(message)))
+				if (EVENT_BUS.post(new MessageEvent.MessageAboutToBeSentEvent(message)))
 					ci.cancel();
 			}
 
+		}
+
+	}
+
+	@Cancelable
+	public static class MessageReceiveEvent extends MessageEvent {
+
+		public IChatComponent message;
+		public final byte type;
+
+		public MessageReceiveEvent(IChatComponent message, byte type) {
+			this.message = message;
+			this.type = type;
+		}
+
+		@EventListener
+		private static void onPacketReceive(PacketEvent.PacketReceiveEvent event) {
+			if (!(event.packet instanceof S02PacketChat))
+				return;
+
+			S02PacketChat packet = (S02PacketChat) event.packet;
+			if (EVENT_BUS.post(new MessageReceiveEvent(packet.getChatComponent(), packet.getType())))
+				event.setCanceled(true);
 		}
 
 	}

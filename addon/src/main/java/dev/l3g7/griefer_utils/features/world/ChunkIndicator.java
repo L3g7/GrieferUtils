@@ -18,9 +18,10 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.RenderWorldLastEvent;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
@@ -29,7 +30,6 @@ import dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.awt.*;
 import java.util.ArrayList;

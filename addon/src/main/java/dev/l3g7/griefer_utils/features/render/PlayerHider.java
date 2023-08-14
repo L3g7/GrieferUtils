@@ -18,30 +18,30 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.PlaySoundAtEntityEvent;
+import dev.l3g7.griefer_utils.event.events.PlaySoundEvent;
+import dev.l3g7.griefer_utils.event.events.RenderPlayerEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.sound.PlaySoundEvent;
-import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
-import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
 
 @Singleton
 public class PlayerHider extends Feature {
@@ -96,8 +96,8 @@ public class PlayerHider extends Feature {
 	 * Handles the player model
 	 */
 	@EventListener
-	public void onEntityRender(RenderPlayerEvent.Pre event) {
-		event.setCanceled(!showPlayer(event.entity));
+	public void onEntityRender(RenderPlayerEvent event) {
+		event.setCanceled(!showPlayer(event.player));
 	}
 
 	private boolean playSound = false;
@@ -122,7 +122,7 @@ public class PlayerHider extends Feature {
 		}
 
 		if (event.name.startsWith("step.") || BLOCKED_SOUNDS.contains(event.name))
-			event.result = null;
+			event.setCanceled(true);
 	}
 
 	private void updatePlayer(EntityPlayer player) {

@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -35,7 +36,6 @@ import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.main.LabyMod;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.io.OutputStream;

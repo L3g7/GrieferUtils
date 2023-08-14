@@ -21,8 +21,9 @@ package dev.l3g7.griefer_utils.features.world.better_schematica;
 import com.github.lunatrius.core.client.renderer.GeometryTessellator;
 import com.github.lunatrius.schematica.api.ISchematic;
 import com.github.lunatrius.schematica.client.renderer.RenderSchematic;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.util.SchematicaUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -35,7 +36,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IWorldAccess;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +100,7 @@ public class HighlightSchematicaBlocks {
 	}
 
 	static void onRenderTick(TickEvent.RenderTickEvent event) {
-		if (event.phase == TickEvent.Phase.END || player() == null)
+		if (player() == null)
 			return;
 
 		if (getWorld() == null) {

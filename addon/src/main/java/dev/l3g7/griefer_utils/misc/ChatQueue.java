@@ -20,12 +20,12 @@ package dev.l3g7.griefer_utils.misc;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.play.client.C01PacketChatMessage;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -72,8 +72,6 @@ public class ChatQueue {
 
 	@EventListener
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (event.phase == TickEvent.Phase.START)
-			return;
 
 		currentQueueDelay--;
 

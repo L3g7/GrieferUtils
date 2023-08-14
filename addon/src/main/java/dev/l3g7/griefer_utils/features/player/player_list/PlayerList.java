@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.DisplayNameGetEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.NameCache;
@@ -46,7 +47,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -25,6 +25,8 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -43,10 +45,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -87,7 +87,7 @@ public class CooldownNotifications extends Feature {
 		});
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onMessageReceive(ClientChatReceivedEvent event) {
+	public void onMessageReceive(MessageReceiveEvent event) {
 		if (event.message.getUnformattedText().matches("^Du hast .+-Booster erhalten\\. Danke für deine Unterstützung von GrieferGames!$"))
 			endDates.put("/grieferboost", System.currentTimeMillis() + HOURS.toMillis(24 * 14 - 1) + 1000);
 		else if (event.message.getUnformattedText().equals("[CaseOpening] Du hast 2 Kisten erhalten."))

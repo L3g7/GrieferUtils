@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemDisplaySetting;
@@ -50,7 +51,6 @@ import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 
 import java.util.List;
 import java.util.Map;

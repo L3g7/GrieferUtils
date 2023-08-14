@@ -18,13 +18,13 @@
 
 package dev.l3g7.griefer_utils.event;
 
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.AnnotationMeta;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraftforge.common.MinecraftForge;

@@ -18,13 +18,11 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
-import com.labymedia.connect.api.CachedObject;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.Action;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.ChatMenuEntry.IconType;
-import dev.l3g7.griefer_utils.features.chat.chat_reactor.ChatReactor;
 import dev.l3g7.griefer_utils.misc.gui.elements.*;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.util.ItemUtil;

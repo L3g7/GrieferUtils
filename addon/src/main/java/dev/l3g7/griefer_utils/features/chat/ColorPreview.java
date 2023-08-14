@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.chat;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -29,7 +30,6 @@ import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraftforge.client.event.GuiScreenEvent;
 
 import java.lang.reflect.Array;
 
@@ -45,7 +45,7 @@ public class ColorPreview extends Feature {
 		.icon("labymod:settings/settings/tabping_colored");
 
 	@EventListener
-	public void onRender(GuiScreenEvent.DrawScreenEvent.Pre event) {
+	public void onRender(GuiScreenEvent.DrawScreenEvent event) {
 		if (event.gui == null || !(event.gui.getClass() == GuiChat.class || event.gui.getClass() == GuiChatCustom.class))
 			return;
 

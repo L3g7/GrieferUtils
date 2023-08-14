@@ -18,13 +18,13 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
 
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.GuiBotShops;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.GuiFarms;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

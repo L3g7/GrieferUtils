@@ -21,13 +21,13 @@ package dev.l3g7.griefer_utils.features.modules.timers;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -85,7 +85,7 @@ public class MobRemover extends Module {
 	}
 
 	@EventListener
-	public void onMessageReceive(ClientChatReceivedEvent event) {
+	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = MOB_REMOVER_PATTERN.matcher(event.message.getFormattedText());
 		if(matcher.matches())
 			mobRemoverEnd = System.currentTimeMillis() + Long.parseLong(matcher.group("minutes")) * 60L * 1000L;

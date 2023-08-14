@@ -20,6 +20,8 @@ package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.RenderWorldLastEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.*;
@@ -31,8 +33,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.EnumSkyBlock;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -85,7 +85,7 @@ public class LightLevelOverlay extends Feature {
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {
-		if (event.phase != TickEvent.Phase.END || world() == null)
+		if (world() == null)
 			return;
 
 		if (passedTicks++ % Math.max(updateDelay.get(), 1) != 0)

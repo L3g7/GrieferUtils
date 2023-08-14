@@ -19,18 +19,18 @@
 package dev.l3g7.griefer_utils.features.player;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.ItemUseEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 
 import java.util.function.BiPredicate;
@@ -68,8 +68,9 @@ public class AutoEat extends Feature {
 	private boolean finishing = false;
 
 	@EventListener
-	public void onPlayerTick(PlayerTickEvent event) {
-		if (finishing) return;
+	public void onClientTick(TickEvent.ClientTickEvent event) {
+		if (player() == null || finishing)
+			return;
 
 		// Check whether eating makes sense
 		if (player().getItemInUse() != null) return;
@@ -88,7 +89,7 @@ public class AutoEat extends Feature {
 	}
 
 	@EventListener
-	public void onUseItemFinish(PlayerUseItemEvent.Finish event) {
+	public void onUseItemFinish(ItemUseEvent.Finish event) {
 		if (previousHotbarSlot == -1)
 			return;
 
@@ -100,7 +101,7 @@ public class AutoEat extends Feature {
 			TickScheduler.runAfterClientTicks(() -> inventory().currentItem = prevHotbarSlot, 1);
 			previousHotbarSlot = -1;
 			finishing = false;
-		}, 5);
+		}, 3);
 	}
 
 	/**

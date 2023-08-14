@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.player;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -32,7 +33,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -50,7 +50,7 @@ public class InteractableProfiles extends Feature {
 		.icon("left_click");
 
 	@EventListener
-	public void onMouse(GuiScreenEvent.MouseInputEvent event) {
+	public void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
 		if (!Mouse.getEventButtonState() || !(event.gui instanceof GuiChest))
 			return;
 

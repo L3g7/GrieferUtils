@@ -21,6 +21,10 @@ package dev.l3g7.griefer_utils.features.player;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.event.events.InputEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.NameCache;
@@ -28,10 +32,6 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.utils.Material;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.regex.Matcher;
 
@@ -89,25 +89,25 @@ public class AfkNick extends Feature {
 		.subSettings(nickName, messageReplay, triggerAfk, new HeaderSetting(), minutes, seconds);
 
 	@EventListener(triggerWhenDisabled = true)
-	private void onInput(InputEvent event) {
+	private void onKeyboardInput(InputEvent.KeyInputEvent event) {
 		if (!manuallyAFK)
 			lastEvent = System.currentTimeMillis();
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	private void onInput(ServerSwitchEvent event) {
+	private void onServerSwitch(ServerSwitchEvent event) {
 		if (!manuallyAFK)
 			lastEvent = System.currentTimeMillis();
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	private void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent event) {
+	private void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent.Pre event) {
 		if (!manuallyAFK)
 			lastEvent = System.currentTimeMillis();
 	}
 
 	@EventListener
-	private void onMsg(ClientChatReceivedEvent event) {
+	private void onMsg(MessageReceiveEvent event) {
 		if (!isAFK || messageReplay.get().isEmpty())
 			return;
 

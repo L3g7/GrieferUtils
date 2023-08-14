@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -37,7 +38,6 @@ import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 
 import java.util.List;
 import java.util.ListIterator;

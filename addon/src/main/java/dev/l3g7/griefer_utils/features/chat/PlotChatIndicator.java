@@ -25,6 +25,8 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
@@ -37,8 +39,6 @@ import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -121,7 +121,7 @@ public class PlotChatIndicator extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onReceive(ClientChatReceivedEvent event) {
+	public void onReceive(MessageReceiveEvent event) {
 		// Check if server is known
 		if (server == null || server.isEmpty())
 			return;
@@ -148,7 +148,7 @@ public class PlotChatIndicator extends Feature {
 	}
 
 	@EventListener
-	public void onRender(GuiScreenEvent.DrawScreenEvent.Pre event) {
+	public void onRender(GuiScreenEvent.DrawScreenEvent event) {
 		if (plotchatState == null || !plotchatState)
 			return;
 

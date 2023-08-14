@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
 import dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter;
@@ -37,7 +38,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.GuiScreenEvent;
 
 import java.util.Arrays;
 

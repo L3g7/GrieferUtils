@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.misc.gui.guis;
 
 
+import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdateSettings;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ModColor;
@@ -27,7 +28,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

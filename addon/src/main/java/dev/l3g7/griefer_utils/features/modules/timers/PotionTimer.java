@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -38,7 +39,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
 
 import java.util.List;
@@ -92,7 +92,7 @@ public class PotionTimer extends Module {
 	}
 
 	@EventListener
-	public void onMouse(GuiScreenEvent.MouseInputEvent event) {
+	public void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
 		if (!Mouse.getEventButtonState() || !(event.gui instanceof GuiChest))
 			return;
 

@@ -25,6 +25,8 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.ChunkFilledEvent;
+import dev.l3g7.griefer_utils.event.events.ChunkUnloadEvent;
+import dev.l3g7.griefer_utils.event.events.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.event.events.render.ParticleSpawnEvent;
@@ -49,9 +51,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.world.ChunkEvent;
-import net.minecraftforge.event.world.NoteBlockEvent;
 
 import java.util.Map;
 import java.util.Objects;
@@ -157,8 +156,8 @@ public class RedstoneHelper extends Feature {
 	}
 
 	@EventListener
-	public void onChunkUnload(ChunkEvent.Unload event) {
-		ChunkCoordIntPair coordPair = new ChunkCoordIntPair(event.getChunk().xPosition, event.getChunk().zPosition);
+	public void onChunkUnload(ChunkUnloadEvent event) {
+		ChunkCoordIntPair coordPair = new ChunkCoordIntPair(event.chunk.xPosition, event.chunk.zPosition);
 		redstoneRenderObjects.remove(coordPair);
 	}
 
@@ -239,7 +238,7 @@ public class RedstoneHelper extends Feature {
 	}
 
 	@EventListener
-	private void onNoteBlock(NoteBlockEvent.Play event) {
+	private void onNoteBlock(NoteBlockPlayEvent event) {
 		BlockPos pos = event.pos;
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
 		Map<BlockPos, RedstoneRenderObject> map = redstoneRenderObjects.computeIfAbsent(pair, k -> new ConcurrentHashMap<>());

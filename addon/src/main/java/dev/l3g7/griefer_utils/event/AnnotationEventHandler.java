@@ -23,9 +23,9 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.annotation.Annotation;

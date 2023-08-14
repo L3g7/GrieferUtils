@@ -19,14 +19,14 @@
 package dev.l3g7.griefer_utils.features.modules.timers;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import dev.l3g7.griefer_utils.core.util.Util;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 

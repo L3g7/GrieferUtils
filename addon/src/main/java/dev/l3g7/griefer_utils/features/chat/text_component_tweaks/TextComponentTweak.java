@@ -19,13 +19,13 @@
 package dev.l3g7.griefer_utils.features.chat.text_component_tweaks;
 
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 import static dev.l3g7.griefer_utils.event.events.network.TabListEvent.updatePlayerInfoList;
 import static net.minecraftforge.fml.common.eventhandler.EventPriority.LOW;

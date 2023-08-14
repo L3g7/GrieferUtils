@@ -23,6 +23,8 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -32,8 +34,6 @@ import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -96,7 +96,7 @@ public class Spent extends Module {
 	}
 
 	@EventListener
-	public void onMessageReceive(ClientChatReceivedEvent event) {
+	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
 			setBalance(moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", ""))), "msg: " + IChatComponent.Serializer.componentToJson(event.message));

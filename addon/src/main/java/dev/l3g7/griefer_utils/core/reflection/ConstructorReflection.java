@@ -23,8 +23,8 @@ import dev.l3g7.griefer_utils.core.util.ArrayUtil;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import static dev.l3g7.griefer_utils.core.util.Util.elevate;
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.util.Util.elevate;
 
 /**
  * Constructor related reflection.

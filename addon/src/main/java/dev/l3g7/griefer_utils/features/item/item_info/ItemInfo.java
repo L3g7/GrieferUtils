@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.modules.BlockInfo;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiBigChest;
@@ -33,7 +34,6 @@ import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 import java.util.Comparator;
 import java.util.List;

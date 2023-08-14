@@ -24,7 +24,9 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -33,8 +35,6 @@ import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -83,7 +83,7 @@ public class SplitLongMessages extends Feature {
 	}
 
 	@EventListener
-	private void onMessageReceive(ClientChatReceivedEvent event) {
+	private void onMessageReceive(MessageReceiveEvent event) {
 		if (!lastParts.isEmpty() && event.message.getUnformattedText().equals("Fehler: Spieler nicht gefunden.")) {
 			lastParts.forEach(ChatQueue::remove);
 			return;

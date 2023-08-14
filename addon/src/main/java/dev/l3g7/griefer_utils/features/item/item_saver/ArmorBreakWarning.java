@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderWorldEvent;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -30,7 +31,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.labymod.utils.Material.DIAMOND_CHESTPLATE;
@@ -56,7 +56,7 @@ public class ArmorBreakWarning extends ItemSaver {
 
 
 	@EventListener
-	public void onPlayerTick(PlayerTickEvent event) {
+	public void onClientTick(TickEvent.ClientTickEvent event) {
 		if (!isEnabled())
 			return;
 

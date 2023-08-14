@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.event.AnnotationEventHandler;
 import dev.l3g7.griefer_utils.event.EventHandler;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.gui.guis.MissingForgeErrorGui;
@@ -35,7 +36,6 @@ import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.crash.CrashReport;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
 import java.util.List;
 import java.util.UUID;

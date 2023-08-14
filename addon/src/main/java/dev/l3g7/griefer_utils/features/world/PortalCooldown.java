@@ -20,14 +20,14 @@ package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
@@ -43,7 +43,7 @@ public class PortalCooldown extends Feature {
 	private long timeoutEnd = -1;
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onMessage(ClientChatReceivedEvent event) {
+	public void onMessage(MessageReceiveEvent event) {
 		String msg = event.message.getFormattedText();
 
 		if (msg.equals("§r§8[§r§6GrieferGames§r§8] §r§fDu bist im §r§5Portalraum§r§f. Wähle deinen Citybuild aus.§r")) {
@@ -66,7 +66,7 @@ public class PortalCooldown extends Feature {
 
 	@EventListener
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (player() == null || event.phase == TickEvent.Phase.START)
+		if (player() == null)
 			return;
 
 		if (timeoutEnd < 0)

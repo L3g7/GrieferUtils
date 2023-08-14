@@ -18,20 +18,20 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.Constants;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
-import dev.l3g7.griefer_utils.core.misc.Constants;
 import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 @Singleton
@@ -55,7 +55,7 @@ public class RealMoney extends Feature {
 		.subSettings(tag, position);
 
 	@EventListener(priority = EventPriority.LOWEST)
-	public void onMessageReceive(ClientChatReceivedEvent event) {
+	public void onMessageReceive(MessageReceiveEvent event) {
 		if (Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText()).matches()) {
 			String text = "§r" + tag.get().replace('&', '§') + "§r";
 

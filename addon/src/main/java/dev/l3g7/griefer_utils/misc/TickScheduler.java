@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc;
+package dev.l3g7.griefer_utils.misc;
 
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.core.misc.functions.Runnable;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
+import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.event.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.event.events.TickEvent.RenderTickEvent;
 
 import java.util.HashMap;
 import java.util.Iterator;

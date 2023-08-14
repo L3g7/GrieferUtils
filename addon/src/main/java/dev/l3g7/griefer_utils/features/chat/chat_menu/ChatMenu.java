@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
@@ -184,7 +185,7 @@ public class ChatMenu extends Feature {
 		if (COPY_TEXT_ENTRY.enabled) entries.add(COPY_TEXT_ENTRY);
 		getCustom().forEach(e -> { if (e.enabled) entries.add(e); });
 
-		renderer = new ChatMenuRenderer(entries, name.replaceAll("§.", ""), ChatLineUtil.getHoveredComponent());
+		renderer = new ChatMenuRenderer(entries, NameCache.ensureRealName(name.replaceAll("§.", "").trim()), ChatLineUtil.getHoveredComponent());
 		event.setCanceled(true);
 	}
 

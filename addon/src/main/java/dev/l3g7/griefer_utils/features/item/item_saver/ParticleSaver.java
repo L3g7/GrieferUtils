@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.item.item_saver;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.BlockInteractEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
@@ -65,16 +65,17 @@ public class ParticleSaver extends ItemSaver {
 	}
 
 	@EventListener
-	public void onPacket(PacketEvent.PacketSendEvent event) {
-		if (isEnabled() && event.packet instanceof C07PacketPlayerDigging) {
-			C07PacketPlayerDigging.Action action = ((C07PacketPlayerDigging) event.packet).getStatus();
-			if (action == C07PacketPlayerDigging.Action.DROP_ITEM || action == C07PacketPlayerDigging.Action.DROP_ALL_ITEMS)
-				return;
+	public void onPacket(PacketEvent.PacketSendEvent<C07PacketPlayerDigging> event) {
+		if (!isEnabled())
+			return;
 
-			if (isHoldingParticle()) {
-				event.setCanceled(true);
-				displayScreen();
-			}
+		C07PacketPlayerDigging.Action action = event.packet.getStatus();
+		if (action == C07PacketPlayerDigging.Action.DROP_ITEM || action == C07PacketPlayerDigging.Action.DROP_ALL_ITEMS)
+			return;
+
+		if (isHoldingParticle()) {
+			event.cancel();
+			displayScreen();
 		}
 	}
 
@@ -83,7 +84,7 @@ public class ParticleSaver extends ItemSaver {
 		if (!isEnabled() || !isHoldingParticle())
 			return;
 
-		event.setCanceled(true);
+		event.cancel();
 		displayScreen();
 	}
 

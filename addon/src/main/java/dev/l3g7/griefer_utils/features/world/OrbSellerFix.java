@@ -23,16 +23,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S0CPacketSpawnPlayer;
 import net.minecraft.network.play.server.S0EPacketSpawnObject;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
@@ -80,7 +81,7 @@ public class OrbSellerFix extends Feature {
 	}
 
 	@EventListener
-	private void onPacket(PacketReceiveEvent event) {
+	private void onPacket(PacketReceiveEvent<Packet<?>> event) {
 		if (adding)
 			return;
 

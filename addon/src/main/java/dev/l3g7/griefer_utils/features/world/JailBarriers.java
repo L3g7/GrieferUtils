@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.EggImpactEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
@@ -30,6 +30,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.server.S0EPacketSpawnObject;
@@ -65,7 +66,7 @@ public class JailBarriers extends Feature {
 	}
 
 	@EventListener
-	private void onPacket(PacketEvent.PacketReceiveEvent event) {
+	private void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
 		if (event.packet instanceof S21PacketChunkData)
 			checkIfChunksAreLoaded();
 
@@ -105,20 +106,20 @@ public class JailBarriers extends Feature {
 	}
 
 	@EventListener
-	private void onPacketSend(PacketEvent.PacketSendEvent event) {
+	private void onPacketSend(PacketEvent.PacketSendEvent<Packet<?>> event) {
 		if (!isNearJail())
 			return;
 
 		if (event.packet instanceof C08PacketPlayerBlockPlacement) {
 			C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
 			if (world().getBlockState(packet.getPosition()).equals(Blocks.barrier.getDefaultState()))
-				event.setCanceled(true);
+				event.cancel();
 		}
 
 		if (event.packet instanceof C07PacketPlayerDigging) {
 			C07PacketPlayerDigging packet = (C07PacketPlayerDigging) event.packet;
 			if (world().getBlockState(packet.getPosition()).equals(Blocks.barrier.getDefaultState()))
-				event.setCanceled(true);
+				event.cancel();
 		}
 	}
 
@@ -162,7 +163,7 @@ public class JailBarriers extends Feature {
 			return;
 
 		if (world().getBlockState(event.mop.getBlockPos()).getBlock() == Blocks.barrier)
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	private void placeBarriers() {

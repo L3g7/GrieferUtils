@@ -18,9 +18,8 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -41,14 +40,14 @@ public class InputEvent extends Event {
 			from = @At(value = "INVOKE:LAST", target = "Lnet/minecraft/client/Minecraft;updateDebugProfilerName(I)V")
 		))
 		public void injectKeyboardEvent(CallbackInfo ci) {
-			MinecraftForge.EVENT_BUS.post(new KeyInputEvent());
+			new KeyInputEvent().fire();
 		}
 
 		@Inject(method = "runTick", at = @At(value = "JUMP", opcode = GOTO, ordinal = 0, shift = At.Shift.BEFORE), slice = @Slice(
 			from = @At(value = "INVOKE:LAST", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V")
 		))
 		public void injectMouseEvent(CallbackInfo ci) {
-			MinecraftForge.EVENT_BUS.post(new MouseInputEvent());
+			new MouseInputEvent().fire();
 		}
 
 	}

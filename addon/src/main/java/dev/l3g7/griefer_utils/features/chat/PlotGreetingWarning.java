@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -56,12 +56,9 @@ public class PlotGreetingWarning extends Feature {
 		.subSettings(maxTimeDifference);
 
 	@EventListener
-	public void onMessageModify(PacketEvent.PacketReceiveEvent event) {
-		if (!(event.packet instanceof S02PacketChat))
-			return;
-
+	public void onMessageModify(PacketEvent.PacketReceiveEvent<S02PacketChat> event) {
 		long lastReadTime = getLastReadTime();
-		IChatComponent message = ((S02PacketChat) event.packet).getChatComponent();
+		IChatComponent message = event.packet.getChatComponent();
 
 		// Check if message was begin of greeting
 		if (message.getFormattedText().matches(GREETING_PATTERN + ".*")) {

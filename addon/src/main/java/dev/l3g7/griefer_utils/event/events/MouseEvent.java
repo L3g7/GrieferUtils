@@ -18,17 +18,14 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.lwjgl.input.Mouse;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Cancelable
 public class MouseEvent extends Event {
 
 	public final int x;
@@ -56,7 +53,7 @@ public class MouseEvent extends Event {
 
 	    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventButton()I", shift = At.Shift.BEFORE))
 	    public void injectRunTick(CallbackInfo ci) {
-		    MinecraftForge.EVENT_BUS.post(new MouseEvent());
+		    new MouseEvent().fire();
 	    }
 
 	}

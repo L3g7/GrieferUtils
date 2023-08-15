@@ -18,27 +18,24 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event.TypedEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Cancelable
-public class GuiOpenEvent extends Event {
+public class GuiOpenEvent<G extends GuiScreen> extends TypedEvent<GuiOpenEvent<G>> {
 
-	public GuiScreen gui;
+	public G gui;
 
-	public GuiOpenEvent(GuiScreen gui) {
+	public GuiOpenEvent(G gui) {
 		this.gui = gui;
 	}
 
@@ -60,9 +57,7 @@ public class GuiOpenEvent extends Event {
 					screen = new GuiGameOver();
 			}
 
-			GuiOpenEvent event = new GuiOpenEvent(screen);
-			MinecraftForge.EVENT_BUS.post(event);
-			screen = event.gui;
+			screen = new GuiOpenEvent<>(screen).fire().gui;
 	    }
 
 	}

@@ -18,30 +18,28 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event.TypedEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * An event being posted when {@link Entity#isBurning()} is called.
+ * An event being posted when {@link Entity#isInvisibleToPlayer(EntityPlayer)} is called on an invisible entity.
  */
-@Cancelable
-public class InvisibilityCheckEvent extends Event {
+public class InvisibilityCheckEvent extends TypedEvent<InvisibilityCheckEvent> {
 
 	public final Entity entity;
+	public boolean invisible = true;
 
 	private InvisibilityCheckEvent(Entity entity) {
 		this.entity = entity;
 	}
 
-	public static boolean isInvisible(Entity entity) {
-		return !MinecraftForge.EVENT_BUS.post(new InvisibilityCheckEvent(entity));
+	public static boolean isInvisible(Object entity) {
+		return new InvisibilityCheckEvent((Entity) entity).fire().invisible;
 	}
 
 	@Mixin(Entity.class)
@@ -50,7 +48,7 @@ public class InvisibilityCheckEvent extends Event {
 		@Inject(method = "isInvisibleToPlayer", at = @At("RETURN"), cancellable = true)
 		private void injectIsInvisibleToPlayer(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
 			if (cir.getReturnValueZ())
-				cir.setReturnValue(InvisibilityCheckEvent.isInvisible((Entity) (Object) this));
+				cir.setReturnValue(InvisibilityCheckEvent.isInvisible(this));
 		}
 
 	}
@@ -61,7 +59,7 @@ public class InvisibilityCheckEvent extends Event {
 		@Inject(method = "isInvisibleToPlayer", at = @At("RETURN"), cancellable = true)
 		private void injectIsInvisibleToPlayer(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
 			if (cir.getReturnValueZ()) {
-				cir.setReturnValue(InvisibilityCheckEvent.isInvisible((Entity) (Object) this));
+				cir.setReturnValue(InvisibilityCheckEvent.isInvisible(this));
 			}
 		}
 

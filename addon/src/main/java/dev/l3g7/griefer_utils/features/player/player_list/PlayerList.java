@@ -19,10 +19,11 @@
 package dev.l3g7.griefer_utils.features.player.player_list;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.DisplayNameGetEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
@@ -46,7 +47,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,7 +141,7 @@ public abstract class PlayerList extends Feature {
 	 * The event listener handling display names.
 	 * @see PlayerList#displayNameAction
 	 */
-	@EventListener(priority = EventPriority.LOW)
+	@EventListener(priority = Priority.LOW)
 	public void onDisplayNameRender(DisplayNameGetEvent event) {
 		if (displayNameAction.get() == DISABLED)
 			return;

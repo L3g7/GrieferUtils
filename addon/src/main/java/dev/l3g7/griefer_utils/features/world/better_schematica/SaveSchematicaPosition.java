@@ -118,9 +118,9 @@ public class SaveSchematicaPosition {
 	}
 
 	static {
-		if (Constants.SCHEMATICA) {
-			new PreSchematicSaveEvent(null, null).getListenerList().register(0, EventPriority.NORMAL, event -> onPreSchematicSaveEvent((PreSchematicSaveEvent) event));
-		}
+		if (Constants.SCHEMATICA)
+			new PreSchematicSaveEvent(null, null).getListenerList()
+				.register(0, EventPriority.NORMAL, event -> onPreSchematicSaveEvent((PreSchematicSaveEvent) event));
 	}
 
 }

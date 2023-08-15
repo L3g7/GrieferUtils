@@ -19,11 +19,12 @@
 package dev.l3g7.griefer_utils.features.chat.filter_webhooks;
 
 import com.google.gson.*;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
@@ -35,8 +36,8 @@ import dev.l3g7.griefer_utils.util.ChatLineUtil;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.main.LabyMod;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -86,12 +87,12 @@ public class FilterWebhooks extends Feature {
     }
 
     @EventListener
-    public void onGuiOpen(GuiOpenEvent event) {
+    public void onGuiOpen(GuiOpenEvent<GuiScreen> event) {
         if (event.gui instanceof GuiChatFilter)
             event.gui = new CustomGuiChatFilter(Reflection.get(event.gui, "defaultInputFieldText"));
     }
 
-    @EventListener(priority = EventPriority.LOWEST)
+    @EventListener(priority = Priority.LOWEST)
     public void onMessageReceive(ChatLineEvent.ChatLineAddEvent event) {
 	    IChatComponent icc = ChatLineUtil.getComponentFromLine(event.chatLine);
 		if (icc == null)

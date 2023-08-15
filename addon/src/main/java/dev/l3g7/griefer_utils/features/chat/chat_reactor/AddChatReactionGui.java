@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.misc.Citybuild;
@@ -29,7 +30,6 @@ import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.PreviewRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class AddChatReactionGui extends Gui {
 	public AddChatReactionGui(ReactionDisplaySetting reaction, GuiScreen backgroundScreen) {
 		this.backgroundScreen = backgroundScreen;
 		editedReaction = reaction;
-		MinecraftForge.EVENT_BUS.register(this);
+		EventRegisterer.register(this);
 	}
 
 	public void initGui() {
@@ -309,6 +309,7 @@ public class AddChatReactionGui extends Gui {
 	}
 
 	private void close() {
+		EventRegisterer.unregister(this);
 		backgroundScreen.initGui();
 		Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
 	}

@@ -18,13 +18,14 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
 
 public class ChunkUnloadEvent extends Event {
 
@@ -39,7 +40,7 @@ public class ChunkUnloadEvent extends Event {
 
 	    @Inject(method = "onChunkUnload", at = @At("HEAD"))
 	    public void injectonChunkUnload(CallbackInfo ci) {
-		    MinecraftForge.EVENT_BUS.post(new ChunkUnloadEvent((Chunk) (Object) this));
+		    new ChunkUnloadEvent(c(this)).fire();
 	    }
 
 	}

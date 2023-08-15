@@ -20,12 +20,12 @@ package dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent.LeftClickEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent.RightClickEvent;
@@ -209,7 +209,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 			return;
 
 		if ((event instanceof LeftClickEvent && setting.leftclick.get()) || (event instanceof RightClickEvent && setting.rightclick.get()))
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	@EventListener
@@ -223,11 +223,11 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 		if (setting.extremeDrop.get()) {
 			if (event.mode == 0 || event.mode == 6)
-				event.setCanceled(true);
+				event.cancel();
 		}
 
 		if (setting.drop.get() && event.mode == 4)
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	@EventListener
@@ -238,21 +238,21 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		mc().displayGuiScreen(previousScreen);
 		ItemSaver.addItem(event.itemStack);
 		previousScreen = null;
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 	@EventListener
-	private void onPacketSend(PacketEvent.PacketSendEvent event) {
-		if (!isEnabled() || !(event.packet instanceof C07PacketPlayerDigging))
+	private void onPacketSend(PacketEvent.PacketSendEvent<C07PacketPlayerDigging> event) {
+		if (!isEnabled())
 			return;
 
-		C07PacketPlayerDigging.Action action = ((C07PacketPlayerDigging) event.packet).getStatus();
+		C07PacketPlayerDigging.Action action = event.packet.getStatus();
 		if (action != DROP_ITEM && action != DROP_ALL_ITEMS)
 			return;
 
 		ItemDisplaySetting setting = getSetting(player().getHeldItem());
 		if (setting != null && setting.drop.get())
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	private static void addItem(ItemStack stack) {

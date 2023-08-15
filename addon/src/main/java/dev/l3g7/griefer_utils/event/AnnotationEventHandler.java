@@ -19,17 +19,20 @@
 package dev.l3g7.griefer_utils.event;
 
 import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.MethodMeta;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.invoke;
 
@@ -45,7 +48,7 @@ public class AnnotationEventHandler implements Opcodes {
 	/**
 	 * Registers all static methods annotated with {@link OnEnable} and {@link OnStartupComplete} as well as non-static methods if the owner is marked with {@link Singleton}.
 	 */
-	static void init() {
+	public static void init() {
 		for (Class<? extends Annotation> annotation : annotations) {
 			List<Runnable> runnables = listeners.computeIfAbsent(annotation, c -> new ArrayList<>());
 
@@ -57,23 +60,6 @@ public class AnnotationEventHandler implements Opcodes {
 
 				runnables.add(() -> invoke(resolveOwner(method, isSingleton), method.load()));
 			}
-		}
-	}
-
-	/**
-	 * Registers all non-static methods annotated with {@link OnEnable} and {@link OnStartupComplete}.
-	 */
-	static void register(Object obj) {
-		Class<?> clazz = obj.getClass();
-		if (clazz.isAnnotationPresent(Singleton.class))
-			return;
-
-		for (Class<? extends Annotation> annotation : annotations) {
-			List<Runnable> runnables = listeners.computeIfAbsent(annotation, c -> new ArrayList<>());
-
-			Arrays.stream(Reflection.getAnnotatedMethods(clazz, annotation))
-				.filter(m -> (m.getModifiers() & ACC_STATIC) == 0)
-				.forEach(m -> runnables.add(() -> Reflection.invoke(obj, m)));
 		}
 	}
 
@@ -93,7 +79,7 @@ public class AnnotationEventHandler implements Opcodes {
 	 * Triggers {@link OnStartupComplete} when GuiMainMenu is opened for the first time.
 	 */
 	@EventListener
-	private void onGuiOpen(GuiOpenEvent event) {
+	private void onGuiOpen(GuiOpenEvent<?> event) {
 		if (startupComplete)
 			return;
 

@@ -18,22 +18,22 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event.TypedEvent;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
+
 /**
- * An event being posted when {@link Entity#isBurning()} is called.
+ * An event being posted when {@link Entity#isBurning()} is called on a burning entity.
  */
-@Cancelable
-public class BurningCheckEvent extends Event {
+public class BurningCheckEvent extends TypedEvent<BurningCheckEvent> {
 
 	public final Entity entity;
+	public boolean burning = true;
 
 	public BurningCheckEvent(Entity entity) {
 		this.entity = entity;
@@ -44,10 +44,8 @@ public class BurningCheckEvent extends Event {
 
 		@Inject(method = "isBurning", at = @At("RETURN"), cancellable = true)
 		private void injectIsBurning(CallbackInfoReturnable<Boolean> cir) {
-			if (cir.getReturnValueZ()) {
-				BurningCheckEvent event = new BurningCheckEvent((Entity) (Object) this);
-				cir.setReturnValue(!MinecraftForge.EVENT_BUS.post(event));
-			}
+			if (cir.getReturnValueZ())
+				cir.setReturnValue(new BurningCheckEvent(c(this)).fire().burning);
 		}
 
 	}

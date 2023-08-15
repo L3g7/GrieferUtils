@@ -18,8 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -31,7 +32,6 @@ import net.labymod.utils.Material;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.*;
 
@@ -95,7 +95,7 @@ public class StandardPrefixes extends Feature {
 		});
 	}
 
-	@EventListener(priority = EventPriority.HIGHEST)
+	@EventListener(priority = Priority.HIGHEST)
 	public void onTabListNameUpdate(TabListEvent.TabListNameUpdateEvent event) {
 		if (!tab.get() || !event.component.getUnformattedText().contains("\u2503"))
 			return;
@@ -123,7 +123,7 @@ public class StandardPrefixes extends Feature {
 		setRankWithPrefix(event.component, parts[0], prefix, true);
 	}
 
-	@EventListener(priority = EventPriority.HIGHEST)
+	@EventListener(priority = Priority.HIGHEST)
 	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
 		if (!chat.get())
 			return;

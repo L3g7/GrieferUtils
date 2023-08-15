@@ -19,6 +19,9 @@
 package dev.l3g7.griefer_utils.misc.gui.guis;
 
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdateSettings;
 import net.labymod.main.LabyMod;
@@ -28,9 +31,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.IOException;
 
@@ -46,13 +46,13 @@ public class ChangelogScreen extends GuiScreen {
 	private GuiScreen previousScreen;
 
 	// Make sure the gui closes to the correct screen
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void onGuiOpen(GuiOpenEvent event) {
+	@EventListener(priority = Priority.LOWEST)
+	public void onGuiOpen(GuiOpenEvent<GuiScreen> event) {
 		if (event.isCanceled() || event.gui instanceof ChangelogScreen)
 			return;
 
 		previousScreen = event.gui;
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 	public static void trigger() {
@@ -79,7 +79,7 @@ public class ChangelogScreen extends GuiScreen {
 	}
 
 	public ChangelogScreen() {
-		MinecraftForge.EVENT_BUS.register(this);
+		EventRegisterer.register(this);
 	}
 
 	public void initGui() {
@@ -95,7 +95,7 @@ public class ChangelogScreen extends GuiScreen {
 	}
 
 	public void closeGui() {
-		MinecraftForge.EVENT_BUS.unregister(this);
+		EventRegisterer.unregister(this);
 		mc.displayGuiScreen(previousScreen);
 	}
 

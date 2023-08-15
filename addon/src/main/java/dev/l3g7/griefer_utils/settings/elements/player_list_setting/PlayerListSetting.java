@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.settings.elements.player_list_setting;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
@@ -35,7 +36,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -181,7 +181,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 
 			public AddPlayerGui(GuiScreen backgroundScreen) {
 				this.backgroundScreen = backgroundScreen;
-				MinecraftForge.EVENT_BUS.register(this);
+				EventRegisterer.register(this);
 			}
 
 			public void initGui() {
@@ -195,6 +195,11 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 				inputField.setFocused(true);
 				buttonList.add(new GuiButton(0, width / 2 - 105, height / 4 + 85, 100, 20, "Abbrechen"));
 				buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, height / 4 + 85, 100, 20, "Hinzufügen"));
+			}
+
+			@Override
+			public void onGuiClosed() {
+				EventRegisterer.unregister(this);
 			}
 
 			private void updateValidity() {

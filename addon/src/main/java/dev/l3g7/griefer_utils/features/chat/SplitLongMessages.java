@@ -19,11 +19,11 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 import de.emotechat.addon.gui.chat.suggestion.EmoteSuggestionsMenu;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
@@ -124,7 +124,7 @@ public class SplitLongMessages extends Feature {
 			send(prefix + s);
 			lastParts.add(prefix + s);
 		}
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 	private static List<String> cutUp(String string, int length) {

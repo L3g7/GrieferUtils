@@ -18,10 +18,9 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,7 +38,7 @@ public class WorldUnloadEvent extends Event {
 		@Inject(method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V", at = @At("HEAD"))
 	    public void injectLoadWorld(WorldClient worldClientIn, String loadingMessage, CallbackInfo ci) {
 			if (theWorld != null)
-				MinecraftForge.EVENT_BUS.post(new WorldUnloadEvent());
+				new WorldUnloadEvent().fire();
 	    }
 
 	}

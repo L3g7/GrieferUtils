@@ -18,14 +18,13 @@
 
 package dev.l3g7.griefer_utils.event.events.network;
 
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Event;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ServerData;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * An event related to the server connection.
@@ -35,11 +34,9 @@ public class ServerEvent extends Event {
 	public static class ServerSwitchEvent extends ServerEvent {
 
 		@EventListener
-		private static void onPacket(PacketReceiveEvent event) {
-			if (event.packet instanceof S3FPacketCustomPayload) {
-				if (((S3FPacketCustomPayload) event.packet).getChannelName().equals("MC|Brand"))
-					MinecraftForge.EVENT_BUS.post(new ServerSwitchEvent());
-			}
+		private static void onPacket(PacketReceiveEvent<S3FPacketCustomPayload> event) {
+			if (event.packet.getChannelName().equals("MC|Brand"))
+				new ServerSwitchEvent().fire();
 		}
 
 	}
@@ -54,7 +51,7 @@ public class ServerEvent extends Event {
 
 		@OnEnable
 		private static void register() {
-			LabyMod.getInstance().getEventManager().registerOnJoin(data -> MinecraftForge.EVENT_BUS.post(new ServerJoinEvent(data)));
+			LabyMod.getInstance().getEventManager().registerOnJoin(data -> new ServerJoinEvent(data).fire());
 		}
 
 	}
@@ -69,7 +66,7 @@ public class ServerEvent extends Event {
 
 		@OnEnable
 		private static void register() {
-			LabyMod.getInstance().getEventManager().registerOnQuit(data -> MinecraftForge.EVENT_BUS.post(new ServerQuitEvent(data)));
+			LabyMod.getInstance().getEventManager().registerOnQuit(data -> new ServerQuitEvent(data).fire());
 		}
 
 	}

@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.modules;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -78,7 +78,7 @@ public class ServerPerformance extends Module {
 	}
 
 	@EventListener
-	public void onPacket(PacketEvent.PacketReceiveEvent event) {
+	public void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
 		Packet<?> packet = event.packet;
 
 		if (packet instanceof S03PacketTimeUpdate) {

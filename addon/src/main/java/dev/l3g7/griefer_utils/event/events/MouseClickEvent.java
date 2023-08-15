@@ -18,17 +18,14 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Cancelable
 public class MouseClickEvent extends Event {
 
 	public static class LeftClickEvent extends MouseClickEvent {}
@@ -40,19 +37,19 @@ public class MouseClickEvent extends Event {
 
 		@Inject(method = "clickMouse", at = @At("HEAD"), cancellable = true)
 		public void injectClickMouse(CallbackInfo ci) {
-			if (MinecraftForge.EVENT_BUS.post(new MouseClickEvent.LeftClickEvent()))
+			if (new MouseClickEvent.LeftClickEvent().fire().isCanceled())
 				ci.cancel();
 		}
 
 		@Inject(method = "rightClickMouse", at = @At("HEAD"), cancellable = true)
 		public void injectRightClickMouse(CallbackInfo ci) {
-			if (MinecraftForge.EVENT_BUS.post(new MouseClickEvent.RightClickEvent()))
+			if (new MouseClickEvent.RightClickEvent().fire().isCanceled())
 				ci.cancel();
 		}
 
 		@ModifyArg(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;sendClickBlockToController(Z)V"))
 		public boolean injectSendClickBlockToController(boolean leftClick) {
-			return leftClick && !MinecraftForge.EVENT_BUS.post(new MouseClickEvent.LeftClickEvent());
+			return leftClick && !new MouseClickEvent.LeftClickEvent().fire().isCanceled();
 		}
 
 	}

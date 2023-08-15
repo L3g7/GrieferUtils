@@ -18,17 +18,16 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Cancelable
+import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
+
 public class RenderToolTipEvent extends Event {
 
 	public final ItemStack stack;
@@ -48,7 +47,7 @@ public class RenderToolTipEvent extends Event {
 
 		@Inject(method = "renderToolTip", at = @At("HEAD"), cancellable = true)
 		public void injectRenderTooltip(ItemStack stack, int x, int y, CallbackInfo ci) {
-			if (MinecraftForge.EVENT_BUS.post(new RenderToolTipEvent(stack, (GuiScreen) (Object) this, x, y)))
+			if (new RenderToolTipEvent(stack, c(this), x, y).fire().isCanceled())
 				ci.cancel();
 		}
 

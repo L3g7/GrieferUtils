@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -37,19 +37,18 @@ public class AntiCineScope extends Feature {
 		.icon("crossed_out_camera");
 
 	@EventListener
-	private void onPacketReceive(PacketReceiveEvent event) {
-		if (!(event.packet instanceof S3FPacketCustomPayload) || !ServerCheck.isOnGrieferGames())
+	private void onPacketReceive(PacketReceiveEvent<S3FPacketCustomPayload> event) {
+		if (!ServerCheck.isOnGrieferGames())
 			return;
 
-		S3FPacketCustomPayload packet = (S3FPacketCustomPayload) event.packet;
-		if (!packet.getChannelName().equals("labymod3:main") && !packet.getChannelName().equals("LMC"))
+		if (!event.packet.getChannelName().equals("labymod3:main") && !event.packet.getChannelName().equals("LMC"))
 			return;
 
-		if (packet.getBufferData().readableBytes() <= 0)
+		if (event.packet.getBufferData().readableBytes() <= 0)
 			return;
 
-		if ("cinescopes".equals(packet.getBufferData().readStringFromBuffer(Short.MAX_VALUE)))
-			event.setCanceled(true);
+		if ("cinescopes".equals(event.packet.getBufferData().readStringFromBuffer(Short.MAX_VALUE)))
+			event.cancel();
 	}
 
 }

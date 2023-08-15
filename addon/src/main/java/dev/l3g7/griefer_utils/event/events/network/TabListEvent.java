@@ -20,8 +20,9 @@ package dev.l3g7.griefer_utils.event.events.network;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
+import dev.l3g7.griefer_utils.core.event_bus.Event;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.misc.PlayerDataProvider;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
@@ -29,7 +30,6 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.network.play.server.S38PacketPlayerListItem.AddPlayerData;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +38,6 @@ import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.*;
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 /**
  * An event related to the tab list.
@@ -59,7 +58,7 @@ public class TabListEvent extends Event {
 
 			// create full deep-copy of component
 			TabListNameUpdateEvent event = new TabListNameUpdateEvent(info.getGameProfile(), originalComponent);
-			EVENT_BUS.post(event);
+			event.fire();
 			info.setDisplayName(event.component);
 		}
 	}
@@ -93,22 +92,19 @@ public class TabListEvent extends Event {
 		}
 
 		@EventListener
-		private static void onPacket(PacketReceiveEvent event) {
-			if (!(event.packet instanceof S38PacketPlayerListItem))
-				return;
+		private static void onPacket(PacketReceiveEvent<S38PacketPlayerListItem> event) {
 
 			// Ignore packets not updating name
-			S38PacketPlayerListItem packet = (S38PacketPlayerListItem) event.packet;
-			if (packet.getAction() != ADD_PLAYER && packet.getAction() != UPDATE_DISPLAY_NAME)
+			if (event.packet.getAction() != ADD_PLAYER && event.packet.getAction() != UPDATE_DISPLAY_NAME)
 				return;
 
-			for (AddPlayerData data : packet.getEntries()) {
+			for (AddPlayerData data : event.packet.getEntries()) {
 				if (data.getDisplayName() == null)
 					continue;
 
 				// Post TabListNameUpdateEvent
 				TabListNameUpdateEvent tabListEvent = new TabListNameUpdateEvent(data.getProfile(), data.getDisplayName());
-				EVENT_BUS.post(tabListEvent);
+				tabListEvent.fire();
 
 				// Update values
 				cachedNames.put(data.getProfile().getId(), data.getDisplayName());
@@ -130,18 +126,13 @@ public class TabListEvent extends Event {
 		}
 
 		@EventListener
-		private static void onPacket(PacketReceiveEvent event) {
-			if (!(event.packet instanceof S38PacketPlayerListItem))
+		private static void onPacket(PacketReceiveEvent<S38PacketPlayerListItem> event) {
+			if (event.packet.getAction() != ADD_PLAYER)
 				return;
 
-			S38PacketPlayerListItem packet = (S38PacketPlayerListItem) event.packet;
-			if (packet.getAction() != ADD_PLAYER)
-				return;
-
-			for (AddPlayerData data : packet.getEntries()) {
+			for (AddPlayerData data : event.packet.getEntries())
 				if (PlayerUtil.isValid(data.getProfile().getName()))
-					EVENT_BUS.post(new TabListPlayerAddEvent(data));
-			}
+					new TabListPlayerAddEvent(data).fire();
 
 		}
 
@@ -161,25 +152,21 @@ public class TabListEvent extends Event {
 		}
 
 		@EventListener
-		private static void onPacket(PacketReceiveEvent event) {
-			if (!(event.packet instanceof S38PacketPlayerListItem))
-				return;
-
-			S38PacketPlayerListItem packet = (S38PacketPlayerListItem) event.packet;
-			if (packet.getAction() != REMOVE_PLAYER)
+		private static void onPacket(PacketReceiveEvent<S38PacketPlayerListItem> event) {
+			if (event.packet.getAction() != REMOVE_PLAYER)
 				return;
 
 			if (mc().getNetHandler() == null)
 				return;
 
-			if (packet.getEntries().size() == mc().getNetHandler().getPlayerInfoMap().size())
+			if (event.packet.getEntries().size() == mc().getNetHandler().getPlayerInfoMap().size())
 				// When whole TabList is affected, TabListClearEvent is posted instead
 				return;
 
-			for (AddPlayerData data : packet.getEntries()) {
+			for (AddPlayerData data : event.packet.getEntries()) {
 				String name = PlayerDataProvider.get(data.getProfile().getId()).getName();
 				if (PlayerUtil.isValid(name))
-					EVENT_BUS.post(new TabListPlayerRemoveEvent(data, name));
+					new TabListPlayerRemoveEvent(data, name).fire();
 			}
 		}
 
@@ -205,19 +192,15 @@ public class TabListEvent extends Event {
 		}
 
 		@EventListener
-		private static void onPacket(PacketReceiveEvent event) {
-			if (!(event.packet instanceof S38PacketPlayerListItem))
-				return;
-
-			S38PacketPlayerListItem packet = (S38PacketPlayerListItem) event.packet;
-			if (packet.getAction() != REMOVE_PLAYER)
+		private static void onPacket(PacketReceiveEvent<S38PacketPlayerListItem> event) {
+			if (event.packet.getAction() != REMOVE_PLAYER)
 				return;
 
 			if (mc().getNetHandler() == null)
 				return;
 
-			if (packet.getEntries().size() == mc().getNetHandler().getPlayerInfoMap().size())
-				EVENT_BUS.post(new TabListClearEvent(packet.getEntries()));
+			if (event.packet.getEntries().size() == mc().getNetHandler().getPlayerInfoMap().size())
+				new TabListClearEvent(event.packet.getEntries()).fire();
 		}
 
 	}

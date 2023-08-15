@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class NoteBlockPlayEvent extends Event {
 

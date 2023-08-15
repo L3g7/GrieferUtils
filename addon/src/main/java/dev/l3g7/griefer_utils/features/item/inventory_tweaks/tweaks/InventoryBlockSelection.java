@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.item.inventory_tweaks.tweaks;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.BlockPickEvent;
 import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemSaver;
@@ -93,7 +93,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 
 		if (bestSlot < 9) { // Best slot is in hotbar
 			inv.currentItem = bestSlot;
-			event.setCanceled(true);
+			event.cancel();
 			return;
 		}
 
@@ -103,7 +103,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 		if (inv.currentItem != targetSlot)
 			inv.currentItem = targetSlot;
 
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 	private int getScore(ItemStack requiredStack, int slot) {

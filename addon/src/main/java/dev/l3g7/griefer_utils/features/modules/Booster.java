@@ -20,10 +20,10 @@ package dev.l3g7.griefer_utils.features.modules;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
@@ -131,7 +131,7 @@ public class Booster extends Module {
 		String msg = event.message.getUnformattedText();
 
 		if (waitingForBoosterInfo && msg.equals("Folgende Booster sind auf diesem Server aktiv:")) {
-			event.setCanceled(true);
+			event.cancel();
 			TickScheduler.runAfterClientTicks(() -> waitingForBoosterInfo = false, 1);
 			return;
 		}
@@ -162,7 +162,7 @@ public class Booster extends Module {
 			return;
 
 		if (waitingForBoosterInfo)
-			event.setCanceled(true);
+			event.cancel();
 
 		String name = m.group("name");
 		String durations = m.group("durations");

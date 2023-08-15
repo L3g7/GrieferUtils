@@ -18,15 +18,16 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
 
 public class RenderItemOverlayEvent extends Event {
 
@@ -47,7 +48,7 @@ public class RenderItemOverlayEvent extends Event {
 
 		@Inject(method = "renderItemOverlayIntoGUI", at = @At("TAIL"))
 		public void injectRenderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text, CallbackInfo ci) {
-			MinecraftForge.EVENT_BUS.post(new RenderItemOverlayEvent((RenderItem) (Object) this, stack, xPosition, yPosition));
+			new RenderItemOverlayEvent(c(this), stack, xPosition, yPosition).fire();
 		}
 
 	}

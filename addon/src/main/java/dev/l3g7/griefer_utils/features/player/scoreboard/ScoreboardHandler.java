@@ -19,9 +19,9 @@
 package dev.l3g7.griefer_utils.features.player.scoreboard;
 
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.features.Feature;

@@ -22,9 +22,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.authlib.properties.Property;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.core.util.IOUtil.URLReadOperation;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.labymod.utils.JsonParse;
@@ -39,9 +39,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
 
+import static dev.l3g7.griefer_utils.core.event_bus.Priority.HIGHEST;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static java.lang.Thread.MIN_PRIORITY;
-import static net.minecraftforge.fml.common.eventhandler.EventPriority.HIGHEST;
 
 public class PlayerDataProvider {
 

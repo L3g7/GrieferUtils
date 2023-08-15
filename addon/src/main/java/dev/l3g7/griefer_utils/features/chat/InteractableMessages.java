@@ -18,9 +18,10 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.Citybuild;
@@ -31,7 +32,6 @@ import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class InteractableMessages extends Feature {
 			+ "\n- Spielernamen bei /clan info (Öffnet das Profil)")
 		.icon("left_click");
 
-	@EventListener(priority = EventPriority.LOW)
+	@EventListener(priority = Priority.LOW)
 	public void modifyMessage(MessageModifyEvent event) {
 		modifyGlobalChats(event);
 		modifyTps(event);

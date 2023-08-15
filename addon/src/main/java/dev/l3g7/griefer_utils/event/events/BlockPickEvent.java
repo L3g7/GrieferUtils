@@ -18,21 +18,18 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Cancelable
 public class BlockPickEvent extends Event {
 
 	public final ItemStack requiredStack;
@@ -53,7 +50,7 @@ public class BlockPickEvent extends Event {
 			if (block.isAir(world, target.getBlockPos()))
 				return;
 
-			if (MinecraftForge.EVENT_BUS.post(new BlockPickEvent(block.getPickBlock(target, world, target.getBlockPos(), player))))
+			if (new BlockPickEvent(block.getPickBlock(target, world, target.getBlockPos(), player)).fire().isCanceled())
 				cir.setReturnValue(true);
 		}
 

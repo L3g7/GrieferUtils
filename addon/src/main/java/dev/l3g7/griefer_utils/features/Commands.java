@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
@@ -45,7 +45,7 @@ public class Commands {
 		if (!event.message.startsWith(CMD_PREFIX))
 			return;
 
-		event.setCanceled(true);
+		event.cancel();
 
 		String msg = event.message.substring(CMD_PREFIX.length());
 		String[] parts = msg.split(" ");

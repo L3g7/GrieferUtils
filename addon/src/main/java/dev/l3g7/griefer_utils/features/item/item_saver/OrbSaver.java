@@ -19,10 +19,10 @@
 package dev.l3g7.griefer_utils.features.item.item_saver;
 
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
@@ -80,7 +80,7 @@ public class OrbSaver extends ItemSaver {
 		if ((FileProvider.getSingleton(OrbSaver.class).isEnabled() && event.itemStack.getTagCompound().hasKey("compressionLevel"))
 			|| isInItemSaver(event.itemStack)
 			|| event.itemStack.getDisplayName().equals("§c§lGeblockt!"))
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -119,7 +119,7 @@ public class OrbSaver extends ItemSaver {
 			else
 				continue;
 
-			event.setCanceled(true);
+			event.cancel();
 			break;
 		}
 
@@ -132,7 +132,8 @@ public class OrbSaver extends ItemSaver {
 
 		if (title.equals("§g§u§cGeblockt!§r")) {
 			Slot slot = ((GuiContainer) event.gui).getSlotUnderMouse();
-			event.setCanceled(slot != null && slot.getSlotIndex() != 45);
+			if (slot != null && slot.getSlotIndex() != 45)
+				event.cancel();
 		}
 	}
 
@@ -152,13 +153,14 @@ public class OrbSaver extends ItemSaver {
 					continue;
 
 				lowerChestInventory.setInventorySlotContents(i, savedBlock);
-				event.setCanceled(true);
+				event.cancel();
 				break;
 			}
 		}
 
 		Slot slot = ((GuiContainer) event.gui).getSlotUnderMouse();
-		event.setCanceled(slot != null && slot.getHasStack() && slot.getStack() == compressedBlock);
+		if (slot != null && slot.getHasStack() && slot.getStack() == compressedBlock)
+			event.cancel();
 	}
 
 	private boolean isInItemSaver(ItemStack stack) {

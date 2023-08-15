@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.misc;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.misc.functions.Runnable;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent.RenderTickEvent;
 

@@ -18,10 +18,9 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Timer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -49,7 +48,7 @@ public abstract class TickEvent extends Event {
 
 			@Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/Profiler;endSection()V", ordinal = 3, shift = AFTER))
 			public void injectRunGameLoopPost(CallbackInfo ci) {
-				MinecraftForge.EVENT_BUS.post(new RenderTickEvent(timer.renderPartialTicks));
+				new RenderTickEvent(timer.renderPartialTicks).fire();
 			}
 
 		}
@@ -63,7 +62,7 @@ public abstract class TickEvent extends Event {
 
 			@Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/Profiler;endSection()V", ordinal = 1, shift = BEFORE))
 			public void injectRunTick(CallbackInfo ci) {
-				MinecraftForge.EVENT_BUS.post(new ClientTickEvent());
+				new ClientTickEvent().fire();
 			}
 
 		}

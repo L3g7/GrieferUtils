@@ -19,10 +19,11 @@
 package dev.l3g7.griefer_utils.features.item;
 
 import com.google.common.collect.ImmutableMap;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
@@ -50,7 +51,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.List;
 import java.util.Map;
@@ -130,7 +130,7 @@ public class AutoTool extends Feature {
 	/**
 	 * Required for compatability with {@link ToolSaver}
 	 */
-	@EventListener(priority = EventPriority.HIGH)
+	@EventListener(priority = Priority.HIGH)
 	public void onMouse(MouseClickEvent.LeftClickEvent event) {
 		if (mc().objectMouseOver == null || mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
 			return;
@@ -139,15 +139,11 @@ public class AutoTool extends Feature {
 	}
 
 	@EventListener
-	public void onPacket(PacketEvent.PacketSendEvent event) {
-		if (!(event.packet instanceof C07PacketPlayerDigging))
+	public void onPacket(PacketEvent.PacketSendEvent<C07PacketPlayerDigging> event) {
+		if (event.packet.getStatus() != C07PacketPlayerDigging.Action.START_DESTROY_BLOCK)
 			return;
 
-		C07PacketPlayerDigging packet = (C07PacketPlayerDigging) event.packet;
-		if (packet.getStatus() != C07PacketPlayerDigging.Action.START_DESTROY_BLOCK)
-			return;
-
-		switchToTool(packet.getPosition());
+		switchToTool(event.packet.getPosition());
 	}
 
 	private void switchToTool(BlockPos targetedBlock) {

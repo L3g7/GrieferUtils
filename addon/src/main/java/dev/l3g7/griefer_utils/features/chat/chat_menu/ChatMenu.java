@@ -22,10 +22,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -186,7 +186,7 @@ public class ChatMenu extends Feature {
 		getCustom().forEach(e -> { if (e.enabled) entries.add(e); });
 
 		renderer = new ChatMenuRenderer(entries, NameCache.ensureRealName(name.replaceAll("§.", "").trim()), ChatLineUtil.getHoveredComponent());
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 	@EventListener
@@ -196,7 +196,7 @@ public class ChatMenu extends Feature {
 
 		if (Keyboard.getEventKeyState() && Keyboard.getEventKey() == 1) {
 			renderer = null;
-			event.setCanceled(true);
+			event.cancel();
 		}
 
 		mc().dispatchKeypresses();

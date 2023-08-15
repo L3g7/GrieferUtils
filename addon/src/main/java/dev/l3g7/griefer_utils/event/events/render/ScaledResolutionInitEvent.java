@@ -18,10 +18,9 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,7 +36,7 @@ public class ScaledResolutionInitEvent extends Event {
 
 		@Inject(method = "<init>", at = @At("RETURN"))
 		public void injectInit(Minecraft p_i46445_1_, CallbackInfo ci) {
-			MinecraftForge.EVENT_BUS.post(new ScaledResolutionInitEvent());
+			new ScaledResolutionInitEvent().fire();
 		}
 
 	}

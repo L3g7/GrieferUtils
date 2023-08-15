@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.item.inventory_tweaks.tweaks;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
@@ -50,19 +50,14 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 		.icon(new ItemStack(Blocks.stone, 0));
 
 	@EventListener
-	public void onPacketReceive(PacketEvent.PacketReceiveEvent event) {
+	public void onPacketReceive(PacketEvent.PacketReceiveEvent<S2FPacketSetSlot> event) {
 		if (expectedStack == null || player() == null)
 			return;
 
-		if (!(event.packet instanceof S2FPacketSetSlot))
+		if (event.packet.func_149173_d() != slot)
 			return;
 
-		S2FPacketSetSlot packet = (S2FPacketSetSlot) event.packet;
-		if (packet.func_149173_d() != slot)
-			return;
-
-		event.setCanceled(true);
-
+		event.cancel();
 
 		for (int slot = 0; slot < 36; slot++) {
 			InventoryPlayer inventory = player().inventory;

@@ -18,10 +18,9 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -46,7 +45,7 @@ public class ItemTooltipEvent extends Event {
 
 		@Inject(method = "getTooltip", at = @At("RETURN"))
 		public void injectGetTooltip(EntityPlayer playerIn, boolean advanced, CallbackInfoReturnable<List<String>> cir) {
-			MinecraftForge.EVENT_BUS.post(new ItemTooltipEvent(this, cir.getReturnValue(), advanced));
+			new ItemTooltipEvent(this, cir.getReturnValue(), advanced).fire();
 		}
 
 	}

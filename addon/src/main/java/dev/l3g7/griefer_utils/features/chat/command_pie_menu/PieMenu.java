@@ -18,6 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
+import dev.l3g7.griefer_utils.core.event_bus.Disableable;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MouseEvent;
@@ -33,8 +36,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -46,7 +47,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
 
-public class PieMenu extends Gui {
+public class PieMenu extends Gui implements Disableable {
 
 	private final List<Pair<String, List<Pair<String, String>>>> allPages = new ArrayList<>();
 	private Pair<String, List<Pair<String, String>>> currentPage;
@@ -60,7 +61,7 @@ public class PieMenu extends Gui {
 	private String hoveredCommand = null;
 
 	public PieMenu() {
-		MinecraftForge.EVENT_BUS.register(this);
+		EventRegisterer.register(this);
 	}
 
 	public void open(boolean animation, SettingsElement entryContainer) {
@@ -123,11 +124,8 @@ public class PieMenu extends Gui {
 			player().sendChatMessage(hoveredCommand);
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void render(RenderGameOverlayEvent event) {
-		if (!open)
-			return;
-
 		if (player() == null || player().getUniqueID() == null || player().hurtTime != 0) {
 			close();
 			return;
@@ -291,9 +289,9 @@ public class PieMenu extends Gui {
 		return b1 == b2 && b2 == b3;
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void lockMouseMovementInCircle(ScaledResolutionInitEvent event) {
-		if (!open || player() == null)
+		if (player() == null)
 			return;
 
 		double radius = (double)LabyMod.getInstance().getDrawUtils().getHeight() / 4 / 3;
@@ -319,14 +317,11 @@ public class PieMenu extends Gui {
 		player().rotationPitch = player().prevRotationPitch = (float) (centerY + fromOriginToObjectY * multiplier);
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void onMouseInput(MouseEvent event) {
-		if (!open)
-			return;
-
 		if (event.dwheel != 0) {
 			switchToPage(page + (event.dwheel > 0 ? -1 : 1));
-			event.setCanceled(true);
+			event.cancel();
 			return;
 		}
 
@@ -345,6 +340,11 @@ public class PieMenu extends Gui {
 
 		page = MathHelper.clamp_int(target, 0, allPages.size() - 1);
 		currentPage = allPages.get(page);
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return open;
 	}
 
 }

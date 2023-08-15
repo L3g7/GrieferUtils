@@ -20,10 +20,10 @@ package dev.l3g7.griefer_utils.features.world;
 
 import com.github.lunatrius.schematica.api.ISchematic;
 import com.google.common.base.Strings;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.ChunkFilledEvent;
 import dev.l3g7.griefer_utils.event.events.ChunkUnloadEvent;
 import dev.l3g7.griefer_utils.event.events.RenderWorldLastEvent;
@@ -44,6 +44,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.BlockPos;
@@ -167,7 +168,7 @@ public class RedstoneHelper extends Feature {
 	}
 
 	@EventListener
-	public void onPacket(PacketEvent.PacketReceiveEvent event) {
+	public void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
 		if (event.packet instanceof S23PacketBlockChange) {
 			S23PacketBlockChange packet = (S23PacketBlockChange) event.packet;
 			onBlockUpdate(packet.getBlockPosition(), packet.getBlockState());
@@ -234,7 +235,7 @@ public class RedstoneHelper extends Feature {
 	@EventListener
 	public void onParticleSpawn(ParticleSpawnEvent event) {
 		if (event.particleID == REDSTONE_PARTICLE_ID && hideRedstoneParticles.get())
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	@EventListener

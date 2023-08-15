@@ -18,17 +18,14 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.entity.projectile.EntityEgg;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Cancelable
 public class EggImpactEvent extends Event {
 
 	public final MovingObjectPosition mop;
@@ -41,8 +38,8 @@ public class EggImpactEvent extends Event {
 	private static class MixinEntityEgg {
 
 		@Inject(method = "onImpact", at = @At("HEAD"), cancellable = true)
-		public void injectOnImpact(MovingObjectPosition p_70184_1_, CallbackInfo ci) {
-			if (MinecraftForge.EVENT_BUS.post(new EggImpactEvent(p_70184_1_)))
+		public void injectOnImpact(MovingObjectPosition mop, CallbackInfo ci) {
+			if (new EggImpactEvent(mop).fire().isCanceled())
 				ci.cancel();
 		}
 

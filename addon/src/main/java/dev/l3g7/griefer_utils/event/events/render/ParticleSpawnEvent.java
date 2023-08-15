@@ -18,17 +18,14 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Cancelable
 public class ParticleSpawnEvent extends Event {
 
 	public final int particleID;
@@ -50,7 +47,7 @@ public class ParticleSpawnEvent extends Event {
 
 		@Inject(method = "spawnParticle(IZDDDDDD[I)V", at = @At("HEAD"), cancellable = true)
 		private void injectSpawnParticle(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int[] args, CallbackInfo ci) {
-			if (MinecraftForge.EVENT_BUS.post(new ParticleSpawnEvent(particleID, ignoreRange, new Vec3d(xCoord, yCoord, zCoord), new Vec3d(xOffset, yOffset, zOffset), args)))
+			if (new ParticleSpawnEvent(particleID, ignoreRange, new Vec3d(xCoord, yCoord, zCoord), new Vec3d(xOffset, yOffset, zOffset), args).fire().isCanceled())
 				ci.cancel();
 		}
 

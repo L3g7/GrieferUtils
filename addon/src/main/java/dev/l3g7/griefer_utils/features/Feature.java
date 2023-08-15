@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features;
 
+import dev.l3g7.griefer_utils.core.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -28,7 +29,7 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * The base class for features.
  */
-public abstract class Feature {
+public abstract class Feature implements Disableable {
 
 	private Category category;
 	private SettingsElement mainElement;

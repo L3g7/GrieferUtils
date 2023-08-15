@@ -23,10 +23,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -83,11 +83,9 @@ public class Transactions extends Feature {
 		.subSettings(HEADER);
 
 	@EventListener
-	public void onMMPacket(MMPacketReceiveEvent event) {
-		if (event.packet instanceof TransactionsPacket) {
-			transactions.addAll(((TransactionsPacket) event.packet).transactions);
-			updateSettings();
-		}
+	public void onMMPacket(MMPacketReceiveEvent<TransactionsPacket> event) {
+		transactions.addAll(event.packet.transactions);
+		updateSettings();
 	}
 
 	@EventListener

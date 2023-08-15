@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.util.Util;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.GuiBotShops;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.GuiFarms;
@@ -63,7 +63,7 @@ public class GuiGrieferInfo extends GuiBigChest {
 		String message = event.message.trim().toLowerCase();
 
 		if (message.equals("/gi") || message.equals("/info")) {
-			event.setCanceled(true);
+			event.cancel();
 			TickScheduler.runAfterRenderTicks(GUI::open, 1);
 		}
 	}

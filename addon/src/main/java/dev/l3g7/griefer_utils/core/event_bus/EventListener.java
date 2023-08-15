@@ -16,25 +16,24 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event;
-
-import dev.l3g7.griefer_utils.features.Feature;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
+package dev.l3g7.griefer_utils.core.event_bus;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Marks a custom forge event listener.
- * @see EventHandler
- */
+import static dev.l3g7.griefer_utils.core.event_bus.Priority.NORMAL;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EventListener {
 
-	EventPriority priority() default EventPriority.NORMAL;
+	/**
+	 * The priority of the event listener.
+	 * Listeners with a higher priority will be called sooner than listeners with a lower priority.
+	 */
+	Priority priority() default NORMAL;
 
 	/**
 	 * Whether the listener should be triggered for canceled events.
@@ -42,14 +41,9 @@ public @interface EventListener {
 	boolean receiveCanceled() default false;
 
 	/**
-	 * Whether the listener should be triggered if it's defining {@link Feature} is disabled.
-	 * Has no effect if the defining class is not a subclass of {@link Feature} or the listener is static.
+	 * Whether the listener should be triggered if it's defining {@link Disableable} is disabled.
+	 * Has no effect if the defining class is not a subclass of {@link Disableable} or the listener is static.
 	 */
 	boolean triggerWhenDisabled() default false;
-
-	/**
-	 * Whether the listener should be triggered for subclasses of the event being listened to.
-	 */
-	boolean receiveSubclasses() default true;
 
 }

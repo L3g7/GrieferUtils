@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.item;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -66,7 +66,8 @@ public class BookFix extends Feature {
 		if (player() == null || mc().currentScreen != null)
 			return;
 
-		event.setCanceled(processClick(player().getHeldItem(), true));
+		if (processClick(player().getHeldItem(), true))
+			event.cancel();
 	}
 
 	/**
@@ -78,8 +79,8 @@ public class BookFix extends Feature {
 			return;
 
 		Slot slot = ((GuiContainer) mc().currentScreen).getSlotUnderMouse();
-		if (slot != null)
-			event.setCanceled(processClick(slot.getStack(), Mouse.getEventButton() == 1));
+		if (slot != null && processClick(slot.getStack(), Mouse.getEventButton() == 1))
+			event.cancel();
 	}
 
 	/**

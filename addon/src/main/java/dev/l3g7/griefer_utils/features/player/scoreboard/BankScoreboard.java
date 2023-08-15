@@ -18,13 +18,13 @@
 
 package dev.l3g7.griefer_utils.features.player.scoreboard;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 @Singleton
 public class BankScoreboard extends ScoreboardHandler.ScoreboardMod {
@@ -45,7 +45,7 @@ public class BankScoreboard extends ScoreboardHandler.ScoreboardMod {
 		super("Bankguthaben", 1);
 	}
 
-	@EventListener(triggerWhenDisabled = true, priority = EventPriority.HIGH)
+	@EventListener(triggerWhenDisabled = true, priority = Priority.HIGH)
 	public void onMMCustomPayload(MysteryModPayloadEvent event) {
 		if (event.channel.equals("bank"))
 			bankBalance = event.payload.getAsJsonObject().get("amount").getAsLong();

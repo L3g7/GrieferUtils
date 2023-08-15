@@ -19,13 +19,12 @@
 package dev.l3g7.griefer_utils.event.events.network;
 
 import com.google.gson.JsonElement;
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Event;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import net.labymod.utils.JsonParse;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * An event being posted when a {@link S3FPacketCustomPayload} on the {@code mysterymod:mm} channel is received.
@@ -41,17 +40,13 @@ public class MysteryModPayloadEvent extends Event {
 	}
 
 	@EventListener
-	private static void onPacket(PacketReceiveEvent event) {
-		if (!(event.packet instanceof S3FPacketCustomPayload))
+	private static void onPacket(PacketReceiveEvent<S3FPacketCustomPayload> event) {
+		if (!event.packet.getChannelName().equals("mysterymod:mm"))
 			return;
 
-		S3FPacketCustomPayload packet = (S3FPacketCustomPayload) event.packet;
-		if (!packet.getChannelName().equals("mysterymod:mm"))
-			return;
-
-		PacketBuffer data = packet.getBufferData();
+		PacketBuffer data = event.packet.getBufferData();
 		data.markReaderIndex();
-		MinecraftForge.EVENT_BUS.post(new MysteryModPayloadEvent(data.readStringFromBuffer(65536), JsonParse.parse(data.readStringFromBuffer(65536))));
+		new MysteryModPayloadEvent(data.readStringFromBuffer(65536), JsonParse.parse(data.readStringFromBuffer(65536))).fire();
 		data.resetReaderIndex();
 	}
 

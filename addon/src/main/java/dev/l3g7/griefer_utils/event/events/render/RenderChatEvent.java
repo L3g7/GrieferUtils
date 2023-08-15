@@ -19,12 +19,11 @@
 package dev.l3g7.griefer_utils.event.events.render;
 
 import de.emotechat.addon.gui.chat.render.EmoteChatRenderer;
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.labymod.utils.DrawUtils;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -51,7 +50,7 @@ public class RenderChatEvent extends Event {
 		@Inject(method = "drawLine", at = @At("TAIL"))
 		@SuppressWarnings("InvalidInjectorMethodSignature") // Library is obfuscated, so method parameters are as well
 		public void injectDrawLine(FontRenderer font, ChatLine chatLine, float x, float y, int width, int alpha, int mouseX, int mouseY, CallbackInfo ci) {
-			MinecraftForge.EVENT_BUS.post(new RenderChatEvent(chatLine, (int) y + 8, alpha / 255f));
+			new RenderChatEvent(chatLine, (int) y + 8, alpha / 255f).fire();
 		}
 
 	}
@@ -61,7 +60,7 @@ public class RenderChatEvent extends Event {
 
 		@Inject(method = "renderChat", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/DrawUtils;drawStringWithShadow(Ljava/lang/String;DDI)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
 		private void injectRenderChat(int updateCounter, CallbackInfo ci, DrawUtils draw, int fontHeight, float scale, int chatLineCount, boolean chatOpen, float opacity, int width, int visibleMessages, double totalMessages, double animationSpeed, float lineHeight, double shift, double posX, double posY, int i, Iterator<ChatLine> chatLineIterator, ChatLine chatline, boolean firstLine, boolean lastLine, int updateCounterDifference, int alpha, int x, int y) {
-			MinecraftForge.EVENT_BUS.post(new RenderChatEvent(chatline, y, alpha / 255f));
+			new RenderChatEvent(chatline, y, alpha / 255f).fire();
 		}
 
 	}

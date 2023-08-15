@@ -20,11 +20,12 @@ package dev.l3g7.griefer_utils.features.player;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
@@ -46,7 +47,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -116,7 +116,7 @@ public class CooldownNotifications extends Feature {
 		}
 	}
 
-	@EventListener(priority = EventPriority.LOWEST) // Make sure loadCooldowns is triggered before
+	@EventListener(priority = Priority.LOWEST) // Make sure loadCooldowns is triggered before
 	public void onServerJoin(ServerEvent.ServerJoinEvent event) {
 		sendCooldowns = true;
 	}

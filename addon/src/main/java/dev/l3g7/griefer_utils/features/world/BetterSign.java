@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -55,9 +55,8 @@ public class BetterSign extends Feature {
 		.icon(Material.SIGN);
 
 	@EventListener
-	public void onGuiOpen(GuiOpenEvent event) {
-		if (event.gui instanceof GuiEditSign)
-			event.gui = new BetterGuiEditSign(Reflection.get(event.gui, "tileSign"));
+	public void onGuiOpen(GuiOpenEvent<GuiEditSign> event) {
+		event.gui = new BetterGuiEditSign(Reflection.get(event.gui, "tileSign"));
 	}
 
 	/**

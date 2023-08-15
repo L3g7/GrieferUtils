@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -35,7 +36,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
 
 import java.io.File;
@@ -72,7 +72,7 @@ public class AddChatMenuEntryGui extends Gui {
 	public AddChatMenuEntryGui(EntryDisplaySetting entry, GuiScreen backgroundScreen) {
 		this.backgroundScreen = backgroundScreen;
 		editedEntry = entry;
-		MinecraftForge.EVENT_BUS.register(this);
+		EventRegisterer.register(this);
 	}
 
 	public void initGui() {
@@ -335,6 +335,7 @@ public class AddChatMenuEntryGui extends Gui {
 	}
 
 	private void close() {
+		EventRegisterer.unregister(this);
 		backgroundScreen.initGui();
 		Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
 	}

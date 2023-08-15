@@ -19,9 +19,9 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -35,8 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UnknownFormatConversionException;
 
+import static dev.l3g7.griefer_utils.core.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static net.minecraftforge.fml.common.eventhandler.EventPriority.LOWEST;
 
 @Singleton
 public class ChatTime extends Feature {

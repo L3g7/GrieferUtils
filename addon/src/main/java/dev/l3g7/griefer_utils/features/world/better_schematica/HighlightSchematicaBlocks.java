@@ -144,23 +144,19 @@ public class HighlightSchematicaBlocks {
 		RenderSchematic.INSTANCE.refresh();
 	}
 
-	static void onPacketSend(PacketEvent.PacketSendEvent event) {
-		if (!(event.packet instanceof C08PacketPlayerBlockPlacement))
+	static void onPacketSend(PacketEvent.PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
+		if (event.packet.getPlacedBlockDirection() == 255 || event.packet.getStack() == null)
 			return;
 
-		C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
-		if (packet.getPlacedBlockDirection() == 255 || packet.getStack() == null)
-			return;
-
-		NBTTagCompound tag = packet.getStack().getTagCompound();
+		NBTTagCompound tag = event.packet.getStack().getTagCompound();
 		if (tag == null || !tag.hasKey("stackSize"))
 			return;
 
-		if (!isHeldItemRequired(packet.getStack()))
+		if (!isHeldItemRequired(event.packet.getStack()))
 			return;
 
 		placedCompressedBlock = true;
-		heldItem = packet.getStack();
+		heldItem = event.packet.getStack();
 	}
 
 	private static boolean isHeldItemRequired(ItemStack heldItem) {

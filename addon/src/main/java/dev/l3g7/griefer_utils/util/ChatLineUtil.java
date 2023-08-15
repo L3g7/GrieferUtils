@@ -18,7 +18,8 @@
 
 package dev.l3g7.griefer_utils.util;
 
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
 import net.labymod.ingamechat.renderer.ChatLine;
@@ -26,7 +27,6 @@ import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.*;
 
@@ -53,7 +53,7 @@ public class ChatLineUtil {
 		MODIFIED_COMPONENTS.add(event.component);
 	}
 
-	@EventListener(priority = EventPriority.HIGHEST)
+	@EventListener(priority = Priority.HIGHEST)
 	private static void onMessageModified(ChatLineEvent.ChatLineInitEvent event) {
 		int width = (event.secondChat ? INSTANCE.getSecond() : INSTANCE.getMain()).getVisualWidth();
 		List<IChatComponent> components = GuiUtilRenderComponents.splitText(event.component, width, mc().fontRendererObj, false, false);
@@ -62,7 +62,7 @@ public class ChatLineUtil {
 		currentComponent = event.component;
 	}
 
-	@EventListener(priority = EventPriority.HIGHEST)
+	@EventListener(priority = Priority.HIGHEST)
 	private static void onChatLineAdd(ChatLineEvent.ChatLineAddEvent event) {
 		if (passedLines++ >= expectedLines)
 			return;

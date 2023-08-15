@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.misc.mysterymod_connection;
 
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent;
@@ -35,7 +35,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.util.concurrent.DefaultThreadFactory;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,7 +59,7 @@ public class MysteryModConnection {
 
 	public static void setState(ChannelHandlerContext ctx, State state) {
 		currentState = state;
-		MinecraftForge.EVENT_BUS.post(new MysteryModConnectionEvent.MMStateChangeEvent(ctx, state));
+		new MysteryModConnectionEvent.MMStateChangeEvent(ctx, state).fire();
 	}
 
 	@OnEnable

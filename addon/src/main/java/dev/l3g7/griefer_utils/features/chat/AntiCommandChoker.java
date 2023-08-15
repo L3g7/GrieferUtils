@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -74,7 +74,7 @@ public class AntiCommandChoker extends Feature {
 	public void onMessageSend(MessageSendEvent event) {
 		String msg = event.message;
 		if (msg.startsWith(COMMAND)) {
-			event.setCanceled(true);
+			event.cancel();
 			String message = msg.substring(COMMAND.length());
 			int id = Integer.parseInt(message.split(" ")[0]);
 
@@ -116,7 +116,7 @@ public class AntiCommandChoker extends Feature {
 				.setChatClickEvent(getClickEvent(null, id)));
 
 			mc().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(question.appendSibling(yes).appendSibling(no), id);
-			event.setCanceled(true);
+			event.cancel();
 			return;
 		}
 
@@ -136,7 +136,7 @@ public class AntiCommandChoker extends Feature {
 			.setChatClickEvent(getClickEvent(msg, id)));
 
 		mc().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(question.appendSibling(yes).appendSibling(no), id);
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 	private ClickEvent getClickEvent(String command, int id) {

@@ -20,9 +20,9 @@ package dev.l3g7.griefer_utils.misc.badges;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.Credits;
@@ -82,7 +82,7 @@ public class GrieferUtilsUserManager {
 		else
 			users.put(event.user.getUuid(), event.group);
 
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 	private static void requestQueuedUsers() {

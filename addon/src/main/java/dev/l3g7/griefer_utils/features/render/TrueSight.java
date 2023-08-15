@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -127,11 +127,11 @@ public class TrueSight extends Feature {
 	}
 
 	@EventListener
-	public void onDisplayNameRender(InvisibilityCheckEvent event) {
+	public void onInvisibilityCheck(InvisibilityCheckEvent event) {
 		Class<?> entity = event.entity.getClass();
 		do {
 			if (entities.containsKey(entity)) {
-				event.setCanceled(entities.get(entity).get());
+				event.invisible = !entities.get(entity).get();
 				break;
 			}
 		} while ((entity = entity.getSuperclass()) != null);

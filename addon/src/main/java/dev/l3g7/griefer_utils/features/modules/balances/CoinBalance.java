@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.modules.balances;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
@@ -43,15 +43,14 @@ public class CoinBalance extends Module {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onPacket(PacketEvent.PacketReceiveEvent event) {
-		if (!(event.packet instanceof S3EPacketTeams) || world() == null)
+	public void onPacket(PacketEvent.PacketReceiveEvent<S3EPacketTeams> event) {
+		if (world() == null)
 			return;
 
-		S3EPacketTeams packet = (S3EPacketTeams) event.packet;
-		if (!packet.getName().equals("money_value") || packet.getAction() != 2 || MinecraftUtil.getServerFromScoreboard().equals("Portal"))
+		if (!event.packet.getName().equals("money_value") || event.packet.getAction() != 2 || MinecraftUtil.getServerFromScoreboard().equals("Portal"))
 			return;
 
-		String money = packet.getPrefix();
+		String money = event.packet.getPrefix();
 		if (!money.endsWith("$")) // Still loading
 			return;
 

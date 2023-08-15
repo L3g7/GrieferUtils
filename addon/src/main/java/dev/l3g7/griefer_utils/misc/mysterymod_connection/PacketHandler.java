@@ -37,7 +37,6 @@ import java.math.BigInteger;
 import java.security.PublicKey;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 
@@ -75,7 +74,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 		else if (packet instanceof LoginResponsePacket)
 			MysteryModConnection.setState(ctx, ((LoginResponsePacket) packet).state);
 
-		EVENT_BUS.post(new MMPacketReceiveEvent(ctx, packet));
+		new MMPacketReceiveEvent<>(ctx, packet).fire();
 	}
 
 	@Override

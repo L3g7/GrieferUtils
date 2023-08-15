@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.BurningCheckEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderPortalCheckEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderPortalDistortionEvent;
@@ -83,30 +83,32 @@ public class NoOverlay extends Feature {
 
 	@EventListener
 	private void onDisplayNameRender(SetupFogEvent event) {
-		if (event.fogType == FogType.BLINDNESS)
-			event.setCanceled(blindness.get());
-		else if (event.fogType == FogType.WATER)
-			event.setCanceled(water.get());
-		else if (event.fogType == FogType.LAVA)
-			event.setCanceled(lava.get());
+		if (event.fogType == FogType.BLINDNESS) {
+			if (blindness.get()) event.cancel();
+		} else if (event.fogType == FogType.WATER) {
+			if (water.get()) event.cancel();
+		} else if (event.fogType == FogType.LAVA) {
+			if (lava.get()) event.cancel();
+		}
 	}
 
 	@EventListener
 	public void onPortalDistortionRender(RenderPortalDistortionEvent event) {
-		event.setCanceled(nausea.get());
+		if (nausea.get())
+			event.distortion = 0;
 	}
 
 	@EventListener
 	private void onPortalRender(RenderPortalCheckEvent event) {
 		if (portal.get())
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	@EventListener
 	public void onDisplayNameRender(BurningCheckEvent event) {
 		// Only hide if in first person
-		if (mc().gameSettings.thirdPersonView == 0 && fire.get())
-			event.setCanceled(true);
+		if (event.burning && mc().gameSettings.thirdPersonView == 0 && fire.get())
+			event.burning = false;
 	}
 
 }

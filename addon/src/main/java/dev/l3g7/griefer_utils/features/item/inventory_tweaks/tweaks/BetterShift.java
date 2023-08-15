@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.item.inventory_tweaks.tweaks;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
@@ -117,7 +117,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 		if (!hasPossibleTrade)
 			return;
 
-		event.setCanceled(true);
+		event.cancel();
 
 		click(event.windowId, event.slotId);
 		click(event.windowId, firstStack == null ? 0 : 1);
@@ -144,7 +144,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 		if (targetSlot == -1)
 			return;
 
-		event.setCanceled(true);
+		event.cancel();
 		click(event.windowId, event.slotId);
 		int finalTargetSlot = targetSlot;
 		TickScheduler.runAfterClientTicks(() -> click(event.windowId, finalTargetSlot), requiresDelay(movedStack) ? 2 : 0);

@@ -18,10 +18,9 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.labymod.accountmanager.storage.account.Account;
 import net.labymod.main.LabyMod;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,7 +33,7 @@ public class AccountSwitchEvent extends Event {
 
 		@Inject(method = "setSession", at = @At("TAIL"), remap = false)
 		public void injectSetSession(Account account, CallbackInfo ci) {
-			MinecraftForge.EVENT_BUS.post(new AccountSwitchEvent());
+			new AccountSwitchEvent().fire();
 		}
 
 	}

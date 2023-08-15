@@ -18,9 +18,10 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -32,7 +33,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 @Singleton
 public class RealMoney extends Feature {
@@ -54,7 +54,7 @@ public class RealMoney extends Feature {
 		.icon("coin_pile")
 		.subSettings(tag, position);
 
-	@EventListener(priority = EventPriority.LOWEST)
+	@EventListener(priority = Priority.LOWEST)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		if (Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText()).matches()) {
 			String text = "§r" + tag.get().replace('&', '§') + "§r";
@@ -68,7 +68,7 @@ public class RealMoney extends Feature {
 			// Feed new message into packet pipeline to allow reprocessing
 			Minecraft.getMinecraft().getNetHandler().handleChat(new S02PacketChat(message));
 
-			event.setCanceled(true);
+			event.cancel();
 		}
 	}
 

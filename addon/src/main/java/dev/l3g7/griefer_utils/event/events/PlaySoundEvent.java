@@ -18,18 +18,15 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Cancelable
 public class PlaySoundEvent extends Event {
 
 	public final String name;
@@ -46,7 +43,7 @@ public class PlaySoundEvent extends Event {
 
 		@Inject(method = "playSound", at = @At("HEAD"), cancellable = true)
 	    public void injectPlaySound(ISound p_sound, CallbackInfo ci) {
-	    	if (loaded && MinecraftForge.EVENT_BUS.post(new PlaySoundEvent(p_sound)))
+	    	if (loaded && new PlaySoundEvent(p_sound).fire().isCanceled())
 				ci.cancel();
 	    }
 

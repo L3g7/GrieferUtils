@@ -18,10 +18,10 @@
 
 package dev.l3g7.griefer_utils.settings;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
 import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.features.Feature;

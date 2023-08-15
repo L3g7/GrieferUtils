@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.settings.elements;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
@@ -33,7 +34,6 @@ import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -179,7 +179,7 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 			public AddStringGui(GuiScreen backgroundScreen, StringDisplaySetting setting) {
 				this.backgroundScreen = backgroundScreen;
 				this.setting = setting;
-				MinecraftForge.EVENT_BUS.register(this);
+				EventRegisterer.register(this);
 			}
 
 			public void initGui() {
@@ -199,6 +199,11 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 
 				buttonList.add(new GuiButton(0, width / 2 - 105, height / 4 + 85, 100, 20, "Abbrechen"));
 				buttonList.add(new GuiButton(1, width / 2 + 5, height / 4 + 85, 100, 20, setting == null ? "Hinzufügen" : "Bearbeiten"));
+			}
+
+			@Override
+			public void onGuiClosed() {
+				EventRegisterer.unregister(this);
 			}
 
 			public void drawScreen(int mouseX, int mouseY, float partialTicks) {

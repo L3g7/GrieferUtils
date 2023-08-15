@@ -18,16 +18,17 @@
 
 package dev.l3g7.griefer_utils.features.world.better_schematica;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.SchematicaUtil;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 
 @Singleton
 public class BetterSchematica extends Feature {
@@ -88,7 +89,7 @@ public class BetterSchematica extends Feature {
 	}
 
 	@EventListener
-	public void onPacketSend(PacketEvent.PacketSendEvent event) {
+	public void onPacketSend(PacketEvent.PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
 		if (Constants.SCHEMATICA && highlightBlocks.get())
 			HighlightSchematicaBlocks.onPacketSend(event);
 	}

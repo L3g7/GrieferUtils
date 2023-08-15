@@ -20,11 +20,11 @@ package dev.l3g7.griefer_utils.features.modules.balances.inventory_value;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -75,7 +75,7 @@ public class InventoryValue extends Module {
 
 		mc().displayGuiScreen(new EnterItemValueGui(value -> addItem(event.itemStack, value), previousScreen, getValue(event.itemStack)));
 		previousScreen = null;
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 	@Override

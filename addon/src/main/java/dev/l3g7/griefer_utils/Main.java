@@ -18,10 +18,10 @@
 
 package dev.l3g7.griefer_utils;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.event.AnnotationEventHandler;
-import dev.l3g7.griefer_utils.event.EventHandler;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -77,7 +77,8 @@ public class Main extends LabyModAddon {
 		});
 
 		try {
-			EventHandler.init();
+			EventRegisterer.init();
+			AnnotationEventHandler.init();
 			AnnotationEventHandler.triggerEvent(OnEnable.class);
 		} catch (Throwable t) {
 			MinecraftUtil.mc().displayCrashReport(new CrashReport("GrieferUtils konnte nicht geladen werden!", t));
@@ -90,10 +91,7 @@ public class Main extends LabyModAddon {
 	 * Fixes an incompatibility with HDSkins (wtf)
 	 */
 	@EventListener
-	private static void onGuiOpen(GuiOpenEvent event) {
-		if (!(event.gui instanceof LabyModAddonsGui))
-			return;
-
+	private static void onGuiOpen(GuiOpenEvent<LabyModAddonsGui> event) {
 		UUID uuid = Main.getInstance().about.uuid;
 		for (AddonInfo addonInfo : AddonInfoManager.getInstance().getAddonInfoList())
 			if (addonInfo.getUuid().equals(uuid))

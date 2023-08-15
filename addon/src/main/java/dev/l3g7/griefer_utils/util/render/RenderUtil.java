@@ -263,7 +263,7 @@ public class RenderUtil {
 		if (textLines.isEmpty())
 			return;
 
-		event.setCanceled(true);
+		event.cancel();
 		renderToolTipWithPadding(textLines, event.x, event.y, event.screen.width, event.screen.height, padding, 0, padding, paddingContentRenderer);
 	}
 

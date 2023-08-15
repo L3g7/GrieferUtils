@@ -18,30 +18,27 @@
 
 package dev.l3g7.griefer_utils.event.events.network;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class PacketEvent extends Event {
+public abstract class PacketEvent<P extends Packet<?>> extends Event {
 
-	public final Packet<?> packet;
+	public final P packet;
 
-	private PacketEvent(Packet<?> packet) {
+	private PacketEvent(P packet) {
 		this.packet = packet;
 	}
 
-	@Cancelable
-	public static class PacketReceiveEvent extends PacketEvent {
+	public static class PacketReceiveEvent<P extends Packet<?>> extends PacketEvent<P> {
 
-		public PacketReceiveEvent(Packet<?> packet) {
+		public PacketReceiveEvent(P packet) {
 			super(packet);
 		}
 
@@ -50,7 +47,7 @@ public class PacketEvent extends Event {
 
 			@Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/Packet;)V", at = @At("HEAD"), cancellable = true)
 			public void injectChannelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
-				if (MinecraftForge.EVENT_BUS.post(new PacketReceiveEvent(packet)))
+				if (new PacketReceiveEvent<>(packet).fire().isCanceled())
 					ci.cancel();
 			}
 
@@ -58,10 +55,9 @@ public class PacketEvent extends Event {
 
 	}
 
-	@Cancelable
-	public static class PacketSendEvent extends PacketEvent {
+	public static class PacketSendEvent<P extends Packet<?>> extends PacketEvent<P> {
 
-		public PacketSendEvent(Packet<?> packet) {
+		public PacketSendEvent(P packet) {
 			super(packet);
 		}
 
@@ -70,7 +66,7 @@ public class PacketEvent extends Event {
 
 			@Inject(method = "addToSendQueue", at = @At("HEAD"), cancellable = true)
 			private void injectPacketSendEvent(Packet<?> packet, CallbackInfo ci) {
-				if (MinecraftForge.EVENT_BUS.post(new PacketSendEvent(packet)))
+				if (new PacketSendEvent<>(packet).fire().isCanceled())
 					ci.cancel();
 			}
 

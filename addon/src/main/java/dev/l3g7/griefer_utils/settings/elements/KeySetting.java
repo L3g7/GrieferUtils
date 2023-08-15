@@ -21,6 +21,8 @@ package dev.l3g7.griefer_utils.settings.elements;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.InputEvent;
@@ -36,8 +38,6 @@ import net.labymod.settings.elements.StringElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -78,7 +78,7 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 		previewField.setText("NONE");
 		previewField.setCursorPositionEnd();
 		previewField.setFocused(false);
-		MinecraftForge.EVENT_BUS.register(this);
+		EventRegisterer.register(this);
 	}
 
 	@Override
@@ -107,25 +107,25 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 		return this;
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void onGuiKeyPress(GuiScreenEvent.KeyboardInputEvent.Post event) {
 		if (!Keyboard.isRepeatEvent() && triggersInContainers)
 			onPress(Keyboard.getEventKey());
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void onGuiMousePress(GuiScreenEvent.MouseInputEvent.Post event) {
 		if (triggersInContainers)
 			onPress(-Mouse.getEventButton());
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void onKeyPress(InputEvent.KeyInputEvent event) {
 		if (!Keyboard.isRepeatEvent())
 			onPress(Keyboard.getEventKey());
 	}
 
-	@SubscribeEvent
+	@EventListener
 	public void onMousePress(InputEvent.MouseInputEvent event) {
 		if (Mouse.getEventButton() != -1)
 			onPress(-Mouse.getEventButton());
@@ -296,7 +296,7 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 		 * Closes the selection gui and updates the parent setting.
 		 */
 		private void close() {
-			MinecraftForge.EVENT_BUS.unregister(this);
+			EventRegisterer.unregister(this);
 			Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
 
 			// Only trigger callback if something changed

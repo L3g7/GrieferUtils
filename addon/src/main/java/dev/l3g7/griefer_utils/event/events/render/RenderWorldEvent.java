@@ -18,11 +18,10 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.TickEvent.RenderTickEvent;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 /**
  * A RenderTickEvent called when no gui is opened.
@@ -33,10 +32,10 @@ public class RenderWorldEvent extends RenderTickEvent {
 		super(renderTickTime);
 	}
 
-	@EventListener(receiveSubclasses = false)
+	@EventListener
 	private static void onRenderTick(RenderTickEvent event) {
 		if (mc().currentScreen == null)
-			EVENT_BUS.post(new RenderWorldEvent(event.renderTickTime));
+			new RenderWorldEvent(event.renderTickTime).fire();
 	}
 
 }

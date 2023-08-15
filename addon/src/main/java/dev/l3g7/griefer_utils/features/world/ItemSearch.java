@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.render.DrawGuiContainerForegroundLayerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -103,7 +103,7 @@ public class ItemSearch extends Feature {
 			if (searchField.textboxKeyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey())) {
 				// Suppress inventory closing when keyBindInventory is pressed
 				if (Keyboard.getEventKey() == mc().gameSettings.keyBindInventory.getKeyCode())
-					event.setCanceled(true);
+					event.cancel();
 			}
 		}
 	}

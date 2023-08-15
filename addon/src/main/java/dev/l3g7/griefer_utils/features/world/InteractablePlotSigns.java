@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -46,12 +46,8 @@ public class InteractablePlotSigns extends Feature {
 		.icon("wooden_board");
 
 	@EventListener
-	public void onPacketSend(PacketEvent.PacketSendEvent event) {
-		if (!(event.packet instanceof C08PacketPlayerBlockPlacement))
-			return;
-
-		C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
-		TileEntity te = world().getTileEntity(packet.getPosition());
+	public void onPacketSend(PacketEvent.PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
+		TileEntity te = world().getTileEntity(event.packet.getPosition());
 
 		if (!(te instanceof TileEntitySign))
 			return;
@@ -66,7 +62,7 @@ public class InteractablePlotSigns extends Feature {
 			return;
 
 		send("/p i " + matcher.group(1) + ";" + matcher.group(2));
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 }

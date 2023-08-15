@@ -18,9 +18,10 @@
 
 package dev.l3g7.griefer_utils.features.chat.auto_unnick;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -30,7 +31,6 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.IChatComponentUtil;
 import net.labymod.utils.Material;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,7 +67,7 @@ public class AutoUnnick extends Feature {
 		getCategory().getSetting().addCallback(v -> updatePlayerInfoList());
 	}
 
-	@EventListener(priority = EventPriority.HIGH)
+	@EventListener(priority = Priority.HIGH)
 	public void onTabListNameUpdate(TabListEvent.TabListNameUpdateEvent event) {
 		if (!tab.get())
 			return;
@@ -91,7 +91,7 @@ public class AutoUnnick extends Feature {
 		IChatComponentUtil.setNameWithPrefix(event.component, nickName, NameCache.getName(nickName), new PrefixFinder(parts[0], parts[1]).getPrefix(), true);
 	}
 
-	@EventListener(priority = EventPriority.HIGH)
+	@EventListener(priority = Priority.HIGH)
 	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
 		if (!chat.get())
 			return;

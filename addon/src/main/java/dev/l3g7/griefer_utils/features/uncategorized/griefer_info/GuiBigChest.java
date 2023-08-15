@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -33,8 +34,6 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.IEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,14 +47,6 @@ public class GuiBigChest extends GuiContainer {
 	private static final ItemStack FILLER = ItemUtil.createItem(Blocks.stained_glass_pane, 7, null);
 
 	private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
-	private static final IEventListener PACKET_LISTENER = e -> {
-		// Prevent window packets from being sent
-		Packet<?> packet = ((PacketSendEvent) e).packet;
-		if ((packet instanceof C0EPacketClickWindow
-			|| packet instanceof C0DPacketCloseWindow)
-			&& mc().currentScreen instanceof GuiBigChest)
-			e.setCanceled(true);
-	};
 
 	private final List<Runnable> leftClickEvents = new ArrayList<>();
 	private final List<Runnable> rightClickEvents = new ArrayList<>();
@@ -229,6 +220,14 @@ public class GuiBigChest extends GuiContainer {
 
 	}
 
+	@EventListener
+	private static void onPacketSend(PacketSendEvent<Packet<?>> event) {
+		if ((event.packet instanceof C0EPacketClickWindow
+			|| event.packet instanceof C0DPacketCloseWindow)
+			&& mc().currentScreen instanceof GuiBigChest)
+			event.cancel();
+	}
+
 	private static class ContainerBigChest extends Container {
 
 		public ContainerBigChest(IInventory inventory) {
@@ -261,10 +260,6 @@ public class GuiBigChest extends GuiContainer {
 			this.renderSize = renderSize;
 			this.toolTipStack = toolTipStack;
 		}
-	}
-
-	static {
-		new PacketSendEvent(null).getListenerList().register(0, EventPriority.NORMAL, PACKET_LISTENER);
 	}
 
 }

@@ -19,12 +19,11 @@
 package dev.l3g7.griefer_utils.event.events.render;
 
 import de.emotechat.addon.gui.chat.render.EmoteChatRenderer;
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -51,7 +50,7 @@ public abstract class ChatLineEvent extends Event {
 
 			@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
 			public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-				MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineInitEvent(component, secondChat));
+				new ChatLineEvent.ChatLineInitEvent(component, secondChat).fire();
 			}
 
 		}
@@ -74,7 +73,7 @@ public abstract class ChatLineEvent extends Event {
 			@Redirect(method = "addChatLine", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V"), remap = false)
 			public void postChatLineAddEvent(List<Object> instance, int i, Object e) {
 				if (!refreshing)
-					MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineAddEvent((ChatLine) e));
+					new ChatLineEvent.ChatLineAddEvent((ChatLine) e).fire();
 				instance.add(i, e);
 			}
 
@@ -92,7 +91,7 @@ public abstract class ChatLineEvent extends Event {
 			@Redirect(method = "addChatLine", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V"))
 			public void postChatLineAddEvent(List<Object> instance, int i, Object e) {
 				if (!refreshing)
-					MinecraftForge.EVENT_BUS.post(new ChatLineEvent.ChatLineAddEvent((ChatLine) e));
+					new ChatLineEvent.ChatLineAddEvent((ChatLine) e).fire();
 				instance.add(i, e);
 			}
 

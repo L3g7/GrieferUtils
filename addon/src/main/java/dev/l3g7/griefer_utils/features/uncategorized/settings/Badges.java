@@ -18,8 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListClearEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerRemoveEvent;
@@ -91,15 +90,18 @@ public class Badges {
 	}
 
 	@EventListener
-	private static void onTabListAddEvent(TabListEvent event) {
-		if (event instanceof TabListPlayerAddEvent)
-			GrieferUtilsUserManager.queueUser(((TabListPlayerAddEvent) event).data.getProfile().getId());
+	private static void onTabListAddEvent(TabListPlayerAddEvent event) {
+		GrieferUtilsUserManager.queueUser(event.data.getProfile().getId());
+	}
 
-		if (event instanceof TabListPlayerRemoveEvent)
-			GrieferUtilsUserManager.removeUser(((TabListPlayerRemoveEvent) event).data.getProfile().getId());
+	@EventListener
+	private static void onTabListRemoveEvent(TabListPlayerRemoveEvent event) {
+		GrieferUtilsUserManager.removeUser(event.data.getProfile().getId());
+	}
 
-		if (event instanceof TabListClearEvent)
-			GrieferUtilsUserManager.clearUsers();
+	@EventListener
+	private static void onTabListClearAddEvent(TabListClearEvent event) {
+		GrieferUtilsUserManager.clearUsers();
 	}
 
 	public static void renderUserPercentage(int left, int width) {

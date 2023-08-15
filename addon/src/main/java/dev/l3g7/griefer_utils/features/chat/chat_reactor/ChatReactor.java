@@ -20,11 +20,12 @@ package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -36,7 +37,6 @@ import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.List;
 
@@ -95,7 +95,7 @@ public class ChatReactor extends Feature {
 		loaded = true;
 	}
 
-	@EventListener(priority = EventPriority.LOWEST)
+	@EventListener(priority = Priority.LOWEST)
 	public void onMsg(ChatLineEvent.ChatLineAddEvent event) {
 		if ((mc().currentScreen instanceof LabyModAddonsGui && getPath().contains(getMainElement()))
 			|| mc().currentScreen instanceof AddChatReactionGui)

@@ -20,10 +20,10 @@ package dev.l3g7.griefer_utils.features.modules.orb_stats;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
@@ -134,9 +134,8 @@ public class OrbStats extends Module {
 	}
 
 	@EventListener
-	public void onGuiOpen(GuiOpenEvent event) {
-		if (event.gui instanceof GuiChest)
-			lastScreen = ((GuiChest) event.gui);
+	public void onGuiOpen(GuiOpenEvent<GuiChest> event) {
+		lastScreen = event.gui;
 	}
 	public static String getUUIDFromSkullTexture(ItemStack itemStack) {
 		if (itemStack == null || itemStack.getItem() != Items.skull || !itemStack.hasTagCompound())

@@ -19,10 +19,10 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
@@ -53,8 +53,8 @@ import java.util.*;
 
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static dev.l3g7.griefer_utils.core.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
-import static net.minecraftforge.fml.common.eventhandler.EventPriority.LOWEST;
 
 /**
  * Automatically sprints when walking.
@@ -173,7 +173,7 @@ public class SelfDisguise extends Feature {
 	@EventListener(priority = LOWEST)
 	public void onDisplayNameRender(InvisibilityCheckEvent event) {
 		if (event.entity == currentDisguise || (currentDisguise != null && event.entity == player())) {
-			event.setCanceled(false);
+			event.invisible = false;
 		}
 	}
 

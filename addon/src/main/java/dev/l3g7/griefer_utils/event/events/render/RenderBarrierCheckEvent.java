@@ -18,10 +18,8 @@
 
 package dev.l3g7.griefer_utils.event.events.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event.TypedEvent;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -29,15 +27,20 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 /**
  * An event being posted when {@link WorldClient#doVoidFogParticles(int, int, int)} checks whether barriers should be rendered.
  */
-@Cancelable
-public class RenderBarrierCheckEvent extends Event {
+public class RenderBarrierCheckEvent extends TypedEvent<RenderBarrierCheckEvent> {
+
+	public boolean renderBarrier;
+
+	public RenderBarrierCheckEvent(boolean renderBarrier) {
+		this.renderBarrier = renderBarrier;
+	}
 
 	@Mixin(WorldClient.class)
 	private static class MixinWorldClient {
 
 		@ModifyVariable(method = "doVoidFogParticles", at = @At("STORE"), ordinal = 0)
 		private boolean modifyShouldRenderBarrier(boolean shouldRenderBarrier) {
-			return shouldRenderBarrier || MinecraftForge.EVENT_BUS.post(new RenderBarrierCheckEvent());
+			return new RenderBarrierCheckEvent(shouldRenderBarrier).fire().renderBarrier;
 		}
 
 	}

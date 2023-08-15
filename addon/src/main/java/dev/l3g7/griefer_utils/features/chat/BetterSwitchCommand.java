@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -55,7 +55,7 @@ public class BetterSwitchCommand extends Feature {
 		Matcher matcher = COMMAND_PATTERN.matcher(msg);
 
 		if (matcher.matches()) {
-			event.setCanceled(true);
+			event.cancel();
 
 			Citybuild cb = Citybuild.getCitybuild(matcher.group(1));
 			if (cb != Citybuild.ANY) {
@@ -79,7 +79,7 @@ public class BetterSwitchCommand extends Feature {
 		display(Constants.ADDON_PREFIX + "§7Lava: 'l'");
 		display(Constants.ADDON_PREFIX + "§7Event: 'v'");
 
-		event.setCanceled(true);
+		event.cancel();
 	}
 
 	@EventListener(triggerWhenDisabled = true)

@@ -18,10 +18,10 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.EventListener;
-import dev.l3g7.griefer_utils.event.events.ChatLogModifyEvent;
+import dev.l3g7.griefer_utils.event.events.ChatMessageLogEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
@@ -114,9 +114,9 @@ public class ShowJoins extends Feature {
 	}
 
 	@EventListener
-	public void onChatLogModify(ChatLogModifyEvent event) {
+	public void onChatLogModify(ChatMessageLogEvent event) {
 		if (!log.get() && !event.message.contains("\u2503") && (event.message.contains("[GrieferUtils] [+] ") || event.message.contains("[GrieferUtils] [-] ")))
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 }

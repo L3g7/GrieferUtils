@@ -18,12 +18,12 @@
 
 package dev.l3g7.griefer_utils.event.events.network;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.Packet;
 import io.netty.channel.ChannelHandlerContext;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class MysteryModConnectionEvent extends Event {
+public abstract class MysteryModConnectionEvent extends Event {
 
 	public final ChannelHandlerContext ctx;
 
@@ -31,11 +31,11 @@ public class MysteryModConnectionEvent extends Event {
 		this.ctx = ctx;
 	}
 
-	public static class MMPacketReceiveEvent extends MysteryModConnectionEvent {
+	public static class MMPacketReceiveEvent<P extends Packet> extends MysteryModConnectionEvent {
 
-		public final Packet packet;
+		public final P packet;
 
-		public MMPacketReceiveEvent(ChannelHandlerContext ctx, Packet packet) {
+		public MMPacketReceiveEvent(ChannelHandlerContext ctx, P packet) {
 			super(ctx);
 			this.packet = packet;
 		}

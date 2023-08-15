@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
@@ -152,7 +152,7 @@ public class Calculator extends Feature {
 		 * Auto-Withdraw *
 		 * ************* */
 		if (event.message.getFormattedText().equals("§r§cFehler:§r§4 §r§4Du hast nicht genug Guthaben.§r")) {
-			event.setCanceled(true);
+			event.cancel();
 			BigDecimal moneyRequired = lastPayment.subtract(getCurrentBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
 			BigDecimal difference = moneyRequired.subtract(new BigDecimal(getBankBalance()));
 
@@ -177,13 +177,13 @@ public class Calculator extends Feature {
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
 		if (event.message.equalsIgnoreCase(prefix.get().trim())) {
-			event.setCanceled(true);
+			event.cancel();
 			display(Constants.ADDON_PREFIX + "§cSyntax: " + prefix.get().trim() + " [Rechnung]");
 			return;
 		}
 
 		if (event.message.toLowerCase().startsWith(prefix.get().trim().toLowerCase() + " ")) {
-			event.setCanceled(true);
+			event.cancel();
 
 			String message = event.message.substring(prefix.get().trim().length()).trim();
 			double exp = calculate(message);
@@ -230,20 +230,20 @@ public class Calculator extends Feature {
 				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getCurrentBalance()).toPlainString());
 			else
 				send("/bank einzahlen %d", getCurrentBalance().setScale(0, RoundingMode.FLOOR).toBigInteger());
-			event.setCanceled(true);
+			event.cancel();
 			return;
 		} else if (event.message.equalsIgnoreCase("/bank abheben *") && starPlaceholder.get()) {
 			if (getBankBalance() < 1000)
 				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", (1000 - getBankBalance()));
 			else
 				send("/bank abheben %d", getBankBalance());
-			event.setCanceled(true);
+			event.cancel();
 			return;
 		} else if (starPlaceholder.get()) {
 			Matcher matcher = Pattern.compile(String.format("/pay %s \\*", Constants.UNFORMATTED_PLAYER_NAME_PATTERN)).matcher(event.message);
 			if (matcher.matches()) {
 				send("/pay %s %d", matcher.group("player"), getCurrentBalance().longValue());
-				event.setCanceled(true);
+				event.cancel();
 				return;
 			}
 		}
@@ -253,7 +253,7 @@ public class Calculator extends Feature {
 		 * ************* */
 		if (((autoEquationDetect.get() || event.message.startsWith("/pay ") || event.message.startsWith("/bank ")) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
 			|| (placeholder.get() && evalEquations(PLACEHOLDER_PATTERN, event)))
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	private boolean evalEquations(Pattern pattern, MessageSendEvent event) {

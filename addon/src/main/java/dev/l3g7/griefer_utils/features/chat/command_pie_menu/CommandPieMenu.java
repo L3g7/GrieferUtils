@@ -20,9 +20,9 @@ package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -110,7 +110,7 @@ public class CommandPieMenu extends Feature {
 	}
 
 	@EventListener
-	private void onGuiOpen(GuiOpenEvent event) {
+	private void onGuiOpen(GuiOpenEvent<?> event) {
 		pieMenu.close();
 	}
 

@@ -18,10 +18,10 @@
 
 package dev.l3g7.griefer_utils.misc;
 
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,22 +52,17 @@ public class NameCache {
 		return uuidToUser.containsKey(uuid);
 	}
 
-	@EventListener(priority = EventPriority.HIGH)
-	public static void onPacket(PacketEvent.PacketReceiveEvent event) {
-		if (!(event.packet instanceof S38PacketPlayerListItem))
-			return;
-
-		S38PacketPlayerListItem packet = (S38PacketPlayerListItem) event.packet;
-
-		switch (packet.getAction()) {
+	@EventListener(priority = Priority.HIGH)
+	public static void onPacket(PacketEvent.PacketReceiveEvent<S38PacketPlayerListItem> event) {
+		switch (event.packet.getAction()) {
 			case ADD_PLAYER:
-				processAddPacket(packet);
+				processAddPacket(event.packet);
 				break;
 			case UPDATE_DISPLAY_NAME:
-				processUpdatePacket(packet);
+				processUpdatePacket(event.packet);
 				break;
 			case REMOVE_PLAYER:
-				processRemovePacket(packet);
+				processRemovePacket(event.packet);
 				break;
 		}
 	}

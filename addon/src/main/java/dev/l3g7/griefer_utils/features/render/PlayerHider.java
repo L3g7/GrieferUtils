@@ -18,9 +18,9 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.PlaySoundAtEntityEvent;
 import dev.l3g7.griefer_utils.event.events.PlaySoundEvent;
 import dev.l3g7.griefer_utils.event.events.RenderPlayerEvent;
@@ -97,7 +97,8 @@ public class PlayerHider extends Feature {
 	 */
 	@EventListener
 	public void onEntityRender(RenderPlayerEvent event) {
-		event.setCanceled(!showPlayer(event.player));
+		if (!showPlayer(((event.player))))
+			event.cancel();
 	}
 
 	private boolean playSound = false;
@@ -122,7 +123,7 @@ public class PlayerHider extends Feature {
 		}
 
 		if (event.name.startsWith("step.") || BLOCKED_SOUNDS.contains(event.name))
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	private void updatePlayer(EntityPlayer player) {

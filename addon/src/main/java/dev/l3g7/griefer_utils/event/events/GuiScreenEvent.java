@@ -18,18 +18,15 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public abstract class GuiScreenEvent extends Event {
 
@@ -61,7 +58,7 @@ public abstract class GuiScreenEvent extends Event {
 
 			@Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;clear(I)V", shift = At.Shift.AFTER))
 			public void injectUpdateCameraAndRender(float partialTicks, long nanoTime, CallbackInfo ci) {
-				EVENT_BUS.post(new DrawScreenEvent(mc.currentScreen));
+				new DrawScreenEvent(mc.currentScreen).fire();
 			}
 
 		}
@@ -74,7 +71,6 @@ public abstract class GuiScreenEvent extends Event {
 			super(gui);
 		}
 
-		@Cancelable
 		public static class Pre extends MouseInputEvent {
 			public Pre(Object gui) {
 				super(gui);
@@ -94,7 +90,6 @@ public abstract class GuiScreenEvent extends Event {
 			super(gui);
 		}
 
-		@Cancelable
 		public static class Pre extends KeyboardInputEvent {
 			public Pre(Object gui) {
 				super(gui);
@@ -113,27 +108,27 @@ public abstract class GuiScreenEvent extends Event {
 
 		@Inject(method = "setWorldAndResolution", at = @At("TAIL"))
 		public void injectSetWorldAndResolution(Minecraft mc, int width, int height, CallbackInfo ci) {
-			EVENT_BUS.post(new InitGuiEvent(this));
+			new InitGuiEvent(this).fire();
 		}
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V", shift = At.Shift.BEFORE))
 		public void injectMouseInputPre(CallbackInfo ci) {
-			EVENT_BUS.post(new MouseInputEvent.Pre(this));
+			new MouseInputEvent.Pre(this).fire();
 		}
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V", shift = At.Shift.AFTER))
 		public void injectMouseInputPost(CallbackInfo ci) {
-			EVENT_BUS.post(new MouseInputEvent.Pre(this));
+			new MouseInputEvent.Pre(this).fire();
 		}
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleKeyboardInput()V", shift = At.Shift.BEFORE))
 		public void injectKeyboardInputPre(CallbackInfo ci) {
-			EVENT_BUS.post(new KeyboardInputEvent.Pre(this));
+			new KeyboardInputEvent.Pre(this).fire();
 		}
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleKeyboardInput()V", shift = At.Shift.AFTER))
 		public void injectKeyboardInputPost(CallbackInfo ci) {
-			EVENT_BUS.post(new KeyboardInputEvent.Pre(this));
+			new KeyboardInputEvent.Pre(this).fire();
 		}
 
 	}

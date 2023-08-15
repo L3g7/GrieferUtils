@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.util;
 
 import com.google.common.collect.ImmutableList;
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
@@ -47,7 +47,7 @@ public class IChatComponentUtil {
 	private static void onMessageSend(MessageSendEvent event) {
 		if (event.message.startsWith(COMMAND)) {
 			suggest(event.message.substring(COMMAND.length()));
-			event.setCanceled(true);
+			event.cancel();
 		}
 	}
 

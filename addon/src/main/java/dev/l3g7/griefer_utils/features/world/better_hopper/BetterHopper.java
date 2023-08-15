@@ -18,13 +18,13 @@
 
 package dev.l3g7.griefer_utils.features.world.better_hopper;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
-import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -42,7 +42,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -99,15 +98,14 @@ public class BetterHopper extends Feature {
 		.subSettings(betterVisualisation, showRange);
 
 	@EventListener
-	public void onPacketSend(PacketEvent.PacketSendEvent event) {
-		if (!(event.packet instanceof C0EPacketClickWindow) || !(mc().currentScreen instanceof GuiChest))
+	public void onPacketSend(WindowClickEvent event) {
+		if (!(mc().currentScreen instanceof GuiChest))
 			return;
 
-		C0EPacketClickWindow packet = (C0EPacketClickWindow) event.packet;
-		if (packet.getMode() == 3)
+		if (event.mode == 3)
 			return;
 
-		int slot = packet.getSlotId();
+		int slot = event.slotId;
 
 		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
 		if (inv.getName().equals("§6Trichter-Mehrfach-Verbindungen")) {
@@ -132,7 +130,7 @@ public class BetterHopper extends Feature {
 			if (slot == 52) {
 				displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
 				mc().displayGuiScreen(null);
-				event.setCanceled(true);
+				event.cancel();
 			}
 		}
 
@@ -156,7 +154,7 @@ public class BetterHopper extends Feature {
 		hopper = getBlockPos(hopperStack);
 
 		if (slot == 16) {
-			if (packet.getMode() != 1)
+			if (event.mode != 1)
 				blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
 
 			mainConnection = null;
@@ -170,7 +168,7 @@ public class BetterHopper extends Feature {
 		if (slot == 34) {
 			displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
 			mc().displayGuiScreen(null);
-			event.setCanceled(true);
+			event.cancel();
 		}
 	}
 

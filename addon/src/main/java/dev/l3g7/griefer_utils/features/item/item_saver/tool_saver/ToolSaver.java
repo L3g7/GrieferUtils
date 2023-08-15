@@ -20,10 +20,10 @@ package dev.l3g7.griefer_utils.features.item.item_saver.tool_saver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
-import dev.l3g7.griefer_utils.event.EventListener;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
@@ -76,7 +76,7 @@ public class ToolSaver extends ItemSaver {
 	@EventListener
 	public void onMouse(MouseClickEvent event) {
 		if (isEnabled() && player() == null || shouldCancel(player().getHeldItem()))
-			event.setCanceled(true);
+			event.cancel();
 	}
 
 	@EventListener
@@ -86,7 +86,7 @@ public class ToolSaver extends ItemSaver {
 
 		mc().displayGuiScreen(previousScreen);
 		previousScreen = null;
-		event.setCanceled(true);
+		event.cancel();
 
 		if (!event.itemStack.isItemStackDamageable()) {
 			displayAchievement("§e§lFehler \u26A0", "§eDieses Item ist nicht vom Werkzeug-Saver betroffen!");

@@ -18,10 +18,9 @@
 
 package dev.l3g7.griefer_utils.event.events.griefergames;
 
-import dev.l3g7.griefer_utils.event.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Event;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * An event being posted after joining a city build.
@@ -31,7 +30,7 @@ public class CityBuildJoinEvent extends Event {
 	@EventListener
 	private static void onMessage(MessageReceiveEvent event) {
 		if (event.message.getFormattedText().equals("§r§8[§r§6GrieferGames§r§8] §r§aDeine Daten wurden vollständig heruntergeladen.§r"))
-			MinecraftForge.EVENT_BUS.post(new CityBuildJoinEvent());
+			new CityBuildJoinEvent().fire();
 	}
 
 }

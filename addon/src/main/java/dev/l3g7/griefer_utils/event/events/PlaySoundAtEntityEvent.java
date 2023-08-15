@@ -18,19 +18,18 @@
 
 package dev.l3g7.griefer_utils.event.events;
 
+import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Cancelable
+import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
+
 public class PlaySoundAtEntityEvent extends Event {
 
 	public final Entity entity;
@@ -44,7 +43,7 @@ public class PlaySoundAtEntityEvent extends Event {
 
 	    @Inject(method = "playSound", at = @At("HEAD"), cancellable = true)
 	    public void injectPlaySound(String name, float volume, float pitch, CallbackInfo ci) {
-	    	if (MinecraftForge.EVENT_BUS.post(new PlaySoundAtEntityEvent((Entity) (Object) this)))
+	    	if (new PlaySoundAtEntityEvent(c(this)).fire().isCanceled())
 				ci.cancel();
 	    }
 
@@ -55,13 +54,13 @@ public class PlaySoundAtEntityEvent extends Event {
 
 		@Inject(method = "playSoundAtEntity", at = @At("HEAD"), cancellable = true)
 	    public void injectPlaySoundAtEntity(Entity entityIn, String name, float volume, float pitch, CallbackInfo ci) {
-		    if (MinecraftForge.EVENT_BUS.post(new PlaySoundAtEntityEvent(entityIn)))
+		    if (new PlaySoundAtEntityEvent(entityIn).fire().isCanceled())
 			    ci.cancel();
 	    }
 
 		@Inject(method = "playSoundToNearExcept", at = @At("HEAD"), cancellable = true)
 		public void injectPlaySoundToNearExcept(EntityPlayer player, String name, float volume, float pitch, CallbackInfo ci) {
-			if (MinecraftForge.EVENT_BUS.post(new PlaySoundAtEntityEvent(player)))
+			if (new PlaySoundAtEntityEvent(player).fire().isCanceled())
 				ci.cancel();
 		}
 

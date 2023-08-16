@@ -25,7 +25,8 @@ import dev.l3g7.griefer_utils.core.util.LambdaUtil;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
 
@@ -34,7 +35,7 @@ class EventBus {
 	/**
 	 * The listeners associated with each event, sorted by priority.
 	 */
-	static final HashMap<Class<?>, ListenerList> events = new HashMap<>();
+	static final Map<Class<?>, ListenerList> events = new ConcurrentHashMap<>();
 
 	/**
 	 * Triggers all listeners annotated with an event handler targeting the given event.

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core;
+package dev.l3g7.griefer_utils;
 
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import net.minecraft.launchwrapper.IClassTransformer;

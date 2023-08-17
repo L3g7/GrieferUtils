@@ -29,11 +29,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
@@ -155,6 +157,14 @@ public class MinecraftUtil {
 			reset += 24 * HOUR; // When it's already after 02:00 UTC, the next reset is 24h later
 
 		return reset;
+	}
+
+	public static String getGuiChestTitle() {
+		if (!(mc().currentScreen instanceof GuiChest))
+			return "";
+
+		IInventory lowerChestInventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
+		return lowerChestInventory.getDisplayName().getFormattedText();
 	}
 
 }

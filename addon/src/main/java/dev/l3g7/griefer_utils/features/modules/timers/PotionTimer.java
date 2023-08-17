@@ -22,10 +22,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
-import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -34,22 +35,27 @@ import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getGuiChestTitle;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @Singleton
 public class PotionTimer extends Module {
+
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	private static final Pattern END_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§7Bis: §r§e(?<end>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})§r");
 
 	private final DropDownSetting<KeyMode> keyModeSetting = new DropDownSetting<>(KeyMode.class)
 		.name("Design")
@@ -92,21 +98,25 @@ public class PotionTimer extends Module {
 	}
 
 	@EventListener
-	public void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
-		if (!Mouse.getEventButtonState() || !(event.gui instanceof GuiChest))
+	private void onMessage(MessageEvent.MessageReceiveEvent event) {
+		Matcher matcher = END_PATTERN.matcher(event.message.getFormattedText());
+		if (!matcher.matches())
 			return;
 
-		int button = Mouse.getEventButton();
-		if (button != 0 && button != 1)
+		String end = matcher.group("end");
+		try {
+			potions.get("fly_potion").expirationDate = DATE_FORMAT.parse(end).getTime();
+		} catch (ParseException e) {
+			BugReporter.reportError(new Throwable("Error while parsing fly potion end from " + event.message.getFormattedText(), e));
+		}
+	}
+
+	@EventListener
+	public void onMouse(WindowClickEvent event) {
+		if (!getGuiChestTitle().startsWith("§6Möchtest du den Trank benutzen?"))
 			return;
 
-		IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
-		String title = lowerChestInventory.getDisplayName().getFormattedText();
-		if (!title.startsWith("§6Möchtest du den Trank benutzen?"))
-			return;
-
-		GuiChest gui = (GuiChest) event.gui;
-		if (gui.inventorySlots.getSlot(12) != gui.getSlotUnderMouse())
+		if (event.slotId != 12)
 			return;
 
 		ItemStack heldItem = player().getHeldItem();

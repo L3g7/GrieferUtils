@@ -20,7 +20,6 @@ package dev.l3g7.griefer_utils.features.player;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.Citybuild;
@@ -30,13 +29,11 @@ import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import org.lwjgl.input.Mouse;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class InteractableProfiles extends Feature {
@@ -62,9 +59,7 @@ public class InteractableProfiles extends Feature {
 		if (gui.getSlotUnderMouse() == null)
 			return;
 
-		IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
-		String title = lowerChestInventory.getDisplayName().getFormattedText();
-		if (!title.startsWith("§6Profil"))
+		if (!getGuiChestTitle().startsWith("§6Profil"))
 			return;
 
 		Slot slot = gui.inventorySlots.getSlot(13);

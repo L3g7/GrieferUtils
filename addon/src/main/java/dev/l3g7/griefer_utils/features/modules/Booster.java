@@ -39,7 +39,6 @@ import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -50,6 +49,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getGuiChestTitle;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
@@ -114,9 +114,7 @@ public class Booster extends Module {
 		if (!(mc.currentScreen instanceof GuiChest))
 			return;
 
-		IInventory inventory = Reflection.get(mc.currentScreen, "lowerChestInventory");
-
-		if (!inventory.getDisplayName().getFormattedText().equals("§6Booster - Übersicht§r"))
+		if (!getGuiChestTitle().equals("§6Booster - Übersicht§r"))
 			return;
 
 		if (waitingForBoosterGUI && isActive()) {

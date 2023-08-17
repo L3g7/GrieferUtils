@@ -41,8 +41,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class OrbSaver extends ItemSaver {
@@ -72,9 +71,7 @@ public class OrbSaver extends ItemSaver {
 		if (event.itemStack == null || !event.itemStack.hasTagCompound())
 			return;
 
-		IInventory lowerChestInventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
-		String title = lowerChestInventory.getDisplayName().getFormattedText();
-		if (!title.startsWith("§6Adventure-Jobs"))
+		if (!getGuiChestTitle().startsWith("§6Adventure-Jobs"))
 			return;
 
 		if ((FileProvider.getSingleton(OrbSaver.class).isEnabled() && event.itemStack.getTagCompound().hasKey("compressionLevel"))

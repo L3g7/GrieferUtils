@@ -34,15 +34,13 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiDispenser;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class ItemSearch extends Feature {
@@ -83,12 +81,9 @@ public class ItemSearch extends Feature {
 			(hopper.get() && event.gui instanceof GuiHopper)))
 			return;
 
-		if (event.gui instanceof GuiChest) {
-			IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
-			String title = lowerChestInventory.getDisplayName().getFormattedText();
-			if (title.startsWith(marker) || title.startsWith("§6Profil") || title.startsWith("§6Lottoschein "))
-				return;
-		}
+		String title = getGuiChestTitle();
+		if (title.startsWith(marker) || title.startsWith("§6Profil") || title.startsWith("§6Lottoschein "))
+			return;
 
 		searchField = new ModTextField(0, mc().fontRendererObj, 82, 6, 83, mc().fontRendererObj.FONT_HEIGHT);
 		searchField.setPlaceHolder("§oSuche...");

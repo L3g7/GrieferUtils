@@ -91,10 +91,10 @@ public class EventRegisterer {
 
 		for (Method method : clazz.getDeclaredMethods()) {
 			if (Modifier.isStatic(method.getModifiers()))
-				return;
+				continue;
 
 			if (!method.isAnnotationPresent(EventListener.class))
-				return;
+				continue;
 
 			registerLazyRegistration(new MethodMeta(new ClassMeta(clazz), method), () -> object);
 		}

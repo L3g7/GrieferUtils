@@ -100,6 +100,10 @@ public class ItemUtil {
 		return itemStack;
 	}
 
+	public static String serializeNBT(ItemStack stack) {
+		return stack.writeToNBT(new NBTTagCompound()).toString();
+	}
+
 	public static boolean canBeRepaired(ItemStack itemStack) {
 		// The repair cost of the item (Source: ContainerRepair#updateRepairOutput()).
 		// If the item is only damaged 1/4, you can repair it with a single material of the same type (i.e. a diamond), thus costing only 1 level

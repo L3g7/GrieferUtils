@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.Listener.ListenerList;
 import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.util.LambdaUtil;
+import dev.l3g7.griefer_utils.core.util.Util;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
@@ -38,6 +39,11 @@ class EventBus {
 	static final Map<Class<?>, ListenerList> events = new ConcurrentHashMap<>();
 
 	/**
+	 * The consumer reporting bugs thrown while firing events.
+	 */
+	static Consumer<Throwable> bugReporter = t -> { throw Util.elevate(t); };
+
+	/**
 	 * Triggers all listeners annotated with an event handler targeting the given event.
 	 */
 	static void fire(Event event) {
@@ -47,8 +53,13 @@ class EventBus {
 		if (list == null)
 			return;
 
-		for (Listener listener : list)
-			listener.consumer.accept(event);
+		for (Listener listener : list) {
+			try {
+				listener.consumer.accept(event);
+			} catch (Throwable t) {
+				bugReporter.accept(t);
+			}
+		}
 	}
 
 	/**

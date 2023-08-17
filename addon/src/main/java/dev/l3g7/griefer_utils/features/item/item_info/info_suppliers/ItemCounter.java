@@ -189,8 +189,8 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 	}
 
 	private int getAmount(ItemStack itemStack) {
-		NBTTagCompound tag = itemStack.serializeNBT().getCompoundTag("tag");
-		if (!tag.hasKey("stackSize"))
+		NBTTagCompound tag = itemStack.getTagCompound();
+		if (tag == null || !tag.hasKey("stackSize"))
 			return itemStack.stackSize;
 
 		NBTBase base = tag.getCompoundTag("display").getTagList("Lore", 8).get(0);

@@ -36,16 +36,13 @@ import net.labymod.main.lang.LanguageManager;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundEventAccessorComposite;
-import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundRegistry;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -55,7 +52,6 @@ import java.util.regex.Pattern;
 /**
  * Copied and modified from {@link GuiChatFilter}
  */
-@SuppressWarnings("unchecked")
 public class CustomGuiChatFilter extends GuiChatCustom {
 
 	// TODO: Inject into open gui instead of overwriting
@@ -624,10 +620,8 @@ public class CustomGuiChatFilter extends GuiChatCustom {
 
     static {
         try {
-            Field soundRegistryInSoundHandlerField = ReflectionHelper.findField(SoundHandler.class, LabyModCore.getMappingAdapter().getSoundRegistryInSoundHandlerMappings());
-            Field soundRegistryInSoundRegistryField = ReflectionHelper.findField(SoundRegistry.class, LabyModCore.getMappingAdapter().getSoundRegistryInSoundRegistryMappings());
-            SoundRegistry soundRegistry = (SoundRegistry) soundRegistryInSoundHandlerField.get(Minecraft.getMinecraft().getSoundHandler());
-            Map<ResourceLocation, SoundEventAccessorComposite> sounds = (Map<ResourceLocation, SoundEventAccessorComposite>) soundRegistryInSoundRegistryField.get(soundRegistry);
+            SoundRegistry soundRegistry = Reflection.get(Minecraft.getMinecraft().getSoundHandler(), "sndRegistry");
+            Map<ResourceLocation, SoundEventAccessorComposite> sounds = Reflection.get(soundRegistry, "soundRegistry");
             for (ResourceLocation resourceObject : sounds.keySet()) {
                 soundNames.add(resourceObject.getResourcePath());
             }

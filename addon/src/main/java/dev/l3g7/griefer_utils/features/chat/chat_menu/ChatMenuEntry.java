@@ -74,7 +74,7 @@ public class ChatMenuEntry {
 		object.addProperty("icon_type", iconType.name());
 		switch (iconType) {
 			case ITEM:
-				object.addProperty("icon", getIconAsItemStack().serializeNBT().toString());
+				object.addProperty("icon", ItemUtil.serializeNBT(getIconAsItemStack()));
 				break;
 			case IMAGE_FILE:
 				DynamicTexture t = (DynamicTexture) mc().getTextureManager().getTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));

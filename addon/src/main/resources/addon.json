@@ -7,7 +7,7 @@
   "debug": "${debug}",
 
   "mainClass": "dev.l3g7.griefer_utils.Main",
-  "transformerClass": "dev.l3g7.griefer_utils.core.PreStart",
+  "transformerClass": "dev.l3g7.griefer_utils.PreStart",
 
   "category": 3,
   "uuid": "%uuid%"

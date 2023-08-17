@@ -25,14 +25,13 @@ import dev.l3g7.griefer_utils.event.AnnotationEventHandler;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.gui.guis.MissingForgeErrorGui;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.settings.MainPage;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.addon.AddonLoader;
 import net.labymod.addon.online.AddonInfoManager;
 import net.labymod.addon.online.info.AddonInfo;
 import net.labymod.api.LabyModAddon;
-import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.crash.CrashReport;
@@ -59,10 +58,6 @@ public class Main extends LabyModAddon {
 	public void onEnable() {
 		System.out.println("GrieferUtils enabling");
 		long begin = System.currentTimeMillis();
-		if (!LabyModCoreMod.isForge()) {
-			MissingForgeErrorGui.open();
-			return;
-		}
 
 		FileProvider.getClassesWithSuperClass(Feature.class).forEach(meta -> {
 			if (meta.isAbstract())
@@ -78,6 +73,7 @@ public class Main extends LabyModAddon {
 
 		try {
 			EventRegisterer.init();
+			EventRegisterer.registerBugReporter(BugReporter::reportError);
 			AnnotationEventHandler.init();
 			AnnotationEventHandler.triggerEvent(OnEnable.class);
 		} catch (Throwable t) {
@@ -87,8 +83,7 @@ public class Main extends LabyModAddon {
 	}
 
 	/**
-	 * Ensures GrieferUtils is shown in the {@link LabyModAddonsGui}.<br>
-	 * Fixes an incompatibility with HDSkins (wtf)
+	 * Ensures GrieferUtils is shown in the {@link LabyModAddonsGui}.
 	 */
 	@EventListener
 	private static void onGuiOpen(GuiOpenEvent<LabyModAddonsGui> event) {
@@ -112,9 +107,6 @@ public class Main extends LabyModAddon {
 
 	@Override
 	protected void fillSettings(List<SettingsElement> list) {
-		if (!LabyModCoreMod.isForge())
-			return;
-
 		list.addAll(MainPage.settings);
 	}
 

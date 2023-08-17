@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.file_provider.meta.MethodMeta;
+import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import org.objectweb.asm.Type;
 
@@ -40,6 +41,10 @@ public class EventRegisterer {
 	 * The pending registrations associated with each event.
 	 */
 	private static final Map<String, Collection<LazyRegistration>> lazyRegistrations = new ConcurrentHashMap<>();
+
+	public static void registerBugReporter(Consumer<Throwable> bugReporter) {
+		EventBus.bugReporter = bugReporter;
+	}
 
 	/**
 	 * Registers the pending registrations for the given event class.<br>

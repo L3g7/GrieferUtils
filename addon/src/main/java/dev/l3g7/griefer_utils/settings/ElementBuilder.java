@@ -139,7 +139,7 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		subSettings(Arrays.asList(
 			new HeaderSetting("§r"),
 			new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-			new HeaderSetting("§e§l" + ((S) this).getDisplayName().replaceAll("§.", "")).scale(.7),
+			new HeaderSetting("§e§l" + ((S) this).getDisplayName().replaceAll("§.", "").replaceAll("[^\\w- ]", "")).scale(.7),
 			new HeaderSetting("§r").scale(.4).entryHeight(10)
 		));
 		return subSettings(Arrays.asList(settings));

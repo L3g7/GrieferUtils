@@ -165,14 +165,14 @@ public class InventoryValue extends Module {
 		is.stackSize = 1;
 
 		ListIterator<SettingsElement> iterator = FileProvider.getSingleton(InventoryValue.class).rawBooleanElement.getSubSettings().getElements().listIterator();
-		String nbt = is.serializeNBT().toString();
+		String nbt = ItemUtil.serializeNBT(is);
 
 		while (iterator.hasNext()) {
 			SettingsElement element = iterator.next();
 
 			if (element instanceof ItemDisplaySetting) {
 				ItemDisplaySetting ids = (ItemDisplaySetting) element;
-				if (nbt.equals(ids.getStack().serializeNBT().toString()))
+				if (nbt.equals(ItemUtil.serializeNBT(ids.getStack())))
 					return ids;
 			}
 
@@ -193,7 +193,7 @@ public class InventoryValue extends Module {
 				continue;
 
 			ItemDisplaySetting ids = (ItemDisplaySetting) element;
-			object.addProperty(ids.getStack().serializeNBT().toString(), ids.value);
+			object.addProperty(ItemUtil.serializeNBT(ids.getStack()), ids.value);
 		}
 
 		Config.set(entryKey, object);

@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MouseEvent;
-import dev.l3g7.griefer_utils.event.events.RenderGameOverlayEvent;
+import dev.l3g7.griefer_utils.event.events.render.RenderGameOverlayEvent;
 import dev.l3g7.griefer_utils.event.events.render.ScaledResolutionInitEvent;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.render.GlEngine;

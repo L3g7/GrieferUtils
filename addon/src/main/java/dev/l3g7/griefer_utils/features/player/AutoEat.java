@@ -31,7 +31,7 @@ import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraft.potion.Potion;
 
 import java.util.function.BiPredicate;
 
@@ -123,7 +123,7 @@ public class AutoEat extends Feature {
 
 			// Check if the food causes bad potion effects
 			int potionId = Reflection.get(food, "potionId");
-			if (potionId > 0 && GameData.getPotionRegistry().getObjectById(potionId).isBadEffect())
+			if (potionId > 0 && Potion.potionTypes[potionId].isBadEffect())
 				continue;
 
 			int itemSaturation = food.getHealAmount(item);

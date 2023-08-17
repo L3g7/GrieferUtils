@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import net.labymod.core.asm.LabyModCoreMod;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
@@ -74,8 +75,10 @@ public class BugReporter {
 	}
 
 	public static void reportError(Throwable error) {
-		if (!enabled.get())
+		if (!enabled.get() || !shouldReportError(error))
 			return;
+
+		MinecraftUtil.displayAchievement("§cGrieferUtils", "§cEs gab einen Fehler :(");
 
 		timestampOfLastReport = System.currentTimeMillis();
 		Thread t = new Thread(() -> {
@@ -107,6 +110,7 @@ public class BugReporter {
 				conn.setConnectTimeout(10000);
 				conn.setDoOutput(true);
 				conn.addRequestProperty("Content-Type", "text/plain");
+				conn.addRequestProperty("X-MINECRAFT-FORGE", String.valueOf(LabyModCoreMod.isForge()));
 
 				if (uuid.get())
 					conn.addRequestProperty("X-MINECRAFT-UUID", MinecraftUtil.uuid().toString());

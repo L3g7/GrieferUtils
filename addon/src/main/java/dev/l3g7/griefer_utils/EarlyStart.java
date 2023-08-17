@@ -20,20 +20,13 @@ package dev.l3g7.griefer_utils;
 
 import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.misc.LibLoader;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import net.labymod.core.asm.LabyModCoreMod;
-import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraftforge.fml.common.asm.ASMTransformerWrapper;
 
 import java.io.IOException;
-import java.util.List;
 
 public class EarlyStart {
 
 	public static void start() throws ReflectiveOperationException, IOException {
-		if (!LabyModCoreMod.isForge())
-			return;
 
 		// Load mcp mappings for automatic name resolution in Reflection
 		Mapper.loadMappings("1.8.9", "22");
@@ -42,11 +35,7 @@ public class EarlyStart {
 		LibLoader.loadLibraries();
 
 		// Add Injector as transformer
-		List<IClassTransformer> transformers = Reflection.get(Launch.classLoader, "transformers");
-		transformers.add(new ASMTransformerWrapper.TransformerWrapper() {
-			protected String getParentClass() { return "dev.l3g7.griefer_utils.injection.Injector"; }
-			protected String getCoreMod() { return "net.labymod.core.asm.LabyModCoreMod"; }
-		});
+		Launch.classLoader.registerTransformer("dev.l3g7.griefer_utils.injection.Injector");
 	}
 
 }

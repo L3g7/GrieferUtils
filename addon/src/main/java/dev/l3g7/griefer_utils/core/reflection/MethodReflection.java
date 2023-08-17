@@ -27,7 +27,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.mapping.Mapping.SEARGE;
 import static dev.l3g7.griefer_utils.core.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.Util.elevate;
@@ -59,7 +58,7 @@ class MethodReflection {
 
 				// Map name
 				if (Mapper.isObfuscated())
-					targetName = Mapper.mapMethodName(m, SEARGE, UNOBFUSCATED);
+					targetName = Mapper.mapMethodName(m, Reflection.mappingTarget, UNOBFUSCATED);
 
 				// Compare name
 				if (!targetName.equals(name))

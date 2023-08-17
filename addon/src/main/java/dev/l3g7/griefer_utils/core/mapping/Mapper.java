@@ -37,6 +37,9 @@ import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 
+import static dev.l3g7.griefer_utils.core.mapping.Mapping.OBFUSCATED;
+import static dev.l3g7.griefer_utils.core.mapping.Mapping.UNOBFUSCATED;
+
 public class Mapper {
 
 	private static final MappedList<MappedClass> classes = new MappedList<>();
@@ -90,6 +93,9 @@ public class Mapper {
 	 * @return the mapped name and descriptor, joined.
 	 */
 	public static String mapMethod(String owner, String name, String desc, Mapping sourceMapping, Mapping targetMapping) {
+		if (targetMapping == OBFUSCATED)
+			owner = mapClass(owner, OBFUSCATED, UNOBFUSCATED);
+
 		MappedClass mappedOwner = classes.get(owner, sourceMapping);
 		if (mappedOwner == null) {
 			// Assume name does not need mapping as owner is not mapped, map descriptor manually
@@ -118,6 +124,9 @@ public class Mapper {
 	 * Maps the name of a method from the source mapping to the target mapping.
 	 */
 	public static String mapMethodName(String owner, String name, String desc, Mapping sourceMapping, Mapping targetMapping) {
+		if (targetMapping == OBFUSCATED)
+			owner = mapClass(owner, OBFUSCATED, UNOBFUSCATED);
+
 		MappedClass mappedOwner = classes.get(owner, sourceMapping);
 		if (mappedOwner == null)
 			// Assume method does not need mapping as owner is not mapped
@@ -143,6 +152,9 @@ public class Mapper {
 	 * Maps the name of a field from the source mapping to the target mapping.
 	 */
 	public static String mapField(String owner, String name, Mapping sourceMapping, Mapping targetMapping) {
+		if (targetMapping == OBFUSCATED)
+			owner = mapClass(owner, OBFUSCATED, UNOBFUSCATED);
+
 		MappedClass mappedOwner = classes.get(owner, sourceMapping);
 		if (mappedOwner == null)
 			// Assume field does not need mapping as owner is not mapped

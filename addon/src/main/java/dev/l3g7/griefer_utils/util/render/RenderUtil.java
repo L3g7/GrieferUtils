@@ -34,7 +34,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.ForgeHooksClient;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -59,6 +58,7 @@ public class RenderUtil {
 	/**
 	 * Renders an item with a given color tint.
 	 */
+	@SuppressWarnings("deprecation")
 	public static void renderItem(ItemStack stack, int x, int y, int color) {
 		IBakedModel model = itemRender.getItemModelMesher().getItemModel(stack);
 
@@ -67,7 +67,7 @@ public class RenderUtil {
 
 		// Transform
 		Reflection.invoke(itemRender, "setupGuiTransform", x, y, model.isGui3d());
-		model = ForgeHooksClient.handleCameraTransforms(model, TransformType.GUI);
+		model.getItemCameraTransforms().applyTransform(TransformType.GUI);
 		scale(0.5F);
 		translate(-0.5F);
 

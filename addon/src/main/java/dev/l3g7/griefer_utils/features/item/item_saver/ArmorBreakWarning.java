@@ -57,7 +57,7 @@ public class ArmorBreakWarning extends ItemSaver {
 
 	@EventListener
 	public void onClientTick(TickEvent.ClientTickEvent event) {
-		if (!isEnabled())
+		if (!isEnabled() || player() == null)
 			return;
 
 		currentWarnItem = null;

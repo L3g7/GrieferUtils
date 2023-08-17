@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.mapping.Mapping.SEARGE;
 import static dev.l3g7.griefer_utils.core.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.core.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.Util.elevate;
@@ -106,7 +105,7 @@ class FieldReflection {
 
 				// Map name
 				if (Mapper.isObfuscated())
-					lookupName = Mapper.mapField(currentClass, name, UNOBFUSCATED, SEARGE);
+					lookupName = Mapper.mapField(currentClass, name, UNOBFUSCATED, Reflection.mappingTarget);
 
 				// Lookup field
 				field = currentClass.getDeclaredField(lookupName);

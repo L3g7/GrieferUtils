@@ -19,7 +19,6 @@
 package dev.l3g7.griefer_utils.core.util;
 
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -64,16 +63,6 @@ public class Util {
 		String formattedMessage = args.length == 0 ? message : String.format(message, args);
 		return new RuntimeException(formattedMessage, throwable, true, false) {};
 	}
-
-	/**
-	 * Terminates Java.
-	 * Should only be used for debug purposes.
-	 */
-	@Deprecated
-	public static void die(int status) {
-		FMLCommonHandler.instance().exitJava(status, false);
-	}
-
 
 	private static final DecimalFormat DOUBLE_NUMBER = new DecimalFormat("00");
 

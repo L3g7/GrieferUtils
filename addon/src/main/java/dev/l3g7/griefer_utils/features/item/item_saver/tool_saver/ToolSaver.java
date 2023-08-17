@@ -165,7 +165,7 @@ public class ToolSaver extends ItemSaver {
 				continue;
 
 			ItemDisplaySetting ids = (ItemDisplaySetting) element;
-			object.addProperty(ids.name, ids.stack.serializeNBT().toString());
+			object.addProperty(ids.name, ItemUtil.serializeNBT(ids.stack));
 		}
 
 		Config.set(getConfigKey() + ".exclusions", object);
@@ -177,13 +177,13 @@ public class ToolSaver extends ItemSaver {
 			return false;
 
 		ListIterator<SettingsElement> iterator = enabled.getSubSettings().getElements().listIterator();
-		String nbt = prepareStack(stack).serializeNBT().toString();
+		String nbt = ItemUtil.serializeNBT(prepareStack(stack));
 
 		while (iterator.hasNext()) {
 			SettingsElement element = iterator.next();
 
 			if (element instanceof ItemDisplaySetting)
-				if (nbt.equals(((ItemDisplaySetting) element).getStack().serializeNBT().toString()))
+				if (nbt.equals(ItemUtil.serializeNBT(((ItemDisplaySetting) element).getStack())))
 					return true;
 
 			if (element instanceof EntryAddSetting)

@@ -18,6 +18,8 @@
 
 package dev.l3g7.griefer_utils.core.reflection;
 
+import dev.l3g7.griefer_utils.core.mapping.Mapping;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,6 +28,15 @@ import java.lang.reflect.Method;
  * The "frontend" of reflection.
  */
 public class Reflection {
+
+	static Mapping mappingTarget = Mapping.SEARGE;
+
+	/**
+	 * Sets the mapping target.
+	 */
+	public static void setMappingTarget(Mapping mappingTarget) {
+		Reflection.mappingTarget = mappingTarget;
+	}
 
 	/**
 	 * @return the value of a field.

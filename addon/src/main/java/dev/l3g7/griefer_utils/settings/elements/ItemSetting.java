@@ -122,7 +122,7 @@ public class ItemSetting extends DropDownElement<ItemSetting.DummyEnum> implemen
 		itemIcon = stack;
 
 		if (configKey != null) {
-			Config.set(configKey, stack == null ? JsonNull.INSTANCE : new JsonPrimitive(stack.serializeNBT().toString()));
+			Config.set(configKey, stack == null ? JsonNull.INSTANCE : new JsonPrimitive(ItemUtil.serializeNBT(stack)));
 			Config.save();
 		}
 		return this;

@@ -35,6 +35,7 @@ import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.Material;
@@ -45,13 +46,12 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants.NBT;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -250,14 +250,14 @@ public class CooldownNotifications extends Feature {
 	 * >0: unix time when available
 	 */
 	private static long getAvailability(ItemStack i) {
-		NBTTagList lore = i.serializeNBT().getCompoundTag("tag").getCompoundTag("display").getTagList("Lore", NBT.TAG_STRING);
-		if (lore.tagCount() == 1) {
-			if (lore.getStringTagAt(0).equals("§aVerfügbar"))
+		List<String> lore = ItemUtil.getLore(i);
+		if (lore.size() == 1) {
+			if (lore.get(0).equals("§aVerfügbar"))
 				return 0;
 
 			return -1;
-		} else if (lore.tagCount() == 2) {
-			String dateStr = lore.getStringTagAt(1)
+		} else if (lore.size() == 2) {
+			String dateStr = lore.get(1)
 				.replace("§7am §e§e", "")
 				.replace(" §7um§e ", " ")
 				.replace(" §7frei.", "");

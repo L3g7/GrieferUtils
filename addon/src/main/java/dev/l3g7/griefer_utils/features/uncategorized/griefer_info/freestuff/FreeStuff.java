@@ -30,6 +30,7 @@ import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.*;
@@ -100,7 +101,7 @@ public class FreeStuff {
 		}
 
 		NBTTagList itemsList = new NBTTagList();
-		items.keySet().stream().limit(10).map(iF -> iF.stack.serializeNBT()).forEachOrdered(itemsList::appendTag);
+		items.keySet().stream().limit(10).map(iF -> iF.stack.writeToNBT(new NBTTagCompound())).forEachOrdered(itemsList::appendTag);
 		stack.getTagCompound().setTag("items_nbt", itemsList);
 
 		lines.add("");

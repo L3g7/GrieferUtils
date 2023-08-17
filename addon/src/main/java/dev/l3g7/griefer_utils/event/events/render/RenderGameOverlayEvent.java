@@ -16,11 +16,10 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event.events;
+package dev.l3g7.griefer_utils.event.events.render;
 
 import dev.l3g7.griefer_utils.core.event_bus.Event;
-import net.minecraft.client.gui.GuiIngame;
-import net.minecraftforge.client.GuiIngameForge;
+import net.minecraft.client.renderer.EntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,23 +27,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public class RenderGameOverlayEvent extends Event {
 
-	@Mixin(GuiIngame.class)
-	private static class MixinGuiIngame {
+	@Mixin(EntityRenderer.class)
+	private static class MixinEntityRenderer {
 
-	    @Inject(method = "renderGameOverlay", at = @At("TAIL"))
-	    public void injectRenderGameOverlay(float partialTicks, CallbackInfo ci) {
-		    new RenderGameOverlayEvent().fire();
+	    @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiIngame;renderGameOverlay(F)V", shift = At.Shift.AFTER))
+	    public void injectUpdateCameraAndRender(float partialTicks, long nanoTime, CallbackInfo ci) {
+	    	new RenderGameOverlayEvent().fire();
 	    }
-
-	}
-
-	@Mixin(GuiIngameForge.class)
-	private static class MixinGuiIngameForge {
-
-		@Inject(method = "renderGameOverlay", at = @At("TAIL"))
-		public void injectRenderGameOverlay(float partialTicks, CallbackInfo ci) {
-			new RenderGameOverlayEvent().fire();
-		}
 
 	}
 

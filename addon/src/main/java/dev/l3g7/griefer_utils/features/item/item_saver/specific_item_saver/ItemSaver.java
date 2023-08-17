@@ -271,13 +271,13 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		is.stackSize = 1;
 
 		ListIterator<SettingsElement> iterator = enabled.getSubSettings().getElements().listIterator();
-		String nbt = is.serializeNBT().toString();
+		String nbt = ItemUtil.serializeNBT(is);
 
 		while (iterator.hasNext()) {
 			SettingsElement element = iterator.next();
 
 			if (element instanceof ItemDisplaySetting)
-				if (nbt.equals(((ItemDisplaySetting) element).getStack().serializeNBT().toString()))
+				if (nbt.equals(ItemUtil.serializeNBT(((ItemDisplaySetting) element).getStack())))
 					return;
 
 			if (element instanceof EntryAddSetting)
@@ -309,7 +309,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 			entry.addProperty("leftclick", itemDisplaySetting.leftclick.get());
 			entry.addProperty("rightclick", itemDisplaySetting.rightclick.get());
 
-			object.add(itemDisplaySetting.getStack().serializeNBT().toString(), entry);
+			object.add(ItemUtil.serializeNBT(itemDisplaySetting.getStack()), entry);
 		}
 
 		Config.set(entryKey, object);

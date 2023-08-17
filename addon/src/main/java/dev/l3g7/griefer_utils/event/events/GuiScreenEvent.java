@@ -118,7 +118,7 @@ public abstract class GuiScreenEvent extends Event {
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V", shift = At.Shift.AFTER))
 		public void injectMouseInputPost(CallbackInfo ci) {
-			new MouseInputEvent.Pre(this).fire();
+			new MouseInputEvent.Post(this).fire();
 		}
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleKeyboardInput()V", shift = At.Shift.BEFORE))
@@ -128,7 +128,7 @@ public abstract class GuiScreenEvent extends Event {
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleKeyboardInput()V", shift = At.Shift.AFTER))
 		public void injectKeyboardInputPost(CallbackInfo ci) {
-			new KeyboardInputEvent.Pre(this).fire();
+			new KeyboardInputEvent.Post(this).fire();
 		}
 
 	}

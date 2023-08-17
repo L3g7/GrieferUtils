@@ -25,7 +25,6 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.injection.transformer.Transformer;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -50,11 +49,9 @@ public class Injector implements IClassTransformer {
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
 
 		if (!Reflection.exists("net.minecraftforge.common.ForgeHooks")) {
-			LogManager.getLogger().fatal("Forge doesnt exist, get trolled");
 			MixinEnvironment.getDefaultEnvironment().setObfuscationContext("notch");
 			Reflection.setMappingTarget(Mapping.OBFUSCATED);
-		} else
-			LogManager.getLogger().fatal("Forge exists, get trolled");
+		}
 
 		// Load transformers
 		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Transformer.class)) {

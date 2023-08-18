@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
@@ -65,13 +66,18 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	private static final String BIRTH_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:2s,id:20s},2:{lvl:5s,id:61s},3:{lvl:21s,id:21s}],display:{Name:\"§4B§aI§3R§2T§eH §4§lKlinge\"}},Damage:0s}";
 
 	private static String entryKey;
+	private static String iconKey;
 	private static GuiScreen previousScreen = null;
 
 	private static final BooleanSetting displayIcon = new BooleanSetting()
 		.name("Icon anzeigen")
 		.description("Ob Items im ItemSaver mit einem Icon markiert werden sollen.")
 		.icon("shield_with_sword")
-		.defaultValue(true);
+		.defaultValue(true)
+		.callback(b -> {
+			Config.set(iconKey, new JsonPrimitive(b));
+			Config.save();
+		});
 
 	private static final EntryAddSetting newEntrySetting = new EntryAddSetting()
 		.name("Item hinzufügen")
@@ -131,6 +137,10 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	@Override
 	public void init() {
 		super.init();
+
+		iconKey = getConfigKey() + ".display_icon";
+		if (Config.has(iconKey))
+			displayIcon.set(Config.get(iconKey).getAsBoolean());
 
 		entryKey = getConfigKey() + ".entries";
 

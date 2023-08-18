@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.features.chat.Calculator;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -53,7 +54,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 @Singleton
 public class InventoryValue extends Module {
 
-	private static final Pattern VALUE_PATTERN = Pattern.compile("\\b(\\d+)\\b");
+	private static final Pattern VALUE_PATTERN = Pattern.compile("\\b([\\d,.k]+)\\b");
 	public static String entryKey = "modules.inventory_value.entries";
 	private GuiScreen previousScreen = null;
 
@@ -213,17 +214,21 @@ public class InventoryValue extends Module {
 
 		for(String string : new String[] {lore.get(lore.size() - 2), stack.getDisplayName()}) {
 			string = string.toLowerCase()
-				.replaceAll("§.|[,.]", "")
+				.replaceAll("§.", "")
+				.replaceAll("(?!\\d).(\\d{3})", "\1\2")
 				.replaceAll(" ?mio", "m")
-				.replace("m", "kk")
-				.replace("k", "000");
+				.replace("m", "kk");
 
 			Matcher matcher = VALUE_PATTERN.matcher(string.replaceAll("§.", ""));
 			if (matcher.find()) {
 				String result = matcher.group(1);
 				if (!matcher.find()) { // Cancel if multiple numbers are found
 					try {
-						return Long.parseLong(result);
+						double value = Calculator.calculate(result, false);
+						if (Double.isNaN(value))
+							return -1;
+
+						return (long) value;
 					} catch (NumberFormatException ignored) {}
 				}
 			}

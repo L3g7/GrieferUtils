@@ -186,7 +186,7 @@ public class Calculator extends Feature {
 			event.cancel();
 
 			String message = event.message.substring(prefix.get().trim().length()).trim();
-			double exp = calculate(message);
+			double exp = calculate(message, true);
 			if (Double.isNaN(exp))
 				return;
 
@@ -276,7 +276,7 @@ public class Calculator extends Feature {
 					return false;
 				}
 
-				double expResult = calculate(equation);
+				double expResult = calculate(equation, true);
 				if (Double.isNaN(expResult))
 					return true;
 
@@ -295,7 +295,7 @@ public class Calculator extends Feature {
 		return false;
 	}
 
-	private double calculate(String equation) {
+	public static double calculate(String equation, boolean displayErrors) {
 		equation = equation.replace("k", " * 1000").replace(",", ".");
 		Expression exp;
 		try {
@@ -303,8 +303,10 @@ public class Calculator extends Feature {
 		} catch (NoSuchMethodError e) {
 			// Sometimes, the constructor cannot be found.
 			// I have no idea why so here's a bit of logging to find out more.
-			display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);
-			display("§cDie Bibliothek konnte nicht geladen werden.");
+			if (displayErrors) {
+				display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);
+				display("§cDie Bibliothek konnte nicht geladen werden.");
+			}
 
 			StringBuilder builder = new StringBuilder();
 			try {
@@ -329,8 +331,10 @@ public class Calculator extends Feature {
 		}
 
 		if (!exp.checkSyntax()) {
-			display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);
-			display("§c" + exp.getErrorMessage().trim());
+			if (displayErrors) {
+				display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);
+				display("§c" + exp.getErrorMessage().trim());
+			}
 			return Double.NaN;
 		}
 
@@ -338,12 +342,14 @@ public class Calculator extends Feature {
 
 		// Check if result is valid
 		if (Double.isInfinite(expResult)) {
-			display(Constants.ADDON_PREFIX + "§r§4⚠ §c\"%s\" ist unendlich! §4⚠§r", equation);
+			if (displayErrors)
+				display(Constants.ADDON_PREFIX + "§r§4⚠ §c\"%s\" ist unendlich! §4⚠§r", equation);
 			return Double.NaN;
 		}
 
 		if (Double.isNaN(expResult)) {
-			display(Constants.ADDON_PREFIX + "§r§4⚠ §c\"%s\" ist ungültig! §4⚠§r", equation);
+			if (displayErrors)
+				display(Constants.ADDON_PREFIX + "§r§4⚠ §c\"%s\" ist ungültig! §4⚠§r", equation);
 			return Double.NaN;
 		}
 

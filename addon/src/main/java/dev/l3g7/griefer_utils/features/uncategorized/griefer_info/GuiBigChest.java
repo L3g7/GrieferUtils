@@ -234,6 +234,8 @@ public class GuiBigChest extends GuiContainer {
 			for (int j = 0; j < inventory.getSizeInventory() / 9; ++j)
 				for (int k = 0; k < 9; ++k)
 					this.addSlotToContainer(new Slot(inventory, k + j * 9, 8 + k * 18, 18 + j * 18));
+
+			windowId = -1337;
 		}
 
 		@Override

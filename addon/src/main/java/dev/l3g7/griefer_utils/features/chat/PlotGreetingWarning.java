@@ -74,7 +74,7 @@ public class PlotGreetingWarning extends Feature {
 		// Guess whether message was part of greeting
 
 		// Check if message was within specified time
-		if (lastGreetingReadTime != 0 && lastReadTime - lastGreetingReadTime <= maxTimeDifference.get() * 1000) {
+		if (lastGreetingReadTime != 0 && lastReadTime != 0 && lastReadTime - lastGreetingReadTime <= maxTimeDifference.get() * 1000) {
 
 			// Check if message is nested
 			if (message.getSiblings().stream().anyMatch(c -> !c.getSiblings().isEmpty()))

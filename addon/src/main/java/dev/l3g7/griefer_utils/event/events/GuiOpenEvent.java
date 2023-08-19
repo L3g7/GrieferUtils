@@ -28,8 +28,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 public class GuiOpenEvent<G extends GuiScreen> extends TypedEvent<GuiOpenEvent<G>> {
 
@@ -40,7 +39,7 @@ public class GuiOpenEvent<G extends GuiScreen> extends TypedEvent<GuiOpenEvent<G
 	}
 
 	@Mixin(Minecraft.class)
-	private static class MixinMinecraft {
+	private static abstract class MixinMinecraft {
 
 		@Shadow
 		public WorldClient theWorld;
@@ -48,8 +47,8 @@ public class GuiOpenEvent<G extends GuiScreen> extends TypedEvent<GuiOpenEvent<G
 		@Shadow
 		public EntityPlayerSP thePlayer;
 
-		@Inject(method = "displayGuiScreen", at = @At("HEAD"))
-	    public void injectDisplayGuiScreen(GuiScreen screen, CallbackInfo ci) {
+		@ModifyVariable(method = "displayGuiScreen", at = @At("HEAD"), argsOnly = true)
+	    public GuiScreen injectDisplayGuiScreen(GuiScreen screen) {
 			if (screen == null) {
 				if (theWorld == null)
 					screen = new GuiMainMenu();
@@ -57,7 +56,7 @@ public class GuiOpenEvent<G extends GuiScreen> extends TypedEvent<GuiOpenEvent<G
 					screen = new GuiGameOver();
 			}
 
-			screen = new GuiOpenEvent<>(screen).fire().gui;
+			return new GuiOpenEvent<>(screen).fire().gui;
 	    }
 
 	}

@@ -19,14 +19,18 @@
 package dev.l3g7.griefer_utils.util;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
-import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
+import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.util.IChatComponent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
@@ -35,11 +39,9 @@ import static net.labymod.ingamechat.IngameChatManager.INSTANCE;
 
 public class ChatLineUtil {
 
-	private static int expectedLines = 0;
-	private static int passedLines = 0;
-	private static IChatComponent currentComponent;
+	public static IChatComponent currentComponent;
 
-	private static final Map<ChatLine, IChatComponent> LINE_TO_COMPONENT = new HashMap<>();
+	public static final Map<ChatLine, IChatComponent> LINE_TO_COMPONENT = new HashMap<>();
 	private static final List<IChatComponent> MODIFIED_COMPONENTS = new ArrayList<>();
 	private static final List<IChatComponent> UNMODIFIED_COMPONENTS = new ArrayList<>();
 
@@ -51,23 +53,6 @@ public class ChatLineUtil {
 	@EventListener
 	private static void onMessageModified(MessageEvent.MessageModifiedEvent event) {
 		MODIFIED_COMPONENTS.add(event.component);
-	}
-
-	@EventListener(priority = Priority.HIGHEST)
-	private static void onMessageModified(ChatLineEvent.ChatLineInitEvent event) {
-		int width = (event.secondChat ? INSTANCE.getSecond() : INSTANCE.getMain()).getVisualWidth();
-		List<IChatComponent> components = GuiUtilRenderComponents.splitText(event.component, width, mc().fontRendererObj, false, false);
-		expectedLines = components.size();
-		passedLines = 0;
-		currentComponent = event.component;
-	}
-
-	@EventListener(priority = Priority.HIGHEST)
-	private static void onChatLineAdd(ChatLineEvent.ChatLineAddEvent event) {
-		if (passedLines++ >= expectedLines)
-			return;
-
-		LINE_TO_COMPONENT.put(event.chatLine, currentComponent);
 	}
 
 	public static IChatComponent getComponentFromLine(ChatLine chatLine) {
@@ -123,6 +108,29 @@ public class ChatLineUtil {
 			return null;
 
 		return LINE_TO_COMPONENT.get(chatline);
+	}
+
+
+
+	@Mixin(value = ChatRenderer.class, remap = false)
+	private static class MixinChatRenderer {
+
+		@Redirect(method = "addChatLine", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V"))
+		public void postChatLineAddEvent(List<Object> instance, int i, Object o) {
+			LINE_TO_COMPONENT.put((ChatLine) o, currentComponent);
+			instance.add(i, o);
+		}
+
+	}
+
+	@Mixin(value = GuiChatAdapter.class, remap = false)
+	private static class MixinGuiChatAdapter {
+
+		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
+		public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
+			currentComponent = component;
+		}
+
 	}
 
 }

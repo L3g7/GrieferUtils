@@ -27,17 +27,15 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.event.events.render.ChatLineEvent;
+import dev.l3g7.griefer_utils.event.events.render.ChatEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
-import dev.l3g7.griefer_utils.util.ChatLineUtil;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.IChatComponent;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -65,7 +63,7 @@ public class FilterWebhooks extends Feature {
 
     public FilterWebhooks() {
 	    EMBED_FOOTER.addProperty("text", Constants.ADDON_NAME + " v" + AddonUtil.getVersion());
-	    EMBED_FOOTER.addProperty("icon_url", "https://grieferutils.l3g7.dev/icon/padded/64x64");
+	    EMBED_FOOTER.addProperty("icon_url", "https://grieferutils.l3g7.dev/icon/padded/64x64/");
     }
 
     static void saveWebhooks() {
@@ -93,13 +91,9 @@ public class FilterWebhooks extends Feature {
     }
 
     @EventListener(priority = Priority.LOWEST)
-    public void onMessageReceive(ChatLineEvent.ChatLineAddEvent event) {
-	    IChatComponent icc = ChatLineUtil.getComponentFromLine(event.chatLine);
-		if (icc == null)
-			return;
-
+    public void onMessageReceive(ChatEvent.ChatMessageAddEvent event) {
         // Check if filters match
-        String msg = icc.getUnformattedText().toLowerCase().replaceAll("§.", "");
+        String msg = event.component.getUnformattedText().toLowerCase().replaceAll("§.", "");
         for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
             if (webhooks.containsKey(filter.getFilterName())
 	                && !webhooks.get(filter.getFilterName()).trim().isEmpty()
@@ -112,7 +106,7 @@ public class FilterWebhooks extends Feature {
 	            JsonArray embeds = new JsonArray();
 				JsonObject embed = new JsonObject();
 				embed.add("title", sanitize(filter.getFilterName()));
-				embed.add("description", sanitize(icc.getUnformattedText().replaceAll("§.", "")));
+				embed.add("description", sanitize(event.component.getUnformattedText().replaceAll("§.", "")));
 				embed.add("footer", EMBED_FOOTER);
 				if (filter.isHighlightMessage())
 					embed.addProperty("color", ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff));

@@ -32,11 +32,15 @@ import net.labymod.addon.AddonLoader;
 import net.labymod.addon.online.AddonInfoManager;
 import net.labymod.addon.online.info.AddonInfo;
 import net.labymod.api.LabyModAddon;
+import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
+import net.labymod.utils.texture.DynamicModTexture;
 import net.minecraft.crash.CrashReport;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -79,6 +83,10 @@ public class Main extends LabyModAddon {
 		} catch (Throwable t) {
 			MinecraftUtil.mc().displayCrashReport(new CrashReport("GrieferUtils konnte nicht geladen werden!", t));
 		}
+
+		Map<String, DynamicModTexture> map = LabyMod.getInstance().getDynamicTextureManager().getResourceLocations();
+		map.put("griefer_utils_icon", new DynamicModTexture(new ResourceLocation("griefer_utils/icons/icon.png"), "griefer_utils_icon"));
+
 		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}
 

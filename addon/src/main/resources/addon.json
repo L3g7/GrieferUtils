@@ -1,7 +1,7 @@
 {
   "name": "GrieferUtils",
   "description": "\u00A7cFalls du das hier liest, gab es einen Fehler. :(\n\u00A7c\u00A7lVermutlich hast du kein Forge installiert.",
-  "icon": "https://i.imgur.com/tWfT5Y8.png",
+  "icon": "griefer_utils_icon",
   "author": "L3g7, L3g73",
   "addonVersion": "${version}",
   "debug": "${debug}",

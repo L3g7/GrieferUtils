@@ -75,6 +75,7 @@ public class BugReporter {
 	}
 
 	public static void reportError(Throwable error) {
+		error.printStackTrace();
 		if (!enabled.get() || !shouldReportError(error))
 			return;
 

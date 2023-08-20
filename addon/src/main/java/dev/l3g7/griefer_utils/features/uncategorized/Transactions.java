@@ -31,6 +31,7 @@ import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMP
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
+import dev.l3g7.griefer_utils.misc.TransactionPPTXWriter;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection.State;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.RequestTransactionsPacket;
@@ -49,6 +50,7 @@ import net.labymod.utils.Material;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -127,7 +129,8 @@ public class Transactions extends Feature {
 			try {
 				export(format);
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				MinecraftUtil.displayAchievement("§c§lFehler \u26A0", "§cDatei konnte nicht erstellt werden.");
+				e.printStackTrace();
 			}
 
 			export.set(NO_SELECTION);
@@ -226,6 +229,7 @@ public class Transactions extends Feature {
 		}, 1);
 	}
 
+	@SuppressWarnings("ResultOfMethodCallIgnored")
 	private void export(ExportFormat format) throws IOException {
 		File file = new File("GrieferUtils", "Transaktionen." + format.fileSuffix);
 		file.getParentFile().mkdirs();
@@ -235,7 +239,8 @@ public class Transactions extends Feature {
 
 		List<Transaction> transactions = new ArrayList<>(this.transactions);
 
-		try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()))) {
+		try (OutputStream stream = Files.newOutputStream(file.toPath());
+		     OutputStreamWriter writer = new OutputStreamWriter(stream)) {
 			switch (format) {
 				case TEXT:
 					for (Transaction t : transactions) {
@@ -271,13 +276,17 @@ public class Transactions extends Feature {
 						PRETTY_PRINTING_GSON.toJson(beautifiedTransactions, jsonWriter);
 					}
 					break;
+
+				case PPTX:
+					new TransactionPPTXWriter(transactions, stream).write();
+					break;
 			}
 		}
 
 		Desktop.getDesktop().open(file);
 	}
 
-	private enum Direction {
+	public enum Direction {
 
 		SENT, RECEIVED, SELF;
 
@@ -296,7 +305,8 @@ public class Transactions extends Feature {
 		NO_SELECTION("§7-", null),
 		TEXT("Text", "txt"),
 		JSON("JSON", "json"),
-		CSV("CSV", "csv");
+		CSV("CSV", "csv"),
+		PPTX("PPTX", "pptx");
 
 		final String name;
 		final String fileSuffix;

@@ -26,13 +26,17 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.utils.Material;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.EnumSkyBlock;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,6 +50,9 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 public class LightLevelOverlay extends Feature {
 
 	private final Map<BlockPos, Integer> lightPositions = new ConcurrentHashMap<>();
+	private final ResourceLocation texture = new ResourceLocation("griefer_utils/textures/light_level_overlay.png");
+	private final double[] textureX = new double[17];
+	private final double[] textureY = new double[9];
 	private int passedTicks = 0;
 
 	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
@@ -83,6 +90,14 @@ public class LightLevelOverlay extends Feature {
 		.icon("light_bulb")
 		.subSettings(key, triggerMode, new HeaderSetting(), range, updateDelay);
 
+	public LightLevelOverlay() {
+		for (int i = 0; i <= 16; i++)
+			textureX[i] = i / 16d;
+
+		for (int i = 0; i <= 8; i++)
+			textureY[i] = i / 8d;
+	}
+
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {
 		if (world() == null)
@@ -113,33 +128,36 @@ public class LightLevelOverlay extends Feature {
 	private void onRenderWorldLast(RenderWorldLastEvent event) {
 		Entity viewer = mc().getRenderViewEntity();
 		double viewerX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * event.partialTicks;
-		double viewerY = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * event.partialTicks;
+		double viewerY = viewer.lastTickPosY - 0.01 + (viewer.posY - viewer.lastTickPosY) * event.partialTicks;
 		double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * event.partialTicks;
 
+		GlStateManager.pushMatrix();
+		GlStateManager.enableDepth();
+		GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+		GlStateManager.enableTexture2D();
+
+		drawUtils().bindTexture(texture);
+		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
+		wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+		wr.setTranslation(-viewerX, -viewerY, -viewerZ);
+
+		double rotation = viewer.rotationYaw % 360;
+		if (rotation < 0)
+			rotation += 360;
+
+		int rot = (int) (Math.round(rotation / 45d) % 8);
+
 		for (Map.Entry<BlockPos, Integer> entry : lightPositions.entrySet()) {
-			GlStateManager.pushMatrix();
-			GlStateManager.enableDepth();
-			GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-			GlStateManager.enableTexture2D();
-
-			double tx = entry.getKey().getX() - viewerX + 0.5;
-			double ty = entry.getKey().getY() - viewerY + 0.01;
-			double tz = entry.getKey().getZ() - viewerZ + 0.5;
-			GlStateManager.translate(tx, ty, tz);
-
-			FontRenderer font = mc().fontRendererObj;
-
-			String str = String.valueOf(entry.getValue());
-
-			GlStateManager.scale(0.0625, 0.05, 0.0625);
-			GlStateManager.rotate(90, 1, 0, 0);
-			GlStateManager.rotate(180 + mc().getRenderManager().playerViewY, 0, 0, 1);
-			GlStateManager.translate(-(font.getStringWidth(str) - 1) / 2d, -(font.FONT_HEIGHT / 2d - 1), 0);
-
-			int color = (17 * entry.getValue()) << 8 | 0xFF0000;
-			font.drawString(str, 0, 0, color);
-			GlStateManager.popMatrix();
+			BlockPos p = entry.getKey();
+			wr.pos(p.getX(), p.getY(), p.getZ()).tex(textureX[entry.getValue()], textureY[rot]).color(255, 255, 255, 255).endVertex();
+			wr.pos(p.getX(), p.getY(), p.getZ() + 1).tex(textureX[entry.getValue()], textureY[rot + 1]).color(255, 255, 255, 255).endVertex();
+			wr.pos(p.getX() + 1, p.getY(), p.getZ() + 1).tex(textureX[entry.getValue() + 1], textureY[rot + 1]).color(255, 255, 255, 255).endVertex();
+			wr.pos(p.getX() + 1, p.getY(), p.getZ()).tex(textureX[entry.getValue() + 1], textureY[rot]).color(255, 255, 255, 255).endVertex();
 		}
+
+		Tessellator.getInstance().draw();
+		wr.setTranslation(0, 0, 0);
+		GL11.glPopMatrix();
 	}
 
 }

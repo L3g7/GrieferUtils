@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.core.asm.LabyModCoreMod;
+import net.minecraft.network.ThreadQuickExitException;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
@@ -61,6 +62,9 @@ public class BugReporter {
 	public static boolean shouldReportError(Throwable error) {
 		if (System.currentTimeMillis() - timestampOfLastReport < 10_000)
 			return false; // Last report less than 10s ago, don't report
+
+		if (error instanceof ThreadQuickExitException)
+			return false;
 
 		// Don't report OutOfMemoryErrors
 		if (error instanceof OutOfMemoryError) {

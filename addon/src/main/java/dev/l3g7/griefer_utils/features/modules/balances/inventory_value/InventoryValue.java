@@ -28,6 +28,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.features.chat.Calculator;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiBigChest;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -108,6 +109,7 @@ public class InventoryValue extends Module {
 	@Override
 	public String[] getKeys() {
 		if (mc().currentScreen instanceof GuiInventory
+			|| mc().currentScreen instanceof GuiBigChest
 			|| !(mc().currentScreen instanceof GuiContainer)
 			&& !(mc().currentScreen instanceof LabyModModuleEditorGui))
 			return new String[] {"Eigenes Inventar"};
@@ -129,7 +131,7 @@ public class InventoryValue extends Module {
 			createSettingElement();
 
 		String invValue = getValue(Arrays.asList(player().inventory.mainInventory));
-		if (!(mc().currentScreen instanceof GuiContainer) || mc().currentScreen instanceof GuiInventory)
+		if (!(mc().currentScreen instanceof GuiContainer) || mc().currentScreen instanceof GuiInventory || mc().currentScreen instanceof GuiBigChest)
 			return mc().currentScreen instanceof LabyModModuleEditorGui ? new String[] {invValue, "0$"} : new String[] {invValue};
 
 		List<Slot> slots = ((GuiContainer) mc().currentScreen).inventorySlots.inventorySlots;

@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.FeatureCategory;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
+@FeatureCategory
 public class InventoryTweaks extends Feature {
 
 	private final List<InventoryTweak> tweaks = FileProvider.getClassesWithSuperClass(InventoryTweak.class).stream()

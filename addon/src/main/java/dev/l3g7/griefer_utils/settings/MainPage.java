@@ -25,9 +25,9 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
 import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.FeatureCategory;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.StringSetting;
+import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
@@ -58,7 +58,7 @@ public class MainPage {
 		filter,
 		new HeaderSetting("§r").scale(.4).entryHeight(10)));
 
-	private static final List<Feature> features = new ArrayList<>();
+	private static final List<SettingsElement> searchableSettings = new ArrayList<>();
 
 	static {
 		try {
@@ -70,14 +70,26 @@ public class MainPage {
 
 	private static void loadFeatures() {
 		// Load features
+		List<Feature> features = new ArrayList<>();
 		FileProvider.getClassesWithSuperClass(Feature.class).forEach(meta -> {
 			if (!meta.isAbstract())
 				features.add(FileProvider.getSingleton(meta.load()));
 		});
 
 		features.sort(Comparator.comparing(f -> f.getMainElement().getDisplayName()));
-		for (Feature feature : features)
+		for (Feature feature : features) {
 			feature.getCategory().add(feature);
+
+			if (feature.getClass().isAnnotationPresent(FeatureCategory.class)) {
+				feature.getMainElement().getSubSettings().getElements().stream()
+					.filter(e -> e instanceof BooleanSetting || e instanceof NumberSetting || e instanceof CategorySetting)
+					.forEachOrdered(searchableSettings::add);
+			} else {
+				searchableSettings.add(feature.getMainElement());
+			}
+		}
+
+		searchableSettings.sort(Comparator.comparing(SettingsElement::getDisplayName));
 
 		// Add every category to the main page
 		Category.getCategories().stream()
@@ -112,9 +124,9 @@ public class MainPage {
 			while (listedElementsStored.size() > startIndex)
 				listedElementsStored.remove(startIndex);
 
-			features.stream()
-				.filter(f -> f.getMainElement().getDisplayName().replaceAll("§.", "").toLowerCase().contains(filter.get().toLowerCase()))
-				.forEach(f -> listedElementsStored.add(f.getMainElement()));
+			searchableSettings.stream()
+				.filter(s -> s.getDisplayName().replaceAll("§.", "").toLowerCase().contains(filter.get().toLowerCase()))
+				.forEach(listedElementsStored::add);
 		}, 1);
 	}
 

@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.FeatureCategory;
 import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.ToolSaver;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
+@FeatureCategory
 public class ItemSaverCategory extends Feature {
 
 	private final List<Class<?>> savers = Arrays.asList(

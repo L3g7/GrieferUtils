@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.event.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.FeatureCategory;
 import dev.l3g7.griefer_utils.features.modules.BlockInfo;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiBigChest;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
@@ -43,6 +44,7 @@ import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.Trigge
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
+@FeatureCategory
 public class ItemInfo extends Feature {
 
 	private final List<ItemInfoSupplier> infoSuppliers = FileProvider.getClassesWithSuperClass(ItemInfoSupplier.class).stream()

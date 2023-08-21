@@ -98,10 +98,12 @@ public class MysteryModConnection {
 
 	@EventListener
 	public static void onAccountSwitch(AccountSwitchEvent event) {
-		if (getState() == CONNECTED)
-			channel.close();
+		new Thread(() -> {
+			if (getState() == CONNECTED)
+				channel.close();
 
-		new Thread(MysteryModConnection::connect).start();
+			MysteryModConnection.connect();
+		}).start();
 	}
 
 	public enum State {

@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.core.misc.matrix.Matrix;
 import dev.l3g7.griefer_utils.core.misc.matrix.jna.util.LibOlmLoader;
 import dev.l3g7.griefer_utils.core.misc.matrix.requests.LogoutRequest;
 import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import net.minecraft.util.Session;
 
 import java.io.IOException;
@@ -48,9 +49,17 @@ public class MatrixClient extends Matrix {
 	}
 
 	@EventListener
-	public void onAccountSwitch(AccountSwitchEvent event) throws IOException {
-		if (isAvailable())
-			authorize();
+	public void onAccountSwitch(AccountSwitchEvent event) {
+		new Thread(() -> {
+			if (!isAvailable())
+				return;
+
+			try {
+				authorize();
+			} catch (IOException e) {
+				BugReporter.reportError(e);
+			}
+		});
 	}
 
 	public void authorize() throws IOException {

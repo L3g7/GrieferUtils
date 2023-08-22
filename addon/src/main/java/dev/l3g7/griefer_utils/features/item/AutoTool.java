@@ -77,12 +77,17 @@ public class AutoTool extends Feature {
 		"Köpfe", of(Blocks.skull)
 	);
 
-	private static final Map<String, Block> RENAMED_BLOCKS = ImmutableMap.of(
-		"stained_clay", Blocks.stained_hardened_clay,
-		"hard_clay", Blocks.hardened_clay,
-		"leaves_2", Blocks.leaves2,
-		"mycel", Blocks.mycelium
-	);
+	private static final Map<String, Block> RENAMED_BLOCKS = new ImmutableMap.Builder<String, Block>()
+		.put("stained_clay", Blocks.stained_hardened_clay)
+		.put("hard_clay", Blocks.hardened_clay)
+		.put("leaves_2", Blocks.leaves2)
+		.put("log_2", Blocks.log2)
+		.put("mycel", Blocks.mycelium)
+		.put("huge_mushroom", Blocks.red_mushroom_block)
+		.put("huge_mushroom_2", Blocks.brown_mushroom_block)
+		.put("soil", Blocks.farmland)
+		.put("snow_block", Blocks.snow)
+		.build();
 
 	private final ToolSaver toolSaver = FileProvider.getSingleton(ToolSaver.class);
 

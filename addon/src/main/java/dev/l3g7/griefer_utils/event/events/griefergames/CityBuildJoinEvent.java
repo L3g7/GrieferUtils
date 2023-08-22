@@ -27,10 +27,31 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
  */
 public class CityBuildJoinEvent extends Event {
 
+	private static boolean waitingForAuth = false;
+	private static boolean dataWasLoaded = false;
+
 	@EventListener
 	private static void onMessage(MessageReceiveEvent event) {
-		if (event.message.getFormattedText().equals("§r§8[§r§6GrieferGames§r§8] §r§aDeine Daten wurden vollständig heruntergeladen.§r"))
-			new CityBuildJoinEvent().fire();
+		if (event.message.getFormattedText().startsWith("§r§8[§r§6GGAuth§r§8] §r§7Bitte verifiziere dich"))
+			waitingForAuth = true;
+
+		if (event.message.getFormattedText().equals("§r§8[§r§6GGAuth§r§8] §r§aDu wurdest erfolgreich verifiziert.§r")) {
+			waitingForAuth = false;
+			fireIfReady();
+		}
+
+		if (event.message.getFormattedText().equals("§r§8[§r§6GrieferGames§r§8] §r§aDeine Daten wurden vollständig heruntergeladen.§r")) {
+			dataWasLoaded = true;
+			fireIfReady();
+		}
+	}
+
+	private static void fireIfReady() {
+		if (!dataWasLoaded || waitingForAuth)
+			return;
+
+		new CityBuildJoinEvent().fire();
+		dataWasLoaded = false;
 	}
 
 }

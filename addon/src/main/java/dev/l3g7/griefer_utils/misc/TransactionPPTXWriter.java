@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -83,9 +84,13 @@ public class TransactionPPTXWriter {
 
 				BigDecimal received = transactions.stream().filter(t -> Direction.get(t) == Direction.RECEIVED).map(t -> new BigDecimal(t.amount)).reduce(BigDecimal.ZERO, BigDecimal::add);
 				BigDecimal spent = transactions.stream().filter(t -> Direction.get(t) == Direction.SENT).map(t -> new BigDecimal(t.amount)).reduce(BigDecimal.ZERO, BigDecimal::add);
-				String receivedStr = format(received);
-				String spentStr = format(spent);
-				String earned = format(received.subtract(spent));
+				received = received.setScale(2, RoundingMode.HALF_EVEN);
+				spent = spent.setScale(2, RoundingMode.HALF_EVEN);
+				int maxScale = Math.max(received.stripTrailingZeros().scale(), spent.stripTrailingZeros().scale());
+
+				String receivedStr = format(received, maxScale);
+				String spentStr = format(spent, maxScale);
+				String earned = format(received.subtract(spent), maxScale);
 				int maxLen = Math.max(receivedStr.length(), Math.max(spentStr.length(), earned.length()));
 
 				out.write(content
@@ -162,11 +167,22 @@ public class TransactionPPTXWriter {
 		return sb.toString();
 	}
 
-	private static String format(BigDecimal value) {
-		String s = DECIMAL_FORMAT_98.format(value.doubleValue());
-		if (s.length() == s.indexOf(".") + 2)
-			s += "0";
-		return s.replace('.', ',');
+	private static String format(BigDecimal value, int maxScale) {
+		StringBuilder s = new StringBuilder(DECIMAL_FORMAT_98.format(value.doubleValue()));
+		int decimalPlaces = s.length() - s.toString().indexOf(',') - 1;
+		int requiredZeroes = maxScale - decimalPlaces;
+
+		if (s.toString().indexOf(',') == -1) {
+			requiredZeroes = maxScale;
+
+			if (requiredZeroes != 0)
+				s.append(",");
+		}
+
+		for (int i = 0; i < requiredZeroes; i++)
+			s.append("0");
+
+		return s.toString();
 	}
 
 	private static String leftPad(String str, int targetLen) {

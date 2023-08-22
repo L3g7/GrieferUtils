@@ -29,10 +29,11 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import net.labymod.utils.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
 public class RealMoney extends Feature {
@@ -66,7 +67,7 @@ public class RealMoney extends Feature {
 				message = event.message.appendText(text);
 
 			// Feed new message into packet pipeline to allow reprocessing
-			Minecraft.getMinecraft().getNetHandler().handleChat(new S02PacketChat(message));
+			mc().addScheduledTask(() -> mc().getNetHandler().handleChat(new S02PacketChat(message)));
 
 			event.cancel();
 		}

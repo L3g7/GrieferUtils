@@ -147,22 +147,23 @@ public class RenderUtil {
 		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.disableTexture2D();
 
-		drawFace(bb, UP, drawInside, false);
-		drawFace(bb, DOWN, drawInside, false);
-		drawFace(bb, NORTH, drawInside, false);
-		drawFace(bb, SOUTH, drawInside, false);
-		drawFace(bb, WEST, drawInside, false);
-		drawFace(bb, EAST, drawInside, false);
+		drawFilledBoxWhenRenderingStarted(bb, drawInside);
 
 		tessellator.draw();
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();
 	}
 
-	/**
-	 * WARNING: Assumes rendering has already begun!
-	 */
-	public static void drawFace(AxisAlignedBB bb, EnumFacing face, boolean bothSides, boolean tex) {
+	public static void drawFilledBoxWhenRenderingStarted(AxisAlignedBB bb, boolean drawInside) {
+		drawFace(bb, UP, drawInside);
+		drawFace(bb, DOWN, drawInside);
+		drawFace(bb, NORTH, drawInside);
+		drawFace(bb, SOUTH, drawInside);
+		drawFace(bb, WEST, drawInside);
+		drawFace(bb, EAST, drawInside);
+	}
+
+	public static void drawFace(AxisAlignedBB bb, EnumFacing face, boolean bothSides) {
 		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
 		if (bothSides) {
 			bb = new AxisAlignedBB(
@@ -177,50 +178,50 @@ public class RenderUtil {
 
 		if (face.getAxis() == EnumFacing.Axis.Y) {
 			if (face == UP || bothSides) {
-				wr.pos(bb.minX, bb.maxY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
-				wr.pos(bb.maxX, bb.maxY, bb.maxZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
-				wr.pos(bb.maxX, bb.maxY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
-				wr.pos(bb.minX, bb.maxY, bb.minZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
+				wr.pos(bb.minX, bb.maxY, bb.maxZ); wr.endVertex();
+				wr.pos(bb.maxX, bb.maxY, bb.maxZ); wr.endVertex();
+				wr.pos(bb.maxX, bb.maxY, bb.minZ); wr.endVertex();
+				wr.pos(bb.minX, bb.maxY, bb.minZ); wr.endVertex();
 			}
 
 			if (face == DOWN || bothSides) {
-				wr.pos(bb.maxX, bb.minY, bb.maxZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
-				wr.pos(bb.minX, bb.minY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
-				wr.pos(bb.minX, bb.minY, bb.minZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
-				wr.pos(bb.maxX, bb.minY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+				wr.pos(bb.maxX, bb.minY, bb.maxZ); wr.endVertex();
+				wr.pos(bb.minX, bb.minY, bb.maxZ); wr.endVertex();
+				wr.pos(bb.minX, bb.minY, bb.minZ); wr.endVertex();
+				wr.pos(bb.maxX, bb.minY, bb.minZ); wr.endVertex();
 			}
 			return;
 		}
 
 		if (face.getAxis() == EnumFacing.Axis.X) {
 			if (face == EAST || bothSides) {
-				wr.pos(bb.maxX, bb.maxY, bb.maxZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
-				wr.pos(bb.maxX, bb.minY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
-				wr.pos(bb.maxX, bb.minY, bb.minZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
-				wr.pos(bb.maxX, bb.maxY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+				wr.pos(bb.maxX, bb.maxY, bb.maxZ); wr.endVertex();
+				wr.pos(bb.maxX, bb.minY, bb.maxZ); wr.endVertex();
+				wr.pos(bb.maxX, bb.minY, bb.minZ); wr.endVertex();
+				wr.pos(bb.maxX, bb.maxY, bb.minZ); wr.endVertex();
 			}
 
 			if (face == WEST || bothSides) {
-				wr.pos(bb.minX, bb.minY, bb.maxZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
-				wr.pos(bb.minX, bb.maxY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
-				wr.pos(bb.minX, bb.maxY, bb.minZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
-				wr.pos(bb.minX, bb.minY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+				wr.pos(bb.minX, bb.minY, bb.maxZ); wr.endVertex();
+				wr.pos(bb.minX, bb.maxY, bb.maxZ); wr.endVertex();
+				wr.pos(bb.minX, bb.maxY, bb.minZ); wr.endVertex();
+				wr.pos(bb.minX, bb.minY, bb.minZ); wr.endVertex();
 			}
 			return;
 		}
 
 		if (face == SOUTH || bothSides) {
-			wr.pos(bb.maxX, bb.maxY, bb.maxZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
-			wr.pos(bb.minX, bb.maxY, bb.maxZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
-			wr.pos(bb.minX, bb.minY, bb.maxZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
-			wr.pos(bb.maxX, bb.minY, bb.maxZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
+			wr.pos(bb.maxX, bb.maxY, bb.maxZ); wr.endVertex();
+			wr.pos(bb.minX, bb.maxY, bb.maxZ); wr.endVertex();
+			wr.pos(bb.minX, bb.minY, bb.maxZ); wr.endVertex();
+			wr.pos(bb.maxX, bb.minY, bb.maxZ); wr.endVertex();
 		}
 
 		if (face == NORTH || bothSides) {
-			wr.pos(bb.minX, bb.maxY, bb.minZ); if(tex) wr.tex(-0.5, 0.5); wr.endVertex();
-			wr.pos(bb.maxX, bb.maxY, bb.minZ); if(tex) wr.tex(0.5, 0.5); wr.endVertex();
-			wr.pos(bb.maxX, bb.minY, bb.minZ); if(tex) wr.tex(0.5, -0.5); wr.endVertex();
-			wr.pos(bb.minX, bb.minY, bb.minZ); if(tex) wr.tex(-0.5, -0.5); wr.endVertex();
+			wr.pos(bb.minX, bb.maxY, bb.minZ); wr.endVertex();
+			wr.pos(bb.maxX, bb.maxY, bb.minZ); wr.endVertex();
+			wr.pos(bb.maxX, bb.minY, bb.minZ); wr.endVertex();
+			wr.pos(bb.minX, bb.minY, bb.minZ); wr.endVertex();
 		}
 	}
 

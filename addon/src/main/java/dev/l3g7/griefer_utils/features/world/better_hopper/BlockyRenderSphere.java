@@ -140,17 +140,17 @@ public class BlockyRenderSphere {
 			AxisAlignedBB bb = this.bb.offset(-cam.x, -cam.y, -cam.z);
 
 			if (up)
-				RenderUtil.drawFace(bb, UP, true, false);
+				RenderUtil.drawFace(bb, UP, true);
 			if (down)
-				RenderUtil.drawFace(bb, DOWN, true, false);
+				RenderUtil.drawFace(bb, DOWN, true);
 			if (north)
-				RenderUtil.drawFace(bb, NORTH, true, false);
+				RenderUtil.drawFace(bb, NORTH, true);
 			if (south)
-				RenderUtil.drawFace(bb, SOUTH, true, false);
+				RenderUtil.drawFace(bb, SOUTH, true);
 			if (west)
-				RenderUtil.drawFace(bb, WEST, true, false);
+				RenderUtil.drawFace(bb, WEST, true);
 			if (east)
-				RenderUtil.drawFace(bb, EAST, true, false);
+				RenderUtil.drawFace(bb, EAST, true);
 		}
 
 		@Override

@@ -43,8 +43,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 @Singleton
 public class LightLevelOverlay extends Feature {
@@ -132,10 +130,6 @@ public class LightLevelOverlay extends Feature {
 		double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * event.partialTicks;
 
 		GlStateManager.pushMatrix();
-		GlStateManager.enableDepth();
-		GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-		GlStateManager.enableTexture2D();
-
 		drawUtils().bindTexture(texture);
 		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
 		wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
@@ -149,15 +143,15 @@ public class LightLevelOverlay extends Feature {
 
 		for (Map.Entry<BlockPos, Integer> entry : lightPositions.entrySet()) {
 			BlockPos p = entry.getKey();
-			wr.pos(p.getX(), p.getY(), p.getZ()).tex(textureX[entry.getValue()], textureY[rot]).color(255, 255, 255, 255).endVertex();
-			wr.pos(p.getX(), p.getY(), p.getZ() + 1).tex(textureX[entry.getValue()], textureY[rot + 1]).color(255, 255, 255, 255).endVertex();
+			wr.pos(p.getX()    , p.getY(), p.getZ()    ).tex(textureX[entry.getValue()    ], textureY[rot    ]).color(255, 255, 255, 255).endVertex();
+			wr.pos(p.getX()    , p.getY(), p.getZ() + 1).tex(textureX[entry.getValue()    ], textureY[rot + 1]).color(255, 255, 255, 255).endVertex();
 			wr.pos(p.getX() + 1, p.getY(), p.getZ() + 1).tex(textureX[entry.getValue() + 1], textureY[rot + 1]).color(255, 255, 255, 255).endVertex();
-			wr.pos(p.getX() + 1, p.getY(), p.getZ()).tex(textureX[entry.getValue() + 1], textureY[rot]).color(255, 255, 255, 255).endVertex();
+			wr.pos(p.getX() + 1, p.getY(), p.getZ()    ).tex(textureX[entry.getValue() + 1], textureY[rot    ]).color(255, 255, 255, 255).endVertex();
 		}
 
 		Tessellator.getInstance().draw();
 		wr.setTranslation(0, 0, 0);
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 
 }

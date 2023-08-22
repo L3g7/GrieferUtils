@@ -28,24 +28,29 @@ import dev.l3g7.griefer_utils.settings.elements.*;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.utils.Material;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
 import java.util.Set;
 
 import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.minecraft.world.EnumSkyBlock.BLOCK;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.*;
 
 @Singleton
 public class LightBugESP extends Feature {
 
-	private final Set<BlockPos> lightBugs = new ConcurrentSet<>();
+	private final Set<AxisAlignedBB> lightBugs = new ConcurrentSet<>();
 	private int passedTicks = 0;
 
 	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
@@ -53,6 +58,11 @@ public class LightBugESP extends Feature {
 			if (getMainElement() != null)
 				((BooleanSetting) getMainElement()).set(false);
 		});
+
+	private final BooleanSetting inBlocks = new BooleanSetting()
+		.name("Lichtbugs in Blöcken anzeigen")
+		.description("Zeigt auch Lichtbugs, an die sich in Blöcken befinden.")
+		.icon("glitch_light_bulb");
 
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
@@ -81,7 +91,7 @@ public class LightBugESP extends Feature {
 		.name("Lichtbugs anzeigen")
 		.description("Zeigt Lichtbugs an, auch durch Wände.")
 		.icon("glitch_light_bulb")
-		.subSettings(key, triggerMode, new HeaderSetting(), range, updateDelay);
+		.subSettings(key, triggerMode, new HeaderSetting(), inBlocks, new HeaderSetting(), range, updateDelay);
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {
@@ -100,13 +110,30 @@ public class LightBugESP extends Feature {
 
 					int level = world().getLightFor(BLOCK, pos);
 
+					Block block = world().getBlockState(pos).getBlock();
+					if (block.getLightValue() == level || (!inBlocks.get() && block != Blocks.air))
+						continue;
+
 					// Check if no neighbor has a higher light level (-> the light source is there)
 					for (EnumFacing value : EnumFacing.VALUES)
 						if (world().getLightFor(BLOCK, pos.add(value.getDirectionVec())) > level)
 							continue loop;
 
-					if (world().getBlockState(pos).getBlock().getLightValue() != level)
-						lightBugs.add(pos);
+					// Check if block is visible
+					if (inBlocks.get()) {
+						boolean visible = false;
+						for (EnumFacing value : EnumFacing.VALUES) {
+							if (block.shouldSideBeRendered(world(), pos.offset(value), value)) {
+								visible = true;
+								break;
+							}
+						}
+
+						if (!visible)
+							continue;
+					}
+
+					lightBugs.add(new AxisAlignedBB(pos, pos.add(1, 1, 1)));
 				}
 			}
 		}
@@ -114,13 +141,31 @@ public class LightBugESP extends Feature {
 
 	@EventListener
 	private void onRenderWorldLast(RenderWorldLastEvent event) {
-		GL11.glDisable(GL_DEPTH_TEST);
-		for (BlockPos pos : lightBugs) {
-			AxisAlignedBB bb = new AxisAlignedBB(pos, pos.add(1, 1, 1));
-			RenderUtil.drawFilledBox(bb, new Color(0x30FFFF00, true), false);
-			RenderUtil.drawBoxOutlines(bb, new Color(0xFFFF00), 2f);
-		}
-		GL11.glEnable(GL_DEPTH_TEST);
+		Entity viewer = mc().getRenderViewEntity();
+		double viewerX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * event.partialTicks;
+		double viewerY = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * event.partialTicks;
+		double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * event.partialTicks;
+
+		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
+		wr.begin(GL_QUADS, DefaultVertexFormats.POSITION);
+		wr.setTranslation(-viewerX, -viewerY, -viewerZ);
+
+		GlStateManager.pushMatrix();
+		GlStateManager.enableBlend();
+		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glColor4f(1, 1, 0, 48 / 255f);
+		GlStateManager.disableTexture2D();
+		GlStateManager.disableDepth();
+
+		for (AxisAlignedBB bb : lightBugs)
+			RenderUtil.drawFilledBoxWhenRenderingStarted(bb, false);
+
+		Tessellator.getInstance().draw();
+		wr.setTranslation(0, 0, 0);
+		GlStateManager.enableDepth();
+		GlStateManager.disableBlend();
+		GlStateManager.enableTexture2D();
+		GlStateManager.popMatrix();
 	}
 
 }

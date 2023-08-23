@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
-import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -36,18 +35,16 @@ import java.util.List;
 @Singleton
 public class RepairValueViewer extends ItemInfo.ItemInfoSupplier {
 
-	private boolean formatValid = true;
-
 	private final StringSetting format = new StringSetting()
 		.name("Format")
 		.icon(Material.EMPTY_MAP)
 		.defaultValue("\\n&7Reparaturwert: %s")
-		.callback(v -> {
+		.setValidator(v -> {
 			try {
 				String.format(v, "");
-				formatValid = v.contains("%s"); // Account for empty strings
+				return v.contains("%s");
 			} catch (IllegalFormatException e) {
-				formatValid = false;
+				return false;
 			}
 		});
 
@@ -59,9 +56,6 @@ public class RepairValueViewer extends ItemInfo.ItemInfoSupplier {
 
 	@Override
 	public List<String> getToolTip(ItemStack itemStack) {
-		if (!formatValid)
-			return ImmutableList.of("§r", "§cUngültiges Reparaturwert-Format!");
-
 		int cost = itemStack.getRepairCost();
 
 		String text = String.format(ModColor.createColors(format.get()), "§r§" + getColor(itemStack) + cost + "§r");

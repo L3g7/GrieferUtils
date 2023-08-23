@@ -33,7 +33,7 @@ import net.minecraft.util.ChatComponentText;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UnknownFormatConversionException;
+import java.util.IllegalFormatException;
 
 import static dev.l3g7.griefer_utils.core.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -42,30 +42,28 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 public class ChatTime extends Feature {
 
 	private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat();
-	private boolean styleValid = false;
-	private boolean formatValid = false;
 
 	private final StringSetting style = new StringSetting()
 		.name("Design")
 		.icon(Material.EMPTY_MAP)
-		.callback(v -> {
+		.setValidator(v -> {
 			try {
-				String.format(v, "test");
-				styleValid = true;
-			} catch (UnknownFormatConversionException e) {
-				styleValid = false;
+				String.format(v, "");
+				return v.contains("%s");
+			} catch (IllegalFormatException e) {
+				return false;
 			}
 		});
 
 	private final StringSetting format = new StringSetting()
 		.name("Zeitformat")
 		.icon(Material.EMPTY_MAP)
-		.callback(v -> {
+		.setValidator(v -> {
 			try {
 				DATE_FORMAT.applyPattern(v);
-				formatValid = true;
+				return true;
 			} catch (IllegalArgumentException e) {
-				formatValid = false;
+				return false;
 			}
 		});
 
@@ -93,10 +91,8 @@ public class ChatTime extends Feature {
 
 	@EventListener(priority = LOWEST)
 	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
-		if (!styleValid || !formatValid)
-			return;
-
-		event.message = new ChatComponentText(String.format(style.get(), DATE_FORMAT.format(new Date())).replace('&', '§') + "§r").appendSibling(event.message);
+		String time = String.format(style.get(), DATE_FORMAT.format(new Date())).replace('&', '§') + "§r";
+		event.message = new ChatComponentText(time).appendSibling(event.message);
 	}
 
 }

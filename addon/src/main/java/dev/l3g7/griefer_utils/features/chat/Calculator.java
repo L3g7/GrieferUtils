@@ -74,6 +74,7 @@ public class Calculator extends Feature {
 		.icon("regex")
 		.defaultValue("{")
 		.callback(s -> this.updatePlaceholderPattern())
+		.setValidator(s -> !s.isEmpty())
 		.maxLength(1);
 
 	private final StringSetting placeholderEnd = (StringSetting) new StringSetting()
@@ -82,6 +83,7 @@ public class Calculator extends Feature {
 		.icon("regex")
 		.defaultValue("}")
 		.callback(s -> this.updatePlaceholderPattern())
+		.setValidator(s -> !s.isEmpty())
 		.maxLength(1);
 
 	private final BooleanSetting placeholder = new BooleanSetting()

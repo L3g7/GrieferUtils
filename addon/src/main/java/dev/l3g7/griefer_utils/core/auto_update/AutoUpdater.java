@@ -115,11 +115,6 @@ public class AutoUpdater {
 
 		for (int suffix = 1; targetFile.exists(); suffix++) {
 			if (!hash(targetFile).equals(preferredRelease.hash)) {
-				// Hash doesn't match, file corrupt? Try deleting
-				if (deleteJarSilently(targetFile.getAbsolutePath()))
-					break;
-
-				// File could not be deleted for now, use other file
 				targetFile = new File(jarFile.getParentFile(), "griefer-utils-v" + version + " - auto-updated #" + suffix + ".jar");
 			} else {
 				// Hash matches, don't download again

@@ -58,6 +58,7 @@ public class ChatTime extends Feature {
 	private final StringSetting format = new StringSetting()
 		.name("Zeitformat")
 		.icon(Material.EMPTY_MAP)
+		.callback(DATE_FORMAT::applyPattern)
 		.setValidator(v -> {
 			try {
 				DATE_FORMAT.applyPattern(v);

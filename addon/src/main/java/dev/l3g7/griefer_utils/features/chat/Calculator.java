@@ -73,7 +73,7 @@ public class Calculator extends Feature {
 		.description("Welches Zeichen den Anfang des Placeholders markieren soll.")
 		.icon("regex")
 		.defaultValue("{")
-		.callback(s -> this.updatePlaceholderPattern())
+		.callback(this::updatePlaceholderPattern)
 		.setValidator(s -> !s.isEmpty())
 		.maxLength(1);
 
@@ -82,7 +82,7 @@ public class Calculator extends Feature {
 		.description("Welches Zeichen das Ende des Placeholders markieren soll.")
 		.icon("regex")
 		.defaultValue("}")
-		.callback(s -> this.updatePlaceholderPattern())
+		.callback(this::updatePlaceholderPattern)
 		.setValidator(s -> !s.isEmpty())
 		.maxLength(1);
 

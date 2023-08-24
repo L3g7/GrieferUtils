@@ -55,7 +55,7 @@ public class ItemInfo extends Feature {
 
 	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
 		.defaultValue(HOLD)
-		.callback(m -> {
+		.callback(() -> {
 			if (getMainElement() != null)
 				((BooleanSetting) getMainElement()).set(false);
 		});

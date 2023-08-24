@@ -56,17 +56,17 @@ public class BetterSchematica extends Feature {
 		super.init();
 
 		if (Constants.SCHEMATICA) {
-			highlightBlocks.callback(b -> {
+			highlightBlocks.callback(() -> {
 				if (isEnabled())
 					SchematicaUtil.refresh();
 			});
 
-			enabled.callback(b -> {
+			enabled.callback(() -> {
 				if (highlightBlocks.get())
 					SchematicaUtil.refresh();
 			});
 
-			getCategory().getSetting().addCallback(b -> {
+			getCategory().getSetting().callback(() -> {
 				if (enabled.get() && highlightBlocks.get())
 					SchematicaUtil.refresh();
 			});

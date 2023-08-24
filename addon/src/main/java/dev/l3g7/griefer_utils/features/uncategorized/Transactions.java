@@ -142,7 +142,7 @@ public class Transactions extends Feature {
 		StringSetting filter = new StringSetting()
 			.name("Suche")
 			.icon("magnifying_glass")
-			.callback(s -> updateFilter());
+			.callback(this::updateFilter);
 
 		list.add(filter);
 		list.add(new HeaderSetting("§r").entryHeight(10));

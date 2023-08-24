@@ -120,6 +120,13 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 	}
 
 	/**
+	 * Adds a callback to be triggered when the held value changes.
+	 */
+	default S callback(Runnable callback) {
+		return callback(v -> callback.run());
+	}
+
+	/**
 	 * A storage for a value.
 	 */
 	class Storage<T> {

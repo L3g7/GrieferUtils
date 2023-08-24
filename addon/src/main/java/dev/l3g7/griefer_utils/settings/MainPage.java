@@ -48,7 +48,7 @@ public class MainPage {
 	private static final StringSetting filter = new StringSetting()
 		.name("Suche")
 		.icon("magnifying_glass")
-		.callback(s -> MainPage.onSearch());
+		.callback(MainPage::onSearch);
 
 	public static final List<SettingsElement> settings = new ArrayList<>(Arrays.asList(
 		new HeaderSetting("§r"),

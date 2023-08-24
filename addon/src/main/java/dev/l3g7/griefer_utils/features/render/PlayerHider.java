@@ -62,7 +62,7 @@ public class PlayerHider extends Feature {
 		.name("NPCs zeigen")
 		.icon("steve")
 		.defaultValue(true)
-		.callback(isActive -> {
+		.callback(() -> {
 			if (isOnGrieferGames())
 				for (EntityPlayer player : world().playerEntities)
 					updatePlayer(player);
@@ -76,7 +76,7 @@ public class PlayerHider extends Feature {
 		.name("Spieler verstecken")
 		.description("Versteckt andere Spieler.")
 		.icon("blindness")
-		.callback(isActive -> {
+		.callback(() -> {
 			if (isOnGrieferGames())
 				for (EntityPlayer player : world().playerEntities)
 					updatePlayer(player);

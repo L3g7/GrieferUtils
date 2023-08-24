@@ -35,7 +35,6 @@ import net.minecraft.util.IChatComponent;
 
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.event.events.network.TabListEvent.updatePlayerInfoList;
 import static dev.l3g7.griefer_utils.util.IChatComponentUtil.getComponents;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
@@ -58,7 +57,7 @@ public class StandardPrefixes extends Feature {
 		.description("Ob die Prefixe in der Tabliste geändert werden sollen.")
 		.icon("tab_list")
 		.defaultValue(true)
-		.callback(c -> updatePlayerInfoList());
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final BooleanSetting chat = new BooleanSetting()
 		.name("Im Chat")
@@ -75,20 +74,20 @@ public class StandardPrefixes extends Feature {
 		.description("Ob der eigene Prefix auch geändert werden sollen.")
 		.icon("steve")
 		.defaultValue(true)
-		.callback(c -> updatePlayerInfoList());
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Standard-Prefixe")
 		.description("Setzt die Prefixe jeder Person auf den standard Prefix des jeweiligen Ranges.")
 		.icon(Material.NAME_TAG)
-		.callback(c -> updatePlayerInfoList())
+		.callback(TabListEvent::updatePlayerInfoList)
 		.subSettings(chat, tab, self);
 
 	@Override
 	public void init() {
 		super.init();
-		getCategory().getSetting().addCallback(v -> updatePlayerInfoList());
+		getCategory().getSetting().callback(TabListEvent::updatePlayerInfoList);
 		tab.callback(enabled -> {
 			if (!enabled && !chat.get())
 				chat.set(true);

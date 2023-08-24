@@ -54,7 +54,7 @@ public class LightLevelOverlay extends Feature {
 	private int passedTicks = 0;
 
 	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
-		.callback(m -> {
+		.callback(() -> {
 			if (getMainElement() != null)
 				((BooleanSetting) getMainElement()).set(false);
 		});

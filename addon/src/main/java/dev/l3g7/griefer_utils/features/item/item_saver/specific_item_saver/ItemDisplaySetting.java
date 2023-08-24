@@ -54,7 +54,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 			.name("Anzeigename")
 			.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretten Items.")
 			.defaultValue(stack.getDisplayName())
-			.callback(this::name)
+			.callback(s -> name(s))
 			.icon(Material.BOOK_AND_QUILL);
 
 		drop = new BooleanSetting()

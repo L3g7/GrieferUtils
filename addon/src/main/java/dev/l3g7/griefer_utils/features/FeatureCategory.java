@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Causes the features's subsettings to be searchable, instead of the main element.
+ * Causes the feature's subsettings to be searchable, instead of the main element.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

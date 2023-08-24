@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.chat.text_component_tweaks;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -28,7 +29,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
-import static dev.l3g7.griefer_utils.event.events.network.TabListEvent.updatePlayerInfoList;
 import static net.minecraft.util.EnumChatFormatting.*;
 
 @Singleton
@@ -38,26 +38,26 @@ public class Enlighten extends TextComponentTweak {
 	private final BooleanSetting enlightenLightGray = new BooleanSetting()
 		.name("Hellgrau aufhellen")
 		.icon(new ItemStack(Blocks.wool, 1, 8))
-		.callback(c -> updatePlayerInfoList());
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final DropDownSetting<GrayMode> enlightenGray = new DropDownSetting<>(GrayMode.class)
 		.name("Grau zu ...")
 		.icon(new ItemStack(Blocks.wool, 1, 7))
 		.defaultValue(GrayMode.GRAY)
-		.callback(c -> updatePlayerInfoList());
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final DropDownSetting<BlackMode> enlightenBlack = new DropDownSetting<>(BlackMode.class)
 		.name("Schwarz zu ...")
 		.icon(new ItemStack(Blocks.wool, 1, 15))
 		.defaultValue(BlackMode.BLACK)
-		.callback(c -> updatePlayerInfoList());
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Aufhellen")
 		.description("Hellt dunkle Texte auf.")
 		.icon("light_bulb")
-		.callback(c -> updatePlayerInfoList())
+		.callback(TabListEvent::updatePlayerInfoList)
 		.subSettings(enlightenLightGray, enlightenGray, enlightenBlack,
 			new HeaderSetting("§r").scale(.4).entryHeight(10),
 			chat, tab, item);

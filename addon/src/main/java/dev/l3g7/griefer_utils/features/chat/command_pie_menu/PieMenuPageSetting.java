@@ -42,7 +42,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 	public PieMenuPageSetting(String name, ArrayList<SettingsElement> entrySettings) {
 		this.name = new StringSetting()
 			.name("Name")
-			.callback(this::name)
+			.callback(s -> name(s))
 			.defaultValue(defaultName = name)
 			.icon(Material.BOOK_AND_QUILL);
 

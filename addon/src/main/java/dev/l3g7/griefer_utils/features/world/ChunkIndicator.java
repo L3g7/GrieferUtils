@@ -46,7 +46,7 @@ import static net.minecraft.init.Blocks.stained_hardened_clay;
 public class ChunkIndicator extends Feature {
 
 	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
-		.callback(m -> {
+		.callback(() -> {
 			if (getMainElement() != null)
 				((BooleanSetting) getMainElement()).set(false);
 		});

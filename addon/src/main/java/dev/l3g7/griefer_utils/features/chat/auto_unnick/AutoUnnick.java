@@ -35,7 +35,6 @@ import net.minecraft.util.IChatComponent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.event.events.network.TabListEvent.updatePlayerInfoList;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 
 @Singleton
@@ -45,7 +44,7 @@ public class AutoUnnick extends Feature {
 		.name("In Tabliste")
 		.description("Ob Spieler in der Tabliste entnickt werden sollen.")
 		.icon("tab_list")
-		.callback(c -> updatePlayerInfoList());
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final BooleanSetting chat = new BooleanSetting()
 		.name("In Chat")
@@ -58,13 +57,13 @@ public class AutoUnnick extends Feature {
 		.name("Automatisch entnicken")
 		.description("Zeigt statt Nicks den echten Namen an.")
 		.icon(Material.NAME_TAG)
-		.callback(c -> updatePlayerInfoList())
+		.callback(TabListEvent::updatePlayerInfoList)
 		.subSettings(chat, tab);
 
 	@Override
 	public void init() {
 		super.init();
-		getCategory().getSetting().addCallback(v -> updatePlayerInfoList());
+		getCategory().getSetting().callback(TabListEvent::updatePlayerInfoList);
 	}
 
 	@EventListener(priority = Priority.HIGH)

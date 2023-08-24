@@ -37,6 +37,12 @@ public class TriggerModeSetting extends DropDownSetting<TriggerModeSetting.Trigg
 	}
 
 	@Override
+	public TriggerModeSetting callback(Runnable callback) {
+		return (TriggerModeSetting) super.callback(callback);
+	}
+
+
+	@Override
 	public TriggerModeSetting defaultValue(TriggerMode value) {
 		return ((TriggerModeSetting) super.defaultValue(value));
 	}

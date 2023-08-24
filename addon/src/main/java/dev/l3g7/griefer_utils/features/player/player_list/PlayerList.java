@@ -76,7 +76,7 @@ public abstract class PlayerList extends Feature {
 		.name("in Tabliste")
 		.icon("tab_list")
 		.defaultValue(ICON)
-		.callback(a -> TabListEvent.updatePlayerInfoList());
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	public final DropDownSetting<MarkAction> chatAction = new DropDownSetting<>(MarkAction.class)
 		.name("in Chat")
@@ -94,11 +94,11 @@ public abstract class PlayerList extends Feature {
 		.defaultValue(true);
 
 	public final PlayerListSetting customEntries = new PlayerListSetting()
-		.callback(l -> TabListEvent.updatePlayerInfoList());
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	@MainElement
 	public final BooleanSetting enabled = new BooleanSetting()
-		.callback(v -> TabListEvent.updatePlayerInfoList());
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	public PlayerList(String name, String description, String chatIcon, Object settingIcon, String ownDescription, ModColor color, int paneType, String message, String url) {
 		enabled
@@ -134,7 +134,7 @@ public abstract class PlayerList extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		getCategory().getSetting().addCallback(v -> TabListEvent.updatePlayerInfoList());
+		getCategory().getSetting().callback(TabListEvent::updatePlayerInfoList);
 	}
 
 	/**

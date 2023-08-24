@@ -217,7 +217,7 @@ public class InventoryValue extends Module {
 		for(String string : new String[] {lore.get(lore.size() - 2), stack.getDisplayName()}) {
 			string = string.toLowerCase()
 				.replaceAll("§.", "")
-				.replaceAll("(?!\\d).(\\d{3})", "\1\2")
+				.replaceAll("(?<=\\d)\\.(\\d{3})", "$1")
 				.replaceAll(" ?mio", "m")
 				.replace("m", "kk");
 

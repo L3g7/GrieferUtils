@@ -215,6 +215,9 @@ public class InventoryValue extends Module {
 			return -1;
 
 		for(String string : new String[] {lore.get(lore.size() - 2), stack.getDisplayName()}) {
+			if (string.startsWith("§7Signiert von"))
+				continue;
+
 			string = string.toLowerCase()
 				.replaceAll("§.", "")
 				.replaceAll("(?<=\\d)\\.(\\d{3})", "$1")

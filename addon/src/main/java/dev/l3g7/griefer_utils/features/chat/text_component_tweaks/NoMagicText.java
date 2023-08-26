@@ -31,7 +31,7 @@ public class NoMagicText extends TextComponentTweak {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Magischen Text deaktivieren")
-		.description("§r§fDeaktiviert den magischen / verschleierten / verschlüsselten Stil in Chatnachrichten.")
+		.description("Deaktiviert den magischen / verschleierten / verschlüsselten Stil in Chatnachrichten.")
 		.icon(Material.BLAZE_POWDER)
 		.callback(TabListEvent::updatePlayerInfoList)
 		.subSettings(chat, tab, item);

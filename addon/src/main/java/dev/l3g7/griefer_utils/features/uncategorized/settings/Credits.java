@@ -38,6 +38,7 @@ public class Credits {
 	public static final CategorySetting category = new CategorySetting()
 		.name("Credits")
 		.icon("labymod:settings/tabs/multiplayer")
+		.description("Das Team hinter GrieferUtils, sowie Copyright und Lizenzen.")
 		.subSettings(
 			new Credits.IconSetting("Lizensiert unter Apache License 2.0", "scroll"),
 			new HeaderSetting().entryHeight(11),

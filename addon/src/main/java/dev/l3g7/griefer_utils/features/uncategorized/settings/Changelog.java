@@ -72,11 +72,11 @@ public class Changelog {
 			entries.sort(Comparator.comparing(SettingsElement::getDisplayName, new VersionComparator()));
 			category.subSettings(entries);
 
-			category.name("§y§fChangelog")
-				.description()
+			category.name("Changelog")
+				.description("Was sich in den einzelnen Updates von GrieferUtils verändert hat.")
 				.settingsEnabled(true);
 		}).orElse(() ->
-			category.name("§y§c§mChangelog")
+			category.name("§c§mChangelog")
 				.description("§cEs gab einen Fehler.")
 				.settingsEnabled(false)
 		);

@@ -101,6 +101,9 @@ public class ServerPerformance extends Module {
 		int tripTime = playerInfo.getResponseTime() / 2;
 
 		long currentWorldTime = packet.getTotalWorldTime();
+		if (currentWorldTime < 0) // the doDayLightCycle gamerule is disabled
+			return;
+
 		long currentMillis = System.currentTimeMillis();
 
 		if (lastWorldTime == null) {

@@ -79,6 +79,9 @@ public class EnterItemValueGui extends GuiScreen {
 		if (keyCode == 1)
 			mc().currentScreen = previousScreen;
 
+		if (typedChar == '-')
+			return;
+
 		String previousText = textField.getText();
 
 		if (keyCode == 211 // Account for delete in front of a dot
@@ -115,11 +118,15 @@ public class EnterItemValueGui extends GuiScreen {
 			return;
 
 		int cursorPos = textField.getCursorPosition();
+		int selectionEnd = textField.getSelectionEnd();
 		textField.setText(Constants.DECIMAL_FORMAT_98.format(number));
 
-		cursorPos += (textField.getText().length() - previousText.length()) / 2;
+		int delta = (textField.getText().length() - previousText.length()) / 2;
+		cursorPos += delta;
+		selectionEnd += delta;
 
 		textField.setCursorPosition(cursorPos);
+		textField.setSelectionPos(selectionEnd);
 	}
 
 	public void updateScreen() {

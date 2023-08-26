@@ -85,13 +85,18 @@ public abstract class Module extends SimpleTextModule {
 	}
 
 	@OnStartupComplete
-	public static void fixMissingCategory() {
+	public static void fixModules() {
 		// Fix bug where category doesn't appear in module gui
 		if (!ModuleCategoryRegistry.getCategories().contains(CATEGORY))
 			ModuleCategoryRegistry.getCategories().add(CATEGORY);
 
 		if (!ModuleCategoryRegistry.ADDON_CATEGORY_LIST.contains(CATEGORY))
 			ModuleCategoryRegistry.ADDON_CATEGORY_LIST.add(CATEGORY);
+
+		// Fix the modules' settings not having descriptions
+		for (net.labymod.ingamegui.Module module : Module.getModules())
+			if (module.getCategory() == CATEGORY)
+				module.getBooleanElement().setDescriptionText(module.getDescription());
 	}
 
 	private final String name;

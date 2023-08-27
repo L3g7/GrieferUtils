@@ -48,9 +48,14 @@ public class PortalCooldown extends Feature {
 
 		if (msg.equals("§r§8[§r§6GrieferGames§r§8] §r§fDu bist im §r§5Portalraum§r§f. Wähle deinen Citybuild aus.§r")) {
 			timeoutEnd = System.currentTimeMillis() + 12_000;
-		} else if (msg.startsWith("§r§cKicked whilst connecting") && !msg.contains("Du hast dich zu schnell wieder eingeloggt.")) {
-			if (MinecraftUtil.getServerFromScoreboard().equals("Portal"))
-				timeoutEnd = System.currentTimeMillis() + 12_000;
+		}
+
+		if (!MinecraftUtil.getServerFromScoreboard().equals("Portal"))
+			return;
+
+		if ((msg.startsWith("§r§cKicked whilst connecting") && !msg.contains("Du hast dich zu schnell wieder eingeloggt."))
+			|| msg.startsWith("§r§cCould not connect to a default or fallback server")) {
+			timeoutEnd = System.currentTimeMillis() + 12_000;
 		}
 	}
 

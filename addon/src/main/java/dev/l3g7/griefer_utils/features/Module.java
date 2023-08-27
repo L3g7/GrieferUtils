@@ -32,6 +32,7 @@ import net.labymod.ingamegui.enums.EnumModuleFormatting;
 import net.labymod.ingamegui.moduletypes.SimpleModule;
 import net.labymod.ingamegui.moduletypes.SimpleTextModule;
 import net.labymod.main.LabyMod;
+import net.labymod.settings.elements.BooleanElement;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 
@@ -126,6 +127,13 @@ public abstract class Module extends SimpleTextModule {
 	public int getSortingId() { return 0; }
 	public ModuleCategory getCategory() { return CATEGORY; }
 	public EnumModuleFormatting getDisplayFormatting() { return super.getDisplayFormatting(); }
+
+	@Override
+	public BooleanElement getBooleanElement() {
+		BooleanElement element = super.getBooleanElement();
+		element.setDescriptionText(description);
+		return element;
+	}
 
 	@Override
 	public void fillSubSettings(List<SettingsElement> list) {

@@ -32,9 +32,11 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
+import dev.l3g7.griefer_utils.util.ChatLineUtil;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.IChatComponent;
 
 import java.util.List;
 
@@ -98,6 +100,8 @@ public class ChatReactor extends Feature {
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
+		IChatComponent component = ChatLineUtil.getUnmodifiedIChatComponent(event.component);
+
 		for (SettingsElement element : enabled.getSubSettings().getElements()) {
 			if (!(element instanceof ReactionDisplaySetting))
 				continue;
@@ -109,7 +113,7 @@ public class ChatReactor extends Feature {
 				continue;
 
 			try {
-				reaction.processMessage(event.component.getUnformattedText());
+				reaction.processMessage(component.getUnformattedText());
 			} catch (Exception e) {
 				display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
 				setting.set(false);

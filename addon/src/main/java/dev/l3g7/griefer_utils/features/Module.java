@@ -114,8 +114,8 @@ public abstract class Module extends SimpleTextModule {
 
 	public String getControlName() { return name; }
 
-	public String[] getKeys() { return new String[]{name}; }
-	public String[] getDefaultKeys() { return new String[]{name}; }
+	public String[] getKeys() { return getDefaultKeys(); }
+	public String[] getDefaultKeys() { return new String[]{ name.replace("\n", "")}; }
 
 	public ControlElement.IconData getIconData() { return iconData; }
 	public String getSettingName() { return configKey; }
@@ -139,7 +139,7 @@ public abstract class Module extends SimpleTextModule {
 	public void fillSubSettings(List<SettingsElement> list) {
 		list.add(new HeaderSetting().entryHeight(8));
 		list.add(new HeaderSetting("§r§l" + Constants.ADDON_NAME).scale(1.3));
-		list.add(new HeaderSetting(getControlName().replace("\n", " ")));
+		list.add(new HeaderSetting(getControlName().replace("\n", "")));
 		super.fillSubSettings(list);
 		list.add(new HeaderSetting());
 	}

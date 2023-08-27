@@ -81,7 +81,7 @@ public class SpawnCounter extends Module {
 			roundsFlown = Config.get(configKey + "Flown").getAsInt();
 
 		if (Config.has(configKey + "Ran"))
-			roundsFlown = Config.get(configKey + "Ran").getAsInt();
+			roundsRan = Config.get(configKey + "Ran").getAsInt();
 	}
 
 	@Override

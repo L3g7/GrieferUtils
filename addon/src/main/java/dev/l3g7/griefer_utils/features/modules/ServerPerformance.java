@@ -55,7 +55,7 @@ public class ServerPerformance extends Module {
 		.defaultValue(DisplayMode.PERCENT);
 
 	public ServerPerformance() {
-		super("Server-Performance", "Zeigt eine (relativ genaue) Schätzung der aktuellen Server-Performance an.", "server-performance", new IconData("griefer_utils/icons/measurement_circle_thingy.png"));
+		super("Server-\nPerformance", "Zeigt eine (relativ genaue) Schätzung der aktuellen Server-Performance an.", "server-performance", new IconData("griefer_utils/icons/measurement_circle_thingy.png"));
 	}
 
 	@Override

@@ -139,7 +139,7 @@ public abstract class Module extends SimpleTextModule {
 	public void fillSubSettings(List<SettingsElement> list) {
 		list.add(new HeaderSetting().entryHeight(8));
 		list.add(new HeaderSetting("§r§l" + Constants.ADDON_NAME).scale(1.3));
-		list.add(new HeaderSetting(getControlName()));
+		list.add(new HeaderSetting(getControlName().replace("\n", " ")));
 		super.fillSubSettings(list);
 		list.add(new HeaderSetting());
 	}

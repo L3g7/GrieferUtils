@@ -81,7 +81,7 @@ public class PotionTimer extends Module {
 	);
 
 	public PotionTimer() {
-		super("Orbtrank-Timer", "Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.", "potion-timer", new ControlElement.IconData(Material.FEATHER));
+		super("Orbtrank-\nTimer", "Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.", "potion-timer", new ControlElement.IconData(Material.FEATHER));
 	}
 
 	@Override

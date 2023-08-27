@@ -39,6 +39,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -50,9 +51,16 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 public class SpawnCounter extends Module {
 
 	private static final List<String> excludedCitybuilds = ImmutableList.of("Nature", "Extreme", "Lava", "Wasser");
+	private static final byte[] quadrantData = new byte[] {
+		-1, -1,
+		-1, +1,
+		+1, -1,
+		+1, +1
+	};
 
-	private AxisAlignedBB spawn;
-	private AxisAlignedBB[] quadrants;
+	private World spawnWorld;
+	private AxisAlignedBB spawnBox;
+	private BlockPos spawnMiddle;
 	private byte startQuadrant = -1;
 	private byte visitedQuadrants = 0;
 
@@ -158,11 +166,14 @@ public class SpawnCounter extends Module {
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {
-		if (player() == null || spawn == null)
+		if (player() == null || spawnWorld == null)
 			return;
 
+		boolean isInSpawnBox = player().posX > spawnBox.minX && player().posX < spawnBox.maxX
+			&& player().posZ > spawnBox.minZ && player().posZ < spawnBox.maxZ;
+
 		// Rough check if the player is at spawn (and not in another world)
-		if (world().getBlockState(new BlockPos(player().posX, 10, player().posZ)).getBlock() != Blocks.bedrock || isPlayerInBB(spawn)) {
+		if (isInSpawnBox || world() != spawnWorld) {
 			visitedQuadrants = 0;
 			startQuadrant = -1;
 			return;
@@ -171,8 +182,13 @@ public class SpawnCounter extends Module {
 		if (player().capabilities.isFlying)
 			hasFlown = true;
 
-		for (byte i = 0; i < quadrants.length; i++) {
-			if (!isPlayerInBB(quadrants[i]))
+		BlockPos playerPos = player().getPosition().subtract(spawnMiddle);
+
+		for (byte i = 0; i < 4; i++) {
+			byte x = quadrantData[i * 2];
+			byte z = quadrantData[i * 2 + 1];
+
+			if (Math.signum(playerPos.getX()) != x || Math.signum(playerPos.getZ()) != z)
 				continue;
 
 			if (startQuadrant == -1)
@@ -197,13 +213,7 @@ public class SpawnCounter extends Module {
 				Config.set(configKey + "Ran", new JsonPrimitive(roundsRan));
 			}
 			Config.save();
-			return;
 		}
-	}
-
-	private boolean isPlayerInBB(AxisAlignedBB bb) {
-		return player().posX > bb.minX && player().posX < bb.maxX
-			&& player().posZ > bb.minZ && player().posZ < bb.maxZ;
 	}
 
 	@EventListener
@@ -216,7 +226,7 @@ public class SpawnCounter extends Module {
 
 		visitedQuadrants = 0;
 		startQuadrant = -1;
-		spawn = null;
+		spawnBox = null;
 		determineSpawn(player().getPosition().down());
 	}
 
@@ -230,16 +240,11 @@ public class SpawnCounter extends Module {
 			if (!isSpawnMiddle(a) || !isSpawnMiddle(b))
 				continue;
 
-			BlockPos origin = new BlockPos(Math.max(a.getX(), b.getX()), pos.getY(), Math.max(a.getZ(), b.getZ()));
+			spawnMiddle = new BlockPos(Math.max(a.getX(), b.getX()), pos.getY(), Math.max(a.getZ(), b.getZ()));
 			int spawnWidth = getServerFromScoreboard().equals("CBE") ? 8 : 18;
 
-			spawn = new AxisAlignedBB(origin, origin).expand(spawnWidth, 0, spawnWidth);
-			quadrants = new AxisAlignedBB[] {
-				new AxisAlignedBB(origin.getX() - 55, 0, origin.getZ() - 55, origin.getX(), 0, origin.getZ()),
-				new AxisAlignedBB(origin.getX() - 55, 0, origin.getZ(), origin.getX(), 0, origin.getZ() + 55),
-				new AxisAlignedBB(origin.getX(), 0, origin.getZ() - 55, origin.getX() + 55, 0, origin.getZ()),
-				new AxisAlignedBB(origin.getX(), 0, origin.getZ(), origin.getX() + 55, 0, origin.getZ() + 55)
-			};
+			spawnBox = new AxisAlignedBB(spawnMiddle, spawnMiddle).expand(spawnWidth, 0, spawnWidth);
+			spawnWorld = world();
 
 			return;
 		}

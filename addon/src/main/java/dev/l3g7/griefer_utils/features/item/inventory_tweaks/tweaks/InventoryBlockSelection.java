@@ -111,11 +111,11 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 		if (stack == null || !stack.isItemEqual(requiredStack) || ItemSaver.getSetting(stack) != null)
 			return -1;
 
-		if (!compressed.get())
-			return 0;
-
 		if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("stackSize"))
 			return Integer.MAX_VALUE;
+
+		if (!compressed.get())
+			return 0;
 
 		if (!stack.getTagCompound().getBoolean("warningDisplayed"))
 			return 0;

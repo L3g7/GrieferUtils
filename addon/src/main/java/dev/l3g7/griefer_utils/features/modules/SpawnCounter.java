@@ -50,7 +50,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 @Singleton
 public class SpawnCounter extends Module {
 
-	private static final List<String> excludedCitybuilds = ImmutableList.of("Nature", "Extreme", "Lava", "Wasser");
+	private static final List<String> excludedCitybuilds = ImmutableList.of("Nature", "Extreme", "Lava", "Wasser", "CBE");
 	private static final byte[] quadrantData = new byte[] {
 		-1, -1,
 		-1, +1,
@@ -226,7 +226,7 @@ public class SpawnCounter extends Module {
 
 		visitedQuadrants = 0;
 		startQuadrant = -1;
-		spawnBox = null;
+		spawnWorld = null;
 		determineSpawn(player().getPosition().down());
 	}
 
@@ -241,9 +241,8 @@ public class SpawnCounter extends Module {
 				continue;
 
 			spawnMiddle = new BlockPos(Math.max(a.getX(), b.getX()), pos.getY(), Math.max(a.getZ(), b.getZ()));
-			int spawnWidth = getServerFromScoreboard().equals("CBE") ? 8 : 18;
 
-			spawnBox = new AxisAlignedBB(spawnMiddle, spawnMiddle).expand(spawnWidth, 0, spawnWidth);
+			spawnBox = new AxisAlignedBB(spawnMiddle, spawnMiddle).expand(18, 0, 18);
 			spawnWorld = world();
 
 			return;

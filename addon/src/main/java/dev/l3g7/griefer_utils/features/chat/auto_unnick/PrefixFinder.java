@@ -18,8 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.chat.auto_unnick;
 
-import dev.l3g7.griefer_utils.core.util.IOUtil;
-import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 
 public class PrefixFinder {
 	public static String[] prefixes = null;
@@ -97,16 +97,9 @@ public class PrefixFinder {
 		return formattingCode;
 	}
 
-	@OnEnable
-	private static void init() {
-		IOUtil.read("https://grieferutils.l3g7.dev/v2/repeating_prefixes").asJsonArray(jsonArray -> {
-			String[] prefixes = new String[jsonArray.size()];
-
-			for (int i = 0; i < jsonArray.size(); i++)
-				prefixes[i] = jsonArray.get(i).getAsString();
-
-			PrefixFinder.prefixes = prefixes;
-		});
+	@EventListener
+	private static void onWebData(WebDataReceiveEvent event) {
+		prefixes = event.data.repeatingPrefixes;
 	}
 
 }

@@ -18,10 +18,12 @@
 
 package dev.l3g7.griefer_utils.settings;
 
+import dev.l3g7.griefer_utils.Main;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
+import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import net.labymod.addon.online.info.AddonInfo;
 
@@ -33,22 +35,24 @@ import static net.labymod.utils.ModColor.YELLOW;
 @Singleton
 public class AddonDescriptor {
 
+	private String description = YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :(";
+
+	@EventListener
+	private void onWebData(WebDataReceiveEvent event) {
+		// Load description from server, so it can be used as news board
+		description = event.data.addonDescription;
+
+		if (Main.getInstance().about != null)
+			updateDescription();
+	}
+
 	@OnStartupComplete
 	public void updateDescription() {
 		AddonInfo addonInfo = AddonUtil.getInfo();
-		if (addonInfo != null) {
-			Reflection.set(addonInfo, "L3g7, L3g73 \u2503 v" + AddonUtil.getVersion(), "author");
+		if (addonInfo == null)
+			return;
 
-			updateDescription(YELLOW + "Verbinde mit GrieferUtils-Server ...");
-
-			// Load description from server, so it can be used as news board
-			IOUtil.read("https://grieferutils.l3g7.dev/v2/addon_description")
-				.asJsonString(this::updateDescription)
-				.orElse(() -> updateDescription(YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :("));
-		}
-	}
-
-	private void updateDescription(String description) {
+		Reflection.set(addonInfo, "L3g7, L3g73 \u2503 v" + AddonUtil.getVersion(), "author");
 		Reflection.set(AddonUtil.getInfo(), description, "description");
 	}
 

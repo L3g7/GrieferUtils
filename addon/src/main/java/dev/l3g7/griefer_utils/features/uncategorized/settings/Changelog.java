@@ -18,14 +18,14 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
-import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
-import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.misc.gui.guis.ChangelogScreen;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
@@ -45,55 +45,44 @@ public class Changelog {
 		.settingsEnabled(false)
 		.subSettings();
 
-	public Changelog() {
-		IOUtil.read("https://grieferutils.l3g7.dev/v2/changelog").asJsonObject(releases -> {
-			List<SettingsElement> entries = new ArrayList<>();
-			for (Map.Entry<String, JsonElement> entry : releases.entrySet()) {
+	@EventListener
+	private void onWebData(WebDataReceiveEvent event) {
+		List<SettingsElement> entries = new ArrayList<>();
 
-				if (!ChangelogScreen.hasData()) {
-					ChangelogScreen.setData(
-						entry.getKey(),
-						entry.getValue().getAsString().substring("Changelog:".length())
-					);
-				}
+		if (AutoUpdateSettings.releaseChannel.get() == ReleaseInfo.ReleaseChannel.BETA)
+			ChangelogScreen.setData(AddonUtil.getVersion(), event.data.changelog.beta.substring("Changelog:".length()));
 
-				String title = "§l" + entry.getKey();
-
-				entries.add(new CategorySetting()
-					.name(" " + title)
-					.subSettings(Arrays.asList(
-						new HeaderSetting("§r"),
-						new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-						new HeaderSetting("§e§lChangelog - " + title).scale(.7),
-						new TextSetting(393).addText(entry.getValue().getAsString().replace("\r", ""))
-					)));
+		for (Map.Entry<String, String> entry : event.data.changelog.all.entrySet()) {
+			if (!ChangelogScreen.hasData()) {
+				ChangelogScreen.setData(
+					entry.getKey(),
+					entry.getValue().substring("Changelog:".length())
+				);
 			}
 
-			entries.sort(Comparator.comparing(SettingsElement::getDisplayName, new VersionComparator()));
-			category.subSettings(entries);
+			String title = "§l" + entry.getKey();
 
-			category.name("Changelog")
-				.description("Was sich in den einzelnen Updates von GrieferUtils verändert hat.")
-				.settingsEnabled(true);
-		}).orElse(() ->
-			category.name("§c§mChangelog")
-				.description("§cEs gab einen Fehler.")
-				.settingsEnabled(false)
-		);
+			entries.add(new CategorySetting()
+				.name(" " + title)
+				.subSettings(Arrays.asList(
+					new HeaderSetting("§r"),
+					new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
+					new HeaderSetting("§e§lChangelog - " + title).scale(.7),
+					new TextSetting(393).addText(entry.getValue().replace("\r", ""))
+				)));
+		}
+
+		entries.sort(Comparator.comparing(SettingsElement::getDisplayName, new VersionComparator()));
+		category.subSettings(entries);
+
+		category.name("Changelog")
+			.description("Was sich in den einzelnen Updates von GrieferUtils verändert hat.")
+			.settingsEnabled(true);
 	}
 
 	@OnEnable
 	public void onEnable() {
-		if (AutoUpdater.hasUpdated) {
-			if (AutoUpdateSettings.releaseChannel.get() == ReleaseInfo.ReleaseChannel.BETA) {
-				// Get changelog for beta version
-				IOUtil.read("https://grieferutils.l3g7.dev/v2/changelog/beta").asJsonString(changelog -> {
-					ChangelogScreen.setData(AddonUtil.getVersion(), changelog.substring("Changelog:".length()));
-					ChangelogScreen.trigger();
-				});
-			} else
-				// Show changelog for stable version
-				ChangelogScreen.trigger();
-		}
+		if (AutoUpdater.hasUpdated)
+			ChangelogScreen.trigger();
 	}
 }

@@ -64,7 +64,7 @@ public class LibOlmLoader {
 			if (!libFile.exists()) {
 				// Download library
 				libFile.getParentFile().mkdirs();
-				String url = "https://grieferutils.l3g7.dev/v2/prebuilt/libolm.3.2.15.dylib";
+				String url = "https://grieferutils.l3g7.dev/v3/prebuilt/libolm.3.2.15.dylib";
 				HttpsURLConnection c = (HttpsURLConnection) new URL(url).openConnection();
 				c.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
 				c.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");

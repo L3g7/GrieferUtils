@@ -81,7 +81,7 @@ public class AutoUpdater {
 			return;
 
 		// Get info about the latest release
-		InputStream in = read("https://grieferutils.l3g7.dev/v2/latest_release");
+		InputStream in = read("https://grieferutils.l3g7.dev/v3/latest_release");
 		@SuppressWarnings("UnstableApiUsage")
 		Map<String, ReleaseInfo> releases = GSON.fromJson(new InputStreamReader(in), new TypeToken<Map<String, ReleaseInfo>>(){}.getType());
 		in.close();

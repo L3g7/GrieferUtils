@@ -18,14 +18,11 @@
 
 package dev.l3g7.griefer_utils.misc.badges;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
-import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.Credits;
+import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.misc.matrix.MatrixClient;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.user.User;
@@ -42,7 +39,7 @@ public class GrieferUtilsUserManager {
 	private static final Map<UUID, LabyGroup> users = new ConcurrentHashMap<>();
 
 	private static long lastRequest = 0;
-	private static final Map<UUID, GrieferUtilsGroup> specialBadges = new HashMap<>();
+	private static Map<UUID, GrieferUtilsGroup> specialBadges = new HashMap<>();
 	private static final Set<UUID> queuedUsers = new ConcurrentSet<>();
 
 	public static boolean isSpecial(String uuid) {
@@ -103,27 +100,9 @@ public class GrieferUtilsUserManager {
 		});
 	}
 
-	static {
-		IOUtil.read("https://grieferutils.l3g7.dev/v2/special_badges").asJsonObject(object -> {
-			for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-				JsonObject groupData = entry.getValue().getAsJsonObject();
-				String title = groupData.has("title") ? groupData.get("title").getAsString() : null;
-				int color_with_labymod = 0xFFFFFF;
-				int color_without_labymod = 0xFFFFFF;
-				if (groupData.has("color")) {
-					JsonElement color = groupData.get("color");
-					if (color.isJsonPrimitive()) {
-						color_with_labymod = color_without_labymod = color.getAsInt();
-					} else {
-						color_with_labymod = color.getAsJsonObject().get("with_labymod").getAsInt();
-						color_without_labymod = color.getAsJsonObject().get("without_labymod").getAsInt();
-					}
-				}
-
-				specialBadges.put(UUID.fromString(entry.getKey()), new GrieferUtilsGroup(color_with_labymod, color_without_labymod, title));
-			}
-			Credits.addTeam();
-		});
+	@EventListener
+	private static void onWebData(WebDataReceiveEvent event) {
+		specialBadges = event.data.specialBadges;
 	}
 
 }

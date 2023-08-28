@@ -20,7 +20,9 @@ package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.BotShop;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.GuiBotShops;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.Farm;
@@ -30,6 +32,7 @@ import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.Free
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.ItemFilter;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.misc.WebAPI;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.item.ItemStack;
 
@@ -41,57 +44,49 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 public class DataHandler {
 
-	public static void requestMetaData() {
-		new Thread(() -> {
-			IOUtil.read("https://griefer.info/grieferutils/farm-meta").asJsonObject(response -> {
-				for (JsonElement entry : response.getAsJsonArray("entity")) {
-					JsonObject entity = entry.getAsJsonObject();
-					String id = entity.get("id").getAsString();
-					String name = entity.get("name").getAsString();
-					SpawnerType type = SpawnerType.SPAWNER_TYPES.get(name);
-					if (type != null)
-						type.setId(id);
-				}
+	@EventListener
+	private static void onWebDataReceive(WebDataReceiveEvent event) {
+		IOUtil.read("https://griefer.info/grieferutils/farm-meta").asJsonObject(response -> {
+			for (JsonElement entry : response.getAsJsonArray("entity")) {
+				JsonObject entity = entry.getAsJsonObject();
+				String id = entity.get("id").getAsString();
+				String name = entity.get("name").getAsString();
+				SpawnerType type = SpawnerType.SPAWNER_TYPES.get(name);
+				if (type != null)
+					type.setId(id);
+			}
 
-				requestFarms();
-			});
+			requestFarms();
+		});
 
-			IOUtil.read("https://grieferutils.l3g7.dev/v2/griefer_info_items").asJsonObject(itemResponse -> {
-				onItemResponse(itemResponse);
+		IOUtil.read("https://griefer.info/grieferutils/freestuff-meta").asJsonArray(metaResponse -> {
+			List<String> missingItems = new ArrayList<>();
 
-				IOUtil.read("https://griefer.info/grieferutils/freestuff-meta").asJsonArray(metaResponse -> {
-					List<String> missingItems = new ArrayList<>();
+			for (JsonElement jsonElement : metaResponse) {
+				JsonObject item = jsonElement.getAsJsonObject();
+				String id = item.get("id").getAsString();
+				String name = item.get("name").getAsString();
+				ItemFilter filter = ItemFilter.FILTER.get(name);
+				if (filter != null)
+					filter.setId(id);
+				else
+					missingItems.add(name + "," + id);
+			}
 
-					for (JsonElement jsonElement : metaResponse) {
-						JsonObject item = jsonElement.getAsJsonObject();
-						String id = item.get("id").getAsString();
-						String name = item.get("name").getAsString();
-						ItemFilter filter = ItemFilter.FILTER.get(name);
-						if (filter != null)
-							filter.setId(id);
-						else
-							missingItems.add(name + "," + id);
-					}
+			if (!missingItems.isEmpty())
+				BugReporter.reportError(new Throwable("Missing FSM-Filter: " + String.join(";", missingItems)));
 
-					if (!missingItems.isEmpty())
-						BugReporter.reportError(new Throwable("Missing FSM-Filter: " + String.join(";", missingItems)));
+			requestFreestuff();
+		});
 
-					requestFreestuff();
-				});
-			});
+		requestBotshops();
 
-			requestBotshops();
-		}).start();
-	}
+		for (Map.Entry<String, WebAPI.Data.GrieferInfoItem> itemEntry : event.data.grieferInfoItems.entrySet()) {
+			ItemStack stack = ItemUtil.fromNBT(itemEntry.getValue().stack);
+			ItemFilter itemFilter = new ItemFilter(itemEntry.getKey(), stack, itemEntry.getValue().custom_name);
+			ItemFilter.FILTER.put(itemEntry.getKey(), itemFilter);
 
-	private static void onItemResponse(JsonObject response) {
-		for (Map.Entry<String, JsonElement> entry : response.entrySet()) {
-			JsonObject data = entry.getValue().getAsJsonObject();
-			ItemStack stack = ItemUtil.fromNBT(data.get("stack").getAsString());
-			ItemFilter itemFilter = new ItemFilter(entry.getKey(), stack, data.has("custom_name"));
-			ItemFilter.FILTER.put(entry.getKey(), itemFilter);
-
-			int compactCategories = data.get("categories").getAsInt();
+			int compactCategories = itemEntry.getValue().categories;
 			for (int i = 0; i < ItemFilter.CATEGORIES.size(); i++)
 				if ((compactCategories & 1 << i) != 0)
 					ItemFilter.CATEGORIES.get(i).itemFilters.add(itemFilter);

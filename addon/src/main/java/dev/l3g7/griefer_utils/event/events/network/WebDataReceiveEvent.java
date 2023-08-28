@@ -16,25 +16,21 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.auto_update;
+package dev.l3g7.griefer_utils.event.events.network;
 
-public class ReleaseInfo {
+import dev.l3g7.griefer_utils.core.event_bus.Event;
+import dev.l3g7.griefer_utils.misc.WebAPI;
+import dev.l3g7.griefer_utils.misc.WebAPI.Data;
 
-	String version;
-	String hash; // SHA-256
+/**
+ * Is fired when {@link WebAPI} receives data.
+ */
+public class WebDataReceiveEvent extends Event {
 
-	public enum ReleaseChannel {
+	public final Data data;
 
-		STABLE("Stabil", "https://github.com/L3g7/GrieferUtils/releases/download/v{version}/griefer-utils-v{version}.jar"),
-		BETA("Beta", "https://grieferutils.l3g7.dev/v3/nightly_builds/griefer-utils-v{version}.jar");
-
-		final String name;
-		final String downloadURL;
-
-		ReleaseChannel(String name, String downloadURL) {
-			this.name = name;
-			this.downloadURL = downloadURL;
-		}
+	public WebDataReceiveEvent(Data data) {
+		this.data = data;
 	}
 
 }

@@ -59,7 +59,7 @@ public class BugReporter {
 	private static final Set<String> reportedBugs = new HashSet<>();
 	private static long timestampOfLastReport = 0;
 
-	public static boolean shouldReportError(Throwable error) {
+	private static boolean shouldReportError(Throwable error) {
 		if (System.currentTimeMillis() - timestampOfLastReport < 10_000)
 			return false; // Last report less than 10s ago, don't report
 
@@ -106,7 +106,7 @@ public class BugReporter {
 
 			// Report bug
 			try {
-				HttpURLConnection conn = (HttpURLConnection) new URL("https://grieferutils.l3g7.dev/v2/bug_report").openConnection();
+				HttpURLConnection conn = (HttpURLConnection) new URL("https://grieferutils.l3g7.dev/v3/bug_report").openConnection();
 
 				if (conn instanceof HttpsURLConnection)
 					((HttpsURLConnection) conn).setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());

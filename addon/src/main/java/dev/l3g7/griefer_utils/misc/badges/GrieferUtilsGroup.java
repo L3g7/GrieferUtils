@@ -34,17 +34,17 @@ public class GrieferUtilsGroup extends LabyGroup {
 
 	public static String icon = "icon";
 
-	private final Color color_with_labymod;
-	private final Color color_without_labymod;
+	private final int color_with_labymod;
+	private final int color_without_labymod;
 	private final String title;
 
 	public GrieferUtilsGroup() {
-		this(0xFFFFFF, 0xFFFFFF, null);
+		this(null, 0xFFFFFF, 0xFFFFFF);
 	}
 
-	public GrieferUtilsGroup(int color_with_labymod, int color_without_labymod, String title) {
-		this.color_with_labymod = new Color(color_with_labymod);
-		this.color_without_labymod = new Color(color_without_labymod);
+	public GrieferUtilsGroup(String title, int color_without_labymod, int color_with_labymod) {
+		this.color_with_labymod = color_with_labymod;
+		this.color_without_labymod = color_without_labymod;
 		this.title = title;
 	}
 
@@ -60,7 +60,7 @@ public class GrieferUtilsGroup extends LabyGroup {
 			return;
 		}
 
-		Color color = LabyMod.getSettings().revealFamiliarUsers ? color_with_labymod : color_without_labymod;
+		Color color = new Color(LabyMod.getSettings().revealFamiliarUsers ? color_with_labymod : color_without_labymod);
 
 		if (icon.equals("icon"))
 			GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f);

@@ -24,10 +24,11 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinUser;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -73,10 +74,9 @@ public class AutoPortal extends Feature {
 				.callback(v -> { if (v) maximize.set(false); });
 	}
 
-	@EventListener
-	public void onServerJoin(ServerJoinEvent event) {
-		if (event.data.getIp().toLowerCase().contains("griefergames"))
-			send("/portal");
+	@EventListener(priority = Priority.HIGH)
+	public void onServerJoin(ServerEvent.GrieferGamesJoinEvent event) {
+		send("/portal");
 	}
 
 	@OnStartupComplete

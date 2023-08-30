@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -118,10 +118,7 @@ public class OrbBalance extends Module {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void loadBalance(ServerJoinEvent ignored) {
-		if (!ServerCheck.isOnGrieferGames())
-			return;
-
+	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.orb_balance.balances." + mc().getSession().getProfile().getId();
 
 		if (Config.has(path))

@@ -25,9 +25,8 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import net.labymod.main.ModTextures;
@@ -122,10 +121,7 @@ public class Received extends Module {
 	}
 
 	@EventListener
-	public void loadBalance(ServerEvent.ServerJoinEvent ignored) {
-		if (!ServerCheck.isOnGrieferGames())
-			return;
-
+	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.money.data." + mc.getSession().getProfile().getId() + ".";
 
 		if (Config.has(path + "received"))

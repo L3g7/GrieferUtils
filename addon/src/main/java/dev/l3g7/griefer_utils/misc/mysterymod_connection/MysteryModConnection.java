@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.PacketDecoder;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.PacketEncoder;
 import io.netty.bootstrap.Bootstrap;
@@ -91,7 +91,7 @@ public class MysteryModConnection {
 	}
 
 	@EventListener
-	public static void onServerJoin(ServerEvent.ServerJoinEvent event) {
+	public static void onServerJoin(ServerJoinEvent event) {
 		if (getState() != CONNECTED)
 			connect();
 	}

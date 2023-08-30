@@ -29,7 +29,7 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -117,7 +117,7 @@ public class CooldownNotifications extends Feature {
 	}
 
 	@EventListener(priority = Priority.LOWEST) // Make sure loadCooldowns is triggered before
-	public void onServerJoin(ServerEvent.ServerJoinEvent event) {
+	public void onServerJoin(GrieferGamesJoinEvent event) {
 		sendCooldowns = true;
 	}
 
@@ -229,7 +229,7 @@ public class CooldownNotifications extends Feature {
 	}
 
 	@EventListener
-	public void loadCooldowns(ServerEvent.ServerJoinEvent event) {
+	public void loadCooldowns(GrieferGamesJoinEvent event) {
 		String path = "player.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId();
 
 		if (Config.has(path)) {

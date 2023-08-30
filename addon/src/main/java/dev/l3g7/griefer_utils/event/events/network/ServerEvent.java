@@ -20,11 +20,14 @@ package dev.l3g7.griefer_utils.event.events.network;
 
 import dev.l3g7.griefer_utils.core.event_bus.Event;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ServerData;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * An event related to the server connection.
@@ -43,15 +46,22 @@ public class ServerEvent extends Event {
 
 	public static class ServerJoinEvent extends ServerEvent {
 
-		public final ServerData data;
-
-		private ServerJoinEvent(ServerData data) {
-			this.data = data;
-		}
-
 		@OnEnable
 		private static void register() {
-			LabyMod.getInstance().getEventManager().registerOnJoin(data -> new ServerJoinEvent(data).fire());
+			LabyMod.getInstance().getEventManager().registerOnJoin(data -> new ServerJoinEvent().fire());
+		}
+
+	}
+
+	public static class GrieferGamesJoinEvent extends ServerEvent {
+
+		@EventListener(priority = Priority.HIGHEST)
+		private static void onPacketReceive(PacketReceiveEvent<S3FPacketCustomPayload> event) {
+			if (!event.packet.getChannelName().equals("MC|Brand"))
+				return;
+
+			if (event.packet.getBufferData().toString(StandardCharsets.UTF_8).contains("GrieferGames"))
+				new GrieferGamesJoinEvent().fire();
 		}
 
 	}

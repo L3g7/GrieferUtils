@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -268,10 +268,7 @@ public class OrbStats extends Module {
 	}
 
 	@EventListener
-	public void loadConfig(ServerJoinEvent ignored) {
-		if (!isOnGrieferGames())
-			return;
-
+	public void loadConfig(GrieferGamesJoinEvent ignored) {
 		lastItem = null;
 		stats.clear();
 

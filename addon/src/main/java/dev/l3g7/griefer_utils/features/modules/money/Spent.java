@@ -38,15 +38,12 @@ import net.minecraft.util.IChatComponent;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.getNextServerRestart;
 import static java.math.BigDecimal.ZERO;
 
 @Singleton
 public class Spent extends Module {
-
-	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s§r§a \\$(?<amount>[\\d.,]+) gegeben\\.§r$", Constants.FORMATTED_PLAYER_PATTERN));
 
 	static BigDecimal moneySpent = BigDecimal.ZERO;
 	private long nextReset = -1;
@@ -97,7 +94,7 @@ public class Spent extends Module {
 
 	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
-		Matcher matcher = PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
+		Matcher matcher = Constants.PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
 			setBalance(moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", ""))), "msg: " + IChatComponent.Serializer.componentToJson(event.message));
 	}

@@ -67,6 +67,7 @@ public class Constants {
 	public static final ImmutableList<Pattern> MESSAGE_PATTERNS = ImmutableList.of(GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, GLOBAL_CHAT_PATTERN);
 
 	public static final Pattern PAYMENT_RECEIVE_PATTERN = Pattern.compile(String.format("^%s(?<!§f) §r§ahat dir \\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
+	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s§r§a \\$(?<amount>[\\d.,]+) gegeben\\.§r$", Constants.FORMATTED_PLAYER_PATTERN));
 
 	public static final DecimalFormat DECIMAL_FORMAT_98 = new DecimalFormat("###,###." + Strings.repeat("#", 98), new DecimalFormatSymbols(Locale.GERMAN)); // max 98 decimal places
 

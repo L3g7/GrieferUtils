@@ -150,6 +150,13 @@ public class Calculator extends Feature {
 		if (!ServerCheck.isOnGrieferGames())
 			return;
 
+		Matcher paymentMatcher = Constants.PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
+		if (paymentMatcher.matches()) {
+			lastPaymentReceiver = null;
+			return;
+		}
+
+
 		/* ************* *
 		 * Auto-Withdraw *
 		 * ************* */

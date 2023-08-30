@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
-public abstract class PieMenuSetting extends ControlElement implements ElementBuilder<PieMenuEntrySetting> {
+public abstract class PieMenuSetting extends ControlElement {
 
 	private boolean hoveringDelete = false;
 	private boolean hoveringEdit = false;

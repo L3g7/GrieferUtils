@@ -73,6 +73,10 @@ public class PrefixSaver extends ItemSaver {
 		event.cancel();
 		mc().displayGuiScreen(new GuiChest(player().inventory, inv) {
 
+			{
+				inventorySlots.windowId = -1337;
+			}
+
 			protected void handleMouseClick(Slot slot, int slotId, int btn, int type) {
 				if (slot != null)
 					slotId = slot.slotNumber;

@@ -84,6 +84,10 @@ public class HeadSaver extends ItemSaver {
 	private void displayScreen(String name) {
 		GuiChest chest = new GuiChest(player().inventory, inv) {
 
+			{
+				inventorySlots.windowId = -1337;
+			}
+
 			protected void handleMouseClick(Slot slot, int slotId, int btn, int type) {
 				if (slot != null)
 					slotId = slot.slotNumber;

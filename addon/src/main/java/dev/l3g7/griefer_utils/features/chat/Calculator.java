@@ -192,6 +192,9 @@ public class Calculator extends Feature {
 
 		String msg = event.message.toLowerCase();
 
+		if (msg.startsWith("/pholo "))
+			return;
+
 		if (msg.startsWith(prefix.get().trim().toLowerCase() + " ")) {
 			event.cancel();
 

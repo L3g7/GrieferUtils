@@ -252,7 +252,7 @@ public class Calculator extends Feature {
 		} else if (starPlaceholder.get()) {
 			Matcher matcher = Pattern.compile(String.format("/pay %s \\*", Constants.UNFORMATTED_PLAYER_NAME_PATTERN)).matcher(msg);
 			if (matcher.matches()) {
-				send("/pay %s %d", matcher.group("player"), getCurrentBalance().longValue());
+				send("/pay %s %s", matcher.group("player"), getCurrentBalance().toPlainString());
 				event.cancel();
 				return;
 			}

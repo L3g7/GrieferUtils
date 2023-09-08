@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.event.events.render.DrawGuiContainerForegroundLaye
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiHopper;
@@ -50,6 +51,11 @@ public class ItemSearch extends Feature {
 	 */
 	public static final String marker = "§4§0§2§7§9§c§d§a§d§e§f§e§l§m§n§r";
 
+	private final BooleanSetting inventory = new BooleanSetting()
+		.name("Inventar")
+		.description("Ob das Inventar auch durchsucht werden soll")
+		.icon("chest");
+
 	private final BooleanSetting dispenser = new BooleanSetting()
 		.name("Spender / Werfer")
 		.description("Ob die Item-Suche auch bei Spendern / Werfern hinzugefügt werden soll")
@@ -65,7 +71,7 @@ public class ItemSearch extends Feature {
 		.name("Item-Suche")
 		.description("Fügt eine Item-Suche innerhalb von Kisten hinzu.")
 		.icon("chest")
-		.subSettings(dispenser, hopper);
+		.subSettings(dispenser, hopper, new HeaderSetting(), inventory);
 
 	public ModTextField searchField = null;
 	private String previousSearch = "";
@@ -137,10 +143,9 @@ public class ItemSearch extends Feature {
 		// Draw search
 		String text = searchField.getText().toLowerCase();
 
-		// the maximum slot id before it is in the player's inventory
 		if (!text.isEmpty()) {
 			for (Slot slot : event.container.inventorySlots.inventorySlots) {
-				if (slot.inventory == player().inventory)
+				if (!inventory.get() && slot.inventory == player().inventory)
 					break;
 
 				if (shouldHide(slot.getStack(), text))

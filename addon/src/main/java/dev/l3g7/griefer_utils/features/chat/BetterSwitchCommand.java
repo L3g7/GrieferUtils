@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.Citybuild;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
@@ -50,6 +51,9 @@ public class BetterSwitchCommand extends Feature {
 
 	@EventListener
 	public void onMessageSend(MessageEvent.MessageSendEvent event) {
+		if (!ServerCheck.isOnGrieferGames())
+			return;
+
 		String msg = event.message;
 
 		Matcher matcher = COMMAND_PATTERN.matcher(msg);

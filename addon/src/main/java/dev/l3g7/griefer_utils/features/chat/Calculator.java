@@ -259,7 +259,7 @@ public class Calculator extends Feature {
 		/* ************* *
 		 *    Equation   *
 		 * ************* */
-		if (((autoEquationDetect.get() || event.message.startsWith("/pay ") || event.message.startsWith("/bank ")) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
+		if ((((autoEquationDetect.get() && ServerCheck.isOnGrieferGames()) || event.message.startsWith("/pay ") || event.message.startsWith("/bank ")) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
 			|| (placeholder.get() && evalEquations(PLACEHOLDER_PATTERN, event)))
 			event.cancel();
 	}

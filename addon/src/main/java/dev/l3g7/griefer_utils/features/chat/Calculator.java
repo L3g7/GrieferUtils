@@ -96,8 +96,7 @@ public class Calculator extends Feature {
 	private final BooleanSetting autoEquationDetect = new BooleanSetting()
 		.name("Automatische Gleichungserkennung")
 		.description("Erkennt automatisch in einer Nachricht eingebettete Gleichungen, auch wenn sie nicht mit {} eingerahmt sind.")
-		.icon("regex")
-		.defaultValue(true);
+		.icon("regex");
 
 	private final NumberSetting decimalPlaces = new NumberSetting()
 		.name("Nachkommastellen")

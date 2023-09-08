@@ -155,10 +155,10 @@ public class ItemSearch extends Feature {
 		if (stack == null)
 			return true;
 
-		if (stack.getDisplayName().toLowerCase().contains(text))
+		if (stack.getDisplayName().toLowerCase().replaceAll("§.", "").contains(text))
 			return false;
 
-		return !stack.getItem().getItemStackDisplayName(stack).toLowerCase().contains(text);
+		return !stack.getItem().getItemStackDisplayName(stack).toLowerCase().replaceAll("§.", "").contains(text);
 	}
 
 }

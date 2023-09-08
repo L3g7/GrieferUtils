@@ -190,7 +190,9 @@ public class Calculator extends Feature {
 			return;
 		}
 
-		if (event.message.toLowerCase().startsWith(prefix.get().trim().toLowerCase() + " ")) {
+		String msg = event.message.toLowerCase();
+
+		if (msg.startsWith(prefix.get().trim().toLowerCase() + " ")) {
 			event.cancel();
 
 			String message = event.message.substring(prefix.get().trim().length()).trim();
@@ -221,9 +223,9 @@ public class Calculator extends Feature {
 		}
 
 		// If /bank abheben with the exact difference was sent and withdraw is SUGGEST
-		if (lastPaymentReceiver != null && event.message.startsWith("/bank abheben")) {
+		if (lastPaymentReceiver != null && msg.startsWith("/bank abheben")) {
 			BigDecimal moneyRequired = lastPayment.subtract(getCurrentBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
-			if (event.message.equals(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == WithdrawAction.SUGGEST) {
+			if (event.message.equalsIgnoreCase(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == WithdrawAction.SUGGEST) {
 				// Wait 1 tick (chat screen still open)
 				TickScheduler.runAfterRenderTicks(() -> suggest("/pay %s %s", lastPaymentReceiver, lastPayment.toPlainString()), 1);
 				return;
@@ -248,7 +250,7 @@ public class Calculator extends Feature {
 			event.cancel();
 			return;
 		} else if (starPlaceholder.get()) {
-			Matcher matcher = Pattern.compile(String.format("/pay %s \\*", Constants.UNFORMATTED_PLAYER_NAME_PATTERN)).matcher(event.message);
+			Matcher matcher = Pattern.compile(String.format("/pay %s \\*", Constants.UNFORMATTED_PLAYER_NAME_PATTERN)).matcher(msg);
 			if (matcher.matches()) {
 				send("/pay %s %d", matcher.group("player"), getCurrentBalance().longValue());
 				event.cancel();
@@ -259,7 +261,7 @@ public class Calculator extends Feature {
 		/* ************* *
 		 *    Equation   *
 		 * ************* */
-		if ((((autoEquationDetect.get() && ServerCheck.isOnGrieferGames()) || event.message.startsWith("/pay ") || event.message.startsWith("/bank ")) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
+		if ((((autoEquationDetect.get() && ServerCheck.isOnGrieferGames()) || msg.startsWith("/pay ") || msg.startsWith("/bank ")) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
 			|| (placeholder.get() && evalEquations(PLACEHOLDER_PATTERN, event)))
 			event.cancel();
 	}

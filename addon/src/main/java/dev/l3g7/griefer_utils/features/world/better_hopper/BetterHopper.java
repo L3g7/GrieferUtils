@@ -90,12 +90,17 @@ public class BetterHopper extends Feature {
 		.description("Zeigt die Trichterreichtweite an.")
 		.icon("ruler");
 
+	private final BooleanSetting showSourceHopper = new BooleanSetting()
+		.name("Ausgangstrichter anzeigen")
+		.description("Zeigt beim Verbinden eines Trichters den Trichter an, von dem aus verbunden wird.")
+		.icon(Material.HOPPER);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Trichteranzeige verbessern")
 		.description("Verbessert die Anzeige von Trichtern.")
 		.icon(Material.HOPPER)
-		.subSettings(betterVisualisation, showRange);
+		.subSettings(betterVisualisation, showRange, showSourceHopper);
 
 	@EventListener
 	public void onPacketSend(WindowClickEvent event) {
@@ -110,7 +115,12 @@ public class BetterHopper extends Feature {
 		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
 		if (inv.getName().equals("§6Trichter-Mehrfach-Verbindungen")) {
 			if (slot == 53) {
-				blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
+				if (showRange.get())
+					blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
+				if (showSourceHopper.get()) {
+					mainConnection = null;
+					displayEnd = Long.MAX_VALUE;
+				}
 				return;
 			}
 
@@ -137,7 +147,7 @@ public class BetterHopper extends Feature {
 		if (!inv.getName().equals("§6Trichter-Einstellungen"))
 			return;
 
-		if (slot != 15 && (slot != 34 || !betterVisualisation.get()) && (slot != 16 || !showRange.get()))
+		if (slot != 15 && (slot != 34 || !betterVisualisation.get()) && (slot != 16 || (!showRange.get() && !showSourceHopper.get())))
 			return;
 
 		filteredConnections.clear();
@@ -154,11 +164,17 @@ public class BetterHopper extends Feature {
 		hopper = getBlockPos(hopperStack);
 
 		if (slot == 16) {
-			if (event.mode != 1)
-				blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
+			displayEnd = -1;
+
+			if (event.mode != 1) {
+				if (showRange.get())
+					blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
+
+				if (showSourceHopper.get())
+					displayEnd = Long.MAX_VALUE;
+			}
 
 			mainConnection = null;
-			displayEnd = -1;
 			return;
 		}
 
@@ -200,8 +216,10 @@ public class BetterHopper extends Feature {
 		String text = event.message.getUnformattedText();
 		if (text.equals("[Trichter] Der Trichter wurde erfolgreich verbunden.")
 			|| text.equals("[Trichter] Der Verbindungsmodus wurde beendet.")
-			|| text.equals("[Trichter] Der Startpunkt ist zu weit entfernt. Bitte starte erneut."))
+			|| text.equals("[Trichter] Der Startpunkt ist zu weit entfernt. Bitte starte erneut.")) {
 			blockyRenderSphere = null;
+			displayEnd = -1;
+		}
 	}
 
 	@EventListener

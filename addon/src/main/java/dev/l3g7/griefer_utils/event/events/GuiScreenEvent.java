@@ -111,9 +111,10 @@ public abstract class GuiScreenEvent extends Event {
 			new InitGuiEvent(this).fire();
 		}
 
-		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V", shift = At.Shift.BEFORE))
+		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V", shift = At.Shift.BEFORE), cancellable = true)
 		public void injectMouseInputPre(CallbackInfo ci) {
-			new MouseInputEvent.Pre(this).fire();
+			if (new MouseInputEvent.Pre(this).fire().isCanceled())
+				ci.cancel();
 		}
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V", shift = At.Shift.AFTER))
@@ -121,9 +122,10 @@ public abstract class GuiScreenEvent extends Event {
 			new MouseInputEvent.Post(this).fire();
 		}
 
-		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleKeyboardInput()V", shift = At.Shift.BEFORE))
+		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleKeyboardInput()V", shift = At.Shift.BEFORE), cancellable = true)
 		public void injectKeyboardInputPre(CallbackInfo ci) {
-			new KeyboardInputEvent.Pre(this).fire();
+			if (new KeyboardInputEvent.Pre(this).fire().isCanceled())
+				ci.cancel();
 		}
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleKeyboardInput()V", shift = At.Shift.AFTER))

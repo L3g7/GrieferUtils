@@ -287,6 +287,10 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
+    <td><a href="open_link.png"><img src="open_link.png" height=16em width=16em />&nbsp;&nbsp;open_link.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><a href="orb.png"><img src="orb.png" height=16em width=16em />&nbsp;&nbsp;orb.png </a></td>
     <td><a href="https://www.deviantart.com/bronzefish678/art/Pixel-orb-thing-245073608">DeviantArt (bronzefish678)</a></td>
   </tr>

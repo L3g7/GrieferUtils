@@ -18,11 +18,14 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
+import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsUserManager;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.settings.elements.ControlElement;
+import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.ModColor;
 
@@ -51,6 +54,14 @@ public class Credits {
 			new HeaderSetting("Special Thanks"),
 			new Credits.IconSetting("TuxFRI", "tuxfri"),
 			new Credits.IconSetting("CobbleShop", "cobbleshop"),
+			new HeaderSetting().entryHeight(11),
+
+			new HeaderSetting("Bild-Credits"),
+			new SmallButtonSetting()
+				.name("Credits öffnen")
+				.icon("white_scroll")
+				.buttonIcon(new IconData("griefer_utils/icons/open_link.png"))
+				.callback(() -> Util.openWebsite("https://grieferutils.l3g7.dev/image_credits")),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Code-Credits"),

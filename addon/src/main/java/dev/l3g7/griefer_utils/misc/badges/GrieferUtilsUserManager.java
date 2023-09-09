@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
 import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.Credits;
 import dev.l3g7.griefer_utils.misc.matrix.MatrixClient;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.user.User;
@@ -103,6 +104,7 @@ public class GrieferUtilsUserManager {
 	@EventListener
 	private static void onWebData(WebDataReceiveEvent event) {
 		specialBadges = event.data.specialBadges;
+		Credits.addTeam();
 	}
 
 }

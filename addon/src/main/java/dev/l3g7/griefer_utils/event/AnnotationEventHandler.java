@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.core.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
+import dev.l3g7.griefer_utils.misc.gui.guis.ChangelogScreen;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.annotation.Annotation;
@@ -80,7 +81,7 @@ public class AnnotationEventHandler implements Opcodes {
 	 */
 	@EventListener
 	private void onGuiOpen(GuiOpenEvent<?> event) {
-		if (startupComplete)
+		if (startupComplete || event.gui instanceof ChangelogScreen)
 			return;
 
 		// Call all methods annotated with @OnStartupComplete

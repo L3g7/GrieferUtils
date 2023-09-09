@@ -1,6 +1,6 @@
 {
   "name": "GrieferUtils",
-  "description": "\u00A7cFalls du das hier liest, gab es einen Fehler.",
+  "description": "\u00A7cFalls du das hier liest, gab es einen Fehler.\nBitte starte Minecraft neu oder melde dich im Discord.",
   "icon": "griefer_utils_icon",
   "author": "L3g7, L3g73",
   "addonVersion": "${version}",

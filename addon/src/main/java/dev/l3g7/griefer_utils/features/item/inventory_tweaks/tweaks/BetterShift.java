@@ -84,15 +84,16 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 			return;
 
 		GuiMerchant screen = (GuiMerchant) mc().currentScreen;
-		if (screen.getSlotUnderMouse() == null)
-			return;
+		Container slots = screen.inventorySlots;
 
-		ItemStack movedStack = screen.getSlotUnderMouse().getStack();
+		ItemStack movedStack = slots.getSlot(event.slotId).getStack();
 		if (movedStack == null)
 			return;
 
+		if (fillsUpSlot(0, slots, event) || fillsUpSlot(1, slots, event))
+			return;
+
 		// Check if a slot is free
-		Container slots = screen.inventorySlots;
 		ItemStack firstStack = slots.getSlot(0).getStack();
 		if (firstStack != null && slots.getSlot(1).getHasStack())
 			return;
@@ -119,8 +120,30 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 
 		event.cancel();
 
-		click(event.windowId, event.slotId);
-		click(event.windowId, firstStack == null ? 0 : 1);
+		click(event, event.slotId);
+		click(event, firstStack == null ? 0 : 1);
+	}
+
+	private boolean fillsUpSlot(int targetSlot, Container slots, WindowClickEvent event) {
+		ItemStack movedStack = slots.getSlot(event.slotId).getStack();
+		ItemStack targetStack = slots.getSlot(targetSlot).getStack();
+
+		if (targetStack == null || targetStack.getItem() != movedStack.getItem() || targetStack.stackSize >= targetStack.getMaxStackSize())
+			return false;
+
+		if (targetStack.getItem().isDamageable() && targetStack.getItemDamage() != movedStack.getItemDamage())
+			return false;
+
+		click(event, event.slotId);
+		click(event, targetSlot);
+
+		// Check if item is consumed fully
+		if (targetStack.getMaxStackSize() - targetStack.stackSize < movedStack.stackSize)
+			TickScheduler.runAfterClientTicks(() -> click(event, event.slotId), 3);
+
+		event.cancel();
+
+		return true;
 	}
 
 	private void move(int end, WindowClickEvent event) {
@@ -145,13 +168,13 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 			return;
 
 		event.cancel();
-		click(event.windowId, event.slotId);
+		click(event, event.slotId);
 		int finalTargetSlot = targetSlot;
-		TickScheduler.runAfterClientTicks(() -> click(event.windowId, finalTargetSlot), requiresDelay(movedStack) ? 2 : 0);
+		TickScheduler.runAfterClientTicks(() -> click(event, finalTargetSlot), requiresDelay(movedStack) ? 2 : 0);
 	}
 
-	private void click(int windowId, int slot) {
-		mc().playerController.windowClick(windowId, slot, 0, 0, player());
+	private void click(WindowClickEvent event, int slot) {
+		mc().playerController.windowClick(event.windowId, slot, 0, 0, player());
 	}
 
 	private boolean requiresDelay(ItemStack stack) {

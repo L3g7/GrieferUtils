@@ -39,11 +39,12 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 public class ChangelogScreen extends GuiScreen {
 
 	private static boolean triggered = false;
+	private static boolean triggeredByUser = false;
 	private static String version = null;
 	private static String changelog = null;
 
 	private TextList textList;
-	private GuiScreen previousScreen;
+	private GuiScreen previousScreen = mc().currentScreen;
 
 	// Make sure the gui closes to the correct screen
 	@EventListener(priority = Priority.LOWEST)
@@ -55,10 +56,11 @@ public class ChangelogScreen extends GuiScreen {
 		event.cancel();
 	}
 
-	public static void trigger() {
+	public static void trigger(boolean triggeredByUser) {
 		triggered = true;
+		ChangelogScreen.triggeredByUser = triggeredByUser;
 
-		if (version == null)
+		if (version == null || mc().currentScreen instanceof ChangelogScreen)
 			return;
 
 		mc().displayGuiScreen(new ChangelogScreen());
@@ -72,7 +74,7 @@ public class ChangelogScreen extends GuiScreen {
 		ChangelogScreen.version = version;
 		ChangelogScreen.changelog = changelog;
 
-		if (!triggered)
+		if (!triggered || mc().currentScreen instanceof ChangelogScreen)
 			return;
 
 		mc().displayGuiScreen(new ChangelogScreen());
@@ -120,8 +122,10 @@ public class ChangelogScreen extends GuiScreen {
 		LabyMod.getInstance().getDrawUtils().drawTexture(width / 2d - textWidth * 0.75 - 29, 18, 256, 256, 20, 20);
 
 		// Left button
-		text = ModColor.cl(isLeftButtonHovered(mouseX, mouseY) ? 'c' : '7') + "Nicht nochmal anzeigen";
-		LabyMod.getInstance().getDrawUtils().drawString(text, width / 2d - 186, height - 22);
+		if (!triggeredByUser) {
+			text = ModColor.cl(isLeftButtonHovered(mouseX, mouseY) ? 'c' : '7') + "Nicht nochmal anzeigen";
+			LabyMod.getInstance().getDrawUtils().drawString(text, width / 2d - 186, height - 22);
+		}
 
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
@@ -132,7 +136,7 @@ public class ChangelogScreen extends GuiScreen {
 	}
 
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		if (isLeftButtonHovered(mouseX, mouseY)) {
+		if (!triggeredByUser && isLeftButtonHovered(mouseX, mouseY)) {
 			AutoUpdateSettings.showUpdateScreen.set(false);
 			closeGui();
 			return;

@@ -22,18 +22,19 @@ import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.misc.gui.guis.ChangelogScreen;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.TextSetting;
+import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import net.labymod.settings.elements.SettingsElement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 @Singleton
 public class Changelog {
@@ -62,14 +63,15 @@ public class Changelog {
 
 			String title = "§l" + entry.getKey();
 
-			entries.add(new CategorySetting()
+			entries.add(new SmallButtonSetting()
 				.name(" " + title)
-				.subSettings(Arrays.asList(
-					new HeaderSetting("§r"),
-					new HeaderSetting("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-					new HeaderSetting("§e§lChangelog - " + title).scale(.7),
-					new TextSetting(393).addText(entry.getValue().replace("\r", ""))
-				)));
+				.callback(() -> {
+					ChangelogScreen.setData(
+						entry.getKey(),
+						entry.getValue().substring("Changelog:".length())
+					);
+					ChangelogScreen.trigger(true);
+				}));
 		}
 
 		entries.sort(Comparator.comparing(SettingsElement::getDisplayName, new VersionComparator()));
@@ -83,6 +85,6 @@ public class Changelog {
 	@OnEnable
 	public void onEnable() {
 		if (AutoUpdater.hasUpdated)
-			ChangelogScreen.trigger();
+			ChangelogScreen.trigger(false);
 	}
 }

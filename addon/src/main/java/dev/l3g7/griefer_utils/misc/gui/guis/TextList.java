@@ -19,16 +19,20 @@
 package dev.l3g7.griefer_utils.misc.gui.guis;
 
 
-import net.labymod.main.LabyMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiListExtended;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
 public class TextList extends GuiListExtended {
 
+	private static final Pattern INDENTATION_PATTERN = Pattern.compile("^( *- ).*");
 	private static final int MAX_LENGTH = 393;
 
 	private final List<Line> lines = new ArrayList<>();
@@ -41,10 +45,13 @@ public class TextList extends GuiListExtended {
 	}
 
 	public void addEntry(String text) {
+		Matcher matcher = INDENTATION_PATTERN.matcher(text);
+		String indentation = matcher.matches() ? matcher.group(1) : "";
+
 		int stringWidth = fontRenderer.getStringWidth(text);
 
 		if (stringWidth <= MAX_LENGTH) {
-			lines.add(new Line(text));
+			lines.add(new Line(text, ""));
 			textWidth = Math.max(textWidth, stringWidth);
 			return;
 		}
@@ -56,6 +63,8 @@ public class TextList extends GuiListExtended {
 			// Limit the string to a width of 393
 			for (int i = text.length(); true; i--) {
 				partString = text.substring(0, i);
+				if (!partString.startsWith(indentation))
+					partString = indentation + partString;
 
 				if (fontRenderer.getStringWidth(partString) <= MAX_LENGTH)
 					break;
@@ -76,14 +85,14 @@ public class TextList extends GuiListExtended {
 			}
 
 			// Add the string and continue with the rest
-			lines.add(new Line(text.substring(0, i)));
+			lines.add(new Line(text.substring(0, i), indentation));
 
 			text = text.substring(i + 1);
 
 			stringWidth = fontRenderer.getStringWidth(text);
 		}
 
-		lines.add(new Line(text));
+		lines.add(new Line(text, indentation));
 		textWidth = MAX_LENGTH;
 	}
 
@@ -113,9 +122,11 @@ public class TextList extends GuiListExtended {
 	private static class Line implements IGuiListEntry {
 
 		private final String text;
+		private final String indentation;
 
-		public Line(String text) {
+		private Line(String text, String indentation) {
 			this.text = text;
+			this.indentation = text.startsWith(indentation) ? "" : indentation;
 		}
 
 		public void setSelected(int a, int b, int c) {}
@@ -124,7 +135,7 @@ public class TextList extends GuiListExtended {
 
 		@Override
 		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {
-			LabyMod.getInstance().getDrawUtils().drawString(text, x, y);
+			drawUtils().drawString(text, x + drawUtils().getStringWidth(indentation), y);
 		}
 
 	}

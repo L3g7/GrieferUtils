@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.chat;
 
+import com.google.common.base.Strings;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
@@ -309,7 +310,32 @@ public class Calculator extends Feature {
 	}
 
 	public static double calculate(String equation, boolean displayErrors) {
-		equation = equation.replace("k", " * 1000").replace(",", ".");
+		equation = equation.replace(",", ".");
+
+		// Resolve "k"s
+		StringBuilder builder = new StringBuilder(equation);
+		int index ;
+		while ((index = builder.indexOf("k")) != -1) {
+
+			int ks = 1;
+			while (builder.length() > index + ks && builder.charAt(index + ks) == 'k')
+				ks++;
+
+			builder.replace(index, index + ks, " * 1" + Strings.repeat("000", ks) + ")");
+
+			while (true) {
+				if (--index < 0)
+					break;
+
+				char character = builder.charAt(index);
+				if (!Character.isDigit(character) && character != '.')
+					break;
+			}
+			builder.insert(index + 1, '(');
+		}
+
+		equation = builder.toString();
+
 		Expression exp;
 		try {
 			exp = new Expression(equation);
@@ -321,7 +347,7 @@ public class Calculator extends Feature {
 				display("§cDie Bibliothek konnte nicht geladen werden.");
 			}
 
-			StringBuilder builder = new StringBuilder();
+			builder = new StringBuilder();
 			try {
 				builder.append("mXparser metadata:\nVersion: ").append(mXparser.VERSION).append("\nMethods:");
 				for (Method method : Expression.class.getDeclaredMethods())

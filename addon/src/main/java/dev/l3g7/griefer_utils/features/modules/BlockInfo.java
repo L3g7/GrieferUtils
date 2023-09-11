@@ -144,7 +144,7 @@ public class BlockInfo extends Module {
 		if (state.getBlock() instanceof BlockSkull) {
 			TileEntitySkull tes = (TileEntitySkull) world().getTileEntity(mop.getBlockPos());
 			pickedStack.setItemDamage(tes.getSkullType());
-			if (tes.getSkullType() == 3) {
+			if (tes.getSkullType() == 3 && tes.getPlayerProfile() != null) {
 				NBTTagCompound tag = new NBTTagCompound();
 				NBTTagCompound nbttagcompound = new NBTTagCompound();
 

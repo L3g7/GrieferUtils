@@ -59,7 +59,7 @@ public class MatrixClient extends Matrix {
 			} catch (IOException e) {
 				BugReporter.reportError(e);
 			}
-		});
+		}).start();
 	}
 
 	public void authorize() throws IOException {

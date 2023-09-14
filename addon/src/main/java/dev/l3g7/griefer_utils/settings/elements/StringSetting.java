@@ -95,6 +95,9 @@ public class StringSetting extends StringElement implements ElementBuilder<Strin
 		if (validator == null)
 			return;
 
+		if (mc.currentScreen instanceof ExpandedStringElementGui)
+			return;
+
 		if (!(mc().currentScreen instanceof AddonsGuiWithCustomBackButton))
 			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(null));
 

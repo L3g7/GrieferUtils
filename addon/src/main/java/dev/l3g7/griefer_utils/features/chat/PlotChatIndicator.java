@@ -35,10 +35,8 @@ import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.ingamechat.GuiChatCustom;
-import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -53,7 +51,6 @@ public class PlotChatIndicator extends Feature {
 
 	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event");
 	private StringBuilder states = new StringBuilder(Strings.repeat("?", 26)); // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
-	private String server;
 
 	private Boolean plotchatState = null;
 	private boolean waitingForPlotchatStatus = false;
@@ -92,16 +89,8 @@ public class PlotChatIndicator extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onCityBuildJoin(CityBuildJoinEvent event) {
-		if (world() == null || world().getScoreboard() == null)
-			return;
-
-		ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
-		server = team == null ? "" : ModColor.removeColor(team.getColorPrefix());
-
-		if (server.isEmpty())
-			return;
-
-		if (server.equals("Lava") || server.equals("Wasser")) {
+		String server = getServerFromScoreboard();
+		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser")) {
 			plotchatState = false;
 			return;
 		}
@@ -118,14 +107,13 @@ public class PlotChatIndicator extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onReceive(MessageReceiveEvent event) {
-		// Check if server is known
-		if (server == null || server.isEmpty())
+		if (getServerFromScoreboard().isEmpty())
 			return;
 
 		// Update plot chat state
 		if (event.message.getFormattedText().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
 			plotchatState = event.message.getFormattedText().contains(" aktiviert");
-			states.setCharAt(getIndex(server), plotchatState ? 'Y' : 'N');
+			states.setCharAt(getIndex(getServerFromScoreboard()), plotchatState ? 'Y' : 'N');
 			Config.set("chat.plot_chat_indicator.states." + mc().getSession().getProfile().getId(), new JsonPrimitive(states.toString()));
 			Config.save();
 

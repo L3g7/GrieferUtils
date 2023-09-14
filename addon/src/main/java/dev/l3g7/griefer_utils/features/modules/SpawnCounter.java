@@ -46,10 +46,12 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.misc.Constants.ADDON_PREFIX;
 import static dev.l3g7.griefer_utils.core.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static net.minecraft.util.EnumFacing.*;
 
 @Singleton
 public class SpawnCounter extends Module {
 
+	private static final EnumFacing[] HORIZONTALS = new EnumFacing[] {SOUTH, WEST, NORTH, EAST};
 	private static final List<String> excludedCitybuilds = ImmutableList.of("Nature", "Extreme", "Lava", "Wasser", "CBE");
 	private static final byte[] quadrantData = new byte[] {
 		-1, -1,
@@ -234,7 +236,7 @@ public class SpawnCounter extends Module {
 		if (excludedCitybuilds.contains(getServerFromScoreboard()))
 			return;
 
-		for (EnumFacing f : EnumFacing.HORIZONTALS) {
+		for (EnumFacing f : HORIZONTALS) {
 			BlockPos a = pos.offset(f);
 			BlockPos b = pos.offset(f.rotateY());
 			if (!isSpawnMiddle(a) || !isSpawnMiddle(b))

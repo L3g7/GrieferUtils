@@ -67,10 +67,10 @@ public class SplitLongMessages extends Feature {
 			return;
 
 		GuiTextField inputField = Reflection.get(event.gui, "inputField");
-		inputField.width = 626;
+		Reflection.set(inputField, 626, "width"); // Only accessible in Forge
 		if (event.gui instanceof GuiChatCustom) {
 			Object[] chatButtons = Reflection.get(event.gui, "chatButtons");
-			inputField.width -= chatButtons.length * 14;
+			Reflection.set(inputField, inputField.getWidth() - chatButtons.length * 14, "width");
 		}
 
 		String text = inputField.getText().toLowerCase();

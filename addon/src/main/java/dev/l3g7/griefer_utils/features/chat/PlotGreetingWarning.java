@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.network.play.server.S02PacketChat;
@@ -105,7 +106,8 @@ public class PlotGreetingWarning extends Feature {
 		if (mc().getNetHandler() == null)
 			return 0;
 
-		ChannelHandler timeoutHandler = mc().getNetHandler().getNetworkManager().channel().pipeline().get("timeout");
+		Channel channel = Reflection.get(mc().getNetHandler().getNetworkManager(), "channel"); // Getter is only available in Forge
+		ChannelHandler timeoutHandler = channel.pipeline().get("timeout");
 		if (timeoutHandler == null)
 			return 0;
 

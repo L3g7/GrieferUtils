@@ -68,6 +68,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 		}
 
+		if (Reflection.exists("net.ccbluex.liquidbounce.injection.forge.mixins.render.MixinRendererLivingEntity"))
+			classes.remove("dev/l3g7/griefer_utils/features/render/TrueSight$MixinRendererLivingEntity");
+
 		mixinCount = classes.size();
 		return classes;
 	}
@@ -100,7 +103,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) { return true; }
 	public void onLoad(String mixinPackage) {}
 	public String getRefMapperConfig() { return null; }
-	public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {}
+	public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
+
+	}
 	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
 	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
 

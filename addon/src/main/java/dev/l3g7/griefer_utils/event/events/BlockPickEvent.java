@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.event.events;
 
 import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -62,7 +63,7 @@ public class BlockPickEvent extends Event {
 				return;
 
 			Block block = theWorld.getBlockState(mop.getBlockPos()).getBlock();
-			if (block.isAir(theWorld, mop.getBlockPos()))
+			if (block.getMaterial() == Material.air)
 				return;
 
 			if (new BlockPickEvent(block.getPickBlock(mop, theWorld, mop.getBlockPos(), thePlayer)).fire().isCanceled())
@@ -80,7 +81,7 @@ public class BlockPickEvent extends Event {
 				return;
 
 			Block block = world.getBlockState(target.getBlockPos()).getBlock();
-			if (block.isAir(world, target.getBlockPos()))
+			if (block.getMaterial() == Material.air)
 				return;
 
 			if (new BlockPickEvent(block.getPickBlock(target, world, target.getBlockPos(), player)).fire().isCanceled())

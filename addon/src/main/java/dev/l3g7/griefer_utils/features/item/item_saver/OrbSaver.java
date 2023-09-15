@@ -128,7 +128,7 @@ public class OrbSaver extends ItemSaver {
 
 		if (title.equals("§g§u§cGeblockt!§r")) {
 			Slot slot = getSlotUnderMouse(event.gui);
-			if (slot != null && slot.getSlotIndex() != 45)
+			if (slot != null && getSlotIndex(slot) != 45)
 				event.cancel();
 		}
 	}

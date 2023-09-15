@@ -140,7 +140,7 @@ public class GuiBigChest extends GuiContainer {
 		else
 			runnables = midClickEvents;
 
-		Runnable clickEvent = runnables.get(MinecraftUtil.getSlotUnderMouse(this).getSlotIndex());
+		Runnable clickEvent = runnables.get(getSlotIndex(MinecraftUtil.getSlotUnderMouse(this)));
 		if (clickEvent != null)
 			clickEvent.run();
 	}
@@ -161,7 +161,7 @@ public class GuiBigChest extends GuiContainer {
 		if (slot == null)
 			return;
 
-		TextureItem textureItem = textureItems.get(slot.getSlotIndex());
+		TextureItem textureItem = textureItems.get(getSlotIndex(slot));
 		if (textureItem == null)
 			return;
 

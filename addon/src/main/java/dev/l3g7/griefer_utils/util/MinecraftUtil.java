@@ -173,4 +173,8 @@ public class MinecraftUtil {
 		return Reflection.get(guiScreen, "theSlot");
 	}
 
+	public static int getSlotIndex(Slot slot) {
+		return Reflection.get(slot, "slotIndex");
+	}
+
 }

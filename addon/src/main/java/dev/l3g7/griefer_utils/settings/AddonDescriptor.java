@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.settings;
 
-import dev.l3g7.griefer_utils.Main;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -36,18 +35,23 @@ import static net.labymod.utils.ModColor.YELLOW;
 public class AddonDescriptor {
 
 	private String description = YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :(";
+	private boolean completedStep = false;
 
 	@EventListener
 	private void onWebData(WebDataReceiveEvent event) {
 		// Load description from server, so it can be used as news board
 		description = event.data.addonDescription;
 
-		if (Main.getInstance().about != null)
-			updateDescription();
+		updateDescription();
 	}
 
 	@OnStartupComplete
 	public void updateDescription() {
+		if (!completedStep) {
+			completedStep = true;
+			return;
+		}
+
 		AddonInfo addonInfo = AddonUtil.getInfo();
 		if (addonInfo == null)
 			return;

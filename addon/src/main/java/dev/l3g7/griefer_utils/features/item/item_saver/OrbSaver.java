@@ -32,7 +32,6 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
@@ -128,7 +127,7 @@ public class OrbSaver extends ItemSaver {
 		}
 
 		if (title.equals("§g§u§cGeblockt!§r")) {
-			Slot slot = ((GuiContainer) event.gui).getSlotUnderMouse();
+			Slot slot = getSlotUnderMouse(event.gui);
 			if (slot != null && slot.getSlotIndex() != 45)
 				event.cancel();
 		}
@@ -155,7 +154,7 @@ public class OrbSaver extends ItemSaver {
 			}
 		}
 
-		Slot slot = ((GuiContainer) event.gui).getSlotUnderMouse();
+		Slot slot = getSlotUnderMouse(event.gui);
 		if (slot != null && slot.getHasStack() && slot.getStack() == compressedBlock)
 			event.cancel();
 	}

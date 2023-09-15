@@ -28,6 +28,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -36,6 +37,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
@@ -165,6 +167,10 @@ public class MinecraftUtil {
 
 		IInventory lowerChestInventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
 		return lowerChestInventory.getDisplayName().getFormattedText();
+	}
+
+	public static Slot getSlotUnderMouse(GuiScreen guiScreen) {
+		return Reflection.get(guiScreen, "theSlot");
 	}
 
 }

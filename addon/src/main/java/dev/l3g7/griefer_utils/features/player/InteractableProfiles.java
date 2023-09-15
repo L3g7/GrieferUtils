@@ -56,14 +56,14 @@ public class InteractableProfiles extends Feature {
 			return;
 
 		GuiChest gui = (GuiChest) event.gui;
-		if (gui.getSlotUnderMouse() == null)
+		if (getSlotUnderMouse(gui) == null)
 			return;
 
 		if (!getGuiChestTitle().startsWith("§6Profil"))
 			return;
 
 		Slot slot = gui.inventorySlots.getSlot(13);
-		if (slot == gui.getSlotUnderMouse()) {
+		if (slot == getSlotUnderMouse(gui)) {
 			if (!slot.getHasStack())
 				return;
 
@@ -76,7 +76,7 @@ public class InteractableProfiles extends Feature {
 		}
 
 		slot = gui.inventorySlots.getSlot(32);
-		if (slot != gui.getSlotUnderMouse() || !slot.getHasStack() || !slot.getStack().hasTagCompound())
+		if (slot != getSlotUnderMouse(gui) || !slot.getHasStack() || !slot.getStack().hasTagCompound())
 			return;
 
 		// CityBuild is not visible

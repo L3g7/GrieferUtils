@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.util.ItemUtil;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -124,8 +125,8 @@ public class GuiBigChest extends GuiContainer {
 
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		if (getSlotUnderMouse() == null
-			|| getSlotUnderMouse().inventory != inventory)
+		if (MinecraftUtil.getSlotUnderMouse(this) == null
+			|| MinecraftUtil.getSlotUnderMouse(this).inventory != inventory)
 			return;
 
 		if (mouseButton > 2)
@@ -139,7 +140,7 @@ public class GuiBigChest extends GuiContainer {
 		else
 			runnables = midClickEvents;
 
-		Runnable clickEvent = runnables.get(getSlotUnderMouse().getSlotIndex());
+		Runnable clickEvent = runnables.get(MinecraftUtil.getSlotUnderMouse(this).getSlotIndex());
 		if (clickEvent != null)
 			clickEvent.run();
 	}
@@ -156,7 +157,7 @@ public class GuiBigChest extends GuiContainer {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		fontRendererObj.drawString(inventory.getDisplayName().getUnformattedText(), 8, 6, 0x404040);
-		Slot slot = getSlotUnderMouse();
+		Slot slot = MinecraftUtil.getSlotUnderMouse(this);
 		if (slot == null)
 			return;
 

@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -78,7 +79,7 @@ public class BookFix extends Feature {
 		if (!Mouse.getEventButtonState() || !(mc().currentScreen instanceof GuiContainer))
 			return;
 
-		Slot slot = ((GuiContainer) mc().currentScreen).getSlotUnderMouse();
+		Slot slot = MinecraftUtil.getSlotUnderMouse(mc().currentScreen);
 		if (slot != null && processClick(slot.getStack(), Mouse.getEventButton() == 1))
 			event.cancel();
 	}

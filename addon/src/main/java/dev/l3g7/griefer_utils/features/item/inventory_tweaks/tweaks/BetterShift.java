@@ -38,8 +38,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.village.MerchantRecipe;
 import org.lwjgl.input.Keyboard;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class BetterShift extends InventoryTweaks.InventoryTweak {
@@ -148,10 +147,10 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 
 	private void move(int end, WindowClickEvent event) {
 		GuiContainer screen = (GuiContainer) mc().currentScreen;
-		if (screen.getSlotUnderMouse() == null)
+		if (getSlotUnderMouse(screen) == null)
 			return;
 
-		ItemStack movedStack = screen.getSlotUnderMouse().getStack();
+		ItemStack movedStack = getSlotUnderMouse(screen).getStack();
 		if (movedStack == null)
 			return;
 

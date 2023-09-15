@@ -27,10 +27,10 @@ import dev.l3g7.griefer_utils.core.misc.BufferedImageLuminanceSource;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.gui.elements.ModTextField;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Items;
@@ -68,7 +68,7 @@ public class QRCodeScanner extends Feature {
 				if (mtf != null && mtf.isFocused())
 					return;
 
-				Slot slot = ((GuiContainer) mc().currentScreen).getSlotUnderMouse();
+				Slot slot = MinecraftUtil.getSlotUnderMouse(mc().currentScreen);
 				if (slot == null || !slot.getHasStack() || (stack = slot.getStack()).getItem() != Items.filled_map) {
 					display(ADDON_PREFIX + "Bitte hovere eine Karte.");
 					return;

@@ -20,7 +20,11 @@ package dev.l3g7.griefer_utils;
 
 import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.misc.LibLoader;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.core.asm.LabyModTransformer;
+import net.labymod.core.asm.mappings.Minecraft18MappingImplementation;
+import net.labymod.core.asm.mappings.UnobfuscatedImplementation;
 import net.minecraft.launchwrapper.Launch;
 
 import java.io.IOException;
@@ -35,11 +39,11 @@ public class EarlyStart {
 		// Load and inject libraries
 		LibLoader.loadLibraries();
 
-		// Sets up LabyMod's mapping adapter
-		// It's usually called in the MinecraftVisitor, but since Mixin changes the transformer order (i think),
-		// transformers from LabyMod addons may be loaded before MinecraftVisitor, causing the adapter to be null
+		// Sets LabyMod's mapping adapter
+		// It's usually set in the MinecraftVisitor, but since Mixin changes the transformer order (i think),
+		// transformers from LabyMod addons may be loaded before the MinecraftVisitor, causing the adapter to be null
 		// and causing a crash if any addon tries to map something.
-		LabyModTransformer.addVisitors();
+		Reflection.set(LabyModTransformer.class, LabyModCoreMod.isObfuscated() ? new Minecraft18MappingImplementation() : new UnobfuscatedImplementation(), "mappingImplementation");
 
 		// Add Injector as transformer
 		Launch.classLoader.registerTransformer("dev.l3g7.griefer_utils.injection.Injector");

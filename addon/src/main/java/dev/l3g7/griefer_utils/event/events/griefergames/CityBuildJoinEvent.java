@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.event.events.griefergames;
 import dev.l3g7.griefer_utils.core.event_bus.Event;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 
 /**
  * An event being posted after joining a city build.
@@ -29,6 +30,11 @@ public class CityBuildJoinEvent extends Event {
 
 	private static boolean waitingForAuth = false;
 	private static boolean dataWasLoaded = false;
+
+	@EventListener
+	private static void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
+		waitingForAuth = dataWasLoaded = false;
+	}
 
 	@EventListener
 	private static void onMessage(MessageReceiveEvent event) {

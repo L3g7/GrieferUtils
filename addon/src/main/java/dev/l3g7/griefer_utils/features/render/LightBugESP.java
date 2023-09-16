@@ -103,10 +103,13 @@ public class LightBugESP extends Feature {
 
 		lightBugs.clear();
 		for (int dX = -range.get(); dX <= range.get(); dX++) {
+			yLoop:
 			for (int dY = -range.get(); dY <= range.get(); dY++) {
-				loop:
+				zloop:
 				for (int dZ = -range.get(); dZ <= range.get(); dZ++) {
 					BlockPos pos = player().getPosition().add(dX, dY, dZ);
+					if (pos.getY() < 0 || pos.getY() > 255)
+						continue yLoop;
 
 					int level = world().getLightFor(BLOCK, pos);
 
@@ -117,7 +120,7 @@ public class LightBugESP extends Feature {
 					// Check if no neighbor has a higher light level (-> the light source is there)
 					for (EnumFacing value : EnumFacing.VALUES)
 						if (world().getLightFor(BLOCK, pos.add(value.getDirectionVec())) > level)
-							continue loop;
+							continue zloop;
 
 					// Check if block is visible
 					if (inBlocks.get()) {

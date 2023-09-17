@@ -218,7 +218,7 @@ public class SpawnCounter extends Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onMessageReceive(MessageEvent.MessageReceiveEvent event) {
 		if (!ServerCheck.isOnGrieferGames())
 			return;

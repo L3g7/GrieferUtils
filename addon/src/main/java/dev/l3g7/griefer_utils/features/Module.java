@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features;
 
+import dev.l3g7.griefer_utils.core.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -38,7 +39,7 @@ import net.labymod.settings.elements.SettingsElement;
 
 import java.util.List;
 
-public abstract class Module extends SimpleTextModule {
+public abstract class Module extends SimpleTextModule implements Disableable {
 
 	public static final ModuleCategory CATEGORY = new ModuleCategory(Constants.ADDON_NAME, true, new ControlElement.IconData("griefer_utils/icons/icon.png")) {
 		@Override
@@ -122,6 +123,7 @@ public abstract class Module extends SimpleTextModule {
 	public String getDescription() { return description; }
 	public boolean isShown() { return !LabyMod.getInstance().isInGame() || ServerCheck.isOnGrieferGames(); }
 	public boolean isActive() { return getBooleanElement().getCurrentValue(); }
+	public boolean isEnabled() { return isActive(); }
 
 	public void loadSettings() {}
 	public int getSortingId() { return 0; }

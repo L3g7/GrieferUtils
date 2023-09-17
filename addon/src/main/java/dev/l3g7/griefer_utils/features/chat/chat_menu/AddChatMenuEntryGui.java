@@ -131,7 +131,7 @@ public class AddChatMenuEntryGui extends Gui {
 			.renderGroup(RENDER_GROUP_SELECTED);
 
 		// Command input
-		nameInput = createTextField("Befehl")
+		nameInput = createTextField("Name")
 			.pos(x, actionInput.bottom() + PADDING)
 			.width(width)
 			.renderGroup(RENDER_GROUP_SELECTED);

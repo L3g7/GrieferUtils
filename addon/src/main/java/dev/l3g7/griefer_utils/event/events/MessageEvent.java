@@ -138,7 +138,7 @@ public class MessageEvent extends Event {
 
 	public static class MessageReceiveEvent extends MessageEvent {
 
-		public IChatComponent message;
+		public final IChatComponent message;
 		public final byte type;
 
 		public MessageReceiveEvent(IChatComponent message, byte type) {

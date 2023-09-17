@@ -22,18 +22,14 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import net.labymod.utils.Material;
-import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
 public class RealMoney extends Feature {
@@ -56,21 +52,16 @@ public class RealMoney extends Feature {
 		.subSettings(tag, position);
 
 	@EventListener(priority = Priority.LOWEST)
-	public void onMessageReceive(MessageReceiveEvent event) {
-		if (Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText()).matches()) {
-			String text = "§r" + tag.get().replace('&', '§') + "§r";
+	public void onMessageReceive(MessageEvent.MessageModifyEvent event) {
+		if (!Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.original.getFormattedText()).matches())
+			return;
 
-			IChatComponent message;
-			if (position.get() == TagPosition.BEFORE)
-				message = new ChatComponentText(text).appendSibling(event.message);
-			else
-				message = event.message.appendText(text);
+		String text = "§r" + tag.get().replace('&', '§') + "§r";
 
-			// Feed new message into packet pipeline to allow reprocessing
-			mc().addScheduledTask(() -> mc().getNetHandler().handleChat(new S02PacketChat(message)));
-
-			event.cancel();
-		}
+		if (position.get() == TagPosition.BEFORE)
+			event.message = new ChatComponentText(text).appendSibling(event.message);
+		else
+			event.message = event.message.appendText(text);
 	}
 
 	private enum TagPosition {

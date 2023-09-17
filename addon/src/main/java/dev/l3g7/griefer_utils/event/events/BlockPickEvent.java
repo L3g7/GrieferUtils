@@ -25,7 +25,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -42,6 +45,15 @@ public class BlockPickEvent extends Event {
 
 	public BlockPickEvent(ItemStack requiredStack) {
 		this.requiredStack = requiredStack;
+	}
+
+	public static ItemStack getPickBlock(Block block, World world, BlockPos pos) {
+		Item item = block.getItem(world, pos);
+		if (item == null)
+			return null;
+
+		Block itemBlock = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
+		return new ItemStack(item, 1, itemBlock.getDamageValue(world, pos));
 	}
 
 	@Mixin(Minecraft.class)
@@ -66,7 +78,7 @@ public class BlockPickEvent extends Event {
 			if (block.getMaterial() == Material.air)
 				return;
 
-			if (new BlockPickEvent(block.getPickBlock(mop, theWorld, mop.getBlockPos(), thePlayer)).fire().isCanceled())
+			if (new BlockPickEvent(getPickBlock(block, theWorld, mop.getBlockPos())).fire().isCanceled())
 				ci.cancel();
 		}
 
@@ -84,7 +96,7 @@ public class BlockPickEvent extends Event {
 			if (block.getMaterial() == Material.air)
 				return;
 
-			if (new BlockPickEvent(block.getPickBlock(target, world, target.getBlockPos(), player)).fire().isCanceled())
+			if (new BlockPickEvent(getPickBlock(block, world, target.getBlockPos())).fire().isCanceled())
 				cir.setReturnValue(true);
 		}
 

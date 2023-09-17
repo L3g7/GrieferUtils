@@ -206,6 +206,15 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	}
 
 	@EventListener
+	private void onRightClick(MouseClickEvent.RightClickEvent event) {
+		onMouse(event);
+	}
+
+		@EventListener
+	private void onLeftClick(MouseClickEvent.LeftClickEvent event) {
+		onMouse(event);
+	}
+
 	private void onMouse(MouseClickEvent event) {
 		if (!isEnabled() || player() == null)
 			return;

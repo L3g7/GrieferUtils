@@ -178,6 +178,10 @@ public class IOUtil {
 			try {
 				if (conn == null) {
 					conn = (HttpURLConnection) new URL(url).openConnection();
+
+					if (conn instanceof HttpsURLConnection)
+						((HttpsURLConnection) conn).setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
+
 					conn.addRequestProperty("User-Agent", "GrieferUtils v" + AddonUtil.getVersion() + " | github.com/L3g7/GrieferUtils");
 					conn.setConnectTimeout(10000);
 				}

@@ -46,6 +46,17 @@ public class DataHandler {
 
 	@EventListener
 	private static void onWebDataReceive(WebDataReceiveEvent event) {
+		for (Map.Entry<String, WebAPI.Data.GrieferInfoItem> itemEntry : event.data.grieferInfoItems.entrySet()) {
+			ItemStack stack = ItemUtil.fromNBT(itemEntry.getValue().stack);
+			ItemFilter itemFilter = new ItemFilter(itemEntry.getKey(), stack, itemEntry.getValue().custom_name);
+			ItemFilter.FILTER.put(itemEntry.getKey(), itemFilter);
+
+			int compactCategories = itemEntry.getValue().categories;
+			for (int i = 0; i < ItemFilter.CATEGORIES.size(); i++)
+				if ((compactCategories & 1 << i) != 0)
+					ItemFilter.CATEGORIES.get(i).itemFilters.add(itemFilter);
+		}
+
 		IOUtil.read("https://griefer.info/grieferutils/farm-meta").asJsonObject(response -> {
 			for (JsonElement entry : response.getAsJsonArray("entity")) {
 				JsonObject entity = entry.getAsJsonObject();
@@ -80,17 +91,6 @@ public class DataHandler {
 		});
 
 		requestBotshops();
-
-		for (Map.Entry<String, WebAPI.Data.GrieferInfoItem> itemEntry : event.data.grieferInfoItems.entrySet()) {
-			ItemStack stack = ItemUtil.fromNBT(itemEntry.getValue().stack);
-			ItemFilter itemFilter = new ItemFilter(itemEntry.getKey(), stack, itemEntry.getValue().custom_name);
-			ItemFilter.FILTER.put(itemEntry.getKey(), itemFilter);
-
-			int compactCategories = itemEntry.getValue().categories;
-			for (int i = 0; i < ItemFilter.CATEGORIES.size(); i++)
-				if ((compactCategories & 1 << i) != 0)
-					ItemFilter.CATEGORIES.get(i).itemFilters.add(itemFilter);
-		}
 	}
 
 	public static void requestFarms() {

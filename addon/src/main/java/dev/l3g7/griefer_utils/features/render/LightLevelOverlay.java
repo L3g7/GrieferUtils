@@ -26,6 +26,8 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.utils.Material;
+import net.minecraft.block.*;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -33,9 +35,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.IBlockAccess;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Map;
@@ -113,7 +115,7 @@ public class LightLevelOverlay extends Feature {
 					if (world().getBlockState(pos).getBlock() != Blocks.air)
 						continue;
 
-					if (!world().getBlockState(pos.down()).getBlock().isSideSolid(world(), pos.down(), EnumFacing.UP))
+					if (!isUpperSideSolid(world().getBlockState(pos.down()).getBlock(), world(), pos.down()))
 						continue;
 
 					lightPositions.put(pos, world().getLightFor(EnumSkyBlock.BLOCK, pos));
@@ -152,6 +154,27 @@ public class LightLevelOverlay extends Feature {
 		Tessellator.getInstance().draw();
 		wr.setTranslation(0, 0, 0);
 		GlStateManager.popMatrix();
+	}
+
+	private boolean isUpperSideSolid(Block block, IBlockAccess world, BlockPos pos) {
+		if (block instanceof BlockFarmland)
+			return false;
+
+		if (block instanceof BlockHopper || block instanceof BlockCompressedPowered)
+			return true;
+
+		IBlockState state = block.getActualState(world.getBlockState(pos), world, pos);
+
+		if (block instanceof BlockSnow)
+			return state.getValue(BlockSnow.LAYERS) >= 8;
+
+		if (block instanceof BlockStairs)
+			return state.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
+
+		if (block instanceof BlockSlab)
+			return block.isFullBlock() || (state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP);
+
+		return block.isNormalCube();
 	}
 
 }

@@ -220,7 +220,7 @@ public class SpawnCounter extends Module {
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onMessageReceive(MessageEvent.MessageReceiveEvent event) {
-		if (!ServerCheck.isOnGrieferGames())
+		if (!ServerCheck.isOnGrieferGames() || player() == null)
 			return;
 
 		if (!event.message.getFormattedText().equals("§r§2§l[Switcher] §r§eLade Daten herunter!§r"))

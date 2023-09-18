@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.GuiOpenEvent;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdateSettings;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ModColor;
@@ -38,6 +39,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 public class ChangelogScreen extends GuiScreen {
 
+	private static boolean completedStartup = false;
 	private static boolean triggered = false;
 	private static boolean triggeredByUser = false;
 	private static String version = null;
@@ -56,14 +58,16 @@ public class ChangelogScreen extends GuiScreen {
 		event.cancel();
 	}
 
+	@OnStartupComplete
+	private static void onStartUpComplete() {
+		completedStartup = true;
+		tryOpening();
+	}
+
 	public static void trigger(boolean triggeredByUser) {
 		triggered = true;
 		ChangelogScreen.triggeredByUser = triggeredByUser;
-
-		if (version == null || mc().currentScreen instanceof ChangelogScreen)
-			return;
-
-		mc().displayGuiScreen(new ChangelogScreen());
+		tryOpening();
 	}
 
 	public static boolean hasData() {
@@ -73,11 +77,12 @@ public class ChangelogScreen extends GuiScreen {
 	public static void setData(String version, String changelog) {
 		ChangelogScreen.version = version;
 		ChangelogScreen.changelog = changelog;
+		tryOpening();
+	}
 
-		if (!triggered || mc().currentScreen instanceof ChangelogScreen)
-			return;
-
-		mc().displayGuiScreen(new ChangelogScreen());
+	private static void tryOpening() {
+		if (triggered && completedStartup && version != null && !(mc().currentScreen instanceof ChangelogScreen))
+			mc().displayGuiScreen(new ChangelogScreen());
 	}
 
 	public ChangelogScreen() {

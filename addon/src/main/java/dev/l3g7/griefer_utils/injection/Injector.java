@@ -32,9 +32,11 @@ import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.transformer.Config;
+import org.spongepowered.asm.service.IMixinService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Injector implements IClassTransformer {
 
@@ -52,6 +54,13 @@ public class Injector implements IClassTransformer {
 			MixinEnvironment.getDefaultEnvironment().setObfuscationContext("notch");
 			Reflection.setMappingTarget(Mapping.OBFUSCATED);
 		}
+
+		try {
+			Class<?> mxInfoClass = Class.forName("org.spongepowered.asm.mixin.transformer.MixinInfo");
+			IMixinService classLoaderUtil0 = Reflection.get(mxInfoClass, "classLoaderUtil");
+			Object classLoaderUtil = Reflection.get(classLoaderUtil0, "classLoaderUtil");
+			Reflection.set(classLoaderUtil, new ConcurrentHashMap<>(), "cachedClasses");
+		} catch (ReflectiveOperationException ignored) {}
 
 		// Load transformers
 		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Transformer.class)) {

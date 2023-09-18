@@ -90,7 +90,7 @@ public class PlotChatIndicator extends Feature {
 	@EventListener(triggerWhenDisabled = true)
 	public void onCityBuildJoin(CityBuildJoinEvent event) {
 		String server = getServerFromScoreboard();
-		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser")) {
+		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser") || server.equals("Portal")) {
 			plotchatState = false;
 			return;
 		}

@@ -140,7 +140,13 @@ public class PlotChatIndicator extends Feature {
 		if (!(gcc instanceof GuiChat))
 			return;
 
-		int buttonWidth = gcc instanceof GuiChatCustom ? Array.getLength(Reflection.get(gcc, "chatButtons")) * 14 : 0;
+		int buttonWidth = 0;
+		if (gcc instanceof GuiChatCustom) {
+			Object chatButtons = Reflection.get(gcc, "chatButtons");
+
+			if (chatButtons != null)
+				buttonWidth = Array.getLength(chatButtons) * 14;
+		}
 		int color = 0xFFFFA126;
 
 		// Render frame

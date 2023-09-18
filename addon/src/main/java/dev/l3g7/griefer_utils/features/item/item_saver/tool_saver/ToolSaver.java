@@ -74,7 +74,13 @@ public class ToolSaver extends ItemSaver {
 	private GuiScreen previousScreen = null;
 
 	@EventListener
-	public void onMouse(MouseClickEvent event) {
+	private void onLeftClick(MouseClickEvent.LeftClickEvent event) {
+		if (isEnabled() && player() == null || shouldCancel(player().getHeldItem()))
+			event.cancel();
+	}
+
+	@EventListener
+	private void onRightClick(MouseClickEvent.RightClickEvent event) {
 		if (isEnabled() && player() == null || shouldCancel(player().getHeldItem()))
 			event.cancel();
 	}

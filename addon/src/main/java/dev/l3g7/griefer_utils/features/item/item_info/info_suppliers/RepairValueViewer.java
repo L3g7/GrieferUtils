@@ -37,6 +37,7 @@ public class RepairValueViewer extends ItemInfo.ItemInfoSupplier {
 
 	private final StringSetting format = new StringSetting()
 		.name("Format")
+		.description("Zeigt unter einem Item seinen Reparaturwert (wie viele XP-Level eine Reparatur mindestens kostet) an.")
 		.icon(Material.EMPTY_MAP)
 		.defaultValue("\\n&7Reparaturwert: %s")
 		.setValidator(v -> {

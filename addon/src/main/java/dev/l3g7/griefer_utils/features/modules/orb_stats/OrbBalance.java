@@ -57,7 +57,7 @@ public class OrbBalance extends Module {
 		super("Orbguthaben", "Zeigt dir an, wie viele Orbs du hast.", "orb_balance", new ControlElement.IconData("griefer_utils/icons/orb.png"));
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onTick(TickEvent.ClientTickEvent event) {
 		if (!ServerCheck.isOnCitybuild() || !(mc.currentScreen instanceof GuiChest))
 			return;

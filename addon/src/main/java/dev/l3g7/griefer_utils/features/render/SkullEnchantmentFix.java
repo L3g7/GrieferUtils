@@ -97,7 +97,7 @@ public class SkullEnchantmentFix extends Feature {
 
 		@Inject(method = "renderEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;disableLighting()V"))
 		public void injectRenderEffect(IBakedModel iBakedModel, CallbackInfo ci) {
-			if (!FileProvider.getSingleton(SkullEnchantmentFix.class).isEnabled() && iBakedModel == cubeModel)
+			if (iBakedModel == cubeModel)
 				GlStateManager.depthFunc(GL11.GL_ALWAYS);
 		}
 

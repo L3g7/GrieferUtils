@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.layers.LayerCustomHead;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemBlock;
@@ -55,7 +56,7 @@ public class ShowHatItems extends Feature {
 		@SuppressWarnings("deprecation")
 		@Inject(method = "doRenderLayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V", shift = At.Shift.AFTER), cancellable = true)
 		public void injectDoRenderLayer(EntityLivingBase entity, float p_177141_2_, float p_177141_3_, float partialTicks, float p_177141_5_, float p_177141_6_, float p_177141_7_, float scale, CallbackInfo ci) {
-			if (!FileProvider.getSingleton(ShowHatItems.class).isEnabled())
+			if (!FileProvider.getSingleton(ShowHatItems.class).isEnabled() || entity instanceof EntityArmorStand)
 				return;
 
 			ItemStack stack = entity.getCurrentArmor(3);

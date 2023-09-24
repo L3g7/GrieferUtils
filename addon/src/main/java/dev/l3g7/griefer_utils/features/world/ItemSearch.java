@@ -42,6 +42,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static org.lwjgl.input.Keyboard.KEY_A;
+import static org.lwjgl.input.Keyboard.KEY_F;
 
 @Singleton
 public class ItemSearch extends Feature {
@@ -106,6 +108,9 @@ public class ItemSearch extends Feature {
 				if (Keyboard.getEventKey() == mc().gameSettings.keyBindInventory.getKeyCode())
 					event.cancel();
 			}
+
+			if (!searchField.isFocused() && Keyboard.getEventKey() == KEY_F && GuiScreen.isKeyComboCtrlA(KEY_A))
+				searchField.setFocused(true);
 		}
 	}
 

@@ -50,7 +50,13 @@ public class ColorPreview extends Feature {
 			return;
 
 		GuiChat gui = (GuiChat) event.gui;
-		int buttonWidth = gui instanceof GuiChatCustom ? Array.getLength(Reflection.get(gui, "chatButtons")) * 14 : 0;
+		int buttonWidth = 0;
+		if (gui instanceof GuiChatCustom) {
+			Object chatButtons = Reflection.get(gui, "chatButtons");
+
+			if (chatButtons != null)
+				buttonWidth = Array.getLength(chatButtons) * 14;
+		}
 		GuiTextField field = Reflection.get(gui, "inputField");
 		String text = field.getText();
 

@@ -120,6 +120,7 @@ public class BetterHopper extends Feature {
 				if (showSourceHopper.get()) {
 					mainConnection = null;
 					displayEnd = Long.MAX_VALUE;
+					borderSize = 1;
 				}
 				return;
 			}
@@ -170,8 +171,10 @@ public class BetterHopper extends Feature {
 				if (showRange.get())
 					blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
 
-				if (showSourceHopper.get())
+				if (showSourceHopper.get()) {
+					borderSize = 1;
 					displayEnd = Long.MAX_VALUE;
+				}
 			}
 
 			mainConnection = null;

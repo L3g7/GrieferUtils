@@ -83,7 +83,7 @@ public class AfkNick extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Automatisch Nicken wenn AFK")
+		.name("Automatisch nicken wenn AFK")
 		.description("Nickt dich, wenn du eine bestimmte, einstellbare Zeit AFK bist.")
 		.icon("labymod:settings/modules/afk_timer")
 		.subSettings(nickName, messageReplay, triggerAfk, new HeaderSetting(), minutes, seconds);

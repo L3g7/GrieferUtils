@@ -32,6 +32,7 @@ import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
+import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -93,10 +94,10 @@ public class PieMenu extends Gui implements Disableable {
 				String cb = entry.cityBuild.get().getDisplayName();
 				String srv = MinecraftUtil.getServerFromScoreboard();
 				if (cb.equals("Egal") || srv.equals(cb))
-					entries.add(Pair.of(entry.name.get(), entry.command.get()));
+					entries.add(Pair.of(ModColor.createColors(entry.name.get()), entry.command.get()));
 			}
 
-			allPages.add(Pair.of(((PieMenuPageSetting) pageElement).name.get(), entries));
+			allPages.add(Pair.of(ModColor.createColors(((PieMenuPageSetting) pageElement).name.get()), entries));
 		}
 
 		if (allPages.size() != 0)

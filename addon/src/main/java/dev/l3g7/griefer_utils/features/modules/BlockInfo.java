@@ -167,8 +167,10 @@ public class BlockInfo extends Module {
 
 		IBlockState state = SchematicaUtil.getWorld().getBlockState(mop.getBlockPos());
 		ItemStack pickedStack = state.getBlock().getPickBlock(mop, SchematicaUtil.getWorld(), mop.getBlockPos(), player());
+		ItemStack stack = pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack;
+		stack.setStackDisplayName("§r" + stack.getDisplayName() + " §b(S)");
 
-		data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
+		data = Pair.of(mop.getBlockPos(), stack);
 		return true;
 	}
 

@@ -100,7 +100,7 @@ public class RedstoneHelper extends Feature {
 
 	private static final BooleanSetting showNoteBlockPitch = new BooleanSetting()
 		.name("Notenblock-Höhe anzeigen")
-		.description("An, welche Tonhöhe bei Notenblöcken eingestellt ist."
+		.description("Zeigt an, welche Tonhöhe bei Notenblöcken eingestellt ist."
 			+ "\nDafür muss von diesem Block ein Ton abgespielt worden sein.")
 		.icon(NOTE_BLOCK)
 		.subSettings(showNoteId);

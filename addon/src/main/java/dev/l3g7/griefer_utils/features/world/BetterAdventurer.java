@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.ItemTooltipEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
@@ -40,16 +41,22 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getStackUnderMouse;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
 public class BetterAdventurer extends Feature {
 
-	private final BooleanSetting displayCount = new BooleanSetting()
+	private static final Pattern SELL_PATTERN = Pattern.compile("^§r§8\\[§r§6Adventure§r§8] §r§7Du hast §r§e\\d+§r§e .*§r§7 abgegeben. Status: §r§e(\\d+)§r§8/§r§6(\\d+)§r$");
+	private ItemStack hoveredStack = null;
+
+	private final BooleanSetting displayMissing = new BooleanSetting()
 		.name("Fehlende Items anzeigen")
 		.description("")
-		.description("Zeigt unter Adventure-Items an, wie viel noch fehlt.")
+		.description("Zeigt unter Adventure-Items sowie beim Abgeben an, wie viel noch fehlt.")
 		.icon(ItemUtil.createItem(Items.diamond_shovel, 0, true))
 		.defaultValue(true);
 
@@ -64,7 +71,7 @@ public class BetterAdventurer extends Feature {
 		.name("Adventurer verbessern")
 		.description("Verbessert den Adventurer.")
 		.icon(ItemUtil.createItem(Items.fire_charge, 0, true))
-		.subSettings(displayCount, coinAmount);
+		.subSettings(displayMissing, coinAmount);
 
 	@EventListener
 	public void onTooltip(ItemTooltipEvent e) {
@@ -72,7 +79,7 @@ public class BetterAdventurer extends Feature {
 		if (!(screen instanceof GuiContainer))
 			return;
 
-		if (displayCount.get()) {
+		if (displayMissing.get()) {
 			try {
 				List<String> adventureToolTip = getMissingItems(e.itemStack);
 				if (adventureToolTip != null)
@@ -85,13 +92,19 @@ public class BetterAdventurer extends Feature {
 
 	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
-		if (!(mc().currentScreen instanceof GuiChest) || !coinAmount.get())
+		if (!(mc().currentScreen instanceof GuiChest))
 			return;
 
 		GuiChest screen = (GuiChest) mc().currentScreen;
 		IInventory inv = Reflection.get(screen, "lowerChestInventory");
 		boolean isAdventurer = inv.getName().startsWith("§6Adventure-Jobs");
-		if (!isAdventurer && !inv.getName().startsWith("§6Shop"))
+		hoveredStack = null;
+		if (isAdventurer && displayMissing.get()) {
+			if (ItemUtil.getLastLore(getStackUnderMouse(screen)).equals("§7Klicke, um die Materialien aus deinem Inventar zu liefern."))
+				hoveredStack = getStackUnderMouse(screen);
+		}
+
+		if (!coinAmount.get() || (!isAdventurer && !inv.getName().startsWith("§6Shop")))
 			return;
 
 		ItemStack stack = screen.inventorySlots.getSlot(isAdventurer ? 40 : 49).getStack();
@@ -112,6 +125,18 @@ public class BetterAdventurer extends Feature {
 		} catch (NumberFormatException | StringIndexOutOfBoundsException e) {
 			System.err.println(lore.get(0));
 		}
+	}
+
+	@EventListener
+	private void onMessageModify(MessageEvent.MessageModifyEvent event) {
+		Matcher matcher = SELL_PATTERN.matcher(event.original.getFormattedText());
+		if (!matcher.matches())
+			return;
+
+		String sold = matcher.group(1);
+		String total = matcher.group(2);
+		int missing = Integer.parseInt(total) - Integer.parseInt(sold);
+		event.message.appendText(String.format("§7 (Fehlend: §e%s§7)", ItemCounter.formatAmount(missing, hoveredStack.getMaxStackSize())));
 	}
 
 	private List<String> getMissingItems(ItemStack itemStack) {

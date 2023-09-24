@@ -173,6 +173,11 @@ public class MinecraftUtil {
 		return Reflection.get(guiScreen, "theSlot");
 	}
 
+	public static ItemStack getStackUnderMouse(GuiScreen guiScreen) {
+		Slot slot = getSlotUnderMouse(guiScreen);
+		return slot == null ? null : slot.getStack();
+	}
+
 	public static int getSlotIndex(Slot slot) {
 		return Reflection.get(slot, "slotIndex");
 	}

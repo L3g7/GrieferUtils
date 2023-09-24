@@ -26,7 +26,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -35,7 +34,6 @@ import net.minecraft.client.gui.GuiScreenBook;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -43,8 +41,7 @@ import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static org.lwjgl.input.Keyboard.KEY_ESCAPE;
 
 /**
@@ -79,8 +76,7 @@ public class BookFix extends Feature {
 		if (!Mouse.getEventButtonState() || !(mc().currentScreen instanceof GuiContainer))
 			return;
 
-		Slot slot = MinecraftUtil.getSlotUnderMouse(mc().currentScreen);
-		if (slot != null && processClick(slot.getStack(), Mouse.getEventButton() == 1))
+		if (processClick(getStackUnderMouse(mc().currentScreen), Mouse.getEventButton() == 1))
 			event.cancel();
 	}
 

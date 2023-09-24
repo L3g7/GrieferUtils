@@ -147,10 +147,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 
 	private void move(int end, WindowClickEvent event) {
 		GuiContainer screen = (GuiContainer) mc().currentScreen;
-		if (getSlotUnderMouse(screen) == null)
-			return;
-
-		ItemStack movedStack = getSlotUnderMouse(screen).getStack();
+		ItemStack movedStack = getStackUnderMouse(screen);
 		if (movedStack == null)
 			return;
 

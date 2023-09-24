@@ -154,8 +154,7 @@ public class OrbSaver extends ItemSaver {
 			}
 		}
 
-		Slot slot = getSlotUnderMouse(event.gui);
-		if (slot != null && slot.getHasStack() && slot.getStack() == compressedBlock)
+		if (getStackUnderMouse(event.gui) == compressedBlock)
 			event.cancel();
 	}
 

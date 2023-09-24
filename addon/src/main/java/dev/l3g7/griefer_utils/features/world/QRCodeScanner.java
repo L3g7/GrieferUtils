@@ -34,7 +34,6 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.storage.MapData;
 
@@ -68,8 +67,8 @@ public class QRCodeScanner extends Feature {
 				if (mtf != null && mtf.isFocused())
 					return;
 
-				Slot slot = MinecraftUtil.getSlotUnderMouse(mc().currentScreen);
-				if (slot == null || !slot.getHasStack() || (stack = slot.getStack()).getItem() != Items.filled_map) {
+				stack = MinecraftUtil.getStackUnderMouse(mc().currentScreen);
+				if (stack == null || stack.getItem() != Items.filled_map) {
 					display(ADDON_PREFIX + "Bitte hovere eine Karte.");
 					return;
 				}

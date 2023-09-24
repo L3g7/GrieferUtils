@@ -115,7 +115,7 @@ public class Calculator extends Feature {
 			autoWithdraw, starPlaceholder, placeholder, autoEquationDetect, prefix);
 
 	private static Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
-	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?k* *[+\\-/*^ek] *[+-]?\\d+(?:[.,]\\d+)?k*|[+-]?\\d+(?:[.,]\\d+)?k+)(?:(?= )|$)");
+	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?[km]* *[+\\-/*^ekm] *[+-]?\\d+(?:[.,]\\d+)?[km]*|[+-]?\\d+(?:[.,]\\d+)?[km]+)(?:(?= )|$)");
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 	private BigDecimal lastPayment = BigDecimal.ZERO;
 	private String lastPaymentReceiver;
@@ -312,29 +312,8 @@ public class Calculator extends Feature {
 	public static double calculate(String equation, boolean displayErrors) {
 		equation = equation.replace(",", ".");
 
-		// Resolve "k"s
-		StringBuilder builder = new StringBuilder(equation);
-		int index ;
-		while ((index = builder.indexOf("k")) != -1) {
-
-			int ks = 1;
-			while (builder.length() > index + ks && builder.charAt(index + ks) == 'k')
-				ks++;
-
-			builder.replace(index, index + ks, " * 1" + Strings.repeat("000", ks) + ")");
-
-			while (true) {
-				if (--index < 0)
-					break;
-
-				char character = builder.charAt(index);
-				if (!Character.isDigit(character) && character != '.')
-					break;
-			}
-			builder.insert(index + 1, '(');
-		}
-
-		equation = builder.toString();
+		equation = resolveLetterZeros(equation, 'k', 3);
+		equation = resolveLetterZeros(equation, 'm', 6);
 
 		Expression exp;
 		try {
@@ -347,7 +326,7 @@ public class Calculator extends Feature {
 				display("§cDie Bibliothek konnte nicht geladen werden.");
 			}
 
-			builder = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 			try {
 				builder.append("mXparser metadata:\nVersion: ").append(mXparser.VERSION).append("\nMethods:");
 				for (Method method : Expression.class.getDeclaredMethods())
@@ -393,6 +372,31 @@ public class Calculator extends Feature {
 		}
 
 		return expResult;
+	}
+
+	private static String resolveLetterZeros(String equation, char letter, int zeros) {
+		StringBuilder builder = new StringBuilder(equation);
+		int index ;
+		while ((index = builder.indexOf(String.valueOf(letter))) != -1) {
+
+			int ks = 1;
+			while (builder.length() > index + ks && builder.charAt(index + ks) == letter)
+				ks++;
+
+			builder.replace(index, index + ks, " * 1" + Strings.repeat(Strings.repeat("0", zeros), ks) + ")");
+
+			while (true) {
+				if (--index < 0)
+					break;
+
+				char character = builder.charAt(index);
+				if (!Character.isDigit(character) && character != '.')
+					break;
+			}
+			builder.insert(index + 1, '(');
+		}
+
+		return builder.toString();
 	}
 
 	private enum WithdrawAction {

@@ -157,12 +157,17 @@ public class AutoUpdater {
 		if (new File(path).delete())
 			return true;
 
-		// Probably locked; Overwrite it with an empty zip file until Minecraft is closed
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		ZipOutputStream out = new ZipOutputStream(bout);
-		out.setComment("File marked for deletion by GrieferUtils updater");
-		out.close();
-		Files.write(Paths.get(path), bout.toByteArray());
+		try {
+			// Probably locked; Overwrite it with an empty zip file until Minecraft is closed
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			ZipOutputStream out = new ZipOutputStream(bout);
+			out.setComment("File marked for deletion by GrieferUtils updater");
+			out.close();
+			Files.write(Paths.get(path), bout.toByteArray());
+		} catch (Throwable t) {
+			// Deleting failed, but it doesn't matter, so nothing is done
+			t.printStackTrace();
+		}
 
 		// Add old file to LabyMod's .delete
 		Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();

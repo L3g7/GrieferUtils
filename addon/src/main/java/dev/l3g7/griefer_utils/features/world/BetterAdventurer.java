@@ -130,7 +130,7 @@ public class BetterAdventurer extends Feature {
 	@EventListener
 	private void onMessageModify(MessageEvent.MessageModifyEvent event) {
 		Matcher matcher = SELL_PATTERN.matcher(event.original.getFormattedText());
-		if (!matcher.matches())
+		if (!matcher.matches() || hoveredStack == null)
 			return;
 
 		String sold = matcher.group(1);

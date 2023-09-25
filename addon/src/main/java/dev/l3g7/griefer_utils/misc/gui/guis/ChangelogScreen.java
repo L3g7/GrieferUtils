@@ -50,7 +50,7 @@ public class ChangelogScreen extends GuiScreen {
 
 	// Make sure the gui closes to the correct screen
 	@EventListener(priority = Priority.LOWEST)
-	public void onGuiOpen(GuiOpenEvent<GuiScreen> event) {
+	public void onGuiOpen(GuiOpenEvent<?> event) {
 		if (event.isCanceled() || event.gui instanceof ChangelogScreen)
 			return;
 

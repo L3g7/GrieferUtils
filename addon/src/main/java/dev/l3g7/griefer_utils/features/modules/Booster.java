@@ -103,7 +103,7 @@ public class Booster extends Module {
 		}
 
 		GuiTextField input = Reflection.get(mc().currentScreen, "inputField");
-		chatInput = input.getText();
+		chatInput = input == null ? null : input.getText();
 	}
 
 	@EventListener

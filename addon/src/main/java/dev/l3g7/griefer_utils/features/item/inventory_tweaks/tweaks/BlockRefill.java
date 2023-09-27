@@ -91,17 +91,17 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 	}
 
 	@EventListener
-	public void onItemUse(ItemUseEvent event) {
-		if (!refillBlocks.get() || !(event.getStackBeforeUse().getItem() instanceof ItemBlock))
+	public void onItemUse(ItemUseEvent.Post event) {
+		if (!refillBlocks.get() || !(event.stackBeforeUse.getItem() instanceof ItemBlock))
 			return;
 
-		ItemStack previousStack = event.getStackBeforeUse();
+		ItemStack previousStack = event.stackBeforeUse;
 		NBTTagCompound tag = previousStack.getTagCompound();
 		if (tag != null && tag.hasKey("currentAmount") && tag.getInteger("currentAmount") != 1)
 			return;
 
-		if (!event.getStackBeforeUse().isItemEqual(event.getStackAfteruse())) {
-			expectedStack = event.getStackBeforeUse();
+		if (!event.stackBeforeUse.isItemEqual(event.stackAfterUse)) {
+			expectedStack = event.stackBeforeUse;
 			slot = player().inventory.currentItem + 36;
 		}
 	}

@@ -140,7 +140,7 @@ public class BlockInfo extends Module {
 		}
 
 		IBlockState state = world().getBlockState(mop.getBlockPos());
-		ItemStack pickedStack = state.getBlock().getPickBlock(mop, world(), mop.getBlockPos(), player());
+		ItemStack pickedStack = getPickBlock(state.getBlock(), world(), mop.getBlockPos());
 		if (state.getBlock() instanceof BlockSkull) {
 			TileEntitySkull tes = (TileEntitySkull) world().getTileEntity(mop.getBlockPos());
 			pickedStack.setItemDamage(tes.getSkullType());
@@ -166,7 +166,7 @@ public class BlockInfo extends Module {
 			return false;
 
 		IBlockState state = SchematicaUtil.getWorld().getBlockState(mop.getBlockPos());
-		ItemStack pickedStack = state.getBlock().getPickBlock(mop, SchematicaUtil.getWorld(), mop.getBlockPos(), player());
+		ItemStack pickedStack = getPickBlock(state.getBlock(),  SchematicaUtil.getWorld(), mop.getBlockPos());
 		ItemStack stack = pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack;
 		stack.setStackDisplayName("§r" + stack.getDisplayName() + " §b(S)");
 

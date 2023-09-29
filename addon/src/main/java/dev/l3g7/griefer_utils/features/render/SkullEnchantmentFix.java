@@ -78,7 +78,7 @@ public class SkullEnchantmentFix extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Kopf-Verzauberung fixen")
 		.description("Behebt, dass Verzauberungen von Köpfe nicht angezeigt werden.")
-		.icon("enchanted_skull");
+		.icon(ICON);
 
 	@Mixin(RenderItem.class)
 	private static class MixinRenderItem {

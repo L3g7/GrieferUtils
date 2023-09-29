@@ -25,7 +25,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import net.labymod.utils.Material;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -41,7 +40,7 @@ public class SpawnerWithHeldItemFix extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Spawner mit Item öffnen")
 		.description("Ermöglicht das Öffnen von Spawnern auf öffentlichen Grundstücken, auch wenn man ein Item / einen Block in der Hand hält.")
-		.icon(Material.MOB_SPAWNER);
+		.icon("griefer_info/spawner");
 
 	@EventListener
 	private void onPacketSend(ItemUseEvent.Pre event) {

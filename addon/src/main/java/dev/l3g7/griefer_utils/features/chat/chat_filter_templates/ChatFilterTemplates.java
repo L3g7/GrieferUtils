@@ -27,8 +27,6 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-
 @Singleton
 public class ChatFilterTemplates extends Feature {
 
@@ -55,10 +53,6 @@ public class ChatFilterTemplates extends Feature {
         if (event.gui.getClass() != GuiChatFilterWithTemplates.class)
             event.gui = new GuiChatFilterWithTemplates(Reflection.get(event.gui, "defaultInputFieldText"));
     }
-
-	public boolean shouldShowAddButton() {
-		return !(isEnabled() && mc().currentScreen instanceof GuiChatFilterWithTemplates && ((GuiChatFilterWithTemplates) mc().currentScreen).templatesOpen);
-	}
 
 	public static class FilterTemplate {
 

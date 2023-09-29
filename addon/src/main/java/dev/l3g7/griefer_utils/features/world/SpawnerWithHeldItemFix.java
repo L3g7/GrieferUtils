@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
@@ -44,7 +45,7 @@ public class SpawnerWithHeldItemFix extends Feature {
 
 	@EventListener
 	private void onPacketSend(ItemUseEvent.Pre event) {
-		if (event.stack == null)
+		if (event.stack == null || !ServerCheck.isOnGrieferGames())
 			return;
 
 		if (event.stack != player().getHeldItem())

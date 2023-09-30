@@ -185,7 +185,12 @@ public class ChatMenu extends Feature {
 		if (COPY_TEXT_ENTRY.enabled) entries.add(COPY_TEXT_ENTRY);
 		getCustom().forEach(e -> { if (e.enabled) entries.add(e); });
 
-		renderer = new ChatMenuRenderer(entries, NameCache.ensureRealName(name.replaceAll("§.", "").trim()), ChatLineUtil.getHoveredComponent());
+		name = name.replaceAll("§.", "").trim();
+		String realName = NameCache.ensureRealName(name);
+		if (realName == null)
+			realName = name;
+
+		renderer = new ChatMenuRenderer(entries, realName, ChatLineUtil.getHoveredComponent());
 		event.cancel();
 	}
 

@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.injection.mixin;
 
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,6 +25,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Mixin(TileEntitySpecialRenderer.class)
 public class MixinTileEntitySpecialRenderer {
@@ -35,7 +36,7 @@ public class MixinTileEntitySpecialRenderer {
 
 	@Inject(method = "setRendererDispatcher", at = @At("RETURN"))
 	public void injectSetRendererDispatcher(CallbackInfo ci) {
-		rendererDispatcher.renderEngine = MinecraftUtil.mc().renderEngine;
+		rendererDispatcher.renderEngine = mc().getTextureManager();
 	}
 
 }

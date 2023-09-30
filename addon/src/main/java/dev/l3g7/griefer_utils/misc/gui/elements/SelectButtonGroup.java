@@ -38,7 +38,7 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 
 			if (width > 0)
 				width += 10; // 10 px padding between buttons
-			width += button.width;
+			width += button.getButtonWidth();
 		}
 		this.width = width;
 
@@ -47,7 +47,7 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 		int buttonX = x;
 		for (Button button : buttons) {
 			button.x(buttonX);
-			buttonX += 10 + button.width;
+			buttonX += 10 + button.getButtonWidth();
 		}
 	}
 
@@ -125,10 +125,10 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
 			int x = xPosition;
 			int y = yPosition;
-			boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
+			boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + getButtonWidth() && mouseY < y + height;
 
 			// Draw background
-			drawUtils().drawRectangle(x, y, x + width, y + height, ModColor.toRGB(80, 80, 80, 60));
+			drawUtils().drawRectangle(x, y, x + getButtonWidth(), y + height, ModColor.toRGB(80, 80, 80, 60));
 
 			// Draw foreground
 			drawUtils().bindTexture(icon.getTextureIcon());

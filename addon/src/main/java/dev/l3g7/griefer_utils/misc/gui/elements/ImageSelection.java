@@ -79,7 +79,7 @@ public class ImageSelection extends ModTextField implements Drawable, Clickable 
 	}
 
 	public ImageSelection width(double width) {
-		this.width = (int) width - 26 - button.width - 5;
+		this.width = (int) width - 26 - button.getButtonWidth() - 5;
 		button.x(xPosition + this.width + 5);
 		return this;
 	}

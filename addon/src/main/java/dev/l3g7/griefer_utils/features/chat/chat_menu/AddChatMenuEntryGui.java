@@ -42,6 +42,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getButtonHeight;
+
 public class AddChatMenuEntryGui extends Gui {
 
 	private static final int RENDER_GROUP_POST = 1; // Drawable objects rendered after everything else
@@ -215,7 +217,7 @@ public class AddChatMenuEntryGui extends Gui {
 					bottom = iconInput.bottom();
 			}
 			cancelButton.yPosition = saveButton.yPosition = (int) bottom + PADDING;
-			scrollbar.update(saveButton.height + saveButton.yPosition - HEADER_HEIGHT);
+			scrollbar.update(getButtonHeight(saveButton) + saveButton.yPosition - HEADER_HEIGHT);
 		}
 
 		mouseY -= scrollbar.getScrollY();

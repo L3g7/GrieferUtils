@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getButtonHeight;
+
 public class AddChatReactionGui extends Gui {
 
 	private static final int RENDER_GROUP_POST = 1; // Drawable objects rendered after everything else
@@ -176,7 +178,7 @@ public class AddChatReactionGui extends Gui {
 
 			cityBuildInput.y(bottom + PADDING);
 			cancelButton.yPosition = saveButton.yPosition = (int) cityBuildInput.bottom() + PADDING;
-			scrollbar.update(saveButton.height + saveButton.yPosition - HEADER_HEIGHT);
+			scrollbar.update(getButtonHeight(saveButton) + saveButton.yPosition - HEADER_HEIGHT);
 		}
 		switch (textTypeInput.getSelected()) {
 			case REGEX:

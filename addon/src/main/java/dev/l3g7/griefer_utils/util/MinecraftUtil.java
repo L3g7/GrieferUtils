@@ -27,6 +27,7 @@ import net.labymod.utils.DrawUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -192,6 +193,10 @@ public class MinecraftUtil {
 
 		Block itemBlock = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
 		return new ItemStack(item, 1, itemBlock.getDamageValue(world, pos));
+	}
+
+	public static int getButtonHeight(GuiButton button) {
+		return Reflection.get(button, "height");
 	}
 
 }

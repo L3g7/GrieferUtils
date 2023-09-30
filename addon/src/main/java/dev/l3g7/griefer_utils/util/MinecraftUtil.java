@@ -38,10 +38,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -180,6 +183,15 @@ public class MinecraftUtil {
 
 	public static int getSlotIndex(Slot slot) {
 		return Reflection.get(slot, "slotIndex");
+	}
+
+	public static ItemStack getPickBlock(Block block, World world, BlockPos pos) {
+		Item item = block.getItem(world, pos);
+		if (item == null)
+			return null;
+
+		Block itemBlock = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
+		return new ItemStack(item, 1, itemBlock.getDamageValue(world, pos));
 	}
 
 }

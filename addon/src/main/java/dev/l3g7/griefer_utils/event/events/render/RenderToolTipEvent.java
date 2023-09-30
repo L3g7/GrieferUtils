@@ -47,7 +47,7 @@ public class RenderToolTipEvent extends Event {
 
 		@Inject(method = "renderToolTip", at = @At("HEAD"), cancellable = true)
 		public void injectRenderTooltip(ItemStack stack, int x, int y, CallbackInfo ci) {
-			if (new RenderToolTipEvent(stack, c(this), x, y).fire().isCanceled())
+			if (stack != null && new RenderToolTipEvent(stack, c(this), x, y).fire().isCanceled())
 				ci.cancel();
 		}
 

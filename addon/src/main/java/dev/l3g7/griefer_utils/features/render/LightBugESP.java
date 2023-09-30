@@ -54,6 +54,7 @@ public class LightBugESP extends Feature {
 	private int passedTicks = 0;
 
 	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
+		.description("Halten: Zeigt die Lichtbugs an, während die Taste gedrückt wird.\nUmschalten: Schaltet das Anzeigen der Lichtbugs um, wenn die Taste gedrückt wird.")
 		.callback(() -> {
 			if (getMainElement() != null)
 				((BooleanSetting) getMainElement()).set(false);
@@ -67,6 +68,7 @@ public class LightBugESP extends Feature {
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
 		.icon("key")
+		.description("Die Taste, mit der Lichtbugs angezeigt werden.")
 		.pressCallback(p -> {
 			if (p || triggerMode.get() == HOLD) {
 				BooleanSetting enabled = ((BooleanSetting) getMainElement());

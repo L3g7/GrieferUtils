@@ -46,6 +46,7 @@ import static net.minecraft.init.Blocks.stained_hardened_clay;
 public class ChunkIndicator extends Feature {
 
 	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
+		.description("Halten: Zeigt die Chunks-Grenzen an, während die Taste gedrückt wird.\nUmschalten: Schaltet das Anzeigen der Chunks-Grenzen um, wenn die Taste gedrückt wird.")
 		.callback(() -> {
 			if (getMainElement() != null)
 				((BooleanSetting) getMainElement()).set(false);
@@ -54,6 +55,7 @@ public class ChunkIndicator extends Feature {
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
 		.icon("key")
+		.description("Die Taste, mit der Chunks-Grenzen angezeigt werden.")
 		.pressCallback(p -> {
 			if (p || triggerMode.get() == HOLD) {
 				BooleanSetting enabled = ((BooleanSetting) getMainElement());

@@ -41,6 +41,7 @@ public class FullBright extends Feature {
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
 		.icon("key")
+		.description("Die Taste, mit der FullBright an-/ausgeschalten wird.")
 		.pressCallback(pressed -> {
 			if (pressed) {
 				BooleanSetting enabled = ((BooleanSetting) getMainElement());

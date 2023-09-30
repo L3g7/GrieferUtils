@@ -36,6 +36,7 @@ public class ShowBarriers extends Feature {
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
 		.icon("key")
+		.description("Die Taste, mit der das Anzeigen von Barrien an-/ausgeschalten wird.")
 		.pressCallback(pressed -> {
 			if (pressed) {
 				BooleanSetting enabled = ((BooleanSetting) getMainElement());

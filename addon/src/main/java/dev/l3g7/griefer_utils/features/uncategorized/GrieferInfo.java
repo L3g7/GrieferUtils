@@ -32,7 +32,7 @@ public class GrieferInfo extends Feature {
 	private final KeySetting setting = new KeySetting()
 		.name("Taste")
 		.icon("key")
-		.description("Mit welcher Taste das Gui geöffnet werden soll.")
+		.description("Die Taste, mit der das Gui geöffnet werden soll.")
 		.pressCallback(b -> { if (b) GuiGrieferInfo.GUI.open(); });
 
 	@MainElement

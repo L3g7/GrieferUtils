@@ -45,6 +45,8 @@ public class ChatTime extends Feature {
 
 	private final StringSetting style = new StringSetting()
 		.name("Design")
+		.description("Das Design des Prefixes, mit Unterstützung von &-Formatierungscodes.\n" +
+			"%s ist die Zeit an sich. ")
 		.icon(Material.EMPTY_MAP)
 		.setValidator(v -> {
 			try {
@@ -57,6 +59,7 @@ public class ChatTime extends Feature {
 
 	private final StringSetting format = new StringSetting()
 		.name("Zeitformat")
+		.description("Das Format der Zeit, gemäß Javas Date Format")
 		.icon(Material.EMPTY_MAP)
 		.callback(DATE_FORMAT::applyPattern)
 		.setValidator(v -> {

@@ -51,6 +51,7 @@ public class PlayerHider extends Feature {
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
 		.icon("key")
+		.description("Die Taste, mit der das Verstecken von Spielern an-/ausgeschalten wird.")
 		.pressCallback(pressed -> {
 			if (pressed) {
 				BooleanSetting enabled = ((BooleanSetting) getMainElement());
@@ -61,6 +62,7 @@ public class PlayerHider extends Feature {
 	private final BooleanSetting showNPCs = new BooleanSetting()
 		.name("NPCs zeigen")
 		.icon("steve")
+		.description("Ob Spieler, die von GrieferGames erzeugt wurden (z.B. Orbhändler), auch angezeigt werden sollen.")
 		.defaultValue(true)
 		.callback(() -> {
 			if (isOnGrieferGames())

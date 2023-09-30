@@ -54,6 +54,7 @@ public class ItemInfo extends Feature {
 		.collect(Collectors.toList());
 
 	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
+		.description("Halten: Zeigt die Item-Infos an, während die Taste gedrückt wird.\nUmschalten: Schaltet das Anzeigen der Item-Infos um, wenn die Taste gedrückt wird.")
 		.defaultValue(HOLD)
 		.callback(() -> {
 			if (getMainElement() != null)
@@ -63,6 +64,7 @@ public class ItemInfo extends Feature {
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
 		.icon("key")
+		.description("Die Taste, mit der die Item-Infos angezeigt werden.")
 		.triggersInContainers()
 		.pressCallback(p -> {
 			if (p || triggerMode.get() == HOLD) {

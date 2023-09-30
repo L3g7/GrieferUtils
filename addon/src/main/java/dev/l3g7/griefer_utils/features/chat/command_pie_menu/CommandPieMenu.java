@@ -52,6 +52,7 @@ public class CommandPieMenu extends Feature {
 	private final KeySetting key = new KeySetting()
 		.name("Taste")
 		.icon("key")
+		.description("Die Taste, mit der das Befehlsradialmenü geöffnet werden soll.")
 		.pressCallback(p -> {
 			if (mc().currentScreen != null || !isEnabled())
 				return;

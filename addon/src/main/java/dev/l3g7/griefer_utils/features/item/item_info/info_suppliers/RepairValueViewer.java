@@ -52,6 +52,7 @@ public class RepairValueViewer extends ItemInfo.ItemInfoSupplier {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Reparaturwert anzeigen")
+		.description("Zeigt unter einem Item seinen Reparaturwert (wie viele XP-Level eine Reparatur mindestens kostet) an.")
 		.icon(Material.ANVIL)
 		.subSettings(format);
 

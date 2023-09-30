@@ -25,10 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -39,21 +36,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getPickBlock;
+
 public class BlockPickEvent extends Event {
 
 	public final ItemStack requiredStack;
 
 	public BlockPickEvent(ItemStack requiredStack) {
 		this.requiredStack = requiredStack;
-	}
-
-	public static ItemStack getPickBlock(Block block, World world, BlockPos pos) {
-		Item item = block.getItem(world, pos);
-		if (item == null)
-			return null;
-
-		Block itemBlock = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
-		return new ItemStack(item, 1, itemBlock.getDamageValue(world, pos));
 	}
 
 	@Mixin(Minecraft.class)

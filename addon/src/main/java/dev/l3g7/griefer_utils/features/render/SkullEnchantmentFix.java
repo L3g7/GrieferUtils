@@ -85,20 +85,23 @@ public class SkullEnchantmentFix extends Feature {
 
 		@Inject(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/resources/model/IBakedModel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer;renderByItem(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
 		public void injectRenderItem(ItemStack stack, IBakedModel model, CallbackInfo ci) {
-			if (stack.getItem() != Items.skull)
+			if (stack.getItem() != Items.skull || !stack.hasEffect())
 				return;
 
 			if (!FileProvider.getSingleton(SkullEnchantmentFix.class).isEnabled() && stack != ICON)
 				return;
 
-			if (stack.hasEffect())
-				Reflection.invoke(mc().getRenderItem(), "renderEffect", cubeModel);
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(-0.00005d, -0.00005d, -0.00005d);
+			GlStateManager.scale(1.0001d, 1.0001d, 1.0001d);
+			Reflection.invoke(mc().getRenderItem(), "renderEffect", cubeModel);
+			GlStateManager.popMatrix();
 		}
 
 		@Inject(method = "renderEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;disableLighting()V"))
 		public void injectRenderEffect(IBakedModel iBakedModel, CallbackInfo ci) {
 			if (iBakedModel == cubeModel)
-				GlStateManager.depthFunc(GL11.GL_ALWAYS);
+				GlStateManager.depthFunc(GL11.GL_LEQUAL);
 		}
 
 	}

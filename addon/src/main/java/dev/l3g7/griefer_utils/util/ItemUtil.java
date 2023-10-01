@@ -113,6 +113,21 @@ public class ItemUtil {
 		return xpCost < 40;
 	}
 
+	public static int getDecompressedAmount(ItemStack itemStack) {
+		NBTTagCompound tag = itemStack.getTagCompound();
+		if (tag == null || !tag.hasKey("stackSize"))
+			return itemStack.stackSize;
+
+		NBTBase base = tag.getCompoundTag("display").getTagList("Lore", 8).get(0);
+		if (base instanceof NBTTagEnd) // Item didn't have lore
+			return itemStack.stackSize;
+
+		String amount = ((NBTTagString) base).getString();
+		return amount.startsWith("§7Anzahl: §e")
+			? Integer.parseInt(amount.substring(12).replace(".", "")) * itemStack.stackSize
+			: itemStack.stackSize;
+	}
+
 	public static ItemStack createItem(Item item, int meta, String name) { return createItem(new ItemStack(item, 1, meta), false, name); }
 	public static ItemStack createItem(Item item, int meta, boolean enchanted) { return createItem(new ItemStack(item, 1, meta), enchanted, null); }
 	public static ItemStack createItem(Block block, int meta, boolean enchanted) { return createItem(new ItemStack(block, 1, meta), enchanted, null); }

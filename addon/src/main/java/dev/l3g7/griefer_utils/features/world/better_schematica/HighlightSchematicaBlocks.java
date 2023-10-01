@@ -24,6 +24,7 @@ import com.github.lunatrius.schematica.client.renderer.RenderSchematic;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.SchematicaUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -81,7 +82,7 @@ public class HighlightSchematicaBlocks {
 
 	@SuppressWarnings("unused")
 	public static void drawCuboid(WorldRenderer worldRenderer, BlockPos pos, int sides, int argb) {
-		GeometryTessellator.drawCuboid(worldRenderer, pos, sides, isHoldingRequiredItem(pos) || placedCompressedBlock ? 0x7F00FF00 : 0x3F000000 | argb);
+		GeometryTessellator.drawCuboid(worldRenderer, pos, sides, isHoldingRequiredItem(pos) ? 0x7F00FF00 : 0x3F000000 | argb);
 	}
 
 	private static boolean isHoldingRequiredItem(BlockPos pos) {
@@ -96,7 +97,7 @@ public class HighlightSchematicaBlocks {
 		if (stack == null)
 			return false;
 
-		return stack.isItemEqual(player().getHeldItem());
+		return stack.isItemEqual(heldItem);
 	}
 
 	static void onRenderTick(TickEvent.RenderTickEvent event) {
@@ -128,10 +129,11 @@ public class HighlightSchematicaBlocks {
 
 		// Switched from air to a block or the other way around
 		if (heldItem == null || player().getHeldItem() == null) {
-			if (isHeldItemRequired(heldItem) || isHeldItemRequired(player().getHeldItem()))
+			boolean refresh = isHeldItemRequired(heldItem) || isHeldItemRequired(player().getHeldItem());
+			heldItem = player().getHeldItem();
+			if (refresh)
 				RenderSchematic.INSTANCE.refresh();
 
-			heldItem = player().getHeldItem();
 			return;
 		}
 
@@ -145,18 +147,22 @@ public class HighlightSchematicaBlocks {
 	}
 
 	static void onPacketSend(PacketEvent.PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
-		if (event.packet.getPlacedBlockDirection() == 255 || event.packet.getStack() == null)
+		ItemStack stack = event.packet.getStack();
+		if (event.packet.getPlacedBlockDirection() == 255 || stack == null)
 			return;
 
-		NBTTagCompound tag = event.packet.getStack().getTagCompound();
+		NBTTagCompound tag = stack.getTagCompound();
 		if (tag == null || !tag.hasKey("stackSize"))
 			return;
 
-		if (!isHeldItemRequired(event.packet.getStack()))
+		if (!isHeldItemRequired(stack))
+			return;
+
+		if (stack.stackSize == 1 && ItemUtil.getDecompressedAmount(stack) == 1)
 			return;
 
 		placedCompressedBlock = true;
-		heldItem = event.packet.getStack();
+		heldItem = stack;
 	}
 
 	private static boolean isHeldItemRequired(ItemStack heldItem) {

@@ -35,10 +35,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagEnd;
-import net.minecraft.nbt.NBTTagString;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -182,25 +178,10 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 				&& (ignoreDamage.get() || stack.getItemDamage() == searchedItem.getItemDamage())
 				&& (ignoreEnchants.get() || getEnchantments(stack).equals(getEnchantments(searchedItem)))
 				&& (ignoreLore.get() || ItemUtil.getLore(stack).equals(ItemUtil.getLore(searchedItem))))
-				amount += getAmount(stack);
+				amount += ItemUtil.getDecompressedAmount(stack);
 		}
 
 		return amount;
-	}
-
-	private int getAmount(ItemStack itemStack) {
-		NBTTagCompound tag = itemStack.getTagCompound();
-		if (tag == null || !tag.hasKey("stackSize"))
-			return itemStack.stackSize;
-
-		NBTBase base = tag.getCompoundTag("display").getTagList("Lore", 8).get(0);
-		if (base instanceof NBTTagEnd) // Item didn't have lore
-			return itemStack.stackSize;
-
-		String amount = ((NBTTagString) base).getString();
-		return amount.startsWith("§7Anzahl: §e")
-			? Integer.parseInt(amount.substring(12).replace(".", "")) * itemStack.stackSize
-			: itemStack.stackSize;
 	}
 
 	@SuppressWarnings("unused")

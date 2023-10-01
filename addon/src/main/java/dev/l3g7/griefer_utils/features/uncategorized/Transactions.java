@@ -150,6 +150,9 @@ public class Transactions extends Feature {
 		// Add transactions
 		List<Transaction> transactions = new ArrayList<>(this.transactions);
 		for (Transaction t : transactions) {
+			if (t.recipientname == null)
+				continue;
+
 			Direction direction = Direction.get(t);
 
 			String amountStr = Constants.DECIMAL_FORMAT_98.format(t.amount);

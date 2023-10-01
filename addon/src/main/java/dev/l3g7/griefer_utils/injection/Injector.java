@@ -36,6 +36,7 @@ import org.spongepowered.asm.service.IMixinService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Injector implements IClassTransformer {
@@ -46,6 +47,11 @@ public class Injector implements IClassTransformer {
 	public Injector() {
 		// Initialize Mixin
 		MixinBootstrap.init();
+
+		// Account for transformers loading classes while grieferutils' mixin config is being initialised, causing the mixins not be applied
+		Set<String> set = Reflection.get(MixinEnvironment.class, "excludeTransformers");
+		set.add("net.labymod.addons.");
+
 		mixinConfig = Config.create("griefer_utils.mixins.json");
 		Reflection.invoke(Mixins.class, "registerConfiguration", mixinConfig);
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);

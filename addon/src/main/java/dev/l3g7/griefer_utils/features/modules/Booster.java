@@ -49,8 +49,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.getGuiChestTitle;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @Singleton
@@ -118,7 +117,9 @@ public class Booster extends Module {
 			return;
 
 		if (waitingForBoosterGUI && isActive()) {
-			mc.displayGuiScreen(chatInput != null ? new GuiChat(chatInput) : null);
+			player().closeScreen();
+			if (chatInput != null)
+				mc.displayGuiScreen(new GuiChat(chatInput));
 			chatInput = null;
 			waitingForBoosterGUI = false;
 		}

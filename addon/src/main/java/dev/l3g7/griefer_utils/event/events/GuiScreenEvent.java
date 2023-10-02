@@ -20,12 +20,18 @@ package dev.l3g7.griefer_utils.event.events;
 
 import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiGameOver;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiWinGame;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public abstract class GuiScreenEvent extends Event {
@@ -36,9 +42,9 @@ public abstract class GuiScreenEvent extends Event {
 		this.gui = (GuiScreen) gui;
 	}
 
-	public static class InitGuiEvent extends GuiScreenEvent {
+	public static class GuiInitEvent extends GuiScreenEvent {
 
-		public InitGuiEvent(Object gui) {
+		public GuiInitEvent(Object gui) {
 			super(gui);
 		}
 
@@ -108,7 +114,7 @@ public abstract class GuiScreenEvent extends Event {
 
 		@Inject(method = "setWorldAndResolution", at = @At("TAIL"))
 		public void injectSetWorldAndResolution(Minecraft mc, int width, int height, CallbackInfo ci) {
-			new InitGuiEvent(this).fire();
+			new GuiInitEvent(this).fire();
 		}
 
 		@Inject(method = "handleInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V", shift = At.Shift.BEFORE), cancellable = true)
@@ -135,4 +141,45 @@ public abstract class GuiScreenEvent extends Event {
 
 	}
 
+	public static class GuiOpenEvent<G extends GuiScreen> extends TypedEvent<GuiOpenEvent<G>> {
+
+		public static final GuiScreen CANCEL_INDICATOR = new GuiWinGame();
+
+		public G gui;
+
+		public GuiOpenEvent(G gui) {
+			this.gui = gui;
+		}
+
+		@Mixin(Minecraft.class)
+		private static abstract class MixinMinecraft {
+
+			@Shadow
+			public WorldClient theWorld;
+
+			@Shadow
+			public EntityPlayerSP thePlayer;
+
+			@ModifyVariable(method = "displayGuiScreen", at = @At("HEAD"), argsOnly = true)
+		    public GuiScreen injectDisplayGuiScreen(GuiScreen screen) {
+				if (screen == null) {
+					if (theWorld == null)
+						screen = new GuiMainMenu();
+					else if (thePlayer.getHealth() <= 0)
+						screen = new GuiGameOver();
+				}
+
+				GuiOpenEvent<?> event = new GuiOpenEvent<>(screen).fire();
+				return event.isCanceled() ? CANCEL_INDICATOR : event.gui;
+		    }
+
+			@Inject(method = "displayGuiScreen", at = @At("HEAD"), cancellable = true)
+			public void injectDisplayGuiScreen(GuiScreen guiScreenIn, CallbackInfo ci) {
+				if (guiScreenIn == CANCEL_INDICATOR)
+					ci.cancel();
+			}
+
+		}
+
+	}
 }

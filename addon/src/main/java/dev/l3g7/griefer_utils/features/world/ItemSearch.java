@@ -79,7 +79,7 @@ public class ItemSearch extends Feature {
 	private String previousSearch = "";
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onGuiInit(GuiScreenEvent.InitGuiEvent event) {
+	public void onGuiInit(GuiScreenEvent.GuiInitEvent event) {
 		if (searchField != null)
 			previousSearch = searchField.getText();
 

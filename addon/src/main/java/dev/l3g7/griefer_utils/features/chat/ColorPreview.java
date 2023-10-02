@@ -58,6 +58,9 @@ public class ColorPreview extends Feature {
 				buttonWidth = Array.getLength(chatButtons) * 14;
 		}
 		GuiTextField field = Reflection.get(gui, "inputField");
+		if (field == null)
+			return;
+
 		String text = field.getText();
 
 		// Check if color is present

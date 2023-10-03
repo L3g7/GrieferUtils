@@ -60,6 +60,9 @@ public class BugReporter {
 	private static long timestampOfLastReport = 0;
 
 	private static boolean shouldReportError(Throwable error) {
+		if (!LabyModCoreMod.isObfuscated())
+			return false;
+
 		if (System.currentTimeMillis() - timestampOfLastReport < 10_000)
 			return false; // Last report less than 10s ago, don't report
 

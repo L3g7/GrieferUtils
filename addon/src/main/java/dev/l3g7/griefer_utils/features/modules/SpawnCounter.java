@@ -75,13 +75,15 @@ public class SpawnCounter extends Module {
 		.name("Nachricht")
 		.description("Wie die Benachrichtung aussehen soll, wenn eine Runde abgeschlossen wurde.")
 		.icon(Material.WATCH)
-		.defaultValue(NotificationType.ACTIONBAR);
+		.defaultValue(NotificationType.ACTIONBAR)
+		.config("modules.spawn_counter.notification_type");
 
 	private final DropDownSetting<DisplayType> displayType = new DropDownSetting<>(DisplayType.class)
 		.name("Rundenart")
 		.description("Welche Arten von Runden angezeigt werden sollen.")
 		.icon("speed")
-		.defaultValue(DisplayType.BOTH);
+		.defaultValue(DisplayType.BOTH)
+		.config("modules.spawn_counter.display_type");
 
 	public SpawnCounter() {
 		super("Spawn-Runden Zähler", "Zählt, wie viele Runden um den Spawn gelaufen wurden.", "spawn-counter", new ControlElement.IconData("griefer_utils/icons/speed.png"));

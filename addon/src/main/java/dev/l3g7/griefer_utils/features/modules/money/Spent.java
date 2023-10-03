@@ -51,6 +51,7 @@ public class Spent extends Module {
 		.name("Automatisch zurücksetzen")
 		.description("Ob automatisch um 04:00 das ausgegebene Geld zurückgesetzt werden soll.")
 		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
+		.config("modules.money_spent.automatically_reset")
 		.callback(b -> {
 			if (!b)
 				nextReset = -1;

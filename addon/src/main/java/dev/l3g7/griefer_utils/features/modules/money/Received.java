@@ -52,6 +52,7 @@ public class Received extends Module {
 		.name("Automatisch zurücksetzen")
 		.description("Ob automatisch um 04:00 das eingenommene Geld zurückgesetzt werden soll.")
 		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
+		.config("modules.money_received.automatically_reset")
 		.callback(b -> {
 			if (!b)
 				nextReset = -1;

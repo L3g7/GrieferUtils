@@ -23,6 +23,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.util.ArrayUtil;
+import dev.l3g7.griefer_utils.util.AddonUtil;
 
 public class ConfigPatcher {
 
@@ -33,10 +34,14 @@ public class ConfigPatcher {
 	}
 
 	public void patch() {
-		if (!config.has("version"))
+		if (!config.has("version")) {
+			config.addProperty("version", AddonUtil.getVersion());
 			return;
+		}
 
 		String version = config.get("version").getAsString();
+		config.addProperty("version", AddonUtil.getVersion());
+
 		VersionComparator cmp = new VersionComparator();
 
 		if (cmp.compare("2.0-BETA-13.2", version) < 0) {

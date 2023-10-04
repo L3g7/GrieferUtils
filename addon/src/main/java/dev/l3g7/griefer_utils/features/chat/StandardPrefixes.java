@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -36,7 +37,8 @@ import net.minecraft.util.IChatComponent;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.util.IChatComponentUtil.getComponents;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.name;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 @Singleton
 public class StandardPrefixes extends Feature {
@@ -104,10 +106,7 @@ public class StandardPrefixes extends Feature {
 		String[] parts = unformatted.split(" \u2503 ");
 
 		if (parts.length != 2) {
-			System.err.println("StandardPrefixes error:");
-			System.err.println(IChatComponent.Serializer.componentToJson(event.component));
-			System.out.println(event.profile);
-			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
+			BugReporter.reportError(new Throwable(event.profile + " + / " + IChatComponent.Serializer.componentToJson(event.component)));
 			return;
 		}
 
@@ -161,6 +160,11 @@ public class StandardPrefixes extends Feature {
 
 	private void setRankWithPrefix(IChatComponent iChatComponent, String rank, String prefix, boolean isTabList) {
 		List<IChatComponent> everything = iChatComponent.getSiblings();
+		if (everything.isEmpty()) {
+			BugReporter.reportError(new Throwable("No siblings in " + IChatComponent.Serializer.componentToJson(iChatComponent)));
+			return;
+		}
+
 		IChatComponent parent = everything.get(everything.size() - 1);
 
 		if (parent.getSiblings().isEmpty())

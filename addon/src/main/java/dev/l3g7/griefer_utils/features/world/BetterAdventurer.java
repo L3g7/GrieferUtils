@@ -20,10 +20,10 @@ package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.event.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
-import dev.l3g7.griefer_utils.event.events.TickEvent;
+import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
 import dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter;
@@ -31,11 +31,9 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -44,14 +42,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.getStackUnderMouse;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
 public class BetterAdventurer extends Feature {
 
 	private static final Pattern SELL_PATTERN = Pattern.compile("^§r§8\\[§r§6Adventure§r§8] §r§7Du hast §r§e\\d+§r§e .*§r§7 abgegeben. Status: §r§e(\\d+)§r§8/§r§6(\\d+)§r$");
-	private ItemStack hoveredStack = null;
+	private ItemStack clickedStack = null;
 
 	private final BooleanSetting displayMissing = new BooleanSetting()
 		.name("Fehlende Items anzeigen")
@@ -91,24 +88,16 @@ public class BetterAdventurer extends Feature {
 	}
 
 	@EventListener
-	public void onTick(TickEvent.RenderTickEvent event) {
-		if (!(mc().currentScreen instanceof GuiChest))
+	private void onGuiSetItemsEvent(GuiModifyItemsEvent event) {
+		boolean isAdventurer = event.getTitle().startsWith("§6Adventure-Jobs");
+		if (!coinAmount.get() || (!isAdventurer && !event.getTitle().startsWith("§6Shop")))
 			return;
 
-		GuiChest screen = (GuiChest) mc().currentScreen;
-		IInventory inv = Reflection.get(screen, "lowerChestInventory");
-		boolean isAdventurer = inv.getName().startsWith("§6Adventure-Jobs");
-		hoveredStack = null;
-		if (isAdventurer && displayMissing.get()) {
-			if (ItemUtil.getLastLore(getStackUnderMouse(screen)).equals("§7Klicke, um die Materialien aus deinem Inventar zu liefern."))
-				hoveredStack = getStackUnderMouse(screen);
-		}
-
-		if (!coinAmount.get() || (!isAdventurer && !inv.getName().startsWith("§6Shop")))
+		ItemStack stack = event.getItem(isAdventurer ? 40 : 49);
+		if (stack == null)
 			return;
 
-		ItemStack stack = screen.inventorySlots.getSlot(isAdventurer ? 40 : 49).getStack();
-		if (stack == null || stack.getItem() != Items.fire_charge)
+		if (stack.getItem() != Items.fire_charge)
 			return;
 
 		if (EnchantmentHelper.getEnchantments(stack).isEmpty())
@@ -128,15 +117,24 @@ public class BetterAdventurer extends Feature {
 	}
 
 	@EventListener
+	private void onClick(WindowClickEvent event) {
+		if (!displayMissing.get())
+			return;
+
+		if (ItemUtil.getLastLore(event.itemStack).equals("§7Klicke, um die Materialien aus deinem Inventar zu liefern."))
+			clickedStack = event.itemStack;
+	}
+
+	@EventListener
 	private void onMessageModify(MessageEvent.MessageModifyEvent event) {
 		Matcher matcher = SELL_PATTERN.matcher(event.original.getFormattedText());
-		if (!matcher.matches() || hoveredStack == null)
+		if (!matcher.matches() || clickedStack == null)
 			return;
 
 		String sold = matcher.group(1);
 		String total = matcher.group(2);
 		int missing = Integer.parseInt(total) - Integer.parseInt(sold);
-		event.message.appendText(String.format("§7 (Fehlend: §e%s§7)", ItemCounter.formatAmount(missing, hoveredStack.getMaxStackSize())));
+		event.message.appendText(String.format("§7 (Fehlend: §e%s§7)", ItemCounter.formatAmount(missing, clickedStack.getMaxStackSize())));
 	}
 
 	private List<String> getMissingItems(ItemStack itemStack) {

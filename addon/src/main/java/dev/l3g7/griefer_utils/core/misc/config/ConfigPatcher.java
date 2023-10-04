@@ -72,6 +72,17 @@ public class ConfigPatcher {
 
 			rename("world.chest_search", "world.item_search");
 		}
+
+		if (cmp.compare("2.0-RC-8", version) <= 0) {
+			JsonObject parent = getParent("item.orb_saver");
+			if (parent != null) {
+				if (getBooleanValue(parent.get("enabled"))) {
+					if (!getBooleanValue(parent.get("on_price_fall"))) {
+						parent.addProperty("enabled", false);
+					}
+				}
+			}
+		}
 	}
 
 	private void rename(String oldKey, String newKey) {
@@ -99,6 +110,10 @@ public class ConfigPatcher {
 
 	private void set(String path, JsonElement value) {
 		getParent(path).add(getKey(path), value);
+	}
+
+	private boolean getBooleanValue(JsonElement element) {
+		return element != null && element.getAsBoolean();
 	}
 
 }

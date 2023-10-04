@@ -27,12 +27,14 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent.LeftClickEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
+import dev.l3g7.griefer_utils.features.item.AutoTool;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -47,6 +49,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
@@ -64,6 +68,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	private static final String BONZE_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
 	private static final String BIRTH_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:2s,id:20s},2:{lvl:5s,id:61s},3:{lvl:21s,id:21s}],display:{Name:\"§4B§aI§3R§2T§eH §4§lKlinge\"}},Damage:0s}";
+	private static final ItemStack blockedIndicator = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");;
 
 	private static String entryKey;
 	private static String iconKey;
@@ -138,6 +143,8 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	public void init() {
 		super.init();
 
+		ItemUtil.setLore(blockedIndicator, "§cEin Item im Inventar ist im Item-Saver!");
+
 		iconKey = getConfigKey() + ".display_icon";
 		if (Config.has(iconKey))
 			displayIcon.set(Config.get(iconKey).getAsBoolean());
@@ -176,7 +183,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	@EventListener
 	public void onGuiDraw(RenderItemOverlayEvent event) {
-		if (!isEnabled() || !displayIcon.get() || getSetting(event.stack) == null)
+		if (!displayIcon.get() || getSetting(event.stack) == null)
 			return;
 
 		float zLevel = Reflection.get(drawUtils(), "zLevel");
@@ -216,7 +223,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	}
 
 	private void onMouse(MouseClickEvent event) {
-		if (!isEnabled() || player() == null)
+		if (player() == null)
 			return;
 
 		InventoryPlayer inv = player().inventory;
@@ -232,9 +239,75 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	}
 
 	@EventListener
-	public void onWindowClick(WindowClickEvent event) {
-		if (!isEnabled())
+	private void onGuiSetItems(GuiModifyItemsEvent event) {
+		if (event.getTitle().startsWith("§6Adventure-Jobs")) {
+			for (int i : new int[] {10, 13, 16}) {
+				ItemStack sellingItem = event.getItem(i);
+				if (sellingItem == null || AutoTool.isTool(sellingItem))
+					continue;
+
+				if (savedStackWithSaveItemExists(event.getInventory(), sellingItem)) {
+					event.setItem(i, blockedIndicator);
+					return;
+				}
+			}
+
 			return;
+		}
+
+		if (event.getTitle().startsWith("§6Orbs - Verkauf ")) {
+			ItemStack firstStack = event.getItem(11);
+			boolean isBlocked = firstStack == blockedIndicator;
+			if (!isBlocked) {
+				for (int i : new int[] {11, 13, 15}) {
+					if (savedStackWithSaveItemExists(event.getInventory(), event.getItem(i))) {
+						isBlocked = true;
+						break;
+					}
+				}
+			}
+
+			if (!isBlocked)
+				return;
+
+			for (int i : new int[] {11, 13, 15})
+				event.setItem(i, blockedIndicator);
+
+			return;
+		}
+
+		if (event.getTitle().startsWith("§6Bauanleitung") || event.getTitle().startsWith("§6Vanilla Bauanleitung")) {
+			for (int i = 0; i < 9; i++) {
+				int slotId = (i / 3) * 9 + 10 + i % 3;
+				if (!savedStackWithSaveItemExists(event.getInventory(), event.getItem(slotId)))
+					continue;
+
+				for (int j = 46; j < 54; j++) {
+					if (event.getItem(j).getItem() == Items.skull)
+						event.setItem(j, blockedIndicator);
+				}
+				return;
+			}
+		}
+	}
+
+	private boolean savedStackWithSaveItemExists(List<ItemStack> itemStacks, ItemStack comparison) {
+		if (comparison == null)
+			return false;
+
+		for (ItemStack itemStack : itemStacks)
+			if (comparison.isItemEqual(itemStack) && getSetting(itemStack) != null)
+				return true;
+
+		return false;
+	}
+
+	@EventListener
+	private void onWindowClick(WindowClickEvent event) {
+		if (event.itemStack == blockedIndicator) {
+			event.cancel();
+			return;
+		}
 
 		ItemDisplaySetting setting = getSetting(event.itemStack);
 		if (setting == null)
@@ -251,7 +324,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	@EventListener
 	private void onAddItem(WindowClickEvent event) {
-		if (!isEnabled() || previousScreen == null || event.itemStack == null)
+		if (previousScreen == null || event.itemStack == null)
 			return;
 
 		mc().displayGuiScreen(previousScreen);
@@ -262,9 +335,6 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	@EventListener
 	private void onPacketSend(PacketEvent.PacketSendEvent<C07PacketPlayerDigging> event) {
-		if (!isEnabled())
-			return;
-
 		C07PacketPlayerDigging.Action action = event.packet.getStatus();
 		if (action != DROP_ITEM && action != DROP_ALL_ITEMS)
 			return;

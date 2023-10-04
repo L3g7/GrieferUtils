@@ -128,6 +128,14 @@ public class ItemUtil {
 			: itemStack.stackSize;
 	}
 
+	public static int hashcode(List<ItemStack> itemStacks) {
+		int hashCode = 1;
+		for (ItemStack stack : itemStacks)
+			hashCode = 31 * hashCode + (stack == null ? 0 : serializeNBT(stack).hashCode());
+
+		return hashCode;
+	}
+
 	public static ItemStack createItem(Item item, int meta, String name) { return createItem(new ItemStack(item, 1, meta), false, name); }
 	public static ItemStack createItem(Item item, int meta, boolean enchanted) { return createItem(new ItemStack(item, 1, meta), enchanted, null); }
 	public static ItemStack createItem(Block block, int meta, boolean enchanted) { return createItem(new ItemStack(block, 1, meta), enchanted, null); }

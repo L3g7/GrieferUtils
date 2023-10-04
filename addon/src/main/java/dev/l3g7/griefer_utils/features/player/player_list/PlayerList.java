@@ -167,7 +167,7 @@ public abstract class PlayerList extends Feature {
 	 * The event listener handling incoming messages.
 	 * @see PlayerList#chatAction
 	 */
-	@EventListener
+	@EventListener(priority = Priority.LOW)
 	public void onMessageModify(MessageModifyEvent event) {
 		if (chatAction.get() == DISABLED)
 			return;
@@ -193,7 +193,7 @@ public abstract class PlayerList extends Feature {
 			style.setChatHoverEvent(new HoverEvent(SHOW_TEXT, new ChatComponentText(this.message)));
 
 			// Update message
-			event.message.getSiblings().add(0,  toComponent(chatAction.get()).setChatStyle(style));
+			event.message = toComponent(chatAction.get()).setChatStyle(style).appendSibling(event.message);
 		});
 	}
 

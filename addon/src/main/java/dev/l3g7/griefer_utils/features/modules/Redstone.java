@@ -34,7 +34,7 @@ public class Redstone extends Module {
 		super("Redstone", "Zeigt dir den Redstonestatus an.", "redstone", new IconData(Material.REDSTONE));
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMMCustomPayload(MysteryModPayloadEvent event) {
 		if (!event.channel.equals("redstone"))
 			return;

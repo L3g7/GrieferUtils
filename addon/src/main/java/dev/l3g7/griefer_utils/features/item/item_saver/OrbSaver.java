@@ -64,7 +64,7 @@ public class OrbSaver extends ItemSaver {
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onWindowClick(WindowClickEvent event) {
-		if (!isEnabled() || !(mc().currentScreen instanceof GuiChest))
+		if (!(mc().currentScreen instanceof GuiChest))
 			return;
 
 		if (event.itemStack == null || !event.itemStack.hasTagCompound())
@@ -73,7 +73,7 @@ public class OrbSaver extends ItemSaver {
 		if (!getGuiChestTitle().startsWith("§6Adventure-Jobs"))
 			return;
 
-		if ((FileProvider.getSingleton(OrbSaver.class).isEnabled() && event.itemStack.getTagCompound().hasKey("compressionLevel"))
+		if (event.itemStack.getTagCompound().hasKey("compressionLevel")
 			|| isInItemSaver(event.itemStack)
 			|| event.itemStack.getDisplayName().equals("§c§lGeblockt!"))
 			event.cancel();
@@ -81,7 +81,7 @@ public class OrbSaver extends ItemSaver {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMouseGui(GuiScreenEvent.MouseInputEvent.Pre event) {
-		if (!isEnabled() || !(event.gui instanceof GuiChest))
+		if (!(event.gui instanceof GuiChest))
 			return;
 
 		suppressOrbs(event);
@@ -98,7 +98,7 @@ public class OrbSaver extends ItemSaver {
 		ItemStack lastBarItem = lowerChestInventory.getStackInSlot(44);
 
 		ItemStack stack = null;
-		if (isEnabled() && onPriceFall.get() && lastBarItem != null && lastBarItem.getMetadata() == 5)
+		if (onPriceFall.get() && lastBarItem != null && lastBarItem.getMetadata() == 5)
 			stack = priceFellBlock;
 
 		for (ItemStack itemStack : player().inventory.mainInventory) {
@@ -108,7 +108,7 @@ public class OrbSaver extends ItemSaver {
 			if (!sellingItem.isItemEqual(itemStack))
 				continue;
 
-			if (isEnabled() && FileProvider.getSingleton(ItemCounter.class).getAmount(Arrays.asList(player().inventory.mainInventory), sellingItem) > LIMIT)
+			if (FileProvider.getSingleton(ItemCounter.class).getAmount(Arrays.asList(player().inventory.mainInventory), sellingItem) > LIMIT)
 				stack = compressedBlock;
 			else if (isInItemSaver(itemStack))
 				stack = savedBlock;

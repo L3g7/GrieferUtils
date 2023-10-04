@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.item.item_saver;
 
+import dev.l3g7.griefer_utils.core.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -75,7 +76,7 @@ public class ItemSaverCategory extends Feature {
 			.collect(Collectors.toList()));
 	}
 
-	public static abstract class ItemSaver {
+	public static abstract class ItemSaver implements Disableable {
 
 		protected SettingsElement mainElement;
 		protected String configKey;

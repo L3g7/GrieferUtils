@@ -74,9 +74,6 @@ public class BorderSaver extends ItemSaver {
 
 	@EventListener
 	public void onPacket(PacketEvent.PacketSendEvent<C07PacketPlayerDigging> event) {
-		if (!isEnabled())
-			return;
-
 		C07PacketPlayerDigging.Action action = event.packet.getStatus();
 		if (action == C07PacketPlayerDigging.Action.DROP_ITEM || action == C07PacketPlayerDigging.Action.DROP_ALL_ITEMS)
 			return;
@@ -90,7 +87,7 @@ public class BorderSaver extends ItemSaver {
 
 	@EventListener
 	public void onPlayerInteract(BlockInteractEvent event) {
-		if (!isEnabled() || !isHoldingBorder())
+		if (!isHoldingBorder())
 			return;
 
 		event.cancel();

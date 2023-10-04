@@ -67,7 +67,7 @@ public class PrefixSaver extends ItemSaver {
 
 	@EventListener
 	public void onMouseClick(MouseClickEvent.RightClickEvent event) {
-		if (!isEnabled() || !"§fVergibt §aein Farbrecht§f! (Rechtsklick)".equals(ItemUtil.getLastLore(mc().thePlayer.getHeldItem())))
+		if (!"§fVergibt §aein Farbrecht§f! (Rechtsklick)".equals(ItemUtil.getLastLore(mc().thePlayer.getHeldItem())))
 			return;
 
 		event.cancel();

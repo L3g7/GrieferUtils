@@ -51,9 +51,10 @@ public class MouseEvent extends Event {
 	@Mixin(Minecraft.class)
 	private static class MixinMinecraft {
 
-	    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventButton()I", shift = At.Shift.BEFORE))
+	    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventButton()I", shift = At.Shift.BEFORE), cancellable = true)
 	    public void injectRunTick(CallbackInfo ci) {
-		    new MouseEvent().fire();
+		    if (new MouseEvent().fire().isCanceled())
+				ci.cancel();
 	    }
 
 	}

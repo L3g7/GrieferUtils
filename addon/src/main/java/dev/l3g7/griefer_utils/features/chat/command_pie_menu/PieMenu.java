@@ -334,7 +334,7 @@ public class PieMenu extends Gui implements Disableable {
 			return;
 
 		switchToPage(page + (event.button == 0 ? -1 : 1));
-//		event.cancel();
+		event.cancel();
 	}
 
 	private void switchToPage(int target) {

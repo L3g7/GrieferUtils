@@ -62,6 +62,19 @@ public class Received extends Module {
 			Config.save();
 		});
 
+	private static final BooleanSetting resetAfterRestart = new BooleanSetting()
+		.name("Nach Neustart zurücksetzen")
+		.description("Ob nach einem Minecraft-Neustart das eingenommene Geld zurückgesetzt werden soll.")
+		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
+		.config("modules.money_received.reset_after_restart")
+		.callback(shouldReset -> {
+			if (shouldReset)
+				Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".received", new JsonPrimitive(ZERO));
+			else
+				Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".received", new JsonPrimitive(moneyReceived));
+			Config.save();
+		});
+
 	public Received() {
 		super("Eingenommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast", "received", new IconData("griefer_utils/icons/wallet_ingoing.png"));
 	}
@@ -71,6 +84,7 @@ public class Received extends Module {
 	public void fillSubSettings(List<SettingsElement> list) {
 		super.fillSubSettings(list);
 		list.add(resetSetting);
+		list.add(resetAfterRestart);
 		list.add(new SmallButtonSetting()
 			.name("Zurücksetzen")
 			.icon("arrow_circle")
@@ -125,7 +139,7 @@ public class Received extends Module {
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.money.data." + mc.getSession().getProfile().getId() + ".";
 
-		if (Config.has(path + "received"))
+		if (Config.has(path + "received") && !resetAfterRestart.get())
 			setBalance(BigDecimal.valueOf(Config.get(path + "received").getAsLong()), "loaded from config: " + path + ": " + Config.get(path + "received").toString());
 		if (Config.has(path + "next_reset")) {
 			nextReset = Config.get(path + "next_reset").getAsLong();
@@ -138,8 +152,10 @@ public class Received extends Module {
 		System.out.printf("Received value changed from %f to %f, stored as %s: %s%n", moneyReceived.doubleValue(), newValue.doubleValue(), new JsonPrimitive(newValue), log);
 
 		moneyReceived = newValue;
-		Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".received", new JsonPrimitive(moneyReceived));
-		Config.save();
+		if (!resetAfterRestart.get()) {
+			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".received", new JsonPrimitive(moneyReceived));
+			Config.save();
+		}
 		return newValue;
 	}
 

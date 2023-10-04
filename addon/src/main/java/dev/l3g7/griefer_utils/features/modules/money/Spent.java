@@ -61,6 +61,19 @@ public class Spent extends Module {
 			Config.save();
 		});
 
+	private static final BooleanSetting resetAfterRestart = new BooleanSetting()
+		.name("Nach Neustart zurücksetzen")
+		.description("Ob nach einem Minecraft-Neustart das ausgegebene Geld zurückgesetzt werden soll.")
+		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
+		.config("modules.money_spent.reset_after_restart")
+		.callback(shouldReset -> {
+			if (shouldReset)
+				Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(ZERO));
+			else
+				Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));
+			Config.save();
+		});
+
 	public Spent() {
 		super("Ausgegeben", "Zeigt dir, wie viel Geld du seit Minecraft-Start ausgegeben hast", "spent", new IconData("griefer_utils/icons/wallet_outgoing.png"));
 	}
@@ -69,6 +82,7 @@ public class Spent extends Module {
 	public void fillSubSettings(List<SettingsElement> list) {
 		super.fillSubSettings(list);
 		list.add(resetSetting);
+		list.add(resetAfterRestart);
 		list.add(new SmallButtonSetting()
 			.name("Zurücksetzen")
 			.icon("arrow_circle")
@@ -113,7 +127,7 @@ public class Spent extends Module {
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.money.balances." + mc.getSession().getProfile().getId() + ".";
 
-		if (Config.has(path + "spent"))
+		if (Config.has(path + "spent") && !resetAfterRestart.get())
 			setBalance(BigDecimal.valueOf(Config.get(path + "spent").getAsLong()), "loaded from config: " + path + ": " + Config.get(path + "spent").toString());
 		if (Config.has(path + "next_reset")) {
 			nextReset = Config.get(path + "next_reset").getAsLong();
@@ -127,8 +141,10 @@ public class Spent extends Module {
 
 		moneySpent = newValue;
 		// Save balance along with player uuid so no problems occur when using multiple accounts
-		Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));
-		Config.save();
+		if (!resetAfterRestart.get()) {
+			Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));
+			Config.save();
+		}
 		return newValue;
 	}
 }

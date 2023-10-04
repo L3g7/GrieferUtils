@@ -97,7 +97,8 @@ public class PieMenu extends Gui implements Disableable {
 					entries.add(Pair.of(ModColor.createColors(entry.name.get()), entry.command.get()));
 			}
 
-			allPages.add(Pair.of(ModColor.createColors(((PieMenuPageSetting) pageElement).name.get()), entries));
+			if (!entries.isEmpty())
+				allPages.add(Pair.of(ModColor.createColors(((PieMenuPageSetting) pageElement).name.get()), entries));
 		}
 
 		if (allPages.size() != 0)
@@ -333,6 +334,7 @@ public class PieMenu extends Gui implements Disableable {
 			return;
 
 		switchToPage(page + (event.button == 0 ? -1 : 1));
+//		event.cancel();
 	}
 
 	private void switchToPage(int target) {

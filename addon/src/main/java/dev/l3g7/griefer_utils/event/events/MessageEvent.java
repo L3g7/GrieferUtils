@@ -46,17 +46,25 @@ public class MessageEvent extends Event {
 		public final IChatComponent original;
 		public IChatComponent message;
 
-		public MessageModifyEvent(IChatComponent original) {
+		public MessageModifyEvent(IChatComponent original, IChatComponent message) {
 			this.original = original;
-			message = original.createCopy();
+			this.message = message.createCopy();
 		}
 
 		@Mixin(value = TagManager.class, remap = false)
 		private static class MixinTagManager {
 
+			private static IChatComponent originalMessage;
+
 			@ModifyVariable(method = "tagComponent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 			private static Object injectTagComponent(Object value) {
-				MessageModifyEvent event = new MessageModifyEvent((IChatComponent) value);
+				originalMessage = (IChatComponent) value;
+				return value;
+			}
+
+			@ModifyVariable(method = "tagComponent", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;getConfigManager()Lnet/labymod/utils/manager/ConfigManager;", shift = At.Shift.BEFORE, ordinal = 0), ordinal = 0, argsOnly = true)
+			private static Object injectTagComponentReturn(Object value) {
+				MessageModifyEvent event = new MessageModifyEvent(originalMessage, (IChatComponent) value);
 				event.fire();
 				return event.message;
 			}

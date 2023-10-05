@@ -116,6 +116,7 @@ public class Calculator extends Feature {
 
 	private static Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
 	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?[km]* *[+\\-/*^ekm] *[+-]?\\d+(?:[.,]\\d+)?[km]*|[+-]?\\d+(?:[.,]\\d+)?[km]+)(?:(?= )|$)");
+	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay %s (?<amount>.+)", Constants.UNFORMATTED_PLAYER_NAME_PATTERN));
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 	private BigDecimal lastPayment = BigDecimal.ZERO;
 	private String lastPaymentReceiver;
@@ -215,11 +216,13 @@ public class Calculator extends Feature {
 			return;
 
 		// Save payment (for auto-withdraw)
-		Matcher paymentMatcher = Constants.PAYMENT_COMMAND_PATTERN.matcher(event.message);
+		Matcher paymentMatcher = PAYMENT_COMMAND_PATTERN.matcher(event.message);
 		if (paymentMatcher.matches()) {
 			lastPaymentReceiver = paymentMatcher.group("player");
 			try {
-				lastPayment = new BigDecimal(paymentMatcher.group("amount").replace(",", ""));
+				double result = calculate(paymentMatcher.group("amount").replace(",", ""), false);
+				if (!Double.isNaN(result))
+					lastPayment = BigDecimal.valueOf(result);
 			} catch (NumberFormatException e) {
 				// Ignore command - GrieferGames will display an error, so we don't have to
 				return;
@@ -231,7 +234,7 @@ public class Calculator extends Feature {
 			BigDecimal moneyRequired = lastPayment.subtract(getCurrentBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
 			if (event.message.equalsIgnoreCase(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == WithdrawAction.SUGGEST) {
 				// Wait 1 tick (chat screen still open)
-				TickScheduler.runAfterRenderTicks(() -> suggest("/pay %s %s", lastPaymentReceiver, lastPayment.toPlainString()), 1);
+				TickScheduler.runAfterRenderTicks(() -> suggest("/pay %s %s", lastPaymentReceiver, lastPayment.stripTrailingZeros().toPlainString()), 1);
 				return;
 			}
 		}
@@ -256,7 +259,7 @@ public class Calculator extends Feature {
 		} else if (starPlaceholder.get()) {
 			Matcher matcher = Pattern.compile(String.format("/pay %s \\*", Constants.UNFORMATTED_PLAYER_NAME_PATTERN)).matcher(msg);
 			if (matcher.matches()) {
-				send("/pay %s %s", matcher.group("player"), getCurrentBalance().toPlainString());
+				send("/pay %s %s", matcher.group("player"), getCurrentBalance().stripTrailingZeros().toPlainString());
 				event.cancel();
 				return;
 			}

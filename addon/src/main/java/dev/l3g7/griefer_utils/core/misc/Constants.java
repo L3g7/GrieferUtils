@@ -54,7 +54,6 @@ public class Constants {
 	// Miscellaneous patterns
 	public static final Pattern FORMATTED_CLAN_TAG_PATTERN = Pattern.compile("(?<clantag>§r§6\\[[ÄÖÜäöü#$§\\-\\w]{2,}§r§6] )?");
 	public static final Pattern CHAT_MESSAGE_PATTERN = Pattern.compile("(?<message>.*)§*r*");
-	public static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay %s (?<amount>[\\d,.]+)", UNFORMATTED_PLAYER_NAME_PATTERN));
 
 	// Message patterns
 	public static final Pattern MESSAGE_RECEIVE_PATTERN = Pattern.compile(String.format("^§r§6\\[§r%s§r§6 \\-> §r§cmir§r§6\\] §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));

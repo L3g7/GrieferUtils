@@ -34,7 +34,6 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.Util;
-import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -64,7 +63,6 @@ public class Badges {
 		.defaultValue(true)
 		.subSettings(showPercentage)
 		.callback(b -> {
-			LogManager.getLogger().info("Setting Badges main element to " + b);
 			if (!b) {
 				GrieferUtilsUserManager.clearUsers();
 				return;
@@ -92,18 +90,21 @@ public class Badges {
 	}
 
 	@EventListener
-	private void onTabListAddEvent(TabListPlayerAddEvent event) {
-		GrieferUtilsUserManager.queueUser(event.data.getProfile().getId());
+	private static void onTabListAddEvent(TabListPlayerAddEvent event) {
+		if (enabled.get())
+			GrieferUtilsUserManager.queueUser(event.data.getProfile().getId());
 	}
 
 	@EventListener
-	private void onTabListRemoveEvent(TabListPlayerRemoveEvent event) {
-		GrieferUtilsUserManager.removeUser(event.data.getProfile().getId());
+	private static void onTabListRemoveEvent(TabListPlayerRemoveEvent event) {
+		if (enabled.get())
+			GrieferUtilsUserManager.removeUser(event.data.getProfile().getId());
 	}
 
 	@EventListener
-	private void onTabListClearAddEvent(TabListClearEvent event) {
-		GrieferUtilsUserManager.clearUsers();
+	private static void onTabListClearAddEvent(TabListClearEvent event) {
+		if (enabled.get())
+			GrieferUtilsUserManager.clearUsers();
 	}
 
 	public static void renderUserPercentage(int left, int width) {

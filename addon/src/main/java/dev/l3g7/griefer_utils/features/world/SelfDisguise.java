@@ -30,9 +30,11 @@ import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.main.LabyMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -41,15 +43,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityGuardian;
-import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
@@ -62,6 +63,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 @Singleton
 public class SelfDisguise extends Feature {
 
+	private static final Pattern LUCKY_SWORD_DISGUISE_PATTERN = Pattern.compile("^§r§8\\[§r§e§lLuckySword§r§8] " + Constants.FORMATTED_PLAYER_PATTERN.pattern() + " §r§7ist nun als §r§e(?<disguise>\\w+) §r§7verkleidet!§r$");
 	private static final Map<String, String> RENAMED_ENTITIES = new HashMap<String, String>() {{
 		put("minecart", "MinecartRideable");
 		put("horse", "EntityHorse");
@@ -141,12 +143,31 @@ public class SelfDisguise extends Feature {
 			return;
 		}
 
+		Matcher swordMatcher = LUCKY_SWORD_DISGUISE_PATTERN.matcher(event.message.getFormattedText());
+		if (swordMatcher.matches()) {
+			resetDisguise();
+			String name = swordMatcher.group("name").replaceAll("§.", "");
+			if (!MinecraftUtil.name().equals(name))
+				return;
+
+			String entity = swordMatcher.group("disguise");
+			if (entity.equals("Schaf")) {
+				currentDisguise = new EntitySheep(world());
+			} else if (entity.equals("Zombie")) {
+				currentDisguise = new EntityZombie(world());
+			} else {
+				BugReporter.reportError(new Throwable("Sword disguise \"" + entity + "\" is now known"));
+				return;
+			}
+			world().addEntityToWorld(currentDisguise.getEntityId(), currentDisguise);
+			return;
+		}
+
 		if (lastSentDisguiseCommand == null)
 			return;
 
 		// Return if the entity doesn't exist
 		if (text.startsWith("Falsche Benutzung: ") && text.endsWith(" sind unbekannte Argumente.")) {
-//			lastSentDisguiseCommand = null;
 			String args = text.substring("Falsche Benutzung: ".length(), text.length() - " sind unbekannte Argumente.".length());
 			unknownArgs = args.replace('-', '_').split(", ");
 			return;
@@ -274,7 +295,7 @@ public class SelfDisguise extends Feature {
 					return;
 
 				IBlockState blockState = Block.getBlockFromName(material).getDefaultState();
-				Reflection.set(currentDisguise, blockState, "fallTile"); // , "field_175132_d", "d"
+				Reflection.set(currentDisguise, blockState, "fallTile");
 			} else if (currentDisguise instanceof EntityHorse) {
 				if (args.remove("saddled", null))
 					((EntityHorse) currentDisguise).setHorseSaddled(true);

@@ -68,7 +68,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	private static final String BONZE_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
 	private static final String BIRTH_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:2s,id:20s},2:{lvl:5s,id:61s},3:{lvl:21s,id:21s}],display:{Name:\"§4B§aI§3R§2T§eH §4§lKlinge\"}},Damage:0s}";
-	private static final ItemStack blockedIndicator = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");;
+	private static final ItemStack blockedIndicator = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");
 
 	private static String entryKey;
 	private static String iconKey;
@@ -246,7 +246,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 				if (sellingItem == null || AutoTool.isTool(sellingItem))
 					continue;
 
-				if (savedStackWithSaveItemExists(event.getInventory(), sellingItem)) {
+				if (savedStackWithSaveItemExists(sellingItem)) {
 					event.setItem(i, blockedIndicator);
 					return;
 				}
@@ -260,7 +260,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 			boolean isBlocked = firstStack == blockedIndicator;
 			if (!isBlocked) {
 				for (int i : new int[] {11, 13, 15}) {
-					if (savedStackWithSaveItemExists(event.getInventory(), event.getItem(i))) {
+					if (savedStackWithSaveItemExists(event.getItem(i))) {
 						isBlocked = true;
 						break;
 					}
@@ -279,7 +279,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		if (event.getTitle().startsWith("§6Bauanleitung") || event.getTitle().startsWith("§6Vanilla Bauanleitung")) {
 			for (int i = 0; i < 9; i++) {
 				int slotId = (i / 3) * 9 + 10 + i % 3;
-				if (!savedStackWithSaveItemExists(event.getInventory(), event.getItem(slotId)))
+				if (!savedStackWithSaveItemExists(event.getItem(slotId)))
 					continue;
 
 				for (int j = 46; j < 54; j++) {
@@ -291,11 +291,11 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		}
 	}
 
-	private boolean savedStackWithSaveItemExists(List<ItemStack> itemStacks, ItemStack comparison) {
+	private boolean savedStackWithSaveItemExists(ItemStack comparison) {
 		if (comparison == null)
 			return false;
 
-		for (ItemStack itemStack : itemStacks)
+		for (ItemStack itemStack : player().inventory.mainInventory)
 			if (comparison.isItemEqual(itemStack) && getSetting(itemStack) != null)
 				return true;
 

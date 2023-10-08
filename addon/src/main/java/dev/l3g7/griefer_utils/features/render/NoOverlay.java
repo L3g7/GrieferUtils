@@ -31,6 +31,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.item.ItemStack;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static net.minecraft.init.Blocks.stained_glass_pane;
 
 /**
@@ -107,7 +108,7 @@ public class NoOverlay extends Feature {
 	@EventListener
 	public void onDisplayNameRender(BurningCheckEvent event) {
 		// Only hide if in first person
-		if (event.burning && mc().gameSettings.thirdPersonView == 0 && fire.get())
+		if (event.burning && mc().gameSettings.thirdPersonView == 0 && fire.get() && event.entity == player())
 			event.burning = false;
 	}
 

@@ -32,8 +32,9 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinE
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
-import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.JsonParse;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -105,9 +106,11 @@ public class OrbStats extends Module {
 	private GuiChest lastScreen = null;
 	private CompletableFuture<Void> guiInitBlock = null;
 
-	public OrbStats() {
-		super("Orb-Statistik", "Zeigt dir an, wie oft das zuletzt abgegebene Item insgesamt abgegeben wurde.", "orb_stats", new ControlElement.IconData("griefer_utils/icons/blue_graph.png"));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Orb-Statistik")
+		.description("Zeigt dir an, wie oft das zuletzt abgegebene Item insgesamt abgegeben wurde.")
+		.icon("blue_graph");
 
 	public void loadSettings() {
 		getBooleanElement().addCallback(v -> {

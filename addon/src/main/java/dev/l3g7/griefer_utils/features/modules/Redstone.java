@@ -22,7 +22,8 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import net.labymod.settings.elements.ControlElement.IconData;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
 
 @Singleton
@@ -30,9 +31,11 @@ public class Redstone extends Module {
 
 	private int redstoneState = -1;
 
-	public Redstone() {
-		super("Redstone", "Zeigt dir den Redstonestatus an.", "redstone", new IconData(Material.REDSTONE));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Redstone")
+		.description("Zeigt dir den Redstonestatus an.")
+		.icon(Material.REDSTONE);
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMMCustomPayload(MysteryModPayloadEvent event) {

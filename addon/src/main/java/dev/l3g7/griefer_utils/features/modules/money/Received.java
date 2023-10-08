@@ -27,15 +27,14 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
-import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.util.IChatComponent;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.regex.Matcher;
 
 import static java.math.BigDecimal.ZERO;
@@ -75,28 +74,23 @@ public class Received extends Module {
 			Config.save();
 		});
 
-	public Received() {
-		super("Eingenommen", "Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast", "received", new IconData("griefer_utils/icons/wallet_ingoing.png"));
-	}
-
-
-	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(resetSetting);
-		list.add(resetAfterRestart);
-		list.add(new SmallButtonSetting()
-			.name("Zurücksetzen")
-			.icon("arrow_circle")
-			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-			.callback(() -> setBalance(ZERO, "single reset")));
-
-		list.add(new SmallButtonSetting()
-			.name("Alles zurücksetzen")
-			.icon("arrow_circle")
-			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-			.callback(() -> setBalance(Spent.setBalance(ZERO, "multi reset from received"), "multi reset from received")));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Eingenommen")
+		.description("Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast.")
+		.icon("wallet_ingoing")
+		.subSettings(resetSetting, resetAfterRestart,
+			new SmallButtonSetting()
+				.name("Zurücksetzen")
+				.icon("arrow_circle")
+				.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
+				.callback(() -> setBalance(ZERO, "single reset")),
+			new SmallButtonSetting()
+				.name("Alles zurücksetzen")
+				.icon("arrow_circle")
+				.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
+				.callback(() -> setBalance(Spent.setBalance(ZERO, "multi reset from received"), "multi reset from received"))
+		);
 
 	@Override
 	public String[] getValues() {

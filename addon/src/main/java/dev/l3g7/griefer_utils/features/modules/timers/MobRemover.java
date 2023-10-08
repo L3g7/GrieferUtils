@@ -24,9 +24,10 @@ import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.List;
@@ -41,19 +42,19 @@ public class MobRemover extends Module {
 	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
 		.name("Zeitformat")
 		.icon("hourglass")
-		.config("modules.mob_remover.time_format")
 		.defaultValue(TimeFormat.LONG);
 
 	private final NumberSetting warnTime = new NumberSetting()
 		.name("Warn-Zeit (s)")
-		.icon("labymod:buttons/exclamation_mark")
-		.config("modules.mob_remover.warn_time");
+		.icon("labymod:buttons/exclamation_mark");
+
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("MobRemover")
+		.description("Zeigt dir die Zeit bis zum nächsten MobRemover an.")
+		.icon("skull_crossed_out");
 
 	private long mobRemoverEnd = -1;
-
-	public MobRemover() {
-		super("MobRemover", "Zeigt dir die Zeit bis zum nächsten MobRemover an", "mob_remover", new IconData("griefer_utils/icons/skull_crossed_out.png"));
-	}
 
 	@Override
 	public String[] getValues() {

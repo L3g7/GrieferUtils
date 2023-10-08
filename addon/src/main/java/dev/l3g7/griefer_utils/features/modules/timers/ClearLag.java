@@ -25,12 +25,11 @@ import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import net.labymod.settings.elements.ControlElement;
-import net.labymod.settings.elements.SettingsElement;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -39,19 +38,20 @@ public class ClearLag extends Module {
 	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
 		.name("Zeitformat")
 		.icon("hourglass")
-		.config("modules.clear_lag.time_format")
 		.defaultValue(TimeFormat.LONG);
 
 	private final NumberSetting warnTime = new NumberSetting()
 		.name("Warn-Zeit (s)")
-		.icon("labymod:buttons/exclamation_mark")
-		.config("modules.clear_lag.warn_time");
+		.icon("labymod:buttons/exclamation_mark");
+
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Clearlag")
+		.description("Zeigt dir die Zeit bis zum nächsten Clearlag an.")
+		.icon("gold_ingot_crossed_out")
+		.subSettings(timeFormat, warnTime);
 
 	private long clearLagEnd = -1;
-
-	public ClearLag() {
-		super("Clearlag", "Zeigt dir die Zeit bis zum nächsten Clearlag an", "clearlag", new ControlElement.IconData("griefer_utils/icons/gold_ingot_crossed_out.png"));
-	}
 
 	@Override
 	public String[] getValues() {
@@ -91,13 +91,6 @@ public class ClearLag extends Module {
 		if (countdown.get("name").getAsString().equals("ClearLag")) {
 			clearLagEnd = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString()));
 		}
-	}
-
-	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(timeFormat);
-		list.add(warnTime);
 	}
 
 	private void title(String title) {

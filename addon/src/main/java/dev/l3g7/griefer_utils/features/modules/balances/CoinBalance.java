@@ -23,8 +23,9 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import net.labymod.settings.elements.ControlElement;
 import net.minecraft.network.play.server.S3EPacketTeams;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
@@ -38,9 +39,11 @@ public class CoinBalance extends Module {
 		return coins;
 	}
 
-	public CoinBalance() {
-		super("Kontostand", "Zeigt den Kontostand an.", "coins", new ControlElement.IconData("griefer_utils/icons/coin_pile.png"));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Kontostand")
+		.description("Zeigt den Kontostand an.")
+		.icon("coin_pile");
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onPacket(PacketEvent.PacketReceiveEvent<S3EPacketTeams> event) {

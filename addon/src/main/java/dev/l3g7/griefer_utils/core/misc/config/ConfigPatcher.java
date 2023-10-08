@@ -21,9 +21,19 @@ package dev.l3g7.griefer_utils.core.misc.config;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.util.ArrayUtil;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.util.AddonUtil;
+
+import java.io.File;
+import java.util.Optional;
+
+import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
 public class ConfigPatcher {
 
@@ -48,7 +58,7 @@ public class ConfigPatcher {
 			rename("item.inventory_tweaks.crafting_shift.craftingShift", "item.inventory_tweaks.better_shift.enabled");
 		}
 
-		if (cmp.compare("2.0-BETA-14", version) <= 0) {
+		if (cmp.compare("2.0-BETA-14", version) < 0) {
 			String oldPath = "chat.command_pie_menu.entries";
 			JsonArray entries = getParent(oldPath).getAsJsonArray("entries");
 			if (entries != null) {
@@ -73,7 +83,7 @@ public class ConfigPatcher {
 			rename("world.chest_search", "world.item_search");
 		}
 
-		if (cmp.compare("2.0-RC-8", version) <= 0) {
+		if (cmp.compare("2.0-RC-8", version) < 0) {
 			JsonObject parent = getParent("item.orb_saver");
 			if (parent != null) {
 				if (getBooleanValue(parent.get("enabled"))) {
@@ -81,6 +91,32 @@ public class ConfigPatcher {
 						parent.addProperty("enabled", false);
 					}
 				}
+			}
+		}
+
+		if (cmp.compare("2.0-RC-9", version) < 0) {
+			rename("modules.block_preview.show_coordinates", "modules.block_info.show_coords");
+			rename("modules.tps", "modules.server_performance");
+			rename("modules.spawn_counter.roundsRan", "modules.spawn_counter.rounds_ran");
+			rename("modules.spawn_counter.roundsFlown", "modules.spawn_counter.rounds_flown");
+			rename("modules.orb_potion_timer", "modules.potion_timer");
+
+			Optional<JsonObject> optional = IOUtil.read(new File("LabyMod/modules.json")).asJsonObject();
+			if (optional.isPresent()) {
+				JsonObject modules = optional.get().getAsJsonObject("modules");
+
+				for (String file : FileProvider.getFiles(f -> f.startsWith("dev/l3g7/griefer_utils/features/modules/") && f.endsWith(".class"))) {
+					ClassMeta meta = FileProvider.getClassMeta(file, true);
+					if (meta != null && meta.hasSuperClass("dev/l3g7/griefer_utils/features/Module")) {
+						String name = meta.name.substring(meta.name.lastIndexOf('/') + 1);
+						JsonObject module = modules.getAsJsonObject(name);
+						if (module != null && module.getAsJsonArray("enabled").size() > 0) {
+							String key = String.format("modules.%s.enabled", UPPER_CAMEL.to(LOWER_UNDERSCORE, name));
+							set(key, new JsonPrimitive(true));
+						}
+					}
+				}
+
 			}
 		}
 	}

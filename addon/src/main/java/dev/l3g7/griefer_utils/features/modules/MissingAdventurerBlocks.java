@@ -21,7 +21,8 @@ package dev.l3g7.griefer_utils.features.modules;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.Module;
-import net.labymod.settings.elements.ControlElement;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,9 +32,11 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 @Singleton
 public class MissingAdventurerBlocks extends Module {
 
-	public MissingAdventurerBlocks() {
-		super("Fehlende Adv. Blöcke", "Zeigt dir an, wie viele Blöcke mit dem in der Hand gehaltenen Adventure-Werkzeug noch abgebaut werden müssen.", "missing_adventurer_blocks", new ControlElement.IconData(Material.FIREBALL));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Fehlende Adv. Blöcke")
+		.description("Zeigt dir an, wie viele Blöcke mit dem in der Hand gehaltenen Adventure-Werkzeug noch abgebaut werden müssen.")
+		.icon(Material.FIREBALL);
 
 	@Override
 	public boolean isShown() {

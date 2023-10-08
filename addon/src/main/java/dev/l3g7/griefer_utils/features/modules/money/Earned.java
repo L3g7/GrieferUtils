@@ -22,6 +22,8 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
@@ -34,9 +36,11 @@ import java.util.List;
 @Singleton
 public class Earned extends Module {
 
-	public Earned() {
-		super("Verdient", "Zeigt dir, wie viel Geld du seit Minecraft-Start verdient hast", "earned", new IconData("griefer_utils/icons/coin_pile.png"));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Verdient")
+		.description("Zeigt dir, wie viel Geld du seit Minecraft-Start verdient hast.")
+		.icon("coin_pile");
 
 	@Override
 	public String[] getValues() {

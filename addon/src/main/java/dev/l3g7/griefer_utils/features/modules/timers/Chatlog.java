@@ -24,13 +24,10 @@ import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
-import net.labymod.settings.elements.ControlElement;
-import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
-
-import java.util.List;
 
 @Singleton
 public class Chatlog extends Module {
@@ -49,11 +46,14 @@ public class Chatlog extends Module {
 		.icon("blindness")
 		.config("modules.chatlog.hide");
 
-	private long chatlogEnd = -1;
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Chatlog")
+		.description("Zeigt dir den verbleibenden Cooldown bis zum nächsten /chatlog an.")
+		.icon(Material.WATCH)
+		.subSettings(timeFormat, hide);
 
-	public Chatlog() {
-		super("Chatlog", "Zeigt dir den verbleibenden Cooldown bis zum nächsten /chatlog an.", "chatlog", new ControlElement.IconData(Material.WATCH));
-	}
+	private long chatlogEnd = -1;
 
 	@Override
 	public String[] getValues() {
@@ -88,13 +88,6 @@ public class Chatlog extends Module {
 			chatlogEnd = System.currentTimeMillis() + 30_000;
 			sentCmd = false;
 		}
-	}
-
-	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(timeFormat);
-		list.add(hide);
 	}
 
 	private enum TimeFormat {

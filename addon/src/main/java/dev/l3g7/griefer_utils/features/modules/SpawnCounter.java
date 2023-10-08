@@ -28,10 +28,10 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import net.labymod.main.LabyMod;
-import net.labymod.settings.elements.ControlElement;
-import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -75,32 +75,28 @@ public class SpawnCounter extends Module {
 		.name("Nachricht")
 		.description("Wie die Benachrichtung aussehen soll, wenn eine Runde abgeschlossen wurde.")
 		.icon(Material.WATCH)
-		.defaultValue(NotificationType.ACTIONBAR)
-		.config("modules.spawn_counter.notification_type");
+		.defaultValue(NotificationType.ACTIONBAR);
 
 	private final DropDownSetting<DisplayType> displayType = new DropDownSetting<>(DisplayType.class)
 		.name("Rundenart")
 		.description("Welche Arten von Runden angezeigt werden sollen.")
 		.icon("speed")
-		.defaultValue(DisplayType.BOTH)
-		.config("modules.spawn_counter.display_type");
+		.defaultValue(DisplayType.BOTH);
+
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Spawn-Runden Zähler")
+		.description("Zählt, wie viele Runden um den Spawn gelaufen wurden.")
+		.icon("speed")
+		.subSettings(notificationType, displayType);
 
 	public SpawnCounter() {
-		super("Spawn-Runden Zähler", "Zählt, wie viele Runden um den Spawn gelaufen wurden.", "spawn-counter", new ControlElement.IconData("griefer_utils/icons/speed.png"));
+		configKey = "modules.spawn_counter.rounds_";
+		if (Config.has(configKey + "flown"))
+			roundsFlown = Config.get(configKey + "flown").getAsInt();
 
-		configKey = "modules.spawn_counter.rounds";
-		if (Config.has(configKey + "Flown"))
-			roundsFlown = Config.get(configKey + "Flown").getAsInt();
-
-		if (Config.has(configKey + "Ran"))
-			roundsRan = Config.get(configKey + "Ran").getAsInt();
-	}
-
-	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(notificationType);
-		list.add(displayType);
+		if (Config.has(configKey + "ran"))
+			roundsRan = Config.get(configKey + "ran").getAsInt();
 	}
 
 	@Override

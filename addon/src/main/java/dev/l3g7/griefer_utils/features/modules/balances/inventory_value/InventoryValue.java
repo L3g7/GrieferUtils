@@ -29,11 +29,11 @@ import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.features.chat.Calculator;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiBigChest;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.settings.LabyModModuleEditorGui;
-import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiScreen;
@@ -62,13 +62,15 @@ public class InventoryValue extends Module {
 	private static final BooleanSetting auto = new BooleanSetting()
 		.name("Wert automatisch bestimmen")
 		.description("Ob der Item-Wert automatisch bestimmt werden soll, oder ob nur Items mit einem manuell eingetragenen Wert gezählt werden sollen.")
-		.config("modules.inventory_value.auto")
 		.defaultValue(true)
 		.icon(Material.GOLD_INGOT);
 
-	public InventoryValue() {
-		super("Inventar-Wert", "Zeigt dir an, wie viel ein Inventar wert ist.", "inventory_value", new ControlElement.IconData("griefer_utils/icons/chest.png"));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Inventar-Wert")
+		.description("Zeigt dir an, wie viel ein Inventar wert ist.")
+		.icon("chest")
+		.subSettings(auto);
 
 	@EventListener
 	private void onAddItem(WindowClickEvent event) {
@@ -83,8 +85,6 @@ public class InventoryValue extends Module {
 	@Override
 	public void fillSubSettings(List<SettingsElement> list) {
 		super.fillSubSettings(list);
-
-		list.add(auto);
 
 		if (Config.has(entryKey)) {
 			JsonObject entries = Config.get(entryKey).getAsJsonObject();

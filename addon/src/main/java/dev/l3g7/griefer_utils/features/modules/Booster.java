@@ -31,11 +31,11 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.main.LabyMod;
-import net.labymod.settings.elements.ControlElement.IconData;
-import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -59,13 +59,6 @@ public class Booster extends Module {
 	private final static Pattern BOOSTER_INFO_TIME_PATTERN = Pattern.compile("\\((\\d+):(\\d+)\\)");
 	private final static Pattern BOOSTER_ACTIVATE_PATTERN = Pattern.compile("^\\[Booster] .* hat für die GrieferGames Community den (?<name>.*)-Booster für 15 Minuten aktiviert\\.$");
 
-	private final DropDownSetting<KeyMode> keyModeSetting = new DropDownSetting<>(KeyMode.class)
-		.name("Design")
-		.icon("wooden_board")
-		.config("modules.booster.design")
-		.defaultValue(KeyMode.TEXT_AND_ICON)
-		.stringProvider(KeyMode::getName);
-
 	private final Map<String, BoosterData> boosters = ImmutableMap.of(
 		"Break", new BoosterData("Break", false),
 		"Drops", new BoosterData("Drop", true),
@@ -74,13 +67,23 @@ public class Booster extends Module {
 		"Erfahrung", new BoosterData("XP", true)
 	);
 
+	private final DropDownSetting<KeyMode> design = new DropDownSetting<>(KeyMode.class)
+		.name("Design")
+		.icon("wooden_board")
+		.config("modules.booster.design")
+		.defaultValue(KeyMode.TEXT_AND_ICON)
+		.stringProvider(KeyMode::getName);
+
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Booster")
+		.description("Zeigt dir die momentan aktiven Booster an.")
+		.icon("rocket")
+		.subSettings(design);
+
 	private boolean waitingForBoosterGUI = false;
 	private boolean waitingForBoosterInfo = false;
 	private String chatInput = null;
-
-	public Booster() {
-		super("Booster", "Zeigt dir die momentan aktiven Booster an", "booster", new IconData("griefer_utils/icons/rocket.png"));
-	}
 
 	@EventListener
 	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
@@ -182,12 +185,6 @@ public class Booster extends Module {
 	}
 
 	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(keyModeSetting);
-	}
-
-	@Override
 	public String[] getKeys() {
 		// Get names (and counts) as Strings
 		List<String> keys = boosters.values().stream()
@@ -228,7 +225,7 @@ public class Booster extends Module {
 	public void draw(double x, double y, double rightX) {
 		super.draw(x, y, rightX);
 
-		if (keyModeSetting.get() == KeyMode.TEXT || !keyVisible)
+		if (design.get() == KeyMode.TEXT || !keyVisible)
 			return;
 
 		List<BoosterData> data = boosters.values().stream()
@@ -246,7 +243,7 @@ public class Booster extends Module {
 		if (getDisplayFormatting() == SQUARE_BRACKETS)
 			xDiff -= singum * mc.fontRendererObj.getStringWidth(new Text("[", 0, bold, italic, underline).getText());
 
-		if (keyModeSetting.get() == KeyMode.ICON)
+		if (design.get() == KeyMode.ICON)
 			xDiff += .5;
 
 		// Add padding
@@ -300,7 +297,7 @@ public class Booster extends Module {
 		}
 
 		private String getDisplayName() {
-			KeyMode mode = keyModeSetting.get();
+			KeyMode mode = design.get();
 			String name = "";
 
 			if (mode != KeyMode.TEXT)

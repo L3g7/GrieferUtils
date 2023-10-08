@@ -20,7 +20,8 @@ package dev.l3g7.griefer_utils.features.modules;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Module;
-import net.labymod.settings.elements.ControlElement.IconData;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -38,9 +39,11 @@ import java.util.List;
 @Singleton
 public class HeadOwner extends Module {
 
-    public HeadOwner() {
-        super("HeadOwner", "Zeigt dir den Spieler, dessen Kopf du ansiehst.", "head-owner", new IconData("griefer_utils/icons/steve.png"));
-    }
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("HeadOwner")
+		.description("Zeigt dir den Spieler, dessen Kopf du ansiehst.")
+		.icon("steve");
 
     @Override
     public String[] getDefaultValues() {

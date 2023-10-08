@@ -36,7 +36,6 @@ public abstract class Feature implements Disableable {
 	private String configKey;
 
 	/**
-	 * <p>
 	 * Initialises the feature.
 	 */
 	public void init() {

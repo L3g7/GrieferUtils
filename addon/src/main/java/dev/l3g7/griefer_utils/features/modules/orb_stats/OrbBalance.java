@@ -28,8 +28,9 @@ import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemSkull;
@@ -53,9 +54,11 @@ public class OrbBalance extends Module {
 
 	private static long balance = -1;
 
-	public OrbBalance() {
-		super("Orbguthaben", "Zeigt dir an, wie viele Orbs du hast.", "orb_balance", new ControlElement.IconData("griefer_utils/icons/orb.png"));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Orbguthaben")
+		.description("Zeigt dir an, wie viele Orbs du hast.")
+		.icon("orb");
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onTick(TickEvent.ClientTickEvent event) {

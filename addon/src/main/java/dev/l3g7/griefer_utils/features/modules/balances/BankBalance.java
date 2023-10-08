@@ -22,14 +22,17 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard;
-import net.labymod.settings.elements.ControlElement;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 
 @Singleton
 public class BankBalance extends Module {
 
-	public BankBalance() {
-		super("Bankguthaben", "Zeigt das Bankguthaben an.", "bank", new ControlElement.IconData("griefer_utils/icons/bank.png"));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Bankguthaben")
+		.description("Zeigt das Bankguthaben an.")
+		.icon("bank");
 
 	@Override
 	public String[] getValues() {

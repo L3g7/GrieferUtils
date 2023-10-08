@@ -25,6 +25,8 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.ingamegui.ModuleCategory;
 import net.labymod.ingamegui.ModuleCategoryRegistry;
@@ -33,9 +35,9 @@ import net.labymod.ingamegui.enums.EnumModuleFormatting;
 import net.labymod.ingamegui.moduletypes.SimpleModule;
 import net.labymod.ingamegui.moduletypes.SimpleTextModule;
 import net.labymod.main.LabyMod;
-import net.labymod.settings.elements.BooleanElement;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
@@ -82,6 +84,7 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 
 		FileProvider.getClassesWithSuperClass(Module.class).stream()
 			.map(meta -> (Module) FileProvider.getSingleton(meta.load()))
+			.map(Module::initModule)
 			.sorted((a, b) -> (a.getClass().getPackage().getName() + a.getControlName()).compareToIgnoreCase((b.getClass().getPackage().getName() + b.getControlName()))) // Include package in sorting so the modules are grouped
 			.forEach(LabyMod.getInstance().getLabyModAPI()::registerModule);
 	}
@@ -101,26 +104,24 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 				module.getBooleanElement().setDescriptionText(module.getDescription());
 	}
 
-	private final String name;
-	private final String description;
-	private final String configKey;
-	private final ControlElement.IconData iconData;
+	private BooleanSetting mainElement;
+	private String configKey;
 
-	public Module(String name, String description, String configKey, ControlElement.IconData iconData) {
-		this.name = name;
-		this.description = description;
-		this.configKey = configKey;
-		this.iconData = iconData;
+	private Module initModule() {
+		Pair<SettingsElement, String> data = ElementBuilder.initMainElement(this, "modules");
+		mainElement = (BooleanSetting) data.getLeft();
+		configKey = data.getRight();
+		return this;
 	}
 
-	public String getControlName() { return name; }
+	public String getControlName() { return mainElement.getDisplayName(); }
 
 	public String[] getKeys() { return getDefaultKeys(); }
-	public String[] getDefaultKeys() { return new String[]{ name.replace("\n", "")}; }
+	public String[] getDefaultKeys() { return new String[]{ mainElement.getDisplayName().replace("\n", "")}; }
 
-	public ControlElement.IconData getIconData() { return iconData; }
+	public ControlElement.IconData getIconData() { return mainElement.getIconData(); }
 	public String getSettingName() { return configKey; }
-	public String getDescription() { return description; }
+	public String getDescription() { return mainElement.getDescriptionText(); }
 	public boolean isShown() { return !LabyMod.getInstance().isInGame() || ServerCheck.isOnGrieferGames(); }
 	public boolean isActive() { return getBooleanElement().getCurrentValue(); }
 	public boolean isEnabled() { return isActive(); }
@@ -130,20 +131,19 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 	public ModuleCategory getCategory() { return CATEGORY; }
 	public EnumModuleFormatting getDisplayFormatting() { return super.getDisplayFormatting(); }
 
-	@Override
-	public BooleanElement getBooleanElement() {
-		BooleanElement element = super.getBooleanElement();
-		element.setDescriptionText(description);
-		return element;
-	}
-
-	@Override
 	public void fillSubSettings(List<SettingsElement> list) {
 		list.add(new HeaderSetting().entryHeight(8));
 		list.add(new HeaderSetting("§r§l" + Constants.ADDON_NAME).scale(1.3));
 		list.add(new HeaderSetting(getControlName().replace("\n", "")));
 		super.fillSubSettings(list);
 		list.add(new HeaderSetting());
+
+		Reflection.set(rawBooleanElement, mainElement.get(), "currentValue");
+		getBooleanElement().addCallback(mainElement::set);
+
+		List<SettingsElement> settings = mainElement.getSubSettings().getElements();
+		if (!settings.isEmpty())
+			list.addAll(settings.subList(4, settings.size()));
 	}
 
 }

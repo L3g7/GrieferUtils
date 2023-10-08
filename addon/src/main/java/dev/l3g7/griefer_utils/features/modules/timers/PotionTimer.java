@@ -28,11 +28,11 @@ import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import net.labymod.main.LabyMod;
-import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
@@ -57,32 +57,31 @@ public class PotionTimer extends Module {
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private static final Pattern END_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§7Bis: §r§e(?<end>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})§r");
 
-	private final DropDownSetting<KeyMode> keyModeSetting = new DropDownSetting<>(KeyMode.class)
-		.name("Design")
-		.icon("wooden_board")
-		.config("modules.orb_potion_timer.design")
-		.defaultValue(KeyMode.TEXT_AND_ICON)
-		.stringProvider(KeyMode::getName);
-
-	private final NumberSetting warnTime = new NumberSetting()
-		.name("Warn-Zeit für Fly Tränke (s)")
-		.icon("labymod:buttons/exclamation_mark")
-		.config("modules.orb_potion_timer.warn_time");
-
-	private final BooleanSetting hide = new BooleanSetting()
-		.name("Verstecken, wenn nichts getrunken")
-		.description("Ob das Modul versteckt werden soll, wenn derzeit kein Orbtrank aktiv ist.")
-		.icon("blindness")
-		.config("modules.orb_potion_timer.hide");
-
 	private final Map<String, PotionData> potions = ImmutableMap.of(
 		"break_potion", new PotionData("Break"),
 		"fly_potion", new PotionData("Fly")
 	);
 
-	public PotionTimer() {
-		super("Orbtrank-\nTimer", "Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.", "potion-timer", new ControlElement.IconData(Material.FEATHER));
-	}
+	private final DropDownSetting<KeyMode> design = new DropDownSetting<>(KeyMode.class)
+		.name("Design")
+		.icon("wooden_board")
+		.defaultValue(KeyMode.TEXT_AND_ICON)
+		.stringProvider(KeyMode::getName);
+
+	private final NumberSetting warnTime = new NumberSetting()
+		.name("Warn-Zeit für Fly Tränke (s)")
+		.icon("labymod:buttons/exclamation_mark");
+
+	private final BooleanSetting hide = new BooleanSetting()
+		.name("Verstecken, wenn nichts getrunken")
+		.description("Ob das Modul versteckt werden soll, wenn derzeit kein Orbtrank aktiv ist.")
+		.icon("blindness");
+
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Orbtrank-\nTimer")
+		.description("Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.")
+		.icon(Material.FEATHER);
 
 	@Override
 	public boolean isShown() {
@@ -92,7 +91,7 @@ public class PotionTimer extends Module {
 	@Override
 	public void fillSubSettings(List<SettingsElement> list) {
 		super.fillSubSettings(list);
-		list.add(keyModeSetting);
+		list.add(design);
 		list.add(warnTime);
 		list.add(hide);
 	}
@@ -186,7 +185,7 @@ public class PotionTimer extends Module {
 		if (!ServerCheck.isOnCitybuild())
 			return;
 
-		if (keyModeSetting.get() == KeyMode.TEXT || !keyVisible)
+		if (design.get() == KeyMode.TEXT || !keyVisible)
 			return;
 
 		List<PotionData> data = potions.values().stream()
@@ -204,7 +203,7 @@ public class PotionTimer extends Module {
 		if (getDisplayFormatting() == SQUARE_BRACKETS)
 			xDiff -= singum * mc.fontRendererObj.getStringWidth(new Text("[", 0, bold, italic, underline).getText());
 
-		if (keyModeSetting.get() == KeyMode.ICON)
+		if (design.get() == KeyMode.ICON)
 			xDiff += .5;
 
 		// Add padding
@@ -253,7 +252,7 @@ public class PotionTimer extends Module {
 		}
 
 		private String getDisplayName() {
-			KeyMode mode = keyModeSetting.get();
+			KeyMode mode = design.get();
 			String name = "";
 
 			if (mode != KeyMode.TEXT)

@@ -22,12 +22,11 @@ package dev.l3g7.griefer_utils.features.modules;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.SchematicaUtil;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.labymod.settings.LabyModModuleEditorGui;
-import net.labymod.settings.elements.ControlElement;
-import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
@@ -58,18 +57,14 @@ public class BlockInfo extends Module {
 
 	private final BooleanSetting showCoords = new BooleanSetting()
 		.name("Koordinaten anzeigen")
-		.config("modules.block_preview.show_coordinates")
 		.icon(Material.COMPASS);
 
-	public BlockInfo() {
-		super("Block-Infos", "Zeigt dir Infos den anvisierten Block an.\n\nFunktioniert auch mit Schematica.", "block_preview", new ControlElement.IconData("griefer_utils/icons/magnifying_glass.png"));
-	}
-
-	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(showCoords);
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Block-Infos")
+		.description("Zeigt dir Infos den anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
+		.icon("magnifying_glass")
+		.subSettings(showCoords);
 
 	@Override
 	public String[] getValues() {

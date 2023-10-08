@@ -22,9 +22,9 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
-import net.labymod.settings.elements.ControlElement.IconData;
-import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
@@ -51,12 +51,14 @@ public class ServerPerformance extends Module {
 		.name("Anzeigemodus")
 		.icon("wooden_board")
 		.description("Ob die Performance in Prozent angezeigt oder in TPS angezeigt werden soll.")
-		.config("modules.tps.display_mode")
 		.defaultValue(DisplayMode.PERCENT);
 
-	public ServerPerformance() {
-		super("Server-\nPerformance", "Zeigt eine (relativ genaue) Schätzung der aktuellen Server-Performance an.", "server-performance", new IconData("griefer_utils/icons/measurement_circle_thingy.png"));
-	}
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Server-\nPerformance")
+		.description("Zeigt eine (relativ genaue) Schätzung der aktuellen Server-Performance an.")
+		.icon("measurement_circle_thingy")
+		.subSettings(displayMode);
 
 	@Override
 	public String[] getDefaultValues() {
@@ -69,12 +71,6 @@ public class ServerPerformance extends Module {
 			return getDefaultValues();
 
 		return new String[] { displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS)};
-	}
-
-	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(displayMode);
 	}
 
 	@EventListener

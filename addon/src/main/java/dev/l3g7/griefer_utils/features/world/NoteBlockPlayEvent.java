@@ -19,7 +19,14 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.event_bus.Event;
+import net.minecraft.block.BlockNote;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 public class NoteBlockPlayEvent extends Event {
 
@@ -73,6 +80,16 @@ public class NoteBlockPlayEvent extends Event {
 
 		static Octave fromId(int id)	{
 			return id < 12 ? LOW : id == 24 ? HIGH : MID;
+		}
+
+	}
+
+	@Mixin(BlockNote.class)
+	private static class MixinBlockNote {
+
+		@Inject(method = "onBlockEventReceived", at = @At("HEAD"))
+		public void injectOnBlockEventReceived(World worldIn, BlockPos pos, IBlockState state, int eventID, int eventParam, CallbackInfoReturnable<Boolean> cir) {
+			new NoteBlockPlayEvent(pos, eventParam).fire();
 		}
 
 	}

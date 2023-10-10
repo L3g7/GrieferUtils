@@ -29,7 +29,6 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -78,27 +77,19 @@ public class ClearLag extends Module {
 		return new String[]{"Unbekannt"};
 	}
 
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onServerSwitch(ServerSwitchEvent event) {
 		clearLagEnd = -1;
-		LogManager.getLogger().info("Switched server. Enabled: " + isEnabled());
 	}
 
 	@EventListener
 	public void onMMCustomPayload(MysteryModPayloadEvent event) {
-		LogManager.getLogger().info("Received MMPE");
-		if (!event.channel.equals("countdown_create")) {
-			LogManager.getLogger().info("Wrong channel");
+		if (!event.channel.equals("countdown_create"))
 			return;
-		}
 
 		JsonObject countdown = event.payload.getAsJsonObject();
-		if (countdown.get("name").getAsString().equals("ClearLag")) {
+		if (countdown.get("name").getAsString().equals("ClearLag"))
 			clearLagEnd = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString()));
-			LogManager.getLogger().info("Parsed :)");
-		} else {
-			LogManager.getLogger().info("Invalid json");
-		}
 	}
 
 	private void title(String title) {

@@ -162,7 +162,7 @@ public class OrbStats extends Module {
 
 	@EventListener
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (!isActive() || !ServerCheck.isOnCitybuild() || !(mc.currentScreen instanceof GuiChest))
+		if (!ServerCheck.isOnCitybuild() || !(mc.currentScreen instanceof GuiChest))
 			return;
 
 		IInventory inv = Reflection.get(mc.currentScreen, "lowerChestInventory");
@@ -200,7 +200,7 @@ public class OrbStats extends Module {
 
 	@EventListener
 	public void onCBJoin(CityBuildJoinEvent event) {
-		if (!isActive() || !isOnGrieferGames())
+		if (!isOnGrieferGames())
 			return;
 
 		// If no data is found, open and close /stats automatically

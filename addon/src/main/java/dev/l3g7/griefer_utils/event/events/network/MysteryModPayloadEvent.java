@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEven
 import net.labymod.utils.JsonParse;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * An event being posted when a {@link S3FPacketCustomPayload} on the {@code mysterymod:mm} channel is received.
@@ -44,9 +45,14 @@ public class MysteryModPayloadEvent extends Event {
 		if (!event.packet.getChannelName().equals("mysterymod:mm"))
 			return;
 
+		LogManager.getLogger().info("Received mm packet");
+
 		PacketBuffer data = event.packet.getBufferData();
 		data.markReaderIndex();
-		new MysteryModPayloadEvent(data.readStringFromBuffer(65536), JsonParse.parse(data.readStringFromBuffer(65536))).fire();
+		String channel = data.readStringFromBuffer(65536);
+		String json = data.readStringFromBuffer(65536);
+		LogManager.getLogger().info("Firing MMPE with channel {} and json {}", channel, json);
+		new MysteryModPayloadEvent(channel, JsonParse.parse(json)).fire();
 		data.resetReaderIndex();
 	}
 

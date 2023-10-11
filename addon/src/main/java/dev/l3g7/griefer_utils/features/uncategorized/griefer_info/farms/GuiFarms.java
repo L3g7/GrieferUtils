@@ -171,7 +171,7 @@ public class GuiFarms extends GuiSearchable<Farm> {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0, 0, 500);
 		for (String texture : textures) {
-			if (texture.equals("cobblestone")) {
+			if (texture.endsWith("stonebrick")) {
 				GlStateManager.scale(0.5, 0.5, 1);
 				drawUtils().renderItemIntoGUI(new ItemStack(Blocks.cobblestone), tooltipTranslation.getLeft() * 2 - 2.5, tooltipY * 2 - 1);
 				GlStateManager.scale(2, 2, 1);

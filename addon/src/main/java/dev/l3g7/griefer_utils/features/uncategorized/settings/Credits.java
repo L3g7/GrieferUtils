@@ -54,6 +54,7 @@ public class Credits {
 			new HeaderSetting("Special Thanks"),
 			new Credits.IconSetting("TuxFRI", "tuxfri"),
 			new Credits.IconSetting("CobbleShop", "cobbleshop"),
+			new Credits.IconSetting("Pleezon", "pleezon"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Bild-Credits"),

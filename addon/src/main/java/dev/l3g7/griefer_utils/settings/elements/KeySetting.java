@@ -98,8 +98,8 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 	}
 
 	/**
-	 * Register a callback for button-presses.
-	 * @param callback true if button is pressed, false if released
+	 * Registers a callback for button presses.
+	 * @param callback true if button is pressed, false if released.
 	 */
 	public KeySetting pressCallback(Consumer<Boolean> callback) {
 		pressCallbacks.add(callback);

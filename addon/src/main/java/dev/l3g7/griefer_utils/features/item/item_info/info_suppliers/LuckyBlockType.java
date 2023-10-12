@@ -55,9 +55,8 @@ public class LuckyBlockType extends ItemInfo.ItemInfoSupplier {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("LuckyBlock-Typ anzeigen §e\u26A0")
-		.description("Zeigt unter LuckyBlöcken an, von welchem Typ sie sind, auch wenn sie umbenannt wurden."
-			+ "\n\n§eDie Zuverlässigkeit kann derzeit nicht garantiert werden!")
+		.name("LuckyBlock-Typ anzeigen")
+		.description("Zeigt unter LuckyBlöcken an, von welchem Typ sie sind, auch wenn sie umbenannt wurden.")
 		.icon(ItemUtil.createItem(Blocks.gold_block, 0, true));
 
 	@Override

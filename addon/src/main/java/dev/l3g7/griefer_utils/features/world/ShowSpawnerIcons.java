@@ -59,7 +59,7 @@ public class ShowSpawnerIcons extends Feature implements RenderObjectGenerator {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Spawner-Icons anzeigen")
 		.description("Zeigt an Spawnern ein Icon des Mobs an, das gespawnt wird.")
-		.icon("griefer_info/outlined_mob_icons/Ghast")
+		.icon("griefer_info/outlined_mob_icons/Silverfish")
 		.subSettings(range);
 
 	@Override

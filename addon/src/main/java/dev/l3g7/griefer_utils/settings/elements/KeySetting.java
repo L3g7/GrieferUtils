@@ -126,7 +126,7 @@ public class KeySetting extends ControlElement implements ElementBuilder<KeySett
 	}
 
 	@EventListener
-	public void onMousePress(InputEvent.MouseInputEvent event) {
+	private void onMousePress(InputEvent.MouseInputEvent event) {
 		if (Mouse.getEventButton() != -1)
 			onPress(-Mouse.getEventButton());
 	}

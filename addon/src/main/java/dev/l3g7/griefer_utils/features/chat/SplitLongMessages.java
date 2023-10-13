@@ -22,7 +22,6 @@ import de.emotechat.addon.gui.chat.suggestion.EmoteSuggestionsMenu;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
@@ -31,6 +30,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiChat;
@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
 
 @Singleton
@@ -84,12 +85,13 @@ public class SplitLongMessages extends Feature {
 
 	@EventListener
 	private void onMessageReceive(MessageReceiveEvent event) {
-		if (!lastParts.isEmpty() && event.message.getUnformattedText().equals("Fehler: Spieler nicht gefunden.")) {
+		if (!lastParts.isEmpty() && cancelSending(event.message.getFormattedText())) {
 			lastParts.forEach(ChatQueue::remove);
+			lastParts.clear();
 			return;
 		}
 
-		for (Pattern pattern : new Pattern[] {Constants.MESSAGE_RECEIVE_PATTERN, Constants.MESSAGE_SEND_PATTERN}) {
+		for (Pattern pattern : new Pattern[] {MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN}) {
 			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 			if (!matcher.matches())
 				continue;
@@ -97,6 +99,15 @@ public class SplitLongMessages extends Feature {
 			lastRecipient = matcher.group("name").replaceAll("§.", "");
 			return;
 		}
+	}
+
+	private boolean cancelSending(String msg) {
+		if (msg.equals("§r§cFehler:§r§4 §r§4Spieler nicht gefunden.§r")
+			|| msg.equals("§r§7Bitte schreibe keine IP-Adressen oder Webseiten in den Chat.§r"))
+			return true;
+
+		Matcher matcher = BLACKLIST_ERROR_PATTERN.matcher(msg);
+		return matcher.matches() && matcher.group("player").replaceAll("§.", "").equals(MinecraftUtil.name());
 	}
 
 	@EventListener

@@ -30,10 +30,14 @@ import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+
 @Singleton
 public class OrbSaver extends ItemSaver {
 
 	private static final ItemStack priceFellBlock;
+	private boolean clicking = false;
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -57,13 +61,21 @@ public class OrbSaver extends ItemSaver {
 
 	@EventListener
 	private void onWindowClick(WindowClickEvent event) {
-		if (event.itemStack == priceFellBlock)
-			event.cancel();
+		if (event.itemStack != priceFellBlock || clicking)
+			return;
+
+		event.cancel();
+
+		if (event.mode == 3) {
+			clicking = true;
+			mc().playerController.windowClick(event.windowId, 15, 0, 0, player());
+			clicking = false;
+		}
 	}
 
 	static {
 		priceFellBlock = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");
-		ItemUtil.setLore(priceFellBlock, "§cDer Preis ist gefallen!");
+		ItemUtil.setLore(priceFellBlock, "§cDer Preis ist gefallen!\n§7Klicke mit dem Mausrad, um die Items trotzdem abzugeben.");
 	}
 
 }

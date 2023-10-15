@@ -49,12 +49,12 @@ public class Credits {
 			new HeaderSetting("Entwickler"),
 			new Credits.IconSetting("L3g7", "l3g7"),
 			new Credits.IconSetting("L3g73", "l3g7"),
+			new Credits.IconSetting("Pleezon\n(Recraft, ServerTPS)", "pleezon"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Special Thanks"),
 			new Credits.IconSetting("TuxFRI", "tuxfri"),
 			new Credits.IconSetting("CobbleShop", "cobbleshop"),
-			new Credits.IconSetting("Pleezon", "pleezon"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Bild-Credits"),
@@ -69,8 +69,6 @@ public class Credits {
 			new Credits.TextSetting("core.misc.Base58", "Encodierung der SSSS-Schlüssel", "Aus org.bitcoinj", "© 2011 Google Inc., © 2018 Andreas Schildbach", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(5),
 			new Credits.TextSetting("core.misc.BufferedImageLuminanceSource", "Umwandlung von Bildern in Licht-Bitmaps", "Aus com.google.zxing", "© 2009 ZXing authors", "Apache License 2.0"),
-			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("features.modules.ServerPerformance", "Konzept basiert auf Pleezons ServerTPS").noLicense(),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Bibliotheken"),
@@ -116,7 +114,7 @@ public class Credits {
 			elements.add(new HeaderSetting().entryHeight(11));
 		}
 
-		category.getSubSettings().getElements().addAll(10, elements);
+		category.getSubSettings().getElements().addAll(11, elements);
 	}
 
 	static {

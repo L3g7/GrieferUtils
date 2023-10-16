@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.item.recraft;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -91,7 +92,7 @@ public class Recraft extends Feature {
 		.description("Wiederholt den letzten \"/rezepte\" Aufruf.\n\n§oErstellt von Pleezon.")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.pressCallback(pressed -> {
-			if (pressed)
+			if (pressed && ServerCheck.isOnCitybuild())
 				RecraftPlayer.play(RecraftRecorder.actions);
 		});
 

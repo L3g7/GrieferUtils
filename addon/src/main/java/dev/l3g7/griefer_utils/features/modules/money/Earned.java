@@ -28,10 +28,8 @@ import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
-import net.labymod.settings.elements.SettingsElement;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Singleton
 public class Earned extends Module {
@@ -40,7 +38,15 @@ public class Earned extends Module {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Verdient")
 		.description("Zeigt dir, wie viel Geld du seit Minecraft-Start verdient hast.")
-		.icon("coin_pile");
+		.icon("coin_pile")
+		.subSettings(new SmallButtonSetting()
+			.name("Zurücksetzen")
+			.icon("arrow_circle")
+			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
+			.callback(() -> {
+				Received.moneyReceived = BigDecimal.ZERO;
+				Spent.moneySpent = BigDecimal.ZERO;
+			}));
 
 	@Override
 	public String[] getValues() {
@@ -55,19 +61,6 @@ public class Earned extends Module {
 	@Override
 	public boolean isShown() {
 		return !LabyMod.getInstance().isInGame() || ServerCheck.isOnGrieferGames();
-	}
-
-	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(new SmallButtonSetting()
-			.name("Zurücksetzen")
-			.icon("arrow_circle")
-			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-			.callback(() -> {
-				Received.moneyReceived = BigDecimal.ZERO;
-				Spent.moneySpent = BigDecimal.ZERO;
-			}));
 	}
 
 }

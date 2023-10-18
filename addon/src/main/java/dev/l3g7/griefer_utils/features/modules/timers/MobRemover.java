@@ -28,9 +28,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
-import net.labymod.settings.elements.SettingsElement;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +50,8 @@ public class MobRemover extends Module {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("MobRemover")
 		.description("Zeigt dir die Zeit bis zum nächsten MobRemover an.")
-		.icon("skull_crossed_out");
+		.icon("skull_crossed_out")
+		.subSettings(timeFormat, warnTime);
 
 	private long mobRemoverEnd = -1;
 
@@ -92,13 +91,6 @@ public class MobRemover extends Module {
 			mobRemoverEnd = System.currentTimeMillis() + Long.parseLong(matcher.group("minutes")) * 60L * 1000L;
 		else if (event.message.getFormattedText().matches("^§r§8\\[§r§6MobRemover§r§8] §r§7Es wurden (?:§r§\\d+§r§7|keine) Tiere entfernt\\.§r$"))
 			mobRemoverEnd = System.currentTimeMillis() + 15L * 60L * 1000L;
-	}
-
-	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(timeFormat);
-		list.add(warnTime);
 	}
 
 	private void title(String title) {

@@ -53,15 +53,18 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C02PacketUseEntity.Action;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
-import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ALL_ITEMS;
-import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.*;
 
 @Singleton
 public class ItemSaver extends ItemSaverCategory.ItemSaver {
@@ -246,7 +249,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 				if (sellingItem == null || AutoTool.isTool(sellingItem))
 					continue;
 
-				if (savedStackWithSaveItemExists(sellingItem)) {
+				if (savedStackWithSameItemExists(sellingItem)) {
 					event.setItem(i, blockedIndicator);
 					return;
 				}
@@ -260,7 +263,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 			boolean isBlocked = firstStack == blockedIndicator;
 			if (!isBlocked) {
 				for (int i : new int[] {11, 13, 15}) {
-					if (savedStackWithSaveItemExists(event.getItem(i))) {
+					if (savedStackWithSameItemExists(event.getItem(i))) {
 						isBlocked = true;
 						break;
 					}
@@ -279,7 +282,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		if (event.getTitle().startsWith("§6Bauanleitung") || event.getTitle().startsWith("§6Vanilla Bauanleitung")) {
 			for (int i = 0; i < 9; i++) {
 				int slotId = (i / 3) * 9 + 10 + i % 3;
-				if (!savedStackWithSaveItemExists(event.getItem(slotId)))
+				if (!savedStackWithSameItemExists(event.getItem(slotId)))
 					continue;
 
 				for (int j = 46; j < 54; j++) {
@@ -291,7 +294,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		}
 	}
 
-	private boolean savedStackWithSaveItemExists(ItemStack comparison) {
+	private boolean savedStackWithSameItemExists(ItemStack comparison) {
 		if (comparison == null)
 			return false;
 
@@ -334,14 +337,36 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	}
 
 	@EventListener
-	private void onPacketSend(PacketEvent.PacketSendEvent<C07PacketPlayerDigging> event) {
-		C07PacketPlayerDigging.Action action = event.packet.getStatus();
-		if (action != DROP_ITEM && action != DROP_ALL_ITEMS)
-			return;
-
-		ItemDisplaySetting setting = getSetting(player().getHeldItem());
-		if (setting != null && setting.drop.get())
+	private void onPacketDigging(PacketEvent.PacketSendEvent<Packet<?>> event) {
+		if (cancel(event.packet))
 			event.cancel();
+	}
+
+	private boolean cancel(Packet<?> packet) {
+		ItemDisplaySetting setting = getSetting(player().getHeldItem());
+		if (setting == null)
+			return false;
+
+		if (packet instanceof C07PacketPlayerDigging) {
+			C07PacketPlayerDigging.Action action = ((C07PacketPlayerDigging) packet).getStatus();
+
+			if (setting.drop.get() && (action == DROP_ITEM || action == DROP_ALL_ITEMS))
+				return true;
+			else
+				return setting.leftclick.get() && action == START_DESTROY_BLOCK;
+		}
+
+		if (packet instanceof C02PacketUseEntity) {
+			C02PacketUseEntity.Action action = ((C02PacketUseEntity) packet).getAction();
+			return (action == Action.ATTACK ? setting.leftclick : setting.rightclick).get();
+		}
+
+		if (packet instanceof C08PacketPlayerBlockPlacement) {
+			C08PacketPlayerBlockPlacement p = (C08PacketPlayerBlockPlacement) packet;
+			return (setting = getSetting(p.getStack())) != null && setting.rightclick.get();
+		}
+
+		return false;
 	}
 
 	private static void addItem(ItemStack stack) {

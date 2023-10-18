@@ -35,15 +35,19 @@ import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
 
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 /**
  * Suppresses clicks if the durability of the held item falls below the set threshold.
@@ -75,13 +79,23 @@ public class ToolSaver extends ItemSaver {
 
 	@EventListener
 	private void onLeftClick(MouseClickEvent.LeftClickEvent event) {
-		if (player() == null || shouldCancel(player().getHeldItem()))
+		if (player() != null && shouldCancel(player().getHeldItem()))
 			event.cancel();
 	}
 
 	@EventListener
 	private void onRightClick(MouseClickEvent.RightClickEvent event) {
-		if (player() == null || shouldCancel(player().getHeldItem()))
+		if (player() == null)
+			return;
+
+		MovingObjectPosition mop = mc().objectMouseOver;
+		if (mop != null && mop.typeOfHit == BLOCK) {
+			IBlockState state = world().getBlockState(mop.getBlockPos());
+			if (state != null && state.getBlock() instanceof BlockContainer)
+				return;
+		}
+
+		if (shouldCancel(player().getHeldItem()))
 			event.cancel();
 	}
 

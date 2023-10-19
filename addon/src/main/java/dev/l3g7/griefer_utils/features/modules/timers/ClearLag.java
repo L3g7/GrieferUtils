@@ -22,15 +22,22 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.util.Util;
+import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModPayloadEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import net.labymod.utils.Material;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
 
 import java.util.concurrent.TimeUnit;
+
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ALL_ITEMS;
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
 
 @Singleton
 public class ClearLag extends Module {
@@ -44,12 +51,17 @@ public class ClearLag extends Module {
 		.name("Warn-Zeit (s)")
 		.icon("labymod:buttons/exclamation_mark");
 
+	private final BooleanSetting preventDrop = new BooleanSetting()
+		.name("Droppen verhindern")
+		.description("Verhindert das Droppen von Items, wenn die Warnung angezeigt wird.")
+		.icon(Material.DROPPER);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Clearlag")
 		.description("Zeigt dir die Zeit bis zum nächsten Clearlag an.")
 		.icon("gold_ingot_crossed_out")
-		.subSettings(timeFormat, warnTime);
+		.subSettings(timeFormat, warnTime, preventDrop);
 
 	private long clearLagEnd = -1;
 
@@ -65,8 +77,11 @@ public class ClearLag extends Module {
 		// Warn if clearlag is less than the set amount of seconds away
 		if (diff < warnTime.get() * 1000) {
 			String s = Util.formatTime(clearLagEnd, true);
-			if (!s.equals("0s"))
-				title("§c§l" + s);
+			if (!s.equals("0s")) {
+				mc.ingameGUI.displayTitle("§cClearlag!", null, -1, -1, -1);
+				mc.ingameGUI.displayTitle(null, "§c§l" + s, -1, -1, -1);
+				mc.ingameGUI.displayTitle(null, null, 0, 2, 3);
+			}
 		}
 
 		return new String[]{Util.formatTime(clearLagEnd, timeFormat.get() == TimeFormat.SHORT)};
@@ -78,12 +93,12 @@ public class ClearLag extends Module {
 	}
 
 	@EventListener
-	public void onServerSwitch(ServerSwitchEvent event) {
+	private void onServerSwitch(ServerSwitchEvent event) {
 		clearLagEnd = -1;
 	}
 
 	@EventListener
-	public void onMMCustomPayload(MysteryModPayloadEvent event) {
+	private void onMMCustomPayload(MysteryModPayloadEvent event) {
 		if (!event.channel.equals("countdown_create"))
 			return;
 
@@ -92,10 +107,24 @@ public class ClearLag extends Module {
 			clearLagEnd = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString()));
 	}
 
-	private void title(String title) {
-		mc.ingameGUI.displayTitle("§cClearlag!", null, -1, -1, -1);
-		mc.ingameGUI.displayTitle(null, title, -1, -1, -1);
-		mc.ingameGUI.displayTitle(null, null, 0, 2, 3);
+	@EventListener
+	private void onWindowClick(WindowClickEvent event) {
+		if (event.mode != 4 || !preventDrop.get())
+			return;
+
+		long diff = clearLagEnd - System.currentTimeMillis();
+		if (diff > 0 && diff < warnTime.get() * 1000)
+			event.cancel();
+	}
+
+	@EventListener
+	private void onPacketDigging(PacketEvent.PacketSendEvent<C07PacketPlayerDigging> event) {
+		if (!preventDrop.get() || (event.packet.getStatus() != DROP_ITEM && event.packet.getStatus() != DROP_ALL_ITEMS))
+			return;
+
+		long diff = clearLagEnd - System.currentTimeMillis();
+		if (diff > 0 && diff < warnTime.get() * 1000)
+			event.cancel();
 	}
 
 	private enum TimeFormat {

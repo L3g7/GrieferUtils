@@ -19,37 +19,27 @@
 package dev.l3g7.griefer_utils.event.events.render;
 
 import dev.l3g7.griefer_utils.core.event_bus.Event;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
+import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class ParticleSpawnEvent extends Event {
+import java.util.Random;
 
-	public final int particleID;
-	public final boolean ignoreRange;
-	public final Vec3d position;
-	public final Vec3d offset;
-	public final int[] args;
+public class RedstoneParticleSpawnEvent extends Event {
 
-	public ParticleSpawnEvent(int particleID, boolean ignoreRange, Vec3d position, Vec3d offset, int[] args) {
-		this.particleID = particleID;
-		this.ignoreRange = ignoreRange;
-		this.position = position;
-		this.offset = offset;
-		this.args = args;
-	}
+	@Mixin(BlockRedstoneWire.class)
+	private static class MixinBlockRedstoneWire {
 
-	@Mixin(World.class)
-	private static class MixinWorld {
-
-		@Inject(method = "spawnParticle(IZDDDDDD[I)V", at = @At("HEAD"), cancellable = true)
-		private void injectSpawnParticle(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int[] args, CallbackInfo ci) {
-			if (new ParticleSpawnEvent(particleID, ignoreRange, new Vec3d(xCoord, yCoord, zCoord), new Vec3d(xOffset, yOffset, zOffset), args).fire().isCanceled())
+	    @Inject(method = "randomDisplayTick", at = @At("HEAD"), cancellable = true)
+	    private void injectRandomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand, CallbackInfo ci) {
+	    	if (new RedstoneParticleSpawnEvent().fire().isCanceled())
 				ci.cancel();
-		}
+	    }
 
 	}
 

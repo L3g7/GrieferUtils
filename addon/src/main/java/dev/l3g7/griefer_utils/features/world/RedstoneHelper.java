@@ -23,7 +23,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.NoteBlockPlayEvent;
-import dev.l3g7.griefer_utils.event.events.render.ParticleSpawnEvent;
+import dev.l3g7.griefer_utils.event.events.render.RedstoneParticleSpawnEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.WorldBlockOverlayRenderer;
 import dev.l3g7.griefer_utils.misc.WorldBlockOverlayRenderer.RenderObject;
@@ -42,7 +42,6 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.ChunkCoordIntPair;
 
 import java.util.Map;
@@ -57,8 +56,6 @@ import static net.minecraft.init.Blocks.*;
  */
 @Singleton
 public class RedstoneHelper extends Feature implements RenderObjectGenerator {
-
-	private static final int REDSTONE_PARTICLE_ID = EnumParticleTypes.REDSTONE.getParticleID();
 
 	private static final BooleanSetting showZeroPower = new BooleanSetting()
 		.name("0 anzeigen")
@@ -150,8 +147,8 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	}
 
 	@EventListener
-	public void onParticleSpawn(ParticleSpawnEvent event) {
-		if (event.particleID == REDSTONE_PARTICLE_ID && hideRedstoneParticles.get())
+	public void onParticleSpawn(RedstoneParticleSpawnEvent event) {
+		if (hideRedstoneParticles.get())
 			event.cancel();
 	}
 

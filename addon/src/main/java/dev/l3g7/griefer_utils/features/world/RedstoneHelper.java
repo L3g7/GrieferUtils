@@ -23,7 +23,6 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.NoteBlockPlayEvent;
-import dev.l3g7.griefer_utils.event.events.render.RedstoneParticleSpawnEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.WorldBlockOverlayRenderer;
 import dev.l3g7.griefer_utils.misc.WorldBlockOverlayRenderer.RenderObject;
@@ -43,8 +42,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -97,7 +102,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		.min(-1)
 		.icon(COMPASS);
 
-	private static final BooleanSetting hideRedstoneParticles = new BooleanSetting()
+	public static final BooleanSetting hideRedstoneParticles = new BooleanSetting()
 		.name("Redstone-Partikel verstecken")
 		.icon(REDSTONE)
 		.defaultValue(true);
@@ -147,12 +152,6 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	}
 
 	@EventListener
-	public void onParticleSpawn(RedstoneParticleSpawnEvent event) {
-		if (hideRedstoneParticles.get())
-			event.cancel();
-	}
-
-	@EventListener
 	private void onNoteBlock(NoteBlockPlayEvent event) {
 		BlockPos pos = event.pos;
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
@@ -161,6 +160,17 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		name += Strings.repeat("'", event.getOctave().ordinal() + 1);
 		String finalName = name;
 		map.put(pos, new TextRRO(showNoteBlockPitch, () -> showNoteId.get() ? String.valueOf(event.getVanillaNoteId()) : finalName));
+	}
+
+	@Mixin(BlockRedstoneWire.class)
+	private static class MixinBlockRedstoneWire {
+
+		@Inject(method = "randomDisplayTick", at = @At("HEAD"), cancellable = true)
+		private void injectRandomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand, CallbackInfo ci) {
+			if (hideRedstoneParticles.get())
+				ci.cancel();
+		}
+
 	}
 
 	private class Wire extends RenderObject {

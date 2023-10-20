@@ -31,7 +31,9 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static org.lwjgl.opengl.GL11.*;
 
 @Singleton
 public class SkullEnchantmentFix extends Feature {
@@ -91,11 +94,29 @@ public class SkullEnchantmentFix extends Feature {
 			if (!FileProvider.getSingleton(SkullEnchantmentFix.class).isEnabled() && stack != ICON)
 				return;
 
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(-0.00005d, -0.00005d, -0.00005d);
-			GlStateManager.scale(1.0001d, 1.0001d, 1.0001d);
+			// Enable stencil
+			Framebuffer fb = mc().getFramebuffer();
+			if (!fb.isStencilEnabled())
+				fb.enableStencil();
+
+			glClear(GL_STENCIL_BUFFER_BIT);
+			glEnable(GL_STENCIL_TEST);
+			glStencilFunc(GL_ALWAYS, 1, 0);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+			// Render skull to stencil buffer
+			TileEntityItemStackRenderer.instance.renderByItem(stack);
+
+			// Render enchantment glint
+			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+			glStencilFunc(GL_EQUAL, 1, 1);
+
+			GlStateManager.translate(-0.035, -0.035, -0.035);
+			GlStateManager.scale(1.07, 1.07, 1.07);
 			Reflection.invoke(mc().getRenderItem(), "renderEffect", cubeModel);
-			GlStateManager.popMatrix();
+
+			// Disable stencil
+			glDisable(GL_STENCIL_TEST);
 		}
 
 		@Inject(method = "renderEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;disableLighting()V"))

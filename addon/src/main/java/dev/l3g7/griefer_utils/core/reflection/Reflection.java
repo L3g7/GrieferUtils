@@ -116,6 +116,13 @@ public class Reflection {
 	}
 
 	/**
+	 * @return all method in the given class, including inherited and private ones.
+	 */
+	public static Method[] getAllMethods(Class<?> targetClass) {
+		return MethodReflection.getAllMethods(targetClass);
+	}
+
+	/**
 	 * Tries to load the class with the specified name.
 	 */
 	public static <T> Class<T> load(String name) {

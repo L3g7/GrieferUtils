@@ -93,7 +93,7 @@ public class Booster extends Module {
 
 	@EventListener
 	public void onCBJoin(CityBuildJoinEvent event) {
-		if (!isActive() || !isOnGrieferGames())
+		if (!isOnGrieferGames())
 			return;
 
 		MinecraftUtil.send("/booster");
@@ -110,7 +110,7 @@ public class Booster extends Module {
 
 	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
-		if (!isOnGrieferGames())
+		if (!isOnGrieferGames() || !waitingForBoosterGUI)
 			return;
 
 		if (!(mc.currentScreen instanceof GuiChest))
@@ -119,13 +119,11 @@ public class Booster extends Module {
 		if (!getGuiChestTitle().equals("§6Booster - Übersicht§r"))
 			return;
 
-		if (waitingForBoosterGUI && isActive()) {
-			player().closeScreen();
-			if (chatInput != null)
-				mc.displayGuiScreen(new GuiChat(chatInput));
-			chatInput = null;
-			waitingForBoosterGUI = false;
-		}
+		player().closeScreen();
+		if (chatInput != null)
+			mc.displayGuiScreen(new GuiChat(chatInput));
+		chatInput = null;
+		waitingForBoosterGUI = false;
 	}
 
 	@EventListener

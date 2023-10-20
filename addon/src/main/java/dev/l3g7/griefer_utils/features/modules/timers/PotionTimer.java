@@ -33,7 +33,6 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import net.labymod.main.LabyMod;
-import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -81,19 +80,12 @@ public class PotionTimer extends Module {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Orbtrank-\nTimer")
 		.description("Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.")
-		.icon(Material.FEATHER);
+		.icon(Material.FEATHER)
+		.subSettings(design, warnTime, hide);
 
 	@Override
 	public boolean isShown() {
 		return super.isShown() && (!hide.get() || potions.values().stream().anyMatch(p -> p.expirationDate >= System.currentTimeMillis()));
-	}
-
-	@Override
-	public void fillSubSettings(List<SettingsElement> list) {
-		super.fillSubSettings(list);
-		list.add(design);
-		list.add(warnTime);
-		list.add(hide);
 	}
 
 	@EventListener

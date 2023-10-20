@@ -31,12 +31,12 @@ public class LambdaUtil {
 			implementation.setAccessible(true);
 
 			// Create lookup searching in target
-			Lookup lookup = globalLookup.in(isClass ? (Class<?>) instance : instance.getClass());
+			Lookup lookup = globalLookup.in(implementation.getDeclaringClass());
 
 			// Create generator
 			MethodType generatorType = isStatic
 				? methodType(functionalInterface)
-				: methodType(functionalInterface, instance.getClass());
+				: methodType(functionalInterface, implementation.getDeclaringClass());
 
 			MethodHandle handle = createGenerator(implementation, lookup, generatorType, functionalInterface);
 

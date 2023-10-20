@@ -167,8 +167,11 @@ public class JailBarriers extends Feature {
 	}
 
 	private void placeBarriers() {
+		// Windows
 		column(297, 98);
 		column(297, 102);
+
+		// Main walls
 		column(301, 90);
 		column(300, 89);
 		wall(299, 88, 295, 88);
@@ -191,8 +194,22 @@ public class JailBarriers extends Feature {
 		wall(266, 101, 266, 105);
 		column(265, 106);
 
+		// Middle barriers
 		cuboid(265, 25, 107, 265, 32, 107);
-		cuboid(294, 28, 105, 294, 50, 109);
+		cuboid(294, 28, 105, 294, 31, 109);
+
+		// Ceiling
+		cuboid(266, 32, 91, 293, 32, 123);
+		ceiling(268, 89, 271, 90);
+		ceiling(282, 88, 286, 90);
+		ceiling(294 , 92, 294, 103);
+		ceiling(295 , 89, 296, 102);
+		ceiling(297, 89, 297, 95);
+		ceiling(298, 90, 298, 94);
+		ceiling(299, 91, 299, 92);
+		ceiling(300, 90, 300, 91);
+
+		// Fix hole in the foundation
 		cuboid(317, 16, 122, 317, 17, 134);
 		placedBlock = targetBlock;
 	}
@@ -213,6 +230,11 @@ public class JailBarriers extends Feature {
 		int flippedZ1 = 214 - minZ;
 		int flippedZ2 = 214 - maxZ;
 		cuboid(minX, 25, flippedZ2, maxX, 32, flippedZ1);
+	}
+
+	private void ceiling(int x1, int z1, int x2, int z2) {
+		cuboid(x1, 32, z1, x2, 32, z2);
+		cuboid(x1, 32, 214 - z2, x2, 32, 214 - z1);
 	}
 
 	private void cuboid(int x1, int y1, int z1, int x2, int y2, int z2) {

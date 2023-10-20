@@ -25,6 +25,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.mapping.Mapping.UNOBFUSCATED;
@@ -123,6 +124,19 @@ class MethodReflection {
 			if (Method.isAnnotationPresent(annotation))
 				methods.add(Method);
 		}
+
+		return methods.toArray(new Method[0]);
+	}
+
+	/**
+	 * @return all method in the given class, including inherited and private ones.
+	 */
+	static Method[] getAllMethods(Class<?> targetClass) {
+		List<Method> methods = new ArrayList<>();
+
+		do {
+			Collections.addAll(methods, targetClass.getDeclaredMethods());
+		} while ((targetClass = targetClass.getSuperclass()) != null);
 
 		return methods.toArray(new Method[0]);
 	}

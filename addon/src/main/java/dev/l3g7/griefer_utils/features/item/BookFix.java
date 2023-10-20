@@ -64,7 +64,7 @@ public class BookFix extends Feature {
 		if (player() == null || mc().currentScreen != null)
 			return;
 
-		if (processClick(player().getHeldItem(), true))
+		if (processClick(player().getHeldItem(), false))
 			event.cancel();
 	}
 
@@ -76,23 +76,26 @@ public class BookFix extends Feature {
 		if (!Mouse.getEventButtonState() || !(mc().currentScreen instanceof GuiContainer))
 			return;
 
-		if (processClick(getStackUnderMouse(mc().currentScreen), Mouse.getEventButton() == 1))
+		if (processClick(getStackUnderMouse(mc().currentScreen), true))
 			event.cancel();
 	}
 
 	/**
 	 * @return {@code true} if the click should be canceled.
 	 */
-	private boolean processClick(ItemStack item, boolean openBook) {
-		if (!ServerCheck.isOnGrieferGames())
+	private boolean processClick(ItemStack stack, boolean inGui) {
+		if (!ServerCheck.isOnGrieferGames() || stack == null)
 			return false;
 
-		if (item == null || (item.getItem() != Items.writable_book && item.getItem() != Items.written_book))
+		if (stack.getItem() == Items.book)
+			return !inGui;
+
+		if (stack.getItem() != Items.writable_book && stack.getItem() != Items.written_book)
 			return false;
 
-		if (openBook) {
+		if (!inGui || Mouse.getEventButton() == 1) {
 			// Fix missing tags
-			NBTTagCompound tag = item.getTagCompound();
+			NBTTagCompound tag = stack.getTagCompound();
 			if (tag == null)
 				tag = new NBTTagCompound();
 
@@ -104,7 +107,7 @@ public class BookFix extends Feature {
 				tag.setTag("pages", new NBTTagList());
 
 			// Open preview
-			mc().displayGuiScreen(new GuiBookPreview(player(), item));
+			mc().displayGuiScreen(new GuiBookPreview(player(), stack));
 		}
 
 		return true;

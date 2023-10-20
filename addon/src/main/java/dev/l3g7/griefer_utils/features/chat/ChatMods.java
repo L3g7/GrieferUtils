@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
 import net.minecraft.init.Blocks;
@@ -52,12 +53,6 @@ public class ChatMods extends Feature {
 		.icon(Material.BARRIER)
 		.defaultValue(true);
 
-	private final DropDownSetting<NewsMode> news = new DropDownSetting<>(NewsMode.class)
-		.name("News")
-		.icon("exclamation_mark")
-		.icon("labymod:buttons/exclamation_mark")
-		.defaultValue(NewsMode.NORMAL);
-
 	private final BooleanSetting removeStreamerNotifications = new BooleanSetting()
 		.name("Streamer-Benachrichtigungen entfernen")
 		.icon("twitch");
@@ -75,13 +70,24 @@ public class ChatMods extends Feature {
 		.name("CaseOpening-Benachrichtigungen entfernen")
 		.icon("chest");
 
+	private final DropDownSetting<NewsMode> news = new DropDownSetting<>(NewsMode.class)
+		.name("News")
+		.icon("exclamation_mark")
+		.icon("labymod:buttons/exclamation_mark")
+		.defaultValue(NewsMode.NORMAL);
+
+	private final HeaderSetting newDropDownFix = new HeaderSetting() {
+		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+			entryHeight(news.isFocused() ? 30 : 0);
+		}
+	};
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Chat aufräumen")
 		.icon("speech_bubble")
 		.description("Löscht unerwünschte Chatnachrichten.")
-		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeMysteryMod, removeLuckyBlock, removeCaseOpening, news);
-
+		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeMysteryMod, removeLuckyBlock, removeCaseOpening, news, newDropDownFix);
 
 	private boolean isNews = false;
 

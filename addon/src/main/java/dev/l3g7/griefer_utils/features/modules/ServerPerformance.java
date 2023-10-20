@@ -30,8 +30,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S05PacketSpawnPosition;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Deque;
+import java.util.LinkedList;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
@@ -43,7 +43,7 @@ public class ServerPerformance extends Module {
 
 	private Double currentTPS = null;
 	private Long lastWorldTime = null;
-	private final List<Double> tps = new ArrayList<>();
+	private final Deque<Double> tps = new LinkedList<>();
 	private long lastMillis = 0;
 	private int lastTripTime = 0;
 
@@ -120,7 +120,7 @@ public class ServerPerformance extends Module {
 		currentTPS = Math.round(averageTps * 100) / 100d; // Round to two decimals
 
 		if (tps.size() > 25)
-			tps.remove(0);
+			tps.removeFirst();
 
 		lastWorldTime = currentWorldTime;
 		lastTripTime = tripTime;

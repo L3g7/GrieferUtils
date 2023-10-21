@@ -166,8 +166,11 @@ public class TabListEvent extends Event {
 				// When the whole TabList is affected, a TabListClearEvent is posted instead
 				return;
 
-			for (AddPlayerData data : event.packet.getEntries())
-				new TabListPlayerRemoveEvent(data, uuidToNameMap.get(data.getProfile().getId())).fire();
+			for (AddPlayerData data : event.packet.getEntries()) {
+				String name = uuidToNameMap.get(data.getProfile().getId());
+				if (name != null)
+					new TabListPlayerRemoveEvent(data, name).fire();
+			}
 		}
 
 	}
@@ -182,8 +185,11 @@ public class TabListEvent extends Event {
 		public TabListClearEvent(List<AddPlayerData> entries) {
 			Map<AddPlayerData, String> namedEntries = new HashMap<>();
 
-			for (AddPlayerData data : entries)
-				namedEntries.put(data, uuidToNameMap.get(data.getProfile().getId()));
+			for (AddPlayerData data : entries) {
+				String name = uuidToNameMap.get(data.getProfile().getId());
+				if (name != null)
+					namedEntries.put(data, name);
+			}
 
 			this.entries = ImmutableMap.copyOf(namedEntries);
 		}

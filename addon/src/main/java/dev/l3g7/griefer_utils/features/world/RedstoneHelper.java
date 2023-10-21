@@ -23,7 +23,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
-import dev.l3g7.griefer_utils.event.NoteBlockPlayEvent;
+import dev.l3g7.griefer_utils.event.events.NoteBlockPlayEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.WorldBlockOverlayRenderer;
 import dev.l3g7.griefer_utils.misc.WorldBlockOverlayRenderer.RenderObject;

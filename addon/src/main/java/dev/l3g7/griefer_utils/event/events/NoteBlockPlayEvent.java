@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.event;
+package dev.l3g7.griefer_utils.event.events;
 
 import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.block.BlockNote;

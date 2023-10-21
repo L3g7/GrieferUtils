@@ -28,6 +28,9 @@ import net.minecraft.launchwrapper.IClassTransformer;
 public class PreStart implements IClassTransformer {
 
 	public PreStart() throws Exception {
+		if (System.setProperty("griefer_utils_load_flag", "") != null)
+			throw new Error("GrieferUtils wurde bereits geladen!");
+
 		AutoUpdater.update();
 		EarlyStart.start();
 	}

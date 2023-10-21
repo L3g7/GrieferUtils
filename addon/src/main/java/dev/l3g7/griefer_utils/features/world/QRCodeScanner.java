@@ -80,6 +80,11 @@ public class QRCodeScanner extends Feature {
 			}
 
 			MapData mapData = Items.filled_map.getMapData(stack, world());
+			if (mapData == null) {
+				display(ADDON_PREFIX + "§cDie Karte wurde noch nicht geladen.");
+				return;
+			}
+
 			BufferedImage img = new BufferedImage(128, 128, BufferedImage.TYPE_INT_RGB);
 
 			for (int i = 0; i < 16384; ++i) {

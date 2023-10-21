@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.world;
 
 import com.google.common.base.Strings;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.NoteBlockPlayEvent;
@@ -167,7 +168,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 		@Inject(method = "randomDisplayTick", at = @At("HEAD"), cancellable = true)
 		private void injectRandomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand, CallbackInfo ci) {
-			if (hideRedstoneParticles.get())
+			if (FileProvider.getSingleton(RedstoneHelper.class).isEnabled() && hideRedstoneParticles.get())
 				ci.cancel();
 		}
 

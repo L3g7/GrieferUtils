@@ -57,12 +57,6 @@ public class LibLoader {
 
 	public static void loadLibraries() throws ReflectiveOperationException, IOException {
 
-		// EdDSA: for ed25519 signatures (Matrix)
-		LibLoader.loadLibrary("net/i2p/crypto/eddsa/0.3.0/eddsa-0.3.0.jar", "https://repo1.maven.org/maven2/net/i2p/crypto/eddsa/0.3.0/eddsa-0.3.0.jar", "4DDA1120DB856640DBEC04140ED23242215A075FE127BDEFA0DCFA29FB31267D");
-
-		// HKDF: for ssss decryption and password derivation (Matrix)
-		LibLoader.loadLibrary("at/favre/lib/hkdf/1.1.0/hkdf-1.1.0.jar", "https://repo1.maven.org/maven2/at/favre/lib/hkdf/1.1.0/hkdf-1.1.0.jar", "81EC4C56E740D440BC9426FA600CAEE4ABB6E9F4CEFF576E9CECE7C3817C5A06");
-
 		// mXparser: for evaluating expressions (Calculator)
 		loadLibrary("org/mariuszgromada/math/MathParser.org-mXparser/5.1.0/MathParser.org-mXparser-5.1.0.jar", "https://repo1.maven.org/maven2/org/mariuszgromada/math/MathParser.org-mXparser/5.1.0/MathParser.org-mXparser-5.1.0.jar", "B5472B5E1BBEFEA2DA6052C68A509C84C7F2CA5F99B76A4C5F58354C08818630");
 
@@ -74,7 +68,7 @@ public class LibLoader {
 	}
 
 	private static void loadLibrary(String path, String downloadUrl, String hash) throws IOException, ReflectiveOperationException {
-		File libFile = new File("libraries", path);
+		File libFile = new File(Launch.assetsDir, "../libraries/" + path);
 		if (!libFile.exists() || !verifyHash(libFile, hash)) {
 			// Download library
 			libFile.getParentFile().mkdirs();

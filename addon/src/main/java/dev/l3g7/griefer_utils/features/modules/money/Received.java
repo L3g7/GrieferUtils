@@ -37,12 +37,11 @@ import net.minecraft.util.IChatComponent;
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getNextServerRestart;
 import static java.math.BigDecimal.ZERO;
 
 @Singleton
 public class Received extends Module {
-
-	private static final int HOUR = 60 * 60 * 1000; // An hour, in milliseconds.
 
 	static BigDecimal moneyReceived = ZERO;
 	private long nextReset = -1;
@@ -56,7 +55,7 @@ public class Received extends Module {
 			if (!b)
 				nextReset = -1;
 			else
-				nextReset = getNextReset();
+				nextReset = getNextServerRestart();
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
 			Config.save();
 		});
@@ -109,27 +108,17 @@ public class Received extends Module {
 			setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))), "msg: " + IChatComponent.Serializer.componentToJson(event.message));
 	}
 
-	private long getNextReset() {
-		long time = System.currentTimeMillis();
-		long reset = time - time % (24 * HOUR) + (2 * HOUR); // Get timestamp for 02:00 UTC on the current day
-
-		if (System.currentTimeMillis() > reset)
-			reset += 24 * HOUR; // When it's already after 02:00 UTC, the next reset is 24h later
-
-		return reset;
-	}
-
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onTick(TickEvent.ClientTickEvent tickEvent) {
 		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
-			nextReset = getNextReset();
+			nextReset = getNextServerRestart();
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
 			setBalance(ZERO, "reset");
 			Config.save();
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.money.data." + mc.getSession().getProfile().getId() + ".";
 

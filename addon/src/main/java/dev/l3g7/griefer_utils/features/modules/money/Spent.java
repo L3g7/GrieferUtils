@@ -108,7 +108,7 @@ public class Spent extends Module {
 			setBalance(moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", ""))), "msg: " + IChatComponent.Serializer.componentToJson(event.message));
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onTick(TickEvent.ClientTickEvent tickEvent) {
 		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
 			nextReset = getNextServerRestart();
@@ -118,7 +118,7 @@ public class Spent extends Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.money.balances." + mc.getSession().getProfile().getId() + ".";
 

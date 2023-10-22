@@ -102,7 +102,7 @@ public class Received extends Module {
 		return new String[]{"0$"};
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())

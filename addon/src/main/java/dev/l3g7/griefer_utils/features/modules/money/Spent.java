@@ -101,7 +101,7 @@ public class Spent extends Module {
 		return new String[]{"0$"};
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = Constants.PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())

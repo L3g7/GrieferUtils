@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.core.misc;
 
-import dev.l3g7.griefer_utils.core.misc.matrix.jna.util.LibOlmLoader;
 import net.minecraft.launchwrapper.Launch;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -57,9 +56,6 @@ public class LibLoader {
 	}
 
 	public static void loadLibraries() throws ReflectiveOperationException, IOException {
-
-		// LibOlm: for the Olm ratchet (Matrix)
-		LibOlmLoader.load();
 
 		// EdDSA: for ed25519 signatures (Matrix)
 		LibLoader.loadLibrary("net/i2p/crypto/eddsa/0.3.0/eddsa-0.3.0.jar", "https://repo1.maven.org/maven2/net/i2p/crypto/eddsa/0.3.0/eddsa-0.3.0.jar", "4DDA1120DB856640DBEC04140ED23242215A075FE127BDEFA0DCFA29FB31267D");

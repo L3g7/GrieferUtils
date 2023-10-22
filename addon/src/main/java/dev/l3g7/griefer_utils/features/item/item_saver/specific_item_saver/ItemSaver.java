@@ -343,6 +343,9 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	}
 
 	private boolean cancel(Packet<?> packet) {
+		if (player() == null)
+			return false;
+
 		ItemDisplaySetting setting = getSetting(player().getHeldItem());
 		if (setting == null)
 			return false;

@@ -50,6 +50,8 @@ import java.security.cert.TrustAnchor;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
@@ -68,11 +70,18 @@ import static java.nio.file.StandardOpenOption.CREATE;
  */
 public class AutoUpdater {
 
+	private static final String DELETION_MARKER = "File marked for deletion by GrieferUtils updater";
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final JsonParser PARSER = new JsonParser();
 	public static boolean hasUpdated = false;
 
 	public static void update() throws IOException, NoSuchAlgorithmException, InterruptedException, ReflectiveOperationException {
+		// Delete old versions
+		File[] addonJars = AddonLoader.getAddonsDirectory().listFiles((file, name) -> name.endsWith(".jar"));
+		if (addonJars != null)
+			for (File addonJar : addonJars)
+				checkJarForDeletion(addonJar);
+
 		if (!isEnabled())
 			return;
 
@@ -149,19 +158,16 @@ public class AutoUpdater {
 		hasUpdated = true;
 	}
 
-	/**
-	 * @return Whether the file was deleted instantly.
-	 */
-	private static boolean deleteJarSilently(String path) throws IOException {
+	private static void deleteJarSilently(String path) throws IOException {
 		// Try to delete file directly
 		if (new File(path).delete())
-			return true;
+			return;
 
 		try {
 			// Probably locked; Overwrite it with an empty zip file until Minecraft is closed
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			ZipOutputStream out = new ZipOutputStream(bout);
-			out.setComment("File marked for deletion by GrieferUtils updater");
+			out.setComment(DELETION_MARKER);
 			out.close();
 			Files.write(Paths.get(path), bout.toByteArray());
 		} catch (Throwable t) {
@@ -173,7 +179,19 @@ public class AutoUpdater {
 		Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();
 		String deleteLine = new File(path).getName() + System.lineSeparator();
 		Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
-		return false;
+	}
+
+	private static void checkJarForDeletion(File file) throws IOException {
+		ZipInputStream in = new ZipInputStream(Files.newInputStream(file.toPath()));
+		ZipEntry entry = in.getNextEntry();
+
+		if (entry == null || !DELETION_MARKER.equals(entry.getComment()) || file.delete())
+			return;
+
+		// Deletion failed, add file to LabyMod's .delete
+		Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();
+		String deleteLine = file.getName() + System.lineSeparator();
+		Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
 	}
 
 	private static ReleaseChannel getPreferredChannel() throws IOException {

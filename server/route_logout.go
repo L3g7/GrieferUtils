@@ -15,7 +15,9 @@ func LogoutRoute(w http.ResponseWriter, r *http.Request, token *jwt.Token) error
 	}
 
 	claims, _ := token.Claims.(jwt.MapClaims)
+	OnlineUsersMutex.Lock()
 	delete(OnlineUsers, claims["sub"].(string))
+	OnlineUsersMutex.Unlock()
 
 	// Send response
 	w.WriteHeader(http.StatusNoContent)

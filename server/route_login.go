@@ -103,7 +103,9 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Authentication complete, create session token
+	OnlineUsersMutex.Lock()
 	OnlineUsers[request.User] = time.Now().Unix()
+	OnlineUsersMutex.Unlock()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS384, &jwt.MapClaims{
 		"exp": time.Now().Add(24 * time.Hour).Unix(),
 		"iat": time.Now().Unix(),

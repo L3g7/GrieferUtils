@@ -9,7 +9,9 @@ import (
 
 func KeepAliveRoute(w http.ResponseWriter, _ *http.Request, token *jwt.Token) error {
 	claims, _ := token.Claims.(jwt.MapClaims)
+	OnlineUsersMutex.Lock()
 	OnlineUsers[claims["sub"].(string)] = time.Now().Unix()
+	OnlineUsersMutex.Unlock()
 
 	// Send response
 	w.WriteHeader(http.StatusNoContent)

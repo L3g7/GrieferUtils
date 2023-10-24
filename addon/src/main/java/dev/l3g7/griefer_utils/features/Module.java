@@ -124,7 +124,6 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 	public String getDescription() { return mainElement.getDescriptionText(); }
 	public boolean isShown() { return !LabyMod.getInstance().isInGame() || ServerCheck.isOnGrieferGames(); }
 	public boolean isEnabled() { return mainElement.get(); }
-	public boolean isEnabled(EnumDisplayType displayType) { return displayType == EnumDisplayType.INGAME && isEnabled(); }
 
 	public void loadSettings() {}
 	public int getSortingId() { return 0; }

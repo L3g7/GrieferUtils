@@ -55,7 +55,7 @@ class RecraftPlayer {
 			return;
 
 		if (actions.isEmpty()) {
-			MinecraftUtil.display(Constants.ADDON_PREFIX + " §cEs wurde kein \"/rezepte\"-Aufruf aufgezeichnet.");
+			MinecraftUtil.display(Constants.ADDON_PREFIX + "§cEs wurde kein \"/rezepte\"-Aufruf aufgezeichnet.");
 			return;
 		}
 

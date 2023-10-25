@@ -49,6 +49,8 @@ public class GUSession {
 		// Get certificates
 		CompletableFuture<PlayerKeyPair> keyPairRequest = PlayerKeyPair.getPlayerKeyPair(mcAuthToken);
 		PlayerKeyPair keyPair = keyPairRequest.join();
+		if (keyPair == null)
+			return;
 
 		// Login
 		this.sessionToken = new LoginRequest(user, keyPair).send(this);

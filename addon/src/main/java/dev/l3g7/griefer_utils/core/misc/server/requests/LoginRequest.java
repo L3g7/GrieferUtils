@@ -75,7 +75,7 @@ public class LoginRequest extends Request<String> {
 
 	@Override
 	protected String parseResponse(GUSession session, Response response) {
-		return response.convertTo(LoginResponse.class).sessionToken;
+		return response.convertTo(LoginResponse.class, new LoginResponse()).sessionToken;
 	}
 
 	private static class LoginResponse {

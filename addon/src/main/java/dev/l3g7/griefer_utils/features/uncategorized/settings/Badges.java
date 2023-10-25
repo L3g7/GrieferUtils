@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListClearEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerRemoveEvent;
+import dev.l3g7.griefer_utils.misc.GUClient;
 import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsGroup;
 import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsUserManager;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -136,7 +137,7 @@ public class Badges {
 				familiarCount++;
 
 		int percent = totalCount == 0 ? 0 : (int) Math.round(familiarCount / (double) totalCount * 100);
-		String text = String.format("§7%d§8/§7%d §a%d%%", familiarCount, totalCount, percent);
+		String text = GUClient.get().isAvailable() ? String.format("§7%d§8/§7%d §a%d%%", familiarCount, totalCount, percent) : "§c?";
 		drawUtils().drawRightString(text, x, 3, 0.7);
 
 		drawUtils().bindTexture("griefer_utils/icons/icon.png");

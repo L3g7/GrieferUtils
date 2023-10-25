@@ -28,6 +28,11 @@ public class Response {
 		this.body = body;
 	}
 
+	public <T> T convertTo(Class<T> type, T fallback) {
+		T res = convertTo(type);
+		return res == null ? fallback : res;
+	}
+
 	public <T> T convertTo(Class<T> type) {
 		return IOUtil.gson.fromJson(body, type);
 	}

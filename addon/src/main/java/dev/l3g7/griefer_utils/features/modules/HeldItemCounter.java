@@ -76,7 +76,7 @@ public class HeldItemCounter {
 
 		@Redirect(method = "draw(DDDLnet/labymod/ingamegui/enums/EnumItemSlot;)V", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/DrawUtils;drawItem(Lnet/minecraft/item/ItemStack;DDLjava/lang/String;)V"))
 		private void drawItem(DrawUtils instance, ItemStack stack, double xPosition, double yPosition, String value) {
-			if (classCheckFails() || !enabled.get() || !stack.isItemStackDamageable()) {
+			if (classCheckFails() || !enabled.get() || stack.isItemStackDamageable()) {
 				instance.drawItem(stack, xPosition, yPosition, null);
 				return;
 			}

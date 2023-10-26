@@ -107,7 +107,7 @@ public class ItemInfo extends Feature {
 
 	public static abstract class ItemInfoSupplier {
 
-		protected SettingsElement mainElement;
+		public SettingsElement mainElement;
 
 		protected SettingsElement init(String parentConfigKey) {
 			return mainElement = ElementBuilder.initMainElement(this, parentConfigKey).getLeft();

@@ -36,11 +36,13 @@ public class RealMoney extends Feature {
 
 	private final StringSetting tag = new StringSetting()
 		.name("Tag")
+		.description("Womit eingehenden Bezahlungen markiert werden sollen.")
 		.icon(Material.NAME_TAG)
 		.defaultValue("&a [✔]");
 
 	private final DropDownSetting<TagPosition> position = new DropDownSetting<>(TagPosition.class)
 		.name("Position")
+		.description("Ob der Tag an den Anfang oder den Ende der Nachricht angehängt wird.")
 		.icon("labymod:settings/settings/marker")
 		.defaultValue(TagPosition.AFTER);
 

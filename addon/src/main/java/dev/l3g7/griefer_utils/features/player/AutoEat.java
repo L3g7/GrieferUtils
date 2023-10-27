@@ -54,6 +54,7 @@ public class AutoEat extends Feature {
 
 	private final DropDownSetting<PreferredFood> preferredFood = new DropDownSetting<>(PreferredFood.class)
 		.name("Bevorzugte Nahrung")
+		.description("Welche Art von Nahrung bevorzugt gegessen werden soll.")
 		.icon(COOKED_BEEF)
 		.defaultValue(HIGH_SATURATION);
 

@@ -37,6 +37,14 @@ public class NoMagicText extends TextComponentTweak {
 		.subSettings(chat, tab, item);
 
 	@Override
+	public void init() {
+		super.init();
+		chat.description("Ob magische Texte im Chat deaktiviert werden sollen.");
+		tab.description("Ob magische Texte in der Tabliste deaktiviert werden sollen.");
+		item.description("Ob magische Texte in Item-Beschreibungen deaktiviert werden sollen.");
+	}
+
+	@Override
 	void modify(IChatComponent component) {
 		component.getChatStyle().setObfuscated(false);
 		component.getSiblings().forEach(this::modify);

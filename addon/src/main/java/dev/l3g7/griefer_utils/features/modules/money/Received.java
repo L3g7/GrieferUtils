@@ -81,11 +81,13 @@ public class Received extends Module {
 		.subSettings(resetSetting, resetAfterRestart,
 			new SmallButtonSetting()
 				.name("Zurücksetzen")
+				.description("Setzt das eingenommene Geld zurück.")
 				.icon("arrow_circle")
 				.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
 				.callback(() -> setBalance(ZERO, "single reset")),
 			new SmallButtonSetting()
 				.name("Alles zurücksetzen")
+				.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
 				.icon("arrow_circle")
 				.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
 				.callback(() -> setBalance(Spent.setBalance(ZERO, "multi reset from received"), "multi reset from received"))

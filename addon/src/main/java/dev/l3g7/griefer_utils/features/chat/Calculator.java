@@ -53,6 +53,7 @@ public class Calculator extends Feature {
 
 	private final DropDownSetting<WithdrawAction> autoWithdraw = new DropDownSetting<>(WithdrawAction.class)
 		.name("Auto. abheben")
+		.description("Ob automatisch Geld abgehoben werden soll, wenn man nicht genügend für die gewünschte Bezahlung auf dem Konto hat.")
 		.icon("bank")
 		.defaultValue(WithdrawAction.SUGGEST);
 

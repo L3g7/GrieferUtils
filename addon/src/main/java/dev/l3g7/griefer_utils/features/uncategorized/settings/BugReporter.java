@@ -50,7 +50,7 @@ public class BugReporter {
 
 	public static final BooleanSetting enabled = new BooleanSetting()
 		.name("Automatische Fehlermeldung")
-		.description("GrieferUtils meldet automatisch durch sich ausgelöste Fehler.")
+		.description("Meldet automatisch durch GrieferUtils ausgelöste Fehler.")
 		.config("settings.automatic_bug_reporting.enabled")
 		.icon("bug")
 		.defaultValue(true)

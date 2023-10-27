@@ -52,10 +52,12 @@ public class ShowJoins extends Feature {
 
 	private final BooleanSetting showOnJoin = new BooleanSetting()
 		.name("Joins beim Betreten des Servers anzeigen")
+		.description("Ob beim initialen Laden der Spieler beim Betreten eines Servers eine Join-Nachricht angezeigt werden soll.")
 		.icon(Material.LEVER);
 
 	private final BooleanSetting log = new BooleanSetting()
 		.name("Joins im Log speichern")
+		.description("Ob die Join-Nachrichten im Log gespeichert werden sollen.")
 		.defaultValue(true)
 		.icon(Material.BOOK_AND_QUILL);
 

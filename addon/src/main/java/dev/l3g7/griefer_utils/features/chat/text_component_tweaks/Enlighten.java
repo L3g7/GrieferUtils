@@ -37,20 +37,31 @@ public class Enlighten extends TextComponentTweak {
 
 	private final BooleanSetting enlightenLightGray = new BooleanSetting()
 		.name("Hellgrau aufhellen")
+		.description("Ob hellgraue Texte zu weißen aufgehellt werden soll.")
 		.icon(new ItemStack(Blocks.wool, 1, 8))
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final DropDownSetting<GrayMode> enlightenGray = new DropDownSetting<>(GrayMode.class)
 		.name("Grau zu ...")
+		.description("Zu welcher Farbe graue Texte aufgehellt werden soll.")
 		.icon(new ItemStack(Blocks.wool, 1, 7))
 		.defaultValue(GrayMode.GRAY)
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final DropDownSetting<BlackMode> enlightenBlack = new DropDownSetting<>(BlackMode.class)
 		.name("Schwarz zu ...")
+		.description("Zu welcher Farbe schwarze Texte aufgehellt werden soll.")
 		.icon(new ItemStack(Blocks.wool, 1, 15))
 		.defaultValue(BlackMode.BLACK)
 		.callback(TabListEvent::updatePlayerInfoList);
+
+	@Override
+	public void init() {
+		super.init();
+		chat.description("Ob Texte im Chat aufgehellt werden sollen.");
+		tab.description("Ob Texte in der Tabliste aufgehellt werden sollen.");
+		item.description("Ob Texte in Item-Beschreibungen aufgehellt werden sollen.");
+	}
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()

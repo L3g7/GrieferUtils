@@ -74,22 +74,26 @@ public abstract class PlayerList extends Feature {
 	// List settings
 	public final DropDownSetting<MarkAction> tabAction = new DropDownSetting<>(MarkAction.class)
 		.name("in Tabliste")
+		.description("Ob Spieler in dieser Liste in der Tabliste markiert werden sollen.")
 		.icon("tab_list")
 		.defaultValue(ICON)
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	public final DropDownSetting<MarkAction> chatAction = new DropDownSetting<>(MarkAction.class)
 		.name("in Chat")
+		.description("Ob Spieler in dieser Liste im Chat markiert werden sollen.")
 		.icon("speech_bubble")
 		.defaultValue(ICON);
 
 	public final DropDownSetting<MarkAction> displayNameAction = new DropDownSetting<>(MarkAction.class)
 		.name("Vor Nametag")
+		.description("Ob Spieler in dieser Liste eine Markierung vor ihrem Namen haben sollen.")
 		.icon("yellow_name")
 		.defaultValue(ICON);
 
 	public final BooleanSetting showInProfile = new BooleanSetting()
 		.name("In /profil anzeigen")
+		.description("Ob das Profil von Spielern in dieser Liste markiert werden soll.")
 		.icon("info")
 		.defaultValue(true);
 

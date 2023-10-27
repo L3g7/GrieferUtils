@@ -45,34 +45,40 @@ public class ChatMods extends Feature {
 
 	private final BooleanSetting antiClearChat = new BooleanSetting()
 		.name("Clearchat unterbinden")
+		.description("Verhindert das leeren des Chats durch /clearchat.")
 		.icon(Material.BARRIER)
 		.defaultValue(true);
 
 	private final BooleanSetting removeSupremeSpaces = new BooleanSetting()
 		.name("Supreme-Leerzeichen entfernen")
+		.description("Entfernt die Leerzeilen vor und nach Nachrichten von Spielern mit Supreme-Rang.")
 		.icon(Material.BARRIER)
 		.defaultValue(true);
 
 	private final BooleanSetting removeStreamerNotifications = new BooleanSetting()
 		.name("Streamer-Benachrichtigungen entfernen")
+		.description("Unterdrückt Benachrichtigungen über Livestreams.")
 		.icon("twitch");
 
 	private final BooleanSetting removeMysteryMod = new BooleanSetting()
 		.name("Download-Benachrichtigungen entfernen")
+		.description("Unterdrückt Erinnerungen an den Download MysteryMods.")
 		.icon("mysterymod")
 		.defaultValue(true);
 
 	private final BooleanSetting removeLuckyBlock = new BooleanSetting()
 		.name("LuckyBlock-Benachrichtigungen entfernen")
+		.description("Unterdrückt Benachrichtigungen über LuckyBlock-Gewinne.")
 		.icon(ItemUtil.createItem(Blocks.gold_block, 0, true));
 
 	private final BooleanSetting removeCaseOpening = new BooleanSetting()
 		.name("CaseOpening-Benachrichtigungen entfernen")
+		.description("Unterdrückt Benachrichtigungen über CaseOpening-Gewinne.")
 		.icon("chest");
 
 	private final DropDownSetting<NewsMode> news = new DropDownSetting<>(NewsMode.class)
 		.name("News")
-		.icon("exclamation_mark")
+		.description("Ändert die Darstellung von News.")
 		.icon("labymod:buttons/exclamation_mark")
 		.defaultValue(NewsMode.NORMAL);
 

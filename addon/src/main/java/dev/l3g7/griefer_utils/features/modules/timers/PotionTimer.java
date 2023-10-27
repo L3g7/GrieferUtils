@@ -63,12 +63,14 @@ public class PotionTimer extends Module {
 
 	private final DropDownSetting<KeyMode> design = new DropDownSetting<>(KeyMode.class)
 		.name("Design")
+		.description("In welchem die Design die aktivierten Tränke angezeigt werden sollen.")
 		.icon("wooden_board")
 		.defaultValue(KeyMode.TEXT_AND_ICON)
 		.stringProvider(KeyMode::getName);
 
 	private final NumberSetting warnTime = new NumberSetting()
 		.name("Warn-Zeit für Fly Tränke (s)")
+		.description("Wie viele Sekunden vor dem Ablauf eines Fly-Tranks eine Warnung angezeigt werden soll.")
 		.icon("labymod:buttons/exclamation_mark");
 
 	private final BooleanSetting hide = new BooleanSetting()

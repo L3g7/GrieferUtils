@@ -39,11 +39,13 @@ public class MobRemover extends Module {
 
 	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
 		.name("Zeitformat")
+		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
 		.icon("hourglass")
 		.defaultValue(TimeFormat.LONG);
 
 	private final NumberSetting warnTime = new NumberSetting()
 		.name("Warn-Zeit (s)")
+		.description("Wie viele Sekunden vor dem nächsten MobRemover eine Warnung angezeigt werden soll.")
 		.icon("labymod:buttons/exclamation_mark");
 
 	@MainElement

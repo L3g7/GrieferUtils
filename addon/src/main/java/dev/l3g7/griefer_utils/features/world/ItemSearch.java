@@ -55,17 +55,17 @@ public class ItemSearch extends Feature {
 
 	private final BooleanSetting inventory = new BooleanSetting()
 		.name("Inventar")
-		.description("Ob das Inventar auch durchsucht werden soll")
+		.description("Ob das Inventar auch durchsucht werden soll.")
 		.icon("chest");
 
 	private final BooleanSetting dispenser = new BooleanSetting()
 		.name("Spender / Werfer")
-		.description("Ob die Item-Suche auch bei Spendern / Werfern hinzugefügt werden soll")
+		.description("Ob die Item-Suche auch bei Spendern / Werfern hinzugefügt werden soll.")
 		.icon(Material.DISPENSER);
 
 	private final BooleanSetting hopper = new BooleanSetting()
 		.name("Tricher")
-		.description("Ob die Item-Suche auch bei Trichtern hinzugefügt werden soll")
+		.description("Ob die Item-Suche auch bei Trichtern hinzugefügt werden soll.")
 		.icon(Material.HOPPER);
 
 	@MainElement

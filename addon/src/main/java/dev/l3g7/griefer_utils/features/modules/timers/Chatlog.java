@@ -36,6 +36,7 @@ public class Chatlog extends Module {
 
 	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
 		.name("Zeitformat")
+		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
 		.icon("hourglass")
 		.config("modules.chatlog.time_format")
 		.defaultValue(TimeFormat.LONG);

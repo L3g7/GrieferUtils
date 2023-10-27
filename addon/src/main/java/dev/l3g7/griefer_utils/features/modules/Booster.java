@@ -69,6 +69,7 @@ public class Booster extends Module {
 
 	private final DropDownSetting<KeyMode> design = new DropDownSetting<>(KeyMode.class)
 		.name("Design")
+		.description("In welchem Design die derzeit aktiven Booster angezeigt werden sollen.")
 		.icon("wooden_board")
 		.config("modules.booster.design")
 		.defaultValue(KeyMode.TEXT_AND_ICON)

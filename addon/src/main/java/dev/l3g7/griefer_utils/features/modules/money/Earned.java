@@ -41,6 +41,7 @@ public class Earned extends Module {
 		.icon("coin_pile")
 		.subSettings(new SmallButtonSetting()
 			.name("Zurücksetzen")
+			.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
 			.icon("arrow_circle")
 			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
 			.callback(() -> {

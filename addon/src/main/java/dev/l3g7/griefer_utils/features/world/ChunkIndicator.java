@@ -83,6 +83,7 @@ public class ChunkIndicator extends Feature {
 
 	private final BooleanSetting red_lines = new BooleanSetting()
 		.name("Rote Linien", "(Nachbar-Chunks)")
+		.description("Ob die Linien zur Begrenzung der anliegenden Chunks angezeigt werden sollen.")
 		.icon(new ItemStack(stained_hardened_clay, 1, 14))
 		.defaultValue(true);
 

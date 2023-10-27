@@ -55,6 +55,7 @@ public class TrueSight extends Feature {
 
 	private final SliderSetting opacity = new SliderSetting()
 		.name("Durchsichtigkeit (%)")
+		.description("Wie durchsichtig ein eigentlich unsichtbares Entity sein soll.")
 		.icon("fading_steve")
 		.min(0).max(100)
 		.defaultValue(85);

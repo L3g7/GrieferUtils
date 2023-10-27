@@ -65,10 +65,12 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	private static final BooleanSetting showZeroPower = new BooleanSetting()
 		.name("0 anzeigen")
+		.description("Ob die Stärke-Anzeige auch angezeigt werden soll, wenn die Stärke 0 beträgt.")
 		.icon(REDSTONE);
 
 	private static final BooleanSetting showPower = new BooleanSetting()
 		.name("Redstone-Stärke anzeigen")
+		.description("Zeigt auf Redstone-Kabeln ihre derzeitige Stärke an.")
 		.icon(REDSTONE)
 		.subSettings(showZeroPower);
 
@@ -92,6 +94,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	private static final BooleanSetting showCauldronLevel = new BooleanSetting()
 		.name("Kessel-Füllstand anzeigen")
+		.description("Zeigt an einem Kessel seinen derzeitigen Füllstand an.")
 		.icon(CAULDRON_ITEM);
 
 	private static final NumberSetting range = new NumberSetting()
@@ -105,6 +108,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	public static final BooleanSetting hideRedstoneParticles = new BooleanSetting()
 		.name("Redstone-Partikel verstecken")
+		.description("Versteckt die Partikel, die durch aktivertem Redstone erzeugt werden.")
 		.icon(REDSTONE)
 		.defaultValue(true);
 

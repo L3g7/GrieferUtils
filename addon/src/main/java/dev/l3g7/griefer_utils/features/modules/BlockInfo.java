@@ -57,6 +57,7 @@ public class BlockInfo extends Module {
 
 	private final BooleanSetting showCoords = new BooleanSetting()
 		.name("Koordinaten anzeigen")
+		.description("Ob die Koordinaten des anvisierten Blocks auch angezeigt werden sollen.")
 		.icon(Material.COMPASS);
 
 	@MainElement

@@ -104,7 +104,7 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 				module.getBooleanElement().setDescriptionText(module.getDescription());
 	}
 
-	private BooleanSetting mainElement;
+	public BooleanSetting mainElement;
 	private String configKey;
 
 	private Module initModule() {
@@ -137,8 +137,9 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 		super.fillSubSettings(list);
 		list.add(new HeaderSetting());
 
-		Reflection.set(rawBooleanElement, mainElement.get(), "currentValue");
 		getBooleanElement().addCallback(mainElement::set);
+		mainElement.callback(b -> Reflection.set(rawBooleanElement, b, "currentValue"));
+		Reflection.set(rawBooleanElement, mainElement.get(), "currentValue");
 
 		List<SettingsElement> settings = mainElement.getSubSettings().getElements();
 		if (!settings.isEmpty())

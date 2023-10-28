@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
 import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.FeatureCategory;
+import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.gui.elements.ModTextField;
@@ -88,6 +89,10 @@ public class MainPage {
 				searchableSettings.add(feature.getMainElement());
 			}
 		}
+
+		for (net.labymod.ingamegui.Module module : Module.getModules())
+			if (module.getCategory() == Module.CATEGORY)
+				searchableSettings.add(new ModuleProxySetting((Module) module));
 
 		searchableSettings.sort(Comparator.comparing(SettingsElement::getDisplayName));
 

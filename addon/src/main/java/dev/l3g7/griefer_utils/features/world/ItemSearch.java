@@ -71,7 +71,7 @@ public class ItemSearch extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Item-Suche")
-		.description("Fügt eine Item-Suche innerhalb von Kisten hinzu.")
+		.description("Fügt eine Item-Suche innerhalb von Guis hinzu.")
 		.icon("chest")
 		.subSettings(dispenser, hopper, new HeaderSetting(), inventory);
 

@@ -107,10 +107,10 @@ public class MinecraftUtil {
 	}
 
 	public static void displayAchievement(String title, String description) {
-		displayAchievement("https://i.imgur.com/tWfT5Y8.png", title, description);
+		displayAchievement("griefer_utils_icon", title, description);
 	}
 
-	public static void displayAchievement (String iconUrl, String title, String description) {
+	public static void displayAchievement(String iconUrl, String title, String description) {
 		labyMod().getGuiCustomAchievement().displayAchievement(iconUrl, title, description);
 	}
 

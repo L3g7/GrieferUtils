@@ -100,8 +100,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	private static final NumberSetting range = new NumberSetting()
 		.name("Radius")
 		.description("Der Radius um den Spieler in Chunks, in dem die Informationen angezeigt werden."
-			+ "\n(-1 ist unendlich)"
-			+ "\n(Betrifft nicht Schematics)")
+			+ "\n(-1 ist unendlich)")
 		.defaultValue(-1)
 		.min(-1)
 		.icon(COMPASS);
@@ -123,11 +122,6 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	public void init() {
 		super.init();
 		WorldBlockOverlayRenderer.registerRenderObjectGenerator(this);
-	}
-
-	@Override
-	public int getRange() {
-		return range.get();
 	}
 
 	@Override
@@ -186,8 +180,8 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 			this.power = power;
 		}
 
-		public void render(BlockPos pos, float partialTicks) {
-			if (!showPower.get())
+		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
+			if (!showPower.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
 				return;
 
 			if (power <= 0 && !showZeroPower.get())
@@ -219,8 +213,8 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 			this.isHopper = isHopper;
 		}
 
-		public void render(BlockPos pos, float partialTicks) {
-			if (!showDirection.get())
+		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
+			if (!showDirection.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
 				return;
 
 			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
@@ -285,8 +279,8 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		}
 
 		@Override
-		public void render(BlockPos pos, float partialTicks) {
-			if (!setting.get())
+		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
+			if (!setting.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
 				return;
 
 			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);

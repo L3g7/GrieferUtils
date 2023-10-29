@@ -84,7 +84,7 @@ public class ConfigPatcher {
 		}
 
 		if (cmp.compare("2.0-RC-8", version) < 0) {
-			JsonObject parent = getParent("item.orb_saver");
+			JsonObject parent = get("item.orb_saver");
 			if (parent != null) {
 				if (getBooleanValue(parent.get("enabled"))) {
 					if (!getBooleanValue(parent.get("on_price_fall"))) {
@@ -119,6 +119,22 @@ public class ConfigPatcher {
 
 			}
 		}
+
+		if (cmp.compare("2.0-RC-12", version) < 0) {
+			rename("world.show_spawner_icons", "world.better_spawners.show_spawner_icons");
+			JsonObject betterSpawners = get("world.better_spawners");
+
+			JsonObject parent = get("world.spawner_with_held_item_fix");
+			if (parent != null && getBooleanValue(parent.get("enabled"))) {
+				betterSpawners.addProperty("enabled", true);
+				betterSpawners.addProperty("spawner_with_held_item_fix", true);
+			}
+
+			parent = get("world.show_spawner_icons");
+			if (parent != null && getBooleanValue(parent.get("enabled"))) {
+				betterSpawners.addProperty("enabled", true);
+			}
+		}
 	}
 
 	private void rename(String oldKey, String newKey) {
@@ -127,6 +143,10 @@ public class ConfigPatcher {
 
 		if (oldParent.get(getKey(oldKey)) != null)
 			newParent.add(getKey(newKey), oldParent.get(getKey(oldKey)));
+	}
+
+	private JsonObject get(String path) {
+		return getParent(path + ".,");
 	}
 
 	private JsonObject getParent(String path) {

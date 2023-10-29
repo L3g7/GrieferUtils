@@ -153,13 +153,11 @@ public class WorldBlockOverlayRenderer {
 		GlStateManager.disableTexture2D();
 
 		for (Map.Entry<ChunkCoordIntPair, Map<BlockPos, RenderObject>> entry : renderObjects.entrySet()) {
-			int requiredRange = Math.max(Math.abs(entry.getKey().chunkXPos - player().chunkCoordX), Math.abs(entry.getKey().chunkZPos - player().chunkCoordZ));
-			if (!checkRange(requiredRange))
-				continue;
+			int chunksFromPlayer = Math.max(Math.abs(entry.getKey().chunkXPos - player().chunkCoordX), Math.abs(entry.getKey().chunkZPos - player().chunkCoordZ));
 
 			for (Map.Entry<BlockPos, RenderObject> chunkEntry : entry.getValue().entrySet())
-				if (chunkEntry.getValue().check(requiredRange))
-					chunkEntry.getValue().render(chunkEntry.getKey(), event.partialTicks);
+				if (chunkEntry.getValue().generator.isEnabled())
+					chunkEntry.getValue().render(chunkEntry.getKey(), event.partialTicks, chunksFromPlayer);
 		}
 
 		if (Constants.SCHEMATICA)
@@ -177,7 +175,7 @@ public class WorldBlockOverlayRenderer {
 
 		for (Map.Entry<BlockPos, RenderObject> entry : schematicasROs.entrySet())
 			if (SchematicaUtil.shouldLayerBeRendered(entry.getKey().getY()))
-				entry.getValue().render(entry.getKey(), partialTicks);
+				entry.getValue().render(entry.getKey(), partialTicks, 0);
 	}
 
 	private static void updateSchematic() {
@@ -216,14 +214,6 @@ public class WorldBlockOverlayRenderer {
 		return false;
 	}
 
-	private static boolean checkRange(int requiredRange) {
-		for (RenderObjectGenerator container : generators)
-			if (container.getRange() != -1 && container.getRange() < requiredRange)
-				return false;
-
-		return true;
-	}
-
 	public abstract static class RenderObject {
 
 		private static RenderObject fromState(IBlockState state, BlockPos pos, WorldClient world) {
@@ -242,13 +232,6 @@ public class WorldBlockOverlayRenderer {
 			this.generator = generator;
 		}
 
-		private boolean check(int requiredRange) {
-			if (!generator.isEnabled())
-				return false;
-
-			return generator.getRange() == -1 || generator.getRange() >= requiredRange;
-		}
-
 		protected static void prepareRender(Vec3d loc, float partialTicks) {
 			GlStateManager.pushMatrix();
 			Entity viewer = mc().getRenderViewEntity();
@@ -265,14 +248,13 @@ public class WorldBlockOverlayRenderer {
 			GlStateManager.enableTexture2D();
 		}
 
-		protected abstract void render(BlockPos pos, float partialTicks);
+		protected abstract void render(BlockPos pos, float partialTicks, int chunksFromPlayer);
 
 	}
 
 	public interface RenderObjectGenerator {
 
 		boolean isEnabled();
-		int getRange();
 		RenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world);
 		default void onBlockUpdate(Map<BlockPos, RenderObject> map, BlockPos pos, IBlockState state) {}
 

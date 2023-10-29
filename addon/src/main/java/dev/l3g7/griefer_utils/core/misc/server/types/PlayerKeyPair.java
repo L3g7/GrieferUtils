@@ -33,7 +33,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 public class PlayerKeyPair {
 
@@ -62,7 +61,7 @@ public class PlayerKeyPair {
 
 				return IOUtil.gson.fromJson(new InputStreamReader(c.getInputStream()), PlayerKeyPair.class);
 			} catch (IOException e) {
-				throw new CompletionException(e);
+				return null;
 			}
 		});
 	}

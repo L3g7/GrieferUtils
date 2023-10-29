@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import net.labymod.ingamegui.modules.item.HeldItemModule;
 import net.labymod.ingamegui.moduletypes.ItemModule;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
@@ -88,7 +89,7 @@ public class HeldItemCounter {
 
 		@SuppressWarnings("ConstantValue")
 		private boolean classCheckFails() {
-			return !((Object) this instanceof ItemModule);
+			return !((Object) this instanceof HeldItemModule);
 		}
 
 	}

@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.settings.elements;
 
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import net.labymod.gui.elements.Tabs;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiButton;
@@ -49,6 +50,7 @@ public class ModuleProxySetting extends BooleanSetting {
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		if (button.mousePressed(mc, mouseX, mouseY)) {
 			button.playPressSound(mc.getSoundHandler());
+			Tabs.lastOpenScreen = null;
 			mc.displayGuiScreen(new LabyModModuleEditorGui());
 			List<SettingsElement> path = MinecraftUtil.path();
 			path.add(Module.CATEGORY.getCategoryElement());

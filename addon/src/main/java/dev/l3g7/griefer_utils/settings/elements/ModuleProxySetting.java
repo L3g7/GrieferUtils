@@ -21,11 +21,15 @@ package dev.l3g7.griefer_utils.settings.elements;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.gui.elements.Tabs;
+import net.labymod.main.ModTextures;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.List;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
 public class ModuleProxySetting extends BooleanSetting {
 
@@ -63,11 +67,19 @@ public class ModuleProxySetting extends BooleanSetting {
 
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-		module.mainElement.draw(x, y, maxX, maxY, mouseX, mouseY);
-
 		mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
 		button.xPosition = maxX - 75;
 		button.yPosition = y + 1;
+
+		module.mainElement.draw(x, y, maxX, maxY, mouseX, mouseY);
+
+		if (!module.mainElement.getSubSettings().getElements().isEmpty())
+			return;
+
+		button.drawButton(mc, mouseX, mouseY);
+		mc.getTextureManager().bindTexture(ModTextures.BUTTON_ADVANCED);
+		GlStateManager.color(1, 1, 1, 1);
+		drawUtils().drawTexture(maxX - 71, y + 4, 0, 0, 256, 256, 14, 14, 2);
 	}
 
 }

@@ -91,7 +91,7 @@ public class MainPage {
 		}
 
 		for (net.labymod.ingamegui.Module module : Module.getModules())
-			if (module.getCategory() == Module.CATEGORY)
+			if (module.getCategory() == Module.CATEGORY && module instanceof Module)
 				searchableSettings.add(new ModuleProxySetting((Module) module));
 
 		searchableSettings.sort(Comparator.comparing(SettingsElement::getDisplayName));

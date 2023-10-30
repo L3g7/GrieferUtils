@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -39,14 +40,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static net.minecraft.client.renderer.OpenGlHelper.GL_FRAMEBUFFER;
+import static net.minecraft.client.renderer.OpenGlHelper.GL_RENDERBUFFER;
+import static org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT;
+import static org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT;
+import static org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT;
 import static org.lwjgl.opengl.GL11.*;
 
 @Singleton
@@ -125,6 +135,50 @@ public class SkullEnchantmentFix extends Feature {
 				GlStateManager.depthFunc(GL11.GL_LEQUAL);
 		}
 
+	}
+
+	@Mixin(Framebuffer.class)
+	private static abstract class MixinFramebuffer {
+
+		@Shadow
+		public abstract void createBindFramebuffer(int width, int height);
+
+		@Shadow public int framebufferWidth;
+		@Shadow public int framebufferHeight;
+		@Shadow public int depthBuffer;
+
+		@Unique
+		private boolean grieferUtils$stencilEnabled = false;
+
+		@ModifyArg(method = "createFramebuffer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/OpenGlHelper;glRenderbufferStorage(IIII)V"), index = 1)
+		public int modifyInternalFormat(int internalFormat) {
+			return grieferUtils$stencilEnabled ? GL_DEPTH24_STENCIL8_EXT : internalFormat;
+		}
+
+		@Redirect(method = "createFramebuffer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/OpenGlHelper;glFramebufferRenderbuffer(IIII)V"))
+		private void redirectGlRenderbufferStorage(int target, int attachment, int renderBufferTarget, int renderBuffer) {
+			if (!grieferUtils$stencilEnabled) {
+				OpenGlHelper.glFramebufferRenderbuffer(target, attachment, renderBufferTarget, renderBuffer);
+				return;
+			}
+
+			OpenGlHelper.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER, this.depthBuffer);
+			OpenGlHelper.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER, this.depthBuffer);
+		}
+
+		@Unique
+		@SuppressWarnings({"AddedMixinMembersNamePattern", "unused"})
+		public boolean isStencilEnabled() { // Shim for vanilla
+			return grieferUtils$stencilEnabled;
+		}
+
+		@Unique
+		@SuppressWarnings({"AddedMixinMembersNamePattern", "unused"})
+		public boolean enableStencil() { // Shim for vanilla
+			grieferUtils$stencilEnabled = true;
+			this.createBindFramebuffer(framebufferWidth, framebufferHeight);
+			return true;
+		}
 	}
 
 }

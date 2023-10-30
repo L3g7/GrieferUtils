@@ -93,6 +93,14 @@ public class SkullEnchantmentFix extends Feature {
 		.description("Behebt, dass Verzauberungen von Köpfe nicht angezeigt werden.")
 		.icon(ICON);
 
+	@Override
+	public void init() {
+		super.init();
+		Framebuffer fb = mc().getFramebuffer();
+		if (!fb.isStencilEnabled())
+			fb.enableStencil();
+	}
+
 	@Mixin(RenderItem.class)
 	private static class MixinRenderItem {
 
@@ -105,10 +113,6 @@ public class SkullEnchantmentFix extends Feature {
 				return;
 
 			// Enable stencil
-			Framebuffer fb = mc().getFramebuffer();
-			if (!fb.isStencilEnabled())
-				fb.enableStencil();
-
 			glClear(GL_STENCIL_BUFFER_BIT);
 			glEnable(GL_STENCIL_TEST);
 			glStencilFunc(GL_ALWAYS, 1, 0);

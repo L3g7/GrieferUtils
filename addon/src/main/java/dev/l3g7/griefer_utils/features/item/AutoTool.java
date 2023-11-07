@@ -223,7 +223,7 @@ public class AutoTool extends Feature {
 			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * (preference.get() != EnchantPreference.FORTUNE ? 10 : 1);
 		}
 
-		if (enforceSilkTouch.get() && state.getBlock().canSilkHarvest(world(), null, state, player()))
+		if (enforceSilkTouch.get() && state.getBlock().isFullCube() && state.getBlock().hasTileEntity())
 			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * 10000;
 
 		return score;

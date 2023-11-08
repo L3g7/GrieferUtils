@@ -148,8 +148,8 @@ public class PlayerListEntryResolver {
 		entry.name = profile.get("username").getAsString();
 		entry.id = profile.get("uuid").getAsString();
 		entry.loaded = true;
-		entry.slim = profile.getAsJsonObject("texture").get("slim").getAsBoolean();
-		String skinData = profile.getAsJsonObject("texture").getAsJsonObject("skin").get("data").getAsString();
+		entry.slim = profile.getAsJsonObject("textures").get("slim").getAsBoolean();
+		String skinData = profile.getAsJsonObject("textures").getAsJsonObject("skin").get("data").getAsString();
 		BufferedImage img = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(skinData)));
 
 		TickScheduler.runAfterRenderTicks(() -> {

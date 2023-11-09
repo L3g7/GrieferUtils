@@ -41,8 +41,14 @@ public class GUClient {
 
 	private final GUSession session = new GUSession("https://s1.grieferutils.l3g7.dev");
 
-	private GUClient() throws IOException, GeneralSecurityException {
-		authorize();
+	private GUClient() {
+		new Thread(() -> {
+			try {
+				authorize();
+			} catch (IOException | GeneralSecurityException e) {
+				BugReporter.reportError(e);
+			}
+		}).start();
 	}
 
 	public static GUClient get() {

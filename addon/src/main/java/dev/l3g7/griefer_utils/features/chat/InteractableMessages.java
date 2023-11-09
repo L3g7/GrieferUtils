@@ -191,18 +191,19 @@ public class InteractableMessages extends Feature {
 			return;
 
 		List<IChatComponent> siblings = event.message.getSiblings();
-		if (siblings.size() == 2)
-			// No entries
-			return;
 
-		for (int i = 2; i < siblings.size(); i += 2) {
-			IChatComponent sibling = siblings.get(i);
-			if (sibling.getChatStyle().getColor() == EnumChatFormatting.RED)
-				continue;
+		boolean modify = false;
+		for (IChatComponent sibling : siblings) {
+			if (sibling.getUnformattedText().endsWith(": "))
+				modify = true;
+			else if (modify) {
+				if (sibling.getChatStyle().getColor() != EnumChatFormatting.YELLOW) // red = invalid, gray = empty
+					continue;
 
-			sibling.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, "/profil " + sibling.getUnformattedText()));
+				if (!sibling.getUnformattedText().trim().isEmpty())
+					sibling.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, "/profil " + sibling.getUnformattedText()));
+			}
 		}
-
 	}
 
 	public void addMsgSuggestions(MessageModifyEvent event) {

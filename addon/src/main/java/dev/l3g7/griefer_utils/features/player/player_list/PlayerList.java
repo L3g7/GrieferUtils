@@ -255,7 +255,7 @@ public abstract class PlayerList extends Feature {
 	/**
 	 * Converts a {@link MarkAction} into a {@link ChatComponentText}.
 	 */
-	private ChatComponentText toComponent(MarkAction action) {
+	public ChatComponentText toComponent(MarkAction action) {
 		if (action == ICON)
 			return new ChatComponentText(color + "[" + icon + "] ");
 		if (action == TAG)

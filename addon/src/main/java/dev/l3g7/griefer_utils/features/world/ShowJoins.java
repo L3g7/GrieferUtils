@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.ChatMessageLogEvent;
@@ -27,6 +28,9 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.player.player_list.PlayerList;
+import dev.l3g7.griefer_utils.features.player.player_list.ScammerList;
+import dev.l3g7.griefer_utils.features.player.player_list.TrustedList;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -102,7 +106,9 @@ public class ShowJoins extends Feature {
 
 		String name = event.data.getProfile().getName();
 		if (shouldShowJoin(name))
-			TickScheduler.runAfterClientTicks(() -> display(Constants.ADDON_PREFIX + "§8[§a+§8] §r" + name), 1);
+			TickScheduler.runAfterClientTicks(() -> display(Constants.ADDON_PREFIX + "§8[§a+§8] "
+				+ getPlayerListPrefix(ScammerList.class) + getPlayerListPrefix(TrustedList.class)
+				+ "§r" + name), 1);
 	}
 
 	@EventListener
@@ -112,13 +118,24 @@ public class ShowJoins extends Feature {
 
 		String name = event.cachedName;
 		if (shouldShowJoin(name))
-			TickScheduler.runAfterClientTicks(() -> display(Constants.ADDON_PREFIX + "§8[§c-§8] §r" + name), 1);
+			TickScheduler.runAfterClientTicks(() -> display(Constants.ADDON_PREFIX + "§8[§c-§8] "
+				+ getPlayerListPrefix(ScammerList.class) + getPlayerListPrefix(TrustedList.class)
+				+ "§r" + name), 1);
 	}
 
 	@EventListener
 	public void onChatLogModify(ChatMessageLogEvent event) {
 		if (!log.get() && !event.message.contains("\u2503") && (event.message.contains("[GrieferUtils] [+] ") || event.message.contains("[GrieferUtils] [-] ")))
 			event.cancel();
+	}
+
+	private String getPlayerListPrefix(Class<? extends PlayerList> listClass) {
+		PlayerList list = FileProvider.getSingleton(listClass);
+
+		if (!list.isEnabled())
+			return "";
+
+		return list.toComponent(list.chatAction.get()).getFormattedText();
 	}
 
 }

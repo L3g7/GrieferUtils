@@ -26,8 +26,6 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S05PacketSpawnPosition;
@@ -58,7 +56,7 @@ public class ServerPerformance extends Module {
 
 	private final BooleanSetting applyColor = new BooleanSetting()
 		.name("Anzeige färben")
-		.icon(new ItemStack(Items.dye, 1, 14))
+		.icon("labymod:settings/settings/tabping_colored")
 		.description("Ob die Performance eingefärbt werden soll.")
 		.defaultValue(true);
 

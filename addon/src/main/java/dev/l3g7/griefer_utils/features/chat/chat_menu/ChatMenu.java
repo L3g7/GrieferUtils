@@ -150,6 +150,7 @@ public class ChatMenu extends Feature {
 	public void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
 		if (renderer != null && renderer.onMouse()) {
 			renderer = null;
+			event.cancel();
 			return;
 		}
 

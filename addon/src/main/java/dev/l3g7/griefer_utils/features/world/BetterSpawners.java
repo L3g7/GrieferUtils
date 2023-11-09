@@ -34,6 +34,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -56,6 +57,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -128,7 +130,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 			return;
 
 		Block clickedBlock = world().getBlockState(event.pos).getBlock();
-		if (clickedBlock != Blocks.mob_spawner)
+		if (clickedBlock != Blocks.mob_spawner || MinecraftUtil.isInFarmwelt())
 			return;
 
 		event.cancel();
@@ -172,6 +174,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	@Mixin(TileEntityMobSpawnerRenderer.class)
 	private static class MixinTileEntityMobSpawnerRenderer {
 
+		@Unique
 		private static final BetterSpawners BETTER_SPAWNERS = FileProvider.getSingleton(BetterSpawners.class);
 
 		@Inject(method = "renderTileEntityAt(Lnet/minecraft/tileentity/TileEntityMobSpawner;DDDFI)V", at = @At("HEAD"), cancellable = true)
@@ -187,6 +190,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	@Mixin(MobSpawnerBaseLogic.class)
 	private static class MixinMobSpawnerBaseLogic {
 
+		@Unique
 		private static final BetterSpawners BETTER_SPAWNERS = FileProvider.getSingleton(BetterSpawners.class);
 
 		@Redirect(method = "updateSpawner", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnParticle(Lnet/minecraft/util/EnumParticleTypes;DDDDDD[I)V"))

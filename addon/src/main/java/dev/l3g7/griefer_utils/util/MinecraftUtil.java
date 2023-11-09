@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -46,6 +47,7 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -197,6 +199,38 @@ public class MinecraftUtil {
 
 	public static int getButtonHeight(GuiButton button) {
 		return Reflection.get(button, "height");
+	}
+
+	/**
+	 * Guesses whether the player is in a farmwelt based upon the amount of bedrock on layer 3
+	 */
+	public static boolean isInFarmwelt() {
+		int checkedBlocks = 0;
+		int bedrocksFound = 0;
+
+		for (int chunkDX = -3; chunkDX <= 3; chunkDX++) {
+			for (int chunkDZ = -3; chunkDZ <= 3; chunkDZ++) {
+				Chunk chunk = world().getChunkFromChunkCoords(player().chunkCoordX + chunkDX, player().chunkCoordZ + chunkDZ);
+				if (!chunk.isLoaded() || chunk.isEmpty())
+					continue;
+
+				checkedBlocks += 256;
+				int blocksFound = 0;
+				for (int x = 0; x < 16; x++)
+					for (int z = 0; z < 16; z++)
+						if (chunk.getBlock(x, 3, z) == Blocks.bedrock)
+							blocksFound++;
+
+				if (blocksFound == 256) {
+					// Player is at spawn
+					return false;
+				}
+
+				bedrocksFound += blocksFound;
+			}
+		}
+
+		return (bedrocksFound / (float) checkedBlocks) > 0.33f;
 	}
 
 }

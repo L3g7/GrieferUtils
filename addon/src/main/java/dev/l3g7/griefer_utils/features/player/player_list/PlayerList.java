@@ -239,7 +239,7 @@ public abstract class PlayerList extends Feature {
 		}
 	}
 
-	enum MarkAction {
+	public enum MarkAction {
 
 		TAG("Als Text"),  // Mark an entry using a tag,   e.g. [SCAMMER]
 		ICON("Als Icon"), // Mark an entry using an icon, e.g. [⚠]

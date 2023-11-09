@@ -33,6 +33,7 @@ import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S05PacketSpawnPosition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
@@ -58,7 +59,7 @@ public class ServerPerformance extends Module {
 	private final BooleanSetting applyColor = new BooleanSetting()
 		.name("Anzeige färben")
 		.icon(new ItemStack(Items.dye, 1, 14))
-		.description("Ob die Performance eingefärbt werden soll:\n< 50%: §crot§r\n50% - 75%: §egelb§r\n75% - 100%: §agrün§r")
+		.description("Ob die Performance eingefärbt werden soll.")
 		.defaultValue(true);
 
 	@MainElement
@@ -75,22 +76,28 @@ public class ServerPerformance extends Module {
 
 	@Override
 	public String[] getValues() {
-		if (currentTPS == null)
-			return getDefaultValues();
+		throw new UnsupportedOperationException();
+	}
 
-		String colorPrefix = "";
-		if (applyColor.get()) {
-			if (currentTPS < 10)
-				colorPrefix = "§c";
-			else if (currentTPS < 15)
-				colorPrefix = "§e";
-			else
-				colorPrefix = "§a";
+	@Override
+	public List<List<Text>> getTextValues() {
+		if (currentTPS == null)
+			return getDefaultTextValues();
+
+		// calculate color
+		int r, g;
+		if (currentTPS < 15) {
+			r = 255;
+			g = Math.max((int) (6.8 * (5d * currentTPS - 62.5) + 170), 0);
+		} else {
+			r = (int) (255 - 6.8 * (5d * currentTPS - 75));
+			g = 255;
 		}
 
+		// create text representation
 		String displayTPS = displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS);
 
-		return new String[] { colorPrefix + displayTPS };
+		return Collections.singletonList(Collections.singletonList(applyColor.get() ? Text.getText(displayTPS, r, g, 0x55) : Text.getText(displayTPS)));
 	}
 
 	@EventListener

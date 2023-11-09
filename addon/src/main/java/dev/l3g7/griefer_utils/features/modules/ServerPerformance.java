@@ -26,6 +26,8 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S05PacketSpawnPosition;
@@ -53,12 +55,18 @@ public class ServerPerformance extends Module {
 		.description("Ob die Performance in Prozent angezeigt oder in TPS angezeigt werden soll.")
 		.defaultValue(DisplayMode.PERCENT);
 
+	private final BooleanSetting applyColor = new BooleanSetting()
+		.name("Anzeige färben")
+		.icon(new ItemStack(Items.dye, 1, 14))
+		.description("Ob die Performance eingefärbt werden soll:\n< 50%: §crot§r\n50% - 75%: §egelb§r\n75% - 100%: §agrün§r")
+		.defaultValue(true);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Server-\nPerformance")
 		.description("Zeigt eine (relativ genaue) Schätzung der aktuellen Server-Performance an.")
 		.icon("measurement_circle_thingy")
-		.subSettings(displayMode);
+		.subSettings(displayMode, applyColor);
 
 	@Override
 	public String[] getDefaultValues() {
@@ -70,7 +78,19 @@ public class ServerPerformance extends Module {
 		if (currentTPS == null)
 			return getDefaultValues();
 
-		return new String[] { displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS)};
+		String colorPrefix = "";
+		if (applyColor.get()) {
+			if (currentTPS < 10)
+				colorPrefix = "§c";
+			else if (currentTPS < 15)
+				colorPrefix = "§e";
+			else
+				colorPrefix = "§a";
+		}
+
+		String displayTPS = displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS);
+
+		return new String[] { colorPrefix + displayTPS };
 	}
 
 	@EventListener

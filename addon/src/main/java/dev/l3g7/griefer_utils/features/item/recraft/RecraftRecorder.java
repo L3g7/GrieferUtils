@@ -19,53 +19,88 @@
 package dev.l3g7.griefer_utils.features.item.recraft;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
-import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.features.item.recraft.Recraft.Action;
+import dev.l3g7.griefer_utils.features.item.recraft.Action.Ingredient;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.util.ItemUtil;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 
-import java.util.LinkedList;
-
-import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.Mode.PLAYING;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 /**
- * @author Pleezon
+ * @author Pleezon, L3g73
  */
 class RecraftRecorder {
 
-	static LinkedList<Action> actions = new LinkedList<>();
+	private static RecraftRecording recording = Recraft.tempRecording;
+	private static GuiScreen previousScreen = null;
+	private static boolean addedIcon = false;
+	private static boolean isChestOpen = false;
 
-	private static int currentGuiID = -1;
-
-	@EventListener
-	private static void onGuiOpen(GuiScreenEvent.GuiOpenEvent<?> event) {
-		if (Recraft.currentMode == PLAYING)
-			return;
-
-		if (!(event.gui instanceof GuiChest)) {
-			currentGuiID = -1;
+	public static void startRecording(RecraftRecording recording) {
+		if (!ServerCheck.isOnCitybuild()) {
+			displayAchievement("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild gestartet werden.");
 			return;
 		}
 
-		GuiChest chest = (GuiChest) event.gui;
-		int id = Recraft.getMenuID(chest);
-		if (id == 0)
-			actions.clear();
+		RecraftRecorder.recording = recording;
+		previousScreen = mc().currentScreen;
+		addedIcon = false;
+		send("/rezepte");
+	}
 
-		currentGuiID = id;
+	@EventListener
+	private static void onGuiOpen(GuiOpenEvent<?> event) {
+		if (RecraftPlayer.isPlaying())
+			return;
+
+		if (!(event.gui instanceof GuiChest)) {
+			recording = Recraft.tempRecording;
+			isChestOpen = false;
+			if (previousScreen != null && previousScreen != event.gui) {
+				event.cancel();
+				mc().displayGuiScreen(previousScreen);
+				previousScreen = null;
+			}
+			return;
+		}
+
+		isChestOpen = true;
+		IInventory inv = Reflection.get(event.gui, "lowerChestInventory");
+		if ("§6Custom-Kategorien".equals(inv.getDisplayName().getUnformattedText()))
+			recording.actions.clear();
 	}
 
 	@EventListener
 	private static void onSendClick(PacketEvent.PacketSendEvent<C0EPacketClickWindow> event) {
-		if (Recraft.currentMode == PLAYING || currentGuiID == -1)
+		if (!isChestOpen)
 			return;
 
 		C0EPacketClickWindow packet = event.packet;
 		if (packet.getClickedItem() == null || packet.getClickedItem().getDisplayName().equals("§7"))
 			return;
 
-		actions.add(new Action(currentGuiID, packet.getSlotId(), packet.getClickedItem(), packet.getMode(), packet.getUsedButton()));
+		if (!addedIcon && "§7Klicke, um dieses Rezept herzustellen.".equals(ItemUtil.getLoreAtIndex(packet.getClickedItem(), 0))) {
+			ItemStack targetStack = player().openContainer.getSlot(25).getStack().copy();
+			targetStack.stackSize = ItemUtil.getCompressionLevel(targetStack);
+			recording.mainSetting.icon(targetStack);
+			addedIcon = true;
+		}
+
+		Ingredient ingredient = null;
+		if (packet.getSlotId() > 53) {
+			ingredient = Ingredient.getIngredient(packet.getClickedItem());
+			if (ingredient == null)
+				return;
+		}
+
+		recording.actions.add(new Action(packet.getSlotId(), ingredient));
 	}
 
 }

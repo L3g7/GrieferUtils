@@ -192,7 +192,7 @@ public class BetterHopper extends Feature {
 	}
 
 	private BlockPos getBlockPos(ItemStack stack) {
-		String line = ItemUtil.getLore(stack).get(0);
+		String line = ItemUtil.getLoreAtIndex(stack, 0);
 		String blockPos = line.substring(line.indexOf("§e") + 2);
 		String[] coords = blockPos.split(";");
 		return new BlockPos(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));

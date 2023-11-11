@@ -236,7 +236,7 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 
 	class IconStorage {
 
-		private ItemStack itemStack = null;
+		public ItemStack itemStack = null;
 
 	}
 }

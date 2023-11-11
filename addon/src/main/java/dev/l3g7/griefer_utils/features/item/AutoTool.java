@@ -233,15 +233,14 @@ public class AutoTool extends Feature {
 		if (stack.getItem() != Items.shears)
 			return false;
 
-		List<String> lore = ItemUtil.getLore(stack);
-		if (lore.size() < 2)
+		String lore = ItemUtil.getLoreAtIndex(stack, 1);
+		if (lore.isEmpty())
 			return false;
 
 		if (stack.getTagCompound().getInteger("current") == 0)
 			return false;
 
-		String secondLine = lore.get(1);
-		Matcher matcher = CUTTER_PATTERN.matcher(secondLine);
+		Matcher matcher = CUTTER_PATTERN.matcher(lore);
 		if (!matcher.matches())
 			return false;
 

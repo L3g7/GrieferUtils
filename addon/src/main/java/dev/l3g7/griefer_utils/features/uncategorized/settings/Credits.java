@@ -43,18 +43,18 @@ public class Credits {
 		.icon("labymod:settings/tabs/multiplayer")
 		.description("Das Team hinter GrieferUtils, sowie Copyright und Lizenzen.")
 		.subSettings(
-			new Credits.IconSetting("Lizensiert unter Apache License 2.0", "scroll"),
+			new IconSetting("Lizensiert unter Apache License 2.0", "scroll"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Entwickler"),
 			new Credits.IconSetting("L3g7", "l3g7"),
 			new Credits.IconSetting("L3g73", "l3g7"),
-			new Credits.IconSetting("Pleezon\n(Recraft, ServerTPS)", "pleezon"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Special Thanks"),
 			new Credits.IconSetting("TuxFRI", "tuxfri"),
 			new Credits.IconSetting("CobbleShop", "cobbleshop"),
+			new Credits.IconSetting("Pleezon", "pleezon"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Bild-Credits"),
@@ -66,33 +66,33 @@ public class Credits {
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Code-Credits"),
-			new Credits.TextSetting("core.misc.Base58", "Encodierung der SSSS-Schlüssel", "Aus org.bitcoinj", "© 2011 Google Inc., © 2018 Andreas Schildbach", "Apache License 2.0"),
+			new TextSetting("core.misc.Base58", "Encodierung der SSSS-Schlüssel", "Aus org.bitcoinj", "© 2011 Google Inc., © 2018 Andreas Schildbach", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("core.misc.BufferedImageLuminanceSource", "Umwandlung von Bildern in Licht-Bitmaps", "Aus com.google.zxing", "© 2009 ZXing authors", "Apache License 2.0"),
+			new TextSetting("core.misc.BufferedImageLuminanceSource", "Umwandlung von Bildern in Licht-Bitmaps", "Aus com.google.zxing", "© 2009 ZXing authors", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Bibliotheken"),
-			new Credits.TextSetting("org.matrix.android:olm", "Olm und Megolm Kryptographie-Ratchets für Matrix", "Windows-Binary von Famedly GmbH", "Mac-Binary von CobbleShop", "Apache License 2.0"),
+			new TextSetting("org.matrix.android:olm", "Olm und Megolm Kryptographie-Ratchets für Matrix", "Windows-Binary von Famedly GmbH", "Mac-Binary von CobbleShop", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("com.github.gatooooooo:ForgeGradle", "Fork von ForgeGradle für Gradle 6", "LPGL-2.1"),
+			new TextSetting("com.github.gatooooooo:ForgeGradle", "Fork von ForgeGradle für Gradle 6", "LPGL-2.1"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("com.github.xcfrg:mixingradle", "Fork von MixinGradle für ForgeGradle 2.1", "MIT"),
+			new TextSetting("com.github.xcfrg:mixingradle", "Fork von MixinGradle für ForgeGradle 2.1", "MIT"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("de.undercouch.download", "Integration der Mods in Gradle", "Apache License 2.0"),
+			new TextSetting("de.undercouch.download", "Integration der Mods in Gradle", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.CookieSetting("com.github.l3g73:freecookies", "Stellt gratis Kekse bereit: Klicke hier", "Cookie License 4.2"),
+			new CookieSetting("com.github.l3g73:freecookies", "Stellt gratis Kekse bereit: Klicke hier", "Cookie License 4.2"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("org.mariuszgromada.math:MathParser.org-mXparser", "Gleichungsberechnung für Rechner", "eigener Open-Source-Lizenz (Dual)"),
+			new TextSetting("org.mariuszgromada.math:MathParser.org-mXparser", "Gleichungsberechnung für Rechner", "eigener Open-Source-Lizenz (Dual)"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("at.favre.lib:hkdf", "Schlüsselableitung (HKDF) für Matrix", "Apache License 2.0"),
+			new TextSetting("at.favre.lib:hkdf", "Schlüsselableitung (HKDF) für Matrix", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("net.i2p.crypto:eddsa", "ECC-Signaturen (EdDSA) für Matrix", "Creative Commons Zero v1.0 Universal"),
+			new TextSetting("net.i2p.crypto:eddsa", "ECC-Signaturen (EdDSA) für Matrix", "Creative Commons Zero v1.0 Universal"),
 			new HeaderSetting().entryHeight(5),
-			new Credits.TextSetting("com.google.zxing:core", "QR-Code-Leser für QR-Code Scanner", "Apache License 2.0"),
+			new TextSetting("com.google.zxing:core", "QR-Code-Leser für QR-Code Scanner", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Und Du <3"),
-			new Credits.UserSetting(),
+			new UserSetting(),
 			new HeaderSetting().entryHeight(22)
 		);
 
@@ -109,17 +109,12 @@ public class Credits {
 			elements.add(new HeaderSetting("Supporter"));
 
 			for (String sup : supporter)
-				elements.add(new Credits.IconSetting(sup, sup.toLowerCase()));
+				elements.add(new IconSetting(sup, sup.toLowerCase()));
 
 			elements.add(new HeaderSetting().entryHeight(11));
 		}
 
-		category.getSubSettings().getElements().addAll(11, elements);
-	}
-
-	static {
-		// Load class
-		GrieferUtilsUserManager.clearUsers();
+		category.getSubSettings().getElements().addAll(10, elements);
 	}
 
 	private static class IconSetting extends ControlElement {
@@ -158,14 +153,6 @@ public class Credits {
 
 			int i = lines.length - 1;
 			lines[i] = "  - Lizenziert unter " + lines[i];
-		}
-
-		private TextSetting noLicense() {
-			int i = lines.length - 1;
-			lines[i] = "  - " + lines[i].substring("  - Lizenziert unter ".length());
-
-
-			return this;
 		}
 
 		@Override

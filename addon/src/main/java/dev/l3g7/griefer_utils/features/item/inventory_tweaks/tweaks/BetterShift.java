@@ -177,7 +177,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 		if (stack.getItem() == Items.filled_map)
 			return true;
 
-		return ItemUtil.getLore(stack).size() >= 3 && ItemUtil.getLore(stack).get(0).equals("§r§7Du benötigst die neueste Version des Möbel-Addons");
+		return ItemUtil.getLore(stack).size() >= 3 && ItemUtil.getLoreAtIndex(stack, 0).equals("§r§7Du benötigst die neueste Version des Möbel-Addons");
 	}
 
 }

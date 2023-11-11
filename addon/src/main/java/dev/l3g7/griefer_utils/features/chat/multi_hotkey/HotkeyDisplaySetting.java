@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.multi_hotkey;
 
+import com.google.common.collect.ImmutableSet;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
@@ -157,6 +158,7 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 
 	private void remove() {
 		FileProvider.getSingleton(MultiHotkey.class).getMainElement().getSubSettings().getElements().remove(this);
+		keys.set(ImmutableSet.of());
 		triggerOnChange();
 	}
 

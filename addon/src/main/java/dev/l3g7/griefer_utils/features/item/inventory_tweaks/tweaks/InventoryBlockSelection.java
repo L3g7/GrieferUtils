@@ -120,7 +120,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 		if (!stack.getTagCompound().getBoolean("warningDisplayed"))
 			return 0;
 
-		String line = ItemUtil.getLore(stack).get(0);
+		String line = ItemUtil.getLoreAtIndex(stack, 0);
 		return Integer.parseInt(line.substring(12).replace(".", ""));
 	}
 

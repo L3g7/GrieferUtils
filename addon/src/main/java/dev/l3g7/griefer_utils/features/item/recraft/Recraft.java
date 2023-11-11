@@ -18,114 +18,107 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft;
 
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
+import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import net.labymod.main.LabyMod;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.renderer.GlStateManager;
+import io.netty.buffer.Unpooled;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.C0EPacketClickWindow;
+import net.minecraft.network.PacketBuffer;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
-import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.Mode.RECORDING;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 /**
- * Purpose of this class is to automate the tedious gui-navigation of GrieferGames'
- * /rezepte. The functionality currently implemented allows the player to quickly recraft the last
- * crafted item using the server's crafting command.
- *
- * @author Pleezon
+ * Original version by Pleezon
  */
 @Singleton
 public class Recraft extends Feature {
 
-	private static final String[] MENU_NAMES = new String[]{
-		"§6Custom-Kategorien",
-		"§6Möbel-Kategorien",
-		"§6Möbel-Liste",
-		"§6Bauanleitung",
-		"§6Item-Komprimierung-Bauanleitung",
-		"§6Item-Komprimierung",
-		"§6Minecraft Rezepte",
-		"§6Vanilla Bauanleitung",
-		"§6Custom-Liste",
-		"§6Custom-Bauanleitung"
-	};
+	static final List<RecraftRecording> recordings = new ArrayList<>();
+	static final RecraftRecording tempRecording = new RecraftRecording();
 
-	static Mode currentMode = RECORDING;
-
-	public static int getMenuID(GuiChest c) {
-		IInventory inv = Reflection.get(c, "lowerChestInventory");
-		String name = inv.getDisplayName().getUnformattedText();
-
-		for (int i = 0; i < MENU_NAMES.length; i++)
-			if (Objects.equals(MENU_NAMES[i], name))
-				return i;
-
-		return -1;
-	}
-
-	@MainElement
-	private final KeySetting key = new KeySetting() {
-
-		@Override
-		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			super.draw(x, y, maxX, maxY, mouseX, mouseY);
-
-			// Draw head of Pleezon's Minecraft account
-			GlStateManager.color(1, 1, 1, 1);
-			LabyMod.getInstance().getDrawUtils().drawPlayerHead(UUID.fromString("7bfe775c-b12c-4282-8bf4-1b1d67101c1e"), x + 12, y + 12, 8);
-		}
-
-	}
-		.name("Recraft")
-		.description("Wiederholt den letzten \"/rezepte\" Aufruf.\n\n§oErstellt von Pleezon.")
+	private final KeySetting key = new KeySetting()
+		.name("Letzten Aufruf wiederholen")
+		.description("Wiederholt den letzten \"/rezepte\" Aufruf.")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.pressCallback(pressed -> {
-			if (pressed && ServerCheck.isOnCitybuild())
-				RecraftPlayer.play(RecraftRecorder.actions);
+			if (pressed && ServerCheck.isOnCitybuild() && isEnabled())
+				RecraftPlayer.play(tempRecording);
 		});
 
-	static class Action {
+	private final EntryAddSetting entryAddSetting = new EntryAddSetting()
+		.name("Aufzeichnung hinzufügen");
 
-		private final int menuID;
-		private final int slot;
-		private final ItemStack stack;
-		private final int mode;
-		private final int button;
+	@MainElement
+	private final BooleanSetting enabled = new BooleanSetting()
+		.name("Recraft")
+		.description("Wiederholt \"/rezepte\" Aufrufe.")
+		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
+		.subSettings(key, new HeaderSetting(), entryAddSetting);
 
-		public Action(int menuID, int slot, ItemStack stack, int mode, int button) {
-			this.menuID = menuID;
-			this.slot = slot;
-			this.stack = stack;
-			this.mode = mode;
-			this.button = button;
-		}
+	@Override
+	public void init() {
+		super.init();
 
-		public void execute(GuiChest chest) {
-			Minecraft.getMinecraft().getNetHandler().addToSendQueue(new C0EPacketClickWindow(chest.inventorySlots.windowId, this.slot, this.button, this.mode, this.stack, (short) 0));
-		}
+		entryAddSetting.callback(() -> {
+			if (!ServerCheck.isOnCitybuild()) {
+				displayAchievement("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild hinzugefügt werden.");
+				return;
+			}
 
-		public boolean isApplicableTo(GuiChest chest) {
-			return menuID == Recraft.getMenuID(chest);
-		}
+			RecraftRecording recording = new RecraftRecording();
+			enabled.getSubSettings().add(recording.mainSetting);
+			recordings.add(recording);
+			recording.setTitle("Aufzeichnung hinzufügen");
+			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
+				recording.setTitle(recording.mainSetting.getDisplayName());
+				save();
+			}, recording.mainSetting));
+		});
 
+		load();
 	}
 
-	enum Mode {
+	private void load() {
+		if (!Config.has(getConfigKey() + ".recordings"))
+			return;
 
-		PLAYING, RECORDING
+		String encodedRecordings = Config.get(getConfigKey() + ".recordings").getAsString();
+		byte[] array = Base64.getDecoder().decode(encodedRecordings);
+		PacketBuffer buffer = new PacketBuffer(Unpooled.wrappedBuffer(array));
 
+		byte recordings = buffer.readByte();
+		for (int i = 0; i < recordings; i++) {
+			RecraftRecording recording = RecraftRecording.read(buffer);
+			Recraft.recordings.add(recording);
+			enabled.getSubSettings().add(recording.mainSetting);
+		}
+	}
+
+	void save() {
+		PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+		buffer.writeByte(recordings.size());
+		for (RecraftRecording recording : recordings)
+			recording.write(buffer);
+
+		byte[] trimmedArray = new byte[buffer.writerIndex()];
+		System.arraycopy(buffer.array(), 0, trimmedArray, 0, trimmedArray.length);
+		String encodedRecordings = Base64.getEncoder().encodeToString(trimmedArray);
+		Config.set(getConfigKey() + ".recordings", new JsonPrimitive(encodedRecordings));
+		Config.save();
 	}
 
 }

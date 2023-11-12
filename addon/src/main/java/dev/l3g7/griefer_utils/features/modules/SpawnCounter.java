@@ -205,12 +205,12 @@ public class SpawnCounter extends Module {
 			if (hasFlown) {
 				roundsFlown++;
 				notificationType.get().notifier.accept("§fDu bist deine " + roundsFlown + "te Runde abgeflogen!");
-				Config.set(configKey + "Flown", new JsonPrimitive(roundsFlown));
+				Config.set(configKey + "flown", new JsonPrimitive(roundsFlown));
 				hasFlown = false;
 			} else {
 				roundsRan++;
 				notificationType.get().notifier.accept("§fDu bist deine " + roundsRan + "te Runde abgelaufen!");
-				Config.set(configKey + "Ran", new JsonPrimitive(roundsRan));
+				Config.set(configKey + "ran", new JsonPrimitive(roundsRan));
 			}
 			Config.save();
 		}

@@ -70,6 +70,8 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 		if (Reflection.exists("net.ccbluex.liquidbounce.injection.forge.mixins.render.MixinRendererLivingEntity"))
 			classes.remove("dev/l3g7/griefer_utils/features/render/TrueSight$MixinRendererLivingEntity");
+		if (Reflection.exists("net/minecraftforge/common/ForgeHooks"))
+			classes.remove("dev/l3g7/griefer_utils/features/render/SkullEnchantmentFix$MixinFramebuffer");
 
 		mixinCount = classes.size();
 		return classes;
@@ -87,7 +89,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 			public Object invoke(Object proxy, Method method, Object[] args) {
 				// Don't do anything in onInit
 				if (!method.getName().equals("onPrepare"))
-					return null;
+					return proxy;
 
 				// Trigger after last mixin
 				if (++currentMixin != mixinCount)

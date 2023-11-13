@@ -38,6 +38,8 @@ import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListSetting;
 import net.labymod.utils.Material;
 
+import java.util.UUID;
+
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.name;
 
@@ -107,7 +109,7 @@ public class ShowJoins extends Feature {
 		String name = event.data.getProfile().getName();
 		if (shouldShowJoin(name))
 			TickScheduler.runAfterClientTicks(() -> display(Constants.ADDON_PREFIX + "§8[§a+§8] "
-				+ getPlayerListPrefix(ScammerList.class) + getPlayerListPrefix(TrustedList.class)
+				+ getPlayerListPrefix(name, event.data.getProfile().getId())
 				+ "§r" + name), 1);
 	}
 
@@ -119,7 +121,7 @@ public class ShowJoins extends Feature {
 		String name = event.cachedName;
 		if (shouldShowJoin(name))
 			TickScheduler.runAfterClientTicks(() -> display(Constants.ADDON_PREFIX + "§8[§c-§8] "
-				+ getPlayerListPrefix(ScammerList.class) + getPlayerListPrefix(TrustedList.class)
+				+ getPlayerListPrefix(name, event.data.getProfile().getId())
 				+ "§r" + name), 1);
 	}
 
@@ -129,13 +131,18 @@ public class ShowJoins extends Feature {
 			event.cancel();
 	}
 
-	private String getPlayerListPrefix(Class<? extends PlayerList> listClass) {
-		PlayerList list = FileProvider.getSingleton(listClass);
+	private String getPlayerListPrefix(String name, UUID uuid) {
+		StringBuilder s = new StringBuilder();
 
-		if (!list.isEnabled())
-			return "";
+		PlayerList scammerList = FileProvider.getSingleton(ScammerList.class);
+		if (scammerList.isEnabled() && scammerList.shouldMark(name, uuid))
+			s.append(scammerList.toComponent(scammerList.chatAction.get()).getFormattedText());
 
-		return list.toComponent(list.chatAction.get()).getFormattedText();
+		PlayerList trustedList = FileProvider.getSingleton(TrustedList.class);
+		if (trustedList.isEnabled() && trustedList.shouldMark(name, uuid))
+			s.append(trustedList.toComponent(trustedList.chatAction.get()).getFormattedText());
+
+		return s.toString();
 	}
 
 }

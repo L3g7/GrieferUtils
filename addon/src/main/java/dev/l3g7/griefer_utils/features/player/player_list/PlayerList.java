@@ -150,7 +150,7 @@ public abstract class PlayerList extends Feature {
 		if (displayNameAction.get() == DISABLED)
 			return;
 
-		if (uuids.contains(event.player.getUniqueID()) || names.contains(event.player.getName()) || customEntries.contains(event.player.getName(), event.player.getUniqueID()))
+		if (shouldMark(event.player.getName(), event.player.getUniqueID()))
 			event.displayName = toComponent(displayNameAction.get()).appendSibling(event.displayName);
 	}
 
@@ -163,7 +163,7 @@ public abstract class PlayerList extends Feature {
 		if (tabAction.get() == DISABLED)
 			return;
 
-		if (uuids.contains(event.profile.getId()) || names.contains(event.profile.getName()) || customEntries.contains(event.profile.getName(), event.profile.getId()))
+		if (shouldMark(event.profile.getName(), event.profile.getId()))
 			event.component = toComponent(tabAction.get()).appendSibling(event.component);
 	}
 
@@ -185,7 +185,7 @@ public abstract class PlayerList extends Feature {
 				return;
 
 			UUID uuid = name.contains("~") ? NameCache.getUUID(name) : PlayerUtil.getUUID(name);
-			if (!uuids.contains(uuid) && !names.contains(name) && !customEntries.contains(name, uuid))
+			if (!shouldMark(name, uuid))
 				return;
 
 			ChatStyle style = new ChatStyle();
@@ -224,7 +224,7 @@ public abstract class PlayerList extends Feature {
 		// Check if player should be marked
 		String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
 		UUID uuid = name.contains("~") ? NameCache.getUUID(name) : PlayerUtil.getUUID(name);
-		if (!uuids.contains(uuid) && !names.contains(name) && !customEntries.contains(name, uuid))
+		if (!shouldMark(name, uuid))
 			return;
 
 		// Construct item
@@ -237,6 +237,10 @@ public abstract class PlayerList extends Feature {
 			if (slot != null && slot.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
 				inventory.setInventorySlotContents(i, indicatorPane);
 		}
+	}
+
+	public boolean shouldMark(String name, UUID uuid) {
+		return uuids.contains(uuid) || names.contains(name) || customEntries.contains(name, uuid);
 	}
 
 	public enum MarkAction {

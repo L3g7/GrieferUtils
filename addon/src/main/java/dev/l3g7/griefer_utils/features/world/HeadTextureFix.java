@@ -55,7 +55,7 @@ public class HeadTextureFix extends Feature {
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());
 	public static final Set<String> processedProfiles = Collections.synchronizedSet(new HashSet<>());
 
-	@Mixin(TileEntityItemStackRenderer.class)
+	@Mixin(value = TileEntityItemStackRenderer.class, priority = 1001)
 	private static class MixinTileEntityItemStackRenderer {
 
 		@Redirect(method = "renderByItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTUtil;readGameProfileFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)Lcom/mojang/authlib/GameProfile;"))

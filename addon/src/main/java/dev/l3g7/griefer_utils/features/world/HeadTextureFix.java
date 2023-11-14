@@ -39,7 +39,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.uuid;
 
 @Singleton
-public class HeadForceLoader extends Feature {
+public class HeadTextureFix extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting() {
@@ -49,8 +49,8 @@ public class HeadForceLoader extends Feature {
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		}
 	}
-		.name("Kopf-Texturen immer laden")
-		.description("Lädt Kopf-Texturen immer.");
+		.name("Kopf-Texturen fixen")
+		.description("Lädt Kopf-Texturen automatisch nach.");
 
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());
 	public static final Set<String> processedProfiles = Collections.synchronizedSet(new HashSet<>());

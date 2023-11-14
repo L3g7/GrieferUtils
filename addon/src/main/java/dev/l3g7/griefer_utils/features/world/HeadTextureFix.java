@@ -61,6 +61,9 @@ public class HeadTextureFix extends Feature {
 		@Redirect(method = "renderByItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTUtil;readGameProfileFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)Lcom/mojang/authlib/GameProfile;"))
 		private GameProfile redirectReadGameProfile(NBTTagCompound nbtTag) {
 			GameProfile gameprofile = NBTUtil.readGameProfileFromNBT(nbtTag);
+			if (!FileProvider.getSingleton(HeadTextureFix.class).isEnabled())
+				return gameprofile;
+
 			String name = gameprofile.getName();
 
 			if (lockedProfiles.contains(name))

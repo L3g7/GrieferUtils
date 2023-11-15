@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.modules.balances.inventory_value;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.item.ItemStack;
@@ -30,19 +31,34 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
 public class ItemDisplaySetting extends ControlElement implements ElementBuilder<ItemDisplaySetting> {
 
-	private final ItemStack stack;
+	private ItemStack stack; // lazy-loaded
+	private final String stackNbt;
 	public long value;
 
 	private final IconStorage iconStorage = new IconStorage();
 	private boolean hoveringDelete = false;
 
-	public ItemDisplaySetting(ItemStack stack, long value) {
+	public ItemDisplaySetting(String stackNbt, long value) {
 		super("§cNo name set", null);
 		setSettingEnabled(false);
-		this.stack = stack;
+		this.stackNbt = stackNbt;
 		this.value = value;
+	}
+
+	public ItemDisplaySetting(ItemStack stack, long value) {
+		this((String) null, value);
+
+		this.stack = stack;
 		icon(stack);
 		name(stack.getDisplayName());
+	}
+
+	private void initStack() {
+		if (stack == null) {
+			stack = ItemUtil.fromNBT(stackNbt);
+			icon(stack);
+			name(stack.getDisplayName());
+		}
 	}
 
 	@Override
@@ -56,6 +72,7 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 	}
 
 	public ItemStack getStack() {
+		initStack();
 		return stack;
 	}
 
@@ -73,6 +90,8 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+		initStack();
+
 		String displayName = getDisplayName();
 		setDisplayName("§f");
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);

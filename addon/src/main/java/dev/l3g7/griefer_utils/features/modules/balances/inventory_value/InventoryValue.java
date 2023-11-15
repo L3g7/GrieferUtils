@@ -89,7 +89,7 @@ public class InventoryValue extends Module {
 		if (Config.has(entryKey)) {
 			JsonObject entries = Config.get(entryKey).getAsJsonObject();
 			for (Map.Entry<String, JsonElement> entry : entries.entrySet())
-				list.add(new ItemDisplaySetting(ItemUtil.fromNBT(entry.getKey()), entry.getValue().getAsLong()));
+				list.add(new ItemDisplaySetting(entry.getKey(), entry.getValue().getAsLong()));
 		}
 
 		list.add(new EntryAddSetting()

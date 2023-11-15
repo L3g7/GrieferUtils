@@ -107,7 +107,7 @@ public class GuiBotShops extends GuiSearchable<BotShop> {
 		}
 
 
-		TextureItem textureItem = new TextureItem("griefer_info/wallet_ingoing" + (filteringForBuying ? "" : "_gray"), (filteringForBuying ? "§f" : "§7") + "Ankauf", "§8Klicke, um Umzuschalten");
+		TextureItem textureItem = new TextureItem("wallets/ingoing" + (filteringForBuying ? "" : "_gray"), (filteringForBuying ? "§f" : "§7") + "Ankauf", "§8Klicke, um Umzuschalten");
 		chest.addTextureItem(28, textureItem, () -> {
 			filteringForBuying = !filteringForBuying;
 			if (!hasClicked) {
@@ -121,7 +121,7 @@ public class GuiBotShops extends GuiSearchable<BotShop> {
 			open();
 		});
 
-		textureItem = new TextureItem("griefer_info/wallet_outgoing" + (filteringForSelling ? "" : "_gray"), (filteringForSelling ? "§f" : "§7") + "Verkauf", "§8Klicke, um Umzuschalten");
+		textureItem = new TextureItem("wallets/outgoing" + (filteringForSelling ? "" : "_gray"), (filteringForSelling ? "§f" : "§7") + "Verkauf", "§8Klicke, um Umzuschalten");
 		chest.addTextureItem(37, textureItem, () -> {
 			filteringForSelling = !filteringForSelling;
 			if (!hasClicked) {

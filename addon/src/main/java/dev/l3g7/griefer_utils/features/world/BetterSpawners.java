@@ -74,7 +74,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	private final BooleanSetting spawnerWithHeldItemFix = new BooleanSetting()
 		.name("Spawner mit Item öffnen")
 		.description("Ermöglicht das Öffnen von Spawnern auf öffentlichen Grundstücken, auch wenn man ein Item / einen Block in der Hand hält.")
-		.icon("griefer_info/spawner");
+		.icon("spawner");
 
 	public final BooleanSetting hideMobPreview = new BooleanSetting()
 		.name("Entity verstecken")
@@ -109,7 +109,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Spawner verbessern")
 		.description("Verbessert Spawner.")
-		.icon("griefer_info/spawner")
+		.icon("spawner")
 		.subSettings(spawnerWithHeldItemFix, showSpawnerIcons, markTriggeredSpawners, new HeaderSetting(), hideMobPreview, hideParticles);
 
 	@Override
@@ -217,7 +217,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 				return;
 			}
 
-			resourceLocation = new ResourceLocation("griefer_utils/icons/griefer_info/outlined_mob_icons/" + EntityList.getEntityString(entity) + ".png");
+			resourceLocation = new ResourceLocation("griefer_utils/icons/mob_icons/outlined_minecraft/" + EntityList.getEntityString(entity).toLowerCase() + ".png");
 		}
 
 		@Override

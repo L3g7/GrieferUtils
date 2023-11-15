@@ -14,10 +14,6 @@
     <td>selfmade</td>
   </tr>
   <tr>
-    <td><a href="griefer_info/mob_icons/"><img src="griefer_info/mob_icons/creeper.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/mob_icons/* </a></td>
-    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest?cb=20221212235332&version=1670889213562&format=png">Minecraft Wiki</a></td>
-  </tr>
-  <tr>
     <td><a href="griefer_info/chest.png"><img src="griefer_info/chest.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/chest.png </a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/entity/chest/normal.png">Minecraft asset</a></td>
   </tr>
@@ -34,33 +30,6 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/diamond_sword.png">Minecraft asset</a></td>
   </tr>
   <tr>
-    <td><a href="griefer_info/spawner.png"><img src="griefer_info/spawner.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/spawner.png  </a></td>
-    <td><a href="https://static.wikia.nocookie.net/minecraft_de_gamepedia/images/f/f4/Spawner_mit_Feuer.png/revision/latest?cb=20200309165109">Minecraft Wiki</a></td>
-  </tr>
-  <tr>
-    <td><a href="griefer_info/spawner_gray.png"><img src="griefer_info/spawner_gray.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/spawner_gray.png  </a></td>
-    <td><a href="https://static.wikia.nocookie.net/minecraft_de_gamepedia/images/4/4f/Spawner_Beta_1.9-pre1.png/revision/latest?cb=20221005111405">Minecraft Wiki</a></td>
-  </tr>
-  <tr>
-    <td><a href="griefer_info/wallet_ingoing.png"><img src="griefer_info/wallet_ingoing.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_ingoing.png  </a></td>
-    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
-  </tr>
-  <tr>
-    <td><a href="griefer_info/wallet_ingoing_gray.png"><img src="griefer_info/wallet_ingoing_gray.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_ingoing_gray.png  </a></td>
-    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
-  </tr>
-  <tr>
-    <td><a href="griefer_info/wallet_inoutgoing.png"><img src="griefer_info/wallet_inoutgoing.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_inoutgoing.png  </a></td>
-    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
-  </tr>
-  <tr>
-    <td><a href="griefer_info/wallet_outgoing.png"><img src="griefer_info/wallet_inoutgoing.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_outgoing.png  </a></td>
-    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
-  </tr>
-  <tr>
-    <td><a href="griefer_info/wallet_outgoing_gray.png"><img src="griefer_info/wallet_outgoing_gray.png" height=16em width=16em />&nbsp;&nbsp;griefer_info/wallet_outgoing_gray.png  </a></td>
-    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
-  </tr>
   <tr>
     <td><a href="litematica/axes.png"><img src="litematica/axes.png" height=16em width=16em />&nbsp;&nbsp;litematica/axes.png </a></td>
     <td>selfmade</td>
@@ -74,8 +43,20 @@
     <td><a href="https://github.com/maruohon/litematica/blob/54343aa6a4eaf71fb7a6ab38dd5c72ed3bf1b897/src/main/resources/assets/litematica/icon.png">Litematica (SuperDragonite2172)</a></td>
   </tr>
   <tr>
-    <td><a href="mob_icons/"><img src="mob_icons/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/* </a></td>
+    <td><a href="mob_icons/faithless/"><img src="mob_icons/faithless/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/faithless/* </a></td>
     <td><a href="https://www.curseforge.com/minecraft/texture-packs/faithless">StitchSprites</a></td>
+  </tr>
+  <tr>
+    <td><a href="mob_icons/minecraft/"><img src="mob_icons/minecraft/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/minecraft/* </a></td>
+    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest?version=1670889213562&format=png">Minecraft Fandom</a></td>
+  </tr>
+  <tr>
+    <td><a href="mob_icons/outlined_minecraft/"><img src="mob_icons/minecraft/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/outlined_minecraft/* </a></td>
+    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest?version=1670889213562&format=png">Minecraft Fandom</a></td>
+  </tr>
+  <tr>
+    <td><a href="wallets/"><img src="wallets/inoutgoing.png" height=16em width=16em />&nbsp;&nbsp;wallets/*  </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
   </tr>
   <tr>
     <td><a href="arrow_circle.png"><img src="arrow_circle.png" height=16em width=16em />&nbsp;&nbsp;arrow_circle.png </a></td>
@@ -122,7 +103,7 @@
     <td><a href="https://apps.apple.com/us/app/calculator/id1069511488">Apple calculator</a></td>
   </tr>
   <tr>
-    <td><a href="crossed_out_camera.png"><img src="crossed_out_camera.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_camera.png </a></td>
+    <td><a href="camera.png"><img src="camera.png" height=16em width=16em />&nbsp;&nbsp;camera.png </a></td>
     <td><a href="https://www.shutterstock.com/de/image-vector/movie-camera-pixel-art-32-bit-2191871743">Shutterstock (pixelpnj)</a></td>
   </tr>
   <tr>
@@ -154,6 +135,10 @@
     <td><a href="https://www.shutterstock.com/image-vector/electronics-pixel-art-icons-set-artificial-1508310176">Shutterstock (VectorPixelStar)</a></td>
   </tr>
   <tr>
+    <td><a href="crossed_out_camera.png"><img src="crossed_out_camera.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_camera.png </a></td>
+    <td><a href="https://www.shutterstock.com/de/image-vector/movie-camera-pixel-art-32-bit-2191871743">Shutterstock (pixelpnj)</a></td>
+  </tr>
+  <tr>
     <td><a href="crosshair.png"><img src="crosshair.png" height=16em width=16em />&nbsp;&nbsp;crosshair.png </a></td>
     <td>selfmade</td>
   </tr>
@@ -172,10 +157,6 @@
   <tr>
     <td><a href="earth_grid.png"><img src="earth_grid.png" height=16em width=16em />&nbsp;&nbsp;earth_grid.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
-  </tr>
-  <tr>
-    <td><a href="enchanted_skull.png"><img src="enchanted_skull.png" height=16em width=16em />&nbsp;&nbsp;enchanted_skull.png </a></td>
-    <td><a href="https://assets.mcasset.cloud/1.20/assets/minecraft/textures/entity/skeleton/skeleton.png">Minecraft asset</a></td>
   </tr>
   <tr>
     <td><a href="explorer.png"><img src="explorer.png" height=16em width=16em />&nbsp;&nbsp;explorer.png </a></td>
@@ -208,6 +189,10 @@
   <tr>
     <td><a href="gold_ingot_crossed_out.png"><img src="gold_ingot_crossed_out.png" height=16em width=16em />&nbsp;&nbsp;gold_ingot_crossed_out.png </a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/gold_ingot.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="green_particle.png"><img src="green_particle.png" height=16em width=16em />&nbsp;&nbsp;green_particle.png </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.8.9/assets/minecraft/textures/particle/particles.png">Minecraft asset</a></td>
   </tr>
   <tr>
     <td><a href="green_scroll.png"><img src="green_scroll.png" height=16em width=16em />&nbsp;&nbsp;green_scroll.png </a></td>
@@ -278,6 +263,10 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
+    <td><a href="mouse.png"><img src="mouse.png" height=16em width=16em />&nbsp;&nbsp;mouse.png </a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
 	<!-- https://d1fdloi71mui9q.cloudfront.net/IBa9YlxRAOTxKwqdO1LA_zGa80ENAU97bC0AU -->
     <td><a href="mysterymod.png"><img src="mysterymod.png" height=16em width=16em />&nbsp;&nbsp;mysterymod.png </a></td>
     <td><a href="https://linktr.ee/MysteryMod">Mysterymod</a></td>
@@ -323,6 +312,10 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
+    <td><a href="recording.png"><img src="recording.png" height=16em width=16em />&nbsp;&nbsp;recording.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><a href="red_scroll.png"><img src="red_scroll.png" height=16em width=16em />&nbsp;&nbsp;red_scroll.png </a></td>
     <td><a href="https://web.archive.org/web/20221107162631/https://preview.pixlr.com/images/800wm/100/1/1001469300.jpg">Stock by Pixlr</a></td>
   </tr>
@@ -352,7 +345,11 @@
   </tr>
   <tr>
     <td><a href="sneaking.png"><img src="sneaking.png" height=16em width=16em />&nbsp;&nbsp;sneaking.png </a></td>
-    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e8/Sneaking_Alex.png/revision/latest?cb=20230325080117">Minecraft Wiki (Duowan channel)</a></td>
+    <td><a href="https://minecraft.wiki/images/Sneaking_Alex.png?7e51d">Minecraft Wiki</a></td>
+  </tr>
+  <tr>
+    <td><a href="spawner.png"><img src="spawner.png" height=16em width=16em />&nbsp;&nbsp;spawner.png </a></td>
+    <td><a href="https://minecraft.wiki/images/thumb/Spawner_with_fire.png/150px-Spawner_with_fire.png?01b06">Minecraft Wiki</a></td>
   </tr>
   <tr>
     <td><a href="speech_bubble.png"><img src="speech_bubble.png" height=16em width=16em />&nbsp;&nbsp;speech_bubble.png </a></td>
@@ -393,14 +390,6 @@
   <tr>
     <td><a href="twitch.png"><img src="twitch.png" height=16em width=16em />&nbsp;&nbsp;twitch.png </a></td>
     <td><a href="https://www.twitch.tv/p/press-center/">Twitch</a></td>
-  </tr>
-  <tr>
-    <td><a href="wallet_ingoing.png"><img src="wallet_ingoing.png" height=16em width=16em />&nbsp;&nbsp;wallet_ingoing.png </a></td>
-    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
-  </tr>
-  <tr>
-    <td><a href="wallet_outgoing.png"><img src="wallet_outgoing.png" height=16em width=16em />&nbsp;&nbsp;wallet_outgoing.png </a></td>
-    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
   </tr>
   <tr>
     <td><a href="webhook.png"><img src="webhook.png" height=16em width=16em />&nbsp;&nbsp;webhook.png </a></td>

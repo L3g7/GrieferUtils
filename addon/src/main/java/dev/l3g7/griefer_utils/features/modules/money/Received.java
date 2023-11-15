@@ -77,7 +77,7 @@ public class Received extends Module {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Eingenommen")
 		.description("Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast.")
-		.icon("wallet_ingoing")
+		.icon("wallets/ingoing")
 		.subSettings(resetSetting, resetAfterRestart,
 			new SmallButtonSetting()
 				.name("Zurücksetzen")

@@ -81,7 +81,7 @@ public class SpawnerType {
 
 	private SpawnerType(String germanName, String texture) {
 		this.germanName = germanName;
-		this.texture = "griefer_info/mob_icons/" + texture;
+		this.texture = "mob_icons/minecraft/" + texture.toLowerCase();
 		texture = "entity." + texture + ".name";
 		otherNames = new String[] {
 			StatCollector.translateToLocal(texture).toLowerCase(),

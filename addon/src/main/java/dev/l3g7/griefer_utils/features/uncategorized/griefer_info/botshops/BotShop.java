@@ -88,7 +88,7 @@ public class BotShop {
 		if (!isCbFiltered)
 			name = String.format("§e[%s] %s", MinecraftUtil.getCityBuildAbbreviation(cb.getDisplayName()), name);
 
-		String texture = "griefer_info/wallet_";
+		String texture = "wallets/";
 		if (buying) texture += "in";
 		if (selling) texture += "out";
 		texture += "going";
@@ -98,7 +98,6 @@ public class BotShop {
 			mc().displayGuiScreen(null);
 		});
 	}
-
 
 	@Override
 	public String toString() {

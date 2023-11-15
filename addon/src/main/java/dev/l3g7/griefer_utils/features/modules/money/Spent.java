@@ -77,7 +77,7 @@ public class Spent extends Module {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Ausgegeben")
 		.description("Zeigt dir, wie viel Geld du seit Minecraft-Start ausgegeben hast.")
-		.icon("wallet_outgoing")
+		.icon("wallets/outgoing")
 		.subSettings(resetSetting, resetAfterRestart,
 			new SmallButtonSetting()
 				.name("Zurücksetzen")

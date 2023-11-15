@@ -32,6 +32,7 @@ import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent.LeftClickEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
@@ -142,9 +143,8 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		return cleanedStackNBT.equals(settingNBT);
 	}
 
-	@Override
-	public void init() {
-		super.init();
+	@OnStartupComplete
+	public void initialize() {
 
 		ItemUtil.setLore(blockedIndicator, "§cEin Item im Inventar ist im Item-Saver!");
 

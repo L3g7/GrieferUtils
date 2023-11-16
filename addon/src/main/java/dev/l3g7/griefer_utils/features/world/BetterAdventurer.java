@@ -104,13 +104,13 @@ public class BetterAdventurer extends Feature {
 			return;
 
 		String lore = ItemUtil.getLoreAtIndex(stack, 0);
-		if (lore.startsWith("§7Anzahl: §e"))
+		if (!lore.startsWith("§7Anzahl: §e"))
 			return;
 
 		try {
 			String amount = lore.substring("§7Anzahl: §e".length());
 			amount = amount.substring(0, amount.indexOf(isAdventurer ? '§' : ' '));
-			stack.stackSize = Integer.parseInt(amount);
+			stack.stackSize = Integer.parseInt(amount) * 2;
 		} catch (NumberFormatException | StringIndexOutOfBoundsException e) {
 			System.err.println(lore);
 		}

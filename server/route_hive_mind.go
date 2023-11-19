@@ -17,8 +17,8 @@ type HiveMindRequest struct {
 }
 
 type HiveMindRequestEntry struct {
-	Value  *uint64 `json:"request_time,omitempty"`
-	MaxAge *uint64 `json:"signature,omitempty"`
+	Value  *uint64 `json:"value,omitempty"`
+	MaxAge *uint64 `json:"max_age,omitempty"`
 }
 
 type HiveMindEntry struct {

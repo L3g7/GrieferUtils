@@ -32,7 +32,7 @@ import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.Free
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.ItemFilter;
 import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
-import dev.l3g7.griefer_utils.misc.WebAPI;
+import dev.l3g7.griefer_utils.misc.server.WebAPI;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.item.ItemStack;
 

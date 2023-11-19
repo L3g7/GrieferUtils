@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
 import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.Credits;
-import dev.l3g7.griefer_utils.misc.GUClient;
+import dev.l3g7.griefer_utils.misc.server.GUClient;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.user.User;
 import net.labymod.user.group.LabyGroup;

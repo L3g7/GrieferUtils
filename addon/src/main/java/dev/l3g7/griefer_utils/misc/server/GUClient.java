@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.misc;
+package dev.l3g7.griefer_utils.misc.server;
 
 import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;

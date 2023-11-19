@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.misc;
+package dev.l3g7.griefer_utils.util.render;
 
 import com.github.lunatrius.schematica.api.ISchematic;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;

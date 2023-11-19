@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.misc;
+package dev.l3g7.griefer_utils.features.uncategorized.transactions;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.features.uncategorized.Transactions.Direction;
+import dev.l3g7.griefer_utils.features.uncategorized.transactions.Transactions.Direction;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.transactions.Transaction;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import org.apache.commons.io.IOUtils;

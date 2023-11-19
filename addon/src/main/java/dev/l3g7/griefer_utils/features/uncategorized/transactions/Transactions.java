@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized;
+package dev.l3g7.griefer_utils.features.uncategorized.transactions;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,7 +30,6 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.TransactionPPTXWriter;
 import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
@@ -59,7 +58,7 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static dev.l3g7.griefer_utils.features.uncategorized.Transactions.ExportFormat.NO_SELECTION;
+import static dev.l3g7.griefer_utils.features.uncategorized.transactions.Transactions.ExportFormat.NO_SELECTION;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton

@@ -19,8 +19,8 @@
 package dev.l3g7.griefer_utils.event.events.network;
 
 import dev.l3g7.griefer_utils.core.event_bus.Event;
-import dev.l3g7.griefer_utils.misc.WebAPI;
-import dev.l3g7.griefer_utils.misc.WebAPI.Data;
+import dev.l3g7.griefer_utils.misc.server.WebAPI;
+import dev.l3g7.griefer_utils.misc.server.WebAPI.Data;
 
 /**
  * Is fired when {@link WebAPI} receives data.

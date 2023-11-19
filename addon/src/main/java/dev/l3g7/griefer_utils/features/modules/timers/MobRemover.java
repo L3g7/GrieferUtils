@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -101,7 +102,7 @@ public class MobRemover extends Module {
 		mc.ingameGUI.displayTitle(null, null, 0, 2, 3);
 	}
 
-	private enum TimeFormat {
+	private enum TimeFormat implements Named {
 		SHORT("Kurz"),
 		LONG("Lang");
 
@@ -109,5 +110,11 @@ public class MobRemover extends Module {
 		TimeFormat(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 }

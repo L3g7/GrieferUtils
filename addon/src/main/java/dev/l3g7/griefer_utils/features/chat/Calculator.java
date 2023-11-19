@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -403,7 +404,7 @@ public class Calculator extends Feature {
 		return builder.toString();
 	}
 
-	private enum WithdrawAction {
+	private enum WithdrawAction implements Named {
 
 		NONE("Nein"), SUGGEST("Vorschlagen"), SEND("Senden");
 
@@ -411,5 +412,11 @@ public class Calculator extends Feature {
 		WithdrawAction(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 }

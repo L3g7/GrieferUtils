@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.misc.Citybuild;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.gui.elements.*;
 import dev.l3g7.griefer_utils.util.AddonUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
@@ -359,7 +360,7 @@ public class AddChatReactionGui extends Gui {
 		}
 	}
 
-	private enum TextCompareMode {
+	private enum TextCompareMode implements Named {
 
 		CONTAINS("Wenn die Nachricht den Text beinhaltet"), EQUALS("Wenn die Nachricht dem Text entspricht");
 
@@ -368,6 +369,12 @@ public class AddChatReactionGui extends Gui {
 		TextCompareMode(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

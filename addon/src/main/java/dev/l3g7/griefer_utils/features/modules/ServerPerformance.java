@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -152,7 +153,7 @@ public class ServerPerformance extends Module {
 		lastMillis = currentMillis;
 	}
 
-	private enum DisplayMode {
+	private enum DisplayMode implements Named {
 		PERCENT("Prozent"),
 		TPS("TPS");
 
@@ -160,5 +161,11 @@ public class ServerPerformance extends Module {
 		DisplayMode(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 }

@@ -30,6 +30,7 @@ import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.NameCache;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -243,7 +244,7 @@ public abstract class PlayerList extends Feature {
 		return uuids.contains(uuid) || names.contains(name) || customEntries.contains(name, uuid);
 	}
 
-	public enum MarkAction {
+	public enum MarkAction implements Named {
 
 		TAG("Als Text"),  // Mark an entry using a tag,   e.g. [SCAMMER]
 		ICON("Als Icon"), // Mark an entry using an icon, e.g. [⚠]
@@ -252,6 +253,11 @@ public abstract class PlayerList extends Feature {
 		final String name;
 		MarkAction(String name) {
 			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
 		}
 
 	}

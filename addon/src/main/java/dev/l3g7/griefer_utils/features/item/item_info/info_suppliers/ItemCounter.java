@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -185,7 +186,7 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 	}
 
 	@SuppressWarnings("unused")
-	enum FormatMode {
+	enum FormatMode implements Named {
 
 		FORMATTED("Formattiert"), UNFORMATTED("Unformattiert"), BOTH("Beides");
 
@@ -194,6 +195,12 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		FormatMode(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

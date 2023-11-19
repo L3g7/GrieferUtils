@@ -30,6 +30,7 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.misc.TransactionPPTXWriter;
 import dev.l3g7.griefer_utils.misc.mysterymod_connection.MysteryModConnection;
@@ -303,7 +304,7 @@ public class Transactions extends Feature {
 		}
 	}
 
-	enum ExportFormat {
+	enum ExportFormat implements Named {
 
 		NO_SELECTION("§7-", null),
 		TEXT("Text", "txt"),
@@ -317,6 +318,11 @@ public class Transactions extends Feature {
 		ExportFormat(String name, String fileSuffix) {
 			this.name = name;
 			this.fileSuffix = fileSuffix;
+		}
+
+		@Override
+		public String getName() {
+			return name;
 		}
 
 	}

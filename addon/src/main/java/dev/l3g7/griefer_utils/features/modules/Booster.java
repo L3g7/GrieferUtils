@@ -29,6 +29,7 @@ import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -315,7 +316,7 @@ public class Booster extends Module {
 
 	}
 
-	private enum KeyMode {
+	private enum KeyMode implements Named {
 		ICON("Icon"),
 		TEXT("Text"),
 		TEXT_AND_ICON("Text & Icon");
@@ -326,9 +327,11 @@ public class Booster extends Module {
 			this.name = name;
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
+
 	}
 
 }

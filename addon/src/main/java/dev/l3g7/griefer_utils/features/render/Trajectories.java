@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -236,7 +237,7 @@ public class Trajectories extends Feature {
 	}
 
 	@SuppressWarnings("unused")
-	enum TrajectoryMode {
+	enum TrajectoryMode implements Named {
 
 		DISABLED("Aus"), TRAIL("An"), DOT("Nur Ziel");
 
@@ -245,6 +246,12 @@ public class Trajectories extends Feature {
 		TrajectoryMode(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

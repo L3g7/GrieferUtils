@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.chat.text_component_tweaks;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -115,7 +116,7 @@ public class Enlighten extends TextComponentTweak {
 		return new String(result).replaceAll("§[f70](§l)?\u2503", "§8$1\u2503"); // Don't enlighten delimiter
 	}
 
-	private enum GrayMode {
+	private enum GrayMode implements Named {
 
 		GRAY("Grau", EnumChatFormatting.DARK_GRAY),
 		LIGHT("Hellgrau", EnumChatFormatting.GRAY),
@@ -129,9 +130,14 @@ public class Enlighten extends TextComponentTweak {
 			this.formatting = formatting;
 		}
 
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
-	private enum BlackMode {
+	private enum BlackMode implements Named {
 
 		BLACK("Schwarz", EnumChatFormatting.BLACK),
 		GRAY("Grau", EnumChatFormatting.DARK_GRAY),
@@ -144,6 +150,11 @@ public class Enlighten extends TextComponentTweak {
 		BlackMode(String name, EnumChatFormatting formatting) {
 			this.name = name;
 			this.formatting = formatting;
+		}
+
+		@Override
+		public String getName() {
+			return name;
 		}
 
 	}

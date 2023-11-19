@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -259,7 +260,7 @@ public class PotionTimer extends Module {
 
 	}
 
-	private enum KeyMode {
+	private enum KeyMode implements Named {
 		ICON("Icon"),
 		TEXT("Text"),
 		TEXT_AND_ICON("Text & Icon");
@@ -270,9 +271,11 @@ public class PotionTimer extends Module {
 			this.name = name;
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
+
 	}
 
 }

@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -66,7 +67,7 @@ public class RealMoney extends Feature {
 			event.message = event.message.appendText(text);
 	}
 
-	private enum TagPosition {
+	private enum TagPosition implements Named {
 
 		BEFORE("Davor"), AFTER("Danach");
 
@@ -74,6 +75,12 @@ public class RealMoney extends Feature {
 		TagPosition(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

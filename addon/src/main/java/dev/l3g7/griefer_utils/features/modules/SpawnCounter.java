@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -258,7 +259,7 @@ public class SpawnCounter extends Module {
 		return mc.fontRendererObj.getStringWidth(new Text(text, 0, bold, italic, underline).getText());
 	}
 
-	private enum NotificationType {
+	private enum NotificationType implements Named {
 
 		NONE("Keine", s -> {}),
 		TOAST("Erfolg", s -> displayAchievement("§aSpawnCounter", s)),
@@ -272,9 +273,15 @@ public class SpawnCounter extends Module {
 			this.name = name;
 			this.notifier = notifier;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
-	private enum DisplayType {
+	private enum DisplayType implements Named {
 
 		RAN("Laufen"),
 		FLOWN("Fliegen"),
@@ -285,6 +292,12 @@ public class SpawnCounter extends Module {
 		DisplayType(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

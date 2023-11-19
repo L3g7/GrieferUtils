@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -138,7 +139,7 @@ public class ChatMods extends Feature {
 		return removeCaseOpening.get() && formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8]");
 	}
 
-	private enum NewsMode {
+	private enum NewsMode implements Named {
 
 		NORMAL("Normal"), COMPACT("Kompakt"), NONE("Versteckt");
 
@@ -146,6 +147,12 @@ public class ChatMods extends Feature {
 		NewsMode(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

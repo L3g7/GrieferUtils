@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -145,7 +146,7 @@ public class AutoEat extends Feature {
 	}
 
 
-	enum TriggerMode {
+	enum TriggerMode implements Named {
 
 		HALF_BAR("bei halbem Hungerbalken"), EFFICIENTLY("effizient");
 
@@ -153,9 +154,15 @@ public class AutoEat extends Feature {
 		TriggerMode(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
-	enum PreferredFood {
+	enum PreferredFood implements Named {
 
 		HIGH_SATURATION("stark sättigend", (a, b) -> a < b), LOW_SATURATION("schwach sättigend", (a, b) -> a > b);
 
@@ -173,6 +180,12 @@ public class AutoEat extends Feature {
 		public boolean compare(int first, int second) {
 			return compareFunc.test(first, second);
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

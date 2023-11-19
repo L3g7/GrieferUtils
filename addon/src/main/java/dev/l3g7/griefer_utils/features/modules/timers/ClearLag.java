@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.event.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -129,7 +130,7 @@ public class ClearLag extends Module {
 			event.cancel();
 	}
 
-	private enum TimeFormat {
+	private enum TimeFormat implements Named {
 		SHORT("Kurz"),
 		LONG("Lang");
 
@@ -137,5 +138,11 @@ public class ClearLag extends Module {
 		TimeFormat(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 }

@@ -16,33 +16,10 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.core.auto_update;
+package dev.l3g7.griefer_utils.misc;
 
-import dev.l3g7.griefer_utils.misc.Named;
+public interface Named {
 
-public class ReleaseInfo {
-
-	String version;
-	String hash; // SHA-256
-
-	public enum ReleaseChannel implements Named {
-
-		STABLE("Stabil", "https://github.com/L3g7/GrieferUtils/releases/download/v{version}/griefer-utils-v{version}.jar"),
-		BETA("Beta", "https://grieferutils.l3g7.dev/v3/nightly_builds/griefer-utils-v{version}.jar");
-
-		final String name;
-		final String downloadURL;
-
-		ReleaseChannel(String name, String downloadURL) {
-			this.name = name;
-			this.downloadURL = downloadURL;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-	}
+	String getName();
 
 }

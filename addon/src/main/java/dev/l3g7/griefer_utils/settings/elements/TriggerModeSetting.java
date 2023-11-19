@@ -18,6 +18,8 @@
 
 package dev.l3g7.griefer_utils.settings.elements;
 
+import dev.l3g7.griefer_utils.misc.Named;
+
 import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.TOGGLE;
@@ -52,7 +54,7 @@ public class TriggerModeSetting extends DropDownSetting<TriggerModeSetting.Trigg
 		return ((TriggerModeSetting) super.defaultValue(value));
 	}
 
-	public enum TriggerMode {
+	public enum TriggerMode implements Named {
 
 		HOLD("Halten"), TOGGLE("Umschalten");
 
@@ -61,6 +63,12 @@ public class TriggerModeSetting extends DropDownSetting<TriggerModeSetting.Trigg
 		TriggerMode(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 
 	}
 

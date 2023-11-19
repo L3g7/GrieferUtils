@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import static net.minecraft.init.Blocks.*;
 import static net.minecraft.init.Items.*;
 
-public enum Citybuild implements DropDown.ItemEnum {
+public enum Citybuild implements DropDown.ItemEnum, Named {
 
 	ANY(nether_star, "Egal","Egal"),
 
@@ -167,6 +167,11 @@ public enum Citybuild implements DropDown.ItemEnum {
 				return true;
 
 		return cb.equalsIgnoreCase(displayName) || cb.equalsIgnoreCase(internalName) || name().equalsIgnoreCase(cb);
+	}
+
+	@Override
+	public String getName() {
+		return displayName;
 	}
 
 }

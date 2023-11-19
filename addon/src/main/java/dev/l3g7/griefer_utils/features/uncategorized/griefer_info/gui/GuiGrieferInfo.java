@@ -16,11 +16,12 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.DataHandler;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.GuiBotShops;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.GuiFarms;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.GuiFreestuff;

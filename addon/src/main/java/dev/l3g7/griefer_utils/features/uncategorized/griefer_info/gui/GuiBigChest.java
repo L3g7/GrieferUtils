@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;

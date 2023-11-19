@@ -32,7 +32,7 @@ import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemD
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemSaver;
 import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.ToolSaver;
 import dev.l3g7.griefer_utils.features.modules.MissingAdventurerBlocks;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;

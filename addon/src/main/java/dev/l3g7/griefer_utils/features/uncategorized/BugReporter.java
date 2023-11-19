@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.settings;
+package dev.l3g7.griefer_utils.features.uncategorized;
 
 import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;

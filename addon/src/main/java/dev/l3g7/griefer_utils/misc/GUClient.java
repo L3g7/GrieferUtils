@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.server.requests.OnlineUsersRequest;
 import dev.l3g7.griefer_utils.core.misc.server.types.GUSession;
 import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import net.minecraft.util.Session;
 
 import java.io.IOException;

@@ -38,7 +38,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 public class Credits {
 
-	public static final CategorySetting category = new CategorySetting()
+	public static final CategorySetting credits = new CategorySetting()
 		.name("Credits")
 		.icon("labymod:settings/tabs/multiplayer")
 		.description("Das Team hinter GrieferUtils, sowie Copyright und Lizenzen.")
@@ -114,7 +114,7 @@ public class Credits {
 			elements.add(new HeaderSetting().entryHeight(11));
 		}
 
-		category.getSubSettings().getElements().addAll(10, elements);
+		credits.getSubSettings().getElements().addAll(10, elements);
 	}
 
 	private static class IconSetting extends ControlElement {

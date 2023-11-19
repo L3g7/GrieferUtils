@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;

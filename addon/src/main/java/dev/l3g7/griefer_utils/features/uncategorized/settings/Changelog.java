@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
 import dev.l3g7.griefer_utils.misc.gui.guis.ChangelogScreen;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
@@ -39,7 +40,7 @@ import java.util.Map;
 @Singleton
 public class Changelog {
 
-	public static final CategorySetting category = new CategorySetting()
+	public static final CategorySetting changelog = new CategorySetting()
 		.name("§eChangelog")
 		.description("§eVerbindet...")
 		.icon("white_scroll")
@@ -50,7 +51,7 @@ public class Changelog {
 	private void onWebData(WebDataReceiveEvent event) {
 		List<SettingsElement> entries = new ArrayList<>();
 
-		if (AutoUpdateSettings.releaseChannel.get() == ReleaseInfo.ReleaseChannel.BETA)
+		if (Settings.releaseChannel.get() == ReleaseInfo.ReleaseChannel.BETA)
 			ChangelogScreen.setData(AddonUtil.getVersion(), event.data.changelog.beta.substring("Changelog:".length()));
 
 		for (Map.Entry<String, String> entry : event.data.changelog.all.entrySet()) {
@@ -75,9 +76,9 @@ public class Changelog {
 		}
 
 		entries.sort(Comparator.comparing(SettingsElement::getDisplayName, new VersionComparator()));
-		category.subSettings(entries);
+		changelog.subSettings(entries);
 
-		category.name("Changelog")
+		changelog.name("Changelog")
 			.description("Was sich in den einzelnen Updates von GrieferUtils verändert hat.")
 			.settingsEnabled(true);
 	}

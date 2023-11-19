@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdateSettings;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
@@ -142,7 +142,7 @@ public class ChangelogScreen extends GuiScreen {
 
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		if (!triggeredByUser && isLeftButtonHovered(mouseX, mouseY)) {
-			AutoUpdateSettings.showUpdateScreen.set(false);
+			Settings.showUpdateScreen.set(false);
 			closeGui();
 			return;
 		}

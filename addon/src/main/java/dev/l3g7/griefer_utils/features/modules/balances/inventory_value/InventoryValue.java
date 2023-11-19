@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.features.chat.Calculator;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiBigChest;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;

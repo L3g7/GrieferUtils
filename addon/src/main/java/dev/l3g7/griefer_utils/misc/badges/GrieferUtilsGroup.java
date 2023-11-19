@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.misc.badges;
 
-import dev.l3g7.griefer_utils.features.uncategorized.settings.Badges;
 import net.labymod.main.LabyMod;
 import net.labymod.user.group.EnumGroupDisplayType;
 import net.labymod.user.group.LabyGroup;

@@ -22,7 +22,7 @@ import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.os.FileSelectionDialog;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import net.labymod.gui.elements.ModTextField;

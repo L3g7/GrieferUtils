@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.settings;
+package dev.l3g7.griefer_utils.misc.badges;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent.TabListClearEvent;
@@ -56,7 +56,7 @@ public class Badges {
 		.icon("icon")
 		.defaultValue(true);
 
-	static final BooleanSetting enabled = new BooleanSetting()
+	public static final BooleanSetting enabled = new BooleanSetting()
 		.name("GrieferUtils-\nNutzer-Anzeige")
 		.description("Zeigt vor den Namen von Spielern ein GrieferUtils-Icon an, wenn sie das Addon benutzen.")
 		.config("settings.badges")

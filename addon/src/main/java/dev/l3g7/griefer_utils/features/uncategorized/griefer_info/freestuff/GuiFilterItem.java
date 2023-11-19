@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff;
 
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiSearchable;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiSearchable;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.ItemFilter.Category;
 
 import java.util.ArrayList;

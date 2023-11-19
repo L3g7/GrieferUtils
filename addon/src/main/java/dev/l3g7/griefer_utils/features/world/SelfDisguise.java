@@ -30,7 +30,7 @@ import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;

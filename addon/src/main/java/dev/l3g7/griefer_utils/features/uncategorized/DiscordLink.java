@@ -30,7 +30,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Singleton
-public class Discord extends Feature {
+public class DiscordLink extends Feature {
 
 	@MainElement
 	private final SmallButtonSetting button = new SmallButtonSetting()

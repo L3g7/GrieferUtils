@@ -31,7 +31,7 @@ import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.SpawnerT
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.FreeStuff;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.ItemFilter;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.WebAPI;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.item.ItemStack;

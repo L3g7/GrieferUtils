@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;

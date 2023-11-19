@@ -52,7 +52,6 @@ public class BetterAdventurer extends Feature {
 
 	private final BooleanSetting displayMissing = new BooleanSetting()
 		.name("Fehlende Items anzeigen")
-		.description("")
 		.description("Zeigt unter Adventure-Items sowie beim Abgeben an, wie viel noch fehlt.")
 		.icon(ItemUtil.createItem(Items.diamond_shovel, 0, true))
 		.defaultValue(true);
@@ -110,7 +109,7 @@ public class BetterAdventurer extends Feature {
 		try {
 			String amount = lore.substring("§7Anzahl: §e".length());
 			amount = amount.substring(0, amount.indexOf(isAdventurer ? '§' : ' '));
-			stack.stackSize = Integer.parseInt(amount) * 2;
+			stack.stackSize = Integer.parseInt(amount);
 		} catch (NumberFormatException | StringIndexOutOfBoundsException e) {
 			System.err.println(lore);
 		}

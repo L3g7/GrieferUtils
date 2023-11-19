@@ -61,10 +61,10 @@ public class LibLoader {
 		loadLibrary("org/mariuszgromada/math/MathParser.org-mXparser/5.1.0/MathParser.org-mXparser-5.1.0.jar", "https://repo1.maven.org/maven2/org/mariuszgromada/math/MathParser.org-mXparser/5.1.0/MathParser.org-mXparser-5.1.0.jar", "B5472B5E1BBEFEA2DA6052C68A509C84C7F2CA5F99B76A4C5F58354C08818630");
 
 		// ZXing: for reading qr codes (QRCodeScanner)
-		LibLoader.loadLibrary("com/google/zxing/core/3.5.1/core-3.5.1.jar", "https://repo1.maven.org/maven2/com/google/zxing/core/3.5.1/core-3.5.1.jar", "1BA7C0FBB6C267E2FB74E1497D855ADAE633CCC98EDC8C75163AA64BC08E3059");
+		loadLibrary("com/google/zxing/core/3.5.1/core-3.5.1.jar", "https://repo1.maven.org/maven2/com/google/zxing/core/3.5.1/core-3.5.1.jar", "1BA7C0FBB6C267E2FB74E1497D855ADAE633CCC98EDC8C75163AA64BC08E3059");
 
 		// Mixin: for modifying other classes (see core.injection.mixin package)
-		LibLoader.loadLibrary("org/spongepowered/mixin/0.7.11/mixin-0.7.11.jar", "https://repo.spongepowered.org/repository/maven-public/org/spongepowered/mixin/0.7.11-SNAPSHOT/mixin-0.7.11-20180703.121122-1.jar", "DA3D6E47B9C12B5A312D89B67BC27E2429D823C09CDE8A90299E9FDCC4EEFC20");
+		loadLibrary("org/spongepowered/mixin/0.7.11/mixin-0.7.11.jar", "https://repo.spongepowered.org/repository/maven-public/org/spongepowered/mixin/0.7.11-SNAPSHOT/mixin-0.7.11-20180703.121122-1.jar", "DA3D6E47B9C12B5A312D89B67BC27E2429D823C09CDE8A90299E9FDCC4EEFC20");
 	}
 
 	private static void loadLibrary(String path, String downloadUrl, String hash) throws IOException, ReflectiveOperationException {

@@ -48,6 +48,10 @@ public abstract class Request<R> {
 	protected abstract R parseResponse(GUSession session, Response response) throws Throwable;
 
 	public R send(GUSession session) throws IOException {
+		return send(session, false);
+	}
+
+	private R send(GUSession session, boolean sessionRenewed) throws IOException {
 		HttpsURLConnection conn = (HttpsURLConnection) new URL(session.host + path).openConnection();
 		conn.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
 
@@ -61,9 +65,12 @@ public abstract class Request<R> {
 
 		// Renew token if authorization fails
 		if (conn.getResponseCode() == HTTP_UNAUTHORIZED) {
+			if (sessionRenewed)
+				throw new IOException("Unauthenticated");
+
 			try {
 				session.renewToken();
-				return send(session);
+				return send(session, true);
 			} catch (GeneralSecurityException e) {
 				throw new IOException(e);
 			}

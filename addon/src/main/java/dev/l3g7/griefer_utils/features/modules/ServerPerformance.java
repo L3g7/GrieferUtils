@@ -140,6 +140,9 @@ public class ServerPerformance extends Module {
 		long timeDiff = currentMillis - (lastMillis + tripTimeDiff);
 		double currentTps = ageDiff / (timeDiff / 1000d);
 
+		if (currentTps < 0)
+			return;
+
 		tps.add(Math.min(currentTps, 20));
 
 		double averageTps = tps.stream().reduce(Double::sum).orElse(0d) / tps.size();

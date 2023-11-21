@@ -113,7 +113,7 @@ public class ChatReactor extends Feature {
 				continue;
 
 			try {
-				reaction.processMessage(component.getUnformattedText());
+				reaction.processMessage(component.getFormattedText());
 			} catch (Exception e) {
 				display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
 				setting.set(false);

@@ -65,7 +65,7 @@ public class ReactionDisplaySetting extends BooleanSetting {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		setDisplayName(displayName);
 
-		String cb = "§e[" + MinecraftUtil.getCityBuildAbbreviation(reaction.cityBuild.getDisplayName()) + "] ";
+		String cb = "§e[" + MinecraftUtil.getCitybuildAbbreviation(reaction.citybuild.getDisplayName()) + "] ";
 		int cbWidth = drawUtils().getStringWidth(cb);
 
 		String trimmedTrigger = drawUtils().trimStringToWidth(reaction.trigger, maxX - x - 25 - 79);

@@ -57,7 +57,7 @@ public class AddChatReactionGui extends Gui {
 	private TextField triggerInput;
 	private TextField commandInput;
 	private DropDown<TextCompareMode> compareModeInput;
-	private DropDown<Citybuild> cityBuildInput;
+	private DropDown<Citybuild> citybuildInput;
 
 	private Scrollbar scrollbar;
 	private Button backButton;
@@ -135,7 +135,7 @@ public class AddChatReactionGui extends Gui {
 			.width(width)
 			.renderGroup(RENDER_GROUP_TEXT);
 
-		cityBuildInput = createDropDown(Citybuild.ANY, "Citybuild")
+		citybuildInput = createDropDown(Citybuild.ANY, "Citybuild")
 			.y(compareModeInput.bottom() + PADDING)
 			.width(width)
 			.renderGroup(RENDER_GROUP_SELECTED)
@@ -150,7 +150,7 @@ public class AddChatReactionGui extends Gui {
 		triggerInput.setText(reaction.trigger);
 		commandInput.setText(reaction.command);
 		compareModeInput.setSelected(reaction.matchAll ? TextCompareMode.EQUALS : TextCompareMode.CONTAINS);
-		cityBuildInput.setSelected(reaction.cityBuild);
+		citybuildInput.setSelected(reaction.citybuild);
 	}
 
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -177,8 +177,8 @@ public class AddChatReactionGui extends Gui {
 				bottom = (int) commandInput.bottom();
 			}
 
-			cityBuildInput.y(bottom + PADDING);
-			cancelButton.yPosition = saveButton.yPosition = (int) cityBuildInput.bottom() + PADDING;
+			citybuildInput.y(bottom + PADDING);
+			cancelButton.yPosition = saveButton.yPosition = (int) citybuildInput.bottom() + PADDING;
 			scrollbar.update(getButtonHeight(saveButton) + saveButton.yPosition - HEADER_HEIGHT);
 		}
 		switch (textTypeInput.getSelected()) {
@@ -223,7 +223,7 @@ public class AddChatReactionGui extends Gui {
 
 		// Draw citybuild menu over footer
 		GL11.glTranslated(0, scrollbar.getScrollY(), 0);
-		cityBuildInput.setScreenHeight(MinecraftUtil.screenHeight() - scrollbar.getScrollY());
+		citybuildInput.setScreenHeight(MinecraftUtil.screenHeight() - scrollbar.getScrollY());
 		draw(mouseX, mouseY, RENDER_GROUP_CITYBUILD_MENU);
 		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
 
@@ -242,8 +242,8 @@ public class AddChatReactionGui extends Gui {
 		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
 		mouseY -= scrollbar.getScrollY();
 
-		// prioritize cityBuild as it overlaps with the save and close buttons
-		if (textTypeInput.getSelected() != TextType.NONE && cityBuildInput.onClick(mouseX, mouseY, mouseButton))
+		// prioritize citybuild as it overlaps with the save and close buttons
+		if (textTypeInput.getSelected() != TextType.NONE && citybuildInput.onClick(mouseX, mouseY, mouseButton))
 			return;
 
 		for (Clickable clickable : clickables)
@@ -267,10 +267,10 @@ public class AddChatReactionGui extends Gui {
 
 	@Override
 	public void handleMouseInput() throws IOException {
-		if (cityBuildInput.getHoverSelected() == null)
+		if (citybuildInput.getHoverSelected() == null)
 			scrollbar.mouseInput();
 		else
-			cityBuildInput.onScroll();
+			citybuildInput.onScroll();
 		super.handleMouseInput();
 	}
 
@@ -287,24 +287,24 @@ public class AddChatReactionGui extends Gui {
 				commandInput.setFocused(true);
 			}
 
-			// Command -> CityBuild / Compare mode
+			// Command -> Citybuild / Compare mode
 			else if (commandInput.isFocused()) {
 				commandInput.setFocused(false);
 				if (textTypeInput.getSelected() == TextType.REGEX)
-					cityBuildInput.onClick(cityBuildInput.getX(), cityBuildInput.getY(), 0); // Use onClick so scrollbar is initialized
+					citybuildInput.onClick(citybuildInput.getX(), citybuildInput.getY(), 0); // Use onClick so scrollbar is initialized
 				else
 					compareModeInput.setOpen(true);
 			}
 
-			// Compare mode -> CityBuild
+			// Compare mode -> Citybuild
 			else if (compareModeInput.isOpen()) {
 				compareModeInput.setOpen(false);
-				cityBuildInput.onClick(cityBuildInput.getX(), cityBuildInput.getY(), 0); // Use onClick so scrollbar is initialized
+				citybuildInput.onClick(citybuildInput.getX(), citybuildInput.getY(), 0); // Use onClick so scrollbar is initialized
 			}
 
-			// CityBuild -> Trigger
-			else if (cityBuildInput.isOpen()) {
-				cityBuildInput.setOpen(false);
+			// Citybuild -> Trigger
+			else if (citybuildInput.isOpen()) {
+				citybuildInput.setOpen(false);
 				triggerInput.setFocused(true);
 			}
 		}
@@ -323,7 +323,7 @@ public class AddChatReactionGui extends Gui {
 		reaction.matchAll = compareModeInput.getSelected() == TextCompareMode.EQUALS;
 		reaction.trigger = triggerInput.getText();
 		reaction.command = commandInput.getText();
-		reaction.cityBuild = cityBuildInput.getSelected();
+		reaction.citybuild = citybuildInput.getSelected();
 		reaction.completed = true;
 
 		if (editedReaction == null) {

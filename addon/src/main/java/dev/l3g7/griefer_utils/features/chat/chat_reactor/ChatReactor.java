@@ -109,7 +109,7 @@ public class ChatReactor extends Feature {
 			ReactionDisplaySetting setting = (ReactionDisplaySetting) element;
 			ChatReaction reaction = setting.reaction;
 
-			if (!reaction.cityBuild.isOnCb())
+			if (!reaction.citybuild.isOnCb())
 				continue;
 
 			try {

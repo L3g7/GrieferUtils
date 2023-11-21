@@ -64,12 +64,12 @@ public enum Citybuild implements DropDown.ItemEnum, Named {
 	LAVA(lava_bucket, "nether1", "Lava", "l"),
 	EVENT(beacon, "eventserver", "Event", "v");
 
-	Citybuild(Block block, int cityBuildId) {
-		this(block, "cb" + cityBuildId, "Citybuild " + cityBuildId);
+	Citybuild(Block block, int citybuildId) {
+		this(block, "cb" + citybuildId, "Citybuild " + citybuildId);
 	}
 
-	Citybuild(Block block, int meta, int cityBuildId) {
-		this(block, meta, "cb" + cityBuildId, "Citybuild " + cityBuildId);
+	Citybuild(Block block, int meta, int citybuildId) {
+		this(block, meta, "cb" + citybuildId, "Citybuild " + citybuildId);
 	}
 
 	Citybuild(Item item, String internalName, String displayName, String... aliases) {

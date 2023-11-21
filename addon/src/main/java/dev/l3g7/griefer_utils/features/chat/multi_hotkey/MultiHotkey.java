@@ -117,7 +117,7 @@ public class MultiHotkey extends Feature {
 			hotkey.commands.get().forEach(key -> commands.add(new JsonPrimitive(key)));
 			entry.add("commands", commands);
 
-			entry.addProperty("cb", hotkey.cityBuild.get().getDisplayName());
+			entry.addProperty("cb", hotkey.citybuild.get().getDisplayName());
 
 			array.add(entry);
 		}

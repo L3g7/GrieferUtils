@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 /**
  * An event being posted after joining a city build.
  */
-public class CityBuildJoinEvent extends Event {
+public class CitybuildJoinEvent extends Event {
 
 	private static boolean waitingForAuth = false;
 	private static boolean dataWasLoaded = false;
@@ -56,7 +56,7 @@ public class CityBuildJoinEvent extends Event {
 		if (!dataWasLoaded || waitingForAuth)
 			return;
 
-		new CityBuildJoinEvent().fire();
+		new CitybuildJoinEvent().fire();
 		dataWasLoaded = false;
 	}
 

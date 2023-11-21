@@ -27,7 +27,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -88,7 +88,7 @@ public class PlotChatIndicator extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onCityBuildJoin(CityBuildJoinEvent event) {
+	public void onCitybuildJoin(CitybuildJoinEvent event) {
 		String server = getServerFromScoreboard();
 		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser") || server.equals("Portal")) {
 			plotchatState = false;

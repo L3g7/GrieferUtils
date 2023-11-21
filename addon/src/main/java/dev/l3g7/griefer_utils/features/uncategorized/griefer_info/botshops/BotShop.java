@@ -86,7 +86,7 @@ public class BotShop {
 	public void addItemStack(GuiBigChest chest, int id, boolean isCbFiltered) {
 		String name = "§6§n" + this.name;
 		if (!isCbFiltered)
-			name = String.format("§e[%s] %s", MinecraftUtil.getCityBuildAbbreviation(cb.getDisplayName()), name);
+			name = String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getDisplayName()), name);
 
 		String texture = "wallets/";
 		if (buying) texture += "in";
@@ -94,7 +94,7 @@ public class BotShop {
 		texture += "going";
 
 		chest.addTextureItem(id, new TextureItem(texture, 14, ItemUtil.createItem(Blocks.command_block, 0, name)), () -> {
-			BetterSwitchCommand.sendOnCityBuild("/p h " + this.name, cb);
+			BetterSwitchCommand.sendOnCitybuild("/p h " + this.name, cb);
 			mc().displayGuiScreen(null);
 		});
 	}

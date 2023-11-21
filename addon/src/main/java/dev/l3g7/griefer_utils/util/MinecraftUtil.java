@@ -140,7 +140,7 @@ public class MinecraftUtil {
 		return team == null ? "" : team.getColorPrefix().replaceAll("§.", "");
 	}
 
-	public static String getCityBuildAbbreviation(String citybuild) {
+	public static String getCitybuildAbbreviation(String citybuild) {
 		if (citybuild.startsWith("CB"))
 			return citybuild.substring(2);
 		if (citybuild.startsWith("Citybuild "))

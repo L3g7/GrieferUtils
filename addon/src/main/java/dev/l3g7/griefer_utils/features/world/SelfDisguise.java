@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -118,7 +118,7 @@ public class SelfDisguise extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onCityBuildJoin(CityBuildJoinEvent event) {
+	public void onCitybuildJoin(CitybuildJoinEvent event) {
 		resetDisguise();
 	}
 

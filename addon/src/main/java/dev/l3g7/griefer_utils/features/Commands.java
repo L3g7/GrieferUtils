@@ -21,7 +21,7 @@ package dev.l3g7.griefer_utils.features;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 
@@ -88,7 +88,7 @@ public class Commands {
 	}
 
 	@EventListener
-	private static void onCityBuild(CityBuildJoinEvent event) {
+	private static void onCitybuild(CitybuildJoinEvent event) {
 		if (onCbCommands.isEmpty())
 			return;
 

@@ -91,7 +91,7 @@ public class PieMenu extends Gui implements Disableable {
 					continue;
 
 				PieMenuEntrySetting entry = (PieMenuEntrySetting) element;
-				String cb = entry.cityBuild.get().getDisplayName();
+				String cb = entry.citybuild.get().getDisplayName();
 				String srv = MinecraftUtil.getServerFromScoreboard();
 				if (cb.equals("Egal") || srv.equals(cb))
 					entries.add(Pair.of(ModColor.createColors(entry.name.get()), entry.command.get()));

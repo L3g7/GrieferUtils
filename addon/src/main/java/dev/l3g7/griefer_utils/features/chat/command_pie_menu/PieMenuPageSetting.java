@@ -109,7 +109,7 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 			JsonObject entryObj = new JsonObject();
 			entryObj.addProperty("name", pieEntry.name.get());
 			entryObj.addProperty("command", pieEntry.command.get());
-			entryObj.addProperty("cb", pieEntry.cityBuild.get().getDisplayName());
+			entryObj.addProperty("cb", pieEntry.citybuild.get().getDisplayName());
 
 			entries.add(entryObj);
 		}

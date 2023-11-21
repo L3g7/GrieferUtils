@@ -33,13 +33,13 @@ public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilde
 
 	public final StringSetting name;
 	public final StringSetting command;
-	public final ItemSetting cityBuild;
+	public final ItemSetting citybuild;
 
 	private String defaultName;
 	private String defaultCommand;
-	private ItemStack defaultCityBuild;
+	private ItemStack defaultCitybuild;
 
-	public PieMenuEntrySetting(String name, String command, ItemStack cityBuild) {
+	public PieMenuEntrySetting(String name, String command, ItemStack citybuild) {
 		this.name = new StringSetting()
 			.name("Name")
 			.description("Wie dieser Eintrag heißen soll.")
@@ -52,13 +52,13 @@ public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilde
 			.defaultValue(defaultCommand = command)
 			.icon(Material.COMMAND);
 
-		this.cityBuild = new ItemSetting(ItemUtil.CB_ITEMS, false)
-			.name("CityBuild")
+		this.citybuild = new ItemSetting(ItemUtil.CB_ITEMS, false)
+			.name("Citybuild")
 			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll.")
-			.defaultValue((defaultCityBuild = cityBuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCityBuild);
+			.defaultValue((defaultCitybuild = citybuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCitybuild);
 
 		icon("command_pie_menu");
-		subSettings(this.name, this.command, this.cityBuild);
+		subSettings(this.name, this.command, this.citybuild);
 	}
 
 	@Override
@@ -69,9 +69,9 @@ public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilde
 	public void openSettings() {
 		defaultName = name.get();
 		defaultCommand = command.get();
-		defaultCityBuild = cityBuild.get();
+		defaultCitybuild = citybuild.get();
 		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
-			if (!name.get().isEmpty() && !command.get().isEmpty() && cityBuild.get() != null) {
+			if (!name.get().isEmpty() && !command.get().isEmpty() && citybuild.get() != null) {
 				onChange();
 				return;
 			}
@@ -85,8 +85,8 @@ public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilde
 				name.set(defaultName);
 			if (command.get().isEmpty())
 				command.set(defaultCommand);
-			if (cityBuild.get() == null)
-				cityBuild.set(defaultCityBuild);
+			if (citybuild.get() == null)
+				citybuild.set(defaultCitybuild);
 			onChange();
 		}, this));
 	}
@@ -95,7 +95,7 @@ public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilde
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 
-		String cb = "§e[" + MinecraftUtil.getCityBuildAbbreviation(cityBuild.get().getDisplayName()) + "] ";
+		String cb = "§e[" + MinecraftUtil.getCitybuildAbbreviation(citybuild.get().getDisplayName()) + "] ";
 		int cbWidth = drawUtils().getStringWidth(cb);
 
 		String trimmedName = drawUtils().trimStringToWidth(name.get(), maxX - x - 25 - 48);

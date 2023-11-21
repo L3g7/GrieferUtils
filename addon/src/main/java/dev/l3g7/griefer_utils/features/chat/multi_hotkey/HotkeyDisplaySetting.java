@@ -46,18 +46,18 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 	public final StringSetting name;
 	public final KeySetting keys;
 	public final StringListSetting commands;
-	public final ItemSetting cityBuild;
+	public final ItemSetting citybuild;
 
 	private String defaultName;
 	private Set<Integer> defaultKeys;
 	private List<String> defaultCommands;
-	private ItemStack defaultCityBuild;
+	private ItemStack defaultCitybuild;
 
 	private int amountsTriggered = 0;
 	private boolean hoveringDelete = false;
 	private boolean hoveringEdit = false;
 
-	public HotkeyDisplaySetting(String name, Set<Integer> keys, List<String> commands, ItemStack cityBuild) {
+	public HotkeyDisplaySetting(String name, Set<Integer> keys, List<String> commands, ItemStack citybuild) {
 		super("§f", null);
 
 		this.name = new StringSetting()
@@ -71,10 +71,10 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 			.defaultValue(defaultCommands = commands)
 			.setContainer(this);
 
-		this.cityBuild = new ItemSetting(ItemUtil.CB_ITEMS, false)
-			.name("CityBuild")
+		this.citybuild = new ItemSetting(ItemUtil.CB_ITEMS, false)
+			.name("Citybuild")
 			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll.")
-			.defaultValue((defaultCityBuild = cityBuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCityBuild);
+			.defaultValue((defaultCitybuild = citybuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCitybuild);
 
 		this.keys = new KeySetting()
 			.name("Taste")
@@ -85,7 +85,7 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 				if (!b || !FileProvider.getSingleton(MultiHotkey.class).isEnabled())
 					return;
 
-				String cb = this.cityBuild.get().getDisplayName();
+				String cb = this.citybuild.get().getDisplayName();
 				if (!cb.equals("Egal") && !cb.equals(MinecraftUtil.getServerFromScoreboard()))
 					return;
 
@@ -102,7 +102,7 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 			});
 
 
-		subSettings(this.name, this.keys, this.commands, this.cityBuild, new HeaderSetting("§e§lBefehle").scale(0.7));
+		subSettings(this.name, this.keys, this.commands, this.citybuild, new HeaderSetting("§e§lBefehle").scale(0.7));
 		setSettingEnabled(false);
 		this.commands.initList();
 	}
@@ -116,9 +116,9 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 		defaultName = name.get();
 		defaultKeys = keys.get();
 		defaultCommands = new ArrayList<>(commands.get());
-		defaultCityBuild = cityBuild.get();
+		defaultCitybuild = citybuild.get();
 		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
-			if (!name.get().isEmpty() && !keys.get().isEmpty() && !commands.get().isEmpty() && cityBuild.get() != null) {
+			if (!name.get().isEmpty() && !keys.get().isEmpty() && !commands.get().isEmpty() && citybuild.get() != null) {
 				triggerOnChange();
 				return;
 			}
@@ -134,8 +134,8 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 				keys.set(defaultKeys);
 			if (commands.get().isEmpty())
 				commands.set(defaultCommands);
-			if (cityBuild.get() == null)
-				cityBuild.set(defaultCityBuild);
+			if (citybuild.get() == null)
+				citybuild.set(defaultCitybuild);
 
 			triggerOnChange();
 		}, this));
@@ -165,7 +165,7 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 	}
 
 	private void triggerOnChange() {
-		icon(cityBuild.get());
+		icon(citybuild.get());
 		FileProvider.getSingleton(MultiHotkey.class).onChange();
 	}
 

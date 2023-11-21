@@ -79,7 +79,7 @@ public class InteractableProfiles extends Feature {
 		if (slot != getSlotUnderMouse(gui) || !slot.getHasStack() || !slot.getStack().hasTagCompound())
 			return;
 
-		// CityBuild is not visible
+		// Citybuild is not visible
 		if (slot.getStack().getItem() == Item.getItemFromBlock(Blocks.barrier))
 			return;
 

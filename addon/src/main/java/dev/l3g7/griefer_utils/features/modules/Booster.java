@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.Named;
@@ -94,7 +94,7 @@ public class Booster extends Module {
 	}
 
 	@EventListener
-	public void onCBJoin(CityBuildJoinEvent event) {
+	public void onCBJoin(CitybuildJoinEvent event) {
 		if (!isOnGrieferGames())
 			return;
 

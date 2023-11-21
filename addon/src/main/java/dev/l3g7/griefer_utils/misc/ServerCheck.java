@@ -21,7 +21,7 @@ package dev.l3g7.griefer_utils.misc;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import net.labymod.core.asm.LabyModCoreMod;
 
@@ -47,7 +47,7 @@ public class ServerCheck {
 	}
 
 	@EventListener
-	public void onCitybuildJoin(CityBuildJoinEvent event) {
+	public void onCitybuildJoin(CitybuildJoinEvent event) {
 		onCitybuild = true;
 	}
 

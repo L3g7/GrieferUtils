@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
@@ -105,7 +105,7 @@ public class CooldownNotifications extends Feature {
 	}
 
 	@EventListener
-	public void onCBJoin(CityBuildJoinEvent event) {
+	public void onCBJoin(CitybuildJoinEvent event) {
 		// If no data is found, open and close /cooldowns automatically
 		if (endDates.isEmpty()) {
 			guiInitBlock = ChatQueue.sendBlocking("/cooldowns", () -> {
@@ -122,7 +122,7 @@ public class CooldownNotifications extends Feature {
 	}
 
 	@EventListener
-	public void onCityBuildJoin(CityBuildJoinEvent event) {
+	public void onCitybuildJoin(CitybuildJoinEvent event) {
 		if (!sendCooldowns)
 			return;
 
@@ -206,7 +206,7 @@ public class CooldownNotifications extends Feature {
 		guiInitBlock.complete(null);
 		waitingForCooldownGUI = false;
 		sendCooldowns = true;
-		onCityBuildJoin(null);
+		onCitybuildJoin(null);
 	}
 
 	private boolean checkEndTime(String name) {

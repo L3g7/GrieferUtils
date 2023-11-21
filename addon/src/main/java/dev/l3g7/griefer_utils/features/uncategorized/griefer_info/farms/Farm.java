@@ -21,10 +21,10 @@ package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.features.chat.BetterSwitchCommand;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.FreeStuff;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest.TextureItem;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiList;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.FreeStuff;
 import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
@@ -100,7 +100,7 @@ public class Farm {
 
 	public void addItemStack(GuiBigChest chest, int id, SpawnerType type, boolean isCbFiltered, boolean secondRow) {
 		chest.addItem(id, toStack(type, isCbFiltered, secondRow), () -> {
-			BetterSwitchCommand.sendOnCityBuild("/p h " + name, cb);
+			BetterSwitchCommand.sendOnCitybuild("/p h " + name, cb);
 			mc().displayGuiScreen(null);
 		}, () -> openGui(chest), () -> {
 			if (freeStuff == null)
@@ -121,7 +121,7 @@ public class Farm {
 		GuiList gui = new GuiList("§8§lFarmen - " + name, 7, previousGui);
 		for (Spawner s : spawner) {
 			Runnable onClick = () -> {
-				BetterSwitchCommand.sendOnCityBuild("/p h " + (s.plot == null ? name : s.plot), cb);
+				BetterSwitchCommand.sendOnCitybuild("/p h " + (s.plot == null ? name : s.plot), cb);
 				mc().displayGuiScreen(null);
 			};
 
@@ -140,7 +140,7 @@ public class Farm {
 
 		stack.setStackDisplayName("§6§n" + name);
 		if (!isCbFiltered)
-			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCityBuildAbbreviation(cb.getDisplayName()), stack.getDisplayName()));
+			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getDisplayName()), stack.getDisplayName()));
 
 		TreeMap<SpawnerType, AtomicInteger> spawner = new TreeMap<>(Comparator.comparing(s -> s.germanName));
 		NBTTagList textureList = new NBTTagList();

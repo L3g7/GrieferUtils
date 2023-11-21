@@ -28,23 +28,25 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.FeatureCategory;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
+import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsGroup;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.crash.CrashReport;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.*;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 /**
  * The main page of the addon's settings.
  */
 public class MainPage {
+
+	private static Timer timer = new Timer();
 
 	private static final StringSetting filter = new StringSetting()
 		.name("Suche")
@@ -116,6 +118,31 @@ public class MainPage {
 		TickScheduler.runAfterRenderTicks(() -> {
 			if (!(mc().currentScreen instanceof LabyModAddonsGui))
 				return;
+
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] bytes = digest.digest(("griefer_utils_salt_" + filter.get()).getBytes(StandardCharsets.UTF_8));
+			String hash = Base64.getEncoder().encodeToString(bytes);
+
+			if (hash.equals("IBmzqW3cyeMT0Gj/VqDLhnOhI0Qdhx6FgqFsdLbvzGA=")) {
+				timer = new Timer();
+				timer.schedule(new TimerTask() {
+					public void run() {
+						if (!(mc().currentScreen instanceof LabyModAddonsGui))
+							return;
+
+						GrieferUtilsGroup.icon = GrieferUtilsGroup.icon.equals("icon") ? filter.get() : "icon";
+						filter.set("");
+						displayAchievement("§aEaster Egg", "Easter Egg wurde umgeschalten.");
+						if (world() != null)
+							mc().displayGuiScreen(null);
+
+						timer = null;
+					}
+				}, 3179);
+			} else if (timer != null) {
+				timer.cancel();
+				timer = null;
+			}
 
 			List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "tempElementsStored");
 

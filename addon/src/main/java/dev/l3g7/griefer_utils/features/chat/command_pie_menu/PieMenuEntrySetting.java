@@ -42,16 +42,19 @@ public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilde
 	public PieMenuEntrySetting(String name, String command, ItemStack cityBuild) {
 		this.name = new StringSetting()
 			.name("Name")
+			.description("Wie dieser Eintrag heißen soll.")
 			.defaultValue(defaultName = name)
 			.icon(Material.BOOK_AND_QUILL);
 
 		this.command = new StringSetting()
 			.name("Befehl")
+			.description("Welcher Befehl ausgeführt werden soll, wenn dieser Eintrag ausgewählt wird.")
 			.defaultValue(defaultCommand = command)
 			.icon(Material.COMMAND);
 
 		this.cityBuild = new ItemSetting(ItemUtil.CB_ITEMS, false)
 			.name("CityBuild")
+			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll.")
 			.defaultValue((defaultCityBuild = cityBuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCityBuild);
 
 		icon("command_pie_menu");

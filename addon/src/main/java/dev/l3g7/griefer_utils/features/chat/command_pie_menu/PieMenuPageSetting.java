@@ -43,6 +43,7 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 	public PieMenuPageSetting(String name, ArrayList<SettingsElement> entrySettings) {
 		this.name = new StringSetting()
 			.name("Name")
+			.description("Wie diese Seite heißen soll.")
 			.callback(s -> name(s))
 			.defaultValue(defaultName = name)
 			.icon(Material.BOOK_AND_QUILL);

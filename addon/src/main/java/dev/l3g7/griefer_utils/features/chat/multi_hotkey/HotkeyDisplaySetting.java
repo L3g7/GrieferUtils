@@ -62,6 +62,7 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 
 		this.name = new StringSetting()
 			.name("Name")
+			.description("Wie dieser Hotkey heißen soll.")
 			.defaultValue(defaultName = name)
 			.icon(Material.BOOK_AND_QUILL);
 
@@ -72,6 +73,7 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 
 		this.cityBuild = new ItemSetting(ItemUtil.CB_ITEMS, false)
 			.name("CityBuild")
+			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll.")
 			.defaultValue((defaultCityBuild = cityBuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCityBuild);
 
 		this.keys = new KeySetting()

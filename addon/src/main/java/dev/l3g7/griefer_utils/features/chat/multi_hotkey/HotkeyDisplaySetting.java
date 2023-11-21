@@ -73,12 +73,12 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 
 		this.citybuild = new ItemSetting(ItemUtil.CB_ITEMS, false)
 			.name("Citybuild")
-			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll.")
+			.description("Auf welchem Citybuild dieser Hotkey funktionieren soll.")
 			.defaultValue((defaultCitybuild = citybuild) == null ? ItemUtil.CB_ITEMS.get(0) : defaultCitybuild);
 
 		this.keys = new KeySetting()
 			.name("Taste")
-			.description("Durch das Drücken welcher Taste/-n dieser Hotkey ausgelöst wird.")
+			.description("Durch das Drücken welcher Taste/-n dieser Hotkey ausgelöst werden soll.")
 			.defaultValue(defaultKeys = keys)
 			.icon("key")
 			.pressCallback(b -> {

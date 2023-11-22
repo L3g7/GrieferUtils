@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -43,8 +44,14 @@ public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilde
 		this.name = new StringSetting()
 			.name("Name")
 			.description("Wie dieser Eintrag heißen soll.")
-			.defaultValue(defaultName = name)
-			.icon(Material.BOOK_AND_QUILL);
+			.icon(Material.BOOK_AND_QUILL)
+			.callback(title -> {
+				if (title.trim().isEmpty())
+					title = "Unbenannter Eintrag";
+
+				HeaderSetting titleSetting = (HeaderSetting) getSubSettings().getElements().get(2);
+				titleSetting.name("§e§l" + title);
+			});
 
 		this.command = new StringSetting()
 			.name("Befehl")
@@ -59,6 +66,7 @@ public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilde
 
 		icon("command_pie_menu");
 		subSettings(this.name, this.command, this.citybuild);
+		this.name.defaultValue(defaultName = name);
 	}
 
 	@Override

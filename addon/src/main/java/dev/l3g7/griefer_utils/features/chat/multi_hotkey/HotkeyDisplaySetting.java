@@ -63,8 +63,14 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 		this.name = new StringSetting()
 			.name("Name")
 			.description("Wie dieser Hotkey heißen soll.")
-			.defaultValue(defaultName = name)
-			.icon(Material.BOOK_AND_QUILL);
+			.icon(Material.BOOK_AND_QUILL)
+			.callback(title -> {
+				if (title.trim().isEmpty())
+					title = "Unbenannter Hotkey";
+
+				HeaderSetting titleSetting = (HeaderSetting) getSubSettings().getElements().get(2);
+				titleSetting.name("§e§l" + title);
+			});
 
 		this.commands = new StringListSetting()
 			.name("Befehl hinzufügen")
@@ -104,6 +110,7 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 
 		subSettings(this.name, this.keys, this.commands, this.citybuild, new HeaderSetting("§e§lBefehle").scale(0.7));
 		setSettingEnabled(false);
+		this.name.defaultValue(defaultName = name);
 		this.commands.initList();
 	}
 

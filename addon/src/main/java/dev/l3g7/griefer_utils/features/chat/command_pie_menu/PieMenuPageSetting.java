@@ -24,6 +24,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -44,9 +45,15 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 		this.name = new StringSetting()
 			.name("Name")
 			.description("Wie diese Seite heißen soll.")
-			.callback(s -> name(s))
-			.defaultValue(defaultName = name)
-			.icon(Material.BOOK_AND_QUILL);
+			.icon(Material.BOOK_AND_QUILL)
+			.callback(title -> {
+				if (title.trim().isEmpty())
+					title = "Unbenannte Seite";
+
+				HeaderSetting titleSetting = (HeaderSetting) getSubSettings().getElements().get(2);
+				name(title);
+				titleSetting.name("§e§l" + title);
+			});
 
 		icon(Material.EMPTY_MAP);
 
@@ -63,6 +70,7 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 			}));
 
 		subSettings(entrySettings.toArray(new SettingsElement[0]));
+		this.name.defaultValue(defaultName = name);
 		setSettingEnabled(false);
 		container = FileProvider.getSingleton(CommandPieMenu.class).getMainElement();
 	}

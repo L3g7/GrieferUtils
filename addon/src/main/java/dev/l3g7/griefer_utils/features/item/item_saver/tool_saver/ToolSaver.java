@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -40,6 +41,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.MovingObjectPosition;
 
 import java.util.List;
@@ -97,6 +102,31 @@ public class ToolSaver extends ItemSaver {
 
 		if (shouldCancel(player().getHeldItem()))
 			event.cancel();
+	}
+
+	@EventListener
+	private void onPacketSend(PacketSendEvent<Packet<?>> event) {
+		if (event.packet instanceof C02PacketUseEntity) {
+			if (shouldCancel(player().getHeldItem()))
+				event.cancel();
+
+			return;
+		}
+
+		if (event.packet instanceof C07PacketPlayerDigging) {
+			C07PacketPlayerDigging packet = (C07PacketPlayerDigging) event.packet;
+			if (packet.getStatus() == C07PacketPlayerDigging.Action.START_DESTROY_BLOCK && shouldCancel(player().getHeldItem()))
+				event.cancel();
+
+			return;
+		}
+
+		if (event.packet instanceof C08PacketPlayerBlockPlacement) {
+			C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
+			IBlockState state = world().getBlockState(packet.getPosition());
+			if (shouldCancel(packet.getStack()) && (state == null || !(state.getBlock() instanceof BlockContainer)))
+				event.cancel();
+		}
 	}
 
 	@EventListener

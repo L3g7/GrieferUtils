@@ -30,10 +30,10 @@ type HiveMindEntry struct {
 var entries = make(map[string]map[string]map[string]HiveMindEntry)
 var entriesMutex sync.Mutex
 
-var validNames = strings.Split(os.Getenv("HIVE_MIND_VALID_NAMES"), ",")
-var validCityBuilds = strings.Split(os.Getenv("HIVE_MIND_VALID_CITY_BUILDS"), ",")
-
 func HiveMindRoute(w http.ResponseWriter, r *http.Request, token *jwt.Token) error {
+	validNames := strings.Split(os.Getenv("HIVE_MIND_VALID_NAMES"), ",")
+	validCityBuilds := strings.Split(os.Getenv("HIVE_MIND_VALID_CITY_BUILDS"), ",")
+
 	claims, _ := token.Claims.(jwt.MapClaims)
 	user := claims["sub"].(string)
 

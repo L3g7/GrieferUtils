@@ -39,7 +39,7 @@ class RecraftPlayer {
 
 	private static Deque<Action> pendingActions;
 	private static boolean closeGui = false;
-	private static boolean executingAction = false;
+	private static Action actionBeingExecuted = null;
 
 	public static void play(RecraftRecording recording) {
 		if (world() == null || !mc().inGameHasFocus)
@@ -56,6 +56,7 @@ class RecraftPlayer {
 
 	@EventListener
 	private static void onGuiOpen(GuiOpenEvent<GuiChest> event) {
+		actionBeingExecuted = null;
 		if (closeGui) {
 			TickScheduler.runAfterRenderTicks(() -> player().closeScreen(), 1);
 			closeGui = false;
@@ -72,15 +73,24 @@ class RecraftPlayer {
 		}
 
 		TickScheduler.runAfterRenderTicks(() -> {
-			if (!pendingActions.isEmpty()) {
-				executingAction = true;
-				pendingActions.poll().execute(event.gui);
-				executingAction = false;
-			}
+			if (!pendingActions.isEmpty())
+				executeAction(pendingActions.poll(), event.gui);
 
 			if (pendingActions.isEmpty())
 				closeGui = true;
 		}, 1);
+	}
+
+	private static void executeAction(Action action, GuiChest chest) {
+		actionBeingExecuted = action;
+		action.execute(chest);
+
+		TickScheduler.runAfterClientTicks(() -> {
+			if (actionBeingExecuted == action) {
+				// Action failed, try again
+				executeAction(action, chest);
+			}
+		}, 2);
 	}
 
 	@EventListener
@@ -90,7 +100,7 @@ class RecraftPlayer {
 
 	@EventListener
 	private static void onWindowClick(WindowClickEvent event) {
-		if (pendingActions == null || executingAction)
+		if (pendingActions == null || actionBeingExecuted != null)
 			return;
 
 		display(Constants.ADDON_PREFIX + "§cDas Abspielen wurde aufgrund einer manuellen Aktion abgebrochen.");

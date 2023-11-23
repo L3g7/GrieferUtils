@@ -59,12 +59,7 @@ public class Commands {
 			if (argsString.isEmpty())
 				return "Usage: /gu:run_on_cb <text>";
 
-			if (ServerCheck.isOnCitybuild()) {
-				if (!MessageEvent.MessageSendEvent.post(command))
-					player().sendChatMessage(argsString);
-			} else {
-				onCbCommands.add(argsString);
-			}
+			runOnCb(argsString);
 			return null;
 		}
 
@@ -85,6 +80,15 @@ public class Commands {
 		}
 
 		return "Unbekannter Befehl. (Siehe /gu:help)";
+	}
+
+	public static void runOnCb(String command) {
+		if (ServerCheck.isOnCitybuild()) {
+			if (!MessageEvent.MessageSendEvent.post(command))
+				player().sendChatMessage(command);
+		} else {
+			onCbCommands.add(command);
+		}
 	}
 
 	@EventListener

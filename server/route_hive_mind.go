@@ -108,11 +108,19 @@ func HiveMindRoute(w http.ResponseWriter, r *http.Request, token *jwt.Token) err
 						deviationCount++
 					}
 				}
-				avgDeviation := deviationSum / deviationCount
 
-				if avgDeviation < consideredAvgDeviation {
+				if deviationCount == 0 {
+					// Data only available from one user
+
 					consideredValue = &v.Value
-					consideredAvgDeviation = avgDeviation
+					// keep avg deviation at max value
+				} else {
+					avgDeviation := deviationSum / deviationCount
+
+					if avgDeviation < consideredAvgDeviation {
+						consideredValue = &v.Value
+						consideredAvgDeviation = avgDeviation
+					}
 				}
 			}
 

@@ -21,12 +21,14 @@ package dev.l3g7.griefer_utils.util.render;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.Entity;
@@ -401,6 +403,24 @@ public class RenderUtil {
 			tooltipY = height - tooltipHeight - 6;
 
 		return Pair.of(tooltipX, tooltipY);
+	}
+
+	public static void renderPlayerSkull(int x, int y) {
+		String name = mc().getSession().getToken().equals("FML") ? "GrieferUtils" : name();
+		ItemStack stack = ItemUtil.fromNBT("{id:\"minecraft:skull\",Count:1b,tag:{SkullOwner:\"" + name + "\"},Damage:3s}");
+
+		GlStateManager.pushMatrix();
+
+		GlStateManager.translate(x + 15.3333, y + 13, 0);
+		GlStateManager.scale(10, 10, -10);
+		GlStateManager.rotate(210, 1, 0, 0);
+		GlStateManager.rotate(-135, 0, 1, 0);
+
+		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.enableDepth();
+		TileEntityItemStackRenderer.instance.renderByItem(stack);
+
+		GlStateManager.popMatrix();
 	}
 
 }

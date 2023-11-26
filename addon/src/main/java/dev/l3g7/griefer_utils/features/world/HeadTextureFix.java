@@ -24,6 +24,8 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.render.RenderUtil;
+import net.labymod.settings.elements.ControlElement.IconData;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -37,9 +39,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.labyMod;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.uuid;
-
 @Singleton
 public class HeadTextureFix extends Feature {
 
@@ -47,12 +46,13 @@ public class HeadTextureFix extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting() {
 		@Override
 		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			iconData = new IconData(labyMod().getDynamicTextureManager().getTexture("griefer_utils/heads/" + uuid(), "https://crafatar.com/renders/head/" + uuid() + "?scale=5&overlay"));
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
+			RenderUtil.renderPlayerSkull(x + 3, y + 2);
 		}
 	}
 		.name("Kopf-Texturen fixen")
-		.description("Lädt Kopf-Texturen automatisch nach.");
+		.description("Lädt Kopf-Texturen automatisch nach.")
+		.icon(new IconData());
 
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());
 	public static final Set<String> processedProfiles = Collections.synchronizedSet(new HashSet<>());

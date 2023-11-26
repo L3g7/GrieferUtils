@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
+import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
@@ -66,14 +67,10 @@ public class Credits {
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Code-Credits"),
-			new TextSetting("core.misc.Base58", "Encodierung der SSSS-Schlüssel", "Aus org.bitcoinj", "© 2011 Google Inc., © 2018 Andreas Schildbach", "Apache License 2.0"),
-			new HeaderSetting().entryHeight(5),
 			new TextSetting("core.misc.BufferedImageLuminanceSource", "Umwandlung von Bildern in Licht-Bitmaps", "Aus com.google.zxing", "© 2009 ZXing authors", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(11),
 
 			new HeaderSetting("Bibliotheken"),
-			new TextSetting("org.matrix.android:olm", "Olm und Megolm Kryptographie-Ratchets für Matrix", "Windows-Binary von Famedly GmbH", "Mac-Binary von CobbleShop", "Apache License 2.0"),
-			new HeaderSetting().entryHeight(5),
 			new TextSetting("com.github.gatooooooo:ForgeGradle", "Fork von ForgeGradle für Gradle 6", "LPGL-2.1"),
 			new HeaderSetting().entryHeight(5),
 			new TextSetting("com.github.xcfrg:mixingradle", "Fork von MixinGradle für ForgeGradle 2.1", "MIT"),
@@ -83,10 +80,6 @@ public class Credits {
 			new CookieSetting("com.github.l3g73:freecookies", "Stellt gratis Kekse bereit: Klicke hier", "Cookie License 4.2"),
 			new HeaderSetting().entryHeight(5),
 			new TextSetting("org.mariuszgromada.math:MathParser.org-mXparser", "Gleichungsberechnung für Rechner", "eigener Open-Source-Lizenz (Dual)"),
-			new HeaderSetting().entryHeight(5),
-			new TextSetting("at.favre.lib:hkdf", "Schlüsselableitung (HKDF) für Matrix", "Apache License 2.0"),
-			new HeaderSetting().entryHeight(5),
-			new TextSetting("net.i2p.crypto:eddsa", "ECC-Signaturen (EdDSA) für Matrix", "Creative Commons Zero v1.0 Universal"),
 			new HeaderSetting().entryHeight(5),
 			new TextSetting("com.google.zxing:core", "QR-Code-Leser für QR-Code Scanner", "Apache License 2.0"),
 			new HeaderSetting().entryHeight(11),
@@ -128,13 +121,13 @@ public class Credits {
 	private static class UserSetting extends ControlElement {
 
 		private UserSetting() {
-			super("Vielen Dank für das Nutzen von GrieferUtils!", null);
+			super("Vielen Dank für das Nutzen von GrieferUtils!", new IconData());
 		}
 
 		@Override
 		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
-			iconData = new IconData(labyMod().getDynamicTextureManager().getTexture("griefer_utils/heads/" + uuid(), "https://crafatar.com/renders/head/" + uuid() + "?scale=5&overlay"));
+			RenderUtil.renderPlayerSkull(x + 3, y + 2);
 		}
 
 	}

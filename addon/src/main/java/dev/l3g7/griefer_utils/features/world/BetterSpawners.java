@@ -27,15 +27,15 @@ import dev.l3g7.griefer_utils.event.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.event.events.TileEntityDataSetEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
-import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer;
-import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObject;
-import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer;
+import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObject;
+import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -97,7 +97,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	private final BooleanSetting showSpawnerIcons = new BooleanSetting()
 		.name("Spawner-Icons anzeigen")
 		.description("Zeigt an Spawnern ein Icon des Mobs an, das gespawnt wird.")
-		.icon("griefer_info/outlined_mob_icons/Silverfish")
+		.icon("mob_icons/outlined_minecraft/silverfish")
 		.subSettings(range);
 
 	private final BooleanSetting markTriggeredSpawners = new BooleanSetting()

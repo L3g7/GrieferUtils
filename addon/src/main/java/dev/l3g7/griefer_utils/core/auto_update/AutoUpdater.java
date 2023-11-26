@@ -91,6 +91,11 @@ public class AutoUpdater {
 
 		// Get info about the latest release
 		InputStream in = read("https://grieferutils.l3g7.dev/v3/latest_release");
+
+		// Check if the server could be reached
+		if (in == null)
+			return;
+
 		@SuppressWarnings("UnstableApiUsage")
 		Map<String, ReleaseInfo> releases = GSON.fromJson(new InputStreamReader(in), new TypeToken<Map<String, ReleaseInfo>>(){}.getType());
 		in.close();
@@ -135,6 +140,11 @@ public class AutoUpdater {
 		// Download target file
 		if (shouldDownload) {
 			in = read(downloadUrl);
+
+			// Check if the server could be reached
+			if (in == null)
+				return;
+
 			Files.copy(in, targetFile.toPath());
 			in.close();
 		}
@@ -301,15 +311,19 @@ public class AutoUpdater {
 	/**
 	 * @see dev.l3g7.griefer_utils.core.util.IOUtil
 	 */
-	public static InputStream read(String url) throws IOException {
-		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+	public static InputStream read(String url) {
+		try {
+			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
-		if (conn instanceof HttpsURLConnection)
-			((HttpsURLConnection) conn).setSSLSocketFactory(getCustomFactory());
+			if (conn instanceof HttpsURLConnection)
+				((HttpsURLConnection) conn).setSSLSocketFactory(getCustomFactory());
 
-		conn.addRequestProperty("User-Agent", "GrieferUtils");
-		conn.setConnectTimeout(10000);
-		return conn.getInputStream();
+			conn.addRequestProperty("User-Agent", "GrieferUtils");
+			conn.setConnectTimeout(10000);
+			return conn.getInputStream();
+		} catch (IOException ignored) {
+			return null;
+		}
 	}
 
 	private static SSLSocketFactory customFactory = null;

@@ -35,7 +35,7 @@ public class HideEffectParticles extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Effekt-Partikel verstecken")
-		.description("Versteckt von Entites mit Effekten ausgelöste Partikel.")
+		.description("Versteckt von Entities mit Effekten ausgelöste Partikel.")
 		.icon("green_particle");
 
 	@Mixin(EntityLivingBase.class)

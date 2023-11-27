@@ -19,7 +19,6 @@
 package dev.l3g7.griefer_utils.features.item.recraft;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.item.recraft.Action.Ingredient;
@@ -27,7 +26,6 @@ import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 
@@ -49,6 +47,7 @@ class RecraftRecorder {
 			return;
 		}
 
+		recording.actions.clear();
 		RecraftRecorder.recording = recording;
 		previousScreen = mc().currentScreen;
 		addedIcon = false;
@@ -60,21 +59,19 @@ class RecraftRecorder {
 		if (RecraftPlayer.isPlaying())
 			return;
 
-		if (!(event.gui instanceof GuiChest)) {
-			recording = Recraft.tempRecording;
-			isChestOpen = false;
-			if (previousScreen != null && previousScreen != event.gui) {
-				event.cancel();
-				mc().displayGuiScreen(previousScreen);
-				previousScreen = null;
-			}
+		if (event.gui instanceof GuiChest) {
+			isChestOpen = true;
 			return;
 		}
 
-		isChestOpen = true;
-		IInventory inv = Reflection.get(event.gui, "lowerChestInventory");
-		if ("§6Custom-Kategorien".equals(inv.getDisplayName().getUnformattedText()))
-			recording.actions.clear();
+		recording = Recraft.tempRecording;
+		isChestOpen = false;
+		if (previousScreen == null || previousScreen == event.gui)
+			return;
+
+		event.cancel();
+		mc().displayGuiScreen(previousScreen);
+		previousScreen = null;
 	}
 
 	@EventListener
@@ -100,6 +97,7 @@ class RecraftRecorder {
 				return;
 		}
 
+		System.out.println("Added action: " + recording.actions.size());
 		recording.actions.add(new Action(packet.getSlotId(), ingredient));
 	}
 

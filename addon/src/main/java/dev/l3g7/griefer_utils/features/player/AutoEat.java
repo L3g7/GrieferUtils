@@ -29,10 +29,13 @@ import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.MovingObjectPosition;
 
 import java.util.function.BiPredicate;
 
@@ -40,6 +43,7 @@ import static dev.l3g7.griefer_utils.features.player.AutoEat.PreferredFood.HIGH_
 import static dev.l3g7.griefer_utils.features.player.AutoEat.TriggerMode.EFFICIENTLY;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.labymod.utils.Material.COOKED_BEEF;
+import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 /**
  * Automatically eats when hungry.
@@ -77,6 +81,14 @@ public class AutoEat extends Feature {
 		// Check whether eating makes sense
 		if (player().getItemInUse() != null) return;
 		if (!player().canEat(false)) return;
+
+		// Don't eat if the player is looking at a container
+		MovingObjectPosition mop = mc().objectMouseOver;
+		if (mop != null && mop.typeOfHit == BLOCK) {
+			IBlockState state = world().getBlockState(mop.getBlockPos());
+			if (state != null && state.getBlock() instanceof BlockContainer)
+				return;
+		}
 
 		// Get best food
 		int itemIndex = getSlotOfFood();

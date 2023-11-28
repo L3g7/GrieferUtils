@@ -23,8 +23,10 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.event.events.TileEntityDataSetEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -38,12 +40,14 @@ import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObject
 import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityMobSpawnerRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
@@ -70,6 +74,9 @@ import static net.labymod.utils.Material.COMPASS;
 
 @Singleton
 public class BetterSpawners extends Feature implements RenderObjectGenerator {
+
+	private BlockPos lastClickedSpawner = null;
+	private BlockPos lastOpenedSpawner = null;
 
 	private final BooleanSetting spawnerWithHeldItemFix = new BooleanSetting()
 		.name("Spawner mit Item öffnen")
@@ -105,12 +112,17 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		.description("Markiert Spawner, die von der Position des Spielers aktiviert werden.")
 		.icon("light_bulb");
 
+	private final BooleanSetting markLastOpenedSpawner = new BooleanSetting()
+		.name("Zuletzt geöffneten Spawner markieren")
+		.description("Markiert den Spawner, der als letztes geöffnet wurde.")
+		.icon("spawner");
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Spawner verbessern")
 		.description("Verbessert Spawner.")
 		.icon("spawner")
-		.subSettings(spawnerWithHeldItemFix, showSpawnerIcons, markTriggeredSpawners, new HeaderSetting(), hideMobPreview, hideParticles);
+		.subSettings(spawnerWithHeldItemFix, showSpawnerIcons, markTriggeredSpawners, markLastOpenedSpawner, new HeaderSetting(), hideMobPreview, hideParticles);
 
 	@Override
 	public void init() {
@@ -144,6 +156,39 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		short transactionID = player().openContainer.getNextTransactionID(player().inventory);
 		int slotId = player().inventory.currentItem + 36;
 		mc().getNetHandler().addToSendQueue(new C0EPacketClickWindow(0, slotId, 0, 0, itemstack, transactionID));
+	}
+
+	// Mark last opened spawner
+
+	@EventListener
+	private void onItemUsePre(ItemUseEvent.Pre event) {
+		if (!ServerCheck.isOnGrieferGames() || player().isSneaking())
+			return;
+
+		if (event.stack != player().getHeldItem())
+			// Packet probably was sent by a mod / addon
+			return;
+
+		if (event.stack != null && !spawnerWithHeldItemFix.get())
+			return;
+
+		if (world().getBlockState(event.pos).getBlock() == Blocks.mob_spawner && !MinecraftUtil.isInFarmwelt())
+			lastClickedSpawner = event.pos;
+	}
+
+	@EventListener
+	private void onGuiOpen(GuiOpenEvent<GuiChest> event) {
+		IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
+		String title = lowerChestInventory.getDisplayName().getFormattedText();
+		if (title.startsWith("§6Spawner - Lager") && lastClickedSpawner != null) {
+			lastOpenedSpawner = lastClickedSpawner;
+			lastClickedSpawner = null;
+		}
+	}
+
+	@EventListener(triggerWhenDisabled = true)
+	private void onServerSwitch(ServerSwitchEvent event) {
+		lastOpenedSpawner = lastClickedSpawner = null;
 	}
 
 	// Show spawner icons & show triggered spawners
@@ -225,6 +270,12 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 			if (markTriggeredSpawners.get() && (boolean) Reflection.invoke(mobSpawnerBaseLogic, "isActivated")) {
 				GlStateManager.disableDepth();
 				RenderUtil.drawBoxOutlines(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0xFFFF00), 3);
+				GlStateManager.enableDepth();
+			}
+
+			if (markLastOpenedSpawner.get() && pos.equals(lastOpenedSpawner)) {
+				GlStateManager.disableDepth();
+				RenderUtil.drawBoxOutlines(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0x00FF00), 3);
 				GlStateManager.enableDepth();
 			}
 

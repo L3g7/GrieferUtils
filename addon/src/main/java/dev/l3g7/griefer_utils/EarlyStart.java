@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils;
 import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.misc.LibLoader;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.misc.ForgeModWarning;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.core.asm.LabyModTransformer;
 import net.labymod.core.asm.mappings.Minecraft18MappingImplementation;
@@ -47,6 +48,9 @@ public class EarlyStart {
 
 		// Add Injector as transformer
 		Launch.classLoader.registerTransformer("dev.l3g7.griefer_utils.injection.Injector");
+
+		// Disable ForgeModWarning
+		ForgeModWarning.loadedUsingLabyMod = true;
 	}
 
 }

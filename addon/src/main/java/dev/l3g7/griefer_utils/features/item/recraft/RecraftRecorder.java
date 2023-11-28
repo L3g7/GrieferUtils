@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.item.recraft;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.item.recraft.Action.Ingredient;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -40,6 +41,7 @@ class RecraftRecorder {
 	private static GuiScreen previousScreen = null;
 	private static boolean addedIcon = false;
 	private static boolean isChestOpen = false;
+	private static boolean executedCommand = false;
 
 	public static void startRecording(RecraftRecording recording) {
 		if (!ServerCheck.isOnCitybuild()) {
@@ -47,7 +49,6 @@ class RecraftRecorder {
 			return;
 		}
 
-		recording.actions.clear();
 		RecraftRecorder.recording = recording;
 		previousScreen = mc().currentScreen;
 		addedIcon = false;
@@ -55,9 +56,20 @@ class RecraftRecorder {
 	}
 
 	@EventListener
+	private static void onMessageSend(MessageEvent.MessageSendEvent event) {
+		if (event.message.equalsIgnoreCase("/rezepte") || event.message.toLowerCase().startsWith("/rezepte "))
+			executedCommand = true;
+	}
+
+	@EventListener
 	private static void onGuiOpen(GuiOpenEvent<?> event) {
 		if (RecraftPlayer.isPlaying())
 			return;
+
+		if (executedCommand) {
+			recording.actions.clear();
+			executedCommand = false;
+		}
 
 		if (event.gui instanceof GuiChest) {
 			isChestOpen = true;
@@ -97,7 +109,6 @@ class RecraftRecorder {
 				return;
 		}
 
-		System.out.println("Added action: " + recording.actions.size());
 		recording.actions.add(new Action(packet.getSlotId(), ingredient));
 	}
 

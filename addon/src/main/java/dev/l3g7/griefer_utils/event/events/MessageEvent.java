@@ -58,7 +58,7 @@ public class MessageEvent extends Event {
 
 			@ModifyVariable(method = "tagComponent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 			private static Object injectTagComponent(Object value) {
-				originalMessage = (IChatComponent) value;
+				originalMessage = ((IChatComponent) value).createCopy();
 				return value;
 			}
 

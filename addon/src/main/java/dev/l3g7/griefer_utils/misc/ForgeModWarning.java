@@ -34,6 +34,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.internal.NetworkModHolder;
 import org.lwjgl.opengl.GL11;
 
 import java.io.File;
@@ -41,7 +43,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ForgeModWarning {
 
@@ -65,6 +69,15 @@ public class ForgeModWarning {
 				List<ModContainer> mods = new ArrayList<>(Loader.instance().getModList());
 				mods.removeIf(m -> "griefer_utils".equals(m.getModId()));
 				Reflection.set(Loader.instance(), mods, "mods");
+
+				Map<String, ModContainer> namedMods = new HashMap<>(Loader.instance().getIndexedModList());
+				namedMods.remove("griefer_utils");
+				Reflection.set(Loader.instance(), namedMods, "namedMods");
+
+				Map<ModContainer, NetworkModHolder> registry = new HashMap<>(NetworkRegistry.INSTANCE.registry());
+				registry.keySet().removeIf(m -> "griefer_utils".equals(m.getModId()));
+				Reflection.set(NetworkRegistry.INSTANCE, registry, "registry");
+
 				Loader.instance().getActiveModList().removeIf(m -> "griefer_utils".equals(m.getModId()));
 
 				// Show warning

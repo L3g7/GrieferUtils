@@ -18,8 +18,6 @@
 
 package dev.l3g7.griefer_utils.util.render;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
@@ -35,20 +33,15 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLContext;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.pos;
@@ -412,32 +405,8 @@ public class RenderUtil {
 		return Pair.of(tooltipX, tooltipY);
 	}
 
-	private static volatile boolean loadingPlayerSkull = false;
-
 	public static void renderPlayerSkull(int x, int y) {
 		String name = mc().getSession().getToken().equals("FML") ? "GrieferUtils" : name();
-		GameProfile profile = TileEntitySkull.updateGameprofile(new GameProfile(null, name));
-
-		// Check if player has skin
-		Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> skin = mc().getSkinManager().loadSkinFromCache(profile);
-		if (skin.containsKey(MinecraftProfileTexture.Type.SKIN)) {
-			ResourceLocation location = new ResourceLocation("skins/" + skin.get(MinecraftProfileTexture.Type.SKIN).getHash());
-			//  Check if skin is loaded
-			if (mc().getTextureManager().getTexture(location) == null) {
-				// load skin async
-				if (!loadingPlayerSkull) {
-					loadingPlayerSkull = true;
-					ContextCapabilities caps = GLContext.getCapabilities();
-					new Thread(() -> {
-						Reflection.invoke(GLContext.class, "setCapabilities", caps); // Copy GL caps from main thread
-						mc().getSkinManager().loadSkin(skin.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
-						loadingPlayerSkull = false;
-					}).start();
-				}
-				return;
-			}
-		}
-
 		ItemStack stack = ItemUtil.fromNBT("{id:\"minecraft:skull\",Count:1b,tag:{SkullOwner:\"" + name + "\"},Damage:3s}");
 
 		GlStateManager.pushMatrix();

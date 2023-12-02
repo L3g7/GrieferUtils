@@ -275,7 +275,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 
 			if (markLastOpenedSpawner.get() && pos.equals(lastOpenedSpawner)) {
 				GlStateManager.disableDepth();
-				RenderUtil.drawBoxOutlines(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0x00FF00), 3);
+				RenderUtil.drawFilledBox(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0x00FF00), false);
 				GlStateManager.enableDepth();
 			}
 

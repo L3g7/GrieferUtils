@@ -154,6 +154,7 @@ public class RenderUtil {
 		tessellator.draw();
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();
+		GL11.glColor4f(1f, 1f, 1f, 1f);
 	}
 
 	public static void drawFilledBoxWhenRenderingStarted(AxisAlignedBB bb, boolean drawInside) {

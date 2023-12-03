@@ -134,7 +134,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 
 	@EventListener
 	private void onPacketSend(ItemUseEvent.Pre event) {
-		if (!spawnerWithHeldItemFix.get() || event.stack == null || !ServerCheck.isOnGrieferGames() || player().isSneaking())
+		if (!ServerCheck.isOnGrieferGames() || player().isSneaking())
 			return;
 
 		if (event.stack != player().getHeldItem())
@@ -143,6 +143,12 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 
 		Block clickedBlock = world().getBlockState(event.pos).getBlock();
 		if (clickedBlock != Blocks.mob_spawner || MinecraftUtil.isInFarmwelt())
+			return;
+
+		if (event.stack == null || spawnerWithHeldItemFix.get())
+			lastClickedSpawner = event.pos;
+
+		if (!spawnerWithHeldItemFix.get() || event.stack == null)
 			return;
 
 		event.cancel();
@@ -159,22 +165,6 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	}
 
 	// Mark last opened spawner
-
-	@EventListener
-	private void onItemUsePre(ItemUseEvent.Pre event) {
-		if (!ServerCheck.isOnGrieferGames() || player().isSneaking())
-			return;
-
-		if (event.stack != player().getHeldItem())
-			// Packet probably was sent by a mod / addon
-			return;
-
-		if (event.stack != null && !spawnerWithHeldItemFix.get())
-			return;
-
-		if (world().getBlockState(event.pos).getBlock() == Blocks.mob_spawner && !MinecraftUtil.isInFarmwelt())
-			lastClickedSpawner = event.pos;
-	}
 
 	@EventListener
 	private void onGuiOpen(GuiOpenEvent<GuiChest> event) {
@@ -275,7 +265,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 
 			if (markLastOpenedSpawner.get() && pos.equals(lastOpenedSpawner)) {
 				GlStateManager.disableDepth();
-				RenderUtil.drawFilledBox(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0x00FF00), false);
+				RenderUtil.drawFilledBox(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0x6000FF00, true), false);
 				GlStateManager.enableDepth();
 			}
 

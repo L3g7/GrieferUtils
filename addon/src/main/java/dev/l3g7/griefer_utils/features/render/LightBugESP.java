@@ -120,14 +120,14 @@ public class LightBugESP extends Feature {
 						continue;
 
 					// Check if no neighbor has a higher light level (-> the light source is there)
-					for (EnumFacing value : EnumFacing.VALUES)
+					for (EnumFacing value : EnumFacing.values())
 						if (world().getLightFor(BLOCK, pos.add(value.getDirectionVec())) > level)
 							continue zloop;
 
 					// Check if block is visible
 					if (inBlocks.get()) {
 						boolean visible = false;
-						for (EnumFacing value : EnumFacing.VALUES) {
+						for (EnumFacing value : EnumFacing.values()) {
 							if (block.shouldSideBeRendered(world(), pos.offset(value), value)) {
 								visible = true;
 								break;

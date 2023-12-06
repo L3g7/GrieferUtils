@@ -95,6 +95,7 @@ public class SelfDisguise extends Feature {
 
 	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
+		Entity currentDisguise = this.currentDisguise;
 		if (currentDisguise == null)
 			return;
 
@@ -123,7 +124,7 @@ public class SelfDisguise extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onServerQUit(ServerQuitEvent event) {
+	public void onServerQuit(ServerQuitEvent event) {
 		resetDisguise();
 	}
 

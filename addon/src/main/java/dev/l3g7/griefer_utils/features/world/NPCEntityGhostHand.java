@@ -47,7 +47,7 @@ public class NPCEntityGhostHand extends Feature {
 
 	@EventListener
 	public void onClick(MouseClickEvent.RightClickEvent event) {
-		if (world() == null)
+		if (world() == null || player() == null)
 			return;
 
 		// Don't intercept if targeted entity is a NPC

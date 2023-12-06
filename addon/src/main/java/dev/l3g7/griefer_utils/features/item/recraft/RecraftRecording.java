@@ -179,9 +179,9 @@ class RecraftRecording {
 
 			Recraft recraft = FileProvider.getSingleton(Recraft.class);
 			recraft.getMainElement().getSubSettings().getElements().remove(this);
-			recraft.save();
 			key.set(ImmutableSet.of());
 			Recraft.recordings.remove(RecraftRecording.this);
+			recraft.save();
 			mc.currentScreen.initGui();
 		}
 

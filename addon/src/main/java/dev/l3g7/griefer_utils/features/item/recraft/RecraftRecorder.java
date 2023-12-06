@@ -40,7 +40,7 @@ class RecraftRecorder {
 	private static RecraftRecording recording = Recraft.tempRecording;
 	private static GuiScreen previousScreen = null;
 	private static boolean addedIcon = false;
-	private static boolean isChestOpen = false;
+	private static boolean isMenuOpen = false;
 	private static boolean executedCommand = false;
 
 	public static void startRecording(RecraftRecording recording) {
@@ -66,18 +66,17 @@ class RecraftRecorder {
 		if (RecraftPlayer.isPlaying())
 			return;
 
-		if (executedCommand) {
-			recording.actions.clear();
-			executedCommand = false;
-		}
-
 		if (event.gui instanceof GuiChest) {
-			isChestOpen = true;
+			if (executedCommand) {
+				isMenuOpen = true;
+				recording.actions.clear();
+				executedCommand = false;
+			}
 			return;
 		}
 
 		recording = Recraft.tempRecording;
-		isChestOpen = false;
+		isMenuOpen = false;
 		if (previousScreen == null || previousScreen == event.gui)
 			return;
 
@@ -88,7 +87,7 @@ class RecraftRecorder {
 
 	@EventListener
 	private static void onSendClick(PacketEvent.PacketSendEvent<C0EPacketClickWindow> event) {
-		if (!isChestOpen)
+		if (!isMenuOpen)
 			return;
 
 		C0EPacketClickWindow packet = event.packet;

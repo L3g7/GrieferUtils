@@ -98,9 +98,7 @@ public class CommandPieMenu extends Feature {
 		}
 	}
 
-	public void onChange() {
-		mc().currentScreen.initGui();
-
+	public void save() {
 		JsonArray array = new JsonArray();
 		for (SettingsElement page : enabled.getSubSettings().getElements())
 			if (page instanceof PieMenuPageSetting)

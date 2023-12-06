@@ -23,6 +23,7 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
+import dev.l3g7.griefer_utils.settings.elements.ListEntrySetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
@@ -127,25 +128,22 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 		return false;
 	}
 
-	private class PlayerDisplaySetting extends ControlElement {
+	private class PlayerDisplaySetting extends ListEntrySetting {
 
 		private final PlayerListEntry data;
-		private boolean deleteHovered = false;
 
 		public PlayerDisplaySetting(PlayerListEntry entry) {
-			super("§cUnknown name", new IconData(ModTextures.MISC_HEAD_QUESTION));
+			super(true, false, false);
+			container = PlayerListSetting.this.container;
+			icon(ModTextures.MISC_HEAD_QUESTION);
 			data = entry;
 		}
 
-		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-			super.mouseClicked(mouseX, mouseY, mouseButton);
-			if (deleteHovered) {
-				getSettings().remove(this);
-				get().remove(data);
-				save();
-				getStorage().callbacks.forEach(c -> c.accept(get()));
-				mc.currentScreen.initGui(); // Update settings
-			}
+		@Override
+		protected void onChange() {
+			get().remove(data);
+			PlayerListSetting.this.save();
+			getStorage().callbacks.forEach(c -> c.accept(get()));
 		}
 
 		@Override
@@ -155,12 +153,6 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 			drawUtils().drawRectangle(x - 1, y, x, maxY, 0x78787878);
 
 			renderData(x + 3, y + 3, 16, data);
-
-			if (mouseOver) {
-				mc.getTextureManager().bindTexture(new IconData("labymod/textures/misc/blocked.png").getTextureIcon());
-				deleteHovered = mouseX > maxX - 19 && mouseX < maxX - 6 && mouseY > y + 5 && mouseY < y + 18;
-				drawUtils().drawTexture( maxX - 16 - (deleteHovered ? 4 : 3), y + (deleteHovered ? 3.5 : 4.5), 256, 256, deleteHovered ? 16 : 14, deleteHovered ? 16 : 14);
-			}
 		}
 
 	}

@@ -84,7 +84,7 @@ public class MultiHotkey extends Feature {
 				}
 			}
 
-			HotkeyDisplaySetting hotKey = new HotkeyDisplaySetting(
+			HotkeyDisplaySetting hotKey = (HotkeyDisplaySetting) new HotkeyDisplaySetting(
 				data.get("name").getAsString(),
 				keys,
 				commands,

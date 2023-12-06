@@ -19,7 +19,6 @@
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu;
 
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.ItemSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
@@ -30,7 +29,7 @@ import net.minecraft.item.ItemStack;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
-public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilder<PieMenuEntrySetting> {
+public class PieMenuEntrySetting extends PieMenuSetting {
 
 	public final StringSetting name;
 	public final StringSetting command;
@@ -67,11 +66,6 @@ public class PieMenuEntrySetting extends PieMenuSetting implements ElementBuilde
 		icon("command_pie_menu");
 		subSettings(this.name, this.command, this.citybuild);
 		this.name.defaultValue(defaultName = name);
-	}
-
-	@Override
-	protected void onChange() {
-		PieMenuPageSetting.triggerOnChange();
 	}
 
 	public void openSettings() {

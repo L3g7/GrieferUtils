@@ -23,7 +23,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
@@ -35,7 +34,7 @@ import net.minecraft.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder<PieMenuPageSetting> {
+public class PieMenuPageSetting extends PieMenuSetting {
 
 	public final StringSetting name;
 
@@ -71,7 +70,6 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 
 		subSettings(entrySettings.toArray(new SettingsElement[0]));
 		this.name.defaultValue(defaultName = name);
-		setSettingEnabled(false);
 		container = FileProvider.getSingleton(CommandPieMenu.class).getMainElement();
 	}
 
@@ -79,7 +77,7 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 		defaultName = name.get();
 		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
 			if (!name.get().isEmpty()) {
-				triggerOnChange();
+				onChange();
 				return;
 			}
 
@@ -90,17 +88,8 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 
 			if (name.get().isEmpty())
 				name.set(defaultName);
-			triggerOnChange();
+			onChange();
 		}, this));
-	}
-
-	@Override
-	protected void onChange() {
-		triggerOnChange();
-	}
-
-	static void triggerOnChange() {
-		FileProvider.getSingleton(CommandPieMenu.class).onChange();
 	}
 
 	public JsonObject toJson() {

@@ -23,15 +23,11 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
-import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +35,7 @@ import java.util.Set;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
-public class HotkeyDisplaySetting extends ControlElement implements ElementBuilder<HotkeyDisplaySetting> {
+public class HotkeyDisplaySetting extends ListEntrySetting {
 
 	private final IconStorage iconStorage = new IconStorage();
 
@@ -54,11 +50,10 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 	private ItemStack defaultCitybuild;
 
 	private int amountsTriggered = 0;
-	private boolean hoveringDelete = false;
-	private boolean hoveringEdit = false;
 
 	public HotkeyDisplaySetting(String name, Set<Integer> keys, List<String> commands, ItemStack citybuild) {
-		super("§f", null);
+		super(true, true, false);
+		container = FileProvider.getSingleton(MultiHotkey.class).getMainElement();
 
 		this.name = new StringSetting()
 			.name("Name")
@@ -109,7 +104,6 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 
 
 		subSettings(this.name, this.keys, this.commands, this.citybuild, new HeaderSetting("§e§lBefehle").scale(0.7));
-		setSettingEnabled(false);
 		this.name.defaultValue(defaultName = name);
 		this.commands.initList();
 	}
@@ -126,7 +120,7 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 		defaultCitybuild = citybuild.get();
 		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
 			if (!name.get().isEmpty() && !keys.get().isEmpty() && !commands.get().isEmpty() && citybuild.get() != null) {
-				triggerOnChange();
+				onChange();
 				return;
 			}
 
@@ -144,45 +138,23 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 			if (citybuild.get() == null)
 				citybuild.set(defaultCitybuild);
 
-			triggerOnChange();
+			onChange();
 		}, this));
 	}
 
-	@Override
-	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
-
-		if (hoveringEdit) {
-			mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-			openSettings();
-			return;
-		}
-
-		if (!hoveringDelete)
-			return;
-
-		mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-		remove();
-	}
-
-	private void remove() {
-		FileProvider.getSingleton(MultiHotkey.class).getMainElement().getSubSettings().getElements().remove(this);
+	protected void remove() {
 		keys.set(ImmutableSet.of());
-		triggerOnChange();
+		super.remove();
 	}
 
-	private void triggerOnChange() {
+	protected void onChange() {
 		icon(citybuild.get());
 		FileProvider.getSingleton(MultiHotkey.class).onChange();
 	}
 
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-		hideSubListButton();
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
-		drawIcon(x, y);
-
-		mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
 
 		String subtitle = String.format("§e[%s] §f§o➡ %s", Util.formatKeys(keys.get()), commands.get().size() + (commands.get().size() == 1 ? " Befehl" : " Befehle"));
 
@@ -190,22 +162,6 @@ public class HotkeyDisplaySetting extends ControlElement implements ElementBuild
 		String trimmedSubtitle = drawUtils().trimStringToWidth(subtitle, maxX - x - 25 - 48);
 		drawUtils().drawString(trimmedName + (trimmedName.equals(name.get()) ? "" : "…"), x + 25, y + 7 - 5);
 		drawUtils().drawString(trimmedSubtitle + (trimmedSubtitle.equals(subtitle) ? "" : "…"), x + 25, y + 7 + 5);
-
-		int xPosition = maxX - 20;
-		double yPosition = y + 4.5;
-
-		hoveringDelete = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
-		xPosition -= 20;
-		hoveringEdit = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
-
-		if (!mouseOver)
-			return;
-
-		mc.getTextureManager().bindTexture(new ResourceLocation("labymod/textures/misc/blocked.png"));
-		drawUtils().drawTexture(maxX - (hoveringDelete ? 20 : 19), y + (hoveringDelete ? 3.5 : 4.5), 256, 256, hoveringDelete ? 16 : 14, hoveringDelete ? 16 : 14);
-
-		mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));
-		drawUtils().drawTexture(maxX - (hoveringEdit ? 40 : 39), y + (hoveringEdit ? 3.5 : 4.5), 256, 256, hoveringEdit ? 16 : 14, hoveringEdit ? 16 : 14);
 	}
 
 }

@@ -20,27 +20,23 @@ package dev.l3g7.griefer_utils.features.modules.balances.inventory_value;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.elements.ListEntrySetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import net.labymod.settings.elements.ControlElement;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
-public class ItemDisplaySetting extends ControlElement implements ElementBuilder<ItemDisplaySetting> {
+public class ItemDisplaySetting extends ListEntrySetting {
 
 	private ItemStack stack; // lazy-loaded
 	private final String stackNbt;
 	public long value;
 
 	private final IconStorage iconStorage = new IconStorage();
-	private boolean hoveringDelete = false;
 
 	public ItemDisplaySetting(String stackNbt, long value) {
-		super("§cNo name set", null);
-		setSettingEnabled(false);
+		super(true, false, false);
+		container = FileProvider.getSingleton(InventoryValue.class).rawBooleanElement;
 		this.stackNbt = stackNbt;
 		this.value = value;
 	}
@@ -71,21 +67,14 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 		return iconStorage;
 	}
 
+	@Override
+	protected void onChange() {
+		InventoryValue.onChange();
+	}
+
 	public ItemStack getStack() {
 		initStack();
 		return stack;
-	}
-
-	@Override
-	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (!hoveringDelete)
-			return;
-
-		mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-		InventoryValue gis = FileProvider.getSingleton(InventoryValue.class);
-		gis.rawBooleanElement.getSubSettings().getElements().remove(this);
-		InventoryValue.onChange();
 	}
 
 	@Override
@@ -95,22 +84,10 @@ public class ItemDisplaySetting extends ControlElement implements ElementBuilder
 		String displayName = getDisplayName();
 		setDisplayName("§f");
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
-		drawIcon(x, y);
 		setDisplayName(displayName);
 
 		drawUtils().drawString(displayName, x + 25, y + 2);
 		drawUtils().drawString("§o➡ " + Constants.DECIMAL_FORMAT_98.format(value) + "$", x + 25, y + 12);
-
-		int xPosition = maxX - 20;
-		double yPosition = y + 4.5;
-
-		hoveringDelete = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
-
-		if (!mouseOver)
-			return;
-
-		mc.getTextureManager().bindTexture(new ResourceLocation("labymod/textures/misc/blocked.png"));
-		drawUtils().drawTexture(maxX - (hoveringDelete ? 20 : 19), y + (hoveringDelete ? 3.5 : 4.5), 256, 256, hoveringDelete ? 16 : 14, hoveringDelete ? 16 : 14);
 	}
 
 }

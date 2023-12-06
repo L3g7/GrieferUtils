@@ -27,6 +27,8 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -92,7 +94,8 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onItemUse(ItemUseEvent.Post event) {
-		if (!refillBlocks.get() || !(event.stackBeforeUse.getItem() instanceof ItemBlock))
+		if (!refillBlocks.get() || !(event.stackBeforeUse.getItem() instanceof ItemBlock
+			|| (event.stackBeforeUse.getItem() == Items.dye && EnumDyeColor.byDyeDamage(event.stackBeforeUse.getMetadata()) == EnumDyeColor.BROWN)))
 			return;
 
 		ItemStack previousStack = event.stackBeforeUse;

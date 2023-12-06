@@ -167,6 +167,7 @@ public class LightBugESP extends Feature {
 
 		Tessellator.getInstance().draw();
 		wr.setTranslation(0, 0, 0);
+		GL11.glColor4f(1, 1, 1, 1);
 		GlStateManager.enableDepth();
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();

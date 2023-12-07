@@ -182,6 +182,9 @@ public class BetterHopper extends Feature {
 		}
 
 		ItemStack targetStack = slots.getSlot(16).getStack();
+		if (targetStack == null)
+			return;
+
 		mainConnection = EnchantmentHelper.getEnchantments(targetStack).isEmpty() ? null : getBlockPos(targetStack);
 
 		if (slot == 34) {

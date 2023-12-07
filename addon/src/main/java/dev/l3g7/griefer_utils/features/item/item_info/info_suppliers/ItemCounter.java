@@ -50,7 +50,7 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 
 	private final DropDownSetting<FormatMode> formatting = new DropDownSetting<>(FormatMode.class)
 		.name("Formattierung")
-		.description("Zeigt die Anzahl unformattiert an.")
+		.description("In welchem Format die Anzahl angezeigt werden soll.")
 		.icon(Material.BOOK_AND_QUILL)
 		.defaultValue(FormatMode.FORMATTED);
 

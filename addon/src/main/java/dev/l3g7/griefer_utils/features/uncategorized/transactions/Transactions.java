@@ -95,7 +95,7 @@ public class Transactions extends Feature {
 		State state = event.state;
 		if (state == State.CONNECTED) {
 			setting.name("Transaktionen")
-				.description()
+				.description("Zeigt die Transaktionen der letzen 30 Tage an.")
 				.settingsEnabled(true);
 
 			// Send Transaction packet every 3s

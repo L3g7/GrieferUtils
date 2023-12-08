@@ -20,14 +20,14 @@ package dev.l3g7.griefer_utils.features.item.recraft;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
-import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.features.item.recraft.Action.Ingredient;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
@@ -52,12 +52,13 @@ class RecraftRecorder {
 		RecraftRecorder.recording = recording;
 		previousScreen = mc().currentScreen;
 		addedIcon = false;
+		executedCommand = true;
 		send("/rezepte");
 	}
 
 	@EventListener
-	private static void onMessageSend(MessageEvent.MessageSendEvent event) {
-		if (event.message.equalsIgnoreCase("/rezepte") || event.message.toLowerCase().startsWith("/rezepte "))
+	private static void onMessageSend(PacketSendEvent<C01PacketChatMessage> event) {
+		if (event.packet.getMessage().equalsIgnoreCase("/rezepte") || event.packet.getMessage().toLowerCase().startsWith("/rezepte "))
 			executedCommand = true;
 	}
 
@@ -86,7 +87,7 @@ class RecraftRecorder {
 	}
 
 	@EventListener
-	private static void onSendClick(PacketEvent.PacketSendEvent<C0EPacketClickWindow> event) {
+	private static void onSendClick(PacketSendEvent<C0EPacketClickWindow> event) {
 		if (!isMenuOpen)
 			return;
 

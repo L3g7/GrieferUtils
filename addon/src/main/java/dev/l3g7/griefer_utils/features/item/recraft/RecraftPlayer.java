@@ -45,6 +45,11 @@ class RecraftPlayer {
 		if (world() == null || !mc().inGameHasFocus)
 			return;
 
+		if (recording.actions.isEmpty()) {
+			displayAchievement("§e§lFehler \u26A0", "§eDiese Aufzeichnung ist leer!");
+			return;
+		}
+
 		pendingActions = new LinkedList<>(recording.actions);
 
 		player().sendChatMessage("/rezepte");

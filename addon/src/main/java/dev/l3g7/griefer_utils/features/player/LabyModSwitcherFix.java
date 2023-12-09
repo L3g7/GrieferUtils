@@ -20,14 +20,24 @@ package dev.l3g7.griefer_utils.features.player;
 
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
+import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import net.labymod.accountmanager.authentication.microsoft.MicrosoftAuthentication;
 import net.labymod.accountmanager.storage.loader.microsoft.model.LauncherAccount;
+import org.apache.commons.io.IOUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 @Singleton
 public class LabyModSwitcherFix extends Feature {
@@ -35,10 +45,10 @@ public class LabyModSwitcherFix extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("LabyMod-Switcher fixen")
-		.description("Behebt, dass LabyMod Account-Sitzungen als gültig anzeigt, das Betreten eines Servers mit diesem Account jedoch aufgrund einer ungültigen Sitzung fehltschlägt.")
+		.description("Behebt, dass LabyMod Account-Sitzungen als gültig anzeigt, das Betreten eines Servers mit diesem Account jedoch aufgrund einer ungültigen Sitzung fehltschlägt, und dass das Hinzufügen von Accounts aufgrund nicht anerkannter Zertifikate fehlschlägt.")
 		.icon("labymod:labymod_logo");
 
-	@Mixin(LauncherAccount.class)
+	@org.spongepowered.asm.mixin.Mixin(LauncherAccount.class)
 	private static class MixinLauncherAccount {
 
 		@Inject(method = "getAccessToken", at = @At("RETURN"), cancellable = true, remap = false)
@@ -54,6 +64,25 @@ public class LabyModSwitcherFix extends Feature {
 
 			cir.setReturnValue(accessToken.split("\\.")[0]);
 		}
+
+	}
+
+	@Mixin(value = MicrosoftAuthentication.class, remap = false)
+	private static class MixinRestUtil {
+
+	    @Redirect(method = "getXBoxProfile", at = @At(value = "INVOKE", target = "Lnet/labymod/accountmanager/utils/RestUtil;performGetContract(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;"))
+	    private <T> T injectGetXBoxProfile(String url, String hash, String token, Class<T> response) throws Exception {
+		    HttpsURLConnection connection = (HttpsURLConnection)(new URL(url)).openConnection();
+		    connection.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
+
+		    connection.addRequestProperty("Authorization", "XBL3.0 x=" + hash + ";" + token);
+		    connection.addRequestProperty("x-xbl-contract-version", "2");
+		    connection.addRequestProperty("Accept", "application/json");
+
+		    InputStream inputStream = connection.getInputStream();
+		    String json = IOUtils.toString(new InputStreamReader(inputStream));
+		    return IOUtil.gson.fromJson(json, response);
+	    }
 
 	}
 

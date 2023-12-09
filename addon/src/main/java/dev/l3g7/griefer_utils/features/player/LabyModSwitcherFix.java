@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.accountmanager.authentication.microsoft.MicrosoftAuthentication;
 import net.labymod.accountmanager.storage.loader.microsoft.model.LauncherAccount;
+import net.labymod.accountmanager.utils.RestUtil;
 import org.apache.commons.io.IOUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,7 +49,7 @@ public class LabyModSwitcherFix extends Feature {
 		.description("Behebt, dass LabyMod Account-Sitzungen als gültig anzeigt, das Betreten eines Servers mit diesem Account jedoch aufgrund einer ungültigen Sitzung fehltschlägt, und dass das Hinzufügen von Accounts aufgrund nicht anerkannter Zertifikate fehlschlägt.")
 		.icon("labymod:labymod_logo");
 
-	@org.spongepowered.asm.mixin.Mixin(LauncherAccount.class)
+	@Mixin(LauncherAccount.class)
 	private static class MixinLauncherAccount {
 
 		@Inject(method = "getAccessToken", at = @At("RETURN"), cancellable = true, remap = false)
@@ -72,6 +73,9 @@ public class LabyModSwitcherFix extends Feature {
 
 	    @Redirect(method = "getXBoxProfile", at = @At(value = "INVOKE", target = "Lnet/labymod/accountmanager/utils/RestUtil;performGetContract(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;"))
 	    private <T> T injectGetXBoxProfile(String url, String hash, String token, Class<T> response) throws Exception {
+			if (!FileProvider.getSingleton(LabyModSwitcherFix.class).isEnabled())
+				return RestUtil.performGetContract(url, hash, token, response);
+
 		    HttpsURLConnection connection = (HttpsURLConnection)(new URL(url)).openConnection();
 		    connection.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
 

@@ -21,7 +21,7 @@ package dev.l3g7.griefer_utils.misc.server;
 import com.google.gson.Gson;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
-import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsGroup;
@@ -34,8 +34,8 @@ public class WebAPI {
 	private static final Gson GSON = new Gson();
 	private static Data data = null;
 
-	@OnEnable
-	private static void onEnable() {
+	@OnStartupComplete
+	private static void onStartupComplete() {
 		IOUtil.read("https://grieferutils.l3g7.dev/v3/").asJsonObject(object -> {
 			data = GSON.fromJson(object, Data.class);
 			new WebDataReceiveEvent(data).fire();
@@ -45,7 +45,7 @@ public class WebAPI {
 	@EventListener
 	private static void onServerJoin(ServerJoinEvent event) {
 		if (data == null)
-			onEnable();
+			onStartupComplete();
 	}
 
 	public static class Data {

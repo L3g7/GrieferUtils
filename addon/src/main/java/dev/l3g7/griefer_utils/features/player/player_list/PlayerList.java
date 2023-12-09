@@ -22,11 +22,10 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
 import dev.l3g7.griefer_utils.event.events.DisplayNameGetEvent;
+import dev.l3g7.griefer_utils.event.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
-import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.NameCache;
@@ -39,11 +38,10 @@ import dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListSe
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.ModColor;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
@@ -53,16 +51,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.features.player.player_list.PlayerList.MarkAction.*;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 
 public abstract class PlayerList extends Feature {
 
-	private static final Pattern PROFILE_TITLE_PATTERN = Pattern.compile(String.format("^§6Profil von §e%s§r$", Constants.FORMATTED_PLAYER_NAME_PATTERN));
 	private final String message;
 	private final String name, icon;
 	private final ModColor color;
@@ -207,23 +202,19 @@ public abstract class PlayerList extends Feature {
 	 * @see PlayerList#showInProfile
 	 */
 	@EventListener
-	public void onTick(TickEvent.RenderTickEvent event) {
+	public void onTick(GuiModifyItemsEvent event) {
 		if (!showInProfile.get())
 			return;
 
-		// Check if chest is open
-		if (!(mc().currentScreen instanceof GuiChest))
+		if (!event.getTitle().startsWith("§6Profil"))
 			return;
 
-		IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
-
-		// Check if chest is /profil using title
-		Matcher matcher = PROFILE_TITLE_PATTERN.matcher(inventory.getDisplayName().getFormattedText());
-		if (!matcher.matches())
+		ItemStack skull = event.getItem(13);
+		if (skull == null || skull.getItem() != Items.skull)
 			return;
 
 		// Check if player should be marked
-		String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
+		String name = NameCache.ensureRealName(skull.getDisplayName().substring(2));
 		UUID uuid = name.contains("~") ? NameCache.getUUID(name) : PlayerUtil.getUUID(name);
 		if (!shouldMark(name, uuid))
 			return;
@@ -233,10 +224,10 @@ public abstract class PlayerList extends Feature {
 		indicatorPane.setStackDisplayName(this.message);
 
 		// Replace every glass pane with indicatorPane
-		for (int i = 0; i < inventory.getSizeInventory(); i++) {
-			ItemStack slot = inventory.getStackInSlot(i);
-			if (slot != null && slot.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
-				inventory.setInventorySlotContents(i, indicatorPane);
+		for (int i = 0; i < 45; i++) {
+			ItemStack stack = event.getItem(i);
+			if (stack != null && stack.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
+				event.setItem(i, indicatorPane);
 		}
 	}
 

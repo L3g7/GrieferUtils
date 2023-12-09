@@ -75,9 +75,10 @@ public class HeadTextureFix extends Feature {
 				GameProfile profile = gameprofile;
 				lockedProfiles.add(name);
 				new Thread(() -> {
-					TileEntitySkull.updateGameprofile(profile);
+					GameProfile gp = TileEntitySkull.updateGameprofile(profile);
 					processedProfiles.add(name);
-					lockedProfiles.remove(name);
+					if (!gp.getProperties().get("textures").isEmpty())
+						lockedProfiles.remove(name); // Keep profile locked if texture is invalid
 				}).start();
 			} else {
 				for (String username : MinecraftServer.getServer().getPlayerProfileCache().getUsernames()) {

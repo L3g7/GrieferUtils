@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import dev.l3g7.griefer_utils.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.util.render.AsyncSkullRenderer;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
@@ -127,7 +127,7 @@ public class Credits {
 		@Override
 		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
-			RenderUtil.renderPlayerSkull(x + 3, y + 2);
+			AsyncSkullRenderer.renderPlayerSkull(x + 3, y + 2);
 		}
 
 	}

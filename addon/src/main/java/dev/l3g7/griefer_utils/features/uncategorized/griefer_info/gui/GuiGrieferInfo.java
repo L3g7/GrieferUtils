@@ -55,7 +55,7 @@ public class GuiGrieferInfo extends GuiBigChest {
 			DataHandler.requestFreestuff();
 		});
 
-		addItem(30, WEBSITE, () -> Util.openWebsite("https://griefer.info"));
+		addItem(30, WEBSITE, () -> Util.openWebsite("https://griefer.info/site/index"));
 		addItem(32, DISCORD, () -> Util.openWebsite("https://discord.gg/YnPatPbVmx"));
 	}
 

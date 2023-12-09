@@ -214,7 +214,7 @@ public abstract class PlayerList extends Feature {
 			return;
 
 		// Check if player should be marked
-		String name = NameCache.ensureRealName(skull.getDisplayName().substring(2));
+		String name = skull.getDisplayName().substring(2);
 		UUID uuid = name.contains("~") ? NameCache.getUUID(name) : PlayerUtil.getUUID(name);
 		if (!shouldMark(name, uuid))
 			return;

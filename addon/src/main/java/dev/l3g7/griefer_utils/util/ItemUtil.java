@@ -124,7 +124,7 @@ public class ItemUtil {
 			return 0;
 
 		int stackSize = tag.getInteger("stackSize");
-		return (int) (Math.log(stackSize) / Math.log(9));
+		return (int) Math.round(Math.log(stackSize) / Math.log(9));
 	}
 
 	public static int getDecompressedAmount(ItemStack itemStack) {

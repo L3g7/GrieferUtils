@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.misc.server.requests.LoginRequest;
 import dev.l3g7.griefer_utils.core.misc.server.requests.LogoutRequest;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -53,7 +54,11 @@ public class GUSession {
 			return;
 
 		// Login
-		this.sessionToken = new LoginRequest(user, keyPair).send(this);
+		try {
+			this.sessionToken = new LoginRequest(user, keyPair).send(this);
+		} catch (UnknownHostException e) {
+			return;
+		}
 		if (sessionToken == null)
 			return;
 

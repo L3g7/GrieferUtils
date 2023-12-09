@@ -66,7 +66,7 @@ public abstract class Request<R> {
 		// Renew token if authorization fails
 		if (conn.getResponseCode() == HTTP_UNAUTHORIZED) {
 			if (sessionRenewed)
-				throw new IOException("Unauthenticated");
+				return null;
 
 			try {
 				session.renewToken();

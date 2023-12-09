@@ -54,6 +54,9 @@ public class GUSession {
 
 		// Login
 		this.sessionToken = new LoginRequest(user, keyPair).send(this);
+		if (sessionToken == null)
+			return;
+
 		keepAlive = SCHEDULER.scheduleAtFixedRate(() -> {
 			try {
 				new KeepAliveRequest().send(this);

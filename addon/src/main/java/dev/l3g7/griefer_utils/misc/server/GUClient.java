@@ -30,6 +30,7 @@ import net.minecraft.util.Session;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -85,7 +86,11 @@ public class GUClient {
 	}
 
 	public List<UUID> getOnlineUsers(Set<UUID> requestedUsers) throws IOException {
-		return new OnlineUsersRequest(requestedUsers).send(session);
+		List<UUID> users = new OnlineUsersRequest(requestedUsers).send(session);
+		if (users == null)
+			users = Collections.emptyList();
+
+		return users;
 	}
 
 }

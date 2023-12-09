@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
@@ -44,6 +45,11 @@ class RecraftPlayer {
 	public static void play(RecraftRecording recording) {
 		if (world() == null || !mc().inGameHasFocus)
 			return;
+
+		if (!ServerCheck.isOnCitybuild()) {
+			displayAchievement("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild abgespielt werden.");
+			return;
+		}
 
 		if (recording.actions.isEmpty()) {
 			displayAchievement("§e§lFehler \u26A0", "§eDiese Aufzeichnung ist leer!");

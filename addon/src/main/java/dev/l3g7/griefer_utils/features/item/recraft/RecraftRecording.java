@@ -19,22 +19,18 @@
 package dev.l3g7.griefer_utils.features.item.recraft;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.features.item.recraft.Action.Ingredient;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.KeySetting;
-import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
-import dev.l3g7.griefer_utils.settings.elements.StringSetting;
-import net.labymod.settings.elements.ControlElement;
+import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.LinkedList;
 
@@ -56,7 +52,7 @@ class RecraftRecording {
 				RecraftPlayer.play(this);
 		});
 
-	private final StringSetting name = new StringSetting()
+	final StringSetting name = new StringSetting()
 		.name("Name")
 		.description("Wie diese Aufzeichnung heißt.")
 		.icon(Material.NAME_TAG);
@@ -78,42 +74,37 @@ class RecraftRecording {
 		titleSetting.name("§e§l" + title);
 	}
 
-	void write(PacketBuffer out) {
-		out.writeString(name.get());
-
-		out.writeByte(key.get().size());
-		for (Integer i : key.get())
-			out.writeByte(i);
+	JsonObject toJson() {
+		JsonObject object = new JsonObject();
+		object.addProperty("name", name.get());
+		object.add("keys", key.getStorage().encodeFunc.apply(key.get()));
 
 		ItemStack icon = mainSetting.iconStorage.itemStack;
 		if (icon != null)
-			new Ingredient(icon, icon.stackSize).write(out);
-		else
-			out.writeByte(0);
+			object.add("icon", new Ingredient(icon, icon.stackSize).toJson());
 
-		out.writeByte((byte) actions.size());
+		JsonArray jsonActions = new JsonArray();
 		for (Action action : actions)
-			action.write(out);
+			jsonActions.add(action.toJson());
+		object.add("actions", jsonActions);
+
+		return object;
 	}
 
-	static RecraftRecording read(PacketBuffer in) {
+	static RecraftRecording read(JsonObject object) {
 		RecraftRecording recording = new RecraftRecording();
-		recording.name.set(in.readStringFromBuffer(Short.MAX_VALUE));
+		recording.name.set(object.get("name").getAsString());
 
-		byte keys = in.readByte();
-		Integer[] keyArray = new Integer[keys];
-		for (byte i = 0; i < keys; i++)
-			keyArray[i] = (int) in.readByte();
+		recording.key.set(recording.key.getStorage().decodeFunc.apply(object.get("keys")));
 
-		recording.key.set(ImmutableSet.copyOf(keyArray));
+		if (object.has("icon")) {
+			JsonObject icon = object.getAsJsonObject("icon");
+			recording.mainSetting.icon(new ItemStack(Item.getItemById(icon.get("id").getAsInt()), icon.get("compression").getAsInt(), icon.get("meta").getAsInt()));
+		}
 
-		int itemId = in.readVarIntFromBuffer();
-		if (itemId != 0)
-			recording.mainSetting.icon(new ItemStack(Item.getItemById(itemId), in.readByte(), in.readByte()));
-
-		byte actions = in.readByte();
-		for (byte i = 0; i < actions; i++)
-			recording.actions.add(Action.readObject(in));
+		JsonArray jsonActions = object.getAsJsonArray("actions");
+		for (JsonElement jsonAction : jsonActions)
+			recording.actions.add(Action.fromJson(jsonAction));
 
 		return recording;
 	}
@@ -139,16 +130,17 @@ class RecraftRecording {
 
 	}
 
-	class RecordingDisplaySetting extends ControlElement implements ElementBuilder<RecordingDisplaySetting> {
+	class RecordingDisplaySetting extends ListEntrySetting {
 
 		private final IconStorage iconStorage = new IconStorage();
-
-		private boolean hoveringDelete = false;
-		private boolean hoveringEdit = false;
+		final RecraftRecording recording = RecraftRecording.this;
 
 		public RecordingDisplaySetting() {
-			super("Unbenannte Aufzeichnung", new IconData(Material.BARRIER));
+			super(true, true, true);
+			name("Unbenannte Aufzeichnung");
+			icon(Material.BARRIER);
 			subSettings(name, key, new HeaderSetting(), new StartRecordingButtonSetting());
+			container = FileProvider.getSingleton(Recraft.class).getMainElement();
 		}
 
 		@Override
@@ -166,51 +158,16 @@ class RecraftRecording {
 		}
 
 		@Override
-		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-			super.mouseClicked(mouseX, mouseY, mouseButton);
+		protected void onChange() {
+			if (!container.getSubSettings().getElements().contains(this))
+				key.set(ImmutableSet.of());
 
-			if (hoveringEdit) {
-				mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> FileProvider.getSingleton(Recraft.class).save(), mainSetting));
-				return;
-			}
-
-			if (!hoveringDelete)
-				return;
-
-			Recraft recraft = FileProvider.getSingleton(Recraft.class);
-			recraft.getMainElement().getSubSettings().getElements().remove(this);
-			key.set(ImmutableSet.of());
-			Recraft.recordings.remove(RecraftRecording.this);
-			recraft.save();
-			mc.currentScreen.initGui();
+			FileProvider.getSingleton(Recraft.class).save();
 		}
 
 		@Override
-		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			hideSubListButton();
-			super.draw(x, y, maxX, maxY, mouseX, mouseY);
-			drawUtils().drawRectangle(x - 1, y, x, maxY, 0x78787878);
-			drawIcon(x, y);
-
-			mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
-
-			int xPosition = maxX - 20;
-			double yPosition = y + 4.5;
-
-			hoveringDelete = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
-
-			xPosition -= 20;
-
-			hoveringEdit = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
-
-			if (!mouseOver)
-				return;
-
-			mc.getTextureManager().bindTexture(new ResourceLocation("labymod/textures/misc/blocked.png"));
-			drawUtils().drawTexture(maxX - (hoveringDelete ? 20 : 19), y + (hoveringDelete ? 3.5 : 4.5), 256, 256, hoveringDelete ? 16 : 14, hoveringDelete ? 16 : 14);
-
-			mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));
-			drawUtils().drawTexture(maxX - (hoveringEdit ? 40 : 39), y + (hoveringEdit ? 3.5 : 4.5), 256, 256, hoveringEdit ? 16 : 14, hoveringEdit ? 16 : 14);
+		protected void openSettings() {
+			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> FileProvider.getSingleton(Recraft.class).save(), mainSetting));
 		}
 
 	}

@@ -18,7 +18,8 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft;
 
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -30,15 +31,12 @@ import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import io.netty.buffer.Unpooled;
+import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.init.Blocks;
-import net.minecraft.network.PacketBuffer;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 /**
@@ -47,7 +45,6 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 @Singleton
 public class Recraft extends Feature {
 
-	static final List<RecraftRecording> recordings = new ArrayList<>();
 	static final RecraftRecording tempRecording = new RecraftRecording();
 
 	private final KeySetting key = new KeySetting()
@@ -59,66 +56,79 @@ public class Recraft extends Feature {
 				RecraftPlayer.play(tempRecording);
 		});
 
-	private final EntryAddSetting entryAddSetting = new EntryAddSetting()
-		.name("Aufzeichnung hinzufügen");
+	private final RecraftPieMenu pieMenu = new RecraftPieMenu();
+
+	private final BooleanSetting animation = new BooleanSetting()
+		.name("Animation")
+		.description("Ob die Öffnen-Animation abgespielt werden soll.")
+		.icon("command_pie_menu")
+		.defaultValue(true);
+
+	private final KeySetting openPieMenu = new KeySetting()
+		.name("Radialmenü öffnen")
+		.icon("key")
+		.description("Die Taste, mit der das Radialmenü geöffnet werden soll.")
+		.pressCallback(p -> {
+			if (mc().currentScreen != null || !isEnabled())
+				return;
+
+			if (p) {
+				pieMenu.open(animation.get(), getMainElement());
+				return;
+			}
+
+			pieMenu.close();
+		});
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Recraft")
 		.description("Wiederholt \"/rezepte\" Aufrufe.")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
-		.subSettings(key, new HeaderSetting(), entryAddSetting);
+		.subSettings(key, new HeaderSetting(), animation, openPieMenu, new HeaderSetting(), new EntryAddSetting()
+			.name("Seite hinzufügen")
+			.callback(() -> {
+				List<SettingsElement> settings = getMainElement().getSubSettings().getElements();
+				long pageNumber = settings.stream().filter(s -> s instanceof RecraftPageSetting).count() + 1;
+				RecraftPageSetting setting = new RecraftPageSetting("Seite " + pageNumber, new ArrayList<>());
+				settings.add(settings.size() - 1, setting);
+				mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(this::save, setting));
+			}));
 
 	@Override
 	public void init() {
 		super.init();
 
-		entryAddSetting.callback(() -> {
-			if (!ServerCheck.isOnCitybuild()) {
-				displayAchievement("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild hinzugefügt werden.");
-				return;
-			}
-
-			RecraftRecording recording = new RecraftRecording();
-			enabled.getSubSettings().add(recording.mainSetting);
-			recordings.add(recording);
-			recording.setTitle("Aufzeichnung hinzufügen");
-			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
-				recording.setTitle(recording.mainSetting.getDisplayName());
-				save();
-			}, recording.mainSetting));
-		});
-
-		load();
-	}
-
-	private void load() {
-		if (!Config.has(getConfigKey() + ".recordings"))
+		if (!Config.has(getConfigKey() + ".pages"))
 			return;
 
-		String encodedRecordings = Config.get(getConfigKey() + ".recordings").getAsString();
-		byte[] array = Base64.getDecoder().decode(encodedRecordings);
-		PacketBuffer buffer = new PacketBuffer(Unpooled.wrappedBuffer(array));
+		JsonArray pages = Config.get(getConfigKey() + ".pages").getAsJsonArray();
 
-		byte recordings = buffer.readByte();
-		for (int i = 0; i < recordings; i++) {
-			RecraftRecording recording = RecraftRecording.read(buffer);
-			Recraft.recordings.add(recording);
-			enabled.getSubSettings().add(recording.mainSetting);
-		}
+		List<SettingsElement> settings = enabled.getSubSettings().getElements();
+		for (JsonElement page : pages)
+			settings.add(settings.size() - 1, RecraftPageSetting.fromJson(page.getAsJsonObject()));
 	}
 
 	void save() {
-		PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-		buffer.writeByte(recordings.size());
-		for (RecraftRecording recording : recordings)
-			recording.write(buffer);
+		JsonArray jsonPages = new JsonArray();
 
-		byte[] trimmedArray = new byte[buffer.writerIndex()];
-		System.arraycopy(buffer.array(), 0, trimmedArray, 0, trimmedArray.length);
-		String encodedRecordings = Base64.getEncoder().encodeToString(trimmedArray);
-		Config.set(getConfigKey() + ".recordings", new JsonPrimitive(encodedRecordings));
+		List<RecraftPageSetting> pages = getSubSettingsOfType(enabled, RecraftPageSetting.class);
+
+		for (RecraftPageSetting page : pages)
+			jsonPages.add(page.toJson());
+
+		Config.set(getConfigKey() + ".pages", jsonPages);
 		Config.save();
+	}
+
+	static <T> List<T> getSubSettingsOfType(SettingsElement container, Class<T> type) {
+		List<T> subSettings = new ArrayList<>();
+
+		for (SettingsElement element : container.getSubSettings().getElements())
+			if (type.isInstance(element))
+				subSettings.add(type.cast(element));
+
+		return subSettings;
 	}
 
 }

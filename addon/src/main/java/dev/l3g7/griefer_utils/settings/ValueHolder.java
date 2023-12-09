@@ -136,8 +136,8 @@ public interface ValueHolder<S extends ValueHolder<S, V>, V> {
 		private final T fallbackValue;
 		public final List<Consumer<T>> callbacks = new ArrayList<>();
 
-		private final Function<T, JsonElement> encodeFunc;
-		private final Function<JsonElement, T> decodeFunc;
+		public final Function<T, JsonElement> encodeFunc;
+		public final Function<JsonElement, T> decodeFunc;
 
 		public Storage(Function<T, JsonElement> encodeFunc, Function<JsonElement, T> decodeFunc, T fallbackValue) {
 			this.encodeFunc = encodeFunc;

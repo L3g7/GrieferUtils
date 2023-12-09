@@ -18,12 +18,14 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
@@ -39,7 +41,7 @@ class Action {
 	}
 
 	public void execute(GuiChest chest) {
-		if (slot < 54) {
+		if (ingredient == null) {
 			mc().playerController.windowClick(chest.inventorySlots.windowId, slot, 0, 0, player());
 			return;
 		}
@@ -51,15 +53,18 @@ class Action {
 		mc().playerController.windowClick(chest.inventorySlots.windowId, ingredientSlot, 0, 0, player());
 	}
 
-	void write(PacketBuffer out) {
-		out.writeByte((byte) slot);
-		if (ingredient != null)
-			ingredient.write(out);
+	JsonElement toJson() {
+		return ingredient != null ? ingredient.toJson() : new JsonPrimitive(slot);
 	}
 
-	static Action readObject(PacketBuffer in) {
-		byte slot = in.readByte();
-		return new Action(slot, slot > 53 ? Ingredient.read(in) : null);
+	static Action fromJson(JsonElement element) {
+		boolean isSlot = element.isJsonPrimitive();
+		return new Action(isSlot ? element.getAsInt() : 0, isSlot ? null : Ingredient.fromJson(element.getAsJsonObject()));
+	}
+
+	@Override
+	public String toString() {
+		return ingredient == null ? String.valueOf(slot) : ingredient.toString();
 	}
 
 	static class Ingredient {
@@ -89,13 +94,13 @@ class Action {
 		}
 
 		Ingredient(ItemStack stack, int compression) {
-			this(Item.getIdFromItem(stack.getItem()), compression, stack.getMetadata());
+			this(Item.getIdFromItem(stack.getItem()), stack.getMetadata(), compression);
 		}
 
-		private Ingredient(int itemId, int compression, int meta) {
+		private Ingredient(int itemId, int meta, int compression) {
 			this.itemId = itemId;
-			this.compression = compression;
 			this.meta = meta;
+			this.compression = compression;
 		}
 
 		private boolean equals(Ingredient other) {
@@ -124,14 +129,23 @@ class Action {
 			return -1;
 		}
 
-		void write(PacketBuffer out) {
-			out.writeVarIntToBuffer(itemId);
-			out.writeByte(compression);
-			out.writeByte(meta);
+		JsonObject toJson() {
+			JsonObject object = new JsonObject();
+
+			object.addProperty("id", itemId);
+			object.addProperty("meta", meta);
+			object.addProperty("compression", compression);
+
+			return object;
 		}
 
-		static Ingredient read(PacketBuffer in) {
-			return new Ingredient(in.readVarIntFromBuffer(), in.readByte(), in.readByte());
+		static Ingredient fromJson(JsonObject object) {
+			return new Ingredient(object.get("id").getAsInt(), object.get("meta").getAsInt(), object.get("compression").getAsInt());
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%d:%d (%d)", itemId, meta, compression);
 		}
 
 	}

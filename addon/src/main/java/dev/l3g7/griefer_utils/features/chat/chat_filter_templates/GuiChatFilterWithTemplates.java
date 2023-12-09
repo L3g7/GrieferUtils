@@ -113,7 +113,7 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 	}
 
 	public void loadTemplate(FilterTemplate template) {
-		Reflection.invoke(this, "loadFilter", new Filters.Filter(template.name, template.contains, template.containsNot, false, "note.harp", false, (short) 200, (short) 200, (short) 50, false, true, false, "Global"));
+		Reflection.invoke(this, "loadFilter", template.toFilter());
 	}
 
 }

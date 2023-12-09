@@ -29,7 +29,6 @@ import net.labymod.gui.elements.Scrollbar;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.FilterChatManager;
-import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.ingamechat.tools.filter.Filters.Filter;
 import net.labymod.main.LabyMod;
 import net.labymod.main.lang.LanguageManager;
@@ -84,7 +83,7 @@ public class CustomGuiChatFilter extends GuiChatCustom {
 			templatesRenderer = new GuiChatFilterWithTemplates("") {
 				@Override
 				public void loadTemplate(ChatFilterTemplates.FilterTemplate template) {
-					Reflection.invoke(CustomGuiChatFilter.this, "loadFilter", new Filters.Filter(template.name, template.contains, template.containsNot, false, "note.harp", false, (short) 200, (short) 200, (short) 50, false, true, false, "Global"));
+					Reflection.invoke(CustomGuiChatFilter.this, "loadFilter", template.toFilter());
 				}
 			};
 		else

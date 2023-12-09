@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -90,6 +91,10 @@ class RecraftPageSetting extends ListEntrySetting {
 	}
 
 	protected void onChange() {
+		if (!container.getSubSettings().getElements().contains(this))
+			for (RecordingDisplaySetting displaySetting : Recraft.getSubSettingsOfType(this, RecordingDisplaySetting.class))
+				displaySetting.recording.key.set(ImmutableSet.of());
+
 		FileProvider.getSingleton(Recraft.class).save();
 	}
 

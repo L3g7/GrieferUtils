@@ -43,7 +43,7 @@ class RecraftRecording {
 
 	LinkedList<Action> actions = new LinkedList<>();
 
-	private final KeySetting key = new KeySetting()
+	final KeySetting key = new KeySetting()
 		.name("Taste")
 		.description("Mit welcher Taste diese Aufzeichung abgespielt werden soll.")
 		.icon("key")

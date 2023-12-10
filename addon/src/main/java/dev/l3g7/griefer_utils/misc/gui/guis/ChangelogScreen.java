@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
@@ -61,7 +62,7 @@ public class ChangelogScreen extends GuiScreen {
 	@OnStartupComplete
 	private static void onStartUpComplete() {
 		completedStartup = true;
-		tryOpening();
+		TickScheduler.runAfterRenderTicks(ChangelogScreen::tryOpening, 1);
 	}
 
 	public static void trigger(boolean triggeredByUser) {

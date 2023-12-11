@@ -58,7 +58,8 @@ class RecraftRecorder {
 
 	@EventListener
 	private static void onMessageSend(PacketSendEvent<C01PacketChatMessage> event) {
-		if (event.packet.getMessage().equalsIgnoreCase("/rezepte") || event.packet.getMessage().toLowerCase().startsWith("/rezepte "))
+		String lowerMsg = event.packet.getMessage().toLowerCase();
+		if (!RecraftPlayer.isPlaying() && (lowerMsg.equals("/rezepte") || lowerMsg.startsWith("/rezepte ")))
 			executedCommand = true;
 	}
 

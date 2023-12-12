@@ -95,7 +95,8 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 	@EventListener
 	public void onItemUse(ItemUseEvent.Post event) {
 		if (!refillBlocks.get() || !(event.stackBeforeUse.getItem() instanceof ItemBlock
-			|| (event.stackBeforeUse.getItem() == Items.dye && EnumDyeColor.byDyeDamage(event.stackBeforeUse.getMetadata()) == EnumDyeColor.BROWN)))
+			|| (event.stackBeforeUse.getItem() == Items.dye && EnumDyeColor.byDyeDamage(event.stackBeforeUse.getMetadata()) == EnumDyeColor.BROWN)
+			|| event.stackBeforeUse.getItem() == Items.redstone))
 			return;
 
 		ItemStack previousStack = event.stackBeforeUse;

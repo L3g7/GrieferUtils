@@ -28,8 +28,8 @@ import dev.l3g7.griefer_utils.misc.TickScheduler;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
 
-import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Queue;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
@@ -38,7 +38,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
  */
 class RecraftPlayer {
 
-	private static Deque<Action> pendingActions;
+	private static Queue<Action> pendingActions;
 	private static boolean closeGui = false;
 	private static Action actionBeingExecuted = null;
 
@@ -94,7 +94,8 @@ class RecraftPlayer {
 
 	private static void executeAction(Action action, GuiChest chest) {
 		actionBeingExecuted = action;
-		action.execute(chest);
+		if (handleErrors(action.execute(chest), chest))
+			return;
 
 		TickScheduler.runAfterClientTicks(() -> {
 			if (actionBeingExecuted == action) {
@@ -102,6 +103,31 @@ class RecraftPlayer {
 				executeAction(action, chest);
 			}
 		}, 2);
+	}
+
+	private static boolean handleErrors(Boolean result, GuiChest chest) {
+		// Success
+		if (result == Boolean.TRUE)
+			return false;
+
+		// Action failed
+		if (result == Boolean.FALSE) {
+			TickScheduler.runAfterRenderTicks(player()::closeScreen, 1);
+			pendingActions = null;
+		}
+
+		// Action was skipped
+		if (pendingActions == null)
+			return true;
+
+		if (pendingActions.isEmpty()) {
+			TickScheduler.runAfterRenderTicks(player()::closeScreen, 1);
+			pendingActions = null;
+		} else {
+			executeAction(pendingActions.poll(), chest);
+		}
+
+		return true;
 	}
 
 	@EventListener

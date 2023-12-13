@@ -96,21 +96,34 @@ class RecraftRecorder {
 		if (packet.getClickedItem() == null || packet.getClickedItem().getDisplayName().equals("§7"))
 			return;
 
-		if (!addedIcon && "§7Klicke, um dieses Rezept herzustellen.".equals(ItemUtil.getLoreAtIndex(packet.getClickedItem(), 0))) {
+		boolean isCrafting = "§7Klicke, um dieses Rezept herzustellen.".equals(ItemUtil.getLoreAtIndex(packet.getClickedItem(), 0));
+		if (!addedIcon && isCrafting) {
 			ItemStack targetStack = player().openContainer.getSlot(25).getStack().copy();
 			targetStack.stackSize = ItemUtil.getCompressionLevel(targetStack);
 			recording.mainSetting.icon(targetStack);
 			addedIcon = true;
 		}
 
-		Ingredient ingredient = null;
 		if (packet.getSlotId() > 53) {
-			ingredient = Ingredient.getIngredient(packet.getClickedItem());
-			if (ingredient == null)
-				return;
+			Ingredient ingredient = Ingredient.fromItemStack(packet.getClickedItem());
+			if (ingredient != null)
+				recording.actions.add(new Action(ingredient));
+			return;
 		}
 
-		recording.actions.add(new Action(packet.getSlotId(), ingredient));
+		if (!isCrafting || player().openContainer.windowId != packet.getWindowId()) {
+			recording.actions.add(new Action(packet.getSlotId(), null));
+			return;
+		}
+
+		Ingredient[] ingredients = new Ingredient[9];
+		for (int i = 0; i < 9; i++) {
+			ItemStack stack = player().openContainer.getSlot(10 + i % 3 + i / 3 * 9).getStack();
+			if (stack != null)
+				ingredients[i] = Ingredient.fromItemStack(stack);
+		}
+
+		recording.actions.add(new Action(packet.getSlotId(), Action.SizedIngredient.fromIngredients(ingredients)));
 	}
 
 }

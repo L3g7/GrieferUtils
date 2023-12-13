@@ -81,7 +81,7 @@ class RecraftRecording {
 
 		ItemStack icon = mainSetting.iconStorage.itemStack;
 		if (icon != null)
-			object.add("icon", new Ingredient(icon, icon.stackSize).toJson());
+			object.addProperty("icon", new Ingredient(icon, icon.stackSize).toLong());
 
 		JsonArray jsonActions = new JsonArray();
 		for (Action action : actions)
@@ -97,9 +97,20 @@ class RecraftRecording {
 
 		recording.key.set(recording.key.getStorage().decodeFunc.apply(object.get("keys")));
 
-		if (object.has("icon")) {
-			JsonObject icon = object.getAsJsonObject("icon");
-			recording.mainSetting.icon(new ItemStack(Item.getItemById(icon.get("id").getAsInt()), icon.get("compression").getAsInt(), icon.get("meta").getAsInt()));
+		JsonElement icon = object.get("icon");
+		if (icon != null) {
+			if (icon.isJsonPrimitive()) {
+				Ingredient ingredient = Ingredient.fromLong(icon.getAsLong());
+				recording.mainSetting.icon(new ItemStack(Item.getItemById(ingredient.itemId), ingredient.compression, ingredient.meta));
+			} else {
+				JsonObject iconObj = icon.getAsJsonObject();
+				recording.mainSetting.icon(new ItemStack(Item.getItemById(iconObj.get("id").getAsInt()), iconObj.get("compression").getAsInt(), iconObj.get("meta").getAsInt()));
+			}
+		}
+
+		if (icon != null && icon.isJsonPrimitive()) {
+			Ingredient ingredient = Ingredient.fromLong(icon.getAsLong());
+			recording.mainSetting.icon(new ItemStack(Item.getItemById(ingredient.itemId), ingredient.compression, ingredient.meta));
 		}
 
 		JsonArray jsonActions = object.getAsJsonArray("actions");

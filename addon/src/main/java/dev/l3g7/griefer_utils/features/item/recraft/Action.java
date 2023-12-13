@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -27,53 +28,122 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 class Action {
 
 	private final int slot;
 	private final Ingredient ingredient;
+	private final List<SizedIngredient> craftingIngredients;
 
-	public Action(int slot, Ingredient ingredient) {
+	public Action(int slot, List<SizedIngredient> craftingIngredients) {
 		this.slot = slot;
-		this.ingredient = ingredient;
+		this.craftingIngredients = craftingIngredients;
+		this.ingredient = null;
 	}
 
-	public void execute(GuiChest chest) {
-		if (ingredient == null) {
-			mc().playerController.windowClick(chest.inventorySlots.windowId, slot, 0, 0, player());
-			return;
+	public Action(Ingredient ingredient) {
+		this.ingredient = ingredient;
+		this.slot = -1;
+		this.craftingIngredients = null;
+	}
+
+	/**
+	 * @return
+	 * true: if this action was successfull<br>
+	 * false: if this action failed<br>
+	 * null: if this action was skipped
+	 */
+	public Boolean execute(GuiChest chest) {
+		if (ingredient != null) {
+			int ingredientSlot = ingredient.getSlot();
+			if (ingredientSlot == -1) {
+				displayAchievement("§c§lFehler \u26A0", "Ein benötigtes Item ist nicht verfügbar!");
+				return false;
+			}
+
+			mc().playerController.windowClick(chest.inventorySlots.windowId, ingredientSlot, 0, 0, player());
+			return true;
 		}
 
-		int ingredientSlot = ingredient.getSlot();
-		if (ingredientSlot == -1)
-			return;
+		if (craftingIngredients != null) {
+			for (SizedIngredient craftingIngredient : craftingIngredients) {
+				if (!craftingIngredient.isAvailable()) {
+					displayAchievement("§eAktion übersprungen \u26A0", "Du hattest nicht genügend Zutaten im Inventar!");
+					return null;
+				}
+			}
+		}
 
-		mc().playerController.windowClick(chest.inventorySlots.windowId, ingredientSlot, 0, 0, player());
+		mc().playerController.windowClick(chest.inventorySlots.windowId, slot, 0, 1, player());
+		return true;
 	}
 
 	JsonElement toJson() {
-		return ingredient != null ? ingredient.toJson() : new JsonPrimitive(slot);
+		if (ingredient != null)
+			return new JsonPrimitive(ingredient.toLong());
+
+		if (craftingIngredients == null)
+			return new JsonPrimitive(slot);
+
+		JsonObject object = new JsonObject();
+		object.addProperty("slot", slot);
+		JsonArray craftingJson = new JsonArray();
+
+		for (SizedIngredient craftingIngredient : craftingIngredients)
+			craftingJson.add(new JsonPrimitive(craftingIngredient.toLong()));
+
+		object.add("crafting_ingredients", craftingJson);
+		return object;
 	}
 
 	static Action fromJson(JsonElement element) {
-		boolean isSlot = element.isJsonPrimitive();
-		return new Action(isSlot ? element.getAsInt() : 0, isSlot ? null : Ingredient.fromJson(element.getAsJsonObject()));
+		if (element.isJsonPrimitive()) {
+			long value = element.getAsLong();
+			if (value < 0xFFFF)
+				return new Action((int) value, null);
+
+			return new Action(Ingredient.fromLong(value));
+		}
+
+		JsonObject object = element.getAsJsonObject();
+		if (!object.has("crafting_ingredients")) // Ensure backwards compatibility
+			return new Action(new Ingredient(object.get("id").getAsInt(), object.get("meta").getAsInt(), object.get("compression").getAsInt()));
+
+		int slot = object.get("slot").getAsInt();
+
+		JsonArray craftingJson = object.getAsJsonArray("crafting_ingredients");
+		if (craftingJson == null)
+			return new Action(slot, null);
+
+		List<SizedIngredient> ingredients = new ArrayList<>();
+		for (JsonElement jsonElement : craftingJson)
+			ingredients.add(SizedIngredient.fromLong(jsonElement.getAsLong()));
+
+		return new Action(slot, ingredients);
 	}
 
 	@Override
 	public String toString() {
-		return ingredient == null ? String.valueOf(slot) : ingredient.toString();
+		if (ingredient != null)
+			return ingredient.toString();
+
+		return slot + " " + craftingIngredients;
 	}
 
 	static class Ingredient {
 
-		private final int itemId;
-		private final int compression;
-		private final int meta;
+		final int itemId;
+		final int compression;
+		final int meta;
 
-		public static Ingredient getIngredient(ItemStack stack) {
+		public static Ingredient fromItemStack(ItemStack stack) {
 			if (stack == null || stack.isItemStackDamageable())
 				return null;
 
@@ -103,7 +173,15 @@ class Action {
 			this.compression = compression;
 		}
 
-		private boolean equals(Ingredient other) {
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof Ingredient))
+				return false;
+
+			return equals((Ingredient) obj);
+		}
+
+		boolean equals(Ingredient other) {
 			if (other == null)
 				return false;
 
@@ -118,7 +196,7 @@ class Action {
 		private int getSlot() {
 			ItemStack[] inv = player().inventory.mainInventory;
 			for (int i = 0; i < inv.length; i++) {
-				if (!this.equals(getIngredient(inv[i])))
+				if (!this.equals(fromItemStack(inv[i])))
 					continue;
 
 				if (i < 9)
@@ -129,23 +207,85 @@ class Action {
 			return -1;
 		}
 
-		JsonObject toJson() {
-			JsonObject object = new JsonObject();
-
-			object.addProperty("id", itemId);
-			object.addProperty("meta", meta);
-			object.addProperty("compression", compression);
-
-			return object;
+		long toLong() {
+			long result = compression;
+			// 10000 is used instead of real bit shifting to maintain readability
+			result += (long) meta * 10000;
+			result += (long) itemId * 10000_0000;
+			return result;
 		}
 
-		static Ingredient fromJson(JsonObject object) {
-			return new Ingredient(object.get("id").getAsInt(), object.get("meta").getAsInt(), object.get("compression").getAsInt());
+		static Ingredient fromLong(long value) {
+			int compression = (int) (value % 10000);
+			int meta = (int) (value / 10000 % 10000);
+			int itemId = (int) (value / 10000_0000 % 10000);
+			return new Ingredient(itemId, meta, compression);
+		}
+
+		public String toString() {
+			return String.format("%d:%d (%d)", itemId, meta, compression);
 		}
 
 		@Override
+		public int hashCode() {
+			return itemId + meta * 10000;
+		}
+
+	}
+
+	static class SizedIngredient {
+
+		private final Ingredient ingredient;
+		private final int size;
+
+		static List<SizedIngredient> fromIngredients(Ingredient[] ingredients) {
+			if (ingredients == null)
+				return null;
+
+			Map<Ingredient, AtomicInteger> ingredientCounts = new HashMap<>();
+			for (Ingredient ingredient : ingredients)
+				if (ingredient != null)
+					ingredientCounts.computeIfAbsent(ingredient, k -> new AtomicInteger(0)).incrementAndGet();
+
+			List<SizedIngredient> sizedIngredients = new ArrayList<>();
+			for (Map.Entry<Ingredient, AtomicInteger> entry : ingredientCounts.entrySet())
+				sizedIngredients.add(new SizedIngredient(entry.getKey(), entry.getValue().intValue()));
+
+			return sizedIngredients;
+		}
+
+		SizedIngredient(Ingredient ingredient, int size) {
+			this.ingredient = ingredient;
+			this.size = size;
+		}
+
+		long toLong() {
+			return ingredient.toLong() + (long) size * 10000_0000_0000L;
+		}
+
+		static SizedIngredient fromLong(long value) {
+			Ingredient ingredient = Ingredient.fromLong(value);
+			int size = (int) (value / 10000_0000_0000L % 10000);
+			return new SizedIngredient(ingredient, size);
+		}
+
+		boolean isAvailable() {
+			int count = 0;
+
+			for (ItemStack stack : player().inventory.mainInventory) {
+				if (!ingredient.equals(Ingredient.fromItemStack(stack)))
+					continue;
+
+				count += stack.stackSize;
+				if (count >= size)
+					return true;
+			}
+
+			return false;
+		}
+
 		public String toString() {
-			return String.format("%d:%d (%d)", itemId, meta, compression);
+			return size + "x " + ingredient.toString();
 		}
 
 	}

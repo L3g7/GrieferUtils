@@ -81,7 +81,7 @@ class Action {
 			}
 		}
 
-		mc().playerController.windowClick(chest.inventorySlots.windowId, slot, 0, 1, player());
+		mc().playerController.windowClick(chest.inventorySlots.windowId, Math.abs(slot), 0, slot < 0 ? 1 : 0, player());
 		return true;
 	}
 

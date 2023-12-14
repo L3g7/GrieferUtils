@@ -123,7 +123,11 @@ class RecraftRecorder {
 				ingredients[i] = Ingredient.fromItemStack(stack);
 		}
 
-		recording.actions.add(new Action(packet.getSlotId(), Action.SizedIngredient.fromIngredients(ingredients)));
+		int slot = packet.getSlotId();
+		if (packet.getMode() == 1)
+			slot = -slot;
+
+		recording.actions.add(new Action(slot, Action.SizedIngredient.fromIngredients(ingredients)));
 	}
 
 }

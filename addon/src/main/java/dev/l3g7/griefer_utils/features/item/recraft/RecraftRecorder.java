@@ -119,7 +119,7 @@ class RecraftRecorder {
 		Ingredient[] ingredients = new Ingredient[9];
 		for (int i = 0; i < 9; i++) {
 			ItemStack stack = player().openContainer.getSlot(10 + i % 3 + i / 3 * 9).getStack();
-			if (stack != null)
+			if (stack != null && !stack.getDisplayName().equals("§7"))
 				ingredients[i] = Ingredient.fromItemStack(stack);
 		}
 

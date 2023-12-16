@@ -207,6 +207,13 @@ public class IOUtil {
 		}
 
 		/**
+		 * Tries to read the input stream as a json object.
+		 */
+		public Optional<String> asJsonString() {
+			return readSync(in -> jsonParser.parse(in).getAsString());
+		}
+
+		/**
 		 * Tries to read the input stream as a json string.
 		 */
 		public AsyncFailable asJsonString(Consumer<String> callback) {

@@ -54,7 +54,7 @@ public class ItemFrameLimitIndicator extends Module {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Rahmenlimit Indikator")
+		.name("Rahmen im Chunk")
 		.description("Zeigt an, wie viele Rahmen sich im derzeitigen Chunk befinden.")
 		.icon(Material.ITEM_FRAME)
 		.subSettings(applyColor, limit);

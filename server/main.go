@@ -1,12 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/joho/godotenv"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -27,6 +25,7 @@ func main() {
 	http.HandleFunc("/online_users", preprocess(checkAuth(OnlineUsersRoute)))
 	http.HandleFunc("/logout", preprocess(checkAuth(LogoutRoute)))
 	http.HandleFunc("/keep_alive", preprocess(checkAuth(KeepAliveRoute)))
+	http.HandleFunc("/hive_mind/mob_remover", preprocess(checkAuth(HiveMindMobRemoverRoute)))
 
 	err := http.ListenAndServe(":3333", nil)
 	if errors.Is(err, http.ErrServerClosed) {
@@ -87,23 +86,6 @@ func checkAuth(handler func(http.ResponseWriter, *http.Request, *jwt.Token) erro
 
 		return handler(w, r, token)
 	}
-}
-
-func DecodeFully(r io.Reader, v any) error {
-	dec := json.NewDecoder(r)
-	dec.DisallowUnknownFields()
-
-	err := dec.Decode(v)
-	if err != nil {
-		return err
-	}
-
-	err = dec.Decode(&struct{}{})
-	if err != io.EOF {
-		return errors.New("JSON not fully decoded")
-	}
-
-	return nil
 }
 
 func Error(w http.ResponseWriter, code int, message string) {

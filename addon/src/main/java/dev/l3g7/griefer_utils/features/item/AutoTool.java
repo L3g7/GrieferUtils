@@ -167,7 +167,7 @@ public class AutoTool extends Feature {
 		// Get best slot
 		for (int i = 0; i < 9; i++) {
 			ItemStack stack = player().inventory.getStackInSlot(i);
-			double currentScore = getScore(stack, state);
+			double currentScore = getScore(stack, state, canMine(targetedBlock, state, i));
 
 			if (bestScore < currentScore) {
 				bestScore = currentScore;
@@ -176,7 +176,7 @@ public class AutoTool extends Feature {
 		}
 
 		// Switch to the best slot, if it isn't the current one
-		if (bestSlot != -1 && bestScore > getScore(player().inventory.getCurrentItem(), state)) {
+		if (bestSlot != -1 && bestScore > getScore(player().inventory.getCurrentItem(), state, canMine(targetedBlock, state, player().inventory.currentItem))) {
 
 			if (switchBack.get() && previousSlot == -1)
 				previousSlot = player().inventory.currentItem;
@@ -185,7 +185,17 @@ public class AutoTool extends Feature {
 		}
 	}
 
-	public double getScore(ItemStack itemStack, IBlockState state) {
+	private boolean canMine(BlockPos pos, IBlockState state, int checkedItem) {
+		int currentItem = player().inventory.currentItem;
+
+		player().inventory.currentItem = checkedItem;
+		boolean canMine = state.getBlock().canHarvestBlock(world(), pos, player());
+		player().inventory.currentItem = currentItem;
+
+		return canMine;
+	}
+
+	public double getScore(ItemStack itemStack, IBlockState state, boolean canMine) {
 		ItemDisplaySetting ids = ItemSaver.getSetting(itemStack);
 		if (ids != null && ids.leftclick.get())
 			return Integer.MIN_VALUE;
@@ -224,10 +234,17 @@ public class AutoTool extends Feature {
 			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * (preference.get() != EnchantPreference.FORTUNE ? 10 : 1);
 		}
 
-		if (enforceSilkTouch.get() && state.getBlock().isFullCube() && state.getBlock().hasTileEntity())
-			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * 10000;
+		if (canMine && enforceSilkTouch.get() && isSilkTouchApplicable(itemStack, state.getBlock()))
+			score += 1_000_000;
 
 		return score;
+	}
+
+	private static boolean isSilkTouchApplicable(ItemStack stack, Block block) {
+		if (EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, stack) == 0)
+			return false;
+
+		return Reflection.invoke(block, "canSilkHarvest");
 	}
 
 	private static boolean isValidCutter(ItemStack stack, Block block) {

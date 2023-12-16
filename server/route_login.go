@@ -22,7 +22,7 @@ var UuidRegex, _ = regexp.Compile("^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][
 
 type LoginRequest struct {
 	User           string `json:"user"`
-	RequestTime    uint64 `json:"request_time"`
+	RequestTime    int64  `json:"request_time"`
 	Signature      string `json:"signature"`
 	PublicKey      string `json:"public_key"`
 	KeySignature   string `json:"key_signature"`
@@ -44,7 +44,7 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Check if RequestTime is reasonable
-	if time.UnixMilli(int64(request.RequestTime)).Add(30 * time.Second).Before(time.Now()) {
+	if request.RequestTime < 0 || time.UnixMilli(request.RequestTime).Add(30 * time.Second).Before(time.Now()) {
 		// RequestTime is more than 30s ago
 		Error(w, http.StatusBadRequest, "Bad Request")
 		return nil
@@ -76,7 +76,7 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Create signed payload
-	payload := binary.BigEndian.AppendUint64(rawUuid, request.RequestTime)
+	payload := binary.BigEndian.AppendUint64(rawUuid, uint64(request.RequestTime))
 	hash := sha256.Sum256(payload)
 
 	// Validate signed payload

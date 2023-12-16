@@ -96,7 +96,7 @@ public class ServerPerformance extends Module {
 		// create text representation
 		String displayTPS = displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS);
 
-		return Collections.singletonList(Collections.singletonList(applyColor.get() ? Text.getText(displayTPS, r, g, 0x55) : Text.getText(displayTPS)));
+		return Collections.singletonList(Collections.singletonList(applyColor.get() ? Text.getText(displayTPS, r, g, 0) : Text.getText(displayTPS)));
 	}
 
 	@EventListener

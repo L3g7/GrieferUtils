@@ -112,7 +112,7 @@ class RecraftPlayer {
 
 		// Action failed
 		if (result == Boolean.FALSE) {
-			TickScheduler.runAfterRenderTicks(player()::closeScreen, 1);
+			TickScheduler.runAfterClientTicks(player()::closeScreen, 1);
 			pendingActions = null;
 		}
 
@@ -121,7 +121,7 @@ class RecraftPlayer {
 			return true;
 
 		if (pendingActions.isEmpty()) {
-			TickScheduler.runAfterRenderTicks(player()::closeScreen, 1);
+			TickScheduler.runAfterClientTicks(player()::closeScreen, 1);
 			pendingActions = null;
 		} else {
 			executeAction(pendingActions.poll(), chest);

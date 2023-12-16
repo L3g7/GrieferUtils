@@ -142,6 +142,7 @@ class Action {
 		final int itemId;
 		final int compression;
 		final int meta;
+		private int lastSlotIndex = -1;
 
 		public static Ingredient fromItemStack(ItemStack stack) {
 			if (stack == null || stack.isItemStackDamageable())
@@ -201,8 +202,12 @@ class Action {
 
 				if (i < 9)
 					i += 36;
-				return i + 45;
+				return lastSlotIndex = i + 45;
 			}
+
+			// Check if the item still is in the player's cursor
+			if (this.equals(fromItemStack(player().inventory.getItemStack())))
+				return lastSlotIndex;
 
 			return -1;
 		}

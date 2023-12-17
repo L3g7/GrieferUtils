@@ -12,7 +12,7 @@ import (
 )
 
 type HiveMindMobRemoverRequest struct {
-	CityBuild string  `json:"city_build"`
+	Citybuild string  `json:"citybuild"`
 	Value     *uint64 `json:"value,omitempty"`
 }
 
@@ -26,12 +26,12 @@ type HiveMindMobRemoverEntry struct {
 	Timestamp uint64
 }
 
-// mobRemoverKnowledge stores all data collected by the hive mind in a map of CityBuild -> []Entry
+// mobRemoverKnowledge stores all data collected by the hive mind in a map of Citybuild -> []Entry
 var mobRemoverKnowledge = make(map[string][]HiveMindMobRemoverEntry)
 var mobRemoverKnowledgeMutex sync.Mutex
 
 func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.Token) error {
-	validCityBuilds := strings.Split(os.Getenv("HIVE_MIND_VALID_CITY_BUILDS"), ",")
+	validCitybuilds := strings.Split(os.Getenv("HIVE_MIND_VALID_CITYBUILDS"), ",")
 
 	claims, _ := token.Claims.(jwt.MapClaims)
 	user := claims["sub"].(string)
@@ -43,13 +43,13 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 		return err
 	}
 
-	cityBuild := request.CityBuild
-	if !slices.Contains(validCityBuilds, cityBuild) {
+	citybuild := request.Citybuild
+	if !slices.Contains(validCitybuilds, citybuild) {
 		Error(w, http.StatusBadRequest, "Bad Request")
 		return nil
 	}
 
-	entries := mobRemoverKnowledge[cityBuild]
+	entries := mobRemoverKnowledge[citybuild]
 
 	var response HiveMindMobRemoverResponse
 
@@ -76,13 +76,13 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 			Value:     *request.Value,
 			Timestamp: uint64(time.Now().Unix()),
 		})
-		mobRemoverKnowledge[cityBuild] = entries
+		mobRemoverKnowledge[citybuild] = entries
 	} else {
 		// Remove entries that already passed
 		entries = Remove(entries, func(entry HiveMindMobRemoverEntry) bool {
 			return now > entry.Timestamp
 		})
-		mobRemoverKnowledge[cityBuild] = entries
+		mobRemoverKnowledge[citybuild] = entries
 
 		// Get value with least avg deviation to other values
 		response.Value = GetWithLeastDeviation(entries, func(first HiveMindMobRemoverEntry, second HiveMindMobRemoverEntry) *uint64 {

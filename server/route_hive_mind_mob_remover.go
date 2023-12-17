@@ -65,6 +65,7 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 		// Validate new entry
 		if *request.Value > now+1200000 {
 			// New entry is more than 20 min away
+			mobRemoverKnowledgeMutex.Unlock()
 			Error(w, http.StatusBadRequest, "Bad Request")
 			return nil
 		}

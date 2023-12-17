@@ -27,7 +27,7 @@ func DecodeFully(r io.Reader, v any) error {
 // Remove removes any entries matching the filter from an unsorted array.
 func Remove[T any](array []T, filter func(T) bool) []T {
 	i := 0
-	for i > len(array) {
+	for i < len(array) {
 		v := array[i]
 		if filter(v) {
 			array[i] = array[len(array)-1]

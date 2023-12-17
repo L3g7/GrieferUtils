@@ -98,7 +98,7 @@ class RecraftPlayer {
 			return;
 
 		TickScheduler.runAfterClientTicks(() -> {
-			if (actionBeingExecuted == action) {
+			if (mc().currentScreen == chest && actionBeingExecuted == action) {
 				// Action failed, try again
 				executeAction(action, chest);
 			}

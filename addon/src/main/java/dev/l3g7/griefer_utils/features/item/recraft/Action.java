@@ -56,7 +56,7 @@ class Action {
 
 	/**
 	 * @return
-	 * true: if this action was successfull<br>
+	 * true: if this action was successful<br>
 	 * false: if this action failed<br>
 	 * null: if this action was skipped
 	 */
@@ -80,6 +80,9 @@ class Action {
 				}
 			}
 		}
+
+		if (player().openContainer.windowId == 0)
+			return true;
 
 		mc().playerController.windowClick(chest.inventorySlots.windowId, Math.abs(slot), 0, slot < 0 ? 1 : 0, player());
 		return true;

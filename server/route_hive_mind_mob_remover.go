@@ -21,9 +21,8 @@ type HiveMindMobRemoverResponse struct {
 }
 
 type HiveMindMobRemoverEntry struct {
-	User      string
-	Value     uint64
-	Timestamp uint64
+	User  string
+	Value uint64
 }
 
 // mobRemoverKnowledge stores all data collected by the hive mind in a map of Citybuild -> []Entry
@@ -72,15 +71,14 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 
 		// Add new entry
 		entries = append(entries, HiveMindMobRemoverEntry{
-			User:      user,
-			Value:     *request.Value,
-			Timestamp: uint64(time.Now().Unix()),
+			User:  user,
+			Value: *request.Value,
 		})
 		mobRemoverKnowledge[citybuild] = entries
 	} else {
 		// Remove entries that already passed
 		entries = Remove(entries, func(entry HiveMindMobRemoverEntry) bool {
-			return now > entry.Timestamp
+			return now > entry.Value
 		})
 		mobRemoverKnowledge[citybuild] = entries
 

@@ -84,19 +84,21 @@ public class ServerPerformance extends Module {
 			return getDefaultTextValues();
 
 		// calculate color
-		int r, g;
+		int r, g, b;
 		if (currentTPS < 15) {
-			r = 255;
-			g = Math.max((int) (6.8 * (5d * currentTPS - 62.5) + 170), 0);
+			r = 0xFF;
+			g = (int) (0xFF * (currentTPS / 15d));
+			b = 0;
 		} else {
-			r = (int) (255 - 6.8 * (5d * currentTPS - 75));
+			r = (int) (0x55 + 0xAA * (20 - currentTPS) / 5d);
 			g = 255;
+			b = (int) (0x55 * (currentTPS - 15) / 5d);
 		}
 
 		// create text representation
 		String displayTPS = displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS);
 
-		return Collections.singletonList(Collections.singletonList(applyColor.get() ? Text.getText(displayTPS, r, g, 0) : Text.getText(displayTPS)));
+		return Collections.singletonList(Collections.singletonList(applyColor.get() ? Text.getText(displayTPS, r, g, b) : Text.getText(displayTPS)));
 	}
 
 	@EventListener

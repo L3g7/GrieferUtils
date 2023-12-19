@@ -24,8 +24,8 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Module;
@@ -37,9 +37,8 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.main.LabyMod;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @Singleton
@@ -85,7 +83,6 @@ public class Booster extends Module {
 
 	private boolean waitingForBoosterGUI = false;
 	private boolean waitingForBoosterInfo = false;
-	private String chatInput = null;
 
 	@EventListener
 	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
@@ -100,31 +97,18 @@ public class Booster extends Module {
 
 		MinecraftUtil.send("/booster");
 		waitingForBoosterGUI = waitingForBoosterInfo = true;
-
-		if (!(mc().currentScreen instanceof GuiChat)) {
-			chatInput = null;
-			return;
-		}
-
-		GuiTextField input = Reflection.get(mc().currentScreen, "inputField");
-		chatInput = input == null ? null : input.getText();
 	}
 
 	@EventListener
-	public void onTick(TickEvent.RenderTickEvent event) {
-		if (!isOnGrieferGames() || !waitingForBoosterGUI)
+	private void onGuiChestOpen(GuiOpenEvent<GuiChest> event) {
+		if (!waitingForBoosterGUI)
 			return;
 
-		if (!(mc.currentScreen instanceof GuiChest))
+		IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
+		if (!lowerChestInventory.getDisplayName().getFormattedText().equals("§6Booster - Übersicht§r"))
 			return;
 
-		if (!getGuiChestTitle().equals("§6Booster - Übersicht§r"))
-			return;
-
-		player().closeScreen();
-		if (chatInput != null)
-			mc.displayGuiScreen(new GuiChat(chatInput));
-		chatInput = null;
+		event.cancel();
 		waitingForBoosterGUI = false;
 	}
 

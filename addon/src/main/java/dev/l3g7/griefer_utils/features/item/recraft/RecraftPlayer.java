@@ -87,7 +87,7 @@ class RecraftPlayer {
 			if (!pendingActions.isEmpty())
 				executeAction(pendingActions.poll(), event.gui);
 
-			if (pendingActions == null || pendingActions.isEmpty())
+			if (pendingActions != null && pendingActions.isEmpty())
 				closeGui = true;
 		}, 1);
 	}

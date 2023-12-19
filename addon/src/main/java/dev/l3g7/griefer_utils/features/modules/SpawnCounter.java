@@ -70,7 +70,10 @@ public class SpawnCounter extends Module {
 	private final String configKey;
 	private int roundsFlown;
 	private int roundsRan;
+
 	private boolean hasFlown;
+	private boolean accountForStartBonus;
+	private long startTime = 0;
 
 	private final DropDownSetting<NotificationType> notificationType = new DropDownSetting<>(NotificationType.class)
 		.name("Nachricht")
@@ -93,9 +96,9 @@ public class SpawnCounter extends Module {
 
 	public SpawnCounter() {
 		configKey = "modules.spawn_counter.rounds_";
+
 		if (Config.has(configKey + "flown"))
 			roundsFlown = Config.get(configKey + "flown").getAsInt();
-
 		if (Config.has(configKey + "ran"))
 			roundsRan = Config.get(configKey + "ran").getAsInt();
 	}
@@ -192,8 +195,11 @@ public class SpawnCounter extends Module {
 			if (Math.signum(playerPos.getX()) != x || Math.signum(playerPos.getZ()) != z)
 				continue;
 
-			if (startQuadrant == -1)
+			if (startQuadrant == -1) {
 				startQuadrant = i;
+				accountForStartBonus = true;
+				startTime = System.currentTimeMillis();
+			}
 
 			visitedQuadrants |= 1 << i;
 
@@ -202,15 +208,22 @@ public class SpawnCounter extends Module {
 				return;
 
 			visitedQuadrants = 0;
+			long delta = System.currentTimeMillis() - startTime;
+			startTime = System.currentTimeMillis();
+
+			if (accountForStartBonus) {
+				delta *= 1.25d;
+				accountForStartBonus = false;
+			}
 
 			if (hasFlown) {
 				roundsFlown++;
-				notificationType.get().notifier.accept("§fDu bist deine " + roundsFlown + "te Runde abgeflogen!");
+				notificationType.get().notifier.accept(String.format("§fDu bist deine §e%dte§f Runde in §e%.1f§f Sekunden abgeflogen!", roundsFlown, Math.round(delta / 100d) / 10d));
 				Config.set(configKey + "flown", new JsonPrimitive(roundsFlown));
 				hasFlown = false;
 			} else {
 				roundsRan++;
-				notificationType.get().notifier.accept("§fDu bist deine " + roundsRan + "te Runde abgelaufen!");
+				notificationType.get().notifier.accept(String.format("§fDu bist deine §e%dte§f Runde in §e%.1f§f Sekunden abgelaufen!", roundsRan, Math.round(delta / 100d) / 10d));
 				Config.set(configKey + "ran", new JsonPrimitive(roundsRan));
 			}
 			Config.save();
@@ -262,7 +275,7 @@ public class SpawnCounter extends Module {
 	private enum NotificationType implements Named {
 
 		NONE("Keine", s -> {}),
-		TOAST("Erfolg", s -> displayAchievement("§aSpawnCounter", s)),
+		TOAST("Erfolg", s -> displayAchievement("§aSpawn-Runden Zähler", s)),
 		ACTIONBAR("Aktionsleiste", s -> mc().ingameGUI.setRecordPlaying(s, true)),
 		MESSAGE("Chatnachricht", s -> display(ADDON_PREFIX + s));
 

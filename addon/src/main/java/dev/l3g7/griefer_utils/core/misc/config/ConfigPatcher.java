@@ -37,6 +37,8 @@ import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
 public class ConfigPatcher {
 
+	public static boolean versionChanged = false;
+
 	JsonObject config;
 
 	public ConfigPatcher(JsonObject config) {
@@ -50,7 +52,11 @@ public class ConfigPatcher {
 		}
 
 		String version = config.get("version").getAsString();
-		config.addProperty("version", AddonUtil.getVersion());
+		String newVersion = AddonUtil.getVersion();
+		if (!newVersion.equals(version)) {
+			config.addProperty("version", newVersion);
+			versionChanged = true;
+		}
 
 		VersionComparator cmp = new VersionComparator();
 

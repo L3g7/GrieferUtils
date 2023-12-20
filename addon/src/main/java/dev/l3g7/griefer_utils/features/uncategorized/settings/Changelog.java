@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
+import dev.l3g7.griefer_utils.core.misc.config.ConfigPatcher;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.misc.gui.guis.ChangelogScreen;
@@ -84,7 +85,7 @@ public class Changelog {
 
 	@OnEnable
 	public void onEnable() {
-		if (AutoUpdater.hasUpdated)
+		if (AutoUpdater.hasUpdated && ConfigPatcher.versionChanged)
 			ChangelogScreen.trigger(false);
 	}
 }

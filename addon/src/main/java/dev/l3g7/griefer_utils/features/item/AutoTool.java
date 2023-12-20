@@ -156,6 +156,9 @@ public class AutoTool extends Feature {
 		if (!ServerCheck.isOnGrieferGames() && player().getHeldItem() != null && player().getHeldItem().getItem() == Items.wooden_axe)
 			return;
 
+//		if (player().capabilities.isCreativeMode)
+//			return;
+
 		IBlockState state = world().getBlockState(targetedBlock);
 
 		if (state.getBlock().getBlockHardness(world(), targetedBlock) < 0) // Block can't be broken
@@ -167,7 +170,7 @@ public class AutoTool extends Feature {
 		// Get best slot
 		for (int i = 0; i < 9; i++) {
 			ItemStack stack = player().inventory.getStackInSlot(i);
-			double currentScore = getScore(stack, state, canMine(targetedBlock, state, i));
+			double currentScore = getScore(stack, state, canMine(state, stack));
 
 			if (bestScore < currentScore) {
 				bestScore = currentScore;
@@ -176,7 +179,7 @@ public class AutoTool extends Feature {
 		}
 
 		// Switch to the best slot, if it isn't the current one
-		if (bestSlot != -1 && bestScore > getScore(player().inventory.getCurrentItem(), state, canMine(targetedBlock, state, player().inventory.currentItem))) {
+		if (bestSlot != -1 && bestScore > getScore(player().inventory.getCurrentItem(), state, canMine(state, player().getHeldItem()))) {
 
 			if (switchBack.get() && previousSlot == -1)
 				previousSlot = player().inventory.currentItem;
@@ -185,14 +188,9 @@ public class AutoTool extends Feature {
 		}
 	}
 
-	private boolean canMine(BlockPos pos, IBlockState state, int checkedItem) {
-		int currentItem = player().inventory.currentItem;
-
-		player().inventory.currentItem = checkedItem;
-		boolean canMine = state.getBlock().canHarvestBlock(world(), pos, player());
-		player().inventory.currentItem = currentItem;
-
-		return canMine;
+	private boolean canMine(IBlockState state, ItemStack item) {
+		Block block = state.getBlock();
+		return block.getMaterial().isToolNotRequired() || item != null && item.canHarvestBlock(block);
 	}
 
 	public double getScore(ItemStack itemStack, IBlockState state, boolean canMine) {

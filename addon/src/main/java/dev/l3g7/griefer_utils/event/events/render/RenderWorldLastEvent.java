@@ -45,6 +45,7 @@ public class RenderWorldLastEvent extends Event {
 	    public void injectRenderWorldPass(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci) {
 		    mc.mcProfiler.endStartSection("gu_render_last");
 			new RenderWorldLastEvent(partialTicks).fire();
+			mc.mcProfiler.endSection();
 	    }
 
 	}

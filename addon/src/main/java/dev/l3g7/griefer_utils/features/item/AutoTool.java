@@ -156,8 +156,8 @@ public class AutoTool extends Feature {
 		if (!ServerCheck.isOnGrieferGames() && player().getHeldItem() != null && player().getHeldItem().getItem() == Items.wooden_axe)
 			return;
 
-//		if (player().capabilities.isCreativeMode)
-//			return;
+		if (player().capabilities.isCreativeMode)
+			return;
 
 		IBlockState state = world().getBlockState(targetedBlock);
 

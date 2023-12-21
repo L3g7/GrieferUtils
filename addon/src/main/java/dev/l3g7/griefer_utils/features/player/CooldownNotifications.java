@@ -168,37 +168,39 @@ public class CooldownNotifications extends Feature {
 
 	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
-		// Check if cooldown gui is open
-		if (mc().currentScreen instanceof GuiChest) {
-			IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
-			if (inventory.getDisplayName().getFormattedText().equals("§6Cooldowns§r")) {
-				if (inventory.getSizeInventory() != 45 || inventory.getStackInSlot(11) == null || inventory.getStackInSlot(11).getItem() != Items.gold_ingot)
-					return;
+		if (!(mc().currentScreen instanceof GuiChest))
+			return;
 
-				// Iterate through slots
-				boolean foundAny = false;
-				for (int i = 0; i < inventory.getSizeInventory(); i++) {
-					ItemStack s = inventory.getStackInSlot(i);
-					if (s == null || s.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
-						continue;
+		IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
+		if (!inventory.getDisplayName().getFormattedText().equals("§6Cooldowns§r"))
+			return;
 
-					// Load cooldown time from item
-					String name = ModColor.removeColor(s.getDisplayName()).replace("-Befehl", "");
-					if (name.startsWith("/clan") || name.equals("Riesige GS überschreiben") || name.equals("/premium"))
-						continue;
+		if (inventory.getSizeInventory() != 45 || inventory.getStackInSlot(11) == null || inventory.getStackInSlot(11).getItem() != Items.gold_ingot)
+			return;
 
-					endDates.put(name, getAvailability(s));
-					foundAny = true;
-				}
+		// Iterate through slots
+		boolean foundAny = false;
+		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+			ItemStack s = inventory.getStackInSlot(i);
+			if (s == null || s.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
+				continue;
 
-				if (foundAny) {
-					saveCooldowns();
-					// Close cooldowns if waitingForCooldownGUI (was automatically opened)
-					if (waitingForCooldownGUI)
-						resetWaitingForGUI();
-				}
-			}
+			// Load cooldown time from item
+			String name = ModColor.removeColor(s.getDisplayName()).replace("-Befehl", "");
+			if (name.startsWith("/clan") || name.equals("Riesige GSe (über 25er) überschreiben") || name.equals("/premium"))
+				continue;
+
+			endDates.put(name, getAvailability(s));
+			foundAny = true;
 		}
+
+		if (!foundAny)
+			return;
+
+		saveCooldowns();
+		// Close cooldowns if waitingForCooldownGUI (was automatically opened)
+		if (waitingForCooldownGUI)
+			resetWaitingForGUI();
 	}
 
 	private void resetWaitingForGUI() {
@@ -232,14 +234,15 @@ public class CooldownNotifications extends Feature {
 	public void loadCooldowns(GrieferGamesJoinEvent event) {
 		String path = "player.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId();
 
-		if (Config.has(path)) {
-			endDates.clear();
-			for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet()) {
-				if (e.getKey().startsWith("/clan") || e.getKey().equals("Riesige GS überschreiben") || e.getKey().equals("/premium"))
-					continue;
+		if (!Config.has(path))
+			return;
 
-				endDates.put(e.getKey(), e.getValue().getAsLong());
-			}
+		endDates.clear();
+		for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet()) {
+			if (e.getKey().startsWith("/clan") || e.getKey().contains("Riesige GS") || e.getKey().equals("/premium"))
+				continue;
+
+			endDates.put(e.getKey(), e.getValue().getAsLong());
 		}
 	}
 

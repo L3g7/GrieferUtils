@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -36,6 +37,7 @@ import net.labymod.main.LabyMod;
 import net.labymod.utils.Material;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -242,6 +244,12 @@ public class SpawnCounter extends Module {
 		startQuadrant = -1;
 		spawnWorld = null;
 		determineSpawn(player().getPosition().down());
+	}
+
+	@EventListener
+	private void onPlayerTeleport(PacketReceiveEvent<S08PacketPlayerPosLook> event) {
+		visitedQuadrants = 0;
+		startQuadrant = -1;
 	}
 
 	private void determineSpawn(BlockPos pos) {

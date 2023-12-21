@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard.getBankBalance;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 @Singleton
 public class Calculator extends Feature {
@@ -116,7 +117,7 @@ public class Calculator extends Feature {
 			autoWithdraw, starPlaceholder, placeholder, autoEquationDetect, prefix);
 
 	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?[km]* *[+\\-/*^ekm] *[+-]?\\d+(?:[.,]\\d+)?[km]*|[+-]?\\d+(?:[.,]\\d+)?[km]+)(?:(?= )|$)");
-	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay %s (?<amount>.+)", Constants.UNFORMATTED_PLAYER_NAME_PATTERN));
+	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay %s (?<amount>.+)", Constants.UNFORMATTED_PLAYER_NAME_PATTERN), CASE_INSENSITIVE);
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 
 	private static Pattern placeholderPattern = Pattern.compile("(?<!\\\\)\\{(?<equation>[^}]*[^\\\\])}");
@@ -232,7 +233,7 @@ public class Calculator extends Feature {
 			return;
 
 		// Save payment (for auto-withdraw)
-		Matcher paymentMatcher = PAYMENT_COMMAND_PATTERN.matcher(msg);
+		Matcher paymentMatcher = PAYMENT_COMMAND_PATTERN.matcher(event.message);
 		if (paymentMatcher.matches()) {
 			lastPaymentReceiver = paymentMatcher.group("player");
 			try {

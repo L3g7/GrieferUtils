@@ -102,6 +102,9 @@ public class BetterJobExchange extends Feature {
 			}
 		}
 
+		if (remainingStacks > 0)
+			ownedStacks -= remainingStacks;
+
 		if (calculateInv.get()) {
 			lore.set(lore.size() - 2, ownedStacks == 1
 				? String.format("§7Klicke, um §eden Stack§7 im Inventar für §a%d§2$§7 zu liefern.", money)

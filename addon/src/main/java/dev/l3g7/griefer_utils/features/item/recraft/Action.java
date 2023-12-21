@@ -60,10 +60,13 @@ class Action {
 	 * false: if this action failed<br>
 	 * null: if this action was skipped
 	 */
-	public Boolean execute(GuiChest chest) {
+	public Boolean execute(GuiChest chest, boolean hasSucceeded) {
 		if (ingredient != null) {
 			int ingredientSlot = ingredient.getSlot();
 			if (ingredientSlot == -1) {
+				if (hasSucceeded)
+					return null;
+
 				displayAchievement("§c§lFehler \u26A0", "Ein benötigtes Item ist nicht verfügbar!");
 				return false;
 			}
@@ -75,7 +78,9 @@ class Action {
 		if (craftingIngredients != null) {
 			for (SizedIngredient craftingIngredient : craftingIngredients) {
 				if (!craftingIngredient.isAvailable()) {
-					displayAchievement("§eAktion übersprungen \u26A0", "Du hattest nicht genügend Zutaten im Inventar!");
+					if (!hasSucceeded)
+						displayAchievement("§eAktion übersprungen \u26A0", "Du hattest nicht genügend Zutaten im Inventar!");
+
 					return null;
 				}
 			}

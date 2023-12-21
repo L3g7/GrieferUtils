@@ -85,27 +85,27 @@ class RecraftPlayer {
 
 		TickScheduler.runAfterRenderTicks(() -> {
 			if (!pendingActions.isEmpty())
-				executeAction(pendingActions.poll(), event.gui);
+				executeAction(pendingActions.poll(), event.gui, false);
 
 			if (pendingActions != null && pendingActions.isEmpty())
 				closeGui = true;
 		}, 1);
 	}
 
-	private static void executeAction(Action action, GuiChest chest) {
+	private static void executeAction(Action action, GuiChest chest, boolean hasSucceeded) {
 		actionBeingExecuted = action;
-		if (handleErrors(action.execute(chest), chest))
+		if (handleErrors(action.execute(chest, hasSucceeded), chest, hasSucceeded))
 			return;
 
 		TickScheduler.runAfterClientTicks(() -> {
 			if (mc().currentScreen == chest && actionBeingExecuted == action) {
 				// Action failed, try again
-				executeAction(action, chest);
+				executeAction(action, chest, true);
 			}
 		}, 2);
 	}
 
-	private static boolean handleErrors(Boolean result, GuiChest chest) {
+	private static boolean handleErrors(Boolean result, GuiChest chest, boolean hasSucceeded) {
 		// Success
 		if (result == Boolean.TRUE)
 			return false;
@@ -117,14 +117,14 @@ class RecraftPlayer {
 		}
 
 		// Action was skipped
-		if (pendingActions == null)
+		if (pendingActions == null || hasSucceeded)
 			return true;
 
 		if (pendingActions.isEmpty()) {
 			TickScheduler.runAfterClientTicks(player()::closeScreen, 1);
 			pendingActions = null;
 		} else {
-			executeAction(pendingActions.poll(), chest);
+			executeAction(pendingActions.poll(), chest, false);
 		}
 
 		return true;

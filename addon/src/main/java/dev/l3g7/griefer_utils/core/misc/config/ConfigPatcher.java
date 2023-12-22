@@ -141,6 +141,23 @@ public class ConfigPatcher {
 				betterSpawners.addProperty("enabled", true);
 			}
 		}
+
+		if (cmp.compare("2.0", version) < 0) {
+			JsonObject chatReactor = get("chat.chat_reactor");
+			if (chatReactor.has("entries")) {
+				JsonArray entries = chatReactor.getAsJsonArray("entries");
+				for (JsonElement e : entries) {
+					JsonObject entry = e.getAsJsonObject();
+					if (!entry.get("is_regex").getAsBoolean())
+						continue;
+
+					String command = entry.get("command").getAsString();
+					command = command.replace("$", "$$");
+					command = command.replaceAll("\\\\(\\d+)", "\\$$1");
+					entry.addProperty("command", command);
+				}
+			}
+		}
 	}
 
 	private void rename(String oldKey, String newKey) {

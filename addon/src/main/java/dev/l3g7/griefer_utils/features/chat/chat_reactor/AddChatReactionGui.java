@@ -173,7 +173,7 @@ public class AddChatReactionGui extends Gui {
 				draw(mouseX, mouseY, RENDER_GROUP_TEXT);
 			} else {
 				triggerInput.label("Regulärer Ausdruck").placeholder("§8^\\[[^ ]+ ┃ ([^ ]+) -> mir] (.*)$");
-				commandInput.placeholder("§8/msg MainAcc \\1: \\2");
+				commandInput.placeholder("§8/msg MainAccount $1: $2");
 				bottom = (int) commandInput.bottom();
 			}
 

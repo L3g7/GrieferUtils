@@ -59,7 +59,7 @@ import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 public abstract class PlayerList extends Feature {
 
 	private final String message;
-	private final String name, icon;
+	private final String icon;
 	private final ModColor color;
 	private final int paneType; // The glass pane color in /profil
 
@@ -107,7 +107,6 @@ public abstract class PlayerList extends Feature {
 			.icon(settingIcon)
 			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, new HeaderSetting(), new HeaderSetting(ownDescription), customEntries);
 
-		this.name = name;
 		customEntries.setContainer(enabled);
 
 		this.message = message;
@@ -260,7 +259,7 @@ public abstract class PlayerList extends Feature {
 		if (action == ICON)
 			return new ChatComponentText(color + "[" + icon + "] ");
 		if (action == TAG)
-			return new ChatComponentText(color + "[§l" + name.toUpperCase() + color + "] ");
+			return new ChatComponentText(color + "[§l" + message.toUpperCase() + color + "] ");
 		return new ChatComponentText("");
 	}
 

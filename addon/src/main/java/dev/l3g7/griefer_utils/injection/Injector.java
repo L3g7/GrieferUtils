@@ -66,7 +66,7 @@ public class Injector implements IClassTransformer {
 			IMixinService classLoaderUtil0 = Reflection.get(mxInfoClass, "classLoaderUtil");
 			Object classLoaderUtil = Reflection.get(classLoaderUtil0, "classLoaderUtil");
 			Reflection.set(classLoaderUtil, new ConcurrentHashMap<>(), "cachedClasses");
-		} catch (ReflectiveOperationException ignored) {}
+		} catch (Throwable ignored) {}
 
 		// Load transformers
 		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Transformer.class)) {

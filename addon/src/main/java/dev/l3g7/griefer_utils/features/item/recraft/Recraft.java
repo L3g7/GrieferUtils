@@ -85,7 +85,7 @@ public class Recraft extends Feature {
 		.name("Recraft")
 		.description("Wiederholt \"/rezepte\" Aufrufe.")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
-		.subSettings(key, new HeaderSetting(), animation, openPieMenu, new HeaderSetting(), new EntryAddSetting()
+		.subSettings(key, new HeaderSetting(), openPieMenu, animation, new HeaderSetting(), new EntryAddSetting()
 			.name("Seite hinzufügen")
 			.callback(() -> {
 				List<SettingsElement> settings = getMainElement().getSubSettings().getElements();

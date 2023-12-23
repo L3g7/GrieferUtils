@@ -76,7 +76,7 @@ public class ToolSaver extends ItemSaver {
 	@MainElement
 	final BooleanSetting enabled = new BooleanSetting()
 		.name("Werkzeug-Saver")
-		.description("Verhindert Klicks, sobald das in der Hand gehaltene Werkzeug die eingestellte Haltbarkeit unterschreitet.")
+		.description("Verhindert Klicks, sobald das in der Hand gehaltene Werkzeug die eingestellte Haltbarkeit unterschreitet.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
 		.icon("broken_pickaxe")
 		.subSettings(damage, saveNonRepairable);
 

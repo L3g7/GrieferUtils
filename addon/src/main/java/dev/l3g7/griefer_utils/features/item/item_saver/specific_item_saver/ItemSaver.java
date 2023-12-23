@@ -104,7 +104,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	@MainElement(configureSubSettings = false)
 	static final BooleanSetting enabled = new BooleanSetting()
 		.name("Spezifischer Item-Saver")
-		.description("Deaktiviert Klicks, Dropping und Abgeben bei einstellbaren Items.")
+		.description("Deaktiviert Klicks, Dropping und Abgeben bei einstellbaren Items.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
 		.icon("shield_with_sword")
 		.subSettings(displayIcon, new HeaderSetting(), newEntrySetting);
 

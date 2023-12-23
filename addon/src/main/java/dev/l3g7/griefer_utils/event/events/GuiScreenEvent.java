@@ -29,6 +29,7 @@ import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.network.play.INetHandlerPlayClient;
+import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import net.minecraft.network.play.server.S2DPacketOpenWindow;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -190,15 +191,21 @@ public abstract class GuiScreenEvent extends Event {
 		@Mixin(S2DPacketOpenWindow.class)
 		private static class MixinS2DPacketOpenWindow {
 
-		    @Inject(method = "processPacket(Lnet/minecraft/network/play/INetHandlerPlayClient;)V", at = @At("HEAD"))
+			@Shadow
+			private int windowId;
+
+			@Inject(method = "processPacket(Lnet/minecraft/network/play/INetHandlerPlayClient;)V", at = @At("HEAD"))
 		    private void injectProcessPacketHead(INetHandlerPlayClient handler, CallbackInfo ci) {
 				cancelOpenPacket = true;
 		    }
 
 			@Inject(method = "processPacket(Lnet/minecraft/network/play/INetHandlerPlayClient;)V", at = @At("RETURN"))
 			private void injectProcessPacketTail(INetHandlerPlayClient handler, CallbackInfo ci) {
-				if (cancelOpenPacket)
-					MinecraftUtil.player().openContainer.windowId = 0;
+				if (!cancelOpenPacket)
+					return;
+
+				MinecraftUtil.player().openContainer.windowId = 0;
+				MinecraftUtil.mc().getNetHandler().addToSendQueue(new C0DPacketCloseWindow(windowId));
 			}
 
 		}

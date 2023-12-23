@@ -29,11 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.misc.Constants.ADDON_PREFIX;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.display;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 /**
- * Might be replaced with something better if more commands are added.
+ * Might be replaced with something better if more (complex) commands are added.
  */
 public class Commands {
 
@@ -71,11 +70,39 @@ public class Commands {
 			return null;
 		}
 
+		if (command.equalsIgnoreCase("run_multiple")) {
+			if (argsString.isEmpty())
+				return "Usage: /gu:run_multiple <text>|<text>|...";
+
+			for (String s : argsString.split("\\|"))
+				if (!MessageSendEvent.post(s))
+					player().sendChatMessage(s);
+
+			return null;
+		}
+
+		if (command.equalsIgnoreCase("run_if_online")) {
+			String[] parts = argsString.split(" ");
+			if (parts.length < 2)
+				return "Usage: /gu:run_if_online <Spieler> <text>";
+
+			String player = parts[0];
+			String cmd = argsString.substring(player.length() + 1);
+
+			if (mc().getNetHandler().getPlayerInfo(player) != null)
+				if (!MessageSendEvent.post(cmd))
+					player().sendChatMessage(cmd);
+
+			return null;
+		}
+
 		if (command.equalsIgnoreCase("help")) {
 			display(ADDON_PREFIX + "Befehle:");
 			display(ADDON_PREFIX + "/gu:help");
 			display(ADDON_PREFIX + "/gu:run_on_cb <text>");
 			display(ADDON_PREFIX + "/gu:queue <text>");
+			display(ADDON_PREFIX + "/gu:run_multiple <text>|<text>|[text]|...");
+			display(ADDON_PREFIX + "/gu:run_if_online <Spieler> <text>");
 			return null;
 		}
 

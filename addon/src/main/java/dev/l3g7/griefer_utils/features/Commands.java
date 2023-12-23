@@ -84,7 +84,7 @@ public class Commands {
 		if (command.equalsIgnoreCase("run_if_online")) {
 			String[] parts = argsString.split(" ");
 			if (parts.length < 2)
-				return "Usage: /gu:run_if_online <Spieler> <text>";
+				return "Usage: /gu:run_if_online <spieler> <text>";
 
 			String player = parts[0];
 			String cmd = argsString.substring(player.length() + 1);

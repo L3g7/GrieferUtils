@@ -101,7 +101,7 @@ public class Commands {
 			display(ADDON_PREFIX + "/gu:help");
 			display(ADDON_PREFIX + "/gu:run_on_cb <text>");
 			display(ADDON_PREFIX + "/gu:queue <text>");
-			display(ADDON_PREFIX + "/gu:run_multiple <text>|<text>|[text]|...");
+			display(ADDON_PREFIX + "/gu:run_multiple <text1>|<text2>|[text3]|...");
 			display(ADDON_PREFIX + "/gu:run_if_online <Spieler> <text>");
 			return null;
 		}

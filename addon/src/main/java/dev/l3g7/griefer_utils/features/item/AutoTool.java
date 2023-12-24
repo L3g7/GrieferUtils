@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.item;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
@@ -40,7 +41,7 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
-import net.minecraft.block.Block;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
@@ -89,6 +90,14 @@ public class AutoTool extends Feature {
 		.put("soil", Blocks.farmland)
 		.put("snow_block", Blocks.snow)
 		.build();
+
+	private static final List<Class<?>> SHEARABLE_BLOCKS = ImmutableList.of(
+		BlockDeadBush.class,
+		BlockDoublePlant.class,
+		BlockLeaves.class,
+		BlockTallGrass.class,
+		BlockVine.class
+	);
 
 	private final ToolSaver toolSaver = FileProvider.getSingleton(ToolSaver.class);
 
@@ -218,8 +227,16 @@ public class AutoTool extends Feature {
 		double score = 0;
 
 		score += itemStack.getItem().getStrVsBlock(itemStack, state.getBlock()) * 1000; // Main mining speed
-		if (itemStack.getItem() == Items.shears && state.getBlock() == Blocks.vine)
-			score = 2000;
+
+		// Account for shears
+		if (itemStack.getItem() == Items.shears) {
+			for (Class<?> shearableBlock : SHEARABLE_BLOCKS) {
+				if (shearableBlock.isInstance(state.getBlock())) {
+					score = 2000;
+					break;
+				}
+			}
+		}
 
 		if (isValidCutter(itemStack, state.getBlock()))
 			score += 2500;

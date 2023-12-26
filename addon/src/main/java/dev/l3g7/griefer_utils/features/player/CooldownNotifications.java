@@ -49,10 +49,7 @@ import net.minecraft.item.ItemStack;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -64,7 +61,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 public class CooldownNotifications extends Feature {
 
 	private static final String TITLE = "§8§m------------§r§8[ §r§6Cooldowns §r§8]§r§8§m------------§r";
-	public final Map<String, Long> endDates = new HashMap<>();
+	public final Map<String, Long> endDates = Collections.synchronizedMap(new HashMap<>());
 	private boolean waitingForCooldownGUI = false;
 	private boolean sendCooldowns = false;
 	private CompletableFuture<Void> guiInitBlock = null;
@@ -132,20 +129,22 @@ public class CooldownNotifications extends Feature {
 		if (endDates.size() == 0)
 			return;
 
-		endDates.keySet().forEach(this::checkEndTime);
+		synchronized (endDates) {
+			endDates.keySet().forEach(this::checkEndTime);
 
-		// Display cooldown information on server join
-		display(TITLE);
+			// Display cooldown information on server join
+			display(TITLE);
 
-		for (Map.Entry<String, Long> entry : endDates.entrySet())
-			if (entry.getValue() == 0)
-				display("§8» §e%s§7:§r %s", entry.getKey(), "§aVerfügbar");
-		for (Map.Entry<String, Long> entry : endDates.entrySet())
-			if (entry.getValue() > 0)
-				display("§8» §e%s§7:§r %s", entry.getKey(), "§6Verfügbar am " + DATE_FORMAT.format(new Date(entry.getValue())));
-		for (Map.Entry<String, Long> entry : endDates.entrySet())
-			if (entry.getValue() < 0)
-				display("§8» §e%s§7:§r %s", entry.getKey(), "§cNicht freigeschaltet");
+			for (Map.Entry<String, Long> entry : endDates.entrySet())
+				if (entry.getValue() == 0)
+					display("§8» §e%s§7:§r %s", entry.getKey(), "§aVerfügbar");
+			for (Map.Entry<String, Long> entry : endDates.entrySet())
+				if (entry.getValue() > 0)
+					display("§8» §e%s§7:§r %s", entry.getKey(), "§6Verfügbar am " + DATE_FORMAT.format(new Date(entry.getValue())));
+			for (Map.Entry<String, Long> entry : endDates.entrySet())
+				if (entry.getValue() < 0)
+					display("§8» §e%s§7:§r %s", entry.getKey(), "§cNicht freigeschaltet");
+		}
 
 		display(TITLE);
 	}
@@ -158,10 +157,12 @@ public class CooldownNotifications extends Feature {
 			: s -> displayAchievement(Constants.ADDON_NAME, String.format("§e%s ist nun §averfügbar§e!", s));
 
 		// Check if cooldown has become available
-		for (String command : endDates.keySet()) {
-			if (checkEndTime(command)) {
-				displayFunc.accept(command);
-				saveCooldowns();
+		synchronized (endDates) {
+			for (String command : endDates.keySet()) {
+				if (checkEndTime(command)) {
+					displayFunc.accept(command);
+					saveCooldowns();
+				}
 			}
 		}
 	}
@@ -222,8 +223,10 @@ public class CooldownNotifications extends Feature {
 
 	private void saveCooldowns() {
 		JsonObject o = new JsonObject();
-		for (Map.Entry<String, Long> entry : endDates.entrySet())
-			o.addProperty(entry.getKey(), entry.getValue());
+		synchronized (endDates) {
+			for (Map.Entry<String, Long> entry : endDates.entrySet())
+				o.addProperty(entry.getKey(), entry.getValue());
+		}
 
 		// Save end dates along with player uuid so no problems occur when using multiple accounts
 		Config.set("player.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId(), o);

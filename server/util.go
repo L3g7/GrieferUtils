@@ -5,10 +5,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/boltdb/bolt"
 	"io"
+	"log"
 	"math"
 	"net/http"
 )
+
+func Decode(r io.Reader, v any) error {
+	return json.NewDecoder(r).Decode(v)
+}
 
 func DecodeFully(r io.Reader, v any) error {
 	dec := json.NewDecoder(r)
@@ -104,6 +110,52 @@ func (avg Avg) get() uint64 {
 
 func (avg Avg) isValid() bool {
 	return avg.count != 0
+}
+
+var db = createDb()
+
+func createDb() *bolt.DB {
+	db, err := bolt.Open("server.db", 0600, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_ = db.Update(func(tx *bolt.Tx) error {
+		b, err := tx.CreateBucketIfNotExists([]byte("leaderboard"))
+		if err != nil {
+			return fmt.Errorf("create bucket: %s", err)
+		}
+
+		_, err = b.CreateBucketIfNotExists([]byte("scores"))
+		if err != nil {
+			return fmt.Errorf("create bucket: %s", err)
+		}
+
+		_, err = b.CreateBucketIfNotExists([]byte("emojis"))
+		if err != nil {
+			return fmt.Errorf("create bucket: %s", err)
+		}
+
+		_, err = b.CreateBucketIfNotExists([]byte("emoji_timestamps"))
+		if err != nil {
+			return fmt.Errorf("create bucket: %s", err)
+		}
+		return nil
+	})
+
+	return db
+}
+
+func Beautify(num uint32) string {
+	str := fmt.Sprintf("%d", num%1000)
+	num /= 1000
+
+	for num > 0 {
+		str = fmt.Sprintf("%d.%s", num, str)
+		num /= 1000
+	}
+
+	return str
 }
 
 func ReportBug(user string, data ...any) {

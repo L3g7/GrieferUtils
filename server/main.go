@@ -18,6 +18,9 @@ func main() {
 		log.Fatal("Could not load .env file")
 	}
 
+	// Initialize leaderboard
+	go syncEmojis()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
 		w.Header().Set("Content-Type", "application/json")
@@ -29,6 +32,7 @@ func main() {
 	http.HandleFunc("/keep_alive", preprocess(true, checkAuth(KeepAliveRoute)))
 	http.HandleFunc("/hive_mind/mob_remover", preprocess(true, checkAuth(HiveMindMobRemoverRoute)))
 	http.HandleFunc("/hive_mind/booster", preprocess(true, checkAuth(HiveMindBoosterRoute)))
+	http.HandleFunc("/leaderboard", preprocess(false, checkAuth(LeaderboardRoute)))
 
 	err := http.ListenAndServe(":3333", nil)
 	if errors.Is(err, http.ErrServerClosed) {

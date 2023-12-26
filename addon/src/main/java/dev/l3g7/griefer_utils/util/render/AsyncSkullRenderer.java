@@ -75,7 +75,8 @@ public class AsyncSkullRenderer {
 
 	@EventListener
 	private static void onAccountSwitch(AccountSwitchEvent event) {
-		requestSkull(mc().getSession().getToken().equals("FML") ? "GrieferUtils" : name());
+		if (mc().getSession() != null && mc().getSession().getToken() != null)
+			requestSkull(mc().getSession().getToken().equals("FML") ? "GrieferUtils" : name());
 	}
 
 }

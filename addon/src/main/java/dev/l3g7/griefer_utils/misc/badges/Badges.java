@@ -32,7 +32,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -42,8 +41,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
-import static net.minecraft.util.Util.EnumOS.OSX;
-import static net.minecraft.util.Util.EnumOS.WINDOWS;
 
 public class Badges {
 
@@ -73,16 +70,6 @@ public class Badges {
 			for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap())
 				GrieferUtilsUserManager.queueUser(info.getGameProfile().getId());
 		});
-
-	public Badges() {
-		if (Util.getOSType() != WINDOWS && Util.getOSType() != OSX) {
-			enabled.name("§c§m" + enabled.getDisplayName())
-				.settingsEnabled(false)
-				.set(false)
-				.callback(v -> { if (v) enabled.set(false);})
-				.description("§cFür " + System.getProperty("os.name") + " momentan nicht verfügbar!");
-		}
-	}
 
 	public static boolean showBadges() {
 		return enabled.get();

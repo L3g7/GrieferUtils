@@ -26,6 +26,7 @@ func main() {
 	http.HandleFunc("/logout", preprocess(checkAuth(LogoutRoute)))
 	http.HandleFunc("/keep_alive", preprocess(checkAuth(KeepAliveRoute)))
 	http.HandleFunc("/hive_mind/mob_remover", preprocess(checkAuth(HiveMindMobRemoverRoute)))
+	http.HandleFunc("/hive_mind/booster", preprocess(checkAuth(HiveMindBoosterRoute)))
 
 	err := http.ListenAndServe(":3333", nil)
 	if errors.Is(err, http.ErrServerClosed) {

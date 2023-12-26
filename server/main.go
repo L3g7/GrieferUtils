@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+const VERSION = "1.1"
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Could not load .env file")
@@ -56,6 +58,7 @@ func preprocess(handler func(http.ResponseWriter, *http.Request) error) func(htt
 		err := handler(w, r)
 		if err != nil {
 			Error(w, http.StatusBadRequest, "Bad Request")
+			ReportBug("", r, err)
 		}
 	}
 }

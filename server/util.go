@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"math"
+	"net/http"
 )
 
 func DecodeFully(r io.Reader, v any) error {
@@ -101,4 +104,13 @@ func (avg Avg) get() uint64 {
 
 func (avg Avg) isValid() bool {
 	return avg.count != 0
+}
+
+func ReportBug(user string, data ...any) {
+	req, _ := http.NewRequest("POST", "https://grieferutils.l3g7.dev/v3/bug_report", bytes.NewBuffer([]byte(fmt.Sprint(data...))))
+	req.Header.Set("User-Agent", "GrieferUtils Server v"+VERSION)
+	req.Header.Set("Content-Type", "text/plain")
+	req.Header.Set("X-MINECRAFT-UUID", user)
+
+	_, _ = http.DefaultClient.Do(req)
 }

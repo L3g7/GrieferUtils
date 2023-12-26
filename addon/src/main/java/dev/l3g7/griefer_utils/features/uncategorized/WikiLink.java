@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized;
 
+
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -26,13 +27,13 @@ import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import net.labymod.settings.elements.ControlElement;
 
 @Singleton
-public class DiscordLink extends Feature {
+public class WikiLink extends Feature {
 
 	@MainElement
 	private final SmallButtonSetting button = new SmallButtonSetting()
-		.name("§zDiscord")
-		.icon("discord")
-		.buttonIcon(new ControlElement.IconData("griefer_utils/icons/discord_clyde.png"))
-		.callback(() -> Util.openWebsite("https://grieferutils.l3g7.dev/discord"));
+		.name("§yWiki")
+		.icon("open_book")
+		.buttonIcon(new ControlElement.IconData("griefer_utils/icons/open_book_outline.png"))
+		.callback(() -> Util.openWebsite("https://grieferutils.l3g7.dev/wiki"));
 
 }

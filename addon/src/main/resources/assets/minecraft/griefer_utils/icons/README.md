@@ -108,7 +108,7 @@
   </tr>
   <tr>
     <td><a href="chest.png"><img src="chest.png" height=16em width=16em />&nbsp;&nbsp;chest.png </a></td>
-    <td><a href="https://stock.adobe.com/de/images/set-of-pixel-boxes/192886298?prev_url=detail">Adobe Stock (Markov)</a></td>
+    <td><a href="https://stock.adobe.com/de/images/set-of-pixel-boxes/192886298">Adobe Stock (Markov)</a></td>
   </tr>
   <tr>
     <td><a href="chunk.png"><img src="chunk.png" height=16em width=16em />&nbsp;&nbsp;chunk.png </a></td>
@@ -168,7 +168,7 @@
   </tr>
   <tr>
     <td><a href="file.png"><img src="file.png" height=16em width=16em />&nbsp;&nbsp;file.png </a></td>
-    <td><a href="https://stock.adobe.com/de/images/pixel-art-icon-document-file-illustration-vector/445483743">Adobe Stock</a></td>
+    <td><a href="https://stock.adobe.com/de/images/pixel-art-icon-document-file-illustration-vector/445483743">Adobe Stock (gassh)</a></td>
   </tr>
   <tr>
     <td><a href="fire.png"><img src="fire.png" height=16em width=16em />&nbsp;&nbsp;fire.png </a></td>
@@ -274,6 +274,14 @@
   <tr>
     <td><a href="one_player_plaque.png"><img src="one_player_plaque.png" height=16em width=16em />&nbsp;&nbsp;one_player_plaque.png </a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="open_book.png"><img src="open_book.png" height=16em width=16em />&nbsp;&nbsp;open_book.png </a></td>
+    <td><a href="https://stock.adobe.com/es/images/different-books-pixel-art-set-fantasy-tome-folio-collection-open-closed-textbooks-8-bit-sprite-game-development-mobile-app-isolated-vector-illustration/502502076">Adobe Stock (SickleMoon)</a></td>
+  </tr>
+  <tr>
+    <td><a href="open_book_outline.png"><img src="open_book_outline.png" height=16em width=16em />&nbsp;&nbsp;open_book_outline.png </a></td>
+    <td><a href="https://stock.adobe.com/es/images/different-books-pixel-art-set-fantasy-tome-folio-collection-open-closed-textbooks-8-bit-sprite-game-development-mobile-app-isolated-vector-illustration/502502076">Adobe Stock (SickleMoon)</a></td>
   </tr>
   <tr>
     <td><a href="open_link.png"><img src="open_link.png" height=16em width=16em />&nbsp;&nbsp;open_link.png </a></td>

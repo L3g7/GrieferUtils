@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.GuiInitEvent;
 import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -32,6 +33,7 @@ import dev.l3g7.griefer_utils.misc.badges.GrieferUtilsGroup;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.settings.LabyModAddonsGui;
+import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.crash.CrashReport;
 
@@ -112,6 +114,20 @@ public class MainPage {
 			.flatMap(s -> s.getSetting().getSubSettings().getElements().stream())
 			.sorted(Comparator.comparing(SettingsElement::getDisplayName))
 			.forEach(settings::add);
+
+		settings.add(new HeaderSetting());
+
+		// Wiki link
+		settings.add(new SmallButtonSetting()
+			.name("Wiki").icon("open_book")
+			.buttonIcon(new ControlElement.IconData("griefer_utils/icons/open_book_outline.png"))
+			.callback(() -> Util.openWebsite("https://grieferutils.l3g7.dev/wiki")));
+
+		// Discord link
+		settings.add(new SmallButtonSetting()
+			.name("Discord").icon("discord")
+			.buttonIcon(new ControlElement.IconData("griefer_utils/icons/discord_clyde.png"))
+			.callback(() -> Util.openWebsite("https://grieferutils.l3g7.dev/discord")));
 	}
 
 	private static void onSearch() {

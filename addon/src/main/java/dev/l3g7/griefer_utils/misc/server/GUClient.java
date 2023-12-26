@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.server.requests.OnlineUsersRequest;
 import dev.l3g7.griefer_utils.core.misc.server.types.GUSession;
 import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import net.minecraft.util.Session;
 
@@ -43,13 +44,6 @@ public class GUClient {
 	private final GUSession session = new GUSession("https://s1.grieferutils.l3g7.dev");
 
 	private GUClient() {
-		new Thread(() -> {
-			try {
-				authorize();
-			} catch (IOException | GeneralSecurityException e) {
-				BugReporter.reportError(e);
-			}
-		}).start();
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {
 				if (session.isValid())
@@ -77,6 +71,7 @@ public class GUClient {
 		return session.isValid();
 	}
 
+	@OnEnable
 	public void authorize() throws IOException, GeneralSecurityException {
 		Session mcSession = mc().getSession();
 

@@ -35,18 +35,56 @@ import net.labymod.ingamegui.enums.EnumModuleFormatting;
 import net.labymod.ingamegui.moduletypes.SimpleModule;
 import net.labymod.ingamegui.moduletypes.SimpleTextModule;
 import net.labymod.main.LabyMod;
+import net.labymod.settings.elements.BooleanElement;
+import net.labymod.settings.elements.CategoryModuleEditorElement;
 import net.labymod.settings.elements.ControlElement;
+import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
+import net.labymod.utils.DrawUtils;
+import net.labymod.utils.ModColor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
 public abstract class Module extends SimpleTextModule implements Disableable {
 
-	public static final ModuleCategory CATEGORY = new ModuleCategory(Constants.ADDON_NAME, true, new ControlElement.IconData("griefer_utils/icons/icon.png")) {
+	public static final ModuleCategory CATEGORY = new ModuleCategory(Constants.ADDON_NAME, true, null) {
 		@Override
 		public void createCategoryElement() {
-			super.createCategoryElement();
+			rawCategoryElement = new CategoryModuleEditorElement(Constants.ADDON_NAME, new IconData("griefer_utils/icons/icon.png")) {
+				// Fix module count
+				public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+					this.mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
+
+					int absoluteY = y + 7;
+					DrawUtils draw = LabyMod.getInstance().getDrawUtils();
+					draw.drawRectangle(x, y, maxX, maxY, ModColor.toRGB(200, 200, 200, mouseOver ? 50 : 30));
+					int imageSize = maxY - y;
+					Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/icon.png"));
+					LabyMod.getInstance().getDrawUtils().drawTexture(x + 2, y + 2, 256, 256, 18, 18);
+
+					draw.drawString(getDisplayName(), x + imageSize + 5, absoluteY);
+					int totalSubCount = 0;
+					int enabledCount = 0;
+
+					for (SettingsElement element : getSubSettings().getElements()) {
+						if (element instanceof BooleanElement) {
+							++totalSubCount;
+							if (((BooleanElement) element).getCurrentValue())
+								++enabledCount;
+						}
+					}
+
+					draw.drawRightString(enabledCount + "§7/§f" + totalSubCount, maxX - 5, absoluteY);
+				}
+			};
+
+			// Populate subSettings
+			for (net.labymod.ingamegui.Module module : net.labymod.ingamegui.Module.getModules())
+				if (module.getCategory() != null && module.getCategory().equals(this))
+					this.rawCategoryElement.getSubSettings().add(module.getBooleanElement().custom("An", "Aus"));
 
 			// Inject headers
 			SimpleModule stylingModule = new SimpleModule(){
@@ -119,7 +157,7 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 	public String[] getKeys() { return getDefaultKeys(); }
 	public String[] getDefaultKeys() { return new String[]{ mainElement.getDisplayName().replace("\n", "")}; }
 
-	public ControlElement.IconData getIconData() { return mainElement.getIconData(); }
+	public IconData getIconData() { return mainElement.getIconData(); }
 	public String getSettingName() { return configKey; }
 	public String getDescription() { return mainElement.getDescriptionText(); }
 	public boolean isShown() { return !LabyMod.getInstance().isInGame() || ServerCheck.isOnGrieferGames(); }

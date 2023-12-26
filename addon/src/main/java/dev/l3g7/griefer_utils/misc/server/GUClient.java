@@ -50,6 +50,12 @@ public class GUClient {
 				BugReporter.reportError(e);
 			}
 		}).start();
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				if (session.isValid())
+					session.logout();
+			} catch (Throwable ignored) {}
+		}));
 	}
 
 	public static GUClient get() {

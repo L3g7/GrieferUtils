@@ -23,12 +23,12 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		Error(w, http.StatusBadRequest, "Bad Request")
 	})
-	http.HandleFunc("/login", preprocess(LoginRoute))
-	http.HandleFunc("/online_users", preprocess(checkAuth(OnlineUsersRoute)))
-	http.HandleFunc("/logout", preprocess(checkAuth(LogoutRoute)))
-	http.HandleFunc("/keep_alive", preprocess(checkAuth(KeepAliveRoute)))
-	http.HandleFunc("/hive_mind/mob_remover", preprocess(checkAuth(HiveMindMobRemoverRoute)))
-	http.HandleFunc("/hive_mind/booster", preprocess(checkAuth(HiveMindBoosterRoute)))
+	http.HandleFunc("/login", preprocess(true, LoginRoute))
+	http.HandleFunc("/online_users", preprocess(true, checkAuth(OnlineUsersRoute)))
+	http.HandleFunc("/logout", preprocess(true, checkAuth(LogoutRoute)))
+	http.HandleFunc("/keep_alive", preprocess(true, checkAuth(KeepAliveRoute)))
+	http.HandleFunc("/hive_mind/mob_remover", preprocess(true, checkAuth(HiveMindMobRemoverRoute)))
+	http.HandleFunc("/hive_mind/booster", preprocess(true, checkAuth(HiveMindBoosterRoute)))
 
 	err := http.ListenAndServe(":3333", nil)
 	if errors.Is(err, http.ErrServerClosed) {
@@ -40,17 +40,17 @@ func main() {
 }
 
 // preprocess adds a handler middleware applying common validity checks and headers.
-func preprocess(handler func(http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) {
+func preprocess(checkMethod bool, handler func(http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
 		w.Header().Set("Content-Type", "application/json")
 
-		if r.Method != "POST" {
+		if r.Method != "POST" && checkMethod {
 			Error(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 			return
 		}
 
-		if r.Header.Get("Content-Type") != "application/json" {
+		if r.Header.Get("Content-Type") != "application/json" && checkMethod {
 			Error(w, http.StatusUnsupportedMediaType, "Unsupported Media Type")
 			return
 		}

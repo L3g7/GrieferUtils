@@ -53,6 +53,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
@@ -136,9 +137,14 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		if (stackNBT == null)
 			return settingNBT == null;
 
-		NBTTagCompound cleanedStackNBT = (NBTTagCompound) stackNBT.copy();
-		cleanedStackNBT.removeTag("display");
-		cleanedStackNBT.removeTag("RepairCost");
+		NBTTagCompound cleanedStackNBT = new NBTTagCompound();
+		for (String s : stackNBT.getKeySet()) {
+			if (s.equals("display") || s.equals("RepairCost"))
+				continue;
+
+			NBTBase tag = stackNBT.getTag(s);
+			cleanedStackNBT.setTag(s, tag == null ? null : tag.copy());
+		}
 
 		return cleanedStackNBT.equals(settingNBT);
 	}

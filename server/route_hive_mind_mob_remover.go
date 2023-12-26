@@ -86,13 +86,8 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 		// Get value with least avg deviation to other values
 		response.Value = GetWithLeastDeviation(entries, func(first HiveMindMobRemoverEntry, second HiveMindMobRemoverEntry) *uint64 {
 			if first != second {
-				if first.Value > second.Value {
-					deviation := first.Value - second.Value
-					return &deviation
-				} else {
-					deviation := second.Value - first.Value
-					return &deviation
-				}
+				deviation := diff(first.Value, second.Value)
+				return &deviation
 			}
 			return nil
 		}, func(val HiveMindMobRemoverEntry) uint64 {

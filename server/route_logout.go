@@ -21,6 +21,6 @@ func LogoutRoute(w http.ResponseWriter, r *http.Request, token *jwt.Token) error
 
 	// Send response
 	w.WriteHeader(http.StatusNoContent)
-	fmt.Fprintf(w, `\n`)
+	_, _ = fmt.Fprintf(w, `\n`)
 	return nil
 }

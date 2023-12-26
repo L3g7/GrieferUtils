@@ -90,5 +90,5 @@ func checkAuth(handler func(http.ResponseWriter, *http.Request, *jwt.Token) erro
 
 func Error(w http.ResponseWriter, code int, message string) {
 	w.WriteHeader(code)
-	fmt.Fprintf(w, `{"status":%d,"message":"%s"}`, code, message)
+	_, _ = fmt.Fprintf(w, `{"status":%d,"message":"%s"}`, code, message)
 }

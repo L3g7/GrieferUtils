@@ -19,8 +19,10 @@
 package dev.l3g7.griefer_utils.core.misc.server;
 
 import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
+import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.misc.server.types.GUSession;
 import dev.l3g7.griefer_utils.core.util.IOUtil;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import org.apache.commons.io.IOUtils;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -47,8 +49,17 @@ public abstract class Request<R> {
 
 	protected abstract R parseResponse(GUSession session, Response response) throws Throwable;
 
-	public R send(GUSession session) throws IOException {
-		return send(session, false);
+	public R send(GUSession session) {
+		return send(session, BugReporter::reportError);
+	}
+
+	public R send(GUSession session, Consumer<IOException> errorHandler) {
+		try {
+			return send(session, false);
+		} catch (IOException e) {
+			errorHandler.accept(e);
+			return null;
+		}
 	}
 
 	private R send(GUSession session, boolean sessionRenewed) throws IOException {

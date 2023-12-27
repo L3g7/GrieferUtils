@@ -21,10 +21,14 @@ package dev.l3g7.griefer_utils.event.events.griefergames;
 import dev.l3g7.griefer_utils.core.event_bus.Event;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
+import dev.l3g7.griefer_utils.misc.Citybuild;
+import dev.l3g7.griefer_utils.misc.ServerCheck;
+import net.minecraft.network.play.server.S3EPacketTeams;
 
 /**
- * An event being posted after joining a city build.
+ * An event being posted after successfully joining a citybuild. (When the player's data has been loaded.)
  */
 public class CitybuildJoinEvent extends Event {
 
@@ -32,12 +36,15 @@ public class CitybuildJoinEvent extends Event {
 	private static boolean dataWasLoaded = false;
 
 	@EventListener
-	private static void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
+	private static void onServerSwitch(ServerSwitchEvent event) {
 		waitingForAuth = dataWasLoaded = false;
 	}
 
 	@EventListener
 	private static void onMessage(MessageReceiveEvent event) {
+		if (!ServerCheck.isOnGrieferGames())
+			return;
+
 		if (event.message.getFormattedText().startsWith("§r§8[§r§6GGAuth§r§8] §r§7Bitte verifiziere dich"))
 			waitingForAuth = true;
 
@@ -58,6 +65,39 @@ public class CitybuildJoinEvent extends Event {
 
 		new CitybuildJoinEvent().fire();
 		dataWasLoaded = false;
+	}
+
+	/**
+	 * An event being posted as early as possible after joining a citybuild.<br>
+	 * The player's data has not been loaded at this point.
+	 */
+	public static class Early extends CitybuildJoinEvent {
+
+		private static boolean switchedServer = false;
+		public final Citybuild citybuild;
+
+		private Early(Citybuild citybuild) {
+			this.citybuild = citybuild;
+		}
+
+		@EventListener
+		private static void onServerSwitch(ServerSwitchEvent event) {
+			if (ServerCheck.isOnGrieferGames())
+				switchedServer = true;
+		}
+
+		@EventListener
+		private static void onTeamsPacket(PacketEvent.PacketReceiveEvent<S3EPacketTeams> event) {
+			if (!switchedServer || !event.packet.getName().equals("server_value") || event.packet.getPrefix().isEmpty())
+				return;
+
+			switchedServer = false;
+			Citybuild cb = Citybuild.getCitybuild(event.packet.getPrefix().replaceAll("§.", ""));
+
+			if (cb != Citybuild.ANY)
+				new Early(cb).fire();
+		}
+
 	}
 
 }

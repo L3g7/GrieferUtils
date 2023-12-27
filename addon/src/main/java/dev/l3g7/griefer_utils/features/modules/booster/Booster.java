@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules;
+package dev.l3g7.griefer_utils.features.modules.booster;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -28,6 +28,7 @@ import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.features.Commands;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -35,20 +36,19 @@ import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.misc.ServerCheck.isOnGrieferGames;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @Singleton
@@ -84,19 +84,35 @@ public class Booster extends Module {
 	private boolean waitingForBoosterGUI = false;
 	private boolean waitingForBoosterInfo = false;
 
+	@Override
+	public void init() {
+		super.init();
+		Runtime.getRuntime().addShutdownHook(new Thread(BoosterRequestHandler::deleteBoosterData));
+	}
+
+	@Override
+	public String getComparisonName() {
+		return "dev.l3g7.griefer_utils.features.modules" + getControlName();
+	}
+
 	@EventListener
 	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
 		// Clear all booster
 		boosters.values().forEach(d -> d.expirationDates.clear());
+		BoosterRequestHandler.deleteBoosterData();
 	}
 
 	@EventListener
-	public void onCBJoin(CitybuildJoinEvent event) {
-		if (!isOnGrieferGames())
-			return;
+	private void onServerQuit(ServerEvent.ServerQuitEvent event) {
+		BoosterRequestHandler.deleteBoosterData();
+	}
 
-		MinecraftUtil.send("/booster");
-		waitingForBoosterGUI = waitingForBoosterInfo = true;
+	@EventListener
+	private void onCbEarlyJoin(CitybuildJoinEvent.Early event) {
+		BoosterRequestHandler.requestBoosterData(event.citybuild, boosters.values(), () -> {
+			Commands.runOnCb("/booster");
+			waitingForBoosterGUI = waitingForBoosterInfo = true;
+		});
 	}
 
 	@EventListener
@@ -128,17 +144,20 @@ public class Booster extends Module {
 			String name = m.group("name");
 
 			BoosterData booster = boosters.get(name);
-			List<Long> dates = booster.expirationDates;
+			Queue<Long> dates = booster.expirationDates;
 
 			if (booster.stackable) {
 				dates.add(System.currentTimeMillis() + 15 * 60 * 1000);
+				BoosterRequestHandler.sendBoosterData(boosters.values());
 				return;
 			}
 
 			if (dates.isEmpty())
 				dates.add(System.currentTimeMillis() + 15 * 60 * 1000);
 			else
-				dates.set(0, dates.get(0) + 15 * 60 * 1000);
+				dates.add(dates.poll() + 15 * 60 * 1000);
+
+			BoosterRequestHandler.sendBoosterData(boosters.values());
 			return;
 		}
 
@@ -152,7 +171,7 @@ public class Booster extends Module {
 
 		String name = m.group("name");
 		String durations = m.group("durations");
-		List<Long> expirationDates = boosters.get(name).expirationDates;
+		Queue<Long> expirationDates = boosters.get(name).expirationDates;
 		expirationDates.clear();
 
 		if (durations == null)
@@ -166,6 +185,8 @@ public class Booster extends Module {
 			int ms = (min * 60 + sek) * 1000;
 			expirationDates.add(System.currentTimeMillis() + ms);
 		}
+
+		BoosterRequestHandler.sendBoosterData(boosters.values());
 	}
 
 	@Override
@@ -256,11 +277,11 @@ public class Booster extends Module {
 		return mc.fontRendererObj.getStringWidth(text);
 	}
 
-	private class BoosterData {
+	class BoosterData {
 
-		private final String displayName;
-		private final boolean stackable;
-		private final List<Long> expirationDates = new ArrayList<>();
+		final String displayName;
+		final boolean stackable;
+		final Queue<Long> expirationDates = new ConcurrentLinkedQueue<>();
 
 		public BoosterData(String displayName, boolean stackable) {
 			this.displayName = displayName;

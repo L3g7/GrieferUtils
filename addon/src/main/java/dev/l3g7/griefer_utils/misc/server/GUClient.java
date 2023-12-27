@@ -22,19 +22,19 @@ import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.misc.server.requests.OnlineUsersRequest;
+import dev.l3g7.griefer_utils.core.misc.server.requests.hive_mind.BoosterRequest;
+import dev.l3g7.griefer_utils.core.misc.server.requests.hive_mind.MobRemoverRequest;
 import dev.l3g7.griefer_utils.core.misc.server.types.GUSession;
 import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
-import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
+import dev.l3g7.griefer_utils.misc.Citybuild;
 import net.minecraft.util.Session;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
@@ -44,12 +44,7 @@ public class GUClient {
 	private final GUSession session = new GUSession("https://s1.grieferutils.l3g7.dev");
 
 	private GUClient() {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			try {
-				if (session.isValid())
-					session.logout();
-			} catch (Throwable ignored) {}
-		}));
+		new Thread(this::authorize).start();
 	}
 
 	public static GUClient get() {
@@ -58,21 +53,14 @@ public class GUClient {
 
 	@EventListener
 	private void onAccountSwitch(AccountSwitchEvent event) {
-		new Thread(() -> {
-			try {
-				authorize();
-			} catch (IOException | GeneralSecurityException e) {
-				BugReporter.reportError(e);
-			}
-		}).start();
+		new Thread(this::authorize).start();
 	}
 
 	public boolean isAvailable() {
 		return session.isValid();
 	}
 
-	@OnEnable
-	public void authorize() throws IOException, GeneralSecurityException {
+	public void authorize() {
 		Session mcSession = mc().getSession();
 
 		// Check if session is valid
@@ -83,15 +71,35 @@ public class GUClient {
 			session.logout();
 
 		// Login with new session
-		session.login(UUIDTypeAdapter.fromString(mcSession.getPlayerID()), mcSession.getToken());
+		try {
+			session.login(UUIDTypeAdapter.fromString(mcSession.getPlayerID()), mcSession.getToken());
+		} catch (GeneralSecurityException e) {
+			BugReporter.reportError(e);
+		}
 	}
 
-	public List<UUID> getOnlineUsers(Set<UUID> requestedUsers) throws IOException {
+	public List<UUID> getOnlineUsers(Set<UUID> requestedUsers) {
 		List<UUID> users = new OnlineUsersRequest(requestedUsers).send(session);
 		if (users == null)
 			users = Collections.emptyList();
 
 		return users;
+	}
+
+	public void sendMobRemoverData(Citybuild citybuild, Long value) {
+		new MobRemoverRequest(citybuild.getInternalName(), value).send(session);
+	}
+
+	public Long getMobRemoverData(Citybuild citybuild) {
+		return new MobRemoverRequest(citybuild.getInternalName(), null).send(session);
+	}
+
+	public void sendBoosterData(Citybuild citybuild, Map<String, List<Long>> value) {
+		new BoosterRequest(citybuild.getInternalName(), value).send(session);
+	}
+
+	public Map<String, List<Long>> getBoosterData(Citybuild citybuild, Consumer<IOException> errorHandler) {
+		return new BoosterRequest(citybuild, 1000L).send(session, errorHandler);
 	}
 
 }

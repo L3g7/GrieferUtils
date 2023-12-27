@@ -22,8 +22,6 @@ import dev.l3g7.griefer_utils.core.misc.server.requests.KeepAliveRequest;
 import dev.l3g7.griefer_utils.core.misc.server.requests.LoginRequest;
 import dev.l3g7.griefer_utils.core.misc.server.requests.LogoutRequest;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -43,7 +41,7 @@ public class GUSession {
 		this.host = host;
 	}
 
-	public void login(UUID user, String mcAuthToken) throws GeneralSecurityException, IOException {
+	public void login(UUID user, String mcAuthToken) throws GeneralSecurityException {
 		this.user = user;
 		this.mcAuthToken = mcAuthToken;
 
@@ -54,28 +52,20 @@ public class GUSession {
 			return;
 
 		// Login
-		try {
-			this.sessionToken = new LoginRequest(user, keyPair).send(this);
-		} catch (UnknownHostException e) {
-			return;
-		}
+		this.sessionToken = new LoginRequest(user, keyPair).send(this);
 		if (sessionToken == null)
 			return;
 
 		keepAlive = SCHEDULER.scheduleAtFixedRate(() -> {
-			try {
-				new KeepAliveRequest().send(this);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			new KeepAliveRequest().send(this);
 		}, 0, 10, TimeUnit.SECONDS);
 	}
 
-	public void renewToken() throws GeneralSecurityException, IOException {
+	public void renewToken() throws GeneralSecurityException {
 		login(user, mcAuthToken);
 	}
 
-	public void logout() throws IOException {
+	public void logout() {
 		new LogoutRequest().send(this);
 
 		if (keepAlive != null)

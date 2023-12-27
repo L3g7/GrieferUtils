@@ -123,7 +123,7 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 		FileProvider.getClassesWithSuperClass(Module.class).stream()
 			.map(meta -> (Module) FileProvider.getSingleton(meta.load()))
 			.map(Module::initModule)
-			.sorted((a, b) -> (a.getClass().getPackage().getName() + a.getControlName()).compareToIgnoreCase((b.getClass().getPackage().getName() + b.getControlName()))) // Include package in sorting so the modules are grouped
+			.sorted((a, b) -> a.getComparisonName().compareToIgnoreCase(b.getComparisonName()))
 			.forEach(LabyMod.getInstance().getLabyModAPI()::registerModule);
 	}
 
@@ -150,6 +150,10 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 		mainElement = (BooleanSetting) data.getLeft();
 		configKey = data.getRight();
 		return this;
+	}
+
+	public String getComparisonName() {
+		return getClass().getPackage().getName() + getControlName();
 	}
 
 	public String getControlName() { return mainElement.getDisplayName(); }

@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.util;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
+import dev.l3g7.griefer_utils.misc.Citybuild;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
@@ -138,6 +139,10 @@ public class MinecraftUtil {
 
 		ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
 		return team == null ? "" : team.getColorPrefix().replaceAll("§.", "");
+	}
+
+	public static Citybuild getCurrentCitybuild() {
+		return Citybuild.getCitybuild(getServerFromScoreboard());
 	}
 
 	public static String getCitybuildAbbreviation(String citybuild) {

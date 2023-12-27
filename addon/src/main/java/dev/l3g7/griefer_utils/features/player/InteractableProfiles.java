@@ -38,6 +38,8 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 @Singleton
 public class InteractableProfiles extends Feature {
 
+	private static long lastInteraction = 0;
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Interagierbare Profile")
@@ -102,8 +104,10 @@ public class InteractableProfiles extends Feature {
 
 		Citybuild cb = Citybuild.getCitybuild(citybuild);
 
-		if (!cb.isOnCb())
+		if (!cb.isOnCb() && System.currentTimeMillis() - lastInteraction > 2500) {
+			lastInteraction = System.currentTimeMillis();
 			cb.join();
+		}
 	}
 
 }

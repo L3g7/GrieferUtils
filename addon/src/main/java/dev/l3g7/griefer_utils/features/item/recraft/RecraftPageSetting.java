@@ -75,6 +75,7 @@ class RecraftPageSetting extends ListEntrySetting {
 
 				RecraftRecording recording = new RecraftRecording();
 				List<SettingsElement> settings = getSubSettings().getElements();
+				recording.mainSetting.container = this;
 				settings.add(settings.size() - 1, recording.mainSetting);
 
 				recording.setTitle("Aufzeichnung hinzufügen");

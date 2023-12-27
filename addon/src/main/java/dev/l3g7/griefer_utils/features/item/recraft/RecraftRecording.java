@@ -151,7 +151,6 @@ class RecraftRecording {
 			name("Unbenannte Aufzeichnung");
 			icon(Material.BARRIER);
 			subSettings(name, key, new HeaderSetting(), new StartRecordingButtonSetting());
-			container = FileProvider.getSingleton(Recraft.class).getMainElement();
 		}
 
 		@Override

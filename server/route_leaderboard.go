@@ -16,7 +16,7 @@ import (
 )
 
 type LeaderboardRequest struct {
-	flown bool
+	Flown bool `json:"flown"`
 }
 
 type Emoji struct {
@@ -59,6 +59,7 @@ func LeaderboardGetRoute(w http.ResponseWriter, token *jwt.Token) error {
 	user := []byte(claims["sub"].(string))
 
 	score := uint32(0)
+	position := 1
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("leaderboard"))
 		scores := b.Bucket([]byte("scores"))
@@ -67,10 +68,17 @@ func LeaderboardGetRoute(w http.ResponseWriter, token *jwt.Token) error {
 			score = binary.LittleEndian.Uint32(value)
 		}
 
-		return nil
+		return scores.ForEach(func(k, v []byte) error {
+
+			if score < binary.LittleEndian.Uint32(v) {
+				position++
+			}
+
+			return nil
+		})
 	})
 
-	_, _ = fmt.Fprintf(w, "{\"score\":%d}", score)
+	_, _ = fmt.Fprintf(w, "{\"score\":%d,\"position\":%d}", score, position)
 	return err
 }
 
@@ -90,16 +98,21 @@ func LeaderboardPostRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 		return err
 	}
 
+	var score uint32 = 0
 	err = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("leaderboard"))
 		scores := b.Bucket([]byte("scores"))
 
-		var score uint32 = 0
 		if value := scores.Get([]byte(user)); value != nil {
 			score = binary.LittleEndian.Uint32(value)
 		}
 
-		return scores.Put([]byte(user), binary.LittleEndian.AppendUint32([]byte{}, score+1))
+		if request.Flown {
+			score += 1
+		} else {
+			score += 2
+		}
+		return scores.Put([]byte(user), binary.LittleEndian.AppendUint32([]byte{}, score))
 	})
 	if err != nil {
 		return err
@@ -114,7 +127,21 @@ func LeaderboardPostRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 		go syncEmojis()
 	}
 
-	_, _ = fmt.Fprint(w, "{}")
+	var position = 1
+	_ = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("leaderboard"))
+		scores := b.Bucket([]byte("scores"))
+		return scores.ForEach(func(k, v []byte) error {
+
+			if score < binary.LittleEndian.Uint32(v) {
+				position++
+			}
+
+			return nil
+		})
+	})
+
+	_, _ = fmt.Fprintf(w, "{\"position\":%d}", position)
 	return nil
 }
 
@@ -137,12 +164,13 @@ func updateLeaderboard() {
 			}
 
 			if idx != -1 {
-				smallerPart := leaderboard[idx+1 : 9]
-				leaderboard = append(leaderboard[:idx], LeaderboardEntry{
+				newLeaderboard := make([]LeaderboardEntry, idx)
+				copy(newLeaderboard, leaderboard[:idx])
+				newLeaderboard = append(newLeaderboard, LeaderboardEntry{
 					key:   k,
 					score: score,
 				})
-				leaderboard = append(leaderboard, smallerPart...)
+				leaderboard = append(newLeaderboard, leaderboard[idx:9]...)
 			}
 
 			return nil
@@ -170,9 +198,13 @@ func updateLeaderboard() {
 	})
 
 	// Load emojis
-	var missingEmojis []*LeaderboardEntry
+	var missingEmojis []int
 	var emojiCount int
-	for _, entry := range leaderboard {
+	for i, entry := range leaderboard {
+		if entry.score == 0 {
+			break
+		}
+
 		_ = db.View(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte("leaderboard"))
 			emojis := b.Bucket([]byte("emojis"))
@@ -186,8 +218,9 @@ func updateLeaderboard() {
 			return nil
 		})
 		if entry.emojiId == 0 {
-			missingEmojis = append(missingEmojis, &entry)
+			missingEmojis = append(missingEmojis, i)
 		}
+		leaderboard[i].emojiId = entry.emojiId
 	}
 
 	// Claim space for missing emojis
@@ -221,7 +254,8 @@ func updateLeaderboard() {
 	}
 
 	syncPool := pool.New()
-	for _, entry := range missingEmojis {
+	for _, i := range missingEmojis {
+		entry := leaderboard[i]
 		syncPool.Go(func() {
 			imgRes, _ := http.Get(fmt.Sprintf("https://render.skinmc.net/3d.php?user=%s&vr=0&hr0&aa=false&hrh=0&headOnly=true&ratio=9", string(entry.key)))
 
@@ -230,7 +264,7 @@ func updateLeaderboard() {
 
 			imgb64 := base64.StdEncoding.EncodeToString(img.Bytes())
 			req, _ := http.NewRequest("POST", "https://discord.com/api/v10/guilds/1188280298631336007/emojis", bytes.NewBuffer([]byte(fmt.Sprintf("{"+
-				"\"name\":\"tinyurl_com_2vxtwcec\",\"image\":\"data:image/png;base64,%s\",\"roles\":[]}", imgb64))))
+				"\"name\":\"tinyurl_com_2vxtwcec___\",\"image\":\"data:image/png;base64,%s\",\"roles\":[]}", imgb64))))
 			req.Header.Set("Authorization", "Bot "+os.Getenv("DISCORD_TOKEN"))
 			req.Header.Set("Content-Type", "application/json")
 
@@ -241,7 +275,9 @@ func updateLeaderboard() {
 				emoji.Id = "1188976812928278638"
 			}
 
-			entry.emojiId, _ = strconv.ParseUint(emoji.Id, 10, 64)
+			emojiId, _ := strconv.ParseUint(emoji.Id, 10, 64)
+			entry.emojiId = emojiId
+			leaderboard[i].emojiId = emojiId
 			_ = db.Update(func(tx *bolt.Tx) error {
 				b := tx.Bucket([]byte("leaderboard"))
 				emojis := b.Bucket([]byte("emojis"))
@@ -254,50 +290,73 @@ func updateLeaderboard() {
 		})
 	}
 	syncPool.Wait()
-	go func() {
-		var fields []DiscordField
+	var fields []DiscordField
 
-		// Get usernames
-		for _, entry := range leaderboard {
-			syncPool.Go(func() {
-				res, _ := http.Get(fmt.Sprintf("https://sessionserver.mojang.com/session/minecraft/profile/%s", string(entry.key)))
-				var profile MinecraftProfile
-				err := Decode(res.Body, &profile)
-				if err == nil {
-					entry.name = profile.Name
-				} else {
-					entry.name = string(entry.key)
-					ReportBug(string(entry.key), res, err)
-				}
-			})
-		}
-		syncPool.Wait()
-
-		for i, entry := range leaderboard {
-			fields = append(fields, DiscordField{
-				Name:  fmt.Sprintf("\u200b \u200b %d. <:_:%d> __%s:__", i, entry.emojiId, entry.name),
-				Value: fmt.Sprintf("\u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b %s", Beautify(entry.score)),
-			})
+	// Get usernames
+	syncPool = pool.New()
+	for idx, lEntry := range leaderboard {
+		if lEntry.score == 0 {
+			break
 		}
 
-		b, _ := json.Marshal(fields)
-		req, _ := http.NewRequest("PATCH", "https://discord.com/api/v10/channels/1185718903805067324/messages/1188298133193629726", bytes.NewBuffer([]byte(`
+		i := idx
+		entry := lEntry
+		syncPool.Go(func() {
+			res, err := http.Get(fmt.Sprintf("https://sessionserver.mojang.com/session/minecraft/profile/%s", string(entry.key)))
+			if err != nil {
+				leaderboard[i].name = string(entry.key)
+				ReportBug(string(entry.key), err)
+				return
+			}
+
+			profile := MinecraftProfile{}
+			err = Decode(res.Body, &profile)
+			if err == nil {
+				leaderboard[i].name = profile.Name
+			} else {
+				leaderboard[i].name = string(entry.key)
+				ReportBug(string(entry.key), res, err)
+			}
+		})
+	}
+	syncPool.Wait()
+
+	position := 0
+	var lastScore uint32 = 4294967295
+	for i, entry := range leaderboard {
+		if entry.score == 0 {
+			break
+		}
+
+		if entry.score < lastScore {
+			position = i + 1
+			lastScore = entry.score
+		}
+
+		fields = append(fields, DiscordField{
+			Name:  fmt.Sprintf("\u200b \u200b %d. <:_:%d> __%s:__", position, entry.emojiId, entry.name),
+			Value: fmt.Sprintf("\u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b %s", Beautify(entry.score)),
+		})
+	}
+
+	lastUpdate = time.Now().Unix()
+
+	b, _ := json.Marshal(fields)
+	req, _ := http.NewRequest("PATCH", "https://discord.com/api/v10/channels/1185718903805067324/messages/1188298133193629726", bytes.NewBuffer([]byte(fmt.Sprintf(`
 {
     "embeds": [
         {
             "title": "\ud83c\udfc6 **__Spawn-Runden Z\u00e4hler Leaderboard__**",
-            "description": "Gelaufene Runden z\u00e4hlen \u00602x\u0060,\ngeflogene Runden \u00601x\u0060.\n\u200b",
+            "description": "Gelaufene Runden z\u00e4hlen \u00602x\u0060,\ngeflogene Runden \u00601x\u0060.\nLetztes Update: <t:%d:R>\n\u200b",
             "color": 14922248,
-            "fields": `+string(b)+`
+            "fields": %s
         }
     ]
-}`)))
-		req.Header.Set("Authorization", "Bot "+os.Getenv("DISCORD_TOKEN"))
-		req.Header.Set("Content-Type", "application/json")
+}`, lastUpdate, string(b)))))
+	req.Header.Set("Authorization", "Bot "+os.Getenv("DISCORD_TOKEN"))
+	req.Header.Set("Content-Type", "application/json")
 
-		_, _ = http.DefaultClient.Do(req)
-	}()
-	lastUpdate = time.Now().Unix()
+	_, _ = http.DefaultClient.Do(req)
 
 }
 

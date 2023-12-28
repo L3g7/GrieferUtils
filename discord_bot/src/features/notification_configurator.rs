@@ -1,4 +1,3 @@
-use std::env;
 use std::str::FromStr;
 use std::sync::Arc;
 use std::time::Duration;
@@ -41,10 +40,11 @@ struct NotificationRole {
 	emoji: u64,
 }
 
+const NOTIFICATION_CONFIGURATOR_OPEN_MESSAGE_ID: u64 = 1189161045231669358u64;
+
 async fn get_open_message_id(ctx: &Context) -> Result<MessageId, serenity::Error> {
-	let token = env::var("NOTIFICATION_CONFIGURATOR_OPEN_MESSAGE_ID");
-	if let Ok(token) = token {
-		return Ok(MessageId::from(token.parse::<u64>().expect("Could not parse NOTIFICATION_CONFIGURATOR_OPEN_MESSAGE_ID")));
+	if NOTIFICATION_CONFIGURATOR_OPEN_MESSAGE_ID != 0 {
+		return Ok(MessageId::from(NOTIFICATION_CONFIGURATOR_OPEN_MESSAGE_ID));
 	}
 
 	Ok(ChannelId::from(1123572206094532741u64)

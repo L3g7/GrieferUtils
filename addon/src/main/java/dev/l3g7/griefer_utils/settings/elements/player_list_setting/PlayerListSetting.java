@@ -32,11 +32,9 @@ import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.PreviewRenderer;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.DrawUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -82,25 +80,6 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 		((ElementBuilder<?>) container).subSettings(settings);
 
 		return this;
-	}
-
-	private void renderData(int x, int y, int size, PlayerListEntry data) {
-		DrawUtils drawUtils = drawUtils();
-		if (data.skin != null) {
-			GlStateManager.bindTexture(data.skin.getGlTextureId());
-
-			if (!data.isMojang()) {
-				drawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);
-				return;
-			}
-
-			int yHeight = data.slim ? 64 : 32; // Old textures are 32x64
-			drawUtils.drawTexture(x, y, 32, yHeight, 32, yHeight, size, size); // First layer
-			drawUtils.drawTexture(x, y, 160, yHeight, 32, yHeight, size, size); // Second layer
-		} else {
-			mc.getTextureManager().bindTexture(ModTextures.MISC_HEAD_QUESTION);
-			drawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);
-		}
 	}
 
 	private List<SettingsElement> getSettings() {
@@ -152,7 +131,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
 			drawUtils().drawRectangle(x - 1, y, x, maxY, 0x78787878);
 
-			renderData(x + 3, y + 3, 16, data);
+			data.renderSkull(x + 3, y + 3, 16);
 		}
 
 	}
@@ -214,7 +193,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 				inputField.drawTextBox();
 
 				super.drawScreen(mouseX, mouseY, partialTicks);
-				renderData((width - 32) / 2, height / 4, 32, entry);
+				entry.renderSkull((width - 32) / 2, height / 4, 32);
 			}
 
 			public void updateScreen() {

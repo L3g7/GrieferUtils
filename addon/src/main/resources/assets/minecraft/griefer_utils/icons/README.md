@@ -396,6 +396,10 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
+    <td><a href="trophy.png"><img src="trophy.png" height=16em width=16em />&nbsp;&nbsp;trophy.png </a></td>
+    <td><a href="https://stock.adobe.com/de/images/winner-cups-gold-silver-and-bronze-pixel-art-icon-set-first-second-and-third-place-trophies-logo-collection-8-bit-sprite-game-development-mobile-app-isolated-vector-illustration/493281225">Adobe Stock (SickleMoon)</a></td>
+  </tr>
+  <tr>
     <td><a href="twitch.png"><img src="twitch.png" height=16em width=16em />&nbsp;&nbsp;twitch.png </a></td>
     <td><a href="https://www.twitch.tv/p/press-center/">Twitch</a></td>
   </tr>

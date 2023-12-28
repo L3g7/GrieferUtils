@@ -20,9 +20,12 @@ package dev.l3g7.griefer_utils.misc.server;
 
 import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.core.misc.server.requests.LeaderboardRequest;
+import dev.l3g7.griefer_utils.core.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.misc.server.requests.OnlineUsersRequest;
 import dev.l3g7.griefer_utils.core.misc.server.requests.hive_mind.BoosterRequest;
 import dev.l3g7.griefer_utils.core.misc.server.requests.hive_mind.MobRemoverRequest;
@@ -51,7 +54,7 @@ public class GUClient {
 		return FileProvider.getSingleton(GUClient.class);
 	}
 
-	@EventListener
+	@EventListener(priority = Priority.HIGH)
 	private void onAccountSwitch(AccountSwitchEvent event) {
 		new Thread(this::authorize).start();
 	}
@@ -99,7 +102,15 @@ public class GUClient {
 	}
 
 	public Map<String, List<Long>> getBoosterData(Citybuild citybuild, Consumer<IOException> errorHandler) {
-		return new BoosterRequest(citybuild, 1000L).send(session, errorHandler);
+		return new BoosterRequest(citybuild, 1000L).request(session, errorHandler, true);
+	}
+
+	public LeaderboardData getLeaderboardData() {
+		return new LeaderboardRequest(false).get(session);
+	}
+
+	public LeaderboardData sendLeaderboardData(boolean flown) {
+		return new LeaderboardRequest(flown).send(session);
 	}
 
 }

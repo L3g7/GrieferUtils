@@ -50,19 +50,23 @@ public abstract class Request<R> {
 	protected abstract R parseResponse(GUSession session, Response response) throws Throwable;
 
 	public R send(GUSession session) {
-		return send(session, BugReporter::reportError);
+		return request(session, BugReporter::reportError, true);
 	}
 
-	public R send(GUSession session, Consumer<IOException> errorHandler) {
+	public R get(GUSession session) {
+		return request(session, BugReporter::reportError, false);
+	}
+
+	public R request(GUSession session, Consumer<IOException> errorHandler, boolean post) {
 		try {
-			return send(session, false);
+			return request(session, false, post);
 		} catch (IOException e) {
 			errorHandler.accept(e);
 			return null;
 		}
 	}
 
-	private R send(GUSession session, boolean sessionRenewed) throws IOException {
+	private R request(GUSession session, boolean sessionRenewed, boolean post) throws IOException {
 		HttpsURLConnection conn = (HttpsURLConnection) new URL(session.host + path).openConnection();
 		conn.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
 
@@ -70,9 +74,11 @@ public abstract class Request<R> {
 		if (session.sessionToken != null)
 			conn.setRequestProperty("Authorization", "Bearer " + session.sessionToken);
 
-		conn.setDoOutput(true);
-		conn.setRequestMethod("POST");
-		conn.getOutputStream().write(serialize().getBytes(UTF_8));
+		if (post) {
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.getOutputStream().write(serialize().getBytes(UTF_8));
+		}
 
 		// Renew token if authorization fails
 		if (conn.getResponseCode() == HTTP_UNAUTHORIZED) {
@@ -81,7 +87,7 @@ public abstract class Request<R> {
 
 			try {
 				session.renewToken();
-				return send(session, true);
+				return request(session, true, post);
 			} catch (GeneralSecurityException e) {
 				throw new IOException(e);
 			}

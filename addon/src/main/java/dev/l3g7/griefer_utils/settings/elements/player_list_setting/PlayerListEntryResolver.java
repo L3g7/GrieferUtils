@@ -111,15 +111,13 @@ public class PlayerListEntryResolver {
 			JsonObject data = op.asJsonObject().orElseThrow(() -> new JsonParseException("Invalid response for " + entry.name));
 			entry.id = data.get("id").getAsString().replaceAll("(.{8})(.{4})(.{4})(.{4})(.{12})", "$1-$2-$3-$4-$5");
 		}
-
-		entry.loaded = true;
-
 		JsonObject profile = IOUtil.read("https://sessionserver.mojang.com/session/minecraft/profile/" + entry.id).asJsonObject().orElse(null);
 		if (profile == null) {
 			loadFromAshcon(entry);
 			return;
 		}
 
+		entry.loaded = true;
 		entry.name = profile.get("name").getAsString();
 
 		for (JsonElement element : profile.getAsJsonArray("properties")) {

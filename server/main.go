@@ -27,12 +27,14 @@ func main() {
 		Error(w, http.StatusBadRequest, "Bad Request")
 	})
 	http.HandleFunc("/login", preprocess(true, LoginRoute))
-	http.HandleFunc("/online_users", preprocess(true, checkAuth(OnlineUsersRoute)))
 	http.HandleFunc("/logout", preprocess(true, checkAuth(LogoutRoute)))
 	http.HandleFunc("/keep_alive", preprocess(true, checkAuth(KeepAliveRoute)))
+
 	http.HandleFunc("/hive_mind/mob_remover", preprocess(true, checkAuth(HiveMindMobRemoverRoute)))
 	http.HandleFunc("/hive_mind/booster", preprocess(true, checkAuth(HiveMindBoosterRoute)))
 	http.HandleFunc("/leaderboard", preprocess(false, checkAuth(LeaderboardRoute)))
+	http.HandleFunc("/online_users", preprocess(true, checkAuth(OnlineUsersRoute)))
+	http.HandleFunc("/admin", preprocess(true, AdminRoute))
 
 	err := http.ListenAndServe(":3333", nil)
 	if errors.Is(err, http.ErrServerClosed) {

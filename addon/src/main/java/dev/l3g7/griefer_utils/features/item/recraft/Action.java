@@ -23,7 +23,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -60,7 +59,7 @@ class Action {
 	 * false: if this action failed<br>
 	 * null: if this action was skipped
 	 */
-	public Boolean execute(GuiChest chest, boolean hasSucceeded) {
+	public Boolean execute(int windowId, boolean hasSucceeded) {
 		if (ingredient != null) {
 			int ingredientSlot = ingredient.getSlot();
 			if (ingredientSlot == -1) {
@@ -71,7 +70,7 @@ class Action {
 				return false;
 			}
 
-			mc().playerController.windowClick(chest.inventorySlots.windowId, ingredientSlot, 0, 0, player());
+			mc().playerController.windowClick(windowId, ingredientSlot, 0, 0, player());
 			return true;
 		}
 
@@ -89,7 +88,7 @@ class Action {
 		if (player().openContainer.windowId == 0)
 			return true;
 
-		mc().playerController.windowClick(chest.inventorySlots.windowId, Math.abs(slot), 0, slot < 0 ? 1 : 0, player());
+		mc().playerController.windowClick(windowId, Math.abs(slot), 0, slot < 0 ? 1 : 0, player());
 		return true;
 	}
 

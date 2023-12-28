@@ -20,13 +20,13 @@ package dev.l3g7.griefer_utils.features.item.recraft;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
+import net.minecraft.network.play.server.S2DPacketOpenWindow;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -66,10 +66,15 @@ class RecraftPlayer {
 	}
 
 	@EventListener
-	private static void onGuiOpen(GuiOpenEvent<GuiChest> event) {
+	private static void onPacketReceive(PacketReceiveEvent<S2DPacketOpenWindow> event) {
+		if (!("minecraft:container".equals(event.packet.getGuiId())))
+			return;
+
 		actionBeingExecuted = null;
 		if (closeGui) {
-			TickScheduler.runAfterRenderTicks(() -> player().closeScreen(), 1);
+			event.cancel();
+			mc().getNetHandler().addToSendQueue(new C0DPacketCloseWindow(event.packet.getWindowId()));
+			player().closeScreenAndDropStack();
 			closeGui = false;
 			return;
 		}
@@ -85,27 +90,27 @@ class RecraftPlayer {
 
 		TickScheduler.runAfterRenderTicks(() -> {
 			if (!pendingActions.isEmpty())
-				executeAction(pendingActions.poll(), event.gui, false);
+				executeAction(pendingActions.poll(), event.packet.getWindowId(), false);
 
 			if (pendingActions != null && pendingActions.isEmpty())
 				closeGui = true;
 		}, 1);
 	}
 
-	private static void executeAction(Action action, GuiChest chest, boolean hasSucceeded) {
+	private static void executeAction(Action action, int windowId, boolean hasSucceeded) {
 		actionBeingExecuted = action;
-		if (handleErrors(action.execute(chest, hasSucceeded), chest, hasSucceeded))
+		if (handleErrors(action.execute(windowId, hasSucceeded), windowId, hasSucceeded))
 			return;
 
 		TickScheduler.runAfterClientTicks(() -> {
-			if (mc().currentScreen == chest && actionBeingExecuted == action) {
+			if (/*mc().currentScreen == chest &&*/ actionBeingExecuted == action) {
 				// Action failed, try again
-				executeAction(action, chest, true);
+				executeAction(action, windowId, true);
 			}
 		}, 2);
 	}
 
-	private static boolean handleErrors(Boolean result, GuiChest chest, boolean hasSucceeded) {
+	private static boolean handleErrors(Boolean result, int windowId, boolean hasSucceeded) {
 		// Success
 		if (result == Boolean.TRUE)
 			return false;
@@ -124,7 +129,7 @@ class RecraftPlayer {
 			TickScheduler.runAfterClientTicks(player()::closeScreen, 1);
 			pendingActions = null;
 		} else {
-			executeAction(pendingActions.poll(), chest, false);
+			executeAction(pendingActions.poll(), windowId, false);
 		}
 
 		return true;

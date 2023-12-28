@@ -360,7 +360,7 @@ func updateLeaderboard() {
 		}
 
 		fields = append(fields, DiscordField{
-			Name:  fmt.Sprintf("\u200b \u200b %d. <:_:%d> __%s:__", position, entry.emojiId, entry.name),
+			Name:  fmt.Sprintf("\u200b \u200b %d. <:tinyurl_com_2vxtwcec___:%d> __%s:__", position, entry.emojiId, entry.name),
 			Value: fmt.Sprintf("\u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b %s", Beautify(entry.score)),
 		})
 	}

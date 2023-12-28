@@ -19,6 +19,18 @@ type LeaderboardRequest struct {
 	Flown bool `json:"flown"`
 }
 
+type LeaderboardResponse struct {
+	Score    uint32                    `json:"score"`
+	Position int                       `json:"position"`
+	Previous *LeaderboardResponseEntry `json:"previous,omitempty"`
+	Next     *LeaderboardResponseEntry `json:"next,omitempty"`
+}
+
+type LeaderboardResponseEntry struct {
+	UUID  string `json:"uuid"`
+	Score uint32 `json:"score"`
+}
+
 type Emoji struct {
 	Id string `json:"id"`
 }
@@ -58,27 +70,55 @@ func LeaderboardGetRoute(w http.ResponseWriter, token *jwt.Token) error {
 	claims, _ := token.Claims.(jwt.MapClaims)
 	user := []byte(claims["sub"].(string))
 
-	score := uint32(0)
-	position := 1
+	response := LeaderboardResponse{
+		Position: 1,
+		Next: &LeaderboardResponseEntry{
+			Score: 4294967295,
+		},
+		Previous: &LeaderboardResponseEntry{},
+	}
+
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("leaderboard"))
 		scores := b.Bucket([]byte("scores"))
 
 		if value := scores.Get(user); value != nil {
-			score = binary.LittleEndian.Uint32(value)
+			response.Score = binary.LittleEndian.Uint32(value)
 		}
 
 		return scores.ForEach(func(k, v []byte) error {
+			score := binary.LittleEndian.Uint32(v)
 
-			if score < binary.LittleEndian.Uint32(v) {
-				position++
+			if response.Score < score {
+				response.Position++
+
+				if response.Next.Score > score {
+					response.Next = &LeaderboardResponseEntry{
+						UUID:  string(k),
+						Score: score,
+					}
+				}
+			} else if response.Score > score {
+				if response.Previous.Score < score {
+					response.Previous = &LeaderboardResponseEntry{
+						UUID:  string(k),
+						Score: score,
+					}
+				}
 			}
 
 			return nil
 		})
 	})
 
-	_, _ = fmt.Fprintf(w, "{\"score\":%d,\"position\":%d}", score, position)
+	if response.Next.UUID == "" {
+		response.Next = nil
+	}
+	if response.Previous.UUID == "" {
+		response.Previous = nil
+	}
+
+	_ = json.NewEncoder(w).Encode(response)
 	return err
 }
 
@@ -127,22 +167,7 @@ func LeaderboardPostRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 		go syncEmojis()
 	}
 
-	var position = 1
-	_ = db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("leaderboard"))
-		scores := b.Bucket([]byte("scores"))
-		return scores.ForEach(func(k, v []byte) error {
-
-			if score < binary.LittleEndian.Uint32(v) {
-				position++
-			}
-
-			return nil
-		})
-	})
-
-	_, _ = fmt.Fprintf(w, "{\"position\":%d}", position)
-	return nil
+	return LeaderboardGetRoute(w, token)
 }
 
 func updateLeaderboard() {

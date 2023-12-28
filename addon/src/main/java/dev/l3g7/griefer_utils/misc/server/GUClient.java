@@ -49,6 +49,12 @@ public class GUClient {
 
 	private GUClient() {
 		new Thread(this::authorize).start();
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				if (session.isValid())
+					session.logout();
+			} catch (Throwable ignored) {}
+		}));
 	}
 
 	@OnEnable

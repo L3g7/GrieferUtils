@@ -279,8 +279,9 @@ func updateLeaderboard() {
 	}
 
 	syncPool := pool.New()
-	for _, i := range missingEmojis {
-		entry := leaderboard[i]
+	for _, idx := range missingEmojis {
+		i := idx
+		entry := leaderboard[idx]
 		syncPool.Go(func() {
 			imgRes, _ := http.Get(fmt.Sprintf("https://render.skinmc.net/3d.php?user=%s&vr=0&hr0&aa=false&hrh=0&headOnly=true&ratio=9", string(entry.key)))
 

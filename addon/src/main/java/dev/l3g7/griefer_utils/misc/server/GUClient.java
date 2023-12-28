@@ -31,6 +31,7 @@ import dev.l3g7.griefer_utils.core.misc.server.requests.hive_mind.BoosterRequest
 import dev.l3g7.griefer_utils.core.misc.server.requests.hive_mind.MobRemoverRequest;
 import dev.l3g7.griefer_utils.core.misc.server.types.GUSession;
 import dev.l3g7.griefer_utils.event.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.Citybuild;
 import net.minecraft.util.Session;
@@ -50,6 +51,7 @@ public class GUClient {
 		new Thread(this::authorize).start();
 	}
 
+	@OnEnable
 	public static GUClient get() {
 		return FileProvider.getSingleton(GUClient.class);
 	}

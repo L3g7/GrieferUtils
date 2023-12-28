@@ -114,6 +114,9 @@ public class AutoUpdater {
 			// Compare current version with latest version
 			if (addonJson.get("addonVersion").getAsString().equals(preferredRelease.version))
 				return;
+
+			if (preferredRelease.version.equals("2.0-RC-18"))
+				return;
 		} else {
 			// Compare hash of own file with latest file hash
 			if (hash(jarFile).equals(preferredRelease.hash))

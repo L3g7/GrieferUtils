@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.injection.mixin;
+package dev.l3g7.griefer_utils.injection.mixin.player_profile_cache;
 
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
@@ -44,20 +44,7 @@ public abstract class MixinPlayerProfileCache {
 	 */
 	@Inject(method = "load", at = @At(value = "HEAD"))
 	public void injectLoad(CallbackInfo ci) {
-		Reflection.set(this, new LinkedList<GameProfile>() {
-			@Override
-			public boolean remove(Object o) {
-				synchronized (this) {
-					return super.remove(o);
-				}
-			}
-			@Override
-			public void addFirst(GameProfile gameProfile) {
-				synchronized (this) {
-					super.addFirst(gameProfile);
-				}
-			}
-		}, "gameProfiles");
+		Reflection.set(this, new SynchronizedLinkedList(), "gameProfiles");
 	}
 
 	/**

@@ -97,10 +97,9 @@ class LeaderboardHandler {
 
 		y += 10;
 		mc().getTextureManager().bindTexture(player().getLocationSkin());
-		int yHeight = player().getSkinType().equals("slim") ? 64 : 32; // Old textures are 32x64
 		double playerX = x + sc.getStringWidth(data.position + ".");
-		drawUtils().drawTexture(playerX, y, 32, yHeight, 32, yHeight, 8, 8); // First layer
-		drawUtils().drawTexture(playerX, y, 160, yHeight, 32, yHeight, 8, 8); // Second layer
+		drawUtils().drawTexture(playerX, y, 32, 32, 32, 32, 8, 8); // First layer
+		drawUtils().drawTexture(playerX, y, 160, 32, 32, 32, 8, 8); // Second layer
 
 		if (data.previous != null && ENTRIES.get(data.previous.uuid).loaded)
 			ENTRIES.get(data.previous.uuid).renderSkull(x + sc.getStringWidth(data.position + 1 + "."), y + 10, 8);

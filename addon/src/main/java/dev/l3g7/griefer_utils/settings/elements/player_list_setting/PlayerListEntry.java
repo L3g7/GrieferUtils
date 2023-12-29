@@ -44,7 +44,7 @@ public class PlayerListEntry {
 
 	public String name;
 	public String id; // The uuid / xuid of the Player
-	public boolean slim;
+	public boolean oldSkin;
 	public ITextureObject skin = null;
 	public boolean loaded = false; // Whether the entry's name and id were loaded
 	protected boolean exists = true;
@@ -116,7 +116,7 @@ public class PlayerListEntry {
 			return;
 		}
 
-		int yHeight = slim ? 64 : 32; // Old textures are 32x64
+		int yHeight = oldSkin ? 64 : 32; // Old textures are 32x64
 		drawUtils().drawTexture(x, y, 32, yHeight, 32, yHeight, size, size); // First layer
 		drawUtils().drawTexture(x, y, 160, yHeight, 32, yHeight, size, size); // Second layer
 	}

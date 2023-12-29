@@ -128,7 +128,7 @@ public class PlayerListEntryResolver {
 
 			String url = JsonParse.parse(new String(Base64.getDecoder().decode(property.get("value").getAsString()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
 			BufferedImage img = IOUtil.readImage(url);
-			entry.slim = img.getHeight() == 32;
+			entry.oldSkin = img.getHeight() == 32;
 
 			TickScheduler.runAfterRenderTicks(() -> {
 				entry.skin = new DynamicTexture(img);
@@ -146,7 +146,7 @@ public class PlayerListEntryResolver {
 		entry.name = profile.get("username").getAsString();
 		entry.id = profile.get("uuid").getAsString();
 		entry.loaded = true;
-		entry.slim = profile.getAsJsonObject("textures").get("slim").getAsBoolean();
+		entry.oldSkin = profile.getAsJsonObject("textures").get("slim").getAsBoolean();
 		String skinData = profile.getAsJsonObject("textures").getAsJsonObject("skin").get("data").getAsString();
 		BufferedImage img = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(skinData)));
 

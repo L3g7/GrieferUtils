@@ -151,7 +151,7 @@ func Beautify(num uint32) string {
 	num /= 1000
 
 	for num > 0 {
-		str = fmt.Sprintf("%d.%s", num, str)
+		str = fmt.Sprintf("%d.%s", num%1000, str)
 		num /= 1000
 	}
 

@@ -76,7 +76,7 @@ class LeaderboardHandler {
 		if (data.next != null && ENTRIES.get(data.next.uuid).loaded)
 			lines.add(String.format("§7%d.   %s: %d", data.position - 1, ENTRIES.get(data.next.uuid).name, data.next.score));
 
-		lines.add(String.format("%d.   §f%s§r%s%d", data.position, MinecraftUtil.name(), spawnCounter.toText(": ").getText(), data.score));
+		lines.add(String.format("§f%d.   %s§r%s%d", data.position, MinecraftUtil.name(), spawnCounter.toText(": ", 0).getText(), data.score));
 
 		if (data.previous != null && ENTRIES.get(data.previous.uuid).loaded)
 			lines.add(String.format("§7%d.   %s: %d", data.position + 1, ENTRIES.get(data.previous.uuid).name, data.previous.score));
@@ -90,7 +90,7 @@ class LeaderboardHandler {
 			return;
 		}
 
-		x += 2;
+		x += sc.isBold() ? 3 : 2;
 
 		if (data.next != null && ENTRIES.get(data.next.uuid).loaded)
 			ENTRIES.get(data.next.uuid).renderSkull(x + sc.getStringWidth(data.position - 1 + "."), y += 10, 8);
@@ -106,7 +106,7 @@ class LeaderboardHandler {
 	}
 
 	private static void drawRight(SpawnCounter sc, double x, double y, double rightX) {
-		x = rightX + 2;
+		x = rightX + (sc.isBold() ? 3 : 2);
 
 		List<String> texts = getTexts(sc);
 
@@ -116,7 +116,7 @@ class LeaderboardHandler {
 		y += 10;
 		mc().getTextureManager().bindTexture(player().getLocationSkin());
 		int yHeight = player().getSkinType().equals("slim") ? 64 : 32; // Old textures are 32x64
-		double playerX = x + sc.getStringWidth(data.position + ".") - sc.getStringWidth(texts.get(1));
+		double playerX = x + sc.getStringWidth(data.position + ".") - sc.getStringWidth(texts.get(data.next == null ? 0 : 1));
 		drawUtils().drawTexture(playerX, y, 32, yHeight, 32, yHeight, 8, 8); // First layer
 		drawUtils().drawTexture(playerX, y, 160, yHeight, 32, yHeight, 8, 8); // Second layer
 

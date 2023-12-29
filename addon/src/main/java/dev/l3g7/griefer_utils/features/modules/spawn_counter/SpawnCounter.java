@@ -32,6 +32,7 @@ import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.Material;
+import net.labymod.utils.ModColor;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Collections;
@@ -101,17 +102,24 @@ public class SpawnCounter extends Module {
 			return texts;
 
 		if (leaderboard.get() == COMPACT) {
-			texts.get(0).add(toText(LeaderboardHandler.getTexts(this).get(0)));
+			texts.get(0).add(toText(LeaderboardHandler.getTexts(this).get(0), valueColor));
 		} else if (leaderboard.get() == ON && player() != null) {
-			for (String text : LeaderboardHandler.getTexts(this))
-				texts.add(Collections.singletonList(toText(text)));
+			for (String text : LeaderboardHandler.getTexts(this)) {
+				char colorChar = text.charAt(1);
+				int color = (colorChar == 'f' ? ModColor.WHITE : ModColor.GRAY).getColor().getRGB();
+				texts.add(Collections.singletonList(toText(text.substring(2), color)));
+			}
 		}
 
 		return texts;
 	}
 
-	Text toText(String text) {
-		return new Text(text, valueColor, bold, italic, underline);
+	Text toText(String text, int color) {
+		return new Text(text, color, bold, italic, underline);
+	}
+
+	boolean isBold() {
+		return bold;
 	}
 
 	@Override
@@ -182,7 +190,7 @@ public class SpawnCounter extends Module {
 	}
 
 	int getStringWidth(String text) {
-		return mc.fontRendererObj.getStringWidth(toText(text).getText());
+		return mc.fontRendererObj.getStringWidth(toText(text, 0).getText());
 	}
 
 	@EventListener

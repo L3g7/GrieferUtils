@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -34,8 +35,6 @@ import net.minecraft.util.IChatComponent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 
 @Singleton
 public class AutoUnnick extends Feature {
@@ -80,10 +79,7 @@ public class AutoUnnick extends Feature {
 		String[] parts = event.component.getFormattedText().split(" ?§r§8§*l* ?\u2503 §r");
 
 		if (parts.length != 2) {
-			System.err.println("AutoUnnick error:");
-			System.err.println(IChatComponent.Serializer.componentToJson(event.component));
-			System.err.println(event.profile);
-			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
+			BugReporter.reportError(new Throwable(IChatComponent.Serializer.componentToJson(event.component) + " | " + event.profile));
 			return;
 		}
 

@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.chat.auto_unnick;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 
 public class PrefixFinder {
 	public static String[] prefixes = null;
@@ -27,7 +28,11 @@ public class PrefixFinder {
 	private final String colorOnlyText;
 	private final String originalText;
 
+	private final String rank, name; // Used for error reporting
+
 	public PrefixFinder(String rank, String name) {
+		this.rank = rank;
+		this.name = name;
 
 		if (rank.charAt(1) != name.charAt(1) || rank.contains("+")) // RW prefix || Streamer/YT +
 			originalText = trim(name);
@@ -36,8 +41,16 @@ public class PrefixFinder {
 
 		this.colorOnlyText = originalText.replaceAll("§[^0-9a-f]", "");
 	}
-
 	public String getPrefix() {
+		try {
+			return getPrefixWithException();
+		} catch (Throwable t) {
+			BugReporter.reportError(new Throwable(t.getMessage() + ": " + rank + " | " + name, t));
+			return "4";
+		}
+	}
+
+	public String getPrefixWithException() {
 		// Single prefix (<= 2 because of §l / §k)
 		if (originalText.lastIndexOf('§') <= 2)
 			return originalText.substring(0, originalText.lastIndexOf('§') + 2)

@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.settings.elements;
 
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.labymod.settings.elements.ControlElement;
 
 public class CategorySetting extends ControlElement implements ElementBuilder<CategorySetting> {
@@ -43,6 +44,9 @@ public class CategorySetting extends ControlElement implements ElementBuilder<Ca
 
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+		if (RenderUtil.shouldBeCulled(y, maxY))
+			return;
+
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		drawIcon(x, y);
 	}

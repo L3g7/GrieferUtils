@@ -27,7 +27,6 @@ import dev.l3g7.griefer_utils.misc.server.GUClient;
 import dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListEntry;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +122,7 @@ class LeaderboardHandler {
 		drawUtils().drawTexture(playerX, y, 160, yHeight, 32, yHeight, 8, 8); // Second layer
 
 		if (data.previous != null && ENTRIES.get(data.previous.uuid).loaded)
-			ENTRIES.get(data.previous.uuid).renderSkull(x + sc.getStringWidth(data.position + 1 + ".") - sc.getStringWidth(texts.get(2)), y + 10, 8);
+			ENTRIES.get(data.previous.uuid).renderSkull(x + sc.getStringWidth(data.position + 1 + ".") - sc.getStringWidth(texts.get(texts.size() - 1)), y + 10, 8);
 	}
 
 }

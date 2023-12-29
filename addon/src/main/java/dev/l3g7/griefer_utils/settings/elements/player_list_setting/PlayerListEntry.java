@@ -33,7 +33,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 public class PlayerListEntry {
 
-	private static final PlayerListEntry INVALID_PLAYER = new PlayerListEntry();
+	public static final PlayerListEntry INVALID_PLAYER = new PlayerListEntry();
 
 	public static PlayerListEntry getEntry(String name) {
 		if (!Constants.UNFORMATTED_PLAYER_NAME_PATTERN.matcher(name).matches())

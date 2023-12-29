@@ -32,10 +32,8 @@ import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.Material;
-import net.labymod.utils.ModColor;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Collections;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.misc.Constants.ADDON_PREFIX;
@@ -83,6 +81,8 @@ public class SpawnCounter extends Module {
 			RoundHandler.roundsFlown = Config.get(configKey + "flown").getAsInt();
 		if (Config.has(configKey + "ran"))
 			RoundHandler.roundsRan = Config.get(configKey + "ran").getAsInt();
+
+		LeaderboardHandler.sc = this;
 	}
 
 	@Override
@@ -92,34 +92,25 @@ public class SpawnCounter extends Module {
 
 	@Override
 	public int getLines() {
-		return leaderboard.get() == ON && LeaderboardHandler.data != null ? LeaderboardHandler.getTexts(this).size() + 1 : 1;
+		return LeaderboardHandler.countLines();
 	}
 
 	@Override
 	public List<List<Text>> getTexts() {
 		List<List<Text>> texts = super.getTexts();
-		if (LeaderboardHandler.data == null)
-			return texts;
-
-		if (leaderboard.get() == COMPACT) {
-			texts.get(0).add(toText(LeaderboardHandler.getTexts(this).get(0), valueColor));
-		} else if (leaderboard.get() == ON && player() != null) {
-			for (String text : LeaderboardHandler.getTexts(this)) {
-				char colorChar = text.charAt(1);
-				int color = (colorChar == 'f' ? ModColor.WHITE : ModColor.GRAY).getColor().getRGB();
-				texts.add(Collections.singletonList(toText(text.substring(2), color)));
-			}
-		}
+		if (LeaderboardHandler.data == null && leaderboard.get() == COMPACT)
+			texts.get(0).add(toText(LeaderboardHandler.getCompactText()));
 
 		return texts;
 	}
 
-	Text toText(String text, int color) {
-		return new Text(text, color, bold, italic, underline);
+	@Override
+	public double getRawWidth() {
+		return Math.max(super.getRawWidth(), LeaderboardHandler.renderWidth);
 	}
 
-	boolean isBold() {
-		return bold;
+	Text toText(String text) {
+		return new Text(text, 0, bold, italic, underline);
 	}
 
 	@Override
@@ -186,11 +177,11 @@ public class SpawnCounter extends Module {
 		}
 
 		if (leaderboard.get() == ON && LeaderboardHandler.data != null && player() != null)
-			LeaderboardHandler.draw(this, x + padding, y, rightX + padding);
+			LeaderboardHandler.draw(x + padding, y);
 	}
 
 	int getStringWidth(String text) {
-		return mc.fontRendererObj.getStringWidth(toText(text, 0).getText());
+		return mc.fontRendererObj.getStringWidth(toText(text).getText());
 	}
 
 	@EventListener

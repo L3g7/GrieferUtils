@@ -89,6 +89,19 @@ public class MainPage {
 				feature.getMainElement().getSubSettings().getElements().stream()
 					.filter(e -> e instanceof BooleanSetting || e instanceof NumberSetting || e instanceof CategorySetting)
 					.forEachOrdered(searchableSettings::add);
+
+				// Enable the feature category when one of its features is enabled
+				if (feature.getMainElement() instanceof BooleanSetting) {
+					for (SettingsElement element : feature.getMainElement().getSubSettings().getElements()) {
+						if (element instanceof BooleanSetting) {
+							((BooleanSetting) element).callback(b -> {
+								if (b) {
+									((BooleanSetting) feature.getMainElement()).set(true);
+								}
+							});
+						}
+					}
+				}
 			} else {
 				searchableSettings.add(feature.getMainElement());
 			}

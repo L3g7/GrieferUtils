@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.C0EPacketClickWindow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +71,7 @@ class Action {
 				return false;
 			}
 
-			mc().playerController.windowClick(windowId, ingredientSlot, 0, 0, player());
+			click(windowId, ingredientSlot);
 			return true;
 		}
 
@@ -85,11 +86,12 @@ class Action {
 			}
 		}
 
-		if (player().openContainer.windowId == 0)
-			return true;
-
-		mc().playerController.windowClick(windowId, Math.abs(slot), 0, slot < 0 ? 1 : 0, player());
+		click(windowId, slot);
 		return true;
+	}
+
+	private static void click(int windowId, int slot) {
+		mc().getNetHandler().addToSendQueue(new C0EPacketClickWindow(windowId, Math.abs(slot), 0, slot < 0 ? 1 : 0, null, (short) 0));
 	}
 
 	JsonElement toJson() {

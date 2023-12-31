@@ -55,7 +55,6 @@ class LeaderboardHandler {
 	}
 
 	private static void request(Supplier<LeaderboardData> supplier) {
-		data = null;
 		if (!GUClient.get().isAvailable() || leaderboard.get() == OFF)
 			return;
 

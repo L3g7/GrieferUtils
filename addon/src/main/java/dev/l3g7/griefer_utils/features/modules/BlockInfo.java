@@ -63,7 +63,7 @@ public class BlockInfo extends Module {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Block-Infos")
-		.description("Zeigt dir Infos den anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
+		.description("Zeigt dir Infos des anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
 		.icon("magnifying_glass")
 		.subSettings(showCoords);
 

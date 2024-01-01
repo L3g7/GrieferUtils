@@ -81,7 +81,7 @@ public class LightLevelOverlay extends Feature {
 
 	private final NumberSetting updateDelay = new NumberSetting()
 		.name("Update-Wartezeit (Ticks)")
-		.description("Wie lange zwischen den Berechnung der Lichtlevel gewartet werden soll.")
+		.description("Wie lange zwischen den Berechnungen der Lichtlevel gewartet werden soll.")
 		.defaultValue(5)
 		.icon(Material.WATCH);
 

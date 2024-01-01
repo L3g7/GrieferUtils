@@ -75,7 +75,7 @@ public class BetterHopper extends Feature {
 
 	private final NumberSetting displayTime = new NumberSetting()
 		.name("Anzeigedauer")
-		.description("Wie lange wie optische Anzeige aktiv bleiben soll, in Sekunden.")
+		.description("Wie lange die optische Anzeige aktiv bleiben soll, in Sekunden.")
 		.icon("hourglass")
 		.defaultValue(10);
 
@@ -87,7 +87,7 @@ public class BetterHopper extends Feature {
 
 	private final BooleanSetting showRange = new BooleanSetting()
 		.name("Trichterreichweite anzeigen")
-		.description("Zeigt die Trichterreichtweite an.")
+		.description("Zeigt die Trichterreichweite an.")
 		.icon("ruler");
 
 	private final BooleanSetting showSourceHopper = new BooleanSetting()

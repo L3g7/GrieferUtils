@@ -37,7 +37,7 @@ public class Earned extends Module {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Verdient")
-		.description("Zeigt dir, wie viel Geld du seit Minecraft-Start verdient hast.")
+		.description("Zeigt dir, wie viel Geld du seit deinem Minecraft-Start verdient hast.")
 		.icon("coin_pile")
 		.subSettings(new SmallButtonSetting()
 			.name("Zurücksetzen")

@@ -90,7 +90,7 @@ public class SkullEnchantmentFix extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Kopf-Verzauberung fixen")
-		.description("Behebt, dass Verzauberungen von Köpfe nicht angezeigt werden.")
+		.description("Behebt, dass Verzauberungen von Köpfen nicht angezeigt werden.")
 		.icon(ICON);
 
 	@Override

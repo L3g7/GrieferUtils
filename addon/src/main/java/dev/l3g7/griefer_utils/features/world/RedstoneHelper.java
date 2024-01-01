@@ -25,13 +25,13 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.events.NoteBlockPlayEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer;
-import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObject;
-import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer;
+import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObject;
+import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockDispenser;
@@ -107,7 +107,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	public static final BooleanSetting hideRedstoneParticles = new BooleanSetting()
 		.name("Redstone-Partikel verstecken")
-		.description("Versteckt die Partikel, die durch aktivertem Redstone erzeugt werden.")
+		.description("Versteckt die Partikel, die durch aktivertes Redstone erzeugt werden.")
 		.icon(REDSTONE)
 		.defaultValue(true);
 

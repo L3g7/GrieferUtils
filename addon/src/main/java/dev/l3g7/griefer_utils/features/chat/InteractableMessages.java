@@ -148,8 +148,8 @@ public class InteractableMessages extends Feature {
 			} else if (i <= startIndex && len + i > startIndex) { // Command is at the end
 				Reflection.set(c, text.substring(0, startIndex - i), "text");
 				IChatComponent commandComponent = new ChatComponentText(text.substring(startIndex - i));
+				setStyle(commandComponent, style, c.getFormattedText());
 				commandComponent.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, command));
-				commandComponent.getChatStyle().setParentStyle(c.getChatStyle());
 				c.getSiblings().add(0, commandComponent);
 				c = commandComponent;
 				text = commandComponent.getUnformattedTextForChat();
@@ -161,7 +161,7 @@ public class InteractableMessages extends Feature {
 				if (i + len > index) { // Command is at the start
 					Reflection.set(c, text.substring(0, index - i), "text");
 					IChatComponent postComponent = new ChatComponentText(text.substring(index - i));
-					postComponent.setChatStyle(style);
+					setStyle(postComponent, style, c.getFormattedText());
 					c.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, command));
 					c.getSiblings().add(0, postComponent);
 				}
@@ -169,6 +169,29 @@ public class InteractableMessages extends Feature {
 			}
 			i += len;
 		}
+	}
+
+	private static void setStyle(IChatComponent target, ChatStyle style, String fallbackText) {
+		if (!style.equals(new ChatStyle())) {
+			target.setChatStyle(style);
+			return;
+		}
+
+		while (fallbackText.endsWith("§r"))
+			fallbackText = fallbackText.substring(0, fallbackText.length() - 2);
+
+		StringBuilder prefix = new StringBuilder();
+		Matcher matcher = Pattern.compile("§(.)").matcher(fallbackText);
+		while (matcher.find()) {
+			String formatting = matcher.group(1);
+			if (formatting.matches("[0-9a-fr]"))
+				prefix = new StringBuilder();
+
+			if (!formatting.equals("r"))
+				prefix.append('§').append(formatting);
+		}
+
+		Reflection.set(target, prefix + target.getUnformattedText(), "text");
 	}
 
 	private void modifyClanInfo(MessageModifyEvent event) {

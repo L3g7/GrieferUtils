@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.chat;
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.Named;
@@ -31,8 +32,13 @@ import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 
 @Singleton
 public class ChatMods extends Feature {
@@ -43,6 +49,8 @@ public class ChatMods extends Feature {
 		"§r§8[§r§6GrieferGames§r§8] §r§fDownload: §r§ahttps://mysterymod.net/download/§r",
 		"§r§8[§r§6GrieferGames§r§8] §r§fWir sind optimiert für MysteryMod. Lade Dir gerne die Mod runter!§r"
 	);
+
+	private static final String RAINBOW_COLORS = "c6eabd";
 
 	private final BooleanSetting antiClearChat = new BooleanSetting()
 		.name("Clearchat unterbinden")
@@ -83,9 +91,14 @@ public class ChatMods extends Feature {
 		.icon("labymod:buttons/exclamation_mark")
 		.defaultValue(NewsMode.NORMAL);
 
+	private final BooleanSetting antiRainbow = new BooleanSetting()
+		.name("Rainbow-Farben entfernen")
+		.description("Entfernt die Farben von Nachrichten mit Rainbow-Schrift.")
+		.icon("labymod:settings/settings/tabping_colored");
+
 	private final HeaderSetting newDropDownFix = new HeaderSetting() {
 		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			entryHeight(news.isFocused() ? 30 : 0);
+			entryHeight(news.isFocused() ? 5 : 0);
 		}
 	};
 
@@ -93,8 +106,8 @@ public class ChatMods extends Feature {
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Chat aufräumen")
 		.icon("speech_bubble")
-		.description("Löscht unerwünschte Chatnachrichten.")
-		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeMysteryMod, removeLuckyBlock, removeCaseOpening, news, newDropDownFix);
+		.description("Räumt den Chat auf.")
+		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeMysteryMod, removeLuckyBlock, removeCaseOpening, news, antiRainbow, newDropDownFix);
 
 	private boolean isNews = false;
 
@@ -102,6 +115,33 @@ public class ChatMods extends Feature {
 	public void onMessageReceive(MessageReceiveEvent event) {
 		if (shouldCancel(event.message.getFormattedText()))
 			event.cancel();
+	}
+
+	@EventListener
+	public void onMessageModify(MessageModifyEvent event) {
+		if (!antiRainbow.get())
+			return;
+
+		for (Pattern pattern : new Pattern[] {GLOBAL_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, PLOTCHAT_RECEIVE_PATTERN}) {
+			Matcher matcher = pattern.matcher(event.original.getFormattedText());
+			if (!matcher.matches())
+				continue;
+
+			String message = matcher.group("message");
+			String msg = message.replace("§l", "").replace("§r", "").replaceAll("§. ", "");
+			if (msg.length() % 3 != 0)
+				return;
+
+			for (int i = 0; i < msg.length() / 3; i++) {
+				int index = i * 3;
+
+				if (msg.charAt(index) != '§' || msg.charAt(++index) != RAINBOW_COLORS.charAt(i % 6))
+					return;
+			}
+
+			String content = event.message.getFormattedText().replace(message, "§b§l" + message.replaceAll("§.", ""));
+			event.message = new ChatComponentText(content);
+		}
 	}
 
 	private boolean shouldCancel(String formattedText) {

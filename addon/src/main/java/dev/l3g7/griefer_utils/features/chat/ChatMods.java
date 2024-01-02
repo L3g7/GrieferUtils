@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.chat;
 
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
@@ -33,6 +34,8 @@ import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -117,7 +120,7 @@ public class ChatMods extends Feature {
 			event.cancel();
 	}
 
-	@EventListener
+	@EventListener(priority = Priority.HIGH)
 	public void onMessageModify(MessageModifyEvent event) {
 		if (!antiRainbow.get())
 			return;
@@ -139,8 +142,9 @@ public class ChatMods extends Feature {
 					return;
 			}
 
-			String content = event.message.getFormattedText().replace(message, "§b§l" + message.replaceAll("§.", ""));
-			event.message = new ChatComponentText(content);
+			IChatComponent messageICC = new ChatComponentText(message.replaceAll("§.", ""));
+			messageICC.getChatStyle().setBold(true).setColor(EnumChatFormatting.AQUA);
+			event.message = new ChatComponentText(event.original.getFormattedText().substring(0, matcher.start("message"))).appendSibling(messageICC);
 		}
 	}
 

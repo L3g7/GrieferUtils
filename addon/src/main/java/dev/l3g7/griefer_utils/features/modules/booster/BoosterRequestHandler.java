@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 class BoosterRequestHandler {
 
-	private static final Timer TIMER = new Timer("GrieferUtils-Booster-Timer", true);
 	private static long lastSendTime = 0;
 	private static Citybuild currentCitybuild = Citybuild.ANY;
 
@@ -38,7 +37,7 @@ class BoosterRequestHandler {
 
 		long sendTime = lastSendTime = System.currentTimeMillis();
 
-		TIMER.schedule(new TimerTask() {
+		new Timer("GrieferUtils-Booster-Timer", true).schedule(new TimerTask() {
 			public void run() {
 				if (lastSendTime != sendTime)
 					return;

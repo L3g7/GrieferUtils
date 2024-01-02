@@ -76,7 +76,7 @@ public class AutoUnnick extends Feature {
 			return;
 
 		String nickName = text.substring(text.indexOf('~'));
-		String[] parts = event.component.getFormattedText().split(" ?§r§8§*l* ?\u2503 §r");
+		String[] parts = event.component.getFormattedText().split(" ?(?:§r)?§8§?l? ?\u2503 (?:§r)?");
 
 		if (parts.length != 2) {
 			BugReporter.reportError(new Throwable(IChatComponent.Serializer.componentToJson(event.component) + " | " + event.profile));

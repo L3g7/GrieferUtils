@@ -146,8 +146,7 @@ func HiveMindBoosterRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 
 				if len(value.Value) == 0 {
 					value = *considered
-				} else {
-					// considered value has more entries than current value;
+				} else if len(considered.Value) > len(value.Value) {
 					// check whether considered value is newer
 					if considered.Timestamp > value.Timestamp {
 

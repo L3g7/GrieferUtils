@@ -64,7 +64,8 @@ func HiveMindBoosterRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 	var response *HiveMindBoosterResponse
 
 	boosterKnowledgeMutex.Lock()
-
+	defer boosterKnowledgeMutex.Unlock()
+			
 	entries := boosterKnowledge[citybuild]
 	if entries == nil {
 		entries = make(map[string][]HiveMindBoosterEntry)
@@ -98,7 +99,6 @@ func HiveMindBoosterRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 		})
 		if !valid {
 			// New entry is more than 20 min away
-			boosterKnowledgeMutex.Unlock()
 			Error(w, http.StatusBadRequest, "Bad Request")
 			return nil
 		}
@@ -180,8 +180,6 @@ func HiveMindBoosterRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 			})
 		})
 	}
-
-	boosterKnowledgeMutex.Unlock()
 
 	if response != nil {
 		_ = json.NewEncoder(w).Encode(*response)

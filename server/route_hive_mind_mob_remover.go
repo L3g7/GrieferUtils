@@ -53,6 +53,7 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 	var response HiveMindMobRemoverResponse
 
 	mobRemoverKnowledgeMutex.Lock()
+	defer mobRemoverKnowledgeMutex.Unlock()
 
 	now := uint64(time.Now().Unix())
 
@@ -65,7 +66,6 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 		// Validate new entry
 		if *request.Value > now+1200000 {
 			// New entry is more than 20 min away
-			mobRemoverKnowledgeMutex.Unlock()
 			Error(w, http.StatusBadRequest, "Bad Request")
 			return nil
 		}
@@ -94,8 +94,6 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 			return val.Value
 		})
 	}
-
-	mobRemoverKnowledgeMutex.Unlock()
 
 	_ = json.NewEncoder(w).Encode(response)
 	return nil

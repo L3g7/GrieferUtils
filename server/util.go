@@ -10,6 +10,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"strings"
 )
 
 func Decode(r io.Reader, v any) error {
@@ -147,15 +148,14 @@ func createDb() *bolt.DB {
 }
 
 func Beautify(num uint32) string {
-	str := fmt.Sprintf("%d", num%1000)
+	str := fmt.Sprintf("%03d", num%1000)
 	num /= 1000
-
 	for num > 0 {
-		str = fmt.Sprintf("%d.%s", num%1000, str)
+		str = fmt.Sprintf("%03d.%s", num%1000, str)
 		num /= 1000
 	}
 
-	return str
+	return strings.TrimLeft(str, "0")
 }
 
 func ReportBug(user string, data ...any) {

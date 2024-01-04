@@ -74,7 +74,7 @@ class RecraftPlayer {
 		if (closeGui) {
 			event.cancel();
 			mc().getNetHandler().addToSendQueue(new C0DPacketCloseWindow(event.packet.getWindowId()));
-			player().closeScreenAndDropStack();
+			mc().addScheduledTask(player()::closeScreenAndDropStack);
 			closeGui = false;
 			return;
 		}

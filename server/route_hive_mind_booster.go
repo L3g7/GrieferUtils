@@ -130,7 +130,7 @@ func HiveMindBoosterRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 
 				considered := GetWithLeastDeviation(entries, func(first HiveMindBoosterEntry, second HiveMindBoosterEntry) *uint64 {
 					var deviation uint64
-					for i := range first.Value {
+					for i := 0; i < min(len(first.Value), len(second.Value)); i++ {
 						deviation += diff(first.Value[i], second.Value[i])
 					}
 					return &deviation

@@ -48,12 +48,12 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 		return nil
 	}
 
-	entries := mobRemoverKnowledge[citybuild]
-
 	var response HiveMindMobRemoverResponse
 
 	mobRemoverKnowledgeMutex.Lock()
 	defer mobRemoverKnowledgeMutex.Unlock()
+
+	entries := mobRemoverKnowledge[citybuild]
 
 	now := uint64(time.Now().Unix())
 

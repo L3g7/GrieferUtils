@@ -49,8 +49,8 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 @Singleton
 public class PlotChatIndicator extends Feature {
 
-	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event");
-	private StringBuilder states = new StringBuilder(Strings.repeat("?", 26)); // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
+	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event", "CBT");
+	private StringBuilder states = new StringBuilder(Strings.repeat("?", 27)); // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
 
 	private Boolean plotchatState = null;
 	private boolean waitingForPlotchatStatus = false;
@@ -78,13 +78,15 @@ public class PlotChatIndicator extends Feature {
 		if (Config.has(path)) {
 			try {
 				states = new StringBuilder(Config.get(path).getAsString());
+				if (states.length() == 26)
+					states.append('?');
 				return;
 			} catch (UnsupportedOperationException ignored) {
 				// Fix for old configs
 			}
 		}
 
-		states = new StringBuilder(Strings.repeat("?", 26));
+		states = new StringBuilder(Strings.repeat("?", 27));
 	}
 
 	@EventListener(triggerWhenDisabled = true)

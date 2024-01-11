@@ -20,23 +20,20 @@ package dev.l3g7.griefer_utils.injection.transformer.transformers;
 
 import dev.l3g7.griefer_utils.injection.transformer.Transformer;
 import dev.l3g7.griefer_utils.injection.transformer.Transformer.Target;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
 
-import java.util.ListIterator;
+@Target("com.github.lunatrius.schematica.client.gui.control.GuiSchematicMaterials")
+public class GuiSchematicMaterialsTransformer extends Transformer {
 
-@Target("com.github.lunatrius.schematica.world.schematic.SchematicFormat")
-public class SchematicFormatTransformer extends Transformer {
+	private static final MethodInsnNode OPEN_MATERIAL_FILE = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/BetterSchematica", "openMaterialFile", "()V", false);
+	private static final MethodInsnNode WRITE_ERROR_MESSAGE = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/BetterSchematica", "writeErrorMessage", "()V", false);
 
 	@Override
 	protected void process() {
-		MethodNode methodNode = getMethod("readFromFile", "(Ljava/io/File;)Lcom/github/lunatrius/schematica/api/ISchematic;");
-		ListIterator<AbstractInsnNode> iterator = getIterator(methodNode, ASTORE, n -> true);
-		iterator.next();
-		iterator.add(new VarInsnNode(ALOAD, 1));
-		iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/SaveSchematicaPosition", "readFromNBT", "(Lnet/minecraft/nbt/NBTTagCompound;)V", false));
+		MethodNode method = getMethod("dumpMaterialList", "(Ljava/util/List;)V");
+		getIterator(method, INVOKESTATIC, "write").add(OPEN_MATERIAL_FILE);
+		getIterator(method, INVOKEINTERFACE, "error").add(WRITE_ERROR_MESSAGE);
 	}
 
 }

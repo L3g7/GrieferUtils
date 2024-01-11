@@ -18,10 +18,11 @@
 
 package dev.l3g7.griefer_utils.injection.transformer;
 
+import dev.l3g7.griefer_utils.core.misc.functions.Function;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.LineNumberNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.lang.annotation.Retention;
@@ -52,19 +53,20 @@ public abstract class Transformer implements Opcodes {
 			.findFirst()
 			.orElseThrow(() -> new NoSuchMethodError("Could not find " + name + desc + " / " + targetMethod + "!"));
 	}
-
-	protected static ListIterator<AbstractInsnNode> getInstructionsAtLine(MethodNode methodNode, int line) {
-		return gotoLine(methodNode.instructions.iterator(), line);
+	protected ListIterator<AbstractInsnNode> getIterator(MethodNode method, int opcode, String methodName) {
+		return getIterator(method, opcode, m -> ((MethodInsnNode) m).name.equals(methodName));
 	}
 
-	protected static ListIterator<AbstractInsnNode> gotoLine(ListIterator<AbstractInsnNode> iterator, int line) {
+	protected ListIterator<AbstractInsnNode> getIterator(MethodNode method, int opcode, Function<AbstractInsnNode, Boolean> nodeValidator) {
+		ListIterator<AbstractInsnNode> iterator = method.instructions.iterator();
+
 		while (iterator.hasNext()) {
 			AbstractInsnNode node = iterator.next();
-			if (node instanceof LineNumberNode && ((LineNumberNode) node).line == line)
+			if (node.getOpcode() == opcode && nodeValidator.apply(node))
 				return iterator;
 		}
 
-		throw new IllegalStateException("Could not find line " + line + " in method!");
+		throw new IllegalStateException("Could not generate iterator!");
 	}
 
 	public String getTarget() {

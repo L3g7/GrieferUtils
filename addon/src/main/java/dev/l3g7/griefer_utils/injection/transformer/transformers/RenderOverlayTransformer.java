@@ -32,19 +32,11 @@ public class RenderOverlayTransformer extends Transformer {
 	@Override
 	protected void process() {
 		MethodNode methodNode = getMethod("func_178581_b", "(FFFLnet/minecraft/client/renderer/chunk/ChunkCompileTaskGenerator;)V");
-		ListIterator<AbstractInsnNode> iterator = methodNode.instructions.iterator();
-		while (iterator.hasNext()) {
-			AbstractInsnNode node = iterator.next();
-			if (node.getOpcode() != INVOKESTATIC)
-				continue;
+		ListIterator<AbstractInsnNode> iterator = getIterator(methodNode, INVOKESTATIC, "drawCuboid");
+		iterator.previous();
+		MethodInsnNode min = (MethodInsnNode) iterator.next();
 
-			MethodInsnNode min = (MethodInsnNode) node;
-			if (!min.name.equals("drawCuboid"))
-				continue;
-
-			iterator.set(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/HighlightSchematicaBlocks", "drawCuboid", min.desc, false));
-			break;
-		}
+		iterator.set(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/HighlightSchematicaBlocks", "drawCuboid", min.desc, false));
 	}
 
 }

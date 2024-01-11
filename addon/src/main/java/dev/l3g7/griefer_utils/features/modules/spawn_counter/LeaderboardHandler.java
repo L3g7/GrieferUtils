@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.modules.spawn_counter;
 
+import com.google.common.base.Objects;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.misc.server.requests.LeaderboardRequest;
@@ -36,6 +37,7 @@ import static dev.l3g7.griefer_utils.core.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.features.modules.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
 import static dev.l3g7.griefer_utils.features.modules.spawn_counter.SpawnCounter.LeaderboardDisplayType.ON;
 import static dev.l3g7.griefer_utils.features.modules.spawn_counter.SpawnCounter.leaderboard;
+import static dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListEntry.INVALID_PLAYER;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 class LeaderboardHandler {
@@ -137,7 +139,10 @@ class LeaderboardHandler {
 	}
 
 	private static PlayerListEntry getEntry(LeaderboardRequest.UserData data) {
-		return data == null ? PlayerListEntry.INVALID_PLAYER : ENTRIES.get(data.uuid);
+		if (data == null)
+			return INVALID_PLAYER;
+
+		return Objects.firstNonNull(ENTRIES.get(data.uuid), INVALID_PLAYER);
 	}
 
 }

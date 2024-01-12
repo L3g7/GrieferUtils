@@ -137,6 +137,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		if (stackNBT == null)
 			return settingNBT == null;
 
+		stackNBT = (NBTTagCompound) stackNBT.copy();
 		NBTTagCompound cleanedStackNBT = new NBTTagCompound();
 		for (String s : stackNBT.getKeySet()) {
 			if (s.equals("display") || s.equals("RepairCost"))

@@ -62,6 +62,8 @@ class LeaderboardHandler {
 
 		new Thread(() -> {
 			data = supplier.get();
+			if (data == null)
+				return;
 
 			if (data.next != null && !ENTRIES.containsKey(data.next.uuid))
 				ENTRIES.put(data.next.uuid, new PlayerListEntry(null, data.next.uuid));

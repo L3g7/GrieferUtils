@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.core.misc.server;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import dev.l3g7.griefer_utils.core.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.misc.server.types.GUSession;
@@ -31,11 +32,22 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class Request<R> {
+
+	protected static final ScheduledExecutorService SCHEDULED_EXECUTOR = Executors.newScheduledThreadPool(
+		4, new ThreadFactoryBuilder()
+			.setPriority(Thread.MIN_PRIORITY)
+			.setNameFormat("grieferutils-server-conn-%d")
+			.build());
 
 	public transient final String path;
 
@@ -57,16 +69,29 @@ public abstract class Request<R> {
 		return request(session, BugReporter::reportError, false);
 	}
 
+	// TODO: handle errors at a higher level, the current solution is very confusing and prone to errors if anything changes
 	public R request(GUSession session, Consumer<IOException> errorHandler, boolean post) {
+		// Try 3 times
+		IOException[] exceptions = new IOException[3];
+		for (int attempt = 0; attempt < 3; attempt++) {
+			try {
+				return request(session, false, post);
+			} catch (IOException e) {
+				exceptions[attempt] = e;
+			}
+		}
+
+		// All tries failed, try again in 10 min
+		Arrays.stream(exceptions).forEach(Throwable::printStackTrace);
 		try {
-			return request(session, false, post);
-		} catch (IOException e) {
-			errorHandler.accept(e);
+			return SCHEDULED_EXECUTOR.schedule(() -> request(session, errorHandler, post), 10, TimeUnit.MINUTES).get();
+		} catch (ExecutionException | InterruptedException e) {
+			errorHandler.accept(new IOException(e));
 			return null;
 		}
 	}
 
-	private R request(GUSession session, boolean sessionRenewed, boolean post) throws IOException {
+	protected R request(GUSession session, boolean sessionRenewed, boolean post) throws IOException {
 		HttpsURLConnection conn = (HttpsURLConnection) new URL(session.host + path).openConnection();
 		conn.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
 

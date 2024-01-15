@@ -98,7 +98,7 @@ public class SpawnCounter extends Module {
 	@Override
 	public List<List<Text>> getTexts() {
 		List<List<Text>> texts = super.getTexts();
-		if (LeaderboardHandler.data == null && leaderboard.get() == COMPACT)
+		if (LeaderboardHandler.data != null && leaderboard.get() == COMPACT)
 			texts.get(0).add(toText(LeaderboardHandler.getCompactText()));
 
 		return texts;
@@ -110,7 +110,7 @@ public class SpawnCounter extends Module {
 	}
 
 	Text toText(String text) {
-		return new Text(text, 0, bold, italic, underline);
+		return new Text(text, valueColor, bold, italic, underline);
 	}
 
 	@Override

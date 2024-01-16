@@ -69,7 +69,7 @@ public class DropDownSetting<E extends Enum<E> & Named> extends DropDownElement<
 		Reflection.set(this, menu, "dropDownMenu");
 
 		// Use name field as default stringProvider
-		stringProvider(Named::getName);
+		stringProvider(e -> ((Named) e).getName());
 	}
 
 	@Override

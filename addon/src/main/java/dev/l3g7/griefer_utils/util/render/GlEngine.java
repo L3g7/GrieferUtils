@@ -139,12 +139,6 @@ public class GlEngine {
 		}
 	}
 
-	public static void enableDepth() {
-		enable(GL_DEPTH_TEST);
-		depthMask = glGetBoolean(GL_DEPTH_WRITEMASK);
-		glDepthMask(true);
-	}
-
 	public static void disableDepth() {
 		disable(GL_DEPTH_TEST);
 		depthMask = glGetBoolean(GL_DEPTH_WRITEMASK);

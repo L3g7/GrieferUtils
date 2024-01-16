@@ -110,7 +110,7 @@ public class Authorization {
 		JsonObject properties = new JsonObject();
 		properties.addProperty("AuthMethod", "RPS");
 		properties.addProperty("SiteName", "user.auth.xboxlive.com");
-		properties.addProperty("RpsTicket", "" + oauth2Token.accessToken);
+		properties.addProperty("RpsTicket", oauth2Token.accessToken);
 		data.add("Properties", properties);
 		userToken = GSON.fromJson(Requests.post(url, headers, data), XToken.class);
 	}

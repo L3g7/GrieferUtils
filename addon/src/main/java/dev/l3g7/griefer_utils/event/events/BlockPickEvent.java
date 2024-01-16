@@ -22,7 +22,6 @@ import dev.l3g7.griefer_utils.core.event_bus.Event;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -54,9 +53,6 @@ public class BlockPickEvent extends Event {
 
 		@Shadow
 		public WorldClient theWorld;
-
-		@Shadow
-		public EntityPlayerSP thePlayer;
 
 		@Inject(method = "middleClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerCapabilities;isCreativeMode:Z"), cancellable = true)
 		private void injectMiddleClickMouse(CallbackInfo ci) {

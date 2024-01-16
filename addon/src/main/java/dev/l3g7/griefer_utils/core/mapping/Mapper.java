@@ -89,38 +89,6 @@ public class Mapper {
 	}
 
 	/**
-	 * Maps the name and descriptor of a method from the source mapping to the target mapping.
-	 * @return the mapped name and descriptor, joined.
-	 */
-	public static String mapMethod(String owner, String name, String desc, Mapping sourceMapping, Mapping targetMapping) {
-		if (targetMapping == OBFUSCATED)
-			owner = mapClass(owner, OBFUSCATED, UNOBFUSCATED);
-
-		MappedClass mappedOwner = classes.get(owner, sourceMapping);
-		if (mappedOwner == null) {
-			// Assume name does not need mapping as owner is not mapped, map descriptor manually
-			return name + mapMethodDesc(desc, sourceMapping, targetMapping);
-		}
-
-		// Map name and descriptor
-		MappedMethod method = mappedOwner.methods.get(name + desc, sourceMapping);
-		if (method == null)
-			// Assume method does not need mapping, map descriptor manually
-			return name + mapMethodDesc(desc, sourceMapping, targetMapping);
-
-		return method.getName(targetMapping) + method.getDesc(targetMapping);
-	}
-
-	/**
-	 * Maps the descriptor of a method from the source mapping to the target mapping.
-	 */
-	public static String mapMethodDesc(String desc, Mapping sourceMapping, Mapping targetMapping) {
-		Type returnType = mapType(Type.getReturnType(desc), sourceMapping, targetMapping);
-		Type[] argumentTypes = mapTypes(Type.getArgumentTypes(desc), sourceMapping, targetMapping);
-		return Type.getMethodDescriptor(returnType, argumentTypes);
-	}
-
-	/**
 	 * Maps the name of a method from the source mapping to the target mapping.
 	 */
 	public static String mapMethodName(String owner, String name, String desc, Mapping sourceMapping, Mapping targetMapping) {
@@ -189,17 +157,6 @@ public class Mapper {
 			return type;
 
 		return Type.getObjectType(mappedType.getName(targetMapping));
-	}
-
-	/**
-	 * Maps all types from the source mapping to the target mapping.
-	 */
-	public static Type[] mapTypes(Type[] types, Mapping sourceMapping, Mapping targetMapping) {
-		Type[] mappedTypes = new Type[types.length];
-		for (int i = 0; i < types.length; i++)
-			mappedTypes[i] = mapType(types[i], sourceMapping, targetMapping);
-
-		return mappedTypes;
 	}
 
 }

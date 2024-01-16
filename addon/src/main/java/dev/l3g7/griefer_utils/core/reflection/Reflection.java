@@ -102,13 +102,6 @@ public class Reflection {
 	}
 
 	/**
-	 * @return all methods with the given annotation present.
-	 */
-	public static Method[] getAnnotatedMethods(Class<?> targetClass, Class<? extends Annotation> annotation) {
-		return MethodReflection.getAnnotatedMethods(targetClass, annotation);
-	}
-
-	/**
 	 * Gets a method with matching name and parameters in the targetClass or its super classes.
 	 */
 	public static Method getMethod(Class<?> targetClass, String name, Object... params) {

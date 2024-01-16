@@ -38,7 +38,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static com.google.common.base.CaseFormat.*;
 import static dev.l3g7.griefer_utils.core.util.Util.elevate;
@@ -108,10 +107,6 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 
 		Reflection.set(this, iconData, "iconData");
 		return (S) this;
-	}
-
-	default S icon(Supplier<?> icon) {
-		return icon(icon.get());
 	}
 
 	/**

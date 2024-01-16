@@ -59,9 +59,4 @@ public class Earned extends Module {
 		return new String[]{"0$"};
 	}
 
-	@Override
-	public boolean isShown() {
-		return !LabyMod.getInstance().isInGame() || ServerCheck.isOnGrieferGames();
-	}
-
 }

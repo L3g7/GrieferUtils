@@ -25,12 +25,9 @@ import dev.l3g7.griefer_utils.core.misc.server.Request;
 import dev.l3g7.griefer_utils.core.misc.server.Response;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 public class OnlineUsersRequest extends Request<List<UUID>> {
 

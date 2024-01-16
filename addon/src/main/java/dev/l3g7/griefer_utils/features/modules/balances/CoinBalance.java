@@ -35,10 +35,6 @@ public class CoinBalance extends Module {
 
 	private static double coins = -1;
 
-	public static double getCoinBalance() {
-		return coins;
-	}
-
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Kontostand")

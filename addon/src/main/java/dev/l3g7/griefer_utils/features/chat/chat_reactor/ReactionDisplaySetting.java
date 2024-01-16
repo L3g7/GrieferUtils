@@ -79,8 +79,4 @@ public class ReactionDisplaySetting extends BooleanSetting {
 		drawUtils().drawTexture(maxX - 66 - (editHovered ? 4 : 3), y + (editHovered ? 3.5 : 4.5), 256, 256, editHovered ? 16 : 14, editHovered ? 16 : 14);
 	}
 
-	@Override
-	public int getObjectWidth() {
-		return super.getObjectWidth();
-	}
 }

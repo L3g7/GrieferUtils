@@ -50,7 +50,7 @@ public class DropDownSetting<E extends Enum<E> & Named> extends DropDownElement<
 	private final Storage<E> storage;
 	private final IconStorage iconStorage = new IconStorage();
 	private final FixedDropDownMenu<E> menu = new FixedDropDownMenu<>();
-	private Function<E, String> stringProvider = e -> ((Enum<?>) e).toString();
+	private Function<E, String> stringProvider = Enum::toString;
 
 	public DropDownSetting(Class<E> enumClass) {
 		this(enumClass, 0);
@@ -69,7 +69,7 @@ public class DropDownSetting<E extends Enum<E> & Named> extends DropDownElement<
 		Reflection.set(this, menu, "dropDownMenu");
 
 		// Use name field as default stringProvider
-		stringProvider(e -> ((Named) e).getName());
+		stringProvider(Named::getName);
 	}
 
 	@Override

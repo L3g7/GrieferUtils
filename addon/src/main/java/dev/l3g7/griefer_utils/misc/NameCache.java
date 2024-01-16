@@ -48,10 +48,6 @@ public class NameCache {
 		return nickToUuidCache.get(nick);
 	}
 
-	public static boolean hasUUID(UUID uuid) {
-		return uuidToUser.containsKey(uuid);
-	}
-
 	@EventListener(priority = Priority.HIGH)
 	public static void onPacket(PacketEvent.PacketReceiveEvent<S38PacketPlayerListItem> event) {
 		switch (event.packet.getAction()) {

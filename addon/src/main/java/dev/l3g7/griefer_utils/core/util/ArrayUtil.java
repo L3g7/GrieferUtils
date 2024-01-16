@@ -106,22 +106,4 @@ public class ArrayUtil {
 			.toArray((T[]) Array.newInstance(type, 0)));
 	}
 
-	public static byte[] merge(byte[]... arrays) {
-		// Compute array length
-		int length = 0;
-		for (byte[] array : arrays)
-			length += array.length;
-
-		// Create merged array
-		byte[] t = new byte[length];
-
-		// Fill merged array
-		int index = 0;
-		for (byte[] array : arrays) {
-			System.arraycopy(array, 0, t, index, array.length);
-			index += array.length;
-		}
-
-		return t;
-	}
 }

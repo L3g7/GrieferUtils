@@ -21,7 +21,6 @@ package dev.l3g7.griefer_utils.core.reflection;
 import dev.l3g7.griefer_utils.core.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.util.ArrayUtil;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -113,19 +112,6 @@ class MethodReflection {
 			return resolveMethod(targetClass.getSuperclass(), name, parameters);
 
 		return null;
-	}
-
-	/**
-	 * @return all methods with the given annotation present.
-	 */
-	static Method[] getAnnotatedMethods(Class<?> targetClass, Class<? extends Annotation> annotation) {
-		List<Method> methods = new ArrayList<>();
-		for (Method Method : ArrayUtil.flatmap(Method.class, targetClass.getDeclaredMethods(), targetClass.getMethods())) {
-			if (Method.isAnnotationPresent(annotation))
-				methods.add(Method);
-		}
-
-		return methods.toArray(new Method[0]);
 	}
 
 	/**

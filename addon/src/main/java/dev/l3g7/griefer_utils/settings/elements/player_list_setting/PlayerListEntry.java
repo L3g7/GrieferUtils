@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,20 @@ package dev.l3g7.griefer_utils.settings.elements.player_list_setting;
 
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.xbox_profile_resolver.core.XboxProfileResolver;
+import net.labymod.main.ModTextures;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 
 import java.io.IOException;
 
 import static dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListEntryResolver.LOOKUP_MAP;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 public class PlayerListEntry {
 
-	private static final PlayerListEntry INVALID_PLAYER = new PlayerListEntry();
+	public static final PlayerListEntry INVALID_PLAYER = new PlayerListEntry();
 
 	public static PlayerListEntry getEntry(String name) {
 		if (!Constants.UNFORMATTED_PLAYER_NAME_PATTERN.matcher(name).matches())
@@ -39,11 +42,11 @@ public class PlayerListEntry {
 		return LOOKUP_MAP.computeIfAbsent(name, k -> new PlayerListEntry(name, null));
 	}
 
-	protected String name;
-	protected String id; // The uuid / xuid of the Player
-	protected boolean slim;
-	protected ITextureObject skin = null;
-	protected boolean loaded = false; // Whether the entry's name and id were loaded
+	public String name;
+	public String id; // The uuid / xuid of the Player
+	public boolean oldSkin;
+	public ITextureObject skin = null;
+	public boolean loaded = false; // Whether the entry's name and id were loaded
 	protected boolean exists = true;
 
 	private PlayerListEntry() {
@@ -97,6 +100,25 @@ public class PlayerListEntry {
 				}
 			}
 		}).start();
+	}
+
+	public void renderSkull(double x, double y, int size) {
+		if (skin == null) {
+			mc().getTextureManager().bindTexture(ModTextures.MISC_HEAD_QUESTION);
+			drawUtils().drawTexture(x, y, 0, 0, 256, 256, size, size);
+			return;
+		}
+
+		GlStateManager.bindTexture(skin.getGlTextureId());
+
+		if (!isMojang()) {
+			drawUtils().drawTexture(x, y, 0, 0, 256, 256, size, size);
+			return;
+		}
+
+		int yHeight = oldSkin ? 64 : 32; // Old textures are 32x64
+		drawUtils().drawTexture(x, y, 32, yHeight, 32, yHeight, size, size); // First layer
+		drawUtils().drawTexture(x, y, 160, yHeight, 32, yHeight, size, size); // Second layer
 	}
 
 }

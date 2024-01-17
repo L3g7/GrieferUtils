@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,23 +55,23 @@ public class ItemSearch extends Feature {
 
 	private final BooleanSetting inventory = new BooleanSetting()
 		.name("Inventar")
-		.description("Ob das Inventar auch durchsucht werden soll")
+		.description("Ob das Inventar auch durchsucht werden soll.")
 		.icon("chest");
 
 	private final BooleanSetting dispenser = new BooleanSetting()
 		.name("Spender / Werfer")
-		.description("Ob die Item-Suche auch bei Spendern / Werfern hinzugefügt werden soll")
+		.description("Ob die Item-Suche auch bei Spendern / Werfern hinzugefügt werden soll.")
 		.icon(Material.DISPENSER);
 
 	private final BooleanSetting hopper = new BooleanSetting()
 		.name("Tricher")
-		.description("Ob die Item-Suche auch bei Trichtern hinzugefügt werden soll")
+		.description("Ob die Item-Suche auch bei Trichtern hinzugefügt werden soll.")
 		.icon(Material.HOPPER);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Item-Suche")
-		.description("Fügt eine Item-Suche innerhalb von Kisten hinzu.")
+		.description("Fügt eine Item-Suche innerhalb von Guis hinzu.")
 		.icon("chest")
 		.subSettings(dispenser, hopper, new HeaderSetting(), inventory);
 

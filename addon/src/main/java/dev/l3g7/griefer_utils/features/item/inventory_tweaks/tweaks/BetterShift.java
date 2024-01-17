@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,7 +177,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 		if (stack.getItem() == Items.filled_map)
 			return true;
 
-		return ItemUtil.getLore(stack).size() >= 3 && ItemUtil.getLore(stack).get(0).equals("§r§7Du benötigst die neueste Version des Möbel-Addons");
+		return ItemUtil.getLore(stack).size() >= 3 && ItemUtil.getLoreAtIndex(stack, 0).equals("§r§7Du benötigst die neueste Version des Möbel-Addons");
 	}
 
 }

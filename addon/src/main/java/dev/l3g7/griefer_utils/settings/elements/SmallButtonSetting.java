@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,16 @@
 package dev.l3g7.griefer_utils.settings.elements;
 
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
-import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement;
-import net.labymod.utils.DrawUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 public class SmallButtonSetting extends ControlElement implements ElementBuilder<SmallButtonSetting> {
 
@@ -67,6 +67,18 @@ public class SmallButtonSetting extends ControlElement implements ElementBuilder
 		callbacks.forEach(Runnable::run);
 	}
 
+	protected void drawButtonIcon(IconData buttonIcon, int buttonX, int buttonY) {
+		if (buttonIcon.hasMaterialIcon()) {
+			drawUtils().drawItem(buttonIcon.getMaterialIcon().createItemStack(), buttonX + 3, buttonY + 2, null);
+			return;
+		}
+
+		GlStateManager.enableBlend();
+		GlStateManager.color(1, 1, 1);
+		mc().getTextureManager().bindTexture(buttonIcon.getTextureIcon());
+		drawUtils().drawTexture(buttonX + 4, buttonY + 3, 0, 0, 256, 256, 14, 14, 2);
+	}
+
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
@@ -77,20 +89,8 @@ public class SmallButtonSetting extends ControlElement implements ElementBuilder
 		button.yPosition = y + 1;
 		button.drawButton(mc, mouseX, mouseY);
 
-		// Draw file icon
-		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
-
-		if (buttonIcon == null || buttonIcon.hasMaterialIcon() == buttonIcon.hasTextureIcon()) // If no material and no texture exists (You can't have both)
-			return;
-
-		if (buttonIcon.hasMaterialIcon()) {
-			drawUtils.drawItem(buttonIcon.getMaterialIcon().createItemStack(), button.xPosition + 3, button.yPosition + 2, null);
-			return;
-		}
-
-		GlStateManager.enableBlend();
-		GlStateManager.color(1, 1, 1);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(buttonIcon.getTextureIcon());
-		drawUtils.drawTexture(button.xPosition + 4, button.yPosition + 3, 0, 0, 256, 256, 14, 14, 2);
+		if (buttonIcon != null && buttonIcon.hasMaterialIcon() != buttonIcon.hasTextureIcon())
+			drawButtonIcon(buttonIcon, button.xPosition, button.yPosition);
 	}
+
 }

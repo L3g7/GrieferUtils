@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import dev.l3g7.griefer_utils.event.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -44,11 +45,13 @@ public class ClearLag extends Module {
 
 	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
 		.name("Zeitformat")
+		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
 		.icon("hourglass")
 		.defaultValue(TimeFormat.LONG);
 
 	private final NumberSetting warnTime = new NumberSetting()
 		.name("Warn-Zeit (s)")
+		.description("Wie viele Sekunden vor dem nächsten Clearlag eine Warnung angezeigt werden soll.")
 		.icon("labymod:buttons/exclamation_mark");
 
 	private final BooleanSetting preventDrop = new BooleanSetting()
@@ -127,7 +130,7 @@ public class ClearLag extends Module {
 			event.cancel();
 	}
 
-	private enum TimeFormat {
+	private enum TimeFormat implements Named {
 		SHORT("Kurz"),
 		LONG("Lang");
 
@@ -135,5 +138,11 @@ public class ClearLag extends Module {
 		TimeFormat(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 }

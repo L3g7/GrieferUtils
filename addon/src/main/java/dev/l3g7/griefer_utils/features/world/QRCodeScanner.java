@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +80,11 @@ public class QRCodeScanner extends Feature {
 			}
 
 			MapData mapData = Items.filled_map.getMapData(stack, world());
+			if (mapData == null) {
+				display(ADDON_PREFIX + "§cDie Karte wurde noch nicht geladen.");
+				return;
+			}
+
 			BufferedImage img = new BufferedImage(128, 128, BufferedImage.TYPE_INT_RGB);
 
 			for (int i = 0; i < 16384; ++i) {

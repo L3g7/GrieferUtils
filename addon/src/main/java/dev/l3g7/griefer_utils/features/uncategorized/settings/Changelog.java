@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.VersionComparator;
+import dev.l3g7.griefer_utils.core.misc.config.ConfigPatcher;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.misc.gui.guis.ChangelogScreen;
@@ -39,7 +40,7 @@ import java.util.Map;
 @Singleton
 public class Changelog {
 
-	public static final CategorySetting category = new CategorySetting()
+	public static final CategorySetting changelog = new CategorySetting()
 		.name("§eChangelog")
 		.description("§eVerbindet...")
 		.icon("white_scroll")
@@ -50,7 +51,7 @@ public class Changelog {
 	private void onWebData(WebDataReceiveEvent event) {
 		List<SettingsElement> entries = new ArrayList<>();
 
-		if (AutoUpdateSettings.releaseChannel.get() == ReleaseInfo.ReleaseChannel.BETA)
+		if (Settings.releaseChannel.get() == ReleaseInfo.ReleaseChannel.BETA)
 			ChangelogScreen.setData(AddonUtil.getVersion(), event.data.changelog.beta.substring("Changelog:".length()));
 
 		for (Map.Entry<String, String> entry : event.data.changelog.all.entrySet()) {
@@ -75,16 +76,16 @@ public class Changelog {
 		}
 
 		entries.sort(Comparator.comparing(SettingsElement::getDisplayName, new VersionComparator()));
-		category.subSettings(entries);
+		changelog.subSettings(entries);
 
-		category.name("Changelog")
+		changelog.name("Changelog")
 			.description("Was sich in den einzelnen Updates von GrieferUtils verändert hat.")
 			.settingsEnabled(true);
 	}
 
 	@OnEnable
 	public void onEnable() {
-		if (AutoUpdater.hasUpdated)
+		if (AutoUpdater.hasUpdated && ConfigPatcher.versionChanged)
 			ChangelogScreen.trigger(false);
 	}
 }

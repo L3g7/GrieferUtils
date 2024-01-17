@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class BetterHopper extends Feature {
 
 	private final NumberSetting displayTime = new NumberSetting()
 		.name("Anzeigedauer")
-		.description("Wie lange wie optische Anzeige aktiv bleiben soll, in Sekunden.")
+		.description("Wie lange die optische Anzeige aktiv bleiben soll, in Sekunden.")
 		.icon("hourglass")
 		.defaultValue(10);
 
@@ -87,7 +87,7 @@ public class BetterHopper extends Feature {
 
 	private final BooleanSetting showRange = new BooleanSetting()
 		.name("Trichterreichweite anzeigen")
-		.description("Zeigt die Trichterreichtweite an.")
+		.description("Zeigt die Trichterreichweite an.")
 		.icon("ruler");
 
 	private final BooleanSetting showSourceHopper = new BooleanSetting()
@@ -182,6 +182,9 @@ public class BetterHopper extends Feature {
 		}
 
 		ItemStack targetStack = slots.getSlot(16).getStack();
+		if (targetStack == null)
+			return;
+
 		mainConnection = EnchantmentHelper.getEnchantments(targetStack).isEmpty() ? null : getBlockPos(targetStack);
 
 		if (slot == 34) {
@@ -192,7 +195,7 @@ public class BetterHopper extends Feature {
 	}
 
 	private BlockPos getBlockPos(ItemStack stack) {
-		String line = ItemUtil.getLore(stack).get(0);
+		String line = ItemUtil.getLoreAtIndex(stack, 0);
 		String blockPos = line.substring(line.indexOf("§e") + 2);
 		String[] coords = blockPos.split(";");
 		return new BlockPos(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));

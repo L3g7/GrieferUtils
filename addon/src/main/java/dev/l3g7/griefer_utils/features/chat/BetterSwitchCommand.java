@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
@@ -87,7 +87,7 @@ public class BetterSwitchCommand extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onCityBuild(CityBuildJoinEvent event) {
+	public void onCitybuild(CitybuildJoinEvent event) {
 		if (command == null)
 			return;
 
@@ -102,7 +102,7 @@ public class BetterSwitchCommand extends Feature {
 		command = null;
 	}
 
-	public static void sendOnCityBuild(String command, Citybuild cb) {
+	public static void sendOnCitybuild(String command, Citybuild cb) {
 		if (cb == Citybuild.ANY)
 			return;
 

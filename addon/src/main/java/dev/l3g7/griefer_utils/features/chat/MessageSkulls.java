@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderChatEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -114,7 +115,13 @@ public class MessageSkulls extends Feature {
 		else
 			endIndex = msg.indexOf(' ', startIndex);
 
-		String name = msg.substring(startIndex, endIndex);
+		String name;
+		try {
+			name = msg.substring(startIndex, endIndex);
+		} catch (StringIndexOutOfBoundsException e) {
+			BugReporter.reportError(new Throwable(String.format("StringIndexOutOfBoundsException %s / %s with indices %d / %d", uMsg, msg, startIndex, endIndex)));
+			return;
+		}
 		NetworkPlayerInfo playerInfo = MinecraftUtil.mc().getNetHandler().getPlayerInfo(NameCache.ensureRealName(name));
 		if (playerInfo == null)
 			return;

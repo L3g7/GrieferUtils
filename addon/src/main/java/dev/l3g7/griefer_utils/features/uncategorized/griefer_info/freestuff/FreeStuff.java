@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -22,9 +22,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.features.chat.BetterSwitchCommand;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiBigChest;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiList;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.Farm;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiList;
 import dev.l3g7.griefer_utils.misc.Citybuild;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
@@ -89,7 +89,7 @@ public class FreeStuff {
 
 		stack.setStackDisplayName("§6§n" + name);
 		if (!isCbFiltered)
-			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCityBuildAbbreviation(cb.getDisplayName()), stack.getDisplayName()));
+			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getDisplayName()), stack.getDisplayName()));
 
 		List<String> lines = items.keySet().stream().map(it -> "  §f" + it.germanName).collect(Collectors.toList());
 
@@ -112,7 +112,7 @@ public class FreeStuff {
 		ItemUtil.setLore(stack, lines);
 
 		chest.addItem(id, stack, () -> {
-			BetterSwitchCommand.sendOnCityBuild("/p h " + name, cb);
+			BetterSwitchCommand.sendOnCitybuild("/p h " + name, cb);
 			mc().displayGuiScreen(null);
 		}, () -> openGui(chest), () -> {
 			if (farm == null)
@@ -136,7 +136,7 @@ public class FreeStuff {
 			if (!entry.getValue().isEmpty())
 				ItemUtil.setLore(freeStuffStack, "§7" + entry.getValue());
 			gui.addEntry(freeStuffStack, () -> {
-				BetterSwitchCommand.sendOnCityBuild("/p h " + name, cb);
+				BetterSwitchCommand.sendOnCitybuild("/p h " + name, cb);
 				mc().displayGuiScreen(null);
 			});
 		}

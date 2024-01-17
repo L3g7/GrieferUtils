@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,11 +109,11 @@ public class ChatReactor extends Feature {
 			ReactionDisplaySetting setting = (ReactionDisplaySetting) element;
 			ChatReaction reaction = setting.reaction;
 
-			if (!reaction.cityBuild.isOnCb())
+			if (!reaction.citybuild.isOnCb())
 				continue;
 
 			try {
-				reaction.processMessage(component.getUnformattedText());
+				reaction.processMessage(component.getFormattedText());
 			} catch (Exception e) {
 				display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
 				setting.set(false);

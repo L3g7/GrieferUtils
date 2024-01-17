@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
+
 public class TileEntityDataSetEvent extends Event {
 
 	public final TileEntity tileEntity;
@@ -40,8 +42,8 @@ public class TileEntityDataSetEvent extends Event {
 	private static class MixinNetHandlerPlayClient {
 
 		@Inject(method = "handleUpdateTileEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/tileentity/TileEntity;readFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-		public void inject(S35PacketUpdateTileEntity packetIn, CallbackInfo ci, TileEntity tileEntity) {
-			new TileEntityDataSetEvent(tileEntity).fire();
+		public void inject(S35PacketUpdateTileEntity packetIn, CallbackInfo ci) {
+			new TileEntityDataSetEvent(world().getTileEntity(packetIn.getPos())).fire();
 		}
 
 	}

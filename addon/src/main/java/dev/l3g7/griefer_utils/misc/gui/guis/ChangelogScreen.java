@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.AutoUpdateSettings;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
@@ -44,6 +45,7 @@ public class ChangelogScreen extends GuiScreen {
 	private static boolean triggeredByUser = false;
 	private static String version = null;
 	private static String changelog = null;
+	private static boolean opened = false;
 
 	private TextList textList;
 	private GuiScreen previousScreen = mc().currentScreen;
@@ -81,12 +83,15 @@ public class ChangelogScreen extends GuiScreen {
 	}
 
 	private static void tryOpening() {
-		if (triggered && completedStartup && version != null && !(mc().currentScreen instanceof ChangelogScreen))
-			mc().displayGuiScreen(new ChangelogScreen());
+		TickScheduler.runAfterRenderTicks(() -> {
+			if (triggered && completedStartup && version != null && !opened)
+				mc().displayGuiScreen(new ChangelogScreen());
+		}, 1);
 	}
 
 	public ChangelogScreen() {
 		EventRegisterer.register(this);
+		opened = true;
 	}
 
 	public void initGui() {
@@ -142,7 +147,7 @@ public class ChangelogScreen extends GuiScreen {
 
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		if (!triggeredByUser && isLeftButtonHovered(mouseX, mouseY)) {
-			AutoUpdateSettings.showUpdateScreen.set(false);
+			Settings.showUpdateScreen.set(false);
 			closeGui();
 			return;
 		}

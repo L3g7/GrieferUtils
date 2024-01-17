@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Constants;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -36,11 +37,13 @@ public class RealMoney extends Feature {
 
 	private final StringSetting tag = new StringSetting()
 		.name("Tag")
+		.description("Womit eingehenden Bezahlungen markiert werden sollen.")
 		.icon(Material.NAME_TAG)
 		.defaultValue("&a [✔]");
 
 	private final DropDownSetting<TagPosition> position = new DropDownSetting<>(TagPosition.class)
 		.name("Position")
+		.description("Ob der Tag an den Anfang oder das Ende der Nachricht angehängt wird.")
 		.icon("labymod:settings/settings/marker")
 		.defaultValue(TagPosition.AFTER);
 
@@ -52,7 +55,7 @@ public class RealMoney extends Feature {
 		.subSettings(tag, position);
 
 	@EventListener(priority = Priority.LOWEST)
-	public void onMessageReceive(MessageEvent.MessageModifyEvent event) {
+	public void onMessageReceive(MessageModifyEvent event) {
 		if (!Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.original.getFormattedText()).matches())
 			return;
 
@@ -64,7 +67,7 @@ public class RealMoney extends Feature {
 			event.message = event.message.appendText(text);
 	}
 
-	private enum TagPosition {
+	private enum TagPosition implements Named {
 
 		BEFORE("Davor"), AFTER("Danach");
 
@@ -72,6 +75,12 @@ public class RealMoney extends Feature {
 		TagPosition(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

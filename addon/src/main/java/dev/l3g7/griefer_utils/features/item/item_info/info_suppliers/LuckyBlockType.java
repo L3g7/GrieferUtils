@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -56,7 +56,7 @@ public class LuckyBlockType extends ItemInfo.ItemInfoSupplier {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("LuckyBlock-Typ anzeigen")
-		.description("Zeigt unter LuckyBlöcken an, von welchem Typ sie sind, auch wenn sie umbenannt wurden.")
+		.description("Zeigt unter LuckyBlöcken an, von welchem Typ sie sind.")
 		.icon(ItemUtil.createItem(Blocks.gold_block, 0, true));
 
 	@Override
@@ -69,7 +69,5 @@ public class LuckyBlockType extends ItemInfo.ItemInfoSupplier {
 		Integer lure = EnchantmentHelper.getEnchantments(itemStack).get(62);
 		return ImmutableList.of("§e§lTyp: " + LURE_TO_NAME.getOrDefault(lure, "§e§lLu§6§lck§e§lyB§6§llo§e§lck"));
 	}
-
-
 
 }

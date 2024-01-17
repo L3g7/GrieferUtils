@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,11 @@ import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -95,6 +95,7 @@ public class SelfDisguise extends Feature {
 
 	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
+		Entity currentDisguise = this.currentDisguise;
 		if (currentDisguise == null)
 			return;
 
@@ -118,12 +119,12 @@ public class SelfDisguise extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onCityBuildJoin(CityBuildJoinEvent event) {
+	public void onCitybuildJoin(CitybuildJoinEvent event) {
 		resetDisguise();
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onServerQUit(ServerQuitEvent event) {
+	public void onServerQuit(ServerQuitEvent event) {
 		resetDisguise();
 	}
 

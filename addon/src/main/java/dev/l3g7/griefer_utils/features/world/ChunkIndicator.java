@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +83,7 @@ public class ChunkIndicator extends Feature {
 
 	private final BooleanSetting red_lines = new BooleanSetting()
 		.name("Rote Linien", "(Nachbar-Chunks)")
+		.description("Ob die Linien zur Begrenzung der anliegenden Chunks angezeigt werden sollen.")
 		.icon(new ItemStack(stained_hardened_clay, 1, 14))
 		.defaultValue(true);
 

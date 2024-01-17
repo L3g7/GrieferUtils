@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,18 +27,24 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
+import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S0CPacketSpawnPlayer;
 import net.minecraft.network.play.server.S0EPacketSpawnObject;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.WorldSettings;
+import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.input.Mouse;
 
 import java.util.*;
 
@@ -49,15 +55,22 @@ import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.A
 public class OrbSellerFix extends Feature {
 
 	private final HashMap<String, Integer> cbToId = new HashMap<>();
+	private Pair<Integer, Integer> mousePos = null;
 	private UUID orbSellerUUID = null;
 	private boolean adding = false;
+
+	private final BooleanSetting restoreMousePos = new BooleanSetting()
+		.name("Maus-Position wiederherstellen")
+		.description("Behebt, dass die Maus zur Mitte des Fensters bewegt wird, wenn etwas abgegeben wurde.")
+		.icon("mouse");
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Orb-Händler fixen")
 		.description("Behebt, dass der Orb-Händler nicht sichtbar ist, wenn man sich mit einem Home zu ihm teleportiert."
 			 + "\n§8(Der Orbhändler auf dem Citybuild muss dafür seit dem letzten Server-Neustart gesehen worden sein.)")
-		.icon("orbseller");
+		.icon("orbseller")
+		.subSettings(restoreMousePos);
 
 	@Override
 	public void init() {
@@ -78,6 +91,31 @@ public class OrbSellerFix extends Feature {
 				}, 1);
 			}
 		}, new Date(Config.get(key + "reset").getAsLong()), 24 * 3600 * 1000);
+	}
+
+	@EventListener
+	private void onGuiOpen(GuiOpenEvent<GuiChest> event) {
+		if (mousePos == null)
+			return;
+
+		TickScheduler.runAfterRenderTicks(() -> {
+			Mouse.setCursorPosition(mousePos.getLeft(), mousePos.getRight());
+			mousePos = null;
+		}, 1);
+	}
+
+	@EventListener
+	private void onWindowClick(WindowClickEvent event) {
+		if (!restoreMousePos.get() || !getGuiChestTitle().startsWith("§6Orbs - Verkauf "))
+			return;
+
+		if (event.mode > 4)
+			return;
+
+		if (!ItemUtil.getLastLore(event.itemStack).endsWith("Orbs zu verkaufen."))
+			return;
+
+		mousePos = Pair.of(Mouse.getX(), Mouse.getY());
 	}
 
 	@EventListener

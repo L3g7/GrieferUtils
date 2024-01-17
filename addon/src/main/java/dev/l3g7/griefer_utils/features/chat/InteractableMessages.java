@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class InteractableMessages extends Feature {
 	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
 	private static final Pattern P_H_PATTERN = Pattern.compile("^.*(?<command>/p h [^ ]+).*$", Pattern.CASE_INSENSITIVE);
 	private static final Pattern CLAN_INFO_PATTERN = Pattern.compile("^» (?<name>[^ ]+) \\((?:offline|online)\\)$");
+	private static final Pattern PLOT_INFO_PLAYER_PATTERN = Pattern.compile("^§r§7(?:Besitzer|Helfer|Vertraut|Verboten): .+$");
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -58,7 +60,8 @@ public class InteractableMessages extends Feature {
 			+ "\n- Den Citybuild bei Globalchat-Nachrichten (Switcht zum CB)"
 			+ "\n- Den Status, Msgs, und Plotchat-Nachrichten (Schlägt /msg vor)"
 			+ "\n- \"/p h\" in Nachrichten (Teleportiert zum Plot)"
-			+ "\n- Spielernamen bei /clan info (Öffnet das Profil)")
+			+ "\n- Spielernamen bei /clan info (Öffnet das Profil)"
+			+ "\n- Spielernamen bei /p i (Öffnet das Profil)")
 		.icon("left_click");
 
 	@EventListener(priority = Priority.LOW)
@@ -67,6 +70,7 @@ public class InteractableMessages extends Feature {
 		modifyTps(event);
 		modifyPHs(event);
 		modifyClanInfo(event);
+		modifyPlotInfo(event);
 		addMsgSuggestions(event);
 	}
 
@@ -180,6 +184,26 @@ public class InteractableMessages extends Feature {
 			part.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, String.format("/profil %s ", name)));
 
 		event.message = message;
+	}
+
+	private void modifyPlotInfo(MessageModifyEvent event) {
+		if (!PLOT_INFO_PLAYER_PATTERN.matcher(event.original.getFormattedText()).matches())
+			return;
+
+		List<IChatComponent> siblings = event.message.getSiblings();
+
+		boolean modify = false;
+		for (IChatComponent sibling : siblings) {
+			if (sibling.getUnformattedText().endsWith(": "))
+				modify = true;
+			else if (modify) {
+				if (sibling.getChatStyle().getColor() != EnumChatFormatting.YELLOW) // red = invalid, gray = empty
+					continue;
+
+				if (!sibling.getUnformattedText().trim().isEmpty())
+					sibling.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, "/profil " + sibling.getUnformattedText()));
+			}
+		}
 	}
 
 	public void addMsgSuggestions(MessageModifyEvent event) {

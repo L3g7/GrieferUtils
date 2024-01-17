@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,14 +120,14 @@ public class LightBugESP extends Feature {
 						continue;
 
 					// Check if no neighbor has a higher light level (-> the light source is there)
-					for (EnumFacing value : EnumFacing.VALUES)
+					for (EnumFacing value : EnumFacing.values())
 						if (world().getLightFor(BLOCK, pos.add(value.getDirectionVec())) > level)
 							continue zloop;
 
 					// Check if block is visible
 					if (inBlocks.get()) {
 						boolean visible = false;
-						for (EnumFacing value : EnumFacing.VALUES) {
+						for (EnumFacing value : EnumFacing.values()) {
 							if (block.shouldSideBeRendered(world(), pos.offset(value), value)) {
 								visible = true;
 								break;
@@ -167,6 +167,7 @@ public class LightBugESP extends Feature {
 
 		Tessellator.getInstance().draw();
 		wr.setTranslation(0, 0, 0);
+		GL11.glColor4f(1, 1, 1, 1);
 		GlStateManager.enableDepth();
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();

@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,6 @@ public class BetterAdventurer extends Feature {
 
 	private final BooleanSetting displayMissing = new BooleanSetting()
 		.name("Fehlende Items anzeigen")
-		.description("")
 		.description("Zeigt unter Adventure-Items sowie beim Abgeben an, wie viel noch fehlt.")
 		.icon(ItemUtil.createItem(Items.diamond_shovel, 0, true))
 		.defaultValue(true);
@@ -103,16 +102,16 @@ public class BetterAdventurer extends Feature {
 		if (EnchantmentHelper.getEnchantments(stack).isEmpty())
 			return;
 
-		List<String> lore = ItemUtil.getLore(stack);
-		if (lore.size() < 1 || !lore.get(0).startsWith("§7Anzahl: §e"))
+		String lore = ItemUtil.getLoreAtIndex(stack, 0);
+		if (!lore.startsWith("§7Anzahl: §e"))
 			return;
 
 		try {
-			String amount = lore.get(0).substring("§7Anzahl: §e".length());
+			String amount = lore.substring("§7Anzahl: §e".length());
 			amount = amount.substring(0, amount.indexOf(isAdventurer ? '§' : ' '));
 			stack.stackSize = Integer.parseInt(amount);
 		} catch (NumberFormatException | StringIndexOutOfBoundsException e) {
-			System.err.println(lore.get(0));
+			System.err.println(lore);
 		}
 	}
 

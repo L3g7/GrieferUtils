@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ public class MixinPlugin implements IMixinConfigPlugin {
 	 * @return every class in GrieferUtils annotated with a valid {@link Mixin}.
 	 */
 	public List<String> getMixins() {
-		// Remove mixin package
-		Reflection.set(Injector.mixinConfig.getConfig(), "", "mixinPackage");
+		// Remove mixin package (it can't be completely empty, otherwise it won't work with higher versions of mixin)
+		Reflection.set(Injector.mixinConfig.getConfig(), "dev/l3g7/", "mixinPackage");
 
 		// Add mixin package again after every class is prepared
 		Reflection.invoke(Injector.mixinConfig.getConfig(), "addListener", createListener());
@@ -64,12 +64,14 @@ public class MixinPlugin implements IMixinConfigPlugin {
 				if (!Reflection.exists(mixinTarget.getClassName()))
 					continue classFinder;
 			}
-			classes.add(meta.toString());
+			classes.add(meta.toString().substring("dev/l3g7/".length()));
 
 		}
 
 		if (Reflection.exists("net.ccbluex.liquidbounce.injection.forge.mixins.render.MixinRendererLivingEntity"))
-			classes.remove("dev/l3g7/griefer_utils/features/render/TrueSight$MixinRendererLivingEntity");
+			classes.remove("griefer_utils/features/render/TrueSight$MixinRendererLivingEntity");
+		if (Reflection.exists("net/minecraftforge/common/ForgeHooks"))
+			classes.remove("griefer_utils/features/render/SkullEnchantmentFix$MixinFramebuffer");
 
 		mixinCount = classes.size();
 		return classes;
@@ -87,7 +89,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 			public Object invoke(Object proxy, Method method, Object[] args) {
 				// Don't do anything in onInit
 				if (!method.getName().equals("onPrepare"))
-					return null;
+					return proxy;
 
 				// Trigger after last mixin
 				if (++currentMixin != mixinCount)
@@ -103,9 +105,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) { return true; }
 	public void onLoad(String mixinPackage) {}
 	public String getRefMapperConfig() { return null; }
-	public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
-
-	}
+	public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {}
 	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
 	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
 

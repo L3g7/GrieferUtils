@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,12 +57,13 @@ public class BlockInfo extends Module {
 
 	private final BooleanSetting showCoords = new BooleanSetting()
 		.name("Koordinaten anzeigen")
+		.description("Ob die Koordinaten des anvisierten Blocks auch angezeigt werden sollen.")
 		.icon(Material.COMPASS);
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Block-Infos")
-		.description("Zeigt dir Infos den anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
+		.description("Zeigt dir Infos des anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
 		.icon("magnifying_glass")
 		.subSettings(showCoords);
 

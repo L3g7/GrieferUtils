@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
+import dev.l3g7.griefer_utils.settings.elements.ListEntrySetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
@@ -31,11 +32,9 @@ import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.PreviewRenderer;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.DrawUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,25 +82,6 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 		return this;
 	}
 
-	private void renderData(int x, int y, int size, PlayerListEntry data) {
-		DrawUtils drawUtils = drawUtils();
-		if (data.skin != null) {
-			GlStateManager.bindTexture(data.skin.getGlTextureId());
-
-			if (!data.isMojang()) {
-				drawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);
-				return;
-			}
-
-			int yHeight = data.slim ? 64 : 32; // Old textures are 32x64
-			drawUtils.drawTexture(x, y, 32, yHeight, 32, yHeight, size, size); // First layer
-			drawUtils.drawTexture(x, y, 160, yHeight, 32, yHeight, size, size); // Second layer
-		} else {
-			mc.getTextureManager().bindTexture(ModTextures.MISC_HEAD_QUESTION);
-			drawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);
-		}
-	}
-
 	private List<SettingsElement> getSettings() {
 		return container.getSubSettings().getElements();
 	}
@@ -127,25 +107,22 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 		return false;
 	}
 
-	private class PlayerDisplaySetting extends ControlElement {
+	private class PlayerDisplaySetting extends ListEntrySetting {
 
 		private final PlayerListEntry data;
-		private boolean deleteHovered = false;
 
 		public PlayerDisplaySetting(PlayerListEntry entry) {
-			super("§cUnknown name", new IconData(ModTextures.MISC_HEAD_QUESTION));
+			super(true, false, false);
+			container = PlayerListSetting.this.container;
+			icon(ModTextures.MISC_HEAD_QUESTION);
 			data = entry;
 		}
 
-		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-			super.mouseClicked(mouseX, mouseY, mouseButton);
-			if (deleteHovered) {
-				getSettings().remove(this);
-				get().remove(data);
-				save();
-				getStorage().callbacks.forEach(c -> c.accept(get()));
-				mc.currentScreen.initGui(); // Update settings
-			}
+		@Override
+		protected void onChange() {
+			get().remove(data);
+			PlayerListSetting.this.save();
+			getStorage().callbacks.forEach(c -> c.accept(get()));
 		}
 
 		@Override
@@ -154,13 +131,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
 			drawUtils().drawRectangle(x - 1, y, x, maxY, 0x78787878);
 
-			renderData(x + 3, y + 3, 16, data);
-
-			if (mouseOver) {
-				mc.getTextureManager().bindTexture(new IconData("labymod/textures/misc/blocked.png").getTextureIcon());
-				deleteHovered = mouseX > maxX - 19 && mouseX < maxX - 6 && mouseY > y + 5 && mouseY < y + 18;
-				drawUtils().drawTexture( maxX - 16 - (deleteHovered ? 4 : 3), y + (deleteHovered ? 3.5 : 4.5), 256, 256, deleteHovered ? 16 : 14, deleteHovered ? 16 : 14);
-			}
+			data.renderSkull(x + 3, y + 3, 16);
 		}
 
 	}
@@ -222,7 +193,7 @@ public class PlayerListSetting extends ControlElement implements ElementBuilder<
 				inputField.drawTextBox();
 
 				super.drawScreen(mouseX, mouseY, partialTicks);
-				renderData((width - 32) / 2, height / 4, 32, entry);
+				entry.renderSkull((width - 32) / 2, height / 4, 32);
 			}
 
 			public void updateScreen() {

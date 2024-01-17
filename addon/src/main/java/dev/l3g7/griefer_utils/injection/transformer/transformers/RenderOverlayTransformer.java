@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -32,19 +32,11 @@ public class RenderOverlayTransformer extends Transformer {
 	@Override
 	protected void process() {
 		MethodNode methodNode = getMethod("func_178581_b", "(FFFLnet/minecraft/client/renderer/chunk/ChunkCompileTaskGenerator;)V");
-		ListIterator<AbstractInsnNode> iterator = methodNode.instructions.iterator();
-		while (iterator.hasNext()) {
-			AbstractInsnNode node = iterator.next();
-			if (node.getOpcode() != INVOKESTATIC)
-				continue;
+		ListIterator<AbstractInsnNode> iterator = getIterator(methodNode, INVOKESTATIC, "drawCuboid");
+		iterator.previous();
+		MethodInsnNode min = (MethodInsnNode) iterator.next();
 
-			MethodInsnNode min = (MethodInsnNode) node;
-			if (!min.name.equals("drawCuboid"))
-				continue;
-
-			iterator.set(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/HighlightSchematicaBlocks", "drawCuboid", min.desc, false));
-			break;
-		}
+		iterator.set(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/HighlightSchematicaBlocks", "drawCuboid", min.desc, false));
 	}
 
 }

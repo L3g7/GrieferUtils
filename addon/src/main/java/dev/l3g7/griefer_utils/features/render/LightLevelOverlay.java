@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class LightLevelOverlay extends Feature {
 
 	private final NumberSetting updateDelay = new NumberSetting()
 		.name("Update-Wartezeit (Ticks)")
-		.description("Wie lange zwischen den Berechnung der Lichtlevel gewartet werden soll.")
+		.description("Wie lange zwischen den Berechnungen der Lichtlevel gewartet werden soll.")
 		.defaultValue(5)
 		.icon(Material.WATCH);
 

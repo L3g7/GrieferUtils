@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
-import dev.l3g7.griefer_utils.settings.ElementBuilder;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.StringSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
@@ -34,7 +34,7 @@ import net.minecraft.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder<PieMenuPageSetting> {
+public class PieMenuPageSetting extends PieMenuSetting {
 
 	public final StringSetting name;
 
@@ -43,9 +43,16 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 	public PieMenuPageSetting(String name, ArrayList<SettingsElement> entrySettings) {
 		this.name = new StringSetting()
 			.name("Name")
-			.callback(s -> name(s))
-			.defaultValue(defaultName = name)
-			.icon(Material.BOOK_AND_QUILL);
+			.description("Wie diese Seite heißen soll.")
+			.icon(Material.BOOK_AND_QUILL)
+			.callback(title -> {
+				if (title.trim().isEmpty())
+					title = "Unbenannte Seite";
+
+				HeaderSetting titleSetting = (HeaderSetting) getSubSettings().getElements().get(2);
+				name(title);
+				titleSetting.name("§e§l" + title);
+			});
 
 		icon(Material.EMPTY_MAP);
 
@@ -62,7 +69,7 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 			}));
 
 		subSettings(entrySettings.toArray(new SettingsElement[0]));
-		setSettingEnabled(false);
+		this.name.defaultValue(defaultName = name);
 		container = FileProvider.getSingleton(CommandPieMenu.class).getMainElement();
 	}
 
@@ -70,7 +77,7 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 		defaultName = name.get();
 		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
 			if (!name.get().isEmpty()) {
-				triggerOnChange();
+				onChange();
 				return;
 			}
 
@@ -81,17 +88,8 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 
 			if (name.get().isEmpty())
 				name.set(defaultName);
-			triggerOnChange();
+			onChange();
 		}, this));
-	}
-
-	@Override
-	protected void onChange() {
-		triggerOnChange();
-	}
-
-	static void triggerOnChange() {
-		FileProvider.getSingleton(CommandPieMenu.class).onChange();
 	}
 
 	public JsonObject toJson() {
@@ -108,7 +106,7 @@ public class PieMenuPageSetting extends PieMenuSetting implements ElementBuilder
 			JsonObject entryObj = new JsonObject();
 			entryObj.addProperty("name", pieEntry.name.get());
 			entryObj.addProperty("command", pieEntry.command.get());
-			entryObj.addProperty("cb", pieEntry.cityBuild.get().getDisplayName());
+			entryObj.addProperty("cb", pieEntry.citybuild.get().getDisplayName());
 
 			entries.add(entryObj);
 		}

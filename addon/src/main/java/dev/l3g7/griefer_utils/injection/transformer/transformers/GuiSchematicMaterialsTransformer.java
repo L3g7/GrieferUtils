@@ -1,0 +1,39 @@
+/*
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
+ *
+ * Copyright 2020-2024 L3g7
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dev.l3g7.griefer_utils.injection.transformer.transformers;
+
+import dev.l3g7.griefer_utils.injection.transformer.Transformer;
+import dev.l3g7.griefer_utils.injection.transformer.Transformer.Target;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+
+@Target("com.github.lunatrius.schematica.client.gui.control.GuiSchematicMaterials")
+public class GuiSchematicMaterialsTransformer extends Transformer {
+
+	private static final MethodInsnNode OPEN_MATERIAL_FILE = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/BetterSchematica", "openMaterialFile", "()V", false);
+	private static final MethodInsnNode WRITE_ERROR_MESSAGE = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/BetterSchematica", "writeErrorMessage", "()V", false);
+
+	@Override
+	protected void process() {
+		MethodNode method = getMethod("dumpMaterialList", "(Ljava/util/List;)V");
+		getIterator(method, INVOKESTATIC, "write").add(OPEN_MATERIAL_FILE);
+		getIterator(method, INVOKEINTERFACE, "error").add(WRITE_ERROR_MESSAGE);
+	}
+
+}

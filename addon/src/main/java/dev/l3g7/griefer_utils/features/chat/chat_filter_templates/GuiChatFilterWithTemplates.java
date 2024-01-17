@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 	}
 
 	public void loadTemplate(FilterTemplate template) {
-		Reflection.invoke(this, "loadFilter", new Filters.Filter(template.name, template.contains, template.containsNot, false, "note.harp", false, (short) 200, (short) 200, (short) 50, false, true, false, "Global"));
+		Reflection.invoke(this, "loadFilter", template.toFilter());
 	}
 
 }

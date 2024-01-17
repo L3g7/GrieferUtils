@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -272,7 +272,7 @@ public class AddChatMenuEntryGui extends Gui {
 		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
 		mouseY -= scrollbar.getScrollY();
 
-		// prioritize cityBuild as it overlaps with the save and close buttons
+		// prioritize citybuild as it overlaps with the save and close buttons
 		if (iconInput.getSelected() == IconType.ITEM && itemIconInput.onClick(mouseX, mouseY, mouseButton))
 			return;
 
@@ -327,7 +327,7 @@ public class AddChatMenuEntryGui extends Gui {
 					actionInput.setFocused(true);
 			}
 
-			// CityBuild -> Trigger
+			// Citybuild -> Trigger
 			else if (itemIconInput.isOpen()) {
 				itemIconInput.setOpen(false);
 				actionInput.setFocused(true);

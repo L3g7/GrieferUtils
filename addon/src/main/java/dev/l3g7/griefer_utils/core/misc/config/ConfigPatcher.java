@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
 public class ConfigPatcher {
 
+	public static boolean versionChanged = false;
+
 	JsonObject config;
 
 	public ConfigPatcher(JsonObject config) {
@@ -50,7 +52,11 @@ public class ConfigPatcher {
 		}
 
 		String version = config.get("version").getAsString();
-		config.addProperty("version", AddonUtil.getVersion());
+		String newVersion = AddonUtil.getVersion();
+		if (!newVersion.equals(version)) {
+			config.addProperty("version", newVersion);
+			versionChanged = true;
+		}
 
 		VersionComparator cmp = new VersionComparator();
 
@@ -84,7 +90,7 @@ public class ConfigPatcher {
 		}
 
 		if (cmp.compare("2.0-RC-8", version) < 0) {
-			JsonObject parent = getParent("item.orb_saver");
+			JsonObject parent = get("item.orb_saver");
 			if (parent != null) {
 				if (getBooleanValue(parent.get("enabled"))) {
 					if (!getBooleanValue(parent.get("on_price_fall"))) {
@@ -119,6 +125,39 @@ public class ConfigPatcher {
 
 			}
 		}
+
+		if (cmp.compare("2.0-RC-12", version) < 0) {
+			rename("world.show_spawner_icons", "world.better_spawners.show_spawner_icons");
+			JsonObject betterSpawners = get("world.better_spawners");
+
+			JsonObject parent = get("world.spawner_with_held_item_fix");
+			if (parent != null && getBooleanValue(parent.get("enabled"))) {
+				betterSpawners.addProperty("enabled", true);
+				betterSpawners.addProperty("spawner_with_held_item_fix", true);
+			}
+
+			parent = get("world.show_spawner_icons");
+			if (parent != null && getBooleanValue(parent.get("enabled"))) {
+				betterSpawners.addProperty("enabled", true);
+			}
+		}
+
+		if (cmp.compare("2.0", version) < 0) {
+			JsonObject chatReactor = get("chat.chat_reactor");
+			if (chatReactor.has("entries")) {
+				JsonArray entries = chatReactor.getAsJsonArray("entries");
+				for (JsonElement e : entries) {
+					JsonObject entry = e.getAsJsonObject();
+					if (!entry.get("is_regex").getAsBoolean())
+						continue;
+
+					String command = entry.get("command").getAsString();
+					command = command.replace("$", "$$");
+					command = command.replaceAll("\\\\(\\d+)", "\\$$1");
+					entry.addProperty("command", command);
+				}
+			}
+		}
 	}
 
 	private void rename(String oldKey, String newKey) {
@@ -127,6 +166,10 @@ public class ConfigPatcher {
 
 		if (oldParent.get(getKey(oldKey)) != null)
 			newParent.add(getKey(newKey), oldParent.get(getKey(oldKey)));
+	}
+
+	private JsonObject get(String path) {
+		return getParent(path + ".,");
 	}
 
 	private JsonObject getParent(String path) {

@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,39 +100,6 @@ public class IOUtil {
 	}
 
 	/**
-	 * Sends the given json to the URL using a POST request.
-	 */
-	public static void writeJson(String url, JsonElement json) {
-		Throwable trigger = new Throwable("Invoker stack trace:");
-		Thread t = new Thread(() -> {
-			try {
-				HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-
-				if (conn instanceof HttpsURLConnection)
-					((HttpsURLConnection) conn).setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
-
-				conn.addRequestProperty("User-Agent", "GrieferUtils v" + AddonUtil.getVersion());
-				conn.setConnectTimeout(10000);
-				conn.setDoOutput(true);
-				conn.addRequestProperty("Content-Type", "application/json");
-				conn.setRequestMethod("POST");
-
-				try (OutputStream out = conn.getOutputStream()) {
-					out.write(json.toString().getBytes(UTF_8));
-					out.flush();
-				}
-				conn.getInputStream().close();
-				conn.disconnect();
-			} catch (Exception e) {
-				e.printStackTrace();
-				trigger.printStackTrace();
-			}
-		});
-		t.setPriority(Thread.MIN_PRIORITY);
-		t.start();
-	}
-
-	/**
 	 * A wrapper class for reading the contents of a file.
 	 */
 	public static class FileReadOperation extends ReadOperation {
@@ -207,10 +174,10 @@ public class IOUtil {
 		}
 
 		/**
-		 * Tries to read the input stream as a json string.
+		 * Tries to read the input stream as a json object.
 		 */
-		public AsyncFailable asJsonString(Consumer<String> callback) {
-			return readAsync(in -> jsonParser.parse(in).getAsString(), callback);
+		public Optional<String> asJsonString() {
+			return readSync(in -> jsonParser.parse(in).getAsString());
 		}
 
 		/**
@@ -225,47 +192,6 @@ public class IOUtil {
 		 */
 		public AsyncFailable asJsonObject(Consumer<JsonObject> callback) {
 			return readAsync(in -> jsonParser.parse(in).getAsJsonObject(), callback);
-		}
-
-		/**
-		 * Tries to open an input stream.
-		 */
-		public Optional<InputStream> getStream() {
-			try {
-				return Optional.of(open());
-			} catch (Exception e) {
-				e.printStackTrace();
-				return Optional.empty();
-			}
-		}
-
-		/**
-		 * Tries to write the input stream to the given file.
-		 */
-		public AsyncFailable asFile(File file, Consumer<File> callback) {
-			AsyncFailable op = new AsyncFailable();
-			Throwable trigger = new Throwable("Invoker stack trace:");
-			Thread t = new Thread(() -> {
-				try {
-					try (InputStream in = open(); FileOutputStream out = new FileOutputStream(file)) {
-						byte[] buffer = new byte[4096];
-
-						int n;
-						while ((n = in.read(buffer)) != -1)
-							out.write(buffer, 0, n);
-
-						callback.accept(file);
-					}
-				} catch (Exception e) {
-					trigger.printStackTrace();
-					e.printStackTrace();
-					if (op.fallback != null)
-						op.fallback.accept(e);
-				}
-			});
-			t.setPriority(Thread.MIN_PRIORITY);
-			t.start();
-			return op;
 		}
 
 		/**

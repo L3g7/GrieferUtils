@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -30,8 +31,9 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S05PacketSpawnPosition;
 
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
@@ -43,7 +45,7 @@ public class ServerPerformance extends Module {
 
 	private Double currentTPS = null;
 	private Long lastWorldTime = null;
-	private final Deque<Double> tps = new LinkedList<>();
+	private final List<Double> tps = new ArrayList<>();
 	private long lastMillis = 0;
 	private int lastTripTime = 0;
 
@@ -53,12 +55,18 @@ public class ServerPerformance extends Module {
 		.description("Ob die Performance in Prozent angezeigt oder in TPS angezeigt werden soll.")
 		.defaultValue(DisplayMode.PERCENT);
 
+	private final BooleanSetting applyColor = new BooleanSetting()
+		.name("Anzeige färben")
+		.icon("labymod:settings/settings/tabping_colored")
+		.description("Ob die Performance eingefärbt werden soll.")
+		.defaultValue(true);
+
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Server-\nPerformance")
 		.description("Zeigt eine (relativ genaue) Schätzung der aktuellen Server-Performance an.")
 		.icon("measurement_circle_thingy")
-		.subSettings(displayMode);
+		.subSettings(displayMode, applyColor);
 
 	@Override
 	public String[] getDefaultValues() {
@@ -67,10 +75,30 @@ public class ServerPerformance extends Module {
 
 	@Override
 	public String[] getValues() {
-		if (currentTPS == null)
-			return getDefaultValues();
+		throw new UnsupportedOperationException();
+	}
 
-		return new String[] { displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS)};
+	@Override
+	public List<List<Text>> getTextValues() {
+		if (currentTPS == null)
+			return getDefaultTextValues();
+
+		// calculate color
+		int r, g, b;
+		if (currentTPS < 15) {
+			r = 0xFF;
+			g = (int) (0xFF * (currentTPS / 15d));
+			b = 0;
+		} else {
+			r = (int) (0x55 + 0xAA * (20 - currentTPS) / 5d);
+			g = 255;
+			b = (int) (0x55 * (currentTPS - 15) / 5d);
+		}
+
+		// create text representation
+		String displayTPS = displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS);
+
+		return Collections.singletonList(Collections.singletonList(applyColor.get() ? Text.getText(displayTPS, r, g, b) : Text.getText(displayTPS)));
 	}
 
 	@EventListener
@@ -114,20 +142,23 @@ public class ServerPerformance extends Module {
 		long timeDiff = currentMillis - (lastMillis + tripTimeDiff);
 		double currentTps = ageDiff / (timeDiff / 1000d);
 
+		if (currentTps < 0)
+			return;
+
 		tps.add(Math.min(currentTps, 20));
 
 		double averageTps = tps.stream().reduce(Double::sum).orElse(0d) / tps.size();
 		currentTPS = Math.round(averageTps * 100) / 100d; // Round to two decimals
 
 		if (tps.size() > 25)
-			tps.removeFirst();
+			tps.remove(0);
 
 		lastWorldTime = currentWorldTime;
 		lastTripTime = tripTime;
 		lastMillis = currentMillis;
 	}
 
-	private enum DisplayMode {
+	private enum DisplayMode implements Named {
 		PERCENT("Prozent"),
 		TPS("TPS");
 
@@ -135,5 +166,11 @@ public class ServerPerformance extends Module {
 		DisplayMode(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 }

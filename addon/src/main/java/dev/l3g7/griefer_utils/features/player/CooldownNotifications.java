@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.TickEvent;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
@@ -49,10 +49,7 @@ import net.minecraft.item.ItemStack;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -64,7 +61,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 public class CooldownNotifications extends Feature {
 
 	private static final String TITLE = "§8§m------------§r§8[ §r§6Cooldowns §r§8]§r§8§m------------§r";
-	public final Map<String, Long> endDates = new HashMap<>();
+	public final Map<String, Long> endDates = Collections.synchronizedMap(new HashMap<>());
 	private boolean waitingForCooldownGUI = false;
 	private boolean sendCooldowns = false;
 	private CompletableFuture<Void> guiInitBlock = null;
@@ -105,7 +102,7 @@ public class CooldownNotifications extends Feature {
 	}
 
 	@EventListener
-	public void onCBJoin(CityBuildJoinEvent event) {
+	public void onCBJoin(CitybuildJoinEvent event) {
 		// If no data is found, open and close /cooldowns automatically
 		if (endDates.isEmpty()) {
 			guiInitBlock = ChatQueue.sendBlocking("/cooldowns", () -> {
@@ -122,7 +119,7 @@ public class CooldownNotifications extends Feature {
 	}
 
 	@EventListener
-	public void onCityBuildJoin(CityBuildJoinEvent event) {
+	public void onCitybuildJoin(CitybuildJoinEvent event) {
 		if (!sendCooldowns)
 			return;
 
@@ -132,20 +129,22 @@ public class CooldownNotifications extends Feature {
 		if (endDates.size() == 0)
 			return;
 
-		endDates.keySet().forEach(this::checkEndTime);
+		synchronized (endDates) {
+			endDates.keySet().forEach(this::checkEndTime);
 
-		// Display cooldown information on server join
-		display(TITLE);
+			// Display cooldown information on server join
+			display(TITLE);
 
-		for (Map.Entry<String, Long> entry : endDates.entrySet())
-			if (entry.getValue() == 0)
-				display("§8» §e%s§7:§r %s", entry.getKey(), "§aVerfügbar");
-		for (Map.Entry<String, Long> entry : endDates.entrySet())
-			if (entry.getValue() > 0)
-				display("§8» §e%s§7:§r %s", entry.getKey(), "§6Verfügbar am " + DATE_FORMAT.format(new Date(entry.getValue())));
-		for (Map.Entry<String, Long> entry : endDates.entrySet())
-			if (entry.getValue() < 0)
-				display("§8» §e%s§7:§r %s", entry.getKey(), "§cNicht freigeschaltet");
+			for (Map.Entry<String, Long> entry : endDates.entrySet())
+				if (entry.getValue() == 0)
+					display("§8» §e%s§7:§r %s", entry.getKey(), "§aVerfügbar");
+			for (Map.Entry<String, Long> entry : endDates.entrySet())
+				if (entry.getValue() > 0)
+					display("§8» §e%s§7:§r %s", entry.getKey(), "§6Verfügbar am " + DATE_FORMAT.format(new Date(entry.getValue())));
+			for (Map.Entry<String, Long> entry : endDates.entrySet())
+				if (entry.getValue() < 0)
+					display("§8» §e%s§7:§r %s", entry.getKey(), "§cNicht freigeschaltet");
+		}
 
 		display(TITLE);
 	}
@@ -158,47 +157,51 @@ public class CooldownNotifications extends Feature {
 			: s -> displayAchievement(Constants.ADDON_NAME, String.format("§e%s ist nun §averfügbar§e!", s));
 
 		// Check if cooldown has become available
-		for (String command : endDates.keySet()) {
-			if (checkEndTime(command)) {
-				displayFunc.accept(command);
-				saveCooldowns();
+		synchronized (endDates) {
+			for (String command : endDates.keySet()) {
+				if (checkEndTime(command)) {
+					displayFunc.accept(command);
+					saveCooldowns();
+				}
 			}
 		}
 	}
 
 	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
-		// Check if cooldown gui is open
-		if (mc().currentScreen instanceof GuiChest) {
-			IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
-			if (inventory.getDisplayName().getFormattedText().equals("§6Cooldowns§r")) {
-				if (inventory.getSizeInventory() != 45 || inventory.getStackInSlot(11) == null || inventory.getStackInSlot(11).getItem() != Items.gold_ingot)
-					return;
+		if (!(mc().currentScreen instanceof GuiChest))
+			return;
 
-				// Iterate through slots
-				boolean foundAny = false;
-				for (int i = 0; i < inventory.getSizeInventory(); i++) {
-					ItemStack s = inventory.getStackInSlot(i);
-					if (s == null || s.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
-						continue;
+		IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
+		if (!inventory.getDisplayName().getFormattedText().equals("§6Cooldowns§r"))
+			return;
 
-					// Load cooldown time from item
-					String name = ModColor.removeColor(s.getDisplayName()).replace("-Befehl", "");
-					if (name.startsWith("/clan") || name.equals("Riesige GS überschreiben") || name.equals("/premium"))
-						continue;
+		if (inventory.getSizeInventory() != 45 || inventory.getStackInSlot(11) == null || inventory.getStackInSlot(11).getItem() != Items.gold_ingot)
+			return;
 
-					endDates.put(name, getAvailability(s));
-					foundAny = true;
-				}
+		// Iterate through slots
+		boolean foundAny = false;
+		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+			ItemStack s = inventory.getStackInSlot(i);
+			if (s == null || s.getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane))
+				continue;
 
-				if (foundAny) {
-					saveCooldowns();
-					// Close cooldowns if waitingForCooldownGUI (was automatically opened)
-					if (waitingForCooldownGUI)
-						resetWaitingForGUI();
-				}
-			}
+			// Load cooldown time from item
+			String name = ModColor.removeColor(s.getDisplayName()).replace("-Befehl", "");
+			if (name.startsWith("/clan") || name.equals("Riesige GSe (über 25er) überschreiben") || name.equals("/premium"))
+				continue;
+
+			endDates.put(name, getAvailability(s));
+			foundAny = true;
 		}
+
+		if (!foundAny)
+			return;
+
+		saveCooldowns();
+		// Close cooldowns if waitingForCooldownGUI (was automatically opened)
+		if (waitingForCooldownGUI)
+			resetWaitingForGUI();
 	}
 
 	private void resetWaitingForGUI() {
@@ -206,7 +209,7 @@ public class CooldownNotifications extends Feature {
 		guiInitBlock.complete(null);
 		waitingForCooldownGUI = false;
 		sendCooldowns = true;
-		onCityBuildJoin(null);
+		onCitybuildJoin(null);
 	}
 
 	private boolean checkEndTime(String name) {
@@ -220,8 +223,10 @@ public class CooldownNotifications extends Feature {
 
 	private void saveCooldowns() {
 		JsonObject o = new JsonObject();
-		for (Map.Entry<String, Long> entry : endDates.entrySet())
-			o.addProperty(entry.getKey(), entry.getValue());
+		synchronized (endDates) {
+			for (Map.Entry<String, Long> entry : endDates.entrySet())
+				o.addProperty(entry.getKey(), entry.getValue());
+		}
 
 		// Save end dates along with player uuid so no problems occur when using multiple accounts
 		Config.set("player.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId(), o);
@@ -232,14 +237,15 @@ public class CooldownNotifications extends Feature {
 	public void loadCooldowns(GrieferGamesJoinEvent event) {
 		String path = "player.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId();
 
-		if (Config.has(path)) {
-			endDates.clear();
-			for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet()) {
-				if (e.getKey().startsWith("/clan") || e.getKey().equals("Riesige GS überschreiben") || e.getKey().equals("/premium"))
-					continue;
+		if (!Config.has(path))
+			return;
 
-				endDates.put(e.getKey(), e.getValue().getAsLong());
-			}
+		endDates.clear();
+		for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet()) {
+			if (e.getKey().startsWith("/clan") || e.getKey().contains("Riesige GS") || e.getKey().equals("/premium"))
+				continue;
+
+			endDates.put(e.getKey(), e.getValue().getAsLong());
 		}
 	}
 

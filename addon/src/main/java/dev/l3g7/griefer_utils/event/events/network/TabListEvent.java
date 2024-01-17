@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import dev.l3g7.griefer_utils.core.event_bus.Event;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
-import dev.l3g7.griefer_utils.misc.PlayerDataProvider;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
@@ -45,6 +44,7 @@ import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.*
 public class TabListEvent extends Event {
 
 	private static final Map<UUID, IChatComponent> cachedNames = new HashMap<>();
+	private static final Map<UUID, String> uuidToNameMap = new HashMap<>();
 
 	public static void updatePlayerInfoList() {
 		if (mc().getNetHandler() == null)
@@ -130,9 +130,12 @@ public class TabListEvent extends Event {
 			if (event.packet.getAction() != ADD_PLAYER)
 				return;
 
-			for (AddPlayerData data : event.packet.getEntries())
-				if (PlayerUtil.isValid(data.getProfile().getName()))
+			for (AddPlayerData data : event.packet.getEntries()) {
+				if (PlayerUtil.isValid(data.getProfile().getName())) {
+					uuidToNameMap.putIfAbsent(data.getProfile().getId(), data.getProfile().getName());
 					new TabListPlayerAddEvent(data).fire();
+				}
+			}
 
 		}
 
@@ -160,12 +163,12 @@ public class TabListEvent extends Event {
 				return;
 
 			if (event.packet.getEntries().size() == mc().getNetHandler().getPlayerInfoMap().size())
-				// When whole TabList is affected, TabListClearEvent is posted instead
+				// When the whole TabList is affected, a TabListClearEvent is posted instead
 				return;
 
 			for (AddPlayerData data : event.packet.getEntries()) {
-				String name = PlayerDataProvider.get(data.getProfile().getId()).getName();
-				if (PlayerUtil.isValid(name))
+				String name = uuidToNameMap.get(data.getProfile().getId());
+				if (name != null)
 					new TabListPlayerRemoveEvent(data, name).fire();
 			}
 		}
@@ -183,8 +186,8 @@ public class TabListEvent extends Event {
 			Map<AddPlayerData, String> namedEntries = new HashMap<>();
 
 			for (AddPlayerData data : entries) {
-				String name = PlayerDataProvider.get(data.getProfile().getId()).getName();
-				if (PlayerUtil.isValid(name))
+				String name = uuidToNameMap.get(data.getProfile().getId());
+				if (name != null)
 					namedEntries.put(data, name);
 			}
 

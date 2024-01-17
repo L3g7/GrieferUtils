@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class SpawnerType {
 
 	private SpawnerType(String germanName, String texture) {
 		this.germanName = germanName;
-		this.texture = "griefer_info/mob_icons/" + texture;
+		this.texture = "mob_icons/minecraft/" + texture.toLowerCase();
 		texture = "entity." + texture + ".name";
 		otherNames = new String[] {
 			StatCollector.translateToLocal(texture).toLowerCase(),

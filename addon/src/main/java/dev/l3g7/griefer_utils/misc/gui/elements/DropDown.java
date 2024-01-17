@@ -2,6 +2,7 @@ package dev.l3g7.griefer_utils.misc.gui.elements;
 
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.misc.Citybuild;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.gui.elements.Scrollbar;
@@ -33,11 +34,11 @@ public class DropDown<T> extends DropDownMenu<T> implements Drawable, Clickable 
 		this.screenWidth = screenWidth;
 	}
 
-	static <T extends Enum<T>> DropDown<T> fromEnum(T placeholder, String label, int screenWidth) {
+	static <T extends Enum<T> & Named> DropDown<T> fromEnum(T placeholder, String label, int screenWidth) {
 		DropDown<T> dropDown = new DropDown<>(label, screenWidth);
 
 		dropDown.setSelected(placeholder);
-		dropDown.setEntryDrawer((e, x, y, trimmed) -> drawUtils.drawString(Reflection.get(e, "name"), x, y));
+		dropDown.setEntryDrawer((e, x, y, trimmed) -> drawUtils.drawString(((Named) e).getName(), x, y));
 
 		for (T value : placeholder.getDeclaringClass().getEnumConstants())
 			dropDown.addOption(value);
@@ -57,7 +58,6 @@ public class DropDown<T> extends DropDownMenu<T> implements Drawable, Clickable 
 		DropDown<T> dropDown = new DropDown<>(label, screenWidth);
 
 		dropDown.setSelected(placeholder);
-		dropDown.setEntryDrawer((e, x, y, trimmed) -> drawUtils.drawString(Reflection.get(e, "name"), x, y));
 		for (T option : options)
 			dropDown.addOption(option);
 

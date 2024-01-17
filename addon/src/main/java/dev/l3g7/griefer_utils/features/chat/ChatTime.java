@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class ChatTime extends Feature {
 	private final StringSetting style = new StringSetting()
 		.name("Design")
 		.description("Das Design des Prefixes, mit Unterstützung von &-Formatierungscodes.\n" +
-			"%s ist die Zeit an sich. ")
+			"%s ist die Zeit an sich.")
 		.icon(Material.EMPTY_MAP)
 		.setValidator(v -> {
 			try {
@@ -59,7 +59,7 @@ public class ChatTime extends Feature {
 
 	private final StringSetting format = new StringSetting()
 		.name("Zeitformat")
-		.description("Das Format der Zeit, gemäß Javas Date Format")
+		.description("Das Format der Zeit, gemäß Javas Date Format.")
 		.icon(Material.EMPTY_MAP)
 		.callback(DATE_FORMAT::applyPattern)
 		.setValidator(v -> {

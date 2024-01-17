@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
 public class InteractableProfiles extends Feature {
+
+	private static long lastInteraction = 0;
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -79,7 +81,7 @@ public class InteractableProfiles extends Feature {
 		if (slot != getSlotUnderMouse(gui) || !slot.getHasStack() || !slot.getStack().hasTagCompound())
 			return;
 
-		// CityBuild is not visible
+		// Citybuild is not visible
 		if (slot.getStack().getItem() == Item.getItemFromBlock(Blocks.barrier))
 			return;
 
@@ -102,8 +104,10 @@ public class InteractableProfiles extends Feature {
 
 		Citybuild cb = Citybuild.getCitybuild(citybuild);
 
-		if (!cb.isOnCb())
+		if (!cb.isOnCb() && System.currentTimeMillis() - lastInteraction > 2500) {
+			lastInteraction = System.currentTimeMillis();
 			cb.join();
+		}
 	}
 
 }

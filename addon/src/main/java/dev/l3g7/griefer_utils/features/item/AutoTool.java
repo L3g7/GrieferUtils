@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.item;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
@@ -32,14 +33,17 @@ import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemD
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemSaver;
 import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.ToolSaver;
 import dev.l3g7.griefer_utils.features.modules.MissingAdventurerBlocks;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
-import net.minecraft.block.Block;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
@@ -89,7 +93,26 @@ public class AutoTool extends Feature {
 		.put("snow_block", Blocks.snow)
 		.build();
 
+	private static final List<Class<?>> SHEARABLE_BLOCKS = ImmutableList.of(
+		BlockDeadBush.class,
+		BlockDoublePlant.class,
+		BlockLeaves.class,
+		BlockTallGrass.class,
+		BlockVine.class
+	);
+
 	private final ToolSaver toolSaver = FileProvider.getSingleton(ToolSaver.class);
+
+	private final KeySetting key = new KeySetting()
+		.name("Taste")
+		.icon("key")
+		.description("Die Taste, mit der die automatische Werkzeugauswahl umgeschalten werden soll.")
+		.pressCallback(p -> {
+			if (p) {
+				BooleanSetting enabled = ((BooleanSetting) getMainElement());
+				enabled.set(!enabled.get());
+			}
+		});
 
 	private final DropDownSetting<EnchantPreference> preference = new DropDownSetting<>(EnchantPreference.class)
 		.name("Bevorzugte Verzauberung")
@@ -115,7 +138,7 @@ public class AutoTool extends Feature {
 		.description("Wechselt beim Abbauen eines Blocks automatisch auf das beste Werkzeug in der Hotbar.")
 		.icon(ItemUtil.createItem(Items.diamond_pickaxe, 0, true))
 		.defaultValue(false)
-		.subSettings(preference, switchBack, enforceSilkTouch);
+		.subSettings(key, new HeaderSetting(), preference, switchBack, enforceSilkTouch);
 
 	private int previousSlot = -1;
 
@@ -155,6 +178,9 @@ public class AutoTool extends Feature {
 		if (!ServerCheck.isOnGrieferGames() && player().getHeldItem() != null && player().getHeldItem().getItem() == Items.wooden_axe)
 			return;
 
+		if (player().capabilities.isCreativeMode)
+			return;
+
 		IBlockState state = world().getBlockState(targetedBlock);
 
 		if (state.getBlock().getBlockHardness(world(), targetedBlock) < 0) // Block can't be broken
@@ -166,7 +192,7 @@ public class AutoTool extends Feature {
 		// Get best slot
 		for (int i = 0; i < 9; i++) {
 			ItemStack stack = player().inventory.getStackInSlot(i);
-			double currentScore = getScore(stack, state);
+			double currentScore = getScore(stack, state, canMine(state, stack));
 
 			if (bestScore < currentScore) {
 				bestScore = currentScore;
@@ -175,7 +201,7 @@ public class AutoTool extends Feature {
 		}
 
 		// Switch to the best slot, if it isn't the current one
-		if (bestSlot != -1 && bestScore > getScore(player().inventory.getCurrentItem(), state)) {
+		if (bestSlot != -1 && bestScore > getScore(player().inventory.getCurrentItem(), state, canMine(state, player().getHeldItem()))) {
 
 			if (switchBack.get() && previousSlot == -1)
 				previousSlot = player().inventory.currentItem;
@@ -184,7 +210,12 @@ public class AutoTool extends Feature {
 		}
 	}
 
-	public double getScore(ItemStack itemStack, IBlockState state) {
+	private boolean canMine(IBlockState state, ItemStack item) {
+		Block block = state.getBlock();
+		return block.getMaterial().isToolNotRequired() || item != null && item.canHarvestBlock(block);
+	}
+
+	public double getScore(ItemStack itemStack, IBlockState state, boolean canMine) {
 		ItemDisplaySetting ids = ItemSaver.getSetting(itemStack);
 		if (ids != null && ids.leftclick.get())
 			return Integer.MIN_VALUE;
@@ -209,8 +240,16 @@ public class AutoTool extends Feature {
 		double score = 0;
 
 		score += itemStack.getItem().getStrVsBlock(itemStack, state.getBlock()) * 1000; // Main mining speed
-		if (itemStack.getItem() == Items.shears && state.getBlock() == Blocks.vine)
-			score = 2000;
+
+		// Account for shears
+		if (itemStack.getItem() == Items.shears) {
+			for (Class<?> shearableBlock : SHEARABLE_BLOCKS) {
+				if (shearableBlock.isInstance(state.getBlock())) {
+					score = 2000;
+					break;
+				}
+			}
+		}
 
 		if (isValidCutter(itemStack, state.getBlock()))
 			score += 2500;
@@ -223,25 +262,31 @@ public class AutoTool extends Feature {
 			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * (preference.get() != EnchantPreference.FORTUNE ? 10 : 1);
 		}
 
-		if (enforceSilkTouch.get() && state.getBlock().canSilkHarvest(world(), null, state, player()))
-			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * 10000;
+		if (canMine && enforceSilkTouch.get() && isSilkTouchApplicable(itemStack, state.getBlock()))
+			score += 1_000_000;
 
 		return score;
+	}
+
+	private static boolean isSilkTouchApplicable(ItemStack stack, Block block) {
+		if (EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, stack) == 0)
+			return false;
+
+		return Reflection.invoke(block, "canSilkHarvest");
 	}
 
 	private static boolean isValidCutter(ItemStack stack, Block block) {
 		if (stack.getItem() != Items.shears)
 			return false;
 
-		List<String> lore = ItemUtil.getLore(stack);
-		if (lore.size() < 2)
+		String lore = ItemUtil.getLoreAtIndex(stack, 1);
+		if (lore.isEmpty())
 			return false;
 
 		if (stack.getTagCompound().getInteger("current") == 0)
 			return false;
 
-		String secondLine = lore.get(1);
-		Matcher matcher = CUTTER_PATTERN.matcher(secondLine);
+		Matcher matcher = CUTTER_PATTERN.matcher(lore);
 		if (!matcher.matches())
 			return false;
 
@@ -292,7 +337,7 @@ public class AutoTool extends Feature {
 		Reflection.invoke(mc().playerController, "syncCurrentPlayItem"); // Send switch packet
 	}
 
-	private enum EnchantPreference {
+	private enum EnchantPreference implements Named {
 
 		NONE("Egal"),
 		FORTUNE("Glück"),
@@ -304,6 +349,7 @@ public class AutoTool extends Feature {
 			this.name = name;
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}

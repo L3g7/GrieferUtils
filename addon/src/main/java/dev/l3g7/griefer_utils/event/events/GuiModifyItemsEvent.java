@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.event.events.TickEvent.RenderTickEvent;
 import dev.l3g7.griefer_utils.util.MinecraftUtil;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -34,11 +35,9 @@ public class GuiModifyItemsEvent extends Event.TypedEvent<GuiModifyItemsEvent> {
 
 	@EventListener(priority = Priority.LOW)
 	private static void onRenderTick(RenderTickEvent event) {
-		if (!(mc().currentScreen instanceof GuiChest) || player() == null)
-			return;
-
-		GuiChest currentScreen = (GuiChest) mc().currentScreen;
-		new GuiModifyItemsEvent(MinecraftUtil.getGuiChestTitle(), currentScreen.inventorySlots).fire();
+		GuiScreen currentScreen = mc().currentScreen; // Account for concurrency
+		if (currentScreen instanceof GuiChest && player() != null)
+			new GuiModifyItemsEvent(MinecraftUtil.getGuiChestTitle(), ((GuiChest) currentScreen).inventorySlots).fire();
 	}
 
 	public GuiModifyItemsEvent(String title, Container container) {

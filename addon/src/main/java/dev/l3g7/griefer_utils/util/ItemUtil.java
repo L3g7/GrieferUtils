@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +74,11 @@ public class ItemUtil {
 		return lore;
 	}
 
+	public static String getLoreAtIndex(ItemStack itemStack, int index) {
+		List<String> lore = getLore(itemStack);
+		return lore.size() > index ? lore.get(index) : "";
+	}
+
 	public static String getLastLore(ItemStack itemStack) {
 		List<String> lore = getLore(itemStack);
 		return lore.size() > 0 ? lore.get(lore.size() - 1) : "";
@@ -113,6 +118,15 @@ public class ItemUtil {
 		return xpCost < 40;
 	}
 
+	public static int getCompressionLevel(ItemStack itemStack) {
+		NBTTagCompound tag = itemStack.getTagCompound();
+		if (tag == null || !tag.hasKey("stackSize"))
+			return 0;
+
+		int stackSize = tag.getInteger("stackSize");
+		return (int) Math.round(Math.log(stackSize) / Math.log(9));
+	}
+
 	public static int getDecompressedAmount(ItemStack itemStack) {
 		NBTTagCompound tag = itemStack.getTagCompound();
 		if (tag == null || !tag.hasKey("stackSize"))
@@ -126,14 +140,6 @@ public class ItemUtil {
 		return amount.startsWith("§7Anzahl: §e")
 			? Integer.parseInt(amount.substring(12).replace(".", "")) * itemStack.stackSize
 			: itemStack.stackSize;
-	}
-
-	public static int hashcode(List<ItemStack> itemStacks) {
-		int hashCode = 1;
-		for (ItemStack stack : itemStacks)
-			hashCode = 31 * hashCode + (stack == null ? 0 : serializeNBT(stack).hashCode());
-
-		return hashCode;
 	}
 
 	public static ItemStack createItem(Item item, int meta, String name) { return createItem(new ItemStack(item, 1, meta), false, name); }

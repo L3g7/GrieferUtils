@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,8 @@ import java.security.cert.TrustAnchor;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
@@ -68,11 +70,18 @@ import static java.nio.file.StandardOpenOption.CREATE;
  */
 public class AutoUpdater {
 
+	private static final String DELETION_MARKER = "File marked for deletion by GrieferUtils updater";
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final JsonParser PARSER = new JsonParser();
 	public static boolean hasUpdated = false;
 
 	public static void update() throws IOException, NoSuchAlgorithmException, InterruptedException, ReflectiveOperationException {
+		// Delete old versions
+		File[] addonJars = AddonLoader.getAddonsDirectory().listFiles((file, name) -> name.endsWith(".jar"));
+		if (addonJars != null)
+			for (File addonJar : addonJars)
+				checkJarForDeletion(addonJar);
+
 		if (!isEnabled())
 			return;
 
@@ -82,6 +91,11 @@ public class AutoUpdater {
 
 		// Get info about the latest release
 		InputStream in = read("https://grieferutils.l3g7.dev/v3/latest_release");
+
+		// Check if the server could be reached
+		if (in == null)
+			return;
+
 		@SuppressWarnings("UnstableApiUsage")
 		Map<String, ReleaseInfo> releases = GSON.fromJson(new InputStreamReader(in), new TypeToken<Map<String, ReleaseInfo>>(){}.getType());
 		in.close();
@@ -99,6 +113,9 @@ public class AutoUpdater {
 		if (addonJson.has("debug") && addonJson.get("debug").getAsBoolean()) {
 			// Compare current version with latest version
 			if (addonJson.get("addonVersion").getAsString().equals(preferredRelease.version))
+				return;
+
+			if (preferredRelease.version.equals("2.0-RC-18"))
 				return;
 		} else {
 			// Compare hash of own file with latest file hash
@@ -126,6 +143,11 @@ public class AutoUpdater {
 		// Download target file
 		if (shouldDownload) {
 			in = read(downloadUrl);
+
+			// Check if the server could be reached
+			if (in == null)
+				return;
+
 			Files.copy(in, targetFile.toPath());
 			in.close();
 		}
@@ -149,19 +171,16 @@ public class AutoUpdater {
 		hasUpdated = true;
 	}
 
-	/**
-	 * @return Whether the file was deleted instantly.
-	 */
-	private static boolean deleteJarSilently(String path) throws IOException {
+	private static void deleteJarSilently(String path) throws IOException {
 		// Try to delete file directly
 		if (new File(path).delete())
-			return true;
+			return;
 
 		try {
 			// Probably locked; Overwrite it with an empty zip file until Minecraft is closed
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			ZipOutputStream out = new ZipOutputStream(bout);
-			out.setComment("File marked for deletion by GrieferUtils updater");
+			out.setComment(DELETION_MARKER);
 			out.close();
 			Files.write(Paths.get(path), bout.toByteArray());
 		} catch (Throwable t) {
@@ -173,7 +192,19 @@ public class AutoUpdater {
 		Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();
 		String deleteLine = new File(path).getName() + System.lineSeparator();
 		Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
-		return false;
+	}
+
+	private static void checkJarForDeletion(File file) throws IOException {
+		ZipInputStream in = new ZipInputStream(Files.newInputStream(file.toPath()));
+		ZipEntry entry = in.getNextEntry();
+
+		if (entry == null || !DELETION_MARKER.equals(entry.getComment()) || file.delete())
+			return;
+
+		// Deletion failed, add file to LabyMod's .delete
+		Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();
+		String deleteLine = file.getName() + System.lineSeparator();
+		Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
 	}
 
 	private static ReleaseChannel getPreferredChannel() throws IOException {
@@ -283,15 +314,19 @@ public class AutoUpdater {
 	/**
 	 * @see dev.l3g7.griefer_utils.core.util.IOUtil
 	 */
-	public static InputStream read(String url) throws IOException {
-		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+	public static InputStream read(String url) {
+		try {
+			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
-		if (conn instanceof HttpsURLConnection)
-			((HttpsURLConnection) conn).setSSLSocketFactory(getCustomFactory());
+			if (conn instanceof HttpsURLConnection)
+				((HttpsURLConnection) conn).setSSLSocketFactory(getCustomFactory());
 
-		conn.addRequestProperty("User-Agent", "GrieferUtils");
-		conn.setConnectTimeout(10000);
-		return conn.getInputStream();
+			conn.addRequestProperty("User-Agent", "GrieferUtils");
+			conn.setConnectTimeout(10000);
+			return conn.getInputStream();
+		} catch (IOException ignored) {
+			return null;
+		}
 	}
 
 	private static SSLSocketFactory customFactory = null;

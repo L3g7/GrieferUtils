@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,14 @@ public class NoMagicText extends TextComponentTweak {
 		.icon(Material.BLAZE_POWDER)
 		.callback(TabListEvent::updatePlayerInfoList)
 		.subSettings(chat, tab, item);
+
+	@Override
+	public void init() {
+		super.init();
+		chat.description("Ob magische Texte im Chat deaktiviert werden sollen.");
+		tab.description("Ob magische Texte in der Tabliste deaktiviert werden sollen.");
+		item.description("Ob magische Texte in Item-Beschreibungen deaktiviert werden sollen.");
+	}
 
 	@Override
 	void modify(IChatComponent component) {

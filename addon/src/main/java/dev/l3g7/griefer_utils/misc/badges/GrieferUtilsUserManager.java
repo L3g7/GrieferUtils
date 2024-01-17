@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.UserSetGroupEvent;
 import dev.l3g7.griefer_utils.event.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.Credits;
-import dev.l3g7.griefer_utils.misc.matrix.MatrixClient;
+import dev.l3g7.griefer_utils.misc.server.GUClient;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.user.User;
 import net.labymod.user.group.LabyGroup;
@@ -84,7 +84,7 @@ public class GrieferUtilsUserManager {
 	}
 
 	private static void requestQueuedUsers() {
-		if (queuedUsers.isEmpty() || !MatrixClient.isAvailable())
+		if (queuedUsers.isEmpty() || !GUClient.get().isAvailable())
 			return;
 
 		lastRequest = System.currentTimeMillis();
@@ -93,7 +93,7 @@ public class GrieferUtilsUserManager {
 		requestedUsers.addAll(queuedUsers);
 		queuedUsers.removeAll(requestedUsers);
 
-		CompletableFuture.supplyAsync((Supplier<List<UUID>>) () -> MatrixClient.get().getOnlineUsers(requestedUsers)).thenAccept(uuids -> {
+		CompletableFuture.supplyAsync((Supplier<List<UUID>>) () -> GUClient.get().getOnlineUsers(requestedUsers)).thenAccept(uuids -> {
 			for (UUID uuid : uuids) {
 				users.put(uuid, user(uuid).getGroup());
 				user(uuid).setGroup(specialBadges.getOrDefault(uuid, new GrieferUtilsGroup()));

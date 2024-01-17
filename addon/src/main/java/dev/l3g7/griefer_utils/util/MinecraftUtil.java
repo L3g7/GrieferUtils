@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.util;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
+import dev.l3g7.griefer_utils.misc.Citybuild;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
@@ -37,6 +38,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -46,6 +48,7 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -107,10 +110,10 @@ public class MinecraftUtil {
 	}
 
 	public static void displayAchievement(String title, String description) {
-		displayAchievement("https://i.imgur.com/tWfT5Y8.png", title, description);
+		displayAchievement("griefer_utils_icon", title, description);
 	}
 
-	public static void displayAchievement (String iconUrl, String title, String description) {
+	public static void displayAchievement(String iconUrl, String title, String description) {
 		labyMod().getGuiCustomAchievement().displayAchievement(iconUrl, title, description);
 	}
 
@@ -138,7 +141,11 @@ public class MinecraftUtil {
 		return team == null ? "" : team.getColorPrefix().replaceAll("§.", "");
 	}
 
-	public static String getCityBuildAbbreviation(String citybuild) {
+	public static Citybuild getCurrentCitybuild() {
+		return Citybuild.getCitybuild(getServerFromScoreboard());
+	}
+
+	public static String getCitybuildAbbreviation(String citybuild) {
 		if (citybuild.startsWith("CB"))
 			return citybuild.substring(2);
 		if (citybuild.startsWith("Citybuild "))
@@ -197,6 +204,38 @@ public class MinecraftUtil {
 
 	public static int getButtonHeight(GuiButton button) {
 		return Reflection.get(button, "height");
+	}
+
+	/**
+	 * Guesses whether the player is in a farmwelt based upon the amount of bedrock on layer 3
+	 */
+	public static boolean isInFarmwelt() {
+		int checkedBlocks = 0;
+		int bedrocksFound = 0;
+
+		for (int chunkDX = -3; chunkDX <= 3; chunkDX++) {
+			for (int chunkDZ = -3; chunkDZ <= 3; chunkDZ++) {
+				Chunk chunk = world().getChunkFromChunkCoords(player().chunkCoordX + chunkDX, player().chunkCoordZ + chunkDZ);
+				if (!chunk.isLoaded() || chunk.isEmpty())
+					continue;
+
+				checkedBlocks += 256;
+				int blocksFound = 0;
+				for (int x = 0; x < 16; x++)
+					for (int z = 0; z < 16; z++)
+						if (chunk.getBlock(x, 3, z) == Blocks.bedrock)
+							blocksFound++;
+
+				if (blocksFound == 256) {
+					// Player is at spawn
+					return false;
+				}
+
+				bedrocksFound += blocksFound;
+			}
+		}
+
+		return (bedrocksFound / (float) checkedBlocks) > 0.33f;
 	}
 
 }

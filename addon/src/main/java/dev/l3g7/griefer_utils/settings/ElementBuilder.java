@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
@@ -39,10 +38,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static com.google.common.base.CaseFormat.*;
 import static dev.l3g7.griefer_utils.core.util.Util.elevate;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 
 /**
  * An interface for builder-like setting creation.
@@ -88,7 +87,9 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 			throw new UnsupportedOperationException(this.getClass().getSimpleName() + "doesn't support icons!");
 
 		IconData iconData;
-		if (icon instanceof Material)
+		if (icon instanceof IconData)
+			iconData = (IconData) icon;
+		else if (icon instanceof Material)
 			iconData = new IconData((Material) icon);
 		else if (icon instanceof ResourceLocation)
 			iconData = new IconData((ResourceLocation) icon);
@@ -108,10 +109,6 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		return (S) this;
 	}
 
-	default S icon(Supplier<?> icon) {
-		return icon(icon.get());
-	}
-
 	/**
 	 * A storage for ItemStack icons.
 	 * Should be implemented for every setting extending {@link ControlElement}.
@@ -128,7 +125,7 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 		if (itemIcon == null)
 			return;
 
-		LabyMod.getInstance().getDrawUtils().drawItem(itemIcon, x + 3, y + 2, null);
+		drawUtils().drawItem(itemIcon, x + 3, y + 2, null);
 	}
 
 	/**
@@ -236,7 +233,7 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 
 	class IconStorage {
 
-		private ItemStack itemStack = null;
+		public ItemStack itemStack = null;
 
 	}
 }

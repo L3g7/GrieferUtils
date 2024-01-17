@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
 import dev.l3g7.griefer_utils.misc.NameCache;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -34,8 +35,6 @@ import net.minecraft.util.IChatComponent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.displayAchievement;
 
 @Singleton
 public class AutoUnnick extends Feature {
@@ -77,13 +76,10 @@ public class AutoUnnick extends Feature {
 			return;
 
 		String nickName = text.substring(text.indexOf('~'));
-		String[] parts = event.component.getFormattedText().split(" ?§r§8§*l* ?\u2503 §r");
+		String[] parts = event.component.getFormattedText().split(" ?(?:§r)?§8§?l? ?\u2503 (?:§r)?");
 
 		if (parts.length != 2) {
-			System.err.println("AutoUnnick error:");
-			System.err.println(IChatComponent.Serializer.componentToJson(event.component));
-			System.err.println(event.profile);
-			displayAchievement("§c§lFehler \u26A0", "§cBitte melde dich beim Team.");
+			BugReporter.reportError(new Throwable(IChatComponent.Serializer.componentToJson(event.component) + " | " + event.profile));
 			return;
 		}
 

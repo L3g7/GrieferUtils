@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,21 @@ package dev.l3g7.griefer_utils.features.modules.timers;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.misc.Named;
+import dev.l3g7.griefer_utils.misc.server.GUClient;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,11 +45,13 @@ public class MobRemover extends Module {
 
 	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
 		.name("Zeitformat")
+		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
 		.icon("hourglass")
 		.defaultValue(TimeFormat.LONG);
 
 	private final NumberSetting warnTime = new NumberSetting()
 		.name("Warn-Zeit (s)")
+		.description("Wie viele Sekunden vor dem nächsten MobRemover eine Warnung angezeigt werden soll.")
 		.icon("labymod:buttons/exclamation_mark");
 
 	@MainElement
@@ -91,6 +99,22 @@ public class MobRemover extends Module {
 			mobRemoverEnd = System.currentTimeMillis() + Long.parseLong(matcher.group("minutes")) * 60L * 1000L;
 		else if (event.message.getFormattedText().matches("^§r§8\\[§r§6MobRemover§r§8] §r§7Es wurden (?:§r§\\d+§r§7|keine) Tiere entfernt\\.§r$"))
 			mobRemoverEnd = System.currentTimeMillis() + 15L * 60L * 1000L;
+		else
+			return;
+
+		if (GUClient.get().isAvailable())
+			new Thread(() -> GUClient.get().sendMobRemoverData(MinecraftUtil.getCurrentCitybuild(), mobRemoverEnd / 1000)).start();
+	}
+
+	@EventListener
+	private void onCitybuildEarlyJoin(CitybuildJoinEvent.Early event) {
+		if (!GUClient.get().isAvailable())
+			return;
+
+		CompletableFuture.supplyAsync((Supplier<Long>) () -> GUClient.get().getMobRemoverData(event.citybuild)).thenAccept(end -> {
+			if (end != null)
+				mobRemoverEnd = end * 1000;
+		});
 	}
 
 	private void title(String title) {
@@ -99,7 +123,7 @@ public class MobRemover extends Module {
 		mc.ingameGUI.displayTitle(null, null, 0, 2, 3);
 	}
 
-	private enum TimeFormat {
+	private enum TimeFormat implements Named {
 		SHORT("Kurz"),
 		LONG("Lang");
 
@@ -107,5 +131,11 @@ public class MobRemover extends Module {
 		TimeFormat(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 }

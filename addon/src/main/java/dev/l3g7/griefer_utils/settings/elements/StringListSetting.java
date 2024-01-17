@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,13 +33,11 @@ import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.drawUtils;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 public class StringListSetting extends ControlElement implements ElementBuilder<StringListSetting>, ValueHolder<StringListSetting, List<String>> {
@@ -105,60 +103,28 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 		return container.getSubSettings().getElements();
 	}
 
-	private class StringDisplaySetting extends ControlElement {
+	private class StringDisplaySetting extends ListEntrySetting {
 
 		private String data;
-		private boolean hoveringDelete = false;
-		private boolean hoveringEdit = false;
 
 		public StringDisplaySetting(String entry) {
-			super("§cUnknown name", new IconData(Material.PAPER));
-			data = entry;
-		}
-
-		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-			super.mouseClicked(mouseX, mouseY, mouseButton);
-
-			if (hoveringEdit) {
-				mc().displayGuiScreen(stringAddSetting.new AddStringGui(mc().currentScreen, this));
-				return;
-			}
-
-			if (!hoveringDelete)
-				return;
-
-			getSettings().remove(this);
-			get().remove(data);
-			save();
-			getStorage().callbacks.forEach(c -> c.accept(get()));
-			mc.currentScreen.initGui(); // Update settings
+			super(true, true, false);
+			container = StringListSetting.this;
+			icon(Material.PAPER);
+			name(data = entry);
 		}
 
 		@Override
-		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			setDisplayName(data);
-			super.draw(x, y, maxX, maxY, mouseX, mouseY);
-			drawUtils().drawRectangle(x - 1, y, x, maxY, 0x78787878);
+		protected void onChange() {
+			get().remove(data);
+			getSettings().remove(this);
+			getStorage().callbacks.forEach(c -> c.accept(get()));
+			StringListSetting.this.save();
+		}
 
-			mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
-
-			int xPosition = maxX - 20;
-			double yPosition = y + 4.5;
-
-			hoveringDelete = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
-
-			xPosition -= 20;
-
-			hoveringEdit = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 15.5 && mouseY <= yPosition + 16;
-
-			if (!mouseOver)
-				return;
-
-			mc.getTextureManager().bindTexture(new ResourceLocation("labymod/textures/misc/blocked.png"));
-			drawUtils().drawTexture(maxX - (hoveringDelete ? 20 : 19), y + (hoveringDelete ? 3.5 : 4.5), 256, 256, hoveringDelete ? 16 : 14, hoveringDelete ? 16 : 14);
-
-			mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));
-			drawUtils().drawTexture(maxX - (hoveringEdit ? 40 : 39), y + (hoveringEdit ? 3.5 : 4.5), 256, 256, hoveringEdit ? 16 : 14, hoveringEdit ? 16 : 14);
+		@Override
+		protected void openSettings() {
+			mc().displayGuiScreen(stringAddSetting.new AddStringGui(mc().currentScreen, this));
 		}
 
 	}
@@ -229,7 +195,7 @@ public class StringListSetting extends ControlElement implements ElementBuilder<
 							getSettings().add(lastIndex, new StringDisplaySetting(inputField.getText()));
 							get().add(inputField.getText());
 						} else {
-							setting.data = inputField.getText();
+							setting.name(setting.data = inputField.getText());
 							int settingIndex = getSettings().indexOf(setting);
 							int listIndex = get().size() - (lastIndex - settingIndex);
 							get().set(listIndex, inputField.getText());

@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,14 +54,26 @@ public class OrbSaver extends ItemSaver {
 		if (lastBarItem == null || lastBarItem.getMetadata() != 5)
 			return;
 
+		ItemStack blockStack = priceFellStack.copy();
+
+		String singlePrice = getOrbPrice(event.getItem(11));
+		if (singlePrice != null) {
+			String allItemsPrice = getOrbPrice(event.getItem(15));
+			String secondLine = String.format("§7Klicke mit dem Mausrad, um die Items trotzdem für je §e%s §7Orbs (= §e%s §7Orbs) abzugeben.", singlePrice, allItemsPrice);
+			ItemUtil.setLore(blockStack, "§cDer Preis ist gefallen!", secondLine);
+		}
+
 		for (int i = 0; i < 54; i++)
 			if (i != 45)
-				event.setItem(i, priceFellStack);
+				event.setItem(i, blockStack);
 	}
 
 	@EventListener
 	private void onWindowClick(WindowClickEvent event) {
-		if (event.itemStack != priceFellStack || clicking)
+		if (clicking)
+			return;
+
+		if (!ItemUtil.getLoreAtIndex(event.itemStack, 0).equals("§cDer Preis ist gefallen!"))
 			return;
 
 		event.cancel();
@@ -71,6 +83,16 @@ public class OrbSaver extends ItemSaver {
 			mc().playerController.windowClick(event.windowId, 15, 0, 0, player());
 			clicking = false;
 		}
+	}
+
+	private static String getOrbPrice(ItemStack stack) {
+		String price = ItemUtil.getLoreAtIndex(stack, 0);
+		if (!price.endsWith("Orbs zu verkaufen."))
+			return null;
+
+		price = price.substring(price.lastIndexOf("§e"));
+		price = price.substring(2, price.indexOf(' '));
+		return price;
 	}
 
 	static {

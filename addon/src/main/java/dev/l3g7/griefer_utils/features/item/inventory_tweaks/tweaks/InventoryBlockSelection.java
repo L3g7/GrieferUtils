@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 		if (!stack.getTagCompound().getBoolean("warningDisplayed"))
 			return 0;
 
-		String line = ItemUtil.getLore(stack).get(0);
+		String line = ItemUtil.getLoreAtIndex(stack, 0);
 		return Integer.parseInt(line.substring(12).replace(".", ""));
 	}
 

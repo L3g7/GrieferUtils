@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.features.render;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -30,6 +31,7 @@ import dev.l3g7.griefer_utils.settings.elements.SliderSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityFallingBlock;
@@ -52,9 +54,11 @@ import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 public class TrueSight extends Feature {
 
 	private static final TrueSight INSTANCE = FileProvider.getSingleton(TrueSight.class);
+	private static final Map<Class<?>, String> CLASS_TO_STRING_MAPPING = Reflection.get(EntityList.class, "classToStringMapping");
 
 	private final SliderSetting opacity = new SliderSetting()
 		.name("Durchsichtigkeit (%)")
+		.description("Wie durchsichtig ein eigentlich unsichtbares Entity sein soll.")
 		.icon("fading_steve")
 		.min(0).max(100)
 		.defaultValue(85);
@@ -71,58 +75,57 @@ public class TrueSight extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		add(EntityArmorStand.class, "Armorstand", "armor_stand");
-		add(EntityBat.class, "Fledermaus", "bat");
-		add(EntityBlaze.class, "Blaze", "blaze");
-		add(EntityCaveSpider.class, "Höhlenspinne", "cave_spider");
-		add(EntityChicken.class, "Huhn", "chicken");
-		add(EntityCow.class, "Kuh", "cow");
-		add(EntityCreeper.class, "Creeper", "creeper");
-		add(EntityDragon.class, "Enderdrache", "ender_dragon");
-		add(EntityEnderman.class, "Enderman", "enderman");
-		add(EntityEndermite.class, "Endermite", "endermite");
+		add(EntityArmorStand.class, "Armorstand");
+		add(EntityBat.class, "Fledermaus");
+		add(EntityBlaze.class, "Blaze");
+		add(EntityCaveSpider.class, "Höhlenspinne");
+		add(EntityChicken.class, "Huhn");
+		add(EntityCow.class, "Kuh");
+		add(EntityCreeper.class, "Creeper");
+		add(EntityDragon.class, "Enderdrache");
+		add(EntityEnderman.class, "Enderman");
+		add(EntityEndermite.class, "Endermite");
 		entities.put(EntityFallingBlock.class, new BooleanSetting()
 			.name("Block")
 			.config(getConfigKey() + ".entities.falling_block")
 			.icon("stone"));
-		add(EntityGhast.class, "Ghast", "ghast");
-		add(EntityGiantZombie.class, "Riese", "zombie");
-		add(EntityGuardian.class, "Guardian", "guardian");
-		add(EntityHorse.class, "Pferd", "horse");
-		add(EntityIronGolem.class, "Eisengolem", "iron_golem");
-		add(EntityMagmaCube.class, "Magmawürfel", "magma_cube");
-		add(EntityMooshroom.class, "Pilzkuh", "mooshroom");
-		add(EntityOcelot.class, "Ozelot", "ocelot");
-		add(EntityPig.class, "Schwein", "pig");
-		add(EntityPigZombie.class, "Schweinezombie", "pig_zombie");
-		add(EntityPlayer.class, "Spieler", "../steve");
+		add(EntityGhast.class, "Ghast");
+		add(EntityGiantZombie.class, "Riese");
+		add(EntityGuardian.class, "Guardian");
+		add(EntityHorse.class, "Pferd");
+		add(EntityIronGolem.class, "Eisengolem");
+		add(EntityMagmaCube.class, "Magmawürfel");
+		add(EntityMooshroom.class, "Pilzkuh");
+		add(EntityOcelot.class, "Ozelot");
+		add(EntityPig.class, "Schwein");
+		add(EntityPigZombie.class, "Schweinezombie");
 		entities.put(EntityPlayer.class, new BooleanSetting()
 			.name("Spieler")
 			.config(getConfigKey() + ".entities.spieler")
 			.icon("steve"));
-		add(EntityRabbit.class, "Hase", "rabbit");
-		add(EntitySheep.class, "Schaf", "sheep");
-		add(EntitySilverfish.class, "Silberfischchen", "silverfish");
-		add(EntitySkeleton.class, "Skelett", "skeleton");
-		add(EntitySlime.class, "Slime", "slime");
-		add(EntitySnowman.class, "Schneegolem", "snow_golem");
-		add(EntitySpider.class, "Spinne", "spider");
-		add(EntitySquid.class, "Tintenfisch", "squid");
-		add(EntityVillager.class, "Dorfbewohner", "villager");
-		add(EntityWitch.class, "Hexe", "witch");
-		add(EntityWolf.class, "Wolf", "wolf");
-		add(EntityZombie.class, "Zombie", "zombie");
+		add(EntityRabbit.class, "Hase");
+		add(EntitySheep.class, "Schaf");
+		add(EntitySilverfish.class, "Silberfischchen");
+		add(EntitySkeleton.class, "Skelett");
+		add(EntitySlime.class, "Slime");
+		add(EntitySnowman.class, "Schneegolem");
+		add(EntitySpider.class, "Spinne");
+		add(EntitySquid.class, "Tintenfisch");
+		add(EntityVillager.class, "Dorfbewohner");
+		add(EntityWitch.class, "Hexe");
+		add(EntityWolf.class, "Wolf");
+		add(EntityZombie.class, "Zombie");
 
 		List<SettingsElement> settings = new ArrayList<>(entities.values());
 		settings.sort(Comparator.comparing(SettingsElement::getDisplayName));
 		enabled.subSettings(settings);
 	}
 
-	private void add(Class<? extends Entity> entity, String name, String texture) {
+	private void add(Class<? extends Entity> entity, String name) {
 		entities.put(entity, new BooleanSetting()
 			.name(name)
 			.config(getConfigKey() + ".entities." + UPPER_CAMEL.to(LOWER_UNDERSCORE, name))
-			.icon("mob_icons/" + texture)
+			.icon("mob_icons/faithless/" + CLASS_TO_STRING_MAPPING.get(entity).toLowerCase())
 			.defaultValue(entity == EntityPlayer.class));
 	}
 

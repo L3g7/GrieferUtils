@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -32,6 +32,7 @@ import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent.LeftClickEvent;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.event.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
@@ -52,6 +53,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
@@ -103,7 +105,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	@MainElement(configureSubSettings = false)
 	static final BooleanSetting enabled = new BooleanSetting()
 		.name("Spezifischer Item-Saver")
-		.description("Deaktiviert Klicks und Dropping bei einstellbaren Items.")
+		.description("Deaktiviert Klicks, Dropping und Abgeben bei einstellbaren Items.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
 		.icon("shield_with_sword")
 		.subSettings(displayIcon, new HeaderSetting(), newEntrySetting);
 
@@ -135,16 +137,21 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 		if (stackNBT == null)
 			return settingNBT == null;
 
-		NBTTagCompound cleanedStackNBT = (NBTTagCompound) stackNBT.copy();
-		cleanedStackNBT.removeTag("display");
-		cleanedStackNBT.removeTag("RepairCost");
+		stackNBT = (NBTTagCompound) stackNBT.copy();
+		NBTTagCompound cleanedStackNBT = new NBTTagCompound();
+		for (String s : stackNBT.getKeySet()) {
+			if (s.equals("display") || s.equals("RepairCost"))
+				continue;
+
+			NBTBase tag = stackNBT.getTag(s);
+			cleanedStackNBT.setTag(s, tag == null ? null : tag.copy());
+		}
 
 		return cleanedStackNBT.equals(settingNBT);
 	}
 
-	@Override
-	public void init() {
-		super.init();
+	@OnStartupComplete
+	public void initialize() {
 
 		ItemUtil.setLore(blockedIndicator, "§cEin Item im Inventar ist im Item-Saver!");
 
@@ -343,6 +350,9 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 	}
 
 	private boolean cancel(Packet<?> packet) {
+		if (player() == null)
+			return false;
+
 		ItemDisplaySetting setting = getSetting(player().getHeldItem());
 		if (setting == null)
 			return false;

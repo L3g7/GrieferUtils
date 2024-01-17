@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.event.events.griefergames.CityBuildJoinEvent;
+import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -49,8 +49,8 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 @Singleton
 public class PlotChatIndicator extends Feature {
 
-	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event");
-	private StringBuilder states = new StringBuilder(Strings.repeat("?", 26)); // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
+	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event", "CBT");
+	private StringBuilder states = new StringBuilder(Strings.repeat("?", 27)); // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
 
 	private Boolean plotchatState = null;
 	private boolean waitingForPlotchatStatus = false;
@@ -78,17 +78,19 @@ public class PlotChatIndicator extends Feature {
 		if (Config.has(path)) {
 			try {
 				states = new StringBuilder(Config.get(path).getAsString());
+				if (states.length() == 26)
+					states.append('?');
 				return;
 			} catch (UnsupportedOperationException ignored) {
 				// Fix for old configs
 			}
 		}
 
-		states = new StringBuilder(Strings.repeat("?", 26));
+		states = new StringBuilder(Strings.repeat("?", 27));
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onCityBuildJoin(CityBuildJoinEvent event) {
+	public void onCitybuildJoin(CitybuildJoinEvent event) {
 		String server = getServerFromScoreboard();
 		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser") || server.equals("Portal")) {
 			plotchatState = false;

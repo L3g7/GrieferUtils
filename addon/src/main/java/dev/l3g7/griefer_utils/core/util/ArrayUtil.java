@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,22 +106,4 @@ public class ArrayUtil {
 			.toArray((T[]) Array.newInstance(type, 0)));
 	}
 
-	public static byte[] merge(byte[]... arrays) {
-		// Compute array length
-		int length = 0;
-		for (byte[] array : arrays)
-			length += array.length;
-
-		// Create merged array
-		byte[] t = new byte[length];
-
-		// Fill merged array
-		int index = 0;
-		for (byte[] array : arrays) {
-			System.arraycopy(array, 0, t, index, array.length);
-			index += array.length;
-		}
-
-		return t;
-	}
 }

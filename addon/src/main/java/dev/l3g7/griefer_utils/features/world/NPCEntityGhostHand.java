@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -30,7 +29,6 @@ import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Timer;
 import net.minecraft.util.Vec3;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
@@ -49,7 +47,7 @@ public class NPCEntityGhostHand extends Feature {
 
 	@EventListener
 	public void onClick(MouseClickEvent.RightClickEvent event) {
-		if (world() == null)
+		if (world() == null || player() == null)
 			return;
 
 		// Don't intercept if targeted entity is a NPC
@@ -58,14 +56,9 @@ public class NPCEntityGhostHand extends Feature {
 
 		float reachDistance = mc().playerController.getBlockReachDistance();
 
-		Timer timer = Reflection.get(mc(), "timer");
-		float partialTicks = timer.renderPartialTicks;
-		Vec3 eyes = player().getPositionEyes(partialTicks);
-
-		// Check if block is in the way (Don't want to create a cheat xD)
-		MovingObjectPosition targetedBlock = mc().getRenderViewEntity().rayTrace(reachDistance, partialTicks);
-		if (targetedBlock != null && targetedBlock.typeOfHit != MovingObjectPosition.MovingObjectType.MISS)
-			return;
+		Vec3 eyes = player().getPositionEyes(partialTicks());
+		Vec3 entityHitPos = null;
+		Entity hitEntity = null;
 
 		for (Entity entity : world().loadedEntityList) {
 			if (!(entity instanceof EntityOtherPlayerMP))
@@ -76,19 +69,33 @@ public class NPCEntityGhostHand extends Feature {
 				continue;
 
 			// Check if entity is hit
-			Vec3 lookVec = player().getLook(partialTicks);
+			Vec3 lookVec = player().getLook(partialTicks());
 			Vec3 maxTracePos = eyes.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
 
 			float collisionSize = entity.getCollisionBorderSize();
 			AxisAlignedBB hitBox = entity.getEntityBoundingBox().expand(collisionSize, collisionSize, collisionSize);
 
-			MovingObjectPosition result = hitBox.calculateIntercept(eyes, maxTracePos);
+			MovingObjectPosition intercept = hitBox.calculateIntercept(eyes, maxTracePos);
+			if (intercept != null) {
+				entityHitPos = intercept.hitVec;
+				hitEntity = entity;
+				break;
+			}
+		}
 
-			if (result != null) {
-				mc().playerController.interactWithEntitySendPacket(player(), entity);
+		if (hitEntity == null)
+			return;
+
+		// Check if a block is in the way
+		MovingObjectPosition targetedBlock = mc().getRenderViewEntity().rayTrace(reachDistance, partialTicks());
+		if (targetedBlock != null && targetedBlock.typeOfHit != MovingObjectPosition.MovingObjectType.MISS) {
+			if (eyes.squareDistanceTo(targetedBlock.hitVec) < eyes.squareDistanceTo(entityHitPos)) {
+				// The block is in front of the npc
 				return;
 			}
 		}
+
+		mc().playerController.interactWithEntitySendPacket(player(), hitEntity);
 	}
 
 }

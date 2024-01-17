@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.misc.Constants.*;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.send;
+import static org.lwjgl.input.Keyboard.*;
 
 @Singleton
 public class SplitLongMessages extends Feature {
@@ -68,6 +69,11 @@ public class SplitLongMessages extends Feature {
 			return;
 
 		GuiTextField inputField = Reflection.get(event.gui, "inputField");
+		if (inputField.getText().length() <= 100 && (getEventKey() == KEY_UP || getEventKey() == KEY_DOWN)) {
+			Reflection.set(inputField, 0, "lineScrollOffset");
+			inputField.setCursorPositionEnd();
+		}
+
 		Reflection.set(inputField, 626, "width"); // Only accessible in Forge
 		if (event.gui instanceof GuiChatCustom) {
 			Object[] chatButtons = Reflection.get(event.gui, "chatButtons");

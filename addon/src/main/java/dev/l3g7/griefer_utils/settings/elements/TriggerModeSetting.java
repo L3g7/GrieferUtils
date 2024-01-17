@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
  */
 
 package dev.l3g7.griefer_utils.settings.elements;
+
+import dev.l3g7.griefer_utils.misc.Named;
 
 import java.util.function.Consumer;
 
@@ -52,7 +54,7 @@ public class TriggerModeSetting extends DropDownSetting<TriggerModeSetting.Trigg
 		return ((TriggerModeSetting) super.defaultValue(value));
 	}
 
-	public enum TriggerMode {
+	public enum TriggerMode implements Named {
 
 		HOLD("Halten"), TOGGLE("Umschalten");
 
@@ -61,6 +63,12 @@ public class TriggerModeSetting extends DropDownSetting<TriggerModeSetting.Trigg
 		TriggerMode(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 
 	}
 

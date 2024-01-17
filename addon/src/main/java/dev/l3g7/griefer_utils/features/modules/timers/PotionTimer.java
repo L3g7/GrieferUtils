@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -63,12 +64,14 @@ public class PotionTimer extends Module {
 
 	private final DropDownSetting<KeyMode> design = new DropDownSetting<>(KeyMode.class)
 		.name("Design")
+		.description("In welchem die Design die aktivierten Tränke angezeigt werden sollen.")
 		.icon("wooden_board")
 		.defaultValue(KeyMode.TEXT_AND_ICON)
 		.stringProvider(KeyMode::getName);
 
 	private final NumberSetting warnTime = new NumberSetting()
 		.name("Warn-Zeit für Fly Tränke (s)")
+		.description("Wie viele Sekunden vor dem Ablauf eines Fly-Tranks eine Warnung angezeigt werden soll.")
 		.icon("labymod:buttons/exclamation_mark");
 
 	private final BooleanSetting hide = new BooleanSetting()
@@ -257,7 +260,7 @@ public class PotionTimer extends Module {
 
 	}
 
-	private enum KeyMode {
+	private enum KeyMode implements Named {
 		ICON("Icon"),
 		TEXT("Text"),
 		TEXT_AND_ICON("Text & Icon");
@@ -268,9 +271,11 @@ public class PotionTimer extends Module {
 			this.name = name;
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
+
 	}
 
 }

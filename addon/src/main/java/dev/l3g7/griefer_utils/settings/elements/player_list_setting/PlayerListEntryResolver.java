@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,15 +111,13 @@ public class PlayerListEntryResolver {
 			JsonObject data = op.asJsonObject().orElseThrow(() -> new JsonParseException("Invalid response for " + entry.name));
 			entry.id = data.get("id").getAsString().replaceAll("(.{8})(.{4})(.{4})(.{4})(.{12})", "$1-$2-$3-$4-$5");
 		}
-
-		entry.loaded = true;
-
 		JsonObject profile = IOUtil.read("https://sessionserver.mojang.com/session/minecraft/profile/" + entry.id).asJsonObject().orElse(null);
 		if (profile == null) {
 			loadFromAshcon(entry);
 			return;
 		}
 
+		entry.loaded = true;
 		entry.name = profile.get("name").getAsString();
 
 		for (JsonElement element : profile.getAsJsonArray("properties")) {
@@ -130,7 +128,7 @@ public class PlayerListEntryResolver {
 
 			String url = JsonParse.parse(new String(Base64.getDecoder().decode(property.get("value").getAsString()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
 			BufferedImage img = IOUtil.readImage(url);
-			entry.slim = img.getHeight() == 32;
+			entry.oldSkin = img.getHeight() == 32;
 
 			TickScheduler.runAfterRenderTicks(() -> {
 				entry.skin = new DynamicTexture(img);
@@ -148,8 +146,8 @@ public class PlayerListEntryResolver {
 		entry.name = profile.get("username").getAsString();
 		entry.id = profile.get("uuid").getAsString();
 		entry.loaded = true;
-		entry.slim = profile.getAsJsonObject("texture").get("slim").getAsBoolean();
-		String skinData = profile.getAsJsonObject("texture").getAsJsonObject("skin").get("data").getAsString();
+		entry.oldSkin = profile.getAsJsonObject("textures").get("slim").getAsBoolean();
+		String skinData = profile.getAsJsonObject("textures").getAsJsonObject("skin").get("data").getAsString();
 		BufferedImage img = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(skinData)));
 
 		TickScheduler.runAfterRenderTicks(() -> {

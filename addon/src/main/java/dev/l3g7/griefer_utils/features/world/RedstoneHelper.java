@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,18 @@ package dev.l3g7.griefer_utils.features.world;
 
 import com.google.common.base.Strings;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
-import dev.l3g7.griefer_utils.event.NoteBlockPlayEvent;
-import dev.l3g7.griefer_utils.event.events.render.RedstoneParticleSpawnEvent;
+import dev.l3g7.griefer_utils.event.events.NoteBlockPlayEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.misc.WorldBlockOverlayRenderer;
-import dev.l3g7.griefer_utils.misc.WorldBlockOverlayRenderer.RenderObject;
-import dev.l3g7.griefer_utils.misc.WorldBlockOverlayRenderer.RenderObjectGenerator;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
+import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer;
+import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObject;
+import dev.l3g7.griefer_utils.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockDispenser;
@@ -43,8 +43,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
@@ -59,10 +65,12 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	private static final BooleanSetting showZeroPower = new BooleanSetting()
 		.name("0 anzeigen")
+		.description("Ob die Stärke-Anzeige auch angezeigt werden soll, wenn die Stärke 0 beträgt.")
 		.icon(REDSTONE);
 
 	private static final BooleanSetting showPower = new BooleanSetting()
 		.name("Redstone-Stärke anzeigen")
+		.description("Zeigt auf Redstone-Kabeln ihre derzeitige Stärke an.")
 		.icon(REDSTONE)
 		.subSettings(showZeroPower);
 
@@ -86,19 +94,20 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	private static final BooleanSetting showCauldronLevel = new BooleanSetting()
 		.name("Kessel-Füllstand anzeigen")
+		.description("Zeigt an einem Kessel seinen derzeitigen Füllstand an.")
 		.icon(CAULDRON_ITEM);
 
 	private static final NumberSetting range = new NumberSetting()
 		.name("Radius")
 		.description("Der Radius um den Spieler in Chunks, in dem die Informationen angezeigt werden."
-			+ "\n(-1 ist unendlich)"
-			+ "\n(Betrifft nicht Schematics)")
+			+ "\n(-1 ist unendlich)")
 		.defaultValue(-1)
 		.min(-1)
 		.icon(COMPASS);
 
-	private static final BooleanSetting hideRedstoneParticles = new BooleanSetting()
+	public static final BooleanSetting hideRedstoneParticles = new BooleanSetting()
 		.name("Redstone-Partikel verstecken")
+		.description("Versteckt die Partikel, die durch aktivertes Redstone erzeugt werden.")
 		.icon(REDSTONE)
 		.defaultValue(true);
 
@@ -113,11 +122,6 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	public void init() {
 		super.init();
 		WorldBlockOverlayRenderer.registerRenderObjectGenerator(this);
-	}
-
-	@Override
-	public int getRange() {
-		return range.get();
 	}
 
 	@Override
@@ -147,12 +151,6 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	}
 
 	@EventListener
-	public void onParticleSpawn(RedstoneParticleSpawnEvent event) {
-		if (hideRedstoneParticles.get())
-			event.cancel();
-	}
-
-	@EventListener
 	private void onNoteBlock(NoteBlockPlayEvent event) {
 		BlockPos pos = event.pos;
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
@@ -163,6 +161,17 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		map.put(pos, new TextRRO(showNoteBlockPitch, () -> showNoteId.get() ? String.valueOf(event.getVanillaNoteId()) : finalName));
 	}
 
+	@Mixin(BlockRedstoneWire.class)
+	private static class MixinBlockRedstoneWire {
+
+		@Inject(method = "randomDisplayTick", at = @At("HEAD"), cancellable = true)
+		private void injectRandomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand, CallbackInfo ci) {
+			if (FileProvider.getSingleton(RedstoneHelper.class).isEnabled() && hideRedstoneParticles.get())
+				ci.cancel();
+		}
+
+	}
+
 	private class Wire extends RenderObject {
 		private final int power;
 
@@ -171,8 +180,8 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 			this.power = power;
 		}
 
-		public void render(BlockPos pos, float partialTicks) {
-			if (!showPower.get())
+		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
+			if (!showPower.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
 				return;
 
 			if (power <= 0 && !showZeroPower.get())
@@ -204,8 +213,8 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 			this.isHopper = isHopper;
 		}
 
-		public void render(BlockPos pos, float partialTicks) {
-			if (!showDirection.get())
+		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
+			if (!showDirection.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
 				return;
 
 			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
@@ -270,8 +279,8 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		}
 
 		@Override
-		public void render(BlockPos pos, float partialTicks) {
-			if (!setting.get())
+		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
+			if (!setting.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
 				return;
 
 			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);

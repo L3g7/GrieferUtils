@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.features.chat.chat_reactor;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
+import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.misc.Citybuild;
 
 import java.util.regex.Matcher;
@@ -29,7 +29,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 public class ChatReaction {
 
-	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\\\(\\d+)");
+	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("(\\$\\$|\\$\\d+)");
 	private static final Pattern COLOR_PATTERN = Pattern.compile("(?<!\\\\)[§&][\\da-fk-or]");
 
 	boolean enabled;
@@ -37,7 +37,7 @@ public class ChatReaction {
 	boolean matchAll;
 	String trigger = "";
 	String command = "";
-	Citybuild cityBuild = Citybuild.ANY;
+	Citybuild citybuild = Citybuild.ANY;
 	boolean completed;
 
 	public ChatReaction() {}
@@ -50,7 +50,7 @@ public class ChatReaction {
 		object.addProperty("match_all", matchAll);
 		object.addProperty("trigger", trigger);
 		object.addProperty("command", command);
-		object.addProperty("city_build", cityBuild.getInternalName());
+		object.addProperty("city_build", citybuild.getInternalName());
 
 		return object;
 	}
@@ -62,7 +62,7 @@ public class ChatReaction {
 		reaction.matchAll = object.get("match_all").getAsBoolean();
 		reaction.trigger = object.get("trigger").getAsString();
 		reaction.command = object.get("command").getAsString();
-		reaction.cityBuild = Citybuild.getCitybuild(object.get("city_build").getAsString());
+		reaction.citybuild = Citybuild.getCitybuild(object.get("city_build").getAsString());
 		reaction.completed = true;
 		return reaction;
 	}
@@ -77,7 +77,7 @@ public class ChatReaction {
 
 		String command = this.command;
 		if (!regEx) {
-			if (matchAll ? trigger.equalsIgnoreCase(text) : text.toLowerCase().contains(trigger.toLowerCase()) && !MessageEvent.MessageSendEvent.post(command))
+			if (matchAll ? trigger.equalsIgnoreCase(text) : text.toLowerCase().contains(trigger.toLowerCase()) && !MessageSendEvent.post(command))
 				player().sendChatMessage(command);
 			return;
 		}
@@ -88,12 +88,14 @@ public class ChatReaction {
 			return;
 
 		Matcher replaceMatcher = PLACEHOLDER_PATTERN.matcher(command);
-
-		while (replaceMatcher.find())
-			command = command.replaceFirst(PLACEHOLDER_PATTERN.pattern(), matcher.group(Integer.parseInt(replaceMatcher.group(1))));
+		while (replaceMatcher.find()) {
+			String group = replaceMatcher.group(1).substring(1);
+			String replacement = group.equals("$") ? "\\$" : matcher.group(Integer.parseInt(group));
+			command = command.replaceFirst("\\$" + Pattern.quote(group), replacement);
+		}
 
 		command = command.replace('§', '&');
-		if (!MessageEvent.MessageSendEvent.post(command))
+		if (!MessageSendEvent.post(command))
 			player().sendChatMessage(command);
 	}
 

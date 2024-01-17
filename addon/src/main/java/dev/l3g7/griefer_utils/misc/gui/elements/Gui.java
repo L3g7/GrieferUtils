@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.misc.gui.elements;
 
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.gui.elements.SelectButtonGroup.Selectable;
 import net.labymod.utils.DrawUtils;
 import net.minecraft.client.Minecraft;
@@ -50,7 +51,7 @@ public class Gui extends GuiScreen {
 		return create(new SelectButtonGroup<>(placeholder, label, width));
 	}
 
-	public <T extends Enum<T>> DropDown<T> createDropDown(T placeholder, String label) {
+	public <T extends Enum<T> & Named> DropDown<T> createDropDown(T placeholder, String label) {
 		return create(DropDown.fromEnum(placeholder, label, width));
 	}
 

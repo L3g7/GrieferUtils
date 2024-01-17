@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,10 +37,11 @@ public class Earned extends Module {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Verdient")
-		.description("Zeigt dir, wie viel Geld du seit Minecraft-Start verdient hast.")
+		.description("Zeigt dir, wie viel Geld du seit deinem Minecraft-Start verdient hast.")
 		.icon("coin_pile")
 		.subSettings(new SmallButtonSetting()
 			.name("Zurücksetzen")
+			.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
 			.icon("arrow_circle")
 			.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
 			.callback(() -> {
@@ -56,11 +57,6 @@ public class Earned extends Module {
 	@Override
 	public String[] getDefaultValues() {
 		return new String[]{"0$"};
-	}
-
-	@Override
-	public boolean isShown() {
-		return !LabyMod.getInstance().isInGame() || ServerCheck.isOnGrieferGames();
 	}
 
 }

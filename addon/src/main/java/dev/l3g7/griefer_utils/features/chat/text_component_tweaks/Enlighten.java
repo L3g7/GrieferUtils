@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.chat.text_component_tweaks;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -37,20 +38,31 @@ public class Enlighten extends TextComponentTweak {
 
 	private final BooleanSetting enlightenLightGray = new BooleanSetting()
 		.name("Hellgrau aufhellen")
+		.description("Ob hellgraue Texte zu weißen aufgehellt werden soll.")
 		.icon(new ItemStack(Blocks.wool, 1, 8))
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final DropDownSetting<GrayMode> enlightenGray = new DropDownSetting<>(GrayMode.class)
 		.name("Grau zu ...")
+		.description("Zu welcher Farbe graue Texte aufgehellt werden soll.")
 		.icon(new ItemStack(Blocks.wool, 1, 7))
 		.defaultValue(GrayMode.GRAY)
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final DropDownSetting<BlackMode> enlightenBlack = new DropDownSetting<>(BlackMode.class)
 		.name("Schwarz zu ...")
+		.description("Zu welcher Farbe schwarze Texte aufgehellt werden soll.")
 		.icon(new ItemStack(Blocks.wool, 1, 15))
 		.defaultValue(BlackMode.BLACK)
 		.callback(TabListEvent::updatePlayerInfoList);
+
+	@Override
+	public void init() {
+		super.init();
+		chat.description("Ob Texte im Chat aufgehellt werden sollen.");
+		tab.description("Ob Texte in der Tabliste aufgehellt werden sollen.");
+		item.description("Ob Texte in Item-Beschreibungen aufgehellt werden sollen.");
+	}
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
@@ -104,7 +116,7 @@ public class Enlighten extends TextComponentTweak {
 		return new String(result).replaceAll("§[f70](§l)?\u2503", "§8$1\u2503"); // Don't enlighten delimiter
 	}
 
-	private enum GrayMode {
+	private enum GrayMode implements Named {
 
 		GRAY("Grau", EnumChatFormatting.DARK_GRAY),
 		LIGHT("Hellgrau", EnumChatFormatting.GRAY),
@@ -118,9 +130,14 @@ public class Enlighten extends TextComponentTweak {
 			this.formatting = formatting;
 		}
 
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
-	private enum BlackMode {
+	private enum BlackMode implements Named {
 
 		BLACK("Schwarz", EnumChatFormatting.BLACK),
 		GRAY("Grau", EnumChatFormatting.DARK_GRAY),
@@ -133,6 +150,11 @@ public class Enlighten extends TextComponentTweak {
 		BlackMode(String name, EnumChatFormatting formatting) {
 			this.name = name;
 			this.formatting = formatting;
+		}
+
+		@Override
+		public String getName() {
+			return name;
 		}
 
 	}

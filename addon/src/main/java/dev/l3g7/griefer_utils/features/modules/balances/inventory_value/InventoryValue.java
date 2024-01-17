@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.features.chat.Calculator;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiBigChest;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
@@ -89,7 +89,7 @@ public class InventoryValue extends Module {
 		if (Config.has(entryKey)) {
 			JsonObject entries = Config.get(entryKey).getAsJsonObject();
 			for (Map.Entry<String, JsonElement> entry : entries.entrySet())
-				list.add(new ItemDisplaySetting(ItemUtil.fromNBT(entry.getKey()), entry.getValue().getAsLong()));
+				list.add(new ItemDisplaySetting(entry.getKey(), entry.getValue().getAsLong()));
 		}
 
 		list.add(new EntryAddSetting()

@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.util.Util;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.features.Module;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
@@ -36,6 +37,7 @@ public class Chatlog extends Module {
 
 	private final DropDownSetting<TimeFormat> timeFormat = new DropDownSetting<>(TimeFormat.class)
 		.name("Zeitformat")
+		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
 		.icon("hourglass")
 		.config("modules.chatlog.time_format")
 		.defaultValue(TimeFormat.LONG);
@@ -90,7 +92,7 @@ public class Chatlog extends Module {
 		}
 	}
 
-	private enum TimeFormat {
+	private enum TimeFormat implements Named {
 		SHORT("Kurz"),
 		LONG("Lang");
 
@@ -98,5 +100,11 @@ public class Chatlog extends Module {
 		TimeFormat(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
+import net.labymod.ingamechat.tools.filter.Filters.Filter;
 
 @Singleton
 public class ChatFilterTemplates extends Feature {
@@ -39,6 +40,8 @@ public class ChatFilterTemplates extends Feature {
 		new FilterTemplate("Ausgehende Zahlung").contains(" gegeben.").containsNot("»", "->", ":", "[GrieferGames]", "hat dir"),
 		new FilterTemplate("MobRemover").contains("[MobRemover]").containsNot("»", "->", ":"),
 		new FilterTemplate("Clearlag").contains("auf dem Boden liegende Items entfernt!", "[GrieferGames] Warnung! Die auf dem Boden liegenden Items werden in").containsNot("»", "->", ":"),
+		new FilterTemplate("Greeting").contains("[Greeting]").containsNot("»").highlight(255, 0, 0),
+		new FilterTemplate("Farewell").contains("[Farewell]").containsNot("»").highlight(255, 0, 0),
 		new FilterTemplate("GrieferUtils").contains("[GrieferUtils]").containsNot("»")
 	};
 
@@ -59,6 +62,10 @@ public class ChatFilterTemplates extends Feature {
 		public final String name;
 		public String[] contains = new String[0];
 		public String[] containsNot = new String[0];
+		public boolean highlighting = false;
+		public short red = 200;
+		public short green = 200;
+		public short blue = 50;
 
 		private FilterTemplate(String name) {
 			this.name = name;
@@ -72,6 +79,18 @@ public class ChatFilterTemplates extends Feature {
 		public FilterTemplate containsNot(String... containsNot) {
 			this.containsNot = containsNot;
 			return this;
+		}
+
+		public FilterTemplate highlight(int red, int green, int blue) {
+			this.highlighting = true;
+			this.red = (short) red;
+			this.green = (short) green;
+			this.blue = (short) blue;
+			return this;
+		}
+
+		public Filter toFilter() {
+			return new Filter(name, contains, containsNot, false, "note.harp", highlighting, red, green, blue, false, !highlighting, false, "Global");
 		}
 
 	}

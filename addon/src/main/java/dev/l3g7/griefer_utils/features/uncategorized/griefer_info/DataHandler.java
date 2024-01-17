@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -31,8 +31,8 @@ import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.SpawnerT
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.FreeStuff;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.ItemFilter;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
-import dev.l3g7.griefer_utils.misc.WebAPI;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
+import dev.l3g7.griefer_utils.misc.server.WebAPI;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.item.ItemStack;
 

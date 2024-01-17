@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.BugReporter;
+import dev.l3g7.griefer_utils.features.uncategorized.BugReporter;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -47,12 +48,14 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard.getBankBalance;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 @Singleton
 public class Calculator extends Feature {
 
 	private final DropDownSetting<WithdrawAction> autoWithdraw = new DropDownSetting<>(WithdrawAction.class)
 		.name("Auto. abheben")
+		.description("Ob automatisch Geld abgehoben werden soll, wenn man nicht genügend für die gewünschte Bezahlung auf dem Konto hat.")
 		.icon("bank")
 		.defaultValue(WithdrawAction.SUGGEST);
 
@@ -89,7 +92,6 @@ public class Calculator extends Feature {
 
 	private final BooleanSetting placeholder = new BooleanSetting()
 		.name("Placeholder in Nachrichten")
-		.description("Ermöglicht in einer Nachricht eingebettete Gleichungen, indem sie mit {} eingerahmt werden.")
 		.icon("regex")
 		.defaultValue(true)
 		.subSettings(placeholderStart, placeholderEnd);
@@ -114,10 +116,12 @@ public class Calculator extends Feature {
 		.subSettings(decimalPlaces, new HeaderSetting(),
 			autoWithdraw, starPlaceholder, placeholder, autoEquationDetect, prefix);
 
-	private static Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(?<equation>[^}]*)}");
-	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?[km]* *[+\\-/*^ekm] *[+-]?\\d+(?:[.,]\\d+)?[km]*|[+-]?\\d+(?:[.,]\\d+)?[km]+)(?:(?= )|$)");
-	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay %s (?<amount>.+)", Constants.UNFORMATTED_PLAYER_NAME_PATTERN));
+	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:(?<= )|^)(?<equation>[+-]?\\d+(?:[.,]\\d+)?[km]* *[+\\-/*^ekm] *[+-]?\\d+(?:[.,]\\d+)?[km]*|[+-]?\\d+(?:[.,]\\d+)?[km]+)(?:(?= )|$)", CASE_INSENSITIVE);
+	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay %s (?<amount>.+)", Constants.UNFORMATTED_PLAYER_NAME_PATTERN), CASE_INSENSITIVE);
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
+
+	private static Pattern placeholderPattern = Pattern.compile("(?<!\\\\)\\{(?<equation>[^}]*[^\\\\])}");
+	private static String escapedPlaceholderPattern = "\\\\([{}])";
 	private BigDecimal lastPayment = BigDecimal.ZERO;
 	private String lastPaymentReceiver;
 
@@ -125,9 +129,22 @@ public class Calculator extends Feature {
 		if (placeholderStart.get().isEmpty() || placeholderEnd.get().isEmpty())
 			return;
 
-		String start = Pattern.quote(placeholderStart.get());
-		String end = Pattern.quote(placeholderEnd.get());
-		PLACEHOLDER_PATTERN = Pattern.compile(String.format("%s(?<equation>[^%s]*)%s", start, end, end));
+		String start = placeholderStart.get();
+		String end = placeholderEnd.get();
+		placeholder.description("Ermöglicht in einer Nachricht eingebettete Gleichungen, indem sie mit " + start + end + " eingerahmt werden, solange keines der Zeichen mit einem \\ escaped wurde.");
+
+		start = Pattern.quote(start);
+		end = Pattern.quote(end);
+		String patternEnd;
+
+		if (placeholderEnd.get().equals("\\"))
+			patternEnd = "\\\\]+)\\\\(?!\\\\)";
+		else
+			patternEnd = String.format("%s]*[^\\\\])%s", end, end);
+
+		placeholderPattern = Pattern.compile(String.format("(?<!\\\\)%s(?<equation>[^%s", start, patternEnd));
+		escapedPlaceholderPattern = String.format("\\\\(%s|%s)", start, end);
+
 	}
 
 	/**
@@ -200,7 +217,7 @@ public class Calculator extends Feature {
 		if (msg.startsWith(prefix.get().trim().toLowerCase() + " ")) {
 			event.cancel();
 
-			String message = event.message.substring(prefix.get().trim().length()).trim();
+			String message = msg.substring(prefix.get().trim().length()).trim();
 			double exp = calculate(message, true);
 			if (Double.isNaN(exp))
 				return;
@@ -232,7 +249,7 @@ public class Calculator extends Feature {
 		// If /bank abheben with the exact difference was sent and withdraw is SUGGEST
 		if (lastPaymentReceiver != null && msg.startsWith("/bank abheben")) {
 			BigDecimal moneyRequired = lastPayment.subtract(getCurrentBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
-			if (event.message.equalsIgnoreCase(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == WithdrawAction.SUGGEST) {
+			if (msg.equals(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == WithdrawAction.SUGGEST) {
 				// Wait 1 tick (chat screen still open)
 				TickScheduler.runAfterRenderTicks(() -> suggest("/pay %s %s", lastPaymentReceiver, lastPayment.stripTrailingZeros().toPlainString()), 1);
 				return;
@@ -242,14 +259,14 @@ public class Calculator extends Feature {
 		/* ****************** *
 		 *  Star placeholder  *
 		 * ****************** */
-		if (event.message.equalsIgnoreCase("/bank einzahlen *") && starPlaceholder.get()) {
+		if (msg.equals("/bank einzahlen *") && starPlaceholder.get()) {
 			if (getCurrentBalance().compareTo(THOUSAND) < 0)
 				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getCurrentBalance()).toPlainString());
 			else
 				send("/bank einzahlen %d", getCurrentBalance().setScale(0, RoundingMode.FLOOR).toBigInteger());
 			event.cancel();
 			return;
-		} else if (event.message.equalsIgnoreCase("/bank abheben *") && starPlaceholder.get()) {
+		} else if (msg.equals("/bank abheben *") && starPlaceholder.get()) {
 			if (getBankBalance() < 1000)
 				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", (1000 - getBankBalance()));
 			else
@@ -269,8 +286,20 @@ public class Calculator extends Feature {
 		 *    Equation   *
 		 * ************* */
 		if ((((autoEquationDetect.get() && ServerCheck.isOnGrieferGames()) || msg.startsWith("/pay ") || msg.startsWith("/bank ")) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
-			|| (placeholder.get() && evalEquations(PLACEHOLDER_PATTERN, event)))
+			|| (placeholder.get() && evalEquations(placeholderPattern, event))) {
 			event.cancel();
+			return;
+		}
+
+		if (!msg.contains("\\"))
+			return;
+
+		String unescapedMessage = event.message.replaceAll(escapedPlaceholderPattern, "$1");
+		if (event.message.equals(unescapedMessage))
+			return;
+
+		event.cancel();
+		send(unescapedMessage);
 	}
 
 	private boolean evalEquations(Pattern pattern, MessageSendEvent event) {
@@ -289,7 +318,7 @@ public class Calculator extends Feature {
 				// Don't calculate if equation is "24/7"
 				if (equation.equals("24/7")
 					&& !(event.message.startsWith("/pay ") || event.message.startsWith("/bank ")) // Calculate 24/7 in /pay and /bank
-					&& pattern != PLACEHOLDER_PATTERN) { // Calculate 24/7 if specified in placeholder
+					&& pattern != placeholderPattern) { // Calculate 24/7 if specified in placeholder
 					return false;
 				}
 
@@ -305,6 +334,9 @@ public class Calculator extends Feature {
 			// Fix symbols
 			if (msg.toLowerCase().startsWith("/pay") || msg.toLowerCase().startsWith("/bank"))
 				msg = msg.replace(".", "").replace(',', '.');
+
+			// Remove the backslash from escaped placeholder letters
+			msg = msg.replaceAll(escapedPlaceholderPattern, "$1");
 
 			send(msg);
 			return true;
@@ -354,7 +386,7 @@ public class Calculator extends Feature {
 		if (!exp.checkSyntax()) {
 			if (displayErrors) {
 				display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);
-				display("§c" + exp.getErrorMessage().trim());
+				display("§c" + exp.getErrorMessage().replace("\r", "").trim());
 			}
 			return Double.NaN;
 		}
@@ -402,7 +434,7 @@ public class Calculator extends Feature {
 		return builder.toString();
 	}
 
-	private enum WithdrawAction {
+	private enum WithdrawAction implements Named {
 
 		NONE("Nein"), SUGGEST("Vorschlagen"), SEND("Senden");
 
@@ -410,5 +442,11 @@ public class Calculator extends Feature {
 		WithdrawAction(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 }

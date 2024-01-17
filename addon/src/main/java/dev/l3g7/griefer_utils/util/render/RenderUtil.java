@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,13 @@
 
 package dev.l3g7.griefer_utils.util.render;
 
+import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.events.TickEvent.RenderTickEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderToolTipEvent;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -54,6 +58,16 @@ import static org.lwjgl.opengl.GL11.*;
 public class RenderUtil {
 
 	private static final RenderItem itemRender = mc().getRenderItem();
+	private static ScaledResolution scaledResolution = null;
+
+	@EventListener(priority = Priority.HIGH)
+	private static void onRenderTick(RenderTickEvent event) {
+		scaledResolution = new ScaledResolution(mc());
+	}
+
+	public static boolean shouldBeCulled(int minY, int maxY) {
+		return maxY < 0 || RenderUtil.scaledResolution.getScaledHeight() < minY;
+	}
 
 	/**
 	 * Renders an item with a given color tint.
@@ -152,6 +166,7 @@ public class RenderUtil {
 		tessellator.draw();
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();
+		GL11.glColor4f(1f, 1f, 1f, 1f);
 	}
 
 	public static void drawFilledBoxWhenRenderingStarted(AxisAlignedBB bb, boolean drawInside) {

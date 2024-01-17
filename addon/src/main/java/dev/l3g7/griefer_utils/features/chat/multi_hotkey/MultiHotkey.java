@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ public class MultiHotkey extends Feature {
 				}
 			}
 
-			HotkeyDisplaySetting hotKey = new HotkeyDisplaySetting(
+			HotkeyDisplaySetting hotKey = (HotkeyDisplaySetting) new HotkeyDisplaySetting(
 				data.get("name").getAsString(),
 				keys,
 				commands,
@@ -117,7 +117,7 @@ public class MultiHotkey extends Feature {
 			hotkey.commands.get().forEach(key -> commands.add(new JsonPrimitive(key)));
 			entry.add("commands", commands);
 
-			entry.addProperty("cb", hotkey.cityBuild.get().getDisplayName());
+			entry.addProperty("cb", hotkey.citybuild.get().getDisplayName());
 
 			array.add(entry);
 		}

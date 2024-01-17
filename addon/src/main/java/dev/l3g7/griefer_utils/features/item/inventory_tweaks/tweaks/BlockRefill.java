@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -92,7 +94,9 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onItemUse(ItemUseEvent.Post event) {
-		if (!refillBlocks.get() || !(event.stackBeforeUse.getItem() instanceof ItemBlock))
+		if (!refillBlocks.get() || !(event.stackBeforeUse.getItem() instanceof ItemBlock
+			|| (event.stackBeforeUse.getItem() == Items.dye && EnumDyeColor.byDyeDamage(event.stackBeforeUse.getMetadata()) == EnumDyeColor.BROWN)
+			|| event.stackBeforeUse.getItem() == Items.redstone))
 			return;
 
 		ItemStack previousStack = event.stackBeforeUse;

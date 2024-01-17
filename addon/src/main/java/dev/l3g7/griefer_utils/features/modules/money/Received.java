@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,17 +32,15 @@ import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.SmallButtonSetting;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
-import net.minecraft.util.IChatComponent;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.getNextServerRestart;
 import static java.math.BigDecimal.ZERO;
 
 @Singleton
 public class Received extends Module {
-
-	private static final int HOUR = 60 * 60 * 1000; // An hour, in milliseconds.
 
 	static BigDecimal moneyReceived = ZERO;
 	private long nextReset = -1;
@@ -56,7 +54,7 @@ public class Received extends Module {
 			if (!b)
 				nextReset = -1;
 			else
-				nextReset = getNextReset();
+				nextReset = getNextServerRestart();
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
 			Config.save();
 		});
@@ -77,19 +75,21 @@ public class Received extends Module {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Eingenommen")
-		.description("Zeigt dir, wie viel Geld du seit Minecraft-Start eingenommen hast.")
-		.icon("wallet_ingoing")
+		.description("Zeigt dir, wie viel Geld du seit deinem Minecraft-Start eingenommen hast.")
+		.icon("wallets/ingoing")
 		.subSettings(resetSetting, resetAfterRestart,
 			new SmallButtonSetting()
 				.name("Zurücksetzen")
+				.description("Setzt das eingenommene Geld zurück.")
 				.icon("arrow_circle")
 				.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-				.callback(() -> setBalance(ZERO, "single reset")),
+				.callback(() -> setBalance(ZERO)),
 			new SmallButtonSetting()
 				.name("Alles zurücksetzen")
+				.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
 				.icon("arrow_circle")
 				.buttonIcon(new IconData(ModTextures.BUTTON_TRASH))
-				.callback(() -> setBalance(Spent.setBalance(ZERO, "multi reset from received"), "multi reset from received"))
+				.callback(() -> setBalance(Spent.setBalance(ZERO)))
 		);
 
 	@Override
@@ -102,49 +102,36 @@ public class Received extends Module {
 		return new String[]{"0$"};
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
-			setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))), "msg: " + IChatComponent.Serializer.componentToJson(event.message));
+			setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
 	}
 
-	private long getNextReset() {
-		long time = System.currentTimeMillis();
-		long reset = time - time % (24 * HOUR) + (2 * HOUR); // Get timestamp for 02:00 UTC on the current day
-
-		if (System.currentTimeMillis() > reset)
-			reset += 24 * HOUR; // When it's already after 02:00 UTC, the next reset is 24h later
-
-		return reset;
-	}
-
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onTick(TickEvent.ClientTickEvent tickEvent) {
 		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
-			nextReset = getNextReset();
+			nextReset = getNextServerRestart();
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
-			setBalance(ZERO, "reset");
+			setBalance(ZERO);
 			Config.save();
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.money.data." + mc.getSession().getProfile().getId() + ".";
 
 		if (Config.has(path + "received") && !resetAfterRestart.get())
-			setBalance(BigDecimal.valueOf(Config.get(path + "received").getAsLong()), "loaded from config: " + path + ": " + Config.get(path + "received").toString());
+			setBalance(BigDecimal.valueOf(Config.get(path + "received").getAsLong()));
 		if (Config.has(path + "next_reset")) {
 			nextReset = Config.get(path + "next_reset").getAsLong();
 			resetSetting.set(nextReset != -1);
 		}
 	}
 
-	protected static BigDecimal setBalance(BigDecimal newValue, String log) {
-		// Temporary, used to debug why the money modules are hallucinating
-		System.out.printf("Received value changed from %f to %f, stored as %s: %s%n", moneyReceived.doubleValue(), newValue.doubleValue(), new JsonPrimitive(newValue), log);
-
+	protected static BigDecimal setBalance(BigDecimal newValue) {
 		moneyReceived = newValue;
 		if (!resetAfterRestart.get()) {
 			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".received", new JsonPrimitive(moneyReceived));

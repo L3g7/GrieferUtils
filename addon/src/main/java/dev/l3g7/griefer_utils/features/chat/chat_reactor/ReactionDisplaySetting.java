@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class ReactionDisplaySetting extends BooleanSetting {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		setDisplayName(displayName);
 
-		String cb = "§e[" + MinecraftUtil.getCityBuildAbbreviation(reaction.cityBuild.getDisplayName()) + "] ";
+		String cb = "§e[" + MinecraftUtil.getCitybuildAbbreviation(reaction.citybuild.getDisplayName()) + "] ";
 		int cbWidth = drawUtils().getStringWidth(cb);
 
 		String trimmedTrigger = drawUtils().trimStringToWidth(reaction.trigger, maxX - x - 25 - 79);
@@ -79,8 +79,4 @@ public class ReactionDisplaySetting extends BooleanSetting {
 		drawUtils().drawTexture(maxX - 66 - (editHovered ? 4 : 3), y + (editHovered ? 3.5 : 4.5), 256, 256, editHovered ? 16 : 14, editHovered ? 16 : 14);
 	}
 
-	@Override
-	public int getObjectWidth() {
-		return super.getObjectWidth();
-	}
 }

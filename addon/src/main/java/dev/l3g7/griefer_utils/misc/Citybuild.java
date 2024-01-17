@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import static net.minecraft.init.Blocks.*;
 import static net.minecraft.init.Items.*;
 
-public enum Citybuild implements DropDown.ItemEnum {
+public enum Citybuild implements DropDown.ItemEnum, Named {
 
 	ANY(nether_star, "Egal","Egal"),
 
@@ -64,12 +64,12 @@ public enum Citybuild implements DropDown.ItemEnum {
 	LAVA(lava_bucket, "nether1", "Lava", "l"),
 	EVENT(beacon, "eventserver", "Event", "v");
 
-	Citybuild(Block block, int cityBuildId) {
-		this(block, "cb" + cityBuildId, "Citybuild " + cityBuildId);
+	Citybuild(Block block, int citybuildId) {
+		this(block, "cb" + citybuildId, "Citybuild " + citybuildId);
 	}
 
-	Citybuild(Block block, int meta, int cityBuildId) {
-		this(block, meta, "cb" + cityBuildId, "Citybuild " + cityBuildId);
+	Citybuild(Block block, int meta, int citybuildId) {
+		this(block, meta, "cb" + citybuildId, "Citybuild " + citybuildId);
 	}
 
 	Citybuild(Item item, String internalName, String displayName, String... aliases) {
@@ -167,6 +167,11 @@ public enum Citybuild implements DropDown.ItemEnum {
 				return true;
 
 		return cb.equalsIgnoreCase(displayName) || cb.equalsIgnoreCase(internalName) || name().equalsIgnoreCase(cb);
+	}
+
+	@Override
+	public String getName() {
+		return displayName;
 	}
 
 }

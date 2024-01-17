@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.event.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.FeatureCategory;
 import dev.l3g7.griefer_utils.features.modules.BlockInfo;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiBigChest;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -107,7 +107,7 @@ public class ItemInfo extends Feature {
 
 	public static abstract class ItemInfoSupplier {
 
-		protected SettingsElement mainElement;
+		public SettingsElement mainElement;
 
 		protected SettingsElement init(String parentConfigKey) {
 			return mainElement = ElementBuilder.initMainElement(this, parentConfigKey).getLeft();

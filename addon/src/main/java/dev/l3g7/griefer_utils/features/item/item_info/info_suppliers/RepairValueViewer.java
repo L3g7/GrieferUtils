@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class RepairValueViewer extends ItemInfo.ItemInfoSupplier {
 
 	private final StringSetting format = new StringSetting()
 		.name("Format")
-		.description("Zeigt unter einem Item seinen Reparaturwert (wie viele XP-Level eine Reparatur mindestens kostet) an.")
+		.description("In welchem Format der Reparaturwert angezeigt werden soll.\n(\\n wird durch einen Zeilenumbruch und %s durch den Reparaturwert ersetzt)")
 		.icon(Material.EMPTY_MAP)
 		.defaultValue("\\n&7Reparaturwert: %s")
 		.setValidator(v -> {

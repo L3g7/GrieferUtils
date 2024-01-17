@@ -1,9 +1,9 @@
 /*
- * This file is part of GrieferUtils https://github.com/L3g7/GrieferUtils.
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
- * Licensed under the Apache License, Version 2.0 the "License";
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -18,6 +18,7 @@
 
 package dev.l3g7.griefer_utils.util;
 
+import com.github.lunatrius.schematica.Schematica;
 import com.github.lunatrius.schematica.api.ISchematic;
 import com.github.lunatrius.schematica.client.renderer.RenderSchematic;
 import com.github.lunatrius.schematica.proxy.ClientProxy;
@@ -25,9 +26,13 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
+import java.io.File;
+
 import static com.github.lunatrius.schematica.proxy.ClientProxy.schematic;
 
 public class SchematicaUtil {
+
+	public static final File MATERIAL_FILE = new File(Schematica.proxy.getDirectory("dumps"), "Schematica-materials.txt");
 
 	public static WorldClient getWorld() {
 		return schematic;

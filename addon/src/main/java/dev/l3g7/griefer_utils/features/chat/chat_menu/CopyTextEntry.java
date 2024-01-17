@@ -1,7 +1,7 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
  *
- * Copyright 2020-2023 L3g7
+ * Copyright 2020-2024 L3g7
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu;
 
 import dev.l3g7.griefer_utils.core.misc.functions.Function;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.util.ChatLineUtil;
@@ -72,7 +73,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 		return mainSetting;
 	}
 
-	private enum CopyFormat {
+	private enum CopyFormat implements Named {
 		UNFORMATTED("Unformattiert", icc -> icc.getUnformattedText().replaceAll("§.", "")),
 		FORMATTED("Formattiert", IChatComponent::getFormattedText),
 		JSON("JSON", IChatComponent.Serializer::componentToJson);
@@ -83,6 +84,11 @@ public class CopyTextEntry extends ChatMenuEntry {
 		CopyFormat(String name, Function<IChatComponent, String> componentToString) {
 			this.name = name;
 			this.componentToString = componentToString;
+		}
+
+		@Override
+		public String getName() {
+			return name;
 		}
 
 	}

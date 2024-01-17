@@ -32,6 +32,7 @@ import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.util.render.AsyncSkullRenderer;
 import net.labymod.settings.elements.ControlElement;
 import net.minecraft.init.Items;
@@ -95,7 +96,10 @@ public class GrieferInfo extends Feature {
 		String player = event.itemStack.getTagCompound().getString("Player");
 
 		Optional<String> profileLink = profileLinks.get(player).getNow(Optional.empty());
-		Util.openWebsite(profileLink.orElse("https://griefer.info/profile?keyword=" + player));
+		if (profileLink.isPresent() && profileLink.get().isEmpty())
+			MinecraftUtil.displayAchievement("§e§lFehler \u26A0", "§eDieser Spieler hat kein Profil!");
+		else
+			Util.openWebsite(profileLink.orElse("https://griefer.info/profile?keyword=" + player));
 	}
 
 }

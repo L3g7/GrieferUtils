@@ -24,7 +24,8 @@ import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.*;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import net.labymod.utils.Material;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
@@ -43,7 +44,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
+import static dev.l3g7.griefer_utils.settings.elements.BooleanSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 @Singleton
@@ -54,24 +55,6 @@ public class LightLevelOverlay extends Feature {
 	private final double[] textureX = new double[17];
 	private final double[] textureY = new double[9];
 	private int passedTicks = 0;
-
-	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
-		.description("Halten: Zeigt das Lichtlevel an, während die Taste gedrückt wird.\nUmschalten: Schaltet das Anzeigen des Lichtlevels um, wenn die Taste gedrückt wird.")
-		.callback(() -> {
-			if (getMainElement() != null)
-				((BooleanSetting) getMainElement()).set(false);
-		});
-
-	private final KeySetting key = new KeySetting()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der das Lichtlevel angezeigt wird.")
-		.pressCallback(p -> {
-			if (p || triggerMode.get() == HOLD) {
-				BooleanSetting enabled = ((BooleanSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
 
 	private final NumberSetting range = new NumberSetting()
 		.name("Radius")
@@ -90,7 +73,8 @@ public class LightLevelOverlay extends Feature {
 		.name("Lichtlevel anzeigen")
 		.description("Zeigt das Lichtlevel auf Blöcken an.")
 		.icon("light_bulb")
-		.subSettings(key, triggerMode, new HeaderSetting(), range, updateDelay);
+		.subSettings(range, updateDelay)
+		.addHotkeySetting("das Anzeigen des Lichtlevels", TOGGLE);
 
 	public LightLevelOverlay() {
 		for (int i = 0; i <= 16; i++)

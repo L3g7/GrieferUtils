@@ -24,7 +24,6 @@ import dev.l3g7.griefer_utils.event.events.render.RenderBarrierCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import net.labymod.utils.Material;
 
 /**
@@ -33,23 +32,12 @@ import net.labymod.utils.Material;
 @Singleton
 public class ShowBarriers extends Feature {
 
-	private final KeySetting key = new KeySetting()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der das Anzeigen von Barrien an-/ausgeschalten wird.")
-		.pressCallback(pressed -> {
-			if (pressed) {
-				BooleanSetting enabled = ((BooleanSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
-
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Barrieren anzeigen")
 		.description("Fügt Partikel bei Barrieren-Blöcken hinzu.")
 		.icon(Material.BARRIER)
-		.subSettings(key);
+		.addHotkeySetting("das Anzeigen von Barrieren", null);
 
 	@EventListener
 	public void onDisplayNameRender(RenderBarrierCheckEvent event) {

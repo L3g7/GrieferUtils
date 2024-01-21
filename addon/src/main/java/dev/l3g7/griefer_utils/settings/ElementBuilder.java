@@ -21,6 +21,7 @@ package dev.l3g7.griefer_utils.settings;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.util.Util;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
@@ -200,7 +201,14 @@ public interface ElementBuilder<S extends SettingsElement & ElementBuilder<S>> {
 			Field field = Arrays.stream(Reflection.getAllFields(owner.getClass()))
 				.filter(f -> Reflection.get(owner, f) == element)
 				.findFirst()
-				.orElseThrow(() -> elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.getDisplayName() + " in " + owner));
+				.orElseGet(() -> {
+					if (parent instanceof BooleanSetting)
+						return ((BooleanSetting) parent).getSettingField(element);
+					return null;
+				});
+
+			if (field == null)
+				throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.getDisplayName() + " in " + owner);
 
 			if (field.getName().equals("value"))
 				throw elevate(new IllegalStateException(), field + " has an illegal name!");

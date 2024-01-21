@@ -29,7 +29,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.settings.elements.player_list_setting.PlayerListSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.minecraft.entity.Entity;
@@ -47,17 +46,6 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
 public class PlayerHider extends Feature {
 
 	private static final List<String> BLOCKED_SOUNDS = Arrays.asList("random.eat", "random.burp", "random.drink");
-
-	private final KeySetting key = new KeySetting()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der das Verstecken von Spielern an-/ausgeschalten wird.")
-		.pressCallback(pressed -> {
-			if (pressed) {
-				BooleanSetting enabled = ((BooleanSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
 
 	private final BooleanSetting showNPCs = new BooleanSetting()
 		.name("NPCs zeigen")
@@ -83,7 +71,8 @@ public class PlayerHider extends Feature {
 				for (EntityPlayer player : world().playerEntities)
 					updatePlayer(player);
 		})
-		.subSettings(key, showNPCs, new HeaderSetting("Ausgenommene Spieler"), excludedPlayers);
+		.subSettings(showNPCs, new HeaderSetting("Ausgenommene Spieler"), excludedPlayers)
+		.addHotkeySetting("das Verstecken von Spielern", null);
 
 	{ excludedPlayers.setContainer(enabled); }
 

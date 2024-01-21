@@ -26,7 +26,6 @@ import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
@@ -38,23 +37,12 @@ public class FullBright extends Feature {
 
 	private static final String GAMMA_PATH = "render.full_bright.old_gamma_value";
 
-	private final KeySetting key = new KeySetting()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der FullBright an-/ausgeschalten wird.")
-		.pressCallback(pressed -> {
-			if (pressed) {
-				BooleanSetting enabled = ((BooleanSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
-
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("FullBright")
 		.description("Stellt den Gammawert auf 10.")
 		.icon("light_bulb")
-		.subSettings(key)
+		.addHotkeySetting("FullBright", null)
 		.callback(active -> {
 			if (active) {
 				float gamma = mc().gameSettings.gammaSetting;

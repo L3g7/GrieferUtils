@@ -30,9 +30,6 @@ import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChes
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.KeySetting;
-import dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
 
@@ -40,7 +37,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
+import static dev.l3g7.griefer_utils.settings.elements.BooleanSetting.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
 @Singleton
@@ -53,32 +50,12 @@ public class ItemInfo extends Feature {
 		.map(ItemInfoSupplier.class::cast)
 		.collect(Collectors.toList());
 
-	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
-		.description("Halten: Zeigt die Item-Infos an, während die Taste gedrückt wird.\nUmschalten: Schaltet das Anzeigen der Item-Infos um, wenn die Taste gedrückt wird.")
-		.defaultValue(HOLD)
-		.callback(() -> {
-			if (getMainElement() != null)
-				((BooleanSetting) getMainElement()).set(false);
-		});
-
-	private final KeySetting key = new KeySetting()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der die Item-Infos angezeigt werden.")
-		.triggersInContainers()
-		.pressCallback(p -> {
-			if (p || triggerMode.get() == HOLD) {
-				BooleanSetting enabled = ((BooleanSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
-
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Item-Infos")
 		.description("Zeigt unterschiedliche Informationen unter einem Item an.")
 		.icon("info")
-		.subSettings(key, triggerMode, new HeaderSetting());
+		.addHotkeySetting("die Item-Infos", HOLD);
 
 	@Override
 	public void init() {

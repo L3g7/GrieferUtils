@@ -16,12 +16,14 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.recraft;
+package dev.l3g7.griefer_utils.features.item.recraft.recipe;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
-import dev.l3g7.griefer_utils.features.item.recraft.Action.Ingredient;
+import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.client.gui.GuiScreen;
@@ -35,7 +37,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 /**
  * @author Pleezon, L3g73
  */
-class RecraftRecorder {
+public class RecipeRecorder {
 
 	private static RecraftRecording recording = Recraft.tempRecording;
 	private static GuiScreen previousScreen = null;
@@ -49,7 +51,7 @@ class RecraftRecorder {
 			return;
 		}
 
-		RecraftRecorder.recording = recording;
+		RecipeRecorder.recording = recording;
 		previousScreen = mc().currentScreen;
 		addedIcon = false;
 		executedCommand = true;
@@ -59,19 +61,20 @@ class RecraftRecorder {
 	@EventListener
 	private static void onMessageSend(PacketSendEvent<C01PacketChatMessage> event) {
 		String lowerMsg = event.packet.getMessage().toLowerCase();
-		if (!RecraftPlayer.isPlaying() && (lowerMsg.equals("/rezepte") || lowerMsg.startsWith("/rezepte ")))
+		if (!Recraft.isPlaying() && (lowerMsg.equals("/rezepte") || lowerMsg.startsWith("/rezepte ")))
 			executedCommand = true;
 	}
 
 	@EventListener
 	private static void onGuiOpen(GuiOpenEvent<?> event) {
-		if (RecraftPlayer.isPlaying())
+		if (Recraft.isPlaying())
 			return;
 
 		if (event.gui instanceof GuiChest) {
 			if (executedCommand) {
 				isMenuOpen = true;
 				recording.actions.clear();
+				recording.craft.set(false);
 				executedCommand = false;
 			}
 			return;
@@ -107,12 +110,12 @@ class RecraftRecorder {
 		if (packet.getSlotId() > 53) {
 			Ingredient ingredient = Ingredient.fromItemStack(packet.getClickedItem());
 			if (ingredient != null)
-				recording.actions.add(new Action(ingredient));
+				recording.actions.add(new RecipeAction(ingredient));
 			return;
 		}
 
 		if (!isCrafting || player().openContainer.windowId != packet.getWindowId()) {
-			recording.actions.add(new Action(packet.getSlotId(), null));
+			recording.actions.add(new RecipeAction(packet.getSlotId(), null));
 			return;
 		}
 
@@ -127,7 +130,7 @@ class RecraftRecorder {
 		if (packet.getMode() == 1)
 			slot = -slot;
 
-		recording.actions.add(new Action(slot, Action.SizedIngredient.fromIngredients(ingredients)));
+		recording.actions.add(new RecipeAction(slot, RecipeAction.SizedIngredient.fromIngredients(ingredients)));
 	}
 
 }

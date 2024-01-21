@@ -16,13 +16,15 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.recraft;
+package dev.l3g7.griefer_utils.features.item.recraft.recipe;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.misc.Constants;
 import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketSendEvent;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
@@ -36,11 +38,11 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 /**
  * @author Pleezon, L3g73
  */
-class RecraftPlayer {
+public class RecipePlayer {
 
-	private static Queue<Action> pendingActions;
+	private static Queue<RecipeAction> pendingActions;
 	private static boolean closeGui = false;
-	private static Action actionBeingExecuted = null;
+	private static RecipeAction actionBeingExecuted = null;
 
 	public static void play(RecraftRecording recording) {
 		if (world() == null || !mc().inGameHasFocus)
@@ -56,7 +58,9 @@ class RecraftPlayer {
 			return;
 		}
 
-		pendingActions = new LinkedList<>(recording.actions);
+		pendingActions = new LinkedList<>();
+		for (RecraftAction action : recording.actions)
+			pendingActions.add((RecipeAction) action);
 
 		player().sendChatMessage("/rezepte");
 	}
@@ -97,7 +101,7 @@ class RecraftPlayer {
 		}, 1);
 	}
 
-	private static void executeAction(Action action, int windowId, boolean hasSucceeded) {
+	private static void executeAction(RecipeAction action, int windowId, boolean hasSucceeded) {
 		actionBeingExecuted = action;
 		if (handleErrors(action.execute(windowId, hasSucceeded), windowId, hasSucceeded))
 			return;

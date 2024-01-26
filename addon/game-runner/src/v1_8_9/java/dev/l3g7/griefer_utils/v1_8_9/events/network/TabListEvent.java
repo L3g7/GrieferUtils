@@ -108,7 +108,7 @@ public class TabListEvent extends Event {
 
 				// Update values
 				cachedNames.put(data.getProfile().getId(), data.getDisplayName());
-				Reflection.set(data, tabListEvent.component, "displayName");
+				Reflection.set(data, "displayName", tabListEvent.component);
 			}
 		}
 

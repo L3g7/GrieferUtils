@@ -254,7 +254,7 @@ public class BetterSign extends Feature {
 		}
 
 		private void setEditLine(int editLine) {
-			Reflection.set(this, editLine, "editLine");
+			Reflection.set(this, "editLine", editLine);
 		}
 
 	}

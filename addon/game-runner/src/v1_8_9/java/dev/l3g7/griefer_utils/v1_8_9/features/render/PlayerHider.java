@@ -137,7 +137,7 @@ public class PlayerHider extends Feature {
 
 		// Fire
 		if (player.isImmuneToFire() != hidden)
-			Reflection.set(player, hidden, "isImmuneToFire");
+			Reflection.set(player, "isImmuneToFire", hidden);
 
 		if (hidden) {
 			player.setSprinting(false); // hide sprinting particles

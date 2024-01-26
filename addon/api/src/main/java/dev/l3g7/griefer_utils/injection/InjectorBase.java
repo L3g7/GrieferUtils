@@ -40,7 +40,7 @@ public class InjectorBase {
 			Class<?> mxInfoClass = Class.forName("org.spongepowered.asm.mixin.transformer.MixinInfo");
 			IMixinService classLoaderUtil0 = Reflection.get(mxInfoClass, "classLoaderUtil");
 			Object classLoaderUtil = Reflection.get(classLoaderUtil0, "classLoaderUtil");
-			Reflection.set(classLoaderUtil, new ConcurrentHashMap<>(), "cachedClasses");
+			Reflection.set(classLoaderUtil, "cachedClasses", new ConcurrentHashMap<>());
 		} catch (Throwable ignored) {}
 
 		// Load transformers

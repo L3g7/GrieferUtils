@@ -42,7 +42,7 @@ public class Util {
 		if (throwable.getMessage() != null)
 			formattedMessage += " (" + throwable.getMessage() + ")";
 
-		Reflection.set(throwable, formattedMessage, "detailMessage");
+		Reflection.set(throwable, "detailMessage", formattedMessage);
 		return throwable;
 	}
 

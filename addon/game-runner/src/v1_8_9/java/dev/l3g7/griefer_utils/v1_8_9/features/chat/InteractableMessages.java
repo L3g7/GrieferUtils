@@ -146,7 +146,7 @@ public class InteractableMessages extends Feature {
 			if (i >= startIndex && i + len <= endIndex) { // The entire component is part of the command
 				c.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, command));
 			} else if (i <= startIndex && len + i > startIndex) { // Command is at the end
-				Reflection.set(c, text.substring(0, startIndex - i), "text");
+				Reflection.set(c, "text", text.substring(0, startIndex - i));
 				IChatComponent commandComponent = new ChatComponentText(text.substring(startIndex - i));
 				commandComponent.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, command));
 				commandComponent.getChatStyle().setParentStyle(c.getChatStyle());
@@ -159,7 +159,7 @@ public class InteractableMessages extends Feature {
 			if (i + len >= endIndex) {
 				int index = i >= startIndex ? endIndex : startIndex;
 				if (i + len > index) { // Command is at the start
-					Reflection.set(c, text.substring(0, index - i), "text");
+					Reflection.set(c, "text", text.substring(0, index - i));
 					IChatComponent postComponent = new ChatComponentText(text.substring(index - i));
 					postComponent.setChatStyle(style);
 					c.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, command));

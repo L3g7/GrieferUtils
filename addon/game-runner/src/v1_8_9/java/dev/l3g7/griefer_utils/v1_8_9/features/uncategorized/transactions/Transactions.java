@@ -228,7 +228,7 @@ public class Transactions extends Feature {
 					return text.contains(filter.toLowerCase());
 				})
 				.forEach(listedElementsStored::add);
-			Reflection.set(mc().currentScreen, listedElementsStored, "listedElementsStored");
+			Reflection.set(mc().currentScreen, "listedElementsStored", listedElementsStored);
 		}, 1);
 	}
 

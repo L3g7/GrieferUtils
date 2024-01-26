@@ -179,7 +179,7 @@ public class OrbSellerFix extends Feature {
 
 		// Add seller to tab list, required for the S0CPacketSpawnPlayer and the skin
 		S38PacketPlayerListItem s38 = new S38PacketPlayerListItem();
-		Reflection.set(s38, ADD_PLAYER, "action");
+		Reflection.set(s38, "action", ADD_PLAYER);
 		s38.getEntries().add(s38.new AddPlayerData(gp, 0, WorldSettings.GameType.SURVIVAL, new ChatComponentText("§6Händler")));
 		s38.processPacket(mc().getNetHandler());
 
@@ -193,7 +193,7 @@ public class OrbSellerFix extends Feature {
 		world().getEntityByID(id).setRotationYawHead(yaw);
 
 		// Remove player from tab list
-		Reflection.set(s38, S38PacketPlayerListItem.Action.REMOVE_PLAYER, "action");
+		Reflection.set(s38, "action", S38PacketPlayerListItem.Action.REMOVE_PLAYER);
 		s38.processPacket(mc().getNetHandler());
 		adding = false;
 	}

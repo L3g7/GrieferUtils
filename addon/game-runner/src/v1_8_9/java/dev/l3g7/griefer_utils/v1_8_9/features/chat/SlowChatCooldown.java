@@ -119,7 +119,7 @@ public class SlowChatCooldown extends Feature {
 		if (originalDisplayEnd > System.currentTimeMillis()) {
 			mc().ingameGUI.setRecordPlaying(originalMessage, false);
 			int time = (int) ((originalDisplayEnd - System.currentTimeMillis()) / 50);
-			Reflection.set(mc().ingameGUI, time, "recordPlayingUpFor");
+			Reflection.set(mc().ingameGUI, "recordPlayingUpFor", time);
 		}
 	}
 

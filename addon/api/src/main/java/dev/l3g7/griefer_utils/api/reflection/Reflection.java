@@ -55,7 +55,7 @@ public class Reflection {
 	/**
 	 * Sets the value of a field.
 	 */
-	public static void set(Object target, Object value, String name) {
+	public static void set(Object target, String name, Object value) {
 		FieldReflection.set(target, value, name);
 	}
 

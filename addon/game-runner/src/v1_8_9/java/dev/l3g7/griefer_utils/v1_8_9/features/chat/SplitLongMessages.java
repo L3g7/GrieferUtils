@@ -62,11 +62,11 @@ public class SplitLongMessages extends Feature {
 
 		GuiTextField inputField = Reflection.get(event.gui, "inputField");
 		if (inputField.getText().length() <= 100 && (getEventKey() == KEY_UP || getEventKey() == KEY_DOWN)) {
-			Reflection.set(inputField, 0, "lineScrollOffset");
+			Reflection.set(inputField, "lineScrollOffset", 0);
 			inputField.setCursorPositionEnd();
 		}
 
-		Reflection.set(inputField, 626, "width"); // Only accessible in Forge
+		Reflection.set(inputField, "width", 626); // Only accessible in Forge
 		/*
 		// TODO: if (event.gui instanceof GuiChatCustom) {
 			Object[] chatButtons = Reflection.get(event.gui, "chatButtons");

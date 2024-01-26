@@ -296,7 +296,7 @@ public class SelfDisguise extends Feature {
 					return;
 
 				IBlockState blockState = Block.getBlockFromName(material).getDefaultState();
-				Reflection.set(currentDisguise, blockState, "fallTile");
+				Reflection.set(currentDisguise, "fallTile", blockState);
 			} else if (currentDisguise instanceof EntityHorse) {
 				if (args.remove("saddled", null))
 					((EntityHorse) currentDisguise).setHorseSaddled(true);

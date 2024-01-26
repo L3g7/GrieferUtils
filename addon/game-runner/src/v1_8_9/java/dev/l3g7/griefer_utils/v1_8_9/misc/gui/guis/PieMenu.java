@@ -108,7 +108,7 @@ public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("gri
 		}
 
 		// Prevent mining / attacking
-		Reflection.set(mc(), 2, "leftClickCounter");
+		Reflection.set(mc(), "leftClickCounter", 2);
 
 		double radiusMouseBorder = DrawUtils.getHeight() / 12d;
 		double midX = DrawUtils.getWidth() / 2d;

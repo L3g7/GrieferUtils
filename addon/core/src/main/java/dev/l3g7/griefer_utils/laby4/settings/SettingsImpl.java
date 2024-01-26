@@ -42,7 +42,7 @@ import static dev.l3g7.griefer_utils.laby4.bridges.ItemBridge.itemBridge;
 public class SettingsImpl implements Settings {
 
 	public static <T extends Widget> void hookChildAdd(AbstractWidget<T> w, Consumer<T> callback) {
-		Reflection.set(w, new ArrayList<>(w.getChildren()) {
+		Reflection.set(w, "children", new ArrayList<>(w.getChildren()) {
 			public void add(int index, T element) {
 				super.add(index, element);
 				try {
@@ -51,7 +51,7 @@ public class SettingsImpl implements Settings {
 					e.printStackTrace();
 				}
 			}
-		}, "children");
+		});
 	}
 
 	public static Icon buildIcon(Object icon) {

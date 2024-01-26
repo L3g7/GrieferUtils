@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.api.Laby;
 import net.labymod.api.addon.LoadedAddon;
 import net.labymod.api.event.Subscribe;
-import net.labymod.api.event.addon.lifecycle.AddonEnableEvent;
+import net.labymod.api.event.addon.lifecycle.AddonPostEnableEvent;
 import net.labymod.api.models.addon.annotation.AddonMain;
 
 @AddonMain
@@ -31,7 +31,7 @@ public class Main {
 	}
 
 	@Subscribe
-	public final void onAddonLoad(AddonEnableEvent event) {
+	public final void onAddonInitialize(AddonPostEnableEvent event) {
 		System.out.println("GrieferUtils enabling");
 		long begin = System.currentTimeMillis();
 

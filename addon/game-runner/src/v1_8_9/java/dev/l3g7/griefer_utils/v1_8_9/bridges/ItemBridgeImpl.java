@@ -10,6 +10,7 @@ import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.laby4.bridges.ItemBridge;
 import net.labymod.api.client.world.item.ItemStack;
 import net.labymod.v1_8_9.client.util.ItemUtil;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.JsonToNBT;
@@ -64,7 +65,7 @@ public class ItemBridgeImpl implements ItemBridge {
 
 	@Override
 	public boolean isConvertableToLabyStack(Object obj) {
-		return obj instanceof McItemStack || obj instanceof Item;
+		return obj instanceof McItemStack || obj instanceof Item || obj instanceof Block;
 	}
 
 	@Override
@@ -74,6 +75,9 @@ public class ItemBridgeImpl implements ItemBridge {
 
 		if (obj instanceof Item item)
 			return toLabyStack(c(new net.minecraft.item.ItemStack(item)));
+
+		if (obj instanceof Block block)
+			return toLabyStack(c(new net.minecraft.item.ItemStack(block)));
 
 		throw new IllegalArgumentException("Can't convert " + obj + " to LabyMod's ItemStack!");
 	}

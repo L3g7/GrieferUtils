@@ -23,7 +23,6 @@ import net.labymod.api.client.component.Component;
 import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.RootSettingRegistry;
-import net.labymod.api.configuration.settings.type.SettingElement;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,7 +33,7 @@ public class MainPage {
 	private static final Config config = new Config();
 
 	@OnEnable
-	public static void registerSettings(Setting parent) {
+	public static void registerSettings() {
 		// Create root setting
 		RootSettingRegistry registry = new RootSettingRegistry("griefer_utils", "settings") {
 			public Component displayName() {
@@ -46,10 +45,12 @@ public class MainPage {
 		// Collect settings
 		ArrayList<BaseSetting<?>> settings = new ArrayList<>();
 		collectSettings(settings);
-		settings.sort(Comparator.comparingInt(e -> ((SettingElement) e).getOrderValue()));
 
 		// Initialize settings
-		settings.forEach(s -> ((BaseSettingImpl<?, ?>) s).create(config, parent));
+		settings.forEach(s -> {
+			if (s instanceof BaseSettingImpl<?, ?> b)
+				b.create(config, registry);
+		});
 		registry.addSettings(Reflection.<List<Setting>>c(settings));
 	}
 

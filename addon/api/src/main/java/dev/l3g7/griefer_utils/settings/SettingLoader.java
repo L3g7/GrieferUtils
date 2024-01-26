@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.api.util.StringUtil;
 import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class SettingLoader {
 	 */
 	private static void loadSubSettings(Object owner, BaseSetting<?> parent, String parentKey) {
 		for (BaseSetting<?> element : new ArrayList<>(parent.getSubSettings())) {
-			if (element instanceof HeaderSetting)
+			if (element instanceof HeaderSetting || element instanceof EntryAddSetting) // TODO: temp
 				continue;
 
 			boolean hasSubSettings = !element.getSubSettings().isEmpty();

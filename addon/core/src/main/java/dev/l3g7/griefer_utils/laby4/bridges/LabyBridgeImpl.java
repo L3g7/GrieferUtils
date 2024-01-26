@@ -177,7 +177,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 			public InstalledAddonInfo getAddon() {return null;}
 
-			public Object getListener() {return null;}
+			public Object getListener() {return labyBridge;}
 
 			public byte getPriority() {return 127;}
 

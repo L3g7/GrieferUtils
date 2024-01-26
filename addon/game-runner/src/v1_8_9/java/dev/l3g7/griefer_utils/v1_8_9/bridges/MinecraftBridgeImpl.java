@@ -32,8 +32,8 @@ import net.minecraft.launchwrapper.Launch;
 import java.io.File;
 import java.util.UUID;
 
-@Singleton
 @Bridge
+@Singleton
 public class MinecraftBridgeImpl implements MinecraftBridge {
 
 	@Override

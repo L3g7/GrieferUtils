@@ -8,10 +8,12 @@
 package dev.l3g7.griefer_utils.v1_8_9.bridges;
 
 import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageBridge;
 import net.minecraft.util.IChatComponent;
 
 @Bridge
+@Singleton
 public class MessageBridgeImpl implements MessageBridge {
 
 	@Override

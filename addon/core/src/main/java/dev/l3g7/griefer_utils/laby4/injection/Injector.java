@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.laby4;
+package dev.l3g7.griefer_utils.laby4.injection;
 
 import dev.l3g7.griefer_utils.injection.InjectorBase;
 import net.labymod.api.Laby;

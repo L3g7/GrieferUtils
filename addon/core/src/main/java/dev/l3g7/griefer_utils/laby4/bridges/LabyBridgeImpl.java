@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.api.util.Util;
-import dev.l3g7.griefer_utils.laby4.Laby4Main;
+import dev.l3g7.griefer_utils.laby4.Main;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
@@ -71,7 +71,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public String addonVersion() {
-		return Laby4Main.getAddon().info().getVersion();
+		return Main.getAddon().info().getVersion();
 	}
 
 	@Override

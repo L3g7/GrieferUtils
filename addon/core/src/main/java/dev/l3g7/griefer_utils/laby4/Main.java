@@ -20,46 +20,44 @@ package dev.l3g7.griefer_utils.laby4;
 
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.api.Laby;
-import net.labymod.api.LabyAPI;
 import net.labymod.api.addon.LoadedAddon;
-import net.labymod.api.client.component.Component;
-import net.labymod.api.configuration.settings.type.RootSettingRegistry;
 import net.labymod.api.event.Subscribe;
 import net.labymod.api.event.addon.lifecycle.AddonEnableEvent;
-import net.labymod.api.event.addon.lifecycle.AddonPostEnableEvent;
 import net.labymod.api.models.addon.annotation.AddonMain;
 
 @AddonMain
-public class Laby4Main {
+public class Main {
 
 	private static LoadedAddon addon;
 
 	public static LoadedAddon getAddon() {
 		if (addon == null)
-			addon = Laby.labyAPI().addonService().getAddon(Laby4Main.class).orElseThrow();
+			addon = Laby.labyAPI().addonService().getAddon(Main.class).orElseThrow();
 
 		return addon;
 	}
 
-	private final Laby4Cfg configProvider = new Laby4Cfg();
-	private final LabyAPI labyAPI = Laby.labyAPI();
-
 	@Subscribe
 	public final void onAddonLoad(AddonEnableEvent event) {
+		System.out.println("GrieferUtils enabling");
+		long begin = System.currentTimeMillis();
+
+		FileProvider.getClassesWithSuperClass(Feature.class).forEach(meta -> {
+			if (meta.isAbstract())
+				return;
+
+			Feature instance = FileProvider.getSingleton(meta.load());
+			instance.init();
+		});
+
+		EventRegisterer.init();
 		Event.fire(OnEnable.class);
-	}
 
-	@Subscribe
-	public final void onAddonInitialize(AddonPostEnableEvent event) {
-		RootSettingRegistry registry = new RootSettingRegistry("griefer_utils", "settings") {
-			public Component displayName() {
-				return Component.text("GrieferUtils");
-			}
-		};
-
-		registry.addSettings(configProvider);
-		this.labyAPI.coreSettingRegistry().addSetting(registry);
+		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}
 
 }

@@ -43,10 +43,6 @@ public class EventRegisterer {
 	 */
 	private static final Map<String, Collection<LazyRegistration>> lazyRegistrations = new ConcurrentHashMap<>();
 
-	public static void registerBugReporter(Consumer<Throwable> bugReporter) {
-		EventBus.bugReporter = bugReporter;
-	}
-
 	/**
 	 * Registers the pending registrations for the given event class.<br>
 	 * It is triggered at the start of {@link EventBus#fire(Event)}, to load the classes as late as possible.

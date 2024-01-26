@@ -1,0 +1,17 @@
+[*]
+charset = utf-8
+tab_width = 4
+indent_style = tab
+indent_size = tab
+insert_final_newline = false
+trim_trailing_whitespace = true
+end_of_line = lf
+
+[*.json]
+indent_style = space
+indent_size = 2
+
+
+[*.lss]
+indent_style = space
+indent_size = 2

@@ -44,7 +44,7 @@ public class MultiHotkey extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Multi-Hotkey")
 		.description("Erlaubt das Ausführen von mehreren sequenziellen Befehlen auf Tastendruck.")
-		.icon("labymod:chat/autotext")
+		.icon("labymod_3/autotext")
 		.subSettings(entryAddSetting);
 
 	@Override

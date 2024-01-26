@@ -33,7 +33,7 @@ public class RealMoney extends Feature {
 	private final DropDownSetting<TagPosition> position = DropDownSetting.create(TagPosition.class)
 		.name("Position")
 		.description("Ob der Tag an den Anfang oder das Ende der Nachricht angehängt wird.")
-		.icon("labymod:settings/settings/marker")
+		.icon("labymod_3/marker")
 		.defaultValue(TagPosition.AFTER);
 
 	@MainElement

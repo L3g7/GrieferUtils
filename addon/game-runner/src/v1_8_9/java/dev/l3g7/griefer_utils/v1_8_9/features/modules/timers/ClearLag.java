@@ -42,7 +42,7 @@ public class ClearLag extends Module {
 	private final NumberSetting warnTime = NumberSetting.create()
 		.name("Warn-Zeit (s)")
 		.description("Wie viele Sekunden vor dem nächsten Clearlag eine Warnung angezeigt werden soll.")
-		.icon("labymod:buttons/exclamation_mark");
+		.icon("labymod_3/exclamation_mark");
 
 	private final SwitchSetting preventDrop = SwitchSetting.create()
 		.name("Droppen verhindern")

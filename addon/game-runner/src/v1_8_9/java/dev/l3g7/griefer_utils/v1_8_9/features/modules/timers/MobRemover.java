@@ -43,7 +43,7 @@ public class MobRemover extends Module {
 	private final NumberSetting warnTime = NumberSetting.create()
 		.name("Warn-Zeit (s)")
 		.description("Wie viele Sekunden vor dem nächsten MobRemover eine Warnung angezeigt werden soll.")
-		.icon("labymod:buttons/exclamation_mark");
+		.icon("labymod_3/exclamation_mark");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

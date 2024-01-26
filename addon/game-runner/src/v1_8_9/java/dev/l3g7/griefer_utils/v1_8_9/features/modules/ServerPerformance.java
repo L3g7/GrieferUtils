@@ -46,7 +46,7 @@ public class ServerPerformance extends Module {
 
 	private final SwitchSetting applyColor = SwitchSetting.create()
 		.name("Anzeige färben")
-		.icon("labymod:settings/settings/tabping_colored")
+		.icon("labymod_3/tabping_colored")
 		.description("Ob die Performance eingefärbt werden soll.")
 		.defaultValue(true);
 

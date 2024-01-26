@@ -73,7 +73,7 @@ public class AfkNick extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Automatisch nicken wenn AFK")
 		.description("Nickt dich, wenn du eine bestimmte, einstellbare Zeit AFK bist.")
-		.icon("labymod:settings/modules/afk_timer")
+		.icon("labymod_3/afk_timer")
 		.subSettings(nickName, messageReplay, triggerAfk, HeaderSetting.create(), minutes, seconds);
 
 	@EventListener(triggerWhenDisabled = true)

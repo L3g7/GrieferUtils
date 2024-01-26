@@ -55,7 +55,7 @@ public class PotionTimer extends Module {
 	private final NumberSetting warnTime = NumberSetting.create()
 		.name("Warn-Zeit für Fly Tränke (s)")
 		.description("Wie viele Sekunden vor dem Ablauf eines Fly-Tranks eine Warnung angezeigt werden soll.")
-		.icon("labymod:buttons/exclamation_mark");
+		.icon("labymod_3/exclamation_mark");
 
 	private final SwitchSetting hide = SwitchSetting.create()
 		.name("Verstecken, wenn nichts getrunken")

@@ -79,13 +79,13 @@ public class ChatMods extends Feature {
 	private final DropDownSetting<NewsMode> news = DropDownSetting.create(NewsMode.class)
 		.name("News")
 		.description("Ändert die Darstellung von News.")
-		.icon("labymod:buttons/exclamation_mark")
+		.icon("labymod_3/exclamation_mark")
 		.defaultValue(NewsMode.NORMAL);
 
 	private final SwitchSetting antiRainbow = SwitchSetting.create()
 		.name("Rainbow-Farben entfernen")
 		.description("Entfernt die Farben von Nachrichten mit Rainbow-Schrift.")
-		.icon("labymod:settings/settings/tabping_colored");
+		.icon("labymod_3/tabping_colored");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

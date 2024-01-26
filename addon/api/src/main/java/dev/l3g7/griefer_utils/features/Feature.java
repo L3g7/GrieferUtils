@@ -69,8 +69,6 @@ public abstract class Feature implements Disableable {
 	 * Checks if the parent category and the feature itself is enabled.
 	 */
 	public boolean isEnabled() {
-		if (category == null) // TODO: TEMPORARY! remove once all Features get loaded
-			return false;
 		if (!category.isEnabled())
 			return false;
 

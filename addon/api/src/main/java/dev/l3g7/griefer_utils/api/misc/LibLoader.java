@@ -18,15 +18,14 @@
 
 package dev.l3g7.griefer_utils.api.misc;
 
+import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.StringUtil;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Field;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -37,24 +36,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class LibLoader {
 
-	private static final ClassLoader launchClassLoaderParent;
-	private static MethodHandle addURL;
-
-	private static final MethodHandles.Lookup globalLookup = MethodHandles.lookup();
-
-	static {
-		// get parent of Launch.classLoader
-		try {
-			Field parent = minecraftBridge.launchClassLoader().getClass().getDeclaredField("parent");
-			parent.setAccessible(true);
-			launchClassLoaderParent = (ClassLoader) parent.get(minecraftBridge.launchClassLoader());
-
-			// MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(URLClassLoader.class, globalLookup);
-			//TODO: addURL = lookup.findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class)); // void addURL(URL
-		} catch (ReflectiveOperationException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	private static final ClassLoader launchClassLoaderParent = Reflection.get(minecraftBridge.launchClassLoader(), "parent");
 
 	public static void loadLibraries(String... libraries) throws Throwable {
 		for (int i = 0; i < libraries.length; i += 5) {
@@ -90,10 +72,11 @@ public class LibLoader {
 			}
 		}
 
-		// Add jar file to parent of LaunchClassLoader
-		// TODO: module does not open shit
-		// addURL.invoke(launchClassLoaderParent, libFile.toURI().toURL());
-		// addURL.invoke(minecraftBridge.launchClassLoader(), libFile.toURI().toURL());
+		// Add jar file to LaunchClassLoader
+		if (launchClassLoaderParent instanceof URLClassLoader)
+			Reflection.invoke(launchClassLoaderParent, "addURL", libFile.toURI().toURL());
+
+		Reflection.invoke(minecraftBridge.launchClassLoader(), "addURL", libFile.toURI().toURL());
 	}
 
 	private static boolean verifyHash(File libFile, String targetHash) throws IOException {

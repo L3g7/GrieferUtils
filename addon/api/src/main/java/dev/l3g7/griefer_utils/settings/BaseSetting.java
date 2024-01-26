@@ -1,0 +1,65 @@
+/*
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
+ *
+ * Copyright 2020-2024 L3g7
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dev.l3g7.griefer_utils.settings;
+
+import java.util.List;
+
+public interface BaseSetting<S extends BaseSetting<S>> {
+
+	Object NULL = new Object();
+
+	String name();
+
+	/**
+	 * Sets the name of the setting.
+	 */
+	S name(String name);
+
+	/**
+	 * Sets the name of the setting, joined by \n.
+	 */
+	default S name(String... name) {
+		return name(String.join("\n", name));
+	}
+
+	/**
+	 * Sets the description of the setting to the given strings.
+	 */
+	S description(String... description);
+
+	/**
+	 * Sets the icon of the setting.
+	 *
+	 * @param icon of type {@link String} for GrieferUtils icons.
+	 */
+	S icon(Object icon);
+
+	/**
+	 * Sets the given settings as sub settings, with the display name as header.
+	 */
+	S subSettings(BaseSetting<?>... settings);
+
+	/**
+	 * Adds the given settings as sub settings.
+	 */
+	S subSettings(List<BaseSetting<?>> settings);
+
+	List<BaseSetting<?>> getSubSettings();
+
+}

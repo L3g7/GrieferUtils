@@ -1,0 +1,77 @@
+/*
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
+ *
+ * Copyright 2020-2024 L3g7
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dev.l3g7.griefer_utils.v1_8_9.events.network;
+
+import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.api.event.event_bus.Event;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.event.event_bus.Priority;
+import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketReceiveEvent;
+import net.minecraft.network.play.server.S3FPacketCustomPayload;
+
+import java.nio.charset.StandardCharsets;
+
+/**
+ * An event related to the server connection.
+ */
+public class ServerEvent extends Event {
+
+	public static class ServerSwitchEvent extends ServerEvent {
+
+		@EventListener
+		private static void onPacket(PacketReceiveEvent<S3FPacketCustomPayload> event) {
+			if (event.packet.getChannelName().equals("MC|Brand"))
+				new ServerSwitchEvent().fire();
+		}
+
+	}
+
+	public static class ServerJoinEvent extends ServerEvent {
+
+		@OnEnable
+		private static void register() {
+			LabyBridge.labyBridge.onJoin(() -> new ServerJoinEvent().fire());
+		}
+
+	}
+
+	public static class GrieferGamesJoinEvent extends ServerEvent {
+
+		@EventListener(priority = Priority.HIGHEST)
+		private static void onPacketReceive(PacketReceiveEvent<S3FPacketCustomPayload> event) {
+			if (!event.packet.getChannelName().equals("MC|Brand"))
+				return;
+
+			if (event.packet.getBufferData().toString(StandardCharsets.UTF_8).contains("GrieferGames"))
+				new GrieferGamesJoinEvent().fire();
+		}
+
+	}
+
+	public static class ServerQuitEvent extends ServerEvent {
+
+		@OnEnable
+		private static void register() {
+			LabyBridge.labyBridge.onQuit(() -> new ServerQuitEvent().fire());
+		}
+
+	}
+
+}

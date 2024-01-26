@@ -90,6 +90,11 @@ public class Config {
 	 */
 	public static JsonObject get() {
 		if (config == null) {
+			if (!configFile.exists()) {
+				config = new JsonObject();
+				return config;
+			}
+
 			config = IOUtil.read(configFile)
 				.asJsonObject()
 				.orElse(new JsonObject());

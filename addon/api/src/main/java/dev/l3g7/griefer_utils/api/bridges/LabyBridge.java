@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.misc.Pair;
 import dev.l3g7.griefer_utils.api.misc.functions.Predicate;
+import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 
 import java.util.UUID;
@@ -31,6 +32,10 @@ import java.util.function.BiFunction;
 public interface LabyBridge {
 
 	LabyBridge labyBridge = FileProvider.getBridge(LabyBridge.class);
+
+	static void run(Runnable laby3, Runnable laby4) {
+		(labyBridge.laby4() ? laby4 : laby3).run();
+	}
 
 	// General information
 

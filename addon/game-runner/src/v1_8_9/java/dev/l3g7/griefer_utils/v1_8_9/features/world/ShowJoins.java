@@ -30,7 +30,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent.TabListPlayerRemoveEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.PlayerList;
 import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.ScammerList;
 import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.TrustedList;

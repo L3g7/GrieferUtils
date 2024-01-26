@@ -33,7 +33,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.DisplayNameGetEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
 import dev.l3g7.griefer_utils.v1_8_9.util.PlayerUtil;
 import net.minecraft.event.ClickEvent;

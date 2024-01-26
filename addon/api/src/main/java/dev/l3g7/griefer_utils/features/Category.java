@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features;
+package dev.l3g7.griefer_utils.features;
 
-import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
+import org.spongepowered.include.com.google.common.collect.ImmutableList;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Blocks;

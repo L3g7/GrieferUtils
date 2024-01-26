@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features;
+package dev.l3g7.griefer_utils.features;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.Disableable;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;

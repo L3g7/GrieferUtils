@@ -19,4 +19,4 @@
 @Category.Meta(name = "Item", icon = "gold_ingot", configKey = "item")
 package dev.l3g7.griefer_utils.v1_8_9.features.item;
 
-import dev.l3g7.griefer_utils.v1_8_9.features.Category;
+import dev.l3g7.griefer_utils.features.Category;

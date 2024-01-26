@@ -23,7 +23,7 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.BlockBrokeEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;

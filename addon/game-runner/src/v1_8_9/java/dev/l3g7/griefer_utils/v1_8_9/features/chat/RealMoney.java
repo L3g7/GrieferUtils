@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageModifyEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
 

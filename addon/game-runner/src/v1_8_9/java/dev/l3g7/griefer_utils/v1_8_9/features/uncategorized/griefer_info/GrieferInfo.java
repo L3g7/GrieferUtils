@@ -29,7 +29,7 @@ import dev.l3g7.griefer_utils.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiGrieferInfo;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Items;

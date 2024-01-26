@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.DrawGuiContainerForegroundLayerEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.ModTextField;
 import net.minecraft.client.gui.GuiHopper;
 import net.minecraft.client.gui.GuiScreen;

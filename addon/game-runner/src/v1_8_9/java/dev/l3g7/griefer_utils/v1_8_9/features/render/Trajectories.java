@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderWorldLastEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.Vec3d;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;

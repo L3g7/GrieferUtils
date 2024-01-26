@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.EggImpactEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;

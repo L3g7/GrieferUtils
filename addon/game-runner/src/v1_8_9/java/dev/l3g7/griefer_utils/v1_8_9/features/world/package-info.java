@@ -19,4 +19,4 @@
 @Category.Meta(name = "Welt", icon = "earth", configKey = "world")
 package dev.l3g7.griefer_utils.v1_8_9.features.world;
 
-import dev.l3g7.griefer_utils.v1_8_9.features.Category;
+import dev.l3g7.griefer_utils.features.Category;

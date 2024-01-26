@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.AutoTool;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_info.info_suppliers.ItemCounter;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;

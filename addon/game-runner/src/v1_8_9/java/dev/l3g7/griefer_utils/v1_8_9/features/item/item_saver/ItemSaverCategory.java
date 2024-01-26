@@ -28,8 +28,8 @@ import dev.l3g7.griefer_utils.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
-import dev.l3g7.griefer_utils.v1_8_9.features.FeatureCategory;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.FeatureCategory;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.tool_saver.ToolSaver;
 
 import java.util.Arrays;

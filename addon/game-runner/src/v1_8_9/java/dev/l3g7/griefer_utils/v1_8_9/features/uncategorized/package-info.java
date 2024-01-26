@@ -19,4 +19,4 @@
 @Category.Uncategorized
 package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized;
 
-import dev.l3g7.griefer_utils.v1_8_9.features.Category;
+import dev.l3g7.griefer_utils.features.Category;

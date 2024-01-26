@@ -29,7 +29,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.PlaySoundAtEntityEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.PlaySoundEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderPlayerEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;

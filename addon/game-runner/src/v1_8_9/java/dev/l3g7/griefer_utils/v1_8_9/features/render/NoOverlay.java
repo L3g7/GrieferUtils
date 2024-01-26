@@ -27,7 +27,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderPortalCheckEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderPortalDistortionEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.SetupFogEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.SetupFogEvent.FogType;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.item.ItemStack;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;

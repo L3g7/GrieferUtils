@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderWorldLastEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import dev.l3g7.griefer_utils.v1_8_9.util.render.RenderUtil;
 import net.minecraft.client.gui.inventory.GuiChest;

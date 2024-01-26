@@ -32,7 +32,7 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
 import dev.l3g7.griefer_utils.v1_8_9.util.ChatLineUtil;
 import net.minecraft.client.Minecraft;

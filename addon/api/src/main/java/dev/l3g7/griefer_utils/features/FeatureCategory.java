@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features;
+package dev.l3g7.griefer_utils.features;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
 
 /**
  * Causes the feature's subsettings to be searchable, instead of the main element.
+ * TODO: fix desc
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface FeatureCategory { }
+public @interface FeatureCategory {}

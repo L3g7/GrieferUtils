@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderToolTipEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.v1_8_9.util.render.RenderUtil;
 import net.minecraft.client.renderer.EntityRenderer;

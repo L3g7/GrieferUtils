@@ -26,8 +26,8 @@ import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
-import dev.l3g7.griefer_utils.v1_8_9.features.FeatureCategory;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.FeatureCategory;
 
 import java.util.Comparator;
 import java.util.List;

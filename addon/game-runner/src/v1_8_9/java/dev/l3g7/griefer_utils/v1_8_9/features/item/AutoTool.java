@@ -35,7 +35,7 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemDisplaySetting;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemSaver;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.tool_saver.ToolSaver;

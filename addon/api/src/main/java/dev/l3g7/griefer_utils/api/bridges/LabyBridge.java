@@ -82,11 +82,4 @@ public interface LabyBridge {
 
 	Pair<String, String> getCachedTexture(UUID uuid);
 
-	void removeChatLine(int id);
-
-	/**
-	 * Replaces the last entry in the sent message history.
-	 */
-	void replaceLastSentMessage(String replacement);
-
 }

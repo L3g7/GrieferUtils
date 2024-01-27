@@ -135,16 +135,6 @@ public class LabyBridgeImpl implements LabyBridge {
 		return location == null ? null : new Pair<>(location.getNamespace(), location.getPath());
 	}
 
-	@Override
-	public void removeChatLine(int id) {
-		// TODO: removeChatLine
-	}
-
-	@Override
-	public void replaceLastSentMessage(String replacement) {
-		// TODO: replaceLastSentMessage
-	}
-
 	public static <T> void register(Class<T> event, Consumer<T> callback) {
 		Laby.labyAPI().eventBus().registry().register(new SubscribeMethod() {
 			@Override

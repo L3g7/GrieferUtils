@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.features.chat;
 
+import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
@@ -15,6 +16,9 @@ import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.StringListSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageSendEvent;
+import net.labymod.ingamechat.IngameChatManager;
+import net.labymod.ingamechat.renderer.ChatLine;
+import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -24,11 +28,13 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 @Singleton
@@ -66,7 +72,28 @@ public class AntiCommandChoker extends Feature {
 			String message = msg.substring(COMMAND.length());
 			int id = Integer.parseInt(message.split(" ")[0]);
 
-			labyBridge.removeChatLine(id);
+			// Remove the message
+			LabyBridge.run(() -> {
+				IngameChatManager ICM = IngameChatManager.INSTANCE;
+
+				List<ChatRenderer> chatRenderers = new ArrayList<>(Arrays.asList(ICM.getChatRenderers()));
+				chatRenderers.add(ICM.getMain());
+				chatRenderers.add(ICM.getSecond());
+
+				for (ChatRenderer chatRenderer : chatRenderers) {
+					for (ChatLine chatLine : chatRenderer.getChatLines()) {
+						chatRenderer.getChatLines().remove(chatLine);
+						break;
+					}
+
+					for (ChatLine chatLine : chatRenderer.getBackendComponents()) {
+						chatRenderer.getChatLines().remove(chatLine);
+						break;
+					}
+				}
+			}, () -> {
+				mc().ingameGUI.getChatGUI().deleteChatLine(id);
+			});
 
 			// Repeat message
 			int idLength = Integer.toString(id).length();
@@ -77,7 +104,9 @@ public class AntiCommandChoker extends Feature {
 
 			mc().getNetHandler().addToSendQueue(new C01PacketChatMessage(command));
 
-			labyBridge.replaceLastSentMessage(command);
+			List<String> sentMessages = mc().ingameGUI.getChatGUI().getSentMessages();
+			if (sentMessages.size() > 0)
+				sentMessages.set(sentMessages.size() - 1, command);
 			return;
 		}
 

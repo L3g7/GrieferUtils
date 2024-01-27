@@ -69,6 +69,9 @@ public abstract class Feature implements Disableable {
 	 * Checks if the parent category and the feature itself is enabled.
 	 */
 	public boolean isEnabled() {
+		if(category == null){
+			throw new RuntimeException("Category must not be null! " + this.getClass());
+		}
 		if (!category.isEnabled())
 			return false;
 

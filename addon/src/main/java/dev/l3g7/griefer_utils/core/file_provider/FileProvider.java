@@ -215,8 +215,14 @@ public abstract class FileProvider {
 
 		if (!singleton.isAnnotationPresent(Singleton.class))
 			throw new IllegalArgumentException(singleton + " is not a singleton!");
+		T loadedClass;
+		try {
+			loadedClass = Reflection.construct(singleton);
+		} catch (NoClassDefFoundError e) {
+			System.out.println("Error constructing singleton of class " + singleton.getCanonicalName());
+			throw e;
+		}
 
-		T loadedClass = Reflection.construct(singleton);
 		singletonInstances.put(singleton, loadedClass);
 		return loadedClass;
 	}

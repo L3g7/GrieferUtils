@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.api.BugReporter;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;

@@ -15,6 +15,12 @@ import dev.l3g7.griefer_utils.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * The base class for features.
  */
@@ -72,4 +78,14 @@ public abstract class Feature implements Disableable {
 		return configKey;
 	}
 
+	/**
+	 * An annotation for marking the main element in a feature.
+	 */
+	@Retention(RUNTIME)
+	@Target(FIELD)
+	public @interface MainElement {
+
+		boolean configureSubSettings() default true;
+
+	}
 }

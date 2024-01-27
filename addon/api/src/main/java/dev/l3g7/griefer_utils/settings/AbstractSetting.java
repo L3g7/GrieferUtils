@@ -13,13 +13,8 @@ import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @SuppressWarnings("unchecked")
 public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends BaseSetting<S> {
@@ -125,17 +120,6 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	 */
 	default S callback(Runnable callback) {
 		return callback(v -> callback.run());
-	}
-
-	/**
-	 * An annotation for marking the main element in a feature.
-	 */
-	@Retention(RUNTIME)
-	@Target(FIELD)
-	@interface MainElement {
-
-		boolean configureSubSettings() default true;
-
 	}
 
 	/**

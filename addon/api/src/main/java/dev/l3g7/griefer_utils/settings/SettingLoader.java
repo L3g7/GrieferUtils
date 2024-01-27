@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.settings;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.StringUtil;
 import dev.l3g7.griefer_utils.api.util.Util;
-import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
 

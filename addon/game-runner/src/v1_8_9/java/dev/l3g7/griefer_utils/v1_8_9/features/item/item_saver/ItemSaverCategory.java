@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver;
 import dev.l3g7.griefer_utils.api.event.event_bus.Disableable;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.SettingLoader.MainElementData;

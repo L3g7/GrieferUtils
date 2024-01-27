@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.api.event.event_bus.Priority;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.util.IOUtil;
-import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;

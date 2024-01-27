@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.api.util.Util;
-import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;

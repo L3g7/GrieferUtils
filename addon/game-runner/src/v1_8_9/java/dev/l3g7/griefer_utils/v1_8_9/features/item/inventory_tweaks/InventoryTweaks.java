@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.v1_8_9.features.item.inventory_tweaks;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.file_provider.meta.ClassMeta;
-import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;

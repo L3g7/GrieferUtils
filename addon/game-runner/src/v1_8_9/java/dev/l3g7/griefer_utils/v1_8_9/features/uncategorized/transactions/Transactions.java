@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;

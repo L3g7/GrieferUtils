@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
 import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
-import dev.l3g7.griefer_utils.settings.AbstractSetting.MainElement;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;

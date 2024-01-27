@@ -45,7 +45,6 @@ public class ChangelogScreen extends GuiScreen {
 	private static boolean triggeredByUser = false;
 	private static String version = null;
 	private static String changelog = null;
-	private static boolean opened = false;
 
 	private TextList textList;
 	private GuiScreen previousScreen = mc().currentScreen;
@@ -84,14 +83,13 @@ public class ChangelogScreen extends GuiScreen {
 
 	private static void tryOpening() {
 		TickScheduler.runAfterRenderTicks(() -> {
-			if (triggered && completedStartup && version != null && !opened)
+			if (triggered && completedStartup && version != null && !(mc().currentScreen instanceof ChangelogScreen))
 				mc().displayGuiScreen(new ChangelogScreen());
 		}, 1);
 	}
 
 	public ChangelogScreen() {
 		EventRegisterer.register(this);
-		opened = true;
 	}
 
 	public void initGui() {

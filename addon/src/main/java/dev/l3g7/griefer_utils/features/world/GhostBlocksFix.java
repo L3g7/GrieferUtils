@@ -20,7 +20,7 @@ package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.events.BlockBrokeEvent;
+import dev.l3g7.griefer_utils.event.events.BlockEvent.BlockBrokeEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -30,7 +30,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.ABORT_DESTROY_BLOCK;
 
 @Singleton
-public class FixGhostBlocks extends Feature {
+public class GhostBlocksFix extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()

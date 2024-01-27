@@ -24,9 +24,6 @@ import dev.l3g7.griefer_utils.event.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
-import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.KeySetting;
-import dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -35,7 +32,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
+import static dev.l3g7.griefer_utils.settings.elements.BooleanSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 import static net.minecraft.init.Blocks.stained_hardened_clay;
 
@@ -44,24 +41,6 @@ import static net.minecraft.init.Blocks.stained_hardened_clay;
  */
 @Singleton
 public class ChunkIndicator extends Feature {
-
-	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
-		.description("Halten: Zeigt die Chunks-Grenzen an, während die Taste gedrückt wird.\nUmschalten: Schaltet das Anzeigen der Chunks-Grenzen um, wenn die Taste gedrückt wird.")
-		.callback(() -> {
-			if (getMainElement() != null)
-				((BooleanSetting) getMainElement()).set(false);
-		});
-
-	private final KeySetting key = new KeySetting()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der Chunks-Grenzen angezeigt werden.")
-		.pressCallback(p -> {
-			if (p || triggerMode.get() == HOLD) {
-				BooleanSetting enabled = ((BooleanSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
 
 	private final BooleanSetting yellow_lines = new BooleanSetting()
 		.name("Gelbe Linien", "(Alle 2 Blöcke)")
@@ -92,9 +71,8 @@ public class ChunkIndicator extends Feature {
 		.name("Chunk-Indikator")
 		.description("Zeigt die Chunkgrenzen an. (Ähnlich wie F3 + G seit 1.10)")
 		.icon("chunk")
-		.subSettings(key, triggerMode,
-			new HeaderSetting(),
-			yellow_lines, cyan_lines, blue_lines, red_lines);
+		.subSettings(yellow_lines, cyan_lines, blue_lines, red_lines)
+		.addHotkeySetting("die Chunk-Grenzen", TOGGLE);
 
 	private static final Color BLUE = new Color(0x3F3FFF);
 	private static final Color CYAN = new Color(0x009B9B);

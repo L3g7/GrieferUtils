@@ -166,7 +166,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 		event.cancel();
 		click(event, event.slotId);
 		int finalTargetSlot = targetSlot;
-		TickScheduler.runAfterClientTicks(() -> click(event, finalTargetSlot), requiresDelay(movedStack) ? 2 : 0);
+		TickScheduler.runAfterClientTicks(() -> click(event, finalTargetSlot), requiresDelay(movedStack) ? 3 : 0);
 	}
 
 	private void click(WindowClickEvent event, int slot) {

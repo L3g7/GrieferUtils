@@ -16,32 +16,39 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.render;
+package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.event.events.render.RenderBarrierCheckEvent;
+import dev.l3g7.griefer_utils.event.events.BlockEvent.BlockClickEvent;
+import dev.l3g7.griefer_utils.event.events.BlockEvent.BlockInteractEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
+import net.minecraft.init.Blocks;
 
-/**
- * Shows barriers.
- */
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
+
 @Singleton
-public class ShowBarriers extends Feature {
+public class DragonEggSaver extends Feature {
 
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Barrieren anzeigen")
-		.description("Fügt Partikel bei Barrieren-Blöcken hinzu.")
-		.icon(Material.BARRIER)
-		.addHotkeySetting("das Anzeigen von Barrieren", null);
+		.name("Drachenei-Saver")
+		.description("Verhindert Klicks auf Dracheneier.")
+		.icon(Material.DRAGON_EGG);
 
 	@EventListener
-	public void onDisplayNameRender(RenderBarrierCheckEvent event) {
-		event.renderBarrier = true;
+	private void onBlockInteract(BlockInteractEvent event) {
+		if (world().getBlockState(event.pos).getBlock() == Blocks.dragon_egg)
+			event.cancel();
+	}
+
+	@EventListener
+	private void onBlockClick(BlockClickEvent event) {
+		if (world().getBlockState(event.pos).getBlock() == Blocks.dragon_egg)
+			event.cancel();
 	}
 
 }

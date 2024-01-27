@@ -31,7 +31,6 @@ import dev.l3g7.griefer_utils.event.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.Commands;
 import dev.l3g7.griefer_utils.features.Module;
 import dev.l3g7.griefer_utils.misc.Named;
-import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
@@ -208,9 +207,6 @@ public class Booster extends Module {
 
 	@Override
 	public String[] getValues() {
-		if (!ServerCheck.isOnCitybuild())
-			return getDefaultValues();
-
 		// Get expirations dates as Strings
 		List<String> values = boosters.values().stream()
 			.filter(d -> !d.isExpired())

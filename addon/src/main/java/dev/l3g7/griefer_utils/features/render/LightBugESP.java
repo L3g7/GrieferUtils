@@ -24,7 +24,9 @@ import dev.l3g7.griefer_utils.event.events.TickEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
-import dev.l3g7.griefer_utils.settings.elements.*;
+import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
+import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.utils.Material;
@@ -42,7 +44,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.Set;
 
-import static dev.l3g7.griefer_utils.settings.elements.TriggerModeSetting.TriggerMode.HOLD;
+import static dev.l3g7.griefer_utils.settings.elements.BooleanSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 import static net.minecraft.world.EnumSkyBlock.BLOCK;
 import static org.lwjgl.opengl.GL11.*;
@@ -53,28 +55,10 @@ public class LightBugESP extends Feature {
 	private final Set<AxisAlignedBB> lightBugs = new ConcurrentSet<>();
 	private int passedTicks = 0;
 
-	private final TriggerModeSetting triggerMode = new TriggerModeSetting()
-		.description("Halten: Zeigt die Lichtbugs an, während die Taste gedrückt wird.\nUmschalten: Schaltet das Anzeigen der Lichtbugs um, wenn die Taste gedrückt wird.")
-		.callback(() -> {
-			if (getMainElement() != null)
-				((BooleanSetting) getMainElement()).set(false);
-		});
-
 	private final BooleanSetting inBlocks = new BooleanSetting()
 		.name("Lichtbugs in Blöcken anzeigen")
 		.description("Zeigt auch Lichtbugs, an die sich in Blöcken befinden.")
 		.icon("glitch_light_bulb");
-
-	private final KeySetting key = new KeySetting()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der Lichtbugs angezeigt werden.")
-		.pressCallback(p -> {
-			if (p || triggerMode.get() == HOLD) {
-				BooleanSetting enabled = ((BooleanSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
 
 	private final NumberSetting range = new NumberSetting()
 		.name("Radius")
@@ -93,7 +77,8 @@ public class LightBugESP extends Feature {
 		.name("Lichtbugs anzeigen")
 		.description("Zeigt Lichtbugs an, auch durch Wände.")
 		.icon("glitch_light_bulb")
-		.subSettings(key, triggerMode, new HeaderSetting(), inBlocks, new HeaderSetting(), range, updateDelay);
+		.subSettings(inBlocks, new HeaderSetting(), range, updateDelay)
+		.addHotkeySetting("das Anzeigen der Lichtbugs", TOGGLE);
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {

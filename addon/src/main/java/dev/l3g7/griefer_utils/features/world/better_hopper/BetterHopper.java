@@ -20,298 +20,141 @@ package dev.l3g7.griefer_utils.features.world.better_hopper;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.event.events.TickEvent;
-import dev.l3g7.griefer_utils.event.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.event.events.BlockEvent.BlockInteractEvent;
+import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.NumberSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import dev.l3g7.griefer_utils.util.render.RenderUtil;
 import net.labymod.utils.Material;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.C0BPacketEntityAction;
+import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.util.MinecraftUtil.world;
-import static org.lwjgl.opengl.GL11.*;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
+import static net.minecraft.network.play.client.C0BPacketEntityAction.Action.START_SNEAKING;
+import static net.minecraft.network.play.client.C0BPacketEntityAction.Action.STOP_SNEAKING;
 
 @Singleton
 public class BetterHopper extends Feature {
 
-	private static final String ENABLE_VISUALISATION_NBT = "{id:\"minecraft:ender_eye\",Count:1b,tag:{display:{Lore:[0:\"§7Zeigt für §e%d Sekunden§7 %s und den Sammelradius optisch an.\",1:\"§7 \",2:\"§7Klicke, um die Anzeige zu starten.\"],Name:\"§6Optische Anzeige\"}},Damage:0s}";
-
-	private final Map<BlockPos, EntityItem> filteredConnections = new HashMap<>();
-	private BlockPos hopper;
-	private BlockPos mainConnection;
-	private int borderSize;
-	private long displayEnd = -1;
-	private BlockyRenderSphere blockyRenderSphere = null;
-
-	private final BooleanSetting fillBoxes = new BooleanSetting()
+	static final BooleanSetting fillBoxes = new BooleanSetting()
 		.name("Anzeigeboxen füllen")
 		.description("Ob die Boxen der Anzeige gefüllt werden sollen.")
 		.defaultValue(true)
 		.icon(ItemUtil.createItem(Blocks.wool, 14, false));
 
-	private final NumberSetting displayTime = new NumberSetting()
+	static final NumberSetting displayTime = new NumberSetting()
 		.name("Anzeigedauer")
 		.description("Wie lange die optische Anzeige aktiv bleiben soll, in Sekunden.")
 		.icon("hourglass")
 		.defaultValue(10);
 
-	private final BooleanSetting betterVisualisation = new BooleanSetting()
+	static final BooleanSetting betterVisualisation = new BooleanSetting()
 		.name("Bessere optische Trichter-Anzeige")
 		.description("Ersetzt die Partikel der optischen Trichter Anzeige durch Boxen / Linien.")
 		.icon(Material.EYE_OF_ENDER)
 		.subSettings(displayTime, fillBoxes);
 
-	private final BooleanSetting showRange = new BooleanSetting()
+	static final BooleanSetting showRange = new BooleanSetting()
 		.name("Trichterreichweite anzeigen")
 		.description("Zeigt die Trichterreichweite an.")
 		.icon("ruler");
 
-	private final BooleanSetting showSourceHopper = new BooleanSetting()
+	static final BooleanSetting showSourceHopper = new BooleanSetting()
 		.name("Ausgangstrichter anzeigen")
 		.description("Zeigt beim Verbinden eines Trichters den Trichter an, von dem aus verbunden wird.")
 		.icon(Material.HOPPER);
 
-	@MainElement
-	private final BooleanSetting enabled = new BooleanSetting()
-		.name("Trichteranzeige verbessern")
-		.description("Verbessert die Anzeige von Trichtern.")
+	private static final NumberSetting lastHoppersLimit = new NumberSetting()
+		.name("Maximale Anzahl an Trichter")
+		.description("Wie viele Trichter maximal angezeigt werden.")
 		.icon(Material.HOPPER)
-		.subSettings(betterVisualisation, showRange, showSourceHopper);
+		.min(1)
+		.defaultValue(1);
 
-	@EventListener
-	public void onPacketSend(WindowClickEvent event) {
-		if (!(mc().currentScreen instanceof GuiChest))
-			return;
+	private static final BooleanSetting showLastHopper = new BooleanSetting()
+		.name("Letzte Trichter anzeigen")
+		.description("Markiert die Trichter, die als letztes geöffnet wurden.")
+		.icon(Material.WATCH)
+		.subSettings(lastHoppersLimit);
 
-		if (event.mode == 3)
-			return;
+	private static final BooleanSetting sneakMode = new BooleanSetting()
+		.name("Sneak-Modus")
+		.description("Öffnet bei Rechtsklicks immer die Einstellungen eines Trichters, auch wenn du nicht sneakst")
+		.icon("sneaking")
+		.addHotkeySetting("den Sneak-Modus", null);
 
-		int slot = event.slotId;
+	@MainElement
+	private static final BooleanSetting enabled = new BooleanSetting()
+		.name("Trichter verbessern")
+		.description("Verbessert Trichter.")
+		.icon(Material.HOPPER)
+		.subSettings(betterVisualisation, showRange, showSourceHopper, showLastHopper, sneakMode);
 
-		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
-		if (inv.getName().equals("§6Trichter-Mehrfach-Verbindungen")) {
-			if (slot == 53) {
-				if (showRange.get())
-					blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
-				if (showSourceHopper.get()) {
-					mainConnection = null;
-					displayEnd = Long.MAX_VALUE;
-					borderSize = 1;
-				}
-				return;
-			}
+	private static final List<BlockPos> lastClickedHoppers = new ArrayList<>();
 
-			if ((slot != 52 && slot != 50))
-				return;
-
-			for (int i = 0; i < 44; i++) {
-				ItemStack stack = inv.getStackInSlot(i);
-				if (stack == null || stack.getDisplayName().equals("§7 "))
-					continue;
-
-				BlockPos pos = getBlockPos(stack);
-				EntityItem entityItem = new EntityItem(world(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
-				filteredConnections.put(pos, entityItem);
-			}
-
-			if (slot == 52) {
-				displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
-				mc().displayGuiScreen(null);
-				event.cancel();
-			}
-		}
-
-		if (!inv.getName().equals("§6Trichter-Einstellungen"))
-			return;
-
-		if (slot != 15 && (slot != 34 || !betterVisualisation.get()) && (slot != 16 || (!showRange.get() && !showSourceHopper.get())))
-			return;
-
-		filteredConnections.clear();
-		Container slots = ((GuiChest) mc().currentScreen).inventorySlots;
-		ItemStack stack = slots.getSlot(31).getStack();
-		if (stack == null)
-			return;
-
-		borderSize = stack.stackSize;
-
-		ItemStack hopperStack = slots.getSlot(13).getStack();
-		if (ItemUtil.getLore(hopperStack).isEmpty())
-			return;
-		hopper = getBlockPos(hopperStack);
-
-		if (slot == 16) {
-			displayEnd = -1;
-
-			if (event.mode != 1) {
-				if (showRange.get())
-					blockyRenderSphere = BlockyRenderSphere.getSphere(hopper);
-
-				if (showSourceHopper.get()) {
-					borderSize = 1;
-					displayEnd = Long.MAX_VALUE;
-				}
-			}
-
-			mainConnection = null;
-			return;
-		}
-
-		ItemStack targetStack = slots.getSlot(16).getStack();
-		if (targetStack == null)
-			return;
-
-		mainConnection = EnchantmentHelper.getEnchantments(targetStack).isEmpty() ? null : getBlockPos(targetStack);
-
-		if (slot == 34) {
-			displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
-			mc().displayGuiScreen(null);
-			event.cancel();
-		}
-	}
-
-	private BlockPos getBlockPos(ItemStack stack) {
-		String line = ItemUtil.getLoreAtIndex(stack, 0);
-		String blockPos = line.substring(line.indexOf("§e") + 2);
-		String[] coords = blockPos.split(";");
-		return new BlockPos(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
+	public BetterHopper() {
+		lastHoppersLimit.callback(i -> {
+			lastHoppersLimit.icon(new ItemStack(Blocks.hopper, i));
+			while (i < lastClickedHoppers.size())
+				lastClickedHoppers.remove(0);
+		});
 	}
 
 	@EventListener
-	public void onRenderTick(TickEvent.RenderTickEvent event) {
-		if (!betterVisualisation.get() || !(mc().currentScreen instanceof GuiChest))
+	private static void onBlockInteract(BlockInteractEvent event) {
+		if (world().getBlockState(event.pos).getBlock() != Blocks.hopper || player().getHeldItem() != null)
 			return;
 
-		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
-		boolean isSettings = inv.getName().equals("§6Trichter-Einstellungen");
+		if (player().isSneaking()) {
+			addHopper(event.pos);
+			return;
+		}
 
-		if (!isSettings && !inv.getName().equals("§6Trichter-Mehrfach-Verbindungen"))
+		if (!sneakMode.get() || !enabled.get())
 			return;
 
-		int slotId = isSettings ? 34 : 52;
-		ItemStack stack = ItemUtil.fromNBT(String.format(ENABLE_VISUALISATION_NBT, displayTime.get(), isSettings ? "die Verbindung" : "alle Verbindungen"));
-		((GuiChest) mc().currentScreen).inventorySlots.getSlot(slotId).putStack(stack);
+		addHopper(event.pos);
+		mc().getNetHandler().addToSendQueue(new C0BPacketEntityAction(player(), START_SNEAKING));
+		TickScheduler.runAfterRenderTicks(() -> mc().getNetHandler().addToSendQueue(new C0BPacketEntityAction(player(), STOP_SNEAKING)), 1);
+	}
+
+	private static void addHopper(BlockPos pos) {
+		lastClickedHoppers.remove(pos);
+		lastClickedHoppers.add(pos);
+		if (lastClickedHoppers.size() > lastHoppersLimit.get())
+			lastClickedHoppers.remove(0);
 	}
 
 	@EventListener
-	public void onMessageReceive(MessageReceiveEvent event) {
-		String text = event.message.getUnformattedText();
-		if (text.equals("[Trichter] Der Trichter wurde erfolgreich verbunden.")
-			|| text.equals("[Trichter] Der Verbindungsmodus wurde beendet.")
-			|| text.equals("[Trichter] Der Startpunkt ist zu weit entfernt. Bitte starte erneut.")) {
-			blockyRenderSphere = null;
-			displayEnd = -1;
-		}
+	private void onBlockChange(PacketReceiveEvent<S23PacketBlockChange> event) {
+		if (event.packet.getBlockState().getBlock() != Blocks.hopper)
+			lastClickedHoppers.remove(event.packet.getBlockPosition());
 	}
 
 	@EventListener
-	public void onRenderWorldLast(RenderWorldLastEvent event) {
-		if (blockyRenderSphere != null)
-			blockyRenderSphere.render();
-
-		if (displayEnd < System.currentTimeMillis()) // Visualisation
+	private void onRenderTick(RenderWorldLastEvent event) {
+		if (!showLastHopper.get() || lastClickedHoppers.isEmpty())
 			return;
 
-		GL11.glDisable(GL_DEPTH_TEST);
-
-		if (mainConnection != null)
-			drawConnection(mainConnection, 0xFF0000);
-
-		renderFilteredConnections(event.partialTicks);
-
-		AxisAlignedBB collectionBox;
-		if (borderSize > 1)
-			collectionBox = new AxisAlignedBB(hopper.add(borderSize, borderSize / 2, borderSize), hopper.add(-borderSize, borderSize / -2, -borderSize));
-		else if (borderSize == 1)
-			collectionBox = new AxisAlignedBB(hopper, hopper.add(1, 1, 1));
-		else
-			collectionBox = new AxisAlignedBB(hopper, hopper).expand(0.125, 0.125, 0.125).offset(0.5, 0.5, 0.5);
-
-		if (fillBoxes.get())
-			RenderUtil.drawFilledBox(collectionBox, new Color(0x1A880088, true), true);
-		RenderUtil.drawBoxOutlines(collectionBox, new Color(0x880088), 1.5f);
-		GlStateManager.enableBlend();
-		GlStateManager.enableBlend();
-		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		GL11.glEnable(GL_DEPTH_TEST);
-	}
-
-	private void renderFilteredConnections(float partialTicks) {
-		for (BlockPos blockPos : filteredConnections.keySet())
-			drawConnection(blockPos, 0xFF4040);
-
-		for (EntityItem entityItem : filteredConnections.values()) {
-			Entity renderEntity =  mc().getRenderViewEntity();
-			double x = entityItem.posX - renderEntity.lastTickPosX - (renderEntity.posX - renderEntity.lastTickPosX) * partialTicks;
-			double y = entityItem.posY - renderEntity.lastTickPosY - (renderEntity.posY - renderEntity.lastTickPosY) * partialTicks;
-			double z = entityItem.posZ - renderEntity.lastTickPosZ - (renderEntity.posZ - renderEntity.lastTickPosZ) * partialTicks;
-			ItemStack stack = entityItem.getEntityItem();
-
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(x, y, z);
-			double yaw = Math.toDegrees(MathHelper.atan2(entityItem.posX - renderEntity.posX, entityItem.posZ - renderEntity.posZ));
-			GlStateManager.rotate((float) yaw, 0, 1, 0);
-
-			double dist = Math.sqrt(Math.pow(entityItem.posX - renderEntity.posX, 2) + Math.pow(entityItem.posZ - renderEntity.posZ, 2));
-			double pitch = Math.toDegrees(MathHelper.atan2(entityItem.posY - (renderEntity.posY + renderEntity.getEyeHeight()), dist));
-			GlStateManager.rotate(-(float) pitch, 1, 0, 0);
-
-			// Draw outline
-			double delta = 1 /16d;
-			GL11.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
-			GlStateManager.color(1, 0, 0, 1);
-			GlStateManager.colorMask(true, false, false, true);
-			drawStack(delta, delta, stack);
-			drawStack(delta, -delta, stack);
-			drawStack(-delta, delta, stack);
-			drawStack(-delta, -delta, stack);
-			GlStateManager.colorMask(true, true, true, true);
-			GL11.glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-			drawStack(0, 0, stack);
-			GlStateManager.popMatrix();
+		double color = 192 / (float) lastClickedHoppers.size();
+		for (int i = 0; i < lastClickedHoppers.size();) {
+			BlockPos lastClickedHopper = lastClickedHoppers.get(i);
+			AxisAlignedBB bb = new AxisAlignedBB(lastClickedHopper, lastClickedHopper.add(1, 1, 1)).expand(0.001, 0.001, 0.001);
+			RenderUtil.drawFilledBox(bb, new Color(0, (int) (++i * color) + 63, 0, 0x80), false);
 		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private void drawStack(double shiftX, double shiftY, ItemStack stack) {
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(shiftX, shiftY, 0);
-		mc().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
-		GlStateManager.popMatrix();
-	}
-
-	private void drawConnection(BlockPos target, int color) {
-		AxisAlignedBB targetBox = new AxisAlignedBB(target, target.add(1, 1, 1));
-		if (fillBoxes.get())
-			RenderUtil.drawFilledBox(targetBox, new Color(0x1A000000 | color, true), true);
-		RenderUtil.drawBoxOutlines(targetBox, new Color(color), 1.5f);
-		RenderUtil.drawLine(hopper.getX() + 0.5f, hopper.getY() + 0.5f, hopper.getZ() + 0.5f, target.getX() + 0.5f, target.getY() + 0.5f, target.getZ() + 0.5f, new Color(color), 1.5f);
 	}
 
 }

@@ -23,6 +23,8 @@ import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
+import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipePlayer;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
@@ -45,15 +47,15 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 @Singleton
 public class Recraft extends Feature {
 
-	static final RecraftRecording tempRecording = new RecraftRecording();
+	public static final RecraftRecording tempRecording = new RecraftRecording();
 
 	private final KeySetting key = new KeySetting()
 		.name("Letzten Aufruf wiederholen")
-		.description("Wiederholt den letzten \"/rezepte\" Aufruf.")
+		.description("Wiederholt den letzten \"/rezepte\" oder \"/craft\" Aufruf.\n\nVielen Dank an Pleezon/AntiBannSystem")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && isEnabled())
-				RecraftPlayer.play(tempRecording);
+				RecipePlayer.play(tempRecording);
 		});
 
 	private final RecraftPieMenu pieMenu = new RecraftPieMenu();
@@ -83,7 +85,7 @@ public class Recraft extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Recraft")
-		.description("Wiederholt \"/rezepte\" Aufrufe.")
+		.description("Wiederholt \"/rezepte\" oder \"/craft\" Aufrufe.\n\nVielen Dank an Pleezon/AntiBannSystem für die Hilfe beim AutoCrafter §c❤")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.subSettings(key, new HeaderSetting(), openPieMenu, animation, new HeaderSetting(), new EntryAddSetting()
 			.name("Seite hinzufügen")
@@ -119,6 +121,10 @@ public class Recraft extends Feature {
 
 		Config.set(getConfigKey() + ".pages", jsonPages);
 		Config.save();
+	}
+
+	public static boolean isPlaying() {
+		return RecipePlayer.isPlaying() || CraftPlayer.isPlaying();
 	}
 
 	static <T> List<T> getSubSettingsOfType(SettingsElement container, Class<T> type) {

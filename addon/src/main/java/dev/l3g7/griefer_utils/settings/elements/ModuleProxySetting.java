@@ -56,6 +56,9 @@ public class ModuleProxySetting extends BooleanSetting {
 			button.playPressSound(mc.getSoundHandler());
 			Tabs.lastOpenScreen = null;
 			mc.displayGuiScreen(new LabyModModuleEditorGui());
+			if (!(mc.currentScreen instanceof LabyModModuleEditorGui))
+				return;
+
 			List<SettingsElement> path = MinecraftUtil.path();
 			path.add(Module.CATEGORY.getCategoryElement());
 			path.add(module.getBooleanElement());

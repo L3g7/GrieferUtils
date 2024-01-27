@@ -21,18 +21,30 @@ package dev.l3g7.griefer_utils.settings.elements;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.ValueHolder;
 import net.labymod.settings.elements.BooleanElement;
+import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Consumer;
+
+import java.lang.reflect.Field;
+
+import static dev.l3g7.griefer_utils.settings.elements.BooleanSetting.TriggerMode.HOLD;
+import static dev.l3g7.griefer_utils.settings.elements.BooleanSetting.TriggerMode.TOGGLE;
 
 /**
  * A setting holding a boolean, represented in-game by a switch.
  */
 public class BooleanSetting extends BooleanElement implements ElementBuilder<BooleanSetting>, ValueHolder<BooleanSetting, Boolean> {
 
+	private static final Field keySettingField;
+	private static final Field triggerModeSettingField;
+
 	private final Storage<Boolean> storage = new ValueHolder.Storage<>(JsonPrimitive::new, JsonElement::getAsBoolean, false);
 	private final IconStorage iconStorage = new IconStorage();
+	private KeySetting key;
+	private final TriggerModeSetting triggerMode = new TriggerModeSetting();
 
 	public BooleanSetting() {
 		super("§cNo name set", null, v -> {}, false);
@@ -61,6 +73,79 @@ public class BooleanSetting extends BooleanElement implements ElementBuilder<Boo
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		drawIcon(x, y);
+	}
+
+	public Field getSettingField(SettingsElement element) {
+		if (element == key)
+			return keySettingField;
+
+		if (element == triggerMode)
+			return triggerModeSettingField;
+
+		return null;
+	}
+
+	public BooleanSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode) {
+		if (getSubSettings().getElements().isEmpty())
+			subSettings();
+
+		subSettings.getElements().add(4, key = new KeySetting()
+			.name("Taste")
+			.description("Welche Taste " + whatActivates + " aktiviert.")
+			.icon("key")
+			.pressCallback(p -> {
+				if (p || triggerMode.get() == HOLD)
+					this.set(!this.get());
+			}));
+
+		if (defaultTriggerMode == null)
+			return this;
+
+		triggerMode.description("Halten: Aktiviert " + whatActivates + ", während die Taste gedrückt wird.\n" +
+			"Umschalten: Schaltet " + whatActivates + " um, wenn die Taste gedrückt wird.");
+		triggerMode.defaultValue(defaultTriggerMode);
+		subSettings.getElements().add(5, triggerMode);
+		subSettings.getElements().add(6, new HeaderSetting());
+		return this;
+	}
+
+	static {
+		try {
+			keySettingField = BooleanSetting.class.getDeclaredField("key");
+			triggerModeSettingField = BooleanSetting.class.getDeclaredField("triggerMode");
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private class TriggerModeSetting extends DropDownSetting<TriggerMode> {
+
+		public TriggerModeSetting() {
+			super(TriggerMode.class);
+			name("Auslösung");
+			icon("lightning");
+			defaultValue(TOGGLE);
+			callback(() -> BooleanSetting.this.set(false));
+		}
+
+	}
+
+	public enum TriggerMode implements Named {
+
+		HOLD("Halten"), TOGGLE("Umschalten");
+
+		final String name;
+
+		TriggerMode(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+
 	}
 
 }

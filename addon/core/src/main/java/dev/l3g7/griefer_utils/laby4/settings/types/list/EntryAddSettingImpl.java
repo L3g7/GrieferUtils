@@ -21,7 +21,7 @@ public class EntryAddSettingImpl extends AbstractSettingImpl<EntryAddSetting, Ob
 
 	@Override
 	protected Widget[] createWidgets() {
-		return new Widget[]{}; // TODO: impl EntryAddSetting
+		return null; // TODO: impl EntryAddSetting
 	}
 
 }

@@ -6,6 +6,9 @@ plugins {
 
 dependencies {
     api(project(":api"))
+
+    compileOnly(fileTree("../libs"))
+    implementation("net.minecraft:launchwrapper:1.12")
 }
 
 labyModProcessor {

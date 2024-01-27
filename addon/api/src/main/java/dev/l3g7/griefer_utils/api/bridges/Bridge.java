@@ -25,7 +25,7 @@ public @interface Bridge {
 
 	class Initializer {
 
-		static String[] labyVersions = new String[]{"laby4"};
+		static String[] labyVersions = new String[]{"laby4", "laby3"};
 		static String[] minecraftVersions = new String[]{"v1_8_9"};
 
 		/**

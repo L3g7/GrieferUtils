@@ -49,7 +49,7 @@ public abstract class Feature implements Disableable {
 			return categories.computeIfAbsent(meta.name(), name -> SwitchSetting.create()
 				.name(meta.name())
 				.icon(meta.icon())
-				.config(configKey + ".active")
+				.config(meta.configKey() + ".active")
 				.defaultValue(true)
 				.subSettings() // creates a header
 			);

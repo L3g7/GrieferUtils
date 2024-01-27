@@ -35,8 +35,8 @@ public class SettingLoader {
 
 		// Load config key
 		String configKey = StringUtil.convertCasing(ownerClass.getSimpleName());
-		if (parent != null)
-			configKey = parent.configKey() + "." + configKey;
+		if (parent.configKey() != null)
+			configKey = parent.configKey().replaceAll(".active$", "") + "." + configKey;
 
 		// Load settings
 		if (mainElement instanceof AbstractSetting<?,?>)

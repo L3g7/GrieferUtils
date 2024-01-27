@@ -46,12 +46,17 @@ public abstract class Feature implements Disableable {
 
 		if (pkg.isAnnotationPresent(Category.class)) {
 			Category meta = pkg.getAnnotation(Category.class);
-			return categories.computeIfAbsent(meta.name(), name -> SwitchSetting.create()
-				.name(meta.name())
-				.icon(meta.icon())
-				.config(meta.configKey() + ".active")
-				.defaultValue(true)
-				.subSettings() // creates a header
+			return categories.computeIfAbsent(meta.name(), name -> {
+					SwitchSetting category = SwitchSetting.create()
+						.name(meta.name())
+						.icon(meta.icon())
+						.config(meta.configKey() + ".active")
+						.defaultValue(true)
+						.subSettings(); // creates a header
+
+					category.getStorage().configKey = configKey;
+					return category;
+				}
 			);
 		}
 
@@ -62,7 +67,7 @@ public abstract class Feature implements Disableable {
 	 * Initialises the main element and config key.
 	 */
 	public void init() {
-		MainElementData data = SettingLoader.initMainElement(this, category);
+		MainElementData data = SettingLoader.initMainElement(this, category.configKey());
 		mainElement = data.mainElement;
 		configKey = data.configKey;
 

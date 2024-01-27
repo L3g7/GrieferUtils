@@ -132,7 +132,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	class Storage<T> {
 
 		public T value = null;
-		private String configKey = null;
+		public String configKey = null;
 		private final T fallbackValue;
 		public final List<Consumer<T>> callbacks = new ArrayList<>();
 

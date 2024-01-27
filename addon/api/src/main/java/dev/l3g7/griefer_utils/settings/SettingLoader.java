@@ -22,7 +22,7 @@ import static dev.l3g7.griefer_utils.api.util.Util.elevate;
 
 public class SettingLoader {
 
-	public static MainElementData initMainElement(Object owner, AbstractSetting<?, ?> parent) {
+	public static MainElementData initMainElement(Object owner, String parentKey) {
 		Class<?> ownerClass = owner.getClass();
 
 		// Load main element
@@ -35,8 +35,8 @@ public class SettingLoader {
 
 		// Load config key
 		String configKey = StringUtil.convertCasing(ownerClass.getSimpleName());
-		if (parent.configKey() != null)
-			configKey = parent.configKey().replaceAll(".active$", "") + "." + configKey;
+		if (parentKey != null)
+			configKey = parentKey + "." + configKey;
 
 		// Load settings
 		if (mainElement instanceof AbstractSetting<?,?>)

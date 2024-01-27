@@ -60,7 +60,7 @@ public class ItemSaverCategory extends Feature {
 
 		// Add savers to category
 		category.subSettings(savers.stream()
-			.map(saver -> saver.init(getCategory()))
+			.map(saver -> saver.init(getCategory().configKey()))
 			.sorted(Comparator.comparing(BaseSetting::name))
 			.collect(Collectors.toList()));
 	}
@@ -76,8 +76,8 @@ public class ItemSaverCategory extends Feature {
 			return configKey;
 		}
 
-		protected BaseSetting<?> init(AbstractSetting<?, ?> parent) {
-			MainElementData data = SettingLoader.initMainElement(this, parent);
+		protected BaseSetting<?> init(String parentKey) {
+			MainElementData data = SettingLoader.initMainElement(this, parentKey);
 			mainElement = data.mainElement;
 			configKey = data.configKey;
 

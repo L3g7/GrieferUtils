@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
-import dev.l3g7.griefer_utils.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
@@ -74,7 +73,7 @@ public class ItemInfo extends Feature {
 	public void init() {
 		super.init();
 		for (ItemInfoSupplier supplier : infoSuppliers)
-			supplier.init(enabled);
+			supplier.init(getConfigKey());
 
 		infoSuppliers.sort(Comparator.comparing(f -> f.mainElement.name()));
 		enabled.subSettings(infoSuppliers.stream().map(s -> s.mainElement).collect(Collectors.toList()));
@@ -99,8 +98,8 @@ public class ItemInfo extends Feature {
 
 		public BaseSetting<?> mainElement;
 
-		protected BaseSetting<?> init(AbstractSetting<?, ?> parent) {
-			return mainElement = SettingLoader.initMainElement(this, parent).mainElement;
+		protected BaseSetting<?> init(String parentKey) {
+			return mainElement = SettingLoader.initMainElement(this, parentKey).mainElement;
 		}
 
 		public abstract List<String> getToolTip(ItemStack itemStack);

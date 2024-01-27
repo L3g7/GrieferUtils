@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.laby4;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.api.Laby;
 import net.labymod.api.addon.LoadedAddon;
@@ -35,13 +34,7 @@ public class Main {
 		System.out.println("GrieferUtils enabling");
 		long begin = System.currentTimeMillis();
 
-		FileProvider.getClassesWithSuperClass(Feature.class).forEach(meta -> {
-			if (meta.isAbstract())
-				return;
-
-			Feature instance = FileProvider.getSingleton(meta.load());
-			instance.init();
-		});
+		Feature.getFeatures().forEach(Feature::init);
 
 		EventRegisterer.init();
 		Event.fire(OnEnable.class);

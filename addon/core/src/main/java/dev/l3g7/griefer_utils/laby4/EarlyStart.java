@@ -18,7 +18,6 @@ public class EarlyStart {
 		Mapper.loadMappings("1.8.9", "22");
 
 		// Load and inject libraries
-
 		LibLoader.loadLibraries(
 
 			// mXparser: for evaluating expressions (Calculator)

@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.laby4.settings;
 
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -56,30 +55,24 @@ public class MainPage {
 	// TODO: searchableSettings
 
 	private static void collectSettings(List<BaseSetting<?>> settings) {
-		// Load features
-		List<Feature> features = new ArrayList<>();
-		FileProvider.getClassesWithSuperClass(Feature.class).forEach(meta -> {
-			if (!meta.isAbstract())
-				features.add(FileProvider.getSingleton(meta.load()));
-		});
-
-		features.sort(Comparator.comparing(f -> f.getMainElement().name()));
-
 		// Enable the feature category if one of its features gets enabled
-		for (Feature feature : features) {
-			if (!feature.getClass().isAnnotationPresent(FeatureCategory.class) || !(feature.getMainElement() instanceof SwitchSetting main))
-				continue;
+		Feature.getFeatures()
+			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
+			.forEach(feature -> {
+				if (!feature.getClass().isAnnotationPresent(FeatureCategory.class)
+					|| !(feature.getMainElement() instanceof SwitchSetting main))
+					return;
 
-			for (BaseSetting<?> element : main.getSubSettings()) {
-				if (!(element instanceof SwitchSetting sub))
-					continue;
+				for (BaseSetting<?> element : main.getSubSettings()) {
+					if (!(element instanceof SwitchSetting sub))
+						continue;
 
-				sub.callback(b -> {
-					if (b)
-						main.set(true);
-				});
-			}
-		}
+					sub.callback(b -> {
+						if (b)
+							main.set(true);
+					});
+				}
+			});
 
 		// Add categories
 		Feature.getCategories().stream()

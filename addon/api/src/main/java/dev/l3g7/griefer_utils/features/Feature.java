@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.features;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.Disableable;
+import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -102,6 +104,12 @@ public abstract class Feature implements Disableable {
 
 	public static List<BaseSetting<?>> getUncategorized() {
 		return categories.computeIfAbsent(null, p -> SwitchSetting.create()).getSubSettings();
+	}
+
+	public static Stream<Feature> getFeatures() {
+		return FileProvider.getClassesWithSuperClass(Feature.class).stream()
+			.filter(m -> !m.isAbstract())
+			.map(meta -> FileProvider.getSingleton(meta.load()));
 	}
 
 	@Retention(RUNTIME)

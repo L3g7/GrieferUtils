@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category.Meta(name = "Item", icon = "gold_ingot", configKey = "item")
+@Category(name = "Item", icon = "gold_ingot", configKey = "item")
 package dev.l3g7.griefer_utils.v1_8_9.features.item;
 
-import dev.l3g7.griefer_utils.features.Category;
+import dev.l3g7.griefer_utils.features.Feature.Category;

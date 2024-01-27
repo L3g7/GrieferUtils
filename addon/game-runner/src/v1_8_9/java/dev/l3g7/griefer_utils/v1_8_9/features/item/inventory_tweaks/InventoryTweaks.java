@@ -10,12 +10,13 @@ package dev.l3g7.griefer_utils.v1_8_9.features.item.inventory_tweaks;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.file_provider.meta.ClassMeta;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
+import dev.l3g7.griefer_utils.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.FeatureCategory;
 
 import java.util.Comparator;
 import java.util.List;
@@ -42,7 +43,7 @@ public class InventoryTweaks extends Feature {
 	public void init() {
 		super.init();
 		for (InventoryTweak tweak : tweaks)
-			tweak.init(getConfigKey());
+			tweak.init(enabled);
 
 		tweaks.sort(Comparator.comparing(f -> f.mainElement.name()));
 		enabled.subSettings(tweaks.stream().map(s -> s.mainElement).collect(Collectors.toList()));
@@ -52,8 +53,8 @@ public class InventoryTweaks extends Feature {
 
 		protected BaseSetting<?> mainElement;
 
-		protected BaseSetting<?> init(String parentConfigKey) {
-			return mainElement = SettingLoader.initMainElement(this, parentConfigKey).mainElement;
+		protected BaseSetting<?> init(AbstractSetting<?, ?> parent) {
+			return mainElement = SettingLoader.initMainElement(this, parent).mainElement;
 		}
 
 		public boolean isEnabled() {

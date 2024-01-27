@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category.Meta(name = "Chat", icon = "speech_bubble", configKey = "chat")
+@Category(name = "Chat", icon = "speech_bubble", configKey = "chat")
 package dev.l3g7.griefer_utils.v1_8_9.features.chat;
 
-import dev.l3g7.griefer_utils.features.Category;
+import dev.l3g7.griefer_utils.features.Feature.Category;

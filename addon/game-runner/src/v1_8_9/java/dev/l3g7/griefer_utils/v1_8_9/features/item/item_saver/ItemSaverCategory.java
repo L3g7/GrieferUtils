@@ -10,14 +10,15 @@ package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver;
 import dev.l3g7.griefer_utils.api.event.event_bus.Disableable;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
+import dev.l3g7.griefer_utils.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.FeatureCategory;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.tool_saver.ToolSaver;
 
 import java.util.Arrays;
@@ -59,7 +60,7 @@ public class ItemSaverCategory extends Feature {
 
 		// Add savers to category
 		category.subSettings(savers.stream()
-			.map(saver -> saver.init(getCategory().getConfigKey()))
+			.map(saver -> saver.init(getCategory()))
 			.sorted(Comparator.comparing(BaseSetting::name))
 			.collect(Collectors.toList()));
 	}
@@ -75,8 +76,8 @@ public class ItemSaverCategory extends Feature {
 			return configKey;
 		}
 
-		protected BaseSetting<?> init(String parentConfigKey) {
-			MainElementData data = SettingLoader.initMainElement(this, parentConfigKey);
+		protected BaseSetting<?> init(AbstractSetting<?, ?> parent) {
+			MainElementData data = SettingLoader.initMainElement(this, parent);
 			mainElement = data.mainElement;
 			configKey = data.configKey;
 

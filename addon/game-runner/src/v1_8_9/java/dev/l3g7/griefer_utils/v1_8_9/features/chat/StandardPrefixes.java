@@ -77,7 +77,7 @@ public class StandardPrefixes extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		getCategory().getSetting().callback(TabListEvent::updatePlayerInfoList);
+		getCategory().callback(TabListEvent::updatePlayerInfoList);
 		tab.callback(enabled -> {
 			if (!enabled && !chat.get())
 				chat.set(true);

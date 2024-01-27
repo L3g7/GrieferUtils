@@ -83,6 +83,10 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		return (S) this;
 	}
 
+	default String configKey() {
+		return getStorage().configKey;
+	}
+
 	/**
 	 * Saves the value in the config.
 	 */

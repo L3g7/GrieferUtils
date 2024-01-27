@@ -63,7 +63,7 @@ public class OrbSellerFix extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		String key = getCategory().getConfigKey() + ".orb_seller_fix.";
+		String key = getCategory().configKey() + ".orb_seller_fix.";
 		if (!Config.has(key + "ids"))
 			return;
 
@@ -187,7 +187,7 @@ public class OrbSellerFix extends Feature {
 	}
 
 	private void saveIds() {
-		String key = getCategory().getConfigKey() + ".orb_seller_fix.";
+		String key = getCategory().configKey() + ".orb_seller_fix.";
 		Config.set(key + "reset", new JsonPrimitive(getNextServerRestart()));
 
 		JsonObject ids = new JsonObject();

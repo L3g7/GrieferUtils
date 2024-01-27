@@ -77,8 +77,7 @@ public class SelfDisguise extends Feature {
 
 	public void init() {
 		super.init();
-		getCategory().getSetting()
-			.callback(v -> { if (!v) hideDisguise(); });
+		getCategory().callback(v -> { if (!v) hideDisguise(); });
 	}
 
 	@EventListener

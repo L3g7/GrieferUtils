@@ -11,9 +11,8 @@ import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.Util;
-import dev.l3g7.griefer_utils.features.Category;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.FeatureCategory;
+import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
@@ -65,40 +64,32 @@ public class MainPage {
 		});
 
 		features.sort(Comparator.comparing(f -> f.getMainElement().name()));
+
+		// Enable the feature category if one of its features gets enabled
 		for (Feature feature : features) {
-			feature.getCategory().add(feature);
-
-			if (!feature.getClass().isAnnotationPresent(FeatureCategory.class))
-				continue;
-
-			// Enable the feature category when one of its features is enabled
-			if (!(feature.getMainElement() instanceof SwitchSetting main))
+			if (!feature.getClass().isAnnotationPresent(FeatureCategory.class) || !(feature.getMainElement() instanceof SwitchSetting main))
 				continue;
 
 			for (BaseSetting<?> element : main.getSubSettings()) {
-				if (!(element instanceof SwitchSetting s))
+				if (!(element instanceof SwitchSetting sub))
 					continue;
 
-				s.callback(b -> {
+				sub.callback(b -> {
 					if (b)
 						main.set(true);
 				});
 			}
 		}
 
-
-		// Add every category to the main page
-		Category.getCategories().stream()
-			.filter(c -> c.getConfigKey() != null)
-			.map(Category::getSetting)
+		// Add categories
+		Feature.getCategories().stream()
 			.sorted(Comparator.comparing(BaseSetting::name))
 			.forEach(settings::add);
 
 		settings.add(HeaderSetting.create());
 
-		Category.getCategories().stream()
-			.filter(c -> c.getConfigKey() == null)
-			.flatMap(s -> s.getSetting().getSubSettings().stream())
+		// Add uncategorized features
+		Feature.getUncategorized().stream()
 			.sorted(Comparator.comparing(BaseSetting::name))
 			.forEach(settings::add);
 

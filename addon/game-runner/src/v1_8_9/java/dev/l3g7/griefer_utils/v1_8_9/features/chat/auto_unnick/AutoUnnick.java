@@ -50,7 +50,7 @@ public class AutoUnnick extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		getCategory().getSetting().callback(TabListEvent::updatePlayerInfoList);
+		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 
 	@EventListener(priority = Priority.HIGH)

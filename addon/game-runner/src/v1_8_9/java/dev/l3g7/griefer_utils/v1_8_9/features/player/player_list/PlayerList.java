@@ -122,7 +122,7 @@ public abstract class PlayerList extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		getCategory().getSetting().callback(TabListEvent::updatePlayerInfoList);
+		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 
 	/**

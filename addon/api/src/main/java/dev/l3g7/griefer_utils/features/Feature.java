@@ -14,11 +14,16 @@ import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
+import org.spongepowered.include.com.google.common.collect.ImmutableList;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
@@ -26,45 +31,59 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 public abstract class Feature implements Disableable {
 
-	private Category category;
+	// Name to setting
+	private static final Map<String, SwitchSetting> categories = new HashMap<>();
+
+	private final SwitchSetting category = findCategory(getClass().getPackage());
 	private BaseSetting<?> mainElement;
 	private String configKey;
 
+	private SwitchSetting findCategory(Package pkg) {
+		if (pkg == null)
+			return categories.computeIfAbsent(null, p -> SwitchSetting.create());
+
+		if (pkg.isAnnotationPresent(Category.class)) {
+			Category meta = pkg.getAnnotation(Category.class);
+			return categories.computeIfAbsent(meta.name(), name -> SwitchSetting.create()
+				.name(meta.name())
+				.icon(meta.icon())
+				.config(configKey + ".active")
+				.defaultValue(true)
+				.subSettings() // creates a header
+			);
+		}
+
+		return findCategory(Reflection.getParentPackage(pkg));
+	}
+
 	/**
-	 * Initialises the feature.
+	 * Initialises the main element and config key.
 	 */
 	public void init() {
-
-		// Find package holding category meta
-		Package pkg = getClass().getPackage();
-		do {
-			if (pkg.isAnnotationPresent(Category.Meta.class) || pkg.isAnnotationPresent(Category.Uncategorized.class))
-				break;
-		} while ((pkg = Reflection.getParentPackage(pkg)) != null);
-
-		if (pkg == null)
-			throw new IllegalStateException("Could not find category of " + getClass().getPackage().getName());
-
-		category = Category.getCategory(pkg);
-
-		MainElementData data = SettingLoader.initMainElement(this, category.getConfigKey());
+		MainElementData data = SettingLoader.initMainElement(this, category);
 		mainElement = data.mainElement;
 		configKey = data.configKey;
+
+		category.subSettings(ImmutableList.of(mainElement));
 	}
 
 	public BaseSetting<?> getMainElement() {
 		return mainElement;
 	}
 
-	public Category getCategory() {
+	public SwitchSetting getCategory() {
 		return category;
+	}
+
+	public String getConfigKey() {
+		return configKey;
 	}
 
 	/**
 	 * Checks if the parent category and the feature itself is enabled.
 	 */
 	public boolean isEnabled() {
-		if (!category.isEnabled())
+		if (!category.get())
 			return false;
 
 		if (mainElement instanceof SwitchSetting)
@@ -74,13 +93,17 @@ public abstract class Feature implements Disableable {
 		return true;
 	}
 
-	public String getConfigKey() {
-		return configKey;
+	public static List<SwitchSetting> getCategories() {
+		return categories.entrySet().stream()
+			.filter(e -> e.getKey() != null)
+			.map(Map.Entry::getValue)
+			.collect(Collectors.toList());
 	}
 
-	/**
-	 * An annotation for marking the main element in a feature.
-	 */
+	public static List<BaseSetting<?>> getUncategorized() {
+		return categories.computeIfAbsent(null, p -> SwitchSetting.create()).getSubSettings();
+	}
+
 	@Retention(RUNTIME)
 	@Target(FIELD)
 	public @interface MainElement {
@@ -88,4 +111,21 @@ public abstract class Feature implements Disableable {
 		boolean configureSubSettings() default true;
 
 	}
+
+	@Retention(RUNTIME)
+	@Target(PACKAGE)
+	public @interface Category {
+
+		String name();
+
+		String icon();
+
+		String configKey();
+
+	}
+
+	@Retention(RUNTIME)
+	@Target(TYPE)
+	public @interface FeatureCategory {}
+
 }

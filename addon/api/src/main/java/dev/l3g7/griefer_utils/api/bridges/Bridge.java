@@ -38,6 +38,26 @@ public @interface Bridge {
 			for (Version value : Version.values())
 				if (!value.isActive())
 					FileProvider.exclude("dev/l3g7/griefer_utils/" + value.pkg);
+
+			// Remove incompatible files
+			FileProvider.exclude(m -> {
+				if (!m.hasAnnotation(ExclusiveTo.class))
+					return false;
+
+				Version[] versions = m.getAnnotation(ExclusiveTo.class).getValue("value", true);
+
+				// Check if at least one compatible version exists for every type
+				typeLoop:
+				for (VersionType type : VersionType.values()) {
+					for (Version version : versions)
+						if (version.type == type && version.isActive())
+							continue typeLoop;
+
+					// No compatible version found, remove file
+					return true;
+				}
+				return false;
+			});
 		}
 
 	}
@@ -73,6 +93,14 @@ public @interface Bridge {
 		public boolean isActive() {
 			return pkg == null || type.current == this;
 		}
+
+	}
+
+	@Retention(RUNTIME)
+	@Target(TYPE)
+	@interface ExclusiveTo {
+
+		Version[] value();
 
 	}
 

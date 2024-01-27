@@ -48,6 +48,7 @@ public abstract class FileProvider {
 	private static final Set<FileProvider> providers = new HashSet<>();
 
 	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>();
+	private static final Set<Predicate<ClassMeta>> classExclusions = new HashSet<>();
 	private static final Map<Class<?>, Object> singletonInstances = new HashMap<>();
 
 	/**
@@ -91,9 +92,24 @@ public abstract class FileProvider {
 		}
 	}
 
-	public static void exclude(String prefix) { // a/b.class
+	/**
+	 * Excludes all files whose path starts with the given prefix.
+	 */
+	public static void exclude(String prefix) {
 		exclusions.add(prefix);
 		fileCache.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
+	}
+
+	/**
+	 * Adds a filter and applies it to all cached classes.
+	 * If a class is affected by the filter, getClassMeta will return null and any method return class
+	 * collections will exclude that class.
+	 */
+	public static void exclude(Predicate<ClassMeta> filter) {
+		classExclusions.add(filter);
+		for (Map.Entry<String, ClassMeta> entry : classMetaCache.entrySet())
+			if (entry.getValue() != null && filter.test(entry.getValue()))
+				entry.setValue(null);
 	}
 
 	/**
@@ -136,8 +152,12 @@ public abstract class FileProvider {
 		if (!getFiles().contains(file)) {
 			if (!loadUnknownFiles)
 				return null;
+
 			// Load ClassMeta using Reflection
 			ClassMeta meta = new ClassMeta(Reflection.load(file));
+			if (classExclusions.stream().anyMatch(p -> p.test(meta)))
+				return classMetaCache.put(file, null);
+
 			classMetaCache.put(file, meta);
 			return meta;
 		}
@@ -151,6 +171,9 @@ public abstract class FileProvider {
 			new ClassReader(IOUtil.toByteArray(in)).accept(node, SKIP_CODE);
 
 			ClassMeta meta = new ClassMeta(node);
+			if (classExclusions.stream().anyMatch(p -> p.test(meta)))
+				return classMetaCache.put(file, null);
+
 			classMetaCache.put(file, meta);
 			return meta;
 		} catch (IOException e) {

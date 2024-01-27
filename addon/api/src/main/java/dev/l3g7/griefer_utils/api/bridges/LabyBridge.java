@@ -17,13 +17,15 @@ import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
+
 @Bridged
 public interface LabyBridge {
 
 	LabyBridge labyBridge = FileProvider.getBridge(LabyBridge.class);
 
 	static void run(Runnable laby3, Runnable laby4) {
-		(labyBridge.laby4() ? laby4 : laby3).run();
+		(LABY_4.isActive() ? laby4 : laby3).run();
 	}
 
 	// General information
@@ -31,8 +33,6 @@ public interface LabyBridge {
 	boolean obfuscated();
 
 	boolean forge();
-
-	boolean laby4();
 
 	String addonVersion();
 

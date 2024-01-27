@@ -22,9 +22,11 @@ public class PreStart implements Entrypoint {
 		if (System.setProperty("griefer_utils_load_flag", "") != null)
 			throw new Error("GrieferUtils wurde bereits geladen!");
 
-		String version = semVer.toString().replace('.', '_');
-		if (!Bridge.Initializer.init("laby4", "v" + version))
+		Bridge.Version mcVersion = Bridge.Version.getMinecraftBySemVer(semVer.toString());
+		if (mcVersion == null)
 			throw new UnsupportedAddonException("GrieferUtils ist nicht für Version " + semVer + " verfügbar!");
+
+		Bridge.Initializer.init(Bridge.Version.LABY_4, mcVersion);
 
 		try {
 			EarlyStart.start();

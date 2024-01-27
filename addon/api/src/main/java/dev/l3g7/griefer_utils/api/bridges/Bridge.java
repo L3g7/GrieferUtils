@@ -12,6 +12,8 @@ import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.VersionType.LABYMOD;
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.VersionType.MINECRAFT;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -25,28 +27,53 @@ public @interface Bridge {
 
 	class Initializer {
 
-		static String[] labyVersions = new String[]{"laby4", "laby3"};
-		static String[] minecraftVersions = new String[]{"v1_8_9"};
+		public static void init(Version labyVersion, Version minecraftVersion) {
+			if (labyVersion.type != LABYMOD || minecraftVersion.type != MINECRAFT)
+				throw new IllegalArgumentException();
 
-		/**
-		 * @return Whether the requested version is available.
-		 */
-		public static boolean init(String labyVersion, String minecraftVersion) {
-			return init(labyVersion, labyVersions) && init(minecraftVersion, minecraftVersions);
+			LABYMOD.current = labyVersion;
+			MINECRAFT.current = minecraftVersion;
+
+			// Exclude incompatible versions
+			for (Version value : Version.values())
+				if (!value.isActive())
+					FileProvider.exclude("dev/l3g7/griefer_utils/" + value.pkg);
 		}
 
-		private static boolean init(String target, String[] availableTargets) {
-			boolean found = false;
+	}
 
-			for (String availableTarget : availableTargets) {
-				if (target.equals(availableTarget))
-					found = true;
-				else
-					FileProvider.exclude("dev/l3g7/griefer_utils/" + availableTarget);
-			}
+	enum VersionType {
+		MINECRAFT, LABYMOD;
 
-			return found;
+		private Version current;
+	}
+
+	enum Version {
+
+		LABY_3(LABYMOD, "laby3"), LABY_4(LABYMOD, "laby4"), ANY_LABY(LABYMOD, null),
+		MINECRAFT_1_8_9(MINECRAFT, "v1_8_9"), ANY_MINECRAFT(MINECRAFT, null);
+
+		private final VersionType type;
+		private final String pkg;
+
+		Version(VersionType type, String pkg) {
+			this.type = type;
+			this.pkg = pkg;
 		}
+
+		public static Version getMinecraftBySemVer(String semVer) {
+			String version = "v" + semVer.replace('.', '_');
+			for (Version value : values())
+				if (value.type == MINECRAFT && version.equals(value.pkg))
+					return value;
+
+			return null;
+		}
+
+		public boolean isActive() {
+			return pkg == null || type.current == this;
+		}
+
 	}
 
 }

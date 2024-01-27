@@ -24,6 +24,7 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.api.bridges.MinecraftBridge.minecraftBridge;
 
@@ -106,7 +107,7 @@ public class BugReporter {
 				conn.addRequestProperty("User-Agent", "GrieferUtils v" + labyBridge.addonVersion());
 				conn.addRequestProperty("Content-Type", "text/plain");
 				conn.addRequestProperty("X-MINECRAFT-FORGE", String.valueOf(labyBridge.forge()));
-				conn.addRequestProperty("X-LABYMOD-4", String.valueOf(labyBridge.laby4()));
+				conn.addRequestProperty("X-LABYMOD-4", String.valueOf(LABY_4.isActive()));
 
 				if (shouldSendUuid.get())
 					conn.addRequestProperty("X-MINECRAFT-UUID", String.valueOf(minecraftBridge.uuid()));

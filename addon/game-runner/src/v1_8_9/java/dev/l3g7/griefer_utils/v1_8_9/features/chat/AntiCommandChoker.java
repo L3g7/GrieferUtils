@@ -10,11 +10,11 @@ package dev.l3g7.griefer_utils.v1_8_9.features.chat;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.StringListSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -27,6 +27,7 @@ import net.minecraft.util.IChatComponent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
@@ -55,7 +56,7 @@ public class AntiCommandChoker extends Feature {
 			t/p h
 			t(p h""")
 		.icon(new ItemStack(Blocks.barrier, 7))
-		.subSettings(labyBridge.laby4() ? null : HeaderSetting.create("§e§lEigene Einträge").scale(0.7), customEntries);
+		.subSettings(LABY_4.isActive() ? null : HeaderSetting.create("§e§lEigene Einträge").scale(0.7), customEntries);
 
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {

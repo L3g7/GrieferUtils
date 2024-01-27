@@ -54,11 +54,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	}
 
 	@Override
-	public boolean laby4() {
-		return true;
-	}
-
-	@Override
 	public String addonVersion() {
 		return Main.getAddon().info().getVersion();
 	}

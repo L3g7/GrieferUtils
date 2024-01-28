@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.injection;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.Version;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
@@ -47,6 +49,12 @@ public class MixinPlugin implements IMixinConfigPlugin {
 			ClassMeta meta = FileProvider.getClassMeta(file, false);
 			if (meta == null || !meta.hasAnnotation(Mixin.class))
 				continue;
+
+			if (meta.hasAnnotation(ExclusiveTo.class)) {
+				Version[] versions = meta.getAnnotation(ExclusiveTo.class).getValue("value", true);
+				if (!Version.isCompatible(versions))
+					continue;
+			}
 
 			ArrayList<Type> mixinTargets = meta.getAnnotation(Mixin.class).getValue("value", false);
 			for (Type mixinTarget : mixinTargets) {

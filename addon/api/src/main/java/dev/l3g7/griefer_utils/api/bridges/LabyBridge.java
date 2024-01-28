@@ -55,6 +55,8 @@ public interface LabyBridge {
 
 	void displayInChat(String message);
 
+	void openWebsite(String url);
+
 	// Events
 
 	void onJoin(Runnable callback);

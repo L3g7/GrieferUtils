@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.SelectButtonGroup;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
@@ -31,6 +30,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.function.Consumer;
 
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 public class ChatMenuEntry {
@@ -200,7 +200,7 @@ public class ChatMenuEntry {
 				break;
 			case OPEN_URL:
 				try {
-					Util.openWebsite(((String) command).replaceAll("(?i)%name%", name));
+					labyBridge.openWebsite(((String) command).replaceAll("(?i)%name%", name));
 				} catch (RuntimeException e) {
 					e.printStackTrace();
 					LabyBridge.labyBridge.notifyError("Die URL, die geöffnet werden soll, ist ungültig.");

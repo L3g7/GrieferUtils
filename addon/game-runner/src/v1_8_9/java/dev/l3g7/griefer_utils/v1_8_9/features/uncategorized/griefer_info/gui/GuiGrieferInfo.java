@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.DataHandler;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.botshops.GuiBotShops;
@@ -20,6 +19,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil.createItem;
 
 public class GuiGrieferInfo extends GuiBigChest {
@@ -44,8 +44,8 @@ public class GuiGrieferInfo extends GuiBigChest {
 			DataHandler.requestFreestuff();
 		});
 
-		addItem(30, WEBSITE, () -> Util.openWebsite("https://griefer.info/site/index"));
-		addItem(32, DISCORD, () -> Util.openWebsite("https://discord.gg/YnPatPbVmx"));
+		addItem(30, WEBSITE, () -> labyBridge.openWebsite("https://griefer.info/site/index"));
+		addItem(32, DISCORD, () -> labyBridge.openWebsite("https://discord.gg/YnPatPbVmx"));
 	}
 
 	@EventListener

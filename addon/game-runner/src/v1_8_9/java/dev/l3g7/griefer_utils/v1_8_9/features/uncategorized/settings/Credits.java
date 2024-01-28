@@ -7,11 +7,12 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings;
 
-import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.laby4.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
+
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 
 public class Credits {
 
@@ -42,7 +43,7 @@ public class Credits {
 				.name("Credits öffnen")
 				.icon("white_scroll")
 				.buttonIcon("griefer_utils/icons/open_link.png")
-				.callback(() -> Util.openWebsite("https://grieferutils.l3g7.dev/image_credits")),
+				.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/image_credits")),
 			HeaderSetting.create().entryHeight(11),
 
 			HeaderSetting.create("Code-Credits"),

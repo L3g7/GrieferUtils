@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.laby4.settings;
 
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
@@ -25,6 +24,8 @@ import net.labymod.api.configuration.settings.type.RootSettingRegistry;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 
 public class MainPage {
 
@@ -92,13 +93,13 @@ public class MainPage {
 		settings.add(ButtonSetting.create()
 			.name("Wiki").icon("open_book")
 			.buttonIcon("open_book_outline")
-			.callback(() -> Util.openWebsite("https://grieferutils.l3g7.dev/wiki")));
+			.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/wiki")));
 
 		// Discord link
 		settings.add(ButtonSetting.create()
 			.name("Discord").icon("discord")
 			.buttonIcon("discord_clyde")
-			.callback(() -> Util.openWebsite("https://grieferutils.l3g7.dev/discord")));
+			.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")));
 	}
 
 }

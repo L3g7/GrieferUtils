@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.api.misc.Pair;
 import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
-import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.laby4.Main;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import net.labymod.api.Laby;
@@ -71,7 +70,7 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void notifyError(String message) {
 		createNotification("§c§lFehler ⚠", "§c" + message)
-			.addButton(Notification.NotificationButton.of(Component.text("Zum Discord"), () -> Util.openWebsite("https://grieferutils.l3g7.dev/discord")))
+			.addButton(Notification.NotificationButton.of(Component.text("Zum Discord"), () -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")))
 			.buildAndPush();
 	}
 
@@ -86,6 +85,11 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void displayInChat(String message) {
 		Laby.labyAPI().minecraft().chatExecutor().displayClientMessage(message);
+	}
+
+	@Override
+	public void openWebsite(String url) {
+		Laby.labyAPI().minecraft().chatExecutor().openUrl(url);
 	}
 
 	@Override

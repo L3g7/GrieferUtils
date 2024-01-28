@@ -10,14 +10,13 @@ package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.util.IOUtil;
-import dev.l3g7.griefer_utils.api.util.Util;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiGrieferInfo;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Items;
@@ -27,6 +26,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 
 @Singleton
 public class GrieferInfo extends Feature {
@@ -75,7 +76,7 @@ public class GrieferInfo extends Feature {
 		String player = event.itemStack.getTagCompound().getString("Player");
 
 		Optional<String> profileLink = profileLinks.get(player).getNow(Optional.empty());
-		Util.openWebsite(profileLink.orElse("https://griefer.info/profile?keyword=" + player));
+		labyBridge.openWebsite(profileLink.orElse("https://griefer.info/profile?keyword=" + player));
 	}
 
 }

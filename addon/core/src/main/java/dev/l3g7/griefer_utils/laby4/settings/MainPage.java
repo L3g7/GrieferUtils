@@ -75,6 +75,11 @@ public class MainPage {
 				}
 			});
 
+		// Add features to categories
+		Feature.getFeatures()
+			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
+			.forEach(Feature::addToCategory);
+
 		// Add categories
 		Feature.getCategories().stream()
 			.sorted(Comparator.comparing(BaseSetting::name))

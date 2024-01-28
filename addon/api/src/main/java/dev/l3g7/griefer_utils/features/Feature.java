@@ -70,7 +70,12 @@ public abstract class Feature implements Disableable {
 		MainElementData data = SettingLoader.initMainElement(this, category.configKey());
 		mainElement = data.mainElement;
 		configKey = data.configKey;
+	}
 
+	/**
+	 * Must happen after initialization for sorting using the main element.
+	 */
+	public void addToCategory() {
 		category.subSettings(ImmutableList.of(mainElement));
 	}
 

@@ -14,10 +14,9 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.api.util.Util.elevate;
@@ -78,7 +77,7 @@ public class AnnotationMeta implements Opcodes {
 			Object value = values.get(key);
 
 			// Check for enums
-			if (isEnum && value.getClass().isArray()) {
+			if (isEnum && mustConvertToEnum(value.getClass())) {
 				value = convertToEnum(value);
 				values.put(key, value);
 			}
@@ -103,21 +102,47 @@ public class AnnotationMeta implements Opcodes {
 			throw elevate(new NullPointerException(), "Could not get value of %s", desc);
 
 		// Check for enums
-		if (isEnum && value.getClass().isArray())
+		if (isEnum && mustConvertToEnum(value.getClass()))
 			value = convertToEnum(value);
 		values.put(key, value);
 		return c(value);
 	}
 
+	private boolean mustConvertToEnum(Class<?> clazz) {
+		if (clazz == ArrayList.class)
+			return true;
+
+		if (!clazz.isArray())
+			return false;
+
+		return clazz.getComponentType() == String.class;
+	}
+
 	/**
-	 * Converts a String[2] into an Enum.
+	 * Converts a String[2] into an Enum and an ArrayList into an array of Enums.
 	 *
 	 * @see AnnotationNode#values
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	private Object convertToEnum(Object value) {
-		String[] data = (String[]) value;
-		return Enum.valueOf((Class<? extends Enum>) c(FileProvider.getClassMetaByDesc(data[0]).load()), data[1]);
+	private <T extends Enum<T>> Object convertToEnum(Object value) {
+		if (value.getClass().isArray()) {
+			String[] data = (String[]) value;
+			return Enum.valueOf((Class<? extends Enum>) c(FileProvider.getClassMetaByDesc(data[0]).load()), data[1]);
+		}
+
+		List<String[]> list = (List<String[]>) value;
+		T[] result = null;
+
+		for (int i = 0; i < list.size(); i++) {
+			String[] data = list.get(i);
+			Class<T> clazz = c(FileProvider.getClassMetaByDesc(data[0]).load());
+			if (result == null)
+				result = c(Array.newInstance(clazz, list.size()));
+
+			result[i] = Enum.valueOf(clazz, data[1]);
+		}
+
+		return result;
 	}
 
 	@Override

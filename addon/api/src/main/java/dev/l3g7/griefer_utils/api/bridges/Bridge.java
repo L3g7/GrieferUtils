@@ -45,18 +45,7 @@ public @interface Bridge {
 					return false;
 
 				Version[] versions = m.getAnnotation(ExclusiveTo.class).getValue("value", true);
-
-				// Check if at least one compatible version exists for every type
-				typeLoop:
-				for (VersionType type : VersionType.values()) {
-					for (Version version : versions)
-						if (version.type == type && version.isActive())
-							continue typeLoop;
-
-					// No compatible version found, remove file
-					return true;
-				}
-				return false;
+				return !Version.isCompatible(versions);
 			});
 		}
 
@@ -92,6 +81,24 @@ public @interface Bridge {
 
 		public boolean isActive() {
 			return pkg == null || type.current == this;
+		}
+
+		/**
+		 * @return whether the current environment is incompatible with the given versions
+		 */
+		public static boolean isCompatible(Version[] versions) {
+			// Check if at least one compatible version exists for every type
+			typeLoop:
+			for (VersionType type : VersionType.values()) {
+				for (Version version : versions)
+					if (version.type == type && version.isActive())
+						continue typeLoop;
+
+				// No compatible version found
+				return false;
+			}
+
+			return true;
 		}
 
 	}

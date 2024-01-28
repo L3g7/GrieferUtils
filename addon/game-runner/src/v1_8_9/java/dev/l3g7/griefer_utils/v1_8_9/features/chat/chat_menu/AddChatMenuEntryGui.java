@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.ChatMenuEntry.Action;
 import dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.ChatMenuEntry.IconType;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.*;
@@ -337,10 +338,14 @@ public class AddChatMenuEntryGui extends Gui {
 		entry.icon = iconInput.getSelected() == IconType.ITEM ? itemIconInput.getSelected() : fileIconInput.getSelection();
 		entry.completed = true;
 
-		if (editedEntry == null)
+		if (editedEntry == null) {
 			// Add entry
+			EntryDisplaySetting setting = new EntryDisplaySetting(entry);
+			SwitchSettingImpl parent = (SwitchSettingImpl) FileProvider.getSingleton(ChatMenu.class).getMainElement();
+			setting.create(parent.getStorage().config, parent);
 			FileProvider.getSingleton(ChatMenu.class).getMainElement()
-				.addSetting(new EntryDisplaySetting(entry));
+				.addSetting(setting);
+		}
 		else
 			editedEntry.initEntry();
 

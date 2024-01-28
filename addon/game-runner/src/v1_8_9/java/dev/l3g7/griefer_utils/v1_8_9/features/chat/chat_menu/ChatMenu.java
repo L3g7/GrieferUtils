@@ -122,7 +122,6 @@ public class ChatMenu extends Feature {
 	}
 
 	private void loadEntries() {
-
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES) {
 			String path = "chat.chat_menu.entries." + entry.name;
 

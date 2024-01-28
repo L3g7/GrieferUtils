@@ -31,10 +31,15 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 		this.entry = entry;
 		EventRegisterer.register(this);
 		initEntry();
+		callback(enabled -> {
+			entry.enabled = enabled;
+			ChatMenu.saveEntries();
+		});
 	}
 
 	public void initEntry() {
 		name(entry.name + "\n§o➡ " + entry.command);
+		set(entry.enabled);
 
 		switch (entry.iconType) {
 			case SYSTEM:

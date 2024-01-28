@@ -53,6 +53,11 @@ public interface HeaderSetting extends BaseSetting<HeaderSetting> {
 	}
 
 	@Override
+	default HeaderSetting addSetting(BaseSetting<?> setting) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	default List<BaseSetting<?>> getSubSettings() {
 		return Collections.emptyList();
 	}

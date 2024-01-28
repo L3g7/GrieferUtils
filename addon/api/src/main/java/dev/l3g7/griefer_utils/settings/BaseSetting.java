@@ -49,6 +49,11 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 	 */
 	S subSettings(List<BaseSetting<?>> settings);
 
+	/**
+	 * Adds the given setting as sub setting.
+	 */
+	S addSetting(BaseSetting<?> setting);
+
 	List<BaseSetting<?>> getSubSettings();
 
 }

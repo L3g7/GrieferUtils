@@ -134,6 +134,13 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 	}
 
 	@Override
+	default S addSetting(BaseSetting<?> setting) {
+		AbstractSettingRegistry self = c(this);
+		self.addSetting(c(setting));
+		return (S) this;
+	}
+
+	@Override
 	default List<BaseSetting<?>> getSubSettings() {
 		return c(getElements().stream().map(KeyValue::getValue).collect(Collectors.toList()));
 	}

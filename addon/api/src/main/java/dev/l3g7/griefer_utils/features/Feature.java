@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import org.spongepowered.include.com.google.common.collect.ImmutableList;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -76,7 +75,7 @@ public abstract class Feature implements Disableable {
 	 * Must happen after initialization for sorting using the main element.
 	 */
 	public void addToCategory() {
-		category.subSettings(ImmutableList.of(mainElement));
+		category.addSetting(mainElement);
 	}
 
 	public BaseSetting<?> getMainElement() {

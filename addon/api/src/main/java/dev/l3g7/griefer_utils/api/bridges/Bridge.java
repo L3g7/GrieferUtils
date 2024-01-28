@@ -84,18 +84,23 @@ public @interface Bridge {
 		}
 
 		/**
-		 * @return whether the current environment is incompatible with the given versions
+		 * @return whether the current environment is compatible with the given versions
 		 */
 		public static boolean isCompatible(Version[] versions) {
 			// Check if at least one compatible version exists for every type
 			typeLoop:
 			for (VersionType type : VersionType.values()) {
+				boolean typeDeclared = false; // Whether a version target was defined for this type
 				for (Version version : versions)
-					if (version.type == type && version.isActive())
-						continue typeLoop;
+					if (version.type == type) {
+						typeDeclared = true;
+						if (version.isActive())
+							continue typeLoop;
+					}
 
 				// No compatible version found
-				return false;
+				if (typeDeclared)
+					return false;
 			}
 
 			return true;

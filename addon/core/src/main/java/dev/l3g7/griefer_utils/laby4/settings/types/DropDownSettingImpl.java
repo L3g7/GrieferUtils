@@ -66,7 +66,7 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends AbstractSett
 
 		widget.addAll(enumClass.getEnumConstants());
 
-		callback(widget::setSelected);
+		callback(v -> widget.setSelected(v, false));
 
 		return new Widget[]{widget};
 	}

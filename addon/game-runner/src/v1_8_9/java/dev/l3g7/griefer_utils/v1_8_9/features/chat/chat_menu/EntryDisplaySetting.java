@@ -30,15 +30,15 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 	public EntryDisplaySetting(ChatMenuEntry entry) {
 		this.entry = entry;
 		EventRegisterer.register(this);
-		initEntry();
+		initDisplay();
 		callback(enabled -> {
 			entry.enabled = enabled;
 			ChatMenu.saveEntries();
 		});
 	}
 
-	public void initEntry() {
-		name(entry.name + "\n§o➡ " + entry.command);
+	public void initDisplay() {
+		name(entry.name, "§o➡ " + entry.command);
 		set(entry.enabled);
 
 		switch (entry.iconType) {

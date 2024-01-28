@@ -7,65 +7,73 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_reactor;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.settings.BaseSetting;
+import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
+import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 
-public class ReactionDisplaySetting extends SwitchSettingImpl { // TODO: implement ReactionDisplaySetting
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
+
+@ExclusiveTo(LABY_4) // TODO LM3 ReactionDisplaySetting
+public class ReactionDisplaySetting extends SwitchSettingImpl {
 
 	public final ChatReaction reaction;
-	public ReactionDisplaySetting(ChatReaction reaction, BaseSetting parent) {
+
+	public ReactionDisplaySetting(ChatReaction reaction) {
 		this.reaction = reaction;
+		EventRegisterer.register(this);
+		initDisplay();
+		callback(enabled -> {
+			reaction.enabled = enabled;
+			ChatReactor.saveEntries();
+		});
 	}
 
-	public void delete() {}
-/*
-	private final SettingsElement parent;
-	private boolean editHovered = false;
-	public final ChatReaction reaction;
-
-	public ReactionDisplaySetting(ChatReaction reaction, SettingsElement parent) {
-		name("§f");
-		this.parent = parent;
-		this.reaction = reaction;
-
-		List<SettingsElement> reactions = parent.getSubSettings().getElements();
-		reactions.add(reactions.size() - 1, this);
+	public void initDisplay() {
+		name(reaction.trigger, "§e[" + MinecraftUtil.getCitybuildAbbreviation(reaction.citybuild.getDisplayName()) + "] §r§o➡ " + reaction.command);
+		icon(reaction.regEx ? "regex" : "yellow_t");
 		set(reaction.enabled);
-		callback(enabled -> reaction.enabled = enabled);
-	}
-
-	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (editHovered)
-			Minecraft.getMinecraft().displayGuiScreen(new AddChatReactionGui(this, Minecraft.getMinecraft().currentScreen));
 	}
 
 	public void delete() {
-		parent.getSubSettings().getElements().remove(this);
+		parent.unregister(kv -> kv.getValue() == this);
 		ChatReactor.saveEntries();
 	}
 
 	@Override
-	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-		icon(reaction.regEx ? "regex" : "yellow_t");
-
-		String displayName = getDisplayName();
-		setDisplayName("§f");
-		super.draw(x, y, maxX, maxY, mouseX, mouseY);
-		setDisplayName(displayName);
-
-		String cb = "§e[" + MinecraftUtil.getCitybuildAbbreviation(reaction.citybuild.getDisplayName()) + "] ";
-		int cbWidth = drawUtils().getStringWidth(cb);
-
-		String trimmedTrigger = drawUtils().trimStringToWidth(reaction.trigger, maxX - x - 25 - 79);
-		String trimmedCommand = drawUtils().trimStringToWidth(reaction.command, maxX - x - 25 - 79 - drawUtils().getStringWidth("➡ ") - cbWidth);
-		drawUtils().drawString(trimmedTrigger + (trimmedTrigger.equals(reaction.trigger) ? "" : "…"), x + 25, y + 7 - 5);
-		drawUtils().drawString("§o➡ " + trimmedCommand + (trimmedCommand.equals(reaction.command) ? "" : "…"), x + 25 + cbWidth, y + 7 + 5);
-		drawUtils().drawString(cb, x + 25, y + 7 + 5);
-
-		editHovered = mouseX > maxX - 70 && mouseX < maxX - 55 && mouseY > y + 4 && mouseY < y + 20;
-		mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));
-		drawUtils().drawTexture(maxX - 66 - (editHovered ? 4 : 3), y + (editHovered ? 3.5 : 4.5), 256, 256, editHovered ? 16 : 14, editHovered ? 16 : 14);
+	public boolean hasAdvancedButton() {
+		return true;
 	}
-*/
+
+	@EventListener
+	private void onInit(SettingActivityInitEvent event) {
+		if (event.holder() != parent)
+			return;
+
+		for (Widget w : event.settings().getChildren()) {
+			if (w instanceof SettingWidget s && s.setting() == this) {
+				SettingsImpl.hookChildAdd(s, e -> {
+					if (e.childWidget() instanceof FlexibleContentWidget content) {
+						ButtonWidget btn = ButtonWidget.icon(SettingsImpl.buildIcon("pencil_vec"), () ->
+							mc().displayGuiScreen(new AddChatReactionGui(this, mc().currentScreen)));
+
+						btn.addId("advanced-button"); // required so LSS is applied
+						content.removeChild("advanced-button");
+						content.addContent(btn);
+					}
+				});
+				break;
+			}
+		}
+
+	}
+
 }

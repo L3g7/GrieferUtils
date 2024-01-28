@@ -29,9 +29,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Collections;
-import java.util.List;
-
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.display;
@@ -57,16 +54,12 @@ public class ChatReactor extends Feature {
 		loadEntries();
 	}
 
-	private static List<BaseSetting> getPath() {
-		return Collections.emptyList();//TODO: Reflection.get(mc().currentScreen, "path");
-	}
-
 	public static void saveEntries() {
 		if (!loaded) // Don't save the config when starting
 			return;
 
 		JsonArray array = new JsonArray();
-		for (BaseSetting element : enabled.getSubSettings()) {
+		for (BaseSetting<?> element : enabled.getSubSettings()) {
 			if (element instanceof ReactionDisplaySetting)
 				array.add(((ReactionDisplaySetting) element).reaction.toJson());
 		}
@@ -76,14 +69,10 @@ public class ChatReactor extends Feature {
 	}
 
 	private void loadEntries() {
-
 		String path = "chat.chat_reactor.entries";
-		if (Config.has(path)) {
-			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
-				ChatReaction reaction = ChatReaction.fromJson(jsonElement.getAsJsonObject());
-				new ReactionDisplaySetting(reaction, enabled);
-			}
-		}
+		if (Config.has(path))
+			for (JsonElement jsonElement : Config.get(path).getAsJsonArray())
+				enabled.addSetting(new ReactionDisplaySetting(ChatReaction.fromJson(jsonElement.getAsJsonObject())));
 
 		loaded = true;
 	}
@@ -93,7 +82,7 @@ public class ChatReactor extends Feature {
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
-		for (BaseSetting element : enabled.getSubSettings()) {
+		for (BaseSetting<?> element : enabled.getSubSettings()) {
 			if (!(element instanceof ReactionDisplaySetting setting))
 				continue;
 

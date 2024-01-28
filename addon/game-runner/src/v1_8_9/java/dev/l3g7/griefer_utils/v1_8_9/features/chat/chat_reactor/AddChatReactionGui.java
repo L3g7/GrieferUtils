@@ -12,6 +12,8 @@ import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.Named;
+import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.*;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.Scrollbar;
@@ -61,8 +63,6 @@ public class AddChatReactionGui extends Gui {
 		super.initGui();
 		backgroundScreen.width = width;
 		backgroundScreen.height = height;
-// TODO:		if (backgroundScreen instanceof LabyModModuleEditorGui)
-//			PreviewRenderer.getInstance().init(AddChatReactionGui.class);
 
 		int center = width / 2;
 		int top = HEADER_HEIGHT + 80; // 80px for breadcrumb
@@ -319,9 +319,13 @@ public class AddChatReactionGui extends Gui {
 			reaction.enabled = true;
 
 			// Add reaction
-			new ReactionDisplaySetting(reaction, FileProvider.getSingleton(ChatReactor.class).getMainElement())
-				.icon(textTypeInput.getSelected().getIcon());
+			ReactionDisplaySetting setting = new ReactionDisplaySetting(reaction);
+			SwitchSettingImpl parent = (SwitchSettingImpl) FileProvider.getSingleton(ChatReactor.class).getMainElement();
+			setting.create(parent.getStorage().config, parent);
+			parent.addSetting((BaseSetting<?>) setting);
 		}
+		else
+			editedReaction.initDisplay();
 
 		ChatReactor.saveEntries();
 		close();

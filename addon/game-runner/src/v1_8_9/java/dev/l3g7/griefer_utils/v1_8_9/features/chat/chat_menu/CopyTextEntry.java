@@ -7,15 +7,27 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.misc.functions.Function;
+import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.util.ChatLineUtil;
+import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 import net.minecraft.init.Items;
 import net.minecraft.util.IChatComponent;
+
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 
 public class CopyTextEntry extends ChatMenuEntry {
 
@@ -34,16 +46,13 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.config(configKey + "modified_message")
 		.icon(Items.writable_book);
 
-	private final SwitchSetting settingContainer = SwitchSetting.create()
-		.name(name)
-		.subSettings(copyFormat, modifiedMessage);
-
-	private final DisplaySetting mainSetting = (DisplaySetting) new DisplaySetting()
+	private final SwitchSetting mainSetting = LabyBridge.get(SwitchSetting::create /* TODO: LM3 DisplaySetting */, LM4DisplaySetting::new)
 		.name(name)
 		.icon(icon)
 		.defaultValue(true)
 		.config(configKey + "enabled")
-		.callback(v -> enabled = v);
+		.callback(v -> enabled = v)
+		.subSettings(copyFormat, modifiedMessage);
 
 	public CopyTextEntry() {
 		super("Text kopieren", null, null, "clipboard");
@@ -55,7 +64,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 		ChatMenu.copyToClipboard(copyFormat.get().componentToString.apply(icc));
 	}
 
-	public BaseSetting getSetting() {
+	public BaseSetting<?> getSetting() {
 		return mainSetting;
 	}
 
@@ -79,28 +88,35 @@ public class CopyTextEntry extends ChatMenuEntry {
 
 	}
 
-	private class DisplaySetting extends SwitchSettingImpl {
-/*
-		// TODO: impl DisplaySetting
-		private boolean editHovered = false;
+	@ExclusiveTo(LABY_4)
+	private static class LM4DisplaySetting extends SwitchSettingImpl {
 
-		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-			super.mouseClicked(mouseX, mouseY, mouseButton);
-			if (editHovered) {
-				path().add(settingContainer);
-				mc().currentScreen.initGui();
+		public LM4DisplaySetting() {
+			EventRegisterer.register(this);
+		}
+
+		/**
+		 * Replaces the advanced-button icon with pencil_vec.
+		 */
+		@EventListener
+		private void onInit(SettingActivityInitEvent event) {
+			if (event.holder() != parent)
+				return;
+
+			for (Widget w : event.settings().getChildren()) {
+				if (w instanceof SettingWidget s && s.setting() == this) {
+					SettingsImpl.hookChildAdd(s, e -> {
+						if (e.childWidget() instanceof FlexibleContentWidget content) {
+							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
+							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec"));
+						}
+					});
+					break;
+				}
 			}
+
 		}
 
-		@Override
-		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			super.draw(x, y, maxX, maxY, mouseX, mouseY);
-
-			editHovered = mouseX > maxX - 70 && mouseX < maxX - 55 && mouseY > y + 4 && mouseY < y + 20;
-			mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/pencil.png"));
-			drawUtils().drawTexture(maxX - 66 - (editHovered ? 4 : 3), y + (editHovered ? 3.5 : 4.5), 256, 256, editHovered ? 16 : 14, editHovered ? 16 : 14);
-		}
-*/
 	}
 
 }

@@ -113,10 +113,10 @@ public class ChatMenuEntry {
 	public void drawIcon(int x, int y, int w, int h) {
 		switch (iconType) {
 			case SYSTEM:
-				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + icon + ".png"));
+				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
 				break;
 			case DEFAULT:
-				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + action.defaultIcon + ".png"));
+				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + action.defaultIcon + ".png"));
 				break;
 			case IMAGE_FILE:
 				DrawUtils.bindTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
@@ -128,7 +128,7 @@ public class ChatMenuEntry {
 		DrawUtils.drawTexture(x, y, 256.0, 256.0, w, h);
 	}
 
-	private ItemStack getIconAsItemStack() {
+	public ItemStack getIconAsItemStack() {
 		return icon != null ? (ItemStack) icon : ItemUtil.MISSING_TEXTURE;
 	}
 

@@ -9,6 +9,7 @@ dependencies {
 
     compileOnly(fileTree("../libs"))
     implementation("net.minecraft:launchwrapper:1.12")
+    implementation("net.labymod.labymod4:core:+")
 }
 
 labyModProcessor {

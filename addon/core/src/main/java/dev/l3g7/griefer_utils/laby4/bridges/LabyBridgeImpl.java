@@ -30,6 +30,8 @@ import net.labymod.api.event.client.session.SessionUpdateEvent;
 import net.labymod.api.event.method.SubscribeMethod;
 import net.labymod.api.models.addon.info.InstalledAddonInfo;
 import net.labymod.api.notification.Notification;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.tab.NameHistoryActivity;
+import net.labymod.core.main.LabyMod;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -137,6 +139,13 @@ public class LabyBridgeImpl implements LabyBridge {
 	public Pair<String, String> getCachedTexture(UUID uuid) {
 		ResourceLocation location = Icon.head(uuid).getResourceLocation();
 		return location == null ? null : new Pair<>(location.getNamespace(), location.getPath());
+	}
+
+	@Override
+	public void openNameHistory(String name) {
+		NameHistoryActivity activity = LabyMod.references().nameHistoryActivity();
+		activity.scheduleQuery(name);
+		Laby.labyAPI().minecraft().minecraftWindow().displayScreen(activity);
 	}
 
 	public static <T> void register(Class<T> event, Consumer<T> callback) {

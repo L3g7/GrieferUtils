@@ -11,18 +11,23 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
 import dev.l3g7.griefer_utils.v1_8_9.util.ChatLineUtil;
+import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
+import net.labymod.core_implementation.mc18.MinecraftImplementation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.init.Items;
@@ -30,16 +35,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IChatComponent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.ChatMenuEntry.Action.*;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
@@ -62,18 +74,18 @@ public class ChatMenu extends Feature {
 	protected static ChatMenuRenderer renderer = null;
 
 	protected static final EntryAddSetting newEntrySetting = EntryAddSetting.create()
-			.name("Neuen Menüpunkt erstellen")
+		.name("Neuen Menüpunkt erstellen")
 		.callback(() -> Minecraft.getMinecraft().displayGuiScreen(new AddChatMenuEntryGui(null, Minecraft.getMinecraft().currentScreen)));
 
 	@MainElement(configureSubSettings = false)
 	private static final SwitchSetting enabled = SwitchSetting.create()
-			.name("Chatmenü")
-			.description("Öffnet ein Chatmenü bei Rechtsklick auf einen Spieler im Chat.")
-			.icon("player_menu");
+		.name("Chatmenü")
+		.description("Öffnet ein Chatmenü bei Rechtsklick auf einen Spieler im Chat.")
+		.icon("player_menu");
 
 	public ChatMenu() {
 		loadEntries();
-		List<BaseSetting> settings = new ArrayList<>();
+		List<BaseSetting<?>> settings = new ArrayList<>();
 
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES) {
 			settings.add(SwitchSetting.create()
@@ -91,12 +103,9 @@ public class ChatMenu extends Feature {
 
 
 		String path = "chat.chat_menu.entries.custom";
-		if (Config.has(path)) {
-			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
-				new EntryDisplaySetting(ChatMenuEntry.fromJson(jsonElement.getAsJsonObject()), enabled);
-			}
-		}
-
+		if (Config.has(path))
+			for (JsonElement jsonElement : Config.get(path).getAsJsonArray())
+				enabled.addSetting(new EntryDisplaySetting(ChatMenuEntry.fromJson(jsonElement.getAsJsonObject())));
 	}
 
 	public static void saveEntries() {
@@ -151,7 +160,7 @@ public class ChatMenu extends Feature {
 
 		String name = null;
 
-		for (Pattern p : new Pattern[] {GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN, GLOBAL_CHAT_PATTERN}) {
+		for (Pattern p : new Pattern[]{GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN, GLOBAL_CHAT_PATTERN}) {
 			Matcher matcher = p.matcher(icc.getFormattedText());
 			if (!matcher.find())
 				continue;
@@ -164,9 +173,9 @@ public class ChatMenu extends Feature {
 			return;
 
 		List<ChatMenuEntry> entries = new ArrayList<>();
-		DEFAULT_ENTRIES.forEach(e -> { if (e.enabled) entries.add(e); });
+		DEFAULT_ENTRIES.forEach(e -> {if (e.enabled) entries.add(e);});
 		if (COPY_TEXT_ENTRY.enabled) entries.add(COPY_TEXT_ENTRY);
-		getCustom().forEach(e -> { if (e.enabled) entries.add(e); });
+		getCustom().forEach(e -> {if (e.enabled) entries.add(e);});
 
 		name = name.replaceAll("§.", "").trim();
 		String realName = NameCache.ensureRealName(name);
@@ -192,18 +201,17 @@ public class ChatMenu extends Feature {
 
 	private static void openNameHistory(String name) {
 		if (name.startsWith("!")) {
-			LabyBridge.labyBridge.notifyMildError("Von Bedrock-Spielern kann kein Namensverlauf abgefragt werden.");
+			labyBridge.notifyMildError("Von Bedrock-Spielern kann kein Namensverlauf abgefragt werden.");
 			return;
 		}
 
-		// TODO: mc().displayGuiScreen(new GuiChatNameHistory("", name));
+		labyBridge.openNameHistory(name);
 	}
-
 
 	static void copyToClipboard(String text) {
 		StringSelection selection = new StringSelection(text);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
-		LabyBridge.labyBridge.notify("\"" + text + "\"",  "wurde in die Zwischenablage kopiert.");
+		labyBridge.notify("\"" + text + "\"", "wurde in die Zwischenablage kopiert.");
 	}
 
 	public static List<ChatMenuEntry> getCustom() {
@@ -214,8 +222,30 @@ public class ChatMenu extends Feature {
 			.collect(Collectors.toList());
 	}
 
-	/*
-	// TODO: @Mixin(value = MinecraftImplementation.class, remap = false)
+	/**
+	 * Ensures newEntrySetting is always the last child.
+	 */
+	@EventListener(triggerWhenDisabled = true)
+	private void onInit(SettingActivityInitEvent event) {
+		if (event.holder() != enabled)
+			return;
+
+		Iterator<Widget> it = event.settings().getChildren().iterator();
+		SettingWidget newEntryWidget = null;
+		while (it.hasNext()) {
+			Widget w = it.next();
+			if (w instanceof SettingWidget s && s.setting() == newEntrySetting) {
+				newEntryWidget = s;
+				it.remove();
+				break;
+			}
+		}
+
+		event.settings().addChild(newEntryWidget);
+	}
+
+	@ExclusiveTo(LABY_3)
+	@Mixin(value = MinecraftImplementation.class, remap = false)
 	private static class MixinMinecraftImplementation {
 
 		@Inject(method = "getClickEventValue", at = @At("HEAD"), cancellable = true)
@@ -224,6 +254,6 @@ public class ChatMenu extends Feature {
 				cir.setReturnValue(null);
 		}
 
-	}*/
+	}
 
 }

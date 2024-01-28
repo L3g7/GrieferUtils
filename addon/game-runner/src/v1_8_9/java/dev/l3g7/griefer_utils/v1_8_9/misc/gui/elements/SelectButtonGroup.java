@@ -109,7 +109,7 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 
 		private IconButton(E value) {
 			super(value.getName());
-			this.icon = new ResourceLocation("griefer_utils/icons/" + value.getIcon() + ".png");
+			this.icon = new ResourceLocation("griefer_utils", "icons/" + value.getIcon() + ".png");
 			this.value = value;
 
 			height(23);

@@ -46,6 +46,8 @@ public class SettingsImpl implements Settings {
 	public static Icon buildIcon(Object icon) {
 		if (icon instanceof String)
 			return Icon.texture(ResourceLocation.create("griefer_utils", "icons/" + icon + ".png"));
+		else if (icon instanceof ResourceLocation location)
+			return Icon.texture(location);
 		else if (icon instanceof Icon)
 			return (Icon) icon;
 		else if (itemBridge.isConvertableToLabyStack(icon))

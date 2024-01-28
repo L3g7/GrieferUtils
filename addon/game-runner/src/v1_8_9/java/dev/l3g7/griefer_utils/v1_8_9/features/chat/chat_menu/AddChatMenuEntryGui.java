@@ -187,7 +187,7 @@ public class AddChatMenuEntryGui extends Gui {
 			}
 
 			List<Button> buttons = Reflection.get(iconInput, "buttons");
-			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils/icons/" + actionTypeInput.getSelected().getIcon() + ".png"));
+			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils", "icons/" + actionTypeInput.getSelected().getIcon() + ".png"));
 			double bottom;
 			switch (iconInput.getSelected()) {
 				case ITEM:
@@ -339,8 +339,12 @@ public class AddChatMenuEntryGui extends Gui {
 
 		if (editedEntry == null)
 			// Add entry
-			new EntryDisplaySetting(entry, FileProvider.getSingleton(ChatMenu.class).getMainElement());
+			FileProvider.getSingleton(ChatMenu.class).getMainElement()
+				.addSetting(new EntryDisplaySetting(entry));
+		else
+			editedEntry.initEntry();
 
+		ChatMenu.saveEntries();
 		close();
 	}
 

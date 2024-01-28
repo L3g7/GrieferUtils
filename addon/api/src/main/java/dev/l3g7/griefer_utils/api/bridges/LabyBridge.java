@@ -89,4 +89,6 @@ public interface LabyBridge {
 
 	Pair<String, String> getCachedTexture(UUID uuid);
 
+	void openNameHistory(String name);
+
 }

@@ -9,23 +9,32 @@ package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_reactor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.api.event.event_bus.Priority;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
-import dev.l3g7.griefer_utils.v1_8_9.events.render.ChatEvent;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.v1_8_9.util.ChatLineUtil;
+import net.labymod.api.Laby;
+import net.labymod.api.client.chat.ChatMessage;
+import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.IChatComponent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Collections;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 @Singleton
@@ -79,30 +88,50 @@ public class ChatReactor extends Feature {
 		loaded = true;
 	}
 
-	@EventListener(priority = Priority.LOWEST)
-	public void onMsg(ChatEvent.ChatMessageAddEvent event) {
-		if ((mc().currentScreen instanceof Object /*TODO: LabyModAddonsGui*/ && getPath().contains(getMainElement()))
+	public static void triggerReactions(IChatComponent component) {
+		if ((mc().currentScreen instanceof Object /*TODO: LabyModAddonsGui && getPath().contains(getMainElement() )*/)
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
-		IChatComponent component = ChatLineUtil.getUnmodifiedIChatComponent(event.component);
-
 		for (BaseSetting element : enabled.getSubSettings()) {
-			if (!(element instanceof ReactionDisplaySetting))
+			if (!(element instanceof ReactionDisplaySetting setting))
 				continue;
 
-			ReactionDisplaySetting setting = (ReactionDisplaySetting) element;
 			ChatReaction reaction = setting.reaction;
-
-			if (!true /*TODO: reaction.citybuild.isOnCb()*/)
+			if (reaction.citybuild.isOnCb())
 				continue;
 
 			try {
 				reaction.processMessage(component.getFormattedText());
 			} catch (Exception e) {
-				//TODO: display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
+				display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
 				setting.set(false);
 			}
 		}
 	}
+
+	@ExclusiveTo(LABY_3)
+	@Mixin(value = GuiChatAdapter.class, remap = false)
+	private static class MixinGuiChatAdapter {
+
+		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
+		public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
+			if (!refresh)
+				triggerReactions(component);
+		}
+
+	}
+
+	@ExclusiveTo(LABY_4)
+	@Mixin(value = GuiNewChat.class, remap = false)
+	private static class MixinGuiNewChat {
+
+		@Inject(method = "printChatMessageWithOptionalDeletion", at = @At("HEAD"))
+		private void injectPrintChatMessageWithOptionalDeletion(IChatComponent lvt_1_1_, int lvt_2_1_, CallbackInfo ci) {
+			ChatMessage chatMessage = Laby.labyAPI().chatProvider().chatController().messageAt(0);
+			triggerReactions((IChatComponent) chatMessage);
+		}
+
+	}
+
 }

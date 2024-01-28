@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.*;
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 
 public class ChatMessageLogEvent extends Event {
 
@@ -33,8 +34,8 @@ public class ChatMessageLogEvent extends Event {
 			logger.info(event.message);
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(GuiNewChat.class)
-	@ExclusiveTo({LABY_4, ANY_MINECRAFT})
 	private static class MixinGuiNewChat {
 
 		@Redirect(method = "printChatMessageWithOptionalDeletion", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V"))
@@ -44,8 +45,8 @@ public class ChatMessageLogEvent extends Event {
 
 	}
 
+	@ExclusiveTo(LABY_3)
 	@Mixin(value = GuiChatAdapter.class, remap = false)
-	@ExclusiveTo({LABY_3, ANY_MINECRAFT})
 	private static class MixinGuiChatAdapter {
 
 		@Redirect(method = "setChatLine", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V"))

@@ -16,6 +16,7 @@ import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.SettingElement;
+import net.labymod.api.util.KeyValue;
 
 import java.util.UUID;
 
@@ -60,6 +61,11 @@ public abstract class AbstractSettingImpl<S extends AbstractSetting<S, V>, V> ex
 			setWidgets(createWidgets());
 
 		BaseSettingImpl.super.create(config, parent);
+		for (KeyValue<Setting> element : getElements()) {
+			Setting child = element.getValue();
+			if (child instanceof AbstractSettingImpl<?,?> s)
+				s.create(config, this);
+		}
 	}
 
 }

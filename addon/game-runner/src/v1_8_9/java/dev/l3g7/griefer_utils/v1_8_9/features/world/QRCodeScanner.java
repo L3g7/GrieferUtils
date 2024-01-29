@@ -7,8 +7,12 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.features.world;
 
+import com.google.zxing.*;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.qrcode.QRCodeReader;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.api.misc.BufferedImageLuminanceSource;
 import dev.l3g7.griefer_utils.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.ModTextField;
@@ -81,8 +85,6 @@ public class QRCodeScanner extends Feature {
 					: MapColor.mapColorArray[colorId / 4].getMapColor(colorId & 3));
 			}
 
-			/*
-			TODO:
 			try {
 				BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(img);
 				if (scan(source) && scan(source.invert())) // Adding DecodeHintType.ALSO_INVERTED doesn't suffice, for some reason
@@ -91,11 +93,9 @@ public class QRCodeScanner extends Feature {
 				display(ADDON_PREFIX + "§cDie Prüfsumme des QR-Codes ist ungültig.");
 			} catch (FormatException e) {
 				display(ADDON_PREFIX + "§cDas Format des QR-Codes ist ungültig.");
-			}*/
+			}
 		});
 
-/*
-TODO:
 	private static boolean scan(LuminanceSource source) throws ChecksumException, FormatException {
 		BinaryBitmap data = new BinaryBitmap(new HybridBinarizer(source));
 		try {
@@ -105,5 +105,5 @@ TODO:
 			return true;
 		}
 	}
-*/
+
 }

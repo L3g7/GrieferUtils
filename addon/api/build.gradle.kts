@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     labyApi("api")
+	implementation("com.google.zxing:core:3.5.1") // ZXing (QR Code Reader)
 }
 
 labyModProcessor {

@@ -9,6 +9,7 @@ pluginManagement {
     buildscript {
         repositories {
             maven("https://dist.labymod.net/api/v1/maven/release/")
+			maven("https://jitpack.io/")
             maven("https://repo.spongepowered.org/repository/maven-public")
             mavenCentral()
         }

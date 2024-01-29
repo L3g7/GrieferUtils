@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.util.render;
 
+import com.github.lunatrius.schematica.api.ISchematic;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.v1_8_9.events.ChunkFilledEvent;
@@ -15,6 +16,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.Vec3d;
+import dev.l3g7.griefer_utils.v1_8_9.util.SchematicaUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
@@ -29,6 +31,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
@@ -92,15 +95,14 @@ public class WorldBlockOverlayRenderer {
 
 	@EventListener
 	private static void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
-		if (event.packet instanceof S23PacketBlockChange) {
-			S23PacketBlockChange packet = (S23PacketBlockChange) event.packet;
+		if (event.packet instanceof S23PacketBlockChange packet) {
 			onBlockUpdate(packet.getBlockPosition(), packet.getBlockState());
+			return;
 		}
 
-		if (!(event.packet instanceof S22PacketMultiBlockChange))
+		if (!(event.packet instanceof S22PacketMultiBlockChange packet))
 			return;
 
-		S22PacketMultiBlockChange packet = (S22PacketMultiBlockChange) event.packet;
 		for (S22PacketMultiBlockChange.BlockUpdateData data : packet.getChangedBlocks())
 			onBlockUpdate(data.getPos(), data.getBlockState());
 	}
@@ -156,20 +158,15 @@ public class WorldBlockOverlayRenderer {
 	}
 
 	private static void renderSchematicasRROs(float partialTicks) {
-		/*
-		TODO:
 		if (SchematicaUtil.dontRender())
 			return;
 
 		for (Map.Entry<BlockPos, RenderObject> entry : schematicasROs.entrySet())
 			if (SchematicaUtil.shouldLayerBeRendered(entry.getKey().getY()))
 				entry.getValue().render(entry.getKey(), partialTicks, 0);
-		*/
 	}
 
 	private static void updateSchematic() {
-		/*
-		TODO:
 		ISchematic schematic = SchematicaUtil.getWorld() == null ? null : SchematicaUtil.getSchematic();
 		BlockPos position = SchematicaUtil.getWorld() == null ? null : SchematicaUtil.getPosition();
 
@@ -194,7 +191,7 @@ public class WorldBlockOverlayRenderer {
 					schematicasROs.put(position.add(dX, dY, dZ), renderObject);
 				}
 			}
-		}*/
+		}
 	}
 
 	private static boolean isEnabled() {

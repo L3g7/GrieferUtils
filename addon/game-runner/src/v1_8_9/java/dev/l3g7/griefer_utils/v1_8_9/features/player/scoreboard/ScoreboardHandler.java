@@ -8,26 +8,35 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.player.scoreboard;
 
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.WorldUnloadEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
+import net.labymod.api.client.component.format.numbers.NumberFormat;
+import net.labymod.api.client.scoreboard.ScoreboardObjective;
+import net.labymod.core.client.gui.hud.hudwidget.ScoreboardHudWidget;
+import net.labymod.ingamegui.modules.ScoreboardModule;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.world;
 
 @Singleton
@@ -179,8 +188,7 @@ public class ScoreboardHandler {
 
 	}
 
-	/*
-	TODO:
+	@ExclusiveTo(LABY_3)
 	@Mixin(value = ScoreboardModule.class, remap = false)
 	private static class MixinScoreboardModule {
 
@@ -192,7 +200,25 @@ public class ScoreboardHandler {
 			return listSize;
 		}
 
-	}*/
+	}
+
+	@Mixin(value = ScoreboardHudWidget.class, remap = false)
+	private static class MixinScoreboardModule0 {
+
+		@ModifyConstant(method = "getVisibleScores", constant = @Constant(longValue = 15), remap = false)
+		private long modifyMaxScoreboardSize(long limit) {
+			if (shouldUnlockScoreboard())
+				return Integer.MAX_VALUE;
+
+			return limit;
+		}
+
+		@Inject(method = "getVisibleScores", at = @At("HEAD"))
+		private void injectgetVisibleScores(net.labymod.api.client.scoreboard.Scoreboard scoreboard, ScoreboardObjective objective, NumberFormat numberFormat, CallbackInfoReturnable<List<?>> cir) {
+			System.out.println("AAAAAA");
+		}
+
+	}
 
 	@Mixin(GuiIngame.class)
 	private static class MixinGuiIngame {

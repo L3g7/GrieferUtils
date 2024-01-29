@@ -71,7 +71,7 @@ public class IChatComponentUtil {
 			System.err.println("IChatComponentUtil error:");
 			System.err.println(IChatComponent.Serializer.componentToJson(iChatComponent));
 			System.err.println("name = " + name + ", realName = " + realName + ", prefix = " + prefix + ", isTabList = " + isTabList);
-			LabyBridge.labyBridge.notifyError("Ein Fehler ist aufgetreten."); // TODO report error?
+			LabyBridge.labyBridge.notifyError("Ein Fehler ist aufgetreten.");
 			return;
 		}
 

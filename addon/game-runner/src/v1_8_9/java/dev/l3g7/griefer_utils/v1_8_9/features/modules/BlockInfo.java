@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.features.Module;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.v1_8_9.util.SchematicaUtil;
 import dev.l3g7.griefer_utils.v1_8_9.util.render.RenderUtil;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
@@ -142,11 +143,6 @@ public class BlockInfo extends Module {
 	}
 
 	private boolean updateObjectMouseOverFromSchematica() {
-		return false;
-	}
-	/*
-	TODO:
-	private boolean updateObjectMouseOverFromSchematica() {
 		if (SchematicaUtil.dontRender())
 			return false;
 
@@ -161,6 +157,6 @@ public class BlockInfo extends Module {
 
 		data = Pair.of(mop.getBlockPos(), stack);
 		return true;
-	}*/
+	}
 
 }

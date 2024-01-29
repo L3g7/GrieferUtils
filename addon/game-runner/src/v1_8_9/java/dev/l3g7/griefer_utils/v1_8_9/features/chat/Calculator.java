@@ -12,15 +12,16 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.Named;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.*;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import org.mariuszgromada.math.mxparser.Expression;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
@@ -173,13 +174,11 @@ public class Calculator extends Feature {
 			} else {
 				// Withdraw difference
 				switch (autoWithdraw.get()) {
-					case SUGGEST:
-						suggest("/bank abheben %d", moneyRequired.toBigInteger());
-						break;
-					case SEND:
+					case SUGGEST -> suggest("/bank abheben %d", moneyRequired.toBigInteger());
+					case SEND -> {
 						send("/bank abheben %d", moneyRequired.toBigInteger());
 						suggest("/pay %s %s", lastPaymentReceiver, lastPayment.toPlainString());
-						break;
+					}
 				}
 			}
 		}
@@ -334,39 +333,7 @@ public class Calculator extends Feature {
 		equation = resolveLetterZeros(equation, 'k', 3);
 		equation = resolveLetterZeros(equation, 'm', 6);
 
-		/*
-		// TODO: Expression exp;
-		try {
-			exp = new Expression(equation);
-		} catch (NoSuchMethodError e) {
-			// Sometimes, the constructor cannot be found.
-			// I have no idea why so here's a bit of logging to find out more.
-			if (displayErrors) {
-				display(Constants.ADDON_PREFIX + "§r§4⚠ §cFehler beim Berechnen von \"%s\"! §4⚠§r", equation);
-				display("§cDie Bibliothek konnte nicht geladen werden.");
-			}
-
-			StringBuilder builder = new StringBuilder();
-			try {
-				builder.append("mXparser metadata:\nVersion: ").append(mXparser.VERSION).append("\nMethods:");
-				for (Method method : Expression.class.getDeclaredMethods())
-					builder.append("\n").append(method.toString());
-
-				MessageDigest m = MessageDigest.getInstance("SHA-256");
-				byte[] buffer = new byte[4096];
-				try (InputStream content = Expression.class.getClassLoader().getResource(Expression.class.getName().replace('.', '/') + ".class").openStream()) {
-					int size;
-					while ((size = content.read(buffer)) != -1)
-						m.update(buffer, 0, size);
-					builder.append("\nClass-Hash: ").append(m);
-				}
-			} catch (Throwable ex) {
-				builder.append("\nError while analysing: ").append(ex);
-			}
-
-			BugReporter.reportError(new Throwable(builder.toString(), e));
-			return Double.NaN;
-		}
+		Expression exp = new Expression(equation);
 
 		if (!exp.checkSyntax()) {
 			if (displayErrors) {
@@ -376,8 +343,7 @@ public class Calculator extends Feature {
 			return Double.NaN;
 		}
 
-		double expResult = exp.calculate();*/
-		double expResult = 0;
+		double expResult = exp.calculate();
 
 		// Check if result is valid
 		if (Double.isInfinite(expResult)) {

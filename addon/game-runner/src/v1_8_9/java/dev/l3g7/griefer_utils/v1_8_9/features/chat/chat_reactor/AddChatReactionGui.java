@@ -321,7 +321,7 @@ public class AddChatReactionGui extends Gui {
 			// Add reaction
 			ReactionDisplaySetting setting = new ReactionDisplaySetting(reaction);
 			SwitchSettingImpl parent = (SwitchSettingImpl) FileProvider.getSingleton(ChatReactor.class).getMainElement();
-			setting.create(parent.getStorage().config, parent);
+			setting.create(parent);
 			parent.addSetting((BaseSetting<?>) setting);
 		}
 		else

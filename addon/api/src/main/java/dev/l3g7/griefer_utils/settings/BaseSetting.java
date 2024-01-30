@@ -56,4 +56,6 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 
 	List<BaseSetting<?>> getSubSettings();
 
+	void create(BaseSetting<?> parent);
+
 }

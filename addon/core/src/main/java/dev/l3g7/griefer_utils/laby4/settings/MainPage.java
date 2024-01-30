@@ -11,12 +11,15 @@ import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
+import dev.l3g7.griefer_utils.laby4.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
+import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
+import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.RootSettingRegistry;
@@ -29,16 +32,10 @@ import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 
 public class MainPage {
 
-	private static final Config config = new Config();
-
 	@OnEnable
 	public static void registerSettings() {
 		// Create root setting
-		RootSettingRegistry registry = new RootSettingRegistry("griefer_utils", "settings") {
-			public Component displayName() {
-				return Component.text("GrieferUtils");
-			}
-		};
+		RootSetting registry = new RootSetting();
 		Laby.labyAPI().coreSettingRegistry().addSetting(registry);
 
 		// Collect settings
@@ -48,7 +45,7 @@ public class MainPage {
 		// Initialize settings
 		settings.forEach(s -> {
 			if (s instanceof BaseSettingImpl<?, ?> b)
-				b.create(config, registry);
+				b.create(registry);
 		});
 		registry.addSettings(Reflection.<List<Setting>>c(settings));
 	}
@@ -105,6 +102,28 @@ public class MainPage {
 			.name("Discord").icon("discord")
 			.buttonIcon("discord_clyde")
 			.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")));
+	}
+
+	private static class RootSetting extends RootSettingRegistry implements BaseSettingImpl<RootSetting, Void> {
+
+		private RootSetting() {
+			super("griefer_utils", "settings");
+		}
+
+		@Override
+		public Component displayName() {
+			return Component.text("GrieferUtils");
+		}
+
+		@Override
+		public Icon getIcon() {
+			return SettingsImpl.buildIcon("icon");
+		}
+
+		@Override
+		public ExtendedStorage<Void> getStorage() {
+			return null;
+		}
 	}
 
 }

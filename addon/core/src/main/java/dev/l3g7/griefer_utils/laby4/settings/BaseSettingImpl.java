@@ -54,15 +54,6 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 		});
 	}
 
-	default void create(Config config, Setting parent) {
-		getStorage().config = config;
-
-		AbstractSettingRegistry self = c(this);
-		self.setParent(parent);
-
-		Laby.fireEvent(new SettingCreateEvent(self));
-	}
-
 	/**
 	 * @return A SettingWidget where the widgets aren't in the input-wrapper div but its parent.
 	 */
@@ -145,6 +136,14 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 		return c(getElements().stream().map(KeyValue::getValue).collect(Collectors.toList()));
 	}
 
+	@Override
+	default void create(BaseSetting<?> parent) {
+		AbstractSettingRegistry self = c(this);
+		self.setParent(c(parent));
+
+		Laby.fireEvent(new SettingCreateEvent(self));
+	}
+
 	// AbstractSetting
 
 	@Override
@@ -170,8 +169,6 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 		public String description = null;
 		public Icon icon;
 		public boolean enabled = true;
-
-		public Config config;
 
 		public ExtendedStorage(Function<V, JsonElement> encodeFunc, Function<JsonElement, V> decodeFunc, V fallbackValue) {
 			super(encodeFunc, decodeFunc, fallbackValue);
@@ -202,7 +199,7 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 		}
 
 		public Config config() {
-			return impl.getStorage().config;
+			return null;
 		}
 
 		public <T> void set(T value) {

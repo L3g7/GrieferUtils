@@ -343,7 +343,7 @@ public class AddChatMenuEntryGui extends Gui {
 			// Add entry
 			EntryDisplaySetting setting = new EntryDisplaySetting(entry);
 			SwitchSettingImpl parent = (SwitchSettingImpl) FileProvider.getSingleton(ChatMenu.class).getMainElement();
-			setting.create(parent.getStorage().config, parent);
+			setting.create(parent);
 			parent.addSetting((BaseSetting<?>) setting);
 		}
 		else

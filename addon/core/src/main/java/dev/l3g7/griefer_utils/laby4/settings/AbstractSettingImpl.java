@@ -10,10 +10,10 @@ package dev.l3g7.griefer_utils.laby4.settings;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.settings.AbstractSetting;
+import dev.l3g7.griefer_utils.settings.BaseSetting;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.SettingElement;
 import net.labymod.api.util.KeyValue;
@@ -56,15 +56,16 @@ public abstract class AbstractSettingImpl<S extends AbstractSetting<S, V>, V> ex
 
 	protected abstract Widget[] createWidgets();
 
-	public void create(Config config, Setting parent) {
+	@Override
+	public void create(BaseSetting<?> parent) {
 		if (getWidgets() == null)
 			setWidgets(createWidgets());
 
-		BaseSettingImpl.super.create(config, parent);
+		BaseSettingImpl.super.create(parent);
 		for (KeyValue<Setting> element : getElements()) {
 			Setting child = element.getValue();
 			if (child instanceof AbstractSettingImpl<?,?> s)
-				s.create(config, this);
+				s.create(this);
 		}
 	}
 

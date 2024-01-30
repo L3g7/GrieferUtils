@@ -109,8 +109,8 @@ public class SpawnCounter extends Module {
 		return Math.max(super.getRawWidth(), LeaderboardHandler.renderWidth);
 	}
 
-	Text toText(String text) {
-		return new Text(text, valueColor, bold, italic, underline);
+	public Text toText(String text) {
+		return super.toText(text);
 	}
 
 	@Override

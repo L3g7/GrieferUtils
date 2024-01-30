@@ -75,7 +75,7 @@ public class NearbyPlayers extends Module {
 		}
 	}
 
-	private static void drawPlayerRight(EntityOtherPlayerMP player, float x, float y) {
+	private void drawPlayerRight(EntityOtherPlayerMP player, float x, float y) {
 		int distance = (int) player.getDistanceToEntity(player());
 
 		x -= mc.fontRendererObj.getStringWidth(distance + "m");
@@ -92,13 +92,14 @@ public class NearbyPlayers extends Module {
 		drawUtils().drawTexture(x, y, 160, 32, 32, 32, 8, 8); // Second layer
 	}
 
-	private static void drawPlayer(EntityOtherPlayerMP player, float x, float y) {
+	private void drawPlayer(EntityOtherPlayerMP player, float x, float y) {
 		int distance = (int) player.getDistanceToEntity(player());
 		if (distance < 10)
 			x += mc.fontRendererObj.getCharWidth('0');
 
-		mc.fontRendererObj.drawStringWithShadow(distance + "m", x, y, Integer.MAX_VALUE);
-		x += mc.fontRendererObj.getStringWidth(distance + "m") + 2;
+		Text text = toText(distance + "m");
+		mc.fontRendererObj.drawStringWithShadow(text.getText(), x, y, text.getColor());
+		x += mc.fontRendererObj.getStringWidth(text.getText()) + 2;
 
 		drawUtils().bindTexture(player.getLocationSkin());
 		drawUtils().drawTexture(x, y, 32, 32, 32, 32, 8, 8); // First layer

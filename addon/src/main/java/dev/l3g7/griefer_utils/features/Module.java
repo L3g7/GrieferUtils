@@ -152,6 +152,10 @@ public abstract class Module extends SimpleTextModule implements Disableable {
 		return this;
 	}
 
+	protected Text toText(String text) {
+		return new Text(text, valueColor, bold, italic, underline);
+	}
+
 	public String getComparisonName() {
 		return getClass().getPackage().getName() + getControlName();
 	}

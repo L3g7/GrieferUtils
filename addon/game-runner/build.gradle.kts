@@ -5,11 +5,18 @@ plugins {
 }
 
 dependencies {
+	compileOnly(fileTree("../libs"))
+	compileOnly(fileTree("libs"))
+
 	// mXparser
 	implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.1.0")
 
 	// ZXing (QR Code Reader)
 	implementation("com.google.zxing:core:3.5.1")
+}
+
+tasks.build {
+	dependsOn("downloadLibs")
 }
 
 tasks.register("downloadLibs") {

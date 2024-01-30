@@ -50,12 +50,6 @@ subprojects {
 	}
 }
 
-project(":game-runner") {
-	dependencies {
-		compileOnly(fileTree("../libs"))
-	}
-}
-
 fun configureRun(provider: net.labymod.gradle.core.minecraft.provider.VersionProvider, gameVersion: String) {
 	provider.runConfiguration {
 		mainClass = "net.minecraft.launchwrapper.Launch"

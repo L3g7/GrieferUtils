@@ -8,30 +8,24 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.chat.command_pie_menu;
 
 import dev.l3g7.griefer_utils.settings.BaseSetting;
-import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent;
-import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
-import net.minecraft.item.ItemStack;
+import dev.l3g7.griefer_utils.settings.SettingLoader;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
-
 public class PieMenu extends dev.l3g7.griefer_utils.v1_8_9.misc.gui.guis.PieMenu {
 
-	public void open(boolean animation, BaseSetting entryContainer) {
-		List<Pair<String, List<Pair<String, Runnable>>>> allPages = new ArrayList<>();
+	public void open(boolean animation, BaseSetting<?> entryContainer) {
+		List<Pair<String, List<Pair<String, Runnable>>>> allPages = new ArrayList<>();/*
 
-		for (BaseSetting pageElement : ((BaseSetting<?>) entryContainer).getSubSettings()) {
+		for (BaseSetting<?> pageElement : ((BaseSetting<?>) entryContainer).getSubSettings()) {
 			if (!(pageElement instanceof PieMenuPageSetting))
 				continue;
 
 			List<Pair<String, Runnable>> entries = new ArrayList<>();
 
-			for (BaseSetting element : ((BaseSetting<?>) pageElement).getSubSettings()) {
+			for (BaseSetting<?> element : ((BaseSetting<?>) pageElement).getSubSettings()) {
 				if (!(element instanceof PieMenuEntrySetting))
 					continue;
 
@@ -50,7 +44,7 @@ public class PieMenu extends dev.l3g7.griefer_utils.v1_8_9.misc.gui.guis.PieMenu
 			if (!entries.isEmpty())
 				allPages.add(Pair.of(DrawUtils.createColors(((PieMenuPageSetting) pageElement).name.get()), entries));
 		}
-
+*/
 		open(animation, allPages);
 	}
 

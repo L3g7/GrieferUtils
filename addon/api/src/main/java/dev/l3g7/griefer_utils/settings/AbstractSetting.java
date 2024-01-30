@@ -63,7 +63,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	 */
 	default void notifyChange() {
 		Storage<V> s = getStorage();
-		s.callbacks.forEach(c -> c.accept(s.value));
+		s.callbacks.forEach(c -> c.accept(get()));
 	}
 
 	/**
@@ -133,7 +133,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 
 		public T value = null;
 		public String configKey = null;
-		private final T fallbackValue;
+		public final T fallbackValue;
 		public final List<Consumer<T>> callbacks = new ArrayList<>();
 
 		public final Function<T, JsonElement> encodeFunc;

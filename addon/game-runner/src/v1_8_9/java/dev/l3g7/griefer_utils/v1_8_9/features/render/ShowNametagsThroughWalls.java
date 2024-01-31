@@ -7,10 +7,11 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.features.render;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
@@ -24,7 +25,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
+
 @Singleton
+@ExclusiveTo(LABY_3)
 public class ShowNametagsThroughWalls extends Feature {
 
 	@MainElement
@@ -34,6 +38,7 @@ public class ShowNametagsThroughWalls extends Feature {
 		.icon("yellow_name");
 
 	@Mixin(RenderLiving.class)
+	@ExclusiveTo(LABY_3)
 	private static abstract class MixinRenderLiving extends RendererLivingEntity<EntityLiving> {
 
 		public MixinRenderLiving(RenderManager renderManagerIn, ModelBase modelBaseIn, float shadowSizeIn) {
@@ -42,13 +47,15 @@ public class ShowNametagsThroughWalls extends Feature {
 
 		@Inject(method = "canRenderName(Lnet/minecraft/entity/EntityLiving;)Z", at = @At("RETURN"), cancellable = true)
 	    private void injectCanRenderName(EntityLiving entity, CallbackInfoReturnable<Boolean> cir) {
-	    	if (FileProvider.getSingleton(ShowNametagsThroughWalls.class).isEnabled() && !cir.getReturnValueZ())
-				cir.setReturnValue(super.canRenderName(entity) && entity.hasCustomName());
+	    	if (FileProvider.getSingleton(ShowNametagsThroughWalls.class).isEnabled() && !cir.getReturnValueZ()) {
+			    cir.setReturnValue(super.canRenderName(entity) && entity.hasCustomName());
+		    }
 	    }
 
 	}
 
 	@Mixin(value = Render.class, priority = 1001)
+	@ExclusiveTo(LABY_3)
 	private static class MixinRender {
 
 		@Redirect(method = "renderLivingLabel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;tryBlendFuncSeparate(IIII)V"))

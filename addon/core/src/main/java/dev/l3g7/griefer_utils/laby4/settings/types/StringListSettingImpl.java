@@ -45,7 +45,7 @@ import static net.labymod.api.Textures.SpriteCommon.X;
 public class StringListSettingImpl extends ListSetting implements StringListSetting, BaseSettingImpl<StringListSetting, List<String>> {
 
 	private final ExtendedStorage<List<String>> storage;
-	private String placeholder;
+	private String placeholder = "";
 	private Icon entryIcon;
 
 	public StringListSettingImpl() {

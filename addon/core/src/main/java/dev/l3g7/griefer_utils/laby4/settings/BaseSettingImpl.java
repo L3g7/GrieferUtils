@@ -137,7 +137,7 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 	}
 
 	@Override
-	default void create(BaseSetting<?> parent) {
+	default void create(Object parent) {
 		AbstractSettingRegistry self = c(this);
 		self.setParent(c(parent));
 

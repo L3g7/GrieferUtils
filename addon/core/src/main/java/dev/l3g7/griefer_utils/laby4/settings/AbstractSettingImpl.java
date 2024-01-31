@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.laby4.settings;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.settings.BaseSetting;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -57,7 +56,7 @@ public abstract class AbstractSettingImpl<S extends AbstractSetting<S, V>, V> ex
 	protected abstract Widget[] createWidgets();
 
 	@Override
-	public void create(BaseSetting<?> parent) {
+	public void create(Object parent) {
 		if (getWidgets() == null)
 			setWidgets(createWidgets());
 

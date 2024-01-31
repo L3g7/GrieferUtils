@@ -44,6 +44,9 @@ public class SettingsImpl implements Settings {
 	}
 
 	public static Icon buildIcon(Object icon) {
+		if (icon == null)
+			return null;
+
 		if (icon instanceof String)
 			return Icon.texture(ResourceLocation.create("griefer_utils", "icons/" + icon + ".png"));
 		else if (icon instanceof ResourceLocation location)

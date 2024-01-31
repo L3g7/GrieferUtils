@@ -11,16 +11,13 @@ import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
-import dev.l3g7.griefer_utils.laby4.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.RootSettingRegistry;
 
@@ -104,7 +101,7 @@ public class MainPage {
 			.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")));
 	}
 
-	private static class RootSetting extends RootSettingRegistry implements BaseSettingImpl<RootSetting, Void> {
+	private static class RootSetting extends RootSettingRegistry {
 
 		private RootSetting() {
 			super("griefer_utils", "settings");
@@ -120,10 +117,6 @@ public class MainPage {
 			return SettingsImpl.buildIcon("icon");
 		}
 
-		@Override
-		public ExtendedStorage<Void> getStorage() {
-			return null;
-		}
 	}
 
 }

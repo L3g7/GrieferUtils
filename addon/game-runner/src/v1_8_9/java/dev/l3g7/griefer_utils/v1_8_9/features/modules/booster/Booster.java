@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent.GuiOpenEvent;
@@ -21,22 +22,27 @@ import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.Commands;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
-import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
+import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
+import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.Style;
+import net.labymod.api.client.component.format.TextColor;
+import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+
+import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.*;
 
 @Singleton
-public class Booster extends Module {
+public class Booster extends Laby4Module {
 
 	private final static Pattern BOOSTER_INFO_PATTERN = Pattern.compile("^(?<name>[A-z]+)-Booster: (?:Deaktiviert|\\dx Multiplikator (?<durations>\\(.+\\) ?)+)");
 	private final static Pattern BOOSTER_INFO_TIME_PATTERN = Pattern.compile("\\((\\d+):(\\d+)\\)");
@@ -67,15 +73,31 @@ public class Booster extends Module {
 	private boolean waitingForBoosterGUI = false;
 	private boolean waitingForBoosterInfo = false;
 
-	@Override
-	public void init() {
-		super.init();
+	public Booster() {
 		Runtime.getRuntime().addShutdownHook(new Thread(BoosterRequestHandler::deleteBoosterData));
 	}
 
 	@Override
+	protected void createText() {
+		super.createText();
+		boosters.values().forEach(BoosterData::createLine);
+	}
+
+	@Override
+	public void onTick(boolean isEditorContext) {
+		boosters.values().forEach(BoosterData::tick);
+	}
+
+	@Override
+	public Object getValue() {
+		return String.valueOf(boosters.values().stream()
+			.map(data -> data.expirationDates.size())
+			.mapToInt(Integer::intValue).sum());
+	}
+
+	@Override
 	public String getComparisonName() {
-		return "dev.l3g7.griefer_utils.v1_8_9.features.modules" + getControlName();
+		return "dev.l3g7.griefer_utils.v1_8_9.features.modules" + enabled.name();
 	}
 
 	@EventListener
@@ -172,98 +194,10 @@ public class Booster extends Module {
 		BoosterRequestHandler.sendBoosterData(boosters.values());
 	}
 
-	@Override
-	public String[] getKeys() {
-		// Get names (and counts) as Strings
-		List<String> keys = boosters.values().stream()
-			.filter(d -> !d.isExpired())
-			.map(BoosterData::getDisplayName)
-			.collect(Collectors.toList());
-
-		keys.add(0, "Booster");
-		return keys.toArray(new String[0]);
-	}
-
-	@Override
-	public String[] getDefaultValues() {
-		return new String[] {"0"};
-	}
-
-	@Override
-	public String[] getValues() {
-		if (!ServerCheck.isOnCitybuild())
-			return getDefaultValues();
-
-		// Get expirations dates as Strings
-		List<String> values = boosters.values().stream()
-			.filter(d -> !d.isExpired())
-			.map(BoosterData::getFormattedTime)
-			.collect(Collectors.toList());
-
-		if (values.isEmpty())
-			return getDefaultValues();
-
-		// Add count to start
-		values.add(0, String.valueOf(boosters.values().stream().map(BoosterData::count).mapToInt(Integer::intValue).sum()));
-
-		return values.toArray(new String[0]);
-	}
-/*
-TODO:+
-
-	@Override
-	public void draw(double x, double y, double rightX) {
-		super.draw(x, y, rightX);
-
-		if (design.get() == KeyMode.TEXT || !keyVisible)
-			return;
-
-		List<BoosterData> data = boosters.values().stream()
-			.filter(d -> !d.isExpired())
-			.collect(Collectors.toList());
-
-		if (data.isEmpty())
-			return;
-
-		double singum = Math.signum(rightX);
-		int fontHeight = mc.fontRendererObj.FONT_HEIGHT;
-
-		double xDiff = 0;
-
-		if (getDisplayFormatting() == SQUARE_BRACKETS)
-			xDiff -= singum * mc.fontRendererObj.getStringWidth(new Text("[", 0, bold, italic, underline).getText());
-
-		if (design.get() == KeyMode.ICON)
-			xDiff += .5;
-
-		// Add padding
-		y += padding;
-		if (rightX == -1)
-			xDiff += padding;
-
-		xDiff *= -singum;
-
-		for (BoosterData d : data) {
-			y += fontHeight + 1;
-
-			double actualX = rightX == -1 ? x : rightX - getDisplayTextWidth(d);
-			actualX += xDiff;
-
-			mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/booster/" + d.displayName.toLowerCase() + ".png"));
-			LabyMod.getInstance().getDrawUtils().drawTexture(actualX, y, 256, 256, 7, 7);
-		}
-
-	}
-	private double getDisplayTextWidth(BoosterData d) {
-		List<Text> texts = getDisplayFormatting().getTexts(d.getDisplayName(), ImmutableList.of(new Text(d.getFormattedTime(), 0)), 0, 0, 0, keyVisible, bold, italic, underline);
-		String text = texts.stream().map(Text::getText).reduce(String::concat).orElseThrow(() -> new RuntimeException("BoosterData has no text"));
-
-		return mc.fontRendererObj.getStringWidth(text);
-	}
-*/
-
 	class BoosterData {
 
+		private final Component keyComponent = Component.empty();
+		private TextLine line;
 		final String displayName;
 		final boolean stackable;
 		final Queue<Long> expirationDates = new ConcurrentLinkedQueue<>();
@@ -273,35 +207,40 @@ TODO:+
 			this.stackable = stackable;
 		}
 
-		private boolean isExpired() {
+		private void createLine() {
+			line = Booster.this.createLine(keyComponent, "");
+		}
+
+		private void tick() {
+
+			// Update key
+			KeyMode mode = design.get();
+			Component name = Component.empty();
+
+			if (mode != KeyMode.TEXT)
+				name.append(Component.icon(SettingsImpl.buildIcon("booster/" + displayName.toLowerCase()), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
+
+			if (mode == KeyMode.TEXT_AND_ICON)
+				name.append(Component.text(" "));
+
+			if (mode != KeyMode.ICON)
+				name.append(Component.text(displayName));
+
+			keyComponent.setChildren(Collections.singleton(name));
+
+			// Update value
 			long currentTime = System.currentTimeMillis();
 			expirationDates.removeIf(d -> d < currentTime);
 
-			return expirationDates.isEmpty();
-		}
-
-		private String getFormattedTime() {
-			return Util.formatTime(expirationDates.stream()
-				.mapToLong(Long::longValue)
-				.min().orElse(0));
-		}
-
-		private String getDisplayName() {
-			KeyMode mode = design.get();
-			String name = "";
-
-			if (mode != KeyMode.TEXT)
-				name += "  "; // Space for the icon
-			if (mode != KeyMode.ICON)
-				name += displayName;
-			if (stackable)
-				name += " x" + count();
-
-			return name;
-		}
-
-		private int count() {
-			return expirationDates.size();
+			if (expirationDates.isEmpty()) {
+				line.setState(HIDDEN);
+				line.update("00:00"); // Fallback value for showcase in Widget editor | TODO: tick down? fix booster count?
+			} else {
+				line.setState(VISIBLE);
+				line.update(Util.formatTime(expirationDates.stream()
+					.mapToLong(Long::longValue)
+					.min().orElse(0)));
+			}
 		}
 
 	}

@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import dev.l3g7.griefer_utils.v1_8_9.misc.server.GUClient;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 @Singleton
-public class MobRemover extends Module {
+public class MobRemover extends Laby4Module {
 
 	private static final Pattern MOB_REMOVER_PATTERN = Pattern.compile("§r§8\\[§r§6MobRemover§r§8] §r§4Achtung! §r§7In §r§e(?<minutes>\\d) Minuten? §r§7werden alle Tiere gelöscht\\.§r");
 
@@ -55,13 +55,13 @@ public class MobRemover extends Module {
 	private long mobRemoverEnd = -1;
 
 	@Override
-	public String[] getValues() {
+	public String getValue() {
 		if (mobRemoverEnd == -1)
-			return getDefaultValues();
+			return "Unbekannt";
 
 		long diff = mobRemoverEnd - System.currentTimeMillis();
 		if (diff < 0)
-			return getDefaultValues();
+			return "Unbekannt";
 
 		// Warn if mob remover is less than the set amount of seconds away
 		if (diff < warnTime.get() * 1000) {
@@ -70,12 +70,7 @@ public class MobRemover extends Module {
 				title("§c§l" + s);
 		}
 
-		return new String[]{Util.formatTime(mobRemoverEnd, timeFormat.get() == TimeFormat.SHORT)};
-	}
-
-	@Override
-	public String[] getDefaultValues() {
-		return new String[]{"Unbekannt"};
+		return Util.formatTime(mobRemoverEnd, timeFormat.get() == TimeFormat.SHORT);
 	}
 
 	@EventListener
@@ -129,4 +124,5 @@ public class MobRemover extends Module {
 		}
 
 	}
+
 }

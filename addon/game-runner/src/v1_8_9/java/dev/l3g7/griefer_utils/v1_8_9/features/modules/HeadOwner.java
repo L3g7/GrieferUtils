@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.v1_8_9.features.modules;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -28,7 +28,7 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 @Singleton
-public class HeadOwner extends Module {
+public class HeadOwner extends Laby4Module {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -36,66 +36,62 @@ public class HeadOwner extends Module {
 		.description("Zeigt dir den Spieler, dessen Kopf du ansiehst.")
 		.icon("steve");
 
-    @Override
-    public String[] getDefaultValues() {
-        return new String[]{"Kein Spielerkopf"};
-    }
+	@Override
+	public String getValue() {
+		TileEntity e = rayTraceTileEntity();
+		if (e instanceof TileEntitySkull s) {
+			if (s.getPlayerProfile() == null || s.getPlayerProfile().getName() == null || s.getPlayerProfile().getName().isEmpty())
+				return "Kein Spielerkopf";
 
-    @Override
-    public String[] getValues() {
-        TileEntity e = rayTraceTileEntity();
-        if (e instanceof TileEntitySkull) {
-            TileEntitySkull s = (TileEntitySkull) e;
-            if (s.getPlayerProfile() != null && s.getPlayerProfile().getName() != null && !s.getPlayerProfile().getName().isEmpty())
-                return new String[]{s.getPlayerProfile().getName()};
-			return getDefaultValues();
-        }
+			return s.getPlayerProfile().getName();
+		}
 
 		Entity entity = rayTraceEntity();
 
-		// Source: ItemSkull.getItemStackDisplayName(ItemStack stack)
-	    if (entity == null)
-			return getDefaultValues();
+		if (entity == null)
+			return "Kein Spielerkopf";
 
+		// Get item
 		ItemStack item;
 
 		if (entity instanceof EntityArmorStand)
-	        item = ((EntityArmorStand) entity).getCurrentArmor(3);
+			item = ((EntityArmorStand) entity).getCurrentArmor(3);
 		else
 			item = ((EntityItemFrame) entity).getDisplayedItem();
 
 		if (item == null || !(item.getItem() instanceof ItemSkull))
-			return getDefaultValues();
+			return "Kein Spielerkopf";
 
 		if (item.getMetadata() != 3 || !item.hasTagCompound())
-			return getDefaultValues();
+			return "Kein Spielerkopf";
 
-	    NBTTagCompound tag = item.getTagCompound();
+		// Extract name
+		NBTTagCompound tag = item.getTagCompound();
 
-	    if (tag.hasKey("SkullOwner", 8))
-		    return new String[]{tag.getString("SkullOwner")};
+		if (tag.hasKey("SkullOwner", 8))
+			return tag.getString("SkullOwner");
 
-	    if (tag.hasKey("SkullOwner", 10)) {
-		    NBTTagCompound nbttagcompound = tag.getCompoundTag("SkullOwner");
+		if (tag.hasKey("SkullOwner", 10)) {
+			NBTTagCompound nbttagcompound = tag.getCompoundTag("SkullOwner");
 
-		    if (nbttagcompound.hasKey("Name", 8))
-			    return new String[]{nbttagcompound.getString("Name")};
-	    }
+			if (nbttagcompound.hasKey("Name", 8))
+				return nbttagcompound.getString("Name");
+		}
 
-	    return getDefaultValues();
-    }
+		return "Kein Spielerkopf";
+	}
 
-    @Override
-    public boolean isShown() {
-        return super.isShown() && (rayTraceTileEntity() instanceof TileEntitySkull || rayTraceEntity() != null);
-    }
+	@Override
+	public boolean isVisibleInGame() {
+		return rayTraceTileEntity() instanceof TileEntitySkull || rayTraceEntity() != null;
+	}
 
     private TileEntity rayTraceTileEntity() {
         if (mc().thePlayer == null)
             return null;
 
         MovingObjectPosition rayTraceResult = mc().thePlayer.rayTrace(1000, 1);
-        if (rayTraceResult == null // Should only happen when one of the player's coordinates is NaN, but it happens (See https://discord.com/channels/1012404337433116792/1034951755240321146)
+        if (rayTraceResult == null // Should only happen when one of the player's coordinates is NaN, but it happens
 	        || rayTraceResult.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
             return null;
 

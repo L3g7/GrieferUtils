@@ -12,10 +12,13 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.v1_8_9.util.SchematicaUtil;
 import dev.l3g7.griefer_utils.v1_8_9.util.render.RenderUtil;
+import net.labymod.api.client.gui.hud.position.HudSize;
+import net.labymod.api.client.gui.mouse.MutableMouse;
+import net.labymod.api.client.render.matrix.Stack;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -36,7 +39,7 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 @Singleton
-public class BlockInfo extends Module {
+public class BlockInfo extends Laby4Module {
 
 	private static final Pair<BlockPos, ItemStack> DEFAULT_DATA = Pair.of(new BlockPos(0, 0, 0), new ItemStack(Blocks.command_block));
 	public static boolean gettingTooltip = false;
@@ -57,17 +60,15 @@ public class BlockInfo extends Module {
 		.subSettings(showCoords);
 
 	@Override
-	public String[] getValues() {
-		return new String[] {""};
+	public void render(Stack stack, MutableMouse mouse, float partialTicks, boolean isEditorContext, HudSize size) {
+		size.set(getWidth(), showCoords.get() ? 40 : 30);
+		if (stack != null) {
+			this.renderEntireBackground(stack, size);
+			draw(0, 0, isEditorContext);
+		}
 	}
 
-	@Override
-	public String[] getDefaultValues() {
-		return new String[] {""};
-	}
-
-	@Override
-	public double getRawWidth() {
+	private float getWidth() {
 		int maxLength = 0;
 		for (String line : lines)
 			maxLength = Math.max(maxLength, mc().fontRendererObj.getStringWidth(line));
@@ -75,19 +76,8 @@ public class BlockInfo extends Module {
 		return 35 + maxLength;
 	}
 
-	@Override
-	public double getRawHeight() {
-		return showCoords.get() ? 40 : 30;
-	}
-
-	@Override
-	public boolean isShown() {
-		return true;
-	}
-
-	@Override
-	public void draw(double x, double y, double rightX) {
-		updateObjectMouseOver();
+	private void draw(double x, double y, boolean isEditorContext) {
+		updateObjectMouseOver(isEditorContext);
 
 		if (data == null || data.getRight() == null || data.getRight().getItem() == null)
 			return;
@@ -108,9 +98,9 @@ public class BlockInfo extends Module {
 		GlStateManager.disableLighting();
 	}
 
-	private void updateObjectMouseOver() {
+	private void updateObjectMouseOver(boolean isEditorContext) {
 		if (world() == null) {
-			// TODO: data = mc.currentScreen instanceof LabyModModuleEditorGui ? DEFAULT_DATA : null;
+			data = isEditorContext ? DEFAULT_DATA : null;
 			return;
 		}
 
@@ -120,7 +110,7 @@ public class BlockInfo extends Module {
 
 		MovingObjectPosition mop = mc().objectMouseOver;
 		if (mop == null || mop.typeOfHit != BLOCK) {
-			// TODO: data = mc.currentScreen instanceof LabyModModuleEditorGui ? DEFAULT_DATA : null;
+			data = isEditorContext ? DEFAULT_DATA : null;
 			return;
 		}
 

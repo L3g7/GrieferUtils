@@ -59,27 +59,6 @@ public class MessageEvent extends Event {
 
 	}
 
-	public static class MessageModifiedEvent extends MessageEvent {
-
-		public final IChatComponent component;
-
-		public MessageModifiedEvent(IChatComponent component) {
-			this.component = component;
-		}
-
-		/*
-		// TODO: @Mixin(value = GuiChatAdapter.class, remap = false)
-		private static class MixinGuiChatAdapter {
-
-			@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"))
-			public void postMessageModifiedEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-				new MessageEvent.MessageModifiedEvent(component).fire();
-			}
-
-		}*/
-
-	}
-
 	public static class MessageSendEvent extends MessageEvent {
 
 		public static boolean post(String message) {

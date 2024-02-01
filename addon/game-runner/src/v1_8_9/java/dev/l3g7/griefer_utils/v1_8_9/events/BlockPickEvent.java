@@ -55,23 +55,4 @@ public class BlockPickEvent extends Event {
 
 	}
 
-	/*
-	// TODO: @Mixin(ForgeHooks.class)
-	public static class MixinForgeHooks {
-
-		@Inject(method = "onPickBlock", at = @At("HEAD"), remap = false, cancellable = true)
-		private static void inject(MovingObjectPosition target, EntityPlayer player, World world, CallbackInfoReturnable<Boolean> cir) {
-			if (target == null || target.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
-				return;
-
-			Block block = world.getBlockState(target.getBlockPos()).getBlock();
-			if (block.getMaterial() == Material.air)
-				return;
-
-			if (new BlockPickEvent(getPickBlock(block, world, target.getBlockPos())).fire().isCanceled())
-				cir.setReturnValue(true);
-		}
-
-	}*/
-
 }

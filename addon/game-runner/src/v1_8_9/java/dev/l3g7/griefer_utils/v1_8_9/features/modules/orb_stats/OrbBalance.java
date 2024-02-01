@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.GrieferGamesJoinEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -34,12 +34,12 @@ import java.util.regex.Pattern;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 @Singleton
-public class OrbBalance extends Module {
+public class OrbBalance extends Laby4Module {
 
 	private static final Pattern SKULL_PATTERN = Pattern.compile("^§7Du besitzt aktuell §e(?<orbs>[\\d.]+) Orbs§7\\.$");
 	private static final Pattern BUY_PATTERN = Pattern.compile("^\\[GrieferGames] Du hast erfolgreich das Produkt .+ für (?<orbs>[\\d.]+) Orbs gekauft\\.$");
-	public static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>[\\S ]+) für (?<orbs>[\\d.]+) Orbs verkauft\\.$");
-	public static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
+	private static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>[\\S ]+) für (?<orbs>[\\d.]+) Orbs verkauft\\.$");
+	private static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
 
 	private static long balance = -1;
 
@@ -49,7 +49,12 @@ public class OrbBalance extends Module {
 		.description("Zeigt dir an, wie viele Orbs du hast.")
 		.icon("orb");
 
-	@EventListener(triggerWhenDisabled = true)
+	@Override
+	public String getValue() {
+		return balance == -1 ? "Bitte öffne den Orb-Händler / Orb-Verkäufer." : DECIMAL_FORMAT_3.format(balance);
+	}
+
+	@EventListener
 	public void onTick(TickEvent.ClientTickEvent event) {
 		if (!ServerCheck.isOnCitybuild() || !(mc().currentScreen instanceof GuiChest))
 			return;
@@ -78,7 +83,7 @@ public class OrbBalance extends Module {
 		}
 	}
 
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
 		if (!ServerCheck.isOnCitybuild())
 			return;
@@ -99,17 +104,7 @@ public class OrbBalance extends Module {
 		}
 	}
 
-	@Override
-	public String[] getValues() {
-		return balance == -1 ? getDefaultValues() : new String[]{DECIMAL_FORMAT_3.format(balance)};
-	}
-
-	@Override
-	public String[] getDefaultValues() {
-		return new String[]{"Bitte öffne den Orb-Händler / Orb-Verkäufer."};
-	}
-
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.orb_balance.balances." + mc().getSession().getProfile().getId();
 

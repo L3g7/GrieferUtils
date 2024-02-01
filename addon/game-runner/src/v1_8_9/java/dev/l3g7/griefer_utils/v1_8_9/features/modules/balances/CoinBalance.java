@@ -13,14 +13,14 @@ import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import net.minecraft.network.play.server.S3EPacketTeams;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.world;
 
 @Singleton
-public class CoinBalance extends Module {
+public class CoinBalance extends Laby4Module {
 
 	private static double coins = -1;
 
@@ -30,7 +30,7 @@ public class CoinBalance extends Module {
 		.description("Zeigt den Kontostand an.")
 		.icon("coin_pile");
 
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onPacket(PacketEvent.PacketReceiveEvent<S3EPacketTeams> event) {
 		if (world() == null)
 			return;
@@ -47,16 +47,11 @@ public class CoinBalance extends Module {
 	}
 
 	@Override
-	public String[] getValues() {
+	public String getValue() {
 		if (coins == -1)
-			return getDefaultValues();
+			return "?";
 
-		return new String[] {Constants.DECIMAL_FORMAT_98.format(coins) + "$"};
-	}
-
-	@Override
-	public String[] getDefaultValues() {
-		return new String[] {"?"};
+		return Constants.DECIMAL_FORMAT_98.format(coins) + "$";
 	}
 
 }

@@ -8,18 +8,21 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.modules;
 
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
+import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import static dev.l3g7.griefer_utils.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
 
 @Singleton
-public class MissingAdventurerBlocks extends Module {
+public class MissingAdventurerBlocks extends Laby4Module {
+
+	private TextLine missingBlocksLine;
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -28,28 +31,18 @@ public class MissingAdventurerBlocks extends Module {
 		.icon(Items.fire_charge);
 
 	@Override
-	public boolean isShown() {
-		return super.isShown() && getMissingBlocks() != -1;
+	public boolean isVisibleInGame() {
+		return getMissingBlocks() != -1;
 	}
 
 	@Override
-	public String[] getKeys() {
-		return getDefaultKeys();
+	protected void createText() {
+		missingBlocksLine = createLine("Fehlende Blöcke", "0");
 	}
 
 	@Override
-	public String[] getDefaultKeys() {
-		return new String[] { "Fehlende Blöcke" };
-	}
-
-	@Override
-	public String[] getValues() {
-		return new String[] { Constants.DECIMAL_FORMAT_98.format(getMissingBlocks()) };
-	}
-
-	@Override
-	public String[] getDefaultValues() {
-		return new String[] { "0" };
+	public void onTick(boolean isEditorContext) {
+		missingBlocksLine.updateAndFlush(DECIMAL_FORMAT_98.format(Math.max(getMissingBlocks(), 0)));
 	}
 
 	private int getMissingBlocks() {

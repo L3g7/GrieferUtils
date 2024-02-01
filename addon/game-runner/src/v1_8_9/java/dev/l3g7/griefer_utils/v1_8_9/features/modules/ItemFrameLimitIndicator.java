@@ -11,12 +11,22 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
+import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.TextColor;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.init.Items;
+import net.minecraft.util.ClassInheritanceMultiMap;
+import net.minecraft.world.chunk.Chunk;
+
+import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.world;
 
 @Singleton
-public class ItemFrameLimitIndicator extends Module {
+public class ItemFrameLimitIndicator extends Laby4Module {
 
 	private final NumberSetting limit = NumberSetting.create()
 		.name("Limit")
@@ -37,18 +47,10 @@ public class ItemFrameLimitIndicator extends Module {
 		.icon(Items.item_frame)
 		.subSettings(applyColor, limit);
 
-	public String[] getValues() { throw new UnsupportedOperationException(); }
-	public String[] getDefaultValues() { throw new UnsupportedOperationException(); }
-
-	/*
-	TODO:
-	public List<List<Text>> getDefaultTextValues() {
-		return Collections.singletonList(Collections.singletonList(Text.getText("0 / " + limit.get(), 0x00FF00)));
-	}
-
-	public List<List<Text>> getTextValues() {
+	@Override
+	public Object getValue() {
 		if (player() == null || world() == null)
-			return getDefaultTextValues();
+			return Component.text("0 / " + limit.get(), TextColor.color(0x00FF00));
 
 		Chunk chunk = world().getChunkFromChunkCoords(player().chunkCoordX, player().chunkCoordZ);
 		int entities = 0;
@@ -56,11 +58,9 @@ public class ItemFrameLimitIndicator extends Module {
 			for (Entity entity : entityList)
 				if (entity instanceof EntityItemFrame || entity instanceof EntityPainting)
 					entities++;
-
-		Text text = Text.getText(entities + " / " + limit.get(), applyColor.get() ? calculateColor(entities) : -1);
-		return Collections.singletonList(Collections.singletonList(text));
+		return Component.empty().append(Component.text(entities + " / " + limit.get(), TextColor.color(applyColor.get() ? calculateColor(entities) : -1)));
 	}
-*/
+
 	private int calculateColor(int entities) {
 		double percent = Math.min(entities / (double) limit.get(), 1);
 		int r, g, b;

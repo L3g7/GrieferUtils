@@ -10,9 +10,10 @@ package dev.l3g7.griefer_utils.v1_8_9.features.modules.spawn_counter;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
-import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import net.minecraft.block.Block;
@@ -39,20 +40,28 @@ class RoundHandler {
 		+1, +1
 	};
 
-	private static World spawnWorld;
-	private static AxisAlignedBB spawnBox;
-	private static BlockPos spawnMiddle;
-	private static byte startQuadrant = -1;
-	private static byte visitedQuadrants = 0;
+	private final SpawnCounter spawnCounter;
 
-	static int roundsFlown;
-	static int roundsRan;
+	private World spawnWorld;
+	private AxisAlignedBB spawnBox;
+	private BlockPos spawnMiddle;
+	private byte startQuadrant = -1;
+	private byte visitedQuadrants = 0;
 
-	private static boolean hasFlown;
-	private static boolean accountForStartBonus;
-	private static long startTime = 0;
+	int roundsFlown;
+	int roundsRan;
 
-	static void checkForRounds(Consumer<String> notifier) {
+	private boolean hasFlown;
+	private boolean accountForStartBonus;
+	private long startTime = 0;
+
+	public RoundHandler(SpawnCounter spawnCounter) {
+		this.spawnCounter = spawnCounter;
+		EventRegisterer.register(this);
+	}
+
+	@EventListener
+	private void onTick(TickEvent.ClientTickEvent event) {
 		if (player() == null || spawnWorld == null)
 			return;
 
@@ -99,16 +108,16 @@ class RoundHandler {
 				accountForStartBonus = false;
 			}
 
-			LeaderboardHandler.onRoundComplete(hasFlown);
+			spawnCounter.leaderboardHandler.onRoundComplete(hasFlown);
 
 			if (hasFlown) {
 				roundsFlown++;
-				notifier.accept(String.format("§fDu bist deine §e%dte§f Runde in §e%.1f§f Sekunden abgeflogen!", roundsFlown, Math.round(delta / 100d) / 10d));
+				spawnCounter.notificationType.get().notifier.accept(String.format("§fDu bist deine §e%dte§f Runde in §e%.1f§f Sekunden abgeflogen!", roundsFlown, Math.round(delta / 100d) / 10d));
 				Config.set(SpawnCounter.configKey + "flown", new JsonPrimitive(roundsFlown));
 				hasFlown = false;
 			} else {
 				roundsRan++;
-				notifier.accept(String.format("§fDu bist deine §e%dte§f Runde in §e%.1f§f Sekunden abgelaufen!", roundsRan, Math.round(delta / 100d) / 10d));
+				spawnCounter.notificationType.get().notifier.accept(String.format("§fDu bist deine §e%dte§f Runde in §e%.1f§f Sekunden abgelaufen!", roundsRan, Math.round(delta / 100d) / 10d));
 				Config.set(SpawnCounter.configKey + "ran", new JsonPrimitive(roundsRan));
 			}
 
@@ -117,13 +126,13 @@ class RoundHandler {
 	}
 
 	@EventListener
-	private static void onPlayerTeleport(PacketReceiveEvent<S08PacketPlayerPosLook> event) {
+	private void onPlayerTeleport(PacketReceiveEvent<S08PacketPlayerPosLook> event) {
 		visitedQuadrants = 0;
 		startQuadrant = -1;
 	}
 
-	@EventListener(triggerWhenDisabled = true)
-	private static void onMessageReceive(MessageReceiveEvent event) {
+	@EventListener
+	private void onMessageReceive(MessageReceiveEvent event) {
 		if (!ServerCheck.isOnGrieferGames() || player() == null)
 			return;
 
@@ -136,7 +145,7 @@ class RoundHandler {
 		determineSpawn(player().getPosition().down());
 	}
 
-	private static void determineSpawn(BlockPos pos) {
+	private void determineSpawn(BlockPos pos) {
 		if (excludedCitybuilds.contains(getServerFromScoreboard()))
 			return;
 
@@ -155,7 +164,7 @@ class RoundHandler {
 		}
 	}
 
-	private static boolean isSpawnMiddle(BlockPos pos) {
+	private boolean isSpawnMiddle(BlockPos pos) {
 		Block targetBlock = getServerFromScoreboard().equals("Event") ? Blocks.quartz_block : Blocks.stonebrick;
 		return world().getBlockState(pos).getBlock() == targetBlock;
 	}

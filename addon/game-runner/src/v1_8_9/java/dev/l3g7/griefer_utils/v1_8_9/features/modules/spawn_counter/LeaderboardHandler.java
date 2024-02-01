@@ -9,45 +9,58 @@ package dev.l3g7.griefer_utils.v1_8_9.features.modules.spawn_counter;
 
 import com.google.common.base.Supplier;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.api.misc.server.requests.LeaderboardRequest;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
+import dev.l3g7.griefer_utils.api.misc.server.requests.LeaderboardRequest.UserData;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.GrieferGamesJoinEvent;
+import dev.l3g7.griefer_utils.v1_8_9.features.modules.spawn_counter.SpawnCounter.LeaderboardDisplayType;
 import dev.l3g7.griefer_utils.v1_8_9.misc.server.GUClient;
 import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListEntry;
-import org.apache.commons.lang3.tuple.Triple;
+import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
+import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.Style;
+import net.labymod.api.client.component.format.TextColor;
+import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
+import net.labymod.api.client.gui.icon.Icon;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static dev.l3g7.griefer_utils.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.v1_8_9.features.modules.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
-import static dev.l3g7.griefer_utils.v1_8_9.features.modules.spawn_counter.SpawnCounter.LeaderboardDisplayType.ON;
-import static dev.l3g7.griefer_utils.v1_8_9.features.modules.spawn_counter.SpawnCounter.leaderboard;
-import static dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListEntry.INVALID_PLAYER;
+import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.name;
+import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.uuid;
+import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.*;
 
 class LeaderboardHandler {
 
 	private static final Map<String, PlayerListEntry> ENTRIES = new ConcurrentHashMap<>();
-	public static LeaderboardData data;
-	public static SpawnCounter sc;
-	public static int renderWidth;
+	public LeaderboardData data;
+
+	private final SpawnCounter spawnCounter;
+	private TextLine previousRank, ownRank, nextRank;
+
+	public LeaderboardHandler(SpawnCounter spawnCounter) {
+		this.spawnCounter = spawnCounter;
+		EventRegisterer.register(this);
+	}
 
 	@EventListener
-	static void onGrieferGamesJoin(GrieferGamesJoinEvent event) {
+	public void onGrieferGamesJoin(GrieferGamesJoinEvent event) {
 		request(() -> GUClient.get().getLeaderboardData());
 	}
 
-	static void onRoundComplete(boolean flown) {
+	public void onRoundComplete(boolean flown) {
 		request(() -> GUClient.get().sendLeaderboardData(flown));
 	}
 
-	private static void request(Supplier<LeaderboardData> supplier) {
-		if (!GUClient.get().isAvailable() || leaderboard.get() == OFF)
+	private void request(Supplier<LeaderboardData> request) {
+		if (!GUClient.get().isAvailable() || spawnCounter.leaderboard.get() == OFF)
 			return;
 
 		new Thread(() -> {
-			data = supplier.get();
+			data = request.get();
 			if (data == null)
 				return;
 
@@ -59,79 +72,48 @@ class LeaderboardHandler {
 		}).start();
 	}
 
-	public static String getCompactText() {
-		return " \u2503 " + data.position + ".: " + data.score;
+	public void createLines() {
+		nextRank = spawnCounter.createRawLine();
+		ownRank = spawnCounter.createRawLine();
+		previousRank = spawnCounter.createRawLine();
 	}
 
-	public static int countLines() {
-		if (data == null || leaderboard.get() != ON)
-			return 1;
+	public void tickLines() {
+		LeaderboardDisplayType displayType = spawnCounter.leaderboard.get();
 
-		int i = 2; // Yourself + the normal line
+		if (displayType == LeaderboardDisplayType.ON && data != null) {
+			tickOtherPlayerLine(data.previous, previousRank, -1);
+			tickOtherPlayerLine(data.next, nextRank, +1);
 
-		if (getEntry(data.next).loaded)
-			i++;
-		if (getEntry(data.previous).loaded)
-			i++;
-
-		return i;
-	}
-/* TODO:
-	public static void draw(double x, double y) {
-		List<Triple<Integer, PlayerListEntry, Integer>> renderData = getRenderData();
-
-		int maxPosWidth = 0;
-		for (Triple<Integer, PlayerListEntry, Integer> datum : renderData) {
-			String text = sc.toText(DECIMAL_FORMAT_98.format(datum.getLeft()) + ".").getText();
-			drawUtils().drawStringWithShadow(text, x, y += 10, datum.getMiddle() == null ? -1 : 0xAAAAAA);
-
-			maxPosWidth = Math.max(drawUtils().getStringWidth(text), maxPosWidth);
-		}
-
-		x += maxPosWidth + 2;
-		y -= 10 * renderData.size();
-
-		int maxNameWidth = 0;
-		for (Triple<Integer, PlayerListEntry, Integer> datum : renderData)
-			maxNameWidth = Math.max(maxNameWidth, drawEntry(datum.getRight(), datum.getMiddle(), x, y += 10));
-
-		renderWidth = maxPosWidth + maxNameWidth + 13;
-	}
-
-	private static int drawEntry(int score, PlayerListEntry entry, double x, double y) {
-		// Render skull
-		if (entry != null) {
-			entry.renderSkull(x, y, 8);
+			ownRank.setState(VISIBLE);
+			ownRank.updateAndFlush(
+					Component.text(DECIMAL_FORMAT_98.format(data.position) + ". ")
+							.append(Component.icon(Icon.head(uuid()), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT)) // TODO fix icon rendering?
+							.append(Component.text(" " + name() + ": " + data.score))
+			);
 		} else {
-			mc().getTextureManager().bindTexture(player().getLocationSkin());
-			drawUtils().drawTexture(x, y, 32, 32, 32, 32, 8, 8); // First layer
-			drawUtils().drawTexture(x, y, 160, 32, 32, 32, 8, 8); // Second layer
+			previousRank.setState(DISABLED);  // TODO widget editor fallback?
+			ownRank.setState(DISABLED);
+			nextRank.setState(DISABLED);
 		}
-
-		String text = sc.toText((entry == null ? mc().getSession().getUsername() : entry.name) + ": " + DECIMAL_FORMAT_98.format(score)).getText();
-		drawUtils().drawStringWithShadow(text, x + 11, y, entry == null ? -1 : 0xAAAAAA);
-		return drawUtils().getStringWidth(text);
-	}*/
-
-	private static List<Triple<Integer, PlayerListEntry, Integer>> getRenderData() {
-		List<Triple<Integer, PlayerListEntry, Integer>> renderData = new ArrayList<>();
-		if (getEntry(data.next).loaded)
-			renderData.add(Triple.of(data.position - 1, getEntry(data.next), data.next.score));
-
-		renderData.add(Triple.of(data.position, null, data.score));
-
-		if (getEntry(data.previous).loaded)
-			renderData.add(Triple.of(data.position + 1, getEntry(data.previous), data.previous.score));
-
-		return renderData;
 	}
 
-	private static PlayerListEntry getEntry(LeaderboardRequest.UserData data) {
-		if (data == null)
-			return INVALID_PLAYER;
+	private void tickOtherPlayerLine(UserData other, TextLine line, int offset) {
+		line.setState(DISABLED);
 
-		PlayerListEntry entry = ENTRIES.get(data.uuid);
-		return entry == null ? INVALID_PLAYER : entry;
+		if (other == null)
+			return;
+
+		PlayerListEntry entry = ENTRIES.get(other.uuid);
+		if (entry == null || !entry.loaded)
+			return;
+
+		line.setState(VISIBLE);
+		line.updateAndFlush(
+			Component.text(DECIMAL_FORMAT_98.format(data.position + offset) + ". ", TextColor.color(0xAAAAAA))
+				.append(Component.icon(Icon.head(UUID.fromString(entry.id)), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT))
+				.append(Component.text(" " + entry.name + ": " + other.score, TextColor.color(0xAAAAAA)))
+		);
 	}
 
 }

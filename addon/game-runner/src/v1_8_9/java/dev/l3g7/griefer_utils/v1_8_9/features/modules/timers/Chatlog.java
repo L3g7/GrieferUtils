@@ -16,11 +16,11 @@ import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import net.minecraft.init.Items;
 
 @Singleton
-public class Chatlog extends Module {
+public class Chatlog extends Laby4Module {
 
 	private boolean sentCmd = false;
 
@@ -44,31 +44,26 @@ public class Chatlog extends Module {
 		.icon(Items.clock)
 		.subSettings(timeFormat, hide);
 
-	private long chatlogEnd = -1;
+	private long chatlogEnd = 0;
 
 	@Override
-	public String[] getValues() {
-		return new String[]{Util.formatTime(chatlogEnd, timeFormat.get() == TimeFormat.SHORT)};
+	public Object getValue() {
+		return Util.formatTime(chatlogEnd, timeFormat.get() == TimeFormat.SHORT);
 	}
 
 	@Override
-	public String[] getDefaultValues() {
-		return new String[]{timeFormat.get() == TimeFormat.SHORT ? "0s" : "0 Sekunden"};
+	public boolean isVisibleInGame() {
+		return !hide.get() || chatlogEnd >= System.currentTimeMillis();
 	}
 
-	@Override
-	public boolean isShown() {
-		return super.isShown() && (!hide.get() || chatlogEnd >= System.currentTimeMillis());
-	}
-
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onMessageSend(MessageSendEvent event) {
 		String msg = event.message.toLowerCase();
 
 		sentCmd = msg.startsWith("/chatlog") && !event.message.trim().equals("/chatlog");
 	}
 
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
 		if (!sentCmd)
 			return;
@@ -96,4 +91,5 @@ public class Chatlog extends Module {
 		}
 
 	}
+
 }

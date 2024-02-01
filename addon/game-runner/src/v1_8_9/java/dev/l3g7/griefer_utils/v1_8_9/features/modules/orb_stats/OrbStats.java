@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.GrieferGamesJoinEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ChatQueue;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.util.PlayerUtil;
@@ -52,11 +52,12 @@ import static dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck.isOnGrieferGames;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 @Singleton
-public class OrbStats extends Module {
+public class OrbStats extends Laby4Module {
 
+	private static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>[\\S ]+) für (?<orbs>[\\d.]+) Orbs verkauft\\.$");
 	private static final Pattern RANKING_PATTERN = Pattern.compile("§7(?<item>.*): §e(?<amount>[0-9]+).*");
-	public static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
-	private static final Map<String, String> GUI_TO_CHAT_MAPPING = new HashMap<String, String>() {{
+	private static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
+	private static final Map<String, String> GUI_TO_CHAT_MAPPING = new HashMap<>() {{
 		put("Hasenfelle", "Hasenfell");
 		put("Rohe Fische", "Roher Fisch");
 		put("Roche Lachse", "Roher Lachs");
@@ -100,10 +101,8 @@ public class OrbStats extends Module {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Orb-Statistik")
 		.description("Zeigt dir an, wie oft das zuletzt abgegebene Item insgesamt abgegeben wurde.")
-		.icon("blue_graph");
-
-	public void loadSettings() {
-		getBooleanElement().callback(v -> {
+		.icon("blue_graph")
+		.callback(v -> {
 			// If no data is found, open and close /stats automatically
 			if (v && stats.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForGUI) {
 				guiInitBlock = ChatQueue.sendBlocking("/stats", () -> {
@@ -114,40 +113,79 @@ public class OrbStats extends Module {
 				statsRevertScreen = mc().currentScreen;
 			}
 		});
-	}
 
 	@Override
-	public String[] getValues() {
-		return lastItem == null ? getDefaultValues() : new String[] {lastItem + ": " + DECIMAL_FORMAT_3.format(stats.get(lastItem.hashCode()))};
+	public String getValue() {
+		return lastItem == null ? "?" : lastItem + ": " + DECIMAL_FORMAT_3.format(stats.get(lastItem.hashCode()));
 	}
 
-	@Override
-	public String[] getDefaultValues() {
-		return new String[]{"?"};
+	private void resetWaitingForGUI() {
+		guiInitBlock.complete(null);
+		mc().displayGuiScreen(statsRevertScreen);
+		statsRevertScreen = null;
+		waitingForGUI = false;
+	}
+
+	private void saveConfig() {
+		String path = "modules.orb_stats.stats." + mc().getSession().getProfile().getId();
+
+		if (lastItem != null)
+			Config.set(path + ".last", new JsonPrimitive(lastItem));
+		Config.set(path + ".data", new JsonPrimitive(HashMapSerializer.toString(stats)));
+		Config.save();
 	}
 
 	@EventListener
 	public void onGuiOpen(GuiOpenEvent<GuiChest> event) {
 		lastScreen = event.gui;
 	}
-	public static String getUUIDFromSkullTexture(ItemStack itemStack) {
-		if (itemStack == null || itemStack.getItem() != Items.skull || !itemStack.hasTagCompound())
-			return null;
 
-		NBTTagList textures = itemStack.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-		if (textures.hasNoTags())
-			return null;
+	@EventListener
+	public void loadConfig(GrieferGamesJoinEvent ignored) {
+		lastItem = null;
+		stats.clear();
 
-		String b64 = ((NBTTagCompound) textures.get(0)).getString("Value");
-		if (b64.isEmpty())
-			return null;
+		String path = "modules.orb_stats.stats." + mc().getSession().getProfile().getId();
 
-		JsonObject object = JsonParser.parseString(new String(Base64.getDecoder().decode(b64))).getAsJsonObject();
-		if (!object.has("profileId"))
-			return null;
+		if (Config.has(path + ".last"))
+			lastItem = Config.get(path + ".last").getAsString();
+		if (Config.has(path + ".data"))
+			stats = HashMapSerializer.fromString(Config.get(path + ".data").getAsString());
+	}
 
-		String uuidString = object.get("profileId").getAsString();
-		return uuidString.replaceFirst("^(.{8})(.{4})(.{4})(.{4})(.{12})$", "$1-$2-$3-$4-$5");
+	@EventListener
+	public void onCBJoin(CitybuildJoinEvent event) {
+		if (!isOnGrieferGames())
+			return;
+
+		// If no data is found, open and close /stats automatically
+		if (stats.isEmpty()) {
+			guiInitBlock = ChatQueue.sendBlocking("/stats", () -> {
+				LabyBridge.labyBridge.notifyError("Stats konnten nicht geöffnet werden!");
+				resetWaitingForGUI();
+			});
+			waitingForGUI = true;
+		}
+	}
+
+	@EventListener
+	public void onMsgReceive(MessageReceiveEvent event) {
+		Matcher matcher = ORB_SELL_PATTERN.matcher(event.message.getUnformattedText());
+		if (!matcher.matches())
+			return;
+
+		lastItem = matcher.group("item");
+
+		Slot s = lastScreen.inventorySlots.getSlot(11);
+		// Both grass items and grass blocks have "Gras" as their name when selling them
+		if (s.getHasStack() && lastItem.equals("Gras"))
+			lastItem = s.getStack().getItem() == Item.getItemFromBlock(Blocks.grass) ? "Grasblöcke" : "Gräser";
+
+
+		// Add the received orbs
+		int addend = Integer.parseInt(matcher.group("amount").replace(".", ""));
+		stats.compute(lastItem.hashCode(), (key, value) -> (value == null ? 0 : value) + addend);
+		saveConfig();
 	}
 
 	@EventListener
@@ -178,49 +216,6 @@ public class OrbStats extends Module {
 		if (waitingForGUI)
 			resetWaitingForGUI();
 
-		saveConfig();
-	}
-
-	private void resetWaitingForGUI() {
-		guiInitBlock.complete(null);
-		mc().displayGuiScreen(statsRevertScreen);
-		statsRevertScreen = null;
-		waitingForGUI = false;
-	}
-
-	@EventListener
-	public void onCBJoin(CitybuildJoinEvent event) {
-		if (!isOnGrieferGames())
-			return;
-
-		// If no data is found, open and close /stats automatically
-		if (stats.isEmpty()) {
-			guiInitBlock = ChatQueue.sendBlocking("/stats", () -> {
-				LabyBridge.labyBridge.notifyError("Stats konnten nicht geöffnet werden!");
-				resetWaitingForGUI();
-			});
-			waitingForGUI = true;
-		}
-	}
-
-	public static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>[\\S ]+) für (?<orbs>[\\d.]+) Orbs verkauft\\.$");
-	@EventListener
-	public void onMsgReceive(MessageReceiveEvent event) {
-		Matcher matcher = ORB_SELL_PATTERN.matcher(event.message.getUnformattedText());
-		if (!matcher.matches())
-			return;
-
-		lastItem = matcher.group("item");
-
-		Slot s = lastScreen.inventorySlots.getSlot(11);
-		// Both grass items and grass blocks have "Gras" as their name when selling them
-		if (s.getHasStack() && lastItem.equals("Gras"))
-			lastItem = s.getStack().getItem() == Item.getItemFromBlock(Blocks.grass) ? "Grasblöcke" : "Gräser";
-
-
-		// Add the received orbs
-		int addend = Integer.parseInt(matcher.group("amount").replace(".", ""));
-		stats.compute(lastItem.hashCode(), (key, value) -> (value == null ? 0 : value) + addend);
 		saveConfig();
 	}
 
@@ -260,26 +255,24 @@ public class OrbStats extends Module {
 		}
 	}
 
-	@EventListener
-	public void loadConfig(GrieferGamesJoinEvent ignored) {
-		lastItem = null;
-		stats.clear();
+	private String getUUIDFromSkullTexture(ItemStack itemStack) {
+		if (itemStack == null || itemStack.getItem() != Items.skull || !itemStack.hasTagCompound())
+			return null;
 
-		String path = "modules.orb_stats.stats." + mc().getSession().getProfile().getId();
+		NBTTagList textures = itemStack.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
+		if (textures.hasNoTags())
+			return null;
 
-		if (Config.has(path + ".last"))
-			lastItem = Config.get(path + ".last").getAsString();
-		if (Config.has(path + ".data"))
-			stats = HashMapSerializer.fromString(Config.get(path + ".data").getAsString());
-	}
+		String b64 = ((NBTTagCompound) textures.get(0)).getString("Value");
+		if (b64.isEmpty())
+			return null;
 
-	private void saveConfig() {
-		String path = "modules.orb_stats.stats." + mc().getSession().getProfile().getId();
+		JsonObject object = JsonParser.parseString(new String(Base64.getDecoder().decode(b64))).getAsJsonObject();
+		if (!object.has("profileId"))
+			return null;
 
-		if (lastItem != null)
-			Config.set(path + ".last", new JsonPrimitive(lastItem));
-		Config.set(path + ".data", new JsonPrimitive(HashMapSerializer.toString(stats)));
-		Config.save();
+		String uuidString = object.get("profileId").getAsString();
+		return uuidString.replaceFirst("^(.{8})(.{4})(.{4})(.{4})(.{12})$", "$1-$2-$3-$4-$5");
 	}
 
 	private static class HashMapSerializer {

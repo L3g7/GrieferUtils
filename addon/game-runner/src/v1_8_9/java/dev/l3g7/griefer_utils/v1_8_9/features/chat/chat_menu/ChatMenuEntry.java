@@ -17,7 +17,6 @@ import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 
 import javax.imageio.ImageIO;
@@ -63,10 +62,8 @@ public class ChatMenuEntry {
 		object.addProperty("command", (String) command);
 		object.addProperty("icon_type", iconType.name());
 		switch (iconType) {
-			case ITEM:
-				object.addProperty("icon", ItemUtil.serializeNBT(getIconAsItemStack()));
-				break;
-			case IMAGE_FILE:
+			case ITEM -> object.addProperty("icon", ItemUtil.serializeNBT(getIconAsItemStack()));
+			case IMAGE_FILE -> {
 				DynamicTexture t = (DynamicTexture) mc().getTextureManager().getTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
 				BufferedImage i = new BufferedImage(Reflection.get(t, "width"), Reflection.get(t, "height"), BufferedImage.TYPE_INT_ARGB);
 				i.setRGB(0, 0, i.getWidth(), i.getHeight(), t.getTextureData(), 0, i.getWidth());
@@ -78,6 +75,7 @@ public class ChatMenuEntry {
 				}
 				object.addProperty("icon", Base64.getEncoder().encodeToString(bytes.toByteArray()));
 				object.addProperty("icon_name", ((File) icon).getName());
+			}
 		}
 
 		return object;
@@ -91,19 +89,17 @@ public class ChatMenuEntry {
 		entry.command = object.get("command").getAsString();
 		entry.iconType = IconType.valueOf(object.get("icon_type").getAsString());
 		switch (entry.iconType) {
-			case ITEM:
-				entry.icon = ItemUtil.fromNBT(object.get("icon").getAsString());
-				break;
-			case IMAGE_FILE:
+			case ITEM -> entry.icon = ItemUtil.fromNBT(object.get("icon").getAsString());
+			case IMAGE_FILE -> {
 				entry.icon = new File(object.get("icon_name").getAsString());
 				ResourceLocation location = new ResourceLocation("griefer_utils/user_content/" + entry.icon.hashCode());
-
 				try {
 					BufferedImage img = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(object.get("icon").getAsString())));
 					mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
 				} catch (IOException | NullPointerException e) {
 					throw new RuntimeException(e);
 				}
+			}
 		}
 		entry.completed = true;
 
@@ -112,18 +108,13 @@ public class ChatMenuEntry {
 
 	public void drawIcon(int x, int y, int w, int h) {
 		switch (iconType) {
-			case SYSTEM:
-				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
-				break;
-			case DEFAULT:
-				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + action.defaultIcon + ".png"));
-				break;
-			case IMAGE_FILE:
-				DrawUtils.bindTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
-				break;
-			case ITEM:
+			case SYSTEM -> mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
+			case DEFAULT -> mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + action.defaultIcon + ".png"));
+			case IMAGE_FILE -> DrawUtils.bindTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
+			case ITEM -> {
 				DrawUtils.drawItem(getIconAsItemStack(), x, y, null);
 				return;
+			}
 		}
 		DrawUtils.drawTexture(x, y, 256.0, 256.0, w, h);
 	}
@@ -193,27 +184,23 @@ public class ChatMenuEntry {
 		return img;
 	}
 
-	public void trigger(String name, IChatComponent entireText) {
+	public void trigger(String name) {
 		switch (action) {
-			case CONSUMER:
-				((Consumer<String>) command).accept(name);
-				break;
-			case OPEN_URL:
+			case CONSUMER -> ((Consumer<String>) command).accept(name);
+			case OPEN_URL -> {
 				try {
 					labyBridge.openWebsite(((String) command).replaceAll("(?i)%name%", name));
 				} catch (RuntimeException e) {
 					e.printStackTrace();
 					LabyBridge.labyBridge.notifyError("Die URL, die geöffnet werden soll, ist ungültig.");
 				}
-				break;
-			case RUN_CMD:
+			}
+			case RUN_CMD -> {
 				String cmd = ((String) command).replaceAll("(?i)%name%", name);
 				if (!MessageEvent.MessageSendEvent.post(cmd))
 					MinecraftUtil.send((cmd));
-				break;
-			case SUGGEST_CMD:
-				MinecraftUtil.suggest(((String) command).replaceAll("(?i)%name%", name));
-				break;
+			}
+			case SUGGEST_CMD -> MinecraftUtil.suggest(((String) command).replaceAll("(?i)%name%", name));
 		}
 	}
 

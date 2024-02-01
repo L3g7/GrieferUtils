@@ -15,13 +15,15 @@ import org.lwjgl.input.Mouse;
 
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils.getHeight;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 public class ChatMenuRenderer {
 
 	private final List<ChatMenuEntry> entries;
 	private final String playerName;
-	private final IChatComponent entireText;
+	private final IChatComponent modifiedComponent;
+	private final IChatComponent originalComponent;
 	private final String titleText;
 
 	private int boxHeight;
@@ -30,11 +32,12 @@ public class ChatMenuRenderer {
 	private int y;
 	private int hoveredEntry = -1;
 
-	public ChatMenuRenderer(List<ChatMenuEntry> entries, String playerName, IChatComponent entireText) {
+	public ChatMenuRenderer(List<ChatMenuEntry> entries, String playerName, IChatComponent modifiedComponent, IChatComponent originalComponent) {
 		this.entries = entries;
 		this.playerName = playerName;
 		this.titleText = "ChatMenü §a" + playerName;
-		this.entireText = entireText;
+		this.modifiedComponent = modifiedComponent;
+		this.originalComponent = originalComponent;
 
 		// Box size
 		boxHeight = 16 + 15 * entries.size();
@@ -51,8 +54,8 @@ public class ChatMenuRenderer {
 		if (DrawUtils.getWidth() - x < boxWidth)
 			x = DrawUtils.getWidth() - boxWidth;
 
-		if (DrawUtils.getHeight() - y < boxHeight)
-			y = DrawUtils.getHeight() - boxHeight;
+		if (getHeight() - y < boxHeight)
+			y = getHeight() - boxHeight;
 	}
 
 	private void drawString(String text, float x, float y) {
@@ -131,7 +134,11 @@ public class ChatMenuRenderer {
 			return false;
 
 		// Trigger the consumer and close the gui
-		entries.get(hoveredEntry).trigger(playerName, entireText);
+		ChatMenuEntry entry = entries.get(hoveredEntry);
+		if (entry instanceof CopyTextEntry copyTextEntry)
+			copyTextEntry.trigger(modifiedComponent, originalComponent);
+		else
+			entry.trigger(playerName);
 		return true;
 	}
 
@@ -142,11 +149,10 @@ public class ChatMenuRenderer {
 	}
 
 	public static int getMouseX() {
-		return Mouse.getX() * new DrawUtils().getWidth() / mc().displayWidth;
+		return Mouse.getX() * DrawUtils.getWidth() / mc().displayWidth;
 	}
 
 	public static int getMouseY() {
-		DrawUtils drawUtils = new DrawUtils();
-		return drawUtils.getHeight() - Mouse.getY() * drawUtils.getHeight() / mc().displayHeight - 1;
+		return getHeight() - Mouse.getY() * getHeight() / mc().displayHeight - 1;
 	}
 }

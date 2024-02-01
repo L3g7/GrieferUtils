@@ -118,7 +118,7 @@ public class ChatReactor extends Feature {
 		@Inject(method = "printChatMessageWithOptionalDeletion", at = @At("HEAD"))
 		private void injectPrintChatMessageWithOptionalDeletion(IChatComponent lvt_1_1_, int lvt_2_1_, CallbackInfo ci) {
 			ChatMessage chatMessage = Laby.labyAPI().chatProvider().chatController().messageAt(0);
-			triggerReactions((IChatComponent) chatMessage);
+			triggerReactions((IChatComponent) chatMessage.component());
 		}
 
 	}

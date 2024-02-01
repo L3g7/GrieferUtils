@@ -24,12 +24,13 @@ import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
-import dev.l3g7.griefer_utils.v1_8_9.util.ChatLineUtil;
+import dev.l3g7.griefer_utils.v1_8_9.util.LabyMod4Util;
+import net.labymod.api.Laby;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
 import net.labymod.core_implementation.mc18.MinecraftImplementation;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IChatComponent;
@@ -40,8 +41,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -150,12 +149,12 @@ public class ChatMenu extends Feature {
 		if (renderer != null && renderer.outOfBox())
 			renderer = null;
 
-		if (Mouse.getEventButton() != 1 || !(mc().currentScreen instanceof GuiChat))
+		if (Mouse.getEventButton() != 1 || !LabyMod4Util.isActivityOpen(ChatInputOverlay.class))
 			return;
 
-		IChatComponent icc = ChatLineUtil.getUnmodifiedIChatComponent(ChatLineUtil.getHoveredComponent());
-		if (icc == null) // Didn't click on a line
-			return;
+		IChatComponent icc = HoveredMessageHandler.getOriginalMessage();
+		if (icc == null)
+			return; // Didn't click on a line
 
 		String name = null;
 
@@ -181,7 +180,7 @@ public class ChatMenu extends Feature {
 		if (realName == null)
 			realName = name;
 
-		renderer = new ChatMenuRenderer(entries, realName, ChatLineUtil.getHoveredComponent());
+		renderer = new ChatMenuRenderer(entries, realName, HoveredMessageHandler.getMessage(), icc);
 		event.cancel();
 	}
 
@@ -208,8 +207,7 @@ public class ChatMenu extends Feature {
 	}
 
 	static void copyToClipboard(String text) {
-		StringSelection selection = new StringSelection(text);
-		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+		Laby.labyAPI().minecraft().chatExecutor().copyToClipboard(text);
 		labyBridge.notify("\"" + text + "\"", "wurde in die Zwischenablage kopiert.");
 	}
 

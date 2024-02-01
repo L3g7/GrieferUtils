@@ -19,7 +19,6 @@ import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.util.ChatLineUtil;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
@@ -58,9 +57,8 @@ public class CopyTextEntry extends ChatMenuEntry {
 		super("Text kopieren", null, null, "clipboard");
 	}
 
-	@Override
-	public void trigger(String name, IChatComponent entireText) {
-		IChatComponent icc = modifiedMessage.get() ? entireText : ChatLineUtil.getUnmodifiedIChatComponent(entireText);
+	public void trigger(IChatComponent modifiedComponent, IChatComponent originalComponent) {
+		IChatComponent icc = modifiedMessage.get() ? modifiedComponent : originalComponent;
 		ChatMenu.copyToClipboard(copyFormat.get().componentToString.apply(icc));
 	}
 

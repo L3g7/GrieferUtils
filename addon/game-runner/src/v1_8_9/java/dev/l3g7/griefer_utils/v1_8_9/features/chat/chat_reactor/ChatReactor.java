@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
+import dev.l3g7.griefer_utils.v1_8_9.util.LabyMod4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.chat.ChatMessage;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
@@ -78,7 +79,7 @@ public class ChatReactor extends Feature {
 	}
 
 	public static void triggerReactions(IChatComponent component) {
-		if ((mc().currentScreen instanceof Object /*TODO: LabyModAddonsGui && getPath().contains(getMainElement() )*/)
+		if (LabyMod4Util.isSettingOpened(enabled)
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
@@ -87,7 +88,7 @@ public class ChatReactor extends Feature {
 				continue;
 
 			ChatReaction reaction = setting.reaction;
-			if (reaction.citybuild.isOnCb())
+			if (!reaction.citybuild.isOnCb())
 				continue;
 
 			try {

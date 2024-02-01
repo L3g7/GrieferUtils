@@ -12,13 +12,13 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.MysteryModPayloadEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import net.minecraft.init.Items;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 @Singleton
-public class Redstone extends Module {
+public class Redstone extends Laby4Module {
 
 	private int redstoneState = -1;
 
@@ -28,7 +28,7 @@ public class Redstone extends Module {
 		.description("Zeigt dir den Redstonestatus an.")
 		.icon(Items.redstone);
 
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onMMCustomPayload(MysteryModPayloadEvent event) {
 		if (!event.channel.equals("redstone"))
 			return;
@@ -37,22 +37,20 @@ public class Redstone extends Module {
 	}
 
 	@Override
-	public String[] getValues() {
+	public String getValue() {
 		if (mc().theWorld == null)
-			return getDefaultValues();
+			return "Unbekannt";
 
-		switch (redstoneState) {
-			case -1:
-				return new String[]{"Unbekannt"};
-			case 0:
-				return new String[]{"§aAktiviert"};
-			default:
-				return new String[]{"§4Deaktiviert"};
-		}
+		return switch (redstoneState) {
+			case -1 -> "Unbekannt";
+			case 0 -> "§aAktiviert";
+			default -> "§4Deaktiviert";
+		};
 	}
 
 	@Override
-	public String[] getDefaultValues() {
-		return new String[]{"Unbekannt"};
+	public boolean isEnabled() {
+		return super.isEnabled();
 	}
+
 }

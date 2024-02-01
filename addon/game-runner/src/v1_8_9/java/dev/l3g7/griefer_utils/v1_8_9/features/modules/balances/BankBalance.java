@@ -8,14 +8,15 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.modules.balances;
 
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import dev.l3g7.griefer_utils.v1_8_9.features.player.scoreboard.BankScoreboard;
 
+import static dev.l3g7.griefer_utils.api.misc.Constants.DECIMAL_FORMAT_98;
+
 @Singleton
-public class BankBalance extends Module {
+public class BankBalance extends Laby4Module {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -24,16 +25,11 @@ public class BankBalance extends Module {
 		.icon("bank");
 
 	@Override
-	public String[] getValues() {
+	public String getValue() {
 		if (BankScoreboard.getBankBalance() == -1)
-			return getDefaultValues();
+			return "?";
 
-		return new String[] {Constants.DECIMAL_FORMAT_98.format(BankScoreboard.getBankBalance()) + "$"};
-	}
-
-	@Override
-	public String[] getDefaultValues() {
-		return new String[] {"?"};
+		return DECIMAL_FORMAT_98.format(BankScoreboard.getBankBalance()) + "$";
 	}
 
 }

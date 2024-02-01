@@ -10,14 +10,15 @@ package dev.l3g7.griefer_utils.v1_8_9.features.player;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.*;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.InputEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
+import dev.l3g7.griefer_utils.v1_8_9.util.LabyMod4Util;
 import net.minecraft.init.Items;
 
 import java.util.regex.Matcher;
@@ -123,10 +124,8 @@ public class AfkNick extends Feature {
 			return;
 
 		// Check settings are currently being edited
-		/*
-		TODO:
-		if (mc().currentScreen instanceof LabyModAddonsGui && !path().isEmpty() && path().get(path().size() - 1) == enabled)
-			return;*/
+		if (LabyMod4Util.isSettingOpened(enabled))
+			return;
 
 		long diff = System.currentTimeMillis() - lastEvent;
 

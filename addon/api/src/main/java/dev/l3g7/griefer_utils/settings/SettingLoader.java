@@ -63,7 +63,15 @@ public class SettingLoader {
 			Field field = Arrays.stream(Reflection.getAllFields(owner.getClass()))
 				.filter(f -> Reflection.get(owner, f) == element)
 				.findFirst()
-				.orElseThrow(() -> elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.name() + " in " + owner));
+				.orElse(null);
+
+			if (field == null) {
+				if (((AbstractSetting<?, ?>) element).get() != BaseSetting.NULL || !element.getSubSettings().isEmpty())
+					throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.name() + " in " + owner);
+
+				// Allow dynamic setting if they don't hold values and have no settings
+				return;
+			}
 
 			if (field.getName().equals("value"))
 				throw elevate(new IllegalStateException(), field + " has an illegal name!");

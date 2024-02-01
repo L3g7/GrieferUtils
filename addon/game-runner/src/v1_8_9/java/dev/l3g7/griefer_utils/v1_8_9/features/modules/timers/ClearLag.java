@@ -20,7 +20,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 
@@ -31,7 +31,7 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DR
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
 
 @Singleton
-public class ClearLag extends Module {
+public class ClearLag extends Laby4Module {
 
 	private final DropDownSetting<TimeFormat> timeFormat = DropDownSetting.create(TimeFormat.class)
 		.name("Zeitformat")
@@ -59,13 +59,13 @@ public class ClearLag extends Module {
 	private long clearLagEnd = -1;
 
 	@Override
-	public String[] getValues() {
+	public String getValue() {
 		if (clearLagEnd == -1)
-			return getDefaultValues();
+			return "Unbekannt";
 
 		long diff = clearLagEnd - System.currentTimeMillis();
 		if (diff < 0)
-			return getDefaultValues();
+			return "Unbekannt";
 
 		// Warn if clearlag is less than the set amount of seconds away
 		if (diff < warnTime.get() * 1000) {
@@ -77,12 +77,7 @@ public class ClearLag extends Module {
 			}
 		}
 
-		return new String[]{Util.formatTime(clearLagEnd, timeFormat.get() == TimeFormat.SHORT)};
-	}
-
-	@Override
-	public String[] getDefaultValues() {
-		return new String[]{"Unbekannt"};
+		return Util.formatTime(clearLagEnd, timeFormat.get() == TimeFormat.SHORT);
 	}
 
 	@EventListener
@@ -135,4 +130,5 @@ public class ClearLag extends Module {
 		}
 
 	}
+
 }

@@ -18,17 +18,18 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.GrieferGamesJoinEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 
+import static dev.l3g7.griefer_utils.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.getNextServerRestart;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 import static java.math.BigDecimal.ZERO;
 
 @Singleton
-public class Spent extends Module {
+public class Spent extends Laby4Module {
 
 	static BigDecimal moneySpent = BigDecimal.ZERO;
 	private long nextReset = -1;
@@ -81,23 +82,18 @@ public class Spent extends Module {
 		);
 
 	@Override
-	public String[] getValues() {
-		return new String[]{Constants.DECIMAL_FORMAT_98.format(moneySpent) + "$"};
+	public Object getValue() {
+		return DECIMAL_FORMAT_98.format(moneySpent) + "$";
 	}
 
-	@Override
-	public String[] getDefaultValues() {
-		return new String[]{"0$"};
-	}
-
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = Constants.PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
 			setBalance(moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
 	}
 
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onTick(TickEvent.ClientTickEvent tickEvent) {
 		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
 			nextReset = getNextServerRestart();
@@ -107,7 +103,7 @@ public class Spent extends Module {
 		}
 	}
 
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.money.balances." + mc().getSession().getProfile().getId() + ".";
 
@@ -128,4 +124,5 @@ public class Spent extends Module {
 		}
 		return newValue;
 	}
+
 }

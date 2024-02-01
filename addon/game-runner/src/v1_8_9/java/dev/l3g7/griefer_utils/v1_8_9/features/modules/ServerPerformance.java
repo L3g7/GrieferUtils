@@ -13,8 +13,10 @@ import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
+import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
+import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.TextColor;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
@@ -30,7 +32,7 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
  * Concept by <a href="https://github.com/Pleezon/ServerTPS/blob/bebc5e75e592fdc1bf9401b1a5d42454028227b0/src/main/java/de/techgamez/pleezon/Main.java">Pleezon/ServerTPS</a>
  */
 @Singleton
-public class ServerPerformance extends Module {
+public class ServerPerformance extends Laby4Module {
 
 	private Double currentTPS = null;
 	private Long lastWorldTime = null;
@@ -58,21 +60,9 @@ public class ServerPerformance extends Module {
 		.subSettings(displayMode, applyColor);
 
 	@Override
-	public String[] getDefaultValues() {
-		return new String[]{"?"};
-	}
-
-	@Override
-	public String[] getValues() {
-		throw new UnsupportedOperationException();
-	}
-
-	/*
-	TODO:
-	@Override
-	public List<List<Text>> getTextValues() {
+	public Object getValue() {
 		if (currentTPS == null)
-			return getDefaultTextValues();
+			return "?";
 
 		// calculate color
 		int r, g, b;
@@ -88,20 +78,17 @@ public class ServerPerformance extends Module {
 
 		// create text representation
 		String displayTPS = displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS);
-
-		return Collections.singletonList(Collections.singletonList(applyColor.get() ? Text.getText(displayTPS, r, g, b) : Text.getText(displayTPS)));
-	}*/
+		return applyColor.get() ? Component.text(displayTPS, TextColor.color(r, g, b)) : Component.text(displayTPS);
+	}
 
 	@EventListener
-	public void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
-		Packet<?> packet = event.packet;
-
-		if (packet instanceof S03PacketTimeUpdate) {
-			calcTps(((S03PacketTimeUpdate) packet));
-		} else if (packet instanceof S05PacketSpawnPosition) {
+	public void onPacket(PacketReceiveEvent<Packet<?>> event) {
+		if (event.packet instanceof S05PacketSpawnPosition) {
+			// Reset tps
 			lastWorldTime = null;
 			tps.clear();
-		}
+		} else if (event.packet instanceof S03PacketTimeUpdate timePacket)
+			calcTps(timePacket);
 	}
 
 	private void calcTps(S03PacketTimeUpdate packet) {
@@ -164,4 +151,5 @@ public class ServerPerformance extends Module {
 		}
 
 	}
+
 }

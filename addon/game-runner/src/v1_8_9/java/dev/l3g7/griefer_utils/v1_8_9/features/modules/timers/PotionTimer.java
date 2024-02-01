@@ -14,29 +14,35 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Module;
-import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
+import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
+import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.Style;
+import net.labymod.api.client.component.format.TextColor;
+import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
+import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.HIDDEN;
+import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
 
 @Singleton
-public class PotionTimer extends Module {
+public class PotionTimer extends Laby4Module {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private static final Pattern END_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§7Bis: §r§e(?<end>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})§r");
@@ -70,8 +76,27 @@ public class PotionTimer extends Module {
 		.subSettings(design, warnTime, hide);
 
 	@Override
-	public boolean isShown() {
-		return super.isShown() && (!hide.get() || potions.values().stream().anyMatch(p -> p.expirationDate >= System.currentTimeMillis()));
+	public boolean isVisibleInGame() {
+		return !hide.get() || potions.values().stream().anyMatch(p -> p.expirationDate >= System.currentTimeMillis());
+	}
+
+	@Override
+	protected void createText() {
+		createLine("Orbtrank-Timer", "");
+		potions.values().forEach(PotionData::createLine);
+	}
+
+	@Override
+	public void onTick(boolean isEditorContext) {
+		potions.values().forEach(PotionData::tick);
+
+		// Warn if the fly potion end is less than the set amount of seconds away
+		long flyPotionEnd = potions.get("fly_potion").expirationDate;
+		if (flyPotionEnd > System.currentTimeMillis() && flyPotionEnd - System.currentTimeMillis() < warnTime.get() * 1000) {
+			String s = Util.formatTime(flyPotionEnd, true);
+			if (!s.equals("0s"))
+				title("§c§l" + s);
+		}
 	}
 
 	@EventListener
@@ -109,109 +134,6 @@ public class PotionTimer extends Module {
 		}
 	}
 
-	@Override
-	public String[] getKeys() {
-		if (!ServerCheck.isOnCitybuild())
-			return new String[] {"Orbtrank-Timer"};
-
-		// Get names as Strings
-		List<String> keys = potions.values().stream()
-			.filter(d -> d.expirationDate >= System.currentTimeMillis())
-			.map(PotionData::getDisplayName)
-			.collect(Collectors.toList());
-
-		keys.add(0, "Orbtrank-Timer");
-		return keys.toArray(new String[0]);
-	}
-
-	@Override
-	public String[] getDefaultValues() {
-		return new String[] {""};
-	}
-
-	@Override
-	public String[] getValues() {
-		if (!ServerCheck.isOnCitybuild())
-			return getDefaultValues();
-
-		// Get expirations dates as Strings
-		List<String> values = potions.values().stream()
-			.filter(d -> d.expirationDate >= System.currentTimeMillis())
-			.map(PotionData::getFormattedTime)
-			.collect(Collectors.toList());
-
-		if (values.isEmpty())
-			return getDefaultValues();
-
-		// Warn if the fly potion end is less than the set amount of seconds away
-		long flyPotionEnd = potions.get("fly_potion").expirationDate;
-		if (flyPotionEnd > System.currentTimeMillis() && flyPotionEnd - System.currentTimeMillis() < warnTime.get() * 1000) {
-			String s = Util.formatTime(flyPotionEnd, true);
-			if (!s.equals("0s"))
-				title("§c§l" + s);
-		}
-
-		values.add(0, "");
-
-		return values.toArray(new String[0]);
-	}
-
-	/*
-	TODO:
-	@Override
-	public void draw(double x, double y, double rightX) {
-		super.draw(x, y, rightX);
-
-		if (!ServerCheck.isOnCitybuild())
-			return;
-
-		if (design.get() == KeyMode.TEXT || !keyVisible)
-			return;
-
-		List<PotionData> data = potions.values().stream()
-			.filter(d -> d.expirationDate >= System.currentTimeMillis())
-			.collect(Collectors.toList());
-
-		if (data.isEmpty())
-			return;
-
-		double singum = Math.signum(rightX);
-		int fontHeight = mc.fontRendererObj.FONT_HEIGHT;
-
-		double xDiff = 0;
-
-		if (getDisplayFormatting() == SQUARE_BRACKETS)
-			xDiff -= singum * mc.fontRendererObj.getStringWidth(new Text("[", 0, bold, italic, underline).getText());
-
-		if (design.get() == KeyMode.ICON)
-			xDiff += .5;
-
-		// Add padding
-		y += padding;
-		if (rightX == -1)
-			xDiff += padding;
-
-		xDiff *= -singum;
-
-		for (PotionData d : data) {
-			y += fontHeight + 1;
-
-			double actualX = rightX == -1 ? x : rightX - getDisplayTextWidth(d);
-			actualX += xDiff;
-
-			mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/booster/" + d.displayName.toLowerCase() + ".png"));
-			LabyMod.getInstance().getDrawUtils().drawTexture(actualX, y, 256, 256, 7, 7);
-		}
-
-	}
-
-	private double getDisplayTextWidth(PotionData d) {
-		List<Text> texts = getDisplayFormatting().getTexts(d.getDisplayName(), ImmutableList.of(new Text(d.getFormattedTime(), 0)), 0, 0, 0, keyVisible, bold, italic, underline);
-		String text = texts.stream().map(Text::getText).reduce(String::concat).orElseThrow(() -> new RuntimeException("PotionData has no text"));
-
-		return mc.fontRendererObj.getStringWidth(text);
-	}*/
-
 	private void title(String title) {
 		mc().ingameGUI.displayTitle("§cFly Trank", null, -1, -1, -1);
 		mc().ingameGUI.displayTitle(null, title, -1, -1, -1);
@@ -220,27 +142,43 @@ public class PotionTimer extends Module {
 
 	private class PotionData {
 
+		private final Component keyComponent = Component.empty();
+		private TextLine line;
 		private final String displayName;
 		private long expirationDate = -1;
 
-		public PotionData(String displayName) {
+		private PotionData(String displayName) {
 			this.displayName = displayName;
 		}
 
-		private String getFormattedTime() {
-			return Util.formatTime(expirationDate);
+		private void createLine() {
+			line = PotionTimer.this.createLine(keyComponent, "");
 		}
 
-		private String getDisplayName() {
+		private void tick() {
+			// Update key
 			KeyMode mode = design.get();
-			String name = "";
+			Component name = Component.empty();
 
 			if (mode != KeyMode.TEXT)
-				name += "  "; // Space for the icon
-			if (mode != KeyMode.ICON)
-				name += displayName;
+				name.append(Component.icon(SettingsImpl.buildIcon("booster/" + displayName.toLowerCase()), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
 
-			return name;
+			if (mode == KeyMode.TEXT_AND_ICON)
+				name.append(Component.text(" "));
+
+			if (mode != KeyMode.ICON)
+				name.append(Component.text(displayName));
+
+			keyComponent.setChildren(Collections.singleton(name));
+
+			// Update value
+			if (expirationDate < System.currentTimeMillis()) {
+				line.setState(HIDDEN);
+				line.update("00:00"); // Fallback value for showcase in Widget editor | TODO: tick down?
+			} else {
+				line.setState(VISIBLE);
+				line.update(Util.formatTime(expirationDate));
+			}
 		}
 
 	}

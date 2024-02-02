@@ -1,4 +1,5 @@
 import net.labymod.gradle.core.addon.info.AddonMeta
+import java.util.UUID
 
 plugins {
 	id("java-library")
@@ -11,7 +12,7 @@ java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 labyMod {
 	defaultPackageName = "dev.l3g7.griefer_utils"
 	addonInfo {
-		namespace = "griefer_utils"
+		namespace = "griefer_utils-" + UUID.randomUUID().toString().replace("-", "")
 		displayName = "GrieferUtils"
 		author = "L3g7, L3g73"
 		description = "§cFalls du das hier liest, gab es einen Fehler."

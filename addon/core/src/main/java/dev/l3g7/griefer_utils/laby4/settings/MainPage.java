@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
+import dev.l3g7.griefer_utils.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
@@ -104,7 +105,7 @@ public class MainPage {
 	private static class RootSetting extends RootSettingRegistry {
 
 		private RootSetting() {
-			super("griefer_utils", "settings");
+			super(Laby4Util.getNamespace(), "settings");
 		}
 
 		@Override

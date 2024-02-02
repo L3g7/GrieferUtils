@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.util.StringUtil;
 import dev.l3g7.griefer_utils.laby4.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
@@ -33,7 +34,7 @@ import java.util.UUID;
 
 public abstract class Laby4Module extends TextHudWidget<ModuleConfig> {
 
-	private static final HudWidgetCategory CATEGORY = new HudWidgetCategory(Laby4Module.class, "griefer_utils") {
+	private static final HudWidgetCategory CATEGORY = new HudWidgetCategory(Laby4Module.class, Laby4Util.getNamespace()) {
 		@Override
 		public @NotNull Component title() {
 			return Component.text("§l" + Constants.ADDON_NAME);

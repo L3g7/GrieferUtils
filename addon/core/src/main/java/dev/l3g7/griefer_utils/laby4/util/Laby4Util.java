@@ -71,4 +71,8 @@ public class Laby4Util {
 		return screen.asActivity();
 	}
 
+	public static String getNamespace() {
+		return ((AddonClassLoader) Laby4Util.class.getClassLoader()).getAddonInfo().getNamespace();
+	}
+
 }

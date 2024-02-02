@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.api.misc;
 
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.StringUtil;
+import dev.l3g7.griefer_utils.api.util.Util;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
@@ -27,7 +28,7 @@ public class LibLoader {
 
 	private static final ClassLoader launchClassLoaderParent = Reflection.get(minecraftBridge.launchClassLoader(), "parent");
 
-	public static void loadLibraries(String... libraries) throws Throwable {
+	public static void loadLibraries(String... libraries) {
 		for (int i = 0; i < libraries.length; i += 5) {
 			boolean hasMvnName = !libraries[i + 4].matches("^[A-F\\d]{64}$");
 
@@ -42,7 +43,11 @@ public class LibLoader {
 			String path = group + "/" + name + "/" + cleanVersion + "/" + name + "-" + cleanVersion + ".jar";
 			String url = repo + "/" + group + "/" + name + "/" + version + "/" + fileName;
 
-			loadLibrary(path, url, hash);
+			try {
+				loadLibrary(path, url, hash);
+			} catch (Throwable e) {
+				throw Util.elevate(e, "Could not load library %s/%s!", group, name);
+			}
 		}
 	}
 

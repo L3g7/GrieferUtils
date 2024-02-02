@@ -27,12 +27,7 @@ public class PreStart implements Entrypoint {
 			throw new UnsupportedAddonException("GrieferUtils ist nicht für Version " + semVer + " verfügbar!");
 
 		Bridge.Initializer.init(Bridge.Version.LABY_4, mcVersion);
-
-		try {
-			EarlyStart.start();
-		} catch (Throwable e) {
-			throw new RuntimeException(e);
-		}
+		EarlyStart.start();
 	}
 
 }

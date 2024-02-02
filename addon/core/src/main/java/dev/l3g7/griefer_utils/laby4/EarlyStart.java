@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.api.misc.LibLoader;
 
 public class EarlyStart {
 
-	public static void start() throws Throwable {
+	public static void start() {
 
 		// Load mcp mappings for automatic name resolution in Reflection
 		Mapper.loadMappings("1.8.9", "22");

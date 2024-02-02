@@ -18,7 +18,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
-import dev.l3g7.griefer_utils.v1_8_9.util.LabyMod4Util;
+import dev.l3g7.griefer_utils.laby4.util.Laby4Util;
 import net.minecraft.init.Items;
 
 import java.util.regex.Matcher;
@@ -124,7 +124,7 @@ public class AfkNick extends Feature {
 			return;
 
 		// Check settings are currently being edited
-		if (LabyMod4Util.isSettingOpened(enabled))
+		if (Laby4Util.isSettingOpened(enabled))
 			return;
 
 		long diff = System.currentTimeMillis() - lastEvent;

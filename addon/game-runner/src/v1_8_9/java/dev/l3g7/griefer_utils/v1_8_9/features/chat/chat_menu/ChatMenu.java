@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
-import dev.l3g7.griefer_utils.v1_8_9.util.LabyMod4Util;
+import dev.l3g7.griefer_utils.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
@@ -149,7 +149,7 @@ public class ChatMenu extends Feature {
 		if (renderer != null && renderer.outOfBox())
 			renderer = null;
 
-		if (Mouse.getEventButton() != 1 || !LabyMod4Util.isActivityOpen(ChatInputOverlay.class))
+		if (Mouse.getEventButton() != 1 || !(Laby4Util.getActivity() instanceof ChatInputOverlay))
 			return;
 
 		IChatComponent icc = HoveredMessageHandler.getOriginalMessage();

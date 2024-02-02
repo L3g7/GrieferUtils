@@ -2,6 +2,7 @@ package dev.l3g7.griefer_utils.v1_8_9.util;
 
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
+import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
 import net.labymod.api.client.gui.screen.LabyScreen;
 import net.labymod.api.client.gui.screen.ScreenInstance;
 import net.labymod.api.client.gui.screen.activity.Activity;
@@ -41,13 +42,16 @@ public class LabyMod4Util {
 		return renderer.screen();
 	}
 
-	public static Setting getCurrentSetting() {
+	private static Setting getCurrentSetting() {
 		LabyScreen labyScreen = getActivity();
 		if (!(labyScreen instanceof NavigationActivity navActivity))
 			return null;
 
-		LabyModNavigationElement navElement = Reflection.get(navActivity, "element");
-		LabyModActivity activity = (LabyModActivity) navElement.getScreen();
+		ScreenNavigationElement element = Reflection.get(navActivity, "element");
+		if (!(element instanceof LabyModNavigationElement))
+			return null;
+
+		LabyModActivity activity = (LabyModActivity) element.getScreen();
 		if (activity == null)
 			return null;
 

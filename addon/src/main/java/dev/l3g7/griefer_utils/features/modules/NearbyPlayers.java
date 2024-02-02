@@ -47,7 +47,7 @@ public class NearbyPlayers extends Module {
 		if (world() == null || player() == null)
 			return getDefaultValues();
 
-		players = world().getEntities(EntityOtherPlayerMP.class, p -> !PlayerUtil.isNPC(p));
+		players = world().getEntities(EntityOtherPlayerMP.class, p -> !PlayerUtil.isNPC(p) && p.getDistanceToEntity(player()) < 1000);
 		players.sort(Comparator.comparingDouble(e -> e.getDistanceToEntity(player())));
 		return new String[] {String.valueOf(players.size())};
 	}

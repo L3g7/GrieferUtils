@@ -7,12 +7,21 @@
 
 package dev.l3g7.griefer_utils.laby4;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.api.misc.LibLoader;
+import net.labymod.api.addon.exception.UnsupportedAddonException;
+import net.labymod.api.models.version.Version;
 
 public class EarlyStart {
 
-	public static void start() {
+	public static void start(Version semVer) {
+		// Initialize bridge
+		Bridge.Version mcVersion = Bridge.Version.getMinecraftBySemVer(semVer.toString());
+		if (mcVersion == null)
+			throw new UnsupportedAddonException("GrieferUtils ist nicht für Version " + semVer + " verfügbar!");
+
+		Bridge.Initializer.init(Bridge.Version.LABY_4, mcVersion);
 
 		// Load mcp mappings for automatic name resolution in Reflection
 		Mapper.loadMappings("1.8.9", "22");

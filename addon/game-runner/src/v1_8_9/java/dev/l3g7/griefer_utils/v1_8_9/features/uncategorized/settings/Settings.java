@@ -9,14 +9,17 @@ package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.api.BugReporter;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.auto_update.ReleaseInfo.ReleaseChannel;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
+import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Blocks;
 
+import static dev.l3g7.griefer_utils.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
 import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.Changelog.changelog;
 import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.Credits.credits;
 
@@ -39,14 +42,12 @@ public class Settings extends Feature {
 		.icon(ItemUtil.createItem(Blocks.stained_glass_pane, 0, true))
 		.defaultValue(true);
 
-	/*
-	TODO:
-	public static final DropDownSetting<ReleaseInfo.ReleaseChannel> releaseChannel = Settings.createDropDown(ReleaseInfo.ReleaseChannel.class)
+	public static final DropDownSetting<ReleaseChannel> releaseChannel = DropDownSetting.create(ReleaseChannel.class)
 		.name("Version")
 		.description("Ob auf die neuste stabile oder die Beta-Version geupdatet werden soll.")
 		.config("settings.auto_update.release_channel")
 		.icon("file")
-		.defaultValue(STABLE);*/
+		.defaultValue(STABLE);
 
 	public static final SwitchSetting autoUpdateEnabled = SwitchSetting.create()
 		.name("Automatisch updaten")
@@ -54,6 +55,6 @@ public class Settings extends Feature {
 		.config("settings.auto_update.enabled")
 		.icon("arrow_circle")
 		.defaultValue(true)
-		.subSettings(showUpdateScreen/*TODO:, releaseChannel*/);
+		.subSettings(showUpdateScreen, releaseChannel);
 
 }

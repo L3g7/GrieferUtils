@@ -7,27 +7,55 @@
 
 package dev.l3g7.griefer_utils.laby4;
 
-import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import dev.l3g7.griefer_utils.auto_update.AutoUpdater;
+import dev.l3g7.griefer_utils.auto_update.UpdateInfoProvider;
+import net.labymod.api.Constants;
 import net.labymod.api.addon.entrypoint.Entrypoint;
-import net.labymod.api.addon.exception.UnsupportedAddonException;
+import net.labymod.api.addon.exception.AddonLoadException;
 import net.labymod.api.models.addon.annotation.AddonEntryPoint;
 import net.labymod.api.models.version.Version;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.util.jar.JarFile;
+
 @AddonEntryPoint(priority = 1001)
 @SuppressWarnings("UnstableApiUsage")
-public class PreStart implements Entrypoint {
+public class PreStart implements Entrypoint, UpdateInfoProvider {
 
 	@Override
 	public void initialize(Version semVer) {
 		if (System.setProperty("griefer_utils_load_flag", "") != null)
 			throw new Error("GrieferUtils wurde bereits geladen!");
 
-		Bridge.Version mcVersion = Bridge.Version.getMinecraftBySemVer(semVer.toString());
-		if (mcVersion == null)
-			throw new UnsupportedAddonException("GrieferUtils ist nicht für Version " + semVer + " verfügbar!");
+		AutoUpdater.update(this);
+		EarlyStart.start(semVer);
+	}
 
-		Bridge.Initializer.init(Bridge.Version.LABY_4, mcVersion);
-		EarlyStart.start();
+	@Override
+	public Path getDeletionList() {
+		return Constants.Files.ADDONS_SCHEDULE_FOR_REMOVAL;
+	}
+
+	@Override
+	public String getDeletionEntry(File fileToBeDeleted) throws IOException {
+		try (JarFile file = new JarFile(fileToBeDeleted)) {
+			JsonElement addonJson = JsonParser.parseReader(new InputStreamReader(file.getInputStream(file.getEntry("addon.json"))));
+			return addonJson.getAsJsonObject().get("namespace").getAsString();
+		}
+	}
+
+	@Override
+	public void handleError(Throwable e) {
+		if (e instanceof IOException) {
+			// Allow start if updating failed due to network errors
+			e.printStackTrace(System.err);
+		} else
+			throw new AddonLoadException("Could not update GrieferUtils!", e);
 	}
 
 }

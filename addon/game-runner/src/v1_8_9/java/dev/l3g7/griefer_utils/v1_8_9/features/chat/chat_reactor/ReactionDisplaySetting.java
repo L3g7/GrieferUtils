@@ -38,7 +38,7 @@ public class ReactionDisplaySetting extends SwitchSettingImpl {
 	}
 
 	public void initDisplay() {
-		name(reaction.trigger, "§e[" + MinecraftUtil.getCitybuildAbbreviation(reaction.citybuild.getDisplayName()) + "] §r§o➡ " + reaction.command);
+		name(reaction.trigger, "§e[" + MinecraftUtil.getCitybuildAbbreviation(reaction.citybuild.getName()) + "] §r§o➡ " + reaction.command);
 		icon(reaction.regEx ? "regex" : "yellow_t");
 		set(reaction.enabled);
 	}

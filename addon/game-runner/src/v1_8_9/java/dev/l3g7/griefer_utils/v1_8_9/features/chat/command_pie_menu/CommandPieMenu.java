@@ -271,7 +271,7 @@ public class CommandPieMenu extends Feature {
 					JsonObject obj = new JsonObject();
 					obj.addProperty("name", entry.name.get());
 					obj.addProperty("command", entry.command.get());
-					obj.addProperty("cb", entry.citybuild.get().getDisplayName()); // NOTE GSON?
+					obj.addProperty("cb", entry.citybuild.get().getName()); // NOTE GSON?
 					entries.add(obj);
 				}
 				return entries;

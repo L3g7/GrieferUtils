@@ -44,7 +44,7 @@ public class DropDown<T> extends DropDownMenu<T> implements Drawable, Clickable 
 			dropDown.setEntryDrawer((o, x, y, trimmedEntry) -> {
 				boolean isSelected = (dropDown.getY() + dropDown.getHeight() / 2 - 4) == y;
 
-				DrawUtils.drawString(((Citybuild) o).getDisplayName(), x + 9, y);
+				DrawUtils.drawString(((Citybuild) o).getName(), x + 9, y);
 				dropDown.drawItemScaled(x, y, isSelected, ((ItemEnum) o).getItem());
 			});
 		}

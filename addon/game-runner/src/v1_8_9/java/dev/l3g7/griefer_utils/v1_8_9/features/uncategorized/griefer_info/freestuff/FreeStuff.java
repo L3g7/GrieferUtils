@@ -78,7 +78,7 @@ public class FreeStuff {
 
 		stack.setStackDisplayName("§6§n" + name);
 		if (!isCbFiltered)
-			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getDisplayName()), stack.getDisplayName()));
+			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getName()), stack.getDisplayName()));
 
 		List<String> lines = items.keySet().stream().map(it -> "  §f" + it.germanName).collect(Collectors.toList());
 

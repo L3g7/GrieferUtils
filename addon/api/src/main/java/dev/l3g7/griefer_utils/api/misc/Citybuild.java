@@ -117,10 +117,6 @@ public enum Citybuild implements Named {
 		minecraftBridge.send("/switch " + internalName);
 	}
 
-	public String getDisplayName() {
-		return displayName;
-	}
-
 	public boolean matches(String cb) {
 		if (cb == null)
 			return false;

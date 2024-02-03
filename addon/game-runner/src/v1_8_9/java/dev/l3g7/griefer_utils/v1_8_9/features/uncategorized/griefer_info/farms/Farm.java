@@ -129,7 +129,7 @@ public class Farm {
 
 		stack.setStackDisplayName("§6§n" + name);
 		if (!isCbFiltered)
-			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getDisplayName()), stack.getDisplayName()));
+			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getName()), stack.getDisplayName()));
 
 		TreeMap<SpawnerType, AtomicInteger> spawner = new TreeMap<>(Comparator.comparing(s -> s.germanName));
 		NBTTagList textureList = new NBTTagList();

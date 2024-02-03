@@ -57,7 +57,7 @@ public class BotShop {
 	public void addItemStack(GuiBigChest chest, int id, boolean isCbFiltered) {
 		String name = "§6§n" + this.name;
 		if (!isCbFiltered)
-			name = String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getDisplayName()), name);
+			name = String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getName()), name);
 
 		String texture = "wallets/";
 		if (buying) texture += "in";

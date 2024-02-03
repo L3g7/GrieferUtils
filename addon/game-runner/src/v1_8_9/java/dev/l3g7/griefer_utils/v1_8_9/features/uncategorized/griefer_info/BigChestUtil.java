@@ -40,7 +40,7 @@ public class BigChestUtil {
 	}
 
 	public static char toAbbreviation(Citybuild citybuild) {
-		String abbreviationString = MinecraftUtil.getCitybuildAbbreviation(citybuild.getDisplayName());
+		String abbreviationString = MinecraftUtil.getCitybuildAbbreviation(citybuild.getName());
 
 		try { // Ensure natural order is kept
 			return (char) Integer.parseInt(abbreviationString);

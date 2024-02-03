@@ -92,7 +92,7 @@ public class BetterHopper extends Feature {
 
 	private static final BooleanSetting sneakMode = new BooleanSetting()
 		.name("Sneak-Modus")
-		.description("Öffnet bei Rechtsklicks immer die Einstellungen eines Trichters, auch wenn du nicht sneakst")
+		.description("Öffnet bei Rechtsklicks immer die Einstellungen eines Trichters, auch wenn du nicht sneakst.")
 		.icon("sneaking")
 		.addHotkeySetting("den Sneak-Modus", null);
 

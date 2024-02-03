@@ -51,7 +51,7 @@ public class Recraft extends Feature {
 
 	private final KeySetting key = new KeySetting()
 		.name("Letzten Aufruf wiederholen")
-		.description("Wiederholt den letzten \"/rezepte\" oder \"/craft\" Aufruf.\n\nVielen Dank an Pleezon/AntiBannSystem")
+		.description("Wiederholt den letzten \"/rezepte\" oder \"/craft\" Aufruf.")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && isEnabled())

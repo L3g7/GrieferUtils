@@ -19,6 +19,9 @@ import net.labymod.api.client.gui.screen.widget.widgets.input.dropdown.renderer.
 import net.labymod.api.client.render.font.RenderableComponent;
 import org.jetbrains.annotations.NotNull;
 
+import static dev.l3g7.griefer_utils.api.misc.Citybuild.CitybuildIconBridge.citybuildIconBridge;
+import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
+
 public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, Citybuild> implements CitybuildSetting {
 
 	public CitybuildSettingImpl() {
@@ -35,33 +38,34 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 
 			@Override
 			public float getWidth(Citybuild entry, float maxWidth) {
-				return this.toRenderableComponent(entry, maxWidth).getWidth();
+				return toRenderableComponent(entry, maxWidth).getWidth();
 			}
 
 			@Override
 			public float getHeight(Citybuild entry, float maxWidth) {
-				return this.toRenderableComponent(entry, maxWidth).getHeight();
+				return toRenderableComponent(entry, maxWidth).getHeight();
 			}
 
 			@Override
 			public @NotNull Widget createEntryWidget(Citybuild entry) {
-				return ComponentWidget.component(this.toComponent(entry));
+				return ComponentWidget.component(toComponent(entry));
 			}
 
 			private Component toComponent(Citybuild entry) {
-				return Component.text(entry.getName());
+				return Component.icon(c(citybuildIconBridge.createIcon(entry)))
+					.append(Component.text(entry.getName()));
 			}
 
 			private RenderableComponent toRenderableComponent(Citybuild entry, float maxWidth) {
 				return RenderableComponent.builder()
 					.maxWidth(maxWidth)
 					.disableCache()
-					.format(this.toComponent(entry));
+					.format(toComponent(entry));
 			}
 
 		});
 
-		widget.addAll(Citybuild.values()); // TODO render CB items
+		widget.addAll(Citybuild.values());
 
 		callback(widget::setSelected);
 

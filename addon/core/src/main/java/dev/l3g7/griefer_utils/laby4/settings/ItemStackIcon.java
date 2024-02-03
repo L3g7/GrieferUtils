@@ -16,13 +16,20 @@ import net.labymod.api.util.bounds.Rectangle;
 
 import static dev.l3g7.griefer_utils.api.bridges.MinecraftBridge.minecraftBridge;
 
-public class ItemStackIcon extends Icon {
+public class ItemStackIcon extends Icon { // NOTE: move somewhere else
 
 	private final ItemStack icon;
+	private final int offsetX, offsetY;
 
-	protected ItemStackIcon(ItemStack icon) {
+	public ItemStackIcon(ItemStack icon) {
+		this(icon, 0, 0);
+	}
+
+	public ItemStackIcon(ItemStack icon, int offsetX, int offsetY) {
 		super(null);
 		this.icon = icon;
+		this.offsetX = offsetX;
+		this.offsetY = offsetY;
 	}
 
 	@Override
@@ -35,6 +42,9 @@ public class ItemStackIcon extends Icon {
 		// Fix position for scales < 16
 		x += -1.5f * width + 24;
 		y += -1.25f * height + 20;
+
+		x += offsetX;
+		y += offsetY;
 
 		minecraftBridge.scale(width / 16f, height / 16f, 1);
 		Laby.labyAPI().minecraft().itemStackRenderer().renderItemStack(stack, icon, (int) x, (int) y);

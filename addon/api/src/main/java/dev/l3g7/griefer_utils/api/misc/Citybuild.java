@@ -7,7 +7,9 @@
 
 package dev.l3g7.griefer_utils.api.misc;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.util.StringUtil;
 
 import static dev.l3g7.griefer_utils.api.bridges.MinecraftBridge.minecraftBridge;
@@ -52,10 +54,10 @@ public enum Citybuild implements Named {
 	private final String[] aliases;
 
 	Citybuild() {
-		String id = this.name().substring(2);
-		this.internalName = "cb" + id;
-		this.displayName = "Citybuild " + id;
-		this.aliases = new String[0];
+		String id = name().substring(2);
+		internalName = "cb" + id;
+		displayName = "Citybuild " + id;
+		aliases = new String[0];
 	}
 
 	Citybuild(String internalName, String displayName, String... aliases) {
@@ -64,32 +66,13 @@ public enum Citybuild implements Named {
 		this.aliases = aliases;
 	}
 
-	public static Citybuild getCitybuild(String cb) {
-		cb = cb.toLowerCase();
-		if (cb.startsWith("cb"))
-			cb = cb.substring(2).trim();
-
-		if (cb.startsWith("citybuild"))
-			cb = cb.substring("citybuild".length()).trim();
-
-		if (StringUtil.isNumeric(cb)) {
-			try {
-				return valueOf("CB" + cb);
-			} catch (IllegalArgumentException ignored) {
-				return Citybuild.ANY;
-			}
-		}
-
-		for (Citybuild citybuild : values()) {
-			if (citybuild.matches(cb))
-				return citybuild;
-		}
-
-		return Citybuild.ANY;
+	@Override
+	public String getName() {
+		return displayName;
 	}
 
 	public String getInternalName() {
-		return this.internalName;
+		return internalName;
 	}
 
 	public boolean isOnCb() {
@@ -128,9 +111,37 @@ public enum Citybuild implements Named {
 		return cb.equalsIgnoreCase(displayName) || cb.equalsIgnoreCase(internalName) || name().equalsIgnoreCase(cb);
 	}
 
-	@Override
-	public String getName() {
-		return displayName;
+	public static Citybuild getCitybuild(String cb) {
+		cb = cb.toLowerCase();
+		if (cb.startsWith("cb"))
+			cb = cb.substring(2).trim();
+
+		if (cb.startsWith("citybuild"))
+			cb = cb.substring("citybuild".length()).trim();
+
+		if (StringUtil.isNumeric(cb)) {
+			try {
+				return valueOf("CB" + cb);
+			} catch (IllegalArgumentException ignored) {
+				return Citybuild.ANY;
+			}
+		}
+
+		for (Citybuild citybuild : values()) {
+			if (citybuild.matches(cb))
+				return citybuild;
+		}
+
+		return Citybuild.ANY;
+	}
+
+	@Bridged
+	public interface CitybuildIconBridge {
+
+		CitybuildIconBridge citybuildIconBridge = FileProvider.getBridge(CitybuildIconBridge.class);
+
+		Object createIcon(Citybuild cb);
+
 	}
 
 }

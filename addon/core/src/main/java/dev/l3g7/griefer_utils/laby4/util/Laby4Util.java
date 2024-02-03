@@ -65,7 +65,7 @@ public class Laby4Util {
 	public static Activity getActivity() {
 		ScreenWrapper screen = Laby.labyAPI().minecraft().minecraftWindow().currentScreen();
 
-		if (!screen.isActivity())
+		if (screen == null || !screen.isActivity())
 			return null;
 
 		return screen.asActivity();

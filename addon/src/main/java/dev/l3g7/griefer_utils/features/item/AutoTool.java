@@ -40,7 +40,6 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.elements.KeySetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.utils.Material;
 import net.minecraft.block.*;
@@ -103,17 +102,6 @@ public class AutoTool extends Feature {
 
 	private final ToolSaver toolSaver = FileProvider.getSingleton(ToolSaver.class);
 
-	private final KeySetting key = new KeySetting()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der die automatische Werkzeugauswahl umgeschalten werden soll.")
-		.pressCallback(p -> {
-			if (p) {
-				BooleanSetting enabled = ((BooleanSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
-
 	private final DropDownSetting<EnchantPreference> preference = new DropDownSetting<>(EnchantPreference.class)
 		.name("Bevorzugte Verzauberung")
 		.description("Ob Glück oder Behutsamkeit bevorzugt werden soll.")
@@ -138,7 +126,8 @@ public class AutoTool extends Feature {
 		.description("Wechselt beim Abbauen eines Blocks automatisch auf das beste Werkzeug in der Hotbar.")
 		.icon(ItemUtil.createItem(Items.diamond_pickaxe, 0, true))
 		.defaultValue(false)
-		.subSettings(key, new HeaderSetting(), preference, switchBack, enforceSilkTouch);
+		.subSettings(new HeaderSetting(), preference, switchBack, enforceSilkTouch)
+		.addHotkeySetting("die automatische Werkzeugauswahl", null);
 
 	private int previousSlot = -1;
 

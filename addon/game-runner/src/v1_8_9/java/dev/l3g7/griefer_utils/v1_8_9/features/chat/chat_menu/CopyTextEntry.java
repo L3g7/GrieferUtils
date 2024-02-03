@@ -45,7 +45,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.config(configKey + "modified_message")
 		.icon(Items.writable_book);
 
-	private final SwitchSetting mainSetting = LabyBridge.get(SwitchSetting::create /* TODO: LM3 DisplaySetting */, LM4DisplaySetting::new)
+	private final SwitchSetting mainSetting = LabyBridge.get(SwitchSetting::create /* NOTE: LM3 DisplaySetting */, LM4DisplaySetting::new)
 		.name(name)
 		.icon(icon)
 		.defaultValue(true)

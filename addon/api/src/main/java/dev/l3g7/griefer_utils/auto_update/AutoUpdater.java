@@ -58,7 +58,8 @@ import static java.nio.file.StandardOpenOption.CREATE;
  * {@link dev.l3g7.griefer_utils.api.util.IOUtil} and
  * {@link dev.l3g7.griefer_utils.api.reflection.Reflection}.
  */
-public class AutoUpdater { // TODO test; probably won't work in Java 8
+public class AutoUpdater { // FIXME untested
+	// NOTE: probably won't work in Java 8
 
 	// DigiCert's Global Root G2 certificate
 	// Used by the api server, l3g7.dev, and missing on older versions of Java, so it has to be added manually.

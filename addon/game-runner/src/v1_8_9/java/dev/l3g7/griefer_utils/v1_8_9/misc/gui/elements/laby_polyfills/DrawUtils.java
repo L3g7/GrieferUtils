@@ -33,7 +33,7 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 
 /**
  * Polyfill for LabyMod 3's DrawUtils and ModColors.
- * TODO: remove?
+ * NOTE: remove?
  */
 @SuppressWarnings("DuplicatedCode")
 public class DrawUtils {

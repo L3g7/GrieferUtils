@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, Citybuild> implements CitybuildSetting {
 
 	public CitybuildSettingImpl() {
-		super(e -> new JsonPrimitive(e.name()), e -> Citybuild.valueOf(e.getAsString()), Citybuild.ANY); // TODO check config compatibility
+		super(e -> new JsonPrimitive(e.name()), e -> Citybuild.valueOf(e.getAsString()), Citybuild.ANY); // FIXME check config compatibility
 	}
 
 	@Override

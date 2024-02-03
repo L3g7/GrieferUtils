@@ -22,7 +22,7 @@ import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWi
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
-@ExclusiveTo(LABY_4) // TODO LM3 ReactionDisplaySetting
+@ExclusiveTo(LABY_4) // NOTE LM3 ReactionDisplaySetting
 public class ReactionDisplaySetting extends SwitchSettingImpl {
 
 	public final ChatReaction reaction;

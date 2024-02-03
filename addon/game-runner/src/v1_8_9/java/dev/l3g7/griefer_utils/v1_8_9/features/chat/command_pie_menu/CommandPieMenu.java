@@ -76,7 +76,7 @@ public class CommandPieMenu extends Feature {
 
 	private final PageListSetting pages = new PageListSetting()
 		.name("Seiten")
-		.icon(Items.map); // TODO check whether pages are saved
+		.icon(Items.map); // FIXME check whether pages are saved
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -168,7 +168,7 @@ public class CommandPieMenu extends Feature {
 		}
 	}
 
-	// TODO: cleanup? merge?
+	// NOTE: cleanup? merge?
 	public static class PageListSetting extends ListSetting implements BaseSettingImpl<PageListSetting, List<PageConfig>> {
 
 		private final ExtendedStorage<List<PageConfig>> storage;
@@ -271,7 +271,7 @@ public class CommandPieMenu extends Feature {
 					JsonObject obj = new JsonObject();
 					obj.addProperty("name", entry.name.get());
 					obj.addProperty("command", entry.command.get());
-					obj.addProperty("cb", entry.citybuild.get().getDisplayName()); // TODO GSON?
+					obj.addProperty("cb", entry.citybuild.get().getDisplayName()); // NOTE GSON?
 					entries.add(obj);
 				}
 				return entries;

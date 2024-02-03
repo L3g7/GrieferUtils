@@ -49,7 +49,7 @@ public class MessageSkulls extends Feature {
 	}
 
 	/*
-	// TODO: RenderChatEvent
+	// FIXME: RenderChatEvent
 	@EventListener
 	public void renderSkull(RenderChatEvent event) {
 		GlStateManager.enableBlend();

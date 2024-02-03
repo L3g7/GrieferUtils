@@ -92,7 +92,7 @@ class LeaderboardHandler {
 							.append(Component.text(" " + name() + ": " + data.score))
 			);
 		} else {
-			previousRank.setState(DISABLED);  // TODO widget editor fallback?
+			previousRank.setState(DISABLED);  // FIXME widget editor fallback?
 			ownRank.setState(DISABLED);
 			nextRank.setState(DISABLED);
 		}

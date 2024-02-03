@@ -22,7 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
-@ExclusiveTo(LABY_4) // TODO LM3 EntryDisplaySetting
+@ExclusiveTo(LABY_4) // NOTE LM3 EntryDisplaySetting
 public class EntryDisplaySetting extends SwitchSettingImpl {
 
 	public final ChatMenuEntry entry;

@@ -234,7 +234,7 @@ public class Booster extends Laby4Module {
 
 			if (expirationDates.isEmpty()) {
 				line.setState(HIDDEN);
-				line.update("00:00"); // Fallback value for showcase in Widget editor | TODO: tick down? fix booster count?
+				line.update("00:00"); // Fallback value for showcase in Widget editor | FIXME: tick down? fix booster count?
 			} else {
 				line.setState(VISIBLE);
 				line.update(Util.formatTime(expirationDates.stream()

@@ -15,7 +15,7 @@ import org.lwjgl.input.Mouse;
 
 /**
  * Polyfill for LabyMod 3's scrollbar
- * TODO: remove?
+ * NOTE: remove?
  */
 public class Scrollbar {
     private int listSize;

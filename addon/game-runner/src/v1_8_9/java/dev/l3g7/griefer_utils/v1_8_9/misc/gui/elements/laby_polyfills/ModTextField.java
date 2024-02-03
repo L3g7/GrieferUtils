@@ -24,7 +24,7 @@ import java.awt.*;
 
 /**
  * Based on LabyMod 3's ModTextField.
- * TODO: remove?
+ * NOTE: remove?
  */
 public class ModTextField extends Gui {
     private final int id;

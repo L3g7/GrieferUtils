@@ -56,7 +56,7 @@ public class SplitLongMessages extends Feature {
 
 		Reflection.set(inputField, "width", 626); // Only accessible in Forge
 		/*
-		// TODO: if (event.gui instanceof GuiChatCustom) {
+		// FIXME: if (event.gui instanceof GuiChatCustom) {
 			Object[] chatButtons = Reflection.get(event.gui, "chatButtons");
 			Reflection.set(inputField, inputField.getWidth() - chatButtons.length * 14, "width");
 		}*/
@@ -178,7 +178,7 @@ public class SplitLongMessages extends Feature {
 	}
 
 	/*
-	// TODO: @Mixin(value = EmoteSuggestionsMenu.class, remap = false)
+	// FIXME: @Mixin(value = EmoteSuggestionsMenu.class, remap = false)
 	private static class MixinEmoteSuggestionsMenu {
 
 		@Shadow

@@ -31,8 +31,7 @@ public class Settings extends Feature {
 	private final CategorySetting element = CategorySetting.create()
 		.name("§yEinstellungen")
 		.icon("cog")
-		.subSettings(credits, changelog, HeaderSetting.create(), /*TODO:Badges.enabled, */autoUpdateEnabled, BugReporter.enabled);
-
+		.subSettings(credits, changelog, HeaderSetting.create(), /* FIXME: Badges.enabled, */autoUpdateEnabled, BugReporter.enabled);
 
 	// Settings for AutoUpdater are here because the AutoUpdater class isn't affected by updates
 	public static final SwitchSetting showUpdateScreen = SwitchSetting.create()

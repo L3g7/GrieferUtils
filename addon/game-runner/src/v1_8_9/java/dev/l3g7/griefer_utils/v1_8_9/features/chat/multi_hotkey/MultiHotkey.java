@@ -45,7 +45,7 @@ public class MultiHotkey extends Feature {
 
 	private final HotkeyListSetting entries = new HotkeyListSetting()
 		.name("Hotkeys")
-		.icon("labymod_3/autotext"); // TODO check whether hotkeys are saved
+		.icon("labymod_3/autotext"); // FIXME check whether hotkeys are saved
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -128,7 +128,7 @@ public class MultiHotkey extends Feature {
 		}
 	}
 
-	// TODO: cleanup? merge?
+	// NOTE: cleanup? merge?
 	public static class HotkeyListSetting extends ListSetting implements BaseSettingImpl<HotkeyListSetting, List<HotkeyConfig>> {
 
 		private final ExtendedStorage<List<HotkeyConfig>> storage;
@@ -141,7 +141,7 @@ public class MultiHotkey extends Feature {
 					obj.addProperty("name", entry.name.get());
 					obj.add("keys", entry.key.getStorage().encodeFunc.apply(entry.key.get()));
 					obj.add("commands", entry.commands.getStorage().encodeFunc.apply(entry.commands.get()));
-					obj.add("cb", entry.citybuild.getStorage().encodeFunc.apply(entry.citybuild.get())); // TODO: GSON?
+					obj.add("cb", entry.citybuild.getStorage().encodeFunc.apply(entry.citybuild.get())); // NOTE: GSON?
 					pages.add(obj);
 				}
 				return pages;

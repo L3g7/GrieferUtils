@@ -174,7 +174,7 @@ public class PotionTimer extends Laby4Module {
 			// Update value
 			if (expirationDate < System.currentTimeMillis()) {
 				line.setState(HIDDEN);
-				line.update("00:00"); // Fallback value for showcase in Widget editor | TODO: tick down?
+				line.update("00:00"); // Fallback value for showcase in Widget editor | FIXME: tick down?
 			} else {
 				line.setState(VISIBLE);
 				line.update(Util.formatTime(expirationDate));

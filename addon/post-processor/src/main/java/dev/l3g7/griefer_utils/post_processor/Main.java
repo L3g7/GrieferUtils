@@ -34,7 +34,7 @@ public class Main {
 		try (FileSystem fs = FileSystems.newFileSystem(newJar.toPath())) {
 			mergeAddonJson(fs);
 			overwriteClassVersion(fs);
-			// TODO: patch StringConcatFactory
+			// NOTE: patch StringConcatFactory
 		}
 	}
 

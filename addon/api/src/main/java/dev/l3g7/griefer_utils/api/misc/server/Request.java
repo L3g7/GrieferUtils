@@ -55,7 +55,7 @@ public abstract class Request<R> {
 		return request(session, BugReporter::reportError, false);
 	}
 
-	// TODO: handle errors at a higher level, the current solution is very confusing and prone to errors if anything changes
+	// NOTE: handle errors at a higher level, the current solution is very confusing and prone to errors if anything changes
 	public R request(GUSession session, Consumer<IOException> errorHandler, boolean post) {
 		// Try 3 times
 		IOException[] exceptions = new IOException[3];

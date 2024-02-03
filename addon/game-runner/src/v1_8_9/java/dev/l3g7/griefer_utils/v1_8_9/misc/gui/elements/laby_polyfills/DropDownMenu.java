@@ -17,7 +17,7 @@ import java.util.Iterator;
 
 /**
  * Polyfill for LabyMod 3's DropDownMenu.
- * TODO: remove?
+ * NOTE: remove?
  */
 public class DropDownMenu<T> extends Gui {
     private static final DropDownEntryDrawer defaultDrawer = new DropDownEntryDrawer() {

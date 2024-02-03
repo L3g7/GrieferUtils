@@ -63,8 +63,8 @@ public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("gri
 
 		lockedYaw = player().rotationYaw;
 		lockedPitch = player().rotationPitch;
-		prevCrosshairState = false; // TODO: labyMod().getLabyModAPI().isCrosshairHidden();
-		// TODO: labyMod().getLabyModAPI().setCrosshairHidden(true);
+		prevCrosshairState = false; // FIXME: labyMod().getLabyModAPI().isCrosshairHidden();
+		// FIXME: labyMod().getLabyModAPI().setCrosshairHidden(true);
 
 		this.allPages = allPages;
 		if (allPages.size() != 0)
@@ -77,7 +77,7 @@ public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("gri
 		if (!open)
 			return;
 
-		// TODO: labyMod().getLabyModAPI().setCrosshairHidden(prevCrosshairState);
+		// FIXME: labyMod().getLabyModAPI().setCrosshairHidden(prevCrosshairState);
 		open = false;
 		if (player() == null)
 			return;

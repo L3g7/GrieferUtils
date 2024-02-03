@@ -16,8 +16,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
-import net.labymod.api.client.component.format.numbers.NumberFormat;
-import net.labymod.api.client.scoreboard.ScoreboardObjective;
 import net.labymod.core.client.gui.hud.hudwidget.ScoreboardHudWidget;
 import net.labymod.ingamegui.modules.ScoreboardModule;
 import net.minecraft.client.gui.GuiIngame;
@@ -26,11 +24,8 @@ import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -211,11 +206,6 @@ public class ScoreboardHandler {
 				return Integer.MAX_VALUE;
 
 			return limit;
-		}
-
-		@Inject(method = "getVisibleScores", at = @At("HEAD"))
-		private void injectgetVisibleScores(net.labymod.api.client.scoreboard.Scoreboard scoreboard, ScoreboardObjective objective, NumberFormat numberFormat, CallbackInfoReturnable<List<?>> cir) {
-			System.out.println("AAAAAA");
 		}
 
 	}

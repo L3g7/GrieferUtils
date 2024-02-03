@@ -24,8 +24,8 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.misc.HoveredMessageHandler;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
+import dev.l3g7.griefer_utils.v1_8_9.util.ChatLineUtil;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
@@ -153,7 +153,7 @@ public class ChatMenu extends Feature {
 		if (Mouse.getEventButton() != 1 || !(Laby4Util.getActivity() instanceof ChatInputOverlay))
 			return;
 
-		IChatComponent icc = HoveredMessageHandler.getOriginalMessage();
+		IChatComponent icc = ChatLineUtil.getUnmodifiedIChatComponent(ChatLineUtil.getHoveredComponent());
 		if (icc == null)
 			return; // Didn't click on a line
 
@@ -181,7 +181,7 @@ public class ChatMenu extends Feature {
 		if (realName == null)
 			realName = name;
 
-		renderer = new ChatMenuRenderer(entries, realName, HoveredMessageHandler.getMessage(), icc);
+		renderer = new ChatMenuRenderer(entries, realName, ChatLineUtil.getHoveredComponent(), icc);
 		event.cancel();
 	}
 

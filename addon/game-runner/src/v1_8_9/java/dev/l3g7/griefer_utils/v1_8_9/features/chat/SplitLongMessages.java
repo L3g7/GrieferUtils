@@ -10,13 +10,15 @@ package dev.l3g7.griefer_utils.v1_8_9.features.chat;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ChatQueue;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
+import net.labymod.api.Laby;
+import net.labymod.v1_8_9.client.chat.VersionedGuiChat;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.init.Items;
@@ -54,12 +56,11 @@ public class SplitLongMessages extends Feature {
 			inputField.setCursorPositionEnd();
 		}
 
-		Reflection.set(inputField, "width", 626); // Only accessible in Forge
-		/*
-		// FIXME: if (event.gui instanceof GuiChatCustom) {
-			Object[] chatButtons = Reflection.get(event.gui, "chatButtons");
-			Reflection.set(inputField, inputField.getWidth() - chatButtons.length * 14, "width");
-		}*/
+		int width = 626;
+		if (event.gui instanceof VersionedGuiChat) // NOTE: Account for LM 3
+			width -= Laby.labyAPI().chatProvider().chatInputService().getButtonWidth();
+
+		Reflection.set(inputField, "width", width); // Only accessible in Forge
 
 		String text = inputField.getText().toLowerCase();
 		if (!(text.startsWith("/msg ") || text.startsWith("/r ") || !(text.startsWith("/") || text.startsWith("@")))) {
@@ -178,7 +179,7 @@ public class SplitLongMessages extends Feature {
 	}
 
 	/*
-	// FIXME: @Mixin(value = EmoteSuggestionsMenu.class, remap = false)
+	// NOTE: @Mixin(value = EmoteSuggestionsMenu.class, remap = false)
 	private static class MixinEmoteSuggestionsMenu {
 
 		@Shadow

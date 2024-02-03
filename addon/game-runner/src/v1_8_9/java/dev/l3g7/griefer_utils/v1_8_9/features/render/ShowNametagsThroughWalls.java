@@ -18,11 +18,13 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
@@ -50,6 +52,7 @@ public class ShowNametagsThroughWalls extends Feature {
 	    	if (FileProvider.getSingleton(ShowNametagsThroughWalls.class).isEnabled() && !cir.getReturnValueZ()) {
 			    cir.setReturnValue(super.canRenderName(entity) && entity.hasCustomName());
 		    }
+
 	    }
 
 	}
@@ -58,10 +61,17 @@ public class ShowNametagsThroughWalls extends Feature {
 	@ExclusiveTo(LABY_3)
 	private static class MixinRender {
 
+		private static boolean renderingLivingEntity;
+
+		@Inject(method = "renderLivingLabel", at = @At("HEAD"))
+		private void injectRenderLivingLabel(Entity entityIn, String str, double x, double y, double z, int maxDistance, CallbackInfo ci) {
+			renderingLivingEntity = entityIn instanceof EntityLiving;
+		}
+
 		@Redirect(method = "renderLivingLabel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;tryBlendFuncSeparate(IIII)V"))
 		private void redirectTryBlendFuncSeparate(int srcFactor, int dstFactor, int srcFactorAlpha, int dstFactorAlpha) {
-			boolean enabled = FileProvider.getSingleton(ShowNametagsThroughWalls.class).isEnabled();
-			GlStateManager.tryBlendFuncSeparate(enabled ? dstFactor : srcFactor, enabled ? srcFactor : dstFactor, srcFactorAlpha, dstFactorAlpha);
+			boolean swap = renderingLivingEntity && FileProvider.getSingleton(ShowNametagsThroughWalls.class).isEnabled();
+			GlStateManager.tryBlendFuncSeparate(swap ? dstFactor : srcFactor, swap ? srcFactor : dstFactor, srcFactorAlpha, dstFactorAlpha);
 		}
 
 	}

@@ -9,6 +9,8 @@ package dev.l3g7.griefer_utils.v1_8_9.events;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
+import net.labymod.api.Laby;
+import net.labymod.v1_8_9.client.gui.screen.LabyScreenRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiGameOver;
@@ -32,6 +34,14 @@ public abstract class GuiScreenEvent extends Event {
 	public final GuiScreen gui;
 
 	public GuiScreenEvent(Object gui) {
+		if (gui instanceof LabyScreenRenderer) {
+			try { // FIXME: Does this cause problems?
+				Object mostInnerScreen = Laby.labyAPI().minecraft().minecraftWindow().mostInnerScreen();
+				if (mostInnerScreen instanceof GuiScreen)
+					gui = mostInnerScreen;
+			} catch (Throwable ignored) {}
+		}
+
 		this.gui = (GuiScreen) gui;
 	}
 

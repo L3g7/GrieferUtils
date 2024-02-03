@@ -67,7 +67,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 
 		widget.addAll(Citybuild.values());
 
-		callback(widget::setSelected);
+		callback(v -> widget.setSelected(v, false));
 
 		return new Widget[]{widget};
 	}

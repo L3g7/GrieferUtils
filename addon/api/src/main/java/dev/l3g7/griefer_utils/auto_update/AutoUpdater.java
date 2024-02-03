@@ -41,12 +41,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import static dev.l3g7.griefer_utils.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.StandardOpenOption.APPEND;
-import static java.nio.file.StandardOpenOption.CREATE;
 
 /**
  * Checks whether GrieferUtils is up-to-date. If not, it downloads the newest release, replaces itself in
@@ -65,12 +62,12 @@ public class AutoUpdater { // FIXME untested
 	// Used by the api server, l3g7.dev, and missing on older versions of Java, so it has to be added manually.
 	private static final byte[] DIGI_CERT_CERTIFICATE = Base64.getDecoder().decode("MIIDjjCCAnagAwIBAgIQAzrx5qcRqaC7KGSxHQn65TANBgkqhkiG9w0BAQsFADBhMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBHMjAeFw0xMzA4MDExMjAwMDBaFw0zODAxMTUxMjAwMDBaMGExCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IEcyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuzfNNNx7a8myaJCtSnX/RrohCgiN9RlUyfuI2/Ou8jqJkTx65qsGGmvPrC3oXgkkRLpimn7Wo6h+4FR1IAWsULecYxpsMNzaHxmx1x7e/dfgy5SDN67sH0NO3Xss0r0upS/kqbitOtSZpLYl6ZtrAGCSYP9PIUkY92eQq2EGnI/yuum06ZIya7XzV+hdG82MHauVBJVJ8zUtluNJbd134/tJS7SsVQepj5WztCO7TG1F8PapspUwtP1MVYwnSlcUfIKdzXOS0xZKBgyMUNGPHgm+F6HmIcr9g+UQvIOlCsRnKPZzFBQ9RnbDhxSJITRNrw9FDKZJobq7nMWxM4MphQIDAQABo0IwQDAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBhjAdBgNVHQ4EFgQUTiJUIBiV5uNu5g/6+rkS7QYXjzkwDQYJKoZIhvcNAQELBQADggEBAGBnKJRvDkhj6zHd6mcY1Yl9PMWLSn/pvtsrF9+wX3N3KjITOYFnQoQj8kVnNeyIv/iPsGEMNKSuIEyExtv4NeF22d+mQrvHRAiGfzZ0JFrabA0UWTW98kndth/Jsw1HKj2ZL7tcu7XUIOGZX1NGFdtom/DzMNU+MeKNhJ7jitralj41E6Vf8PlwUHBHQRFXGU7Aj64GxJUTFy8bJZ918rGOmaFvE7FBcf6IKshPECBV1/MUReXgRPTqh5Uykw7+U0b6LJ3/iyK5S9kJRaTepLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTflMrY=");
 
-	private static final String DELETION_MARKER = "File marked for deletion by GrieferUtils updater";
+	public static final String DELETION_MARKER = "File marked for deletion by GrieferUtils updater";
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	public static boolean hasUpdated = false;
 
-	public static void update(UpdateInfoProvider infoProvider) {
+	public static void update(UpdateImpl infoProvider) {
 		try {
 			doUpdate(infoProvider);
 		} catch (Throwable e) {
@@ -78,7 +75,7 @@ public class AutoUpdater { // FIXME untested
 		}
 	}
 
-	private static void doUpdate(UpdateInfoProvider infoProvider) throws Throwable {
+	private static void doUpdate(UpdateImpl infoProvider) throws Throwable {
 		// Check if addon was loaded from a .jar file
 		if (!AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile().contains(".jar"))
 			return;
@@ -159,7 +156,7 @@ public class AutoUpdater { // FIXME untested
 
 		// New version downloaded successfully, remove old version
 		removeURLFromClassLoaders(jarFile.toURI().toURL());
-		deleteJarSilently(jarFile.getPath(), infoProvider);
+		infoProvider.deleteJar(jarFile);
 
 		// Load new version
 		Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
@@ -169,35 +166,14 @@ public class AutoUpdater { // FIXME untested
 		hasUpdated = true;
 	}
 
-	private static void deleteJarSilently(String path, UpdateInfoProvider infoProvider) throws IOException {
-		// Try to delete file directly
-		if (new File(path).delete())
-			return;
-
-		try {
-			// Probably locked; Overwrite it with an empty zip file until Minecraft is closed
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			ZipOutputStream out = new ZipOutputStream(bout);
-			out.setComment(DELETION_MARKER);
-			out.close();
-			Files.write(Paths.get(path), bout.toByteArray());
-		} catch (Throwable ignored) {}
-
-		// Add old file to LabyMod's .delete
-		String deleteLine = infoProvider.getDeletionEntry(new File(path)) + System.lineSeparator();
-		Files.write(infoProvider.getDeletionList(), deleteLine.getBytes(), CREATE, APPEND);
-	}
-
-	private static void checkJarForDeletion(File file, UpdateInfoProvider infoProvider) throws IOException {
+	private static void checkJarForDeletion(File file, UpdateImpl infoProvider) throws IOException {
 		ZipInputStream in = new ZipInputStream(Files.newInputStream(file.toPath()));
 		ZipEntry entry = in.getNextEntry();
 
-		if (entry == null || !DELETION_MARKER.equals(entry.getComment()) || file.delete())
+		if (entry == null || !DELETION_MARKER.equals(entry.getComment()))
 			return;
 
-		// Deletion failed, add file to LabyMod's .delete
-		String deleteLine = infoProvider.getDeletionEntry(file) + System.lineSeparator();
-		Files.write(infoProvider.getDeletionList(), deleteLine.getBytes(), CREATE, APPEND);
+		infoProvider.deleteJar(file);
 	}
 
 	private static ReleaseChannel getPreferredChannel() throws IOException {

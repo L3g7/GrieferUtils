@@ -9,13 +9,10 @@ package dev.l3g7.griefer_utils.auto_update;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
-public interface UpdateInfoProvider {
+public interface UpdateImpl {
 
-	Path getDeletionList();
-
-	String getDeletionEntry(File fileToBeDeleted) throws IOException;
+	void deleteJar(File jar) throws IOException;
 
 	void handleError(Throwable e);
 

@@ -7,25 +7,28 @@
 
 package dev.l3g7.griefer_utils.laby4;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import dev.l3g7.griefer_utils.auto_update.AutoUpdater;
-import dev.l3g7.griefer_utils.auto_update.UpdateInfoProvider;
+import dev.l3g7.griefer_utils.auto_update.UpdateImpl;
 import net.labymod.api.Constants;
 import net.labymod.api.addon.entrypoint.Entrypoint;
 import net.labymod.api.addon.exception.AddonLoadException;
 import net.labymod.api.models.addon.annotation.AddonEntryPoint;
 import net.labymod.api.models.version.Version;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.util.jar.JarFile;
+import java.nio.file.Files;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static dev.l3g7.griefer_utils.auto_update.AutoUpdater.DELETION_MARKER;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
 
 @AddonEntryPoint(priority = 1001)
 @SuppressWarnings("UnstableApiUsage")
-public class PreStart implements Entrypoint, UpdateInfoProvider {
+public class PreStart implements Entrypoint, UpdateImpl {
 
 	@Override
 	public void initialize(Version semVer) {
@@ -37,16 +40,25 @@ public class PreStart implements Entrypoint, UpdateInfoProvider {
 	}
 
 	@Override
-	public Path getDeletionList() {
-		return Constants.Files.ADDONS_SCHEDULE_FOR_REMOVAL;
-	}
+	public void deleteJar(File jar) throws IOException {
+		// Try to delete file directly
+		if (jar.delete())
+			return;
 
-	@Override
-	public String getDeletionEntry(File fileToBeDeleted) throws IOException {
-		try (JarFile file = new JarFile(fileToBeDeleted)) {
-			JsonElement addonJson = JsonParser.parseReader(new InputStreamReader(file.getInputStream(file.getEntry("addon.json"))));
-			return addonJson.getAsJsonObject().get("namespace").getAsString();
-		}
+		// Minecraft's ClassLoader can create file leaks so the jar is probably locked.
+
+		// Prepare jar for deletion by LabyMod
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		ZipOutputStream out = new ZipOutputStream(bout);
+		out.setComment(DELETION_MARKER);
+		out.putNextEntry(new ZipEntry("addon.json"));
+		out.write("{\"namespace\":\"griefer_utils-marked_for_deletion\",\"author\":\"\",\"displayName\":\"\",\"version\":\"\",\"compatibleMinecraftVersions\":\"\",\"meta\":[]}".getBytes());
+		out.close();
+		Files.write(jar.toPath(), bout.toByteArray());
+
+		// Add jar to .asfr
+		String deleteLine = "griefer_utils-marked_for_deletion" + System.lineSeparator();
+		Files.write(Constants.Files.ADDONS_SCHEDULE_FOR_REMOVAL, deleteLine.getBytes(), CREATE, APPEND);
 	}
 
 	@Override

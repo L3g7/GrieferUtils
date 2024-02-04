@@ -20,6 +20,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.settings.types.SwitchSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
 import static net.minecraft.init.Blocks.stained_hardened_clay;
 
@@ -59,7 +60,7 @@ public class ChunkIndicator extends Feature {
 		.description("Zeigt die Chunkgrenzen an. (Ähnlich wie F3 + G seit 1.10)")
 		.icon("chunk")
 		.subSettings(yellow_lines, cyan_lines, blue_lines, red_lines)
-		.addHotkeySetting("die Chunk-Grenzen", null); // TODO TOGGLE
+		.addHotkeySetting("die Chunk-Grenzen", TOGGLE);
 
 	private static final Color BLUE = new Color(0x3F3FFF);
 	private static final Color CYAN = new Color(0x009B9B);

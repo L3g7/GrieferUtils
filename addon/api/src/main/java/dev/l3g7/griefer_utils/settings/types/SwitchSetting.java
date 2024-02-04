@@ -7,16 +7,40 @@
 
 package dev.l3g7.griefer_utils.settings.types;
 
+import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.settings.AbstractSetting;
 
 import static dev.l3g7.griefer_utils.settings.Settings.settings;
+import static dev.l3g7.griefer_utils.settings.types.SwitchSetting.TriggerMode.TOGGLE;
 
 public interface SwitchSetting extends AbstractSetting<SwitchSetting, Boolean> {
 
 	static SwitchSetting create() {return settings.createSwitchSetting();}
 
-	SwitchSetting asCheckbox();
+	SwitchSetting asCheckbox(); // NOTE: use
 
-	SwitchSetting addHotkeySetting(String whatActivates, Object defaultTriggerMode);
+	default SwitchSetting addHotkeySetting() {
+		return addHotkeySetting(null, TOGGLE);
+	}
+
+	SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode);
+
+	enum TriggerMode implements Named {
+
+		HOLD("Halten"), TOGGLE("Umschalten");
+
+		final String name;
+
+		TriggerMode(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+
+	}
 
 }

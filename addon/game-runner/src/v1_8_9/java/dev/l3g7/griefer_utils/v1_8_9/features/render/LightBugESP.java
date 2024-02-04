@@ -32,6 +32,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.Set;
 
+import static dev.l3g7.griefer_utils.settings.types.SwitchSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 import static net.minecraft.world.EnumSkyBlock.BLOCK;
 import static org.lwjgl.opengl.GL11.*;
@@ -65,7 +66,7 @@ public class LightBugESP extends Feature {
 		.description("Zeigt Lichtbugs an, auch durch Wände.")
 		.icon("glitch_light_bulb")
 		.subSettings(inBlocks, HeaderSetting.create(), range, updateDelay)
-		.addHotkeySetting("das Anzeigen der Lichtbugs", null); // TODO: TOGGLE
+		.addHotkeySetting("das Anzeigen der Lichtbugs", TOGGLE);
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {

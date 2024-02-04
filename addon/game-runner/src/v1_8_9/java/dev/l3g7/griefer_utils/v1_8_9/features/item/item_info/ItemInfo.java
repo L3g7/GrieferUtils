@@ -26,6 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.settings.types.SwitchSetting.TriggerMode.HOLD;
+
 @Singleton
 @FeatureCategory
 public class ItemInfo extends Feature {
@@ -41,7 +43,7 @@ public class ItemInfo extends Feature {
 		.name("Item-Infos")
 		.description("Zeigt unterschiedliche Informationen unter einem Item an.")
 		.icon("info")
-		.addHotkeySetting("die Item-Infos", null); // TODO: HOLD
+		.addHotkeySetting("die Item-Infos", HOLD);
 
 	@Override
 	public void init() {

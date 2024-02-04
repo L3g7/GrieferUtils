@@ -25,7 +25,7 @@ public class ShowBarriers extends Feature {
 		.name("Barrieren anzeigen")
 		.description("Fügt Partikel bei Barrieren-Blöcken hinzu.")
 		.icon(Blocks.barrier)
-		.addHotkeySetting("das Anzeigen von Barrieren", null);
+		.addHotkeySetting();
 
 	@EventListener
 	public void onDisplayNameRender(RenderBarrierCheckEvent event) {

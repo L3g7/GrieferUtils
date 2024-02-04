@@ -132,6 +132,20 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 	}
 
 	@Override
+	default S addSetting(int index, BaseSetting<?> setting) {
+		setting.setParent(this);
+
+		net.labymod.api.configuration.settings.type.AbstractSetting lmSetting = c(setting);
+
+		lmSetting.setParent(this);
+		getElements().add(index, new KeyValue<>(lmSetting.getId(), lmSetting));
+		if (isInitialized() && lmSetting instanceof AbstractSettingRegistry)
+			lmSetting.initialize();
+
+		return (S) this;
+	}
+
+	@Override
 	default List<BaseSetting<?>> getSubSettings() {
 		return c(getElements().stream().map(KeyValue::getValue).collect(Collectors.toList()));
 	}

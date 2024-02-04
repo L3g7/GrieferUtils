@@ -113,7 +113,7 @@ public class AutoTool extends Feature {
 		.icon(ItemUtil.createItem(Items.diamond_pickaxe, 0, true))
 		.defaultValue(false)
 		.subSettings(HeaderSetting.create(), preference, switchBack, enforceSilkTouch)
-		.addHotkeySetting("die automatische Werkzeugauswahl", null);
+		.addHotkeySetting();
 
 	private int previousSlot = -1;
 

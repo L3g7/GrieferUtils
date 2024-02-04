@@ -60,7 +60,7 @@ public class PlayerHider extends Feature {
 					updatePlayer(player);
 		})
 		.subSettings(showNPCs, HeaderSetting.create("Ausgenommene Spieler")/*TODO:, excludedPlayers*/)
-		.addHotkeySetting("das Verstecken von Spielern", null);
+		.addHotkeySetting();
 
 //	{ excludedPlayers.setContainer(enabled); }
 

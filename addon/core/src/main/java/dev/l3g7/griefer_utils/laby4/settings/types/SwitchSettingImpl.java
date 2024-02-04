@@ -10,11 +10,15 @@ package dev.l3g7.griefer_utils.laby4.settings.types;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.laby4.settings.AbstractSettingImpl;
+import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
+import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.CheckBoxWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SwitchWidget;
 
+import static dev.l3g7.griefer_utils.settings.types.SwitchSetting.TriggerMode.HOLD;
 import static net.labymod.api.client.gui.screen.widget.widgets.input.CheckBoxWidget.State.CHECKED;
 import static net.labymod.api.client.gui.screen.widget.widgets.input.CheckBoxWidget.State.UNCHECKED;
 
@@ -52,8 +56,32 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 	}
 
 	@Override
-	public SwitchSetting addHotkeySetting(String whatActivates, Object defaultTriggerMode) {
-		// TODO
+	public SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode) {
+		addSetting(0, HeaderSetting.create());
+
+		DropDownSettingImpl<TriggerMode> triggerMode = (DropDownSettingImpl<TriggerMode>) DropDownSetting.create(TriggerMode.class)
+			.name("Auslösung")
+			.icon("lightning")
+			.inferConfig("triggerMode")
+			.defaultValue(defaultTriggerMode)
+			.callback(() -> set(false));
+		addSetting(0, triggerMode);
+
+		KeySettingImpl key = (KeySettingImpl) KeySetting.create()
+			.name("Taste")
+			.icon("key")
+			.inferConfig("key")
+			.pressCallback(p -> {
+				if (p || triggerMode.get() == HOLD)
+					this.set(!this.get());
+			});
+		addSetting(0, key);
+
+		if (whatActivates != null) {
+			key.description("Welche Taste " + whatActivates + " aktiviert.");
+			triggerMode.description("Halten: Aktiviert " + whatActivates + ", während die Taste gedrückt wird.",
+				"Umschalten: Schaltet " + whatActivates + " um, wenn die Taste gedrückt wird.");
+		}
 		return this;
 	}
 

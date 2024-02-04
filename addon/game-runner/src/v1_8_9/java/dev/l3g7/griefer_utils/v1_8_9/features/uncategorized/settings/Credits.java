@@ -23,7 +23,6 @@ import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingHeaderWidget;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.AbstractSetting;
-import net.labymod.api.util.KeyValue;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -109,7 +108,7 @@ public class Credits {
 		for (int i = 0; i < settings.size(); i++) {
 			AbstractSetting setting = settings.get(i);
 			setting.setParent(parent);
-			parent.getElements().add(7 + i, new KeyValue<>(setting.getId(), setting));
+			credits.addSetting(7 + i, c(setting));
 			if (parent.isInitialized())
 				setting.initialize();
 		}

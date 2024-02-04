@@ -33,6 +33,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static dev.l3g7.griefer_utils.settings.types.SwitchSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 
 @Singleton
@@ -62,7 +63,7 @@ public class LightLevelOverlay extends Feature {
 		.description("Zeigt das Lichtlevel auf Blöcken an.")
 		.icon("light_bulb")
 		.subSettings(range, updateDelay)
-		.addHotkeySetting("das Anzeigen des Lichtlevels", null); //TODO TOGGLE
+		.addHotkeySetting("das Anzeigen des Lichtlevels", TOGGLE);
 
 	public LightLevelOverlay() {
 		for (int i = 0; i <= 16; i++)

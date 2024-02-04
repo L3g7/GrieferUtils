@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.v1_8_9.misc.badges.Badges;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Blocks;
 
@@ -31,7 +32,7 @@ public class Settings extends Feature {
 	private final CategorySetting element = CategorySetting.create()
 		.name("§yEinstellungen")
 		.icon("cog")
-		.subSettings(credits, changelog, HeaderSetting.create(), /* FIXME: Badges.enabled, */autoUpdateEnabled, BugReporter.enabled);
+		.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, autoUpdateEnabled, BugReporter.enabled);
 
 	// Settings for AutoUpdater are here because the AutoUpdater class isn't affected by updates
 	public static final SwitchSetting showUpdateScreen = SwitchSetting.create()

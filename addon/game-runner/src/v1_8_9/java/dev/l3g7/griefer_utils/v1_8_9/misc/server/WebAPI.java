@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.util.IOUtil;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.WebDataReceiveEvent;
-import org.spongepowered.include.com.google.gson.annotations.SerializedName;
+import dev.l3g7.griefer_utils.v1_8_9.misc.badges.GrieferUtilsGroup;
 
 import java.util.Map;
 import java.util.UUID;
@@ -54,17 +54,6 @@ public class WebAPI {
 			public String stack;
 			public int categories;
 			public boolean custom_name;
-		}
-
-		public static class GrieferUtilsGroup {
-
-			@SerializedName("color_with_labymod")
-			public int colorWithLabymod;
-
-			@SerializedName("color_without_labymod")
-			public int colorWithoutLabymod;
-			public String title;
-
 		}
 
 	}

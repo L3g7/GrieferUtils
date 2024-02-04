@@ -69,28 +69,26 @@ public class Credits {
 			HeaderSetting.create().entryHeight(22)
 		);
 
-	/*
-	TODO:
 	public static void addTeam() {
-		List<String> supporter = new ArrayList<>();
-		List<SettingsElement> elements = new ArrayList<>();
-
-		if (GrieferUtilsUserManager.isSpecial("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db"))
-			supporter.add("MoosLeitung");
-		if (GrieferUtilsUserManager.isSpecial("bc1f3d61-0878-4006-ba46-fb479fc37a1e"))
-			supporter.add("0001EnderGirlLP");
-
-		if (!supporter.isEmpty()) {
-			elements.add(Settings.createHeader("Supporter"));
-
-			for (String sup : supporter)
-				elements.add(createIconSetting(sup, sup.toLowerCase()));
-
-			elements.add(Settings.header().entryHeight(11));
-		}
-
-		credits.getSubSettings().getElements().addAll(10, elements);
-	}*/
+//		List<String> supporter = new ArrayList<>(); TODO
+//		List<SettingsElement> elements = new ArrayList<>();
+//
+//		if (GrieferUtilsUserManager.isSpecial("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db"))
+//			supporter.add("MoosLeitung");
+//		if (GrieferUtilsUserManager.isSpecial("bc1f3d61-0878-4006-ba46-fb479fc37a1e"))
+//			supporter.add("0001EnderGirlLP");
+//
+//		if (!supporter.isEmpty()) {
+//			elements.add(Settings.createHeader("Supporter"));
+//
+//			for (String sup : supporter)
+//				elements.add(createIconSetting(sup, sup.toLowerCase()));
+//
+//			elements.add(Settings.header().entryHeight(11));
+//		}
+//
+//		credits.getSubSettings().getElements().addAll(10, elements);
+	}
 
 	private static CategorySetting createIconSetting(String displayName, String icon) {
 		return CategorySetting.create()

@@ -97,12 +97,12 @@ public class MysteryModConnection {
 
 	public enum State {
 
-		CONNECTED("Verbunden"),
+		CONNECTED("Verbunden."),
 		INVALID_SESSION("Die Session ist ungültig!"),
 		SESSION_SERVERS_UNAVAILABLE("Die Session-Server sind nicht erreichbar!"),
 		ERROR_OCCURRED("Es gab einen Fehler!"),
-		CONNECTING("Verbindet..."),
-		NOT_CONNECTED("Nicht verbunden");
+		CONNECTING("Verbindung wird gerade aufgebaut."),
+		NOT_CONNECTED("Nicht verbunden.");
 
 		public final String errorMessage;
 		State(String errorMessage) {

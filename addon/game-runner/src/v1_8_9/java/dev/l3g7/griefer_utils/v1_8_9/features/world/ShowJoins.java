@@ -26,6 +26,8 @@ import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.display;
@@ -37,6 +39,7 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.name;
 @Singleton
 public class ShowJoins extends Feature {
 
+	private static final Map<UUID, Long> addTimestamps = new HashMap<>();
 //TODO:	private final PlayerListSetting players = new PlayerListSetting();
 
 	private final SwitchSetting filter = SwitchSetting.create()
@@ -96,10 +99,20 @@ TODO			return players.contains(name, null);*/
 			return;
 
 		String name = event.data.getProfile().getName();
-		if (shouldShowJoin(name))
-			TickScheduler.runAfterClientTicks(() -> display(Constants.ADDON_PREFIX + "§8[§a+§8] "
+		if (!shouldShowJoin(name))
+			return;
+
+		UUID uuid = event.data.getProfile().getId();
+		addTimestamps.put(uuid, event.readTime);
+
+		TickScheduler.runAfterClientTicks(() -> {
+			if (!addTimestamps.containsKey(uuid))
+				return;
+
+			display(Constants.ADDON_PREFIX + "§8[§a+§8] "
 				+ getPlayerListPrefix(name, event.data.getProfile().getId())
-				+ "§r" + name), 1);
+				+ "§r" + name);
+		}, 3);
 	}
 
 	@EventListener
@@ -108,10 +121,20 @@ TODO			return players.contains(name, null);*/
 			return;
 
 		String name = event.cachedName;
-		if (shouldShowJoin(name))
-			TickScheduler.runAfterClientTicks(() -> display(Constants.ADDON_PREFIX + "§8[§c-§8] "
+		if (!shouldShowJoin(name))
+			return;
+
+		UUID uuid = event.data.getProfile().getId();
+
+		TickScheduler.runAfterClientTicks(() -> {
+			long time = event.readTime - addTimestamps.remove(uuid);
+			if (time < 75_000_000)
+				return;
+
+			display(Constants.ADDON_PREFIX + "§8[§c-§8] "
 				+ getPlayerListPrefix(name, event.data.getProfile().getId())
-				+ "§r" + name), 1);
+				+ "§r" + name);
+		}, 1);
 	}
 
 	@EventListener

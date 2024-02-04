@@ -14,6 +14,8 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.util.PlayerUtil;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.network.play.server.S38PacketPlayerListItem.AddPlayerData;
@@ -34,6 +36,7 @@ public class TabListEvent extends Event {
 
 	private static final Map<UUID, IChatComponent> cachedNames = new HashMap<>();
 	private static final Map<UUID, String> uuidToNameMap = new HashMap<>();
+	public final long readTime = getLastReadTime();
 
 	public static void updatePlayerInfoList() {
 		if (mc().getNetHandler() == null)
@@ -195,6 +198,18 @@ public class TabListEvent extends Event {
 				new TabListClearEvent(event.packet.getEntries()).fire();
 		}
 
+	}
+
+	private static long getLastReadTime() {
+		if (mc().getNetHandler() == null)
+			return 0;
+
+		Channel channel = Reflection.get(mc().getNetHandler().getNetworkManager(), "channel"); // Getter is only available in Forge
+		ChannelHandler timeoutHandler = channel.pipeline().get("timeout");
+		if (timeoutHandler == null)
+			return 0;
+
+		return Reflection.get(timeoutHandler, "lastReadTime");
 	}
 
 }

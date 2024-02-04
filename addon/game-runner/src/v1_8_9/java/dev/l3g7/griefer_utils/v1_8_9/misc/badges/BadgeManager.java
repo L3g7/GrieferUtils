@@ -101,6 +101,7 @@ public class BadgeManager {
 
 	private static void setGroup(GroupHolder groupHolder, Group group) {
 		Reflection.set(groupHolder, "visibleGroup", group);
+		Credits.addTeam();
 	}
 
 }

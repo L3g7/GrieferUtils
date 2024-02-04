@@ -206,6 +206,9 @@ public class WorldBlockOverlayRenderer {
 
 		private static RenderObject fromState(IBlockState state, BlockPos pos, WorldClient world) {
 			for (RenderObjectGenerator generator: generators) {
+				if (!generator.isEnabled())
+					continue;
+
 				RenderObject renderObject = generator.getRenderObject(state, pos, world);
 				if (renderObject != null)
 					return renderObject;

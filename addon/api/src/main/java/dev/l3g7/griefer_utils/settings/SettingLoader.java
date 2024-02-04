@@ -37,7 +37,7 @@ public class SettingLoader {
 			configKey = parentKey + "." + configKey;
 
 		// Load settings
-		if (mainElement instanceof AbstractSetting<?,?>)
+		if (mainElement instanceof AbstractSetting<?, ?>)
 			((AbstractSetting<?, ?>) mainElement).config(configKey + "." + mainElementField.getName());
 
 		if (mainElementField.getAnnotation(MainElement.class).configureSubSettings())
@@ -61,27 +61,36 @@ public class SettingLoader {
 				.orElse(null);
 
 			if (field == null) {
-				if (((AbstractSetting<?, ?>) element).get() != BaseSetting.NULL || !element.getSubSettings().isEmpty())
-					throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.name() + " in " + owner);
+				// Skip dynamic settings with inferred keys
+				if (element instanceof AbstractSetting<?, ?> abs && abs.getStorage().configKey != null)
+					return;
 
 				// Allow dynamic settings if they don't hold values and have no settings
-				return;
+				if (((AbstractSetting<?, ?>) element).get() == BaseSetting.NULL && element.getSubSettings().isEmpty())
+					return;
+
+				throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.name() + " in " + owner);
 			}
 
 			if (field.getName().equals("value"))
 				throw elevate(new IllegalStateException(), field + " has an illegal name!");
 
 			String key = parentKey + "." + StringUtil.convertCasing(field.getName());
-			loadSubSettings(owner, element, key);
-			if (element instanceof AbstractSetting<?,?>) {
-				try {
-					if (hasSubSettings)
-						((AbstractSetting<?, ?>) element).config(key + ".value");
-					else
-						((AbstractSetting<?, ?>) element).config(key);
-				} catch (Throwable t) {
-					throw Util.elevate(t, "loading config for %s.%s failed!", field.getDeclaringClass().getSimpleName(), field.getName());
-				}
+			load(owner, element, key, field.getDeclaringClass().getSimpleName() + "." + field.getName());
+		}
+	}
+
+	private static void load(Object owner, BaseSetting<?> element, String key, String identifier) {
+		loadSubSettings(owner, element, key);
+
+		if (element instanceof AbstractSetting<?, ?>) {
+			try {
+				if (!element.getSubSettings().isEmpty())
+					key += ".value";
+
+				((AbstractSetting<?, ?>) element).config(key);
+			} catch (Throwable t) {
+				throw Util.elevate(t, "loading config for %s failed!", identifier);
 			}
 		}
 	}

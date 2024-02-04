@@ -80,6 +80,14 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		// Add callback
 		s.callbacks.add(value -> save());
 
+		for (BaseSetting<?> setting : getSubSettings()) {
+			if (setting instanceof AbstractSetting<?,?> abs) {
+				if (abs.getStorage().inferredKey != null)
+					// Uses the parent key as base. Technically wrong but required to preserve config compatibility
+					abs.config(configKey.replaceFirst("\\.[^.]+$", "") + "." + abs.getStorage().inferredKey);
+			}
+		}
+
 		return (S) this;
 	}
 
@@ -101,10 +109,9 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		if (inferredKey == null)
 			return;
 
-		if (!(parent instanceof AbstractSetting<?,?> absSetting))
+		if (!(parent instanceof AbstractSetting<?,?>))
 			throw new IllegalStateException("Cannot infer config key");
 
-		config(absSetting.configKey() + "." + inferredKey);
 	}
 
 	/**

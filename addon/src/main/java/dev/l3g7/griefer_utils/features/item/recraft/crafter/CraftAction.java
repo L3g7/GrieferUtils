@@ -70,7 +70,6 @@ public class CraftAction extends RecraftAction {
 
 		}
 
-		System.out.println("Slots: " + Arrays.toString(slots));
 		return slots;
 	}
 

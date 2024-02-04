@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
+import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
@@ -48,15 +49,13 @@ public class MainPage {
 		registry.addSettings(Reflection.<List<Setting>>c(settings));
 	}
 
-	// TODO: searchableSettings
-
 	private static void collectSettings(List<BaseSetting<?>> settings) {
 		// Enable the feature category if one of its features gets enabled
 		Feature.getFeatures()
 			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
 			.forEach(feature -> {
 				if (!feature.getClass().isAnnotationPresent(FeatureCategory.class)
-					|| !(feature.getMainElement() instanceof SwitchSetting main))
+					|| !(feature.getMainElement() instanceof SwitchSettingImpl main))
 					return;
 
 				for (BaseSetting<?> element : main.getSubSettings()) {
@@ -68,6 +67,8 @@ public class MainPage {
 							main.set(true);
 					});
 				}
+
+				main.setSearchTags(new String[]{main.name()});
 			});
 
 		// Add features to categories
@@ -79,6 +80,9 @@ public class MainPage {
 		Feature.getCategories().stream()
 			.sorted(Comparator.comparing(BaseSetting::name))
 			.forEach(settings::add);
+
+		for (SwitchSetting v : Feature.getCategories())
+			((SwitchSettingImpl) v).setSearchTags(new String[]{v.name()});
 
 		settings.add(HeaderSetting.create());
 

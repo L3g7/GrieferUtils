@@ -88,8 +88,6 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 	@Override
 	default S name(String name) {
 		getStorage().name = name.trim();
-		SettingElement self = c(this);
-		self.setSearchTags(new String[]{name.trim()});
 		return (S) this;
 	}
 

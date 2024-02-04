@@ -11,8 +11,6 @@ import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.StringUtil;
 import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -53,9 +51,6 @@ public class SettingLoader {
 	 */
 	private static void loadSubSettings(Object owner, BaseSetting<?> parent, String parentKey) {
 		for (BaseSetting<?> element : new ArrayList<>(parent.getSubSettings())) {
-			if (element instanceof HeaderSetting || element instanceof EntryAddSetting) // TODO: temp
-				continue;
-
 			boolean hasSubSettings = !element.getSubSettings().isEmpty();
 			if (!hasSubSettings && !(element instanceof AbstractSetting<?, ?>))
 				continue;
@@ -69,7 +64,7 @@ public class SettingLoader {
 				if (((AbstractSetting<?, ?>) element).get() != BaseSetting.NULL || !element.getSubSettings().isEmpty())
 					throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.name() + " in " + owner);
 
-				// Allow dynamic setting if they don't hold values and have no settings
+				// Allow dynamic settings if they don't hold values and have no settings
 				return;
 			}
 

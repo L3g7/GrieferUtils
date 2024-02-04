@@ -27,6 +27,7 @@ import static dev.l3g7.griefer_utils.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.getNextServerRestart;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 import static java.math.BigDecimal.ZERO;
+import static net.labymod.api.Textures.SpriteCommon.TRASH;
 
 @Singleton
 public class Received extends Laby4Module {
@@ -71,13 +72,13 @@ public class Received extends Laby4Module {
 				.name("Zurücksetzen")
 				.description("Setzt das eingenommene Geld zurück.")
 				.icon("arrow_circle")
-				.buttonIcon("labymod_3/trash")
+				.buttonIcon(TRASH)
 				.callback(() -> setBalance(ZERO)),
 			ButtonSetting.create()
 				.name("Alles zurücksetzen")
 				.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
 				.icon("arrow_circle")
-				.buttonIcon("labymod_3/trash")
+				.buttonIcon(TRASH)
 				.callback(() -> setBalance(Spent.setBalance(ZERO)))
 		);
 

@@ -13,12 +13,14 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.laby4.settings.types.StringListSettingImpl;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
+import net.labymod.api.Textures;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
@@ -27,6 +29,7 @@ import static dev.l3g7.griefer_utils.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.getNextServerRestart;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 import static java.math.BigDecimal.ZERO;
+import static net.labymod.api.Textures.SpriteCommon.TRASH;
 
 @Singleton
 public class Spent extends Laby4Module {
@@ -71,13 +74,13 @@ public class Spent extends Laby4Module {
 				.name("Zurücksetzen")
 				.description("Setzt das ausgegebene Geld zurück.")
 				.icon("arrow_circle")
-				.buttonIcon("labymod_3/trash")
+				.buttonIcon(TRASH)
 				.callback(() -> setBalance(ZERO)),
 			ButtonSetting.create()
 				.name("Alles zurücksetzen")
 				.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
-				.icon("arrow_circle")
-				.buttonIcon("labymod_3/trash")
+				.icon("arrow_circle") // FIXME icon is ugly
+				.buttonIcon(TRASH)
 				.callback(() -> setBalance(Received.setBalance(ZERO)))
 		);
 

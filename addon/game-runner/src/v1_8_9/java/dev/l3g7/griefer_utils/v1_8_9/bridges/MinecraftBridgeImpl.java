@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ChatQueue;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.launchwrapper.Launch;
 
@@ -42,7 +41,7 @@ public class MinecraftBridgeImpl implements MinecraftBridge {
 
 	@Override
 	public UUID uuid() {
-		return Minecraft.getMinecraft().getSession().getProfile().getId();
+		return MinecraftUtil.uuid();
 	}
 
 	@Override

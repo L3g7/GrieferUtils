@@ -63,7 +63,7 @@ public class MinecraftUtil {
 
 	public static UUID uuid() {
 		UUID uuid = mc().getSession().getProfile().getId();
-		return uuid == null ? UUID.fromString("0-0-0-0-0") : uuid;
+		return uuid == null ? UUID.fromString("606e2ff0-ed77-4842-9d6c-e1d3321c7838") : uuid;
 	}
 
 	public static AxisAlignedBB axisAlignedBB(Vec3d a, Vec3d b) {

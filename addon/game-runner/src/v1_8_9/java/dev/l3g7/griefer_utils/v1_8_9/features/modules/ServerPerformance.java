@@ -78,7 +78,7 @@ public class ServerPerformance extends Laby4Module {
 
 		// create text representation
 		String displayTPS = displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS);
-		return applyColor.get() ? Component.text(displayTPS, TextColor.color(r, g, b)) : Component.text(displayTPS);
+		return applyColor.get() ? Component.empty().append(Component.text(displayTPS, TextColor.color(r, g, b))) : Component.text(displayTPS);
 	}
 
 	@EventListener

@@ -83,8 +83,28 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		return (S) this;
 	}
 
+	/**
+	 * Infers the config key by joining it with the config key of the parent setting.
+	 */
+	default S inferConfig(String partialKey) {
+		getStorage().inferredKey = partialKey;
+		return (S) this;
+	}
+
 	default String configKey() {
 		return getStorage().configKey;
+	}
+
+	@Override
+	default void setParent(BaseSetting<?> parent) {
+		String inferredKey = getStorage().inferredKey;
+		if (inferredKey == null)
+			return;
+
+		if (!(parent instanceof AbstractSetting<?,?> absSetting))
+			throw new IllegalStateException("Cannot infer config key");
+
+		config(absSetting.configKey() + "." + inferredKey);
 	}
 
 	/**
@@ -133,6 +153,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 
 		public T value = null;
 		public String configKey = null;
+		private String inferredKey = null;
 		public final T fallbackValue;
 		public final List<Consumer<T>> callbacks = new ArrayList<>();
 

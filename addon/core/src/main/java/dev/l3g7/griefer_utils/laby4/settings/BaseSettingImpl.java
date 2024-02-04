@@ -118,6 +118,7 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 
 		settings = new ArrayList<>(settings);
 		settings.removeIf(Objects::isNull);
+		settings.forEach(s -> s.setParent(this));
 		self.addSettings((List<Setting>) c(settings));
 		return (S) this;
 	}
@@ -125,6 +126,7 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 	@Override
 	default S addSetting(BaseSetting<?> setting) {
 		AbstractSettingRegistry self = c(this);
+		setting.setParent(this);
 		self.addSetting(c(setting));
 		return (S) this;
 	}

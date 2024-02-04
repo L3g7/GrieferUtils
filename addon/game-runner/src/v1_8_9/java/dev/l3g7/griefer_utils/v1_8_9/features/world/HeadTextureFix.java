@@ -10,8 +10,8 @@ package dev.l3g7.griefer_utils.v1_8_9.features.world;
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -29,9 +29,10 @@ import java.util.Set;
 public class HeadTextureFix extends Feature {
 
 	@MainElement
-	private final SwitchSetting enabled = SwitchSetting.create() // TODO: AsyncSkullRenderer.renderPlayerSkull(x + 3, y + 2);
+	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kopf-Texturen fixen")
-		.description("Lädt Kopf-Texturen automatisch nach.");
+		.description("Lädt Kopf-Texturen automatisch nach.")
+		.icon("bookshelf");
 
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());
 	public static final Set<String> processedProfiles = Collections.synchronizedSet(new HashSet<>());

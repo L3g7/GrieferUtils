@@ -77,6 +77,12 @@ public class BlockInfo extends Laby4Module {
 		}
 	}
 
+	@Override
+	public void load(ModuleConfig config) {
+		super.load(config);
+		getSettings().remove(0);
+	}
+
 	private float getWidth() {
 		int maxLength = 0;
 		for (String line : lines)

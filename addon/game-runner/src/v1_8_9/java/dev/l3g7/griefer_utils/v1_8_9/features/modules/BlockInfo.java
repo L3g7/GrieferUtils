@@ -16,7 +16,12 @@ import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.v1_8_9.util.SchematicaUtil;
 import dev.l3g7.griefer_utils.v1_8_9.util.render.RenderUtil;
+import net.labymod.api.client.gui.hud.HudWidgetRendererAccessor;
+import net.labymod.api.client.gui.hud.binding.dropzone.HudWidgetDropzone;
+import net.labymod.api.client.gui.hud.binding.dropzone.NamedHudWidgetDropzones;
+import net.labymod.api.client.gui.hud.hudwidget.HudWidget;
 import net.labymod.api.client.gui.hud.position.HudSize;
+import net.labymod.api.client.gui.hud.position.HudWidgetAnchor;
 import net.labymod.api.client.gui.mouse.MutableMouse;
 import net.labymod.api.client.render.matrix.Stack;
 import net.minecraft.block.BlockSkull;
@@ -58,6 +63,10 @@ public class BlockInfo extends Laby4Module {
 		.description("Zeigt dir Infos des anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
 		.icon("magnifying_glass")
 		.subSettings(showCoords);
+
+	public BlockInfo() {
+		bindDropzones(new BlockInfoDropzone());
+	}
 
 	@Override
 	public void render(Stack stack, MutableMouse mouse, float partialTicks, boolean isEditorContext, HudSize size) {
@@ -147,6 +156,41 @@ public class BlockInfo extends Laby4Module {
 
 		data = Pair.of(mop.getBlockPos(), stack);
 		return true;
+	}
+
+	private static class BlockInfoDropzone extends HudWidgetDropzone {
+
+		public BlockInfoDropzone() {
+			super("griefer_utils_block_info");
+		}
+
+		public float getX(HudWidgetRendererAccessor renderer, HudSize hudWidgetSize) {
+			return renderer.getArea().getCenterX() - hudWidgetSize.getScaledWidth() / 2;
+		}
+
+		public float getY(HudWidgetRendererAccessor renderer, HudSize hudWidgetSize) {
+			float offset = 0.0f;
+
+			HudWidget<?> bossBar = renderer.getRelevantHudWidgetForDropzone(NamedHudWidgetDropzones.BOSS_BAR);
+			if (bossBar != null)
+				offset += renderer.getWidget(bossBar).scaledBounds().getHeight();
+
+			HudWidget<?> direction = renderer.getRelevantHudWidgetForDropzone(NamedHudWidgetDropzones.DIRECTION);
+			if (direction != null)
+				offset += renderer.getWidget(direction).scaledBounds().getHeight() + 4;
+			else if (bossBar != null)
+				offset += 2;
+
+			return renderer.getArea().getTop() + offset + 1;
+		}
+
+		public HudWidgetDropzone copy() {
+			return new BlockInfoDropzone();
+		}
+
+		public HudWidgetAnchor getAnchor() {
+			return HudWidgetAnchor.CENTER_TOP;
+		}
 	}
 
 }

@@ -92,7 +92,7 @@ public class CraftRecorder {
 		if (!isMenuOpen)
 			return;
 
-		if (event.slotId != 0)
+		if (event.slotId != 0 || event.itemStack == null)
 			return;
 
 		if (!addedIcon) {

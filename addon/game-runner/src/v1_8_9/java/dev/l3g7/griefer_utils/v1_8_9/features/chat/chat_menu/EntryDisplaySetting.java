@@ -17,6 +17,7 @@ import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.entry.FlexibleContentEntry;
 import net.minecraft.util.ResourceLocation;
 
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
@@ -79,8 +80,7 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 							mc().displayGuiScreen(new AddChatMenuEntryGui(this, mc().currentScreen)));
 
 						btn.addId("advanced-button"); // required so LSS is applied
-						content.removeChild("advanced-button");
-						content.addContent(btn);
+						content.replaceChild(content.getChild("advanced-button"), new FlexibleContentEntry(btn, false));
 					}
 				});
 				break;

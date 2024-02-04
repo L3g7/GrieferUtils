@@ -241,6 +241,8 @@ public class Booster extends Laby4Module {
 					.mapToLong(Long::longValue)
 					.min().orElse(0)));
 			}
+
+			reinitialize();
 		}
 
 	}

@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.v1_8_9.features;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.misc.Constants;
+import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.StringUtil;
 import dev.l3g7.griefer_utils.laby4.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
@@ -26,7 +27,14 @@ import net.labymod.api.client.gui.hud.hudwidget.text.TextHudWidget;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextHudWidgetConfig;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.labymod.api.client.gui.icon.Icon;
+import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
+import net.labymod.api.client.gui.screen.ScreenInstance;
 import net.labymod.api.configuration.settings.Setting;
+import net.labymod.core.client.gui.hud.hudwidget.BossBarHudWidget;
+import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
+import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.WidgetsEditorActivity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -107,6 +115,31 @@ public abstract class Laby4Module extends TextHudWidget<ModuleConfig> {
 
 	public Object getValue() {
 		return null;
+	}
+
+	public void reinitialize() {
+
+		// Check if in widget activity
+		if (!(Laby4Util.getActivity() instanceof NavigationActivity navActivity))
+			return;
+
+		ScreenNavigationElement element = Reflection.get(navActivity, "element");
+		if (!(element instanceof LabyModNavigationElement))
+			return;
+
+		LabyModActivity activity = (LabyModActivity) element.getScreen();
+		if (activity == null)
+			return;
+
+		if (activity.getById("widgets") != activity.getActiveTab())
+			return;
+
+		// Reinitialize (if not dragging)
+		ScreenInstance instance = Reflection.get(activity.getActiveTab(), "instance");
+		WidgetsEditorActivity editor = (WidgetsEditorActivity) instance;
+
+		if (!editor.renderer().getWidget(this).isDragging())
+			editor.renderer().reinitializeHudWidget(this, "moved");
 	}
 
 	// Settings

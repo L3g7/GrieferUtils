@@ -179,6 +179,8 @@ public class PotionTimer extends Laby4Module {
 				line.setState(VISIBLE);
 				line.update(Util.formatTime(expirationDate));
 			}
+
+			reinitialize();
 		}
 
 	}

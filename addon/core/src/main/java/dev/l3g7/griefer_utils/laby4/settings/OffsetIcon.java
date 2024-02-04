@@ -19,10 +19,10 @@ import java.util.function.Supplier;
 
 public class OffsetIcon extends Icon {
 
-	private final int offsetX, offsetY;
+	private final float offsetX, offsetY;
 	private final Icon icon;
 
-	public OffsetIcon(Icon icon, int offsetX, int offsetY) {
+	public OffsetIcon(Icon icon, float offsetX, float offsetY) {
 		super(null);
 		this.icon = icon;
 		this.offsetX = offsetX;

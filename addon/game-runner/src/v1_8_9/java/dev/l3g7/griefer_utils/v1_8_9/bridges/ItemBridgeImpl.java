@@ -16,8 +16,6 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
@@ -83,7 +81,6 @@ public class ItemBridgeImpl implements ItemBridge {
 	}
 
 	@Mixin(net.minecraft.item.ItemStack.class)
-	@Implements(@Interface(iface = McItemStack.class, prefix = "_$"))
 	public static abstract class MixinItemStack implements McItemStack {}
 
 }

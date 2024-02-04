@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.laby4.settings.OffsetIcon;
 import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
@@ -217,8 +218,13 @@ public class Booster extends Laby4Module {
 			KeyMode mode = design.get();
 			Component name = Component.empty();
 
-			if (mode != KeyMode.TEXT)
-				name.append(Component.icon(SettingsImpl.buildIcon("booster/" + displayName.toLowerCase()), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
+			if (mode != KeyMode.TEXT) {
+				if (mode == KeyMode.ICON)
+					name.append(Component.icon(new OffsetIcon(SettingsImpl.buildIcon("booster/" + displayName.toLowerCase()), -0.5f, -.5f), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
+				else
+					// Text and icon
+					name.append(Component.icon(new OffsetIcon(SettingsImpl.buildIcon("booster/" + displayName.toLowerCase()), .5f, -1), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
+			}
 
 			if (mode == KeyMode.TEXT_AND_ICON)
 				name.append(Component.text(" "));

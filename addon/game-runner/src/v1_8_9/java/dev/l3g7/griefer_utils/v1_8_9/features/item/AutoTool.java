@@ -16,14 +16,13 @@ import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemDisplaySetting;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemSaver;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.tool_saver.ToolSaver;
@@ -90,17 +89,6 @@ public class AutoTool extends Feature {
 
 	private final ToolSaver toolSaver = FileProvider.getSingleton(ToolSaver.class);
 
-	private final KeySetting key = KeySetting.create()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der die automatische Werkzeugauswahl umgeschalten werden soll.")
-		.pressCallback(p -> {
-			if (p) {
-				SwitchSetting enabled = ((SwitchSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
-
 	private final DropDownSetting<EnchantPreference> preference = DropDownSetting.create(EnchantPreference.class)
 		.name("Bevorzugte Verzauberung")
 		.description("Ob Glück oder Behutsamkeit bevorzugt werden soll.")
@@ -124,7 +112,8 @@ public class AutoTool extends Feature {
 		.description("Wechselt beim Abbauen eines Blocks automatisch auf das beste Werkzeug in der Hotbar.")
 		.icon(ItemUtil.createItem(Items.diamond_pickaxe, 0, true))
 		.defaultValue(false)
-		.subSettings(key, HeaderSetting.create(), preference, switchBack, enforceSilkTouch);
+		.subSettings(HeaderSetting.create(), preference, switchBack, enforceSilkTouch)
+		.addHotkeySetting("die automatische Werkzeugauswahl", null);
 
 	private int previousSlot = -1;
 

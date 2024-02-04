@@ -9,14 +9,9 @@ package dev.l3g7.griefer_utils.v1_8_9.features.world;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
-import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.types.KeySetting;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderWorldLastEvent;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.v1_8_9.misc.TriggerModeSetting;
-import dev.l3g7.griefer_utils.v1_8_9.misc.TriggerModeSetting.TriggerMode;
 import dev.l3g7.griefer_utils.v1_8_9.util.render.RenderUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -25,7 +20,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.v1_8_9.misc.TriggerModeSetting.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
 import static net.minecraft.init.Blocks.stained_hardened_clay;
 
@@ -34,24 +28,6 @@ import static net.minecraft.init.Blocks.stained_hardened_clay;
  */
 @Singleton
 public class ChunkIndicator extends Feature {
-
-	private final DropDownSetting<TriggerMode> triggerMode = TriggerModeSetting.create()
-		.description("Halten: Zeigt die Chunks-Grenzen an, während die Taste gedrückt wird.\nUmschalten: Schaltet das Anzeigen der Chunks-Grenzen um, wenn die Taste gedrückt wird.")
-		.callback(() -> {
-			if (getMainElement() != null)
-				((SwitchSetting) getMainElement()).set(false);
-		});
-
-	private final KeySetting key = KeySetting.create()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der Chunks-Grenzen angezeigt werden.")
-		.pressCallback(p -> {
-			if (p || triggerMode.get() == HOLD) {
-				SwitchSetting enabled = ((SwitchSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
 
 	private final SwitchSetting yellow_lines = SwitchSetting.create()
 		.name("Gelbe Linien", "(Alle 2 Blöcke)")
@@ -82,9 +58,8 @@ public class ChunkIndicator extends Feature {
 		.name("Chunk-Indikator")
 		.description("Zeigt die Chunkgrenzen an. (Ähnlich wie F3 + G seit 1.10)")
 		.icon("chunk")
-		.subSettings(key, triggerMode,
-			HeaderSetting.create(),
-			yellow_lines, cyan_lines, blue_lines, red_lines);
+		.subSettings(yellow_lines, cyan_lines, blue_lines, red_lines)
+		.addHotkeySetting("die Chunk-Grenzen", null); // TODO TOGGLE
 
 	private static final Color BLUE = new Color(0x3F3FFF);
 	private static final Color CYAN = new Color(0x009B9B);

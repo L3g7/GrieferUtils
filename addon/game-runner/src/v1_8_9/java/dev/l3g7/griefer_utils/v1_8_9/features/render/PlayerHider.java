@@ -10,14 +10,13 @@ package dev.l3g7.griefer_utils.v1_8_9.features.render;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.PlaySoundAtEntityEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.PlaySoundEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderPlayerEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
@@ -33,17 +32,6 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.world;
 public class PlayerHider extends Feature {
 
 	private static final List<String> BLOCKED_SOUNDS = Arrays.asList("random.eat", "random.burp", "random.drink");
-
-	private final KeySetting key = KeySetting.create()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der das Verstecken von Spielern an-/ausgeschalten wird.")
-		.pressCallback(pressed -> {
-			if (pressed) {
-				SwitchSetting enabled = ((SwitchSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
 
 	private final SwitchSetting showNPCs = SwitchSetting.create()
 		.name("NPCs zeigen")
@@ -71,7 +59,8 @@ public class PlayerHider extends Feature {
 				for (EntityPlayer player : world().playerEntities)
 					updatePlayer(player);
 		})
-		.subSettings(key, showNPCs, HeaderSetting.create("Ausgenommene Spieler")/*TODO:, excludedPlayers*/);
+		.subSettings(showNPCs, HeaderSetting.create("Ausgenommene Spieler")/*TODO:, excludedPlayers*/)
+		.addHotkeySetting("das Verstecken von Spielern", null);
 
 //	{ excludedPlayers.setContainer(enabled); }
 

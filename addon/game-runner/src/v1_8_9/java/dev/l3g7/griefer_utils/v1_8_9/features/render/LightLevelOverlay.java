@@ -9,11 +9,11 @@ package dev.l3g7.griefer_utils.v1_8_9.features.render;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.types.*;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.types.NumberSetting;
+import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderWorldLastEvent;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.v1_8_9.misc.TriggerModeSetting;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
@@ -33,7 +33,6 @@ import org.lwjgl.opengl.GL11;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dev.l3g7.griefer_utils.v1_8_9.misc.TriggerModeSetting.TriggerMode.HOLD;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 
 @Singleton
@@ -44,24 +43,6 @@ public class LightLevelOverlay extends Feature {
 	private final double[] textureX = new double[17];
 	private final double[] textureY = new double[9];
 	private int passedTicks = 0;
-
-	private final DropDownSetting<TriggerModeSetting.TriggerMode> triggerMode = TriggerModeSetting.create()
-		.description("Halten: Zeigt das Lichtlevel an, während die Taste gedrückt wird.\nUmschalten: Schaltet das Anzeigen des Lichtlevels um, wenn die Taste gedrückt wird.")
-		.callback(() -> {
-			if (getMainElement() != null)
-				((SwitchSetting) getMainElement()).set(false);
-		});
-
-	private final KeySetting key = KeySetting.create()
-		.name("Taste")
-		.icon("key")
-		.description("Die Taste, mit der das Lichtlevel angezeigt wird.")
-		.pressCallback(p -> {
-			if (p || triggerMode.get() == HOLD) {
-				SwitchSetting enabled = ((SwitchSetting) getMainElement());
-				enabled.set(!enabled.get());
-			}
-		});
 
 	private final NumberSetting range = NumberSetting.create()
 		.name("Radius")
@@ -80,7 +61,8 @@ public class LightLevelOverlay extends Feature {
 		.name("Lichtlevel anzeigen")
 		.description("Zeigt das Lichtlevel auf Blöcken an.")
 		.icon("light_bulb")
-		.subSettings(key, triggerMode, HeaderSetting.create(), range, updateDelay);
+		.subSettings(range, updateDelay)
+		.addHotkeySetting("das Anzeigen des Lichtlevels", null); //TODO TOGGLE
 
 	public LightLevelOverlay() {
 		for (int i = 0; i <= 16; i++)

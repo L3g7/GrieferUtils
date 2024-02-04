@@ -17,4 +17,6 @@ public interface SwitchSetting extends AbstractSetting<SwitchSetting, Boolean> {
 
 	SwitchSetting asCheckbox();
 
+	SwitchSetting addHotkeySetting(String whatActivates, Object defaultTriggerMode);
+
 }

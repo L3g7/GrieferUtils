@@ -51,4 +51,10 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 		return this;
 	}
 
+	@Override
+	public SwitchSetting addHotkeySetting(String whatActivates, Object defaultTriggerMode) {
+		// TODO
+		return this;
+	}
+
 }

@@ -107,7 +107,11 @@
     <td><a href="https://apps.apple.com/us/app/calculator/id1069511488">Apple calculator</a></td>
   </tr>
   <tr>
-    <td><a href="camera.png"><img src="camera.png" height=16em width=16em />&nbsp;&nbsp;camera.png </a></td>
+    <td><a href="crossed_out_block_outline.png"><img src="crossed_out_block_outline.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_block_outline.png </a></td>
+    <td><a href="https://modrinth.com/mod/antighost">Giselbaer</a></td>
+  </tr>
+  <tr>
+    <td><a href="crossed_out_camera.png"><img src="crossed_out_camera.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_camera.png </a></td>
     <td><a href="https://www.shutterstock.com/de/image-vector/movie-camera-pixel-art-32-bit-2191871743">Shutterstock (pixelpnj)</a></td>
   </tr>
   <tr>
@@ -221,6 +225,10 @@
   <tr>
     <td><a href="key.png"><img src="key.png" height=16em width=16em />&nbsp;&nbsp;key.png </a></td>
     <td><a href="https://betterttv.com/emotes/5c857788f779543bcdf37124">BetterTTV (CoobieXD)</a></td>
+  </tr>
+  <tr>
+    <td><a href="knowledge_book.png"><img src="knowledge_book.png" height=16em width=16em />&nbsp;&nbsp;knowledge_book.png </a></td>
+    <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/knowledge_book.png">Minecraft asset</a></td>
   </tr>
   <tr>
     <td><a href="left_click.png"><img src="left_click.png" height=16em width=16em />&nbsp;&nbsp;left_click.png </a></td>

@@ -1,8 +1,19 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
+ *
+ * Copyright 2020-2024 L3g7
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft;
@@ -11,12 +22,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftPlayer;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe.RecipePlayer;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Blocks;
@@ -32,15 +45,15 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 @Singleton
 public class Recraft extends Feature {
 
-	static final RecraftRecording tempRecording = new RecraftRecording();
+	public static final RecraftRecording tempRecording = new RecraftRecording();
 
 	private final KeySetting key = KeySetting.create()
 		.name("Letzten Aufruf wiederholen")
-		.description("Wiederholt den letzten \"/rezepte\" Aufruf.")
+		.description("Wiederholt den letzten \"/rezepte\" oder \"/craft\" Aufruf.")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && isEnabled())
-				RecraftPlayer.play(tempRecording);
+				RecipePlayer.play(tempRecording);
 		});
 
 	private final RecraftPieMenu pieMenu = new RecraftPieMenu();
@@ -70,7 +83,7 @@ public class Recraft extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Recraft")
-		.description("Wiederholt \"/rezepte\" Aufrufe.")
+		.description("Wiederholt \"/rezepte\" oder \"/craft\" Aufrufe.\n\nVielen Dank an Pleezon/AntiBannSystem für die Hilfe beim AutoCrafter §c❤")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.subSettings(key, HeaderSetting.create(), openPieMenu, animation, HeaderSetting.create(), EntryAddSetting.create()
 			.name("Seite hinzufügen")
@@ -79,7 +92,7 @@ public class Recraft extends Feature {
 				long pageNumber = settings.stream().filter(s -> s instanceof RecraftPageSetting).count() + 1;
 				RecraftPageSetting setting = new RecraftPageSetting("Seite " + pageNumber, new ArrayList<>());
 				settings.add(settings.size() - 1, setting);
-				// TODO: mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(this::save, setting));
+//				mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(this::save, setting)); TODO
 			}));
 
 	@Override
@@ -106,6 +119,10 @@ public class Recraft extends Feature {
 
 		Config.set(getConfigKey() + ".pages", jsonPages);
 		Config.save();
+	}
+
+	public static boolean isPlaying() {
+		return RecipePlayer.isPlaying() || CraftPlayer.isPlaying();
 	}
 
 	static <T> List<T> getSubSettingsOfType(BaseSetting<?> container, Class<T> type) {

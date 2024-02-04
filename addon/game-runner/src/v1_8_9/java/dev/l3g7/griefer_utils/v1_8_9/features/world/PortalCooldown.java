@@ -9,12 +9,12 @@ package dev.l3g7.griefer_utils.v1_8_9.features.world;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;

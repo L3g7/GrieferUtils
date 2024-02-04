@@ -50,7 +50,7 @@ public class ItemFrameLimitIndicator extends Laby4Module {
 	@Override
 	public Object getValue() {
 		if (player() == null || world() == null)
-			return Component.text("0 / " + limit.get(), TextColor.color(0x00FF00));
+			return Component.empty().append(Component.text("0 / " + limit.get(), TextColor.color(applyColor.get() ? calculateColor(0) : -1)));
 
 		Chunk chunk = world().getChunkFromChunkCoords(player().chunkCoordX, player().chunkCoordZ);
 		int entities = 0;

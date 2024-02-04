@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
 import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.laby4.settings.OffsetIcon;
 import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
@@ -25,7 +26,6 @@ import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
-import net.labymod.api.client.render.font.RenderableComponent;
 import net.minecraft.init.Items;
 
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.display;
@@ -92,14 +92,14 @@ public class SpawnCounter extends Laby4Module {
 		Component value = Component.empty();
 
 		if (displayType.get() != RoundDisplayType.FLOWN)
-			value.append(Component.icon(SettingsImpl.buildIcon("speed"), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT))
+			value.append(Component.icon(new OffsetIcon(SettingsImpl.buildIcon("speed"), -2, -1), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT))
 				.append(Component.text(roundHandler.roundsRan));
 
 		if (displayType.get() == RoundDisplayType.BOTH)
 			value.append(Component.text(" "));
 
 		if (displayType.get() != RoundDisplayType.RAN)
-			value.append(Component.icon(SettingsImpl.buildIcon("booster/fly"), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT))
+			value.append(Component.icon(new OffsetIcon(SettingsImpl.buildIcon("booster/fly"), -2, -1), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT)) // NOTE: cleanup
 				.append(Component.text(roundHandler.roundsFlown));
 
 		if (leaderboard.get() == LeaderboardDisplayType.COMPACT)
@@ -108,16 +108,8 @@ public class SpawnCounter extends Laby4Module {
 		return value;
 	}
 
-	TextLine createRawLine() {
-		TextLine textLine = new TextLine(this, (Component) null, "") {
-			@Override
-			protected void flushInternal() {
-				this.renderableComponent = RenderableComponent.builder().disableCache().format(this.valueComponent);
-			}
-		};
-
+	void addLine(TextLine textLine) {
 		lines.add(textLine);
-		return textLine;
 	}
 
 	@Override

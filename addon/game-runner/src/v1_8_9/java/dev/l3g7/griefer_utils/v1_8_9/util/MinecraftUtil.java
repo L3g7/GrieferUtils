@@ -62,7 +62,8 @@ public class MinecraftUtil {
 	public static float           partialTicks()    { return LabyBridge.labyBridge.partialTicks(); }
 
 	public static UUID uuid() {
-		return mc().getSession().getProfile().getId();
+		UUID uuid = mc().getSession().getProfile().getId();
+		return uuid == null ? UUID.fromString("0-0-0-0-0") : uuid;
 	}
 
 	public static AxisAlignedBB axisAlignedBB(Vec3d a, Vec3d b) {

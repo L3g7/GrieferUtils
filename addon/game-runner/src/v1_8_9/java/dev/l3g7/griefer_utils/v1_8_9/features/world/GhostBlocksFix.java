@@ -9,16 +9,16 @@ package dev.l3g7.griefer_utils.v1_8_9.features.world;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.events.BlockBrokeEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.v1_8_9.events.BlockEvent.BlockBrokeEvent;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.ABORT_DESTROY_BLOCK;
 
 @Singleton
-public class FixGhostBlocks extends Feature {
+public class GhostBlocksFix extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

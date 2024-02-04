@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.events.BlockInteractEvent;
+import dev.l3g7.griefer_utils.v1_8_9.events.BlockEvent.BlockInteractEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.ItemSaverCategory.ItemSaver;
 import dev.l3g7.griefer_utils.v1_8_9.features.world.ItemSearch;

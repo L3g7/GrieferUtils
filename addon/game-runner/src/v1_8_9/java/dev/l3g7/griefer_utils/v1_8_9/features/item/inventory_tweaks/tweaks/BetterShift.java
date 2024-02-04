@@ -35,10 +35,11 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Besseres Shiften")
-		.description("Ermöglicht das Verschieben von Items \"Shift + Klick\" in einigen Eingaben."
-			+ "\n- Werkbank"
-			+ "\n- Spieler-Crafting §o(Shift + Alt + Klick)§r"
-			+ "\n- Dorfbewohner")
+		.description("""
+			Ermöglicht das Verschieben von Items "Shift + Klick" in einigen Eingaben.
+			- Werkbank
+			- Spieler-Crafting §o(Shift + Alt + Klick)§r
+			- Dorfbewohner""")
 		.icon(Blocks.crafting_table);
 
 	@EventListener
@@ -65,13 +66,12 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onGuiVillagerClick(WindowClickEvent event) {
-		if (!enabled.get() || !(mc().currentScreen instanceof GuiMerchant))
+		if (!enabled.get() || !(mc().currentScreen instanceof GuiMerchant screen))
 			return;
 
 		if (event.mode != 1 || event.slotId <= 2)
 			return;
 
-		GuiMerchant screen = (GuiMerchant) mc().currentScreen;
 		Container slots = screen.inventorySlots;
 
 		ItemStack movedStack = slots.getSlot(event.slotId).getStack();
@@ -155,7 +155,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 		event.cancel();
 		click(event, event.slotId);
 		int finalTargetSlot = targetSlot;
-		TickScheduler.runAfterClientTicks(() -> click(event, finalTargetSlot), requiresDelay(movedStack) ? 2 : 0);
+		TickScheduler.runAfterClientTicks(() -> click(event, finalTargetSlot), requiresDelay(movedStack) ? 3 : 0);
 	}
 
 	private void click(WindowClickEvent event, int slot) {

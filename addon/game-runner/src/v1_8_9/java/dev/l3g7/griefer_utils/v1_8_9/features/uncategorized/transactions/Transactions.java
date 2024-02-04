@@ -7,50 +7,39 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.transactions;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonWriter;
-import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
-import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.laby4.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
 import dev.l3g7.griefer_utils.v1_8_9.misc.mysterymod_connection.MysteryModConnection;
 import dev.l3g7.griefer_utils.v1_8_9.misc.mysterymod_connection.MysteryModConnection.State;
 import dev.l3g7.griefer_utils.v1_8_9.misc.mysterymod_connection.packets.transactions.RequestTransactionsPacket;
 import dev.l3g7.griefer_utils.v1_8_9.misc.mysterymod_connection.packets.transactions.Transaction;
 import dev.l3g7.griefer_utils.v1_8_9.misc.mysterymod_connection.packets.transactions.TransactionsPacket;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
+import net.labymod.api.Laby;
+import net.labymod.api.client.component.TextComponent;
+import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.screen.widget.widgets.ComponentWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.minecraft.init.Items;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.uuid;
 
 @Singleton
-public class Transactions extends Feature {
+public class Transactions extends Feature { // NOTE: search, export
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	private static final List<BaseSetting<?>> HEADER = Arrays.asList(
@@ -62,7 +51,8 @@ public class Transactions extends Feature {
 	);
 
 	private final Set<Transaction> transactions = Collections.synchronizedSet(new TreeSet<>());
-	private final Gson PRETTY_PRINTING_GSON = new GsonBuilder().setPrettyPrinting().create();
+
+	private SettingWidget settingWidget;
 
 	@MainElement
 	private final CategorySetting setting = CategorySetting.create()
@@ -89,8 +79,34 @@ public class Transactions extends Feature {
 			// Send Transaction packet every 3s
 			MysteryModConnection.eventLoopGroup.scheduleAtFixedRate(() -> event.ctx.writeAndFlush(new RequestTransactionsPacket(uuid())), 0, 3, TimeUnit.SECONDS);
 		} else {
-			setting.name("§c§mTransaktionen")
-				.description("§cMysteryMod ist nicht erreichbar:", state.errorMessage, "", "Joine auf einen Server, um die Verbindung erneut zu versuchen!");
+			setting.name("§cTransaktionen")
+				.description("§cMysteryMod ist nicht erreichbar:", state.errorMessage, "", "Joine auf einen Server, um die Verbindung erneut zu versuchen!")
+				.disable();
+		}
+
+		if (settingWidget != null)
+			Laby.labyAPI().minecraft().executeOnRenderThread(() -> settingWidget.reInitialize());
+	}
+
+	@EventListener
+	public void onInit(SettingActivityInitEvent event) {
+		// Grab settingWidget for reloading
+		if (event.holder() == ((CategorySettingImpl) setting).parent()) {
+			for (Widget child : event.settings().getChildren()) {
+				if (child instanceof SettingWidget widget && widget.setting() == setting) {
+					settingWidget = widget;
+				}
+			}
+		}
+
+		// Fix title for subsettings
+		else if (event.holder().parent() == setting) {
+			ComponentWidget titleWidget = event.get("setting-header", "title");
+			TextComponent title = (TextComponent) titleWidget.component();
+			String id = Reflection.<TextComponent>get(event.settings().getChildren().remove(0), "displayName").getText();
+
+			title.text(title.getText().replaceAll("§[aec]", "§f") + "§r §7(#" + id + ")");
+
 		}
 	}
 
@@ -98,47 +114,16 @@ public class Transactions extends Feature {
 		List<BaseSetting<?>> list = setting.getSubSettings();
 
 		list.clear();
-		list.addAll(HEADER);
+		list.add(HeaderSetting.createText("Transaktionen der letzten 30 Tage", "Die Beträge sind abgerundet!").center());
 
 		// Add transactions count
+		list.add(HeaderSetting.create("§r"));
 		list.add(HeaderSetting.create("Insgesamt " + (transactions.size() == 1 ? "eine Transaktion" : transactions.size() + " Transaktionen")));
-		list.add(HeaderSetting.create("§r").scale(.4).entryHeight(10));
-
-		// Add export setting
-		DropDownSetting<ExportFormat> export = DropDownSetting.create(ExportFormat.class) // TODO:, 1)
-			.name("Transaktionen exportierten")
-			.defaultValue(ExportFormat.NO_SELECTION)
-			.icon(Items.writable_book);
-
-		export.callback(format -> {
-			if (format == ExportFormat.NO_SELECTION)
-				return;
-
-			try {
-				export(format);
-			} catch (IOException e) {
-				LabyBridge.labyBridge.notifyError("Datei konnte nicht erstellt werden.");
-				e.printStackTrace();
-			}
-
-			export.set(ExportFormat.NO_SELECTION);
-		});
-
-		list.add(export);
-
-		// Add filter
-		StringSetting filter = StringSetting.create()
-			.name("Suche")
-			.icon("magnifying_glass")
-			.callback(this::updateFilter);
-
-		list.add(filter);
-		list.add(HeaderSetting.create("§r").entryHeight(10));
 
 		// Add transactions
 		List<Transaction> transactions = new ArrayList<>(this.transactions);
 		for (Transaction t : transactions) {
-			if (t.recipientname == null)
+			if (t.recipientname == null || t.recipientname.equals("muchelchen") || t.recipientname.equals("1Stocki") || t.username.equals("L3g73"))
 				continue;
 
 			Direction direction = Direction.get(t);
@@ -146,135 +131,40 @@ public class Transactions extends Feature {
 			String amountStr = Constants.DECIMAL_FORMAT_98.format(t.amount);
 			String title = "§l" + amountStr + "$§";
 
-			List<BaseSetting<?>> subSettings = new ArrayList<>(Arrays.asList(
-				HeaderSetting.create("§r"),
-				HeaderSetting.create("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-				HeaderSetting.create("§f§lTransaktion #" + t.id).scale(.7)
-			));
+			List<BaseSetting<?>> subSettings = new ArrayList<>();
+			subSettings.add(HeaderSetting.create(String.valueOf(t.id))); // Removed and merged into header by onInit method
+
+			String icon = "outgoing_gray";
 
 			// Add sender/receiver by direction
 			switch (direction) {
 				case SENT:
 					title = "§c" + title + "c an §l" + t.recipientname;
-					subSettings.add(HeaderSetting.create("§lEmpfänger: §r" + t.recipientname).entryHeight(11));
+					icon = "outgoing";
+					subSettings.add(CategorySetting.create().name("§lEmpfänger: §r" + t.recipientname).icon("yellow_name"));
 					break;
 				case RECEIVED:
 					title = "§a" + title + "a von §l" + t.username;
-					subSettings.add(HeaderSetting.create("§lSender: §r" + t.username).entryHeight(11));
+					icon = "ingoing";
+					subSettings.add(CategorySetting.create().name("§lSender: §r" + t.username).icon("yellow_name"));
 					break;
 				case SELF:
 					title = "§e" + title + "e an dich";
+					icon = "inoutgoing";
 					break;
 			}
 
 			// Add amount and timestamp
-			subSettings.add(HeaderSetting.create("§lBetrag: §r" + amountStr + "$").entryHeight(11));
-			subSettings.add(HeaderSetting.create("§lZeitpunkt: §r" + DATE_FORMAT.format(new Date(t.timestamp))).entryHeight(11));
+			subSettings.add(CategorySetting.create().name("§lBetrag: §r" + amountStr + "$").icon("coin_pile"));
+			subSettings.add(CategorySetting.create().name("§lZeitpunkt: §r" + DATE_FORMAT.format(new Date(t.timestamp))).icon(Items.clock));
 
-			list.add(CategorySetting.create().name(" " + title).subSettings(subSettings));
+			list.add(CategorySetting.create().name(" " + title).icon("wallets/" + icon).subSettings(subSettings));
 		}
 
 		// Update
-		TickScheduler.runAfterRenderTicks(() -> {
-/*TODO:			if (!(mc().currentScreen instanceof LabyModAddonsGui))
-				return;
-
-			if (path().size() == 0 || path().get(path().size() - 1) != setting)
-				return;*/
-
-			updateFilter();
-		}, 1);
-	}
-
-	private void updateFilter() {
-		TickScheduler.runAfterRenderTicks(() -> {
-/*TODO:			if (!(mc().currentScreen instanceof LabyModAddonsGui))
-				return;*/
-
-			List<BaseSetting<?>> listedElementsStored = new ArrayList<>(Reflection.get(mc().currentScreen, "listedElementsStored"));
-			listedElementsStored.removeIf(setting -> setting instanceof CategorySetting);
-
-			StringSetting filterSetting = listedElementsStored.stream()
-				.filter(s -> s instanceof StringSetting)
-				.map(s -> (StringSetting) s)
-				.findFirst().orElse(null);
-
-			String filter = filterSetting == null ? "" : filterSetting.get();
-			boolean dotMode = filter.contains(".");
-
-			getMainElement().getSubSettings().stream()
-				.filter(setting -> {
-					if (!(setting instanceof CategorySetting))
-						return false;
-
-					String text = setting.name().toLowerCase()
-						.replaceAll("§.", "");
-
-					if (!dotMode)
-						text = text.replace(".", "");
-
-					return text.contains(filter.toLowerCase());
-				})
-				.forEach(listedElementsStored::add);
-			Reflection.set(mc().currentScreen, "listedElementsStored", listedElementsStored);
-		}, 1);
-	}
-
-	@SuppressWarnings("ResultOfMethodCallIgnored")
-	private void export(ExportFormat format) throws IOException {
-		File file = new File("GrieferUtils", "Transaktionen." + format.fileSuffix);
-		file.getParentFile().mkdirs();
-		if (file.exists())
-			file.delete();
-		file.createNewFile();
-
-		List<Transaction> transactions = new ArrayList<>(this.transactions);
-
-		try (OutputStream stream = Files.newOutputStream(file.toPath());
-		     OutputStreamWriter writer = new OutputStreamWriter(stream)) {
-			switch (format) {
-				case TEXT:
-					for (Transaction t : transactions) {
-						String date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(t.timestamp));
-						String typeString = t.username.equals(MinecraftUtil.name()) ? t.username.equals(t.recipientname) ? "an dich selbst gezahlt" : "an " + t.recipientname + " gezahlt" : "von " + t.username + " bekommen";
-						String amount = String.valueOf(t.amount).replaceFirst("\\.0*$|(\\.\\d*?)0+$", "$1");
-						writer.write(String.format("[%s] $%s %s%n", date, amount, typeString));
-					}
-					break;
-
-				case CSV:
-					writer.write("Transaktionsid;Sender;Empfänger;Sender-Id;Empfänger-Id;Betrag;Zeitpunkt\n");
-					for (Transaction t : transactions)
-						writer.write(String.format("%s;%s;%s;%s;%s;%s;%s%n", t.id, t.username, t.recipientname, t.userId, t.recipientId, t.amount, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(t.timestamp))));
-					break;
-
-				case JSON:
-					JsonArray beautifiedTransactions = new JsonArray();
-					for (Transaction t : transactions) {
-						JsonObject object = new JsonObject();
-						object.addProperty("transaction_id", t.id);
-						object.addProperty("sender_name", t.username);
-						object.addProperty("receiver_name", t.recipientname);
-						object.addProperty("sender_uuid", t.userId);
-						object.addProperty("receiver_uuid", t.recipientId);
-						object.addProperty("amount", t.amount);
-						object.addProperty("unix_timestamp", t.timestamp);
-						beautifiedTransactions.add(object);
-					}
-
-					try (JsonWriter jsonWriter = new JsonWriter(writer)) {
-						jsonWriter.setIndent("\t");
-						PRETTY_PRINTING_GSON.toJson(beautifiedTransactions, jsonWriter);
-					}
-					break;
-
-				case PPTX:
-					new TransactionPPTXWriter(transactions, stream).write();
-					break;
-			}
-		}
-
-		Desktop.getDesktop().open(file);
+		setting.subSettings(list.toArray(BaseSetting[]::new));
+		if (settingWidget != null)
+			Laby.labyAPI().minecraft().executeOnRenderThread(() -> settingWidget.reInitialize());
 	}
 
 	public enum Direction {
@@ -289,29 +179,6 @@ public class Transactions extends Feature {
 			else
 				return RECEIVED;
 		}
-	}
-
-	enum ExportFormat implements Named {
-
-		NO_SELECTION("§7-", null),
-		TEXT("Text", "txt"),
-		JSON("JSON", "json"),
-		CSV("CSV", "csv"),
-		PPTX("PPTX", "pptx");
-
-		final String name;
-		final String fileSuffix;
-
-		ExportFormat(String name, String fileSuffix) {
-			this.name = name;
-			this.fileSuffix = fileSuffix;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
 	}
 
 }

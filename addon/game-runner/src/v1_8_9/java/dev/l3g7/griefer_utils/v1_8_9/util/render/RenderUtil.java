@@ -62,7 +62,6 @@ public class RenderUtil {
 	/**
 	 * Renders an item with a given color tint.
 	 */
-	@SuppressWarnings("deprecation")
 	public static void renderItem(ItemStack stack, int x, int y, int color) {
 		IBakedModel model = itemRender.getItemModelMesher().getItemModel(stack);
 
@@ -151,9 +150,15 @@ public class RenderUtil {
 		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.disableTexture2D();
 
+		Object blendState = Reflection.get(GlStateManager.class, "blendState");
+		int originalSrcFactor = Reflection.get(blendState, "srcFactor");
+		int originalDstFactor = Reflection.get(blendState, "dstFactor");
+		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		drawFilledBoxWhenRenderingStarted(bb, drawInside);
 
 		tessellator.draw();
+		GlStateManager.blendFunc(originalSrcFactor, originalDstFactor);
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();
 		GL11.glColor4f(1f, 1f, 1f, 1f);

@@ -69,14 +69,14 @@ public class BetterHopper extends Feature {
 	private static final NumberSetting lastHoppersLimit = NumberSetting.create()
 		.name("Maximale Anzahl an Trichter")
 		.description("Wie viele Trichter maximal angezeigt werden.")
-		.icon(Material.HOPPER)
+		.icon(Blocks.hopper)
 		.min(1)
 		.defaultValue(1);
 
 	private static final SwitchSetting showLastHopper = SwitchSetting.create()
 		.name("Letzte Trichter anzeigen")
 		.description("Markiert die Trichter, die als letztes geöffnet wurden.")
-		.icon(Material.WATCH)
+		.icon(Blocks.hopper)
 		.subSettings(lastHoppersLimit);
 
 	private static final SwitchSetting sneakMode = SwitchSetting.create()

@@ -39,6 +39,8 @@ public class ShowNametagsThroughWalls extends Feature {
 		.description("Zeigt Nametags auch durch Wände an.\n(Funktioniert nicht bei Spielern)")
 		.icon("yellow_name");
 
+	// NOTE Implement https://github.com/L3g7/GrieferUtils/commit/421d52f50619ddf05f942548d70b0c9648614b6c when merging with LabyMod 3
+
 	@Mixin(RenderLiving.class)
 	@ExclusiveTo(LABY_3)
 	private static abstract class MixinRenderLiving extends RendererLivingEntity<EntityLiving> {

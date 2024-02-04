@@ -41,7 +41,7 @@ public abstract class Feature implements Disableable {
 
 	private SwitchSetting findCategory(Package pkg) {
 		if (pkg == null)
-			return categories.computeIfAbsent(null, p -> SwitchSetting.create());
+			return categories.computeIfAbsent(null, p -> SwitchSetting.create().defaultValue(true));
 
 		if (pkg.isAnnotationPresent(Category.class)) {
 			Category meta = pkg.getAnnotation(Category.class);

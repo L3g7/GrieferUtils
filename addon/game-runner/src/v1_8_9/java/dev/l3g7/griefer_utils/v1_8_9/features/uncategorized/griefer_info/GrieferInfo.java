@@ -79,7 +79,10 @@ public class GrieferInfo extends Feature {
 		String player = event.itemStack.getTagCompound().getString("Player");
 
 		Optional<String> profileLink = profileLinks.get(player).getNow(Optional.empty());
-		labyBridge.openWebsite(profileLink.orElse("https://griefer.info/profile?keyword=" + player));
+		if (profileLink.isPresent() && profileLink.get().isEmpty())
+			labyBridge.notify("§e§lFehler \u26A0", "§eDieser Spieler hat kein Profil!");
+		else
+			labyBridge.openWebsite(profileLink.orElse("https://griefer.info/profile?keyword=" + player));
 	}
 
 }

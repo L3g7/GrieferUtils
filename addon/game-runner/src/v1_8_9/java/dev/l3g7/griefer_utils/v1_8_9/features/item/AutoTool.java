@@ -23,7 +23,6 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemSaver;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.tool_saver.ToolSaver;
 import dev.l3g7.griefer_utils.v1_8_9.features.modules.MissingAdventurerBlocks;
@@ -114,7 +113,7 @@ public class AutoTool extends Feature {
 		.icon(ItemUtil.createItem(Items.diamond_pickaxe, 0, true))
 		.defaultValue(false)
 		.subSettings(HeaderSetting.create(), preference, switchBack, enforceSilkTouch)
-		.addHotkeySetting();
+		.addHotkeySetting("die automatische Werkzeugauswahl", null);
 
 	private int previousSlot = -1;
 

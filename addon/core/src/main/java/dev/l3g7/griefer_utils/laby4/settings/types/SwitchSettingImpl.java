@@ -57,15 +57,17 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 
 	@Override
 	public SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode) {
-		addSetting(0, HeaderSetting.create());
-
 		DropDownSettingImpl<TriggerMode> triggerMode = (DropDownSettingImpl<TriggerMode>) DropDownSetting.create(TriggerMode.class)
 			.name("Auslösung")
 			.icon("lightning")
 			.inferConfig("triggerMode")
 			.defaultValue(defaultTriggerMode)
 			.callback(() -> set(false));
-		addSetting(0, triggerMode);
+
+		if (defaultTriggerMode != null) {
+			addSetting(0, HeaderSetting.create());
+			addSetting(0, triggerMode);
+		}
 
 		KeySettingImpl key = (KeySettingImpl) KeySetting.create()
 			.name("Taste")
@@ -77,11 +79,9 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 			});
 		addSetting(0, key);
 
-		if (whatActivates != null) {
-			key.description("Welche Taste " + whatActivates + " aktiviert.");
-			triggerMode.description("Halten: Aktiviert " + whatActivates + ", während die Taste gedrückt wird.",
-				"Umschalten: Schaltet " + whatActivates + " um, wenn die Taste gedrückt wird.");
-		}
+		key.description("Welche Taste " + whatActivates + " aktiviert.");
+		triggerMode.description("Halten: Aktiviert " + whatActivates + ", während die Taste gedrückt wird.",
+			"Umschalten: Schaltet " + whatActivates + " um, wenn die Taste gedrückt wird.");
 		return this;
 	}
 

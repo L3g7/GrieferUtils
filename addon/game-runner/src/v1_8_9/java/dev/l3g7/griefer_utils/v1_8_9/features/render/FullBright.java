@@ -30,7 +30,7 @@ public class FullBright extends Feature {
 		.name("FullBright")
 		.description("Stellt den Gammawert auf 10.")
 		.icon("light_bulb")
-		.addHotkeySetting()
+		.addHotkeySetting("FullBright", null)
 		.callback(active -> {
 			if (active) {
 				float gamma = mc().gameSettings.gammaSetting;

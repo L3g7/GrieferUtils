@@ -82,17 +82,17 @@ public class SettingLoader { // NOTE: cleanup
 
 	private static void load(Object owner, BaseSetting<?> element, String key, String identifier) {
 		if (element instanceof AbstractSetting<?, ?> abs) {
-			if (abs.getStorage().subsettingConfig)
-				loadSubSettings(owner, element, key);
-
 			try {
 				if (!element.getSubSettings().isEmpty() && abs.getStorage().subsettingConfig)
-					key += ".value";
-
-				((AbstractSetting<?, ?>) element).config(key);
+					abs.config(key + ".value");
+				else
+					abs.config(key);
 			} catch (Throwable t) {
 				throw Util.elevate(t, "loading config for %s failed!", identifier);
 			}
+
+			if (abs.getStorage().subsettingConfig)
+				loadSubSettings(owner, element, key);
 		} else
 			loadSubSettings(owner, element, key);
 	}

@@ -54,7 +54,11 @@ public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>
 		MultiKeybindWidget widget = new MultiKeybindWidget(v -> this.set(Arrays.stream(v).map(Key::getId).collect(Collectors.toSet())));
 		widget.placeholder(placeholder);
 		widget.setKeys(get().stream().map(Key::get).collect(Collectors.toSet()));
-		callback(newValue -> widget.setKeys(get().stream().map(Key::get).collect(Collectors.toSet())));
+		callback(newValue -> {
+			Set<Key> keys = widget.getKeys();
+			keys.clear();
+			get().stream().map(Key::get).forEach(keys::add);
+		});
 
 		return new Widget[]{widget};
 	}

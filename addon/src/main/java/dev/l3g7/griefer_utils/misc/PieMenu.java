@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
+import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.MouseEvent;
 import dev.l3g7.griefer_utils.event.events.render.RenderGameOverlayEvent;
 import dev.l3g7.griefer_utils.event.events.render.ScaledResolutionInitEvent;
@@ -97,6 +98,11 @@ public abstract class PieMenu extends Gui implements Disableable {
 
 		if (hoveredRunnable != null)
 			hoveredRunnable.run();
+	}
+
+	@EventListener
+	private void onGuiOpen(GuiOpenEvent<?> event) {
+		close();
 	}
 
 	@EventListener

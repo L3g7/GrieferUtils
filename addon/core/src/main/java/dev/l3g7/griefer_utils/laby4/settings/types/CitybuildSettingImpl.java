@@ -25,7 +25,18 @@ import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, Citybuild> implements CitybuildSetting {
 
 	public CitybuildSettingImpl() {
-		super(e -> new JsonPrimitive(e.name()), e -> Citybuild.valueOf(e.getAsString()), Citybuild.ANY); // FIXME check config compatibility
+		super(e -> {
+			String name = e.name();
+			if (e == Citybuild.ANY) {
+				name = "Egal";
+			} else if (!e.name().startsWith("CB")) {
+				StringBuilder sb = new StringBuilder(name.toLowerCase());
+				sb.setCharAt(0, e.name().charAt(0));
+				name = sb.toString();
+			}
+
+			return new JsonPrimitive(name);
+		}, e -> Citybuild.getCitybuild(e.getAsString()), Citybuild.ANY);
 	}
 
 	@Override

@@ -66,7 +66,7 @@ public class BetterSchematica extends Feature {
 		super.init();
 
 		if (!SCHEMATICA) {
-			enabled.name("Besseres Schematica")
+			enabled.name("§7Besseres Schematica")
 				.description("Verbessert Schematica.\n\n(Schematica ist nicht installiert.)")
 				.set(false)
 				.disable()

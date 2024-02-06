@@ -95,7 +95,6 @@ public class BadgeManager {
 	@EventListener
 	private static void onWebData(WebDataReceiveEvent event) {
 		specialBadges = event.data.specialBadges;
-		specialBadges.put(UUID.fromString("75bbfffc-e53c-41f0-9db7-dd2ec6de3673"), specialBadges.get(UUID.fromString("2b453b54-baec-4c83-b323-b242d341079c")));
 		Credits.addTeam();
 	}
 

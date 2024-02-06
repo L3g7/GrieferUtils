@@ -17,6 +17,7 @@ import net.labymod.api.Textures;
 import net.labymod.api.client.resources.ResourceLocation;
 import net.labymod.core.client.render.schematic.Schematic;
 import net.labymod.core.client.render.schematic.block.Block;
+import net.labymod.core.configuration.labymod.LabyConfigProvider;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -51,8 +52,12 @@ public class MainMenuSkull {
 				labyBridge.notify("§e§lNeustart benötigt ⚠", "Um den Kopf " + action + ", muss Minecraft neugestartet werden.");
 			}
 		})
-		.config("settings.auto_update.show_screen")
+		.config("settings.main_menu_skull")
 		.defaultValue(true);
+
+	static {
+		LabyConfigProvider.INSTANCE.get().appearance().dynamicBackground().enabled().addChangeListener(enabled::enabled);
+	}
 
 	@Mixin(Schematic.class)
 	@ExclusiveTo(LABY_4)

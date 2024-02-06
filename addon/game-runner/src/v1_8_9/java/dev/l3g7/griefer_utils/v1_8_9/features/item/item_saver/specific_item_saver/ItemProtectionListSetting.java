@@ -158,7 +158,7 @@ public class ItemProtectionListSetting extends ListSetting implements BaseSettin
 		if (event.holder() != this)
 			return;
 
-		// Update ProtectedItemSettingEntry widgets
+		// Update ItemProtectionEntry widgets
 		for (Widget w : event.settings().getChildren()) {
 			if (w instanceof SettingWidget s && s.setting() instanceof ItemProtectionEntry entry) {
 				SettingsImpl.hookChildAdd(s, e -> {

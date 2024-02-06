@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 
+import java.io.File;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
@@ -63,6 +64,11 @@ public interface LabyBridge {
 	void displayInChat(String message);
 
 	void openWebsite(String url);
+
+	/**
+	 * @return whether the file was opened successfully
+	 */
+	boolean openFile(File file);
 
 	// Events
 

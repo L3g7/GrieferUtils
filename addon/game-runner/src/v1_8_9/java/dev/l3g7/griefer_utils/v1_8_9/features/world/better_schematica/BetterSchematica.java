@@ -28,9 +28,6 @@ import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.v1_8_9.util.SchematicaUtil;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 
-import java.awt.*;
-import java.io.IOException;
-
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.api.misc.Constants.SCHEMATICA;
 
@@ -129,11 +126,8 @@ public class BetterSchematica extends Feature {
 		if (!betterSchematica.openMaterialFile.get())
 			return;
 
-		try {
-			Desktop.getDesktop().open(SchematicaUtil.MATERIAL_FILE);
-		} catch (IOException e) {
+		if (!labyBridge.openFile(SchematicaUtil.MATERIAL_FILE))
 			labyBridge.notifyMildError("Datei konnte nicht geöffnet werden");
-		}
 	}
 
 	public static void writeErrorMessage() {

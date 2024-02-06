@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.laby4.bridges;
 
+import dev.l3g7.griefer_utils.api.BugReporter;
 import dev.l3g7.griefer_utils.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
@@ -28,13 +29,16 @@ import net.labymod.api.event.client.network.server.ServerDisconnectEvent;
 import net.labymod.api.event.client.network.server.ServerJoinEvent;
 import net.labymod.api.event.client.session.SessionUpdateEvent;
 import net.labymod.api.event.method.SubscribeMethod;
+import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.models.addon.info.InstalledAddonInfo;
 import net.labymod.api.notification.Notification;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.tab.NameHistoryActivity;
 import net.labymod.core.main.LabyMod;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
@@ -93,7 +97,17 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public void openWebsite(String url) {
-		Laby.labyAPI().minecraft().chatExecutor().openUrl(url);
+		OperatingSystem.getPlatform().openUrl(url);
+	}
+
+	@Override
+	public boolean openFile(File file) {
+		try {
+			return OperatingSystem.getPlatform().launchUrlProcess(file.toURI().toURL());
+		} catch (MalformedURLException e) {
+			BugReporter.reportError(e);
+			return false;
+		}
 	}
 
 	@Override

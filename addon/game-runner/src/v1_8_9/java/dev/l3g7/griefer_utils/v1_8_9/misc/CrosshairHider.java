@@ -15,7 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 public class CrosshairHider {
 
-	private static boolean visible;
+	private static boolean visible = true;
+
+	public static boolean isVisible() {
+		return visible;
+	}
 
 	public static void hide() {
 		visible = false;
@@ -30,7 +34,7 @@ public class CrosshairHider {
 
 	    @Inject(method = "showCrosshair", at = @At("HEAD"), cancellable = true)
 	    private void injectShowCrosshair(CallbackInfoReturnable<Boolean> cir) {
-	    	if (!visible)
+	    	if (!isVisible())
 				cir.setReturnValue(false);
 	    }
 

@@ -90,7 +90,8 @@ public class LightLevelOverlay extends Feature {
 					if (world().getBlockState(pos).getBlock() != Blocks.air)
 						continue;
 
-					if (!isUpperSideSolid(world().getBlockState(pos.down()).getBlock(), world(), pos.down()))
+					Block downBlock = world().getBlockState(pos.down()).getBlock();
+					if (!isUpperSideSolid(downBlock, world(), pos.down()) && !(downBlock instanceof BlockFarmland))
 						continue;
 
 					lightPositions.put(pos, world().getLightFor(EnumSkyBlock.BLOCK, pos));

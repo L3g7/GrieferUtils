@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.api.event.event_bus.Disableable;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MouseEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderGameOverlayEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.ScaledResolutionInitEvent;
@@ -86,6 +87,11 @@ public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("gri
 
 		if (hoveredRunnable != null)
 			hoveredRunnable.run();
+	}
+
+	@EventListener
+	private void onGuiOpen(GuiOpenEvent<?> event) {
+		close();
 	}
 
 	@EventListener

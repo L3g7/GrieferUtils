@@ -60,7 +60,7 @@ public class AsyncSkullRenderer {
 
 	private static synchronized void requestSkull(String name) {
 		if (namesRequested.add(name))
-			new Thread(() -> requestedHeads.put(name, ItemUtil.fromNBT("{id:\"minecraft:skull\",Count:1b,tag:{SkullOwner:\"" + name + "\"},Damage:3s}"))).start(); // FIXME ConcurrentModificationException
+			new Thread(() -> requestedHeads.put(name, ItemUtil.fromNBT("{id:\"minecraft:skull\",Count:1b,tag:{SkullOwner:\"" + name + "\"},Damage:3s}"))).start();
 	}
 
 	@OnEnable

@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.v1_8_9.events.MouseEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderGameOverlayEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.ScaledResolutionInitEvent;
+import dev.l3g7.griefer_utils.v1_8_9.misc.CrosshairHider;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.v1_8_9.util.render.GlEngine;
 import net.minecraft.client.Minecraft;
@@ -43,7 +44,6 @@ public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("gri
 
 	private float lockedYaw = 0f;
 	private float lockedPitch = 0f;
-	private boolean prevCrosshairState;
 	private long selectionStarted;
 	protected boolean open = false;
 	private Runnable hoveredRunnable = null;
@@ -63,8 +63,7 @@ public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("gri
 
 		lockedYaw = player().rotationYaw;
 		lockedPitch = player().rotationPitch;
-		prevCrosshairState = false; // FIXME: labyMod().getLabyModAPI().isCrosshairHidden();
-		// FIXME: labyMod().getLabyModAPI().setCrosshairHidden(true);
+		CrosshairHider.hide();
 
 		this.allPages = allPages;
 		if (allPages.size() != 0)
@@ -77,7 +76,7 @@ public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("gri
 		if (!open)
 			return;
 
-		// FIXME: labyMod().getLabyModAPI().setCrosshairHidden(prevCrosshairState);
+		CrosshairHider.show();
 		open = false;
 		if (player() == null)
 			return;
@@ -227,17 +226,9 @@ public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("gri
 		DrawUtils.drawRectBorder(tagX - tagPadding - 1, tagY - tagHeight - tagPadding - 1, tagX + stringWidth + tagPadding + 1, tagY + tagPadding + 1, hover ? MAX_VALUE : MIN_VALUE, 1);
 
 		switch (alignment) {
-			case -1: {
-				DrawUtils.drawRightString(displayName, x, y, size);
-				break;
-			}
-			case 0: {
-				DrawUtils.drawCenteredString(displayName, x, y, size);
-				break;
-			}
-			case 1: {
-				DrawUtils.drawString(displayName, x, y, size);
-			}
+			case -1 -> DrawUtils.drawRightString(displayName, x, y, size);
+			case 0 ->  DrawUtils.drawCenteredString(displayName, x, y, size);
+			case 1 ->  DrawUtils.drawString(displayName, x, y, size);
 		}
 	}
 

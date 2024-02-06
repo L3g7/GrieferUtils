@@ -39,7 +39,7 @@ public class Badges {
 		.description("""
 			Zeigt vor den Namen von Spielern ein GrieferUtils-Icon an, wenn sie das Addon benutzen.
 
-			§nFarben:
+			§nFarben:§r
 			§cRot§r: Offizieller Account / Entwickler
 			§bBlau§r: Entwickler
 			§aGrün§r: Supporter""")

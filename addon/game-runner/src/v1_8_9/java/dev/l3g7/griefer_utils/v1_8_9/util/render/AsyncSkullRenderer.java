@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,11 +24,17 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.name;
 
 public class AsyncSkullRenderer {
 
+	static {
+		// Load class manually
+		TileEntityRendererDispatcher.instance.getFontRenderer();
+	}
+
 	private static final ConcurrentSet<String> namesRequested = new ConcurrentSet<>();
 	private static final ConcurrentHashMap<String, ItemStack> requestedHeads = new ConcurrentHashMap<>();
 
 	public static void renderPlayerSkull(int x, int y) {
-		renderSkull(x, y, mc().getSession().getToken().equals("FML") ? "GrieferUtils" : name());
+		String token = mc().getSession().getToken();
+		renderSkull(x, y, token.equals("FML") || token.equals("0") ? "GrieferUtils" : name());
 	}
 
 	public synchronized static void renderSkull(int x, int y, String name) {

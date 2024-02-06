@@ -10,11 +10,11 @@ package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.laby4.settings.OwnHeadIcon;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.v1_8_9.misc.SkullIcon;
 import dev.l3g7.griefer_utils.v1_8_9.misc.badges.BadgeManager;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.labymod.api.client.component.Component;
@@ -123,7 +123,7 @@ public class Credits {
 	private static CategorySetting createUserSetting() {
 		return CategorySetting.create()
 			.name("Vielen Dank für das Nutzen von GrieferUtils!")
-			.icon(new OwnHeadIcon());
+			.icon(SkullIcon.OWN);
 	}
 
 	private static BaseSetting<?> createTextSetting(String... text) {

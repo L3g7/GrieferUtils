@@ -11,8 +11,8 @@ import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -115,6 +115,7 @@ public class SkullEnchantmentFix extends Feature {
 			// Render enchantment glint
 			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 			glStencilFunc(GL_EQUAL, 1, 1);
+			GlStateManager.enableBlend();
 
 			GlStateManager.translate(-0.035, -0.035, -0.035);
 			GlStateManager.scale(1.07, 1.07, 1.07);

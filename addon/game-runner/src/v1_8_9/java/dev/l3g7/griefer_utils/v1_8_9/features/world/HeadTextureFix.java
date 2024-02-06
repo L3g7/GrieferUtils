@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.v1_8_9.misc.SkullIcon;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -32,7 +33,7 @@ public class HeadTextureFix extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kopf-Texturen fixen")
 		.description("Lädt Kopf-Texturen automatisch nach.")
-		.icon("bookshelf");
+		.icon(SkullIcon.OWN);
 
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());
 	public static final Set<String> processedProfiles = Collections.synchronizedSet(new HashSet<>());

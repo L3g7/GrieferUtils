@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends BaseSetting<S> {
+public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends BaseSetting<S> { // NOTE: add untyped version
 
 	Storage<V> getStorage();
 
@@ -99,6 +99,11 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		return (S) this;
 	}
 
+	default S disableSubsettingConfig() {
+		getStorage().subsettingConfig = false;
+		return (S) this;
+	}
+
 	default String configKey() {
 		return getStorage().configKey;
 	}
@@ -161,6 +166,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		public T value = null;
 		public String configKey = null;
 		private String inferredKey = null;
+		public boolean subsettingConfig = true;
 		public final T fallbackValue;
 		public final List<Consumer<T>> callbacks = new ArrayList<>();
 

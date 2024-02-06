@@ -138,6 +138,7 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 
 				ButtonWidget.icon(X, () -> {
 					values.remove(idx);
+					notifyChange();
 					event.activity.reload();
 				}).addId("delete-button")
 			));

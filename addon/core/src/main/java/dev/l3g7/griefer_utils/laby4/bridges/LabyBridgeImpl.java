@@ -65,13 +65,16 @@ public class LabyBridgeImpl implements LabyBridge {
 	}
 
 	@Override
-	public void notify(String title, String message) {
-		createNotification(title, message).buildAndPush();
+	public void notify(String title, String message, int ms) {
+		createNotification(title, message)
+			.duration(ms)
+			.buildAndPush();
 	}
 
 	@Override
 	public void notifyError(String message) {
 		createNotification("§c§lFehler ⚠", "§c" + message)
+			.duration(15_000)
 			.addButton(Notification.NotificationButton.of(Component.text("Zum Discord"), () -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")))
 			.buildAndPush();
 	}
@@ -80,7 +83,6 @@ public class LabyBridgeImpl implements LabyBridge {
 		return Notification.builder().type(Notification.Type.ADVANCEMENT)
 			.title(Component.text(title))
 			.text(Component.text(message))
-			.duration(15_000)
 			.icon(Icon.sprite(ResourceLocation.create("griefer_utils", "icons/icon.png"), 0, 0, 128, 128, 128, 128));
 	}
 

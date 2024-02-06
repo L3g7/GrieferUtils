@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 import static dev.l3g7.griefer_utils.api.util.Util.elevate;
 
-public class SettingLoader {
+public class SettingLoader { // NOTE: cleanup
 
 	public static MainElementData initMainElement(Object owner, String parentKey) {
 		Class<?> ownerClass = owner.getClass();
@@ -81,18 +81,20 @@ public class SettingLoader {
 	}
 
 	private static void load(Object owner, BaseSetting<?> element, String key, String identifier) {
-		loadSubSettings(owner, element, key);
+		if (element instanceof AbstractSetting<?, ?> abs) {
+			if (abs.getStorage().subsettingConfig)
+				loadSubSettings(owner, element, key);
 
-		if (element instanceof AbstractSetting<?, ?>) {
 			try {
-				if (!element.getSubSettings().isEmpty())
+				if (!element.getSubSettings().isEmpty() && abs.getStorage().subsettingConfig)
 					key += ".value";
 
 				((AbstractSetting<?, ?>) element).config(key);
 			} catch (Throwable t) {
 				throw Util.elevate(t, "loading config for %s failed!", identifier);
 			}
-		}
+		} else
+			loadSubSettings(owner, element, key);
 	}
 
 	public static class MainElementData {

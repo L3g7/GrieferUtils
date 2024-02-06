@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.ProtectionType.ITEM_PICKUP;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
 
@@ -56,7 +57,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 			() -> getHotbarSlot(true, is -> is.getItem() instanceof ItemBlock), // Block
 			() -> getHotbarSlot(true, is -> !is.isItemStackDamageable()), // Not a tool
 			() -> getHotbarSlot(true, is -> true), // Not in the ItemSaver
-			() -> getHotbarSlot(false, is -> !ItemSaver.getSetting(is).extremeDrop.get())}) { // Doesn't have extreme drop enabled
+			() -> getHotbarSlot(false, is -> !ItemSaver.getProtectionFor(is).isProtectedAgainst(ITEM_PICKUP))}) { // Doesn't have pickup protection enabled
 			targetSlot = slotSupplier.get();
 			if (targetSlot != -1)
 				break;
@@ -97,7 +98,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 
 	private int getScore(ItemStack requiredStack, int slot) {
 		ItemStack stack = player().inventory.getStackInSlot(slot);
-		if (stack == null || !stack.isItemEqual(requiredStack) || ItemSaver.getSetting(stack) != null)
+		if (stack == null || !stack.isItemEqual(requiredStack) || ItemSaver.getProtectionFor(stack).isProtected())
 			return -1;
 
 		if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("stackSize"))
@@ -116,7 +117,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 	private int getHotbarSlot(boolean prefilter, Predicate<ItemStack> filter) {
 		ItemStack[] stacks = player().inventory.mainInventory;
 		for (int i = 0; i < 9; i++) {
-			if (prefilter && (stacks[i] == null || ItemSaver.getSetting(stacks[i]) != null))
+			if (prefilter && (stacks[i] == null) || ItemSaver.getProtectionFor(stacks[i]).isProtected())
 				continue;
 
 			if (filter.test(stacks[i]))

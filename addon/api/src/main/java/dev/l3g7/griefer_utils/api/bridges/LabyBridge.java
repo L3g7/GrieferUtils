@@ -45,9 +45,11 @@ public interface LabyBridge {
 
 	// Utility methods
 
-	default void notifyMildError(String message) {labyBridge.notify("§e§lFehler ⚠", "§e" + message);}
+	default void notifyMildError(String message) {notify("§e§lFehler ⚠", "§e" + message);}
 
-	void notify(String title, String message);
+	default void notify(String title, String message) {notify(title, message, 15_000);}
+
+	void notify(String title, String message, int ms);
 
 	/**
 	 * Adds a button redirecting to the support discord server, if supported.

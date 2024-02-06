@@ -22,6 +22,7 @@ import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.RootSettingRegistry;
+import net.labymod.api.configuration.settings.type.SettingElement;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -74,7 +75,10 @@ public class MainPage {
 		// Add features to categories
 		Feature.getFeatures()
 			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
-			.forEach(Feature::addToCategory);
+			.forEach(f -> {
+				f.addToCategory();
+				((SettingElement) f.getMainElement()).setSearchTags(new String[]{f.getMainElement().name()});
+			});
 
 		// Add categories
 		Feature.getCategories().stream()

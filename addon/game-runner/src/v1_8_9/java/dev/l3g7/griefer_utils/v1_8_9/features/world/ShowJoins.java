@@ -11,18 +11,18 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
-import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.ChatMessageLogEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent.TabListPlayerRemoveEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.PlayerList;
 import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.ScammerList;
 import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.TrustedList;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingImpl;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 
@@ -40,12 +40,17 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.name;
 public class ShowJoins extends Feature {
 
 	private static final Map<UUID, Long> addTimestamps = new HashMap<>();
-//TODO:	private final PlayerListSetting players = new PlayerListSetting();
+
+	private final PlayerListSettingImpl players = new PlayerListSettingImpl()
+		.name("Spieler")
+		.icon("magnifying_glass");
 
 	private final SwitchSetting filter = SwitchSetting.create()
 		.name("Joins filtern")
 		.description("Ob nur die Joins von bestimmten Spielern angezeigt werden sollen.")
-		.icon(Blocks.hopper);
+		.icon(Blocks.hopper)
+		.callback(players::enabled);
+	{ players.enabled(filter.get()); }
 
 	private final SwitchSetting showOnJoin = SwitchSetting.create()
 		.name("Joins beim Betreten des Servers anzeigen")
@@ -63,13 +68,7 @@ public class ShowJoins extends Feature {
 		.name("Joins anzeigen")
 		.description("Zeigt dir an, wenn (bestimmte) Spieler den Server betreten / verlassen.")
 		.icon("radar")
-		.subSettings(showOnJoin, log, filter,
-			HeaderSetting.create().scale(.4).entryHeight(10),
-			HeaderSetting.create("§e§lSpieler").scale(.7)
-		//TODO:	players
-		);
-
-//TODO:	{ players.setContainer(enabled); }
+		.subSettings(showOnJoin, log, filter, players);
 
 	private boolean onServer = false;
 
@@ -87,8 +86,8 @@ public class ShowJoins extends Feature {
 		if (name().equals(name)) // Don't show Joins/Leaves for yourself
 			return false;
 
-/*		if(filter.get())
-TODO			return players.contains(name, null);*/
+		if(filter.get())
+			return players.contains(name, null);
 
 		return true;
 	}

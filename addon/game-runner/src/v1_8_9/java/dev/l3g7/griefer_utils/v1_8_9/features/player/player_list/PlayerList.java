@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.api.event.event_bus.Priority;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.util.IOUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
@@ -21,8 +22,8 @@ import dev.l3g7.griefer_utils.v1_8_9.events.DisplayNameGetEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingImpl;
 import dev.l3g7.griefer_utils.v1_8_9.util.PlayerUtil;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
@@ -80,23 +81,19 @@ public abstract class PlayerList extends Feature {
 		.icon("info")
 		.defaultValue(true);
 
-	/*
-	TODO:
-	public final PlayerListSetting customEntries = new PlayerListSetting()
-		.callback(TabListEvent::updatePlayerInfoList);*/
+	public final PlayerListSettingImpl customEntries = new PlayerListSettingImpl()
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	@MainElement
 	public final SwitchSetting enabled = SwitchSetting.create()
 		.callback(TabListEvent::updatePlayerInfoList);
 
-	public PlayerList(String name, String description, String chatIcon, Object settingIcon, String ownDescription, EnumChatFormatting color, int paneType, String message, String url) {
+	public PlayerList(String name, String description, String chatIcon, Object settingIcon, String entryDescription, EnumChatFormatting color, int paneType, String message, String url) {
 		enabled
 			.name(name)
 			.description(description)
 			.icon(settingIcon)
-			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, HeaderSetting.create(), HeaderSetting.create(ownDescription)/* TODO: , customEntries*/);
-
-		// TODO: customEntries.setContainer(enabled);
+			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, HeaderSetting.create(), customEntries.name(entryDescription).icon(settingIcon));
 
 		this.message = message;
 		this.icon = chatIcon;
@@ -220,7 +217,7 @@ public abstract class PlayerList extends Feature {
 	}
 
 	public boolean shouldMark(String name, UUID uuid) {
-		return uuids.contains(uuid) || names.contains(name);// TODO: || customEntries.contains(name, uuid);
+		return uuids.contains(uuid) || names.contains(name) || customEntries.contains(name, uuid);
 	}
 
 	public enum MarkAction implements Named {

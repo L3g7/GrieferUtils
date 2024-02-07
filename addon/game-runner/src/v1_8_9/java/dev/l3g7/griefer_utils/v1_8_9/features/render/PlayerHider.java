@@ -11,12 +11,13 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.PlaySoundAtEntityEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.PlaySoundEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderPlayerEvent;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingImpl;
+import dev.l3g7.griefer_utils.v1_8_9.util.PlayerUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
@@ -44,10 +45,9 @@ public class PlayerHider extends Feature {
 					updatePlayer(player);
 		});
 
-	/*
-	TODO:
-	private final PlayerListSetting excludedPlayers = new PlayerListSetting()
-		.name("%s. Spieler");*/
+	private final PlayerListSettingImpl excludedPlayers = new PlayerListSettingImpl()
+		.name("Ausgenommene Spieler")
+		.icon("light_bulb");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -59,14 +59,12 @@ public class PlayerHider extends Feature {
 				for (EntityPlayer player : world().playerEntities)
 					updatePlayer(player);
 		})
-		.subSettings(showNPCs, HeaderSetting.create("Ausgenommene Spieler")/*TODO:, excludedPlayers*/)
+		.subSettings(showNPCs, excludedPlayers)
 		.addHotkeySetting("das Verstecken von Spielern", null);
-
-//	{ excludedPlayers.setContainer(enabled); }
 
 	@EventListener
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (world() != null )
+		if (world() != null)
 			for (EntityPlayer player : world().playerEntities)
 				updatePlayer(player);
 	}
@@ -127,7 +125,7 @@ public class PlayerHider extends Feature {
 	}
 
 	private boolean showPlayer(Entity player) {
-		return player.equals(player());// || excludedPlayers.contains(player.getName(), player.getUniqueID()) || (PlayerUtil.isNPC(player) && showNPCs.get());
+		return player.equals(player()) || excludedPlayers.contains(player.getName(), player.getUniqueID()) || (PlayerUtil.isNPC(player) && showNPCs.get());
 	}
 
 }

@@ -29,6 +29,7 @@ import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.DropDownSetting;
+import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.settings.KeyBinding;
@@ -131,6 +132,10 @@ public class AutoEat extends Feature {
 			ItemStack item = inventory().getStackInSlot(i);
 			// Skip non-foods
 			if (item == null || item.getItem() == null || !(item.getItem() instanceof ItemFood))
+				continue;
+
+			// Skip items with lore
+			if (ItemUtil.getLore(item).size() != 0)
 				continue;
 
 			ItemFood food = (ItemFood) item.getItem();

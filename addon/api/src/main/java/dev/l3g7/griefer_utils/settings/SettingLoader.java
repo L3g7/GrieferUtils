@@ -63,11 +63,11 @@ public class SettingLoader { // NOTE: cleanup
 			if (field == null) {
 				// Skip dynamic settings with inferred keys
 				if (element instanceof AbstractSetting<?, ?> abs && abs.getStorage().configKey != null)
-					return;
+					continue;
 
 				// Allow dynamic settings if they don't hold values and have no settings
 				if (((AbstractSetting<?, ?>) element).get() == BaseSetting.NULL && element.getSubSettings().isEmpty())
-					return;
+					continue;
 
 				throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.name() + " in " + owner);
 			}

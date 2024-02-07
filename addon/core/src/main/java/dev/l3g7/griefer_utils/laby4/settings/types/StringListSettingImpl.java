@@ -18,10 +18,13 @@ import dev.l3g7.griefer_utils.settings.types.StringListSetting;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
+import net.labymod.api.client.gui.lss.style.modifier.attribute.AttributeState;
 import net.labymod.api.client.gui.screen.Parent;
 import net.labymod.api.client.gui.screen.activity.AutoActivity;
 import net.labymod.api.client.gui.screen.activity.Link;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
+import net.labymod.api.client.gui.screen.key.InputType;
+import net.labymod.api.client.gui.screen.key.Key;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.overlay.ScreenOverlay;
 import net.labymod.api.client.gui.screen.widget.widgets.DivWidget;
@@ -161,6 +164,8 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 		private final int editIndex;
 		private final SettingContentActivity activity;
 
+		private ButtonWidget addButton;
+
 		public StringListInputActivity(int editIndex, SettingContentActivity activity) {
 			super(32700);
 			this.editIndex = editIndex;
@@ -186,6 +191,10 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 			textInput.setCursorAtEnd();
 			textInput.maximalLength(100);
 			textInput.setFocused(true);
+			textInput.submitHandler(name -> {
+				if (addButton.isAttributeStateEnabled(AttributeState.ENABLED))
+					addButton.onPress();
+			});
 
 			// Buttons
 			HorizontalListWidget buttons = new HorizontalListWidget();
@@ -193,7 +202,7 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 
 			buttons.addEntry(ButtonWidget.text("Abbrechen", this::close));
 
-			ButtonWidget addButton = ButtonWidget.text(editIndex == -1 ? "Hinzufügen" : "Bearbeiten", () -> {
+			addButton = ButtonWidget.text(editIndex == -1 ? "Hinzufügen" : "Bearbeiten", () -> {
 				if (editIndex == -1)
 					get().add(textInput.getText().trim());
 				else
@@ -205,6 +214,17 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 			buttons.addEntry(addButton);
 			textInput.updateListener(s -> addButton.setEnabled(!s.trim().isEmpty()));
 			addButton.setEnabled(!textInput.getText().isEmpty());
+		}
+
+		@Override
+		public boolean keyPressed(Key key, InputType type) {
+			boolean result = super.keyPressed(key, type);
+			if (!result && key == Key.ESCAPE) {
+				close();
+				return true;
+			}
+
+			return result;
 		}
 
 		@Override

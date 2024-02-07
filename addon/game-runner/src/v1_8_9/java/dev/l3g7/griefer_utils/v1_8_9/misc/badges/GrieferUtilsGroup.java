@@ -99,6 +99,8 @@ public class GrieferUtilsGroup extends Group {
 		if (icon.equals("icon"))
 			GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1);
 
+		GlStateManager.enableAlpha();
+		GlStateManager.enableBlend();
 		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
 		DrawUtils.drawTexture(x, y, 255, 255, 8, 8, 1.1f);
 		GlStateManager.color(1, 1, 1, 1);

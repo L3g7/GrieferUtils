@@ -70,9 +70,11 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 
 		// Add widgets to parent
 		SettingsImpl.hookChildAdd(w, e -> {
-			if (e.childWidget() instanceof FlexibleContentWidget parent)
+			if (e.childWidget() instanceof FlexibleContentWidget parent) {
+				parent.removeChild("advanced-button");
 				for (Widget widget : widgets)
 					parent.addContent(widget);
+			}
 		});
 
 		return w;

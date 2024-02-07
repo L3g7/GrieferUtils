@@ -11,12 +11,13 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
+import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.settings.KeyBinding;
@@ -116,10 +117,12 @@ public class AutoEat extends Feature {
 		for (int i = 0; i < 9; i++) {
 			ItemStack item = inventory().getStackInSlot(i);
 			// Skip non-foods
-			if (item == null || item.getItem() == null || !(item.getItem() instanceof ItemFood))
+			if (item == null || item.getItem() == null || !(item.getItem() instanceof ItemFood food))
 				continue;
 
-			ItemFood food = (ItemFood) item.getItem();
+			// Skip items with lore
+			if (ItemUtil.getLore(item).size() != 0)
+				continue;
 
 			// Check if the food causes bad potion effects
 			int potionId = Reflection.get(food, "potionId");

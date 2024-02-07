@@ -103,6 +103,13 @@ public class SkullEnchantmentFix extends Feature {
 			if (!FileProvider.getSingleton(SkullEnchantmentFix.class).isEnabled() && stack != ICON)
 				return;
 
+			if (stack == ICON) {
+				// Adjust scale to fit the other icons
+				GlStateManager.scale(1.2, 1.2, 1.2);
+				GlStateManager.translate(0, -0.1, -0.1);
+				TileEntityItemStackRenderer.instance.renderByItem(stack);
+			}
+
 			// Enable stencil
 			glClear(GL_STENCIL_BUFFER_BIT);
 			glEnable(GL_STENCIL_TEST);

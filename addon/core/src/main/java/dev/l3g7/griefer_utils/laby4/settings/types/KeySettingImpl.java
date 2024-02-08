@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.events.InputEvent.Gui.GuiKeyInputEvent;
 import dev.l3g7.griefer_utils.events.InputEvent.Gui.GuiMouseInputEvent;
 import dev.l3g7.griefer_utils.events.InputEvent.KeyInputEvent;
@@ -47,6 +48,7 @@ public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>
 					.collect(Collectors.toList())),
 			new TreeSet<>()
 		);
+		EventRegisterer.register(this);
 	}
 
 	@Override

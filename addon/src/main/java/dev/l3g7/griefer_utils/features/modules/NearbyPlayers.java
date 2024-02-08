@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.util.PlayerUtil;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -108,7 +109,10 @@ public class NearbyPlayers extends Module {
 		drawUtils().drawTexture(x, y, 32, 32, 32, 32, 8, 8); // First layer
 		drawUtils().drawTexture(x, y, 160, 32, 32, 32, 8, 8); // Second layer
 
-		mc.fontRendererObj.drawStringWithShadow(player.getDisplayName().getFormattedText(), x + 10, y, Integer.MAX_VALUE);
+		// Use display name from tab list for applied text mods
+		IChatComponent displayName = mc().getNetHandler().getPlayerInfo(player.getUniqueID()).getDisplayName();
+		if (displayName != null)
+			mc.fontRendererObj.drawStringWithShadow(displayName.getFormattedText(), x + 10, y, Integer.MAX_VALUE);
 	}
 
 }

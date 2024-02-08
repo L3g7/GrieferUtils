@@ -8,19 +8,28 @@
 package dev.l3g7.griefer_utils.laby4;
 
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.api.event.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.api.Laby;
 import net.labymod.api.addon.LoadedAddon;
 import net.labymod.api.event.Subscribe;
 import net.labymod.api.event.addon.lifecycle.AddonPostEnableEvent;
 import net.labymod.api.models.addon.annotation.AddonMain;
+import net.labymod.api.models.addon.info.InstalledAddonInfo;
+
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
+import static net.labymod.api.client.component.format.NamedTextColor.YELLOW;
 
 @AddonMain
 public class Main {
 
 	private static LoadedAddon addon;
+	private static String addonDescription = YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :(";
 
 	public static LoadedAddon getAddon() {
 		if (addon == null)
@@ -40,6 +49,21 @@ public class Main {
 		Event.fire(OnEnable.class);
 
 		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
+	}
+
+	@EventListener
+	private static void onWebData(WebDataReceiveEvent event) {
+		// Load description from server, so it can be used as news board
+		addonDescription = event.data.addonDescription;
+
+		updateDescription();
+	}
+
+	@OnStartupComplete
+	private static void updateDescription() {
+		InstalledAddonInfo addon = getAddon().info();
+		Reflection.set(addon, "author", "L3g7, L3g73 ┃ v" + labyBridge.addonVersion());
+		Reflection.set(addon, "description", addonDescription);
 	}
 
 }

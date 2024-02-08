@@ -55,9 +55,9 @@ public class GrieferUtilsGroup extends Group {
 
 	public static String icon = "icon";
 
-	private final int color_with_labymod;
-	private final int color_without_labymod;
 	public final String title;
+	private final int colorWithLabymod;
+	private final int colorWithoutLabymod;
 	public final TextColor titleColor;
 
 	public GrieferUtilsGroup() {
@@ -65,13 +65,13 @@ public class GrieferUtilsGroup extends Group {
 	}
 
 	public GrieferUtilsGroup(WebAPI.Data.SpecialBadge badge) {
-		this(badge.title, badge.color_without_labymod, badge.color_with_labymod);
+		this(badge.title, badge.colorWithoutLabymod, badge.colorWithLabymod);
 	}
 
-	public GrieferUtilsGroup(String title, int color_without_labymod, int color_with_labymod) {
+	public GrieferUtilsGroup(String title, int colorWithoutLabymod, int colorWithLabymod) {
 		super(999, "griefer_utils", "GrieferUtils", "", '\0', "", "", false);
-		this.color_with_labymod = color_with_labymod;
-		this.color_without_labymod = color_without_labymod;
+		this.colorWithLabymod = colorWithLabymod;
+		this.colorWithoutLabymod = colorWithoutLabymod;
 
 		TextColor currentTitleColor = null;
 		while (title != null && title.startsWith("§")) {
@@ -99,7 +99,7 @@ public class GrieferUtilsGroup extends Group {
 	}
 
 	private void render(boolean revealFamiliarUsers, float x, float y) {
-		Color color = new Color(revealFamiliarUsers ? color_with_labymod : color_without_labymod);
+		Color color = new Color(revealFamiliarUsers ? colorWithLabymod : colorWithoutLabymod);
 
 		if (icon.equals("icon"))
 			GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1);

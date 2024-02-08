@@ -25,7 +25,7 @@ public class WebAPI {
 		if (data != null)
 			return;
 
-		IOUtil.read("https://grieferutils.l3g7.dev/v3").asJsonObject(object -> {
+		IOUtil.read("https://grieferutils.l3g7.dev/v4").asJsonObject(object -> {
 			data = GSON.fromJson(object, Data.class);
 			new WebDataReceiveEvent(data).fire();
 		});
@@ -47,14 +47,14 @@ public class WebAPI {
 		public static class GrieferInfoItem {
 			public String stack;
 			public int categories;
-			public boolean custom_name;
+			public boolean customName;
 		}
 
 		public static class SpecialBadge {
 
 			public String title;
-			public int color_with_labymod;
-			public int color_without_labymod;
+			public int colorWithLabymod;
+			public int colorWithoutLabymod;
 
 		}
 

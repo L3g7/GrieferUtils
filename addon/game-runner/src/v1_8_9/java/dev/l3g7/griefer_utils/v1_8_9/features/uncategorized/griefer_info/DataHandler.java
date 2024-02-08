@@ -37,7 +37,7 @@ public class DataHandler {
 	private static void onWebDataReceive(WebDataReceiveEvent event) {
 		for (Map.Entry<String, WebAPI.Data.GrieferInfoItem> itemEntry : event.data.grieferInfoItems.entrySet()) {
 			ItemStack stack = ItemUtil.fromNBT(itemEntry.getValue().stack);
-			ItemFilter itemFilter = new ItemFilter(itemEntry.getKey(), stack, itemEntry.getValue().custom_name);
+			ItemFilter itemFilter = new ItemFilter(itemEntry.getKey(), stack, itemEntry.getValue().customName);
 			ItemFilter.FILTER.put(itemEntry.getKey(), itemFilter);
 
 			int compactCategories = itemEntry.getValue().categories;

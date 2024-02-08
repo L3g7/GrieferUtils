@@ -93,7 +93,7 @@ public class AutoUpdater { // FIXME untested
 			return;
 
 		// Get info about the latest release
-		InputStream in = read("https://grieferutils.l3g7.dev/v3/latest_release");
+		InputStream in = read("https://grieferutils.l3g7.dev/v4/latest_release");
 
 		// Check if the server could be reached
 		if (in == null)

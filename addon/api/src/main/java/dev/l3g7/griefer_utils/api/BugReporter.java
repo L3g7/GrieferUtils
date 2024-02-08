@@ -96,7 +96,7 @@ public class BugReporter {
 
 			// Report bug
 			try {
-				HttpURLConnection conn = (HttpURLConnection) new URL("https://grieferutils.l3g7.dev/v3/bug_report").openConnection();
+				HttpURLConnection conn = (HttpURLConnection) new URL("https://grieferutils.l3g7.dev/v4/bug_report").openConnection();
 
 				if (conn instanceof HttpsURLConnection)
 					((HttpsURLConnection) conn).setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());

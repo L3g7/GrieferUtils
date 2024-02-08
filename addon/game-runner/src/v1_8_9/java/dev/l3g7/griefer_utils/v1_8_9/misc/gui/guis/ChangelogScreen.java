@@ -112,7 +112,7 @@ public class ChangelogScreen extends GuiScreen {
 
 		// Icon
 		int textWidth = fontRendererObj.getStringWidth(text);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/icon.png"));
+		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
 		DrawUtils.drawTexture(width / 2d - textWidth * 0.75 - 29, 18, 256, 256, 20, 20);
 
 		// Left button

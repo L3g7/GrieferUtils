@@ -14,11 +14,12 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.VersionComparator;
 import dev.l3g7.griefer_utils.api.misc.config.ConfigPatcher;
 import dev.l3g7.griefer_utils.auto_update.AutoUpdater;
+import dev.l3g7.griefer_utils.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.guis.ChangelogScreen;
+import net.labymod.api.Textures;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -56,6 +57,7 @@ public class Changelog {
 
 			entries.add(ButtonSetting.create()
 				.name(" " + title)
+				.buttonIcon(Textures.SpriteCommon.SETTINGS)
 				.callback(() -> {
 					ChangelogScreen.setData(
 						entry.getKey(),

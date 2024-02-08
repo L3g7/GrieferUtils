@@ -17,7 +17,7 @@ public class CitybuildIconBridgeImpl implements Citybuild.CitybuildIconBridge {
 
 	@Override
 	@SuppressWarnings("DuplicatedCode") // intellij is brain-dead
-	public Icon createIcon(Citybuild cb) {
+	public Icon createIcon(Citybuild cb, boolean asEntry) {
 		ItemStack stack = switch (cb) {
 			case ANY -> new ItemStack(nether_star);
 			case CB1 -> new ItemStack(diamond_block);
@@ -50,7 +50,7 @@ public class CitybuildIconBridgeImpl implements Citybuild.CitybuildIconBridge {
 			case EVENT -> new ItemStack(beacon);
 		};
 
-		return new ItemStackIcon(c(stack), -2, -1);
+		return new ItemStackIcon(c(stack), asEntry ? -2 : 0, asEntry ? -1 : 0);
 	}
 
 }

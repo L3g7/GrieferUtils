@@ -23,7 +23,7 @@ import net.labymod.api.event.labymod.config.SettingWidgetInitializeEvent;
 
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 
-public class SettingActivityInitEvent extends Event {
+public class SettingActivityInitEvent extends Event { // NOTE: use SettingWidgetInitializeEvent?
 
 	public final SettingContentActivity activity;
 	public final FlexibleContentWidget container;

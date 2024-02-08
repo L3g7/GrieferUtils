@@ -140,7 +140,7 @@ public enum Citybuild implements Named {
 
 		CitybuildIconBridge citybuildIconBridge = FileProvider.getBridge(CitybuildIconBridge.class);
 
-		Object createIcon(Citybuild cb);
+		Object createIcon(Citybuild cb, boolean asEntry);
 
 	}
 

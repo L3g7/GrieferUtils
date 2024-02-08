@@ -11,9 +11,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.laby4.settings.BaseSettingImpl;
 import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.CitybuildSettingImpl;
@@ -26,6 +28,12 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent.GuiOpenEvent;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
+import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.entry.FlexibleContentEntry;
+import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.loader.annotation.SpriteTexture;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
@@ -46,6 +54,7 @@ import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
+import static net.labymod.api.Textures.SpriteCommon.X;
 
 @Singleton
 public class CommandPieMenu extends Feature {
@@ -193,9 +202,10 @@ public class CommandPieMenu extends Feature {
 				}
 				return v;
 			}, new ArrayList<>()));
+			EventRegisterer.register(this);
 		}
 
-		public PageListSetting(ExtendedStorage<List<PageConfig>> storage) {
+		private PageListSetting(ExtendedStorage<List<PageConfig>> storage) {
 			super(UUID.randomUUID().toString(), null, null, new String[0], null, false, null, (byte) -127,
 				new ConfigPropertySettingAccessor(null, null, null, null) {
 					@Override
@@ -231,17 +241,45 @@ public class CommandPieMenu extends Feature {
 
 		@Override
 		public ListSettingEntry createNew() {
-			PageConfig config = new PageConfig("Seite " + get().size());
+			PageConfig config = new PageConfig("Seite " + (get().size() + 1));
+			config.create(this);
 			get().add(config);
 
-			ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), get().size()) {
-				public Icon getIcon() {
-					return SettingsImpl.buildIcon("command_pie_menu");
-				}
-			};
-
+			ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), get().size());
 			entry.addSettings(config);
 			return entry;
+		}
+
+		@EventListener
+		private void onInit(SettingActivityInitEvent event) {
+			if (event.holder() != this)
+				return;
+
+			// Update entry widgets
+			for (Widget w : event.settings().getChildren()) {
+				if (w instanceof SettingWidget s && s.setting() instanceof ListSettingEntry entry) {
+					SettingsImpl.hookChildAdd(s, e -> {
+						if (e.childWidget() instanceof FlexibleContentWidget content) {
+							// Fix icon
+							IconWidget widget = new IconWidget(SettingsImpl.buildIcon(Items.map));
+							widget.addId("setting-icon");
+							content.addChild(0, new FlexibleContentEntry(widget, false));
+							widget.initialize(content);
+
+							// Update button icons
+							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
+							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec")); // NOTE: use original icons?
+							content.removeChild("delete-button");
+
+							content.addContent(ButtonWidget.icon(X, () -> {
+								get().remove(entry.listIndex());
+								notifyChange();
+								event.activity.reload();
+							}).addId("delete-button"));
+						}
+					});
+				}
+			}
 		}
 
 		@Override
@@ -287,6 +325,7 @@ public class CommandPieMenu extends Feature {
 				}
 				return v;
 			}, new ArrayList<>()));
+			EventRegisterer.register(this);
 		}
 
 		private EntryListSetting(ExtendedStorage<List<EntryConfig>> storage) {
@@ -325,6 +364,7 @@ public class CommandPieMenu extends Feature {
 		@Override
 		public ListSettingEntry createNew() {
 			EntryConfig config = new EntryConfig();
+			config.create(this);
 			get().add(config);
 
 			ListSettingEntry entry = new ListSettingEntry(this, config.newEntryTitle(), get().size()) {
@@ -335,6 +375,38 @@ public class CommandPieMenu extends Feature {
 
 			entry.addSettings(config);
 			return entry;
+		}
+
+		@EventListener
+		private void onInit(SettingActivityInitEvent event) {
+			if (event.holder() != this)
+				return;
+
+			// Update entry widgets
+			for (Widget w : event.settings().getChildren()) {
+				if (w instanceof SettingWidget s && s.setting() instanceof ListSettingEntry entry) {
+					SettingsImpl.hookChildAdd(s, e -> {
+						if (e.childWidget() instanceof FlexibleContentWidget content) {
+							// Fix icon
+							IconWidget widget = new IconWidget(SettingsImpl.buildIcon("command_pie_menu"));
+							widget.addId("setting-icon");
+							content.addChild(0, new FlexibleContentEntry(widget, false));
+							widget.initialize(content);
+
+							// Update button icons
+							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
+							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec"));
+							content.removeChild("delete-button");
+
+							content.addContent(ButtonWidget.icon(X, () -> {
+								get().remove(entry.listIndex());
+								notifyChange();
+								event.activity.reload();
+							}).addId("delete-button"));
+						}
+					});
+				}
+			}
 		}
 
 		@Override

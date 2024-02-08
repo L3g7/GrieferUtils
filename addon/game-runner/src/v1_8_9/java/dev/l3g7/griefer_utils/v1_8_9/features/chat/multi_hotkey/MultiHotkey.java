@@ -11,9 +11,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.events.InputEvent;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.events.InputEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.laby4.settings.BaseSettingImpl;
 import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.StringSettingImpl;
@@ -22,12 +24,19 @@ import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.key.Key;
+import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.entry.FlexibleContentEntry;
+import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.loader.annotation.SpriteTexture;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
 import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.configuration.settings.type.list.ListSettingConfig;
 import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
+import net.labymod.api.util.KeyValue;
 import net.minecraft.init.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,13 +47,14 @@ import java.util.*;
 
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
+import static net.labymod.api.Textures.SpriteCommon.X;
 
 @Singleton
 public class MultiHotkey extends Feature {
 
 	private final HotkeyListSetting entries = new HotkeyListSetting()
 		.name("Hotkeys")
-		.icon("labymod_3/autotext"); // FIXME check whether hotkeys are saved
+		.icon("labymod_3/autotext");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -78,27 +88,32 @@ public class MultiHotkey extends Feature {
 		}
 	}
 
-	public static class HotkeyConfig extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {
+	private class HotkeyConfig extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {
 
 		private int amountsTriggered = 0;
 
 		private final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 			.name("Name")
 			.description("Wie dieser Hotkey heißen soll.")
-			.icon(Items.writable_book);
+			.icon(Items.writable_book)
+			.callback(entries::notifyChange);
 
 		private final KeySetting key = KeySetting.create()
 			.name("Taste")
 			.description("Durch das Drücken welcher Taste/-n dieser Hotkey ausgelöst werden soll.")
-			.icon("key");
+			.icon("key")
+			.callback(entries::notifyChange);
 
 		private final CitybuildSetting citybuild = CitybuildSetting.create()
 			.name("Citybuild")
-			.description("Auf welchem Citybuild dieser Hotkey funktionieren soll.");
+			.description("Auf welchem Citybuild dieser Hotkey funktionieren soll.")
+			.callback(entries::notifyChange);
 
 		private final StringListSetting commands = StringListSetting.create()
 			.name("Befehle")
-			.icon(Items.paper);
+			.icon(Items.paper)
+			.entryIcon(Items.paper)
+			.callback(entries::notifyChange);
 
 		public HotkeyConfig(String name) {
 			this.name.set(name);
@@ -128,7 +143,7 @@ public class MultiHotkey extends Feature {
 	}
 
 	// NOTE: cleanup? merge?
-	public static class HotkeyListSetting extends ListSetting implements BaseSettingImpl<HotkeyListSetting, List<HotkeyConfig>> {
+	private class HotkeyListSetting extends ListSetting implements BaseSettingImpl<HotkeyListSetting, List<HotkeyConfig>> {
 
 		private final ExtendedStorage<List<HotkeyConfig>> storage;
 
@@ -156,6 +171,7 @@ public class MultiHotkey extends Feature {
 				}
 				return v;
 			}, new ArrayList<>()));
+			EventRegisterer.register(this);
 		}
 
 		public HotkeyListSetting(ExtendedStorage<List<HotkeyConfig>> storage) {
@@ -188,8 +204,6 @@ public class MultiHotkey extends Feature {
 			);
 
 			this.storage = storage;
-			for (HotkeyConfig page : get())
-				page.create(this);
 		}
 
 		@Override
@@ -209,6 +223,27 @@ public class MultiHotkey extends Feature {
 		}
 
 		@Override
+		public List<KeyValue<Setting>> getElements() {
+			List<KeyValue<Setting>> list = new ArrayList<>();
+
+			List<HotkeyConfig> entries = get();
+
+			for (int i = 0; i < entries.size(); ++i) {
+				HotkeyConfig config = entries.get(i);
+				if (config.isInvalid()) {
+					entries.remove(i--);
+				} else {
+					config.create(this);
+					ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i);
+					entry.addSettings(config);
+					list.add(new KeyValue<>(entry.getId(), entry));
+				}
+			}
+
+			return list;
+		}
+
+		@Override
 		public Component displayName() {
 			return Component.text(name());
 		}
@@ -222,5 +257,39 @@ public class MultiHotkey extends Feature {
 		public ExtendedStorage<List<HotkeyConfig>> getStorage() {
 			return storage;
 		}
+
+		@EventListener
+		private void onInit(SettingActivityInitEvent event) {
+			if (event.holder() != this)
+				return;
+
+			// Update entry widgets
+			for (Widget w : event.settings().getChildren()) {
+				if (w instanceof SettingWidget s && s.setting() instanceof ListSettingEntry entry) {
+					SettingsImpl.hookChildAdd(s, e -> {
+						if (e.childWidget() instanceof FlexibleContentWidget content) {
+							// Fix icon
+							IconWidget widget = new IconWidget(SettingsImpl.buildIcon("labymod_3/autotext")); // NOTE: duplicate code; use LM4's icon?
+							widget.addId("setting-icon");
+							content.addChild(0, new FlexibleContentEntry(widget, false));
+							widget.initialize(content);
+
+							// Update button icons
+							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
+							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec")); // NOTE: use original icons?
+							content.removeChild("delete-button");
+
+							content.addContent(ButtonWidget.icon(X, () -> {
+								get().remove(entry.listIndex());
+								notifyChange();
+								event.activity.reload();
+							}).addId("delete-button"));
+						}
+					});
+				}
+			}
+		}
+
 	}
+
 }

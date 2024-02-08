@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.v1_8_9.bridges;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.api.event.events.InputEvent;
+import dev.l3g7.griefer_utils.events.InputEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.InputEvent.KeyInputEvent;

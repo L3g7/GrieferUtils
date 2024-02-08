@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.v1_8_9.util.render;
 
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.api.event.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.client.renderer.GlStateManager;

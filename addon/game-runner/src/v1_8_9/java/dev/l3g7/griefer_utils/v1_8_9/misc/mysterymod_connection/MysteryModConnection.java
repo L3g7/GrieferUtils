@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.v1_8_9.misc.mysterymod_connection;
 
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.api.event.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.MysteryModConnectionEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.mysterymod_connection.packets.PacketDecoder;

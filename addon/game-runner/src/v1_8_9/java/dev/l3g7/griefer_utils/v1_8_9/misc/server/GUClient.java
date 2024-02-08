@@ -11,7 +11,7 @@ import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.api.BugReporter;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.api.event.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Citybuild;

@@ -38,7 +38,10 @@ public class BadgeManager {
 	}
 
 	public static void queueUser(UUID uuid) {
-		queuedUsers.add(uuid);
+		Group group = users.remove(uuid);
+
+		if (group != null)
+			setGroup(user(uuid), group);
 	}
 
 	public static void removeUser(UUID uuid) {

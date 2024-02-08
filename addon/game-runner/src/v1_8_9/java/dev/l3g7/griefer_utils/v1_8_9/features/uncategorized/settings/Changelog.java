@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.v1_8_9.events.network.WebDataReceiveEvent;
+import dev.l3g7.griefer_utils.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.guis.ChangelogScreen;
 
 import java.util.ArrayList;

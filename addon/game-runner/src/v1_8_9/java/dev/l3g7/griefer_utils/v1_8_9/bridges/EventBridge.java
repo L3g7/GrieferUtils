@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.bridges;
 
+import dev.l3g7.griefer_utils.api.WebAPI;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
@@ -15,6 +16,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.InputEvent.KeyInputEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.InputEvent.MouseInputEvent;
+import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.guis.ChangelogScreen;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -34,6 +36,11 @@ public class EventBridge {
 		// Call all methods annotated with @OnStartupComplete
 		startupComplete = true;
 		Event.fire(OnStartupComplete.class);
+	}
+
+	@EventListener
+	private static void onServerJoin(ServerJoinEvent event) {
+		WebAPI.update();
 	}
 
 	@EventListener

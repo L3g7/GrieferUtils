@@ -10,9 +10,10 @@ package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.api.BugReporter;
+import dev.l3g7.griefer_utils.api.WebAPI;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.util.IOUtil;
-import dev.l3g7.griefer_utils.v1_8_9.events.network.WebDataReceiveEvent;
+import dev.l3g7.griefer_utils.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.botshops.BotShop;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.botshops.GuiBotShops;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.farms.Farm;
@@ -21,7 +22,6 @@ import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.farms.S
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff.FreeStuff;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff.ItemFilter;
-import dev.l3g7.griefer_utils.v1_8_9.misc.server.WebAPI;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.item.ItemStack;
 

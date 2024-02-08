@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.v1_8_9.features.chat.auto_unnick;
 
 import dev.l3g7.griefer_utils.api.BugReporter;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.v1_8_9.events.network.WebDataReceiveEvent;
+import dev.l3g7.griefer_utils.events.WebDataReceiveEvent;
 
 public class PrefixFinder {
 	public static String[] prefixes = null;

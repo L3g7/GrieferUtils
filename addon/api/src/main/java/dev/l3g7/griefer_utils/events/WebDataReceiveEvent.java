@@ -5,20 +5,19 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.events.network;
+package dev.l3g7.griefer_utils.events;
 
+import dev.l3g7.griefer_utils.api.WebAPI;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
-import dev.l3g7.griefer_utils.v1_8_9.misc.server.WebAPI;
-import dev.l3g7.griefer_utils.v1_8_9.misc.server.WebAPI.Data;
 
 /**
  * Is fired when {@link WebAPI} receives data.
  */
 public class WebDataReceiveEvent extends Event {
 
-	public final Data data;
+	public final WebAPI.Data data;
 
-	public WebDataReceiveEvent(Data data) {
+	public WebDataReceiveEvent(WebAPI.Data data) {
 		this.data = data;
 	}
 

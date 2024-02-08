@@ -10,9 +10,9 @@ package dev.l3g7.griefer_utils.v1_8_9.misc.badges;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.UserSetGroupEvent;
-import dev.l3g7.griefer_utils.v1_8_9.events.network.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.Credits;
 import dev.l3g7.griefer_utils.v1_8_9.misc.server.GUClient;
 import io.netty.util.internal.ConcurrentSet;
@@ -30,7 +30,7 @@ public class BadgeManager {
 	private static final Map<UUID, Group> users = new ConcurrentHashMap<>();
 
 	private static long lastRequest = 0;
-	private static Map<UUID, GrieferUtilsGroup> specialBadges = new HashMap<>();
+	private static final Map<UUID, GrieferUtilsGroup> specialBadges = new HashMap<>();
 	private static final Set<UUID> queuedUsers = new ConcurrentSet<>();
 
 	public static boolean isSpecial(String uuid) {
@@ -94,7 +94,8 @@ public class BadgeManager {
 
 	@EventListener
 	private static void onWebData(WebDataReceiveEvent event) {
-		specialBadges = event.data.specialBadges;
+		event.data.specialBadges.forEach((k, v) -> specialBadges.put(k, new GrieferUtilsGroup(v)));
+
 		Credits.addTeam();
 	}
 

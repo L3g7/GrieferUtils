@@ -5,15 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.misc.server;
+package dev.l3g7.griefer_utils.api;
 
 import com.google.gson.Gson;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnStartupComplete;
-import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.util.IOUtil;
-import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerJoinEvent;
-import dev.l3g7.griefer_utils.v1_8_9.events.network.WebDataReceiveEvent;
-import dev.l3g7.griefer_utils.v1_8_9.misc.badges.GrieferUtilsGroup;
+import dev.l3g7.griefer_utils.events.WebDataReceiveEvent;
 
 import java.util.Map;
 import java.util.UUID;
@@ -24,17 +21,14 @@ public class WebAPI {
 	private static Data data = null;
 
 	@OnStartupComplete
-	private static void onStartupComplete() {
+	public static void update() {
+		if (data != null)
+			return;
+
 		IOUtil.read("https://grieferutils.l3g7.dev/v3").asJsonObject(object -> {
 			data = GSON.fromJson(object, Data.class);
 			new WebDataReceiveEvent(data).fire();
 		});
-	}
-
-	@EventListener
-	private static void onServerJoin(ServerJoinEvent event) {
-		if (data == null)
-			onStartupComplete();
 	}
 
 	public static class Data {
@@ -43,7 +37,7 @@ public class WebAPI {
 		public Changelog changelog;
 		public Map<String, GrieferInfoItem> grieferInfoItems;
 		public String[] repeatingPrefixes;
-		public Map<UUID, GrieferUtilsGroup> specialBadges;
+		public Map<UUID, SpecialBadge> specialBadges;
 
 		public static class Changelog {
 			public Map<String, String> all;
@@ -54,6 +48,14 @@ public class WebAPI {
 			public String stack;
 			public int categories;
 			public boolean custom_name;
+		}
+
+		public static class SpecialBadge {
+
+			public String title;
+			public int color_with_labymod;
+			public int color_without_labymod;
+
 		}
 
 	}

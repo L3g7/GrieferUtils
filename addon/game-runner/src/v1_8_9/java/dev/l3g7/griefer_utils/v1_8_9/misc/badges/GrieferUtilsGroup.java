@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.misc.badges;
 
+import dev.l3g7.griefer_utils.api.WebAPI;
 import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
@@ -61,6 +62,10 @@ public class GrieferUtilsGroup extends Group {
 
 	public GrieferUtilsGroup() {
 		this(null, 0xFFFFFF, 0xFFFFFF);
+	}
+
+	public GrieferUtilsGroup(WebAPI.Data.SpecialBadge badge) {
+		this(badge.title, badge.color_without_labymod, badge.color_with_labymod);
 	}
 
 	public GrieferUtilsGroup(String title, int color_without_labymod, int color_with_labymod) {

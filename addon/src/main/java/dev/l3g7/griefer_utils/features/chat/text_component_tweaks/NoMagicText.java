@@ -19,10 +19,12 @@
 package dev.l3g7.griefer_utils.features.chat.text_component_tweaks;
 
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.reflection.Reflection;
 import dev.l3g7.griefer_utils.event.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.labymod.utils.Material;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 @Singleton
@@ -47,6 +49,9 @@ public class NoMagicText extends TextComponentTweak {
 	@Override
 	void modify(IChatComponent component) {
 		component.getChatStyle().setObfuscated(false);
+		if (component instanceof ChatComponentText)
+			Reflection.set(component, component.getUnformattedTextForChat().replace("§k", ""), "text");
+
 		component.getSiblings().forEach(this::modify);
 	}
 

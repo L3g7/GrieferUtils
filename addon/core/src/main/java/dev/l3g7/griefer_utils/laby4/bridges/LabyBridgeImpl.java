@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.laby4.Main;
+import dev.l3g7.griefer_utils.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
@@ -32,6 +33,7 @@ import net.labymod.api.event.method.SubscribeMethod;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.models.addon.info.InstalledAddonInfo;
 import net.labymod.api.notification.Notification;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.tab.NameHistoryActivity;
 import net.labymod.core.main.LabyMod;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +68,14 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public float partialTicks() {
 		return Laby.labyAPI().minecraft().getPartialTicks();
+	}
+
+	@Override
+	public int chatButtonWidth() {
+		if (!(Laby4Util.getActivity() instanceof ChatInputOverlay))
+			return 0;
+
+		return (int) Laby.labyAPI().chatProvider().chatInputService().getButtonWidth() - 1;
 	}
 
 	@Override

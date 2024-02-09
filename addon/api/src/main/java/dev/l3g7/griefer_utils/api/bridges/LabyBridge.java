@@ -44,6 +44,8 @@ public interface LabyBridge {
 
 	float partialTicks();
 
+	int chatButtonWidth();
+
 	// Utility methods
 
 	default void notifyMildError(String message) {notify("§e§lFehler ⚠", "§e" + message);}

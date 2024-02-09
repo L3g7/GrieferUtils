@@ -21,12 +21,12 @@ import dev.l3g7.griefer_utils.v1_8_9.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
-import net.labymod.api.Laby;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 
 /**
@@ -124,18 +124,18 @@ public class PlotChatIndicator extends Feature {
 		if (plotchatState == null || !plotchatState)
 			return;
 
-		GuiScreen gcc = event.gui;
-		if (!(gcc instanceof GuiChat))
+		GuiScreen gui = event.gui;
+		if (!(gui instanceof GuiChat))
 			return;
 
-		int buttonWidth = (int) Laby.labyAPI().chatProvider().chatInputService().getButtonWidth() - 1;
+		int buttonWidth = labyBridge.chatButtonWidth();
 		int color = 0xFFFFA126;
 
 		// Render frame
-		GuiScreen.drawRect(1, gcc.height - 15, gcc.width - 1 - buttonWidth, gcc.height - 14, color);
-		GuiScreen.drawRect(1, gcc.height - 2, gcc.width - 1 - buttonWidth, gcc.height - 1, color);
-		GuiScreen.drawRect(1, gcc.height - 15, 2, gcc.height - 1, color);
-		GuiScreen.drawRect(gcc.width - 2 - buttonWidth, gcc.height - 15, gcc.width - 1 - buttonWidth, gcc.height - 1, color);
+		GuiScreen.drawRect(1, gui.height - 15, gui.width - 1 - buttonWidth, gui.height - 14, color);
+		GuiScreen.drawRect(1, gui.height - 2, gui.width - 1 - buttonWidth, gui.height - 1, color);
+		GuiScreen.drawRect(1, gui.height - 15, 2, gui.height - 1, color);
+		GuiScreen.drawRect(gui.width - 2 - buttonWidth, gui.height - 15, gui.width - 1 - buttonWidth, gui.height - 1, color);
 	}
 
 }

@@ -8,9 +8,11 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.chat.text_component_tweaks;
 
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent;
 import net.minecraft.init.Items;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 @Singleton
@@ -35,6 +37,9 @@ public class NoMagicText extends TextComponentTweak {
 	@Override
 	void modify(IChatComponent component) {
 		component.getChatStyle().setObfuscated(false);
+		if (component instanceof ChatComponentText)
+			Reflection.set(component, component.getUnformattedTextForChat().replace("§k", ""), "text");
+
 		component.getSiblings().forEach(this::modify);
 	}
 

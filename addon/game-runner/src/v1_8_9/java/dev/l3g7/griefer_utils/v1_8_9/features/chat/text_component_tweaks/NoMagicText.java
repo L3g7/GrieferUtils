@@ -38,7 +38,7 @@ public class NoMagicText extends TextComponentTweak {
 	void modify(IChatComponent component) {
 		component.getChatStyle().setObfuscated(false);
 		if (component instanceof ChatComponentText)
-			Reflection.set(component, component.getUnformattedTextForChat().replace("§k", ""), "text");
+			Reflection.set(component, "text", component.getUnformattedTextForChat().replace("§k", ""));
 
 		component.getSiblings().forEach(this::modify);
 	}

@@ -40,6 +40,7 @@ import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettin
 import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.configuration.settings.type.list.ListSettingConfig;
 import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
+import net.labymod.api.util.KeyValue;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import org.jetbrains.annotations.NotNull;
@@ -83,9 +84,9 @@ public class CommandPieMenu extends Feature {
 			pieMenu.close();
 		});
 
-	private final PageListSetting pages = new PageListSetting()
+	private static final PageListSetting pages = new PageListSetting() // NOTE: better way to trigger notifyChange
 		.name("Seiten")
-		.icon(Items.map); // FIXME check whether pages are saved
+		.icon(Items.map);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -104,16 +105,19 @@ public class CommandPieMenu extends Feature {
 		private final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 			.name("Name")
 			.description("Wie der Eintrag heißen soll.")
-			.icon(Items.writable_book);
+			.icon(Items.writable_book)
+			.callback(pages::notifyChange);
 
 		private final StringSettingImpl command = (StringSettingImpl) StringSetting.create()
 			.name("Befehl")
 			.description("Welcher Befehl ausgeführt werden soll, wenn dieser Eintrag ausgewählt wird.")
-			.icon(Blocks.command_block);
+			.icon(Blocks.command_block)
+			.callback(pages::notifyChange);
 
 		private final CitybuildSettingImpl citybuild = (CitybuildSettingImpl) CitybuildSetting.create()
 			.name("Citybuild")
-			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll");
+			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll")
+			.callback(pages::notifyChange);
 
 		public void create(BaseSetting<?> parent) {
 			name.create(parent);
@@ -146,11 +150,13 @@ public class CommandPieMenu extends Feature {
 
 		private final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 			.name("Name")
-			.icon(Items.writable_book);
+			.icon(Items.writable_book)
+			.callback(pages::notifyChange);
 
 		private final EntryListSetting entries = new EntryListSetting()
 			.name("Einträge")
-			.icon("command_pie_menu");
+			.icon("command_pie_menu")
+			.callback(pages::notifyChange);
 
 		public PageConfig(String name) {
 			this.name.set(name);
@@ -240,12 +246,33 @@ public class CommandPieMenu extends Feature {
 		}
 
 		@Override
+		public List<KeyValue<Setting>> getElements() {
+			List<KeyValue<Setting>> list = new ArrayList<>();
+
+			List<PageConfig> configs = get();
+			for (int i = 0; i < configs.size(); ++i) {
+				PageConfig config = configs.get(i);
+				if (config.isInvalid()) {
+					configs.remove(i--);
+					notifyChange();
+				} else {
+					ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i);
+					entry.addSettings(config);
+					list.add(new KeyValue<>(entry.getId(), entry));
+				}
+			}
+
+			return list;
+		}
+
+		@Override
 		public ListSettingEntry createNew() {
 			PageConfig config = new PageConfig("Seite " + (get().size() + 1));
 			config.create(this);
 			get().add(config);
+			notifyChange();
 
-			ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), get().size());
+			ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), get().size() - 1);
 			entry.addSettings(config);
 			return entry;
 		}
@@ -362,12 +389,34 @@ public class CommandPieMenu extends Feature {
 		}
 
 		@Override
+		public List<KeyValue<Setting>> getElements() {
+			List<KeyValue<Setting>> list = new ArrayList<>();
+
+			List<EntryConfig> configs = get();
+			for (int i = 0; i < configs.size(); ++i) {
+				EntryConfig config = configs.get(i);
+				if (config.isInvalid()) {
+					configs.remove(i--);
+					notifyChange();
+				} else {
+					ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i);
+					entry.addSettings(config);
+					config.create(this);
+					list.add(new KeyValue<>(entry.getId(), entry));
+				}
+			}
+
+			return list;
+		}
+
+		@Override
 		public ListSettingEntry createNew() {
 			EntryConfig config = new EntryConfig();
 			config.create(this);
 			get().add(config);
+			notifyChange();
 
-			ListSettingEntry entry = new ListSettingEntry(this, config.newEntryTitle(), get().size()) {
+			ListSettingEntry entry = new ListSettingEntry(this, config.newEntryTitle(), get().size() - 1) {
 				public Icon getIcon() {
 					return SettingsImpl.buildIcon(Items.map);
 				}

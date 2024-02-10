@@ -1,19 +1,8 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- *
- * Copyright 2020-2024 L3g7
- *
+ * Copyright (c) L3g7.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe;
@@ -33,6 +22,7 @@ import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording.RecordingMode.RECIPE;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 
 /**
@@ -75,7 +65,7 @@ public class RecipeRecorder {
 			if (executedCommand) {
 				isMenuOpen = true;
 				recording.actions.clear();
-				recording.craft.set(false);
+				recording.mode.set(RECIPE);
 				executedCommand = false;
 			}
 			return;
@@ -104,7 +94,7 @@ public class RecipeRecorder {
 		if (!addedIcon && isCrafting) {
 			ItemStack targetStack = player().openContainer.getSlot(25).getStack().copy();
 			targetStack.stackSize = ItemUtil.getCompressionLevel(targetStack);
-			recording.mainSetting.icon(targetStack);
+			recording.icon = targetStack;
 			addedIcon = true;
 		}
 

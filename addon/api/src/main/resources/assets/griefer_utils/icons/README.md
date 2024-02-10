@@ -332,7 +332,11 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
-    <td><a href="recording.png"><img src="recording.png" height=16em width=16em />&nbsp;&nbsp;recording.png </a></td>
+    <td><a href="recording_red.png"><img src="recording_red.png" height=16em width=16em />&nbsp;&nbsp;recording_red.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><a href="recording_white.png"><img src="recording_white.png" height=16em width=16em />&nbsp;&nbsp;recording_white.png </a></td>
     <td>selfmade</td>
   </tr>
   <tr>

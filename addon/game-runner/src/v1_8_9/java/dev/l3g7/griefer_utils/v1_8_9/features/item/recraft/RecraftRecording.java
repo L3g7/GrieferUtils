@@ -97,6 +97,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 	public void create(Object parent) {
 		name.create(parent);
 		key.create(parent);
+		mode.create(parent);
 		mode.callback(v -> {
 			mode.icon(v.icon);
 			actions.clear();
@@ -120,6 +121,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 	@Override
 	public @NotNull List<Setting> toSettings(@Nullable Setting parent, SpriteTexture texture) {
 		startRecording.buttonIcon(actions.isEmpty() ? "recording_red" : "recording_white");
+		craftAll.enabled(mode.get() == CRAFT);
 		return Arrays.asList((Setting) name, (Setting) key, (Setting) mode, (Setting) craftAll, (Setting) startRecording);
 	}
 
@@ -276,7 +278,12 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 					entries.remove(i--);
 				} else {
 					config.create(this);
-					ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i);
+					ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i) {
+						@Override
+						public Icon getIcon() {
+							return SettingsImpl.buildIcon(config.icon);
+						}
+					};
 					entry.addSettings(config);
 					list.add(new KeyValue<>(entry.getId(), entry));
 				}
@@ -310,12 +317,6 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 				if (w instanceof SettingWidget s && s.setting() instanceof ListSettingEntry entry) {
 					SettingsImpl.hookChildAdd(s, e -> {
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
-							// Fix icon
-							IconWidget widget = new IconWidget(entry.getIcon()); // NOTE: duplicate code
-							widget.addId("setting-icon");
-							content.addChild(0, new FlexibleContentEntry(widget, false));
-							widget.initialize(content);
-
 							// Update button icons
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
 							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec")); // NOTE: use original icons?

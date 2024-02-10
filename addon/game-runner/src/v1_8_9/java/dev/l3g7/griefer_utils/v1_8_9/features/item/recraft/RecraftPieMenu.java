@@ -16,7 +16,7 @@ import java.util.List;
 
 public class RecraftPieMenu extends PieMenu {
 
-	public void open(boolean animation, RecraftPageListSetting pages) {
+	public void open(boolean animation, RecraftPageListSetting pages) { // NOTE: blur / mark empty recordings?
 		List<Pair<String, List<Pair<String, Runnable>>>> allPages = new ArrayList<>();
 
 		for (RecraftPage page : pages.get()) {

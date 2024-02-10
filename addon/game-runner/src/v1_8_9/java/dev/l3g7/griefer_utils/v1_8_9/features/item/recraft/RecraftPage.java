@@ -56,7 +56,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 		.callback(pages::notifyChange);
 
 	public final RecraftRecording.RecraftRecordingListSetting recordings = new RecraftRecording.RecraftRecordingListSetting()
-		.name("Seiten")
+		.name("Aufzeichnungen")
 		.icon("camera")
 		.callback(pages::notifyChange);
 

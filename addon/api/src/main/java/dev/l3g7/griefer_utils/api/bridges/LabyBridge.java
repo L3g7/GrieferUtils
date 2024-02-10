@@ -48,9 +48,9 @@ public interface LabyBridge {
 
 	// Utility methods
 
-	default void notifyMildError(String message) {notify("§e§lFehler ⚠", "§e" + message);}
+	default void notifyMildError(String message) {notify("§e§lFehler ⚠", "§e" + message, 15_000);}
 
-	default void notify(String title, String message) {notify(title, message, 15_000);}
+	default void notify(String title, String message) {notify(title, message, 5_000);}
 
 	void notify(String title, String message, int ms);
 

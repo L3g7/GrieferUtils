@@ -70,7 +70,7 @@ public class IOUtil {
 		} catch (IOException e) {
 			// Check if error was caused due to not enough space
 			if (file.getUsableSpace() < payload.length + 4096L) {
-				LabyBridge.labyBridge.notify("§c§lFehler ⚠", "§cZu wenig Speicherplatz!");
+				LabyBridge.labyBridge.notify("§c§lFehler ⚠", "§cZu wenig Speicherplatz!", 15_000);
 				return;
 			}
 

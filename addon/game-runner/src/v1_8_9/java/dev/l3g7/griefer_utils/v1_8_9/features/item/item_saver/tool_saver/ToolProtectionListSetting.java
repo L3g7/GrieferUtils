@@ -163,7 +163,7 @@ public class ToolProtectionListSetting extends ListSetting implements BaseSettin
 		// Hook add button
 		event.get("setting-header", "add-button").setPressable(() -> {
 			if (mc().thePlayer == null) {
-				labyBridge.notify("§e§lFehler ⚠", "§eHinzufügen von Items ist nur Ingame möglich!", 5000);
+				labyBridge.notify("§e§lFehler ⚠", "§eHinzufügen von Items ist nur Ingame möglich!");
 				return;
 			}
 
@@ -184,12 +184,12 @@ public class ToolProtectionListSetting extends ListSetting implements BaseSettin
 		event.cancel();
 
 		if (!event.itemStack.isItemStackDamageable()) {
-			labyBridge.notify("§e§lFehler ⚠", "§eDieses Item ist nicht vom Werkzeug-Saver betroffen!", 5000);
+			labyBridge.notify("§e§lFehler ⚠", "§eDieses Item ist nicht vom Werkzeug-Saver betroffen!");
 			return;
 		}
 
 		if (isExcluded(event.itemStack)) {
-			labyBridge.notify("§e§lFehler ⚠", "§eDieses Item ist bereits ausgenommen!", 5000);
+			labyBridge.notify("§e§lFehler ⚠", "§eDieses Item ist bereits ausgenommen!");
 			return;
 		}
 

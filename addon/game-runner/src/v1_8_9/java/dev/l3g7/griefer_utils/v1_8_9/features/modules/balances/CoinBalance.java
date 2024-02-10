@@ -30,7 +30,7 @@ public class CoinBalance extends Laby4Module {
 		.description("Zeigt den Kontostand an.")
 		.icon("coin_pile");
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onPacket(PacketEvent.PacketReceiveEvent<S3EPacketTeams> event) {
 		if (world() == null)
 			return;

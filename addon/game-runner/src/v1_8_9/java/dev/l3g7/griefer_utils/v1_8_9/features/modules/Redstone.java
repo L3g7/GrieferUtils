@@ -28,7 +28,7 @@ public class Redstone extends Laby4Module {
 		.description("Zeigt dir den Redstonestatus an.")
 		.icon(Items.redstone);
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMMCustomPayload(MysteryModPayloadEvent event) {
 		if (!event.channel.equals("redstone"))
 			return;

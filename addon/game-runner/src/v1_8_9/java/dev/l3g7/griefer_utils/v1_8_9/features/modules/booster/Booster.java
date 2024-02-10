@@ -101,14 +101,14 @@ public class Booster extends Laby4Module {
 		return "dev.l3g7.griefer_utils.v1_8_9.features.modules" + enabled.name();
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
 		// Clear all booster
 		boosters.values().forEach(d -> d.expirationDates.clear());
 		BoosterRequestHandler.deleteBoosterData();
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onServerQuit(ServerEvent.ServerQuitEvent event) {
 		BoosterRequestHandler.deleteBoosterData();
 	}
@@ -134,7 +134,7 @@ public class Booster extends Laby4Module {
 		waitingForBoosterGUI = false;
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMsg(MessageReceiveEvent event) {
 		String msg = event.message.getUnformattedText();
 

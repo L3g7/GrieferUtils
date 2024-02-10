@@ -80,12 +80,12 @@ public class ClearLag extends Laby4Module {
 		return Util.formatTime(clearLagEnd, timeFormat.get() == TimeFormat.SHORT);
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onServerSwitch(ServerSwitchEvent event) {
 		clearLagEnd = -1;
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onMMCustomPayload(MysteryModPayloadEvent event) {
 		if (!event.channel.equals("countdown_create"))
 			return;

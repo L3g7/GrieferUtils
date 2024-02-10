@@ -56,14 +56,14 @@ public class Chatlog extends Laby4Module {
 		return !hide.get() || chatlogEnd >= System.currentTimeMillis();
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessageSend(MessageSendEvent event) {
 		String msg = event.message.toLowerCase();
 
 		sentCmd = msg.startsWith("/chatlog") && !event.message.trim().equals("/chatlog");
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		if (!sentCmd)
 			return;

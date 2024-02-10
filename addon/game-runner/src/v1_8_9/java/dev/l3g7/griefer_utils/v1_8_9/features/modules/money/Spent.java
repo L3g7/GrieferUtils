@@ -89,14 +89,14 @@ public class Spent extends Laby4Module {
 		return DECIMAL_FORMAT_98.format(moneySpent) + "$";
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = Constants.PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
 			setBalance(moneySpent.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onTick(TickEvent.ClientTickEvent tickEvent) {
 		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
 			nextReset = getNextServerRestart();
@@ -106,7 +106,7 @@ public class Spent extends Laby4Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.money.balances." + mc().getSession().getProfile().getId() + ".";
 

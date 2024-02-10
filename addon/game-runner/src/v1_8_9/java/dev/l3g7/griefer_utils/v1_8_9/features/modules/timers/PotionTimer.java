@@ -100,7 +100,7 @@ public class PotionTimer extends Laby4Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onMessage(MessageEvent.MessageReceiveEvent event) {
 		Matcher matcher = END_PATTERN.matcher(event.message.getFormattedText());
 		if (!matcher.matches())
@@ -114,7 +114,7 @@ public class PotionTimer extends Laby4Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMouse(WindowClickEvent event) {
 		if (!getGuiChestTitle().startsWith("§6Möchtest du den Trank benutzen?"))
 			return;

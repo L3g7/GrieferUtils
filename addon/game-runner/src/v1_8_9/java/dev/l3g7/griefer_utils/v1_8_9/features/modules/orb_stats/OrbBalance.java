@@ -54,7 +54,7 @@ public class OrbBalance extends Laby4Module {
 		return balance == -1 ? "Bitte öffne den Orb-Händler / Orb-Verkäufer." : DECIMAL_FORMAT_3.format(balance);
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onTick(TickEvent.ClientTickEvent event) {
 		if (!ServerCheck.isOnCitybuild() || !(mc().currentScreen instanceof GuiChest))
 			return;
@@ -83,7 +83,7 @@ public class OrbBalance extends Laby4Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		if (!ServerCheck.isOnCitybuild())
 			return;
@@ -104,7 +104,7 @@ public class OrbBalance extends Laby4Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
 		String path = "modules.orb_balance.balances." + mc().getSession().getProfile().getId();
 

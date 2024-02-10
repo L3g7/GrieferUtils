@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.v1_8_9.features;
 
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.api.event.event_bus.Disableable;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
@@ -30,7 +31,6 @@ import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
 import net.labymod.api.client.gui.screen.ScreenInstance;
 import net.labymod.api.configuration.settings.Setting;
-import net.labymod.core.client.gui.hud.hudwidget.BossBarHudWidget;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModActivity;
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class Laby4Module extends TextHudWidget<ModuleConfig> {
+public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements Disableable {
 
 	private static final HudWidgetCategory CATEGORY = new HudWidgetCategory(Laby4Module.class, Laby4Util.getNamespace()) {
 		@Override

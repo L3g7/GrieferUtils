@@ -81,7 +81,7 @@ public class ServerPerformance extends Laby4Module {
 		return applyColor.get() ? Component.empty().append(Component.text(displayTPS, TextColor.color(r, g, b))) : Component.text(displayTPS);
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onPacket(PacketReceiveEvent<Packet<?>> event) {
 		if (event.packet instanceof S05PacketSpawnPosition) {
 			// Reset tps

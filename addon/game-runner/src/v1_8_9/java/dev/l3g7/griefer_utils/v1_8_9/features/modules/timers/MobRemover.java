@@ -73,12 +73,12 @@ public class MobRemover extends Laby4Module {
 		return Util.formatTime(mobRemoverEnd, timeFormat.get() == TimeFormat.SHORT);
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerSwitchEvent p) {
 		mobRemoverEnd = -1;
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = MOB_REMOVER_PATTERN.matcher(event.message.getFormattedText());
 		if(matcher.matches())
@@ -92,7 +92,7 @@ public class MobRemover extends Laby4Module {
 			new Thread(() -> GUClient.get().sendMobRemoverData(MinecraftUtil.getCurrentCitybuild(), mobRemoverEnd / 1000)).start();
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onCitybuildEarlyJoin(CitybuildJoinEvent.Early event) {
 		if (!GUClient.get().isAvailable())
 			return;

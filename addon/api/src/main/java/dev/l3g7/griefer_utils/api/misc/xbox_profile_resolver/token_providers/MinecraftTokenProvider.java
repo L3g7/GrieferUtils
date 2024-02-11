@@ -9,12 +9,14 @@ package dev.l3g7.griefer_utils.api.misc.xbox_profile_resolver.token_providers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.api.misc.xbox_profile_resolver.core.Authorization;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,13 +32,13 @@ public class MinecraftTokenProvider implements TokenProvider {
 			return false;
 
 		byte[] raw = minecraftBridge.winCryptUnprotectData(Files.readAllBytes(path));
-		JsonObject o = new JsonParser().parse(new InputStreamReader(new ByteArrayInputStream(raw))).getAsJsonObject();
+		JsonObject o = Streams.parse(new JsonReader(new InputStreamReader(new ByteArrayInputStream(raw)))).getAsJsonObject();
 		for (Map.Entry<String, JsonElement> entry : o.get("credentials").getAsJsonObject().entrySet()) {
 			if (entry.getKey().equals("common"))
 				continue;
 
 			JsonObject credentials = entry.getValue().getAsJsonObject();
-			JsonObject oauthToken = new JsonParser().parse(credentials.get("Xal.Production.Msa.Foci.1").getAsString()).getAsJsonObject();
+			JsonObject oauthToken = Streams.parse(new JsonReader(new StringReader(credentials.get("Xal.Production.Msa.Foci.1").getAsString()))).getAsJsonObject();
 			Authorization.set(new Authorization(oauthToken.get("refresh_token").getAsString()));
 
 			if (Authorization.get().validate())

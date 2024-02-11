@@ -10,8 +10,9 @@ package dev.l3g7.griefer_utils.auto_update;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.auto_update.ReleaseInfo.ReleaseChannel;
 import sun.misc.Unsafe;
 
@@ -190,43 +191,35 @@ public class AutoUpdater { // FIXME untested
 	}
 
 	private static ReleaseChannel getPreferredChannel() throws IOException {
-		Path configPath = new File("config", "GrieferUtils.json").toPath();
-		if (!Files.exists(configPath))
-			return STABLE;
-
-		JsonObject config = JsonParser.parseReader(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ))).getAsJsonObject();
-		if (!config.has("settings"))
-			return STABLE;
-
-		config = config.get("settings").getAsJsonObject();
-		if (!config.has("auto_update"))
-			return STABLE;
-
-		config = config.get("auto_update").getAsJsonObject();
-		if (!config.has("release_channel"))
+		JsonObject config = getConfig();
+		if (config == null || config.get("release_channel") == null)
 			return STABLE;
 
 		return ReleaseChannel.valueOf(config.get("release_channel").getAsString());
 	}
 
 	private static boolean isEnabled() throws IOException {
-		Path configPath = new File("config", "GrieferUtils.json").toPath();
-		if (!Files.exists(configPath))
-			return true;
-
-		JsonObject config = JsonParser.parseReader(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ))).getAsJsonObject();
-		if (!config.has("settings"))
-			return true;
-
-		config = config.get("settings").getAsJsonObject();
-		if (!config.has("auto_update"))
-			return true;
-
-		config = config.get("auto_update").getAsJsonObject();
-		if (!config.has("enabled"))
+		JsonObject config = getConfig();
+		if (config == null || !config.has("enabled"))
 			return true;
 
 		return config.get("enabled").getAsBoolean();
+	}
+
+	private static JsonObject getConfig() throws IOException {
+		Path configPath = new File("config", "GrieferUtils.json").toPath();
+		if (!Files.exists(configPath))
+			return null;
+
+		JsonObject config = Streams.parse(new JsonReader(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ)))).getAsJsonObject();
+		if (config.get("settings") == null)
+			return null;
+
+		config = config.get("settings").getAsJsonObject();
+		if (config.get("auto_update") == null)
+			return null;
+
+		return config.get("auto_update").getAsJsonObject();
 	}
 
 	/**
@@ -234,6 +227,7 @@ public class AutoUpdater { // FIXME untested
 	 */
 	private static String getOwnJar() {
 		String ownJarUrl = AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+
 		if (ownJarUrl.contains("!"))
 			ownJarUrl = ownJarUrl.substring(0, ownJarUrl.lastIndexOf("!")); // remove class
 
@@ -280,6 +274,7 @@ public class AutoUpdater { // FIXME untested
 	 * Hashes the content of the given file using SHA-256 and returns the hex digest.
 	 */
 	private static final char[] HEX_CHARSET = "0123456789abcdef".toCharArray();
+
 	public static String hash(File file) throws NoSuchAlgorithmException, IOException {
 		byte[] bytes = MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(file.toPath()));
 		char[] res = new char[bytes.length * 2];
@@ -349,6 +344,7 @@ public class AutoUpdater { // FIXME untested
 
 	/**
 	 * Searches the addon's addon.json file and returns the json content.
+	 *
 	 * @see dev.l3g7.griefer_utils.api.file_provider.impl.JarFileProvider
 	 */
 	private static JsonObject getAddonJson() throws IOException {
@@ -367,7 +363,7 @@ public class AutoUpdater { // FIXME untested
 
 			Optional<JarEntry> addonJson = jarFile.stream().filter(entry -> entry.getName().equals("addon.json")).findFirst();
 			if (addonJson.isPresent())
-				return JsonParser.parseReader(new InputStreamReader(jarFile.getInputStream(addonJson.get()))).getAsJsonObject();
+				return Streams.parse(new JsonReader(new InputStreamReader(jarFile.getInputStream(addonJson.get())))).getAsJsonObject();
 		}
 
 		throw new FileNotFoundException("addon.json");

@@ -8,8 +8,9 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.modules.orb_stats;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
@@ -37,6 +38,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -267,7 +269,7 @@ public class OrbStats extends Laby4Module {
 		if (b64.isEmpty())
 			return null;
 
-		JsonObject object = JsonParser.parseString(new String(Base64.getDecoder().decode(b64))).getAsJsonObject();
+		JsonObject object = Streams.parse(new JsonReader(new StringReader(new String(Base64.getDecoder().decode(b64))))).getAsJsonObject();
 		if (!object.has("profileId"))
 			return null;
 

@@ -8,7 +8,8 @@
 package dev.l3g7.griefer_utils.api.misc.xbox_profile_resolver.util;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.api.misc.CustomSSLSocketFactoryProvider;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -59,7 +60,7 @@ public class Requests {
 			}
 		}
 
-		return new JsonParser().parse(new InputStreamReader(conn.getInputStream()));
+		return Streams.parse(new JsonReader(new InputStreamReader(conn.getInputStream())));
 	}
 
 }

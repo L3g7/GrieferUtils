@@ -8,7 +8,8 @@
 package dev.l3g7.griefer_utils.post_processor;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -46,7 +47,7 @@ public class Main {
 
 		JsonObject addon;
 		try (Reader in = new InputStreamReader(Files.newInputStream(addonJson), UTF_8)) {
-			addon = JsonParser.parseReader(in).getAsJsonObject();
+			addon = Streams.parse(new JsonReader(in)).getAsJsonObject();
 		}
 
 		// Write addon.json

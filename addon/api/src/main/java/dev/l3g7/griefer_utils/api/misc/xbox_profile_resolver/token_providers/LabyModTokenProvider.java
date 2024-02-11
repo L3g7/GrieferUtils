@@ -9,7 +9,8 @@ package dev.l3g7.griefer_utils.api.misc.xbox_profile_resolver.token_providers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.api.misc.xbox_profile_resolver.core.Authorization;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class LabyModTokenProvider implements TokenProvider {
 		if (!Files.exists(path))
 			return false;
 
-		JsonObject accounts = new JsonParser().parse(Files.newBufferedReader(path)).getAsJsonObject().getAsJsonObject("accounts");
+		JsonObject accounts = Streams.parse(new JsonReader(Files.newBufferedReader(path))).getAsJsonObject().getAsJsonObject("accounts");
 
 		for (Map.Entry<String, JsonElement> entry : accounts.entrySet()) {
 

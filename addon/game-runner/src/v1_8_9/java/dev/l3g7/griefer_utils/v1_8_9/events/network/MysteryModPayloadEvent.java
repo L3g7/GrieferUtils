@@ -8,12 +8,15 @@
 package dev.l3g7.griefer_utils.v1_8_9.events.network;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketReceiveEvent;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
+
+import java.io.StringReader;
 
 /**
  * An event being posted when a {@link S3FPacketCustomPayload} on the {@code mysterymod:mm} channel is received.
@@ -35,7 +38,7 @@ public class MysteryModPayloadEvent extends Event {
 
 		PacketBuffer data = event.packet.getBufferData();
 		data.markReaderIndex();
-		new MysteryModPayloadEvent(data.readStringFromBuffer(65536), JsonParser.parseString(data.readStringFromBuffer(65536))).fire();
+		new MysteryModPayloadEvent(data.readStringFromBuffer(65536), Streams.parse(new JsonReader(new StringReader(data.readStringFromBuffer(65536))))).fire();
 		data.resetReaderIndex();
 	}
 

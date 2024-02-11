@@ -10,7 +10,8 @@ package dev.l3g7.griefer_utils.v1_8_9.settings.player_list;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.api.misc.xbox_profile_resolver.core.XboxProfile;
@@ -24,6 +25,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
@@ -120,7 +122,7 @@ public class PlayerListEntryResolver {
 			if (!property.get("name").getAsString().equals("textures"))
 				continue;
 
-			String url = JsonParser.parseString(new String(Base64.getDecoder().decode(property.get("value").getAsString()))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+			String url = Streams.parse(new JsonReader(new StringReader(new String(Base64.getDecoder().decode(property.get("value").getAsString()))))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
 			BufferedImage img = readImage(url);
 			entry.oldSkin = img.getHeight() == 32;
 

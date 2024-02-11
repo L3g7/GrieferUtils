@@ -8,8 +8,10 @@
 package dev.l3g7.griefer_utils.v1_8_9.util;
 
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.v1_8_9.events.render.ScaledResolutionInitEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ChatQueue;
 import dev.l3g7.griefer_utils.v1_8_9.misc.Vec3d;
 import net.minecraft.block.Block;
@@ -46,6 +48,7 @@ public class MinecraftUtil {
 
 	public static final int FONT_HEIGHT = 9;
 	private static final int HOUR = 60 * 60 * 1000; // An hour, in milliseconds.
+	private static ScaledResolution currentResolution;
 
 	public static Minecraft       mc()              { return Minecraft.getMinecraft(); }
 	public static EntityPlayerSP  player()          { return mc().thePlayer; }
@@ -57,8 +60,8 @@ public class MinecraftUtil {
 	public static InventoryPlayer inventory()       { return player().inventory; }
 	public static ItemStack       heldItem()        { return player() == null ? null : player().getHeldItem(); }
 
-	public static int             screenWidth()     { return new ScaledResolution(mc()).getScaledWidth(); }
-	public static int             screenHeight()    { return new ScaledResolution(mc()).getScaledHeight(); }
+	public static int             screenWidth()     { return currentResolution.getScaledWidth(); }
+	public static int             screenHeight()    { return currentResolution.getScaledHeight(); }
 
 	public static float           partialTicks()    { return LabyBridge.labyBridge.partialTicks(); }
 
@@ -121,15 +124,15 @@ public class MinecraftUtil {
 		if (citybuild.startsWith("Citybuild "))
 			return citybuild.substring(10);
 
-		switch (citybuild) {
-			case "Nature": return "N";
-			case "Extreme": return "X";
-			case "Evil": return "E";
-			case "Wasser": return "W";
-			case "Lava": return "L";
-			case "Event": return "V";
-			default: return "*";
-		}
+		return switch (citybuild) {
+			case "Nature" -> "N";
+			case "Extreme" -> "X";
+			case "Evil" -> "E";
+			case "Wasser" -> "W";
+			case "Lava" -> "L";
+			case "Event" -> "V";
+			default -> "*";
+		};
 	}
 
 	public static long getNextServerRestart() {
@@ -208,6 +211,9 @@ public class MinecraftUtil {
 		return (bedrocksFound / (float) checkedBlocks) > 0.33f;
 	}
 
-	public static void drawString(String text, float x, float y, int lvt41, boolean lvt51) {
+	@EventListener
+	private static void onScaledResolutionInit(ScaledResolutionInitEvent event) {
+		currentResolution = event.scaledResolution;
 	}
+
 }

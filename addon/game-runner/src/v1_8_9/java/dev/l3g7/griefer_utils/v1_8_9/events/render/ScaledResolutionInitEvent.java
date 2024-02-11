@@ -15,17 +15,25 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
+
 /**
  * Used to lock the mouse
  */
 public class ScaledResolutionInitEvent extends Event {
+
+	public final ScaledResolution scaledResolution;
+
+	public ScaledResolutionInitEvent(ScaledResolution scaledResolution) {
+		this.scaledResolution = scaledResolution;
+	}
 
 	@Mixin(ScaledResolution.class)
 	private static class MixinScaledResolution {
 
 		@Inject(method = "<init>", at = @At("RETURN"))
 		public void injectInit(Minecraft p_i46445_1_, CallbackInfo ci) {
-			new ScaledResolutionInitEvent().fire();
+			new ScaledResolutionInitEvent(c(this)).fire();
 		}
 
 	}

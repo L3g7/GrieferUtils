@@ -22,8 +22,8 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -65,7 +65,21 @@ public class AutoUpdater { // FIXME untested
 	public static final String DELETION_MARKER = "File marked for deletion by GrieferUtils updater";
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
+	private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+
 	public static boolean hasUpdated = false;
+
+	// Create unrestricted lookup
+	static {
+		try {
+			Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+			theUnsafe.setAccessible(true);
+			Unsafe unsafe = (Unsafe) theUnsafe.get(null);
+			unsafe.putInt(LOOKUP, 12, -1);
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public static void update(UpdateImpl infoProvider) {
 		try {
@@ -159,8 +173,7 @@ public class AutoUpdater { // FIXME untested
 		infoProvider.deleteJar(jarFile);
 
 		// Load new version
-		Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-		addURL.setAccessible(true);
+		MethodHandle addURL = LOOKUP.findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
 		addURL.invoke(AutoUpdater.class.getClassLoader(), targetFile.toURI().toURL());
 
 		hasUpdated = true;
@@ -231,19 +244,13 @@ public class AutoUpdater { // FIXME untested
 	 */
 	@SuppressWarnings("unchecked")
 	private static void removeURLFromClassLoaders(URL urlToRemove) throws Throwable {
-		// Create unrestricted lookup
-		MethodHandles.Lookup lookup = MethodHandles.lookup();
-		Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-		theUnsafe.setAccessible(true);
-		Unsafe unsafe = (Unsafe) theUnsafe.get(null);
-		unsafe.putInt(lookup, 12, -1);
 
 		// Create store accessors
 		Class<?> urlClassPathClass = Class.forName("jdk.internal.loader.URLClassPath");
-		MethodHandle ucpGetter = lookup.findGetter(URLClassLoader.class, "ucp", urlClassPathClass);
-		MethodHandle pathGetter = lookup.findGetter(urlClassPathClass, "path", ArrayList.class);
-		MethodHandle lmapGetter = lookup.findGetter(urlClassPathClass, "lmap", HashMap.class);
-		MethodHandle loadersGetter = lookup.findGetter(urlClassPathClass, "loaders", ArrayList.class);
+		MethodHandle ucpGetter = LOOKUP.findGetter(URLClassLoader.class, "ucp", urlClassPathClass);
+		MethodHandle pathGetter = LOOKUP.findGetter(urlClassPathClass, "path", ArrayList.class);
+		MethodHandle lmapGetter = LOOKUP.findGetter(urlClassPathClass, "lmap", HashMap.class);
+		MethodHandle loadersGetter = LOOKUP.findGetter(urlClassPathClass, "loaders", ArrayList.class);
 
 		URLClassLoader classLoader = (URLClassLoader) AutoUpdater.class.getClassLoader();
 

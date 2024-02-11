@@ -77,7 +77,7 @@ public class CommandPieMenu extends Feature {
 				return;
 
 			if (p) {
-				pieMenu.open(animation.get(), getMainElement());
+				pieMenu.open(animation.get(), pages);
 				return;
 			}
 
@@ -102,19 +102,19 @@ public class CommandPieMenu extends Feature {
 
 	public static class EntryConfig extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {
 
-		private final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
+		final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 			.name("Name")
 			.description("Wie der Eintrag heißen soll.")
 			.icon(Items.writable_book)
 			.callback(pages::notifyChange);
 
-		private final StringSettingImpl command = (StringSettingImpl) StringSetting.create()
+		final StringSettingImpl command = (StringSettingImpl) StringSetting.create()
 			.name("Befehl")
 			.description("Welcher Befehl ausgeführt werden soll, wenn dieser Eintrag ausgewählt wird.")
 			.icon(Blocks.command_block)
 			.callback(pages::notifyChange);
 
-		private final CitybuildSettingImpl citybuild = (CitybuildSettingImpl) CitybuildSetting.create()
+		final CitybuildSettingImpl citybuild = (CitybuildSettingImpl) CitybuildSetting.create()
 			.name("Citybuild")
 			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll")
 			.callback(pages::notifyChange);
@@ -148,12 +148,12 @@ public class CommandPieMenu extends Feature {
 
 	public static class PageConfig extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {
 
-		private final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
+		final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 			.name("Name")
 			.icon(Items.writable_book)
 			.callback(pages::notifyChange);
 
-		private final EntryListSetting entries = new EntryListSetting()
+		final EntryListSetting entries = new EntryListSetting()
 			.name("Einträge")
 			.icon("command_pie_menu")
 			.callback(pages::notifyChange);

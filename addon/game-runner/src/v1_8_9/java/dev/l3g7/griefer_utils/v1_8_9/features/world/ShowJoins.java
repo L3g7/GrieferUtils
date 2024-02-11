@@ -126,7 +126,7 @@ public class ShowJoins extends Feature {
 		UUID uuid = event.data.getProfile().getId();
 
 		TickScheduler.runAfterClientTicks(() -> {
-			long time = event.readTime - addTimestamps.remove(uuid);
+			long time = event.readTime - (addTimestamps.containsKey(uuid) ? addTimestamps.remove(uuid) : 0);
 			if (time < 75_000_000)
 				return;
 

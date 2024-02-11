@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.laby4.settings.types;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.api.misc.functions.Predicate;
+import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.settings.types.StringSetting;
 import net.labymod.api.client.component.Component;
@@ -21,6 +22,7 @@ public class StringSettingImpl extends AbstractSettingImpl<StringSetting, String
 	private int maxLength = Integer.MAX_VALUE;
 	private Component placeholder = null;
 	private Predicate<String> validator = v -> true;
+	private TextFieldWidget textWidget;
 
 	public StringSettingImpl() {
 		super(JsonPrimitive::new, JsonElement::getAsString, "");
@@ -28,17 +30,20 @@ public class StringSettingImpl extends AbstractSettingImpl<StringSetting, String
 
 	@Override
 	protected Widget[] createWidgets() {
-		TextFieldWidget widget = new TextFieldWidget();
+		if (textWidget != null)
+			return new Widget[]{textWidget};
 
-		widget.placeholder(placeholder);
-		widget.maximalLength(maxLength);
-		widget.validator(validator);
+		textWidget = new TextFieldWidget();
 
-		widget.setText(get());
-		widget.updateListener(this::set);
-		callback(v -> widget.setText(v, true));
+		textWidget.placeholder(placeholder);
+		textWidget.maximalLength(maxLength);
+		textWidget.validator(validator);
 
-		return new Widget[]{widget};
+		textWidget.setText(get());
+		textWidget.updateListener(this::set);
+		callback(v -> textWidget.setText(v, true));
+
+		return new Widget[]{textWidget};
 	}
 
 	@Override
@@ -59,4 +64,10 @@ public class StringSettingImpl extends AbstractSettingImpl<StringSetting, String
 		return this;
 	}
 
+	@Override
+	public StringSetting moveCursorToEnd() {
+		textWidget.setCursorAtEnd();
+		Reflection.set(textWidget, "marked", false);
+		return this;
+	}
 }

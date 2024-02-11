@@ -26,4 +26,6 @@ public interface StringSetting extends AbstractSetting<StringSetting, String> {
 	 */
 	StringSetting validator(Predicate<String> validator);
 
+	StringSetting moveCursorToEnd();
+
 }

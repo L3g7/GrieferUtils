@@ -8,13 +8,26 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.player.player_list;
 
 import com.google.gson.*;
-import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.api.BugReporter;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.laby4.settings.types.StringSettingImpl;
+import dev.l3g7.griefer_utils.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.ImageSelection.FileSelectionDialog;
+import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static net.minecraft.util.EnumChatFormatting.RED;
 
 @Singleton
@@ -22,7 +35,6 @@ public class ScammerList extends PlayerList {
 
 	private String previousText = "";
 
-	/*
 	private final StringSetting fileSelection = new FileStringSetting()
 		.name("Datei")
 		.description("Eine lokale Datei, aus der Scammer geladen werden sollen.")
@@ -35,9 +47,9 @@ public class ScammerList extends PlayerList {
 			try {
 				load(new URL(s));
 			} catch (MalformedURLException e) {
-				displayAchievement("§cFehler", "§cUngültiger Dateipfad");
+				labyBridge.notifyError("Ungültiger Dateipfad");
 			}
-		});*/
+		});
 
 	public ScammerList() {
 		super("§zLokale Scammerliste", "Markiert lokal hinzugefügte Scammer.", "⚠", "red_scroll", "Scammer", RED, 14, "§c§lScammer", null);
@@ -45,14 +57,11 @@ public class ScammerList extends PlayerList {
 
 	@Override
 	public void init() {
-		super.init();/*
+		super.init();
 		fileSelection.config(getConfigKey() + ".file");
-		getMainElement().getSubSettings().getElements().add(8, fileSelection);
-		getMainElement().getSubSettings().getElements().add(8, new HeaderSetting());
-
-		ModTextField textField = Reflection.get(fileSelection, "textField");
-		textField.setCursorPositionEnd();
-		textField.setSelectionPos(Integer.MAX_VALUE);*/
+		fileSelection.create(fileSelection);
+		fileSelection.moveCursorToEnd();
+		getMainElement().addSetting(getMainElement().getSubSettings().size() - 1, fileSelection);
 	}
 
 	private void load(URL url) {
@@ -66,12 +75,61 @@ public class ScammerList extends PlayerList {
 				names.add(entry.get("name").getAsString());
 			}
 
-			LabyBridge.labyBridge.notify("§aGrieferUtils", "§aDatei konnte erfolgreich geladen werden.");
+			labyBridge.notify("§aDatei geladen", "§aDatei konnte erfolgreich geladen werden.");
 		} catch (UnsupportedOperationException | IllegalStateException | NullPointerException | JsonSyntaxException e) {
-			LabyBridge.labyBridge.notifyError("Ist der Dateiinhalt richtig?");
+			labyBridge.notifyError("Ist der Dateiinhalt richtig?");
 		} catch (Throwable e) {
-			LabyBridge.labyBridge.notifyError("Datei konnte nicht geladen werden.");
+			labyBridge.notifyError("Datei konnte nicht geladen werden.");
 		}
+	}
+
+	private static class FileStringSetting extends StringSettingImpl {
+
+		public FileStringSetting() {
+			EventRegisterer.register(this);
+		}
+
+		@Override
+		public boolean hasAdvancedButton() {
+			return true;
+		}
+
+		@EventListener
+		private void onInit(SettingActivityInitEvent event) {
+			if (event.holder() != parent)
+				return;
+
+			for (Widget w : event.settings().getChildren()) {
+				if (w instanceof SettingWidget s && s.setting() == this) {
+					SettingsImpl.hookChildAdd(s, e -> {
+						if (e.childWidget() instanceof FlexibleContentWidget content) {
+							ButtonWidget btn = ButtonWidget.icon(SettingsImpl.buildIcon("explorer"), () -> {
+								FileSelectionDialog.chooseFile(f -> {
+									if (f == null)
+										return;
+
+									try {
+										URL url = f.toURI().toURL();
+										set(url.toString());
+										moveCursorToEnd();
+									} catch (MalformedURLException ex) {
+										BugReporter.reportError(ex);
+										labyBridge.notifyError("Datei konnte nicht geladen werden - WTF?");
+									}
+								}, "JSON-Datei", "json");
+							});
+
+							btn.addId("advanced-button"); // required so LSS is applied
+							content.removeChild("advanced-button");
+							content.addContent(btn);
+						}
+					});
+					break;
+				}
+			}
+
+		}
+
 	}
 
 }

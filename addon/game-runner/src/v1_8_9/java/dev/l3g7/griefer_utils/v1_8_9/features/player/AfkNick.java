@@ -42,7 +42,7 @@ public class AfkNick extends Feature {
 	private final KeySetting triggerAfk = KeySetting.create()
 		.name("Hotkey")
 		.icon("key")
-		.description("Markiert dich automatisch als AFK, wenn diese Taste gedrück wird.")
+		.description("Markiert dich automatisch als AFK, wenn diese Taste gedrückt wird.")
 		.pressCallback(b -> {
 			if (!b)
 				return;

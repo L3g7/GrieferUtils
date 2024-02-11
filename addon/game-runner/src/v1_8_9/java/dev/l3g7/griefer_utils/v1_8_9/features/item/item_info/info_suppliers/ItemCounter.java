@@ -43,18 +43,18 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		.icon(Items.writable_book)
 		.defaultValue(FormatMode.FORMATTED);
 
-	private final SwitchSetting ignoreDamage = SwitchSetting.create()
+	public static final SwitchSetting ignoreDamage = SwitchSetting.create()
 		.name("Schaden / Sub-IDs ignorieren")
 		.description("Ignoriert den Schaden / die Sub-IDs der Items beim Zählen der Anzahl.")
 		.icon("broken_pickaxe");
 
-	private final SwitchSetting ignoreEnchants = SwitchSetting.create()
+	public static final SwitchSetting ignoreEnchants = SwitchSetting.create()
 		.name("Verzauberungen ignorieren")
 		.description("Ignoriert die Verzauberungen der Items beim Zählen der Anzahl.")
 		.icon(Items.enchanted_book)
 		.defaultValue(true);
 
-	private final SwitchSetting ignoreLore = SwitchSetting.create()
+	public static final SwitchSetting ignoreLore = SwitchSetting.create()
 		.name("Beschreibungen ignorieren")
 		.description("Ignoriert die Beschreibungen der Items beim Zählen der Anzahl.")
 		.icon(Items.paper)
@@ -157,7 +157,7 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		return getAmount(items.stream().map(Slot::getStack).collect(Collectors.toList()), searchedItem);
 	}
 
-	public int getAmount(List<ItemStack> items, ItemStack searchedItem) {
+	public static int getAmount(List<ItemStack> items, ItemStack searchedItem) {
 		int amount = 0;
 
 		for (ItemStack stack : items) {

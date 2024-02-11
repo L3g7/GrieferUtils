@@ -236,7 +236,13 @@ public class AutoUpdater { // FIXME untested
 		String ownJarUrl = AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		if (ownJarUrl.contains("!"))
 			ownJarUrl = ownJarUrl.substring(0, ownJarUrl.lastIndexOf("!")); // remove class
-		return URLDecoder.decode(ownJarUrl, UTF_8);
+
+		ownJarUrl = URLDecoder.decode(ownJarUrl, UTF_8);
+
+		if (ownJarUrl.startsWith("file:/"))
+			ownJarUrl = ownJarUrl.substring(5);
+
+		return ownJarUrl;
 	}
 
 	/**

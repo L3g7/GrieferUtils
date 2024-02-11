@@ -50,7 +50,7 @@ public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements
 
 		@Override
 		public @NotNull Component description() {
-			return Component.text(":D");
+			return Component.text("\"Erweitert dein Spielerlebnis um wichtige Informationen =D\"\n~ FeuersteinHD");
 		}
 	};
 

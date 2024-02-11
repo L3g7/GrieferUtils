@@ -144,6 +144,10 @@ public class ConfigPatcher {
 				}
 			}
 		}
+
+		if (cmp.compare("2.2-BETA-1", version) < 0) {
+			rename("chat.fix_ghost_blocks", "chat.ghost_blocks_fix");
+		}
 	}
 
 	private void rename(String oldKey, String newKey) {

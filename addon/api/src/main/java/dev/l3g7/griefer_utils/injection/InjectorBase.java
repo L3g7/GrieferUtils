@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.injection;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.Version.VersionType;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.meta.ClassMeta;
@@ -32,6 +33,7 @@ public class InjectorBase {
 		MixinBootstrap.init();
 
 		mixinConfig = Config.create("griefer_utils.mixins.json");
+		Reflection.set(mixinConfig.getConfig(), "refMapperConfig", VersionType.MINECRAFT.getCurrent().refmap + "-GrieferUtils.refmap.json");
 		Reflection.invoke(Mixins.class, "registerConfiguration", mixinConfig);
 		if (labymodNamespace != null)
 			mixinConfig.getConfig().decorate("labymod-namespace", labymodNamespace);

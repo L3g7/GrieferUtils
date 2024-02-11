@@ -26,7 +26,7 @@ import static dev.l3g7.griefer_utils.auto_update.AutoUpdater.DELETION_MARKER;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 
-@AddonEntryPoint(priority = 1001)
+@AddonEntryPoint(priority = 900)
 @SuppressWarnings("UnstableApiUsage")
 public class PreStart implements Entrypoint, UpdateImpl {
 

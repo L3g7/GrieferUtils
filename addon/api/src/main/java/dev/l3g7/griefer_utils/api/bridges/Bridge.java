@@ -12,8 +12,8 @@ import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static dev.l3g7.griefer_utils.api.bridges.Bridge.VersionType.LABYMOD;
-import static dev.l3g7.griefer_utils.api.bridges.Bridge.VersionType.MINECRAFT;
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.VersionType.LABYMOD;
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.VersionType.MINECRAFT;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -51,23 +51,25 @@ public @interface Bridge {
 
 	}
 
-	enum VersionType {
-		MINECRAFT, LABYMOD;
-
-		private Version current;
-	}
-
 	enum Version {
 
-		LABY_3(LABYMOD, "laby3"), LABY_4(LABYMOD, "laby4"), ANY_LABY(LABYMOD, null),
-		MINECRAFT_1_8_9(MINECRAFT, "v1_8_9"), ANY_MINECRAFT(MINECRAFT, null);
+		LABY_3("laby3"), LABY_4("laby4"), ANY_LABY(null),
+		MINECRAFT_1_8_9("v1_8_9", "1.8.9"), ANY_MINECRAFT(null, null);
 
 		private final VersionType type;
 		private final String pkg;
+		public final String refmap; // Specific to Minecraft versions
 
-		Version(VersionType type, String pkg) {
-			this.type = type;
+		Version(String pkg) {
+			this.type = LABYMOD;
 			this.pkg = pkg;
+			this.refmap = null;
+		}
+
+		Version(String pkg, String refmap) {
+			this.type = MINECRAFT;
+			this.pkg = pkg;
+			this.refmap = refmap;
 		}
 
 		public static Version getMinecraftBySemVer(String semVer) {
@@ -80,7 +82,7 @@ public @interface Bridge {
 		}
 
 		public boolean isActive() {
-			return pkg == null || type.current == this;
+			return pkg == null /* ANY */ || type.current == this;
 		}
 
 		/**
@@ -106,6 +108,15 @@ public @interface Bridge {
 			return true;
 		}
 
+		public enum VersionType {
+			MINECRAFT, LABYMOD;
+
+			private Version current;
+
+			public Version getCurrent() {
+				return current;
+			}
+		}
 	}
 
 	@Retention(RUNTIME)

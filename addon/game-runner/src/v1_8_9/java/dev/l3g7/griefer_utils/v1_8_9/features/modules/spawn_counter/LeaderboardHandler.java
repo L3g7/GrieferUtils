@@ -14,13 +14,13 @@ import dev.l3g7.griefer_utils.api.misc.server.requests.LeaderboardRequest.Leader
 import dev.l3g7.griefer_utils.api.misc.server.requests.LeaderboardRequest.UserData;
 import dev.l3g7.griefer_utils.laby4.settings.OffsetIcon;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.GrieferGamesJoinEvent;
+import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module.CustomRenderTextLine;
 import dev.l3g7.griefer_utils.v1_8_9.features.modules.spawn_counter.SpawnCounter.LeaderboardDisplayType;
 import dev.l3g7.griefer_utils.v1_8_9.misc.server.GUClient;
 import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListEntry;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
-import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.render.font.RenderableComponent;
@@ -114,25 +114,27 @@ class LeaderboardHandler {
 		line.updateLeaderboardLine(UUID.fromString(entry.id), entry.name, other.score);
 	}
 
-	public class LeaderboardLine extends TextLine {
+	public class LeaderboardLine extends CustomRenderTextLine {
 
 		private final TextColor textColor;
 		private final int offset;
 		RenderableComponent first, second;
 
 		public LeaderboardLine(boolean primary, int offset) {
-			super(spawnCounter, (Component) null, "");
+			super(spawnCounter);
 			this.textColor = TextColor.color(primary ? -1 : 0xAAAAAA);
 			this.offset = offset;
-
 			spawnCounter.addLine(this);
 		}
 
 		@Override
-		protected void flushInternal() {}
+		public boolean isAvailable() {
+			return first != null && second != null;
+		}
 
-		private RenderableComponent createRenderableComponent(Component c) {
-			return RenderableComponent.builder().disableCache().format(c);
+		@Override
+		public float getWidth() {
+			return maxPosWidth + second.getWidth();
 		}
 
 		public void updateLeaderboardLine(UUID uuid, String name, int score) {
@@ -143,7 +145,6 @@ class LeaderboardHandler {
 			this.second = createRenderableComponent(
 				Component.icon(new OffsetIcon(Icon.head(uuid), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
 					.append(Component.text(" " + name + ": " + score, textColor)));
-			renderableComponent = this.first;
 
 			maxPosWidth = Math.max(maxPosWidth, this.first.getWidth());
 		}

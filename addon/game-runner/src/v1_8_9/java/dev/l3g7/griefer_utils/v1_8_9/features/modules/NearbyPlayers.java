@@ -16,12 +16,12 @@ import dev.l3g7.griefer_utils.v1_8_9.util.PlayerUtil;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
-import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.api.client.render.matrix.Stack;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
@@ -61,17 +61,20 @@ public class NearbyPlayers extends Laby4Module {
 			lines.add(new NearbyPlayerLine(player));
 	}
 
-	public class NearbyPlayerLine extends TextLine {
+	public class NearbyPlayerLine extends CustomRenderTextLine {
 
 		RenderableComponent distance, player;
 
 		public NearbyPlayerLine(EntityOtherPlayerMP player) {
-			super(NearbyPlayers.this, (Component) null, "");
-
+			super(NearbyPlayers.this);
 			int distance = (int) player.getDistanceToEntity(player());
 
 			// Use display name from tab list for applied text mods
-			IChatComponent displayName = mc().getNetHandler().getPlayerInfo(player.getUniqueID()).getDisplayName();
+			NetworkPlayerInfo playerInfo = mc().getNetHandler().getPlayerInfo(player.getUniqueID());
+			if (playerInfo == null)
+				return;
+
+			IChatComponent displayName = playerInfo.getDisplayName();
 			if (displayName == null)
 				return;
 
@@ -80,15 +83,17 @@ public class NearbyPlayers extends Laby4Module {
 				Component.icon(new OffsetIcon(Icon.head(player.getUniqueID()), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
 					.append(Component.text(" ")).append(c(displayName)));
 
-			this.renderableComponent = this.distance;
 			maxDistWidth = Math.max(maxDistWidth, this.distance.getWidth());
 		}
 
 		@Override
-		protected void flushInternal() {}
+		public boolean isAvailable() {
+			return distance != null && player != null;
+		}
 
-		private RenderableComponent createRenderableComponent(Component c) {
-			return RenderableComponent.builder().disableCache().format(c);
+		@Override
+		public float getWidth() {
+			return maxDistWidth + player.getWidth();
 		}
 
 		@Override

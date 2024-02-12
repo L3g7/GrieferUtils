@@ -23,13 +23,17 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.features.Laby4Module.ModuleConfig;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.gui.hud.binding.category.HudWidgetCategory;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextHudWidget;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextHudWidgetConfig;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
+import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
 import net.labymod.api.client.gui.screen.ScreenInstance;
+import net.labymod.api.client.render.font.RenderableComponent;
+import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
@@ -208,4 +212,38 @@ public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements
 
 	}
 
+	public static abstract class CustomRenderTextLine extends TextLine {
+
+		public CustomRenderTextLine(TextHudWidget<?> widget) {
+			super(widget, (Component) null, "");
+			// Fix LabyMod using line#renderableComponent#getWidth instead of line#getWidth to calculate x offset
+			this.renderableComponent = new RenderableComponent(null, null, Style.EMPTY, 0, 0, List.of(), 0) {
+				@Override
+				public float getWidth() {
+					return CustomRenderTextLine.this.getWidth();
+				}
+			};
+		}
+
+		@Override
+		protected void flushInternal() {}
+
+		protected RenderableComponent createRenderableComponent(Component c) {
+			return RenderableComponent.builder().disableCache().format(c);
+		}
+
+		@Override
+		public State state() {
+			return isAvailable() ? state : State.DISABLED;
+		}
+
+		public abstract boolean isAvailable();
+
+		@Override
+		public abstract float getWidth();
+
+		@Override
+		public abstract void renderLine(Stack stack, float x, float y, float space, HudSize hudWidgetSize);
+
+	}
 }

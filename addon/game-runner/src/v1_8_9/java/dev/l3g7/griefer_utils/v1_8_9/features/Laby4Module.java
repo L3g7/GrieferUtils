@@ -32,6 +32,7 @@ import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
 import net.labymod.api.client.gui.screen.ScreenInstance;
+import net.labymod.api.client.gui.screen.widget.widgets.hud.HudWidgetWidget;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.configuration.settings.Setting;
@@ -61,18 +62,12 @@ public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements
 	private TextLine line;
 
 	private SwitchSettingImpl setting;
-	private final String id;
 
 	public Laby4Module() {
 		super(UUID.randomUUID().toString(), ModuleConfig.class);
+		Reflection.set(this, "id", "griefer_utils_" + StringUtil.convertCasing(getClass().getSimpleName()));
+
 		bindCategory(CATEGORY);
-
-		id = StringUtil.convertCasing(getClass().getSimpleName());
-	}
-
-	@Override
-	public String getId() {
-		return id;
 	}
 
 	@Override
@@ -142,8 +137,13 @@ public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements
 		ScreenInstance instance = Reflection.get(activity.getActiveTab(), "instance");
 		WidgetsEditorActivity editor = (WidgetsEditorActivity) instance;
 
-		if (!editor.renderer().getWidget(this).isDragging())
-			editor.renderer().reinitializeHudWidget(this, "moved");
+		for (HudWidgetWidget widget : editor.renderer().getChildren()) {
+			if (widget.hudWidget() == this) {
+				if (!widget.isDragging())
+					editor.renderer().reinitializeHudWidget(this, "moved");
+				break;
+			}
+		}
 	}
 
 	// Settings
@@ -202,6 +202,7 @@ public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements
 
 		@Override
 		public void setEnabled(boolean enabled) {
+			super.setEnabled(enabled);
 			setting.set(enabled);
 		}
 

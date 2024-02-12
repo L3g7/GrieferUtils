@@ -85,13 +85,13 @@ public class GrieferUtilsGroup extends Group {
 	}
 
 	@Override
-	public GroupDisplayType getDisplayType() {
-		return title == null ? NONE : ABOVE_HEAD;
+	public boolean isDefault() {
+		return true;
 	}
 
 	@Override
-	public TextColor getTextColor() {
-		return TextColor.color(0xFF0000);
+	public GroupDisplayType getDisplayType() {
+		return title == null ? NONE : ABOVE_HEAD;
 	}
 
 	public void render(float x, float y) {

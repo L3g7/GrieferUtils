@@ -108,7 +108,7 @@
   </tr>
   <tr>
     <td><a href="buy_me_a_coffee_outline.png"><img src="buy_me_a_coffee_outline.png" height=16em width=16em />&nbsp;&nbsp;buy_me_a_coffee_outline.png </a></td>
-    <td><a href="https://www.buymeacoffee.com/icons/apple-icon.png">Buy Me a Coffee</a></td>
+    <td><a href="https://cdn.buymeacoffee.com/brand-assets/bmcbrand.zip?ver=1.5">Buy Me a Coffee</a></td>
   </tr>
   <tr>
     <td><a href="calculator.png"><img src="calculator.png" height=16em width=16em />&nbsp;&nbsp;calculator.png </a></td>

@@ -29,10 +29,10 @@ public class ItemTooltipEvent extends Event {
 		this.showAdvancedItemTooltips = showAdvancedItemTooltips;
 	}
 
-	@Mixin(ItemStack.class)
+	@Mixin(value = ItemStack.class, priority = 999)
 	private static class MixinItemStack  {
 
-		@Inject(method = "getTooltip", at = @At("RETURN"))
+		@Inject(method = "getTooltip", at = @At("TAIL"))
 		public void injectGetTooltip(EntityPlayer playerIn, boolean advanced, CallbackInfoReturnable<List<String>> cir) {
 			new ItemTooltipEvent(this, cir.getReturnValue(), advanced).fire();
 		}

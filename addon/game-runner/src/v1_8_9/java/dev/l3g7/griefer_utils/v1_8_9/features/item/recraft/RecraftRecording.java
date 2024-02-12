@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.laby4.settings.BaseSettingImpl;
 import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.settings.types.*;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftRecorder;
@@ -102,8 +103,8 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 			mode.icon(v.icon);
 			actions.clear();
 			icon = new ItemStack(Blocks.barrier);
-			craftAll.enabled(v == CRAFT);
 		});
+		((SwitchSettingImpl) craftAll).setVisibleSupplier(() -> mode.get() == CRAFT);
 		craftAll.create(parent);
 		startRecording.create(parent);
 	}
@@ -121,7 +122,6 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 	@Override
 	public @NotNull List<Setting> toSettings(@Nullable Setting parent, SpriteTexture texture) {
 		startRecording.buttonIcon(actions.isEmpty() ? "recording_red" : "recording_white");
-		craftAll.enabled(mode.get() == CRAFT);
 		return Arrays.asList((Setting) name, (Setting) key, (Setting) mode, (Setting) craftAll, (Setting) startRecording);
 	}
 

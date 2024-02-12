@@ -57,7 +57,8 @@ public class Badges {
 			"§nFarben:\n" +
 			"§cRot§r: Offizieller Account / Entwickler\n" +
 			"§bBlau§r: Entwickler\n" +
-			"§aGrün§r: Supporter")
+			"§aGrün§r: Supporter\n" +
+			"§eGelb§r: Unterstützer")
 		.config("settings.badges")
 		.icon("icon")
 		.defaultValue(true)

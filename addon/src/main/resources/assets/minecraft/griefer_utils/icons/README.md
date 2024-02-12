@@ -31,6 +31,10 @@
   </tr>
   <tr>
   <tr>
+    <td><a href="labymod_3/"><img src="labymod_3/labymod_logo.png" height=16em width=16em />&nbsp;&nbsp;labymod_3/* </a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
     <td><a href="litematica/axes.png"><img src="litematica/axes.png" height=16em width=16em />&nbsp;&nbsp;litematica/axes.png </a></td>
     <td>selfmade</td>
   </tr>
@@ -99,11 +103,23 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/bundle_filled.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="buy_me_a_coffee.png"><img src="buy_me_a_coffee.png" height=16em width=16em />&nbsp;&nbsp;buy_me_a_coffee.png </a></td>
+    <td><a href="https://www.buymeacoffee.com/icons/apple-icon.png">Buy Me a Coffee</a></td>
+  </tr>
+  <tr>
+    <td><a href="buy_me_a_coffee_outline.png"><img src="buy_me_a_coffee_outline.png" height=16em width=16em />&nbsp;&nbsp;buy_me_a_coffee_outline.png </a></td>
+    <td><a href="https://cdn.buymeacoffee.com/brand-assets/bmcbrand.zip?ver=1.5">Buy Me a Coffee</a></td>
+  </tr>
+  <tr>
     <td><a href="calculator.png"><img src="calculator.png" height=16em width=16em />&nbsp;&nbsp;calculator.png </a></td>
     <td><a href="https://apps.apple.com/us/app/calculator/id1069511488">Apple calculator</a></td>
   </tr>
   <tr>
-    <td><a href="camera.png"><img src="camera.png" height=16em width=16em />&nbsp;&nbsp;camera.png </a></td>
+    <td><a href="crossed_out_block_outline.png"><img src="crossed_out_block_outline.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_block_outline.png </a></td>
+    <td><a href="https://modrinth.com/mod/antighost">Giselbaer</a></td>
+  </tr>
+  <tr>
+    <td><a href="crossed_out_camera.png"><img src="crossed_out_camera.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_camera.png </a></td>
     <td><a href="https://www.shutterstock.com/de/image-vector/movie-camera-pixel-art-32-bit-2191871743">Shutterstock (pixelpnj)</a></td>
   </tr>
   <tr>
@@ -133,10 +149,6 @@
   <tr>
     <td><a href="cpu.png"><img src="cpu.png" height=16em width=16em />&nbsp;&nbsp;cpu.png </a></td>
     <td><a href="https://www.shutterstock.com/image-vector/electronics-pixel-art-icons-set-artificial-1508310176">Shutterstock (VectorPixelStar)</a></td>
-  </tr>
-  <tr>
-    <td><a href="crossed_out_block_outline.png"><img src="crossed_out_block_outline.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_block_outline.png </a></td>
-    <td><a href="https://modrinth.com/mod/antighost">Giselbaer</a></td>
   </tr>
   <tr>
     <td><a href="crossed_out_camera.png"><img src="crossed_out_camera.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_camera.png </a></td>
@@ -304,8 +316,8 @@
     <td><a href="https://textures.minecraft.net/texture/ef686fbf016e1458f7f9a9850f38ef7fd6ae1d28bc241ac0c0686f77fdbb4b61">Minecraft Skin</a></td>
   </tr>
   <tr>
-    <td><a href="pencil.png"><img src="pencil.png" height=16em width=16em />&nbsp;&nbsp;pencil.png </a></td>
-    <td><a href="https://www.pinterest.de/pin/151081762469399143/">Pinterest (Jason Robb)</a></td>
+    <td><a href="pencil_vec.png"><img src="pencil_vec.png" height=16em width=16em />&nbsp;&nbsp;pencil_vec.png </a></td>
+    <td><a href="https://phosphoricons.com/">Phosphor Icons (pencil, Fill)</a></td>
   </tr>
   <tr>
     <td><a href="player_menu.png"><img src="player_menu.png" height=16em width=16em />&nbsp;&nbsp;player_menu.png </a></td>
@@ -328,7 +340,11 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
-    <td><a href="recording.png"><img src="recording.png" height=16em width=16em />&nbsp;&nbsp;recording.png </a></td>
+    <td><a href="recording_red.png"><img src="recording_red.png" height=16em width=16em />&nbsp;&nbsp;recording_red.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><a href="recording_white.png"><img src="recording_white.png" height=16em width=16em />&nbsp;&nbsp;recording_white.png </a></td>
     <td>selfmade</td>
   </tr>
   <tr>

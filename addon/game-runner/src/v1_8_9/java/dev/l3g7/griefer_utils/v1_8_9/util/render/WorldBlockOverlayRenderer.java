@@ -163,7 +163,8 @@ public class WorldBlockOverlayRenderer {
 
 		for (Map.Entry<BlockPos, RenderObject> entry : schematicasROs.entrySet())
 			if (SchematicaUtil.shouldLayerBeRendered(entry.getKey().getY()))
-				entry.getValue().render(entry.getKey(), partialTicks, 0);
+				if (entry.getValue().generator.isEnabled())
+					entry.getValue().render(entry.getKey(), partialTicks, 0);
 	}
 
 	private static void updateSchematic() {
@@ -206,9 +207,6 @@ public class WorldBlockOverlayRenderer {
 
 		private static RenderObject fromState(IBlockState state, BlockPos pos, WorldClient world) {
 			for (RenderObjectGenerator generator: generators) {
-				if (!generator.isEnabled())
-					continue;
-
 				RenderObject renderObject = generator.getRenderObject(state, pos, world);
 				if (renderObject != null)
 					return renderObject;

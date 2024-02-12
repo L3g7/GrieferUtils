@@ -42,13 +42,6 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.uuid;
 public class Transactions extends Feature { // NOTE: search, export
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-	private static final List<BaseSetting<?>> HEADER = Arrays.asList(
-		HeaderSetting.create("§r"),
-		HeaderSetting.create("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-		HeaderSetting.create("§f§lTransaktionen").scale(.7).entryHeight(7),
-		HeaderSetting.create("§fder letzten 30 Tage").scale(.7).entryHeight(10),
-		HeaderSetting.create("§c§nDie Beträge sind abgerundet§c!").scale(.7)
-	);
 
 	private final Set<Transaction> transactions = Collections.synchronizedSet(new TreeSet<>());
 
@@ -59,8 +52,7 @@ public class Transactions extends Feature { // NOTE: search, export
 		.name("Transaktionen")
 		.description("§eVerbindet...")
 		.icon("scroll")
-		.disable()
-		.subSettings(HEADER);
+		.disable();
 
 	@EventListener
 	public void onMMPacket(MMPacketReceiveEvent<TransactionsPacket> event) {
@@ -114,7 +106,7 @@ public class Transactions extends Feature { // NOTE: search, export
 		List<BaseSetting<?>> list = setting.getSubSettings();
 
 		list.clear();
-		list.add(HeaderSetting.createText("Transaktionen der letzten 30 Tage", "Die Beträge sind abgerundet!").center());
+		list.add(HeaderSetting.createText("Transaktionen der letzten 30 Tage").center());
 
 		// Add transactions count
 		list.add(HeaderSetting.create("§r"));

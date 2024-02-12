@@ -32,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.util.ResourceLocation;
 
 import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.ProtectionType.*;
 import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.UNPROTECTED;
@@ -104,7 +105,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver { // FIXME: test, tes
 		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
 		GlStateManager.color(1, 1, 1, 1);
-		DrawUtils.bindTexture("griefer_utils/icons/shield_with_sword.png");
+		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/shield_with_sword.png"));
 
 		float x = event.x - 0.5f;
 		float y = event.y;

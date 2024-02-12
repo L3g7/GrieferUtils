@@ -200,7 +200,7 @@ public class GuiBigChest extends GuiContainer {
 			int dX = (i % 9) * 18 + 8;
 			int dY = (i / 9) * 18 + 19;
 
-			DrawUtils.bindTexture(textureItem.texture);
+			DrawUtils.bindTexture(new ResourceLocation("griefer_utils", textureItem.texture));
 			double dSize = (16 - textureItem.renderSize) / 2d;
 
 			DrawUtils.drawTexture(x + dX + dSize, y + dY + dSize, 0, 0, 256, 256, textureItem.renderSize, textureItem.renderSize);
@@ -248,7 +248,7 @@ public class GuiBigChest extends GuiContainer {
 		}
 
 		public TextureItem(String texture, int renderSize, ItemStack toolTipStack) {
-			this.texture = "griefer_utils/icons/" + texture + ".png";
+			this.texture = "icons/" + texture + ".png";
 			this.renderSize = renderSize;
 			this.toolTipStack = toolTipStack;
 		}

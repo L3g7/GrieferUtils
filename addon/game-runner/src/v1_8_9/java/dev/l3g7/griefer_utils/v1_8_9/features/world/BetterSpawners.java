@@ -241,7 +241,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 				return;
 			}
 
-			resourceLocation = new ResourceLocation("griefer_utils/icons/mob_icons/outlined_minecraft/" + EntityList.getEntityString(entity).toLowerCase() + ".png");
+			resourceLocation = new ResourceLocation("griefer_utils", "icons/mob_icons/outlined_minecraft/" + EntityList.getEntityString(entity).toLowerCase() + ".png");
 		}
 
 		@Override

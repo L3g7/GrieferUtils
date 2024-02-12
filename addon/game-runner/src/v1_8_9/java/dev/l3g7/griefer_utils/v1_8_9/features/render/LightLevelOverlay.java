@@ -40,7 +40,7 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 public class LightLevelOverlay extends Feature {
 
 	private final Map<BlockPos, Integer> lightPositions = new ConcurrentHashMap<>();
-	private final ResourceLocation texture = new ResourceLocation("griefer_utils/textures/light_level_overlay.png");
+	private final ResourceLocation texture = new ResourceLocation("griefer_utils", "textures/light_level_overlay.png");
 	private final double[] textureX = new double[17];
 	private final double[] textureY = new double[9];
 	private int passedTicks = 0;

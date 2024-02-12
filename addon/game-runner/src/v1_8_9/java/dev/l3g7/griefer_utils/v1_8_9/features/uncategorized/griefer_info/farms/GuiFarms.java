@@ -21,6 +21,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -166,7 +167,7 @@ public class GuiFarms extends GuiSearchable<Farm> {
 				GlStateManager.scale(2, 2, 1);
 			} else {
 				GlStateManager.disableLighting();
-				DrawUtils.bindTexture("griefer_utils/icons/" + texture + ".png");
+				DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/" + texture + ".png"));
 				DrawUtils.drawTexture(tooltipTranslation.getLeft() - 0.5, tooltipY, 256, 256, 7, 7);
 			}
 			tooltipY += 10;

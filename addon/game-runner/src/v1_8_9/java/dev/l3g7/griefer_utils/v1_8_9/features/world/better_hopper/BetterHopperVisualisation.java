@@ -50,7 +50,7 @@ class BetterHopperVisualisation implements Disableable {
 	private BlockPos hopper;
 	private BlockPos mainConnection;
 	private int borderSize;
-	private long displayEnd = -1;
+	static long displayEnd = -1;
 	private BlockyRenderSphere blockyRenderSphere = null;
 
 	@EventListener

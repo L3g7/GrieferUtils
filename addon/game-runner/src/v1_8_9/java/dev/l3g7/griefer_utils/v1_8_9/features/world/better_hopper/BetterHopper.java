@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import dev.l3g7.griefer_utils.v1_8_9.util.render.RenderUtil;
-import net.labymod.utils.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -135,7 +134,7 @@ public class BetterHopper extends Feature {
 
 	@EventListener
 	private void onRenderTick(RenderWorldLastEvent event) {
-		if (!showLastHopper.get() || lastClickedHoppers.isEmpty())
+		if (!showLastHopper.get() || lastClickedHoppers.isEmpty() || BetterHopperVisualisation.displayEnd >= System.currentTimeMillis())
 			return;
 
 		double color = 192 / (float) lastClickedHoppers.size();

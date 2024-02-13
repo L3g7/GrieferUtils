@@ -39,7 +39,7 @@ public class JarFileProvider extends FileProvider {
 	protected Throwable update0(Class<?> refClass) {
 		try {
 			String jarPath = refClass.getProtectionDomain().getCodeSource().getLocation().getFile();
-			if (!jarPath.contains(".jar"))
+			if (!jarPath.contains(".jar!") && !jarPath.contains(".gu_jar!"))
 				throw new IllegalStateException("Invalid code source location: " + jarPath);
 
 			// Sanitize jarPath

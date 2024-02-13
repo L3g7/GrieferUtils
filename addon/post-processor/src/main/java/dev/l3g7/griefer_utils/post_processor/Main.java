@@ -23,6 +23,8 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Main {
 
+	private static final String LABY_3_LOADER = "/dev/l3g7/griefer_utils/laby3/PreStart.class";
+
 	public static void main(String[] args) throws IOException {
 		String version = System.getProperty("griefer_utils.version");
 
@@ -63,22 +65,13 @@ public class Main {
 	}
 
 	/**
-	 * Overwrites the class version of all .class files with 52 (Java 1.8)
+	 * Overwrites the class version of the LabyMod 3 jar loader with 52 (Java 1.8)
 	 */
 	private static void overwriteClassVersion(FileSystem fs) throws IOException {
-		for (Path rootDirectory : fs.getRootDirectories()) {
-			Files.walk(rootDirectory)
-				.filter(p -> p.toString().endsWith("class"))
-				.forEach(p -> {
-					try {
-						byte[] bytes = Files.readAllBytes(p);
-						bytes[7] = 52;
-						Files.write(p, bytes);
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				});
-		}
+		Path path = fs.getPath(LABY_3_LOADER);
+		byte[] bytes = Files.readAllBytes(path);
+		bytes[7] = 52;
+		Files.write(path, bytes);
 	}
 
 }

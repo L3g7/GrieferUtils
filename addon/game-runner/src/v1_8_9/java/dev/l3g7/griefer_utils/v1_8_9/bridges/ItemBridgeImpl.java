@@ -9,7 +9,6 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.util.Util;
 import dev.l3g7.griefer_utils.laby4.bridges.ItemBridge;
 import net.labymod.api.client.world.item.ItemStack;
-import net.labymod.v1_8_9.client.util.ItemUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -22,7 +21,6 @@ import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 
 @Bridge
 @Singleton
-@SuppressWarnings("UnstableApiUsage")
 public class ItemBridgeImpl implements ItemBridge {
 
 	@Override
@@ -32,12 +30,15 @@ public class ItemBridgeImpl implements ItemBridge {
 
 	@Override
 	public ItemStack toLabyStack(McItemStack nbt) {
-		return ItemUtil.getLabyItemStack(c(nbt));
+		if (nbt == null)
+			return c(new net.minecraft.item.ItemStack(Blocks.air));
+
+		return c(nbt);
 	}
 
 	@Override
 	public McItemStack fromLabyStack(ItemStack itemStack) {
-		return c(ItemUtil.getMinecraftItemStack(itemStack));
+		return c(itemStack);
 	}
 
 	@Override

@@ -14,7 +14,7 @@ dependencies {
     // I can't just use the latest version as LabyMod sometimes publishes unstable versions with breaking changes.
     // I can't get it from game-runner as game-runner is dependent on core and its build script model must be fully prepared to get its dependencies.
     // I hope that's just a temporary fix
-    implementation("net.labymod.labymod4:core:4.1.17-internal-48ca5e2b")
+    implementation("net.labymod.labymod4:core:4.1.19-internal-72f834b8")
 }
 
 labyModProcessor {

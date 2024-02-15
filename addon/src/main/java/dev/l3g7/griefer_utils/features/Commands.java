@@ -19,7 +19,6 @@
 package dev.l3g7.griefer_utils.features;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
-import dev.l3g7.griefer_utils.event.events.MessageEvent;
 import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
@@ -66,7 +65,8 @@ public class Commands {
 			if (argsString.isEmpty())
 				return "Usage: /gu:queue <text>";
 
-			ChatQueue.send(argsString);
+			if (!MessageSendEvent.post(command))
+				ChatQueue.send(argsString);
 			return null;
 		}
 
@@ -111,7 +111,7 @@ public class Commands {
 
 	public static void runOnCb(String command) {
 		if (ServerCheck.isOnCitybuild()) {
-			if (!MessageEvent.MessageSendEvent.post(command))
+			if (!MessageSendEvent.post(command))
 				player().sendChatMessage(command);
 		} else {
 			onCbCommands.add(command);

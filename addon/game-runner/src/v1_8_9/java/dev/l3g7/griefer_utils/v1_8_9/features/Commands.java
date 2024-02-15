@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.v1_8_9.features;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ChatQueue;
@@ -49,7 +48,8 @@ public class Commands {
 			if (argsString.isEmpty())
 				return "Usage: /gu:run_on_cb <text>";
 
-			runOnCb(argsString);
+			if (!MessageSendEvent.post(argsString))
+				runOnCb(argsString);
 			return null;
 		}
 
@@ -102,7 +102,7 @@ public class Commands {
 
 	public static void runOnCb(String command) {
 		if (ServerCheck.isOnCitybuild()) {
-			if (!MessageEvent.MessageSendEvent.post(command))
+			if (!MessageSendEvent.post(command))
 				player().sendChatMessage(command);
 		} else {
 			onCbCommands.add(command);

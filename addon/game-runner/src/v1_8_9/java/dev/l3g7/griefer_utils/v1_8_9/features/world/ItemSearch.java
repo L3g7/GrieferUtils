@@ -105,8 +105,9 @@ public class ItemSearch extends Feature {
 	@EventListener
 	public void onMousePress(GuiScreenEvent.MouseInputEvent.Post event) {
 		if (searchField != null && Mouse.getEventButton() != -1) {
-			int guiLeft = Reflection.get(event.gui, "guiLeft");
-			int guiTop = Reflection.get(event.gui, "guiTop");
+			GuiScreen gui = mc().currentScreen;
+			int guiLeft = Reflection.get(gui, "guiLeft");
+			int guiTop = Reflection.get(gui, "guiTop");
 
 			int scale = new ScaledResolution(mc()).getScaleFactor();
 			int x = Mouse.getEventX() / scale;

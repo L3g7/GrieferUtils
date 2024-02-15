@@ -34,6 +34,7 @@ import static net.minecraft.util.EnumChatFormatting.RED;
 public class ScammerList extends PlayerList {
 
 	private String previousText = "";
+	private boolean starting = true;
 
 	private final StringSetting fileSelection = new FileStringSetting()
 		.name("Datei")
@@ -59,6 +60,7 @@ public class ScammerList extends PlayerList {
 	public void init() {
 		super.init();
 		fileSelection.config(getConfigKey() + ".file");
+		starting = false;
 		fileSelection.create(fileSelection);
 		fileSelection.moveCursorToEnd();
 		getMainElement().addSetting(getMainElement().getSubSettings().size() - 1, fileSelection);
@@ -75,11 +77,12 @@ public class ScammerList extends PlayerList {
 				names.add(entry.get("name").getAsString());
 			}
 
-			labyBridge.notify("§aDatei geladen", "§aDatei konnte erfolgreich geladen werden.");
+			if (!starting) // Don't show success message on startup
+				labyBridge.notify("§aDatei geladen", "§aDatei konnte erfolgreich geladen werden.");
 		} catch (UnsupportedOperationException | IllegalStateException | NullPointerException | JsonSyntaxException e) {
-			labyBridge.notifyError("Ist der Dateiinhalt richtig?");
+			labyBridge.notifyError("Ist der " + (starting ? "Scammer-" : "") + "Dateiinhalt richtig?");
 		} catch (Throwable e) {
-			labyBridge.notifyError("Datei konnte nicht geladen werden.");
+			labyBridge.notifyError((starting ? "Scammer-" : "") + "Datei konnte nicht geladen werden.");
 		}
 	}
 

@@ -43,6 +43,7 @@ import static net.labymod.utils.ModColor.RED;
 public class ScammerList extends PlayerList {
 
 	private String previousText = "";
+	private boolean starting = true;
 
 	private final StringSetting fileSelection = new FileStringSetting()
 		.name("Datei")
@@ -68,6 +69,7 @@ public class ScammerList extends PlayerList {
 	public void init() {
 		super.init();
 		fileSelection.config(getConfigKey() + ".file");
+		starting = false;
 		getMainElement().getSubSettings().getElements().add(8, fileSelection);
 		getMainElement().getSubSettings().getElements().add(8, new HeaderSetting());
 
@@ -87,11 +89,12 @@ public class ScammerList extends PlayerList {
 				names.add(entry.get("name").getAsString());
 			}
 
-			displayAchievement("§aDatei wurde geladen", "§aDatei konnte erfolgreich geladen werden.");
+			if (!starting) // Don't show success message on Startup
+				displayAchievement("§aDatei wurde geladen", "§aDatei konnte erfolgreich geladen werden.");
 		} catch (IllegalStateException | NullPointerException | JsonSyntaxException e) {
-			displayAchievement("§cFehler", "§cDatei konnte nicht geladen werden - Ist das JSON gültig?");
+			displayAchievement("§cFehler", "§c" + (starting ? "Scammer-" : "") + "Datei konnte nicht geladen werden - Ist das JSON gültig?");
 		} catch (Throwable e) {
-			displayAchievement("§cFehler", "§cDatei konnte nicht geladen werden - Existiert sie?");
+			displayAchievement("§cFehler", "§c" + (starting ? "Scammer-" : "") + "Datei konnte nicht geladen werden - Existiert sie?");
 		}
 	}
 

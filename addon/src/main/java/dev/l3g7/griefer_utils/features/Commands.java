@@ -65,7 +65,7 @@ public class Commands {
 			if (argsString.isEmpty())
 				return "Usage: /gu:queue <text>";
 
-			if (!MessageSendEvent.post(command))
+			if (!MessageSendEvent.post(argsString))
 				ChatQueue.send(argsString);
 			return null;
 		}

@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.laby3;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.auto_update.AutoUpdater;
 import net.labymod.addon.AddonLoader;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -63,7 +62,7 @@ public class PreStart implements IClassTransformer {
 	}
 
 	private File getOwnJar() throws UnsupportedEncodingException {
-		String jarPath = AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+		String jarPath = PreStart.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		if (!jarPath.contains(".jar"))
 			throw new IllegalStateException("Invalid code source location: " + jarPath);
 

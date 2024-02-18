@@ -25,6 +25,8 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.event.events.NoteBlockPlayEvent;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.world.redstone_helper.VertexDataStorage;
+import dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObjectObserver;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import dev.l3g7.griefer_utils.settings.elements.HeaderSetting;
@@ -37,7 +39,6 @@ import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.BlockPos;
@@ -57,27 +58,27 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 import static net.labymod.utils.Material.*;
 import static net.minecraft.init.Blocks.*;
 
-/**
- * Implements cursor movement, selection and copy and paste in the sign edit gui.
- */
 @Singleton
 public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	private static final BooleanSetting showZeroPower = new BooleanSetting()
 		.name("0 anzeigen")
 		.description("Ob die Stärke-Anzeige auch angezeigt werden soll, wenn die Stärke 0 beträgt.")
-		.icon(REDSTONE);
+		.icon(REDSTONE)
+		.callback(RenderObjectObserver.Chunk::onSettingsChange);
 
 	private static final BooleanSetting showPower = new BooleanSetting()
 		.name("Redstone-Stärke anzeigen")
 		.description("Zeigt auf Redstone-Kabeln ihre derzeitige Stärke an.")
 		.icon(REDSTONE)
-		.subSettings(showZeroPower);
+		.subSettings(showZeroPower)
+		.callback(RenderObjectObserver.Chunk::onSettingsChange);
 
 	private static final BooleanSetting showDirection = new BooleanSetting()
 		.name("Richtung anzeigen")
 		.description("Zeigt die Richtung von Werfern / Spendern und Trichtern.")
-		.icon(COMPASS);
+		.icon(COMPASS)
+		.callback(RenderObjectObserver.Chunk::onSettingsChange);
 
 	private static final BooleanSetting showNoteId = new BooleanSetting()
 		.name("Ton-ID anzeigen")
@@ -100,7 +101,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	private static final NumberSetting range = new NumberSetting()
 		.name("Radius")
 		.description("Der Radius um den Spieler in Chunks, in dem die Informationen angezeigt werden."
-			+ "\n(-1 ist unendlich)")
+			+ "\n(-1 ist unendlich)\n(Betrifft derzeit nur Notebblöcke und Werfer/Spender)")
 		.defaultValue(-1)
 		.min(-1)
 		.icon(COMPASS);
@@ -112,11 +113,12 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		.defaultValue(true);
 
 	@MainElement
-	private final BooleanSetting enabled = new BooleanSetting()
+	private static final BooleanSetting enabled = new BooleanSetting()
 		.name("Redstone-Helfer")
 		.description("Hilft beim Arbeiten mit Redstone.")
 		.icon(REDSTONE)
-		.subSettings(showPower, showDirection, showNoteBlockPitch, showCauldronLevel, range, new HeaderSetting(), hideRedstoneParticles);
+		.subSettings(showPower, showDirection, showNoteBlockPitch, showCauldronLevel, range, new HeaderSetting(), hideRedstoneParticles)
+		.callback(RenderObjectObserver.Chunk::onSettingsChange);
 
 	@Override
 	public void init() {
@@ -127,21 +129,14 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	@Override
 	public RenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world) {
 		Block block = state.getBlock();
-		if (block == redstone_wire)
-			return new Wire(state.getValue(BlockRedstoneWire.POWER));
-
 		if (block == cauldron)
 			return new TextRRO(showCauldronLevel, () -> state.getValue(BlockCauldron.LEVEL));
 
-		boolean isHopper = block == hopper;
-		if (!isHopper && block != dropper && block != dispenser)
+		if (block != dropper && block != dispenser)
 			return null;
 
 		EnumFacing dir = state.getValue(BlockDispenser.FACING);
-		if (isHopper && dir == EnumFacing.DOWN)
-			return null;
-
-		return new Directional(dir, isHopper);
+		return new Dropper(dir);
 	}
 
 	@Override
@@ -172,45 +167,80 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	}
 
-	private class Wire extends RenderObject {
-		private final int power;
+	public static class Wire extends dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObject {
 
-		private Wire(int power) {
-			super(RedstoneHelper.this);
+		public final int power;
+
+		public Wire(BlockPos pos, int power) {
+			super(TextureType.ROTATING_TEXT, pos);
 			this.power = power;
 		}
 
-		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
-			if (!showPower.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
-				return;
+		public double getYOffset() { return 0.02f; }
+		public double[] getTexData() { return VertexDataStorage.getTexData(power); }
+		public double[] getOffsets(int rotation) { return VertexDataStorage.getVertexOffsets(power)[rotation]; }
 
-			if (power <= 0 && !showZeroPower.get())
-				return;
+		@Override
+		public boolean shouldRender() {
+			if (!FileProvider.getSingleton(RedstoneHelper.class).isEnabled() || !showPower.get())
+				return false;
 
-			FontRenderer font = mc().fontRendererObj;
-
-			prepareRender(new Vec3d(pos.getX(), pos.getY() + 0.02, pos.getZ()), partialTicks);
-			String str = String.valueOf(power);
-
-			GlStateManager.scale(0.035, 0.035, 0.035);
-			GlStateManager.rotate(90, 1, 0, 0);
-			GlStateManager.rotate(180 + mc().getRenderManager().playerViewY, 0, 0, 1);
-			GlStateManager.translate(-(font.getStringWidth(str) - 1) / 2d, -(font.FONT_HEIGHT / 2d - 1), 0);
-
-			font.drawString(str, 0, 0, 0xFFFFFF);
-
-			GlStateManager.popMatrix();
+			return power > 0 || showZeroPower.get();
 		}
+
+		@Override
+		public boolean equals(dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObject r) {
+			return super.equals(r) && power == ((Wire) r).power;
+		}
+
 	}
 
-	private class Directional extends RenderObject {
-		private final EnumFacing dir;
-		private final boolean isHopper;
+	public static class Hopper extends dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObject {
 
-		private Directional(EnumFacing dir, boolean isHopper) {
+		private final int facing;
+
+		public Hopper(BlockPos pos, EnumFacing facing) {
+			super(TextureType.ARROWS, pos);
+			this.facing = facing.getHorizontalIndex();
+		}
+
+		@Override
+		public double getYOffset() {
+			return 0.7f;
+		}
+
+		@Override
+		public double[] getTexData() {
+			return VertexDataStorage.getTexData("⬆");
+		}
+
+		@Override
+		public double[] getOffsets(int rotation) {
+			return VertexDataStorage.getVertexOffsets("⬆")[facing];
+		}
+
+		@Override
+		public boolean shouldRender() {
+			if (!FileProvider.getSingleton(RedstoneHelper.class).isEnabled())
+				return false;
+
+			return showDirection.get();
+		}
+
+		@Override
+		public boolean equals(dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObject r) {
+			return super.equals(r) && facing == ((Hopper) r).facing;
+		}
+
+	}
+
+	private class Dropper extends RenderObject {
+
+		private final EnumFacing dir;
+
+		private Dropper(EnumFacing dir) {
 			super(RedstoneHelper.this);
 			this.dir = dir;
-			this.isHopper = isHopper;
 		}
 
 		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
@@ -244,24 +274,18 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 			GlStateManager.scale(0.1, 0.1, 0.1);
 
-			if (isHopper) {
-				GlStateManager.translate(0, 6.9, 0);
-				GlStateManager.rotate(90, 1, 0, 0);
-				mc().fontRendererObj.drawString("⬅", 0, 0, 0xFFFFFF);
-			} else {
-				mc().fontRendererObj.drawString("⬅", 0, 0, 0);
+			mc().fontRendererObj.drawString("⬅", 0, 0, 0);
 
-				GlStateManager.translate(0, 0, 10.2);
+			GlStateManager.translate(0, 0, 10.2);
 
-				mc().fontRendererObj.drawString("⬅", 0, 0, 0);
-				GlStateManager.translate(0, 10.2, -10.35);
+			mc().fontRendererObj.drawString("⬅", 0, 0, 0);
+			GlStateManager.translate(0, 10.2, -10.35);
 
-				GlStateManager.rotate(90, 1, 0, 0);
-				mc().fontRendererObj.drawString("⬅", 0, 0, 0);
+			GlStateManager.rotate(90, 1, 0, 0);
+			mc().fontRendererObj.drawString("⬅", 0, 0, 0);
 
-				GlStateManager.translate(0, 0, 10.5);
-				mc().fontRendererObj.drawString("⬅", 0, 0, 0);
-			}
+			GlStateManager.translate(0, 0, 10.5);
+			mc().fontRendererObj.drawString("⬅", 0, 0, 0);
 
 			GlStateManager.popMatrix();
 		}

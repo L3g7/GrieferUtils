@@ -69,20 +69,21 @@ public class BetterJobExchange extends Feature {
 			int y = i % 7 + 1;
 
 			ItemStack stack = event.getItem(x * 9 + y);
-			if (!ItemUtil.getLastLore(stack).startsWith("§7Rechtsklicke, um die Details zu den Aufträgen anzuzeigen."))
-				return;
+			int endIndex = ItemUtil.getLore(stack).indexOf("§7Rechtsklicke, um die Details zu den Aufträgen anzuzeigen.");
+			if (endIndex == -1)
+				continue;
 
-			modifyItemStack(stack);
+			modifyItemStack(stack, endIndex);
 		}
 	}
 
-	private static void modifyItemStack(ItemStack stack) {
+	private static void modifyItemStack(ItemStack stack, int endIndex) {
 		List<String> lore = ItemUtil.getLore(stack);
 		String lastLine = lore.get(lore.size() - 1);
 		if (lastLine.endsWith(marker))
 			return;
 
-		List<Pair<Integer, Integer>> offers = lore.subList(0, lore.size() - 3).stream().map(BetterJobExchange::extractOffer).collect(Collectors.toList());
+		List<Pair<Integer, Integer>> offers = lore.subList(0, endIndex - 2).stream().map(BetterJobExchange::extractOffer).collect(Collectors.toList());
 
 		int money = 0;
 		int ownedStacks = getOwnedStacks(stack);

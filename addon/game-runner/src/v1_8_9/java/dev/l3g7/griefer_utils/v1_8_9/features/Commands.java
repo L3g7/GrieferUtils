@@ -48,8 +48,7 @@ public class Commands {
 			if (argsString.isEmpty())
 				return "Usage: /gu:run_on_cb <text>";
 
-			if (!MessageSendEvent.post(argsString))
-				runOnCb(argsString);
+			runOnCb(argsString);
 			return null;
 		}
 
@@ -57,7 +56,8 @@ public class Commands {
 			if (argsString.isEmpty())
 				return "Usage: /gu:queue <text>";
 
-			ChatQueue.send(argsString);
+			if (!MessageSendEvent.post(argsString))
+				ChatQueue.send(argsString);
 			return null;
 		}
 

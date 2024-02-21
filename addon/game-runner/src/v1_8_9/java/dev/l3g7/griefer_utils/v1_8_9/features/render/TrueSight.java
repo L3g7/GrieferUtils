@@ -10,8 +10,10 @@ package dev.l3g7.griefer_utils.v1_8_9.features.render;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
+import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SliderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
@@ -34,6 +36,7 @@ import java.util.*;
 
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static dev.l3g7.griefer_utils.v1_8_9.features.render.TrueSight.ToggleMode.*;
 
 /**
  * Shows invisible entities.
@@ -44,6 +47,8 @@ public class TrueSight extends Feature {
 	private static final TrueSight INSTANCE = FileProvider.getSingleton(TrueSight.class);
 	private static final Map<Class<?>, String> CLASS_TO_STRING_MAPPING = Reflection.get(EntityList.class, "classToStringMapping");
 
+	private final Map<Class<? extends Entity>, SwitchSetting> entities = new HashMap<>();
+
 	private final SliderSetting opacity = SliderSetting.create()
 		.name("Durchsichtigkeit (%)")
 		.description("Wie durchsichtig ein eigentlich unsichtbares Entity sein soll.")
@@ -51,18 +56,33 @@ public class TrueSight extends Feature {
 		.min(0).max(100)
 		.defaultValue(85);
 
+	private boolean togglingAll; // NOTE refactor
+	private final DropDownSetting<ToggleMode> toggleAll = DropDownSetting.create(ToggleMode.class)
+		.name("Alle umschalten")
+		.icon("scroll")
+		.defaultValue(ALL_OFF)
+		.callback(v -> {
+			if (v == CUSTOM)
+				return;
+
+			togglingAll = true;
+			for (SwitchSetting setting : entities.values())
+				setting.set(v == ALL_ON);
+			togglingAll = false;
+		});
+
+
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Unsichtbare Entities anzeigen")
 		.description("Macht unsichtbare Entities sichtbar.")
 		.icon("blue_light_bulb")
-		.subSettings(opacity, HeaderSetting.create());
-
-	private final Map<Class<? extends Entity>, SwitchSetting> entities = new HashMap<>();
+		.subSettings(opacity);
 
 	@Override
 	public void init() {
 		super.init();
+		enabled.subSettings(Arrays.asList(toggleAll, HeaderSetting.create())); // hotfix to prevent toggleAll from being saved
 		add(EntityArmorStand.class, "Armorstand");
 		add(EntityBat.class, "Fledermaus");
 		add(EntityBlaze.class, "Blaze");
@@ -76,7 +96,8 @@ public class TrueSight extends Feature {
 		entities.put(EntityFallingBlock.class, SwitchSetting.create()
 			.name("Block")
 			.config(getConfigKey() + ".entities.falling_block")
-			.icon("stone"));
+			.icon("stone")
+			.callback(this::updateGlobalToggle));
 		add(EntityGhast.class, "Ghast");
 		add(EntityGiantZombie.class, "Riese");
 		add(EntityGuardian.class, "Guardian");
@@ -90,7 +111,8 @@ public class TrueSight extends Feature {
 		entities.put(EntityPlayer.class, SwitchSetting.create()
 			.name("Spieler")
 			.config(getConfigKey() + ".entities.spieler")
-			.icon("steve"));
+			.icon("steve")
+			.callback(this::updateGlobalToggle));
 		add(EntityRabbit.class, "Hase");
 		add(EntitySheep.class, "Schaf");
 		add(EntitySilverfish.class, "Silberfischchen");
@@ -107,6 +129,8 @@ public class TrueSight extends Feature {
 		List<BaseSetting<?>> settings = new ArrayList<>(entities.values());
 		settings.sort(Comparator.comparing(BaseSetting::name));
 		enabled.subSettings(settings);
+
+		updateGlobalToggle();
 	}
 
 	private void add(Class<? extends Entity> entity, String name) {
@@ -114,7 +138,18 @@ public class TrueSight extends Feature {
 			.name(name)
 			.config(getConfigKey() + ".entities." + UPPER_CAMEL.to(LOWER_UNDERSCORE, name))
 			.icon("mob_icons/faithless/" + CLASS_TO_STRING_MAPPING.get(entity).toLowerCase())
-			.defaultValue(entity == EntityPlayer.class));
+			.defaultValue(entity == EntityPlayer.class)
+			.callback(this::updateGlobalToggle));
+	}
+
+	private void updateGlobalToggle() {
+		if(togglingAll)
+			return;
+
+		boolean enabled = entities.values().iterator().next().get();
+		boolean allEqual = entities.values().stream().allMatch(s -> s.get() == enabled);
+
+		toggleAll.set(!allEqual ? CUSTOM : enabled ? ALL_ON : ALL_OFF);
 	}
 
 	@EventListener
@@ -141,6 +176,21 @@ public class TrueSight extends Feature {
 		@ModifyArg(method = "renderModel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V"), index = 3)
 		private float overwriteAlpha(float alpha) {
 			return getRenderModelAlpha();
+		}
+
+	}
+	public enum ToggleMode implements Named {
+		CUSTOM(""), ALL_ON("Alle an"), ALL_OFF("Alle aus");
+
+		private final String name;
+
+		ToggleMode(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
 		}
 
 	}

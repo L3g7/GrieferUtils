@@ -243,11 +243,16 @@ public class Calculator extends Feature {
 		 *  Star placeholder  *
 		 * ****************** */
 		if (msg.equals("/bank einzahlen *") && starPlaceholder.get()) {
-			if (getCurrentBalance().compareTo(THOUSAND) < 0)
-				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getCurrentBalance()).toPlainString());
-			else
-				send("/bank einzahlen %d", getCurrentBalance().setScale(0, RoundingMode.FLOOR).toBigInteger());
 			event.cancel();
+			if (getCurrentBalance().compareTo(THOUSAND) < 0) {
+				if (getBankBalance() < 1000)
+					display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getCurrentBalance()).toPlainString());
+				else {
+					send("/bank abheben 1000");
+					send("/bank einzahlen %d", getCurrentBalance().add(THOUSAND).setScale(0, RoundingMode.FLOOR).toBigInteger());
+				}
+			} else
+				send("/bank einzahlen %d", getCurrentBalance().setScale(0, RoundingMode.FLOOR).toBigInteger());
 			return;
 		} else if (msg.equals("/bank abheben *") && starPlaceholder.get()) {
 			if (getBankBalance() < 1000)

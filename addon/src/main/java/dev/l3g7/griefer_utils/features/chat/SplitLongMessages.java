@@ -81,7 +81,7 @@ public class SplitLongMessages extends Feature {
 		}
 
 		String text = inputField.getText().toLowerCase();
-		if (!(text.startsWith("/msg ") || text.startsWith("/r ") || !(text.startsWith("/") || text.startsWith("@")))) {
+		if (!(text.startsWith("/msg ") || text.startsWith("/r ") || !(text.startsWith("/")))) { // NOTE: refactor
 			inputField.setMaxStringLength(100);
 			return;
 		}
@@ -133,12 +133,17 @@ public class SplitLongMessages extends Feature {
 
 		int index = text.toLowerCase().startsWith("/msg ") ? text.indexOf(' ') + 1 : 0;
 		index = text.toLowerCase().startsWith("/") ? text.indexOf(' ', index) + 1 : 0;
+		if (text.startsWith("@"))
+			index = 1;
 
 		String message = text.substring(index);
 		String prefix = text.substring(0, index);
 
 		for (String s : cutUp(message, 100 - prefix.length())) {
-			send(prefix + s);
+			if (text.startsWith("@"))
+				ChatQueue.queuedSlowMessages.add(prefix + s);
+			else
+				send(prefix + s);
 			lastParts.add(prefix + s);
 		}
 		event.cancel();

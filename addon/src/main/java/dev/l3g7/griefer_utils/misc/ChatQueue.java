@@ -44,6 +44,7 @@ public class ChatQueue {
 
 	private static final int QUEUE_DELAY = 50; // 2.5s
 
+	public static final List<String> queuedSlowMessages = new ArrayList<>(); // NOTE: refactor
 	private static final List<String> queuedMessages = new ArrayList<>();
 	private static final List<Triple<String, Future<Void>, Runnable>> blockingMessages = new ArrayList<>();
 	private static int currentQueueDelay = QUEUE_DELAY;
@@ -55,7 +56,7 @@ public class ChatQueue {
 	public void onPacketSend(PacketSendEvent<C01PacketChatMessage> event) {
 		if (blockingMessages.isEmpty()) {
 			messagesSentWithoutDelay = 0;
-			currentQueueDelay = QUEUE_DELAY;
+			currentQueueDelay = Math.max(QUEUE_DELAY, currentQueueDelay);
 		}
 	}
 
@@ -64,6 +65,7 @@ public class ChatQueue {
 		lastMessageSentTimestamp = messagesSentWithoutDelay = 0;
 		currentBlock = null;
 		queuedMessages.clear();
+		queuedSlowMessages.clear();
 		blockingMessages.clear();
 	}
 
@@ -98,7 +100,7 @@ public class ChatQueue {
 		}
 
 		// Process messages
-		if (currentQueueDelay <= 0 && (!queuedMessages.isEmpty() || !blockingMessages.isEmpty()) && player() != null) {
+		if (currentQueueDelay <= 0 && (!queuedMessages.isEmpty() || !queuedSlowMessages.isEmpty() || !blockingMessages.isEmpty()) && player() != null) {
 			String msg;
 			if (!blockingMessages.isEmpty()) { // Prioritize blocking messages
 				++messagesSentWithoutDelay;
@@ -106,9 +108,15 @@ public class ChatQueue {
 				msg = entry.getLeft();
 				currentBlock = Pair.of(entry.getMiddle(), entry.getRight());
 			} else {
-				msg = queuedMessages.remove(0);
-				messagesSentWithoutDelay = 0;
-				currentQueueDelay = QUEUE_DELAY;
+				if (!queuedMessages.isEmpty()) {
+					msg = queuedMessages.remove(0);
+					messagesSentWithoutDelay = 0;
+					currentQueueDelay = QUEUE_DELAY;
+				} else {
+					msg = queuedSlowMessages.remove(0);
+					messagesSentWithoutDelay = 0;
+					currentQueueDelay = 120;
+				}
 			}
 
 			player().sendChatMessage(msg);

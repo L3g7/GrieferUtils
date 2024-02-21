@@ -136,12 +136,12 @@ public class MainPage {
 			.buttonIcon(new ControlElement.IconData("griefer_utils/icons/open_book_outline.png"))
 			.callback(() -> Util.openWebsite("https://grieferutils.l3g7.dev/wiki")));
 
-		// Buy Me a Coffee link
+		// Ko-fi link
 		settings.add(new SmallButtonSetting()
-			.name("Entwickler unterstützen").icon("buy_me_a_coffee")
+			.name("Entwickler unterstützen").icon("ko_fi")
 			.description("Wenn dir das Addon gefällt kannst du hier das Entwickler-Team dahinter unterstützen §c❤")
-			.buttonIcon(new ControlElement.IconData("griefer_utils/icons/buy_me_a_coffee_outline.png"))
-			.callback(() -> Util.openWebsite("https://buymeacoffee.com/l3g7")));
+			.buttonIcon(new ControlElement.IconData("griefer_utils/icons/ko_fi_outline.png"))
+			.callback(() -> Util.openWebsite("https://ko-fi.com/l3g7_3")));
 
 		// Discord link
 		settings.add(new SmallButtonSetting()

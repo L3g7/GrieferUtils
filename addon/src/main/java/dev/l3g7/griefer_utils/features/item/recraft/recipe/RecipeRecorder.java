@@ -32,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording.RecordingMode.RECIPE;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 /**
@@ -74,7 +75,7 @@ public class RecipeRecorder {
 			if (executedCommand) {
 				isMenuOpen = true;
 				recording.actions.clear();
-				recording.craft.set(false);
+				recording.mode.set(RECIPE);
 				executedCommand = false;
 			}
 			return;

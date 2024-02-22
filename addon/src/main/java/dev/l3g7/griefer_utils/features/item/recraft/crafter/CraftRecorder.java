@@ -32,6 +32,7 @@ import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording.RecordingMode.CRAFT;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 public class CraftRecorder {
@@ -71,7 +72,7 @@ public class CraftRecorder {
 			if (executedCommand) {
 				isMenuOpen = true;
 				recording.actions.clear();
-				recording.craft.set(true);
+				recording.mode.set(CRAFT);
 				executedCommand = false;
 			}
 			return;

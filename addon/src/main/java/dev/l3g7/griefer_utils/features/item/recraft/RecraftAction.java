@@ -19,8 +19,6 @@
 package dev.l3g7.griefer_utils.features.item.recraft;
 
 import com.google.gson.JsonElement;
-import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftAction;
-import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipeAction;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
@@ -32,17 +30,11 @@ public abstract class RecraftAction {
 
 	protected abstract JsonElement toJson();
 
-	static RecraftAction loadFromJson(JsonElement element, boolean craft) {
-		if (craft)
-			return CraftAction.fromJson(element);
-		return RecipeAction.fromJson(element);
-	}
-
 	public static class Ingredient {
 
-		final int itemId;
-		final int compression;
-		final int meta;
+		public final int itemId;
+		public final int compression;
+		public final int meta;
 		private int lastSlotIndex = -1;
 
 		public static Ingredient fromItemStack(ItemStack stack) {
@@ -65,7 +57,7 @@ public abstract class RecraftAction {
 			return new Ingredient(stack, compressionLevel);
 		}
 
-		Ingredient(ItemStack stack, int compression) {
+		public Ingredient(ItemStack stack, int compression) {
 			this(Item.getIdFromItem(stack.getItem()), stack.getMetadata(), compression);
 		}
 
@@ -90,7 +82,15 @@ public abstract class RecraftAction {
 			return equals((Ingredient) obj);
 		}
 
-		boolean equals(Ingredient other) {
+		public boolean itemEquals(Ingredient other) {
+			if (other == null)
+				return false;
+
+			return meta == other.meta
+				&& itemId == other.itemId;
+		}
+
+		protected boolean equals(Ingredient other) {
 			if (other == null)
 				return false;
 

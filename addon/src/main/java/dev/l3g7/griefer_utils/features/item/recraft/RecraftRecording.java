@@ -23,16 +23,23 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.core.misc.functions.Function;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
+import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftAction;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftRecorder;
+import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressAction;
+import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressPlayer;
+import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressRecorder;
+import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipeAction;
 import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipePlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipeRecorder;
+import dev.l3g7.griefer_utils.misc.Named;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import dev.l3g7.griefer_utils.util.ItemUtil;
-import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
@@ -66,11 +73,11 @@ public class RecraftRecording {
 		.description("Wie diese Aufzeichnung heißt.")
 		.icon(Material.NAME_TAG);
 
-	public final BooleanSetting craft = new BooleanSetting()
+	public final DropDownSetting<RecordingMode> mode = new DropDownSetting<>(RecordingMode.class)
 		.name("Modus")
 		.description("Ob die Aufzeichnung /craft oder /rezepte ausführt.")
 		.icon("knowledge_book")
-		.custom("/craft", "Rezept");
+		.defaultValue(RecordingMode.RECIPE);
 
 	public final BooleanSetting craftAll = new BooleanSetting()
 		.name("Alles vercraften")
@@ -82,21 +89,18 @@ public class RecraftRecording {
 	public RecraftRecording() {
 		mainSetting = new RecordingDisplaySetting();
 
-		craft.callback(b ->  {
-			craft.getIconStorage().itemStack = null;
-			craft.icon(b ? ItemUtil.createItem(Blocks.crafting_table, 0, true) : "knowledge_book");
+		mode.callback(m ->  {
+			mode.getIconStorage().itemStack = null;
+			mode.icon(m.icon);
 			actions.clear();
 			mainSetting.getIconStorage().itemStack = null;
 			mainSetting.icon(Material.BARRIER);
 
 			mainSetting.getSubSettings().getElements().remove(craftAll);
-			if (b) {
+			if (m == RecordingMode.CRAFT) {
 				List<SettingsElement> settings = mainSetting.getSubSettings().getElements();
-				settings.add(settings.indexOf(craft) + 1, craftAll);
+				settings.add(settings.indexOf(mode) + 1, craftAll);
 			}
-
-			if (mc().currentScreen instanceof LabyModAddonsGui)
-				mc().currentScreen.initGui();
 		});
 
 		name.callback(s -> {
@@ -114,17 +118,11 @@ public class RecraftRecording {
 	}
 
 	public void startRecording() {
-		if (craft.get())
-			CraftRecorder.startRecording(this);
-		else
-			RecipeRecorder.startRecording(this);
+		mode.get().recorder.accept(this);
 	}
 
 	public void play() {
-		if (craft.get())
-			CraftPlayer.play(this);
-		else
-			RecipePlayer.play(this);
+		mode.get().player.accept(this);
 	}
 
 	JsonObject toJson() {
@@ -136,7 +134,7 @@ public class RecraftRecording {
 		if (icon != null)
 			object.addProperty("icon", new Ingredient(icon, icon.stackSize).toLong());
 
-		object.addProperty("craft", craft.get());
+		object.addProperty("mode", mode.get().getName());
 		object.addProperty("craftAll", craftAll.get());
 
 		JsonArray jsonActions = new JsonArray();
@@ -164,9 +162,16 @@ public class RecraftRecording {
 			}
 		}
 
-		if (object.has("craft") && object.get("craft").getAsBoolean()) {
-			recording.craft.set(true);
-			recording.craftAll.set(object.get("craftAll").getAsBoolean());
+		if (object.has("mode")) {
+			String mode = object.get("mode").getAsString();
+			for (RecordingMode recordingMode : RecordingMode.values())
+				if (recordingMode.getName().equals(mode))
+					recording.mode.set(recordingMode);
+
+			if (recording.mode.get() == RecordingMode.CRAFT)
+				recording.craftAll.set(object.get("craftAll").getAsBoolean());
+		} else {
+			return recording;
 		}
 
 		if (icon != null && icon.isJsonPrimitive()) {
@@ -176,9 +181,35 @@ public class RecraftRecording {
 
 		JsonArray jsonActions = object.getAsJsonArray("actions");
 		for (JsonElement jsonAction : jsonActions)
-			recording.actions.add(RecraftAction.loadFromJson(jsonAction, recording.craft.get()));
+			recording.actions.add(recording.mode.get().actionParser.apply(jsonAction));
 
 		return recording;
+	}
+
+	public enum RecordingMode implements Named {
+
+		RECIPE("Rezept", "knowledge_book", RecipeRecorder::startRecording, RecipePlayer::play, RecipeAction::fromJson),
+		CRAFT("/craft", ItemUtil.createItem(Blocks.crafting_table, 0, true), CraftRecorder::startRecording, CraftPlayer::play, CraftAction::fromJson),
+		DECOMPRESS("Dekomprimieren", "thonk", DecompressRecorder::startRecording, DecompressPlayer::play, DecompressAction::fromJson);
+
+		final String displayName;
+		final Object icon;
+		final Consumer<RecraftRecording> recorder, player;
+		final Function<JsonElement, RecraftAction> actionParser;
+
+		RecordingMode(String displayName, Object icon, Consumer<RecraftRecording> recorder, Consumer<RecraftRecording> player, Function<JsonElement, RecraftAction> actionParser) {
+			this.displayName = displayName;
+			this.icon = icon;
+			this.recorder = recorder;
+			this.player = player;
+			this.actionParser = actionParser;
+		}
+
+		@Override
+		public String getName() {
+			return displayName;
+		}
+
 	}
 
 	private class StartRecordingButtonSetting extends SmallButtonSetting {
@@ -211,7 +242,7 @@ public class RecraftRecording {
 			super(true, true, true);
 			name("Unbenannte Aufzeichnung");
 			icon(Material.BARRIER);
-			subSettings(name, key, craft, new HeaderSetting(), new StartRecordingButtonSetting());
+			subSettings(name, key, mode, new HeaderSetting(), new StartRecordingButtonSetting());
 		}
 
 		@Override
@@ -231,10 +262,10 @@ public class RecraftRecording {
 			double sX = (x + 13) * 2;
 			double sY = (y + 1) * 2;
 
-			if (craft.get()) {
+			if (mode.get() == RecordingMode.CRAFT) {
 				drawUtils().drawItem(ItemUtil.createItem(new ItemStack(Blocks.crafting_table), true, null), sX, sY, null);
 			} else {
-				drawUtils().bindTexture("griefer_utils/icons/knowledge_book.png");
+				drawUtils().bindTexture("griefer_utils/icons/" + (mode.get() == RecordingMode.RECIPE ? "knowledge_book" : "thonk") + ".png");
 				drawUtils().drawTexture(sX, sY, 256, 256, 16, 16);
 			}
 			GlStateManager.popMatrix();

@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.item.recraft.crafter;
 
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
@@ -56,11 +57,19 @@ public class CraftPlayer {
 	private static State state;
 	private static Object resyncReference;
 
+	private static Supplier<Boolean> onFinish;
+
 	public static boolean isPlaying() {
 		return state != IDLE;
 	}
 
 	public static void play(RecraftRecording recording) {
+		windowId = null;
+
+		play(recording, () -> true, true);
+	}
+
+	public static void play(RecraftRecording recording, Supplier<Boolean> onFinish, boolean reset) {
 		if (world() == null || !mc().inGameHasFocus)
 			return;
 
@@ -74,12 +83,15 @@ public class CraftPlayer {
 			return;
 		}
 
-		state = WAITING_FOR_GUI;
-		windowId = null;
-		firstPlay = true;
+		CraftPlayer.onFinish = onFinish;
+		if (reset) {
+			windowId = null;
+			state = WAITING_FOR_GUI;
+			firstPlay = true;
+			player().sendChatMessage("/craft");
+		}
 
 		playRecording(currentRecording = recording);
-		player().sendChatMessage("/craft");
 	}
 
 	private static void playRecording(RecraftRecording recording) {
@@ -106,11 +118,13 @@ public class CraftPlayer {
 				return;
 			}
 
-			player().closeScreen();
-			player().openContainer.putStackInSlot(1, null);
-			pendingActions = null;
-			windowId = null;
-			return;
+			if (onFinish.get()) {
+				player().closeScreen();
+				player().openContainer.putStackInSlot(1, null);
+				pendingActions = null;
+				windowId = null;
+				return;
+			}
 		}
 	}
 

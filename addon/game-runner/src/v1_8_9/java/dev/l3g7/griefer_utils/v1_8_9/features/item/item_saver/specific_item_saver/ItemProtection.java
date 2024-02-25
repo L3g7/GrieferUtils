@@ -22,6 +22,7 @@ import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_it
 public class ItemProtection {
 
 	static final ItemProtection BONZE = new ItemProtection(ItemUtil.fromNBT("{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}"));
+	static final ItemProtection BONZE_24 = new ItemProtection(ItemUtil.fromNBT("{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:24s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:24s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}"));
 	static final ItemProtection BIRTH = new ItemProtection(ItemUtil.fromNBT("{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:2s,id:20s},2:{lvl:5s,id:61s},3:{lvl:21s,id:21s}],display:{Name:\"§4B§aI§3R§2T§eH §4§lKlinge\"}},Damage:0s}"));
 
 	static final ItemProtection UNPROTECTED = new ItemProtection();

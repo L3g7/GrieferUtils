@@ -104,7 +104,7 @@ public class ItemProtectionListSetting extends ListSetting implements BaseSettin
 				list.add(item);
 			}
 			return list;
-		}, new ArrayList<>(Arrays.asList(ItemProtection.BONZE, ItemProtection.BIRTH)));
+		}, new ArrayList<>(Arrays.asList(ItemProtection.BONZE, ItemProtection.BONZE_24, ItemProtection.BIRTH)));
 
 		EventRegisterer.register(this);
 	}

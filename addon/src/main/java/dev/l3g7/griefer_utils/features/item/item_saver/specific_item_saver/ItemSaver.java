@@ -72,6 +72,7 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.*;
 public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 	private static final String BONZE_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
+	private static final String BONZE24_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:24s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:24s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
 	private static final String BIRTH_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:2s,id:20s},2:{lvl:5s,id:61s},3:{lvl:21s,id:21s}],display:{Name:\"§4B§aI§3R§2T§eH §4§lKlinge\"}},Damage:0s}";
 	private static final ItemStack blockedIndicator = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");
 
@@ -163,6 +164,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 
 		if (!Config.has(entryKey)) {
 			addItem(ItemUtil.fromNBT(BONZE_NBT));
+			addItem(ItemUtil.fromNBT(BONZE24_NBT));
 			addItem(ItemUtil.fromNBT(BIRTH_NBT));
 			return;
 		}

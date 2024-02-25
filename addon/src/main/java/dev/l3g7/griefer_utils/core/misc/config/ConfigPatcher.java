@@ -161,6 +161,18 @@ public class ConfigPatcher {
 
 		if (cmp.compare("2.2-BETA-1", version) < 0) {
 			rename("chat.fix_ghost_blocks", "chat.ghost_blocks_fix");
+
+			// Add Bonze 24
+			JsonObject entries = get("item.item_saver.entries");
+			if (entries != null) {
+				JsonObject bonze24 = new JsonObject();
+				bonze24.addProperty("name", "§6Klinge von GrafBonze (24)");
+				bonze24.addProperty("drop", true);
+				bonze24.addProperty("extreme_drop", false);
+				bonze24.addProperty("leftclick", true);
+				bonze24.addProperty("rightclick", false);
+				entries.add("{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:24s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:24s,id:21s}]},Damage:0s}", bonze24);
+			}
 		}
 	}
 

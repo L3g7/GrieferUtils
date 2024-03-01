@@ -22,11 +22,13 @@ import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.event.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
+import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -65,8 +67,7 @@ public class CraftPlayer {
 
 	public static void play(RecraftRecording recording) {
 		windowId = null;
-
-		play(recording, () -> true, true);
+		play(recording, recording::playSuccessor, true);
 	}
 
 	public static void play(RecraftRecording recording, Supplier<Boolean> onFinish, boolean reset) {
@@ -88,7 +89,10 @@ public class CraftPlayer {
 			windowId = null;
 			state = WAITING_FOR_GUI;
 			firstPlay = true;
-			player().sendChatMessage("/craft");
+			if (Recraft.playingSuccessor)
+				MinecraftUtil.send("/craft");
+			else
+				player().sendChatMessage("/craft");
 		}
 
 		playRecording(currentRecording = recording);

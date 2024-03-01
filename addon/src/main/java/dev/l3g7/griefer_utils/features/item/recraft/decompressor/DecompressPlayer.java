@@ -12,6 +12,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 public class DecompressPlayer {
 
 	private static final RecraftRecording craftRecording = new RecraftRecording();
+	private static RecraftRecording recording;
 
 	public static void play(RecraftRecording recording) {
 		if (world() == null || !mc().inGameHasFocus)
@@ -27,6 +28,7 @@ public class DecompressPlayer {
 			return;
 		}
 
+		DecompressPlayer.recording = recording;
 		Ingredient ingredient = ((DecompressAction) recording.actions.get(0)).ingredient;
 		craft(ingredient, true);
 	}
@@ -41,8 +43,11 @@ public class DecompressPlayer {
 				freeSlots++;
 
 		int slot = getSlotWithLowestCompression(ingredient, freeSlots);
-		if (slot == -1) {
-			displayAchievement("§e§lFehler \u26A0", "Du hast nicht genügend Platz im Inventar!");
+		if (slot < 0) {
+			if (slot == -1)
+				displayAchievement("§e§lFehler \u26A0", "Du hast nicht genügend Platz im Inventar!");
+
+			recording.playSuccessor();
 			return true;
 		}
 
@@ -64,6 +69,7 @@ public class DecompressPlayer {
 	private static int getSlotWithLowestCompression(Ingredient ingredient, int freeSlots) {
 		int compression = 8;
 		int slot = -1;
+		int placeChecksFailed = 0;
 		ItemStack[] inv = player().inventory.mainInventory;
 
 		for (int i = 0; i < inv.length; i++) {
@@ -77,12 +83,17 @@ public class DecompressPlayer {
 			if (slotIngredient.compression == 0)
 				continue;
 
-			if (getAdditionalRequiredSlots(slotIngredient.compression, inv[i].stackSize) > freeSlots)
+			if (getAdditionalRequiredSlots(slotIngredient.compression, inv[i].stackSize) > freeSlots) {
+				placeChecksFailed++;
 				continue;
+			}
 
 			compression = slotIngredient.compression;
 			slot = i;
 		}
+
+		if (slot == -1 && placeChecksFailed == 0)
+			return -2;
 
 		return slot;
 	}

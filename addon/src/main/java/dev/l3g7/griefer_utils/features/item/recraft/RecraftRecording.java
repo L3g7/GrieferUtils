@@ -65,7 +65,7 @@ public class RecraftRecording {
 		.icon("key")
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && FileProvider.getSingleton(Recraft.class).isEnabled())
-				play();
+				play(false);
 		});
 
 	final StringSetting name = new StringSetting()
@@ -83,6 +83,8 @@ public class RecraftRecording {
 		.name("Alles vercraften")
 		.description("Ob die Aufzeichnung so lange wiederholt werden soll, bis alle Items im Inventar verbraucht wurden.")
 		.icon("arrow_circle");
+
+	public final RecraftRecordingSelectionSetting successor = new RecraftRecordingSelectionSetting(this);
 
 	public final RecordingDisplaySetting mainSetting;
 
@@ -110,6 +112,7 @@ public class RecraftRecording {
 			mainSetting.name(s);
 			setTitle(s);
 		});
+		name.callback(() -> Recraft.iterate((i, r) -> r.successor.updateName(r.successor.get())));
 	}
 
 	public void setTitle(String title) {
@@ -121,8 +124,13 @@ public class RecraftRecording {
 		mode.get().recorder.accept(this);
 	}
 
-	public void play() {
+	public void play(boolean isSuccessor) {
+		Recraft.playingSuccessor = isSuccessor;
 		mode.get().player.accept(this);
+	}
+
+	public boolean playSuccessor() {
+		return successor.execute(mode.get());
 	}
 
 	JsonObject toJson() {
@@ -141,6 +149,8 @@ public class RecraftRecording {
 		for (RecraftAction action : actions)
 			jsonActions.add(action.toJson());
 		object.add("actions", jsonActions);
+
+		object.addProperty("successor", successor.toInt());
 
 		return object;
 	}
@@ -183,6 +193,9 @@ public class RecraftRecording {
 		for (JsonElement jsonAction : jsonActions)
 			recording.actions.add(recording.mode.get().actionParser.apply(jsonAction));
 
+		if (object.has("successor"))
+			recording.successor.fromInt(object.get("successor").getAsInt());
+
 		return recording;
 	}
 
@@ -190,7 +203,7 @@ public class RecraftRecording {
 
 		RECIPE("Rezept", "knowledge_book", RecipeRecorder::startRecording, RecipePlayer::play, RecipeAction::fromJson),
 		CRAFT("/craft", ItemUtil.createItem(Blocks.crafting_table, 0, true), CraftRecorder::startRecording, CraftPlayer::play, CraftAction::fromJson),
-		DECOMPRESS("Dekomprimieren", "thonk", DecompressRecorder::startRecording, DecompressPlayer::play, DecompressAction::fromJson);
+		DECOMPRESS("Dekomprimieren", "chest", DecompressRecorder::startRecording, DecompressPlayer::play, DecompressAction::fromJson);
 
 		final String displayName;
 		final Object icon;
@@ -242,7 +255,8 @@ public class RecraftRecording {
 			super(true, true, true);
 			name("Unbenannte Aufzeichnung");
 			icon(Material.BARRIER);
-			subSettings(name, key, mode, new HeaderSetting(), new StartRecordingButtonSetting());
+			subSettings(name, key, mode, new HeaderSetting(), new StartRecordingButtonSetting(),
+				new HeaderSetting().entryHeight(10), new HeaderSetting("Nachfolgende Aufzeichnung"), successor);
 		}
 
 		@Override
@@ -265,7 +279,8 @@ public class RecraftRecording {
 			if (mode.get() == RecordingMode.CRAFT) {
 				drawUtils().drawItem(ItemUtil.createItem(new ItemStack(Blocks.crafting_table), true, null), sX, sY, null);
 			} else {
-				drawUtils().bindTexture("griefer_utils/icons/" + (mode.get() == RecordingMode.RECIPE ? "knowledge_book" : "thonk") + ".png");
+				String icon = mode.get() == RecordingMode.RECIPE ? "knowledge_book" : "chest";
+				drawUtils().bindTexture("griefer_utils/icons/" + icon + ".png");
 				drawUtils().drawTexture(sX, sY, 256, 256, 16, 16);
 			}
 			GlStateManager.popMatrix();

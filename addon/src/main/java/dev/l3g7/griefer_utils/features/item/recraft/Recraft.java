@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.item.recraft;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.config.Config;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -38,6 +39,7 @@ import net.minecraft.init.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 
@@ -48,6 +50,7 @@ import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
 public class Recraft extends Feature {
 
 	public static final RecraftRecording tempRecording = new RecraftRecording();
+	public static boolean playingSuccessor;
 
 	private final KeySetting key = new KeySetting()
 		.name("Letzten Aufruf wiederholen")
@@ -135,6 +138,18 @@ public class Recraft extends Feature {
 				subSettings.add(type.cast(element));
 
 		return subSettings;
+	}
+
+	public static void iterate(BiConsumer<Integer, RecraftRecording> consumer) {
+		List<RecraftPageSetting> pages = getSubSettingsOfType(FileProvider.getSingleton(Recraft.class).getMainElement(), RecraftPageSetting.class);
+		for (int i = 0; i < pages.size(); i++) {
+			List<RecraftRecording.RecordingDisplaySetting> recordings = Recraft.getSubSettingsOfType(pages.get(i), RecraftRecording.RecordingDisplaySetting.class);
+
+			for (int j = 0; j < recordings.size(); j++) {
+				RecraftRecording.RecordingDisplaySetting recording = recordings.get(j);
+				consumer.accept(i << 16 | j, recording.recording);
+			}
+		}
 	}
 
 }

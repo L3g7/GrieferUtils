@@ -20,7 +20,6 @@ package dev.l3g7.griefer_utils.misc.gui.guis;
 
 import dev.l3g7.griefer_utils.core.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.reflection.Reflection;
-import dev.l3g7.griefer_utils.util.MinecraftUtil;
 import net.labymod.gui.elements.Tabs;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.AddonElement;
@@ -34,11 +33,13 @@ import java.util.HashSet;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.util.MinecraftUtil.path;
 
 public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 
 	private final HashSet<Supplier<Boolean>> closeChecks = new HashSet<>();
 	private final GuiScreen previousScreen = mc().currentScreen;
+	private final int startPathSize;
 
 	public AddonsGuiWithCustomBackButton(Runnable onBack, SettingsElement element) {
 		this(element);
@@ -46,9 +47,11 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 	}
 
 	public AddonsGuiWithCustomBackButton(SettingsElement element) {
-		List<SettingsElement> path = new ArrayList<>(MinecraftUtil.path());
+		List<SettingsElement> path = new ArrayList<>(path());
 		if (element != null)
 			path.add(element);
+
+		startPathSize = path.size();
 
 		Reflection.set(this, path, "path");
 
@@ -75,7 +78,7 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
-		if (button == Reflection.get(this, "buttonBack")) {
+		if (button == Reflection.get(this, "buttonBack") && startPathSize == path().size()) {
 			if (canClose())
 				mc().displayGuiScreen(previousScreen);
 

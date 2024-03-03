@@ -81,7 +81,7 @@ public class RecraftRecording {
 
 	public final DropDownSetting<RecordingMode> mode = new DropDownSetting<>(RecordingMode.class)
 		.name("Modus")
-		.description("Ob die Aufzeichnung /craft oder /rezepte ausführt.")
+		.description("Ob die Aufzeichnung /craft, /rezepte ausführt oder dekomprimiert.")
 		.icon("knowledge_book")
 		.defaultValue(RecordingMode.RECIPE);
 

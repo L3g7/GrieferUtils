@@ -76,7 +76,7 @@ public class RecraftRecording {
 
 	public final BooleanSetting ignoreSubIds = new BooleanSetting()
 		.name("Sub-IDs ignorieren")
-		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) beachtet werden sollen.")
+		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) ignoriert werden sollen.")
 		.icon(new ItemStack(Blocks.log, 1, 2));
 
 	public final DropDownSetting<RecordingMode> mode = new DropDownSetting<>(RecordingMode.class)

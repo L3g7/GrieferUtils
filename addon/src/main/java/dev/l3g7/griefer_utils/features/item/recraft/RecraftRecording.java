@@ -40,6 +40,7 @@ import dev.l3g7.griefer_utils.misc.ServerCheck;
 import dev.l3g7.griefer_utils.misc.gui.guis.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.settings.elements.*;
 import dev.l3g7.griefer_utils.util.ItemUtil;
+import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
@@ -73,6 +74,11 @@ public class RecraftRecording {
 		.description("Wie diese Aufzeichnung heißt.")
 		.icon(Material.NAME_TAG);
 
+	public final BooleanSetting ignoreSubIds = new BooleanSetting()
+		.name("Sub-IDs ignorieren")
+		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) beachtet werden sollen.")
+		.icon(new ItemStack(Blocks.log, 1, 2));
+
 	public final DropDownSetting<RecordingMode> mode = new DropDownSetting<>(RecordingMode.class)
 		.name("Modus")
 		.description("Ob die Aufzeichnung /craft oder /rezepte ausführt.")
@@ -98,11 +104,14 @@ public class RecraftRecording {
 			mainSetting.getIconStorage().itemStack = null;
 			mainSetting.icon(Material.BARRIER);
 
-			mainSetting.getSubSettings().getElements().remove(craftAll);
+			boolean removed = mainSetting.getSubSettings().getElements().remove(craftAll);
 			if (m == RecordingMode.CRAFT) {
 				List<SettingsElement> settings = mainSetting.getSubSettings().getElements();
 				settings.add(settings.indexOf(mode) + 1, craftAll);
 			}
+
+			if (removed == (m != RecordingMode.CRAFT) && mc().currentScreen instanceof LabyModAddonsGui)
+				mc().currentScreen.initGui();
 		});
 
 		name.callback(s -> {
@@ -142,6 +151,7 @@ public class RecraftRecording {
 		if (icon != null)
 			object.addProperty("icon", new Ingredient(icon, icon.stackSize).toLong());
 
+		object.addProperty("ignore_sub_ids", ignoreSubIds.get());
 		object.addProperty("mode", mode.get().getName());
 		object.addProperty("craftAll", craftAll.get());
 
@@ -170,6 +180,10 @@ public class RecraftRecording {
 				JsonObject iconObj = icon.getAsJsonObject();
 				recording.mainSetting.icon(new ItemStack(Item.getItemById(iconObj.get("id").getAsInt()), iconObj.get("compression").getAsInt(), iconObj.get("meta").getAsInt()));
 			}
+		}
+
+		if (object.has("ignore_sub_ids")) {
+			recording.ignoreSubIds.set(object.get("ignore_sub_ids").getAsBoolean());
 		}
 
 		if (object.has("mode")) {
@@ -255,7 +269,7 @@ public class RecraftRecording {
 			super(true, true, true);
 			name("Unbenannte Aufzeichnung");
 			icon(Material.BARRIER);
-			subSettings(name, key, mode, new HeaderSetting(), new StartRecordingButtonSetting(),
+			subSettings(name, key, mode, ignoreSubIds, new HeaderSetting(), new StartRecordingButtonSetting(),
 				new HeaderSetting().entryHeight(10), new HeaderSetting("Nachfolgende Aufzeichnung"), successor);
 		}
 

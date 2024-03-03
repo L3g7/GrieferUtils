@@ -74,7 +74,7 @@ public class DecompressPlayer {
 
 		for (int i = 0; i < inv.length; i++) {
 			Ingredient slotIngredient = Ingredient.fromItemStack(inv[i]);
-			if (!ingredient.itemEquals(slotIngredient))
+			if (!ingredient.itemEquals(slotIngredient, recording.ignoreSubIds.get()))
 				continue;
 
 			if (slotIngredient.compression >= compression)
@@ -124,12 +124,8 @@ public class DecompressPlayer {
 		}
 
 		@Override
-		protected boolean equals(Ingredient other) {
-			if (other == null)
-				return false;
-
-			return meta == other.meta
-				&& itemId == other.itemId;
+		public boolean equals(Ingredient other, boolean ignoreSubIds) {
+			return itemEquals(other, ignoreSubIds);
 		}
 
 	}

@@ -74,29 +74,19 @@ public abstract class RecraftAction {
 			return ingredient.equals(Ingredient.fromItemStack(stack));
 		}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof Ingredient))
-				return false;
-
-			return equals((Ingredient) obj);
-		}
-
-		public boolean itemEquals(Ingredient other) {
+		public boolean itemEquals(Ingredient other, boolean ignoreSubId) {
 			if (other == null)
 				return false;
 
-			return meta == other.meta
+			return (meta == other.meta || ignoreSubId)
 				&& itemId == other.itemId;
 		}
 
-		protected boolean equals(Ingredient other) {
-			if (other == null)
+		public boolean equals(Ingredient other, boolean ignoreSubId) {
+			if (!itemEquals(other, ignoreSubId))
 				return false;
 
-			return meta == other.meta
-				&& itemId == other.itemId
-				&& compression == other.compression;
+			return compression == other.compression;
 		}
 
 		public int getSlot(int[] excludedSlots) {

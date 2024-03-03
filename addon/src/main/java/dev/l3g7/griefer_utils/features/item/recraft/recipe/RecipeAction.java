@@ -58,7 +58,7 @@ public class RecipeAction extends RecraftAction {
 	 * false: if this action failed<br>
 	 * null: if this action was skipped
 	 */
-	public Boolean execute(int windowId, boolean hasSucceeded) {
+	public Boolean execute(int windowId, boolean hasSucceeded, boolean ignoreSubIds) {
 		if (ingredient != null) {
 			int ingredientSlot = ingredient.getSlot();
 			if (ingredientSlot == -1) {
@@ -75,7 +75,7 @@ public class RecipeAction extends RecraftAction {
 
 		if (craftingIngredients != null) {
 			for (SizedIngredient craftingIngredient : craftingIngredients) {
-				if (!craftingIngredient.isAvailable()) {
+				if (!craftingIngredient.isAvailable(ignoreSubIds)) {
 					if (!hasSucceeded)
 						displayAchievement("§eAktion übersprungen \u26A0", "Du hattest nicht genügend Zutaten im Inventar!");
 
@@ -180,11 +180,11 @@ public class RecipeAction extends RecraftAction {
 			return new SizedIngredient(ingredient, size);
 		}
 
-		boolean isAvailable() {
+		boolean isAvailable(boolean ignoreSubIds) {
 			int count = 0;
 
 			for (ItemStack stack : player().inventory.mainInventory) {
-				if (!ingredient.equals(Ingredient.fromItemStack(stack)))
+				if (!ingredient.equals(Ingredient.fromItemStack(stack), ignoreSubIds))
 					continue;
 
 				count += stack.stackSize;

@@ -47,6 +47,7 @@ public class RecipePlayer {
 	private static boolean closeGui = false;
 	private static RecipeAction actionBeingExecuted = null;
 	private static Supplier<Boolean> onFinish;
+	private static RecraftRecording recording;
 
 	public static void play(RecraftRecording recording) {
 		play(recording, recording::playSuccessor);
@@ -66,6 +67,7 @@ public class RecipePlayer {
 			return;
 		}
 
+		RecipePlayer.recording = recording;
 		RecipePlayer.onFinish = onFinish;
 		pendingActions = new LinkedList<>();
 		for (RecraftAction action : recording.actions)
@@ -116,7 +118,7 @@ public class RecipePlayer {
 
 	private static void executeAction(RecipeAction action, int windowId, boolean hasSucceeded) {
 		actionBeingExecuted = action;
-		if (handleErrors(action.execute(windowId, hasSucceeded), windowId, hasSucceeded))
+		if (handleErrors(action.execute(windowId, hasSucceeded, recording.ignoreSubIds.get()), windowId, hasSucceeded))
 			return;
 
 		TickScheduler.runAfterClientTicks(() -> {

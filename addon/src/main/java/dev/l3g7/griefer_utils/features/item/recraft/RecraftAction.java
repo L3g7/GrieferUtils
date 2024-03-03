@@ -24,6 +24,8 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import java.util.Objects;
+
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.player;
 
 public abstract class RecraftAction {
@@ -74,16 +76,21 @@ public abstract class RecraftAction {
 			return ingredient.equals(Ingredient.fromItemStack(stack));
 		}
 
-		public boolean itemEquals(Ingredient other, boolean ignoreSubId) {
+		public boolean itemEquals(Ingredient other) {
 			if (other == null)
 				return false;
 
-			return (meta == other.meta || ignoreSubId)
+			return (meta == other.meta || Recraft.ignoreSubIds)
 				&& itemId == other.itemId;
 		}
 
-		public boolean equals(Ingredient other, boolean ignoreSubId) {
-			if (!itemEquals(other, ignoreSubId))
+		@Override
+		public boolean equals(Object obj) {
+			return obj instanceof Ingredient && equals((Ingredient) obj);
+		}
+
+		public boolean equals(Ingredient other) {
+			if (!itemEquals(other))
 				return false;
 
 			return compression == other.compression;
@@ -141,6 +148,11 @@ public abstract class RecraftAction {
 
 		public String toString() {
 			return String.format("%d:%d (%d)", itemId, meta, compression);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(itemId, compression, meta);
 		}
 
 	}

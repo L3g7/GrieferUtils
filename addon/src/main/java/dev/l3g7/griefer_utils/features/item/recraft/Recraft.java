@@ -51,6 +51,7 @@ public class Recraft extends Feature {
 
 	public static final RecraftRecording tempRecording = new RecraftRecording();
 	public static boolean playingSuccessor;
+	public static boolean ignoreSubIds;
 
 	private final KeySetting key = new KeySetting()
 		.name("Letzten Aufruf wiederholen")

@@ -80,7 +80,7 @@ class RecraftPageSetting extends ListEntrySetting {
 
 				recording.setTitle("Aufzeichnung hinzufügen");
 				mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
-					recording.setTitle(recording.mainSetting.getDisplayName());
+					recording.setTitle(recording.name.get());
 					FileProvider.getSingleton(Recraft.class).save();
 				}, recording.mainSetting));
 			})

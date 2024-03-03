@@ -140,8 +140,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting {
 			return true;
 		}
 
-		CraftPlayer.play(recording, recording::playSuccessor, false);
-		return false;
+		return !CraftPlayer.play(recording, recording::playSuccessor, false);
 	}
 
 	private class RecordingSelectionSetting extends ControlElement implements ElementBuilder<SmallButtonSetting> {

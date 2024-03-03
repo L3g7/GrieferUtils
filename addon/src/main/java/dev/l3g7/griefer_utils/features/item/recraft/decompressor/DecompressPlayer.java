@@ -52,18 +52,17 @@ public class DecompressPlayer {
 		}
 
 		ItemStack stack = player().inventory.mainInventory[slot];
-		startCrafting(new PredeterminedIngredient(stack, slot), firstExecute);
-		return false;
+		return !startCrafting(new PredeterminedIngredient(stack, slot), firstExecute);
 	}
 
-	private static void startCrafting(PredeterminedIngredient ingredient, boolean reset) {
+	private static boolean startCrafting(PredeterminedIngredient ingredient, boolean reset) {
 		Ingredient[] ingredients = new Ingredient[9];
 		ingredients[0] = ingredient;
 
 		craftRecording.actions.clear();
 		craftRecording.actions.add(new CraftAction(ingredients));
 
-		CraftPlayer.play(craftRecording, () -> craft(ingredient, false), reset);
+		return CraftPlayer.play(craftRecording, () -> craft(ingredient, false), reset);
 	}
 
 	private static int getSlotWithLowestCompression(Ingredient ingredient, int freeSlots) {
@@ -74,7 +73,7 @@ public class DecompressPlayer {
 
 		for (int i = 0; i < inv.length; i++) {
 			Ingredient slotIngredient = Ingredient.fromItemStack(inv[i]);
-			if (!ingredient.itemEquals(slotIngredient, recording.ignoreSubIds.get()))
+			if (!ingredient.itemEquals(slotIngredient))
 				continue;
 
 			if (slotIngredient.compression >= compression)
@@ -124,8 +123,8 @@ public class DecompressPlayer {
 		}
 
 		@Override
-		public boolean equals(Ingredient other, boolean ignoreSubIds) {
-			return itemEquals(other, ignoreSubIds);
+		public boolean equals(Ingredient other) {
+			return itemEquals(other);
 		}
 
 	}

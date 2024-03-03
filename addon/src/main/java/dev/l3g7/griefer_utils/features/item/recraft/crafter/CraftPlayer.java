@@ -70,18 +70,22 @@ public class CraftPlayer {
 		play(recording, recording::playSuccessor, true);
 	}
 
-	public static void play(RecraftRecording recording, Supplier<Boolean> onFinish, boolean reset) {
+	/**
+	 * @return whether the recording was started successfully
+	 */
+	public static boolean play(RecraftRecording recording, Supplier<Boolean> onFinish, boolean reset) {
+		pendingActions = null;
 		if (world() == null || !mc().inGameHasFocus)
-			return;
+			return false;
 
 		if (!ServerCheck.isOnCitybuild()) {
 			displayAchievement("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild abgespielt werden.");
-			return;
+			return false;
 		}
 
 		if (recording.actions.isEmpty()) {
 			displayAchievement("§e§lFehler \u26A0", "§eDiese Aufzeichnung ist leer!");
-			return;
+			return false;
 		}
 
 		CraftPlayer.onFinish = onFinish;
@@ -96,6 +100,7 @@ public class CraftPlayer {
 		}
 
 		playRecording(currentRecording = recording);
+		return true;
 	}
 
 	private static void playRecording(RecraftRecording recording) {

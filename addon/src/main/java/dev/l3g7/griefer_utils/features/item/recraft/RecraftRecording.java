@@ -74,7 +74,7 @@ public class RecraftRecording {
 		.description("Wie diese Aufzeichnung heißt.")
 		.icon(Material.NAME_TAG);
 
-	public final BooleanSetting ignoreSubIds = new BooleanSetting()
+	private final BooleanSetting ignoreSubIds = new BooleanSetting()
 		.name("Sub-IDs ignorieren")
 		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) ignoriert werden sollen.")
 		.icon(new ItemStack(Blocks.log, 1, 2));
@@ -135,6 +135,7 @@ public class RecraftRecording {
 
 	public void play(boolean isSuccessor) {
 		Recraft.playingSuccessor = isSuccessor;
+		Recraft.ignoreSubIds = ignoreSubIds.get();
 		mode.get().player.accept(this);
 	}
 

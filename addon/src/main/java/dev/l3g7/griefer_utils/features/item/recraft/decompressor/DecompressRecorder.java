@@ -55,6 +55,7 @@ public class DecompressRecorder {
 		stack.stackSize = 0;
 		recording.mainSetting.icon(stack);
 
+		recording.actions.clear();
 		recording.actions.add(new DecompressAction(new Ingredient(stack, 0)));
 		mc().displayGuiScreen(previousScreen);
 		previousScreen = null;

@@ -38,7 +38,7 @@ public class BookFix extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Bücher fixen")
-		.description("Unterbindet Linksklick auf Bücher und öffnet eine Vorschau bei Rechtsklick.")
+		.description("Unterbindet Linksklicks auf Bücher und öffnet eine Vorschau bei Rechtsklick.")
 		.icon(Items.book);
 
 	/**

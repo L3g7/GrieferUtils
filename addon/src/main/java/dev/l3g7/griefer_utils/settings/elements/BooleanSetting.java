@@ -120,12 +120,19 @@ public class BooleanSetting extends BooleanElement implements ElementBuilder<Boo
 
 	private class TriggerModeSetting extends DropDownSetting<TriggerMode> {
 
+		private TriggerMode previousMode;
+
 		public TriggerModeSetting() {
 			super(TriggerMode.class);
 			name("Auslösung");
 			icon("lightning");
 			defaultValue(TOGGLE);
-			callback(() -> BooleanSetting.this.set(false));
+			callback(m -> {
+				if (previousMode != null && previousMode != m)
+					BooleanSetting.this.set(false);
+
+				previousMode = m;
+			});
 		}
 
 	}

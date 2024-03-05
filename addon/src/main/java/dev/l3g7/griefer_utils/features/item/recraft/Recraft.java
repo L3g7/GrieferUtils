@@ -89,7 +89,7 @@ public class Recraft extends Feature {
 	@MainElement
 	private final BooleanSetting enabled = new BooleanSetting()
 		.name("Recraft")
-		.description("Wiederholt \"/rezepte\" oder \"/craft\" Aufrufe.\n\nVielen Dank an Pleezon/AntiBannSystem für die Hilfe beim AutoCrafter §c❤")
+		.description("Wiederholt \"/rezepte\" oder \"/craft\" Aufrufe oder dekomprimiert Items.\n\nVielen Dank an Pleezon/AntiBannSystem für die Hilfe beim AutoCrafter §c❤")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.subSettings(key, new HeaderSetting(), openPieMenu, animation, new HeaderSetting(), new EntryAddSetting()
 			.name("Seite hinzufügen")

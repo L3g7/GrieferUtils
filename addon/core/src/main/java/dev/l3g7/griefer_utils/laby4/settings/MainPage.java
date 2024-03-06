@@ -120,7 +120,7 @@ public class MainPage {
 	private static class RootSetting extends RootSettingRegistry {
 
 		private RootSetting() {
-			super(Laby4Util.getNamespace(), "settings");
+			super(Laby4Util.getNamespace(), Laby4Util.getNamespace());
 		}
 
 		@Override

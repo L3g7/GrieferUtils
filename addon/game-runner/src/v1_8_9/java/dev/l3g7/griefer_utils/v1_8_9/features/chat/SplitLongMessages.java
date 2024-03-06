@@ -18,7 +18,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ChatQueue;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import net.labymod.api.Laby;
-import net.labymod.v1_8_9.client.chat.VersionedGuiChat;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.init.Items;
@@ -57,8 +57,8 @@ public class SplitLongMessages extends Feature {
 		}
 
 		int width = 626;
-		if (event.gui instanceof VersionedGuiChat) // NOTE: Account for LM 3
-			width -= Laby.labyAPI().chatProvider().chatInputService().getButtonWidth();
+		if (Laby.labyAPI().minecraft().minecraftWindow().currentLabyScreen() instanceof ChatInputOverlay)
+			width -= (int) Laby.labyAPI().chatProvider().chatInputService().getButtonWidth();
 
 		Reflection.set(inputField, "width", width); // Only accessible in Forge
 

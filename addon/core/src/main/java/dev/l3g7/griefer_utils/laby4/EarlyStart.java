@@ -7,15 +7,27 @@
 
 package dev.l3g7.griefer_utils.laby4;
 
+import com.google.gson.JsonObject;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.api.misc.LibLoader;
+import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import net.labymod.api.Laby;
 import net.labymod.api.addon.exception.UnsupportedAddonException;
 import net.labymod.api.models.version.Version;
+
+import java.io.InputStreamReader;
 
 public class EarlyStart {
 
 	public static void start(Version semVer) {
+		// Ensure addon version is up-to-date
+		JsonObject addonJson = Streams.parse(new JsonReader(new InputStreamReader(FileProvider.getData("addon.json")))).getAsJsonObject();
+		Reflection.set(Laby.labyAPI().addonService().getAddon(Main.class).orElseThrow().info(), "version", addonJson.get("version").getAsString());
+
 		// Initialize bridge
 		Bridge.Version mcVersion = Bridge.Version.getMinecraftBySemVer(semVer.toString());
 		if (mcVersion == null)

@@ -59,6 +59,8 @@ public class Main {
 			addon.addProperty("icon", "griefer_utils_icon");
 			addon.addProperty("debug", System.getProperty("griefer_utils.debug"));
 			addon.addProperty("transformerClass", "dev.l3g7.griefer_utils.laby3.PreStart");
+			addon.addProperty("debug", "false"); // NOTE: don't hardcode
+			addon.addProperty("addonVersion", addon.get("version").getAsString());
 
 			out.write(addon.toString().getBytes(StandardCharsets.ISO_8859_1));
 		}

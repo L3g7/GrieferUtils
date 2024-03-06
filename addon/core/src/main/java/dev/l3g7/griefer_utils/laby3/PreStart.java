@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -52,12 +53,14 @@ public class PreStart implements IClassTransformer {
 		// The following code is temporary, it will be removed once the two branches (labymod-4 and v2) are merged successfully
 
 		File ownJar = getOwnJar();
-		File targetFile = new File(ownJar.getParentFile(), "griefer_utils_labymod_3.gu_jar"); // Using .jar would cause the jar to be loaded automatically
+		File targetFile = Files.createTempFile("griefer_utils_labymod_3", ".gu_jar").toFile();
+		Runtime.getRuntime().addShutdownHook(new Thread(targetFile::delete));
 
 		extractJar(ownJar, targetFile);
 		addToClassLoaders(targetFile.toURI().toURL());
 		removeURLFromClassLoaders(ownJar.toURI().toURL());
 
+		System.setProperty("griefer_utils_loader_jar", ownJar.getAbsolutePath());
 		Class.forName("dev.l3g7.griefer_utils.PreStart").getDeclaredConstructor().newInstance();
 	}
 

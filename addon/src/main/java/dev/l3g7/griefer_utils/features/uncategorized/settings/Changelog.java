@@ -18,7 +18,6 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
-import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo;
 import dev.l3g7.griefer_utils.core.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.file_provider.Singleton;
@@ -85,7 +84,7 @@ public class Changelog {
 
 	@OnEnable
 	public void onEnable() {
-		if (AutoUpdater.hasUpdated && ConfigPatcher.versionChanged)
+		if (ConfigPatcher.versionChanged)
 			ChangelogScreen.trigger(false);
 	}
 }

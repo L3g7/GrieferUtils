@@ -86,7 +86,8 @@ public class AutoUpdater {
 			return;
 
 		// Check if Updater was loaded from a .jar file
-		if (!AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile().contains(".jar"))
+		String srcFile = AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+		if (!(srcFile.contains(".jar") || srcFile.contains(".gu_jar")))
 			return;
 
 		// Get info about the latest release
@@ -105,7 +106,7 @@ public class AutoUpdater {
 		ReleaseInfo preferredRelease = releases.get(preferredChannel.name().toLowerCase());
 
 		// Get own jar file
-		String ownJarUrl = getOwnJar();
+		String ownJarUrl = getOwnJar(true);
 		File jarFile = new File(ownJarUrl.substring(5)); // Remove protocol from jar path
 
 		// If addon has debug mode enabled, compare versions
@@ -160,15 +161,27 @@ public class AutoUpdater {
 		}
 
 		// New version downloaded successfully, remove old version
-		removeURLFromClassLoaders(new URL(ownJarUrl));
 		deleteJarSilently(ownJarUrl.substring(6));
+		hasUpdated = false;
+	}
 
-		// Load new version
-		Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-		addURL.setAccessible(true);
-		addURL.invoke(Launch.classLoader, targetFile.toURI().toURL());
+	private static boolean extractJar(File container, File targetFile) throws IOException {
+		try (JarFile jarFile = new JarFile(container);
+		     OutputStream out = new FileOutputStream(targetFile)) {
 
-		hasUpdated = true;
+			ZipEntry entry = jarFile.getEntry("griefer_utils_labymod_3.jar");
+			if (entry == null)
+				return false;
+
+			InputStream in = jarFile.getInputStream(entry);
+
+			// Extract file
+			byte[] buf = new byte[8192];
+			for (int l; (l = in.read(buf)) != -1; )
+				out.write(buf, 0, l);
+
+			return true;
+		}
 	}
 
 	private static void deleteJarSilently(String path) throws IOException {
@@ -250,7 +263,10 @@ public class AutoUpdater {
 	/**
 	 * @return The path to the jar {@link AutoUpdater} was loaded from, in a format ready for URLs.
 	 */
-	private static String getOwnJar() throws UnsupportedEncodingException {
+	private static String getOwnJar(boolean getLoader) throws UnsupportedEncodingException {
+		if (System.getProperty("griefer_utils_loader_jar") != null && getLoader)
+			return new File(System.getProperty("griefer_utils_loader_jar")).toURI().toString();
+
 		String ownJarUrl = AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		ownJarUrl = ownJarUrl.substring(0, ownJarUrl.lastIndexOf("!")); // remove class
 		return URLDecoder.decode(ownJarUrl, "UTF-8");
@@ -376,7 +392,7 @@ public class AutoUpdater {
 	 */
 	private static JsonObject getAddonJson() throws IOException {
 		String jarPath = AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-		if (!jarPath.contains(".jar"))
+		if (!(jarPath.contains(".jar") || jarPath.contains(".gu_jar")))
 			throw new IllegalStateException("Invalid code source location: " + jarPath);
 
 		// Sanitize jarPath

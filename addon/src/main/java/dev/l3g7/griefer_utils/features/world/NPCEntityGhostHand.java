@@ -31,6 +31,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 
+import java.util.ArrayList;
+
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 /**
@@ -60,7 +62,7 @@ public class NPCEntityGhostHand extends Feature {
 		Vec3 entityHitPos = null;
 		Entity hitEntity = null;
 
-		for (Entity entity : world().loadedEntityList) {
+		for (Entity entity : new ArrayList<>(world().loadedEntityList)) {
 			if (!(entity instanceof EntityOtherPlayerMP))
 				continue;
 

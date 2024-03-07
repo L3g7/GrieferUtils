@@ -23,6 +23,7 @@ import dev.l3g7.griefer_utils.event.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.event.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.misc.ChatQueue;
 import dev.l3g7.griefer_utils.misc.ServerCheck;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,6 +123,11 @@ public class Commands {
 	private static void onCitybuild(CitybuildJoinEvent event) {
 		if (onCbCommands.isEmpty())
 			return;
+
+		if (player() == null) {
+			TickScheduler.runAfterClientTicks(() -> onCitybuild(event), 1);
+			return;
+		}
 
 		for (String command : onCbCommands)
 			if (!MessageSendEvent.post(command))

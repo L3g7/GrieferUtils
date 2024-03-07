@@ -295,7 +295,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver {
 					continue;
 
 				for (int j = 46; j < 54; j++) {
-					if (event.getItem(j).getItem() == Items.skull)
+					if (event.getItem(j) != null && event.getItem(j).getItem() == Items.skull)
 						event.setItem(j, blockedIndicator);
 				}
 				return;

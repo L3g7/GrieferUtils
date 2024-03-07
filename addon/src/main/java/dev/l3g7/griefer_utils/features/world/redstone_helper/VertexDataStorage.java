@@ -1,9 +1,13 @@
 package dev.l3g7.griefer_utils.features.world.redstone_helper;
 
 import dev.l3g7.griefer_utils.core.misc.functions.Predicate;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -12,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
+import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 public class VertexDataStorage { // TODO: Split between texture data and vertex data (calculate vertex data in RenderObjects?)
 
@@ -48,7 +53,7 @@ public class VertexDataStorage { // TODO: Split between texture data and vertex 
 		return vertexOffsets[getIndex(obj)];
 	}
 
-	private static void calculateData()  { // TODO: Remove spaghetti
+	public static void calculateData()  { // TODO: Remove spaghetti
 		for (int i = 0; i < CHARS.length(); i++) {
 			char c = CHARS.charAt(i);
 			int textureIndex = CHARS_IN_ASCII.indexOf(c);
@@ -84,11 +89,6 @@ public class VertexDataStorage { // TODO: Split between texture data and vertex 
 			System.arraycopy(scaledTextureData[secondCharIndex], 0, texData, 4, 4);
 		}
 
-//		double[] singleTexData = scaledTextureData[16];
-//		double[] texData = new double[singleTexData.length * 4];
-//		for (int i = 0; i < 4; i++) {
-//			System.arraycopy(singleTexData, 0, texData, i * 4, 4);
-//		}
 	}
 
 	private static void parseChar(CharClamper clamper, int i, int textureIndex, int rotations, double size) {
@@ -102,10 +102,6 @@ public class VertexDataStorage { // TODO: Split between texture data and vertex 
 		scaledTexData[1] = rawTextureData[i][1] / (double) clamper.width;
 		scaledTexData[2] = rawTextureData[i][2] / (double) clamper.height;
 		scaledTexData[3] = rawTextureData[i][3] / (double) clamper.height;
-	}
-
-	static {
-		((IReloadableResourceManager) mc().getResourceManager()).registerReloadListener(resourceManager -> calculateData());
 	}
 
 	private static class CharClamper {
@@ -261,6 +257,16 @@ public class VertexDataStorage { // TODO: Split between texture data and vertex 
 			result[index] = dlen * Math.cos(yaw);
 			result[index + 4] = dlen * Math.sin(yaw);
 		}
+
+	}
+
+	@Mixin(Minecraft.class)
+	private static class MixinMinecraft {
+
+	    @Inject(method = "refreshResources", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/IReloadableResourceManager;reloadResources(Ljava/util/List;)V", shift = AFTER))
+	    private void injectRefreshResources(CallbackInfo ci) {
+	    	calculateData();
+	    }
 
 	}
 

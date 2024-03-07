@@ -74,7 +74,7 @@ public class RecraftRecording {
 		.description("Wie diese Aufzeichnung heißt.")
 		.icon(Material.NAME_TAG);
 
-	private final BooleanSetting ignoreSubIds = new BooleanSetting()
+	final BooleanSetting ignoreSubIds = new BooleanSetting()
 		.name("Sub-IDs ignorieren")
 		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) ignoriert werden sollen.")
 		.icon(new ItemStack(Blocks.log, 1, 2));

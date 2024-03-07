@@ -36,6 +36,7 @@ import dev.l3g7.griefer_utils.settings.elements.components.EntryAddSetting;
 import dev.l3g7.griefer_utils.util.ItemUtil;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +54,22 @@ public class Recraft extends Feature {
 	public static boolean playingSuccessor;
 	public static boolean ignoreSubIds;
 
-	private final KeySetting key = new KeySetting()
+	private final BooleanSetting ignoreSubIdsSetting = new BooleanSetting()
+		.name("Sub-IDs ignorieren")
+		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) ignoriert werden sollen.")
+		.icon(new ItemStack(Blocks.log, 1, 2))
+		.callback(tempRecording.ignoreSubIds::set);
+
+	private final KeySetting key = new KeySetting() {
+		public int getObjectWidth() {
+			return super.getObjectWidth() - 20;
+		}
+	}
 		.name("Letzten Aufruf wiederholen")
 		.description("Wiederholt den letzten \"/rezepte\" oder \"/craft\" Aufruf.")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
+		.subSettings(ignoreSubIdsSetting)
+		.settingsEnabled(true)
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && isEnabled())
 				RecipePlayer.play(tempRecording);

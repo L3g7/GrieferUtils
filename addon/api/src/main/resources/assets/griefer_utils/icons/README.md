@@ -52,11 +52,11 @@
   </tr>
   <tr>
     <td><a href="mob_icons/minecraft/"><img src="mob_icons/minecraft/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/minecraft/* </a></td>
-    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest?version=1670889213562&format=png">Minecraft Fandom</a></td>
+    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest">Minecraft Fandom</a></td>
   </tr>
   <tr>
     <td><a href="mob_icons/outlined_minecraft/"><img src="mob_icons/minecraft/creeper.png" height=16em width=16em />&nbsp;&nbsp;mob_icons/outlined_minecraft/* </a></td>
-    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest?version=1670889213562&format=png">Minecraft Fandom</a></td>
+    <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest">Minecraft Fandom</a></td>
   </tr>
   <tr>
     <td><a href="wallets/"><img src="wallets/inoutgoing.png" height=16em width=16em />&nbsp;&nbsp;wallets/*  </a></td>
@@ -107,14 +107,6 @@
     <td><a href="https://apps.apple.com/us/app/calculator/id1069511488">Apple calculator</a></td>
   </tr>
   <tr>
-    <td><a href="crossed_out_block_outline.png"><img src="crossed_out_block_outline.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_block_outline.png </a></td>
-    <td><a href="https://modrinth.com/mod/antighost">Giselbaer</a></td>
-  </tr>
-  <tr>
-    <td><a href="crossed_out_camera.png"><img src="crossed_out_camera.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_camera.png </a></td>
-    <td><a href="https://www.shutterstock.com/de/image-vector/movie-camera-pixel-art-32-bit-2191871743">Shutterstock (pixelpnj)</a></td>
-  </tr>
-  <tr>
     <td><a href="chest.png"><img src="chest.png" height=16em width=16em />&nbsp;&nbsp;chest.png </a></td>
     <td><a href="https://stock.adobe.com/de/images/set-of-pixel-boxes/192886298">Adobe Stock (Markov)</a></td>
   </tr>
@@ -141,6 +133,10 @@
   <tr>
     <td><a href="cpu.png"><img src="cpu.png" height=16em width=16em />&nbsp;&nbsp;cpu.png </a></td>
     <td><a href="https://www.shutterstock.com/image-vector/electronics-pixel-art-icons-set-artificial-1508310176">Shutterstock (VectorPixelStar)</a></td>
+  </tr>
+  <tr>
+    <td><a href="crossed_out_block_outline.png"><img src="crossed_out_block_outline.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_block_outline.png </a></td>
+    <td><a href="https://modrinth.com/mod/antighost">Giselbaer</a></td>
   </tr>
   <tr>
     <td><a href="crossed_out_camera.png"><img src="crossed_out_camera.png" height=16em width=16em />&nbsp;&nbsp;crossed_out_camera.png </a></td>
@@ -370,6 +366,10 @@
   <tr>
     <td><a href="shield_with_sword.png"><img src="shield_with_sword.png" height=16em width=16em />&nbsp;&nbsp;shield_with_sword.png </a></td>
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/mob_effect/resistance.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
+    <td><a href="skull.png"><img src="skull.png" height=16em width=16em />&nbsp;&nbsp;skull.png </a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><a href="skull_crossed_out.png"><img src="skull_crossed_out.png" height=16em width=16em />&nbsp;&nbsp;skull_crossed_out.png </a></td>

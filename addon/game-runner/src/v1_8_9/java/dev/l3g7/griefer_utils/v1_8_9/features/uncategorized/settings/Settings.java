@@ -20,6 +20,8 @@ import dev.l3g7.griefer_utils.v1_8_9.misc.badges.Badges;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Blocks;
 
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.auto_update.ReleaseInfo.ReleaseChannel.BETA;
 import static dev.l3g7.griefer_utils.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
 import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.Changelog.changelog;
 import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.Credits.credits;
@@ -48,6 +50,15 @@ public class Settings extends Feature {
 		.config("settings.auto_update.release_channel")
 		.icon("file")
 		.defaultValue(STABLE);
+
+	static {
+		releaseChannel.callback(v -> {
+			if (v == STABLE) {
+				labyBridge.notify("§e§lFehler ⚠", "§eLabyMod 4 ist in der Beta!");
+				releaseChannel.set(BETA);
+			}
+		});
+	}
 
 	public static final SwitchSetting autoUpdateEnabled = SwitchSetting.create()
 		.name("Automatisch updaten")

@@ -25,6 +25,7 @@ import static net.labymod.api.client.gui.screen.widget.widgets.input.CheckBoxWid
 public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolean> implements SwitchSetting {
 
 	private boolean checkbox = false;
+	private TriggerMode previousMode; // NOTE: refactor
 
 	public SwitchSettingImpl() {
 		super(JsonPrimitive::new, JsonElement::getAsBoolean, false);
@@ -62,7 +63,12 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 			.icon("lightning")
 			.inferConfig("triggerMode")
 			.defaultValue(defaultTriggerMode)
-			.callback(() -> set(false));
+			.callback(m -> {
+				if (previousMode != null && previousMode != m)
+					SwitchSettingImpl.this.set(false);
+
+				previousMode = m;
+			});
 
 		if (defaultTriggerMode != null) {
 			addSetting(0, HeaderSetting.create());

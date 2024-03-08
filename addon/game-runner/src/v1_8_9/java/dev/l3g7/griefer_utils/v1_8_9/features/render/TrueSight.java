@@ -59,6 +59,7 @@ public class TrueSight extends Feature {
 	private boolean togglingAll; // NOTE refactor
 	private final DropDownSetting<ToggleMode> toggleAll = DropDownSetting.create(ToggleMode.class)
 		.name("Alle umschalten")
+		.description("Schaltet alle Entities auf einmal an oder aus.")
 		.icon("scroll")
 		.defaultValue(ALL_OFF)
 		.callback(v -> {

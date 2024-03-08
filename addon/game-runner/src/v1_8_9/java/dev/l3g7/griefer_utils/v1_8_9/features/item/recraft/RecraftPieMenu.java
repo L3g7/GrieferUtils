@@ -23,7 +23,7 @@ public class RecraftPieMenu extends PieMenu {
 			List<Pair<String, Runnable>> entries = new ArrayList<>();
 
 			for (RecraftRecording recording : page.recordings.get())
-				entries.add(Pair.of(recording.name.get(), recording::play));
+				entries.add(Pair.of(recording.name.get(), () -> recording.play(false)));
 
 			allPages.add(Pair.of(page.name.get(), entries));
 		}

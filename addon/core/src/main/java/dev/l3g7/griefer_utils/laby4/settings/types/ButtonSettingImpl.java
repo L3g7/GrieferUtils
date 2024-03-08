@@ -24,6 +24,7 @@ import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWi
 public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object> implements ButtonSetting {
 
 	private Icon buttonIcon;
+	private String buttonLabel = "§cNo icon";
 
 	public ButtonSettingImpl() {
 		super(e -> JsonNull.INSTANCE, e -> NULL, NULL);
@@ -42,6 +43,12 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 	}
 
 	@Override
+	public ButtonSetting buttonLabel(String label) {
+		buttonLabel = label;
+		return this;
+	}
+
+	@Override
 	public boolean hasAdvancedButton() {
 		return true;
 	}
@@ -56,10 +63,11 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						ButtonWidget btn = buttonIcon == null ?
-							ButtonWidget.component(Component.text("§cNo icon"), null, () -> set(null)) :
+							ButtonWidget.component(Component.text(buttonLabel), null, () -> set(null)) :
 							ButtonWidget.icon(buttonIcon, () -> set(null));
 
-						btn.addId("advanced-button"); // required so LSS is applied
+						if (buttonIcon != null)
+							btn.addId("advanced-button"); // required so LSS is applied
 						content.removeChild("advanced-button");
 						content.addContent(btn);
 					}

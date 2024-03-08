@@ -206,7 +206,10 @@ public class WorldBlockOverlayRenderer {
 	public abstract static class RenderObject {
 
 		private static RenderObject fromState(IBlockState state, BlockPos pos, WorldClient world) {
-			for (RenderObjectGenerator generator: generators) {
+			if (world == null)
+				return null;
+
+			for (RenderObjectGenerator generator : generators) {
 				RenderObject renderObject = generator.getRenderObject(state, pos, world);
 				if (renderObject != null)
 					return renderObject;
@@ -244,7 +247,9 @@ public class WorldBlockOverlayRenderer {
 	public interface RenderObjectGenerator {
 
 		boolean isEnabled();
+
 		RenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world);
+
 		default void onBlockUpdate(Map<BlockPos, RenderObject> map, BlockPos pos, IBlockState state) {}
 
 	}

@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
@@ -28,11 +29,20 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 public class Recraft extends Feature {
 
 	public static final RecraftRecording tempRecording = new RecraftRecording("Leere Aufzeichnung");
+	public static boolean playingSuccessor;
+	public static boolean ignoreSubIds;
+
+	private final SwitchSetting ignoreSubIdsSetting = SwitchSetting.create()
+		.name("Sub-IDs ignorieren")
+		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) ignoriert werden sollen.")
+		.icon(new ItemStack(Blocks.log, 1, 2))
+		.callback(tempRecording.ignoreSubIds::set);
 
 	private final KeySetting key = KeySetting.create()
 		.name("Letzten Aufruf wiederholen")
 		.description("Wiederholt den letzten \"/rezepte\" oder \"/craft\" Aufruf.")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
+		.subSettings(ignoreSubIdsSetting)
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && isEnabled())
 				RecipePlayer.play(tempRecording);
@@ -69,7 +79,7 @@ public class Recraft extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Recraft")
-		.description("Wiederholt \"/rezepte\" oder \"/craft\" Aufrufe.\n\nVielen Dank an Pleezon/AntiBannSystem für die Hilfe beim AutoCrafter §c❤")
+		.description("Wiederholt \"/rezepte\" oder \"/craft\" Aufrufe oder dekomprimiert Items.\n\nVielen Dank an Pleezon/AntiBannSystem für die Hilfe beim AutoCrafter §c❤")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.subSettings(key, HeaderSetting.create(), openPieMenu, animation, HeaderSetting.create(), pages);
 

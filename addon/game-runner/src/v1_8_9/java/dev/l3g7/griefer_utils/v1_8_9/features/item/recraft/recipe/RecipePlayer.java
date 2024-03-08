@@ -9,13 +9,16 @@ package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.misc.Constants;
+import dev.l3g7.griefer_utils.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.v1_8_9.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.Recraft;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
+import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import net.minecraft.network.play.server.S2DPacketOpenWindow;
 
@@ -34,8 +37,13 @@ public class RecipePlayer {
 	private static Queue<RecipeAction> pendingActions;
 	private static boolean closeGui = false;
 	private static RecipeAction actionBeingExecuted = null;
+	private static Supplier<Boolean> onFinish;
 
 	public static void play(RecraftRecording recording) {
+		play(recording, recording::playSuccessor);
+	}
+
+	public static void play(RecraftRecording recording, Supplier<Boolean> onFinish) {
 		if (world() == null || !mc().inGameHasFocus)
 			return;
 
@@ -49,11 +57,15 @@ public class RecipePlayer {
 			return;
 		}
 
+		RecipePlayer.onFinish = onFinish;
 		pendingActions = new LinkedList<>();
 		for (RecraftAction action : recording.actions)
 			pendingActions.add((RecipeAction) action);
 
-		player().sendChatMessage("/rezepte");
+		if (Recraft.playingSuccessor)
+			MinecraftUtil.send("/rezepte");
+		else
+			player().sendChatMessage("/rezepte");
 	}
 
 	public static boolean isPlaying() {
@@ -68,9 +80,13 @@ public class RecipePlayer {
 		actionBeingExecuted = null;
 		if (closeGui) {
 			event.cancel();
-			mc().getNetHandler().addToSendQueue(new C0DPacketCloseWindow(event.packet.getWindowId()));
-			mc().addScheduledTask(player()::closeScreenAndDropStack);
 			closeGui = false;
+			TickScheduler.runAfterClientTicks(() -> {
+				if (onFinish.get()) {
+					mc().getNetHandler().addToSendQueue(new C0DPacketCloseWindow(event.packet.getWindowId()));
+					mc().addScheduledTask(player()::closeScreenAndDropStack);
+				}
+			}, 1);
 			return;
 		}
 
@@ -121,8 +137,11 @@ public class RecipePlayer {
 			return true;
 
 		if (pendingActions.isEmpty()) {
-			TickScheduler.runAfterClientTicks(player()::closeScreen, 1);
 			pendingActions = null;
+			TickScheduler.runAfterClientTicks(() -> {
+				player().closeScreen();
+				onFinish.get();
+			}, 1);
 		} else {
 			executeAction(pendingActions.poll(), windowId, false);
 		}

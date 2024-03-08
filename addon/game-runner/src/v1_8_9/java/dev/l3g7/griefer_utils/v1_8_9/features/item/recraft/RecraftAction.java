@@ -8,12 +8,12 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft;
 
 import com.google.gson.JsonElement;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftAction;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe.RecipeAction;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import java.util.Objects;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
 
@@ -21,17 +21,11 @@ public abstract class RecraftAction {
 
 	protected abstract JsonElement toJson();
 
-	static RecraftAction loadFromJson(JsonElement element, boolean craft) {
-		if (craft)
-			return CraftAction.fromJson(element);
-		return RecipeAction.fromJson(element);
-	}
-
 	public static class Ingredient {
 
-		final int itemId;
-		final int compression;
-		final int meta;
+		public final int itemId;
+		public final int compression;
+		public final int meta;
 		private int lastSlotIndex = -1;
 
 		public static Ingredient fromItemStack(ItemStack stack) {
@@ -54,7 +48,7 @@ public abstract class RecraftAction {
 			return new Ingredient(stack, compressionLevel);
 		}
 
-		Ingredient(ItemStack stack, int compression) {
+		public Ingredient(ItemStack stack, int compression) {
 			this(Item.getIdFromItem(stack.getItem()), stack.getMetadata(), compression);
 		}
 
@@ -71,21 +65,24 @@ public abstract class RecraftAction {
 			return ingredient.equals(Ingredient.fromItemStack(stack));
 		}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof Ingredient))
-				return false;
-
-			return equals((Ingredient) obj);
-		}
-
-		boolean equals(Ingredient other) {
+		public boolean itemEquals(Ingredient other) {
 			if (other == null)
 				return false;
 
-			return meta == other.meta
-				&& itemId == other.itemId
-				&& compression == other.compression;
+			return (meta == other.meta || Recraft.ignoreSubIds)
+				&& itemId == other.itemId;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return obj instanceof Ingredient && equals((Ingredient) obj);
+		}
+
+		public boolean equals(Ingredient other) {
+			if (!itemEquals(other))
+				return false;
+
+			return compression == other.compression;
 		}
 
 		public int getSlot(int[] excludedSlots) {
@@ -140,6 +137,11 @@ public abstract class RecraftAction {
 
 		public String toString() {
 			return String.format("%d:%d (%d)", itemId, meta, compression);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(itemId, compression, meta);
 		}
 
 	}

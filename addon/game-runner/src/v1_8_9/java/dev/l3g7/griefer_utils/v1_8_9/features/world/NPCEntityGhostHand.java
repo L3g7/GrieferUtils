@@ -9,15 +9,17 @@ package dev.l3g7.griefer_utils.v1_8_9.features.world;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MouseClickEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.v1_8_9.util.PlayerUtil;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+
+import java.util.ArrayList;
 
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 
@@ -48,7 +50,7 @@ public class NPCEntityGhostHand extends Feature {
 		Vec3 entityHitPos = null;
 		Entity hitEntity = null;
 
-		for (Entity entity : world().loadedEntityList) {
+		for (Entity entity : new ArrayList<>(world().loadedEntityList)) {
 			if (!(entity instanceof EntityOtherPlayerMP))
 				continue;
 

@@ -8,13 +8,16 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.Recraft;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction.Ingredient;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
+import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -46,30 +49,48 @@ public class CraftPlayer {
 	private static State state;
 	private static Object resyncReference;
 
+	private static Supplier<Boolean> onFinish;
+
 	public static boolean isPlaying() {
 		return state != IDLE;
 	}
 
 	public static void play(RecraftRecording recording) {
+		windowId = null;
+		play(recording, recording::playSuccessor, true);
+	}
+
+	/**
+	 * @return whether the recording was started successfully
+	 */
+	public static boolean play(RecraftRecording recording, Supplier<Boolean> onFinish, boolean reset) {
+		pendingActions = null;
 		if (world() == null || !mc().inGameHasFocus)
-			return;
+			return false;
 
 		if (!ServerCheck.isOnCitybuild()) {
 			labyBridge.notify("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild abgespielt werden.");
-			return;
+			return false;
 		}
 
 		if (recording.actions.isEmpty()) {
 			labyBridge.notify("§e§lFehler \u26A0", "§eDiese Aufzeichnung ist leer!");
-			return;
+			return false;
 		}
 
-		state = WAITING_FOR_GUI;
-		windowId = null;
-		firstPlay = true;
+		CraftPlayer.onFinish = onFinish;
+		if (reset) {
+			windowId = null;
+			state = WAITING_FOR_GUI;
+			firstPlay = true;
+			if (Recraft.playingSuccessor)
+				MinecraftUtil.send("/craft");
+			else
+				player().sendChatMessage("/craft");
+		}
 
 		playRecording(currentRecording = recording);
-		player().sendChatMessage("/craft");
+		return true;
 	}
 
 	private static void playRecording(RecraftRecording recording) {
@@ -96,11 +117,13 @@ public class CraftPlayer {
 				return;
 			}
 
-			player().closeScreen();
-			player().openContainer.putStackInSlot(1, null);
-			pendingActions = null;
-			windowId = null;
-			return;
+			if (onFinish.get()) {
+				player().closeScreen();
+				player().openContainer.putStackInSlot(1, null);
+				pendingActions = null;
+				windowId = null;
+				return;
+			}
 		}
 	}
 

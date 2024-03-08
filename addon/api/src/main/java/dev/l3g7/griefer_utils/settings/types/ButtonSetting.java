@@ -15,11 +15,8 @@ public interface ButtonSetting extends AbstractSetting<ButtonSetting, Object> {
 
 	static ButtonSetting create() {return settings.createButtonSetting();}
 
-	/**
-	 * Sets the icon of the button.
-	 *
-	 * @param icon of type {@link String} for GrieferUtils icons.
-	 */
 	ButtonSetting buttonIcon(Object icon);
+
+	ButtonSetting buttonLabel(String label);
 
 }

@@ -14,16 +14,25 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.misc.Named;
+import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.laby4.settings.BaseSettingImpl;
 import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.laby4.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.settings.types.*;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftAction;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftRecorder;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.decompressor.DecompressAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.decompressor.DecompressPlayer;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.decompressor.DecompressRecorder;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe.RecipeAction;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe.RecipePlayer;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe.RecipeRecorder;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
+import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -31,8 +40,6 @@ import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.entry.FlexibleContentEntry;
-import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.loader.annotation.SpriteTexture;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
@@ -53,6 +60,7 @@ import java.util.*;
 
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording.RecordingMode.CRAFT;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording.RecordingMode.RECIPE;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class RecraftRecording extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {
@@ -71,15 +79,20 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 		.icon("key")
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && FileProvider.getSingleton(Recraft.class).isEnabled()) {
-				play();
+				play(false);
 			}
 		});
 
+	final SwitchSetting ignoreSubIds = SwitchSetting.create()
+		.name("Sub-IDs ignorieren")
+		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) ignoriert werden sollen.")
+		.icon(new ItemStack(Blocks.log, 1, 2));
+
 	public final DropDownSetting<RecordingMode> mode = DropDownSetting.create(RecordingMode.class)
 		.name("Modus")
-		.description("Ob die Aufzeichnung /craft oder /rezepte ausführt.")
+		.description("Ob die Aufzeichnung /craft, /rezepte ausführt oder dekomprimiert.")
 		.icon("knowledge_book")
-		.defaultValue(RecordingMode.RECIPE);
+		.defaultValue(RECIPE);
 
 	public final SwitchSetting craftAll = SwitchSetting.create()
 		.name("Alles vercraften")
@@ -91,13 +104,24 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 		.icon("camera")
 		.callback(this::startRecording);
 
+	public final RecraftSuccessorSetting successor = new RecraftSuccessorSetting();
+
 	public RecraftRecording(String name) {
 		this.name.set(name);
+		if (!"Leere Aufzeichnung".equals(name)) { // cursed
+			this.name.callback(Recraft.pages::notifyChange);
+			key.callback(Recraft.pages::notifyChange);
+			ignoreSubIds.callback(Recraft.pages::notifyChange);
+			mode.callback(Recraft.pages::notifyChange);
+			craftAll.callback(Recraft.pages::notifyChange);
+			successor.callback(Recraft.pages::notifyChange);
+		}
 	}
 
 	public void create(Object parent) {
 		name.create(parent);
 		key.create(parent);
+		ignoreSubIds.create(parent);
 		mode.create(parent);
 		mode.callback(v -> {
 			mode.icon(v.icon);
@@ -107,6 +131,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 		((SwitchSettingImpl) craftAll).setVisibleSupplier(() -> mode.get() == CRAFT);
 		craftAll.create(parent);
 		startRecording.create(parent);
+		successor.create(parent);
 	}
 
 	@Override
@@ -122,38 +147,54 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 	@Override
 	public @NotNull List<Setting> toSettings(@Nullable Setting parent, SpriteTexture texture) {
 		startRecording.buttonIcon(actions.isEmpty() ? "recording_red" : "recording_white");
-		return Arrays.asList((Setting) name, (Setting) key, (Setting) mode, (Setting) craftAll, (Setting) startRecording);
+		return Arrays.asList((Setting) name, (Setting) key, (Setting) ignoreSubIds, (Setting) mode, (Setting) craftAll, (Setting) startRecording, new HeaderSettingImpl("Nachfolgende Aufzeichnung"), successor);
 	}
 
-	public void play() {
-		if (mode.get() == CRAFT)
-			CraftPlayer.play(this); // NOTE: refactor
-		else
-			RecipePlayer.play(this);
+	public void play(boolean isSuccessor) {
+		Recraft.playingSuccessor = isSuccessor;
+		Recraft.ignoreSubIds = ignoreSubIds.get();
+		mode.get().player.accept(this);
+	}
+
+	public boolean playSuccessor() {
+		RecraftRecording recording = successor.get();
+		if (recording == null)
+			return true;
+
+		if (mode.get() == RECIPE || recording.mode.get() == RECIPE) {
+			TickScheduler.runAfterClientTicks(() -> recording.play(true), 1);
+			return true;
+		}
+
+		return !CraftPlayer.play(recording, recording::playSuccessor, false);
 	}
 
 	public void startRecording() {
-		if (mode.get() == CRAFT)
-			CraftRecorder.startRecording(this);
-		else
-			RecipeRecorder.startRecording(this);
+		mode.get().recorder.accept(this);
 	}
 
 	public enum RecordingMode implements Named {
 
-		CRAFT("/craft", ItemUtil.createItem(Blocks.crafting_table, 0, true)), RECIPE("/rezepte", "knowledge_book");
+		RECIPE("Rezept", "knowledge_book", RecipeRecorder::startRecording, RecipePlayer::play, RecipeAction::fromJson),
+		CRAFT("/craft", ItemUtil.createItem(Blocks.crafting_table, 0, true), CraftRecorder::startRecording, CraftPlayer::play, CraftAction::fromJson),
+		DECOMPRESS("Dekomprimieren", "chest", DecompressRecorder::startRecording, DecompressPlayer::play, DecompressAction::fromJson);
 
-		private final String name;
+		private final String displayName;
 		private final Object icon;
+		private final Consumer<RecraftRecording> recorder, player;
+		private final Function<JsonElement, RecraftAction> actionParser;
 
-		RecordingMode(String name, Object icon) {
-			this.name = name;
+		RecordingMode(String displayName, Object icon, Consumer<RecraftRecording> recorder, Consumer<RecraftRecording> player, Function<JsonElement, RecraftAction> actionParser) {
+			this.displayName = displayName;
 			this.icon = icon;
+			this.recorder = recorder;
+			this.player = player;
+			this.actionParser = actionParser;
 		}
 
 		@Override
 		public String getName() {
-			return name;
+			return displayName;
 		}
 
 	}
@@ -173,13 +214,36 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 
 					obj.addProperty("icon", new RecraftAction.Ingredient(entry.icon, entry.icon.stackSize).toLong());
 
-					obj.addProperty("craft", entry.mode.get() == CRAFT);
+					obj.addProperty("ignore_sub_ids", entry.ignoreSubIds.get());
+					obj.addProperty("mode", entry.mode.get().getName());
 					obj.addProperty("craftAll", entry.craftAll.get());
 
 					JsonArray jsonActions = new JsonArray();
 					for (RecraftAction action : entry.actions)
 						jsonActions.add(action.toJson());
 					obj.add("actions", jsonActions);
+
+					RecraftRecording recording = entry.successor.get();
+					if (recording == null) {
+						obj.addProperty("successor", -1);
+					} else {
+						int pageIdx = 0;
+
+						pageLoop:
+						for (RecraftPage page : Recraft.pages.get()) {
+							int recIdx = 0;
+							for (RecraftRecording rec : page.recordings.get()) {
+								if (rec == recording) {
+									obj.addProperty("successor", pageIdx << 16 | recIdx);
+									break pageLoop;
+								}
+								recIdx++;
+							}
+
+							pageIdx++;
+						}
+					}
+
 
 					pages.add(obj);
 				}
@@ -202,14 +266,51 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 						}
 					}
 
-					if (object.has("craft") && object.get("craft").getAsBoolean()) {
-						recording.mode.set(CRAFT);
-						recording.craftAll.set(object.get("craftAll").getAsBoolean());
+					if (object.has("ignore_sub_ids")) {
+						recording.ignoreSubIds.set(object.get("ignore_sub_ids").getAsBoolean());
+					}
+
+					if (object.has("mode")) {
+						String mode = object.get("mode").getAsString();
+						for (RecordingMode recordingMode : RecordingMode.values())
+							if (recordingMode.getName().equals(mode))
+								recording.mode.set(recordingMode);
+
+						if (recording.mode.get() == RecordingMode.CRAFT)
+							recording.craftAll.set(object.get("craftAll").getAsBoolean());
+					} else {
+						v.add(recording);
+						continue;
 					}
 
 					JsonArray jsonActions = object.getAsJsonArray("actions");
 					for (JsonElement jsonAction : jsonActions)
-						recording.actions.add(RecraftAction.loadFromJson(jsonAction, recording.mode.get() == CRAFT));
+						recording.actions.add(recording.mode.get().actionParser.apply(jsonAction));
+
+
+					if (object.has("successor")) {
+						int index = object.get("successor").getAsInt();
+
+						// All recordings must have been loaded before the selected one can be loaded
+						TickScheduler.runAfterRenderTicks(() -> {
+							int pageIdx = 0;
+
+							pageLoop:
+							for (RecraftPage page : Recraft.pages.get()) {
+								int recIdx = 0;
+								for (RecraftRecording rec : page.recordings.get()) {
+									if ((pageIdx << 16 | recIdx) == index) {
+										recording.successor.set(rec);
+										break pageLoop;
+									}
+									recIdx++;
+								}
+
+								pageIdx++;
+							}
+						}, 1);
+
+					}
 
 					v.add(recording);
 				}

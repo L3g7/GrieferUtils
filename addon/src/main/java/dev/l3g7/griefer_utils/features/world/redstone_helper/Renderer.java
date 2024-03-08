@@ -42,7 +42,7 @@ public class Renderer {
 		GlStateManager.translate(-EntityFX.interpPosX, -EntityFX.interpPosY, -EntityFX.interpPosZ);
 
 		double viewY = mc().getRenderManager().playerViewY + 12.5d;
-		if (viewY < 0)
+		while (viewY < 0)
 			viewY += 360;
 
 		int rotationIndex = MathHelper.clamp_int((int) (Math.floor(viewY / 22.5) % 16), 0, 15);

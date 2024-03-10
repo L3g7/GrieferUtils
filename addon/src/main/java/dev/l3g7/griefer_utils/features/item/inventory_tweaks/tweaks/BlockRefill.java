@@ -23,14 +23,13 @@ import dev.l3g7.griefer_utils.core.file_provider.Singleton;
 import dev.l3g7.griefer_utils.event.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.event.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
+import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder.MainElement;
 import dev.l3g7.griefer_utils.settings.elements.BooleanSetting;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 
@@ -82,10 +81,13 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 			if (!Objects.equals(expectedStack.getTagCompound(), itemStack.getTagCompound()))
 				continue;
 
-			ItemStack heldItem = player().getHeldItem();
-			mc().playerController.windowClick(0, slot < 9 ? slot + 36 : slot, inventory.currentItem, 2, player());
-			inventory.setInventorySlotContents(slot, (heldItem == null || heldItem.stackSize == 0) ? null : heldItem);
-			inventory.setInventorySlotContents(inventory.currentItem, itemStack);
+			int finalSlot = slot;
+			TickScheduler.runAfterClientTicks(() -> {
+				ItemStack heldItem = player().getHeldItem();
+				mc().playerController.windowClick(0, finalSlot < 9 ? finalSlot + 36 : finalSlot, inventory.currentItem, 2, player());
+				inventory.setInventorySlotContents(finalSlot, (heldItem == null || heldItem.stackSize == 0) ? null : heldItem);
+				inventory.setInventorySlotContents(inventory.currentItem, itemStack);
+			}, expectedStack.getItem() instanceof ItemBlock ? 0 : 1);
 			break;
 		}
 
@@ -94,9 +96,13 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onItemUse(ItemUseEvent.Post event) {
-		if (!refillBlocks.get() || !(event.stackBeforeUse.getItem() instanceof ItemBlock
-			|| (event.stackBeforeUse.getItem() == Items.dye && EnumDyeColor.byDyeDamage(event.stackBeforeUse.getMetadata()) == EnumDyeColor.BROWN)
-			|| event.stackBeforeUse.getItem() == Items.redstone))
+		Item item = event.stackBeforeUse.getItem();
+
+		if (!refillBlocks.get() || !(item instanceof ItemBlock
+			|| (item == Items.dye && EnumDyeColor.byDyeDamage(event.stackBeforeUse.getMetadata()) == EnumDyeColor.BROWN)
+			|| item == Items.redstone
+			|| item instanceof ItemReed
+			|| item instanceof ItemBucket))
 			return;
 
 		ItemStack previousStack = event.stackBeforeUse;

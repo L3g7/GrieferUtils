@@ -102,6 +102,16 @@ public abstract class ItemUseEvent extends Event {
 					new Post(stackBeforeUse, ((ItemStack) (Object) this).copy()).fire();
 			}
 
+			@Inject(method = "useItemRightClick", at = @At("HEAD"))
+			private void injectUseItemRightClickHead(World worldIn, EntityPlayer playerIn, CallbackInfoReturnable<ItemStack> cir) {
+				stackBeforeUse = ((ItemStack) (Object) this).copy();
+			}
+
+			@Inject(method = "useItemRightClick", at = @At("RETURN"))
+			private void injectUseItemRightClickTail(World worldIn, EntityPlayer playerIn, CallbackInfoReturnable<ItemStack> cir) {
+				new Post(stackBeforeUse, cir.getReturnValue().copy()).fire();
+			}
+
 		}
 
 	}

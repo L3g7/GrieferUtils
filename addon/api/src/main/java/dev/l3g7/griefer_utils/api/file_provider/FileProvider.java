@@ -46,6 +46,7 @@ public abstract class FileProvider {
 	protected static final Map<String, Supplier<InputStream>> fileCache = new HashMap<>();
 	protected static final Set<String> exclusions = new HashSet<>();
 	private static final Set<FileProvider> providers = new HashSet<>();
+	private static final Set<FilePreProcessor> preprocessors = new HashSet<>();
 
 	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>();
 	private static final Set<Predicate<ClassMeta>> classExclusions = new HashSet<>();
@@ -113,6 +114,13 @@ public abstract class FileProvider {
 	}
 
 	/**
+	 * Adds a preprocessor that is applied to class bytes before they are parsed.
+	 */
+	public static void addPreprocessor(FilePreProcessor filter) {
+		preprocessors.add(filter);
+	}
+
+	/**
 	 * @return all known files.
 	 */
 	public static Collection<String> getFiles() {
@@ -168,7 +176,13 @@ public abstract class FileProvider {
 		// Load ClassMeta using ASM
 		try (InputStream in = getData(file)) {
 			ClassNode node = new ClassNode();
-			new ClassReader(IOUtil.toByteArray(in)).accept(node, SKIP_CODE);
+			byte[] bytes = IOUtil.toByteArray(in);
+
+			String className = file.substring(0, file.length() - 6).replace('/', '.');
+			for (FilePreProcessor preprocessor : preprocessors)
+				bytes = preprocessor.process(className, bytes);
+
+			new ClassReader(bytes).accept(node, SKIP_CODE);
 
 			ClassMeta meta = new ClassMeta(node);
 			if (classExclusions.stream().anyMatch(p -> p.test(meta)))
@@ -279,4 +293,9 @@ public abstract class FileProvider {
 		return getSingleton(bridge.load());
 	}
 
+	public interface FilePreProcessor {
+
+		byte[] process(String name, byte[] bytes);
+
+	}
 }

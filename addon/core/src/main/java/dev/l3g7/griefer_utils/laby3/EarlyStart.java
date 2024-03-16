@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.laby3;
 
 import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.api.misc.LibLoader;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
@@ -16,6 +17,8 @@ import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.MINECRAFT_1_8_9;
 public class EarlyStart {
 
 	public static void start() {
+		FileProvider.addPreprocessor(PreStart.Java17to8Transpiler::preprocess);
+
 		Bridge.Initializer.init(LABY_3, MINECRAFT_1_8_9);
 
 		// Load mcp mappings for automatic name resolution in Reflection

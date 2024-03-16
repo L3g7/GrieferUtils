@@ -17,13 +17,14 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Main {
 
-	private static final String LABY_3_LOADER = "/dev/l3g7/griefer_utils/laby3/PreStart.class";
+	private static final String LABY_3_FOLDER = "/dev/l3g7/griefer_utils/laby3";
 
 	public static void main(String[] args) throws IOException {
 		String version = System.getProperty("griefer_utils.version");
@@ -35,9 +36,16 @@ public class Main {
 
 		// Apply patches
 		try (FileSystem fs = FileSystems.newFileSystem(newJar.toPath())) {
+			// Merge json
 			mergeAddonJson(fs);
-			overwriteClassVersion(fs);
-			// NOTE: patch StringConcatFactory
+
+			// Overwrite class versions
+			try (Stream<Path> stream = Files.walk(fs.getPath(LABY_3_FOLDER))) {
+				stream
+					.filter(p -> !Files.isDirectory(p))
+					.filter(p -> p.startsWith(LABY_3_FOLDER + "/PreStart.class") || (p.startsWith(LABY_3_FOLDER + "/PreStart$") && p.endsWith(".class")))
+					.forEach(Main::overwriteClassVersion);
+			}
 		}
 	}
 
@@ -67,13 +75,16 @@ public class Main {
 	}
 
 	/**
-	 * Overwrites the class version of the LabyMod 3 jar loader with 52 (Java 1.8)
+	 * Overwrites the class version of a class file to allow execution in Java 8.
 	 */
-	private static void overwriteClassVersion(FileSystem fs) throws IOException {
-		Path path = fs.getPath(LABY_3_LOADER);
-		byte[] bytes = Files.readAllBytes(path);
-		bytes[7] = 52;
-		Files.write(path, bytes);
+	private static void overwriteClassVersion(Path path) {
+		try {
+			byte[] bytes = Files.readAllBytes(path);
+			bytes[7 /* major_version */] = 52 /* Java 1.8 */;
+			Files.write(path, bytes);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

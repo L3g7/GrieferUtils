@@ -41,7 +41,6 @@ import net.labymod.api.util.KeyValue;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModActivity;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.child.SettingsActivity;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.WidgetsEditorActivity;
 import net.labymod.core.client.gui.screen.widget.widgets.hud.window.HudWidgetWindowWidget;
 import net.minecraft.client.gui.GuiScreen;
@@ -143,7 +142,7 @@ public class ItemValueListSetting extends ListSetting implements BaseSettingImpl
 					"§o➡ " + Constants.DECIMAL_FORMAT_98.format(value.value) + "$")
 				.icon(value.stack);
 
-			entry.getSubSettings().forEach(s -> ((AbstractSetting<?, ?>) s).callback(this::notifyChange));
+			entry.getChildSettings().forEach(s -> ((AbstractSetting<?, ?>) s).callback(this::notifyChange));
 
 			entry.create(this);
 			list.add(new KeyValue<>(entry.getId(), entry));

@@ -50,8 +50,8 @@ public class SettingLoader { // NOTE: cleanup
 	 * Loads the config values for all subSettings.
 	 */
 	private static void loadSubSettings(Object owner, BaseSetting<?> parent, String parentKey) {
-		for (BaseSetting<?> element : new ArrayList<>(parent.getSubSettings())) {
-			boolean hasSubSettings = !element.getSubSettings().isEmpty();
+		for (BaseSetting<?> element : new ArrayList<>(parent.getChildSettings())) {
+			boolean hasSubSettings = !element.getChildSettings().isEmpty();
 			if (!hasSubSettings && !(element instanceof AbstractSetting<?, ?>))
 				continue;
 
@@ -66,7 +66,7 @@ public class SettingLoader { // NOTE: cleanup
 					continue;
 
 				// Allow dynamic settings if they don't hold values and have no settings
-				if (((AbstractSetting<?, ?>) element).get() == BaseSetting.NULL && element.getSubSettings().isEmpty())
+				if (((AbstractSetting<?, ?>) element).get() == BaseSetting.NULL && element.getChildSettings().isEmpty())
 					continue;
 
 				throw elevate(new NoSuchFieldException(), "Could not find declaration field for " + element.name() + " in " + owner);
@@ -83,7 +83,7 @@ public class SettingLoader { // NOTE: cleanup
 	private static void load(Object owner, BaseSetting<?> element, String key, String identifier) {
 		if (element instanceof AbstractSetting<?, ?> abs) {
 			try {
-				if (!element.getSubSettings().isEmpty() && abs.getStorage().subsettingConfig)
+				if (!element.getChildSettings().isEmpty() && abs.getStorage().subsettingConfig)
 					abs.config(key + ".value");
 				else
 					abs.config(key);

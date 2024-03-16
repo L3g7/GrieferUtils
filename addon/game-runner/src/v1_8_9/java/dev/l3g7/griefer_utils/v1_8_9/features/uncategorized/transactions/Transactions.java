@@ -103,7 +103,7 @@ public class Transactions extends Feature { // NOTE: search, export
 	}
 
 	private void updateSettings() {
-		List<BaseSetting<?>> list = setting.getSubSettings();
+		List<BaseSetting<?>> list = setting.getChildSettings();
 
 		list.clear();
 		list.add(HeaderSetting.createText("Transaktionen der letzten 30 Tage").center());

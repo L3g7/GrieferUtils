@@ -177,7 +177,7 @@ public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements
 		labySettings.add(wrapper);
 
 		labySettings.addAll(setting.getSettings());
-		setting.getSubSettings().forEach(s -> s.create(null));
+		setting.getChildSettings().forEach(s -> s.create(null));
 	}
 
 	// Registration

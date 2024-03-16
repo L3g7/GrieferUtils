@@ -148,7 +148,7 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 	}
 
 	@Override
-	default List<BaseSetting<?>> getSubSettings() {
+	default List<BaseSetting<?>> getChildSettings() {
 		return c(getElements().stream()
 			.map(KeyValue::getValue)
 			.filter(BaseSetting.class::isInstance)

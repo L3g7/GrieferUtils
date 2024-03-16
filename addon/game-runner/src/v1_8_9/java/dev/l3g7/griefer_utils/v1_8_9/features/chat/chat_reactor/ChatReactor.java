@@ -60,7 +60,7 @@ public class ChatReactor extends Feature {
 			return;
 
 		JsonArray array = new JsonArray();
-		for (BaseSetting<?> element : enabled.getSubSettings()) {
+		for (BaseSetting<?> element : enabled.getChildSettings()) {
 			if (element instanceof ReactionDisplaySetting)
 				array.add(((ReactionDisplaySetting) element).reaction.toJson());
 		}
@@ -83,7 +83,7 @@ public class ChatReactor extends Feature {
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
-		for (BaseSetting<?> element : enabled.getSubSettings()) {
+		for (BaseSetting<?> element : enabled.getChildSettings()) {
 			if (!(element instanceof ReactionDisplaySetting setting))
 				continue;
 

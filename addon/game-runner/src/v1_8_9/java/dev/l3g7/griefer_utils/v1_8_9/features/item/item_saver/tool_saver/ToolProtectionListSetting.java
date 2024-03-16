@@ -129,7 +129,7 @@ public class ToolProtectionListSetting extends ListSetting implements BaseSettin
 			entry.name(protection.name())
 				.icon(protection.stack());
 
-			entry.getSubSettings().forEach(s -> ((AbstractSetting<?, ?>) s).callback(this::notifyChange));
+			entry.getChildSettings().forEach(s -> ((AbstractSetting<?, ?>) s).callback(this::notifyChange));
 
 			entry.create(this);
 			list.add(new KeyValue<>(entry.getId(), entry));

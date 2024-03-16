@@ -213,7 +213,7 @@ public class ChatMenu extends Feature {
 	}
 
 	public static List<ChatMenuEntry> getCustom() {
-		return enabled.getSubSettings()
+		return enabled.getChildSettings()
 			.stream()
 			.filter(e -> e instanceof EntryDisplaySetting)
 			.map(e -> ((EntryDisplaySetting) e).entry)

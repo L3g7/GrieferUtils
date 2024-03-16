@@ -58,7 +58,7 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 
 	default void setParent(BaseSetting<?> parent) {}
 
-	List<BaseSetting<?>> getSubSettings();
+	List<BaseSetting<?>> getChildSettings();
 
 	void create(Object parent);
 

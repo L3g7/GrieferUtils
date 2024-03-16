@@ -59,7 +59,7 @@ public class MainPage {
 					|| !(feature.getMainElement() instanceof SwitchSettingImpl main))
 					return;
 
-				for (BaseSetting<?> element : main.getSubSettings()) {
+				for (BaseSetting<?> element : main.getChildSettings()) {
 					if (!(element instanceof SwitchSetting sub))
 						continue;
 

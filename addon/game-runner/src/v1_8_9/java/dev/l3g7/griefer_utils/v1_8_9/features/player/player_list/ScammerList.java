@@ -63,7 +63,7 @@ public class ScammerList extends PlayerList {
 		starting = false;
 		fileSelection.create(fileSelection);
 		fileSelection.moveCursorToEnd();
-		getMainElement().addSetting(getMainElement().getSubSettings().size() - 1, fileSelection);
+		getMainElement().addSetting(getMainElement().getChildSettings().size() - 1, fileSelection);
 	}
 
 	private void load(URL url) {

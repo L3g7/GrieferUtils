@@ -65,7 +65,7 @@ public class PreStart implements IClassTransformer {
 				Unsafe unsafe = (Unsafe) theUnsafe.get(null);
 				unsafe.putInt(LOOKUP, 12 /* allowedModes */, -1 /* TRUSTED */);
 
-				// Find private  classes
+				// Find private classes
 				Class<?> boundMethodHandle = Class.forName("java.lang.invoke.BoundMethodHandle");
 				Class<?> lambdaFormEditor = Class.forName("java.lang.invoke.LambdaFormEditor");
 				Class<?> lambdaForm = Class.forName("java.lang.invoke.LambdaForm");
@@ -163,7 +163,7 @@ public class PreStart implements IClassTransformer {
 				if (element == null) {
 					// Call insert using new argument
 					result = MethodHandles.collectArguments(result, result.type().parameterCount() - 1, insert);
-					// result = (..., arg, StringBuilder) -> String
+					// result gets type (..., arg, StringBuilder) -> String
 				} else {
 					// Bind first constant
 					insert = MethodHandles.insertArguments(insert, 0, element);

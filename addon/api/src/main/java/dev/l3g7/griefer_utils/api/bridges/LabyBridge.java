@@ -78,8 +78,6 @@ public interface LabyBridge {
 
 	void onQuit(Runnable callback);
 
-	void onAccountSwitch(Runnable callback);
-
 	void onMessageSend(Predicate<String> callback);
 
 	void onMessageModify(BiFunction<Object, Object, Object> callback);

@@ -7,15 +7,6 @@
 
 package dev.l3g7.griefer_utils.events;
 
-import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
 
-public class AccountSwitchEvent extends Event {
-
-	@OnEnable
-	public static void register() {
-		LabyBridge.labyBridge.onAccountSwitch(() -> new AccountSwitchEvent().fire());
-	}
-
-}
+public class AccountSwitchEvent extends Event {}

@@ -27,7 +27,7 @@ public class MappingEntries {
 
 	}
 
-	static class MappedField extends MappedMember {
+	public static class MappedField extends MappedMember { // NOTE: access must be elevated for Java 8 to work; fix?
 
 		MappedField(String obf, String srg) {
 			super(obf, srg);
@@ -35,7 +35,7 @@ public class MappingEntries {
 
 	}
 
-	static class MappedMethod extends MappedMember {
+	public static class MappedMethod extends MappedMember { // NOTE: access must be elevated for Java 8 to work; fix?
 
 		/**
 		 * The obfuscated descriptor of the method.
@@ -62,7 +62,7 @@ public class MappingEntries {
 		}
 	}
 
-	static class MappedMember {
+	public static class MappedMember { // NOTE: access must be elevated for Java 8 to work; fix?
 
 		/**
 		 * The obfuscated name of the member.
@@ -108,7 +108,7 @@ public class MappingEntries {
 	/**
 	 * An {@link ArrayList} with a cache for every mapping type to achieve faster lookup.
 	 */
-	static class MappedList<M extends MappedMember> extends ArrayList<M> {
+	public static class MappedList<M extends MappedMember> extends ArrayList<M> { // NOTE: access must be elevated for Java 8 to work; fix?
 
 		/**
 		 * A member storage where the key is the obfuscated name.
@@ -156,7 +156,7 @@ public class MappingEntries {
 	/**
 	 * A {@link MappedList} where the lookup keys include the corresponding method descriptors.
 	 */
-	static class MethodList extends MappedList<MappedMethod> {
+	public static class MethodList extends MappedList<MappedMethod> { // NOTE: access must be elevated for Java 8 to work; fix?
 
 		/**
 		 * populates the cache maps for faster mapping lookup.

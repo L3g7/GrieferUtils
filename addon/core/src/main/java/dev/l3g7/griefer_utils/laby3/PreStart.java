@@ -7,7 +7,10 @@
 
 package dev.l3g7.griefer_utils.laby3;
 
+import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.api.util.IOUtil;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -17,12 +20,15 @@ import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import sun.misc.Unsafe;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.invoke.MethodType.methodType;
@@ -39,6 +45,26 @@ public class PreStart implements IClassTransformer {
 		field.setAccessible(true);
 		List<IClassTransformer> transformers = (List<IClassTransformer>) field.get(getClass().getClassLoader());
 		transformers.add(0, new Java17to8Transpiler());
+
+		// Forge's remapper loads the classes using getClassBytes, and puts them in a ClassReader, so a version of the
+		// classes with a modified major version have to be loaded and cached manually to prevent crashes
+		field = LaunchClassLoader.class.getDeclaredField("resourceCache");
+		field.setAccessible(true);
+		Map<String, byte[]> resourceCache = (Map<String, byte[]>) field.get(Launch.classLoader);
+
+		for (String file : FileProvider.getFiles(f -> f.endsWith(".class"))) {
+			try (InputStream in = FileProvider.getData(file)) {
+				ClassNode node = new ClassNode();
+
+				String slashName = file.substring(0, file.length() - 6);
+				String dotName = slashName.replace('/', '.');
+				byte[] bytes = Java17to8Transpiler.preprocess(dotName, IOUtil.toByteArray(in));
+				resourceCache.put(slashName, bytes);
+				resourceCache.put(dotName, bytes); // TODO Which name is actually being used?
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 
 		// TODO AutoUpdater.update()
 		EarlyStart.start();

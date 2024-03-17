@@ -10,7 +10,6 @@ import dev.l3g7.griefer_utils.injection.transformer.Transformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
-import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.transformer.Config;
 import org.spongepowered.asm.service.IMixinService;
@@ -30,7 +29,16 @@ public class InjectorBase {
 	public static void initialize(String labymodNamespace) {
 
 		// Initialize Mixin
-		MixinBootstrap.init();
+		try {
+			Class<?> launchClassLoaderClass = Class.forName("net.minecraft.launchwrapper.LaunchClassLoader");
+			Class<?> clazz = launchClassLoaderClass.getClassLoader().loadClass("org.spongepowered.asm.launch.MixinBootstrap");
+			clazz.getDeclaredMethod("init").invoke(null);
+
+			InjectorBase.class.getClassLoader().loadClass("dev.l3g7.griefer_utils.injection.MixinPlugin");
+			InjectorBase.class.getClassLoader().loadClass("dev.l3g7.griefer_utils.injection.MixinPlugin$1");
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
 
 		mixinConfig = Config.create("griefer_utils.mixins.json");
 		Reflection.set(mixinConfig.getConfig(), "refMapperConfig", VersionType.MINECRAFT.getCurrent().refmap + "-GrieferUtils.refmap.json");

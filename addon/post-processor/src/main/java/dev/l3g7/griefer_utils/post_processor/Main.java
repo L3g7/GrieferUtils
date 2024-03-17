@@ -43,7 +43,7 @@ public class Main {
 			try (Stream<Path> stream = Files.walk(fs.getPath(LABY_3_FOLDER))) {
 				stream
 					.filter(p -> !Files.isDirectory(p))
-					.filter(p -> p.startsWith(LABY_3_FOLDER + "/PreStart.class") || (p.startsWith(LABY_3_FOLDER + "/PreStart$") && p.endsWith(".class")))
+					.filter(p -> p.startsWith(LABY_3_FOLDER + "/PreStart.class") || (p.toString().startsWith(LABY_3_FOLDER + "/PreStart$") && p.toString().endsWith(".class")))
 					.forEach(Main::overwriteClassVersion);
 			}
 		}
@@ -78,6 +78,7 @@ public class Main {
 	 * Overwrites the class version of a class file to allow execution in Java 8.
 	 */
 	private static void overwriteClassVersion(Path path) {
+		System.out.println("sout go brrrrrrr " + path);
 		try {
 			byte[] bytes = Files.readAllBytes(path);
 			bytes[7 /* major_version */] = 52 /* Java 1.8 */;

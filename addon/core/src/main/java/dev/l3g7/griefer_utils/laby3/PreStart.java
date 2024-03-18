@@ -40,13 +40,14 @@ public class PreStart implements IClassTransformer {
 		if (System.setProperty("griefer_utils_load_flag", "") != null)
 			throw new Error("GrieferUtils wurde bereits geladen!");
 
-		// Add transpiler before every other transformer
+		// Add transpilers before every other transformer
 		Field field = LaunchClassLoader.class.getDeclaredField("transformers");
 		field.setAccessible(true);
 		List<IClassTransformer> transformers = (List<IClassTransformer>) field.get(getClass().getClassLoader());
+		transformers.add(0, new MixinPluginTranspiler());
 		transformers.add(0, new Java17to8Transpiler());
 
-		// Forge's remapper loads the classes using getClassBytes, and puts them in a ClassReader, so a version of the
+		// Forge's remapper loads the classes using getClassBytes and puts them in a ClassReader, so a version of all
 		// classes with a modified major version have to be loaded and cached manually to prevent crashes
 		field = LaunchClassLoader.class.getDeclaredField("resourceCache");
 		field.setAccessible(true);
@@ -73,6 +74,27 @@ public class PreStart implements IClassTransformer {
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
 		return basicClass;
+	}
+
+	public static class MixinPluginTranspiler implements IClassTransformer {
+
+		@Override
+		public byte[] transform(String name, String transformedName, byte[] basicClass) {
+			if (!transformedName.equals("dev.l3g7.griefer_utils.injection.MixinPlugin"))
+				return basicClass;
+
+			ClassNode classNode = new ClassNode();
+			ClassReader reader = new ClassReader(basicClass);
+			reader.accept(classNode, 0);
+
+			for (MethodNode method : classNode.methods)
+				method.desc = method.desc.replace("Lorg/objectweb/asm/tree/ClassNode;", "Lorg/spongepowered/asm/lib/tree/ClassNode;");
+
+			ClassWriter writer = new ClassWriter(3);
+			classNode.accept(writer);
+			return writer.toByteArray();
+		}
+
 	}
 
 	public static class Java17to8Transpiler implements IClassTransformer {

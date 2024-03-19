@@ -4,6 +4,7 @@ import dev.l3g7.griefer_utils.core.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording.RecordingDisplaySetting;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording.RecordingMode;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
+import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressPlayer;
 import dev.l3g7.griefer_utils.misc.TickScheduler;
 import dev.l3g7.griefer_utils.settings.ElementBuilder;
 import dev.l3g7.griefer_utils.settings.elements.CategorySetting;
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.getSubSettingsOfType;
 import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.iterate;
-import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording.RecordingMode.RECIPE;
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording.RecordingMode.*;
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.*;
 
 public class RecraftRecordingSelectionSetting extends SmallButtonSetting {
@@ -57,10 +58,16 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting {
 				.name(page.name.get())
 				.icon(Material.EMPTY_MAP);
 
+			List<RecordingDisplaySetting> displays = getSubSettingsOfType(page, RecordingDisplaySetting.class);
+			if (container.mode.get() == DECOMPRESS)
+				displays.remove(container.mainSetting);
+
+			if (displays.isEmpty())
+				continue;
+
 			settings.add(category);
 			category.subSettings();
 
-			List<RecordingDisplaySetting> displays = getSubSettingsOfType(page, RecordingDisplaySetting.class);
 			for (RecordingDisplaySetting display : displays)
 				category.getSubSettings().add(new RecordingSelectionSetting(display.recording));
 		}
@@ -140,7 +147,10 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting {
 			return true;
 		}
 
-		return !CraftPlayer.play(recording, recording::playSuccessor, false);
+		if (recording.mode.get() == CRAFT)
+			return !CraftPlayer.play(recording, recording::playSuccessor, false, false);
+
+		return DecompressPlayer.play(recording);
 	}
 
 	private class RecordingSelectionSetting extends ControlElement implements ElementBuilder<SmallButtonSetting> {

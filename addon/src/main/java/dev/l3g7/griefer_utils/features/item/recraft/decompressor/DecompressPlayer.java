@@ -14,26 +14,29 @@ public class DecompressPlayer {
 	private static final RecraftRecording craftRecording = new RecraftRecording();
 	private static RecraftRecording recording;
 
-	public static void play(RecraftRecording recording) {
+	/**
+	 * @return whether the recording was started successfully
+	 */
+	public static boolean play(RecraftRecording recording) {
 		if (world() == null || !mc().inGameHasFocus)
-			return;
+			return false;
 
 		if (!ServerCheck.isOnCitybuild()) {
 			displayAchievement("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild abgespielt werden.");
-			return;
+			return false;
 		}
 
 		if (recording.actions.isEmpty()) {
 			displayAchievement("§e§lFehler \u26A0", "§eDiese Aufzeichnung ist leer!");
-			return;
+			return false;
 		}
 
 		DecompressPlayer.recording = recording;
 		Ingredient ingredient = ((DecompressAction) recording.actions.get(0)).ingredient;
-		craft(ingredient, true);
+		return craft(ingredient);
 	}
 
-	private static boolean craft(Ingredient ingredient, boolean firstExecute) {
+	private static boolean craft(Ingredient ingredient) {
 		ItemStack[] inv = player().inventory.mainInventory;
 
 		int freeSlots = 0;
@@ -52,17 +55,17 @@ public class DecompressPlayer {
 		}
 
 		ItemStack stack = player().inventory.mainInventory[slot];
-		return !startCrafting(new PredeterminedIngredient(stack, slot), firstExecute);
+		return startCrafting(new PredeterminedIngredient(stack, slot));
 	}
 
-	private static boolean startCrafting(PredeterminedIngredient ingredient, boolean reset) {
+	private static boolean startCrafting(PredeterminedIngredient ingredient) {
 		Ingredient[] ingredients = new Ingredient[9];
 		ingredients[0] = ingredient;
 
 		craftRecording.actions.clear();
 		craftRecording.actions.add(new CraftAction(ingredients));
 
-		return CraftPlayer.play(craftRecording, () -> craft(ingredient, false), reset);
+		return CraftPlayer.play(craftRecording, () -> craft(ingredient), false, true);
 	}
 
 	private static int getSlotWithLowestCompression(Ingredient ingredient, int freeSlots) {

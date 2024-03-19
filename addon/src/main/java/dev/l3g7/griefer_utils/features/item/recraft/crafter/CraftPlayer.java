@@ -51,6 +51,7 @@ public class CraftPlayer {
 	private static Queue<CraftAction> pendingActions;
 	private static int failedActions = 0;
 	private static boolean firstPlay = false;
+	private static boolean usingPlayerInventory = false;
 
 	private static Ingredient[] ingredients;
 	private static int[] sourceIds; // crafting slot id -> hotbar id
@@ -67,14 +68,15 @@ public class CraftPlayer {
 
 	public static void play(RecraftRecording recording) {
 		windowId = null;
-		play(recording, recording::playSuccessor, true);
+		play(recording, recording::playSuccessor, true, false);
 	}
 
 	/**
 	 * @return whether the recording was started successfully
 	 */
-	public static boolean play(RecraftRecording recording, Supplier<Boolean> onFinish, boolean reset) {
+	public static boolean play(RecraftRecording recording, Supplier<Boolean> onFinish, boolean reset, boolean usingPlayerInventory) {
 		pendingActions = null;
+		CraftPlayer.usingPlayerInventory = usingPlayerInventory;
 		if (world() == null || !mc().inGameHasFocus)
 			return false;
 
@@ -88,8 +90,13 @@ public class CraftPlayer {
 			return false;
 		}
 
+		playRecording(currentRecording = recording);
+
 		CraftPlayer.onFinish = onFinish;
-		if (reset) {
+		if (usingPlayerInventory) {
+			windowId = 0;
+			startAction();
+		} else if (reset) {
 			windowId = null;
 			state = WAITING_FOR_GUI;
 			firstPlay = true;
@@ -99,7 +106,6 @@ public class CraftPlayer {
 				player().sendChatMessage("/craft");
 		}
 
-		playRecording(currentRecording = recording);
 		return true;
 	}
 
@@ -128,10 +134,12 @@ public class CraftPlayer {
 			}
 
 			if (onFinish.get()) {
-				player().closeScreen();
-				player().openContainer.putStackInSlot(1, null);
+				if (!usingPlayerInventory) {
+					player().closeScreen();
+					player().openContainer.putStackInSlot(1, null);
+				}
 				pendingActions = null;
-				windowId = null;
+//				windowId = null; TODO: Was this required?
 				return;
 			}
 		}
@@ -212,7 +220,9 @@ public class CraftPlayer {
 			}
 		}
 
-		TickScheduler.runAfterClientTicks(() -> forceResync(state, null), clicks);
+		TickScheduler.runAfterClientTicks(() -> {
+			forceResync(state, null);
+		}, clicks);
 	}
 
 	@EventListener
@@ -231,14 +241,17 @@ public class CraftPlayer {
 		if (CraftPlayer.state != state
 			|| state.ordinal() < INTO_HOTBAR.ordinal()
 			|| windowId == null
-			|| resyncReference != reference)
+			|| resyncReference != reference) {
 			return;
+		}
 
 		mc().getNetHandler().addToSendQueue(new C0EPacketClickWindow(windowId, 0, -1, 0, new ItemStack(Blocks.dirt), (short) -999));
 		mc().getNetHandler().addToSendQueue(new C0FPacketConfirmTransaction(windowId, (short) -999, true));
 
 		Object finalReference = reference;
-		TickScheduler.runAfterClientTicks(() -> forceResync(state, finalReference), 60);
+		TickScheduler.runAfterClientTicks(() -> {
+			forceResync(state, finalReference);
+		}, 60);
 	}
 
 	@EventListener

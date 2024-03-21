@@ -66,6 +66,7 @@ public class GuiBigChest extends GuiContainer {
 
 	public GuiBigChest(String title, int rows, GuiBigChest previousGui) {
 		this(title, rows);
+		if(previousGui == null) return;
 		addItem((rows - 1) * 9, BACK_BUTTON, previousGui::open);
 	}
 
@@ -91,13 +92,21 @@ public class GuiBigChest extends GuiContainer {
 		mc().displayGuiScreen(this);
 	}
 
-	/**
-	 * Adds an item to the inventory and registers a callback when clicking it.
-	 */
 	public void addItem(int slot, ItemStack stack, Runnable onClick) {
 		addItem(slot, stack, onClick, onClick, onClick);
 	}
-
+	public void setGuiTitle(String s){
+		InventoryBasic b = (InventoryBasic) this.inventory;
+		b.setCustomName(s);
+	}
+	/**
+	 * Sets a {@code slot} to hold a specific {@link ItemStack} and links it with a {@link Runnable} to be called on specific click events.
+	 * @param slot the slot to be set
+	 * @param stack the stack to be displayed in the slot
+	 * @param onLeftClick the callback to be run on-left-click
+	 * @param onRightClick the callback to be run on-right-click
+	 * @param onMidClick the callback to be run on-mid-click
+	 */
 	public void addItem(int slot, ItemStack stack, Runnable onLeftClick, Runnable onRightClick, Runnable onMidClick) {
 		inventory.setInventorySlotContents(slot, stack);
 		textureItems.set(slot, null);

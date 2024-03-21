@@ -25,6 +25,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,8 +91,9 @@ public class ItemUtil {
 
 	public static ItemStack setLore(ItemStack itemStack, List<String> lore) {
 		NBTTagCompound tag = itemStack.getTagCompound();
-		if (tag == null)
+		if (tag == null) {
 			tag = new NBTTagCompound();
+		}
 
 		NBTTagCompound display = tag.getCompoundTag("display");
 		NBTTagList loreTag = new NBTTagList();
@@ -105,6 +107,42 @@ public class ItemUtil {
 		return itemStack;
 	}
 
+	public static class ItemEnchantment {
+		int id;
+		int lvl;
+
+		public ItemEnchantment(int id, int lvl) {
+			this.id = id;
+			this.lvl = lvl;
+		}
+
+		NBTTagCompound getCompound() {
+			NBTTagCompound compound = new NBTTagCompound();
+			compound.setInteger("id", id);
+			compound.setInteger("lvl", lvl);
+			return compound;
+		}
+	}
+	public static ItemStack setEnchantments(ItemStack itemStack, ItemEnchantment... enchantments) {
+		return setEnchantments(itemStack, (ItemEnchantment) Arrays.asList(enchantments));
+	}
+	public static ItemStack setEnchantments(ItemStack itemStack, ArrayList<ItemEnchantment> enchantments) {
+		NBTTagCompound tag = itemStack.getTagCompound();
+		if (tag == null) {
+			tag = new NBTTagCompound();
+		}
+
+		NBTTagList ench = tag.getTagList("ench", Constants.NBT.TAG_LIST);
+		if (ench == null) ench = new NBTTagList();
+
+		for (ItemEnchantment e : enchantments)
+			ench.appendTag(e.getCompound());
+
+		tag.setTag("ench", ench);
+		itemStack.setTagCompound(tag);
+		return itemStack;
+	}
+
 	public static String serializeNBT(ItemStack stack) {
 		return stack.writeToNBT(new NBTTagCompound()).toString();
 	}
@@ -114,7 +152,6 @@ public class ItemUtil {
 		// If the item is only damaged 1/4, you can repair it with a single material of the same type (i.e. a diamond), thus costing only 1 level
 		// more than the repair value. Otherwise, it can be repaired with another item of the same type (i.e. a diamond sword), costing 2 levels more.
 		int xpCost = itemStack.getRepairCost() + (itemStack.getItemDamage() >= itemStack.getMaxDamage() / 4 ? 1 : 2);
-
 		return xpCost < 40;
 	}
 

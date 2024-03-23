@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.api.misc.Pair;
 import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.api.misc.functions.Predicate;
@@ -46,6 +47,8 @@ import java.net.MalformedURLException;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static dev.l3g7.griefer_utils.api.mapping.Mapping.OBFUSCATED;
+import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 
 @Bridge
@@ -55,6 +58,11 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public boolean obfuscated() {
 		return !Laby.labyAPI().labyModLoader().isAddonDevelopmentEnvironment();
+	}
+
+	@Override
+	public Mapping activeMapping() {
+		return obfuscated() ? OBFUSCATED : UNOBFUSCATED;
 	}
 
 	@Override

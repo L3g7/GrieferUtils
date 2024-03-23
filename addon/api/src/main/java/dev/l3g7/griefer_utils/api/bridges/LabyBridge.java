@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.api.bridges;
 
 import dev.l3g7.griefer_utils.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.api.misc.Pair;
 import dev.l3g7.griefer_utils.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
@@ -37,6 +38,8 @@ public interface LabyBridge {
 	// General information
 
 	boolean obfuscated();
+
+	Mapping activeMapping();
 
 	boolean forge();
 

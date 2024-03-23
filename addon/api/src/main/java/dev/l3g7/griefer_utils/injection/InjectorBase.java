@@ -16,9 +16,6 @@ import org.spongepowered.asm.mixin.transformer.Config;
 import java.util.HashMap;
 import java.util.Map;
 
-import static dev.l3g7.griefer_utils.api.mapping.Mapping.OBFUSCATED;
-import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
-
 public class InjectorBase {
 
 	static Config mixinConfig;
@@ -44,7 +41,7 @@ public class InjectorBase {
 			transformers.put(transformer.getTarget(), transformer);
 		}
 
-		Reflection.setMappingTarget(LabyBridge.labyBridge.obfuscated() ? OBFUSCATED : UNOBFUSCATED);
+		Reflection.setMappingTarget(LabyBridge.labyBridge.activeMapping());
 	}
 
 	public boolean shouldTransform(String name, String transformedName) {

@@ -5,6 +5,7 @@ import dev.l3g7.griefer_utils.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.api.misc.Pair;
 import dev.l3g7.griefer_utils.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
@@ -30,6 +31,8 @@ import java.net.URISyntaxException;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static dev.l3g7.griefer_utils.api.mapping.Mapping.SEARGE;
+import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.laby3.bridges.Laby3MinecraftBridge.laby3MinecraftBridge;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -42,6 +45,11 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public boolean obfuscated() {
 		return LabyModCoreMod.isObfuscated();
+	}
+
+	@Override
+	public Mapping activeMapping() {
+		return obfuscated() ? SEARGE : UNOBFUSCATED;
 	}
 
 	@Override

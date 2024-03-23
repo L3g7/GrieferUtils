@@ -12,12 +12,16 @@ import net.labymod.core.asm.LabyModTransformer;
 import net.labymod.core.asm.mappings.Minecraft18MappingImplementation;
 import net.labymod.core.asm.mappings.UnobfuscatedImplementation;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.fml.relauncher.CoreModManager;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.MINECRAFT_1_8_9;
+import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 
 public class EarlyStart {
 
@@ -64,7 +68,17 @@ public class EarlyStart {
 
 		// Add Injector as transformer
 		Launch.classLoader.registerTransformer(Injector.class.getName());
-		// TODO ForgeModWarning.loadedUsingLabyMod = true;
+
+		if (labyBridge.forge()) {
+			// Add own file to ignored mods so Forge doesn't try to read this jar
+			String jarPath = EarlyStart.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+			if (!jarPath.contains(".jar"))
+				return;
+
+			jarPath = jarPath.substring(5, jarPath.lastIndexOf("!"));
+			jarPath = URLDecoder.decode(jarPath, "UTF-8");
+			CoreModManager.getIgnoredMods().add(new File(jarPath).getName());
+		}
 	}
 
 }

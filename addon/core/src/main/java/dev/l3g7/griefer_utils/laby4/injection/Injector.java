@@ -20,6 +20,8 @@ import net.minecraft.launchwrapper.Launch;
 
 import java.util.Set;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.VersionType.MINECRAFT;
+
 @AddonEntryPoint
 @AddonTransformer
 @SuppressWarnings("UnstableApiUsage")
@@ -32,7 +34,7 @@ public class Injector extends InjectorBase implements Entrypoint, AddonClassTran
 		transformerExceptions.removeIf(s -> s.startsWith("net.labymod"));
 
 		LoadedAddon addon = Laby.labyAPI().addonService().getAddon(getClass()).orElseThrow();
-		InjectorBase.initialize(addon.info().getNamespace());
+		InjectorBase.initialize(addon.info().getNamespace(), MINECRAFT.getCurrent().refmap);
 	}
 
 }

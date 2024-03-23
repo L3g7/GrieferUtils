@@ -1,6 +1,5 @@
 package dev.l3g7.griefer_utils.injection;
 
-import dev.l3g7.griefer_utils.api.bridges.Bridge.Version.VersionType;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.meta.ClassMeta;
@@ -25,14 +24,14 @@ public class InjectorBase {
 	static Config mixinConfig;
 	private static final Map<String, Transformer> transformers = new HashMap<>();
 
-	public static void initialize(String labymodNamespace) {
+	public static void initialize(String labymodNamespace, String refmapVersion) {
 		// Initialize Mixin
 		MixinBootstrap.init();
 
 		mixinConfig = Config.create("griefer_utils.mixins.json");
 
 		// Load refmap
-		Reflection.set(mixinConfig.getConfig(), "refMapperConfig", VersionType.MINECRAFT.getCurrent().refmap + "-GrieferUtils.refmap.json");
+		Reflection.set(mixinConfig.getConfig(), "refMapperConfig", "refmaps/" + refmapVersion + ".json");
 
 		// Register mixins
 		Reflection.invoke(Mixins.class, "registerConfiguration", mixinConfig);

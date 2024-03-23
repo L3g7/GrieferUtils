@@ -28,7 +28,7 @@ public class Injector extends InjectorBase implements IClassTransformer {
 		InjectorBase.class.getClassLoader().loadClass("dev.l3g7.griefer_utils.injection.MixinPlugin$1");
 
 		// Initialize injector
-		InjectorBase.initialize(null);
+		InjectorBase.initialize(null, "LabyMod-3");
 
 		// Finalize mixin initialization
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);

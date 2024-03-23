@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.post_processor;
 import dev.l3g7.griefer_utils.post_processor.processors.CompilationPostProcessor;
 import dev.l3g7.griefer_utils.post_processor.processors.compilation.AddonJsonProcessor;
 import dev.l3g7.griefer_utils.post_processor.processors.compilation.ClassVersionProcessor;
+import dev.l3g7.griefer_utils.post_processor.processors.compilation.RefmapConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class PostProcessor {
 
-	private static final List<CompilationPostProcessor> COMPILATION_PROCESSORS = Arrays.asList(AddonJsonProcessor.INSTANCE, ClassVersionProcessor.INSTANCE);
+	private static final List<CompilationPostProcessor> COMPILATION_PROCESSORS = Arrays.asList(AddonJsonProcessor.INSTANCE, ClassVersionProcessor.INSTANCE, RefmapConverter.INSTANCE);
 
 	public static void main(String[] args) throws IOException {
 		String version = System.getProperty("griefer_utils.version");

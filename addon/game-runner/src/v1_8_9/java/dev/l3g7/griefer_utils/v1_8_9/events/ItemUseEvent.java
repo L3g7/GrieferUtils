@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.v1_8_9.events;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
+import dev.l3g7.griefer_utils.injection.InheritedInvoke;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -51,6 +52,7 @@ public abstract class ItemUseEvent extends Event {
 		@Mixin(PlayerControllerMP.class)
 		private static class MixinPlayerControllerMP {
 
+			@InheritedInvoke(World.class)
 			@Inject(method = "onPlayerRightClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/WorldClient;getBlockState(Lnet/minecraft/util/BlockPos;)Lnet/minecraft/block/state/IBlockState;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILEXCEPTION)
 			public void injectOnPlayerRightClick(EntityPlayerSP player, WorldClient worldIn, ItemStack heldStack, BlockPos hitPos, EnumFacing side, Vec3 hitVec, CallbackInfoReturnable<Boolean> cir, float f, float f1, float f2) {
 				if (new Pre(heldStack, player, worldIn, hitPos, side, f, f1, f2).fire().isCanceled())

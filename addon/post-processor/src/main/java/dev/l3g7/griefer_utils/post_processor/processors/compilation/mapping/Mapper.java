@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 public class Mapper {
 
@@ -56,8 +57,7 @@ public class Mapper {
 	public static String mapClass(String name) {
 		MappedClass mappedClass = classes.obfMap.get(name);
 		if (mappedClass == null)
-			// Assume class does not need mapping
-			return name;
+			throw new NoSuchElementException("Could not find mapping for class " + name);
 
 		return mappedClass.srgName();
 	}
@@ -68,14 +68,16 @@ public class Mapper {
 	public static String mapMethodName(String owner, String name, String desc, boolean allowUnknown) {
 		MappedClass mappedOwner = classes.obfMap.get(owner);
 		if (mappedOwner == null)
-			// Assume method does not need mapping as owner is not mapped
-			return name;
+			throw new NoSuchElementException("Could not find mapping for class " + owner);
 
 		// Map name and descriptor
 		MappedMethod method = mappedOwner.methodObfMap().get(name + desc);
-		if (method == null)
-			// Assume method does not need mapping
-			return name;
+		if (method == null) {
+			if (allowUnknown)
+				return name;
+
+			throw new NoSuchElementException("Could not find mapping for method " + name + desc + " in class " + mappedOwner.srgName() + " (" + owner + ")");
+		}
 
 		return method.srgName;
 	}
@@ -86,13 +88,11 @@ public class Mapper {
 	public static String mapField(String owner, String name) {
 		MappedClass mappedOwner = classes.obfMap.get(owner);
 		if (mappedOwner == null)
-			// Assume field does not need mapping as owner is not mapped
-			return name;
+			throw new NoSuchElementException("Could not find mapping for class " + owner);
 
 		MappedField field = mappedOwner.fieldObfMap().get(name);
 		if (field == null)
-			// Assume field does not need mapping
-			return name;
+			throw new NoSuchElementException("Could not find mapping for field " + name + " in class " + mappedOwner.srgName() + " (" + owner + ")");
 
 		return field.srgName();
 	}
@@ -106,9 +106,13 @@ public class Mapper {
 			return type;
 
 		MappedClass mappedType = classes.obfMap.get(type.getInternalName());
-		if (mappedType == null)
-			// Assume type does not need mapping
-			return type;
+		if (mappedType == null) {
+			if (type.getInternalName().contains("/"))
+				// Not a minecraft class
+				return type;
+
+			throw new NoSuchElementException("Could not find mapping for class " + type.getInternalName());
+		}
 
 		return Type.getObjectType(mappedType.srgName());
 	}

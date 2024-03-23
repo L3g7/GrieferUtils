@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.objectweb.asm.ClassReader.*;
@@ -52,16 +53,18 @@ public class RefmapConverter extends CompilationPostProcessor {
 	public void apply(FileSystem fs) throws IOException {
 		// Move refmaps
 		Files.createDirectory(fs.getPath("/refmaps/"));
-		Files.list(fs.getPath("/"))
-			.filter(p -> p.toString().endsWith("-GrieferUtils.refmap.json"))
-			.forEach(path -> {
-				String name = path.getFileName().toString();
-				try {
-					Files.move(path, fs.getPath("/refmaps/" + name.substring(0, name.length() - 25) + ".json"));
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			});
+		try (Stream<Path> stream = Files.list(fs.getPath("/"))) {
+			stream
+				.filter(p -> p.toString().endsWith("-GrieferUtils.refmap.json"))
+				.forEach(path -> {
+					String name = path.getFileName().toString();
+					try {
+						Files.move(path, fs.getPath("/refmaps/" + name.substring(0, name.length() - 25) + ".json"));
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				});
+		}
 
 		// Generate LabyMod 3 refmap
 		Path refmapIn = fs.getPath("/refmaps/1.8.9.json");

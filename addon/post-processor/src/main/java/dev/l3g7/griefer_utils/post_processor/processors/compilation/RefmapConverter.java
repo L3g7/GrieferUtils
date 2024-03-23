@@ -19,7 +19,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.objectweb.asm.ClassReader.*;
@@ -97,9 +99,9 @@ public class RefmapConverter extends CompilationPostProcessor {
 				if (method) {
 					mappedName = Mapper.mapMethodName(owner, name, desc, true);
 
-					if (mappedName.equals(name)) {
+					if (mappedName.equals(name) && !name.equals("<init>")) {
 						// Resolve @InheritedInvoke
-						owner = getInheritedInvokeOwner(Files.readAllBytes(fs.getPath(key + ".class")));
+						owner = getInheritedInvokeOwner(entry.getKey(), Files.readAllBytes(fs.getPath(key + ".class")));
 						mappedName = Mapper.mapMethodName(owner, name, desc, false);
 					}
 
@@ -123,7 +125,7 @@ public class RefmapConverter extends CompilationPostProcessor {
 		}
 	}
 
-	private String getInheritedInvokeOwner(byte[] classBytes) {
+	private String getInheritedInvokeOwner(String target, byte[] classBytes) {
 		ClassReader r = new ClassReader(classBytes);
 		ClassNode node = new ClassNode();
 		r.accept(node, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
@@ -132,19 +134,30 @@ public class RefmapConverter extends CompilationPostProcessor {
 			if (methodNode.invisibleAnnotations == null)
 				continue;
 
-			for (AnnotationNode annotation : methodNode.invisibleAnnotations) {
-				if (!annotation.desc.equals("Ldev/l3g7/griefer_utils/injection/InheritedInvoke;"))
-					continue;
+			// Find right method
+			for (AnnotationNode inject : methodNode.visibleAnnotations) {
+				if (inject.desc.equals("Lorg/spongepowered/asm/mixin/injection/Inject;")) {
+					AnnotationNode at = (AnnotationNode) ((List<?>) getAnnotationValue(inject, "at")).get(0);
+					if (!target.equals(getAnnotationValue(at, "target")))
+						continue;
 
-				for (int i = 0; i < annotation.values.size(); i += 2) {
-					if (annotation.values.get(i).equals("value")) {
-						return ((Type) annotation.values.get(i + 1)).getInternalName();
-					}
+					// Find @InheritedInvoke
+					for (AnnotationNode annotation : methodNode.invisibleAnnotations)
+						if (annotation.desc.equals("Ldev/l3g7/griefer_utils/injection/InheritedInvoke;"))
+							return ((Type) getAnnotationValue(annotation, "value")).getInternalName();
+
 				}
 			}
 		}
 		return null;
 	}
 
-	// TODO: remove mapping pkg from jar, fix broad getInheritedInvokeOwner, implement allowUnknown
+	private Object getAnnotationValue(AnnotationNode annotation, String key) {
+		for (int i = 0; i < annotation.values.size(); i += 2)
+			if (annotation.values.get(i).equals(key))
+				return annotation.values.get(i + 1);
+
+		throw new NoSuchElementException(key);
+	}
+
 }

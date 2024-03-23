@@ -7,6 +7,7 @@ import dev.l3g7.griefer_utils.api.misc.LibLoader;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.api.util.IOUtil;
 import dev.l3g7.griefer_utils.laby3.injection.Injector;
+import net.labymod.addon.AddonLoader;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.core.asm.LabyModTransformer;
 import net.labymod.core.asm.mappings.Minecraft18MappingImplementation;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Map;
+import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.MINECRAFT_1_8_9;
@@ -79,6 +81,13 @@ public class EarlyStart {
 			jarPath = URLDecoder.decode(jarPath, "UTF-8");
 			CoreModManager.getIgnoredMods().add(new File(jarPath).getName());
 		}
+
+		// Fix main class
+		Map<UUID, String> names = Reflection.get(AddonLoader.class, "names");
+		UUID addonUuid = names.entrySet().stream().filter(e -> e.getValue().equals("GrieferUtils")).findFirst().get().getKey();
+
+		Map<UUID, String> mainClasses = Reflection.get(AddonLoader.class, "mainClasses");
+		mainClasses.put(addonUuid, Main.class.getName());
 	}
 
 }

@@ -10,13 +10,12 @@ import dev.l3g7.griefer_utils.injection.transformer.Transformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
+import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.transformer.Config;
-import org.spongepowered.asm.service.IMixinService;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.api.mapping.Mapping.OBFUSCATED;
 import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
@@ -27,31 +26,18 @@ public class InjectorBase {
 	private static final Map<String, Transformer> transformers = new HashMap<>();
 
 	public static void initialize(String labymodNamespace) {
-
 		// Initialize Mixin
-		try {
-			Class<?> launchClassLoaderClass = Class.forName("net.minecraft.launchwrapper.LaunchClassLoader");
-			Class<?> clazz = launchClassLoaderClass.getClassLoader().loadClass("org.spongepowered.asm.launch.MixinBootstrap");
-			clazz.getDeclaredMethod("init").invoke(null);
-
-			InjectorBase.class.getClassLoader().loadClass("dev.l3g7.griefer_utils.injection.MixinPlugin");
-			InjectorBase.class.getClassLoader().loadClass("dev.l3g7.griefer_utils.injection.MixinPlugin$1");
-		} catch (ReflectiveOperationException e) {
-			throw new RuntimeException(e);
-		}
+		MixinBootstrap.init();
 
 		mixinConfig = Config.create("griefer_utils.mixins.json");
+
+		// Load refmap
 		Reflection.set(mixinConfig.getConfig(), "refMapperConfig", VersionType.MINECRAFT.getCurrent().refmap + "-GrieferUtils.refmap.json");
+
+		// Register mixins
 		Reflection.invoke(Mixins.class, "registerConfiguration", mixinConfig);
 		if (labymodNamespace != null)
 			mixinConfig.getConfig().decorate("labymod-namespace", labymodNamespace);
-
-		try {
-			Class<?> mxInfoClass = Class.forName("org.spongepowered.asm.mixin.transformer.MixinInfo");
-			IMixinService classLoaderUtil0 = Reflection.get(mxInfoClass, "classLoaderUtil");
-			Object classLoaderUtil = Reflection.get(classLoaderUtil0, "classLoaderUtil");
-			Reflection.set(classLoaderUtil, "cachedClasses", new ConcurrentHashMap<>());
-		} catch (Throwable ignored) {}
 
 		// Load transformers
 		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Transformer.class)) {

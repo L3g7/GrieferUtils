@@ -9,6 +9,7 @@ dependencies {
 
     compileOnly(fileTree("../libs"))
     implementation("net.minecraft:launchwrapper:1.12")
+    implementation(project(":post-processor"))
 
     // Required because the core package actually doesn't include LabyMod 4's core, only its api.
     // I can't just use the latest version as LabyMod sometimes publishes unstable versions with breaking changes.

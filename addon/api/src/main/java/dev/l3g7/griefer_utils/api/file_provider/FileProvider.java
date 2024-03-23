@@ -46,7 +46,6 @@ public abstract class FileProvider {
 	protected static final Map<String, Supplier<InputStream>> fileCache = new HashMap<>();
 	protected static final Set<String> exclusions = new HashSet<>();
 	private static final Set<FileProvider> providers = new HashSet<>();
-	private static final Set<FilePreProcessor> preprocessors = new HashSet<>();
 
 	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>();
 	private static final Set<Predicate<ClassMeta>> classExclusions = new HashSet<>();
@@ -114,13 +113,6 @@ public abstract class FileProvider {
 	}
 
 	/**
-	 * Adds a preprocessor that is applied to class bytes before they are parsed.
-	 */
-	public static void addPreprocessor(FilePreProcessor filter) {
-		preprocessors.add(filter);
-	}
-
-	/**
 	 * @return all known files.
 	 */
 	public static Collection<String> getFiles() {
@@ -177,11 +169,7 @@ public abstract class FileProvider {
 		try (InputStream in = getData(file)) {
 			ClassNode node = new ClassNode();
 			byte[] bytes = IOUtil.toByteArray(in);
-
-			String className = file.substring(0, file.length() - 6).replace('/', '.');
-			for (FilePreProcessor preprocessor : preprocessors)
-				bytes = preprocessor.process(className, bytes);
-
+			bytes[7 /* major_version */] = (byte) Math.min(bytes[7], 52 /* Java 1.8 */);
 			new ClassReader(bytes).accept(node, SKIP_CODE);
 
 			ClassMeta meta = new ClassMeta(node);
@@ -293,9 +281,4 @@ public abstract class FileProvider {
 		return getSingleton(bridge.load());
 	}
 
-	public interface FilePreProcessor {
-
-		byte[] process(String name, byte[] bytes);
-
-	}
 }

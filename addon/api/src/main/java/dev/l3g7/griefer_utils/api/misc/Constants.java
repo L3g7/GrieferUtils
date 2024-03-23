@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.api.misc;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -52,7 +52,7 @@ public class Constants {
 	public static final Pattern GLOBAL_CHAT_PATTERN = Pattern.compile(String.format("^§r§a§l@§r§8\\[§r§6(?<cb>\\w+)§r§8] %s §r§8» §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 	public static final Pattern STATUS_PATTERN = Pattern.compile(String.format("^%s§f (?<message>[^\u00bb]*)§*r*$", FORMATTED_PLAYER_PATTERN));
 
-	public static final List<Pattern> MESSAGE_PATTERNS;
+	public static final List<Pattern> MESSAGE_PATTERNS = Arrays.asList(GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, GLOBAL_CHAT_PATTERN);
 
 	public static final Pattern PAYMENT_RECEIVE_PATTERN = Pattern.compile(String.format("^%s(?<!§f) §r§ahat dir \\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
 	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s§r§a \\$(?<amount>[\\d.,]+) gegeben\\.§r$", Constants.FORMATTED_PLAYER_PATTERN));
@@ -60,19 +60,9 @@ public class Constants {
 	public static final DecimalFormat DECIMAL_FORMAT_98;
 
 	static {
-		MESSAGE_PATTERNS = new ArrayList<>() {{
-			add(GLOBAL_RECEIVE_PATTERN);
-			add(PLOTCHAT_RECEIVE_PATTERN);
-			add(MESSAGE_RECEIVE_PATTERN);
-			add(MESSAGE_SEND_PATTERN);
-			add(GLOBAL_CHAT_PATTERN);
-		}};
-
-		StringBuilder hashtags = new StringBuilder(98); // max 98 decimal places
-		for (int i = 0; i < 98; i++)
-			hashtags.append('#');
-
-		DECIMAL_FORMAT_98 = new DecimalFormat("###,###." + hashtags, new DecimalFormatSymbols(Locale.GERMAN));
+		char[] decimalPattern = new char[98];
+		Arrays.fill(decimalPattern, '#');
+		DECIMAL_FORMAT_98 = new DecimalFormat("###,###." + new String(decimalPattern), new DecimalFormatSymbols(Locale.GERMAN));
 	}
 
 }

@@ -30,16 +30,16 @@ public class CleanupProcessor extends CompilationPostProcessor {
 	@Override
 	public void apply(FileSystem fs) throws IOException {
 		// delete LabyMod 4 autogen
-		delete(fs.getPath("dev/l3g7/griefer_utils/core"));
+		deleteDir(fs.getPath("dev/l3g7/griefer_utils/core"));
 
-		// delete Compilation post processors
-		delete(fs.getPath("dev/l3g7/griefer_utils/post_processor/processors/compilation"));
-		delete(fs.getPath("dev/l3g7/griefer_utils/post_processor/processors/CompilationPostProcessor.class"));
-		delete(fs.getPath("dev/l3g7/griefer_utils/post_processor/PostProcessor.class"));
+		// delete compilation post processors
+		deleteDir(fs.getPath("dev/l3g7/griefer_utils/post_processor/processors/compilation"));
+		Files.deleteIfExists(fs.getPath("dev/l3g7/griefer_utils/post_processor/processors/CompilationPostProcessor.class"));
+		Files.deleteIfExists(fs.getPath("dev/l3g7/griefer_utils/post_processor/PostProcessor.class"));
 
-		delete(fs.getPath("META-INF/custom-services"));
+		deleteDir(fs.getPath("META-INF/custom-services"));
 
-		// Manifest
+		// Fix manifest version
 		Path manifestPath = fs.getPath("META-INF/MANIFEST.MF");
 		Manifest manifest = new Manifest(Files.newInputStream(manifestPath));
 		if (!manifest.getMainAttributes().containsKey("Manifest-Version")) {
@@ -53,14 +53,9 @@ public class CleanupProcessor extends CompilationPostProcessor {
 		Files.write(manifestPath, out.toByteArray());
 	}
 
-	private void delete(Path obj) throws IOException {
+	private void deleteDir(Path obj) throws IOException {
 		if (!Files.exists(obj))
 			return;
-
-		if (!Files.isDirectory(obj)) {
-			Files.delete(obj);
-			return;
-		}
 
 		try (Stream<Path> walk = Files.walk(obj)) {
 			walk.sorted(Comparator.reverseOrder())

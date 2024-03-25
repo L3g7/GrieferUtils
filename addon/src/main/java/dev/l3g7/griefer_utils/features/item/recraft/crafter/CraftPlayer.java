@@ -294,7 +294,7 @@ public class CraftPlayer {
 					if (sourceIds[j] != i)
 						continue;
 
-					if (!Ingredient.check(ingredients[j], stacks[i + 37]))
+					if (!Ingredient.check(ingredients[j], stacks[i + (usingPlayerInventory ? 36 : 37)]))
 						click(event.packet.func_148911_c(), hotbarSourceIds[i], i, ++fails * 2);
 					break;
 				}

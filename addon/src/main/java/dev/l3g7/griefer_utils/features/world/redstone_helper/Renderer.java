@@ -7,10 +7,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -19,11 +19,10 @@ import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.util.MinecraftUtil.mc;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
 
@@ -166,18 +165,29 @@ public class Renderer {
 				return;
 
 			int offset = vertexFormat.getNextOffset();
-			List<VertexFormatElement> elements = vertexFormat.getElements();
 
-			// preDraw
-			for (int i = 0; i < elements.size(); i++)
-				elements.get(i).getUsage().preDraw(vertexFormat, i, offset, bytebuffer);
+			/* preDraw */
+			// preDraw Position
+			byteBuffer.position(0);
+			GL11.glVertexPointer(3, GL_FLOAT, offset, bytebuffer);
+			GL11.glEnableClientState(GL_VERTEX_ARRAY);
+			// preDraw UV
+			byteBuffer.position(12);
+			OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+			glTexCoordPointer(2, GL_FLOAT, offset, bytebuffer);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
 
 			// draw
 			GL11.glDrawArrays(GL_QUADS, 0, vertexCount);
 
-			// postDraw
-			for (int i = 0; i < elements.size(); i++)
-				elements.get(i).getUsage().postDraw(vertexFormat, i, offset, bytebuffer);
+			/* postDraw */
+			// Position
+			glDisableClientState(GL_VERTEX_ARRAY);
+			// postDraw UV
+			OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
 		}
 
 	}

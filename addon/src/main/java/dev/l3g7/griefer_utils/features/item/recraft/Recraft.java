@@ -72,7 +72,7 @@ public class Recraft extends Feature {
 		.settingsEnabled(true)
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && isEnabled())
-				RecipePlayer.play(tempRecording);
+				tempRecording.play(false);
 		});
 
 	private final RecraftPieMenu pieMenu = new RecraftPieMenu();

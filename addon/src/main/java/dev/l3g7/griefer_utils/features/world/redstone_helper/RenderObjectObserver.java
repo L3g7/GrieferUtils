@@ -127,7 +127,7 @@ public class RenderObjectObserver {
 		}
 
 		private final Map<Integer, ChunkPart> parts = new HashMap<>();
-		private final Set<ChunkPart> partsToRecompile = new HashSet<>();
+		private final Set<ChunkPart> partsToRecompile = Collections.synchronizedSet(new HashSet<>());
 
 		void add(RenderObject newObj) {
 			ChunkPart part = parts.computeIfAbsent(newObj.pos.getY() / 16, k -> new ChunkPart());
@@ -163,11 +163,12 @@ public class RenderObjectObserver {
 
 		void draw(ChunkCoordIntPair pair, Frustum frustum, int rotation) {
 			if (!partsToRecompile.isEmpty()) {
-				List<ChunkPart> parts = new ArrayList<>(partsToRecompile);
-				for (ChunkPart chunkPart : parts)
-					chunkPart.recompile();
-
-				parts.forEach(partsToRecompile::remove);
+				synchronized (partsToRecompile) {
+					partsToRecompile.removeIf(p -> {
+						p.recompile();
+						return true;
+					});
+				}
 			}
 
 			for (Map.Entry<Integer, ChunkPart> entry : parts.entrySet()) {

@@ -95,9 +95,6 @@ public class MessageSkulls extends Feature {
 		int endIndex;
 		int arrowIndex = msg.indexOf('\u00bb');
 
-		if (idStart > startIndex)
-			return;
-
 		IChatComponent unmodified = ChatLineUtil.getUnmodifiedIChatComponent(wholeComponent);
 		if (unmodified == null)
 			throw new RuntimeException("ChatLine could not be unmodified! " + wholeComponent);

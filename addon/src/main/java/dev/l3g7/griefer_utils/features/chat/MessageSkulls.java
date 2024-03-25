@@ -89,7 +89,7 @@ public class MessageSkulls extends Feature {
 		if (wholeComponent == null)
 			return;
 
-		String msg = wholeComponent.getUnformattedText();
+		String msg = wholeComponent.getUnformattedText().replaceAll("§.", "");
 
 		int startIndex = msg.indexOf('\u2503') + 2;
 		int endIndex;

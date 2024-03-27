@@ -118,7 +118,7 @@ public class AutoUpdater { // FIXME untested
 		in.close();
 
 		// Get preferred release channel
-		ReleaseChannel preferredChannel = getPreferredChannel();
+		ReleaseChannel preferredChannel = ReleaseChannel.BETA;
 		ReleaseInfo preferredRelease = releases.get(preferredChannel.name().toLowerCase());
 
 		// If addon has debug mode enabled, compare versions

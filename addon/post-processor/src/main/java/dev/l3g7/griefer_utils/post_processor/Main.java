@@ -17,6 +17,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.jar.Manifest;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -37,6 +38,7 @@ public class Main {
 		try (FileSystem fs = FileSystems.newFileSystem(newJar.toPath())) {
 			mergeAddonJson(fs);
 			overwriteClassVersion(fs);
+			addAgentToManifest(fs);
 			// NOTE: patch StringConcatFactory
 		}
 	}
@@ -76,4 +78,17 @@ public class Main {
 		Files.write(path, bytes);
 	}
 
+	private static void addAgentToManifest(FileSystem fs) throws IOException {
+		Path manifestPath = fs.getPath("META-INF/MANIFEST.MF");
+		Manifest manifest = new Manifest(Files.newInputStream(manifestPath));
+		if (!manifest.getMainAttributes().containsKey("Manifest-Version")) {
+			manifest.getMainAttributes().putValue("Manifest-Version", "1.0");
+			manifest.getMainAttributes().putValue("Agent-Class", "dev.l3g7.griefer_utils.laby4.injection.Agent");
+			manifest.getMainAttributes().putValue("Can-Retransform-Classes", "true");
+		}
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		manifest.write(out);
+		Files.write(manifestPath, out.toByteArray());
+	}
 }

@@ -18,8 +18,6 @@ import net.labymod.api.models.addon.annotation.AddonTransformer;
 import net.labymod.api.models.version.Version;
 import net.minecraft.launchwrapper.Launch;
 
-import java.util.Set;
-
 @AddonEntryPoint
 @AddonTransformer
 @SuppressWarnings("UnstableApiUsage")
@@ -28,9 +26,16 @@ public class Injector extends InjectorBase implements Entrypoint, AddonClassTran
 	@Override
 	public void initialize(Version version) {
 		// Enable mixing into LabyMod's classes
-		Set<String> transformerExceptions = Reflection.get(Launch.classLoader, "transformerExceptions");
-		transformerExceptions.removeIf(s -> s.startsWith("net.labymod"));
+		try {
+			Reflection.set(Launch.classLoader, "parent", new TransformingParentClassLoader());
 
+			Launch.classLoader.addClassLoaderExclusion("net.labymod.api.");
+			Launch.classLoader.addClassLoaderExclusion("net.labymod.core.");
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+
+		// Load injector
 		LoadedAddon addon = Laby.labyAPI().addonService().getAddon(getClass()).orElseThrow();
 		InjectorBase.initialize(addon.info().getNamespace());
 	}

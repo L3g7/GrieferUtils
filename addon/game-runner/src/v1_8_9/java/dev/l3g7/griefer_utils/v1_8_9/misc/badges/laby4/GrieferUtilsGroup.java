@@ -5,14 +5,17 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.misc.badges;
+package dev.l3g7.griefer_utils.v1_8_9.misc.badges.laby4;
 
 import dev.l3g7.griefer_utils.api.WebAPI;
 import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.v1_8_9.misc.badges.Badges;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.v1_8_9.misc.server.GUClient;
 import net.labymod.api.Laby;
 import net.labymod.api.LabyAPI;
+import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.component.format.TextDecoration;
@@ -22,6 +25,7 @@ import net.labymod.api.client.gui.screen.widget.attributes.bounds.Bounds;
 import net.labymod.api.client.network.NetworkPlayerInfo;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.api.client.render.matrix.Stack;
+import net.labymod.api.configuration.labymod.main.laby.multiplayer.TabListConfig;
 import net.labymod.api.user.GameUserService;
 import net.labymod.api.user.group.Group;
 import net.labymod.api.user.group.GroupDisplayType;
@@ -47,6 +51,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.awt.*;
 
 import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
+import static java.lang.Boolean.TRUE;
 import static net.labymod.api.user.group.GroupDisplayType.ABOVE_HEAD;
 import static net.labymod.api.user.group.GroupDisplayType.NONE;
 
@@ -109,6 +115,46 @@ public class GrieferUtilsGroup extends Group {
 		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
 		DrawUtils.drawTexture(x, y, 255, 255, 8, 8, 1.1f);
 		GlStateManager.color(1, 1, 1, 1);
+	}
+
+	public static void renderUserPercentage(int left, int width) {
+		if (!Badges.showBadges() || !Badges.showPercentage.get())
+			return;
+
+		int x = width + left;
+
+		int totalCount = mc().getNetHandler().getPlayerInfoMap().size();
+		int familiarCount = 0;
+
+		for (net.minecraft.client.network.NetworkPlayerInfo npi : mc().getNetHandler().getPlayerInfoMap())
+			if (Laby.references().gameUserService().gameUser(npi.getGameProfile().getId()).isUsingLabyMod())
+				familiarCount++;
+
+		TabListConfig tlc = Laby.labyAPI().config().multiplayer().tabList();
+
+		if (TRUE.equals(tlc.labyModBadge().get()) && TRUE.equals(tlc.labyModPercentage().get())) {
+			int percent = totalCount == 0 ? 0 : (int) Math.round(familiarCount / (double) totalCount * 100);
+			String labyModText = String.format("§7%d§8/§7%d §a%d%%", familiarCount, totalCount, percent);
+			double delta = Laby.references().renderPipeline().textRenderer().width(labyModText) * 0.7 + 6.5;
+			x -= delta;
+
+			Textures.SpriteLabyMod.DEFAULT_WOLF_HIGH_RES.render(Stack.getDefaultEmptyStack(), x, 1.5f, 6.5f);
+			x -= 3f;
+		}
+
+
+		familiarCount = 0;
+		for (net.minecraft.client.network.NetworkPlayerInfo npi : mc().getNetHandler().getPlayerInfoMap())
+			if (Laby.references().gameUserService().gameUser(npi.getGameProfile().getId()).visibleGroup() instanceof GrieferUtilsGroup)
+				familiarCount++;
+
+		int percent = totalCount == 0 ? 0 : (int) Math.round(familiarCount / (double) totalCount * 100);
+		String text = GUClient.get().isAvailable() ? String.format("§7%d§8/§7%d §a%d%%", familiarCount, totalCount, percent) : "§c?";
+		DrawUtils.drawRightString(text, x, 1.5, 0.7);
+
+		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
+		x -= Laby.references().renderPipeline().textRenderer().width(text) * 0.7;
+		DrawUtils.drawTexture(x - 8, 1.25, 256, 256, 7, 7);
 	}
 
 	/**
@@ -201,7 +247,7 @@ public class GrieferUtilsGroup extends Group {
 
 	    @Inject(method = "render", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	    private void injectRender(Stack stack, LabyAPI labyAPI, Bounds bounds, boolean update, CallbackInfo ci, int screenWidth, float columnsWidth, float backgroundWidth, RenderableComponent headerRenderableComponent, RenderableComponent footerRenderableComponent, int x, int y) {
-	    	Badges.renderUserPercentage(x, (int) backgroundWidth);
+	    	renderUserPercentage(x, (int) backgroundWidth);
 	    }
 
 	}

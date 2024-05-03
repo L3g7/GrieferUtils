@@ -5,15 +5,19 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.misc.badges;
+package dev.l3g7.griefer_utils.v1_8_9.misc.badges.laby4;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.UserSetGroupEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.Credits;
+import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.Credits;
+import dev.l3g7.griefer_utils.v1_8_9.misc.badges.BadgeManagerBridge;
 import dev.l3g7.griefer_utils.v1_8_9.misc.server.GUClient;
 import io.netty.util.internal.ConcurrentSet;
 import net.labymod.api.Laby;
@@ -25,7 +29,12 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BadgeManager {
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
+
+@Bridge
+@Singleton
+@ExclusiveTo(LABY_4)
+public class Laby4BadgeManagerBridge implements BadgeManagerBridge {
 
 	private static final Map<UUID, Group> users = new ConcurrentHashMap<>();
 
@@ -33,11 +42,11 @@ public class BadgeManager {
 	private static final Map<UUID, GrieferUtilsGroup> specialBadges = new HashMap<>();
 	private static final Set<UUID> queuedUsers = new ConcurrentSet<>();
 
-	public static boolean isSpecial(String uuid) {
+	public boolean isSpecial(String uuid) {
 		return specialBadges.containsKey(UUID.fromString(uuid));
 	}
 
-	public static void queueUser(UUID uuid) {
+	public void queueUser(UUID uuid) {
 		queuedUsers.add(uuid);
 		Group group = users.remove(uuid);
 
@@ -45,14 +54,14 @@ public class BadgeManager {
 			setGroup(user(uuid), group);
 	}
 
-	public static void removeUser(UUID uuid) {
+	public void removeUser(UUID uuid) {
 		Group group = users.remove(uuid);
 
 		if (group != null)
 			setGroup(user(uuid), group);
 	}
 
-	public static void clearUsers() {
+	public void clearUsers() {
 		for (UUID uuid : users.keySet())
 			removeUser(uuid);
 	}
@@ -70,13 +79,14 @@ public class BadgeManager {
 
 	@EventListener
 	private static void onSetGroup(UserSetGroupEvent event) {
-		if (!users.containsKey(event.user.getUniqueId()) || event.group instanceof GrieferUtilsGroup)
+		DefaultGameUser user = (DefaultGameUser) event.user;
+		if (!users.containsKey(user.getUniqueId()) || event.group instanceof GrieferUtilsGroup)
 			return;
 
 		if (event.group == null)
-			users.remove(event.user.getUniqueId());
+			users.remove(user.getUniqueId());
 		else
-			users.put(event.user.getUniqueId(), event.group);
+			users.put(user.getUniqueId(), (Group) event.group);
 
 		event.cancel();
 	}

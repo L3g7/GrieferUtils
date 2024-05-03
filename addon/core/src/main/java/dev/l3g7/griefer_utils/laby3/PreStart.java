@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.laby3;
 
-import dev.l3g7.griefer_utils.post_processor.processors.runtime.Java17to8Transpiler;
+import dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler.Java17to8Transpiler;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;

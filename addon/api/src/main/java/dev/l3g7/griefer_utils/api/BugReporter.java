@@ -81,7 +81,7 @@ public class BugReporter {
 				// Get stacktrace
 				error.printStackTrace(new PrintStream(out));
 				MessageDigest digest = MessageDigest.getInstance("SHA-256");
-				String stackTrace = out.toString(StandardCharsets.UTF_8);
+				String stackTrace = out.toString("UTF-8");
 
 				// Remove object hash codes
 				stackTrace = stackTrace.replaceAll("\\$\\$Lambda[\\d/$]*\\.(\\w+)(?=\\()", "\\$\\$Lambda").replaceAll("@[\\da-f]+", "");

@@ -28,6 +28,7 @@ public class Java17to8Transpiler extends RuntimePostProcessor {
 	private static final List<RuntimePostProcessor> lateTranspilers = Arrays.asList(
 		new StringConcatPolyfill(),
 		new AccessElevator()
+		new SuperclassRemapper()
 	);
 
 	private static final Field modCountField;

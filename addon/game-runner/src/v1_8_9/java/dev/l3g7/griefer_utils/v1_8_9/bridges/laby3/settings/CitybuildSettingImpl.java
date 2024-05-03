@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.api.misc.Citybuild.ANY;
 import static dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil.createItem;
 import static net.minecraft.init.Blocks.*;
 
@@ -34,7 +35,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	// TODO: cleanup whatever this is
 	private final ExtendedStorage<Citybuild> storage = new ExtendedStorage<>(e -> {
 		String name = e.name();
-		if (e == Citybuild.ANY) {
+		if (e == ANY) {
 			name = "Egal";
 		} else if (!e.name().startsWith("CB")) {
 			StringBuilder sb = new StringBuilder(name.toLowerCase());
@@ -43,7 +44,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 		}
 
 		return new JsonPrimitive(name);
-	}, e -> Citybuild.getCitybuild(e.getAsString()), Citybuild.ANY);
+	}, e -> Citybuild.getCitybuild(e.getAsString()), ANY);
 
 	@Override
 	public ExtendedStorage<Citybuild> getStorage() {
@@ -53,7 +54,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	public static final List<Pair<ItemStack, Citybuild>> CB_ITEMS = new ArrayList<>();
 
 	static {
-		CB_ITEMS.add(new Pair<>(createItem(Items.nether_star, 0, "Egal"), Citybuild.ANY));
+		CB_ITEMS.add(new Pair<>(createItem(Items.nether_star, 0, "Egal"), ANY));
 
 		Block[] blocks = new Block[]{diamond_block, emerald_block, gold_block, redstone_block, lapis_block, coal_block, emerald_ore, redstone_ore, diamond_ore, gold_ore, iron_ore, coal_ore, lapis_ore, bedrock, gravel, obsidian, barrier, iron_block, barrier, prismarine, mossy_cobblestone, brick_block};
 		for (int i = 0; i < blocks.length; i++)
@@ -76,7 +77,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	private final ArrayList<ItemStack> items = Reflection.get(menu, "list");
 	private final List<Consumer<ItemStack>> callbacks = new ArrayList<>();
 	private final boolean sorted;
-	private ItemStack currentValue = null;
+	private ItemStack currentItem = null;
 	private ItemStack itemIcon;
 
 	public CitybuildSettingImpl() {
@@ -84,6 +85,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 			@Override
 			public void draw(int mouseX, int mouseY) {}
 		});
+		setChangeListener(v -> set(menu.getSelected()));
 
 		List<ItemStack> items = CB_ITEMS.stream().map(p -> p.a).collect(Collectors.toList());
 		iconData = new IconData();
@@ -138,11 +140,21 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 				return pair.b;
 		}
 
-		return Citybuild.ANY;
+		return ANY;
+	}
+
+	@Override
+	public CitybuildSetting set(Citybuild value) {
+		for (Pair<ItemStack, Citybuild> pair : CB_ITEMS) {
+			if (pair.b == value)
+				return set(pair.a);
+		}
+
+		return set(ANY);
 	}
 
 	public CitybuildSetting set(ItemStack stack) {
-		Citybuild cb = Citybuild.ANY;
+		Citybuild cb = ANY;
 		for (Pair<ItemStack, Citybuild> pair : CB_ITEMS) {
 			if (pair.a == menu.getSelected()) {
 				cb = pair.b;
@@ -150,8 +162,8 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 			}
 		}
 
-		CitybuildSetting.super.set(cb);
-		currentValue = stack;
+		Laby3Setting.super.set(cb);
+		currentItem = stack;
 		menu.setSelected(stack);
 		filterItems();
 
@@ -165,7 +177,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	}
 
 	public CitybuildSetting defaultValue(ItemStack defaultValue) {
-		if (currentValue == null) {
+		if (currentItem == null) {
 			set(defaultValue);
 		}
 		return this;
@@ -210,7 +222,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	public boolean onClickDropDown(int mouseX, int mouseY, int mouseButton) {
 		if (menu.onClick(mouseX, mouseY, mouseButton)) {
 			textField.setFocused(menu.isOpen());
-			if (menu.getSelected() != currentValue)
+			if (menu.getSelected() != currentItem)
 				set(menu.getSelected());
 			textField.setText("");
 			filterItems();
@@ -279,9 +291,6 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	public DropDownMenu<ItemStack> getDropDownMenu() {
 		return menu;
 	}
-
-	@Override
-	public void setChangeListener(net.labymod.utils.Consumer<DummyEnum> changeListener) {}
 
 	public enum DummyEnum {}
 

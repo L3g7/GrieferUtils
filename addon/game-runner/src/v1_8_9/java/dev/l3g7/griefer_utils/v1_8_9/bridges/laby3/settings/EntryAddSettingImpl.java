@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.v1_8_9.bridges.laby3.settings;
 
 import com.google.gson.JsonNull;
+import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.settings.types.list.EntryAddSetting;
 import net.labymod.main.LabyMod;
@@ -17,6 +18,7 @@ public class EntryAddSettingImpl extends ControlElement implements Laby3Setting<
 		super("§cno name set", new IconData("labymod/textures/settings/category/addons.png"));
 	}
 
+	@Override
 	public EntryAddSetting callback(Runnable callback) {
 		this.callback = callback;
 		return this;

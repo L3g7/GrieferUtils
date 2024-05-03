@@ -20,12 +20,15 @@ import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.guis.ChangelogScreen;
 import net.labymod.api.Textures;
+import net.labymod.main.ModTextures;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.auto_update.ReleaseInfo.ReleaseChannel.BETA;
 
 @Singleton
@@ -55,16 +58,16 @@ public class Changelog {
 
 			String title = "§l" + entry.getKey();
 
-			entries.add(ButtonSetting.create()
+			Function<ButtonSetting, ButtonSetting> addIconFunc = LABY_4.isActive() ? this::addIconLaby4 : this::addIconLaby3;
+			entries.add(addIconFunc.apply(ButtonSetting.create()
 				.name(" " + title)
-				.buttonIcon(Textures.SpriteCommon.SETTINGS)
 				.callback(() -> {
 					ChangelogScreen.setData(
 						entry.getKey(),
 						entry.getValue().substring("Changelog:".length())
 					);
 					ChangelogScreen.trigger(true);
-				}));
+				})));
 		}
 
 		entries.sort(Comparator.comparing(BaseSetting::name, new VersionComparator()));
@@ -73,6 +76,14 @@ public class Changelog {
 		changelog.name("Changelog")
 			.description("Was sich in den einzelnen Updates von GrieferUtils verändert hat.")
 			.enable();
+	}
+
+	private ButtonSetting addIconLaby4(ButtonSetting button) { // TODO refactor
+		return button.buttonIcon(Textures.SpriteCommon.SETTINGS);
+	}
+
+	private ButtonSetting addIconLaby3(ButtonSetting button) {
+		return button.buttonIcon(ModTextures.BUTTON_ADVANCED);
 	}
 
 	@OnEnable

@@ -34,6 +34,17 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElem
 		// Initialize menu
 		menu.fill(enumClass.getEnumConstants());
 		Reflection.set(this, "dropDownMenu", menu);
+
+		// Use Named interface as provider for display names
+		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
+		menu.setEntryDrawer((o, x, y, trimmedEntry) -> drawUtils.drawString(((Named) o).getName(), x, y));
+		int width = ((List<?>) Reflection.get(menu, "list"))
+			.stream().mapToInt(e -> drawUtils.getStringWidth(((Named) e).getName()))
+			.max()
+			.orElse(0)
+			+ 9;
+
+		menu.doSetWidth(width + 15); // 15px for arrow
 	}
 
 	@Override
@@ -57,7 +68,7 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElem
 	@Override
 	public DropDownSetting<E> set(E value) {
 		menu.setSelected(value);
-		return DropDownSetting.super.set(value);
+		return Laby3Setting.super.set(value);
 	}
 
 	/**
@@ -95,7 +106,7 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElem
 
 		// Draw selected entry with fixed width
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(0,0, (int) ((maxX - 21) / new ScaledResolution(mc).getScaledWidth_double() * mc.displayWidth), mc.displayHeight);
+		GL11.glScissor(0, 0, (int) ((maxX - 21) / new ScaledResolution(mc).getScaledWidth_double() * mc.displayWidth), mc.displayHeight);
 
 		String trimmedEntry = drawUtils.trimStringToWidth(ModColor.cl("f") + selected.getName(), width - 10);
 		drawUtils.drawString(trimmedEntry, menu.getX() + 5, (y + 3) + height / 2f - 4);

@@ -2,8 +2,11 @@ package dev.l3g7.griefer_utils.laby3.settings;
 
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.api.misc.functions.Function;
+import dev.l3g7.griefer_utils.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.laby3.settings.Icon.WrappedIcon;
 import dev.l3g7.griefer_utils.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
+import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.ArrayList;
@@ -24,18 +27,6 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		((SettingsElement) this).setDisplayName(null);
 	}
 
-	default void drawIcon(int x, int y) {}
-
-	// Overwritten methods
-
-	default String getDisplayName() {
-		return getStorage().name; // TODO just use setters
-	}
-
-	default String getDescriptionText() {
-		return getStorage().description;
-	}
-
 	// BaseSetting
 
 	@Override
@@ -45,7 +36,8 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 	@Override
 	default S name(String name) {
-		getStorage().name = name.trim();
+		((SettingsElement) this).setDisplayName(name.trim());
+		getStorage().name = name.trim(); // TODO why store in storage?
 		return (S) this;
 	}
 
@@ -55,12 +47,15 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 			getStorage().description = null;
 		else
 			getStorage().description = String.join("\n", description).trim();
+
+		((SettingsElement) this).setDescriptionText(getStorage().description);
 		return (S) this;
 	}
 
 	@Override
 	default S icon(Object icon) {
 		getStorage().icon = laby3MinecraftBridge.createIcon(icon);
+		Reflection.set(this, "iconData", new WrappedIcon(getStorage().icon));
 		return (S) this;
 	}
 
@@ -101,7 +96,10 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	}
 
 	@Override
-	default void create(Object parent) {}
+	default void create(Object parent) {
+		for (BaseSetting<?> setting : getChildSettings())
+			setting.create(this);
+	}
 
 	// AbstractSetting
 
@@ -119,6 +117,15 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		return (S) this;
 	}
 
+	@Override
+	default S set(V value) {
+		if (Reflection.getField(getClass(), "currentValue") != null)
+			Reflection.set(this, "currentValue", value);
+		if (Reflection.getMethod(getClass(), "updateValue") != null)
+			Reflection.invoke(this, "updateValue");
+
+		return AbstractSetting.super.set(value);
+	}
 
 	class ExtendedStorage<V> extends Storage<V> {
 

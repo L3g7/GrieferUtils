@@ -2,6 +2,7 @@ package dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements;
 
 import com.sun.jna.*;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.ModTextField;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 public class ImageSelection extends ModTextField implements Drawable, Clickable {
@@ -193,9 +195,13 @@ public class ImageSelection extends ModTextField implements Drawable, Clickable 
 			if (filterName != null)
 				params.lpstrFilter = new WString(filterName + "\0" + Arrays.stream(allowedFileTypes).map(f -> "*." + f).collect(Collectors.joining(";")) + "\0\0");
 
-
 			if (GetOpenFileNameW(params)) {
-				fileConsumer.accept(new File(params.lpstrFile.getWideString(0)));
+				String path;
+				if (LABY_4.isActive())
+					path = params.lpstrFile.getWideString(0);
+				else
+					path = Reflection.invoke(params.lpstrFile, "getString", 0L, true);
+				fileConsumer.accept(new File(path));
 				return;
 			}
 

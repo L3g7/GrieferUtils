@@ -5,23 +5,20 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors.compilation;
+package dev.l3g7.griefer_utils.post_processor.processors.compilation.refmap_conversion;
 
 import com.google.gson.*;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
+import dev.l3g7.griefer_utils.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.post_processor.processors.CompilationPostProcessor;
-import dev.l3g7.griefer_utils.post_processor.processors.compilation.mapping.Mapper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -42,11 +39,8 @@ public class RefmapConverter extends CompilationPostProcessor {
 	public static final RefmapConverter INSTANCE = new RefmapConverter();
 
 	private RefmapConverter() {
-		try {
-			Mapper.loadMappings();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		System.setProperty("griefer_utils.custom_ssl", "false");
+		Mapper.loadMappings("1.8.9", "22", new File("build/1.8.9_stable_22.json"));
 	}
 
 	@Override
@@ -103,23 +97,23 @@ public class RefmapConverter extends CompilationPostProcessor {
 				String owner = Type.getType(mapping.substring(0, ownerEndIdx)).getInternalName();
 				String name = mapping.substring(ownerEndIdx, nameEndIdx);
 				String desc = mapping.substring(nameEndIdx);
-				String mappedOwner = Mapper.mapClass(owner);
+				String mappedOwner = ReferenceMapper.mapClass(owner);
 				String mappedName;
 
 				if (method) {
-					mappedName = Mapper.mapMethodName(owner, name, desc, true);
+					mappedName = ReferenceMapper.mapMethodName(owner, name, desc, true);
 
 					if (mappedName.equals(name) && !name.equals("<init>")) {
 						// Resolve @InheritedInvoke
 						owner = getInheritedInvokeOwner(entry.getKey(), Files.readAllBytes(fs.getPath(key + ".class")));
-						mappedName = Mapper.mapMethodName(owner, name, desc, false);
+						mappedName = ReferenceMapper.mapMethodName(owner, name, desc, false);
 					}
 
-					Type[] argumentTypes = Mapper.mapTypes(Type.getArgumentTypes(desc));
-					Type returnType = Mapper.mapType(Type.getReturnType(desc));
+					Type[] argumentTypes = ReferenceMapper.mapTypes(Type.getArgumentTypes(desc));
+					Type returnType = ReferenceMapper.mapType(Type.getReturnType(desc));
 					desc = Type.getMethodDescriptor(returnType, argumentTypes);
 				} else
-					mappedName = Mapper.mapField(owner, name);
+					mappedName = ReferenceMapper.mapField(owner, name);
 
 				String newMapping = "L" + mappedOwner + ";" + mappedName + desc;
 				entry.setValue(new JsonPrimitive(newMapping));
@@ -146,8 +140,13 @@ public class RefmapConverter extends CompilationPostProcessor {
 
 			// Find right method
 			for (AnnotationNode inject : methodNode.visibleAnnotations) {
-				if (inject.desc.equals("Lorg/spongepowered/asm/mixin/injection/Inject;")) {
-					AnnotationNode at = (AnnotationNode) ((List<?>) getAnnotationValue(inject, "at")).get(0);
+				if (inject.desc.startsWith("Lorg/spongepowered/asm/mixin/injection/")) {
+					AnnotationNode at;
+					if (getAnnotationValue(inject, "at") instanceof AnnotationNode v)
+						at = v;
+					else
+						at = (AnnotationNode) ((List<?>) getAnnotationValue(inject, "at")).get(0);
+
 					if (!target.equals(getAnnotationValue(at, "target")))
 						continue;
 

@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.post_processor;
 
 import dev.l3g7.griefer_utils.post_processor.processors.CompilationPostProcessor;
 import dev.l3g7.griefer_utils.post_processor.processors.compilation.*;
+import dev.l3g7.griefer_utils.post_processor.processors.compilation.refmap_conversion.RefmapConverter;
 
 import java.io.File;
 import java.io.IOException;

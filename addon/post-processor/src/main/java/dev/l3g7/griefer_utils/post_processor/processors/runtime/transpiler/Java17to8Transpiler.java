@@ -26,6 +26,7 @@ public class Java17to8Transpiler extends RuntimePostProcessor {
 	private static final List<RuntimePostProcessor> earlyTranspilers = Collections.singletonList(new ClassVersionPatcher());
 	// Transpilers that require renamed classes i.e. that must be triggered after the renameTransformer
 	private static final List<RuntimePostProcessor> lateTranspilers = Arrays.asList(
+		new StringConcatPolyfill(),
 		new AccessElevator()
 	);
 

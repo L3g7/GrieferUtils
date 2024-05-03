@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu;
+package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.laby4;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
@@ -13,8 +13,8 @@ import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.ChatMenuEntry.Action;
-import dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.ChatMenuEntry.IconType;
+import dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.laby4.ChatMenuEntry.Action;
+import dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.laby4.ChatMenuEntry.IconType;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.*;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.Scrollbar;

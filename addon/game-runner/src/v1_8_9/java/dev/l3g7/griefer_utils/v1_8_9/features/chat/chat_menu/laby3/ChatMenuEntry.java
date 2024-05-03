@@ -1,11 +1,22 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
+ *
+ * Copyright 2020-2024 L3g7
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu;
+package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.laby3;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
@@ -17,6 +28,7 @@ import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 
 import javax.imageio.ImageIO;
@@ -62,8 +74,10 @@ public class ChatMenuEntry {
 		object.addProperty("command", (String) command);
 		object.addProperty("icon_type", iconType.name());
 		switch (iconType) {
-			case ITEM -> object.addProperty("icon", ItemUtil.serializeNBT(getIconAsItemStack()));
-			case IMAGE_FILE -> {
+			case ITEM:
+				object.addProperty("icon", ItemUtil.serializeNBT(getIconAsItemStack()));
+				break;
+			case IMAGE_FILE:
 				DynamicTexture t = (DynamicTexture) mc().getTextureManager().getTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
 				BufferedImage i = new BufferedImage(Reflection.get(t, "width"), Reflection.get(t, "height"), BufferedImage.TYPE_INT_ARGB);
 				i.setRGB(0, 0, i.getWidth(), i.getHeight(), t.getTextureData(), 0, i.getWidth());
@@ -75,7 +89,6 @@ public class ChatMenuEntry {
 				}
 				object.addProperty("icon", Base64.getEncoder().encodeToString(bytes.toByteArray()));
 				object.addProperty("icon_name", ((File) icon).getName());
-			}
 		}
 
 		return object;
@@ -89,17 +102,19 @@ public class ChatMenuEntry {
 		entry.command = object.get("command").getAsString();
 		entry.iconType = IconType.valueOf(object.get("icon_type").getAsString());
 		switch (entry.iconType) {
-			case ITEM -> entry.icon = ItemUtil.fromNBT(object.get("icon").getAsString());
-			case IMAGE_FILE -> {
+			case ITEM:
+				entry.icon = ItemUtil.fromNBT(object.get("icon").getAsString());
+				break;
+			case IMAGE_FILE:
 				entry.icon = new File(object.get("icon_name").getAsString());
 				ResourceLocation location = new ResourceLocation("griefer_utils/user_content/" + entry.icon.hashCode());
+
 				try {
 					BufferedImage img = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(object.get("icon").getAsString())));
 					mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
 				} catch (IOException | NullPointerException e) {
 					throw new RuntimeException(e);
 				}
-			}
 		}
 		entry.completed = true;
 
@@ -108,18 +123,23 @@ public class ChatMenuEntry {
 
 	public void drawIcon(int x, int y, int w, int h) {
 		switch (iconType) {
-			case SYSTEM -> mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
-			case DEFAULT -> mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + action.defaultIcon + ".png"));
-			case IMAGE_FILE -> DrawUtils.bindTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
-			case ITEM -> {
+			case SYSTEM:
+				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + icon + ".png"));
+				break;
+			case DEFAULT:
+				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + action.defaultIcon + ".png"));
+				break;
+			case IMAGE_FILE:
+				DrawUtils.bindTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
+				break;
+			case ITEM:
 				DrawUtils.drawItem(getIconAsItemStack(), x, y, null);
 				return;
-			}
 		}
 		DrawUtils.drawTexture(x, y, 256.0, 256.0, w, h);
 	}
 
-	public ItemStack getIconAsItemStack() {
+	private ItemStack getIconAsItemStack() {
 		return icon != null ? (ItemStack) icon : ItemUtil.MISSING_TEXTURE;
 	}
 
@@ -184,23 +204,27 @@ public class ChatMenuEntry {
 		return img;
 	}
 
-	public void trigger(String name) {
+	public void trigger(String name, IChatComponent entireText) {
 		switch (action) {
-			case CONSUMER -> ((Consumer<String>) command).accept(name);
-			case OPEN_URL -> {
+			case CONSUMER:
+				((Consumer<String>) command).accept(name);
+				break;
+			case OPEN_URL:
 				try {
 					labyBridge.openWebsite(((String) command).replaceAll("(?i)%name%", name));
 				} catch (RuntimeException e) {
 					e.printStackTrace();
 					LabyBridge.labyBridge.notifyError("Die URL, die geöffnet werden soll, ist ungültig.");
 				}
-			}
-			case RUN_CMD -> {
+				break;
+			case RUN_CMD:
 				String cmd = ((String) command).replaceAll("(?i)%name%", name);
 				if (!MessageEvent.MessageSendEvent.post(cmd))
 					MinecraftUtil.send((cmd));
-			}
-			case SUGGEST_CMD -> MinecraftUtil.suggest(((String) command).replaceAll("(?i)%name%", name));
+				break;
+			case SUGGEST_CMD:
+				MinecraftUtil.suggest(((String) command).replaceAll("(?i)%name%", name));
+				break;
 		}
 	}
 

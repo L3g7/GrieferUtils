@@ -1,13 +1,25 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
+ *
+ * Copyright 2020-2024 L3g7
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu;
+package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_menu.laby3;
 
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
+import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IChatComponent;
@@ -15,15 +27,13 @@ import org.lwjgl.input.Mouse;
 
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils.getHeight;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 public class ChatMenuRenderer {
 
 	private final List<ChatMenuEntry> entries;
 	private final String playerName;
-	private final IChatComponent modifiedComponent;
-	private final IChatComponent originalComponent;
+	private final IChatComponent entireText;
 	private final String titleText;
 
 	private int boxHeight;
@@ -32,12 +42,11 @@ public class ChatMenuRenderer {
 	private int y;
 	private int hoveredEntry = -1;
 
-	public ChatMenuRenderer(List<ChatMenuEntry> entries, String playerName, IChatComponent modifiedComponent, IChatComponent originalComponent) {
+	public ChatMenuRenderer(List<ChatMenuEntry> entries, String playerName, IChatComponent entireText) {
 		this.entries = entries;
 		this.playerName = playerName;
 		this.titleText = "ChatMenü §a" + playerName;
-		this.modifiedComponent = modifiedComponent;
-		this.originalComponent = originalComponent;
+		this.entireText = entireText;
 
 		// Box size
 		boxHeight = 16 + 15 * entries.size();
@@ -54,8 +63,8 @@ public class ChatMenuRenderer {
 		if (DrawUtils.getWidth() - x < boxWidth)
 			x = DrawUtils.getWidth() - boxWidth;
 
-		if (getHeight() - y < boxHeight)
-			y = getHeight() - boxHeight;
+		if (DrawUtils.getHeight() - y < boxHeight)
+			y = DrawUtils.getHeight() - boxHeight;
 	}
 
 	private void drawString(String text, float x, float y) {
@@ -100,6 +109,8 @@ public class ChatMenuRenderer {
 
 		if (entry.icon instanceof ItemStack) {
 			stack = ((ItemStack) entry.icon);
+		} else if (entry.icon instanceof Material) {
+			stack = ((Material) entry.icon).createItemStack();
 		} else {
 			entry.drawIcon(x, y, 12, 12);
 			return;
@@ -134,11 +145,7 @@ public class ChatMenuRenderer {
 			return false;
 
 		// Trigger the consumer and close the gui
-		ChatMenuEntry entry = entries.get(hoveredEntry);
-		if (entry instanceof CopyTextEntry copyTextEntry)
-			copyTextEntry.trigger(modifiedComponent, originalComponent);
-		else
-			entry.trigger(playerName);
+		entries.get(hoveredEntry).trigger(playerName, entireText);
 		return true;
 	}
 
@@ -153,6 +160,6 @@ public class ChatMenuRenderer {
 	}
 
 	public static int getMouseY() {
-		return getHeight() - Mouse.getY() * getHeight() / mc().displayHeight - 1;
+		return DrawUtils.getHeight() - Mouse.getY() * DrawUtils.getHeight() / mc().displayHeight - 1;
 	}
 }

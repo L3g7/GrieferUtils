@@ -30,10 +30,4 @@ public class SliderSettingImpl extends SliderElement implements Laby3Setting<Sli
 		return (SliderSetting) setMaxValue(max);
 	}
 
-	@Override
-	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-		super.draw(x, y, maxX, maxY, mouseX, mouseY);
-		drawIcon(x, y);
-	}
-
 }

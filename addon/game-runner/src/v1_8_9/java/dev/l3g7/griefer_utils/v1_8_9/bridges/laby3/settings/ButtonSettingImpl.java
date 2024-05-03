@@ -52,7 +52,6 @@ public class ButtonSettingImpl extends ControlElement implements Laby3Setting<Bu
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
-		drawIcon(x, y);
 
 		mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
 

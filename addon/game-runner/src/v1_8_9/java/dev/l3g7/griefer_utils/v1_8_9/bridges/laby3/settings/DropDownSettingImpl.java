@@ -88,7 +88,6 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElem
 
 		menu.doSetX(maxX - width - 5);
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
-		drawIcon(x, y);
 
 		menu.setSelected(selected);
 

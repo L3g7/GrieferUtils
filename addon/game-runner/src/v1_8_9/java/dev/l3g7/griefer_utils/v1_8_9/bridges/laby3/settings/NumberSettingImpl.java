@@ -43,10 +43,4 @@ public class NumberSettingImpl extends NumberElement implements Laby3Setting<Num
 		return this;
 	}
 
-	@Override
-	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-		super.draw(x, y, maxX, maxY, mouseX, mouseY);
-		drawIcon(x, y);
-	}
-
 }

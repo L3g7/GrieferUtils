@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.laby3;
 
+import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.mapping.Mapper;
@@ -88,6 +89,10 @@ public class EarlyStart {
 
 		Map<UUID, String> mainClasses = Reflection.get(AddonLoader.class, "mainClasses");
 		mainClasses.put(addonUuid, Main.class.getName());
+
+		// Fix addon version
+		Map<UUID, JsonObject> loadedOffline = Reflection.get(AddonLoader.class, "loadedOffline");
+		loadedOffline.get(addonUuid).getAsJsonObject().addProperty("version", 1);
 	}
 
 }

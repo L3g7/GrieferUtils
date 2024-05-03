@@ -20,11 +20,12 @@ import dev.l3g7.griefer_utils.v1_8_9.misc.badges.Badges;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Blocks;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.auto_update.ReleaseInfo.ReleaseChannel.BETA;
 import static dev.l3g7.griefer_utils.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
 import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.Changelog.changelog;
-import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.Credits.credits;
+import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.Credits.credits;
 
 @Singleton
 @FeatureCategory
@@ -33,8 +34,7 @@ public class Settings extends Feature {
 	@MainElement(configureSubSettings = false)
 	private final CategorySetting element = CategorySetting.create()
 		.name("§yEinstellungen")
-		.icon("cog")
-		.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, MainMenuSkull.enabled, autoUpdateEnabled, BugReporter.enabled);
+		.icon("cog");
 
 	// Settings for AutoUpdater are here because the AutoUpdater class isn't affected by updates
 	public static final SwitchSetting showUpdateScreen = SwitchSetting.create()
@@ -67,5 +67,12 @@ public class Settings extends Feature {
 		.icon("arrow_circle")
 		.defaultValue(true)
 		.subSettings(showUpdateScreen, releaseChannel);
+
+	public Settings() {
+		if (LABY_4.isActive())
+			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, MainMenuSkull.enabled, autoUpdateEnabled, BugReporter.enabled);
+		else
+			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, autoUpdateEnabled, BugReporter.enabled);
+	}
 
 }

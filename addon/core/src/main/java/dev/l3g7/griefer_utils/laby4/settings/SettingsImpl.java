@@ -28,7 +28,7 @@ import static dev.l3g7.griefer_utils.laby4.bridges.ItemBridge.itemBridge;
 
 @Singleton
 @Bridge
-public class SettingsImpl implements Settings {
+public class SettingsImpl implements Settings { // Note: replace with multiple bridges
 
 	public static <T extends Widget> void hookChildAdd(AbstractWidget<T> w, Consumer<T> callback) {
 		Reflection.set(w, "children", new ArrayList<>(w.getChildren()) {
@@ -123,6 +123,5 @@ public class SettingsImpl implements Settings {
 	public EntryAddSetting createEntryAddSetting() {
 		return new EntryAddSettingImpl();
 	}
-
 
 }

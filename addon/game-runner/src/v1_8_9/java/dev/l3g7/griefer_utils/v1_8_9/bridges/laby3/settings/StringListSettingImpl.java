@@ -3,7 +3,9 @@ package dev.l3g7.griefer_utils.v1_8_9.bridges.laby3.settings;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.laby3.settings.Laby3Setting;
+import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.StringListSetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
@@ -54,23 +56,18 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 	public void create(Object parent) {
 		Laby3Setting.super.create(parent);
 		this.container = (SettingsElement) parent;
+		initList();
 	}
 
-	@Override
-	public StringListSetting config(String configKey) {
-		Laby3Setting.super.config(configKey);
-		return initList();
-	}
-
-	public StringListSetting initList() {
+	public void initList() {
 		ArrayList<SettingsElement> settings = new ArrayList<>();
 		for (String entry : get())
 			settings.add(new StringDisplaySetting(entry));
 
 		settings.add(stringAddSetting = new StringAddSetting());
 		getSettings().remove(this);
+
 		container.getSubSettings().addAll(settings);
-		return this;
 	}
 
 	@Override
@@ -123,7 +120,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 	private class StringAddSetting extends EntryAddSetting {
 
 		StringAddSetting() {
-			super(StringListSettingImpl.this.displayName);
+			super("Eintrag hinzufügen");
 			callback(() -> mc().displayGuiScreen(new AddStringGui(mc().currentScreen, null)));
 		}
 
@@ -232,6 +229,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 			super(displayName, new IconData("labymod/textures/settings/category/addons.png"));
 		}
 
+		@Override
 		public EntryAddSetting callback(Runnable callback) {
 			this.callback = callback;
 			return this;
@@ -328,8 +326,6 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 			hideSubListButton();
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
-			if (hasIcon)
-				drawIcon(x, y);
 
 			mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
 			if (!mouseOver)
@@ -385,14 +381,16 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 
 	}
 
-
 	@Override
 	public StringListSetting placeholder(String placeholder) {
-		return null;
+		// TODO implement
+		return this;
 	}
 
 	@Override
 	public StringListSetting entryIcon(Object icon) {
-		return null;
+		// TODO implement
+		return this;
 	}
+
 }

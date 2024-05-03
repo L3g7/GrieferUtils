@@ -1,20 +1,32 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
+ *
+ * Copyright 2020-2024 L3g7
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.crafter;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketReceiveEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.Recraft;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction.Ingredient;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.Recraft;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftAction.Ingredient;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftRecording;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
@@ -28,19 +40,22 @@ import net.minecraft.network.play.server.S30PacketWindowItems;
 
 import java.util.*;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftPlayer.State.*;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.crafter.CraftPlayer.State.*;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 
 /**
  * @author Pleezon, L3g73
  */
+@Bridge.ExclusiveTo(LABY_3)
 public class CraftPlayer {
 
 	private static RecraftRecording currentRecording;
 	private static Queue<CraftAction> pendingActions;
 	private static int failedActions = 0;
 	private static boolean firstPlay = false;
+	private static boolean usingPlayerInventory = false;
 
 	private static Ingredient[] ingredients;
 	private static int[] sourceIds; // crafting slot id -> hotbar id
@@ -57,14 +72,15 @@ public class CraftPlayer {
 
 	public static void play(RecraftRecording recording) {
 		windowId = null;
-		play(recording, recording::playSuccessor, true);
+		play(recording, recording::playSuccessor, true, false);
 	}
 
 	/**
 	 * @return whether the recording was started successfully
 	 */
-	public static boolean play(RecraftRecording recording, Supplier<Boolean> onFinish, boolean reset) {
+	public static boolean play(RecraftRecording recording, Supplier<Boolean> onFinish, boolean reset, boolean usingPlayerInventory) {
 		pendingActions = null;
+		CraftPlayer.usingPlayerInventory = usingPlayerInventory;
 		if (world() == null || !mc().inGameHasFocus)
 			return false;
 
@@ -78,8 +94,13 @@ public class CraftPlayer {
 			return false;
 		}
 
+		playRecording(currentRecording = recording);
+
 		CraftPlayer.onFinish = onFinish;
-		if (reset) {
+		if (usingPlayerInventory) {
+			windowId = 0;
+			startAction();
+		} else if (reset) {
 			windowId = null;
 			state = WAITING_FOR_GUI;
 			firstPlay = true;
@@ -89,7 +110,6 @@ public class CraftPlayer {
 				player().sendChatMessage("/craft");
 		}
 
-		playRecording(currentRecording = recording);
 		return true;
 	}
 
@@ -118,10 +138,12 @@ public class CraftPlayer {
 			}
 
 			if (onFinish.get()) {
-				player().closeScreen();
-				player().openContainer.putStackInSlot(1, null);
+				if (!usingPlayerInventory) {
+					player().closeScreen();
+					player().openContainer.putStackInSlot(1, null);
+				}
 				pendingActions = null;
-				windowId = null;
+//				windowId = null; TODO: Was this required?
 				return;
 			}
 		}
@@ -202,7 +224,9 @@ public class CraftPlayer {
 			}
 		}
 
-		TickScheduler.runAfterClientTicks(() -> forceResync(state, null), clicks);
+		TickScheduler.runAfterClientTicks(() -> {
+			forceResync(state, null);
+		}, clicks);
 	}
 
 	@EventListener
@@ -221,14 +245,17 @@ public class CraftPlayer {
 		if (CraftPlayer.state != state
 			|| state.ordinal() < INTO_HOTBAR.ordinal()
 			|| windowId == null
-			|| resyncReference != reference)
+			|| resyncReference != reference) {
 			return;
+		}
 
 		mc().getNetHandler().addToSendQueue(new C0EPacketClickWindow(windowId, 0, -1, 0, new ItemStack(Blocks.dirt), (short) -999));
 		mc().getNetHandler().addToSendQueue(new C0FPacketConfirmTransaction(windowId, (short) -999, true));
 
 		Object finalReference = reference;
-		TickScheduler.runAfterClientTicks(() -> forceResync(state, finalReference), 60);
+		TickScheduler.runAfterClientTicks(() -> {
+			forceResync(state, finalReference);
+		}, 60);
 	}
 
 	@EventListener

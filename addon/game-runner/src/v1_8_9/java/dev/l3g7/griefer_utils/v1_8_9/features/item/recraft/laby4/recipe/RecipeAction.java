@@ -5,13 +5,13 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.recipe;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.RecraftAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 

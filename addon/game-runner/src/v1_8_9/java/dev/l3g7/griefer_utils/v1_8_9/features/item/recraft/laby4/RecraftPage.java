@@ -5,11 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
@@ -43,8 +44,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.Recraft.pages;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.Recraft.pages;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class RecraftPage extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {
@@ -85,6 +87,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 	}
 
 	// NOTE: cleanup? merge?
+	@ExclusiveTo(LABY_4)
 	public static class RecraftPageListSetting extends ListSetting implements BaseSettingImpl<RecraftPageListSetting, List<RecraftPage>> {
 
 		private final ExtendedStorage<List<RecraftPage>> storage;

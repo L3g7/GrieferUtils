@@ -5,9 +5,9 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4;
 
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftPage.RecraftPageListSetting;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.RecraftPage.RecraftPageListSetting;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.guis.PieMenu;
 import org.apache.commons.lang3.tuple.Pair;
 

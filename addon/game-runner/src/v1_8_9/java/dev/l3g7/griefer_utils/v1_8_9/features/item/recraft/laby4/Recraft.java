@@ -5,27 +5,30 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftPlayer;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe.RecipePlayer;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.crafter.CraftPlayer;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.recipe.RecipePlayer;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 /**
  * Original version by Pleezon
  */
 @Singleton
+@ExclusiveTo(LABY_4)
 public class Recraft extends Feature {
 
 	public static final RecraftRecording tempRecording = new RecraftRecording("Leere Aufzeichnung");

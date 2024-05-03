@@ -1,17 +1,9 @@
-/*
- * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- */
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.decompressor;
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.decompressor;
-
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.Recraft;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction.Ingredient;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftAction;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftPlayer;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftRecording;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.crafter.CraftAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import net.minecraft.item.ItemStack;
 
@@ -20,29 +12,32 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 
 public class DecompressPlayer {
 
-	private static final RecraftRecording craftRecording = Recraft.tempRecording;
+	private static final RecraftRecording craftRecording = new RecraftRecording();
 	private static RecraftRecording recording;
 
-	public static void play(RecraftRecording recording) {
+	/**
+	 * @return whether the recording was started successfully
+	 */
+	public static boolean play(RecraftRecording recording) {
 		if (world() == null || !mc().inGameHasFocus)
-			return;
+			return false;
 
 		if (!ServerCheck.isOnCitybuild()) {
 			labyBridge.notify("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild abgespielt werden.");
-			return;
+			return false;
 		}
 
 		if (recording.actions.isEmpty()) {
 			labyBridge.notify("§e§lFehler \u26A0", "§eDiese Aufzeichnung ist leer!");
-			return;
+			return false;
 		}
 
 		DecompressPlayer.recording = recording;
-		Ingredient ingredient = ((DecompressAction) recording.actions.get(0)).ingredient;
-		craft(ingredient, true);
+		RecraftAction.Ingredient ingredient = ((DecompressAction) recording.actions.get(0)).ingredient;
+		return craft(ingredient);
 	}
 
-	private static boolean craft(Ingredient ingredient, boolean firstExecute) {
+	private static boolean craft(RecraftAction.Ingredient ingredient) {
 		ItemStack[] inv = player().inventory.mainInventory;
 
 		int freeSlots = 0;
@@ -61,27 +56,27 @@ public class DecompressPlayer {
 		}
 
 		ItemStack stack = player().inventory.mainInventory[slot];
-		return !startCrafting(new PredeterminedIngredient(stack, slot), firstExecute);
+		return startCrafting(new PredeterminedIngredient(stack, slot));
 	}
 
-	private static boolean startCrafting(PredeterminedIngredient ingredient, boolean reset) {
-		Ingredient[] ingredients = new Ingredient[9];
+	private static boolean startCrafting(PredeterminedIngredient ingredient) {
+		RecraftAction.Ingredient[] ingredients = new RecraftAction.Ingredient[9];
 		ingredients[0] = ingredient;
 
 		craftRecording.actions.clear();
 		craftRecording.actions.add(new CraftAction(ingredients));
 
-		return CraftPlayer.play(craftRecording, () -> craft(ingredient, false), reset);
+		return CraftPlayer.play(craftRecording, () -> craft(ingredient), false, true);
 	}
 
-	private static int getSlotWithLowestCompression(Ingredient ingredient, int freeSlots) {
+	private static int getSlotWithLowestCompression(RecraftAction.Ingredient ingredient, int freeSlots) {
 		int compression = 8;
 		int slot = -1;
 		int placeChecksFailed = 0;
 		ItemStack[] inv = player().inventory.mainInventory;
 
 		for (int i = 0; i < inv.length; i++) {
-			Ingredient slotIngredient = Ingredient.fromItemStack(inv[i]);
+			RecraftAction.Ingredient slotIngredient = RecraftAction.Ingredient.fromItemStack(inv[i]);
 			if (!ingredient.itemEquals(slotIngredient))
 				continue;
 
@@ -117,7 +112,7 @@ public class DecompressPlayer {
 		return stacks + getAdditionalRequiredSlots(compression - 1, rest);
 	}
 
-	private static class PredeterminedIngredient extends Ingredient {
+	private static class PredeterminedIngredient extends RecraftAction.Ingredient {
 
 		private final int slot;
 
@@ -132,7 +127,7 @@ public class DecompressPlayer {
 		}
 
 		@Override
-		public boolean equals(Ingredient other) {
+		public boolean equals(RecraftAction.Ingredient other) {
 			return itemEquals(other);
 		}
 

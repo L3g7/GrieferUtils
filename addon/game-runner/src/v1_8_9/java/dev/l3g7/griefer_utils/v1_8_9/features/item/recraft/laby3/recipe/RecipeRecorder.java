@@ -1,18 +1,30 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
+ *
+ * Copyright 2020-2024 L3g7
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.recipe;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketSendEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.Recraft;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction.Ingredient;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.Recraft;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftAction.Ingredient;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftRecording;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,13 +33,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording.RecordingMode.RECIPE;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftRecording.RecordingMode.RECIPE;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 
 /**
  * @author Pleezon, L3g73
  */
+@Bridge.ExclusiveTo(LABY_3)
 public class RecipeRecorder {
 
 	private static RecraftRecording recording = Recraft.tempRecording;
@@ -94,7 +108,7 @@ public class RecipeRecorder {
 		if (!addedIcon && isCrafting) {
 			ItemStack targetStack = player().openContainer.getSlot(25).getStack().copy();
 			targetStack.stackSize = ItemUtil.getCompressionLevel(targetStack);
-			recording.icon = targetStack;
+//			recording.mainSetting.icon(targetStack);
 			addedIcon = true;
 		}
 

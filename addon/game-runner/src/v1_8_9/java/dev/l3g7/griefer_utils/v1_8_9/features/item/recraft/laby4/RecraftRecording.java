@@ -5,11 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
@@ -22,15 +23,15 @@ import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.settings.types.*;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftAction;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftPlayer;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter.CraftRecorder;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.decompressor.DecompressAction;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.decompressor.DecompressPlayer;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.decompressor.DecompressRecorder;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe.RecipeAction;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe.RecipePlayer;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.recipe.RecipeRecorder;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.crafter.CraftAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.crafter.CraftPlayer;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.crafter.CraftRecorder;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.decompressor.DecompressAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.decompressor.DecompressPlayer;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.decompressor.DecompressRecorder;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.recipe.RecipeAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.recipe.RecipePlayer;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.recipe.RecipeRecorder;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
@@ -58,9 +59,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording.RecordingMode.CRAFT;
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording.RecordingMode.RECIPE;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.RecraftRecording.RecordingMode.CRAFT;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.RecraftRecording.RecordingMode.RECIPE;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class RecraftRecording extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {
@@ -200,6 +202,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 	}
 
 	// NOTE: cleanup? merge?
+	@ExclusiveTo(LABY_4)
 	public static class RecraftRecordingListSetting extends ListSetting implements BaseSettingImpl<RecraftRecordingListSetting, List<RecraftRecording>> {
 
 		private final ExtendedStorage<List<RecraftRecording>> storage;

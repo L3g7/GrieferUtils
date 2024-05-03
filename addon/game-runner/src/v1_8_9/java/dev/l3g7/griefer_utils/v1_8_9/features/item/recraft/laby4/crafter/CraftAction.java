@@ -5,13 +5,13 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.crafter;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.crafter;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4.RecraftAction;
 
 import java.util.ArrayList;
 import java.util.Arrays;

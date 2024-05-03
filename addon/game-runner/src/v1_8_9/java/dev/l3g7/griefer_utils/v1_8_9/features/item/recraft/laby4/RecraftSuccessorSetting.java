@@ -5,9 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby4;
 
 import com.google.gson.JsonNull;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
@@ -40,8 +41,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 
+@ExclusiveTo(LABY_4)
 public class RecraftSuccessorSetting extends ListSetting implements BaseSettingImpl<RecraftSuccessorSetting, RecraftRecording> {
 
 	private final ExtendedStorage<RecraftRecording> storage;
@@ -168,6 +171,7 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 	}
 
 
+	@ExclusiveTo(LABY_4)
 	private class RecraftSuccessorPage extends ListSetting implements BaseSettingImpl<RecraftSuccessorPage, Object> {
 
 		private final ExtendedStorage<Object> storage;

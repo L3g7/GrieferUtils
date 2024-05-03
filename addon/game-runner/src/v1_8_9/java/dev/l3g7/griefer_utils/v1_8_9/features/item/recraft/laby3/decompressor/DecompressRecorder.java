@@ -1,28 +1,25 @@
-/*
- * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- */
+package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.decompressor;
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.decompressor;
-
+import dev.l3g7.griefer_utils.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.v1_8_9.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.Recraft;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftAction.Ingredient;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.RecraftRecording;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.Recraft;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftAction;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.RecraftRecording;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.item.ItemStack;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.api.misc.Constants.ADDON_PREFIX;
-import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
 
+@Bridge.ExclusiveTo(LABY_3)
 public class DecompressRecorder {
 
 	private static RecraftRecording recording = Recraft.tempRecording;
@@ -62,10 +59,10 @@ public class DecompressRecorder {
 
 		ItemStack stack = event.itemStack.copy();
 		stack.stackSize = 0;
-		recording.icon = stack;
+//		recording.mainSetting.icon(stack);
 
 		recording.actions.clear();
-		recording.actions.add(new DecompressAction(new Ingredient(stack, 0)));
+		recording.actions.add(new DecompressAction(new RecraftAction.Ingredient(stack, 0)));
 		mc().displayGuiScreen(previousScreen);
 		previousScreen = null;
 		event.cancel();

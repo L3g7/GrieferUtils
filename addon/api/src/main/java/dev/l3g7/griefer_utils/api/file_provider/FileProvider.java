@@ -265,7 +265,7 @@ public abstract class FileProvider {
 		return loadedClass;
 	}
 
-	public static <I> I getBridge(Class<I> type) {
+	public static <I> Class<? extends I> getBridgeClass(Class<I> type) {
 		if (!type.isAnnotationPresent(Bridged.class))
 			throw new IllegalArgumentException(type + " is not bridged!");
 
@@ -278,7 +278,11 @@ public abstract class FileProvider {
 		if (!bridge.hasAnnotation(Bridge.class))
 			throw new IllegalArgumentException(bridge + " is not a bridge!");
 
-		return getSingleton(bridge.load());
+		return bridge.load();
+	}
+
+	public static <I> I getBridge(Class<I> type) {
+		return getSingleton(getBridgeClass(type));
 	}
 
 }

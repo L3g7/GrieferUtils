@@ -56,8 +56,8 @@ public @interface Bridge {
 		LABY_3("laby3"), LABY_4("laby4"), ANY_LABY(null),
 		MINECRAFT_1_8_9("v1_8_9", "1.8.9"), ANY_MINECRAFT(null, null);
 
-		final VersionType type; // NOTE: access must be elevated for Java 8 to work; fix?
-		final String pkg; // NOTE: access must be elevated for Java 8 to work; fix?
+		private final VersionType type;
+		private final String pkg;
 		public final String refmap; // Specific to Minecraft versions
 
 		Version(String pkg) {
@@ -111,7 +111,7 @@ public @interface Bridge {
 		public enum VersionType {
 			MINECRAFT, LABYMOD;
 
-			Version current; // NOTE: access must be elevated for Java 8 to work; fix?
+			private Version current;
 
 			public Version getCurrent() {
 				return current;

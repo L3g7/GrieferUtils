@@ -2,12 +2,11 @@ package dev.l3g7.griefer_utils.laby3.settings;
 
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.laby3.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import net.labymod.api.configuration.settings.type.SettingElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,25 +43,17 @@ public class MainPage {
 							main.set(true);
 					});
 				}
-
-				main.setSearchTags(new String[]{main.name()});
 			});
 
 		// Add features to categories
 		Feature.getFeatures()
 			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
-			.forEach(f -> {
-				f.addToCategory();
-				((SettingElement) f.getMainElement()).setSearchTags(new String[]{f.getMainElement().name()});
-			});
+			.forEach(Feature::addToCategory);
 
 		// Add categories
 		Feature.getCategories().stream()
 			.sorted(Comparator.comparing(BaseSetting::name))
 			.forEach(settings::add);
-
-		for (SwitchSetting v : Feature.getCategories())
-			((SwitchSettingImpl) v).setSearchTags(new String[]{v.name()});
 
 		settings.add(HeaderSetting.create());
 
@@ -91,6 +82,10 @@ public class MainPage {
 			.name("Discord").icon("discord")
 			.buttonIcon("discord_clyde")
 			.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")));
+
+		// Create settings
+		for (BaseSetting<?> setting : settings)
+			setting.create(null);
 
 		return settings;
 	}

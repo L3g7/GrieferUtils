@@ -2,6 +2,7 @@ package dev.l3g7.griefer_utils.laby3.bridges;
 
 import dev.l3g7.griefer_utils.api.BugReporter;
 import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
@@ -31,6 +32,7 @@ import java.net.URISyntaxException;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.api.mapping.Mapping.SEARGE;
 import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.laby3.bridges.Laby3MinecraftBridge.laby3MinecraftBridge;
@@ -162,6 +164,7 @@ public class LabyBridgeImpl implements LabyBridge {
 		laby3MinecraftBridge.openNameHistory(name);
 	}
 
+	@ExclusiveTo(LABY_3)
 	@Mixin(LabyMod.class)
 	private static class MixinLabyMod {
 

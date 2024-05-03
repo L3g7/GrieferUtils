@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.laby4.bridges;
 
 import dev.l3g7.griefer_utils.api.BugReporter;
 import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
@@ -47,12 +48,14 @@ import java.net.MalformedURLException;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.mapping.Mapping.OBFUSCATED;
 import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 
 @Bridge
 @Singleton
+@ExclusiveTo(LABY_4)
 public class LabyBridgeImpl implements LabyBridge {
 
 	@Override

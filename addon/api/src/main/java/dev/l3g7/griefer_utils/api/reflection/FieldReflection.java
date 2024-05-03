@@ -12,9 +12,7 @@ import dev.l3g7.griefer_utils.api.util.ArrayUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
@@ -111,7 +109,7 @@ class FieldReflection {
 	 * @return all fields with the given annotation present.
 	 */
 	static Field[] getAnnotatedFields(Class<?> targetClass, Class<? extends Annotation> annotation, boolean checkSuperClasses) {
-		List<Field> fields = new ArrayList<>();
+		Set<Field> fields = new HashSet<>();
 		for (Field field : checkSuperClasses ? getAllFields(targetClass) : ArrayUtil.flatmap(Field.class, targetClass.getDeclaredFields(), targetClass.getFields())) {
 			if (field.isAnnotationPresent(annotation))
 				fields.add(field);
@@ -124,7 +122,7 @@ class FieldReflection {
 	 * @return all fields in a class and its super classes.
 	 */
 	static Field[] getAllFields(Class<?> clazz) {
-		List<Field> fields = new ArrayList<>();
+		Set<Field> fields = new HashSet<>();
 		do {
 			fields.addAll(Arrays.asList(ArrayUtil.flatmap(Field.class, clazz.getDeclaredFields(), clazz.getFields())));
 		} while ((clazz = clazz.getSuperclass()) != null);

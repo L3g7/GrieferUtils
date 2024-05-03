@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_reactor;
+package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_reactor.laby4;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.api.misc.Citybuild;

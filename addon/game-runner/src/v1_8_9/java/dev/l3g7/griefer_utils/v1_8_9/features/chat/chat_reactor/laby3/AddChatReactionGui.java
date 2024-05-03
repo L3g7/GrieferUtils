@@ -1,23 +1,35 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
+ *
+ * Copyright 2020-2024 L3g7
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_reactor;
+package dev.l3g7.griefer_utils.v1_8_9.features.chat.chat_reactor.laby3;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.Named;
-import dev.l3g7.griefer_utils.laby4.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.*;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.Scrollbar;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
+import net.labymod.gui.elements.Scrollbar;
+import net.labymod.settings.LabyModModuleEditorGui;
+import net.labymod.settings.PreviewRenderer;
+import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
@@ -63,6 +75,8 @@ public class AddChatReactionGui extends Gui {
 		super.initGui();
 		backgroundScreen.width = width;
 		backgroundScreen.height = height;
+		if (backgroundScreen instanceof LabyModModuleEditorGui)
+			PreviewRenderer.getInstance().init(AddChatReactionGui.class);
 
 		int center = width / 2;
 		int top = HEADER_HEIGHT + 80; // 80px for breadcrumb
@@ -204,7 +218,6 @@ public class AddChatReactionGui extends Gui {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
 		DrawUtils.drawTexture(width / 2d + actionSize - addonIconSize, 20, 256, 256, addonIconSize, addonIconSize);
 
-
 		// Draw footer
 		int footerSize = 10;
 		DrawUtils.drawOverlayBackground(height - footerSize, height); // footer background
@@ -319,13 +332,9 @@ public class AddChatReactionGui extends Gui {
 			reaction.enabled = true;
 
 			// Add reaction
-			ReactionDisplaySetting setting = new ReactionDisplaySetting(reaction);
-			SwitchSettingImpl parent = (SwitchSettingImpl) FileProvider.getSingleton(ChatReactor.class).getMainElement();
-			setting.create(parent);
-			parent.addSetting((BaseSetting<?>) setting);
+			new ReactionDisplaySetting(reaction, (SettingsElement) FileProvider.getSingleton(ChatReactor.class).getMainElement())
+				.icon(textTypeInput.getSelected().getIcon());
 		}
-		else
-			editedReaction.initDisplay();
 
 		ChatReactor.saveEntries();
 		close();

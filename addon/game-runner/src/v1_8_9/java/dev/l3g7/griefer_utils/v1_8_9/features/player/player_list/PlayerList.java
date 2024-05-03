@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.Named;
 import dev.l3g7.griefer_utils.api.util.IOUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
@@ -23,7 +24,9 @@ import dev.l3g7.griefer_utils.v1_8_9.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
-import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingImpl;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListEntry;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingLaby3;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingLaby4;
 import dev.l3g7.griefer_utils.v1_8_9.util.PlayerUtil;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
@@ -40,6 +43,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.PlayerList.MarkAction.*;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
@@ -81,14 +85,20 @@ public abstract class PlayerList extends Feature {
 		.icon("info")
 		.defaultValue(true);
 
-	public final PlayerListSettingImpl customEntries = new PlayerListSettingImpl()
-		.callback(TabListEvent::updatePlayerInfoList);
+	public final AbstractSetting<?, List<PlayerListEntry>> customEntries;
 
 	@MainElement
 	public final SwitchSetting enabled = SwitchSetting.create()
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	public PlayerList(String name, String description, String chatIcon, Object settingIcon, String entryDescription, EnumChatFormatting color, int paneType, String message, String url) {
+		if (LABY_4.isActive())
+			customEntries = new PlayerListSettingLaby4()
+				.callback(TabListEvent::updatePlayerInfoList);
+		else
+			customEntries = new PlayerListSettingLaby3()
+				.callback(TabListEvent::updatePlayerInfoList);
+
 		enabled
 			.name(name)
 			.description(description)
@@ -124,6 +134,7 @@ public abstract class PlayerList extends Feature {
 
 	/**
 	 * The event listener handling display names.
+	 *
 	 * @see PlayerList#displayNameAction
 	 */
 	@EventListener(priority = Priority.LOW)
@@ -137,6 +148,7 @@ public abstract class PlayerList extends Feature {
 
 	/**
 	 * The event listener handling the tab list.
+	 *
 	 * @see PlayerList#tabAction
 	 */
 	@EventListener
@@ -150,6 +162,7 @@ public abstract class PlayerList extends Feature {
 
 	/**
 	 * The event listener handling incoming messages.
+	 *
 	 * @see PlayerList#chatAction
 	 */
 	@EventListener(priority = Priority.LOW)
@@ -184,6 +197,7 @@ public abstract class PlayerList extends Feature {
 
 	/**
 	 * The event listener handling /profil.
+	 *
 	 * @see PlayerList#showInProfile
 	 */
 	@EventListener
@@ -217,8 +231,19 @@ public abstract class PlayerList extends Feature {
 	}
 
 	public boolean shouldMark(String name, UUID uuid) {
-		return uuids.contains(uuid) || names.contains(name) || customEntries.contains(name, uuid);
+		if (name == null && uuid == null)
+			return false;
+
+		if (uuids.contains(uuid) || names.contains(name))
+			return true;
+
+		for (PlayerListEntry entry : customEntries.get())
+			if (name == null ? uuid.toString().equalsIgnoreCase(entry.id) : name.equalsIgnoreCase(entry.name))
+				return true;
+
+		return false;
 	}
+
 
 	public enum MarkAction implements Named {
 
@@ -227,6 +252,7 @@ public abstract class PlayerList extends Feature {
 		DISABLED("Aus");  // Don't mark an entry
 
 		final String name;
+
 		MarkAction(String name) {
 			this.name = name;
 		}

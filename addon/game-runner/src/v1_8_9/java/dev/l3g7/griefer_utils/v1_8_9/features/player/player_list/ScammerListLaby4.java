@@ -9,6 +9,8 @@ package dev.l3g7.griefer_utils.v1_8_9.features.player.player_list;
 
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.api.BugReporter;
+import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
@@ -27,11 +29,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static net.minecraft.util.EnumChatFormatting.RED;
 
+@Bridge
 @Singleton
-public class ScammerList extends PlayerList {
+@ExclusiveTo(LABY_4)
+public class ScammerListLaby4 extends PlayerList implements TempScammerListBridge {
 
 	private String previousText = "";
 	private boolean starting = true;
@@ -52,7 +57,7 @@ public class ScammerList extends PlayerList {
 			}
 		});
 
-	public ScammerList() {
+	public ScammerListLaby4() {
 		super("§zLokale Scammerliste", "Markiert lokal hinzugefügte Scammer.", "⚠", "red_scroll", "Scammer", RED, 14, "§c§lScammer", null);
 	}
 
@@ -84,6 +89,11 @@ public class ScammerList extends PlayerList {
 		} catch (Throwable e) {
 			labyBridge.notifyError((starting ? "Scammer-" : "") + "Datei konnte nicht geladen werden.");
 		}
+	}
+
+	@Override
+	public MarkAction getChatAction() {
+		return chatAction.get();
 	}
 
 	private static class FileStringSetting extends StringSettingImpl {

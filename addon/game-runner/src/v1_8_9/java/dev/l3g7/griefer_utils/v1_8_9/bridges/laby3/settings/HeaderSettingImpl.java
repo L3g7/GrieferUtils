@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.v1_8_9.bridges.laby3.settings;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
+import net.labymod.settings.elements.HeaderElement;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +15,9 @@ public class HeaderSettingImpl extends ControlElement implements HeaderSetting {
 
 	private static final int FONT_HEIGHT = mc().fontRendererObj.FONT_HEIGHT;
 
+	private Integer entryHeight = null;
+	private double scale = 1;
+
 	private String name;
 	private String description = null;
 	private List<String> rows;
@@ -21,6 +25,7 @@ public class HeaderSettingImpl extends ControlElement implements HeaderSetting {
 	public HeaderSettingImpl(String name) {
 		super(name, null);
 		this.name = name;
+		this.rows = Collections.singletonList(name);
 	}
 
 	public HeaderSettingImpl(String... rows) {
@@ -29,15 +34,11 @@ public class HeaderSettingImpl extends ControlElement implements HeaderSetting {
 		this.rows = Arrays.asList(rows);
 	}
 
-	@Override
-	public int getEntryHeight() {
-		return super.getEntryHeight() + (rows.size() - 1) * (FONT_HEIGHT + 1);
-	}
-
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+		double dy = y;
 		for (String row : rows) {
-			LabyMod.getInstance().getDrawUtils().drawCenteredString(row, x + (maxX - x) / 2d, y + 7, 1);
-			y += FONT_HEIGHT + 1;
+			LabyMod.getInstance().getDrawUtils().drawCenteredString(row, x + (maxX - x) / 2d, dy + 7, scale);
+			dy += (FONT_HEIGHT + 1) * scale;
 		}
 	}
 
@@ -69,6 +70,31 @@ public class HeaderSettingImpl extends ControlElement implements HeaderSetting {
 	@Override
 	public String getDescriptionText() {
 		return description;
+	}
+
+	@Override
+	public HeaderSetting scale(double scale) {
+		this.scale = scale;
+		return this;
+	}
+
+	@Override
+	public HeaderSetting entryHeight(int height) {
+		this.entryHeight = height;
+		return this;
+	}
+
+	@Override
+	public int getObjectWidth() {
+		return 9999999; // To suppress LabyMod focusing it when clicked
+	}
+
+	@Override
+	public int getEntryHeight() {
+		if (entryHeight == null)
+			return 22 + (rows.size() - 1) * (FONT_HEIGHT + 1);
+
+		return entryHeight;
 	}
 
 	@Override

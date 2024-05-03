@@ -17,8 +17,8 @@ public class MappingEntries {
 
 	public static class MappedClass extends MappedMember {
 
-		final MappedList<MappedField> fields = new MappedList<>();
-		final MethodList methods = new MethodList();
+		public final MappedList<MappedField> fields = new MappedList<>();
+		public final MethodList methods = new MethodList();
 
 		MappedClass(String obf, String unobf) {
 			super(obf, unobf);
@@ -113,17 +113,17 @@ public class MappingEntries {
 		/**
 		 * A member storage where the key is the obfuscated name.
 		 */
-		protected transient final Map<String, M> obfMap = new HashMap<>();
+		public transient final Map<String, M> obfMap = new HashMap<>();
 
 		/**
 		 * A member storage where the key is the searge name.
 		 */
-		protected transient final Map<String, M> srgMap = new HashMap<>();
+		public transient final Map<String, M> srgMap = new HashMap<>();
 
 		/**
 		 * A member storage where the key is the unobfuscated name.
 		 */
-		protected transient final Map<String, M> unobfMap = new HashMap<>();
+		public transient final Map<String, M> unobfMap = new HashMap<>();
 
 		/**
 		 * populates the cache maps.
@@ -141,7 +141,7 @@ public class MappingEntries {
 			}
 		}
 
-		M get(String key, Mapping mapping) {
+		public M get(String key, Mapping mapping) {
 			switch (mapping) {
 				case OBFUSCATED:
 					return obfMap.get(key);

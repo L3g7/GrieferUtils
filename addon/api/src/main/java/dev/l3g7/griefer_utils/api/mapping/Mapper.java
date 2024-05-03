@@ -31,11 +31,14 @@ import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
 
 public class Mapper {
 
-	private static final MappedList<MappedClass> classes = new MappedList<>();
+	public static final MappedList<MappedClass> classes = new MappedList<>();
 
 	public static void loadMappings(String minecraftVersion, String mappingVersion) {
+		loadMappings(minecraftVersion, mappingVersion, new File(minecraftBridge.assetsDir(), String.format("griefer_utils/mappings/%s_stable_%s.json", minecraftVersion, mappingVersion)));
+	}
+
+	public static void loadMappings(String minecraftVersion, String mappingVersion, File mappings) {
 		try {
-			File mappings = new File(minecraftBridge.assetsDir(), String.format("griefer_utils/mappings/%s_stable_%s.json", minecraftVersion, mappingVersion));
 			Collection<MappedClass> mappedClasses;
 
 			if (mappings.exists()) {
@@ -43,12 +46,12 @@ public class Mapper {
 				mappedClasses = IOUtil.gson.fromJson(new FileReader(mappings), new TypeToken<Collection<MappedClass>>() {}.getType());
 				if (mappedClasses.isEmpty()) {
 					// Probably invalid download, overwrite
-					mappedClasses = new MappingCreator().createMappings("1.8.9", "22");
+					mappedClasses = new MappingCreator().createMappings(minecraftVersion, mappingVersion);
 					IOUtil.write(mappings, new Gson().toJson(mappedClasses));
 				}
 			} else {
 				// Create and store mappings
-				mappedClasses = new MappingCreator().createMappings("1.8.9", "22");
+				mappedClasses = new MappingCreator().createMappings(minecraftVersion, mappingVersion);
 				IOUtil.write(mappings, new Gson().toJson(mappedClasses));
 			}
 

@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.api.mapping;
 
+import dev.l3g7.griefer_utils.api.mapping.MappingEntries.MappedMember;
 import dev.l3g7.griefer_utils.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.api.util.ArrayUtil;
 import dev.l3g7.griefer_utils.api.util.IOUtil;
@@ -99,8 +100,8 @@ public class MappingCreator {
 	 */
 	private ZipInputStream getZipInputStream(String url) throws IOException {
 		HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
-		conn.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
-
+		if (Boolean.parseBoolean(System.getProperties().getProperty("griefer_utils.custom_ssl", "true")))
+			conn.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
 		return new ZipInputStream(conn.getInputStream());
 	}
 
@@ -123,7 +124,7 @@ public class MappingCreator {
 	 * @param srgCache the cache storing the searge member names and their associated members.
 	 * @return the loaded member.
 	 */
-	private <M extends MappingEntries.MappedMember> M loadSrgMapping(String line, int srgPosition, BiFunction<String, String, M> constructor, Function<MappingEntries.MappedClass, MappingEntries.MappedList<M>> mappingStore, Map<String, List<M>> srgCache) {
+	private <M extends MappedMember> M loadSrgMapping(String line, int srgPosition, BiFunction<String, String, M> constructor, Function<MappingEntries.MappedClass, MappingEntries.MappedList<M>> mappingStore, Map<String, List<M>> srgCache) {
 		String[] parts = line.substring(4).split(" ");
 
 		Member obf = new Member(parts[0]);

@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.laby3.settings;
 
 import com.google.gson.JsonElement;
+import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.laby3.settings.Icon.WrappedIcon;
@@ -62,6 +63,12 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	@Override
 	default S subSettings(BaseSetting<?>... settings) {
 		((SettingsElement) this).getSubSettings().getElements().clear();
+		subSettings(Arrays.asList(
+			HeaderSetting.create("§r"),
+			HeaderSetting.create("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
+			HeaderSetting.create("§e§l" + ((S) this).name().replaceAll("§.", "").replaceAll("[^\\w-äÄöÖüÜß ]", "")).scale(.7),
+			HeaderSetting.create("§r").scale(.4).entryHeight(10)
+		));
 		return subSettings(Arrays.asList(settings));
 	}
 

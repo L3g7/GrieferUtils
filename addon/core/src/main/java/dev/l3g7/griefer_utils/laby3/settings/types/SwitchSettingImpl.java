@@ -4,8 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.laby4.settings.types.DropDownSettingImpl;
-import dev.l3g7.griefer_utils.laby4.settings.types.KeySettingImpl;
 import dev.l3g7.griefer_utils.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.KeySetting;
@@ -34,7 +32,7 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 
 	@Override
 	public SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode) {
-		DropDownSettingImpl<TriggerMode> triggerMode = (DropDownSettingImpl<TriggerMode>) DropDownSetting.create(TriggerMode.class)
+		DropDownSetting<TriggerMode> triggerMode = DropDownSetting.create(TriggerMode.class)
 			.name("Auslösung")
 			.icon("lightning")
 			.inferConfig("triggerMode")
@@ -51,7 +49,7 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 			addSetting(0, triggerMode);
 		}
 
-		KeySettingImpl key = (KeySettingImpl) KeySetting.create()
+		KeySetting key = KeySetting.create()
 			.name("Taste")
 			.icon("key")
 			.inferConfig("key")

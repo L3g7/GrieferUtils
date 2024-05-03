@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.transactions;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
@@ -36,10 +37,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.uuid;
 
 @Singleton
-public class Transactions extends Feature { // NOTE: search, export
+@ExclusiveTo(LABY_4)
+public class TransactionsL4 extends Feature { // NOTE: search, export
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 

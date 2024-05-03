@@ -1,1 +1,8 @@
+.gradle
+.idea
+target
+
 .env
+Rocket.toml
+
+server.db

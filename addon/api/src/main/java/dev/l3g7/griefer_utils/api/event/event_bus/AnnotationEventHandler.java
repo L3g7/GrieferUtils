@@ -13,13 +13,9 @@ import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.file_provider.meta.MethodMeta;
 import org.objectweb.asm.Opcodes;
-import org.spongepowered.include.com.google.common.collect.ImmutableList;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.invoke;
 
@@ -30,7 +26,7 @@ import static dev.l3g7.griefer_utils.api.reflection.Reflection.invoke;
 public class AnnotationEventHandler implements Opcodes {
 
 	private static final Map<Class<? extends Annotation>, List<Runnable>> listeners = new HashMap<>();
-	private static final List<Class<? extends Annotation>> annotations = ImmutableList.of(OnEnable.class, OnStartupComplete.class);
+	private static final List<Class<? extends Annotation>> annotations = Arrays.asList(OnEnable.class, OnStartupComplete.class);
 	private static boolean initialized = false;
 
 	/**

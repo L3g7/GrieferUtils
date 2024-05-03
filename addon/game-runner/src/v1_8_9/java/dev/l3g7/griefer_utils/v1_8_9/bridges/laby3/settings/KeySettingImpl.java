@@ -64,7 +64,7 @@ public class KeySettingImpl extends ControlElement implements Laby3Setting<KeySe
 	@Override
 	public KeySetting set(Set<Integer> value) {
 		previewField.setText(formatKeys(value));
-		return KeySetting.super.set(value);
+		return Laby3Setting.super.set(value);
 	}
 
 	public KeySetting pressCallback(Consumer<Boolean> callback) {

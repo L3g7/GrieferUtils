@@ -5,8 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.tool_saver;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.tool_saver.laby4;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
@@ -17,6 +19,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.ItemSaverCategory.ItemSaver;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.TempToolSaverBridge;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -28,14 +31,17 @@ import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.MovingObjectPosition;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 /**
  * Suppresses clicks if the durability of the held item falls below the set threshold.
  */
+@Bridge
 @Singleton
-public class ToolSaver extends ItemSaver {
+@ExclusiveTo(LABY_4)
+public class ToolSaver extends ItemSaver implements TempToolSaverBridge {
 
 	private final NumberSetting damage = NumberSetting.create()
 		.name("Min. Haltbarkeit")

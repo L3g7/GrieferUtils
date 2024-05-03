@@ -5,9 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.chat;
+package dev.l3g7.griefer_utils.v1_8_9.features.chat.filter_webhooks.laby4;
 
 import com.google.gson.*;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
@@ -47,10 +48,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 
 @Singleton
+@ExclusiveTo(LABY_4)
 public class FilterWebhooks extends Feature {
 
 	@MainElement
@@ -195,6 +198,7 @@ public class FilterWebhooks extends Feature {
 		return new JsonPrimitive(value);
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(net.labymod.api.configuration.loader.Config.class)
 	public static class ConfigMixin {
 
@@ -206,7 +210,8 @@ public class FilterWebhooks extends Feature {
 
 	}
 
-	@Mixin(DefaultFilterChatService.class)
+	@ExclusiveTo(LABY_4)
+	@Mixin(value = DefaultFilterChatService.class, remap = false)
 	public static class DefaultFilterChatServiceMixin {
 
 		@Final

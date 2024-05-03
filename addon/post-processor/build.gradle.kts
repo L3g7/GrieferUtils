@@ -32,4 +32,4 @@ dependencies {
 	implementation("net.minecraft:launchwrapper:1.12")
 }
 
-java.targetCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_21

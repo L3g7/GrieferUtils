@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.v1_8_9.features.chat.multi_hotkey;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
@@ -45,12 +46,14 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
 @Singleton
-public class MultiHotkey extends Feature {
+@ExclusiveTo(LABY_4)
+public class MultiHotkeyL4 extends Feature {
 
 	private final HotkeyListSetting entries = new HotkeyListSetting()
 		.name("Hotkeys")
@@ -88,6 +91,7 @@ public class MultiHotkey extends Feature {
 		}
 	}
 
+	@ExclusiveTo(LABY_4)
 	private class HotkeyConfig extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {
 
 		private int amountsTriggered = 0;
@@ -143,6 +147,7 @@ public class MultiHotkey extends Feature {
 	}
 
 	// NOTE: cleanup? merge?
+	@ExclusiveTo(LABY_4)
 	private class HotkeyListSetting extends ListSetting implements BaseSettingImpl<HotkeyListSetting, List<HotkeyConfig>> {
 
 		private final ExtendedStorage<List<HotkeyConfig>> storage;

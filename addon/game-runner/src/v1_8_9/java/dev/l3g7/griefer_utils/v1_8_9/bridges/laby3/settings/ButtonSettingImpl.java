@@ -4,8 +4,10 @@ import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.laby3.settings.Icon;
 import dev.l3g7.griefer_utils.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.settings.types.ButtonSetting;
+import dev.l3g7.griefer_utils.v1_8_9.util.render.GlEngine;
 import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class ButtonSettingImpl extends ControlElement implements Laby3Setting<ButtonSetting, Object>, ButtonSetting {
 
@@ -60,7 +62,7 @@ public class ButtonSettingImpl extends ControlElement implements Laby3Setting<Bu
 		button.drawButton(mc, mouseX, mouseY);
 
 		if (buttonIcon != null)
-			buttonIcon.draw(button.xPosition + 3, button.yPosition + 2);
+			buttonIcon.draw(button.xPosition + 1, button.yPosition, 14 / 16f);
 	}
 
 }

@@ -23,9 +23,9 @@ import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemSaver;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.tool_saver.ToolSaver;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.MissingAdventurerBlocks;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.TempToolSaverBridge;
+import dev.l3g7.griefer_utils.v1_8_9.features.modules.TempMissingAdventurerBlocksBridge;
 import dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.block.*;
@@ -48,7 +48,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.collect.ImmutableList.of;
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.ProtectionType.LEFT_CLICK;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.*;
 import static net.minecraft.enchantment.Enchantment.*;
 
@@ -87,7 +86,7 @@ public class AutoTool extends Feature {
 		BlockVine.class
 	);
 
-	private final ToolSaver toolSaver = FileProvider.getSingleton(ToolSaver.class);
+	private final TempToolSaverBridge toolSaver = FileProvider.getBridge(TempToolSaverBridge.class);
 
 	private final DropDownSetting<EnchantPreference> preference = DropDownSetting.create(EnchantPreference.class)
 		.name("Bevorzugte Verzauberung")
@@ -131,7 +130,7 @@ public class AutoTool extends Feature {
 	}
 
 	/**
-	 * Required for compatability with {@link ToolSaver}
+	 * Required for compatability with ToolSaver
 	 */
 	@EventListener(priority = Priority.HIGH)
 	public void onMouse(MouseClickEvent.LeftClickEvent event) {
@@ -191,7 +190,7 @@ public class AutoTool extends Feature {
 	}
 
 	public double getScore(ItemStack itemStack, IBlockState state, boolean canMine) {
-		if (ItemSaver.getProtectionFor(itemStack).isProtectedAgainst(LEFT_CLICK))
+		if (FileProvider.getBridge(TempItemSaverBridge.class).isProtectedAgainstLeftClick(itemStack))
 			return Integer.MIN_VALUE;
 
 		if (toolSaver.isEnabled())
@@ -285,7 +284,7 @@ public class AutoTool extends Feature {
 			return false;
 
 		// Finished
-		if (MissingAdventurerBlocks.getMissingBlocks(stack) <= 0)
+		if (FileProvider.getBridge(TempMissingAdventurerBlocksBridge.class).getMissingBlocks(stack) <= 0)
 			return false;
 
 		// Not owned by the player

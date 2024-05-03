@@ -8,12 +8,13 @@
 package dev.l3g7.griefer_utils.v1_8_9.features.item.inventory_tweaks.tweaks;
 
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.BlockPickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.inventory_tweaks.InventoryTweaks;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemSaver;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
@@ -24,7 +25,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.ProtectionType.ITEM_PICKUP;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
 
@@ -57,7 +57,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 			() -> getHotbarSlot(true, is -> is.getItem() instanceof ItemBlock), // Block
 			() -> getHotbarSlot(true, is -> !is.isItemStackDamageable()), // Not a tool
 			() -> getHotbarSlot(true, is -> true), // Not in the ItemSaver
-			() -> getHotbarSlot(false, is -> !ItemSaver.getProtectionFor(is).isProtectedAgainst(ITEM_PICKUP))}) { // Doesn't have pickup protection enabled
+			() -> getHotbarSlot(false, is -> !FileProvider.getBridge(TempItemSaverBridge.class).isProtectedAgainstItemPickup(is))}) { // Doesn't have pickup protection enabled
 			targetSlot = slotSupplier.get();
 			if (targetSlot != -1)
 				break;
@@ -98,7 +98,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 
 	private int getScore(ItemStack requiredStack, int slot) {
 		ItemStack stack = player().inventory.getStackInSlot(slot);
-		if (stack == null || !stack.isItemEqual(requiredStack) || ItemSaver.getProtectionFor(stack).isProtected())
+		if (stack == null || !stack.isItemEqual(requiredStack) || FileProvider.getBridge(TempItemSaverBridge.class).isProtected(stack))
 			return -1;
 
 		if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("stackSize"))
@@ -117,7 +117,7 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 	private int getHotbarSlot(boolean prefilter, Predicate<ItemStack> filter) {
 		ItemStack[] stacks = player().inventory.mainInventory;
 		for (int i = 0; i < 9; i++) {
-			if (prefilter && (stacks[i] == null) || ItemSaver.getProtectionFor(stacks[i]).isProtected())
+			if (prefilter && (stacks[i] == null) || FileProvider.getBridge(TempItemSaverBridge.class).isProtected(stacks[i]))
 				continue;
 
 			if (filter.test(stacks[i]))

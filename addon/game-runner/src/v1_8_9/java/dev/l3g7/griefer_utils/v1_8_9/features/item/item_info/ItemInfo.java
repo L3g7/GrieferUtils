@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.ItemTooltipEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.BlockInfo;
+import dev.l3g7.griefer_utils.v1_8_9.features.modules.TempBlockInfoBridge;
 import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import net.minecraft.item.ItemStack;
@@ -58,7 +58,7 @@ public class ItemInfo extends Feature {
 
 	@EventListener
 	public void onTooltip(ItemTooltipEvent e) {
-		if (BlockInfo.gettingTooltip)
+		if (FileProvider.getBridge(TempBlockInfoBridge.class).gettingTooltip())
 			return;
 
 		if (MinecraftUtil.mc().currentScreen instanceof GuiBigChest)

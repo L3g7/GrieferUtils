@@ -49,11 +49,11 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
-public class PlayerListSettingImpl extends ListSetting implements AbstractSetting<PlayerListSettingImpl, List<PlayerListEntry>>, BaseSettingImpl<PlayerListSettingImpl, List<PlayerListEntry>> { // NOTE: cleanup
+public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetting<PlayerListSettingLaby4, List<PlayerListEntry>>, BaseSettingImpl<PlayerListSettingLaby4, List<PlayerListEntry>> { // NOTE: cleanup
 
 	private final ExtendedStorage<List<PlayerListEntry>> storage;
 
-	public PlayerListSettingImpl() {
+	public PlayerListSettingLaby4() {
 		super(UUID.randomUUID().toString(), null, null, new String[0], null, false, null, (byte) -127,
 			new ConfigPropertySettingAccessor(null, null, null, null) {
 				@Override
@@ -107,17 +107,6 @@ public class PlayerListSettingImpl extends ListSetting implements AbstractSettin
 	@Override
 	public Icon getIcon() {
 		return getStorage().icon;
-	}
-
-	public boolean contains(String name, UUID uuid) {
-		if (name == null && uuid == null)
-			return false;
-
-		for (PlayerListEntry entry : get())
-			if (name == null ? uuid.toString().equalsIgnoreCase(entry.id) : name.equalsIgnoreCase(entry.name))
-				return true;
-
-		return false;
 	}
 
 	@EventListener

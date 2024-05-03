@@ -28,8 +28,7 @@ public class ClassVersionProcessor extends CompilationPostProcessor {
 
 	private static final Predicate<Path> BOOTSTRAP_CLASSES =
 		p -> p.startsWith("dev/l3g7/griefer_utils/laby3/PreStart.class")
-			|| p.startsWith(POST_PROCESSOR_FOLDER + "/processors/runtime/Java17to8Transpiler.class")
-			|| p.startsWith(POST_PROCESSOR_FOLDER + "/processors/runtime/Java17to8Transpiler$BoundClassWriter.class")
+			|| p.startsWith(POST_PROCESSOR_FOLDER + "/processors/runtime/transpiler/")
 			|| p.startsWith(POST_PROCESSOR_FOLDER + "/processors/RuntimePostProcessor.class");
 
 	private ClassVersionProcessor() {}

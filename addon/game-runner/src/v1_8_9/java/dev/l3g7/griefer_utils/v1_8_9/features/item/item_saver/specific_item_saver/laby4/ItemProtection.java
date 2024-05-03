@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4;
 
 import dev.l3g7.griefer_utils.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
@@ -16,8 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.ProtectionType.LEFT_CLICK;
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.ProtectionType.RIGHT_CLICK;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType.LEFT_CLICK;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType.RIGHT_CLICK;
 
 public class ItemProtection {
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.ProtectionType;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -43,7 +43,7 @@ import java.util.*;
 
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.ProtectionType.*;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType.*;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 import static net.labymod.api.Textures.SpriteCommon.X;
 

@@ -5,10 +5,11 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver;
+package dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
@@ -20,6 +21,7 @@ import dev.l3g7.griefer_utils.v1_8_9.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.AutoTool;
 import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.ItemSaverCategory;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.v1_8_9.util.ItemUtil;
 import net.minecraft.client.renderer.GlStateManager;
@@ -34,14 +36,17 @@ import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.ResourceLocation;
 
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.ProtectionType.*;
-import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemProtection.UNPROTECTED;
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType.*;
+import static dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4.ItemProtection.UNPROTECTED;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.heldItem;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.inventory;
 import static net.minecraft.network.play.client.C02PacketUseEntity.Action.ATTACK;
 
+@Bridge
 @Singleton
-public class ItemSaver extends ItemSaverCategory.ItemSaver { // FIXME: test, test dependant features
+@ExclusiveTo(LABY_4)
+public class ItemSaver extends ItemSaverCategory.ItemSaver implements TempItemSaverBridge { // FIXME: test, test dependant features
 
 	private static final ItemStack BLOCKED = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");
 
@@ -64,10 +69,6 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver { // FIXME: test, tes
 		.description("Deaktiviert Klicks, Dropping und Abgeben bei einstellbaren Items.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
 		.icon("shield_with_sword")
 		.subSettings(displayIcon, HeaderSetting.create(), entries);
-
-	public static ItemProtection getProtectionFor(ItemStack stack) {
-		return FileProvider.getSingleton(ItemSaver.class).getProtection(stack);
-	}
 
 	private ItemProtection getProtection(ItemStack stack) {
 		if (stack == null || !isEnabled())
@@ -238,6 +239,21 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver { // FIXME: test, tes
 	private void onPacketPlaceBlock(PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
 		if (getProtection(heldItem()).isProtectedAgainst(RIGHT_CLICK))
 			event.cancel();
+	}
+
+	@Override
+	public boolean isProtected(ItemStack itemStack) {
+		return getProtection(itemStack).isProtected();
+	}
+
+	@Override
+	public boolean isProtectedAgainstLeftClick(ItemStack itemStack) {
+		return getProtection(itemStack).isProtectedAgainst(LEFT_CLICK);
+	}
+
+	@Override
+	public boolean isProtectedAgainstItemPickup(ItemStack itemStack) {
+		return getProtection(itemStack).isProtectedAgainst(ITEM_PICKUP);
 	}
 
 }

@@ -38,7 +38,7 @@ public class ChatMessageLogEvent extends Event {
 	@Mixin(GuiNewChat.class)
 	private static class MixinGuiNewChat {
 
-		@Redirect(method = "printChatMessageWithOptionalDeletion", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V"))
+		@Redirect(method = "printChatMessageWithOptionalDeletion", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V"), remap = false)
 		public void log(Logger logger, String message) {
 			tryLogging(logger, message);
 		}

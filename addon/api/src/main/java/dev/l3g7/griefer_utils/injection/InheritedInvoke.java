@@ -13,7 +13,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a mixin @Inject targeting the invocation of an inherited method.
+ * Marks a mixin injection targeting the invocation of an inherited method.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)

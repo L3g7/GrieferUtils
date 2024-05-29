@@ -149,7 +149,8 @@ public class ChatMods extends Feature {
 	}
 
 	private boolean shouldCancel(String formattedText) {
-		boolean isNewsLine = formattedText.equals("§r§f§m------------§r§8 [ §r§6News§r§8 ] §r§f§m------------§r");
+		boolean isNewsLine = formattedText.equals("§f§m------------§r§8 [ §r§6News§r§8 ] §r§f§m------------§r");
+		
 		if (isNewsLine)
 			isNews = !isNews;
 

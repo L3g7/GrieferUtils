@@ -54,7 +54,7 @@ public class PortalCooldown extends Feature {
 			return;
 
 		if ((msg.startsWith("§r§cKicked whilst connecting") && !msg.contains("Du hast dich zu schnell wieder eingeloggt."))
-			|| msg.startsWith("§r§cCould not connect to a default or fallback server")) {
+			|| msg.startsWith("§r§cCould not connect to a default or fallback server") || msg.startsWith("§c§r§cKein Verbindungsaufbau zu ") || msg.startsWith("§c§r§cUnable to connect to ")) {
 			timeoutEnd = System.currentTimeMillis() + 12_000;
 		}
 	}

@@ -80,7 +80,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		// Add callback
 		s.callbacks.add(value -> save());
 
-		for (BaseSetting<?> setting : getSubSettings()) {
+		for (BaseSetting<?> setting : getChildSettings()) {
 			if (setting instanceof AbstractSetting<?,?> abs) {
 				if (abs.getStorage().inferredKey != null)
 					// Uses the parent key as base. Technically wrong but required to preserve config compatibility

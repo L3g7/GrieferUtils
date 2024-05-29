@@ -61,10 +61,6 @@ class ConstructorReflection {
 			}
 		}
 
-		if (targetClass.getSimpleName().endsWith("DefaultSubscribeMethod"))
-			System.err.println("Checked " + Arrays.toString(targetClass.getDeclaredConstructors()) +  " constructors");
-		else
-			System.err.println("asdkasd " + targetClass.getSimpleName());
 		return null;
 	}
 

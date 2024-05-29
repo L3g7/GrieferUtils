@@ -7,8 +7,7 @@
 
 package dev.l3g7.griefer_utils.api.util;
 
-import dev.l3g7.griefer_utils.api.reflection.Reflection;
-
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 
 /**
@@ -17,6 +16,16 @@ import java.text.DecimalFormat;
 public class Util {
 
 	private static final DecimalFormat DOUBLE_NUMBER = new DecimalFormat("00");
+
+	private static final Field detailMessage;
+	static {
+		try {
+			detailMessage = Throwable.class.getDeclaredField("detailMessage");
+			detailMessage.setAccessible(true);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	/**
 	 * Adds a message in front of the existing message.
@@ -27,7 +36,11 @@ public class Util {
 		if (throwable.getMessage() != null)
 			formattedMessage += " (" + throwable.getMessage() + ")";
 
-		Reflection.set(throwable, "detailMessage", formattedMessage);
+		try {
+			detailMessage.set(throwable, formattedMessage);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 		return throwable;
 	}
 

@@ -9,12 +9,16 @@ package dev.l3g7.griefer_utils.laby4.bridges;
 
 import dev.l3g7.griefer_utils.api.BugReporter;
 import dev.l3g7.griefer_utils.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.api.misc.Pair;
 import dev.l3g7.griefer_utils.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.api.misc.functions.Runnable;
+import dev.l3g7.griefer_utils.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.laby4.Main;
 import dev.l3g7.griefer_utils.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
@@ -44,15 +48,24 @@ import java.net.MalformedURLException;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.api.mapping.Mapping.OBFUSCATED;
+import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 
 @Bridge
 @Singleton
+@ExclusiveTo(LABY_4)
 public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public boolean obfuscated() {
 		return !Laby.labyAPI().labyModLoader().isAddonDevelopmentEnvironment();
+	}
+
+	@Override
+	public Mapping activeMapping() {
+		return obfuscated() ? OBFUSCATED : UNOBFUSCATED;
 	}
 
 	@Override
@@ -131,11 +144,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	}
 
 	@Override
-	public void onAccountSwitch(Runnable callback) {
-		register(SessionUpdateEvent.class, v -> callback.run());
-	}
-
-	@Override
 	public void onMessageSend(Predicate<String> callback) {
 		register(ChatMessageSendEvent.class, v -> v.setCancelled(callback.test(v.getMessage())));
 	}
@@ -202,6 +210,11 @@ public class LabyBridgeImpl implements LabyBridge {
 
 			public SubscribeMethod copy(Object newListener) {return null;}
 		});
+	}
+
+	@OnEnable
+	public static void registerEvents() {
+		register(SessionUpdateEvent.class, v -> new AccountSwitchEvent().fire());
 	}
 
 }

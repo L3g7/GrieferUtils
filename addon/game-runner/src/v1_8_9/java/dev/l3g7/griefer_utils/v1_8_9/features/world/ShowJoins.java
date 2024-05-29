@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Constants;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.ChatMessageLogEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.griefergames.CitybuildJoinEvent;
@@ -19,17 +20,21 @@ import dev.l3g7.griefer_utils.v1_8_9.events.network.ServerEvent.ServerSwitchEven
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.PlayerList;
-import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.ScammerList;
+import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.TempScammerListBridge;
 import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.TrustedList;
 import dev.l3g7.griefer_utils.v1_8_9.misc.TickScheduler;
-import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingImpl;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListEntry;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingLaby3;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingLaby4;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.name;
 
@@ -41,9 +46,18 @@ public class ShowJoins extends Feature {
 
 	private static final Map<UUID, Long> addTimestamps = new HashMap<>();
 
-	private final PlayerListSettingImpl players = new PlayerListSettingImpl()
-		.name("Spieler")
-		.icon("magnifying_glass");
+	private final AbstractSetting<?, List<PlayerListEntry>> players = temp();
+
+	private static AbstractSetting<?, List<PlayerListEntry>> temp() { // TODO refactor
+		if (LABY_4.isActive())
+			return new PlayerListSettingLaby4()
+				.name("Spieler")
+				.icon("magnifying_glass");
+		else
+			return new PlayerListSettingLaby3()
+				.name("Spieler")
+				.icon("magnifying_glass");
+	}
 
 	private final SwitchSetting filter = SwitchSetting.create()
 		.name("Joins filtern")
@@ -86,10 +100,17 @@ public class ShowJoins extends Feature {
 		if (name().equals(name)) // Don't show Joins/Leaves for yourself
 			return false;
 
-		if(filter.get())
-			return players.contains(name, null);
+		if(!filter.get())
+			return true;
 
-		return true;
+		if (name == null)
+			return false;
+
+		for (PlayerListEntry entry : players.get())
+			if (name.equalsIgnoreCase(entry.name))
+				return true;
+
+		return false;
 	}
 
 	@EventListener
@@ -145,9 +166,9 @@ public class ShowJoins extends Feature {
 	private String getPlayerListPrefix(String name, UUID uuid) {
 		StringBuilder s = new StringBuilder();
 
-		PlayerList scammerList = FileProvider.getSingleton(ScammerList.class);
+		TempScammerListBridge scammerList = FileProvider.getBridge(TempScammerListBridge.class);
 		if (scammerList.isEnabled() && scammerList.shouldMark(name, uuid))
-			s.append(scammerList.toComponent(scammerList.chatAction.get()).getFormattedText());
+			s.append(scammerList.toComponent(scammerList.getChatAction()).getFormattedText());
 
 		PlayerList trustedList = FileProvider.getSingleton(TrustedList.class);
 		if (trustedList.isEnabled() && trustedList.shouldMark(name, uuid))

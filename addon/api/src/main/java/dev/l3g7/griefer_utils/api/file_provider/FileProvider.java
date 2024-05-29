@@ -168,7 +168,9 @@ public abstract class FileProvider {
 		// Load ClassMeta using ASM
 		try (InputStream in = getData(file)) {
 			ClassNode node = new ClassNode();
-			new ClassReader(IOUtil.toByteArray(in)).accept(node, SKIP_CODE);
+			byte[] bytes = IOUtil.toByteArray(in);
+			bytes[7 /* major_version */] = (byte) Math.min(bytes[7], 52 /* Java 1.8 */);
+			new ClassReader(bytes).accept(node, SKIP_CODE);
 
 			ClassMeta meta = new ClassMeta(node);
 			if (classExclusions.stream().anyMatch(p -> p.test(meta)))
@@ -263,7 +265,7 @@ public abstract class FileProvider {
 		return loadedClass;
 	}
 
-	public static <I> I getBridge(Class<I> type) {
+	public static <I> Class<? extends I> getBridgeClass(Class<I> type) {
 		if (!type.isAnnotationPresent(Bridged.class))
 			throw new IllegalArgumentException(type + " is not bridged!");
 
@@ -276,7 +278,11 @@ public abstract class FileProvider {
 		if (!bridge.hasAnnotation(Bridge.class))
 			throw new IllegalArgumentException(bridge + " is not a bridge!");
 
-		return getSingleton(bridge.load());
+		return bridge.load();
+	}
+
+	public static <I> I getBridge(Class<I> type) {
+		return getSingleton(getBridgeClass(type));
 	}
 
 }

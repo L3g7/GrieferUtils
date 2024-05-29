@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.laby4.events;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
 import dev.l3g7.griefer_utils.laby4.bridges.LabyBridgeImpl;
@@ -21,8 +22,10 @@ import net.labymod.api.client.gui.screen.widget.widgets.layout.list.VerticalList
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.event.labymod.config.SettingWidgetInitializeEvent;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 
+@ExclusiveTo(LABY_4)
 public class SettingActivityInitEvent extends Event { // NOTE: use SettingWidgetInitializeEvent?
 
 	public final SettingContentActivity activity;

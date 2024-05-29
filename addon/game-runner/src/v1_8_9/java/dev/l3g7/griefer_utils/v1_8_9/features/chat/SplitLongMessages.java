@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.v1_8_9.misc.ChatQueue;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import net.labymod.api.Laby;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
+import net.labymod.ingamechat.GuiChatCustom;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.init.Items;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.send;
 import static org.lwjgl.input.Keyboard.*;
@@ -57,8 +59,15 @@ public class SplitLongMessages extends Feature {
 		}
 
 		int width = 626;
-		if (Laby.labyAPI().minecraft().minecraftWindow().currentLabyScreen() instanceof ChatInputOverlay)
-			width -= (int) Laby.labyAPI().chatProvider().chatInputService().getButtonWidth();
+		if (LABY_4.isActive()) { // NOTE: replace with switch
+			if (Laby.labyAPI().minecraft().minecraftWindow().currentLabyScreen() instanceof ChatInputOverlay)
+				width -= (int) Laby.labyAPI().chatProvider().chatInputService().getButtonWidth();
+		} else {
+			if (event.gui instanceof GuiChatCustom) {
+				Object[] chatButtons = Reflection.get(event.gui, "chatButtons");
+				width -= chatButtons.length * 14;
+			}
+		}
 
 		Reflection.set(inputField, "width", width); // Only accessible in Forge
 
@@ -182,9 +191,8 @@ public class SplitLongMessages extends Feature {
 
 		return stringBuilder.length() + 1;
 	}
-
-	/*
-	// NOTE: @Mixin(value = EmoteSuggestionsMenu.class, remap = false)
+/*
+	@Mixin(value = EmoteSuggestionsMenu.class, remap = false)
 	private static class MixinEmoteSuggestionsMenu {
 
 		@Shadow
@@ -210,7 +218,6 @@ public class SplitLongMessages extends Feature {
 			minecraftTextFieldLength = textFieldLength;
 		}
 
-	}*/
-
-
+	}
+*/
 }

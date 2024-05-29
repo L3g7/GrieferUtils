@@ -20,17 +20,20 @@ class PackageReflection {
 	 */
 	static Package getParentPackage(Package pkg) {
 		String name = pkg.getName();
-		if (!name.contains("."))
-			return null;
 
-		Package parent = Package.getPackage(name.substring(0, name.lastIndexOf(".")));
-		if (parent == null) {
-			// Try to load package using file provider
-			ClassMeta meta = FileProvider.getClassMeta(name.substring(0, name.lastIndexOf(".")).replace('.', '/') + "/package-info.class", false);
-			if (meta != null)
-				return meta.load().getPackage();
+		while (name.contains(".")) {
+			name = name.substring(0, name.lastIndexOf("."));
+			pkg = Package.getPackage(name);
+			if (pkg == null) {
+				// Try to load package using file provider
+				ClassMeta meta = FileProvider.getClassMeta(name.replace('.', '/') + "/package-info.class", false);
+				if (meta != null)
+					return meta.load().getPackage();
+			} else
+				return pkg;
 		}
-		return parent;
+
+		return null;
 	}
 
 }

@@ -13,9 +13,7 @@ import dev.l3g7.griefer_utils.api.util.ArrayUtil;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
@@ -108,7 +106,7 @@ class MethodReflection {
 	 * @return all methods with the given annotation present.
 	 */
 	static Method[] getAnnotatedMethods(Class<?> targetClass, Class<? extends Annotation> annotation) {
-		List<Method> methods = new ArrayList<>();
+		Set<Method> methods = new HashSet<>();
 		for (Method Method : ArrayUtil.flatmap(Method.class, targetClass.getDeclaredMethods(), targetClass.getMethods())) {
 			if (Method.isAnnotationPresent(annotation))
 				methods.add(Method);
@@ -121,7 +119,7 @@ class MethodReflection {
 	 * @return all method in the given class, including inherited and private ones.
 	 */
 	static Method[] getAllMethods(Class<?> targetClass) {
-		List<Method> methods = new ArrayList<>();
+		Set<Method> methods = new HashSet<>();
 
 		do {
 			Collections.addAll(methods, targetClass.getDeclaredMethods());

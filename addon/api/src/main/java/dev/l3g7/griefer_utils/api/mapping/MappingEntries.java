@@ -17,8 +17,8 @@ public class MappingEntries {
 
 	public static class MappedClass extends MappedMember {
 
-		final MappedList<MappedField> fields = new MappedList<>();
-		final MethodList methods = new MethodList();
+		public final MappedList<MappedField> fields = new MappedList<>();
+		public final MethodList methods = new MethodList();
 
 		MappedClass(String obf, String unobf) {
 			super(obf, unobf);
@@ -27,7 +27,7 @@ public class MappingEntries {
 
 	}
 
-	static class MappedField extends MappedMember {
+	public static class MappedField extends MappedMember {
 
 		MappedField(String obf, String srg) {
 			super(obf, srg);
@@ -35,7 +35,7 @@ public class MappingEntries {
 
 	}
 
-	static class MappedMethod extends MappedMember {
+	public static class MappedMethod extends MappedMember {
 
 		/**
 		 * The obfuscated descriptor of the method.
@@ -62,7 +62,7 @@ public class MappingEntries {
 		}
 	}
 
-	static class MappedMember {
+	public static class MappedMember {
 
 		/**
 		 * The obfuscated name of the member.
@@ -108,22 +108,22 @@ public class MappingEntries {
 	/**
 	 * An {@link ArrayList} with a cache for every mapping type to achieve faster lookup.
 	 */
-	static class MappedList<M extends MappedMember> extends ArrayList<M> {
+	public static class MappedList<M extends MappedMember> extends ArrayList<M> {
 
 		/**
 		 * A member storage where the key is the obfuscated name.
 		 */
-		protected transient final Map<String, M> obfMap = new HashMap<>();
+		public transient final Map<String, M> obfMap = new HashMap<>();
 
 		/**
 		 * A member storage where the key is the searge name.
 		 */
-		protected transient final Map<String, M> srgMap = new HashMap<>();
+		public transient final Map<String, M> srgMap = new HashMap<>();
 
 		/**
 		 * A member storage where the key is the unobfuscated name.
 		 */
-		protected transient final Map<String, M> unobfMap = new HashMap<>();
+		public transient final Map<String, M> unobfMap = new HashMap<>();
 
 		/**
 		 * populates the cache maps.
@@ -141,7 +141,7 @@ public class MappingEntries {
 			}
 		}
 
-		M get(String key, Mapping mapping) {
+		public M get(String key, Mapping mapping) {
 			switch (mapping) {
 				case OBFUSCATED:
 					return obfMap.get(key);
@@ -156,7 +156,7 @@ public class MappingEntries {
 	/**
 	 * A {@link MappedList} where the lookup keys include the corresponding method descriptors.
 	 */
-	static class MethodList extends MappedList<MappedMethod> {
+	public static class MethodList extends MappedList<MappedMethod> {
 
 		/**
 		 * populates the cache maps for faster mapping lookup.

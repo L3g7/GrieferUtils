@@ -48,7 +48,7 @@ public class MessageEvent extends Event {
 					messageBridge.fromLaby(newMsg)
 				);
 				msg.fire();
-				return msg.modified ? messageBridge.toLaby(msg.message) : null;
+				return msg.modified ? messageBridge.toLaby(msg.message) : prevMsg;
 			});
 		}
 

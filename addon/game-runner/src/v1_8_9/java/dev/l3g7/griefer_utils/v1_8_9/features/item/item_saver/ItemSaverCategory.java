@@ -12,14 +12,14 @@ import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
-import dev.l3g7.griefer_utils.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.settings.BaseSetting;
 import dev.l3g7.griefer_utils.settings.SettingLoader;
 import dev.l3g7.griefer_utils.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.tool_saver.ToolSaver;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.TempToolSaverBridge;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -31,11 +31,11 @@ import java.util.stream.Collectors;
 public class ItemSaverCategory extends Feature {
 
 	private final List<Class<?>> savers = Arrays.asList(
-		dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.ItemSaver.class,
+		// dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4.ItemSaver.class,
 		BorderSaver.class,
 		ParticleSaver.class,
 		PrefixSaver.class,
-		ToolSaver.class,
+		// ToolSaver.class,
 		HeadSaver.class,
 		ArmorBreakWarning.class,
 		OrbSaver.class
@@ -54,9 +54,12 @@ public class ItemSaverCategory extends Feature {
 
 		// Get savers
 		List<ItemSaver> savers = this.savers.stream()
-				.map(FileProvider::getSingleton)
-				.map(ItemSaver.class::cast)
-				.collect(Collectors.toList());
+			.map(FileProvider::getSingleton)
+			.map(ItemSaver.class::cast)
+			.collect(Collectors.toList());
+
+		savers.add((ItemSaver) FileProvider.getBridge(TempItemSaverBridge.class)); // TODO: temp
+		savers.add((ItemSaver) FileProvider.getBridge(TempToolSaverBridge.class));
 
 		// Add savers to category
 		category.subSettings(savers.stream()

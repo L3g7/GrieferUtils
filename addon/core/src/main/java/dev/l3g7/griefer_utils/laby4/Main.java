@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.laby4;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.api.event.event_bus.Event;
@@ -22,10 +23,12 @@ import net.labymod.api.event.addon.lifecycle.AddonPostEnableEvent;
 import net.labymod.api.models.addon.annotation.AddonMain;
 import net.labymod.api.models.addon.info.InstalledAddonInfo;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 import static net.labymod.api.client.component.format.NamedTextColor.YELLOW;
 
 @AddonMain
+@ExclusiveTo(LABY_4)
 public class Main {
 
 	private static LoadedAddon addon;

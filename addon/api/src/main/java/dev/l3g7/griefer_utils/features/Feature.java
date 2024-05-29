@@ -112,7 +112,7 @@ public abstract class Feature implements Disableable {
 	}
 
 	public static List<BaseSetting<?>> getUncategorized() {
-		return categories.computeIfAbsent(null, p -> SwitchSetting.create()).getSubSettings();
+		return categories.computeIfAbsent(null, p -> SwitchSetting.create()).getChildSettings();
 	}
 
 	public static Stream<Feature> getFeatures() {

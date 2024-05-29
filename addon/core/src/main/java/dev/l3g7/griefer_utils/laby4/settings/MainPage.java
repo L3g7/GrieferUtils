@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.laby4.settings;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -28,8 +29,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 
+@ExclusiveTo(LABY_4)
 public class MainPage {
 
 	@OnEnable
@@ -59,7 +62,7 @@ public class MainPage {
 					|| !(feature.getMainElement() instanceof SwitchSettingImpl main))
 					return;
 
-				for (BaseSetting<?> element : main.getSubSettings()) {
+				for (BaseSetting<?> element : main.getChildSettings()) {
 					if (!(element instanceof SwitchSetting sub))
 						continue;
 

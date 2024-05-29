@@ -11,12 +11,15 @@ import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.PlaySoundAtEntityEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.PlaySoundEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.TickEvent;
 import dev.l3g7.griefer_utils.v1_8_9.events.render.RenderPlayerEvent;
-import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingImpl;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListEntry;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingLaby3;
+import dev.l3g7.griefer_utils.v1_8_9.settings.player_list.PlayerListSettingLaby4;
 import dev.l3g7.griefer_utils.v1_8_9.util.PlayerUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +27,9 @@ import net.minecraft.potion.Potion;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.v1_8_9.misc.ServerCheck.isOnGrieferGames;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.world;
@@ -45,9 +50,18 @@ public class PlayerHider extends Feature {
 					updatePlayer(player);
 		});
 
-	private final PlayerListSettingImpl excludedPlayers = new PlayerListSettingImpl()
-		.name("Ausgenommene Spieler")
-		.icon("light_bulb");
+	private final AbstractSetting<?, List<PlayerListEntry>> excludedPlayers = temp();
+
+	private static AbstractSetting<?, List<PlayerListEntry>> temp() { // TODO refactor
+		if (LABY_4.isActive())
+			return new PlayerListSettingLaby4()
+				.name("Ausgenommene Spieler")
+				.icon("light_bulb");
+		else
+			return new PlayerListSettingLaby3()
+				.name("Ausgenommene Spieler")
+				.icon("light_bulb");
+	}
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -125,7 +139,19 @@ public class PlayerHider extends Feature {
 	}
 
 	private boolean showPlayer(Entity player) {
-		return player.equals(player()) || excludedPlayers.contains(player.getName(), player.getUniqueID()) || (PlayerUtil.isNPC(player) && showNPCs.get());
+		if (player.equals(player()) || (PlayerUtil.isNPC(player) && showNPCs.get()))
+			return true;
+
+		String name = player.getName();
+		UUID uuid = player.getUniqueID();
+		if (name == null && uuid == null)
+			return false;
+
+		for (PlayerListEntry entry : excludedPlayers.get())
+			if (name == null ? uuid.toString().equalsIgnoreCase(entry.id) : name.equalsIgnoreCase(entry.name))
+				return true;
+
+		return false;
 	}
 
 }

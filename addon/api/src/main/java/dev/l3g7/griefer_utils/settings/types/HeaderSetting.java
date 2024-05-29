@@ -63,7 +63,7 @@ public interface HeaderSetting extends BaseSetting<HeaderSetting> {
 	}
 
 	@Override
-	default List<BaseSetting<?>> getSubSettings() {
+	default List<BaseSetting<?>> getChildSettings() {
 		return Collections.emptyList();
 	}
 

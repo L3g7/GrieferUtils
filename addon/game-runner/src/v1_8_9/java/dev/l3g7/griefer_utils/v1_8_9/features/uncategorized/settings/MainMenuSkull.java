@@ -59,7 +59,7 @@ public class MainMenuSkull {
 		LabyConfigProvider.INSTANCE.get().appearance().dynamicBackground().enabled().addChangeListener(enabled::enabled);
 	}
 
-	@Mixin(Schematic.class)
+	@Mixin(value = Schematic.class, remap = false)
 	@ExclusiveTo(LABY_4)
 	private abstract static class MixinSchematic {
 
@@ -85,7 +85,7 @@ public class MainMenuSkull {
 
 	}
 
-	@Mixin(Textures.Splash.class)
+	@Mixin(value = Textures.Splash.class, remap = false)
 	@ExclusiveTo(LABY_4)
 	private static class MixinTextures {
 

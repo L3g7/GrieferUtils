@@ -37,7 +37,7 @@ public class Injector extends InjectorBase implements Entrypoint, AddonClassTran
 
 		// Load injector
 		LoadedAddon addon = Laby.labyAPI().addonService().getAddon(getClass()).orElseThrow();
-		InjectorBase.initialize(addon.info().getNamespace());
+		InjectorBase.initialize(addon.info().getNamespace(), MINECRAFT.getCurrent().refmap);
 	}
 
 }

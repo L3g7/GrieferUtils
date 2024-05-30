@@ -31,13 +31,12 @@ public class CleanupProcessor extends CompilationPostProcessor {
 	public void apply(FileSystem fs) throws IOException {
 		// delete LabyMod 4 autogen
 		deleteDir(fs.getPath("dev/l3g7/griefer_utils/core"));
+		deleteDir(fs.getPath("META-INF/custom-services"));
 
 		// delete compilation post processors
 		deleteDir(fs.getPath("dev/l3g7/griefer_utils/post_processor/processors/compilation"));
 		Files.deleteIfExists(fs.getPath("dev/l3g7/griefer_utils/post_processor/processors/CompilationPostProcessor.class"));
 		Files.deleteIfExists(fs.getPath("dev/l3g7/griefer_utils/post_processor/PostProcessor.class"));
-
-		deleteDir(fs.getPath("META-INF/custom-services"));
 
 		// Fix manifest version
 		Path manifestPath = fs.getPath("META-INF/MANIFEST.MF");

@@ -28,7 +28,6 @@ import net.labymod.api.client.render.font.RenderableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static dev.l3g7.griefer_utils.api.misc.Citybuild.CitybuildIconBridge.citybuildIconBridge;
-import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 
 public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, Citybuild> implements CitybuildSetting {
 
@@ -55,9 +54,9 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 
 			return new JsonPrimitive(name);
 		}, e -> Citybuild.getCitybuild(e.getAsString()), Citybuild.ANY);
-		icon(citybuildIconBridge.createIcon(Citybuild.ANY, false));
+		icon(citybuildIconBridge.toItemStack(Citybuild.ANY));
 		callback(v -> {
-			icon(citybuildIconBridge.createIcon(v, false));
+			icon(citybuildIconBridge.toItemStack(v));
 
 			if (activity != null) {
 				iconWidget.icon().set(getIcon());
@@ -91,7 +90,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 			}
 
 			private Component toComponent(Citybuild entry) {
-				return Component.icon(c(citybuildIconBridge.createIcon(entry, true)))
+				return Component.icon(SettingsImpl.buildIcon(citybuildIconBridge.toItemStack(Citybuild.ANY)))
 					.append(Component.text(entry.getName()));
 			}
 

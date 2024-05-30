@@ -25,6 +25,10 @@ public class ItemStackIcon extends Icon { // NOTE: move somewhere else
 		this(icon, 0, 0);
 	}
 
+	public ItemStackIcon(ItemStack icon, boolean asEntry) {
+		this(icon, asEntry ? -2 : 0, asEntry ? -1 : 0);
+	}
+
 	public ItemStackIcon(ItemStack icon, int offsetX, int offsetY) {
 		super(null);
 		this.icon = icon;

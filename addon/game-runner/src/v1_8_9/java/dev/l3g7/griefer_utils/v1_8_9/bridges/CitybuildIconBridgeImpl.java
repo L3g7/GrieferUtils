@@ -3,11 +3,8 @@ package dev.l3g7.griefer_utils.v1_8_9.bridges;
 import dev.l3g7.griefer_utils.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.laby4.settings.ItemStackIcon;
-import net.labymod.api.client.gui.icon.Icon;
 import net.minecraft.item.ItemStack;
 
-import static dev.l3g7.griefer_utils.api.reflection.Reflection.c;
 import static net.minecraft.init.Blocks.*;
 import static net.minecraft.init.Items.*;
 
@@ -17,8 +14,8 @@ public class CitybuildIconBridgeImpl implements Citybuild.CitybuildIconBridge {
 
 	@Override
 	@SuppressWarnings("DuplicatedCode") // intellij is brain-dead
-	public Icon createIcon(Citybuild cb, boolean asEntry) {
-		ItemStack stack = switch (cb) {
+	public ItemStack toItemStack(Citybuild cb) {
+		return switch (cb) {
 			case ANY -> new ItemStack(nether_star);
 			case CB1 -> new ItemStack(diamond_block);
 			case CB2 -> new ItemStack(emerald_block);
@@ -49,8 +46,6 @@ public class CitybuildIconBridgeImpl implements Citybuild.CitybuildIconBridge {
 			case LAVA -> new ItemStack(lava_bucket);
 			case EVENT -> new ItemStack(beacon);
 		};
-
-		return new ItemStackIcon(c(stack), asEntry ? -2 : 0, asEntry ? -1 : 0);
 	}
 
 }

@@ -17,7 +17,9 @@ import dev.l3g7.griefer_utils.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.laby3.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.laby4.settings.ItemStackIcon;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
+import net.labymod.api.client.world.item.ItemStack;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.*;
@@ -75,7 +77,7 @@ public class MultiHotkeyL3 extends Feature {
 				keys,
 				commands,
 				cb
-			).icon(citybuildIconBridge.createIcon(cb, false));
+			).icon(citybuildIconBridge.toItemStack(cb));
 
 			List<SettingsElement> settings = enabled.getSubSettings().getElements();
 			settings.add(settings.size() - 1, hotKey);

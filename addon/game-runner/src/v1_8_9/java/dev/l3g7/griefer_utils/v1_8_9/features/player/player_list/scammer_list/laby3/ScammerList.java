@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.player.player_list;
+package dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.scammer_list.laby3;
 
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.api.BugReporter;
@@ -16,12 +16,13 @@ import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.v1_8_9.bridges.laby3.settings.StringSettingImpl;
+import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.PlayerList;
+import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.TempScammerListBridge;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.ImageSelection.FileSelectionDialog;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
-import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
@@ -37,7 +38,7 @@ import static dev.l3g7.griefer_utils.api.bridges.LabyBridge.labyBridge;
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_3)
-public class ScammerListLaby3 extends PlayerList implements TempScammerListBridge {
+public class ScammerList extends PlayerList implements TempScammerListBridge {
 
 	private String previousText = "";
 	private boolean starting = true;
@@ -58,7 +59,7 @@ public class ScammerListLaby3 extends PlayerList implements TempScammerListBridg
 			}
 		});
 
-	public ScammerListLaby3() {
+	public ScammerList() {
 		super("§zLokale Scammerliste", "Markiert lokal hinzugefügte Scammer.", "⚠", "red_scroll", "Scammer", EnumChatFormatting.RED, 14, "§c§lScammer", null);
 	}
 

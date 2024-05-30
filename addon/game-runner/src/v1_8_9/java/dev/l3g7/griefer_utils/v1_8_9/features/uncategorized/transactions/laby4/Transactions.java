@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.transactions;
+package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.transactions.laby4;
 
 import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
@@ -42,7 +42,7 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.uuid;
 
 @Singleton
 @ExclusiveTo(LABY_4)
-public class TransactionsL4 extends Feature { // NOTE: search, export
+public class Transactions extends Feature { // NOTE: search, export
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 

@@ -53,7 +53,7 @@ import static net.labymod.api.Textures.SpriteCommon.X;
 
 @Singleton
 @ExclusiveTo(LABY_4)
-public class MultiHotkeyL4 extends Feature {
+public class MultiHotkey extends Feature {
 
 	private final HotkeyListSetting entries = new HotkeyListSetting()
 		.name("Hotkeys")

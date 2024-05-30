@@ -5,31 +5,32 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.player;
+package dev.l3g7.griefer_utils.v1_8_9.features.player.clean_up_player_menu.laby4;
 
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
-import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import net.labymod.main.LabyMod;
-import net.labymod.user.util.UserActionEntry;
+import net.labymod.api.Laby;
+import net.labymod.api.client.entity.player.interaction.BulletPoint;
+import net.labymod.api.util.KeyValue;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 
 @Singleton
-@ExclusiveTo(LABY_3)
-public class CleanUpPlayerMenuL3 extends Feature {
+@ExclusiveTo(LABY_4)
+public class CleanUpPlayerMenu extends Feature {
 
-	private List<UserActionEntry> defaultEntries;
-	private List<UserActionEntry> allDefaultEntries;
+	private List<KeyValue<BulletPoint>> entries;
+	private List<KeyValue<BulletPoint>> allEntries;
 	private String statesKey;
-	private int shownEntries;
+	private int shownEntries = 0;
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -40,9 +41,8 @@ public class CleanUpPlayerMenuL3 extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		defaultEntries = Reflection.get(LabyMod.getInstance().getUserManager().getUserActionGui(), "defaultEntries");
-		allDefaultEntries = new ArrayList<>(defaultEntries);
-		shownEntries = 0;
+		entries = Laby.references().interactionMenuRegistry().getElements();
+		allEntries = new ArrayList<>(entries);
 
 		statesKey = getConfigKey() + ".entries";
 		if (Config.has(statesKey)) {
@@ -52,13 +52,14 @@ public class CleanUpPlayerMenuL3 extends Feature {
 
 		List<SwitchSetting> settings = new ArrayList<>();
 
-		for (int i = 0; i < allDefaultEntries.size(); i++) {
-			UserActionEntry entry = allDefaultEntries.get(i);
+		for (int i = 0; i < allEntries.size(); i++) {
+			IChatComponent title = (IChatComponent) allEntries.get(i).getValue().getTitle();
+			String name = title.getUnformattedText();
 			int index = 1 << i;
 
 			settings.add(SwitchSetting.create()
-				.name(entry.getDisplayName())
-				.description("Ob der Spielermenü-Eintrag \"" + entry.getDisplayName() + "\" angezeigt werden soll.")
+				.name(name)
+				.description("Ob der Spielermenü-Eintrag \"" + name + "\" angezeigt werden soll.")
 				.icon("labymod_3/playermenu")
 				.defaultValue((shownEntries & index) != 0)
 				.callback(b -> {
@@ -75,11 +76,11 @@ public class CleanUpPlayerMenuL3 extends Feature {
 	}
 
 	private void updateEntries() {
-		defaultEntries.clear();
+		entries.clear();
 
-		for (int i = 0; i < allDefaultEntries.size(); i++)
+		for (int i = 0; i < allEntries.size(); i++)
 			if ((shownEntries & 1 << i) != 0)
-				defaultEntries.add(allDefaultEntries.get(i));
+				entries.add(allEntries.get(i));
 
 		Config.set(statesKey, new JsonPrimitive(shownEntries));
 		Config.save();

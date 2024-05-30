@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.transactions;
+package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.transactions.laby3;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -45,7 +45,7 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.uuid;
 
 @Singleton
 @ExclusiveTo(LABY_3)
-public class TransactionsL3 extends Feature {
+public class Transactions extends Feature {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	private static final List<BaseSetting<?>> HEADER = Arrays.asList(

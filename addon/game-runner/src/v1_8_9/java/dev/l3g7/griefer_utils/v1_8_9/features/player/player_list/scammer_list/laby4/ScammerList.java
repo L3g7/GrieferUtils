@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.player.player_list;
+package dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.scammer_list.laby4;
 
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.api.BugReporter;
@@ -18,6 +18,8 @@ import dev.l3g7.griefer_utils.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.laby4.settings.types.StringSettingImpl;
 import dev.l3g7.griefer_utils.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.PlayerList;
+import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.TempScammerListBridge;
 import dev.l3g7.griefer_utils.v1_8_9.misc.gui.elements.ImageSelection.FileSelectionDialog;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
@@ -36,7 +38,7 @@ import static net.minecraft.util.EnumChatFormatting.RED;
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
-public class ScammerListLaby4 extends PlayerList implements TempScammerListBridge {
+public class ScammerList extends PlayerList implements TempScammerListBridge {
 
 	private String previousText = "";
 	private boolean starting = true;
@@ -57,7 +59,7 @@ public class ScammerListLaby4 extends PlayerList implements TempScammerListBridg
 			}
 		});
 
-	public ScammerListLaby4() {
+	public ScammerList() {
 		super("§zLokale Scammerliste", "Markiert lokal hinzugefügte Scammer.", "⚠", "red_scroll", "Scammer", RED, 14, "§c§lScammer", null);
 	}
 

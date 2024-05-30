@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.render;
+package dev.l3g7.griefer_utils.v1_8_9.features.render.clan_tags.laby3;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,23 +15,24 @@ import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.events.network.MysteryModPayloadEvent;
-import net.labymod.core.main.LabyMod;
-import net.labymod.serverapi.protocol.model.display.Subtitle;
+import net.labymod.main.LabyMod;
+import net.labymod.user.User;
+import net.labymod.utils.ModColor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 
 /**
  * Shows a player's clan tag underneath their name tag.
  */
 @Singleton
-@ExclusiveTo(LABY_4)
-public class ClanTagsL4 extends Feature {
+@ExclusiveTo(LABY_3)
+public class ClanTags extends Feature {
 
-	private final List<Subtitle> subtitles = new ArrayList<>();
+	private final Map<UUID, String> tags = new HashMap<>();
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -41,11 +42,15 @@ public class ClanTagsL4 extends Feature {
 		.callback(this::toggleClanTags);
 
 	private void toggleClanTags(boolean enabled) {
-		for (Subtitle subtitle : subtitles) {
-			if (enabled)
-				LabyMod.references().subtitleService().addSubtitle(subtitle);
-			else
-				LabyMod.references().subtitleService().removeSubtitle(subtitle);
+		if (enabled) {
+			tags.forEach((uuid, tag) -> {
+				User user = LabyMod.getInstance().getUserManager().getUser(uuid);
+				user.setSubTitle(tag);
+				user.setSubTitleSize(0.8);
+			});
+		} else {
+			for (User user : LabyMod.getInstance().getUserManager().getUsers().values())
+				user.setSubTitle(null);
 		}
 	}
 
@@ -58,11 +63,14 @@ public class ClanTagsL4 extends Feature {
 			JsonObject obj = elem.getAsJsonObject();
 
 			UUID uuid = UUID.fromString(obj.get("targetId").getAsString());
-			Subtitle subtitle = new Subtitle(uuid, 0.8, obj.get("text"));
+			User user = LabyMod.getInstance().getUserManager().getUser(uuid);
 
-			subtitles.add(subtitle);
-			if (isEnabled())
-				LabyMod.references().subtitleService().addSubtitle(subtitle);
+			String tag = ModColor.createColors(obj.get("text").getAsString());
+			tags.put(uuid, tag);
+			if (isEnabled()) {
+				user.setSubTitle(tag);
+				user.setSubTitleSize(obj.get("scale").getAsDouble());
+			}
 		}
 	}
 

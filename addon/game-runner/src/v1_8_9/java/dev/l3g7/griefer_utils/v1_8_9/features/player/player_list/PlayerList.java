@@ -56,8 +56,8 @@ public abstract class PlayerList extends Feature {
 	private final int paneType; // The glass pane color in /profil
 
 	// List entries
-	final List<UUID> uuids = new ArrayList<>();
-	final List<String> names = new ArrayList<>();
+	protected final List<UUID> uuids = new ArrayList<>();
+	protected final List<String> names = new ArrayList<>();
 
 	// List settings
 	public final DropDownSetting<MarkAction> tabAction = DropDownSetting.create(MarkAction.class)

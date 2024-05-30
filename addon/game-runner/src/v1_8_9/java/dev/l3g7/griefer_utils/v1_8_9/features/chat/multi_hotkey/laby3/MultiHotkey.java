@@ -17,9 +17,7 @@ import dev.l3g7.griefer_utils.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.laby3.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.laby4.settings.ItemStackIcon;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
-import net.labymod.api.client.world.item.ItemStack;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.*;
@@ -31,7 +29,7 @@ import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 @Singleton
 @ExclusiveTo(LABY_3)
-public class MultiHotkeyL3 extends Feature {
+public class MultiHotkey extends Feature {
 
 	private String entryKey;
 

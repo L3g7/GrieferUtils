@@ -47,7 +47,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting implements Laby3Setti
 
 	public HotkeyDisplaySetting(String name, Set<Integer> keys, List<String> commands, Citybuild citybuild) {
 		super(true, true, false);
-		container = (SettingsElement) FileProvider.getSingleton(MultiHotkeyL3.class).getMainElement();
+		container = (SettingsElement) FileProvider.getSingleton(MultiHotkey.class).getMainElement();
 
 		this.name = StringSetting.create()
 			.name("Name")
@@ -76,7 +76,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting implements Laby3Setti
 			.defaultValue(defaultKeys = keys)
 			.icon("key")
 			.pressCallback(b -> {
-				if (!b || !FileProvider.getSingleton(MultiHotkeyL3.class).isEnabled())
+				if (!b || !FileProvider.getSingleton(MultiHotkey.class).isEnabled())
 					return;
 
 				if (!this.citybuild.get().isOnCb())
@@ -136,7 +136,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting implements Laby3Setti
 
 	protected void onChange() {
 		icon(citybuild.get());
-		FileProvider.getSingleton(MultiHotkeyL3.class).onChange();
+		FileProvider.getSingleton(MultiHotkey.class).onChange();
 	}
 
 	@Override

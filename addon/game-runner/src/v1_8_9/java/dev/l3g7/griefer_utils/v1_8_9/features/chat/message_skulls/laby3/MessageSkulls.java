@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.chat.message_skulls;
+package dev.l3g7.griefer_utils.v1_8_9.features.chat.message_skulls.laby3;
 
 import de.emotechat.addon.gui.chat.render.EmoteChatRenderer;
 import dev.l3g7.griefer_utils.api.BugReporter;
@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.bridges.laby3.temp.ChatLineUtil;
 import dev.l3g7.griefer_utils.v1_8_9.events.MessageEvent;
+import dev.l3g7.griefer_utils.v1_8_9.features.chat.message_skulls.EmoteChatUtil;
 import dev.l3g7.griefer_utils.v1_8_9.misc.NameCache;
 import dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil;
 import net.labymod.ingamechat.renderer.ChatLine;
@@ -45,7 +46,7 @@ import static dev.l3g7.griefer_utils.api.misc.Constants.*;
 
 @Singleton
 @ExclusiveTo(LABY_3)
-public class MessageSkullsL3 extends Feature {
+public class MessageSkulls extends Feature {
 
 	private static final ArrayList<Pattern> PATTERNS = new ArrayList<>(MESSAGE_PATTERNS) {{
 		remove(GLOBAL_CHAT_PATTERN);
@@ -96,7 +97,7 @@ public class MessageSkullsL3 extends Feature {
 	}
 
 	public static void renderSkull(ChatLine chatLine, double y, float alpha) {
-		if (!FileProvider.getSingleton(MessageSkullsL3.class).isEnabled())
+		if (!FileProvider.getSingleton(MessageSkulls.class).isEnabled())
 			return;
 
 		GlStateManager.enableBlend();

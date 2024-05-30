@@ -18,6 +18,8 @@ import net.labymod.api.models.addon.annotation.AddonTransformer;
 import net.labymod.api.models.version.Version;
 import net.minecraft.launchwrapper.Launch;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.VersionType.MINECRAFT;
+
 @AddonEntryPoint
 @AddonTransformer
 @SuppressWarnings("UnstableApiUsage")

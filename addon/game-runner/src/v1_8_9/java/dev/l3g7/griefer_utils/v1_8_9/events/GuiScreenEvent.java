@@ -13,7 +13,10 @@ import net.labymod.api.Laby;
 import net.labymod.v1_8_9.client.gui.screen.LabyScreenRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.GuiGameOver;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.network.play.INetHandlerPlayClient;
@@ -174,22 +177,15 @@ public abstract class GuiScreenEvent extends Event {
 				}
 
 				GuiOpenEvent<?> event = new GuiOpenEvent<>(screen).fire();
-				System.out.println(new StringBuilder().append("From ").append(screen).append(", canceled: ").append(event.isCanceled()).append(", gui: ").append(event.gui).toString());
 				return event.isCanceled() ? CANCEL_INDICATOR : event.gui;
 		    }
 
 			@Inject(method = "displayGuiScreen", at = @At("HEAD"), cancellable = true)
 			public void injectDisplayGuiScreen(GuiScreen guiScreenIn, CallbackInfo ci) {
-				System.out.println(new StringBuilder().append("injectDisplayGuiScreen HEAD: ").append(guiScreenIn).append(" < ").append(mc().currentScreen).toString());
 				if (guiScreenIn == CANCEL_INDICATOR)
 					ci.cancel();
 				else
 					cancelOpenPacket = false;
-			}
-
-			@Inject(method = "displayGuiScreen", at = @At("TAIL"), cancellable = true)
-			public void injectDisplayGuiScreen2(GuiScreen guiScreenIn, CallbackInfo ci) {
-				System.out.println(new StringBuilder().append("injectDisplayGuiScreen TAIL: ").append(guiScreenIn).append(" < ").append(mc().currentScreen).toString());
 			}
 
 		}

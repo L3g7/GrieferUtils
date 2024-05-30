@@ -66,10 +66,8 @@ public class StringSettingImpl extends StringElement implements Laby3Setting<Str
 		if (mc.currentScreen instanceof ExpandedStringElementGui)
 			return;
 
-		if (!(mc().currentScreen instanceof AddonsGuiWithCustomBackButton)) {
+		if (!(mc().currentScreen instanceof AddonsGuiWithCustomBackButton))
 			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(null));
-			System.out.println("Displaying cbb: " + mc().currentScreen);
-		}
 
 		((AddonsGuiWithCustomBackButton) mc().currentScreen).addCheck(closeCheck);
 	}

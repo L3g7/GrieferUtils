@@ -59,18 +59,15 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 	}
 
 	private boolean canClose() {
-		System.out.println("Running " + closeChecks);
 		for (Supplier<Boolean> closeCheck : closeChecks)
 			if (!closeCheck.get())
 				return false;
 
-		System.out.println("> true");
 		return true;
 	}
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		System.out.println((button == Reflection.get(this, "buttonBack")) + " && " + startPathSize + " == " + path().size());
 		if (button == Reflection.get(this, "buttonBack") && startPathSize == path().size()) {
 			if (canClose())
 				mc().displayGuiScreen(previousScreen);

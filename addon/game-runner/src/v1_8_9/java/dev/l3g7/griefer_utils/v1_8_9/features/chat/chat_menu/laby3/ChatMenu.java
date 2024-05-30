@@ -163,7 +163,6 @@ public class ChatMenu extends Feature {
 		if (Mouse.getEventButton() != 1 || !(mc().currentScreen instanceof GuiChat))
 			return;
 
-		System.out.println("Clicked on gui: " + event.gui);
 		IChatComponent icc = ChatLineUtil.getUnmodifiedIChatComponent(ChatLineUtil.getHoveredComponent());
 		if (icc == null) // Didn't click on a line
 			return;

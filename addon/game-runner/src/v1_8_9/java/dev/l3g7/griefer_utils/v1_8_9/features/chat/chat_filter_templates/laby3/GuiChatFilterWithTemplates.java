@@ -26,7 +26,6 @@ import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.main.GameConfiguration;
 
 import java.io.IOException;
 
@@ -36,7 +35,6 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 
 	public GuiChatFilterWithTemplates(String defaultText) {
 		super(defaultText);
-		System.out.println(">:> GuiChatFilterWithTemplates");
 	}
 
 	// TODO: Inject into open gui instead of overwriting
@@ -44,7 +42,6 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		System.out.println(">:> drawScreen");
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		Filters.Filter selectedFilter = Reflection.get(this, "selectedFilter");
 		if (selectedFilter != null)
@@ -55,7 +52,6 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 
 	@Override
 	public void setWorldAndResolution(Minecraft lvt_1_1_, int lvt_2_1_, int lvt_3_1_) {
-		System.out.println(">:> setWorldAndResolution");
 		super.setWorldAndResolution(lvt_1_1_, lvt_2_1_, lvt_3_1_);
 	}
 

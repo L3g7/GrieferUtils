@@ -40,6 +40,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Bridge
 @Singleton
+@ExclusiveTo(LABY_3)
 public class LabyBridgeImpl implements LabyBridge {
 
 	private String addonVersion = null;

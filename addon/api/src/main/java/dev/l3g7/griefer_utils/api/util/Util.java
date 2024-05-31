@@ -7,8 +7,12 @@
 
 package dev.l3g7.griefer_utils.api.util;
 
+import sun.misc.Unsafe;
+
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.util.function.BiConsumer;
 
 /**
  * Everything that doesn't fit into the other utility classes.
@@ -17,12 +21,41 @@ public class Util {
 
 	private static final DecimalFormat DOUBLE_NUMBER = new DecimalFormat("00");
 
-	private static final Field detailMessage;
+	private static final BiConsumer<Throwable, String> setDetailMessageFunc;
+
 	static {
 		try {
-			detailMessage = Throwable.class.getDeclaredField("detailMessage");
-			detailMessage.setAccessible(true);
-		} catch (NoSuchFieldException e) {
+			if (System.getProperty("java.version").startsWith("1.")) {
+				// Java 8 (or lower)
+				Field detailMessage = Throwable.class.getDeclaredField("detailMessage");
+				detailMessage.setAccessible(true);
+				setDetailMessageFunc = (throwable, formattedMessage) -> {
+					try {
+						detailMessage.set(throwable, formattedMessage);
+					} catch (IllegalAccessException e) {
+						throw new RuntimeException(e);
+					}
+				};
+			} else {
+				// Java 9 or higher
+				// Create elevated lookup
+				MethodHandles.Lookup lookup = MethodHandles.lookup();
+				Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+				theUnsafe.setAccessible(true);
+				Unsafe unsafe = (Unsafe) theUnsafe.get(null);
+				unsafe.putInt(lookup, 12 /* allowedModes */, -1 /* TRUSTED */);
+
+				var setter = lookup.findSetter(Throwable.class, "detailMessage", String.class);
+
+				setDetailMessageFunc = (throwable, formattedMessage) -> {
+					try {
+						setter.invoke(throwable, formattedMessage);
+					} catch (Throwable e) {
+						throw new RuntimeException(e);
+					}
+				};
+			}
+		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -36,11 +69,7 @@ public class Util {
 		if (throwable.getMessage() != null)
 			formattedMessage += " (" + throwable.getMessage() + ")";
 
-		try {
-			detailMessage.set(throwable, formattedMessage);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+		setDetailMessageFunc.accept(throwable, formattedMessage);
 		return throwable;
 	}
 

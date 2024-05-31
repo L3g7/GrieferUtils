@@ -24,16 +24,16 @@ import java.io.InputStreamReader;
 public class EarlyStart {
 
 	public static void start(Version semVer) {
-		// Ensure addon version is up-to-date
-		JsonObject addonJson = Streams.parse(new JsonReader(new InputStreamReader(FileProvider.getData("addon.json")))).getAsJsonObject();
-		Reflection.set(Laby.labyAPI().addonService().getAddon(Main.class).orElseThrow().info(), "version", addonJson.get("version").getAsString());
-
 		// Initialize bridge
 		Bridge.Version mcVersion = Bridge.Version.getMinecraftBySemVer(semVer.toString());
 		if (mcVersion == null)
 			throw new UnsupportedAddonException("GrieferUtils ist nicht für Version " + semVer + " verfügbar!");
 
 		Bridge.Initializer.init(Bridge.Version.LABY_4, mcVersion);
+
+		// Ensure addon version is up-to-date
+		JsonObject addonJson = Streams.parse(new JsonReader(new InputStreamReader(FileProvider.getData("addon.json")))).getAsJsonObject();
+		Reflection.set(Laby.labyAPI().addonService().getAddon(Main.class).orElseThrow().info(), "version", addonJson.get("version").getAsString());
 
 		// Load mcp mappings for automatic name resolution in Reflection
 		Mapper.loadMappings("1.8.9", "22");

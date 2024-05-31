@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.v1_8_9.bridges.laby3;
 
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.api.reflection.Reflection;
 import net.minecraft.client.Minecraft;
@@ -21,6 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
+
+@ExclusiveTo(LABY_3)
 public class Laby3ResourceFix {
 
 	@OnEnable

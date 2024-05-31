@@ -46,10 +46,15 @@ public class Main {
 		System.out.println("GrieferUtils enabling");
 		long begin = System.currentTimeMillis();
 
-		Feature.getFeatures().forEach(Feature::init);
+		try {
+			Feature.getFeatures().forEach(Feature::init);
 
-		EventRegisterer.init();
-		Event.fire(OnEnable.class);
+			EventRegisterer.init();
+			Event.fire(OnEnable.class);
+		} catch (RuntimeException e) {
+			e.printStackTrace(System.err);
+			throw e;
+		}
 
 		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}

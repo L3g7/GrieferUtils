@@ -45,6 +45,9 @@ public class RefmapConverter extends CompilationPostProcessor {
 
 	@Override
 	public void apply(FileSystem fs) throws IOException {
+		// Move mixins.json
+		Files.move(fs.getPath("1.8.9-GrieferUtils.mixins.json"), fs.getPath("griefer_utils.mixins.json"));
+
 		// Move refmaps
 		Files.createDirectory(fs.getPath("/refmaps/"));
 		try (Stream<Path> stream = Files.list(fs.getPath("/"))) {

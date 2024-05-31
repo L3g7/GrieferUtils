@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.laby3.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.v1_8_9.misc.SkullIcon;
 import dev.l3g7.griefer_utils.v1_8_9.util.render.AsyncSkullRenderer;
@@ -34,10 +35,18 @@ import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_4;
 public class HeadTextureFix extends Feature {
 
 	@MainElement
-	private final SwitchSetting enabled = (LABY_4.isActive() ? SwitchSetting.create()
-		.icon(SkullIcon.OWN) : new OwnSkullSwitchSetting())
-		.name("Kopf-Texturen fixen")
-		.description("Lädt Kopf-Texturen automatisch nach.");
+	private final SwitchSetting enabled;
+
+	private HeadTextureFix() {
+		if (LABY_4.isActive()) {
+			enabled = SwitchSetting.create().icon(SkullIcon.OWN);
+		} else
+			enabled = new OwnSkullSwitchSetting();
+
+		enabled
+			.name("Kopf-Texturen fixen")
+			.description("Lädt Kopf-Texturen automatisch nach.");
+	}
 
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());
 	public static final Set<String> processedProfiles = Collections.synchronizedSet(new HashSet<>());

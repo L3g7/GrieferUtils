@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.v1_8_9.features.chat.command_pie_menu.laby3;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import dev.l3g7.griefer_utils.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.api.misc.config.Config;
@@ -34,9 +35,11 @@ import net.labymod.settings.elements.SettingsElement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.v1_8_9.util.MinecraftUtil.mc;
 
 @Singleton
+@ExclusiveTo(LABY_3)
 public class CommandPieMenu extends Feature {
 
 	private String entryKey;

@@ -11,6 +11,8 @@ dependencies {
 	compileOnly(fileTree("../libs"))
 	compileOnly(fileTree("libs"))
 
+	implementation("org.jetbrains:annotations:24.1.0")
+
 	// mXparser
 	implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.1.0")
 
@@ -49,6 +51,10 @@ tasks.register("run", JavaExec::class) {
 		System.getProperty("user.home") + "/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/b3add478d4382b78ea20b1671390a858002feb6c/gson-2.10.1.jar",
 		System.getProperty("user.home") + "/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/9.7/73d7b3086e14beb604ced229c302feff6449723/asm-9.7.jar",
 		System.getProperty("user.home") + "/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/9.7/e446a17b175bfb733b87c5c2560ccb4e57d69f1a/asm-tree-9.7.jar"
+	)
+	jvmArgs(
+		"-Dgriefer_utils.version=" + props.getProperty("version"),
+		"-Dgriefer_utils.debug=" + props.getProperty("debug")
 	)
 	mainClass.set("dev.l3g7.griefer_utils.post_processor.PostProcessor")
 }

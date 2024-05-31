@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "dev.l3g7.griefer_utils.injection.mixin",
+  "package": "dev.l3g7.griefer_utils.v1_8_9",
   "plugin": "dev.l3g7.griefer_utils.injection.MixinPlugin",
   "refmap": "(dynamically loaded by InjectorBase)",
   "compatibilityLevel": "JAVA_8",

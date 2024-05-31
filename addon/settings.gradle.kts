@@ -23,5 +23,4 @@ pluginManagement {
 plugins.apply("net.labymod.gradle")
 
 include(":api")
-include(":core")
 include("post-processor")

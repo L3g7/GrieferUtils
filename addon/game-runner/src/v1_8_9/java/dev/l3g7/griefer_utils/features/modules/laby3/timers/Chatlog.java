@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.timers;
+package dev.l3g7.griefer_utils.features.modules.laby3.timers;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby3Module;
+import dev.l3g7.griefer_utils.features.modules.Laby3Module;
 import net.labymod.utils.Material;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;

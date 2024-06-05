@@ -13,11 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import dev.l3g7.griefer_utils.core.api.file_provider.impl.JarFileProvider;
-import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
-import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel;
 import sun.misc.Unsafe;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -47,6 +43,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -54,10 +51,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * the classloader with the new jar, and deletes the old file on shutdown.
  * <p>
  * As loading any class would prevent it from being updated, this class contains code also found in
- * {@link Config},
- * {@link CustomSSLSocketFactoryProvider},
- * {@link IOUtil} and
- * {@link Reflection}.
+ * {@link dev.l3g7.griefer_utils.core.api.misc.config.Config},
+ * {@link dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider},
+ * {@link dev.l3g7.griefer_utils.core.api.util.IOUtil} and
+ * {@link dev.l3g7.griefer_utils.core.api.reflection.Reflection}.
  */
 public class AutoUpdater { // FIXME untested
 	// NOTE: probably won't work in Java 8
@@ -121,7 +118,7 @@ public class AutoUpdater { // FIXME untested
 		in.close();
 
 		// Get preferred release channel
-		ReleaseInfo.ReleaseChannel preferredChannel = ReleaseInfo.ReleaseChannel.BETA;
+		ReleaseChannel preferredChannel = ReleaseChannel.BETA;
 		ReleaseInfo preferredRelease = releases.get(preferredChannel.name().toLowerCase());
 
 		// If addon has debug mode enabled, compare versions
@@ -193,12 +190,12 @@ public class AutoUpdater { // FIXME untested
 		infoProvider.deleteJar(file);
 	}
 
-	private static ReleaseInfo.ReleaseChannel getPreferredChannel() throws IOException {
+	private static ReleaseChannel getPreferredChannel() throws IOException {
 		JsonObject config = getConfig();
 		if (config == null || config.get("release_channel") == null)
-			return ReleaseInfo.ReleaseChannel.STABLE;
+			return STABLE;
 
-		return ReleaseInfo.ReleaseChannel.valueOf(config.get("release_channel").getAsString());
+		return ReleaseChannel.valueOf(config.get("release_channel").getAsString());
 	}
 
 	private static boolean isEnabled() throws IOException {
@@ -290,7 +287,7 @@ public class AutoUpdater { // FIXME untested
 	}
 
 	/**
-	 * @see IOUtil
+	 * @see dev.l3g7.griefer_utils.core.api.util.IOUtil
 	 */
 	public static InputStream read(String url) {
 		try {
@@ -310,7 +307,7 @@ public class AutoUpdater { // FIXME untested
 	private static SSLSocketFactory customFactory = null;
 
 	/**
-	 * @see CustomSSLSocketFactoryProvider
+	 * @see dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider
 	 */
 	private static SSLSocketFactory getCustomFactory() {
 		if (customFactory != null)
@@ -348,7 +345,7 @@ public class AutoUpdater { // FIXME untested
 	/**
 	 * Searches the addon's addon.json file and returns the json content.
 	 *
-	 * @see JarFileProvider
+	 * @see dev.l3g7.griefer_utils.core.api.file_provider.impl.JarFileProvider
 	 */
 	private static JsonObject getAddonJson() throws IOException {
 		String jarPath = AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile();

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.player;
+package dev.l3g7.griefer_utils.features.player;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

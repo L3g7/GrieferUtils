@@ -8,13 +8,14 @@
 package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.Settings;
 
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
+
 public interface StringListSetting extends AbstractSetting<StringListSetting, List<String>> {
 
-	static StringListSetting create() {return Settings.settings.createStringListSetting();}
+	static StringListSetting create() {return settings.createStringListSetting();}
 
 	StringListSetting placeholder(String placeholder);
 

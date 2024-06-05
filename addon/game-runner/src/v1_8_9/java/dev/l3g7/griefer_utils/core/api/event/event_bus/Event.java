@@ -7,9 +7,9 @@
 
 package dev.l3g7.griefer_utils.core.api.event.event_bus;
 
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-
 import java.lang.annotation.Annotation;
+
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 /**
  * The base class for all events.
@@ -52,7 +52,7 @@ public class Event {
 	public static class TypedEvent<E extends TypedEvent<E>> extends Event {
 
 		public E fire() {
-			return Reflection.c(super.fire());
+			return c(super.fire());
 		}
 
 	}

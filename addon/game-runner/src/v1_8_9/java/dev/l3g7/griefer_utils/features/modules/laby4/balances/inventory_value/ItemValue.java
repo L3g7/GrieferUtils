@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.balances.inventory_value;
+package dev.l3g7.griefer_utils.features.modules.laby4.balances.inventory_value;
 
 import dev.l3g7.griefer_utils.features.chat.Calculator;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;

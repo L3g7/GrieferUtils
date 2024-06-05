@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.map;
 
 /**
@@ -111,7 +112,7 @@ public class ClassMeta implements IMeta {
 		if (loadedClass == null)
 			loadedClass = Reflection.load(name);
 
-		return Reflection.c(loadedClass);
+		return c(loadedClass);
 	}
 
 	@Override

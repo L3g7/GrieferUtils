@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.player.clean_up_player_menu.laby4;
+package dev.l3g7.griefer_utils.features.player.clean_up_player_menu.laby4;
 
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;

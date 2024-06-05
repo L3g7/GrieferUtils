@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.spawn_counter;
+package dev.l3g7.griefer_utils.features.modules.laby3.spawn_counter;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonPrimitive;

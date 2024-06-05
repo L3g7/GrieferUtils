@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.world;
+package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
@@ -19,9 +19,9 @@ import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.PlayerList;
-import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.TempScammerListBridge;
-import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.TrustedList;
+import dev.l3g7.griefer_utils.features.player.player_list.PlayerList;
+import dev.l3g7.griefer_utils.features.player.player_list.TempScammerListBridge;
+import dev.l3g7.griefer_utils.features.player.player_list.TrustedList;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListSettingLaby3;

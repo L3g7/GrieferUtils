@@ -14,8 +14,6 @@ import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.keep_alive
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.keep_alive.KeepAlivePacket;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.RequestTransactionsPacket;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.TransactionsPacket;
-import dev.l3g7.griefer_utils.misc.mysterymod_connection.packets.auth.*;
-import dev.l3g7.griefer_utils.v1_8_9.misc.mysterymod_connection.packets.auth.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 

@@ -8,18 +8,19 @@
 package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.Settings;
 
 import java.util.Collections;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
+
 public interface HeaderSetting extends BaseSetting<HeaderSetting> {
 
-	static HeaderSetting create(String name) {return Settings.settings.createHeaderSetting(name);}
+	static HeaderSetting create(String name) {return settings.createHeaderSetting(name);}
 
-	static HeaderSetting createText(String... rows) {return Settings.settings.createHeaderSettingWithRows(rows);}
+	static HeaderSetting createText(String... rows) {return settings.createHeaderSettingWithRows(rows);}
 
-	static HeaderSetting create() {return Settings.settings.createHeaderSetting("");}
+	static HeaderSetting create() {return settings.createHeaderSetting("");}
 
 	default HeaderSetting scale(double scale) {
 		// Unsupported in LabyMod 4

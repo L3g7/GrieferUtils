@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.features.chat.chat_menu.laby3.ChatMenuEntry.Action.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 

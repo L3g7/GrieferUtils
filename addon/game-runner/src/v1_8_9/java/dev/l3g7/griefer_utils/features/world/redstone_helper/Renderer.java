@@ -1,8 +1,8 @@
-package dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper;
+package dev.l3g7.griefer_utils.features.world.redstone_helper;
 
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.RenderObjectObserver.Chunk;
+import dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObjectObserver.Chunk;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.GLAllocation;

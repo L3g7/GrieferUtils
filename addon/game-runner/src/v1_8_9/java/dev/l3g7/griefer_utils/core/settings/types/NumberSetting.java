@@ -8,11 +8,12 @@
 package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.Settings;
+
+import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
 public interface NumberSetting extends AbstractSetting<NumberSetting, Integer> {
 
-	static NumberSetting create() {return Settings.settings.createNumberSetting();}
+	static NumberSetting create() {return settings.createNumberSetting();}
 
 	NumberSetting placeholder(String placeholder);
 

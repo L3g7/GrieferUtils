@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.player.player_list;
+package dev.l3g7.griefer_utils.features.player.player_list;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
@@ -44,7 +44,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.PlayerList.MarkAction.*;
+import static dev.l3g7.griefer_utils.features.player.player_list.PlayerList.MarkAction.*;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 

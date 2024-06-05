@@ -8,11 +8,12 @@
 package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.Settings;
+
+import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
 public interface SliderSetting extends AbstractSetting<SliderSetting, Integer> {
 
-	static SliderSetting create() {return Settings.settings.createSliderSetting();}
+	static SliderSetting create() {return settings.createSliderSetting();}
 
 	/**
 	 * Sets the lower limit the value can have.

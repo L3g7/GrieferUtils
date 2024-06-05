@@ -46,6 +46,8 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
+import static dev.l3g7.griefer_utils.features.chat.chat_menu.laby4.ChatMenuEntry.Action.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
@@ -55,13 +57,13 @@ public class ChatMenu extends Feature {
 	protected static final CopyTextEntry COPY_TEXT_ENTRY = new CopyTextEntry();
 
 	protected static final List<ChatMenuEntry> DEFAULT_ENTRIES = ImmutableList.of(
-		new ChatMenuEntry("Profil öffnen", ChatMenuEntry.Action.RUN_CMD, "/profil %name%", "wooden_board"),
-		new ChatMenuEntry("Namensverlauf", ChatMenuEntry.Action.CONSUMER, (Consumer<String>) ChatMenu::openNameHistory, "yellow_name"),
-		new ChatMenuEntry("Namen kopieren", ChatMenuEntry.Action.CONSUMER, (Consumer<String>) ChatMenu::copyToClipboard, "yellow_name"),
-		new ChatMenuEntry("Im Forum suchen", ChatMenuEntry.Action.OPEN_URL, "https://forum.griefergames.de/search/?q=%name%", "earth_grid"),
-		new ChatMenuEntry("Inventar öffnen", ChatMenuEntry.Action.RUN_CMD, "/invsee %name%", "bundle"),
-		new ChatMenuEntry("Ausrüstung ansehen", ChatMenuEntry.Action.RUN_CMD, "/view %name%", new ItemStack(Items.iron_chestplate)),
-		new ChatMenuEntry("EC öffnen", ChatMenuEntry.Action.RUN_CMD, "/ec %name%", "chest")
+		new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %name%", "wooden_board"),
+		new ChatMenuEntry("Namensverlauf", CONSUMER, (Consumer<String>) ChatMenu::openNameHistory, "yellow_name"),
+		new ChatMenuEntry("Namen kopieren", CONSUMER, (Consumer<String>) ChatMenu::copyToClipboard, "yellow_name"),
+		new ChatMenuEntry("Im Forum suchen", OPEN_URL, "https://forum.griefergames.de/search/?q=%name%", "earth_grid"),
+		new ChatMenuEntry("Inventar öffnen", RUN_CMD, "/invsee %name%", "bundle"),
+		new ChatMenuEntry("Ausrüstung ansehen", RUN_CMD, "/view %name%", new ItemStack(Items.iron_chestplate)),
+		new ChatMenuEntry("EC öffnen", RUN_CMD, "/ec %name%", "chest")
 	);
 
 	protected static ChatMenuRenderer renderer = null;

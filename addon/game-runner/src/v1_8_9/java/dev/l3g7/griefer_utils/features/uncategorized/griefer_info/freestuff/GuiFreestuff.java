@@ -5,12 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff;
 
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.BigChestUtil;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiBigChest;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiGrieferInfo;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiSearchable;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiGrieferInfo;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiSearchable;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;

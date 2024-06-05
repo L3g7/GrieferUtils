@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 
 /**
@@ -77,7 +78,7 @@ class MethodReflection {
 		// Invoke
 		try {
 			method.setAccessible(true);
-			return Reflection.c(method.invoke(target, params));
+			return c(method.invoke(target, params));
 		} catch (InvocationTargetException e) {
 			throw elevate(e.getCause(), "Tried to invoke method '%s' with parameters '%s' in '%s'", method.getName(), ArrayUtil.toString(params, o -> o == null ? "<null>" : o.getClass().toString(), ", "), target == null ? "<null>" : target.toString());
 		} catch (Throwable e) {

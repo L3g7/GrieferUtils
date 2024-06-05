@@ -5,16 +5,16 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.features.chat.BetterSwitchCommand;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.BigChestUtil;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.farms.Farm;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiBigChest;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiList;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.Farm;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiList;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.init.Blocks;

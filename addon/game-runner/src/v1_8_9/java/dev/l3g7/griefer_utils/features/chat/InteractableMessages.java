@@ -28,6 +28,7 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 
 @Singleton

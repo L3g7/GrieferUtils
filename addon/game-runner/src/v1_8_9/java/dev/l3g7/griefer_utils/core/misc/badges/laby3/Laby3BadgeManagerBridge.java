@@ -16,9 +16,9 @@ import dev.l3g7.griefer_utils.core.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.UserSetGroupEvent;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits;
 import dev.l3g7.griefer_utils.core.misc.badges.BadgeManagerBridge;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.Credits;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.Gui;
 import dev.l3g7.griefer_utils.core.misc.server.GUClient;
 import io.netty.util.internal.ConcurrentSet;
@@ -43,6 +43,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.misc.badges.Badges.showBadges;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Bridge
@@ -122,7 +123,7 @@ public class Laby3BadgeManagerBridge implements BadgeManagerBridge {
 	}
 
 	public static void renderUserPercentage(int left, int width) {
-		if (!Badges.showBadges() || !Badges.showPercentage.get())
+		if (!showBadges() || !Badges.showPercentage.get())
 			return;
 
 		int x = width - left;
@@ -166,12 +167,12 @@ public class Laby3BadgeManagerBridge implements BadgeManagerBridge {
 
 		@Redirect(method = "newTabOverlay", at = @At(value = "FIELD", target = "Lnet/labymod/main/ModSettings;revealFamiliarUsers:Z", ordinal = 1), remap = false)
 		private boolean redirectRevealFamiliarUsers(ModSettings instance) {
-			return instance.revealFamiliarUsers || Badges.showBadges();
+			return instance.revealFamiliarUsers || showBadges();
 		}
 
 		@Redirect(method = "newTabOverlay", at = @At(value = "INVOKE", target = "Lnet/labymod/user/User;isFamiliar()Z"), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/labymod/core_implementation/mc18/gui/ModPlayerTabOverlay;drawRect(IIIII)V", ordinal = 0)))
 		private boolean redirectIsFamiliar(User instance) {
-			if (Badges.showBadges() && instance.getGroup() instanceof GrieferUtilsGroup)
+			if (showBadges() && instance.getGroup() instanceof GrieferUtilsGroup)
 				return true;
 
 			return LabyMod.getSettings().revealFamiliarUsers && instance.isFamiliar();

@@ -7,8 +7,6 @@
 
 package dev.l3g7.griefer_utils.core.api.util;
 
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +15,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 /**
  * A utility class for array stuff.
@@ -90,7 +90,7 @@ public class ArrayUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> T[] flatmap(Class<T> type, T[]... array) {
 		// Convert type to array class
-		return Reflection.c(Arrays.stream(array)
+		return c(Arrays.stream(array)
 			.flatMap(Stream::of)
 			.collect(Collectors.toList())
 			.toArray((T[]) Array.newInstance(type, 0)));

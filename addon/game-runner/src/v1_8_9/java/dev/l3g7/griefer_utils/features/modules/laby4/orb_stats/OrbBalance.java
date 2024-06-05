@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.orb_stats;
+package dev.l3g7.griefer_utils.features.modules.laby4.orb_stats;
 
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
@@ -19,8 +19,8 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby4Module;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.TempOrbBalanceBridge;
+import dev.l3g7.griefer_utils.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.modules.TempOrbBalanceBridge;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import net.minecraft.client.gui.inventory.GuiChest;

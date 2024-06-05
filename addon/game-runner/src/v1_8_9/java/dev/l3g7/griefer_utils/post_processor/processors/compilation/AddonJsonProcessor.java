@@ -49,7 +49,7 @@ public class AddonJsonProcessor extends CompilationPostProcessor {
 			addon.addProperty("name", "GrieferUtils");
 			addon.addProperty("icon", "griefer_utils_icon");
 			addon.addProperty("debug", System.getProperty("griefer_utils.debug"));
-			addon.addProperty("transformerClass", "dev.l3g7.griefer_utils.laby3.PreStart");
+			addon.addProperty("transformerClass", "dev.l3g7.griefer_utils.labymod.laby3.PreStart");
 			addon.addProperty("addonVersion", addon.get("version").getAsString());
 
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();

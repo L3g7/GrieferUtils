@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.util.Requests;
 import java.io.IOException;
 import java.util.Map;
 
+import static dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfileResolver.GSON;
 import static dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.util.Util.strMap;
 
 public class Authorization {
@@ -82,7 +83,7 @@ public class Authorization {
 				"client_id", oauth2Token.msaClientId
 		);
 
-		OAuth2Token newToken = XboxProfileResolver.GSON.fromJson(Requests.post("https://login.live.com/oauth20_token.srf", strMap(), data), OAuth2Token.class);
+		OAuth2Token newToken = GSON.fromJson(Requests.post("https://login.live.com/oauth20_token.srf", strMap(), data), OAuth2Token.class);
 		if (newToken.issued == null)
 			newToken.issued = new DateTime();
 
@@ -100,7 +101,7 @@ public class Authorization {
 		properties.addProperty("SiteName", "user.auth.xboxlive.com");
 		properties.addProperty("RpsTicket", "" + oauth2Token.accessToken);
 		data.add("Properties", properties);
-		userToken = XboxProfileResolver.GSON.fromJson(Requests.post(url, headers, data), XToken.class);
+		userToken = GSON.fromJson(Requests.post(url, headers, data), XToken.class);
 	}
 
 	private void requestXstsToken() throws IOException {
@@ -115,7 +116,7 @@ public class Authorization {
 		properties.add("UserTokens", userTokens);
 		properties.addProperty("SandboxId", "RETAIL");
 		data.add("Properties", properties);
-		xstsToken = XboxProfileResolver.GSON.fromJson(Requests.post(url, headers, data), XToken.class);
+		xstsToken = GSON.fromJson(Requests.post(url, headers, data), XToken.class);
 	}
 
 }

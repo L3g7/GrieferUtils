@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper;
+package dev.l3g7.griefer_utils.features.world.redstone_helper;
 
 import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import net.minecraft.client.Minecraft;

@@ -9,11 +9,12 @@ package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.Settings;
+
+import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
 public interface StringSetting extends AbstractSetting<StringSetting, String> {
 
-	static StringSetting create() {return Settings.settings.createStringSetting();}
+	static StringSetting create() {return settings.createStringSetting();}
 
 	StringSetting maxLength(int maxLength);
 

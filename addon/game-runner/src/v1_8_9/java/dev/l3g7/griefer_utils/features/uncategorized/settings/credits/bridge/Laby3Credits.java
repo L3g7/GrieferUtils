@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.bridge;
+package dev.l3g7.griefer_utils.features.uncategorized.settings.credits.bridge;
 
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.Credits;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import net.labymod.main.LabyMod;

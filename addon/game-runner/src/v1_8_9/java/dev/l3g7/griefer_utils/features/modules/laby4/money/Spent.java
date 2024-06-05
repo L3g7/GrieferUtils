@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.money;
+package dev.l3g7.griefer_utils.features.modules.laby4.money;
 
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.modules.Laby4Module;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;

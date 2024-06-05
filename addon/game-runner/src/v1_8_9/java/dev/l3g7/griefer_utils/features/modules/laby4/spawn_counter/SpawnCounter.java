@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.spawn_counter;
+package dev.l3g7.griefer_utils.features.modules.laby4.spawn_counter;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.modules.Laby4Module;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.labymod.api.client.component.Component;
@@ -114,7 +114,7 @@ public class SpawnCounter extends Laby4Module {
 
 	@Override
 	public String getComparisonName() {
-		return "dev.l3g7.griefer_utils.v1_8_9.features.modules" + enabled.name();
+		return "dev.l3g7.griefer_utils.features.modules" + enabled.name();
 	}
 
 	enum NotificationType implements Named {

@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
+
 @Singleton
 public class ChatMods extends Feature {
 

@@ -9,10 +9,11 @@ package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.Settings;
+
+import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
 public interface DropDownSetting<E extends Enum<E> & Named> extends AbstractSetting<DropDownSetting<E>, E> {
 
-	static <E extends Enum<E> & Named> DropDownSetting<E> create(Class<E> enumClass) {return Settings.settings.createDropDownSetting(enumClass);}
+	static <E extends Enum<E> & Named> DropDownSetting<E> create(Class<E> enumClass) {return settings.createDropDownSetting(enumClass);}
 
 }

@@ -8,11 +8,12 @@
 package dev.l3g7.griefer_utils.core.api.reflection;
 
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
-import dev.l3g7.griefer_utils.core.api.util.Util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 
 /**
@@ -26,16 +27,16 @@ class ConstructorReflection {
 	static <T> T construct(Class<T> targetClass, Object... params) {
 		Constructor<T> constructor = resolveConstructor(targetClass, params);
 		if (constructor == null)
-			throw Util.elevate(new NoSuchMethodException(), "Could not find constructor matching parameters in '%s'", targetClass.getName());
+			throw elevate(new NoSuchMethodException(), "Could not find constructor matching parameters in '%s'", targetClass.getName());
 
 		// Create instance
 		try {
 			constructor.setAccessible(true);
 			return constructor.newInstance(params);
 		} catch (InvocationTargetException e) {
-			throw Util.elevate(e.getCause(), "Tried to construct '%s'", targetClass.getName());
+			throw elevate(e.getCause(), "Tried to construct '%s'", targetClass.getName());
 		} catch (Throwable e) {
-			throw Util.elevate(e, "Tried to construct '%s'", targetClass.getName());
+			throw elevate(e, "Tried to construct '%s'", targetClass.getName());
 		}
 	}
 
@@ -46,7 +47,7 @@ class ConstructorReflection {
 		for (Constructor<?> constructor : targetClass.getDeclaredConstructors()) {
 			// Check arg types
 			if (ArrayUtil.equals(constructor.getParameterTypes(), parameters, ClassReflection::isApplicable))
-				return Reflection.c(constructor);
+				return c(constructor);
 			else if (targetClass.getSimpleName().endsWith("DefaultSubscribeMethod")) {
 				Class<?>[] a = constructor.getParameterTypes();
 				Object[] b = parameters;

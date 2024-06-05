@@ -5,13 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.world;
+package dev.l3g7.griefer_utils.features.world;
 
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.misc.SkullIcon;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;

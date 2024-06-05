@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.bridge;
+package dev.l3g7.griefer_utils.features.uncategorized.settings.credits.bridge;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -31,7 +31,7 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.Credits.credits;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits.credits;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Bridge

@@ -8,10 +8,11 @@
 package dev.l3g7.griefer_utils.core.settings.types.list;
 
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.Settings;
+
+import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
 public interface EntryAddSetting extends AbstractSetting<EntryAddSetting, Object> {
 
-	static EntryAddSetting create() {return Settings.settings.createEntryAddSetting();}
+	static EntryAddSetting create() {return settings.createEntryAddSetting();}
 
 }

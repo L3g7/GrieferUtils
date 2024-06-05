@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.core.settings.player_list;
 
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
@@ -17,7 +16,7 @@ import net.labymod.utils.ModColor;
 
 public class EntryAddSetting extends ControlElement implements Laby3Setting<EntryAddSetting, Object> {
 
-	private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> BaseSetting.NULL, BaseSetting.NULL);
+	private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 	private Runnable callback;
 
 	public EntryAddSetting(String displayName) {

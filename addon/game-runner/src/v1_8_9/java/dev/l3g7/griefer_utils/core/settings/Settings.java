@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.settings.types.*;
-import dev.l3g7.griefer_utils.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 
 @Bridged

@@ -4,15 +4,13 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
-import dev.l3g7.griefer_utils.bridges.laby3.settings.*;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.*;
-import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SliderSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.Settings;
+import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
-import dev.l3g7.griefer_utils.v1_8_9.bridges.laby3.settings.*;
+import dev.l3g7.griefer_utils.core.bridges.laby3.settings.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 

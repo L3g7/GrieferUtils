@@ -5,13 +5,13 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.balances;
+package dev.l3g7.griefer_utils.features.modules.laby4.balances;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby4Module;
-import dev.l3g7.griefer_utils.v1_8_9.features.player.scoreboard.BankScoreboard;
+import dev.l3g7.griefer_utils.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 

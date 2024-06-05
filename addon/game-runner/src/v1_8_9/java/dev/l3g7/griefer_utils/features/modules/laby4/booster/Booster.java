@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.booster;
+package dev.l3g7.griefer_utils.features.modules.laby4.booster;
 
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -23,8 +23,8 @@ import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Commands;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.Commands;
+import dev.l3g7.griefer_utils.features.modules.Laby4Module;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.labymod.api.client.component.Component;
@@ -102,7 +102,7 @@ public class Booster extends Laby4Module {
 
 	@Override
 	public String getComparisonName() {
-		return "dev.l3g7.griefer_utils.v1_8_9.features.modules" + enabled.name();
+		return "dev.l3g7.griefer_utils.features.modules" + enabled.name();
 	}
 
 	@EventListener(triggerWhenDisabled = true)

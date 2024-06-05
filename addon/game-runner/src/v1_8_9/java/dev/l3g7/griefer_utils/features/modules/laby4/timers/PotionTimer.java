@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.timers;
+package dev.l3g7.griefer_utils.features.modules.laby4.timers;
 
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.modules.Laby4Module;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;

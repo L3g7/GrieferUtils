@@ -35,6 +35,7 @@ import java.util.function.BiFunction;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.SEARGE;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
+import static dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MinecraftBridge.laby3MinecraftBridge;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Bridge
@@ -85,7 +86,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public void notify(String title, String message, int ms) {
-		Laby3MinecraftBridge.laby3MinecraftBridge.displayAchievement(title, message);
+		laby3MinecraftBridge.displayAchievement(title, message);
 	}
 
 	@Override
@@ -151,17 +152,17 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public HeaderSetting createLaby3DropDownPadding() {
-		return Laby3MinecraftBridge.laby3MinecraftBridge.createDropDownPadding();
+		return laby3MinecraftBridge.createDropDownPadding();
 	}
 
 	@Override
 	public Pair<String, String> getCachedTexture(UUID uuid) {
-		return Laby3MinecraftBridge.laby3MinecraftBridge.getCachedTexture(uuid);
+		return laby3MinecraftBridge.getCachedTexture(uuid);
 	}
 
 	@Override
 	public void openNameHistory(String name) {
-		Laby3MinecraftBridge.laby3MinecraftBridge.openNameHistory(name);
+		laby3MinecraftBridge.openNameHistory(name);
 	}
 
 	@ExclusiveTo(LABY_3)

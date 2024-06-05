@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.spawn_counter;
+package dev.l3g7.griefer_utils.features.modules.laby4.spawn_counter;
 
 import com.google.common.base.Supplier;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -15,8 +15,8 @@ import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.L
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.UserData;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.OffsetIcon;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby4Module.CustomRenderTextLine;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.spawn_counter.SpawnCounter.LeaderboardDisplayType;
+import dev.l3g7.griefer_utils.features.modules.Laby4Module.CustomRenderTextLine;
+import dev.l3g7.griefer_utils.features.modules.laby4.spawn_counter.SpawnCounter.LeaderboardDisplayType;
 import dev.l3g7.griefer_utils.core.misc.server.GUClient;
 import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListEntry;
 import net.labymod.api.client.component.Component;
@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
-import static dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
+import static dev.l3g7.griefer_utils.features.modules.laby4.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.DISABLED;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;

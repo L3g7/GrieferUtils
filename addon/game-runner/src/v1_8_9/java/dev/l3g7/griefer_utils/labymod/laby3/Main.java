@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.events.LabyModAddonsGuiOpenEvent;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.MainPage;
-import dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MinecraftBridge;
 import net.labymod.addon.AddonLoader;
 import net.labymod.addon.online.AddonInfoManager;
 import net.labymod.addon.online.info.AddonInfo;
@@ -35,6 +34,7 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MinecraftBridge.laby3MinecraftBridge;
 import static net.labymod.utils.ModColor.YELLOW;
 
 /**
@@ -66,7 +66,7 @@ public class Main extends LabyModAddon {
 
 		// Fix icon
 		Map<String, DynamicModTexture> map = LabyMod.getInstance().getDynamicTextureManager().getResourceLocations();
-		map.put("griefer_utils_icon", Laby3MinecraftBridge.laby3MinecraftBridge.createDynamicTexture("griefer_utils/icons/icon.png", "griefer_utils_icon"));
+		map.put("griefer_utils_icon", laby3MinecraftBridge.createDynamicTexture("griefer_utils/icons/icon.png", "griefer_utils_icon"));
 
 		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}

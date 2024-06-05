@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.money;
+package dev.l3g7.griefer_utils.features.modules.laby3.money;
 
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -29,8 +29,8 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.item.recraft.laby3.SmallButtonSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby3Module;
+import dev.l3g7.griefer_utils.features.item.recraft.laby3.SmallButtonSetting;
+import dev.l3g7.griefer_utils.features.modules.Laby3Module;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;

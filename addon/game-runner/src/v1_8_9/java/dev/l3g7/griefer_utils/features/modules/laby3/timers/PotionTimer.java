@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.timers;
+package dev.l3g7.griefer_utils.features.modules.laby3.timers;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -32,7 +32,7 @@ import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby3Module;
+import dev.l3g7.griefer_utils.features.modules.Laby3Module;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.Material;

@@ -9,7 +9,6 @@ plugins {
 
 dependencies {
 	compileOnly(fileTree("../libs"))
-	compileOnly(fileTree("libs"))
 
 	implementation("org.jetbrains:annotations:24.1.0")
 

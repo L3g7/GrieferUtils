@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.core.util.render;
 
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -21,6 +20,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.minecraft.util.EnumFacing.Axis.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -29,7 +29,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class GlEngine {
 
-	private static final TextureManager textureManager = MinecraftUtil.mc().getTextureManager();
+	private static final TextureManager textureManager = mc().getTextureManager();
 	private static final Tessellator tessellator = Tessellator.getInstance();
 	private static final WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 

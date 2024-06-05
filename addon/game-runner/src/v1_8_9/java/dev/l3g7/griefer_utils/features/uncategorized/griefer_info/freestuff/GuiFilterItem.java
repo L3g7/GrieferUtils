@@ -5,17 +5,17 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff;
 
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff.ItemFilter.Category;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiSearchable;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.ItemFilter.Category;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiSearchable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
-import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.BigChestUtil.toSlotId;
+import static dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil.toSlotId;
 
 public class GuiFilterItem extends GuiSearchable<ItemFilter> {
 

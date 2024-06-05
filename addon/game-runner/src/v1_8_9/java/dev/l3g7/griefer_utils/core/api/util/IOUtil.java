@@ -74,7 +74,7 @@ public class IOUtil {
 				return;
 			}
 
-			throw Util.elevate(e);
+			throw elevate(e);
 		}
 	}
 

@@ -16,7 +16,6 @@ import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -35,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
@@ -68,7 +68,7 @@ public class WorldBlockOverlayRenderer {
 				for (int y = 0; y < 16; y++) {
 					for (int z = 0; z < 16; z++) {
 						BlockPos targetPos = coords.getBlock(x, y + ebs.getYLocation(), z);
-						RenderObject redstoneRenderObject = RenderObject.fromState(ebs.get(x, y, z), targetPos, MinecraftUtil.world());
+						RenderObject redstoneRenderObject = RenderObject.fromState(ebs.get(x, y, z), targetPos, world());
 						if (redstoneRenderObject == null)
 							continue;
 
@@ -108,12 +108,12 @@ public class WorldBlockOverlayRenderer {
 	}
 
 	private static void onBlockUpdate(BlockPos pos, IBlockState state) {
-		RenderObject redstoneRenderObject = RenderObject.fromState(state, pos, MinecraftUtil.world());
+		RenderObject redstoneRenderObject = RenderObject.fromState(state, pos, world());
 
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
 
 		if (redstoneRenderObject != null) {
-			getRenderObjectsForChunk(pair).put(pos, RenderObject.fromState(state, pos, MinecraftUtil.world()));
+			getRenderObjectsForChunk(pair).put(pos, RenderObject.fromState(state, pos, world()));
 			return;
 		}
 
@@ -141,7 +141,7 @@ public class WorldBlockOverlayRenderer {
 		GlStateManager.disableTexture2D();
 
 		for (Map.Entry<ChunkCoordIntPair, Map<BlockPos, RenderObject>> entry : renderObjects.entrySet()) {
-			int chunksFromPlayer = Math.max(Math.abs(entry.getKey().chunkXPos - MinecraftUtil.player().chunkCoordX), Math.abs(entry.getKey().chunkZPos - MinecraftUtil.player().chunkCoordZ));
+			int chunksFromPlayer = Math.max(Math.abs(entry.getKey().chunkXPos - player().chunkCoordX), Math.abs(entry.getKey().chunkZPos - player().chunkCoordZ));
 
 			for (Map.Entry<BlockPos, RenderObject> chunkEntry : entry.getValue().entrySet())
 				if (chunkEntry.getValue().generator.isEnabled())
@@ -226,7 +226,7 @@ public class WorldBlockOverlayRenderer {
 
 		protected static void prepareRender(Vec3d loc, float partialTicks) {
 			GlStateManager.pushMatrix();
-			Entity viewer = MinecraftUtil.mc().getRenderViewEntity();
+			Entity viewer = mc().getRenderViewEntity();
 			double viewerX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * partialTicks;
 			double viewerY = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * partialTicks;
 			double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * partialTicks;

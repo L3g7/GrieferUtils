@@ -7,12 +7,11 @@
 
 package dev.l3g7.griefer_utils.core.api.reflection;
 
-import dev.l3g7.griefer_utils.core.api.util.Util;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 
 /**
@@ -39,9 +38,9 @@ class ClassReflection {
 	 */
 	static <T> Class<T> load(String name) {
 		try {
-			return Reflection.c(Class.forName(name.replaceAll("\\.class$", "").replace('/', '.')));
+			return c(Class.forName(name.replaceAll("\\.class$", "").replace('/', '.')));
 		} catch (Throwable e) {
-			throw Util.elevate(e, "Could not load class '%s'", name);
+			throw elevate(e, "Could not load class '%s'", name);
 		}
 	}
 

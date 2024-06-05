@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.world;
+package dev.l3g7.griefer_utils.features.world;
 
 import com.google.common.base.Strings;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
@@ -16,8 +16,8 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.NoteBlockPlayEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.RenderObjectObserver;
-import dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.VertexDataStorage;
+import dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObjectObserver;
+import dev.l3g7.griefer_utils.features.world.redstone_helper.VertexDataStorage;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer;
 import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderObject;
@@ -158,7 +158,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	}
 
-	public static class Wire extends dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.RenderObject {
+	public static class Wire extends dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObject {
 
 		public final int power;
 
@@ -180,13 +180,13 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		}
 
 		@Override
-		public boolean equals(dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.RenderObject r) {
+		public boolean equals(dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObject r) {
 			return super.equals(r) && power == ((Wire) r).power;
 		}
 
 	}
 
-	public static class Hopper extends dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.RenderObject {
+	public static class Hopper extends dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObject {
 
 		private final int facing;
 
@@ -219,7 +219,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		}
 
 		@Override
-		public boolean equals(dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.RenderObject r) {
+		public boolean equals(dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObject r) {
 			return super.equals(r) && facing == ((Hopper) r).facing;
 		}
 

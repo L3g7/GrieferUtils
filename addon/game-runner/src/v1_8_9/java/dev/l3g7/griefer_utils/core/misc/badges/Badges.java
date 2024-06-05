@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddE
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import net.minecraft.client.network.NetworkPlayerInfo;
 
+import static dev.l3g7.griefer_utils.core.misc.badges.BadgeManagerBridge.badgeManager;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class Badges {
@@ -41,7 +42,7 @@ public class Badges {
 		.subSettings(showPercentage)
 		.callback(b -> {
 			if (!b) {
-				BadgeManagerBridge.badgeManager.clearUsers();
+				badgeManager.clearUsers();
 				return;
 			}
 
@@ -49,7 +50,7 @@ public class Badges {
 				return;
 
 			for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap())
-				BadgeManagerBridge.badgeManager.queueUser(info.getGameProfile().getId());
+				badgeManager.queueUser(info.getGameProfile().getId());
 		});
 
 	public static boolean showBadges() {
@@ -59,19 +60,19 @@ public class Badges {
 	@EventListener
 	private static void onTabListAddEvent(TabListPlayerAddEvent event) {
 		if (enabled.get())
-			BadgeManagerBridge.badgeManager.queueUser(event.data.getProfile().getId());
+			badgeManager.queueUser(event.data.getProfile().getId());
 	}
 
 	@EventListener
 	private static void onTabListRemoveEvent(TabListPlayerRemoveEvent event) {
 		if (enabled.get())
-			BadgeManagerBridge.badgeManager.removeUser(event.data.getProfile().getId());
+			badgeManager.removeUser(event.data.getProfile().getId());
 	}
 
 	@EventListener
 	private static void onTabListClearAddEvent(TabListClearEvent event) {
 		if (enabled.get())
-			BadgeManagerBridge.badgeManager.clearUsers();
+			badgeManager.clearUsers();
 	}
 
 }

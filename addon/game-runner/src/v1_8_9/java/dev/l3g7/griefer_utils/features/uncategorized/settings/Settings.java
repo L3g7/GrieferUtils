@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings;
+package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -24,8 +24,8 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.BETA;
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
-import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.Changelog.changelog;
-import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.Credits.credits;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.Changelog.changelog;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits.credits;
 
 @Singleton
 @FeatureCategory

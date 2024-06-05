@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.world.better_schematica;
+package dev.l3g7.griefer_utils.features.world.better_schematica;
 
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;

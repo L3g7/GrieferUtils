@@ -35,7 +35,7 @@ public class IChatComponentUtil {
 	@EventListener
 	private static void onMessageSend(MessageSendEvent event) {
 		if (event.message.startsWith(COMMAND)) {
-			MinecraftUtil.suggest(event.message.substring(COMMAND.length()));
+			suggest(event.message.substring(COMMAND.length()));
 			event.cancel();
 		}
 	}

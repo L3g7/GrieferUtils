@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -15,7 +15,7 @@ import org.lwjgl.input.Mouse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.BigChestUtil.toSlotId;
+import static dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil.toSlotId;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class GuiList extends GuiBigChest {

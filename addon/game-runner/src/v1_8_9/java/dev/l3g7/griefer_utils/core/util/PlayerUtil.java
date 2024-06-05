@@ -14,6 +14,8 @@ import net.minecraft.util.IChatComponent;
 
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+
 /**
  * A utility class for minecraft player related methods.
  */
@@ -23,7 +25,7 @@ public class PlayerUtil {
 	 * @return the player's uuid.
 	 */
 	public static UUID getUUID(String name) {
-		for(NetworkPlayerInfo info : MinecraftUtil.mc().getNetHandler().getPlayerInfoMap()) {
+		for(NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
 			if(info.getGameProfile().getName().equalsIgnoreCase(name))
 				return info.getGameProfile().getId();
 
@@ -41,7 +43,7 @@ public class PlayerUtil {
 	}
 
 	public static String getRank(String name) {
-		NetworkPlayerInfo info = MinecraftUtil.mc().getNetHandler().getPlayerInfo(name);
+		NetworkPlayerInfo info = mc().getNetHandler().getPlayerInfo(name);
 		if (info == null)
 			return "";
 
@@ -56,7 +58,7 @@ public class PlayerUtil {
 	}
 
 	public static String getName() {
-		return MinecraftUtil.mc().getSession().getUsername();
+		return mc().getSession().getUsername();
 	}
 
 	public static boolean isNPC(Entity entity) {

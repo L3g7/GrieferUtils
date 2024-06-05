@@ -5,14 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui;
 
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.DataHandler;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.botshops.GuiBotShops;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.farms.GuiFarms;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.DataHandler;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.GuiBotShops;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.GuiFarms;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import net.minecraft.init.Blocks;

@@ -8,10 +8,11 @@
 package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.Settings;
+
+import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
 public interface CategorySetting extends AbstractSetting<CategorySetting, Object> {
 
-	static CategorySetting create() {return Settings.settings.createCategorySetting();}
+	static CategorySetting create() {return settings.createCategorySetting();}
 
 }

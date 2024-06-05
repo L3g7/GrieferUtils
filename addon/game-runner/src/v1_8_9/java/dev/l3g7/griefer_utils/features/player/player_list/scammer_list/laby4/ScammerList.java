@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.scammer_list.laby4;
+package dev.l3g7.griefer_utils.features.player.player_list.scammer_list.laby4;
 
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
@@ -18,8 +18,8 @@ import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
-import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.PlayerList;
-import dev.l3g7.griefer_utils.v1_8_9.features.player.player_list.TempScammerListBridge;
+import dev.l3g7.griefer_utils.features.player.player_list.PlayerList;
+import dev.l3g7.griefer_utils.features.player.player_list.TempScammerListBridge;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.ImageSelection.FileSelectionDialog;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;

@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.injection.transformer;
 
+import dev.l3g7.griefer_utils.core.injection.transformer.Transformer;
 import dev.l3g7.griefer_utils.core.injection.transformer.Transformer.Target;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;

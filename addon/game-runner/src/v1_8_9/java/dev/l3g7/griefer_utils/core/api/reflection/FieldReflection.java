@@ -9,13 +9,13 @@ package dev.l3g7.griefer_utils.core.api.reflection;
 
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
-import dev.l3g7.griefer_utils.core.api.util.Util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 
 /**
@@ -36,14 +36,14 @@ class FieldReflection {
 	static <V> V get(Object target, Field field) {
 		// Check target
 		if (target == null)
-			throw Util.elevate(new IllegalArgumentException(), "Tried to get null field");
+			throw elevate(new IllegalArgumentException(), "Tried to get null field");
 
 		// Get value
 		try {
 			field.setAccessible(true);
-			return Reflection.c(field.get(target));
+			return c(field.get(target));
 		} catch (Throwable e) {
-			throw Util.elevate(e, "Tried to access field '%s' in '%s'", field.getName(), target.toString());
+			throw elevate(e, "Tried to access field '%s' in '%s'", field.getName(), target.toString());
 		}
 	}
 
@@ -57,7 +57,7 @@ class FieldReflection {
 			field.set(target, value);
 		} catch (Throwable e) {
 			Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-			throw Util.elevate(e, "Tried to access field '%s' in '%s'", name, targetClass.getName());
+			throw elevate(e, "Tried to access field '%s' in '%s'", name, targetClass.getName());
 		}
 	}
 
@@ -67,7 +67,7 @@ class FieldReflection {
 		// Check field
 		if (field == null) {
 			Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
-			throw Util.elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", name, targetClass.getName());
+			throw elevate(new NoSuchFieldException(), "Could not find field '%s' in '%s'", name, targetClass.getName());
 		}
 
 		return field;
@@ -79,7 +79,7 @@ class FieldReflection {
 	static Field resolveField(Object target, String name) {
 		// Check target
 		if (target == null)
-			throw Util.elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", name);
+			throw elevate(new IllegalArgumentException(), "Tried to get field '%s' of null", name);
 
 		Class<?> targetClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
 

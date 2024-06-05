@@ -7,11 +7,12 @@
 
 package dev.l3g7.griefer_utils.core.api.misc;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
-import dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge;
+
+import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
 
 public enum Citybuild implements Named {
 
@@ -78,25 +79,25 @@ public enum Citybuild implements Named {
 		if (this == ANY)
 			return true;
 
-		return matches(MinecraftBridge.minecraftBridge.getGrieferGamesSubServer());
+		return matches(minecraftBridge.getGrieferGamesSubServer());
 	}
 
 	public void join() {
 		if (internalName == null)
 			throw new IllegalStateException("This citybuild does not exist");
 
-		if (!MinecraftBridge.minecraftBridge.onGrieferGames()) {
+		if (!minecraftBridge.onGrieferGames()) {
 			LabyBridge.display(Constants.ADDON_PREFIX + "§fBitte betrete GrieferGames.");
 			return;
 		}
 
-		String cb = MinecraftBridge.minecraftBridge.getGrieferGamesSubServer();
+		String cb = minecraftBridge.getGrieferGamesSubServer();
 		if (cb.equals("Portal") || cb.equals("Lobby")) {
 			LabyBridge.display(Constants.ADDON_PREFIX + "§fBitte betrete einen Citybuild.");
 			return;
 		}
 
-		MinecraftBridge.minecraftBridge.send("/switch " + internalName);
+		minecraftBridge.send("/switch " + internalName);
 	}
 
 	public boolean matches(String cb) {
@@ -134,7 +135,7 @@ public enum Citybuild implements Named {
 		return Citybuild.ANY;
 	}
 
-	@Bridge.Bridged
+	@Bridged
 	public interface CitybuildIconBridge {
 
 		CitybuildIconBridge citybuildIconBridge = FileProvider.getBridge(CitybuildIconBridge.class);

@@ -6,6 +6,6 @@
  */
 
 @Category(name = "Spieler", icon = "steve", configKey = "player")
-package dev.l3g7.griefer_utils.v1_8_9.features.player;
+package dev.l3g7.griefer_utils.features.player;
 
 import dev.l3g7.griefer_utils.features.Feature.Category;

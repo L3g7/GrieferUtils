@@ -5,9 +5,9 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.farms;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms;
 
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiSearchable;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiSearchable;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import java.util.Comparator;
 import java.util.TreeSet;
 
-import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.farms.SpawnerType.SPAWNER_TYPES;
+import static dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.SpawnerType.SPAWNER_TYPES;
 
 public class GuiFilterType extends GuiSearchable<SpawnerType> {
 

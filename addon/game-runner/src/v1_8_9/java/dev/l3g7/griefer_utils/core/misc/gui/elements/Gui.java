@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.core.misc.gui.elements;
 
 import dev.l3g7.griefer_utils.core.api.misc.Named;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.SelectButtonGroup.Selectable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -41,7 +42,7 @@ public class Gui extends GuiScreen {
 		return create(new ImageSelection(label));
 	}
 
-	public <E extends Enum<E> & SelectButtonGroup.Selectable> SelectButtonGroup<E> createSelectGroup(E placeholder, String label) {
+	public <E extends Enum<E> & Selectable> SelectButtonGroup<E> createSelectGroup(E placeholder, String label) {
 		return create(new SelectButtonGroup<>(placeholder, label, width));
 	}
 

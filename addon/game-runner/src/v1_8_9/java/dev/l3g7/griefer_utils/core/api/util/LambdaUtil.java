@@ -1,7 +1,6 @@
 package dev.l3g7.griefer_utils.core.api.util;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
@@ -11,6 +10,8 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static java.lang.invoke.MethodType.methodType;
 
 public class LambdaUtil {
@@ -32,7 +33,7 @@ public class LambdaUtil {
 
 			// Create lookup searching in target
 			Lookup lookup;
-			if (Bridge.Version.LABY_4.isActive()) {
+			if (LABY_4.isActive()) {
 				lookup = MethodHandles.privateLookupIn(implementation.getDeclaringClass(), globalLookup);
 			} else {
 				Reflection.set(globalLookup, "allowedModes", -1);
@@ -47,7 +48,7 @@ public class LambdaUtil {
 			MethodHandle handle = createGenerator(implementation, lookup, generatorType, functionalInterface);
 
 			// Create interface
-			return Reflection.c(isStatic ? handle.invoke() : handle.invoke(instance));
+			return c(isStatic ? handle.invoke() : handle.invoke(instance));
 		} catch (Throwable t) {
 			throw Util.elevate(t);
 		}

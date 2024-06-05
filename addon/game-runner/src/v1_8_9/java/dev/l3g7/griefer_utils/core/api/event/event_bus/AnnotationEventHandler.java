@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnStartupComplete
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.annotation.Annotation;
@@ -47,7 +46,7 @@ public class AnnotationEventHandler implements Opcodes {
 				if (!method.isStatic() && !isSingleton)
 					continue;
 
-				runnables.add(() -> Reflection.invoke(resolveOwner(method, isSingleton), method.load()));
+				runnables.add(() -> invoke(resolveOwner(method, isSingleton), method.load()));
 			}
 		}
 	}

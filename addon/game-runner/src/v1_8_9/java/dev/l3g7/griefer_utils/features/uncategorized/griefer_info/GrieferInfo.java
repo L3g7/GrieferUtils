@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
 
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.gui.GuiGrieferInfo;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiGrieferInfo;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

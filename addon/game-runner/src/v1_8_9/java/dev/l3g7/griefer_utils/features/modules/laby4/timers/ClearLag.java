@@ -5,9 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby4.timers;
+package dev.l3g7.griefer_utils.features.modules.laby4.timers;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -21,7 +22,7 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.modules.Laby4Module;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 

@@ -12,7 +12,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.Authorization;
-import dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,6 +22,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
+
 public class MinecraftTokenProvider implements TokenProvider {
 
 	public boolean loadWithException() throws IOException {
@@ -30,7 +31,7 @@ public class MinecraftTokenProvider implements TokenProvider {
 		if (!Files.exists(path))
 			return false;
 
-		byte[] raw = MinecraftBridge.minecraftBridge.winCryptUnprotectData(Files.readAllBytes(path));
+		byte[] raw = minecraftBridge.winCryptUnprotectData(Files.readAllBytes(path));
 		JsonObject o = Streams.parse(new JsonReader(new InputStreamReader(new ByteArrayInputStream(raw)))).getAsJsonObject();
 		for (Map.Entry<String, JsonElement> entry : o.get("credentials").getAsJsonObject().entrySet()) {
 			if (entry.getKey().equals("common"))

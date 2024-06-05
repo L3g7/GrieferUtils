@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static org.objectweb.asm.ClassReader.SKIP_CODE;
 
 /**
@@ -254,7 +255,7 @@ public abstract class FileProvider {
 	 */
 	public static <T> T getSingleton(Class<T> singleton) {
 		if (singletonInstances.containsKey(singleton))
-			return Reflection.c(singletonInstances.get(singleton));
+			return c(singletonInstances.get(singleton));
 
 		if (!singleton.isAnnotationPresent(Singleton.class))
 			throw new IllegalArgumentException(singleton + " is not a singleton!");

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info;
+package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,14 +14,14 @@ import dev.l3g7.griefer_utils.core.api.WebAPI;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.events.WebDataReceiveEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.botshops.BotShop;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.botshops.GuiBotShops;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.farms.Farm;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.farms.GuiFarms;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.farms.SpawnerType;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff.FreeStuff;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
-import dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.griefer_info.freestuff.ItemFilter;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.BotShop;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.GuiBotShops;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.Farm;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.GuiFarms;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms.SpawnerType;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.FreeStuff;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.GuiFreestuff;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.ItemFilter;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import net.minecraft.item.ItemStack;
 

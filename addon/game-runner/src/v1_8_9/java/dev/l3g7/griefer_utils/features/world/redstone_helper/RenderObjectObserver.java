@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper;
+package dev.l3g7.griefer_utils.features.world.redstone_helper;
 
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
@@ -24,9 +24,9 @@ import dev.l3g7.griefer_utils.core.events.ChunkFilledEvent;
 import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.world.RedstoneHelper;
-import dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.RenderObject.TextureType;
-import dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.Renderer.CompiledChunk;
+import dev.l3g7.griefer_utils.features.world.RedstoneHelper;
+import dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObject.TextureType;
+import dev.l3g7.griefer_utils.features.world.redstone_helper.Renderer.CompiledChunk;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.network.Packet;

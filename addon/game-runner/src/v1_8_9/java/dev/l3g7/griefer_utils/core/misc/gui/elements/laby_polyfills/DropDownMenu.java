@@ -37,7 +37,7 @@ public class DropDownMenu<T> extends Gui {
     private int maxY = Integer.MAX_VALUE;
     private ArrayList<T> list = new ArrayList();
     private DropDownEntryDrawer entryDrawer = null;
-    private dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar scrollbar;
+    private Scrollbar scrollbar;
     private Consumer<T> hoverCallback;
 
     public DropDownMenu(String title, int x, int y, int width, int height) {

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.world.better_schematica;
+package dev.l3g7.griefer_utils.features.world.better_schematica;
 
 import com.github.lunatrius.core.client.renderer.GeometryTessellator;
 import com.github.lunatrius.schematica.api.ISchematic;

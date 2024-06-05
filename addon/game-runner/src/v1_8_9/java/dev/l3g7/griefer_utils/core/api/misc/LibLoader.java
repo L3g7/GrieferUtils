@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.core.api.misc;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
@@ -22,11 +21,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class LibLoader {
 
-	private static final ClassLoader launchClassLoaderParent = Reflection.get(MinecraftBridge.minecraftBridge.launchClassLoader(), "parent");
+	private static final ClassLoader launchClassLoaderParent = Reflection.get(minecraftBridge.launchClassLoader(), "parent");
 
 	public static void loadLibraries(String... libraries) {
 		for (int i = 0; i < libraries.length; i += 5) {
@@ -52,7 +52,7 @@ public class LibLoader {
 	}
 
 	private static void loadLibrary(String path, String downloadUrl, String hash) throws Throwable {
-		File libFile = new File(MinecraftBridge.minecraftBridge.assetsDir(), "../libraries/" + path);
+		File libFile = new File(minecraftBridge.assetsDir(), "../libraries/" + path);
 		if (!libFile.exists() || !verifyHash(libFile, hash)) {
 			// Download library
 			libFile.getParentFile().mkdirs();
@@ -70,7 +70,7 @@ public class LibLoader {
 		if (launchClassLoaderParent instanceof URLClassLoader)
 			Reflection.invoke(launchClassLoaderParent, "addURL", libFile.toURI().toURL());
 
-		Reflection.invoke(MinecraftBridge.minecraftBridge.launchClassLoader(), "addURL", libFile.toURI().toURL());
+		Reflection.invoke(minecraftBridge.launchClassLoader(), "addURL", libFile.toURI().toURL());
 	}
 
 	private static boolean verifyHash(File libFile, String targetHash) throws IOException {

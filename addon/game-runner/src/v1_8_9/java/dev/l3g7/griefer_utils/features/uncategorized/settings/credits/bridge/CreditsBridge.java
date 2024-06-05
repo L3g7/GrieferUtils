@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.bridge;
+package dev.l3g7.griefer_utils.features.uncategorized.settings.credits.bridge;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;

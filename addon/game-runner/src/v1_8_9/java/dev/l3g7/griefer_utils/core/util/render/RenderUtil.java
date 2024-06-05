@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderToolTipEvent;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -37,6 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.pos;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.render.GlEngine.*;
 import static net.minecraft.util.EnumFacing.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -45,12 +47,12 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class RenderUtil {
 
-	private static final RenderItem itemRender = MinecraftUtil.mc().getRenderItem();
+	private static final RenderItem itemRender = mc().getRenderItem();
 	private static ScaledResolution scaledResolution = null;
 
 	@EventListener(priority = Priority.HIGH)
 	private static void onRenderTick(RenderTickEvent event) {
-		scaledResolution = new ScaledResolution(MinecraftUtil.mc());
+		scaledResolution = new ScaledResolution(mc());
 	}
 
 	public static boolean shouldBeCulled(int minY, int maxY) {
@@ -63,20 +65,20 @@ public class RenderUtil {
 	public static void renderItem(ItemStack stack, int x, int y, int color) {
 		IBakedModel model = itemRender.getItemModelMesher().getItemModel(stack);
 
-		GlEngine.begin();
-		GlEngine.disableBlocksBlurAndMipmap();
+		begin();
+		disableBlocksBlurAndMipmap();
 
 		// Transform
 		Reflection.invoke(itemRender, "setupGuiTransform", x, y, model.isGui3d());
 		model.getItemCameraTransforms().applyTransform(TransformType.GUI);
-		GlEngine.scale(0.5F);
-		GlEngine.translate(-0.5F);
+		scale(0.5F);
+		translate(-0.5F);
 
 		// Draw item
-		WorldRenderer worldrenderer = GlEngine.beginWorldDrawing(GL_QUADS, DefaultVertexFormats.ITEM);
+		WorldRenderer worldrenderer = beginWorldDrawing(GL_QUADS, DefaultVertexFormats.ITEM);
 		Reflection.invoke(itemRender, "renderQuads", worldrenderer, model.getGeneralQuads(), color, stack);
 
-		GlEngine.finish();
+		finish();
 	}
 
 	public static void drawBoxOutlines(AxisAlignedBB bb, Color color, float width) {
@@ -108,19 +110,19 @@ public class RenderUtil {
 	}
 
 	public static void drawLine(float startX, float startY, float startZ, float endX, float endY, float endZ, Color color, float width) {
-		Entity entity = MinecraftUtil.mc().getRenderViewEntity();
+		Entity entity = mc().getRenderViewEntity();
 
 		// Get cam pos
 		Vec3d prevPos = new Vec3d(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
 
-		Vec3d cam = prevPos.add(MinecraftUtil.pos(entity).subtract(prevPos).scale(MinecraftUtil.partialTicks()));
+		Vec3d cam = prevPos.add(pos(entity).subtract(prevPos).scale(partialTicks()));
 
 		// Update line width
 		GL11.glLineWidth(width);
 		GlStateManager.disableTexture2D();
 
 		// Draw lines
-		GlEngine.begin();
+		begin();
 		WorldRenderer buf = GlEngine.beginWorldDrawing(GL_LINES, DefaultVertexFormats.POSITION);
 		GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
@@ -134,9 +136,9 @@ public class RenderUtil {
 	}
 
 	public static void drawFilledBox(AxisAlignedBB bb, Color color, boolean drawInside) {
-		Entity entity = MinecraftUtil.mc().getRenderViewEntity();
+		Entity entity = mc().getRenderViewEntity();
 		Vec3d prevPos = new Vec3d(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
-		Vec3d cam = prevPos.add(MinecraftUtil.pos(entity).subtract(prevPos).scale(MinecraftUtil.partialTicks()));
+		Vec3d cam = prevPos.add(pos(entity).subtract(prevPos).scale(partialTicks()));
 		bb = bb.offset(-cam.x, -cam.y, -cam.z);
 
 		Tessellator tessellator = Tessellator.getInstance();
@@ -265,7 +267,7 @@ public class RenderUtil {
 	}
 
 	public static void renderToolTipWithLeftPadding(RenderToolTipEvent event, float padding, BiConsumer<Float, Float> paddingContentRenderer) {
-		List<String> textLines = event.stack.getTooltip(MinecraftUtil.player(), MinecraftUtil.settings().advancedItemTooltips);
+		List<String> textLines = event.stack.getTooltip(player(), settings().advancedItemTooltips);
 		for (int i = 0; i < textLines.size(); ++i)
 			textLines.set(i, (i == 0 ? event.stack.getRarity().rarityColor : "§7") + textLines.get(i));
 
@@ -347,7 +349,7 @@ public class RenderUtil {
 		int tooltipTextWidth = 0;
 
 		for (String textLine : textLines) {
-			int textLineWidth = MinecraftUtil.mc().fontRendererObj.getStringWidth(textLine);
+			int textLineWidth = mc().fontRendererObj.getStringWidth(textLine);
 
 			if (textLineWidth > tooltipTextWidth) {
 				tooltipTextWidth = textLineWidth;
@@ -374,13 +376,13 @@ public class RenderUtil {
 			List<String> wrappedTextLines = new ArrayList<>();
 			for (int i = 0; i < textLines.size(); i++) {
 				String textLine = textLines.get(i);
-				List<String> wrappedLine = MinecraftUtil.mc().fontRendererObj.listFormattedStringToWidth(textLine, tooltipTextWidth);
+				List<String> wrappedLine = mc().fontRendererObj.listFormattedStringToWidth(textLine, tooltipTextWidth);
 				if (i == 0) {
 					titleLinesCount = wrappedLine.size();
 				}
 
 				for (String line : wrappedLine) {
-					int lineWidth = MinecraftUtil.mc().fontRendererObj.getStringWidth(line);
+					int lineWidth = mc().fontRendererObj.getStringWidth(line);
 					if (lineWidth > wrappedTooltipWidth) {
 						wrappedTooltipWidth = lineWidth;
 					}

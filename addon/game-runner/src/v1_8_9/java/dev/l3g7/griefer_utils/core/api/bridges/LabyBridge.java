@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.bridges;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
@@ -19,17 +20,19 @@ import java.io.File;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-@Bridge.Bridged
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+
+@Bridged
 public interface LabyBridge {
 
 	LabyBridge labyBridge = FileProvider.getBridge(LabyBridge.class);
 
 	static void run(Runnable laby3, Runnable laby4) {
-		(Bridge.Version.LABY_4.isActive() ? laby4 : laby3).run();
+		(LABY_4.isActive() ? laby4 : laby3).run();
 	}
 
 	static <T> T get(Supplier<T> laby3, Supplier<T> laby4) {
-		return (Bridge.Version.LABY_4.isActive() ? laby4 : laby3).get();
+		return (LABY_4.isActive() ? laby4 : laby3).get();
 	}
 
 	// General information

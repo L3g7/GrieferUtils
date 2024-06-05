@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static net.labymod.api.client.component.Component.empty;
 import static net.labymod.api.client.component.Component.space;
 

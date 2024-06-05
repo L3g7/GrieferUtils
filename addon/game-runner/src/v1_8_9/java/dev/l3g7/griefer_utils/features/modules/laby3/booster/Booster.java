@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.booster;
+package dev.l3g7.griefer_utils.features.modules.laby3.booster;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -33,8 +33,8 @@ import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.Commands;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby3Module;
+import dev.l3g7.griefer_utils.features.Commands;
+import dev.l3g7.griefer_utils.features.modules.Laby3Module;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.gui.inventory.GuiChest;

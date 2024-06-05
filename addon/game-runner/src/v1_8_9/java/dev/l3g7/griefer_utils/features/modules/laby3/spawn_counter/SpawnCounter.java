@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.spawn_counter;
+package dev.l3g7.griefer_utils.features.modules.laby3.spawn_counter;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
@@ -30,7 +30,7 @@ import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
-import dev.l3g7.griefer_utils.v1_8_9.features.modules.Laby3Module;
+import dev.l3g7.griefer_utils.features.modules.Laby3Module;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.Material;

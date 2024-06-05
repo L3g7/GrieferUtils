@@ -8,9 +8,6 @@
 package dev.l3g7.griefer_utils.core.api;
 
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -20,11 +17,16 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
+
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
 
 public class BugReporter {
 
@@ -47,7 +49,7 @@ public class BugReporter {
 	private static long timestampOfLastReport = 0;
 
 	private static boolean shouldReportError(Throwable error) {
-		if (!LabyBridge.labyBridge.obfuscated())
+		if (!labyBridge.obfuscated())
 			return false;
 
 		if (System.currentTimeMillis() - timestampOfLastReport < 10_000)
@@ -71,7 +73,7 @@ public class BugReporter {
 		if (!enabled.get() || !shouldReportError(error))
 			return;
 
-		LabyBridge.labyBridge.notifyError("Ein unbekannter Fehler ist aufgetreten!");
+		labyBridge.notifyError("Ein unbekannter Fehler ist aufgetreten!");
 
 		timestampOfLastReport = System.currentTimeMillis();
 		Thread t = new Thread(() -> {
@@ -102,13 +104,13 @@ public class BugReporter {
 				conn.setConnectTimeout(10000);
 				conn.setDoOutput(true);
 
-				conn.addRequestProperty("User-Agent", "GrieferUtils v" + LabyBridge.labyBridge.addonVersion());
+				conn.addRequestProperty("User-Agent", "GrieferUtils v" + labyBridge.addonVersion());
 				conn.addRequestProperty("Content-Type", "text/plain");
-				conn.addRequestProperty("X-MINECRAFT-FORGE", String.valueOf(LabyBridge.labyBridge.forge()));
-				conn.addRequestProperty("X-LABYMOD-4", String.valueOf(Bridge.Version.LABY_4.isActive()));
+				conn.addRequestProperty("X-MINECRAFT-FORGE", String.valueOf(labyBridge.forge()));
+				conn.addRequestProperty("X-LABYMOD-4", String.valueOf(LABY_4.isActive()));
 
 				if (shouldSendUuid.get())
-					conn.addRequestProperty("X-MINECRAFT-UUID", String.valueOf(MinecraftBridge.minecraftBridge.uuid()));
+					conn.addRequestProperty("X-MINECRAFT-UUID", String.valueOf(minecraftBridge.uuid()));
 
 				conn.setRequestMethod("POST");
 				try (OutputStream out = conn.getOutputStream()) {

@@ -7,12 +7,13 @@
 
 package dev.l3g7.griefer_utils.core.api.bridges;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 
 import java.io.File;
 import java.util.UUID;
 
-@Bridge.Bridged
+@Bridged
 public interface MinecraftBridge {
 
 	MinecraftBridge minecraftBridge = FileProvider.getBridge(MinecraftBridge.class);

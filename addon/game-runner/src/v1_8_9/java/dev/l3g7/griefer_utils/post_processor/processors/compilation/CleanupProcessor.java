@@ -30,7 +30,7 @@ public class CleanupProcessor extends CompilationPostProcessor {
 	@Override
 	public void apply(FileSystem fs) throws IOException {
 		// delete LabyMod 4 autogen
-		deleteDir(fs.getPath("dev/l3g7/griefer_utils/core"));
+		deleteDir(fs.getPath("dev/l3g7/griefer_utils/v1_8_9"));
 		deleteDir(fs.getPath("META-INF/custom-services"));
 
 		// delete compilation post processors

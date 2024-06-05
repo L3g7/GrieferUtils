@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon.WrappedIcon;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -55,7 +56,7 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	@Override
 	default S icon(Object icon) {
 		getStorage().icon = laby3MinecraftBridge.createIcon(icon);
-		Reflection.set(this, "iconData", new Icon.WrappedIcon(getStorage().icon));
+		Reflection.set(this, "iconData", new WrappedIcon(getStorage().icon));
 		return (S) this;
 	}
 

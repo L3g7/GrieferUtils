@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.render;
+package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -30,6 +30,7 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.core.util.render.GlEngine.pos;
+import static dev.l3g7.griefer_utils.core.util.render.GlEngine.*;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static net.minecraft.block.material.Material.water;

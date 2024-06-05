@@ -12,12 +12,10 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.settings.types.*;
-import dev.l3g7.griefer_utils.laby4.settings.types.*;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.list.EntryAddSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.bridges.ItemBridge;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.*;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.list.EntryAddSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.Settings;
+import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.AbstractWidget;
@@ -25,6 +23,8 @@ import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.resources.ResourceLocation;
 
 import java.util.ArrayList;
+
+import static dev.l3g7.griefer_utils.labymod.laby4.bridges.ItemBridge.itemBridge;
 
 @Singleton
 @Bridge
@@ -53,8 +53,8 @@ public class SettingsImpl implements Settings { // Note: replace with multiple b
 			return Icon.texture(location);
 		else if (icon instanceof Icon)
 			return (Icon) icon;
-		else if (ItemBridge.itemBridge.isConvertableToLabyStack(icon))
-			return new ItemStackIcon(ItemBridge.itemBridge.convertToLabyStack(icon));
+		else if (itemBridge.isConvertableToLabyStack(icon))
+			return new ItemStackIcon(itemBridge.convertToLabyStack(icon));
 		else
 			throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
 	}

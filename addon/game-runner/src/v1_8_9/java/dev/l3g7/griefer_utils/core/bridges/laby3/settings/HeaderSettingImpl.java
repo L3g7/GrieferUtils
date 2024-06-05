@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.core.bridges.laby3.settings;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
+import net.labymod.settings.elements.HeaderElement;
 
 import java.util.Arrays;
 import java.util.Collections;

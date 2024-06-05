@@ -9,11 +9,12 @@ package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.Settings;
+
+import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
 public interface SwitchSetting extends AbstractSetting<SwitchSetting, Boolean> {
 
-	static SwitchSetting create() {return Settings.settings.createSwitchSetting();}
+	static SwitchSetting create() {return settings.createSwitchSetting();}
 
 	SwitchSetting asCheckbox(); // NOTE: use
 

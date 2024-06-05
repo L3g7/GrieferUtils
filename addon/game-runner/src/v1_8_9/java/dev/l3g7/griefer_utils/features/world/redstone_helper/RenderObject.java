@@ -1,7 +1,7 @@
-package dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper;
+package dev.l3g7.griefer_utils.features.world.redstone_helper;
 
-import dev.l3g7.griefer_utils.v1_8_9.features.world.RedstoneHelper;
-import dev.l3g7.griefer_utils.v1_8_9.features.world.redstone_helper.Renderer.CompiledChunk;
+import dev.l3g7.griefer_utils.features.world.RedstoneHelper;
+import dev.l3g7.griefer_utils.features.world.redstone_helper.Renderer.CompiledChunk;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.BlockRedstoneWire;

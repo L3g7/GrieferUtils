@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3.ChatFilterTemplates.FilterTemplate;
 import net.labymod.core.LabyModCore;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.Filters;
@@ -72,7 +73,7 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 
 			relY += 13;
 			int currentIndex = 0;
-			for (ChatFilterTemplates.FilterTemplate template : ChatFilterTemplates.TEMPLATES) {
+			for (FilterTemplate template : ChatFilterTemplates.TEMPLATES) {
 				if (currentIndex == hoveredIndex)
 					drawRect(relX, relY, relX + 118, relY + 11, 0x70000000);
 
@@ -132,7 +133,7 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 		}
 	}
 
-	public void loadTemplate(ChatFilterTemplates.FilterTemplate template) {
+	public void loadTemplate(FilterTemplate template) {
 		Reflection.invoke(this, "loadFilter", template.toFilter());
 	}
 

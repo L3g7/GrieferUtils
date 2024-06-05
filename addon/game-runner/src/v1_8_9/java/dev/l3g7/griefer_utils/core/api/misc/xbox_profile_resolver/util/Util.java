@@ -39,7 +39,7 @@ public class Util {
 					builder.append(URLEncoder.encode(value, "UTF-8"));
 				}
 			} catch (UnsupportedEncodingException e) {
-				throw dev.l3g7.griefer_utils.core.api.util.Util.elevate(e);
+				throw elevate(e);
 			}
 		});
 		return builder.toString();

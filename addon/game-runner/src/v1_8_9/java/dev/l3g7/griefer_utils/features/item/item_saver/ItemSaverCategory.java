@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class ItemSaverCategory extends Feature {
 
 	private final List<Class<?>> savers = Arrays.asList(
-		// dev.l3g7.griefer_utils.v1_8_9.features.item.item_saver.specific_item_saver.laby4.ItemSaver.class,
+		// dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemSaver.class,
 		BorderSaver.class,
 		ParticleSaver.class,
 		PrefixSaver.class,

@@ -18,6 +18,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 
 /**
@@ -62,9 +63,9 @@ public class AnnotationMeta implements Opcodes {
 	 */
 	public <T> Class<T> loadClass() {
 		if (type != null)
-			return Reflection.c(type);
+			return c(type);
 		else
-			return Reflection.c(type = FileProvider.getClassMetaByDesc(desc).load());
+			return c(type = FileProvider.getClassMetaByDesc(desc).load());
 	}
 
 	/**
@@ -80,7 +81,7 @@ public class AnnotationMeta implements Opcodes {
 				value = convertToEnum(value);
 				values.put(key, value);
 			}
-			return Reflection.c(value);
+			return c(value);
 		}
 
 		// Load value using Reflection
@@ -104,7 +105,7 @@ public class AnnotationMeta implements Opcodes {
 		if (isEnum && mustConvertToEnum(value.getClass()))
 			value = convertToEnum(value);
 		values.put(key, value);
-		return Reflection.c(value);
+		return c(value);
 	}
 
 	private boolean mustConvertToEnum(Class<?> clazz) {
@@ -126,7 +127,7 @@ public class AnnotationMeta implements Opcodes {
 	private <T extends Enum<T>> Object convertToEnum(Object value) {
 		if (value.getClass().isArray()) {
 			String[] data = (String[]) value;
-			return Enum.valueOf((Class<? extends Enum>) Reflection.c(FileProvider.getClassMetaByDesc(data[0]).load()), data[1]);
+			return Enum.valueOf((Class<? extends Enum>) c(FileProvider.getClassMetaByDesc(data[0]).load()), data[1]);
 		}
 
 		List<String[]> list = (List<String[]>) value;
@@ -134,9 +135,9 @@ public class AnnotationMeta implements Opcodes {
 
 		for (int i = 0; i < list.size(); i++) {
 			String[] data = list.get(i);
-			Class<T> clazz = Reflection.c(FileProvider.getClassMetaByDesc(data[0]).load());
+			Class<T> clazz = c(FileProvider.getClassMetaByDesc(data[0]).load());
 			if (result == null)
-				result = Reflection.c(Array.newInstance(clazz, list.size()));
+				result = c(Array.newInstance(clazz, list.size()));
 
 			result[i] = Enum.valueOf(clazz, data[1]);
 		}

@@ -22,6 +22,8 @@ import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.features.chat.chat_menu.laby3.ChatMenuEntry.Action;
+import dev.l3g7.griefer_utils.features.chat.chat_menu.laby3.ChatMenuEntry.IconType;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.*;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar;
@@ -57,10 +59,10 @@ public class AddChatMenuEntryGui extends Gui {
 	private final EntryDisplaySetting editedEntry;
 
 	// Input fields
-	private SelectButtonGroup<ChatMenuEntry.Action> actionTypeInput;
+	private SelectButtonGroup<Action> actionTypeInput;
 	private TextField actionInput;
 	private TextField nameInput;
-	private SelectButtonGroup<ChatMenuEntry.IconType> iconInput;
+	private SelectButtonGroup<IconType> iconInput;
 	private DropDown<ItemStack> itemIconInput;
 	private ImageSelection fileIconInput;
 
@@ -111,7 +113,7 @@ public class AddChatMenuEntryGui extends Gui {
 			.callback(this::save);
 
 		// Action selection
-		actionTypeInput = createSelectGroup(ChatMenuEntry.Action.CONSUMER, "Aktion")
+		actionTypeInput = createSelectGroup(Action.CONSUMER, "Aktion")
 			.y(top);
 
 		int width = actionTypeInput.width();
@@ -136,7 +138,7 @@ public class AddChatMenuEntryGui extends Gui {
 			.width(width)
 			.renderGroup(RENDER_GROUP_SELECTED);
 
-		iconInput = createSelectGroup(ChatMenuEntry.IconType.DEFAULT, "Icon")
+		iconInput = createSelectGroup(IconType.DEFAULT, "Icon")
 			.y(nameInput.bottom() + PADDING)
 			.renderGroup(RENDER_GROUP_SELECTED);
 
@@ -182,7 +184,7 @@ public class AddChatMenuEntryGui extends Gui {
 		// Configure content
 		saveButton.enabled = !actionInput.getText().isEmpty() && !nameInput.getText().isEmpty();
 
-		if (actionTypeInput.getSelected() == ChatMenuEntry.Action.CONSUMER)
+		if (actionTypeInput.getSelected() == Action.CONSUMER)
 			cancelButton.yPosition = saveButton.yPosition = (int) actionTypeInput.bottom() + PADDING;
 		else {
 			switch (actionTypeInput.getSelected()) {
@@ -223,12 +225,12 @@ public class AddChatMenuEntryGui extends Gui {
 		// Draw content
 		draw(mouseX, mouseY);
 
-		if (actionTypeInput.getSelected() != ChatMenuEntry.Action.CONSUMER)
+		if (actionTypeInput.getSelected() != Action.CONSUMER)
 			draw(mouseX, mouseY, RENDER_GROUP_SELECTED);
 
-		if (iconInput.getSelected() == ChatMenuEntry.IconType.ITEM)
+		if (iconInput.getSelected() == IconType.ITEM)
 			draw(mouseX, mouseY, RENDER_GROUP_ITEM_ICON);
-		else if (iconInput.getSelected() == ChatMenuEntry.IconType.IMAGE_FILE)
+		else if (iconInput.getSelected() == IconType.IMAGE_FILE)
 			draw(mouseX, mouseY, RENDER_GROUP_FILE_ICON);
 
 		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
@@ -273,7 +275,7 @@ public class AddChatMenuEntryGui extends Gui {
 		mouseY -= scrollbar.getScrollY();
 
 		// prioritize citybuild as it overlaps with the save and close buttons
-		if (iconInput.getSelected() == ChatMenuEntry.IconType.ITEM && itemIconInput.onClick(mouseX, mouseY, mouseButton))
+		if (iconInput.getSelected() == IconType.ITEM && itemIconInput.onClick(mouseX, mouseY, mouseButton))
 			return;
 
 		for (Clickable clickable : clickables)
@@ -321,7 +323,7 @@ public class AddChatMenuEntryGui extends Gui {
 			// Command -> Trigger / Item icon
 			else if (nameInput.isFocused()) {
 				nameInput.setFocused(false);
-				if (iconInput.getSelected() == ChatMenuEntry.IconType.ITEM)
+				if (iconInput.getSelected() == IconType.ITEM)
 					itemIconInput.onClick(itemIconInput.getX(), itemIconInput.getY(), 0); // Use onClick so scrollbar is initialized
 				else
 					actionInput.setFocused(true);
@@ -348,7 +350,7 @@ public class AddChatMenuEntryGui extends Gui {
 		entry.action = actionTypeInput.getSelected();
 		entry.command = actionInput.getText();
 		entry.iconType = iconInput.getSelected();
-		entry.icon = iconInput.getSelected() == ChatMenuEntry.IconType.ITEM ? itemIconInput.getSelected() : fileIconInput.getSelection();
+		entry.icon = iconInput.getSelected() == IconType.ITEM ? itemIconInput.getSelected() : fileIconInput.getSelection();
 		entry.completed = true;
 
 		if (editedEntry == null)

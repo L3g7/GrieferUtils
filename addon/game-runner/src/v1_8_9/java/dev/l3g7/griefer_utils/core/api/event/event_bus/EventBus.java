@@ -8,22 +8,24 @@
 package dev.l3g7.griefer_utils.core.api.event.event_bus;
 
 import dev.l3g7.griefer_utils.core.api.BugReporter;
+import dev.l3g7.griefer_utils.core.api.event.event_bus.Listener.ListenerList;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.util.LambdaUtil;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+
 class EventBus {
 
 	/**
 	 * The listeners associated with each event, sorted by priority.
 	 */
-	static final Map<Class<?>, Listener.ListenerList> events = new ConcurrentHashMap<>();
+	static final Map<Class<?>, ListenerList> events = new ConcurrentHashMap<>();
 
 	/**
 	 * Triggers all listeners annotated with an event handler targeting the given event.
@@ -31,7 +33,7 @@ class EventBus {
 	static void fire(Event event) {
 		EventRegisterer.handleLazyRegistrations(event.getClass().getName());
 
-		Listener.ListenerList list = events.get(event.getClass());
+		ListenerList list = events.get(event.getClass());
 		if (list == null)
 			return;
 
@@ -61,7 +63,7 @@ class EventBus {
 		boolean mustBeEnabled = !listener.triggerWhenDisabled() && owner instanceof Disableable;
 
 		// Create listener list
-		Listener.ListenerList listeners = events.computeIfAbsent(eventClass, e -> new Listener.ListenerList());
+		ListenerList listeners = events.computeIfAbsent(eventClass, e -> new ListenerList());
 
 		// Create type parameter check
 		Predicate<Event> typeCheck;
@@ -97,7 +99,7 @@ class EventBus {
 				}
 			}
 
-			typeCheck = Predicate.all(Reflection.c(typeChecks));
+			typeCheck = Predicate.all(c(typeChecks));
 		}
 
 		Consumer<Event> consumer = LambdaUtil.createFunctionalInterface(Consumer.class, method, owner);

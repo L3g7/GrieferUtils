@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.spawn_counter;
+package dev.l3g7.griefer_utils.features.modules.laby3.spawn_counter;
 
 import com.google.common.base.Supplier;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -38,9 +38,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
-import static dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
-import static dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.spawn_counter.SpawnCounter.LeaderboardDisplayType.ON;
-import static dev.l3g7.griefer_utils.v1_8_9.features.modules.laby3.spawn_counter.SpawnCounter.leaderboard;
+import static dev.l3g7.griefer_utils.features.modules.laby3.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
+import static dev.l3g7.griefer_utils.features.modules.laby3.spawn_counter.SpawnCounter.LeaderboardDisplayType.ON;
+import static dev.l3g7.griefer_utils.features.modules.laby3.spawn_counter.SpawnCounter.leaderboard;
 import static dev.l3g7.griefer_utils.core.settings.player_list.PlayerListEntry.INVALID_PLAYER;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static net.labymod.ingamegui.Module.mc;

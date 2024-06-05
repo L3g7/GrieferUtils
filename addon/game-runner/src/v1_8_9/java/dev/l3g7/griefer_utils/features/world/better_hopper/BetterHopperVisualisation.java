@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.world.better_hopper;
+package dev.l3g7.griefer_utils.features.world.better_hopper;
 
 import dev.l3g7.griefer_utils.core.api.event.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
@@ -36,7 +36,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static dev.l3g7.griefer_utils.v1_8_9.features.world.better_hopper.BetterHopper.*;
+import static dev.l3g7.griefer_utils.features.world.better_hopper.BetterHopper.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 import static org.lwjgl.opengl.GL11.*;

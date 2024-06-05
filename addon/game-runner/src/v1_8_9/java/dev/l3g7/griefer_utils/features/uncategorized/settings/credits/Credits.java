@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits;
+package dev.l3g7.griefer_utils.features.uncategorized.settings.credits;
 
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.v1_8_9.features.uncategorized.settings.credits.bridge.CreditsBridge.creditsBridge;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.bridge.CreditsBridge.creditsBridge;
 import static dev.l3g7.griefer_utils.core.misc.badges.BadgeManagerBridge.badgeManager;
 
 public class Credits {

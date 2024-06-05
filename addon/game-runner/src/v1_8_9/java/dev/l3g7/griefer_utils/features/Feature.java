@@ -7,14 +7,14 @@
 
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.api.event.event_bus.Disableable;
-import dev.l3g7.griefer_utils.api.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.settings.BaseSetting;
-import dev.l3g7.griefer_utils.settings.SettingLoader;
-import dev.l3g7.griefer_utils.settings.SettingLoader.MainElementData;
-import dev.l3g7.griefer_utils.settings.types.NumberSetting;
-import dev.l3g7.griefer_utils.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.api.event.event_bus.Disableable;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.SettingLoader;
+import dev.l3g7.griefer_utils.core.settings.SettingLoader.MainElementData;
+import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

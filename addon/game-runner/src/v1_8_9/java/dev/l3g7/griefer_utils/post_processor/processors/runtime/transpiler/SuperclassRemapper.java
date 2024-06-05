@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler;
 
-import dev.l3g7.griefer_utils.api.mapping.Mapper;
+import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.post_processor.processors.RuntimePostProcessor;
 import dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler.Java17to8Transpiler.BoundClassWriter;
 import org.objectweb.asm.ClassReader;
@@ -18,8 +18,8 @@ import org.objectweb.asm.tree.*;
 
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.api.mapping.Mapping.SEARGE;
-import static dev.l3g7.griefer_utils.api.mapping.Mapping.UNOBFUSCATED;
+import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.SEARGE;
+import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 import static org.objectweb.asm.Type.*;
 
 /**

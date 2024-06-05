@@ -7,14 +7,14 @@
 
 package dev.l3g7.griefer_utils.post_processor.processors.compilation.refmap_conversion;
 
-import dev.l3g7.griefer_utils.api.mapping.MappingEntries;
+import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries;
 import org.objectweb.asm.Type;
 
 import java.util.NoSuchElementException;
 
-import static dev.l3g7.griefer_utils.api.mapping.Mapper.classes;
-import static dev.l3g7.griefer_utils.api.mapping.Mapping.OBFUSCATED;
-import static dev.l3g7.griefer_utils.api.mapping.Mapping.SEARGE;
+import static dev.l3g7.griefer_utils.core.api.mapping.Mapper.classes;
+import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
+import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.SEARGE;
 
 public class ReferenceMapper {
 

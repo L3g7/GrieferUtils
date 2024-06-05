@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.post_processor.processors.compilation.refmap_conv
 import com.google.gson.*;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
-import dev.l3g7.griefer_utils.api.mapping.Mapper;
+import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.post_processor.processors.CompilationPostProcessor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;

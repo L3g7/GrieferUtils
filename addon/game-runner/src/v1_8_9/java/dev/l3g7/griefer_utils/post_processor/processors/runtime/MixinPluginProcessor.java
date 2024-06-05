@@ -24,7 +24,7 @@ public class MixinPluginProcessor extends RuntimePostProcessor {
 
 	@Override
 	public byte[] transform(String fileName, byte[] basicClass) {
-		if (!fileName.equals("dev/l3g7/griefer_utils/injection/MixinPlugin.class"))
+		if (!fileName.equals("dev/l3g7/griefer_utils/core/injection/MixinPlugin.class"))
 			return basicClass;
 
 		ClassNode classNode = new ClassNode();

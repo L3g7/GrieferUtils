@@ -19,7 +19,7 @@
 package dev.l3g7.griefer_utils.features.item.recraft.laby3.recipe;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;

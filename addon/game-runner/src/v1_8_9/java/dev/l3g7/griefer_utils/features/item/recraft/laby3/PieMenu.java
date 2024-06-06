@@ -8,9 +8,9 @@
 package dev.l3g7.griefer_utils.features.item.recraft.laby3;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Disableable;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.MouseEvent;

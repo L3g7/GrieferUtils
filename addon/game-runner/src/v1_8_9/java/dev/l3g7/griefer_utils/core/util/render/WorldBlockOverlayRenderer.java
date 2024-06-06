@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.core.util.render;
 
 import com.github.lunatrius.schematica.api.ISchematic;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.ChunkFilledEvent;
 import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;

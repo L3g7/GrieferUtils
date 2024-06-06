@@ -9,8 +9,8 @@ package dev.l3g7.griefer_utils.core.events.network;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Event;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;

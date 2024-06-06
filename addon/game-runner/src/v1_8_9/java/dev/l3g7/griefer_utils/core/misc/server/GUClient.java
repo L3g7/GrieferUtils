@@ -9,8 +9,8 @@ package dev.l3g7.griefer_utils.core.misc.server;
 
 import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.core.api.event.event_bus.Priority.HIGH;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton

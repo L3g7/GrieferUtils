@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.chat.message_skulls.laby3;
 import de.emotechat.addon.gui.chat.render.EmoteChatRenderer;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;

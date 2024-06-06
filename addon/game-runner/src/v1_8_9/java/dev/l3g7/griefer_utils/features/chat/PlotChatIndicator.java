@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.chat;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.features.Feature;

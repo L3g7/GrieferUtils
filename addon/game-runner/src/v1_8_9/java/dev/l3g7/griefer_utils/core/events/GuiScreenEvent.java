@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.events;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.labymod.api.Laby;
 import net.labymod.v1_8_9.client.gui.screen.LabyScreenRenderer;

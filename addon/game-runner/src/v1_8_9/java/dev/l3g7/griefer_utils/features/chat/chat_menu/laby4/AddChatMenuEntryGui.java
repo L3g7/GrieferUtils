@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu.laby4;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;

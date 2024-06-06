@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.text_component_tweaks;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Items;
 import net.minecraft.util.IChatComponent;
 
-import static dev.l3g7.griefer_utils.core.api.event.event_bus.Priority.LOW;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOW;
 
 abstract class TextComponentTweak extends Feature {
 

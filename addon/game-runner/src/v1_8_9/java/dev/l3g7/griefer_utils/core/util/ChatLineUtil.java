@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.core.util;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import net.labymod.api.client.chat.ChatMessage;
 import net.labymod.api.client.chat.advanced.ChatMessagesWidget;

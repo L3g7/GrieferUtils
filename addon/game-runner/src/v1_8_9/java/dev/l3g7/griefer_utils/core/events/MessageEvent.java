@@ -8,9 +8,9 @@
 package dev.l3g7.griefer_utils.core.events;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Event;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.network.play.server.S02PacketChat;

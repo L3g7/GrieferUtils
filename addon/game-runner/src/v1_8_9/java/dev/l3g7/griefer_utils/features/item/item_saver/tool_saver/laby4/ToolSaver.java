@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.laby4;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;

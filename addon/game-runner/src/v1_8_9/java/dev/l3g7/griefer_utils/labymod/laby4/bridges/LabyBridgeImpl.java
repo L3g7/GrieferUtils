@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;

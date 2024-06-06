@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;

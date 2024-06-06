@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.item.item_saver;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Disableable;
+import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.features.Feature;

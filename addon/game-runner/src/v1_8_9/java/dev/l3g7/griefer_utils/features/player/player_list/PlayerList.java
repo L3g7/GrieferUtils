@@ -8,8 +8,8 @@
 package dev.l3g7.griefer_utils.features.player.player_list;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Priority;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;

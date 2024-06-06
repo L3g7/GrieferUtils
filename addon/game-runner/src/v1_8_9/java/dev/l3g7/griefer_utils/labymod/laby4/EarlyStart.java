@@ -16,20 +16,15 @@ import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.misc.LibLoader;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import net.labymod.api.Laby;
-import net.labymod.api.addon.exception.UnsupportedAddonException;
-import net.labymod.api.models.version.Version;
 
 import java.io.InputStreamReader;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+
 public class EarlyStart {
 
-	public static void start(Version semVer) {
-		// Initialize bridge
-		Bridge.Version mcVersion = Bridge.Version.getMinecraftBySemVer(semVer.toString());
-		if (mcVersion == null)
-			throw new UnsupportedAddonException("GrieferUtils ist nicht für Version " + semVer + " verfügbar!");
-
-		Bridge.Initializer.init(Bridge.Version.LABY_4, mcVersion);
+	public static void start() {
+		Bridge.Initializer.init(LABY_4);
 
 		// Ensure addon version is up-to-date
 		JsonObject addonJson = Streams.parse(new JsonReader(new InputStreamReader(FileProvider.getData("addon.json")))).getAsJsonObject();

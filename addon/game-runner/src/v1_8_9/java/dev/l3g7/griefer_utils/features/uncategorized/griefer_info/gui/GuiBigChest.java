@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;

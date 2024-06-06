@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.features.chat.auto_unnick;
 
 import dev.l3g7.griefer_utils.core.api.BugReporter;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.WebDataReceiveEvent;
 
 public class PrefixFinder {

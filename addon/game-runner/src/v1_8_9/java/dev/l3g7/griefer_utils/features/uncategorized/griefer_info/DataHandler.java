@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.WebAPI;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.BotShop;

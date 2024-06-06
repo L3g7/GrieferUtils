@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.DataHandler;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.GuiBotShops;

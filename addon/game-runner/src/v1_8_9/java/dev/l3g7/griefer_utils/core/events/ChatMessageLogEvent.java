@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.core.events;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.minecraft.client.gui.GuiNewChat;
 import org.apache.logging.log4j.Logger;

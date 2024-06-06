@@ -36,7 +36,7 @@ public class PreStart implements Entrypoint, UpdateImpl {
 			throw new Error("GrieferUtils wurde bereits geladen!");
 
 		AutoUpdater.update(this);
-		EarlyStart.start(semVer);
+		EarlyStart.start();
 	}
 
 	@Override

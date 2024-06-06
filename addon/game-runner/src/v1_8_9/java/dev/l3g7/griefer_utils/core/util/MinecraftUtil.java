@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.core.util;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.render.ScaledResolutionInitEvent;

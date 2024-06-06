@@ -2,10 +2,9 @@ package dev.l3g7.griefer_utils.core.bridges.laby3.settings;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;

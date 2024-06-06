@@ -5,10 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.event.event_bus;
+package dev.l3g7.griefer_utils.core.api.event_bus;
 
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnStartupComplete;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;

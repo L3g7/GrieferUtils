@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.misc;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;

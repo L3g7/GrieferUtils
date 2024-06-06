@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.events;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;

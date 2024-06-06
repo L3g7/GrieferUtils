@@ -21,7 +21,7 @@ package dev.l3g7.griefer_utils.features.modules.laby3.spawn_counter;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;

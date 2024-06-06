@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.events;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import net.minecraft.block.BlockNote;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;

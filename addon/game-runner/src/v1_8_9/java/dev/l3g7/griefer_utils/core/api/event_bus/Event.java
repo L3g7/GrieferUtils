@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.event.event_bus;
+package dev.l3g7.griefer_utils.core.api.event_bus;
 
 import java.lang.annotation.Annotation;
 

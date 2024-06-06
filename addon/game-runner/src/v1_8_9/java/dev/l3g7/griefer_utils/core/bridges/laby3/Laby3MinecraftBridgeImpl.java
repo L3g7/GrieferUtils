@@ -3,7 +3,7 @@ package dev.l3g7.griefer_utils.core.bridges.laby3;
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MinecraftBridge;

@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;

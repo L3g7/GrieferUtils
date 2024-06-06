@@ -9,8 +9,8 @@ package dev.l3g7.griefer_utils.features.modules.laby4.spawn_counter;
 
 import com.google.common.base.Supplier;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.UserData;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.OffsetIcon;

@@ -23,13 +23,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.MINECRAFT_1_8_9;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
 public class EarlyStart {
 
 	public static void start() throws IOException, ReflectiveOperationException {
-		Bridge.Initializer.init(LABY_3, MINECRAFT_1_8_9);
+		Bridge.Initializer.init(LABY_3);
 
 		// Load mcp mappings for automatic name resolution in Reflection
 		Mapper.loadMappings("1.8.9", "22");

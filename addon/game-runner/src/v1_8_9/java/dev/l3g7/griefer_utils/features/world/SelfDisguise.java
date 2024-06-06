@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.world;
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static dev.l3g7.griefer_utils.core.api.event.event_bus.Priority.LOWEST;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**

@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.events.render;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Event.TypedEvent;
+import dev.l3g7.griefer_utils.core.api.event_bus.Event.TypedEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;

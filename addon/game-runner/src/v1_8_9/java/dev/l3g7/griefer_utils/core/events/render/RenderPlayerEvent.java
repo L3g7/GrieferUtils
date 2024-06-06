@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.events.render;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;

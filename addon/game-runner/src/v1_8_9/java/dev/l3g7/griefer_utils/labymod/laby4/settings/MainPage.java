@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;

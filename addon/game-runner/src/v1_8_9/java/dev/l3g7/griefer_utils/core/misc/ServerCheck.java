@@ -8,15 +8,15 @@
 package dev.l3g7.griefer_utils.core.misc;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 
-import static dev.l3g7.griefer_utils.core.api.event.event_bus.Priority.HIGHEST;
-import static dev.l3g7.griefer_utils.core.api.event.event_bus.Priority.LOWEST;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGHEST;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 @Singleton

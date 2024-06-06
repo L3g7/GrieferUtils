@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.core.settings.player_list;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;

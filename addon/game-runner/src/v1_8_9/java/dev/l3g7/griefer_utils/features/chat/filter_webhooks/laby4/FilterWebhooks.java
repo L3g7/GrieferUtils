@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.chat.filter_webhooks.laby4;
 
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;

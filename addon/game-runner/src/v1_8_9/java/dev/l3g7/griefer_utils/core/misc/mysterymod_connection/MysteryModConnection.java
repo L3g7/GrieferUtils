@@ -7,8 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.misc.mysterymod_connection;
 
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerJoinEvent;

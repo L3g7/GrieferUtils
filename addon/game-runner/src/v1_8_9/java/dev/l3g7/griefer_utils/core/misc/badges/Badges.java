@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.core.misc.badges;
 
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListClearEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddEvent;

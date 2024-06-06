@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.IllegalFormatException;
 
-import static dev.l3g7.griefer_utils.core.api.event.event_bus.Priority.LOWEST;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton

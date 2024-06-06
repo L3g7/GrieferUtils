@@ -1,6 +1,6 @@
 package dev.l3g7.griefer_utils.features.world.redstone_helper;
 
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.features.world.redstone_helper.RenderObjectObserver.Chunk;
 import net.minecraft.client.Minecraft;

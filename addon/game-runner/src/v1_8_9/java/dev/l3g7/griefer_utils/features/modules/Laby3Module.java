@@ -19,9 +19,9 @@
 package dev.l3g7.griefer_utils.features.modules;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnStartupComplete;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.Disableable;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
+import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;

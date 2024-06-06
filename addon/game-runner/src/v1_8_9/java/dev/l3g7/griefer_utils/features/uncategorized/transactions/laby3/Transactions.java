@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.transactions.laby3;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;

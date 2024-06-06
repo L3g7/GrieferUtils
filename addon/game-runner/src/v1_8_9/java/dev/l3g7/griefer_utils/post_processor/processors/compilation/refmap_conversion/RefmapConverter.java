@@ -11,6 +11,7 @@ import com.google.gson.*;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
+import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import dev.l3g7.griefer_utils.post_processor.processors.CompilationPostProcessor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
@@ -155,7 +156,7 @@ public class RefmapConverter extends CompilationPostProcessor {
 
 					// Find @InheritedInvoke
 					for (AnnotationNode annotation : methodNode.invisibleAnnotations)
-						if (annotation.desc.equals("Ldev/l3g7/griefer_utils/injection/InheritedInvoke;"))
+						if (annotation.desc.equals(Type.getDescriptor(InheritedInvoke.class)))
 							return ((Type) getAnnotationValue(annotation, "value")).getInternalName();
 
 				}

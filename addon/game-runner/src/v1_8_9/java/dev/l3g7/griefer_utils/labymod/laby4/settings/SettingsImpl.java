@@ -22,11 +22,14 @@ import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.AbstractWidget;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.resources.ResourceLocation;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.labymod.laby4.bridges.ItemBridge.itemBridge;
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 @Bridge
 @Singleton
@@ -56,8 +59,12 @@ public class SettingsImpl implements Settings { // Note: replace with multiple b
 			return Icon.texture(location);
 		else if (icon instanceof Icon)
 			return (Icon) icon;
-		else if (itemBridge.isConvertableToLabyStack(icon))
-			return new ItemStackIcon(itemBridge.convertToLabyStack(icon));
+		else if (icon instanceof ItemStack stack)
+			return new ItemStackIcon(c(stack));
+		else if (icon instanceof Item item)
+			return buildIcon(new ItemStack(item));
+		else if (icon instanceof Block block)
+			return buildIcon(new ItemStack(block));
 		else
 			throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
 	}

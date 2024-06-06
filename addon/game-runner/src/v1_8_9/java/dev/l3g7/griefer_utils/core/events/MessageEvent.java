@@ -7,12 +7,10 @@
 
 package dev.l3g7.griefer_utils.core.events;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.network.play.server.S02PacketChat;
@@ -21,8 +19,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import static dev.l3g7.griefer_utils.core.events.MessageEvent.MessageBridge.messageBridge;
 
 /**
  * A forge event for message processing.
@@ -44,11 +40,11 @@ public class MessageEvent extends Event {
 		private static void register() {
 			LabyBridge.labyBridge.onMessageModify((prevMsg, newMsg) -> {
 				MessageModifyEvent msg = new MessageModifyEvent(
-					messageBridge.fromLaby(prevMsg),
-					messageBridge.fromLaby(newMsg)
+					(IChatComponent) prevMsg,
+					(IChatComponent) newMsg
 				);
 				msg.fire();
-				return msg.modified ? messageBridge.toLaby(msg.message) : prevMsg;
+				return msg.modified ? msg.message : prevMsg;
 			});
 		}
 
@@ -117,16 +113,6 @@ public class MessageEvent extends Event {
 			if (new MessageReceiveEvent(event.packet.getChatComponent(), event.packet.getType()).fire().isCanceled())
 				event.cancel();
 		}
-
-	}
-
-	@Bridged
-	public interface MessageBridge {
-
-		MessageBridge messageBridge = FileProvider.getBridge(MessageBridge.class);
-
-		IChatComponent fromLaby(Object message);
-		Object toLaby(IChatComponent message);
 
 	}
 

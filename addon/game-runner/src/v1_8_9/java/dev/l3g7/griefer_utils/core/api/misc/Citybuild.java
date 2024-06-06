@@ -7,63 +7,69 @@
 
 package dev.l3g7.griefer_utils.core.api.misc;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
+import dev.l3g7.griefer_utils.core.misc.ChatQueue;
+import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import net.minecraft.item.ItemStack;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
+import static net.minecraft.init.Blocks.*;
+import static net.minecraft.init.Items.*;
 
 public enum Citybuild implements Named {
 
-	ANY("Egal","Egal"),
+	ANY(new ItemStack(nether_star), "Egal", "Egal"),
 
-	CB1,
-	CB2,
-	CB3,
-	CB4,
-	CB5,
-	CB6,
-	CB7,
-	CB8,
-	CB9,
-	CB10,
-	CB11,
-	CB12,
-	CB13,
-	CB14,
-	CB15,
-	CB16,
-	CB17,
-	CB18,
-	CB19,
-	CB20,
-	CB21,
-	CB22,
+	CB1(new ItemStack(diamond_block)),
+	CB2(new ItemStack(emerald_block)),
+	CB3(new ItemStack(gold_block)),
+	CB4(new ItemStack(redstone_block)),
+	CB5(new ItemStack(lapis_block)),
+	CB6(new ItemStack(coal_block)),
+	CB7(new ItemStack(emerald_ore)),
+	CB8(new ItemStack(redstone_ore)),
+	CB9(new ItemStack(diamond_ore)),
+	CB10(new ItemStack(gold_ore)),
+	CB11(new ItemStack(iron_ore)),
+	CB12(new ItemStack(coal_ore)),
+	CB13(new ItemStack(lapis_ore)),
+	CB14(new ItemStack(bedrock)),
+	CB15(new ItemStack(gravel)),
+	CB16(new ItemStack(obsidian)),
+	CB17(new ItemStack(stone, 1, 6)),
+	CB18(new ItemStack(iron_block)),
+	CB19(new ItemStack(prismarine, 1, 2)),
+	CB20(new ItemStack(prismarine)),
+	CB21(new ItemStack(mossy_cobblestone)),
+	CB22(new ItemStack(brick_block)),
 
-	NATURE("nature", "Nature", "n"),
-	EXTREME("extreme", "Extreme", "x"),
-	CBE("cbevil", "Evil", "e", "cbe", "CB Evil"),
+	NATURE(new ItemStack(sapling, 1, 5), "nature", "Nature", "n"),
+	EXTREME(new ItemStack(sapling, 1, 3), "extreme", "Extreme", "x"),
+	CBE(new ItemStack(netherrack), "cbevil", "Evil", "e", "cbe", "CB Evil"),
 
-	WATER("farm1", "Wasser", "w"),
-	LAVA("nether1", "Lava", "l"),
-	EVENT("eventserver", "Event", "v");
+	WATER(new ItemStack(water_bucket), "farm1", "Wasser", "w"),
+	LAVA(new ItemStack(lava_bucket), "nether1", "Lava", "l"),
+	EVENT(new ItemStack(beacon), "eventserver", "Event", "v");
 
 	private final String internalName;
 	private final String displayName;
 	private final String[] aliases;
+	private final ItemStack stack;
 
-	Citybuild() {
+	Citybuild(ItemStack stack) {
 		String id = name().substring(2);
 		internalName = "cb" + id;
 		displayName = "Citybuild " + id;
 		aliases = new String[0];
+		this.stack = stack;
 	}
 
-	Citybuild(String internalName, String displayName, String... aliases) {
+	Citybuild(ItemStack stack, String internalName, String displayName, String... aliases) {
 		this.internalName = internalName;
 		this.displayName = displayName;
 		this.aliases = aliases;
+		this.stack = stack;
 	}
 
 	@Override
@@ -79,25 +85,25 @@ public enum Citybuild implements Named {
 		if (this == ANY)
 			return true;
 
-		return matches(minecraftBridge.getGrieferGamesSubServer());
+		return matches(MinecraftUtil.getServerFromScoreboard());
 	}
 
 	public void join() {
 		if (internalName == null)
 			throw new IllegalStateException("This citybuild does not exist");
 
-		if (!minecraftBridge.onGrieferGames()) {
+		if (!ServerCheck.isOnGrieferGames()) {
 			LabyBridge.display(Constants.ADDON_PREFIX + "§fBitte betrete GrieferGames.");
 			return;
 		}
 
-		String cb = minecraftBridge.getGrieferGamesSubServer();
+		String cb = MinecraftUtil.getServerFromScoreboard();
 		if (cb.equals("Portal") || cb.equals("Lobby")) {
 			LabyBridge.display(Constants.ADDON_PREFIX + "§fBitte betrete einen Citybuild.");
 			return;
 		}
 
-		minecraftBridge.send("/switch " + internalName);
+		ChatQueue.send("/switch " + internalName);
 	}
 
 	public boolean matches(String cb) {
@@ -135,13 +141,8 @@ public enum Citybuild implements Named {
 		return Citybuild.ANY;
 	}
 
-	@Bridged
-	public interface CitybuildIconBridge {
-
-		CitybuildIconBridge citybuildIconBridge = FileProvider.getBridge(CitybuildIconBridge.class);
-
-		Object toItemStack(Citybuild cb);
-
+	public ItemStack toItemStack() {
+		return stack;
 	}
 
 }

@@ -7,10 +7,11 @@
 
 package dev.l3g7.griefer_utils.core.api.reflection;
 
+import net.minecraft.launchwrapper.Launch;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 
@@ -60,7 +61,7 @@ class ClassReflection {
 	static boolean exists(String name) {
 		name = name.replace('.', '/') + ".class";
 		return ClassReflection.class.getClassLoader().getResource(name) != null
-			|| minecraftBridge.launchClassLoader().getResource(name) != null;
+			|| Launch.classLoader.getResource(name) != null;
 	}
 
 }

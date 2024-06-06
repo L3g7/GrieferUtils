@@ -15,15 +15,14 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.CitybuildIconBridge.citybuildIconBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 
@@ -75,7 +74,7 @@ public class MultiHotkey extends Feature {
 				keys,
 				commands,
 				cb
-			).icon(citybuildIconBridge.toItemStack(cb));
+			).icon(cb.toItemStack());
 
 			List<SettingsElement> settings = enabled.getSubSettings().getElements();
 			settings.add(settings.size() - 1, hotKey);

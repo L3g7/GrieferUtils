@@ -21,14 +21,14 @@ public class InjectorBase {
 	static Config mixinConfig;
 	private static final Map<String, Transformer> transformers = new HashMap<>();
 
-	public static void initialize(String labymodNamespace, String refmapVersion) {
+	public static void initialize(String labymodNamespace, String refmap) {
 		// Initialize Mixin
 		MixinBootstrap.init();
 
 		mixinConfig = Config.create("griefer_utils.mixins.json");
 
 		// Load refmap
-		Reflection.set(mixinConfig.getConfig(), "refMapperConfig", "refmaps/" + refmapVersion + ".json");
+		Reflection.set(mixinConfig.getConfig(), "refMapperConfig", "refmaps/" + refmap + ".json");
 
 		// Register mixins
 		Reflection.invoke(Mixins.class, "registerConfiguration", mixinConfig);

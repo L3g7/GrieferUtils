@@ -18,8 +18,6 @@ import net.labymod.api.models.addon.annotation.AddonTransformer;
 import net.labymod.api.models.version.Version;
 import net.minecraft.launchwrapper.Launch;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.VersionType.MINECRAFT;
-
 @AddonEntryPoint
 @AddonTransformer
 @SuppressWarnings("UnstableApiUsage")
@@ -39,7 +37,7 @@ public class Injector extends InjectorBase implements Entrypoint, AddonClassTran
 
 		// Load injector
 		LoadedAddon addon = Laby.labyAPI().addonService().getAddon(getClass()).orElseThrow();
-		InjectorBase.initialize(addon.info().getNamespace(), MINECRAFT.getCurrent().refmap);
+		InjectorBase.initialize(addon.info().getNamespace(), "LabyMod-4");
 	}
 
 }

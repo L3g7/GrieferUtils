@@ -13,8 +13,7 @@ import net.labymod.api.client.render.batch.ResourceRenderContext;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.client.world.item.ItemStack;
 import net.labymod.api.util.bounds.Rectangle;
-
-import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class ItemStackIcon extends Icon { // NOTE: move somewhere else
 
@@ -50,9 +49,9 @@ public class ItemStackIcon extends Icon { // NOTE: move somewhere else
 		x += offsetX;
 		y += offsetY;
 
-		minecraftBridge.scale(width / 16f, height / 16f, 1);
+		GlStateManager.scale(width / 16f, height / 16f, 1);
 		Laby.labyAPI().minecraft().itemStackRenderer().renderItemStack(stack, icon, (int) x, (int) y);
-		minecraftBridge.scale(16f / width, 16f / height, 1);
+		GlStateManager.scale(16f / width, 16f / height, 1);
 	}
 
 }

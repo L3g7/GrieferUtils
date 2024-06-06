@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedList;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedMethod;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.Type;
 
 import java.io.File;
@@ -25,7 +26,6 @@ import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 
@@ -34,7 +34,7 @@ public class Mapper {
 	public static final MappedList<MappedClass> classes = new MappedList<>();
 
 	public static void loadMappings(String minecraftVersion, String mappingVersion) {
-		loadMappings(minecraftVersion, mappingVersion, new File(minecraftBridge.assetsDir(), String.format("griefer_utils/mappings/%s_stable_%s.json", minecraftVersion, mappingVersion)));
+		loadMappings(minecraftVersion, mappingVersion, new File(Launch.assetsDir, String.format("griefer_utils/mappings/%s_stable_%s.json", minecraftVersion, mappingVersion)));
 	}
 
 	public static void loadMappings(String minecraftVersion, String mappingVersion, File mappings) {

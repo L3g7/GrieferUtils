@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.api;
 
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
@@ -17,7 +18,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -26,7 +26,6 @@ import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.api.bridges.MinecraftBridge.minecraftBridge;
 
 public class BugReporter {
 
@@ -110,7 +109,7 @@ public class BugReporter {
 				conn.addRequestProperty("X-LABYMOD-4", String.valueOf(LABY_4.isActive()));
 
 				if (shouldSendUuid.get())
-					conn.addRequestProperty("X-MINECRAFT-UUID", String.valueOf(minecraftBridge.uuid()));
+					conn.addRequestProperty("X-MINECRAFT-UUID", String.valueOf(MinecraftUtil.uuid()));
 
 				conn.setRequestMethod("POST");
 				try (OutputStream out = conn.getOutputStream()) {

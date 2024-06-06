@@ -11,10 +11,10 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
-import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -26,8 +26,6 @@ import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWi
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.client.render.font.RenderableComponent;
 import org.jetbrains.annotations.NotNull;
-
-import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.CitybuildIconBridge.citybuildIconBridge;
 
 public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, Citybuild> implements CitybuildSetting {
 
@@ -54,9 +52,9 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 
 			return new JsonPrimitive(name);
 		}, e -> Citybuild.getCitybuild(e.getAsString()), Citybuild.ANY);
-		icon(citybuildIconBridge.toItemStack(Citybuild.ANY));
+		icon(Citybuild.ANY.toItemStack());
 		callback(v -> {
-			icon(citybuildIconBridge.toItemStack(v));
+			icon(v.toItemStack());
 
 			if (activity != null) {
 				iconWidget.icon().set(getIcon());
@@ -90,7 +88,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 			}
 
 			private Component toComponent(Citybuild entry) {
-				return Component.icon(SettingsImpl.buildIcon(citybuildIconBridge.toItemStack(Citybuild.ANY)))
+				return Component.icon(SettingsImpl.buildIcon(Citybuild.ANY.toItemStack()))
 					.append(Component.text(entry.getName()));
 			}
 

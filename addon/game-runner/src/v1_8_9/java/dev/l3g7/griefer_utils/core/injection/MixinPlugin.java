@@ -51,8 +51,8 @@ public class MixinPlugin implements IMixinConfigPlugin {
 				continue;
 
 			if (meta.hasAnnotation(ExclusiveTo.class)) {
-				Version[] versions = meta.getAnnotation(ExclusiveTo.class).getValue("value", true);
-				if (!Version.isCompatible(versions))
+				Version version = meta.getAnnotation(ExclusiveTo.class).getValue("value", true);
+				if (version.isActive())
 					continue;
 			}
 

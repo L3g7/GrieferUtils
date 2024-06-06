@@ -1,11 +1,9 @@
 package dev.l3g7.griefer_utils.core.bridges.laby3;
 
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.ItemStackIcon;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.render.GlEngine;
-import net.labymod.main.LabyMod;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import net.labymod.utils.Material;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
@@ -13,7 +11,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.CitybuildIconBridge.citybuildIconBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class IconImpl {
@@ -29,7 +26,7 @@ public class IconImpl {
 		if (icon instanceof String)
 			return new TexturedIcon(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
 		else if (icon instanceof Citybuild citybuild)
-			return of(citybuildIconBridge.toItemStack(citybuild));
+			return of(citybuild.toItemStack());
 		else if (icon instanceof ResourceLocation location)
 			return new TexturedIcon(location);
 		else if (icon instanceof Icon i)

@@ -9,8 +9,10 @@ package dev.l3g7.griefer_utils.core.api;
 
 import com.google.gson.Gson;
 import dev.l3g7.griefer_utils.core.api.event.annotation_events.OnStartupComplete;
+import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.events.WebDataReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerJoinEvent;
 
 import java.util.Map;
 import java.util.UUID;
@@ -20,8 +22,13 @@ public class WebAPI {
 	private static final Gson GSON = new Gson();
 	private static Data data = null;
 
+	@EventListener
+	private static void onServerJoin(ServerJoinEvent event) {
+		update();
+	}
+
 	@OnStartupComplete
-	public static void update() {
+	private static void update() {
 		if (data != null)
 			return;
 

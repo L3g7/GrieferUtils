@@ -8,46 +8,35 @@
 package dev.l3g7.griefer_utils.core.events;
 
 import dev.l3g7.griefer_utils.core.api.event.event_bus.Event;
+import net.minecraft.client.Minecraft;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static org.objectweb.asm.Opcodes.GOTO;
 
 public class InputEvent extends Event {
 
-	public static class MouseInputEvent extends InputEvent {
+	public static class MouseInputEvent extends InputEvent {}
+	public static class KeyInputEvent extends InputEvent {}
 
-		public final int button;
+	@Mixin(Minecraft.class)
+	private static class MixinMinecraft {
 
-		public MouseInputEvent(int button) {
-			this.button = button;
+		@Inject(method = "runTick", at = @At(value = "JUMP", opcode = GOTO, ordinal = 1, shift = At.Shift.BEFORE), slice = @Slice(
+			from = @At(value = "INVOKE:LAST", target = "Lnet/minecraft/client/Minecraft;updateDebugProfilerName(I)V")
+		))
+		public void injectKeyboardEvent(CallbackInfo ci) {
+			new KeyInputEvent().fire();
 		}
 
-	}
-	public static class KeyInputEvent extends InputEvent {
-
-		public final boolean isRepeat;
-		public final int keyCode;
-
-		public KeyInputEvent(boolean isRepeat, int keyCode) {
-			this.isRepeat = isRepeat;
-			this.keyCode = keyCode;
-		}
-
-	}
-
-	public static class Gui {
-
-		public static class GuiMouseInputEvent extends MouseInputEvent {
-
-			public GuiMouseInputEvent(int button) {
-				super(button);
-			}
-
-		}
-
-		public static class GuiKeyInputEvent extends KeyInputEvent {
-
-			public GuiKeyInputEvent(boolean isRepeat, int keyCode) {
-				super(isRepeat, keyCode);
-			}
-
+		@Inject(method = "runTick", at = @At(value = "JUMP", opcode = GOTO, ordinal = 0, shift = At.Shift.BEFORE), slice = @Slice(
+			from = @At(value = "INVOKE:LAST", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V")
+		))
+		public void injectMouseEvent(CallbackInfo ci) {
+			new MouseInputEvent().fire();
 		}
 
 	}

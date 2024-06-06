@@ -6,10 +6,11 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
-import dev.l3g7.griefer_utils.core.events.InputEvent2;
+import dev.l3g7.griefer_utils.core.events.InputEvent.KeyInputEvent;
+import dev.l3g7.griefer_utils.core.events.InputEvent.MouseInputEvent;
+import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModModuleEditorGui;
@@ -96,13 +97,13 @@ public class KeySettingImpl extends ControlElement implements Laby3Setting<KeySe
 	}
 
 	@EventListener
-	public void onKeyPress(InputEvent2.KeyInputEvent event) {
+	public void onKeyPress(KeyInputEvent event) {
 		if (!Keyboard.isRepeatEvent())
 			onPress(Keyboard.getEventKey());
 	}
 
 	@EventListener
-	private void onMousePress(InputEvent2.MouseInputEvent event) {
+	private void onMousePress(MouseInputEvent event) {
 		if (Mouse.getEventButton() != -1)
 			onPress(-Mouse.getEventButton());
 	}

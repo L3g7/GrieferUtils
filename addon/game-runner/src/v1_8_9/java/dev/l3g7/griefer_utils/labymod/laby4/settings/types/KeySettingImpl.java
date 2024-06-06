@@ -12,17 +12,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.events.InputEvent.Gui.GuiKeyInputEvent;
-import dev.l3g7.griefer_utils.core.events.InputEvent.Gui.GuiMouseInputEvent;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.events.InputEvent.KeyInputEvent;
 import dev.l3g7.griefer_utils.core.events.InputEvent.MouseInputEvent;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.screen.key.Key;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.MultiKeybindWidget;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,27 +85,27 @@ public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>
 
 
 	@EventListener
-	public void onGuiKeyPress(GuiKeyInputEvent event) {
-		if (!event.isRepeat && triggersInContainers)
-			onPress(event.keyCode);
+	public void onGuiKeyPress(GuiScreenEvent.KeyboardInputEvent.Post event) {
+		if (!Keyboard.isRepeatEvent() && triggersInContainers)
+			onPress(Keyboard.getEventKey());
 	}
 
 	@EventListener
-	public void onGuiMousePress(GuiMouseInputEvent event) {
+	public void onGuiMousePress(GuiScreenEvent.MouseInputEvent.Post event) {
 		if (triggersInContainers)
-			onPress(-event.button);
+			onPress(-Mouse.getEventButton());
 	}
 
 	@EventListener
 	public void onKeyPress(KeyInputEvent event) {
-		if (!event.isRepeat)
-			onPress(event.keyCode);
+		if (!Keyboard.isRepeatEvent())
+			onPress(Keyboard.getEventKey());
 	}
 
 	@EventListener
 	private void onMousePress(MouseInputEvent event) {
-		if (event.button != -1)
-			onPress(-event.button);
+		if (Mouse.getEventButton() != -1)
+			onPress(-Mouse.getEventButton());
 	}
 
 	private void onPress(int code) {

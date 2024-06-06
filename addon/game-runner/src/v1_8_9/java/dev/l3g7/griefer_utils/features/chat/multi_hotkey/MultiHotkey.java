@@ -14,14 +14,14 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.InputEvent;
+import dev.l3g7.griefer_utils.core.events.InputEvent.KeyInputEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
-import dev.l3g7.griefer_utils.core.settings.types.*;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.key.Key;
@@ -41,6 +41,7 @@ import net.labymod.api.util.KeyValue;
 import net.minecraft.init.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.input.Keyboard;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -67,13 +68,13 @@ public class MultiHotkey extends Feature {
 		.subSettings(entries);
 
 	@EventListener
-	public void onKeyPress(InputEvent.KeyInputEvent event) {
-		if (event.isRepeat)
+	public void onKeyPress(KeyInputEvent event) {
+		if (Keyboard.isRepeatEvent())
 			return;
 
 		for (HotkeyConfig hotkey : entries.get()) {
 			Set<Integer> keys = hotkey.key.get();
-			if (!keys.contains(event.keyCode))
+			if (!keys.contains(Keyboard.getEventKey()))
 				continue;
 
 			if (!keys.stream().allMatch(i -> Key.get(i).isPressed()))

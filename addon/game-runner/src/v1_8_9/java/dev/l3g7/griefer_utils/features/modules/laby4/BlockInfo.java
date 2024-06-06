@@ -9,15 +9,16 @@ package dev.l3g7.griefer_utils.features.modules.laby4;
 
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
-import dev.l3g7.griefer_utils.features.modules.TempBlockInfoBridge;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.modules.TempBlockInfoBridge;
 import net.labymod.api.client.gui.hud.HudWidgetRendererAccessor;
 import net.labymod.api.client.gui.hud.binding.dropzone.HudWidgetDropzone;
 import net.labymod.api.client.gui.hud.binding.dropzone.NamedHudWidgetDropzones;
@@ -42,11 +43,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 @Bridge
 @Singleton
+@ExclusiveTo(LABY_4)
 public class BlockInfo extends Laby4Module implements TempBlockInfoBridge {
 
 	private static final Pair<BlockPos, ItemStack> DEFAULT_DATA = Pair.of(new BlockPos(0, 0, 0), new ItemStack(Blocks.command_block));

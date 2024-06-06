@@ -19,6 +19,7 @@
 package dev.l3g7.griefer_utils.features.modules.laby3;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
@@ -29,10 +30,12 @@ import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Bridge
 @Singleton
+@ExclusiveTo(LABY_3)
 public class MissingAdventurerBlocks extends Laby3Module implements TempMissingAdventurerBlocksBridge {
 
 	@MainElement

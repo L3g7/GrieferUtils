@@ -8,15 +8,16 @@
 package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.*;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.list.EntryAddSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.Settings;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.*;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.list.EntryAddSettingImpl;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.AbstractWidget;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -24,10 +25,12 @@ import net.labymod.api.client.resources.ResourceLocation;
 
 import java.util.ArrayList;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.labymod.laby4.bridges.ItemBridge.itemBridge;
 
-@Singleton
 @Bridge
+@Singleton
+@ExclusiveTo(LABY_4)
 public class SettingsImpl implements Settings { // Note: replace with multiple bridges
 
 	public static <T extends Widget> void hookChildAdd(AbstractWidget<T> w, Consumer<T> callback) {

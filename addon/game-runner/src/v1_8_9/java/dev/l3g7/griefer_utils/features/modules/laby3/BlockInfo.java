@@ -20,6 +20,7 @@ package dev.l3g7.griefer_utils.features.modules.laby3;
 
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
@@ -46,11 +47,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 @Bridge
 @Singleton
+@ExclusiveTo(LABY_3)
 public class BlockInfo extends Laby3Module implements TempBlockInfoBridge {
 
 	private static final Pair<BlockPos, ItemStack> DEFAULT_DATA = Pair.of(new BlockPos(0, 0, 0), new ItemStack(Blocks.command_block));

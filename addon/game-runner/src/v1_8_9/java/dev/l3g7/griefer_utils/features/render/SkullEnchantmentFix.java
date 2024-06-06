@@ -11,9 +11,9 @@ import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -82,9 +82,9 @@ public class SkullEnchantmentFix extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		FramebufferWithStencil fb = (FramebufferWithStencil) mc().getFramebuffer();
-		if (!fb.isStencilEnabled())
-			fb.enableStencil();
+		if (mc().getFramebuffer() instanceof FramebufferWithStencil fb)
+			if (!fb.isStencilEnabled())
+				fb.enableStencil();
 	}
 
 	public interface FramebufferWithStencil {

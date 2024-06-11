@@ -53,7 +53,7 @@ public abstract class Feature implements Disableable {
 						.defaultValue(true)
 						.subSettings(); // creates a header
 
-					category.getStorage().configKey = meta.configKey();
+					category.getStorage().configKeySupplierTEMP = v -> meta.configKey();
 					return category;
 				}
 			);

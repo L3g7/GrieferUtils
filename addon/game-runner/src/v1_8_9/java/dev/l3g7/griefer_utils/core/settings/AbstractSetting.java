@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +106,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	}
 
 	default String configKey() {
-		return getStorage().configKey;
+		return getStorage().configKeySupplierTEMP.apply(this);
 	}
 
 	@Override
@@ -169,6 +170,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		public boolean subsettingConfig = true;
 		public final T fallbackValue;
 		public final List<Consumer<T>> callbacks = new ArrayList<>();
+		public Function<AbstractSetting<?, ?>, String> configKeySupplierTEMP = e -> e.getStorage().configKey; // TODO remove
 
 		public final Function<T, JsonElement> encodeFunc;
 		public final Function<JsonElement, T> decodeFunc;

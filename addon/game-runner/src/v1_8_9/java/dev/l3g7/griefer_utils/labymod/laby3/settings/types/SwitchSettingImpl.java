@@ -32,6 +32,9 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 
 	@Override
 	public SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode) {
+		if (getSubSettings().getElements().isEmpty())
+			subSettings();
+
 		DropDownSetting<TriggerMode> triggerMode = DropDownSetting.create(TriggerMode.class)
 			.name("Auslösung")
 			.icon("lightning")
@@ -44,11 +47,6 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 				previousMode = m;
 			});
 
-		if (defaultTriggerMode != null) {
-			addSetting(0, HeaderSetting.create());
-			addSetting(0, triggerMode);
-		}
-
 		KeySetting key = KeySetting.create()
 			.name("Taste")
 			.icon("key")
@@ -57,11 +55,20 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 				if (p || triggerMode.get() == HOLD)
 					this.set(!this.get());
 			});
-		addSetting(0, key);
 
+		addSetting(4, key);
+
+		// NOTE why here
 		key.description("Welche Taste " + whatActivates + " aktiviert.");
 		triggerMode.description("Halten: Aktiviert " + whatActivates + ", während die Taste gedrückt wird.",
 			"Umschalten: Schaltet " + whatActivates + " um, wenn die Taste gedrückt wird.");
+
+		// TODO cleanup
+		if (defaultTriggerMode == null)
+			return this;
+
+		addSetting(5, triggerMode);
+		addSetting(6, HeaderSetting.create());
 		return this;
 	}
 

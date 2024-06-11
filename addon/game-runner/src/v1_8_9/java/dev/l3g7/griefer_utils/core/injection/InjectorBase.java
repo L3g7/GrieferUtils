@@ -10,6 +10,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.transformer.Config;
 
@@ -25,7 +26,9 @@ public class InjectorBase {
 		// Initialize Mixin
 		MixinBootstrap.init();
 
-		mixinConfig = Config.create("griefer_utils.mixins.json");
+		// Usage of deprecated API required for mixin 7.11 compatibility
+		//noinspection deprecation
+		mixinConfig = Config.create("griefer_utils.mixins.json", MixinEnvironment.getDefaultEnvironment());
 
 		// Load refmap
 		Reflection.set(mixinConfig.getConfig(), "refMapperConfig", "refmaps/" + refmap + ".json");

@@ -23,6 +23,8 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
+import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
 
@@ -39,10 +41,11 @@ public class ItemDisplaySetting extends ListEntrySetting {
 	private final ItemStack stack;
 
 	public ItemDisplaySetting(ItemStack stack) {
-		super(true, true, false, new IconData(Material.STONE));
+		super(true, true, false, new Icon.WrappedIcon(Icon.of(stack)));
 		this.stack = stack;
 		// icon(stack); // TODO
 		setDisplayName(stack.getDisplayName());
+		container = (SettingsElement) ItemSaver.enabled;
 
 		name = StringSetting.create()
 			.name("Anzeigename")

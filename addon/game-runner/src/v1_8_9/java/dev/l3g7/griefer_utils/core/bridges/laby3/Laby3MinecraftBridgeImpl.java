@@ -33,7 +33,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_3)
-public class Laby3MinecraftBridgeImpl implements Laby3MinecraftBridge {
+public class Laby3MinecraftBridgeImpl implements Laby3MinecraftBridge { // TODO remove
 
 	@Override
 	public DynamicModTexture createDynamicTexture(String path, String url) {

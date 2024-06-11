@@ -44,7 +44,7 @@ public class MessageEvent extends Event {
 					(IChatComponent) newMsg
 				);
 				msg.fire();
-				return msg.modified ? msg.message : prevMsg;
+				return msg.message;
 			});
 		}
 

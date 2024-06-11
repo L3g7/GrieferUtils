@@ -19,10 +19,13 @@ import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import net.labymod.settings.LabyModAddonsGui;
 import net.minecraft.init.Items;
 
 import java.util.regex.Matcher;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton.path;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 @Singleton
@@ -124,8 +127,14 @@ public class AfkNick extends Feature {
 			return;
 
 		// Check settings are currently being edited
-		if (Laby4Util.isSettingOpened(enabled))
-			return;
+		if (LABY_4.isActive()) {
+			if (Laby4Util.isSettingOpened(enabled))
+				return;
+		} else {
+			// TODO cleanup + fix import of path()
+			if (mc().currentScreen instanceof LabyModAddonsGui && !path().isEmpty() && path().get(path().size() - 1) == enabled)
+				return;
+		}
 
 		long diff = System.currentTimeMillis() - lastEvent;
 

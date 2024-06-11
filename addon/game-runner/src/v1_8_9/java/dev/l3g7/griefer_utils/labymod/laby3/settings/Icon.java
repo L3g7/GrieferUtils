@@ -1,7 +1,9 @@
 package dev.l3g7.griefer_utils.labymod.laby3.settings;
 
+import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,7 +33,14 @@ public abstract class Icon {
 
 		@Override
 		public boolean hasTextureIcon() {
-			throw new UnsupportedOperationException("Cannot render custom icon");
+			// TODO cleanup, clarify
+			ScaledResolution scaled = LabyMod.getInstance().getDrawUtils().getScaledResolution();
+			double rescale = (double) scaled.getScaleFactor() / LabyMod.getInstance().getDrawUtils().getCustomScaling();
+
+			int x = LabyMod.getSettings().moduleEditorSplitX - 25;
+			int y = (int) (20.0 * rescale) + 14;
+			icon.draw(x, y, 1);
+			return false;
 		}
 
 	}

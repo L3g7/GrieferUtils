@@ -91,6 +91,10 @@ public class HeadTextureFix extends Feature {
 	}
 
 	public static class OwnSkullSwitchSetting extends SwitchSettingImpl {
+		public OwnSkullSwitchSetting() {
+			iconData = new IconData();
+		}
+
 		@Override
 		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);

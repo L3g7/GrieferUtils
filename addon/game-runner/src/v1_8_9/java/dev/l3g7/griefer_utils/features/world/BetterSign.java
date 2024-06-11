@@ -51,13 +51,13 @@ public class BetterSign extends Feature {
 	 */
 	private static class BetterGuiEditSign extends GuiEditSign {
 
-		private final TileEntitySign tileSign;
-		private final SignTextField[] lines = new SignTextField[4];
-		private boolean allSelected = false;
+		public final TileEntitySign tileSign2; // TODO don't remap tileSign
+		public final SignTextField[] lines = new SignTextField[4];
+		public boolean allSelected = false;
 
 		public BetterGuiEditSign(TileEntitySign tileSign) {
 			super(tileSign);
-			this.tileSign = tileSign;
+			this.tileSign2 = tileSign;
 		}
 
 		@Override
@@ -67,7 +67,7 @@ public class BetterSign extends Feature {
 			// Initialize text fields
 			for (int i = 0; i < 4; i++) {
 				lines[i] = new SignTextField(-1, Minecraft.getMinecraft().fontRendererObj, 0, 2 + 10 * i, 200, 10);
-				lines[i].setText(tileSign.signText[i].getUnformattedText());
+				lines[i].setText(tileSign2.signText[i].getUnformattedText());
 			}
 			lines[0].setFocused(true);
 		}
@@ -135,7 +135,7 @@ public class BetterSign extends Feature {
 					copySelectedText();
 					for (int i = 0; i < lines.length; i++) {
 						lines[i].writeText("");
-						tileSign.signText[i] = new ChatComponentText(lines[i].getText());
+						tileSign2.signText[i] = new ChatComponentText(lines[i].getText());
 					}
 					return;
 				}
@@ -149,7 +149,7 @@ public class BetterSign extends Feature {
 					for (l = editLine; l < lines.length; l++) {
 						lines[l].writeText(strings[i]);
 						lines[l].setText(fontRendererObj.trimStringToWidth(lines[l].getText(), 90));
-						tileSign.signText[l] = new ChatComponentText(lines[l].getText());
+						tileSign2.signText[l] = new ChatComponentText(lines[l].getText());
 						if (++i == strings.length)
 							break;
 					}
@@ -187,14 +187,14 @@ public class BetterSign extends Feature {
 					line.deleteFromCursor(-1);
 
 				// Update
-				tileSign.signText[editLine] = new ChatComponentText(line.getText());
+				tileSign2.signText[editLine] = new ChatComponentText(line.getText());
 			}
 		}
 
 		@Override
 		protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 			super.mouseClicked(mouseX, mouseY, mouseButton);
-			int offset = tileSign.getBlockType() == Blocks.standing_sign ? 70 : 100;
+			int offset = tileSign2.getBlockType() == Blocks.standing_sign ? 70 : 100;
 			lines[getEditLine()].setCursorPositionEnd();
 			int editLine = MathHelper.clamp_int((mouseY - offset) / 10, 0, 3);
 			lines[editLine].mouseClicked(mouseX, mouseButton, width);
@@ -205,7 +205,7 @@ public class BetterSign extends Feature {
 		public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 			// Hide text on sign
 			for (int i = 0; i < 4; i++)
-				tileSign.signText[i] = new ChatComponentText("");
+				tileSign2.signText[i] = new ChatComponentText("");
 			int editLine = getEditLine();
 			setEditLine(-1);
 
@@ -214,13 +214,13 @@ public class BetterSign extends Feature {
 			// Add text back to sign
 			setEditLine(editLine);
 			for (int i = 0; i < 4; i++)
-				tileSign.signText[i] = new ChatComponentText(lines[i].getText());
+				tileSign2.signText[i] = new ChatComponentText(lines[i].getText());
 
 			GlStateManager.pushMatrix();
 			GlStateManager.translate((float) (width / 2), -0.5F, 500.0F);
 
 			// Account for extra offset when creating a standing sign
-			if (tileSign.getBlockType() == Blocks.standing_sign)
+			if (tileSign2.getBlockType() == Blocks.standing_sign)
 				GlStateManager.translate(0.0F, 70, 0.0F);
 			else
 				GlStateManager.translate(0.0F, 100, 0.0F);
@@ -253,7 +253,7 @@ public class BetterSign extends Feature {
 	private static class SignTextField extends GuiTextField {
 
 		private final FontRenderer font;
-		private int cursorCounter;
+		private int cursorCounter2; // TODO don't remap tileSign
 
 		public SignTextField(int componentId, FontRenderer font, int x, int y, int width, int height) {
 			super(componentId, font, x, y, width, height);
@@ -278,7 +278,7 @@ public class BetterSign extends Feature {
 			String text = getText();
 			int cursorPos = getCursorPosition();
 			int selectionEnd = Math.min(getSelectionEnd(), text.length());
-			boolean showCursor = isFocused() && cursorCounter / 6 % 2 == 0;
+			boolean showCursor = isFocused() && cursorCounter2 / 6 % 2 == 0;
 			boolean cursorInText = cursorPos < text.length(); // Whether the cursor is not at the end
 			int textEnd = xPosition; // The position of the text end
 
@@ -308,7 +308,7 @@ public class BetterSign extends Feature {
 		@Override
 		public void updateCursorCounter() {
 			super.updateCursorCounter();
-			++cursorCounter;
+			++cursorCounter2;
 		}
 
 	}

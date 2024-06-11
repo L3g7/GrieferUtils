@@ -21,10 +21,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+
 public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 
 	private final HashSet<Supplier<Boolean>> closeChecks = new HashSet<>();
-	private final GuiScreen previousScreen = mc.currentScreen;
+	private final GuiScreen previousScreen = mc().currentScreen;
 	private final int startPathSize;
 
 	public AddonsGuiWithCustomBackButton(Runnable onBack, SettingsElement element) {
@@ -32,7 +34,7 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 		addCheck(() -> { onBack.run(); return true; });
 	}
 
-	public ArrayList<SettingsElement> path() { return Reflection.get(mc.currentScreen, "path"); }
+	public ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }
 
 	public AddonsGuiWithCustomBackButton(SettingsElement element) {
 		List<SettingsElement> path = new ArrayList<>(path());
@@ -48,7 +50,7 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 		Reflection.set(previousScreen, "path", previousPath);
 
 
-		AddonElement openAddon = Reflection.get(mc.currentScreen, "openedAddonSettings");
+		AddonElement openAddon = Reflection.get(mc().currentScreen, "openedAddonSettings");
 		Reflection.set(this, "openedAddonSettings", openAddon);
 	}
 

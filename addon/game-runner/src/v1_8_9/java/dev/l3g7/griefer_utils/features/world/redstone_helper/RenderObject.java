@@ -10,9 +10,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Arrays;
+
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static net.minecraft.init.Blocks.hopper;
-import static net.minecraft.init.Blocks.redstone_wire;
+import static net.minecraft.init.Blocks.*;
 
 public abstract class RenderObject {
 
@@ -96,7 +97,8 @@ public abstract class RenderObject {
 		public void draw(CompiledChunk[][] compiledChunks, int rotation) {
 			mc().getTextureManager().bindTexture(texture);
 			CompiledChunk[] chunks = compiledChunks[ordinal()];
-			if (chunks != null)
+			// TODO why can chunks include nulls?
+			if (chunks != null && chunks[rotates ? rotation : 0] != null)
 				chunks[rotates ? rotation : 0].draw();
 		}
 	}

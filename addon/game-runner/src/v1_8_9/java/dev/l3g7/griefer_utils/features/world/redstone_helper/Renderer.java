@@ -19,6 +19,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.GL11;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,8 @@ public class Renderer {
 
 			isDrawing = true;
 			reset();
-			byteBuffer.limit(byteBuffer.capacity());
+			// Invoke limit of superclass because ByteBuffer#position doesn't exist in Java 8 // NOTE beautify
+			((Buffer) byteBuffer).limit(byteBuffer.capacity());
 		}
 
 		public CompiledChunk tex(double u, double v) {
@@ -134,7 +136,8 @@ public class Renderer {
 			int newSize = byteBuffer.capacity() + increase;
 			LogManager.getLogger().warn("[GU] Needed to grow BufferBuilder buffer: Old size " + byteBuffer.capacity() + " bytes, new size " + newSize + " bytes.");
 			ByteBuffer bytebuffer = GLAllocation.createDirectByteBuffer(newSize);
-			this.byteBuffer.position(0);
+			// Invoke position of superclass because ByteBuffer#position doesn't exist in Java 8
+			((Buffer) this.byteBuffer).position(0);
 			bytebuffer.put(this.byteBuffer);
 			bytebuffer.rewind();
 			this.byteBuffer = bytebuffer;
@@ -187,7 +190,8 @@ public class Renderer {
 		VertexFormatElement attr = format.getElement(element);
 		int count = attr.getElementCount();
 		int constant = attr.getType().getGlConstant();
-		buffer.position(format.getOffset(element));
+		// Invoke position of superclass because ByteBuffer#position doesn't exist in Java 8
+		((Buffer) buffer).position(format.getOffset(element));
 		switch (attrType) {
 			case POSITION -> {
 				glVertexPointer(count, constant, stride, buffer);

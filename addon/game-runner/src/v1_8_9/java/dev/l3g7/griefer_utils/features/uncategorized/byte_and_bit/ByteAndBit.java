@@ -45,19 +45,12 @@ public class ByteAndBit extends Feature {
 	protected static final Map<String, BABBot> allBots = new ConcurrentHashMap<>();
 	Map<String, BABBot> renderedBots = new ConcurrentHashMap<>();
 
-	private final SwitchSetting showTooltip = SwitchSetting.create()
-		.name("Botshop-GUI Hilfsnachrichten")
-		.description("Ob kleine hilfsnachricht")
-		.defaultValue(true)
-		.icon(Items.paper);
-
 	@MainElement
 	private final KeySetting keybind = KeySetting.create()
 		.name("Botshop-GUI")
 		.description("Öffnet das BotShop-GUI von unterstützten BotShops.")
 		.icon("byte_and_bit")
 		.defaultValue(new HashSet<>(Collections.singletonList(Keyboard.KEY_RETURN)))
-		.subSettings(showTooltip)
 		.pressCallback(this::onKeyPress);
 
 	@OnEnable
@@ -129,12 +122,10 @@ public class ByteAndBit extends Feature {
 	}
 
 	void drawTooltip() {
-		if (!showTooltip.get()) return;
 		BossStatus.bossName = "GrieferUtils: BotShop-GUI verfügbar!";
 		BossStatus.statusBarTime = 1;
 		BossStatus.healthScale = 0f;
 	}
-
 
 	public void onKeyPress(boolean b) {
 		if (!b) return;

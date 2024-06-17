@@ -65,7 +65,6 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 		icon("command_pie_menu");
 		subSettings(this.name, this.command, this.citybuild);
 		this.name.defaultValue(defaultName = name);
-		System.out.println("Created citybuild setting with val " +defaultCitybuild + " -< "+ this.citybuild.get() + " ; " + ((CitybuildSettingImpl) this.citybuild).getDropDownMenu().getSelected());
 	}
 
 	public void openSettings() {
@@ -89,7 +88,6 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 				command.set(defaultCommand);
 			if (citybuild.get() == null) {
 				citybuild.set(defaultCitybuild);
-				System.out.println("Set cb with val " +defaultCitybuild + " -< "+ this.citybuild.get() + " ; " + ((CitybuildSettingImpl) this.citybuild).getDropDownMenu().getSelected());
 			}
 
 			onChange();

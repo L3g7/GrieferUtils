@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -24,8 +26,19 @@ public class BABItem implements Comparable<BABItem> {
 	private static final DecimalFormat priceFormat = new DecimalFormat("###,###,###.##");
 	private final ItemStack stack;
 	final float price;
+	public AtomicInteger warehouseCount;
+
+	public Availability getAvailability() {
+		int count = warehouseCount.get();
+		return count > 0 ? (count > 7 * stack.stackSize ? Availability.AVAILABLE : Availability.SCARCE) : Availability.EMPTY;
+	}
 
 	public ItemStack getStack() {
+		ItemStack stack = this.stack.copy();
+		var lore = ItemUtil.getLore(stack);
+		lore.add("§r");
+		lore.add("§r§fGU: §r" + String.format(getAvailability().name, (warehouseCount.get() / stack.stackSize)));
+		ItemUtil.setLore(stack, lore);
 		return stack;
 	}
 
@@ -33,14 +46,18 @@ public class BABItem implements Comparable<BABItem> {
 		return price;
 	}
 
-	public BABItem(float price, ItemStack stack) {
+	public BABItem(float price, ItemStack stack, AtomicInteger warehouseCount) {
 		this.price = price;
 		this.stack = stack;
+		this.warehouseCount = warehouseCount;
 	}
 
 	@Override
 	public int compareTo(BABItem o) {
+		if (warehouseCount.get() == 0) return 1;
+		if (o.warehouseCount.get() == 0) return -1;
 		Item otherItem = o.getStack().getItem();
+
 		Item thisItem = this.getStack().getItem();
 
 		int id = Item.getIdFromItem(otherItem);
@@ -68,13 +85,15 @@ public class BABItem implements Comparable<BABItem> {
 		VeloMaterial material = new VeloMaterial();
 		private static final String defaultDisplayName = "§r";
 		String displayName = defaultDisplayName;
+		int warehouseCount = Integer.MAX_VALUE;
 		int repairCost = 0;
 		List<VeloLore> lore = Collections.emptyList();
 		List<VeloEnchantment> enchantments = Collections.emptyList();
 		List<VeloPrice> prices = Collections.emptyList();
 
 		public List<BABItem> convert() {
-			if(displayName == null) displayName = defaultDisplayName;
+			AtomicInteger i = new AtomicInteger(warehouseCount);
+			if (displayName == null) displayName = defaultDisplayName;
 			if (prices.isEmpty())
 				return Collections.emptyList();
 
@@ -99,7 +118,7 @@ public class BABItem implements Comparable<BABItem> {
 
 				if (!enchantments.isEmpty()) ItemUtil.setEnchantments(stack, itemEnchantments);
 
-				items.add(new BABItem(price.price, stack));
+				items.add(new BABItem(price.price, stack, i));
 			}
 			return items;
 		}
@@ -140,4 +159,17 @@ public class BABItem implements Comparable<BABItem> {
 		if (obj instanceof BABItem) return ItemStack.areItemStacksEqual(stack, ((BABItem) obj).stack);
 		return false;
 	}
+
+	public enum Availability {
+
+		AVAILABLE("§aVerfügbar"), SCARCE("§eKnapp (%d)"), EMPTY("§cAusverkauft");
+
+		public final String name;
+
+		Availability(String name) {
+			this.name = name;
+		}
+
+	}
+
 }

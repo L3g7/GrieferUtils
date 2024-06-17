@@ -34,14 +34,14 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 public class GuiBigChest extends GuiContainer {
 
 	protected static final ItemStack BACK_BUTTON = ItemUtil.fromNBT("{id:\"minecraft:skull\",Count:1b,tag:{display:{Name:\"§f" + "Zurück" + "\"},SkullOwner:{Id:\"00000000-0000-0000-0000-000000000000\",Properties:{textures:[0:{Value:\"" + "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHBzOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2Y3YWFjYWQxOTNlMjIyNjk3MWVkOTUzMDJkYmE0MzM0MzhiZTQ2NDRmYmFiNWViZjgxODA1NDA2MTY2N2ZiZTIifX19" + "\"}]}}},Damage:3s}");
-	private static final ItemStack FILLER = ItemUtil.createItem(Blocks.stained_glass_pane, 7, null);
+	protected static final ItemStack FILLER = ItemUtil.createItem(Blocks.stained_glass_pane, 7, null);
 
-	private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
+	protected static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 
 	private final List<Runnable> leftClickEvents = new ArrayList<>();
 	private final List<Runnable> rightClickEvents = new ArrayList<>();
 	private final List<Runnable> midClickEvents = new ArrayList<>();
-	private final List<TextureItem> textureItems = new ArrayList<>();
+	protected final List<TextureItem> textureItems = new ArrayList<>();
 	private final IInventory inventory;
 	protected final int rows;
 
@@ -252,9 +252,9 @@ public class GuiBigChest extends GuiContainer {
 	 * Used for what to the user looks like items with custom textures
 	 */
 	public static class TextureItem {
-		private final String texture;
-		private final int renderSize;
-		private final ItemStack toolTipStack;
+		public final String texture;
+		public final int renderSize;
+		public final ItemStack toolTipStack;
 
 		public TextureItem(String texture, String title, String... lore) {
 			this(texture, 16, ItemUtil.setLore(ItemUtil.createItem(Blocks.command_block, 0, title), lore));

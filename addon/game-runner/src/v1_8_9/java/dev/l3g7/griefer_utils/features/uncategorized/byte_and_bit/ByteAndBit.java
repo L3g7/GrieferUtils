@@ -5,22 +5,22 @@ import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.bridges.laby3.settings.KeySettingImpl;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABBot;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.gui.BotshopGUI;
+import net.labymod.api.client.gui.screen.key.Key;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.network.play.server.S0CPacketSpawnPlayer;
 import net.minecraft.network.play.server.S13PacketDestroyEntities;
 import org.lwjgl.input.Keyboard;
@@ -29,7 +29,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
@@ -122,7 +124,13 @@ public class ByteAndBit extends Feature {
 	}
 
 	void drawTooltip() {
-		BossStatus.bossName = "GrieferUtils: BotShop-GUI verfügbar!";
+		String keys;
+		if (LABY_4.isActive()) {
+			keys = Key.concat(keybind.get().stream().map(Key::get).collect(Collectors.toSet()));
+		} else {
+			keys = KeySettingImpl.formatKeys(keybind.get());
+		}
+		BossStatus.bossName = "BotShop-GUI verfügbar! [" + keys + "]";
 		BossStatus.statusBarTime = 1;
 		BossStatus.healthScale = 0f;
 	}

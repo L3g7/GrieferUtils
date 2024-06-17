@@ -4,14 +4,18 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABBot;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABItem;
+import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABItem.Availability;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
@@ -41,12 +45,14 @@ public class BotshopGUI extends GuiBigChest {
 	private int backspaceSpeed = 0;
 	private int backspaceTimer = 0;
 	private final String botname;
+	private boolean[] availabilities = new boolean[7 * 7];
 
 	public TreeSet<BABItem> itemsDisplayed;
 	final List<BABItem> boughtItems;
 	final List<BABItem> items;
 	final DecimalFormat priceFormat = new DecimalFormat("###,###,###.#");
 	List<Float> prices = new ArrayList<>();
+
 
 	private float price() {
 		return (float) prices.stream().flatMapToDouble(DoubleStream::of).sum();
@@ -75,6 +81,9 @@ public class BotshopGUI extends GuiBigChest {
 
 	@Override
 	public void onGuiClosed() {
+		boughtItems.forEach((i) -> {
+			i.warehouseCount.getAndAdd(i.getStack().stackSize);
+		});
 		EventRegisterer.unregister(this);
 	}
 
@@ -104,6 +113,7 @@ public class BotshopGUI extends GuiBigChest {
 			for (BABItem i : items)
 				if (i.getPrice() == entry.getPrice()) {
 					boughtItems.remove(i);
+					i.warehouseCount.getAndAdd(i.getStack().stackSize);
 				}
 
 			for (int i = 0; i < prices.size(); i++) {
@@ -124,17 +134,63 @@ public class BotshopGUI extends GuiBigChest {
 		}
 
 		super.addItem(slot + diff, entry.getStack(), () -> {
-			List<BABItem> addedItems = new ArrayList<>(8);
+			List<BABItem> addedItems = new ArrayList<>(16);
 			for (BABItem i : items)
-				if (i.getPrice() == entry.getPrice())
+				if (i.getPrice() == entry.getPrice()) {
+					if (i.warehouseCount.get() < i.getStack().stackSize) return;
 					addedItems.add(i);
+				}
 
 			if (boughtItems.size() + addedItems.size() > 7)
 				return;
 			prices.add(entry.getPrice());
+			addedItems.forEach((i) -> {
+				i.warehouseCount.getAndAdd(-i.getStack().stackSize);
+			});
 			boughtItems.addAll(addedItems);
 			updatePage();
 		});
+	}
+
+	protected void drawGuiContainerBackgroundLayer2(float partialTicks, int mouseX, int mouseY) {
+		mc.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
+		int x = (width - xSize) / 2;
+		int y = (height - ySize) / 2;
+
+		GlStateManager.color(1, 1, 1);
+		drawTexturedModalRect(x, y, 0, 0, xSize, 17);
+		drawTexturedModalRect(x, y + rows * 18 + 17, 0, 215, xSize, 7);
+		y--;
+		for (int i = 1; i <= rows; i++)
+			drawTexturedModalRect(x, y + i * 18, 0, 17, xSize, 18);
+
+		// Has to be in a separate loop, otherwise some wierd stuff is rendered
+		for (int i = 1; i <= rows; i++) {
+			for (int dX = 0; dX < 9; dX++) {
+				Slot slot = inventorySlots.getSlot((i - 1) * 9 + dX);
+				if (!slot.getHasStack() || slot.getStack().getItem() != FILLER.getItem()) {
+					boolean availble = dX < 2 || availabilities[(i - 1) * 7 + dX - 2];
+					DrawUtils.drawItem(availble ? FILLER : new ItemStack(Blocks.stained_glass_pane, 1, 14), x + dX * 18 + 8, y + i * 18 + 1, null);
+				}
+			}
+		}
+
+		for (int i = 0; i < textureItems.size(); i++) {
+			TextureItem textureItem = textureItems.get(i);
+			if (textureItem == null)
+				continue;
+
+			int dX = (i % 9) * 18 + 8;
+			int dY = (i / 9) * 18 + 19;
+
+			DrawUtils.bindTexture(new ResourceLocation("griefer_utils", textureItem.texture));
+			double dSize = (16 - textureItem.renderSize) / 2d;
+
+			DrawUtils.drawTexture(x + dX + dSize, y + dY + dSize, 0, 0, 256, 256, textureItem.renderSize, textureItem.renderSize);
+			mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, textureItem.toolTipStack, x + dX, y + dY);
+			GlStateManager.disableLighting();
+		}
+
 	}
 
 	private void setMenuDisabled() {
@@ -218,12 +274,13 @@ public class BotshopGUI extends GuiBigChest {
 			addTextureItem(28, new TextureItem("coin_pile_crossed_out", "§4§lGesperrt", "§fNicht genügend Guthaben"), null);
 		} else if (!boughtItems.isEmpty()) {
 			addTextureItem(28, new TextureItem("coin_pile", "§a§lKaufen (" + priceStr() + ")", "§fBestätige deinen Einkauf"), () -> {
-				Minecraft.getMinecraft().thePlayer.closeScreen();
-				if (botname == null) return;
-
-				for (float price : prices) {
-					ChatQueue.send("/pay " + botname + " " + price);
+				if (botname != null) {
+					for (float price : prices) {
+						ChatQueue.send("/pay " + botname + " " + price);
+					}
 				}
+				boughtItems.clear();
+				Minecraft.getMinecraft().thePlayer.closeScreen();
 			});
 		}
 		if (full) {
@@ -231,7 +288,7 @@ public class BotshopGUI extends GuiBigChest {
 			return;
 		}
 
-		onScroll(currentScroll); // NOTE cleanup
+		update(currentScroll);
 	}
 
 	private int onSearch(String searchString) {
@@ -249,7 +306,7 @@ public class BotshopGUI extends GuiBigChest {
 		return this.itemsDisplayed.size();
 	}
 
-	private void onScroll(float scroll) {
+	private void update(float scroll) {
 		int i = (itemsDisplayed.size() + 7 - 1) / 7 - 7;
 		scrollStartRow = Math.max((int) (scroll * i + 0.5), 0);
 
@@ -259,11 +316,16 @@ public class BotshopGUI extends GuiBigChest {
 			for (int x = 0; x < 7; ++x) {
 				int index = x + (y + scrollStartRow) * 7;
 				int slotId = x + y * 7;
-
-				if (index >= 0 && index < itemsDisplayed.size())
-					setMenuItem(entriesAsList.get(index), slotId);
-				else
+				int iidx = x + y * 7;
+				if (index >= 0 && index < itemsDisplayed.size()) {
+					BABItem babItem = entriesAsList.get(index);
+					if (babItem == null) availabilities[iidx] = true;
+					else availabilities[iidx] = !babItem.getAvailability().equals(Availability.EMPTY);
+					setMenuItem(babItem, slotId);
+				} else {
+					availabilities[iidx] = true;
 					setMenuItem(null, slotId);
+				}
 			}
 		}
 	}
@@ -327,7 +389,7 @@ public class BotshopGUI extends GuiBigChest {
 		if (isScrolling) {
 			currentScroll = ((mouseY - top) - 7.5f) / ((bottom - top) - 15f);
 			currentScroll = MathHelper.clamp_float(currentScroll, 0, 1);
-			onScroll(currentScroll);
+			update(currentScroll);
 		}
 
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -346,7 +408,7 @@ public class BotshopGUI extends GuiBigChest {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-		super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+		drawGuiContainerBackgroundLayer2(partialTicks, mouseX, mouseY);
 		GlStateManager.enableAlpha();
 		mc().getTextureManager().bindTexture(SEARCH_TAB_TEXTURE);
 		drawTexturedModalRect(guiLeft + 167 - searchFieldWidth, guiTop, 80, 0, searchFieldWidth + 1, 17);
@@ -381,7 +443,7 @@ public class BotshopGUI extends GuiBigChest {
 
 		currentScroll = currentScroll - dWheel / invisibleRows;
 		currentScroll = MathHelper.clamp_float(currentScroll, 0.0F, 1.0F);
-		onScroll(currentScroll);
+		update(currentScroll);
 	}
 
 	public void onEntryData() {

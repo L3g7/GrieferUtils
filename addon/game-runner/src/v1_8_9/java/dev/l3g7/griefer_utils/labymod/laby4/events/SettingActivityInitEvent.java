@@ -28,12 +28,17 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 @ExclusiveTo(LABY_4)
 public class SettingActivityInitEvent extends Event { // NOTE: use SettingWidgetInitializeEvent?
 
+	private static Setting lastHolder;
+
 	public final SettingContentActivity activity;
 	public final FlexibleContentWidget container;
+	public final boolean isReload;
 
 	private SettingActivityInitEvent(SettingContentActivity activity, FlexibleContentWidget container) {
 		this.activity = activity;
 		this.container = container;
+		this.isReload = lastHolder == holder();
+		lastHolder = holder();
 	}
 
 	public <T extends Widget> T get(String... idPath) {

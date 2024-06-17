@@ -12,33 +12,32 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.MysteryModConnection;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.MysteryModConnection.State;
-import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.RequestTransactionsPacket;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.Transaction;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.TransactionsPacket;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.TextComponent;
-import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
+import net.labymod.api.client.gui.screen.ScreenInstance;
 import net.labymod.api.client.gui.screen.widget.widgets.ComponentWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.SettingsActivity;
 import net.minecraft.init.Items;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.uuid;
 
 @Singleton
 @ExclusiveTo(LABY_4)
@@ -47,8 +46,6 @@ public class Transactions extends Feature { // NOTE: search, export
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
 	private final Set<Transaction> transactions = Collections.synchronizedSet(new TreeSet<>());
-
-	private SettingWidget settingWidget;
 
 	@MainElement
 	private final CategorySetting setting = CategorySetting.create()
@@ -70,28 +67,19 @@ public class Transactions extends Feature { // NOTE: search, export
 			setting.name("Transaktionen")
 				.description("Zeigt die Transaktionen der letzen 30 Tage an.")
 				.enable();
-
-			// Send Transaction packet every 3s
-			MysteryModConnection.eventLoopGroup.scheduleAtFixedRate(() -> event.ctx.writeAndFlush(new RequestTransactionsPacket(uuid())), 0, 3, TimeUnit.SECONDS);
+			MysteryModConnection.requestTransactions();
 		} else {
 			setting.name("§cTransaktionen")
 				.description("§cMysteryMod ist nicht erreichbar:", state.errorMessage, "", "Joine auf einen Server, um die Verbindung erneut zu versuchen!")
 				.disable();
 		}
-
-		if (settingWidget != null)
-			Laby.labyAPI().minecraft().executeOnRenderThread(() -> settingWidget.reInitialize());
 	}
 
 	@EventListener
 	public void onInit(SettingActivityInitEvent event) {
-		// Grab settingWidget for reloading
-		if (event.holder() == ((CategorySettingImpl) setting).parent()) {
-			for (Widget child : event.settings().getChildren()) {
-				if (child instanceof SettingWidget widget && widget.setting() == setting) {
-					settingWidget = widget;
-				}
-			}
+		if (event.holder() == setting) {
+			if (!event.isReload)
+				MysteryModConnection.requestTransactions();
 		}
 
 		// Fix title for subsettings
@@ -101,7 +89,6 @@ public class Transactions extends Feature { // NOTE: search, export
 			String id = Reflection.<TextComponent>get(event.settings().getChildren().remove(0), "displayName").getText();
 
 			title.text(title.getText().replaceAll("§[aec]", "§f") + "§r §7(#" + id + ")");
-
 		}
 	}
 
@@ -158,8 +145,15 @@ public class Transactions extends Feature { // NOTE: search, export
 
 		// Update
 		setting.subSettings(list.toArray(BaseSetting[]::new));
-		if (settingWidget != null)
-			Laby.labyAPI().minecraft().executeOnRenderThread(() -> settingWidget.reInitialize());
+
+		if (!Laby4Util.isSettingOpened(setting))
+			return;
+
+		ScreenNavigationElement element = Reflection.get(Laby4Util.getActivity(), "element");
+		LabyModActivity activity = (LabyModActivity) element.getScreen();
+		ScreenInstance instance = Reflection.get(activity.getActiveTab(), "instance");
+		SettingsActivity settingsActivity = (SettingsActivity) instance;
+		Laby.labyAPI().minecraft().executeOnRenderThread(settingsActivity::reload);
 	}
 
 	public enum Direction {

@@ -43,6 +43,9 @@ public class CategorySettingImpl extends AbstractSettingImpl<CategorySetting, Ob
 		if (event.holder() != parent)
 			return;
 
+		if (event.get("scroll") == null)
+			return;
+
 		for (Widget w : event.settings().getChildren()) {
 			if (w instanceof SettingWidget s && s.setting() == this) {
 				SettingsImpl.hookChildAdd(s, e -> {

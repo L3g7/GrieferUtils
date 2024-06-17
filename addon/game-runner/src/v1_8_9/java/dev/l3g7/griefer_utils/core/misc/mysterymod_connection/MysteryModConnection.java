@@ -7,13 +7,14 @@
 
 package dev.l3g7.griefer_utils.core.misc.mysterymod_connection;
 
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.PacketDecoder;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.PacketEncoder;
+import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.RequestTransactionsPacket;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -32,6 +33,7 @@ import java.net.SocketAddress;
 import java.util.concurrent.ExecutionException;
 
 import static dev.l3g7.griefer_utils.core.misc.mysterymod_connection.MysteryModConnection.State.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.uuid;
 
 public class MysteryModConnection {
 
@@ -93,6 +95,10 @@ public class MysteryModConnection {
 
 			MysteryModConnection.connect();
 		}).start();
+	}
+
+	public static void requestTransactions() {
+		channel.writeAndFlush(new RequestTransactionsPacket(uuid()));
 	}
 
 	public enum State {

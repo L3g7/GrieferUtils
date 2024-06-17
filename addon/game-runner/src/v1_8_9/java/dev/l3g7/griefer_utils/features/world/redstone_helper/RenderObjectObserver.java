@@ -56,7 +56,7 @@ public class RenderObjectObserver {
 			for (int x = 0; x < 16; x++) {
 				for (int y = 0; y < 16; y++) {
 					for (int z = 0; z < 16; z++) {
-						BlockPos targetPos = coords.getBlock(x, y + ebs.getYLocation(), z);
+						BlockPos targetPos = new BlockPos(x, y + ebs.getYLocation(), z);
 						RenderObject renderObject = RenderObject.fromState(targetPos, ebs.get(x, y, z)); // TODO: use data[] directly
 						if (renderObject == null)
 							continue;
@@ -98,9 +98,9 @@ public class RenderObjectObserver {
 	}
 
 	private static void updateBlock(BlockPos pos, IBlockState state) {
-		RenderObject renderObject = RenderObject.fromState(pos, state);
-
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
+		BlockPos ebsPos = new BlockPos(pos.getX() - (pair.chunkXPos << 4), pos.getY(), pos.getZ() - (pair.chunkZPos << 4));
+		RenderObject renderObject = RenderObject.fromState(ebsPos, state);
 
 		if (renderObject != null) {
 			Chunk chunk = data.computeIfAbsent(pair, k -> new Chunk());
@@ -110,7 +110,7 @@ public class RenderObjectObserver {
 
 		Chunk chunk = data.get(pair);
 		if (chunk != null && chunk.hasData())
-			chunk.remove(pos);
+			chunk.remove(ebsPos);
 	}
 
 	static boolean isEnabled() {

@@ -21,6 +21,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Map;
 
@@ -40,17 +41,22 @@ public class Renderer {
 
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(-EntityFX.interpPosX, -EntityFX.interpPosY, -EntityFX.interpPosZ);
-
 		double viewY = mc().getRenderManager().playerViewY + 12.5d;
 		while (viewY < 0)
 			viewY += 360;
 
 		int rotationIndex = MathHelper.clamp_int((int) (Math.floor(viewY / 22.5) % 16), 0, 15);
 
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(-EntityFX.interpPosX, -EntityFX.interpPosY, -EntityFX.interpPosZ);
 		Frustum frustum = new Frustum();
+		GlStateManager.popMatrix();
+
 		for (Map.Entry<ChunkCoordIntPair, Chunk> entry : RenderObjectObserver.data.entrySet()) {
+			GlStateManager.pushMatrix();
+
+			GlStateManager.translate(entry.getKey().chunkXPos * 16 - EntityFX.interpPosX,
+				-EntityFX.interpPosY, entry.getKey().chunkZPos * 16 - EntityFX.interpPosZ);
 			ChunkCoordIntPair pair = entry.getKey();
 			boolean isVisible = frustum.isBoundingBoxInFrustum(new AxisAlignedBB(
 				pair.getXStart(),
@@ -63,9 +69,9 @@ public class Renderer {
 
 			if (isVisible)
 				entry.getValue().draw(entry.getKey(), frustum, rotationIndex);
-		}
 
-		GlStateManager.popMatrix();
+			GlStateManager.popMatrix();
+		}
 
 		GlStateManager.depthMask(true);
 		GlStateManager.disableBlend();

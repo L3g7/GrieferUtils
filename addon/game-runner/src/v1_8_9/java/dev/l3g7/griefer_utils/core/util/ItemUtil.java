@@ -197,7 +197,7 @@ public class ItemUtil {
 	}
 
 	public static ItemStack setEnchantments(ItemStack itemStack, ItemEnchantment... enchantments) {
-		return setEnchantments(itemStack, (ItemEnchantment) Arrays.asList(enchantments));
+		return setEnchantments(itemStack, new ArrayList<>(Arrays.asList(enchantments)));
 	}
 
 	public static ItemStack setEnchantments(ItemStack itemStack, ArrayList<ItemEnchantment> enchantments) {

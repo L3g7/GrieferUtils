@@ -19,6 +19,7 @@ import org.lwjgl.input.Mouse;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.DoubleStream;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
@@ -45,20 +46,10 @@ public class BotshopGUI extends GuiBigChest {
 	final List<BABItem> boughtItems;
 	final List<BABItem> items;
 	final DecimalFormat priceFormat = new DecimalFormat("###,###,###.#");
+	List<Float> prices = new ArrayList<>();
 
 	private float price() {
-		float total = 0;
-
-		itemLoop:
-		for (BABItem i : boughtItems) {
-			for (BABItem j : boughtItems)
-				if (i.getPrice() == j.getPrice() && i != j)
-					continue itemLoop;
-
-			total += i.getPrice();
-		}
-
-		return total;
+		return (float) prices.stream().flatMapToDouble(DoubleStream::of).sum();
 	}
 
 	private String priceStr() {
@@ -111,8 +102,16 @@ public class BotshopGUI extends GuiBigChest {
 		}
 		super.addItem(slot * 9, entry.getStack(), () -> {
 			for (BABItem i : items)
-				if (i.getPrice() == entry.getPrice())
+				if (i.getPrice() == entry.getPrice()) {
 					boughtItems.remove(i);
+				}
+
+			for (int i = 0; i < prices.size(); i++) {
+				if (prices.get(i) == entry.getPrice()) {
+					prices.remove(i);
+					break;
+				}
+			}
 			updatePage();
 		});
 	}
@@ -126,14 +125,13 @@ public class BotshopGUI extends GuiBigChest {
 
 		super.addItem(slot + diff, entry.getStack(), () -> {
 			List<BABItem> addedItems = new ArrayList<>(8);
-
 			for (BABItem i : items)
 				if (i.getPrice() == entry.getPrice())
 					addedItems.add(i);
 
 			if (boughtItems.size() + addedItems.size() > 7)
 				return;
-
+			prices.add(entry.getPrice());
 			boughtItems.addAll(addedItems);
 			updatePage();
 		});
@@ -157,12 +155,16 @@ public class BotshopGUI extends GuiBigChest {
 		if (entry.getStack().getItem().getItemStackDisplayName(entry.getStack()).replaceAll("§.", "").toLowerCase().contains(search))
 			return true;
 
+		// Check i18n name
+		if (entry.getStack().getUnlocalizedName().replaceAll("§.", "").toLowerCase().contains(search))
+			return true;
+
 		// Check lore
 		for (String line : ItemUtil.getLore(entry.getStack()))
 			if (line.replaceAll("§.", "").toLowerCase().contains(search.toLowerCase()))
 				return true;
 
-		return false;
+		return String.valueOf(entry.getPrice()).contains(search);
 	}
 
 	@Override
@@ -219,8 +221,8 @@ public class BotshopGUI extends GuiBigChest {
 				Minecraft.getMinecraft().thePlayer.closeScreen();
 				if (botname == null) return;
 
-				for (BABItem i : boughtItems) {
-					ChatQueue.send("/pay " + botname + " " + i.getPrice());
+				for (float price : prices) {
+					ChatQueue.send("/pay " + botname + " " + price);
 				}
 			});
 		}
@@ -261,7 +263,7 @@ public class BotshopGUI extends GuiBigChest {
 				if (index >= 0 && index < itemsDisplayed.size())
 					setMenuItem(entriesAsList.get(index), slotId);
 				else
-					addItem(slotId, null, null);
+					setMenuItem(null, slotId);
 			}
 		}
 	}

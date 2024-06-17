@@ -1,17 +1,20 @@
 package dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries;
+import com.google.gson.reflect.TypeToken;
+import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.ItemUtil.ItemEnchantment;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * An implementation of an Item-API parser for {@link dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.ByteAndBit}
@@ -37,7 +40,6 @@ public class BABItem implements Comparable<BABItem> {
 
 	@Override
 	public int compareTo(BABItem o) {
-
 		Item otherItem = o.getStack().getItem();
 		Item thisItem = this.getStack().getItem();
 
@@ -62,48 +64,70 @@ public class BABItem implements Comparable<BABItem> {
 		return Float.compare(this.price, o.getPrice());
 	}
 
-	public static List<BABItem> parse(JsonArray in) {
-		ArrayList<BABItem> ret = new ArrayList<>();
-		for (JsonElement itemElement : in) {
-			JsonObject item = itemElement.getAsJsonObject();
-			JsonObject material = item.get("material").getAsJsonObject();
+	private static class VeloItem {
+		VeloMaterial material = new VeloMaterial();
+		private static final String defaultDisplayName = "§r";
+		String displayName = defaultDisplayName;
+		int repairCost = 0;
+		List<VeloLore> lore = Collections.emptyList();
+		List<VeloEnchantment> enchantments = Collections.emptyList();
+		List<VeloPrice> prices = Collections.emptyList();
 
-			String materialName = material.get("name").getAsString();
-			int subID = material.get("subID").getAsInt();
-			int stackSize = material.get("stackSize").getAsShort(); // currently unused. Maybe useful in the future
-			String displayName = item.get("displayName").getAsString();
-			int repairCost = item.get("repairCost").getAsInt();
-			JsonArray lore = item.get("lore").getAsJsonArray();
-			String[] loreLines = new String[lore.size()];
-			int idx = 0;
-			for (JsonElement loreLineElement : lore) {
-				JsonObject loreLine = loreLineElement.getAsJsonObject();
-				loreLines[idx++] = loreLine.get("lineContent").getAsString();
-			}
+		public List<BABItem> convert() {
+			if(displayName == null) displayName = defaultDisplayName;
+			if (prices.isEmpty())
+				return Collections.emptyList();
 
-			JsonArray ench = item.get("enchantments").getAsJsonArray();
-			ArrayList<ItemUtil.ItemEnchantment> enchantments = new ArrayList<>();
+			List<BABItem> items = new ArrayList<>();
+			ItemEnchantment[] itemEnchantments = enchantments.stream().map((e) -> new ItemEnchantment(e.id, e.level)).toArray(ItemEnchantment[]::new);
+			for (var price : this.prices) {
+				if (price.price == null) continue;
+				if (price.price < 0) continue; // ankauf - TODO
 
-			for (JsonElement enchElement : ench) {
-				JsonObject enchObject = enchElement.getAsJsonObject();
-				enchantments.add(new ItemUtil.ItemEnchantment(enchObject.get("id").getAsInt(), enchObject.get("level").getAsInt()));
-			}
-			for (JsonElement priceJson : itemElement.getAsJsonObject().get("prices").getAsJsonArray()) {
-				// initialize a separate BABItem entry for each price/amount variation
-				float price = priceJson.getAsJsonObject().get("price").getAsFloat();
-				if (price < 0)
-					continue;
+				ItemStack stack = new ItemStack(Blocks.stone, price.amount, 10000);
+				if (material.name != null) {
+					Item item = Item.getByNameOrId(material.name);
+					if (item != null)
+						stack = new ItemStack(item, price.amount, this.material.subID);
+				}
 
-				int amount = priceJson.getAsJsonObject().get("amount").getAsInt();
-				ItemStack stack = new ItemStack(Item.getByNameOrId(materialName), amount, subID);
 				stack.setRepairCost(repairCost);
-				stack.setStackDisplayName("§r" + displayName + " §r§a(" + priceFormat.format(price) + "$)");
-				if (loreLines.length > 0) ItemUtil.setLore(stack, loreLines);
-				if (!enchantments.isEmpty()) ItemUtil.setEnchantments(stack, enchantments);
-				ret.add(new BABItem(price, stack));
+				stack.setStackDisplayName("§r" + displayName + " §r§a(" + priceFormat.format(price.price) + "$)");
+
+				if (!lore.isEmpty())
+					ItemUtil.setLore(stack, lore.stream().map(l -> l.lineContent).toArray(String[]::new));
+
+				if (!enchantments.isEmpty()) ItemUtil.setEnchantments(stack, itemEnchantments);
+
+				items.add(new BABItem(price.price, stack));
 			}
+			return items;
 		}
-		return ret;
+	}
+
+	private static class VeloMaterial {
+		String name = "§r";
+		int subID = 0;
+		int stackSize = 1;
+	}
+
+	private static class VeloLore {
+		String lineContent = "§r";
+	}
+
+	private static class VeloEnchantment {
+		int id = 0;
+		int level = 0;
+	}
+
+	private static class VeloPrice {
+		Float price;
+		int amount = 1;
+	}
+
+	public static List<BABItem> parse(JsonArray in) {
+		ArrayList<VeloItem> items = IOUtil.gson.fromJson(in, new TypeToken<ArrayList<VeloItem>>() {}.getType());
+		return items.stream().parallel().map(VeloItem::convert).flatMap(List::stream).collect(Collectors.toList());
 	}
 
 	@Override

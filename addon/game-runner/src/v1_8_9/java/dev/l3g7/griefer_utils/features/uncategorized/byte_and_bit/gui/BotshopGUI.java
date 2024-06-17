@@ -435,13 +435,7 @@ public class BotshopGUI extends GuiBigChest {
 
 		float invisibleRows = entryCount / 5f - 5;
 
-		if (dWheel > 0)
-			dWheel = 1;
-
-		if (dWheel < 0)
-			dWheel = -1;
-
-		currentScroll = currentScroll - dWheel / invisibleRows;
+		currentScroll = currentScroll - (dWheel / invisibleRows);
 		currentScroll = MathHelper.clamp_float(currentScroll, 0.0F, 1.0F);
 		update(currentScroll);
 	}

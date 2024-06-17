@@ -11,37 +11,41 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
+import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
+import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.MysteryModConnection;
+import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.MysteryModConnection.State;
+import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.Transaction;
+import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.TransactionsPacket;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
-import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.MysteryModConnection;
-import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.MysteryModConnection.State;
-import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.RequestTransactionsPacket;
-import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.Transaction;
-import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.TransactionsPacket;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.client.gui.GuiScreen;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.uuid;
 
 @Singleton
 @ExclusiveTo(LABY_3)
@@ -82,8 +86,7 @@ public class Transactions extends Feature {
 				.description("Zeigt die Transaktionen der letzen 30 Tage an.");
 			((ControlElement) setting).setSettingEnabled(true);
 
-			// Send Transaction packet every 3s
-			MysteryModConnection.eventLoopGroup.scheduleAtFixedRate(() -> event.ctx.writeAndFlush(new RequestTransactionsPacket(uuid())), 0, 3, TimeUnit.SECONDS);
+			MysteryModConnection.requestTransactions();
 		} else {
 			setting.name("§c§mTransaktionen")
 				.description("§cMysteryMod ist nicht erreichbar:", state.errorMessage, "", "Joine auf einen Server, um die Verbindung erneut zu versuchen!");
@@ -160,6 +163,11 @@ public class Transactions extends Feature {
 		}, 1);
 	}
 
+	public void onInit() {
+		if (path().get(path().size() - 1) == setting)
+			MysteryModConnection.requestTransactions();
+	}
+
 	public static ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }
 
 	private void updateFilter() {
@@ -229,6 +237,17 @@ public class Transactions extends Feature {
 		@Override
 		public String getName() {
 			return name;
+		}
+
+	}
+
+	@Mixin(LabyModAddonsGui.class)
+	private static class MixinLabyModAddonsGui {
+
+		@InheritedInvoke(GuiScreen.class)
+		@Inject(method = "mouseClicked", at = @At(value = "INVOKE", target = "Ljava/util/ArrayList;add(Ljava/lang/Object;)Z", shift = At.Shift.AFTER))
+		public void onPathAdd(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
+			FileProvider.getSingleton(Transactions.class).onInit();
 		}
 
 	}

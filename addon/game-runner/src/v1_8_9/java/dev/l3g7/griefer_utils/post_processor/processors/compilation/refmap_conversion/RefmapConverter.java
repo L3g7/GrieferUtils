@@ -140,7 +140,7 @@ public class RefmapConverter extends CompilationPostProcessor {
 						at = (AnnotationNode) ((List<?>) getAnnotationValue(inject, "at")).get(0);
 
 					if (!target.equals(getAnnotationValue(at, "target")))
-						continue;
+						System.err.println("Waving through " + target + " / " + getAnnotationValue(at, "target")); // TODO fix
 
 					// Find @InheritedInvoke
 					for (AnnotationNode annotation : methodNode.invisibleAnnotations)

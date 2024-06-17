@@ -14,6 +14,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -178,4 +179,41 @@ public class ItemUtil {
 		CB_ITEMS.add(createItem(beacon, 0, "Event"));
 	}
 
+	public static class ItemEnchantment {
+		int id;
+		int lvl;
+
+		public ItemEnchantment(int id, int lvl) {
+			this.id = id;
+			this.lvl = lvl;
+		}
+
+		NBTTagCompound getCompound() {
+			NBTTagCompound compound = new NBTTagCompound();
+			compound.setInteger("id", id);
+			compound.setInteger("lvl", lvl);
+			return compound;
+		}
+	}
+
+	public static ItemStack setEnchantments(ItemStack itemStack, ItemEnchantment... enchantments) {
+		return setEnchantments(itemStack, (ItemEnchantment) Arrays.asList(enchantments));
+	}
+
+	public static ItemStack setEnchantments(ItemStack itemStack, ArrayList<ItemEnchantment> enchantments) {
+		NBTTagCompound tag = itemStack.getTagCompound();
+		if (tag == null) {
+			tag = new NBTTagCompound();
+		}
+
+		NBTTagList ench = tag.getTagList("ench", Constants.NBT.TAG_LIST);
+		if (ench == null) ench = new NBTTagList();
+
+		for (ItemEnchantment e : enchantments)
+			ench.appendTag(e.getCompound());
+
+		tag.setTag("ench", ench);
+		itemStack.setTagCompound(tag);
+		return itemStack;
+	}
 }

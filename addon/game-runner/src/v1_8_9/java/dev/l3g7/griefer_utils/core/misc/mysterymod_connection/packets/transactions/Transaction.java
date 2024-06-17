@@ -42,6 +42,6 @@ public class Transaction implements Comparable<Transaction> {
 
 	@Override
 	public int compareTo(Transaction o) {
-		return Long.compare(o.timestamp, timestamp);
+		return Long.compare(o.id, id);
 	}
 }

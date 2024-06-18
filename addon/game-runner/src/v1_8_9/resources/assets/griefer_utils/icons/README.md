@@ -356,6 +356,10 @@
     <td><a href="https://www.redbubble.com/de/i/sticker/Pixel-Raketenschiff-auf-Wei%C3%9F-von-Rocket-To-Pluto/53450460.EJUG5">Rocket-To-Pluto</a></td>
   </tr>
   <tr>
+    <td><a href="rotations.png"><img src="rotations.png" height=16em width=16em />&nbsp;&nbsp;rotations.png </a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><a href="ruler.png"><img src="ruler.png" height=16em width=16em />&nbsp;&nbsp;ruler.png </a></td>
     <td>selfmade</td>
   </tr>

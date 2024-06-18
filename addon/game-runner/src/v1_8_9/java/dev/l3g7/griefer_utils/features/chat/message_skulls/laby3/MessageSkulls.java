@@ -14,13 +14,13 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.bridges.laby3.temp.ChatLineUtil;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
-import dev.l3g7.griefer_utils.features.chat.message_skulls.EmoteChatUtil;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.chat.message_skulls.EmoteChatUtil;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.ingamechat.renderer.ChatRenderer;
 import net.labymod.main.LabyMod;
@@ -115,14 +115,11 @@ public class MessageSkulls extends Feature {
 		if (wholeComponent == null)
 			return;
 
-		String msg = wholeComponent.getUnformattedText();
+		String msg = wholeComponent.getUnformattedText().replaceAll("§.", "");
 
 		int startIndex = msg.indexOf('\u2503') + 2;
 		int endIndex;
 		int arrowIndex = msg.indexOf('\u00bb');
-
-		if (idStart > startIndex)
-			return;
 
 		IChatComponent unmodified = ChatLineUtil.getUnmodifiedIChatComponent(wholeComponent);
 		if (unmodified == null)

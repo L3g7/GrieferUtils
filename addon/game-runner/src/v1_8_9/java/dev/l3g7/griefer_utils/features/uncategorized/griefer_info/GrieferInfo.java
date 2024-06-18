@@ -59,7 +59,7 @@ public class GrieferInfo extends Feature {
 		if (!profile.get())
 			return;
 
-		if (!event.getTitle().startsWith("§6Profil"))
+		if (!event.getTitle().startsWith("§6Profil") || event.getTitle().startsWith("§6Profil - Einstellungen"))
 			return;
 
 		ItemStack skull = event.getItem(13);

@@ -84,15 +84,12 @@ public class RenderObjectObserver {
 
 	@EventListener
 	private static void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
-		if (event.packet instanceof S23PacketBlockChange) {
-			S23PacketBlockChange packet = (S23PacketBlockChange) event.packet;
+		if (event.packet instanceof S23PacketBlockChange packet)
 			updateBlock(packet.getBlockPosition(), packet.getBlockState());
-		}
 
-		if (!(event.packet instanceof S22PacketMultiBlockChange))
+		if (!(event.packet instanceof S22PacketMultiBlockChange packet))
 			return;
 
-		S22PacketMultiBlockChange packet = (S22PacketMultiBlockChange) event.packet;
 		for (S22PacketMultiBlockChange.BlockUpdateData data : packet.getChangedBlocks())
 			updateBlock(data.getPos(), data.getBlockState());
 	}
@@ -127,7 +124,7 @@ public class RenderObjectObserver {
 		}
 
 		private final Map<Integer, ChunkPart> parts = new HashMap<>();
-		private final Set<ChunkPart> partsToRecompile = new HashSet<>();
+		private final Set<ChunkPart> partsToRecompile = Collections.synchronizedSet(new HashSet<>());
 
 		void add(RenderObject newObj) {
 			ChunkPart part = parts.computeIfAbsent(newObj.pos.getY() / 16, k -> new ChunkPart());
@@ -163,11 +160,12 @@ public class RenderObjectObserver {
 
 		void draw(ChunkCoordIntPair pair, Frustum frustum, int rotation) {
 			if (!partsToRecompile.isEmpty()) {
-				List<ChunkPart> parts = new ArrayList<>(partsToRecompile);
-				for (ChunkPart chunkPart : parts)
-					chunkPart.recompile();
-
-				parts.forEach(partsToRecompile::remove);
+				synchronized (partsToRecompile) {
+					partsToRecompile.removeIf(p -> {
+						p.recompile();
+						return true;
+					});
+				}
 			}
 
 			for (Map.Entry<Integer, ChunkPart> entry : parts.entrySet()) {

@@ -11,11 +11,11 @@ import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
-import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -81,7 +81,7 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 
 		callback(v -> {
 			if (v != null) {
-				name(v.name.get());
+				name(v.name().get());
 				icon(v.icon);
 			} else {
 				name("§7[Kein Nachfolger]");
@@ -216,7 +216,7 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 
 			for (RecraftRecording recording : page.recordings.get()) {
 				ButtonSettingImpl setting = (ButtonSettingImpl) ButtonSetting.create()
-					.name(recording.name.get())
+					.name(recording.name().get())
 					.icon(recording.icon)
 					.buttonLabel("Auswählen")
 					.callback(() -> {

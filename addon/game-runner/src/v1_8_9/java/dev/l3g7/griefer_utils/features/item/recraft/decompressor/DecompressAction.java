@@ -1,8 +1,8 @@
-package dev.l3g7.griefer_utils.features.item.recraft.laby3.decompressor;
+package dev.l3g7.griefer_utils.features.item.recraft.decompressor;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftAction;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
 
 public class DecompressAction extends RecraftAction {
 
@@ -13,7 +13,7 @@ public class DecompressAction extends RecraftAction {
 	}
 
 	@Override
-	protected JsonElement toJson() {
+	public JsonElement toJson() {
 		return new JsonPrimitive(ingredient.toLong());
 	}
 

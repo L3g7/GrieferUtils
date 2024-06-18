@@ -16,36 +16,32 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.recraft.laby3.recipe;
+package dev.l3g7.griefer_utils.features.item.recraft.recipe;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.Recraft;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftAction;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording;
 import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import net.minecraft.network.play.server.S2DPacketOpenWindow;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.ADDON_PREFIX;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**
  * @author Pleezon, L3g73
  */
-@Bridge.ExclusiveTo(LABY_3)
 public class RecipePlayer {
 
 	private static Queue<RecipeAction> pendingActions;
@@ -66,18 +62,18 @@ public class RecipePlayer {
 			return;
 		}
 
-		if (recording.actions.isEmpty()) {
+		if (recording.actions().isEmpty()) {
 			labyBridge.notify("§e§lFehler \u26A0", "§eDiese Aufzeichnung ist leer!");
 			return;
 		}
 
 		RecipePlayer.onFinish = onFinish;
 		pendingActions = new LinkedList<>();
-		for (RecraftAction action : recording.actions)
+		for (RecraftAction action : recording.actions())
 			pendingActions.add((RecipeAction) action);
 
 		if (Recraft.playingSuccessor)
-			MinecraftUtil.send("/rezepte");
+			send("/rezepte");
 		else
 			player().sendChatMessage("/rezepte");
 	}
@@ -173,7 +169,7 @@ public class RecipePlayer {
 		if (pendingActions == null || actionBeingExecuted != null)
 			return;
 
-		display(Constants.ADDON_PREFIX + "§cDas Abspielen wurde aufgrund einer manuellen Aktion abgebrochen.");
+		LabyBridge.display(ADDON_PREFIX + "§cDas Abspielen wurde aufgrund einer manuellen Aktion abgebrochen.");
 		pendingActions = null;
 	}
 

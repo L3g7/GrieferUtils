@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
-import dev.l3g7.griefer_utils.features.item.recraft.TempToolSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
 
 import java.util.Arrays;
 import java.util.Comparator;

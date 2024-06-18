@@ -26,17 +26,17 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
-import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
-import dev.l3g7.griefer_utils.features.item.recraft.TempToolSaverBridge;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
+import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -120,16 +120,14 @@ public class ToolSaver extends ItemSaver implements TempToolSaverBridge {
 			return;
 		}
 
-		if (event.packet instanceof C07PacketPlayerDigging) {
-			C07PacketPlayerDigging packet = (C07PacketPlayerDigging) event.packet;
+		if (event.packet instanceof C07PacketPlayerDigging packet) {
 			if (packet.getStatus() == C07PacketPlayerDigging.Action.START_DESTROY_BLOCK && shouldCancel(player().getHeldItem()))
 				event.cancel();
 
 			return;
 		}
 
-		if (event.packet instanceof C08PacketPlayerBlockPlacement) {
-			C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
+		if (event.packet instanceof C08PacketPlayerBlockPlacement packet) {
 			IBlockState state = world().getBlockState(packet.getPosition());
 			if (shouldCancel(packet.getStack()) && (state == null || !(state.getBlock() instanceof BlockContainer)))
 				event.cancel();
@@ -216,13 +214,9 @@ public class ToolSaver extends ItemSaver implements TempToolSaverBridge {
 			mc().currentScreen.initGui();
 
 		JsonObject object = new JsonObject();
-		for (SettingsElement element : ((SettingsElement) enabled).getSubSettings().getElements()) {
-			if (!(element instanceof ItemDisplaySetting))
-				continue;
-
-			ItemDisplaySetting ids = (ItemDisplaySetting) element;
-			object.addProperty(ids.name, ItemUtil.serializeNBT(ids.stack));
-		}
+		for (SettingsElement element : ((SettingsElement) enabled).getSubSettings().getElements())
+			if (element instanceof ItemDisplaySetting ids)
+				object.addProperty(ids.name, ItemUtil.serializeNBT(ids.stack));
 
 		Config.set(getConfigKey() + ".exclusions", object);
 		Config.save();

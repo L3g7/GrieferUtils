@@ -24,12 +24,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 
@@ -78,28 +78,28 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 
 				recording.setTitle("Aufzeichnung hinzufügen");
 				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
-					recording.setTitle(recording.name.get());
-					FileProvider.getSingleton(Recraft.class).save();
+					recording.setTitle(recording.name().get());
+					Recraft.save();
 				}, recording.mainSetting));
 			})
 		);
 
 		getSubSettings().addAll((ArrayList<SettingsElement>) entrySettings);
 		this.name.defaultValue(name);
-		container = (SettingsElement) FileProvider.getSingleton(Recraft.class).getMainElement();
+		container = (SettingsElement) FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.recraft.Recraft.class).getMainElement();
 	}
 
 	protected void onChange() {
 		if (!container.getSubSettings().getElements().contains(this))
 			for (RecraftRecording.RecordingDisplaySetting displaySetting : Recraft.getSubSettingsOfType(this, RecraftRecording.RecordingDisplaySetting.class))
-				displaySetting.recording.key.set(ImmutableSet.of());
+				displaySetting.recording.key().set(ImmutableSet.of());
 
-		FileProvider.getSingleton(Recraft.class).save();
+		Recraft.save();
 	}
 
 	@Override
 	protected void openSettings() {
-		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> FileProvider.getSingleton(Recraft.class).save(), this));
+		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(Recraft::save, this));
 	}
 
 	JsonObject toJson() {

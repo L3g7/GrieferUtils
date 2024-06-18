@@ -1,48 +1,44 @@
-/*
- * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- */
+package dev.l3g7.griefer_utils.features.item.recraft.decompressor;
 
-package dev.l3g7.griefer_utils.features.item.recraft.laby4.decompressor;
-
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.Recraft;
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftAction.Ingredient;
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftRecording;
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.crafter.CraftAction;
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording;
+import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftAction;
+import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
 import net.minecraft.item.ItemStack;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftBridge.recraftBridge;
 
 public class DecompressPlayer {
 
-	private static final RecraftRecording craftRecording = Recraft.tempRecording;
+	private static final RecraftRecording craftRecording = recraftBridge.createEmptyRecording();
 	private static RecraftRecording recording;
 
-	public static void play(RecraftRecording recording) {
+	/**
+	 * @return whether the recording was started successfully
+	 */
+	public static boolean play(RecraftRecording recording) {
 		if (world() == null || !mc().inGameHasFocus)
-			return;
+			return false;
 
 		if (!ServerCheck.isOnCitybuild()) {
 			labyBridge.notify("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild abgespielt werden.");
-			return;
+			return false;
 		}
 
-		if (recording.actions.isEmpty()) {
+		if (recording.actions().isEmpty()) {
 			labyBridge.notify("§e§lFehler \u26A0", "§eDiese Aufzeichnung ist leer!");
-			return;
+			return false;
 		}
 
 		DecompressPlayer.recording = recording;
-		Ingredient ingredient = ((DecompressAction) recording.actions.get(0)).ingredient;
-		craft(ingredient, true);
+		Ingredient ingredient = ((DecompressAction) recording.actions().get(0)).ingredient;
+		return craft(ingredient);
 	}
 
-	private static boolean craft(Ingredient ingredient, boolean firstExecute) {
+	private static boolean craft(Ingredient ingredient) {
 		ItemStack[] inv = player().inventory.mainInventory;
 
 		int freeSlots = 0;
@@ -61,17 +57,17 @@ public class DecompressPlayer {
 		}
 
 		ItemStack stack = player().inventory.mainInventory[slot];
-		return !startCrafting(new PredeterminedIngredient(stack, slot), firstExecute);
+		return startCrafting(new PredeterminedIngredient(stack, slot));
 	}
 
-	private static boolean startCrafting(PredeterminedIngredient ingredient, boolean reset) {
+	private static boolean startCrafting(PredeterminedIngredient ingredient) {
 		Ingredient[] ingredients = new Ingredient[9];
 		ingredients[0] = ingredient;
 
-		craftRecording.actions.clear();
-		craftRecording.actions.add(new CraftAction(ingredients));
+		craftRecording.actions().clear();
+		craftRecording.actions().add(new CraftAction(ingredients));
 
-		return CraftPlayer.play(craftRecording, () -> craft(ingredient, false), reset);
+		return CraftPlayer.play(craftRecording, () -> craft(ingredient), false, true);
 	}
 
 	private static int getSlotWithLowestCompression(Ingredient ingredient, int freeSlots) {

@@ -16,20 +16,19 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.recraft.laby3.crafter;
+package dev.l3g7.griefer_utils.features.item.recraft.crafter;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.Recraft;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftAction;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftAction.Ingredient;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording;
 import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -40,15 +39,13 @@ import net.minecraft.network.play.server.S30PacketWindowItems;
 
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.features.item.recraft.laby3.crafter.CraftPlayer.State.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer.State.*;
 
 /**
  * @author Pleezon, L3g73
  */
-@Bridge.ExclusiveTo(LABY_3)
 public class CraftPlayer {
 
 	private static RecraftRecording currentRecording;
@@ -89,7 +86,7 @@ public class CraftPlayer {
 			return false;
 		}
 
-		if (recording.actions.isEmpty()) {
+		if (recording.actions().isEmpty()) {
 			labyBridge.notify("§e§lFehler \u26A0", "§eDiese Aufzeichnung ist leer!");
 			return false;
 		}
@@ -116,7 +113,7 @@ public class CraftPlayer {
 	private static void playRecording(RecraftRecording recording) {
 		failedActions = 0;
 		pendingActions = new LinkedList<>();
-		for (RecraftAction action : recording.actions)
+		for (RecraftAction action : recording.actions())
 			pendingActions.add((CraftAction) action);
 	}
 
@@ -130,7 +127,7 @@ public class CraftPlayer {
 				continue;
 			}
 
-			if (failedActions != currentRecording.actions.size() && currentRecording.craftAll.get()) {
+			if (failedActions != currentRecording.actions().size() && currentRecording.craftAll().get()) {
 				firstPlay = false;
 				playRecording(currentRecording);
 				startAction();
@@ -202,7 +199,7 @@ public class CraftPlayer {
 						replaceItems = true;
 					}
 
-					hotbarSourceIds[slotId] = sourceIds[i] + 1;
+					hotbarSourceIds[slotId] = sourceIds[i] + (usingPlayerInventory ? 0 : 1);
 					sourceIds[i] = slotId;
 				}
 			}
@@ -224,9 +221,7 @@ public class CraftPlayer {
 			}
 		}
 
-		TickScheduler.runAfterClientTicks(() -> {
-			forceResync(state, null);
-		}, clicks);
+		TickScheduler.runAfterClientTicks(() -> forceResync(state, null), clicks);
 	}
 
 	@EventListener
@@ -253,9 +248,7 @@ public class CraftPlayer {
 		mc().getNetHandler().addToSendQueue(new C0FPacketConfirmTransaction(windowId, (short) -999, true));
 
 		Object finalReference = reference;
-		TickScheduler.runAfterClientTicks(() -> {
-			forceResync(state, finalReference);
-		}, 60);
+		TickScheduler.runAfterClientTicks(() -> forceResync(state, finalReference), 60);
 	}
 
 	@EventListener
@@ -298,7 +291,7 @@ public class CraftPlayer {
 					if (sourceIds[j] != i)
 						continue;
 
-					if (!Ingredient.check(ingredients[j], stacks[i + 37]))
+					if (!Ingredient.check(ingredients[j], stacks[i + (usingPlayerInventory ? 36 : 37)]))
 						click(event.packet.func_148911_c(), hotbarSourceIds[i], i, ++fails * 2);
 					break;
 				}
@@ -337,11 +330,12 @@ public class CraftPlayer {
 	}
 
 	@EventListener
-	private static void onWindowClose(GuiOpenEvent<?> event) {
+	private static void onGuiOpen(GuiOpenEvent<?> event) {
 		if (state == IDLE || event.gui instanceof GuiCrafting)
 			return;
 
 		state = IDLE;
+		onFinish = () -> false;
 	}
 
 	enum State {

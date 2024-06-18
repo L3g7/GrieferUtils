@@ -1,36 +1,44 @@
 /*
  * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
- * Copyright (c) L3g7.
+ *
+ * Copyright 2020-2024 L3g7
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.recraft.laby4.recipe;
+package dev.l3g7.griefer_utils.features.item.recraft.recipe;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.Recraft;
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftAction.Ingredient;
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftRecording;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftRecording.RecordingMode.RECIPE;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.RECIPE;
 
 /**
  * @author Pleezon, L3g73
  */
-@ExclusiveTo(LABY_4)
 public class RecipeRecorder {
 
 	private static RecraftRecording recording = Recraft.tempRecording;
@@ -67,8 +75,8 @@ public class RecipeRecorder {
 		if (event.gui instanceof GuiChest) {
 			if (executedCommand) {
 				isMenuOpen = true;
-				recording.actions.clear();
-				recording.mode.set(RECIPE);
+				recording.actions().clear();
+				recording.mode().set(RECIPE);
 				executedCommand = false;
 			}
 			return;
@@ -97,19 +105,19 @@ public class RecipeRecorder {
 		if (!addedIcon && isCrafting) {
 			ItemStack targetStack = player().openContainer.getSlot(25).getStack().copy();
 			targetStack.stackSize = ItemUtil.getCompressionLevel(targetStack);
-			recording.icon = targetStack;
+			recording.setIcon(targetStack);
 			addedIcon = true;
 		}
 
 		if (packet.getSlotId() > 53) {
 			Ingredient ingredient = Ingredient.fromItemStack(packet.getClickedItem());
 			if (ingredient != null)
-				recording.actions.add(new RecipeAction(ingredient));
+				recording.actions().add(new RecipeAction(ingredient));
 			return;
 		}
 
 		if (!isCrafting || player().openContainer.windowId != packet.getWindowId()) {
-			recording.actions.add(new RecipeAction(packet.getSlotId(), null));
+			recording.actions().add(new RecipeAction(packet.getSlotId(), null));
 			return;
 		}
 
@@ -124,7 +132,7 @@ public class RecipeRecorder {
 		if (packet.getMode() == 1)
 			slot = -slot;
 
-		recording.actions.add(new RecipeAction(slot, RecipeAction.SizedIngredient.fromIngredients(ingredients)));
+		recording.actions().add(new RecipeAction(slot, RecipeAction.SizedIngredient.fromIngredients(ingredients)));
 	}
 
 }

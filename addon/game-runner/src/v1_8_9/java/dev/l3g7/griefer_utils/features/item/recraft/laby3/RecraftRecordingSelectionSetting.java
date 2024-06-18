@@ -3,14 +3,14 @@ package dev.l3g7.griefer_utils.features.item.recraft.laby3;
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording.RecordingDisplaySetting;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording.RecordingMode;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.crafter.CraftPlayer;
-import dev.l3g7.griefer_utils.features.item.recraft.laby3.decompressor.DecompressPlayer;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.util.render.GlEngine;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
+import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
+import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressPlayer;
+import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording.RecordingDisplaySetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.LabyModAddonsGui;
@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.*;
 import static dev.l3g7.griefer_utils.features.item.recraft.laby3.Recraft.getSubSettingsOfType;
 import static dev.l3g7.griefer_utils.features.item.recraft.laby3.Recraft.iterate;
-import static dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording.RecordingMode.*;
 
 public class RecraftRecordingSelectionSetting extends SmallButtonSetting implements Laby3Setting<RecraftRecordingSelectionSetting, Object> {
 
@@ -53,7 +53,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 		while (settings.size() > 4)
 			settings.remove(4);
 
-		List<RecraftPageSetting> pages = getSubSettingsOfType((SettingsElement) FileProvider.getSingleton(Recraft.class).getMainElement(), RecraftPageSetting.class);
+		List<RecraftPageSetting> pages = getSubSettingsOfType((SettingsElement) FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.recraft.Recraft.class).getMainElement(), RecraftPageSetting.class);
 
 		settings.add(new RecordingSelectionSetting(null));
 
@@ -63,7 +63,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 				.icon(Material.EMPTY_MAP);
 
 			List<RecordingDisplaySetting> displays = getSubSettingsOfType(page, RecordingDisplaySetting.class);
-			if (container.mode.get() == DECOMPRESS)
+			if (container.mode().get() == DECOMPRESS)
 				displays.remove(container.mainSetting);
 
 			if (displays.isEmpty())
@@ -79,7 +79,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 
 	void setSelectedRecording(RecraftRecording selectedRecording) {
 		recording = selectedRecording;
-		setDisplayName(selectedRecording == null ? "§8[Nichts ausgewählt]" : selectedRecording.name.get());
+		setDisplayName(selectedRecording == null ? "§8[Nichts ausgewählt]" : selectedRecording.name().get());
 //		icon(new IconData());
 //		icon(selectedRecording == null ? Material.BARRIER : new IconData());
 
@@ -103,7 +103,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			name = name.substring(0, name.indexOf('\n'));
 
 		if (selectedRecording != null)
-			name += "\n§8§o➡ " + selectedRecording.name.get();
+			name += "\n§8§o➡ " + selectedRecording.name().get();
 
 		container.mainSetting.setDisplayName(name);
 	}
@@ -146,12 +146,12 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 		if (recording == null)
 			return true;
 
-		if (previousMode == RECIPE || recording.mode.get() == RECIPE) {
-			TickScheduler.runAfterClientTicks(() -> recording.play(true), 1);
+		if (previousMode == RECIPE || recording.mode().get() == RECIPE) {
+			TickScheduler.runAfterClientTicks(() -> recording.getCore().play(true), 1);
 			return true;
 		}
 
-		if (recording.mode.get() == CRAFT)
+		if (recording.mode().get() == CRAFT)
 			return !CraftPlayer.play(recording, recording::playSuccessor, false, false);
 
 		return DecompressPlayer.play(recording);
@@ -173,7 +173,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			setSettingEnabled(false);
 			this.recording = recording;
 //			icon(recording == null ? Material.BARRIER : new IconData());
-			setDisplayName(recording == null ? "§8Nichts auswählen" : recording.name.get());
+			setDisplayName(recording == null ? "§8Nichts auswählen" : recording.name().get());
 		}
 
 		@Override

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.recraft.laby3;
+package dev.l3g7.griefer_utils.features.item.recraft;
 
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -30,7 +30,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 public abstract class RecraftAction {
 
-	protected abstract JsonElement toJson();
+	public abstract JsonElement toJson();
 
 	public static class Ingredient {
 

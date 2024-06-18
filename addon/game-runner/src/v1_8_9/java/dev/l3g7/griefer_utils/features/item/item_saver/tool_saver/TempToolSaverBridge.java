@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.recraft;
+package dev.l3g7.griefer_utils.features.item.item_saver.tool_saver;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import net.minecraft.item.ItemStack;

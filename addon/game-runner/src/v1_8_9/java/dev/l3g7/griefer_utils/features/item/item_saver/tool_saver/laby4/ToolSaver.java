@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.core.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
-import dev.l3g7.griefer_utils.features.item.recraft.TempToolSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;

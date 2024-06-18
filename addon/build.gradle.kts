@@ -14,10 +14,10 @@ labyMod {
 		namespace = "griefer_utils"
 		displayName = "GrieferUtils"
 		author = "L3g7, L3g73"
-		description = "§cFalls du das hier liest, gab es einen Fehler."
+		description = "Please trigger the \"run\" task before using or distributing GrieferUtils" // Overwritten by post processor
 		minecraftVersion = "1.8.9"
 		version = providers.gradleProperty("version").get()
-		meta(AddonMeta.RESTART_REQUIRED)
+		meta(AddonMeta.RESTART_REQUIRED, AddonMeta.BACKGROUND)
 	}
 
 	minecraft {

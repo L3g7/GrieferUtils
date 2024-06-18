@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,13 +46,14 @@ public class AddonJsonProcessor extends CompilationPostProcessor {
 		try (OutputStream out = Files.newOutputStream(addonJson)) {
 			addon.addProperty("uuid", "%uuid%");
 			addon.addProperty("name", "GrieferUtils");
+			addon.addProperty("description", "\uD83D\uDC4B");
 			addon.addProperty("icon", "griefer_utils_icon");
 			addon.addProperty("debug", System.getProperty("griefer_utils.debug"));
 			addon.addProperty("transformerClass", "dev.l3g7.griefer_utils.labymod.laby3.PreStart");
 			addon.addProperty("addonVersion", addon.get("version").getAsString());
 
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			out.write(gson.toJson(addon).getBytes(StandardCharsets.ISO_8859_1));
+			out.write(gson.toJson(addon).getBytes(UTF_8));
 		}
 	}
 

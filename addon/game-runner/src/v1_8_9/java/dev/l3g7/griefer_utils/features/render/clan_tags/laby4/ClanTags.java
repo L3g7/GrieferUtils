@@ -16,7 +16,8 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
 import net.labymod.core.main.LabyMod;
-import net.labymod.serverapi.protocol.model.display.Subtitle;
+import net.labymod.serverapi.api.model.component.ServerAPIComponent;
+import net.labymod.serverapi.core.model.display.Subtitle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class ClanTags extends Feature {
 			JsonObject obj = elem.getAsJsonObject();
 
 			UUID uuid = UUID.fromString(obj.get("targetId").getAsString());
-			Subtitle subtitle = new Subtitle(uuid, 0.8, obj.get("text"));
+			Subtitle subtitle = Subtitle.create(uuid, ServerAPIComponent.text(obj.get("text").getAsString()), 0.8);
 
 			subtitles.add(subtitle);
 			if (isEnabled())

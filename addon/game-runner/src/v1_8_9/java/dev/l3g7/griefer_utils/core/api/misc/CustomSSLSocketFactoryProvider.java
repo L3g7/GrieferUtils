@@ -57,7 +57,7 @@ public class CustomSSLSocketFactoryProvider {
 
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
-		for (String file : FileProvider.getFiles(f -> f.endsWith(".der") && f.startsWith("assets/minecraft/griefer_utils/security/certificates/")))
+		for (String file : FileProvider.getFiles(f -> f.endsWith(".der") && f.startsWith("assets/griefer_utils/certificates/")))
 			addCertificate(keyStore, cf.generateCertificate(FileProvider.getData(file)));
 
 		return keyStore;

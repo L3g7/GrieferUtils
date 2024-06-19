@@ -16,7 +16,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABBot;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.gui.BotshopGUI;
 import net.labymod.api.client.gui.screen.key.Key;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
@@ -32,8 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**
  * Implements any <a href="byteandbitstudio.de">ByteAndBit-Studio</a> features
@@ -97,8 +95,11 @@ public class ByteAndBit extends Feature {
 
 	@EventListener
 	public void onEntityYeet(PacketReceiveEvent<S13PacketDestroyEntities> p) {
+		if (world() == null)
+			return;
+
 		for (int id : p.packet.getEntityIDs()) {
-			Entity e = Minecraft.getMinecraft().theWorld.getEntityByID(id);
+			Entity e = world().getEntityByID(id);
 			if (!(e instanceof EntityPlayer player)) continue;
 
 			String uuid = player.getUniqueID().toString().replaceAll("-", "");

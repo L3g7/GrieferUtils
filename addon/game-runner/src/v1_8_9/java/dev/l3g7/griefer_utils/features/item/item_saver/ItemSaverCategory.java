@@ -38,7 +38,8 @@ public class ItemSaverCategory extends Feature {
 		// ToolSaver.class,
 		HeadSaver.class,
 		ArmorBreakWarning.class,
-		OrbSaver.class
+		OrbSaver.class,
+		ChestSaver.class
 	);
 
 	@MainElement

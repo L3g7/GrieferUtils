@@ -28,14 +28,14 @@ public class Recraft extends Feature {
 		.icon(new ItemStack(Blocks.log, 1, 2))
 		.callback(tempRecording.getCore().ignoreSubIds::set);
 
-	private final KeySetting key = KeySetting.create()
+	private final KeySetting repeatLastRecording = KeySetting.create()
 		.name("Letzten Aufruf wiederholen")
 		.description("Wiederholt den letzten \"/rezepte\" oder \"/craft\" Aufruf.")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
 		.subSettings(ignoreSubIdsSetting)
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && isEnabled())
-				RecipePlayer.play(tempRecording);
+				tempRecording.getCore().play(false);
 		});
 
 	private final SwitchSetting animation = SwitchSetting.create()
@@ -65,7 +65,7 @@ public class Recraft extends Feature {
 		.name("Recraft")
 		.description("Wiederholt \"/rezepte\" oder \"/craft\" Aufrufe oder dekomprimiert Items.\n\nVielen Dank an Pleezon/AntiBannSystem für die Hilfe beim AutoCrafter §c❤")
 		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
-		.subSettings(key, HeaderSetting.create(), openPieMenu, animation, HeaderSetting.create(), recraftBridge.getPagesSetting());
+		.subSettings(repeatLastRecording, HeaderSetting.create(), openPieMenu, animation, HeaderSetting.create(), recraftBridge.getPagesSetting());
 
 	@Override
 	public void init() {
@@ -76,4 +76,5 @@ public class Recraft extends Feature {
 	public static boolean isPlaying() {
 		return RecipePlayer.isPlaying() || CraftPlayer.isPlaying();
 	}
+
 }

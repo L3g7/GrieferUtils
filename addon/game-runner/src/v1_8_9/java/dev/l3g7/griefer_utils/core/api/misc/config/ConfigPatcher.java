@@ -11,7 +11,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.misc.VersionComparator;
@@ -21,6 +20,9 @@ import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 
 import java.io.File;
 import java.util.Optional;
+
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+
 public class ConfigPatcher {
 
 	public static boolean versionChanged = false;
@@ -33,12 +35,12 @@ public class ConfigPatcher {
 
 	public void patch() {
 		if (!config.has("version")) {
-			config.addProperty("version", LabyBridge.labyBridge.addonVersion());
+			config.addProperty("version", labyBridge.addonVersion());
 			return;
 		}
 
 		String version = config.get("version").getAsString();
-		String newVersion = LabyBridge.labyBridge.addonVersion();
+		String newVersion = labyBridge.addonVersion();
 		if (!newVersion.equals(version)) {
 			config.addProperty("version", newVersion);
 			versionChanged = true;
@@ -147,6 +149,20 @@ public class ConfigPatcher {
 
 		if (cmp.compare("2.2-BETA-1", version) < 0) {
 			rename("chat.fix_ghost_blocks", "chat.ghost_blocks_fix");
+		}
+
+		if (cmp.compare("2.2-BETA-6", version) < 0) {
+			JsonElement element = get("item.recraft").get("key");
+			if (element != null) {
+				JsonObject object = null;
+				if (element.isJsonObject()) {
+					object = element.getAsJsonObject();
+				} else  if (element.isJsonArray()) {
+					object = new JsonObject();
+					object.add("value", element);
+				}
+				set("item.recraft.repeat_last_recording", object);
+			}
 		}
 	}
 

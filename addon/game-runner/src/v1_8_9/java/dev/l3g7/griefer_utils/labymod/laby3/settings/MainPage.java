@@ -1,38 +1,65 @@
 package dev.l3g7.griefer_utils.labymod.laby3.settings;
 
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.misc.badges.laby3.GrieferUtilsGroup;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import net.labymod.gui.elements.ModTextField;
+import net.labymod.settings.LabyModAddonsGui;
+import net.labymod.settings.elements.SettingsElement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 public class MainPage {
 
+	private static Timer timer = new Timer();
+
+	private static final StringSetting filter = StringSetting.create()
+		.name("Suche")
+		.icon("magnifying_glass")
+		.callback(MainPage::onSearch);
+
+	private static final List<SettingsElement> searchableSettings = new ArrayList<>();
+	private static List<BaseSetting<?>> settings = Collections.emptyList();
+
 	public static List<BaseSetting<?>> collectSettings() {
-		List<BaseSetting<?>> settings = new ArrayList<>(Arrays.asList(
+		settings = new ArrayList<>(Arrays.asList(
 			HeaderSetting.create("§r"),
 			HeaderSetting.create("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
 			HeaderSetting.create("§e§lStartseite").scale(.7),
 			HeaderSetting.create("§r").scale(.4).entryHeight(10),
-// TODO		filter,
+			filter,
 			HeaderSetting.create("§r").scale(.4).entryHeight(10)));
 
 		// Enable the feature category if one of its features gets enabled
 		Feature.getFeatures()
 			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
 			.forEach(feature -> {
-				if (!feature.getClass().isAnnotationPresent(Feature.FeatureCategory.class)
-					|| !(feature.getMainElement() instanceof SwitchSettingImpl main))
+				if (!feature.getClass().isAnnotationPresent(Feature.FeatureCategory.class)) {
+					searchableSettings.add(c(feature.getMainElement()));
 					return;
+				}
+
+				((SettingsElement) feature.getMainElement()).getSubSettings().getElements().stream()
+					.filter(e -> e instanceof SwitchSetting || e instanceof NumberSetting || e instanceof CategorySetting)
+					.forEachOrdered(searchableSettings::add);
+
+				if (!(feature.getMainElement() instanceof SwitchSettingImpl main)) {
+					return;
+				}
 
 				for (BaseSetting<?> element : main.getChildSettings()) {
 					if (!(element instanceof SwitchSetting sub))
@@ -87,7 +114,73 @@ public class MainPage {
 		for (BaseSetting<?> setting : settings)
 			setting.create(null);
 
+		searchableSettings.sort(Comparator.comparing(SettingsElement::getDisplayName));
+
 		return settings;
+	}
+
+
+	private static void onSearch() {
+		TickScheduler.runAfterRenderTicks(() -> {
+			if (!(mc().currentScreen instanceof LabyModAddonsGui))
+				return;
+
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] bytes = digest.digest(("griefer_utils_salt_" + filter.get()).getBytes(StandardCharsets.UTF_8));
+			String hash = Base64.getEncoder().encodeToString(bytes);
+
+			if (hash.equals("IBmzqW3cyeMT0Gj/VqDLhnOhI0Qdhx6FgqFsdLbvzGA=")) {
+				timer = new Timer();
+				timer.schedule(new TimerTask() {
+					public void run() {
+						if (!(mc().currentScreen instanceof LabyModAddonsGui))
+							return;
+
+						GrieferUtilsGroup.icon = GrieferUtilsGroup.icon.equals("icon") ? filter.get() : "icon";
+						filter.set("");
+						labyBridge.notify("§aEaster Egg", "Easter Egg wurde umgeschalten.");
+						if (world() != null)
+							mc().displayGuiScreen(null);
+
+						timer = null;
+					}
+				}, 3179);
+			} else if (timer != null) {
+				timer.cancel();
+				timer = null;
+			}
+
+			List<SettingsElement> listedElementsStored = Reflection.get(mc().currentScreen, "tempElementsStored");
+
+			if (filter.get().isEmpty()) {
+				listedElementsStored.clear();
+				listedElementsStored.addAll(c(settings));
+				return;
+			}
+
+			int startIndex = 6;
+			while (listedElementsStored.size() > startIndex)
+				listedElementsStored.remove(startIndex);
+
+			searchableSettings.stream()
+				.filter(s -> s.getDisplayName().replaceAll("§.", "").toLowerCase().contains(filter.get().toLowerCase()))
+				.forEach(v -> listedElementsStored.add(c(v)));
+		}, 1);
+	}
+
+	@EventListener
+	private static void onGuiInit(GuiScreenEvent.GuiInitEvent event) {
+		if (!(event.gui instanceof LabyModAddonsGui))
+			return;
+
+		filter.getStorage().value = "";
+
+		Reflection.set(filter, "currentValue", "");
+		ModTextField textField = Reflection.get(filter, "textField");
+		textField.setText("");
+		textField.setFocused(false);
+
+		// TODO filter.unfocus(0, 0, 0);
 	}
 
 }

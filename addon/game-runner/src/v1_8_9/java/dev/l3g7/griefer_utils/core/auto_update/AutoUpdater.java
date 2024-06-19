@@ -23,7 +23,6 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -83,11 +82,13 @@ public class AutoUpdater { // FIXME untested
 	}
 
 	public static void update(UpdateImpl infoProvider) {
-		try {
-			doUpdate(infoProvider);
-		} catch (Throwable e) {
-			infoProvider.handleError(e);
-		}
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				doUpdate(infoProvider);
+			} catch (Throwable e) {
+				infoProvider.handleError(e);
+			}
+		}));
 	}
 
 	private static void doUpdate(UpdateImpl infoProvider) throws Throwable {
@@ -170,12 +171,7 @@ public class AutoUpdater { // FIXME untested
 		}
 
 		// New version downloaded successfully, remove old version
-		removeURLFromClassLoaders(jarFile.toURI().toURL());
 		infoProvider.deleteJar(jarFile);
-
-		// Load new version
-		MethodHandle addURL = LOOKUP.findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
-		addURL.invoke(AutoUpdater.class.getClassLoader(), targetFile.toURI().toURL());
 
 		hasUpdated = true;
 	}

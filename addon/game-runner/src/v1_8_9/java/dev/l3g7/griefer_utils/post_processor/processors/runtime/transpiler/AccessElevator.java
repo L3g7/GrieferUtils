@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler.Java1
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -29,6 +30,12 @@ public class AccessElevator extends RuntimePostProcessor implements Opcodes {
 		ClassNode classNode = new ClassNode();
 		ClassReader reader = new ClassReader(classBytes);
 		reader.accept(classNode, 0);
+
+		// Don't elevate in Mixin classes
+		if (classNode.invisibleAnnotations != null)
+			for (AnnotationNode visibleAnnotation : classNode.invisibleAnnotations)
+				if (visibleAnnotation.desc.equals("Lorg/spongepowered/asm/mixin/Mixin;"))
+					return classBytes;
 
 		classNode.access = elevate(classNode.access);
 		for (FieldNode field : classNode.fields)

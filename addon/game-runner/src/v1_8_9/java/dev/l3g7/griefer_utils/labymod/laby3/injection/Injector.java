@@ -7,7 +7,9 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.service.IMixinService;
+import sun.misc.Unsafe;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +39,7 @@ public class Injector extends InjectorBase implements IClassTransformer {
 			// Account for transformers loading classes while grieferutils' mixin config is being initialised, causing the mixins not be applied // TODO what?
 			Set<String> set = Reflection.get(MixinEnvironment.class, "excludeTransformers");
 			set.add("net.labymod.addons.");
+			MixinEnvironment.getDefaultEnvironment().setObfuscationContext("notch");
 		} else {
 			MixinEnvironment.getDefaultEnvironment().setObfuscationContext("searge");
 		}
@@ -47,7 +50,22 @@ public class Injector extends InjectorBase implements IClassTransformer {
 			IMixinService classLoaderUtil0 = Reflection.get(mxInfoClass, "classLoaderUtil");
 			Object classLoaderUtil = Reflection.get(classLoaderUtil0, "classLoaderUtil");
 			Reflection.set(classLoaderUtil, "cachedClasses", new ConcurrentHashMap<>());
-		} catch (Throwable ignored) {}
+
+			Class<?> mixinEnv = Class.forName("org.spongepowered.asm.mixin.MixinEnvironment");
+			Set<String> excludeTransformers = Reflection.get(mixinEnv, "excludeTransformers");
+
+			Unsafe unsafe = Reflection.get(Unsafe.class, "theUnsafe");
+			unsafe.putObject(mixinEnv, 104 /* excludeTransformers */, new HashSet<>(excludeTransformers) {
+				@Override
+				public boolean add(String s) {
+					if (s.contains("griefer_utils"))
+						return false;
+					return super.add(s);
+				}
+			});
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 
 	@Override

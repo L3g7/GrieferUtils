@@ -33,8 +33,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.SEARGE;
-import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
+import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.*;
 import static dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MinecraftBridge.laby3MinecraftBridge;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -52,7 +51,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public Mapping activeMapping() {
-		return obfuscated() ? SEARGE : UNOBFUSCATED;
+		return obfuscated() ? forge() ? SEARGE : OBFUSCATED : UNOBFUSCATED;
 	}
 
 	@Override

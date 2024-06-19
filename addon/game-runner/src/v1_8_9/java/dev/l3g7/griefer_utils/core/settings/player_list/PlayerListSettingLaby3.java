@@ -106,9 +106,9 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 
 		@Override
 		protected void onChange() {
-			get().remove(data);
+			PlayerListSettingLaby3.this.get().remove(data);
 			PlayerListSettingLaby3.this.save();
-			getStorage().callbacks.forEach(c -> c.accept(get()));
+			PlayerListSettingLaby3.this.getStorage().callbacks.forEach(c -> c.accept(PlayerListSettingLaby3.this.get()));
 		}
 
 		@Override

@@ -7,16 +7,19 @@
 
 package dev.l3g7.griefer_utils.core.settings.player_list;
 
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ListEntrySetting extends ControlElement {
+public abstract class ListEntrySetting extends ControlElement implements BaseSetting<ListEntrySetting> {
 
 	private final boolean deletable, editable, movable;
 
@@ -133,6 +136,54 @@ public abstract class ListEntrySetting extends ControlElement {
 			hoveringDown = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 44 / 3d && mouseY <= yPosition + 28 / 3d;
 			LabyMod.getInstance().getDrawUtils().drawTexture(maxX - 59, y + 12.5, 67, hoveringDown ? 52 : 20, 14, 7, 14 / 0.75d, 7 / 0.75d);
 		}
+	}
+
+	@Override
+	public ListEntrySetting icon(Object icon) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ListEntrySetting name(String s) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String name() {
+		return getDisplayName();
+	}
+
+	@Override
+	public ListEntrySetting description(String... description) {
+		return null;
+	}
+
+	@Override
+	public void create(Object parent) {}
+
+	@Override
+	public ListEntrySetting subSettings(BaseSetting<?>... settings) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ListEntrySetting subSettings(List<BaseSetting<?>> settings) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ListEntrySetting addSetting(BaseSetting<?> setting) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ListEntrySetting addSetting(int index, BaseSetting<?> setting) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<BaseSetting<?>> getChildSettings() {
+		return Collections.emptyList();
 	}
 
 }

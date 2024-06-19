@@ -118,8 +118,10 @@ public class ByteAndBit extends Feature {
 			GlStateManager.disableDepth();
 			GlStateManager.enableDepth();
 
-			if (bot.botZone.isVecInside(player().getPositionVector()))
+			if (bot.isVecInsideOrTouching(player().getPositionVector())) {
 				drawTooltip();
+				bot.sync();
+			}
 		}
 	}
 
@@ -141,8 +143,11 @@ public class ByteAndBit extends Feature {
 			if (bot.botZone == null)
 				continue;
 
-			if (bot.botZone.isVecInside(player().getPositionVector())) {
-				mc().currentScreen = new BotshopGUI(bot);
+			if (bot.isVecInsideOrTouching(player().getPositionVector())) {
+				bot.sync().whenComplete((dataPresent, ex) -> {
+					if (ex == null)
+						mc().addScheduledTask(() -> mc().displayGuiScreen(new BotshopGUI(bot)));
+				});
 			}
 		}
 	}

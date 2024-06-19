@@ -7,6 +7,7 @@ import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABBot;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABItem;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABItem.Availability;
@@ -25,6 +26,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.DoubleStream;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
@@ -153,7 +155,7 @@ public class BotshopGUI extends GuiBigChest {
 	}
 
 	protected void drawGuiContainerBackgroundLayer2(float partialTicks, int mouseX, int mouseY) {
-		mc.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
+		mc().getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 
@@ -187,7 +189,7 @@ public class BotshopGUI extends GuiBigChest {
 			double dSize = (16 - textureItem.renderSize) / 2d;
 
 			DrawUtils.drawTexture(x + dX + dSize, y + dY + dSize, 0, 0, 256, 256, textureItem.renderSize, textureItem.renderSize);
-			mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, textureItem.toolTipStack, x + dX, y + dY);
+			mc().getRenderItem().renderItemOverlays(mc().fontRendererObj, textureItem.toolTipStack, x + dX, y + dY);
 			GlStateManager.disableLighting();
 		}
 
@@ -421,7 +423,7 @@ public class BotshopGUI extends GuiBigChest {
 
 		int sbStart = guiTop + 18;
 		int sbEnd = guiTop + ySize - 6;
-		mc.getTextureManager().bindTexture(SCROLLBAR_TEXTURE);
+		mc().getTextureManager().bindTexture(SCROLLBAR_TEXTURE);
 		drawTexturedModalRect(guiLeft + 174, sbStart + ((sbEnd - sbStart - 17) * currentScroll), entryCount > 25 ? 232 : 244, 0, 12, 15);
 	}
 
@@ -434,6 +436,9 @@ public class BotshopGUI extends GuiBigChest {
 			return;
 
 		float invisibleRows = entryCount / 5f - 5;
+
+		if (LABY_3.isActive())
+			dWheel = MathHelper.clamp_int(dWheel, -1, 1);
 
 		currentScroll = currentScroll - (dWheel / invisibleRows);
 		currentScroll = MathHelper.clamp_float(currentScroll, 0.0F, 1.0F);

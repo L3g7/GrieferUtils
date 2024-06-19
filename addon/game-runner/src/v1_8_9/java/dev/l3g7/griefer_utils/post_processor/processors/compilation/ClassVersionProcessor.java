@@ -28,6 +28,7 @@ public class ClassVersionProcessor extends CompilationPostProcessor {
 
 	private static final Predicate<Path> BOOTSTRAP_CLASSES =
 		p -> p.startsWith("dev/l3g7/griefer_utils/labymod/laby3/PreStart.class")
+			|| p.startsWith("dev/l3g7/griefer_utils/core/auto_update/UpdateImpl.class")
 			|| p.startsWith(POST_PROCESSOR_FOLDER + "/processors/runtime/transpiler/")
 			|| p.startsWith(POST_PROCESSOR_FOLDER + "/processors/RuntimePostProcessor.class");
 

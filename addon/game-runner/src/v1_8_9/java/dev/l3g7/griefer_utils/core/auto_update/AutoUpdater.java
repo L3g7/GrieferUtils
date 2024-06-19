@@ -23,6 +23,7 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -43,7 +44,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Checks whether GrieferUtils is up-to-date. If not, it downloads the newest release, replaces itself in
@@ -82,13 +82,11 @@ public class AutoUpdater { // FIXME untested
 	}
 
 	public static void update(UpdateImpl infoProvider) {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			try {
-				doUpdate(infoProvider);
-			} catch (Throwable e) {
-				infoProvider.handleError(e);
-			}
-		}));
+		try {
+			doUpdate(infoProvider);
+		} catch (Throwable e) {
+			infoProvider.handleError(e);
+		}
 	}
 
 	private static void doUpdate(UpdateImpl infoProvider) throws Throwable {
@@ -171,7 +169,12 @@ public class AutoUpdater { // FIXME untested
 		}
 
 		// New version downloaded successfully, remove old version
+		removeURLFromClassLoaders(jarFile.toURI().toURL());
 		infoProvider.deleteJar(jarFile);
+
+		// Load new version
+		MethodHandle addURL = LOOKUP.findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
+		addURL.invoke(AutoUpdater.class.getClassLoader(), targetFile.toURI().toURL());
 
 		hasUpdated = true;
 	}
@@ -227,7 +230,11 @@ public class AutoUpdater { // FIXME untested
 		if (ownJarUrl.contains("!"))
 			ownJarUrl = ownJarUrl.substring(0, ownJarUrl.lastIndexOf("!")); // remove class
 
-		ownJarUrl = URLDecoder.decode(ownJarUrl, UTF_8);
+		try {
+			ownJarUrl = URLDecoder.decode(ownJarUrl, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 
 		if (ownJarUrl.startsWith("file:/"))
 			ownJarUrl = ownJarUrl.substring(5);
@@ -350,7 +357,7 @@ public class AutoUpdater { // FIXME untested
 
 		// Sanitize jarPath
 		jarPath = jarPath.substring(5, jarPath.lastIndexOf("!")); // remove protocol and class
-		jarPath = URLDecoder.decode(jarPath, UTF_8);
+		jarPath = URLDecoder.decode(jarPath, "UTF-8");
 
 		// Read entries
 		try (JarFile jarFile = new JarFile(jarPath)) {

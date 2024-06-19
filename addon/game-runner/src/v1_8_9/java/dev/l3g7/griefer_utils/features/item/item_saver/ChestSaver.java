@@ -27,10 +27,6 @@ import static dev.l3g7.griefer_utils.core.util.ItemUtil.createItem;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
-
-/**
- * Suppresses left clicks and dropping when holing a diamond sword enchanted with looting 21.
- */
 @Singleton
 public class ChestSaver extends ItemSaver {
 
@@ -40,7 +36,7 @@ public class ChestSaver extends ItemSaver {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kisten-Saver")
 		.description("Fragt beim Einlösen einer Kiste nach einer Bestätigung.")
-		.icon(createItem(Blocks.ender_chest, 0, false));
+		.icon(Blocks.ender_chest);
 
 	private final IInventory inv = new InventoryBasic(ItemSearch.marker + "§0Willst du die Kiste einlösen?", false, 27);
 
@@ -57,8 +53,7 @@ public class ChestSaver extends ItemSaver {
 
 	@EventListener
 	public void onMouseClick(MouseClickEvent.RightClickEvent event) {
-
-		if (!"§fAktiviert §6die Kisten §fper Rechtsklick!".equals(ItemUtil.getLoreAtIndex(mc().thePlayer.getHeldItem(),1)))
+		if (!"§fAktiviert §6die Kisten §fper Rechtsklick!".equals(ItemUtil.getLoreAtIndex(mc().thePlayer.getHeldItem(), 1)))
 			return;
 
 		event.cancel();

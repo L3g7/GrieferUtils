@@ -117,9 +117,9 @@ public class SelfDisguise extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onSend(MessageSendEvent event) {
-		if (event.message.equals("/ud")) {
+		if (event.message.equalsIgnoreCase("/ud")) {
 			resetDisguise();
-		} else if (event.message.startsWith("/d "))
+		} else if (event.message.toLowerCase().startsWith("/d "))
 			lastSentDisguiseCommand = event.message;
 	}
 

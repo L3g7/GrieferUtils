@@ -28,7 +28,8 @@ public class RecraftBridgeImpl implements RecraftBridge {
 
 	public static final RecraftPage.RecraftPageListSetting pages = new RecraftPage.RecraftPageListSetting()
 		.name("Seiten")
-		.icon(Items.map);
+		.icon(Items.map)
+		.inferConfig("pages");
 
 	@Override
 	public void openPieMenu(boolean animation) {

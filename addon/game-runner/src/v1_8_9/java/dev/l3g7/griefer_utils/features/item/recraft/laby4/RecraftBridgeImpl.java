@@ -7,7 +7,9 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft.laby4;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftBridge;
 import net.minecraft.init.Items;
@@ -17,8 +19,10 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 /**
  * Original version by Pleezon
  */
+@Bridge
+@Singleton
 @ExclusiveTo(LABY_4)
-public class Recraft implements RecraftBridge {
+public class RecraftBridgeImpl implements RecraftBridge {
 
 	private final RecraftPieMenu pieMenu = new RecraftPieMenu();
 

@@ -46,7 +46,7 @@ import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.features.item.recraft.laby4.Recraft.pages;
+import static dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftBridgeImpl.pages;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class RecraftPage extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {

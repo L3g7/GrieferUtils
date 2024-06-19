@@ -79,7 +79,7 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 				recording.setTitle("Aufzeichnung hinzufügen");
 				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
 					recording.setTitle(recording.name().get());
-					Recraft.save();
+					RecraftBridgeImpl.save();
 				}, recording.mainSetting));
 			})
 		);
@@ -91,22 +91,22 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 
 	protected void onChange() {
 		if (!container.getSubSettings().getElements().contains(this))
-			for (RecraftRecording.RecordingDisplaySetting displaySetting : Recraft.getSubSettingsOfType(this, RecraftRecording.RecordingDisplaySetting.class))
+			for (RecraftRecording.RecordingDisplaySetting displaySetting : RecraftBridgeImpl.getSubSettingsOfType(this, RecraftRecording.RecordingDisplaySetting.class))
 				displaySetting.recording.key().set(ImmutableSet.of());
 
-		Recraft.save();
+		RecraftBridgeImpl.save();
 	}
 
 	@Override
 	protected void openSettings() {
-		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(Recraft::save, this));
+		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, this));
 	}
 
 	JsonObject toJson() {
 		JsonObject object = new JsonObject();
 		object.addProperty("name", name.get());
 
-		List<RecraftRecording.RecordingDisplaySetting> recordings = Recraft.getSubSettingsOfType(this, RecraftRecording.RecordingDisplaySetting.class);
+		List<RecraftRecording.RecordingDisplaySetting> recordings = RecraftBridgeImpl.getSubSettingsOfType(this, RecraftRecording.RecordingDisplaySetting.class);
 
 		JsonArray jsonRecordings = new JsonArray();
 		for (RecraftRecording.RecordingDisplaySetting recording : recordings)

@@ -88,7 +88,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 			mainSetting.setDisplayName(s);
 			setTitle(s);
 		});
-		name().callback(() -> dev.l3g7.griefer_utils.features.item.recraft.laby3.Recraft.iterate((i, r) -> r.successor.updateName(r.successor.get())));
+		name().callback(() -> RecraftBridgeImpl.iterate((i, r) -> r.successor.updateName(r.successor.get())));
 	}
 
 	public void setTitle(String title) {
@@ -214,12 +214,12 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 			if (!container.getSubSettings().getElements().contains(this))
 				key().set(ImmutableSet.of());
 
-			dev.l3g7.griefer_utils.features.item.recraft.laby3.Recraft.save();
+			RecraftBridgeImpl.save();
 		}
 
 		@Override
 		protected void openSettings() {
-			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(dev.l3g7.griefer_utils.features.item.recraft.laby3.Recraft::save, mainSetting));
+			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, mainSetting));
 		}
 
 		@Override

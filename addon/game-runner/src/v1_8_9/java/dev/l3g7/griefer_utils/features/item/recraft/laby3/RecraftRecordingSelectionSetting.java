@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.*;
-import static dev.l3g7.griefer_utils.features.item.recraft.laby3.Recraft.getSubSettingsOfType;
-import static dev.l3g7.griefer_utils.features.item.recraft.laby3.Recraft.iterate;
+import static dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftBridgeImpl.getSubSettingsOfType;
+import static dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftBridgeImpl.iterate;
 
 public class RecraftRecordingSelectionSetting extends SmallButtonSetting implements Laby3Setting<RecraftRecordingSelectionSetting, Object> {
 

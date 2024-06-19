@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
@@ -31,8 +32,9 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
  * Original version by Pleezon
  */
 @Bridge
+@Singleton
 @ExclusiveTo(LABY_3)
-public class Recraft implements RecraftBridge {
+public class RecraftBridgeImpl implements RecraftBridge {
 
 	private final RecraftPieMenu pieMenu = new RecraftPieMenu();
 
@@ -54,7 +56,7 @@ public class Recraft implements RecraftBridge {
 				long pageNumber = settings.stream().filter(s -> s instanceof RecraftPageSetting).count() + 1;
 				RecraftPageSetting setting = new RecraftPageSetting("Seite " + pageNumber, new ArrayList<>());
 				settings.add(settings.size() - 1, setting);
-				mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(Recraft::save, setting));
+				mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, setting));
 			});
 	}
 
@@ -108,7 +110,7 @@ public class Recraft implements RecraftBridge {
 	public static void iterate(BiConsumer<Integer, RecraftRecording> consumer) {
 		List<RecraftPageSetting> pages = getSubSettingsOfType((SettingsElement) getMainSetting(), RecraftPageSetting.class);
 		for (int i = 0; i < pages.size(); i++) {
-			List<RecraftRecording.RecordingDisplaySetting> recordings = Recraft.getSubSettingsOfType(pages.get(i), RecraftRecording.RecordingDisplaySetting.class);
+			List<RecraftRecording.RecordingDisplaySetting> recordings = RecraftBridgeImpl.getSubSettingsOfType(pages.get(i), RecraftRecording.RecordingDisplaySetting.class);
 
 			for (int j = 0; j < recordings.size(); j++) {
 				RecraftRecording.RecordingDisplaySetting recording = recordings.get(j);

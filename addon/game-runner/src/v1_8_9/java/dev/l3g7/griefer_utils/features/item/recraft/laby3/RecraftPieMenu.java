@@ -30,10 +30,10 @@ public class RecraftPieMenu extends PieMenu {
 	public void open(boolean animation, SettingsElement entryContainer) {
 		List<Pair<String, List<Pair<String, Runnable>>>> allPages = new ArrayList<>();
 
-		List<RecraftPageSetting> pages = Recraft.getSubSettingsOfType(entryContainer, RecraftPageSetting.class);
+		List<RecraftPageSetting> pages = RecraftBridgeImpl.getSubSettingsOfType(entryContainer, RecraftPageSetting.class);
 
 		for (RecraftPageSetting page : pages) {
-			List<RecordingDisplaySetting> recordings = Recraft.getSubSettingsOfType(page, RecordingDisplaySetting.class);
+			List<RecordingDisplaySetting> recordings = RecraftBridgeImpl.getSubSettingsOfType(page, RecordingDisplaySetting.class);
 			List<Pair<String, Runnable>> entries = new ArrayList<>();
 
 			for (RecordingDisplaySetting recording : recordings)

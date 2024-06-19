@@ -108,7 +108,7 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 		selectNothing.create(this);
 		list.add(new KeyValue<>(selectNothing.getId(), selectNothing));
 
-		for (RecraftPage page : Recraft.pages.get()) {
+		for (RecraftPage page : RecraftBridgeImpl.pages.get()) {
 			RecraftSuccessorPage p = new RecraftSuccessorPage(page);
 			p.create(this);
 

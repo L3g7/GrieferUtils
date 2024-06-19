@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
@@ -53,6 +52,7 @@ import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.*;
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.CRAFT;
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.RECIPE;
 import static net.labymod.api.Textures.SpriteCommon.X;
@@ -82,12 +82,12 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 	public RecraftRecording(String name) {
 		name().set(name);
 		if (!"Leere Aufzeichnung".equals(name)) { // cursed
-			name().callback(Recraft.pages::notifyChange);
-			key().callback(Recraft.pages::notifyChange);
-			ignoreSubIds().callback(Recraft.pages::notifyChange);
-			mode().callback(Recraft.pages::notifyChange);
-			craftAll().callback(Recraft.pages::notifyChange);
-			successor.callback(Recraft.pages::notifyChange);
+			name().callback(RecraftBridgeImpl.pages::notifyChange);
+			key().callback(RecraftBridgeImpl.pages::notifyChange);
+			ignoreSubIds().callback(RecraftBridgeImpl.pages::notifyChange);
+			mode().callback(RecraftBridgeImpl.pages::notifyChange);
+			craftAll().callback(RecraftBridgeImpl.pages::notifyChange);
+			successor.callback(RecraftBridgeImpl.pages::notifyChange);
 		}
 	}
 
@@ -124,8 +124,8 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 	}
 
 	public void play(boolean isSuccessor) {
-		Recraft.playingSuccessor = isSuccessor;
-		Recraft.ignoreSubIds = ignoreSubIds().get();
+		playingSuccessor = isSuccessor;
+		ignoreSubIds = ignoreSubIds().get();
 		mode().get().player.accept(this);
 	}
 
@@ -179,7 +179,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 						int pageIdx = 0;
 
 						pageLoop:
-						for (RecraftPage page : Recraft.pages.get()) {
+						for (RecraftPage page : RecraftBridgeImpl.pages.get()) {
 							int recIdx = 0;
 							for (RecraftRecording rec : page.recordings.get()) {
 								if (rec == recording) {
@@ -245,7 +245,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 							int pageIdx = 0;
 
 							pageLoop:
-							for (RecraftPage page : Recraft.pages.get()) {
+							for (RecraftPage page : RecraftBridgeImpl.pages.get()) {
 								int recIdx = 0;
 								for (RecraftRecording rec : page.recordings.get()) {
 									if ((pageIdx << 16 | recIdx) == index) {

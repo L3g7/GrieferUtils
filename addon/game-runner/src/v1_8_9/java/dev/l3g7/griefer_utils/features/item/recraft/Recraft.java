@@ -8,10 +8,8 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftPage;
 import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipePlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
@@ -61,10 +59,6 @@ public class Recraft extends Feature {
 
 			recraftBridge.closePieMenu();
 		});
-
-	public static final RecraftPage.RecraftPageListSetting pages = new RecraftPage.RecraftPageListSetting()
-		.name("Seiten")
-		.icon(Items.map);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

@@ -45,6 +45,7 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 
 	RecraftPageSetting(String name, List<SettingsElement> entrySettings) {
 		super(true, true, true, new IconData(Material.EMPTY_MAP));
+		subSettings();
 
 		entrySettings.forEach(e -> ((RecraftRecording.RecordingDisplaySetting) e).container = this);
 

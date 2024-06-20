@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.FileResourcePack;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
 
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @ExclusiveTo(LABY_3)
 public class Laby3ResourceFix {
@@ -40,6 +42,9 @@ public class Laby3ResourceFix {
 		jarPath = URLDecoder.decode(jarPath, "UTF-8");
 
 		defaultResourcePacks.add(new GrieferUtilsResourcePack(new File(jarPath)));
+
+		if (mc().getResourceManager() instanceof IReloadableResourceManager rm)
+			rm.reloadResources(defaultResourcePacks);
 	}
 
 	public static class GrieferUtilsResourcePack extends FileResourcePack {

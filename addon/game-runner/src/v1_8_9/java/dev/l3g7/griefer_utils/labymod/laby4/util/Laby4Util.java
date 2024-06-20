@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.labymod.laby4.util;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import net.labymod.api.Laby;
-import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
+import net.labymod.api.client.gui.navigation.elements.ScreenBaseNavigationElement;
 import net.labymod.api.client.gui.screen.ScreenInstance;
 import net.labymod.api.client.gui.screen.ScreenWrapper;
 import net.labymod.api.client.gui.screen.activity.Activity;
@@ -30,7 +30,7 @@ public class Laby4Util {
 		if (!(getActivity() instanceof NavigationActivity navActivity))
 			return false;
 
-		ScreenNavigationElement element = Reflection.get(navActivity, "element");
+		ScreenBaseNavigationElement<?> element = Reflection.get(navActivity, "element");
 		if (!(element instanceof LabyModNavigationElement))
 			return false;
 

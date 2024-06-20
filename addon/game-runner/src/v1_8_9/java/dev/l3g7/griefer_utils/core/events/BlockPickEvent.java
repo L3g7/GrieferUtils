@@ -12,13 +12,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getPickBlock;
 
@@ -51,6 +55,24 @@ public class BlockPickEvent extends Event {
 
 			if (new BlockPickEvent(getPickBlock(block, theWorld, mop.getBlockPos())).fire().isCanceled())
 				ci.cancel();
+		}
+
+	}
+
+	@Mixin(ForgeHooks.class)
+	public static class MixinForgeHooks {
+
+		@Inject(method = "onPickBlock", at = @At("HEAD"), remap = false, cancellable = true)
+		private static void inject(MovingObjectPosition target, EntityPlayer player, World world, CallbackInfoReturnable<Boolean> cir) {
+			if (target == null || target.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+				return;
+
+			Block block = world.getBlockState(target.getBlockPos()).getBlock();
+			if (block.getMaterial() == Material.air)
+				return;
+
+			if (new BlockPickEvent(getPickBlock(block, world, target.getBlockPos())).fire().isCanceled())
+				cir.setReturnValue(true);
 		}
 
 	}

@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.post_processor.processors.RuntimePostProcessor;
 import dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler.Java17to8Transpiler.BoundClassWriter;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -20,7 +21,6 @@ import org.objectweb.asm.tree.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -30,7 +30,7 @@ import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 import static org.objectweb.asm.Type.*;
 
 /**
- * Elevates the access of all classes, fields and methods to avoid having to generate synthetic accessors.
+ * Maps accesses to members of superclasses.
  */
 public class SuperclassRemapper extends RuntimePostProcessor implements Opcodes {
 
@@ -39,6 +39,8 @@ public class SuperclassRemapper extends RuntimePostProcessor implements Opcodes 
 	 * TODO: shouldn't be required
 	 */
 	private final Set<String> classesWithoutMinecraft = new HashSet<>();
+
+	private final boolean readClassBytes = !LabyModCoreMod.isForge();
 
 	@Override
 	public byte[] transform(String fileName, byte[] classBytes) {
@@ -51,18 +53,18 @@ public class SuperclassRemapper extends RuntimePostProcessor implements Opcodes 
 
 		// Find minecraft superclasses
 		List<String> checkedClasses = new ArrayList<>(Collections.singletonList(classNode.name));
-		List<ClassNode> minecraftClasses = new ArrayList<>();
+		List<String> minecraftClasses = new ArrayList<>();
 		if (classesWithoutMinecraft.contains(classNode.superName)) {
 			classesWithoutMinecraft.addAll(checkedClasses);
 			return classBytes;
 		}
 
-		var cb = readClass(classNode.superName);
+		var cb = getClass(classNode.superName);
 		do {
 			if (cb.name.startsWith("net/minecraft/"))
-				minecraftClasses.add(cb);
+				minecraftClasses.add(cb.name);
 			checkedClasses.add(cb.name);
-			cb = readClass(cb.superName);
+			cb = getClass(cb.superName);
 		} while (cb != null);
 
 		if (minecraftClasses.isEmpty()) {
@@ -70,14 +72,15 @@ public class SuperclassRemapper extends RuntimePostProcessor implements Opcodes 
 			return classBytes;
 		}
 
+		// Map member accesses
 		var it = classNode.methods.listIterator();
 		while (it.hasNext()) {
 			MethodNode method = it.next();
 			for (AbstractInsnNode node : method.instructions) {
 				// Map method invocations
 				if (node instanceof MethodInsnNode methodInsn) {
-					for (ClassNode minecraftClass : minecraftClasses) {
-						String mappedName = Mapper.mapMethodName(minecraftClass.name, methodInsn.name, methodInsn.desc, UNOBFUSCATED, SEARGE);
+					for (String minecraftClass : minecraftClasses) {
+						String mappedName = Mapper.mapMethodName(minecraftClass, methodInsn.name, methodInsn.desc, UNOBFUSCATED, SEARGE);
 						if (methodInsn.name.equals(mappedName))
 							continue;
 
@@ -88,8 +91,8 @@ public class SuperclassRemapper extends RuntimePostProcessor implements Opcodes 
 
 				// Map field accesses
 				else if (node instanceof FieldInsnNode field) {
-					for (ClassNode minecraftClass : minecraftClasses) {
-						String mappedName = Mapper.mapField(minecraftClass.name, field.name, UNOBFUSCATED, SEARGE);
+					for (String minecraftClass : minecraftClasses) {
+						String mappedName = Mapper.mapField(minecraftClass, field.name, UNOBFUSCATED, SEARGE);
 						if (field.name.equals(mappedName))
 							continue;
 
@@ -100,8 +103,8 @@ public class SuperclassRemapper extends RuntimePostProcessor implements Opcodes 
 			}
 
 			// Map overrides
-			for (ClassNode minecraftClass : minecraftClasses) {
-				String mappedName = Mapper.mapMethodName(minecraftClass.name, method.name, method.desc, UNOBFUSCATED, SEARGE);
+			for (String minecraftClass : minecraftClasses) {
+				String mappedName = Mapper.mapMethodName(minecraftClass, method.name, method.desc, UNOBFUSCATED, SEARGE);
 				if (method.name.equals(mappedName))
 					continue;
 
@@ -135,8 +138,7 @@ public class SuperclassRemapper extends RuntimePostProcessor implements Opcodes 
 			case Type.FLOAT -> FLOAD;
 			case Type.DOUBLE -> DLOAD;
 			case ARRAY, OBJECT -> ALOAD;
-			default ->
-				throw new IllegalArgumentException(new StringBuilder().append("Unrecognized type sort ").append(type.getSort()).toString());
+			default -> throw new IllegalArgumentException(String.valueOf(type.getSort()));
 		};
 	}
 
@@ -148,79 +150,73 @@ public class SuperclassRemapper extends RuntimePostProcessor implements Opcodes 
 			case Type.DOUBLE -> DRETURN;
 			case ARRAY, OBJECT -> ARETURN;
 			case VOID -> RETURN;
-			default ->
-				throw new IllegalArgumentException(new StringBuilder().append("Unrecognized type sort ").append(type.getSort()).toString());
+			default -> throw new IllegalArgumentException(String.valueOf(type.getSort()));
 		};
 	}
 
-	private ClassNode readClass(String name) {
+	private ClassNode getClass(String name) {
 		if (name == null)
 			return null;
 
-		var cb = getClassBytes(name, name);
-		if (cb == null) {
-			System.out.println(new StringBuilder().append("FUCK ").append(name).append(" IS NULL :(;(;(").toString());
-			return null;
+		if (readClassBytes) {
+			byte[] bytes = getClassBytes(name);
+			if (bytes == null)
+				throw new RuntimeException(new NullPointerException("Couldn't find class bytes for " + name + "!"));
+
+			bytes[7 /* major_version */] = 52 /* Java 1.8 */;
+			ClassNode node = new ClassNode();
+			new ClassReader(bytes).accept(node, 0);
+			return node;
 		}
-		cb[7 /* major_version */] = 52 /* Java 1.8 */;
-		ClassReader r = new ClassReader(cb);
-		ClassNode c = new ClassNode();
-		r.accept(c, 0);
-		return c;
+
+		try {
+			var clazz = Class.forName(name.replace('/', '.'));
+			var c = new ClassNode();
+			c.name = Type.getInternalName(clazz);
+			c.superName = clazz.getSuperclass() == null ? null : Type.getInternalName(clazz.getSuperclass());
+			return c;
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public byte[] getClassBytes(String name, String transformedName) {
-		byte[] classBytes = Launch.classLoader.getClassBytes(name);
-		if (classBytes != null) {
-			return classBytes;
-		} else {
-			URLClassLoader appClassLoader;
-			if (Launch.class.getClassLoader() instanceof URLClassLoader) {
-				appClassLoader = (URLClassLoader) Launch.class.getClassLoader();
-			} else {
-				appClassLoader = new URLClassLoader(new URL[0], Launch.class.getClassLoader());
-			}
+	private byte[] getClassBytes(String name) {
+		try {
+			byte[] classBytes = Launch.classLoader.getClassBytes(name);
+			if (classBytes != null)
+				return classBytes;
 
-			InputStream classStream = null;
+			String resourcePath = name.replace('.', '/').concat(".class");
 
-			Object var7;
-			try {
-				String resourcePath = transformedName.replace('.', '/').concat(".class");
-				classStream = appClassLoader.getResourceAsStream(resourcePath);
-				byte[] var13 = toByteArray(classStream);
-				return var13;
-			} catch (Exception var11) {
-				var7 = null;
-			} finally {
-				if (classStream != null) {
-					try {
-						classStream.close();
-					} catch (IOException ignored) {}
+			// Get stream
+			InputStream in;
+			if (Launch.class.getClassLoader() instanceof URLClassLoader ucl)
+				in = ucl.getResourceAsStream(resourcePath);
+			else {
+				try (URLClassLoader ucl = new URLClassLoader(new URL[0], Launch.class.getClassLoader())) {
+					in = ucl.getResourceAsStream(resourcePath);
 				}
 			}
 
-			return (byte[]) var7;
-		}
-	}
+			// Read stream
+			try (in) {
+				if (in == null)
+					throw new IOException(new NullPointerException("InputStream is null"));
 
-	public static byte[] toByteArray(InputStream in) throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream(Math.max(32, in.available()));
-		copy(in, out);
-		return out.toByteArray();
-	}
+				@SuppressWarnings({"JavaExistingMethodCanBeUsed", "RedundantSuppression"})
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-	public static long copy(InputStream from, OutputStream to) throws IOException {
-		byte[] buf = new byte[8192];
-		long total = 0L;
+				byte[] buffer = new byte[4096];
+				int read;
+				while ((read = in.read(buffer, 0, 4096)) >= 0)
+					output.write(buffer, 0, read);
 
-		while (true) {
-			int r = from.read(buf);
-			if (r == -1) {
-				return total;
+				return output.toByteArray();
 			}
-
-			to.write(buf, 0, r);
-			total += (long) r;
+		} catch (IOException e) {
+			return null;
 		}
 	}
+
 }
+

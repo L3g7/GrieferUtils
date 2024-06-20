@@ -12,9 +12,9 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.core.main.LabyMod;
 import net.labymod.serverapi.api.model.component.ServerAPIComponent;
 import net.labymod.serverapi.core.model.display.Subtitle;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 /**
  * Shows a player's clan tag underneath their name tag.
@@ -51,7 +52,7 @@ public class ClanTags extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onPlayerTick(MysteryModPayloadEvent event) {
+	public void onMMPayload(MysteryModPayloadEvent event) {
 		if (!event.channel.equals("user_subtitle"))
 			return;
 
@@ -63,7 +64,7 @@ public class ClanTags extends Feature {
 
 			subtitles.add(subtitle);
 			if (isEnabled())
-				LabyMod.references().subtitleService().addSubtitle(subtitle);
+				mc().addScheduledTask(() -> LabyMod.references().subtitleService().addSubtitle(subtitle));
 		}
 	}
 

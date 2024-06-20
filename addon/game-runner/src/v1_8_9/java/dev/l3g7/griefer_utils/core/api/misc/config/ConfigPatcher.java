@@ -162,6 +162,7 @@ public class ConfigPatcher {
 					object.add("value", element);
 				}
 				set("item.recraft.repeat_last_recording", object);
+				get("item.recraft").remove("key");
 			}
 		}
 	}

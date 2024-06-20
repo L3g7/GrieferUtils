@@ -75,6 +75,8 @@ public interface LabyBridge {
 	 */
 	boolean openFile(File file);
 
+	void copyText(String text);
+
 	// Events
 
 	void onJoin(Runnable callback);

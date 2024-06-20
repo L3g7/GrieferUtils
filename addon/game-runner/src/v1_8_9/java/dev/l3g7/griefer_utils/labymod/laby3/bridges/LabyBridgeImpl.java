@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -116,6 +117,12 @@ public class LabyBridgeImpl implements LabyBridge {
 			BugReporter.reportError(e);
 			return false;
 		}
+	}
+
+	@Override
+	public void copyText(String text) {
+		StringSelection sel = new StringSelection(text);
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
 	}
 
 	@Override

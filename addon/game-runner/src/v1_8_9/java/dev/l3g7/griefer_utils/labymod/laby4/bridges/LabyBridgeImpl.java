@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
@@ -19,10 +18,10 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.resources.ResourceLocation;
@@ -52,6 +51,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static net.labymod.api.Laby.labyAPI;
 
 @Bridge
 @Singleton
@@ -60,7 +60,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public boolean obfuscated() {
-		return !Laby.labyAPI().labyModLoader().isAddonDevelopmentEnvironment();
+		return !labyAPI().labyModLoader().isAddonDevelopmentEnvironment();
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public boolean forge() {
-		return Laby.labyAPI().addonService().getAddon("labyforge").isPresent();
+		return labyAPI().addonService().getAddon("labyforge").isPresent();
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public float partialTicks() {
-		return Laby.labyAPI().minecraft().getPartialTicks();
+		return labyAPI().minecraft().getPartialTicks();
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class LabyBridgeImpl implements LabyBridge {
 		if (!(Laby4Util.getActivity() instanceof ChatInputOverlay))
 			return 0;
 
-		return (int) Laby.labyAPI().chatProvider().chatInputService().getButtonWidth() - 1;
+		return (int) labyAPI().chatProvider().chatInputService().getButtonWidth() - 1;
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public void displayInChat(String message) {
-		Laby.labyAPI().minecraft().chatExecutor().displayClientMessage(message);
+		labyAPI().minecraft().chatExecutor().displayClientMessage(message);
 	}
 
 	@Override
@@ -131,6 +131,11 @@ public class LabyBridgeImpl implements LabyBridge {
 			BugReporter.reportError(e);
 			return false;
 		}
+	}
+
+	@Override
+	public void copyText(String text) {
+		labyAPI().minecraft().setClipboard(text);
 	}
 
 	@Override
@@ -160,7 +165,7 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public boolean trySendMessage(String message) {
 		ChatMessageSendEvent event = new ChatMessageSendEvent(message, false);
-		Laby.labyAPI().eventBus().fire(event);
+		labyAPI().eventBus().fire(event);
 		return event.isCancelled();
 	}
 
@@ -179,11 +184,11 @@ public class LabyBridgeImpl implements LabyBridge {
 	public void openNameHistory(String name) {
 		NameHistoryActivity activity = LabyMod.references().nameHistoryActivity();
 		activity.scheduleQuery(name);
-		Laby.labyAPI().minecraft().minecraftWindow().displayScreen(activity);
+		labyAPI().minecraft().minecraftWindow().displayScreen(activity);
 	}
 
 	public static <T> void register(Class<T> event, Consumer<T> callback) {
-		Laby.labyAPI().eventBus().registry().register(new SubscribeMethod() {
+		labyAPI().eventBus().registry().register(new SubscribeMethod() {
 			@Override
 			public void invoke(Event event) {
 				callback.accept(c(event));

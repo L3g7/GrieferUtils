@@ -12,27 +12,26 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.settings.types.*;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import org.mariuszgromada.math.mxparser.Expression;
 
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
-import static dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard.getBankBalance;
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard.getBankBalance;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 @Singleton
@@ -207,8 +206,7 @@ public class Calculator extends Feature {
 
 			String text = Constants.DECIMAL_FORMAT_98.format(exp);
 			display(Constants.ADDON_PREFIX + "Ergebnis: " + text);
-			StringSelection sel = new StringSelection(text.replace(".", ""));
-			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
+			labyBridge.copyText(text.replace(".", ""));
 			return;
 		}
 

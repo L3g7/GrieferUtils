@@ -52,7 +52,7 @@ public class BotshopGUI extends GuiBigChest {
 	public TreeSet<BABItem> itemsDisplayed;
 	final List<BABItem> boughtItems;
 	final List<BABItem> items;
-	final DecimalFormat priceFormat = new DecimalFormat("###,###,###.#");
+	final DecimalFormat priceFormat = new DecimalFormat("###,###,###.##");
 	List<Float> prices = new ArrayList<>();
 
 

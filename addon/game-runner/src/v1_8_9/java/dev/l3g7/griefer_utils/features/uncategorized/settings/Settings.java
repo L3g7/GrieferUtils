@@ -54,7 +54,7 @@ public class Settings extends Feature {
 	static {
 		releaseChannel.callback(v -> {
 			if (v == STABLE) {
-				labyBridge.notify("§e§lFehler ⚠", "§eLabyMod 4 ist in der Beta!");
+				labyBridge.notify("§e§lFehler ⚠", "§eKlappt noch nicht");
 				releaseChannel.set(BETA);
 			}
 		});

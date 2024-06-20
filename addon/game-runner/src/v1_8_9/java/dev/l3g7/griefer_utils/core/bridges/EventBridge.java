@@ -7,22 +7,21 @@
 
 package dev.l3g7.griefer_utils.core.bridges;
 
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
-import dev.l3g7.griefer_utils.core.misc.gui.guis.ChangelogScreen;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.DrawScreenEvent;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 
 public class EventBridge {
 
 	private static boolean startupComplete = false;
 
 	/**
-	 * Triggers {@link OnStartupComplete} when GuiMainMenu is opened for the first time.
+	 * Triggers {@link OnStartupComplete} when the main menu is drawn for the first time.
 	 */
 	@EventListener
-	private static void onGuiOpen(GuiOpenEvent<?> event) {
-		if (startupComplete || event.gui instanceof ChangelogScreen)
+	private static void onGuiOpen(DrawScreenEvent event) {
+		if (startupComplete)
 			return;
 
 		// Call all methods annotated with @OnStartupComplete

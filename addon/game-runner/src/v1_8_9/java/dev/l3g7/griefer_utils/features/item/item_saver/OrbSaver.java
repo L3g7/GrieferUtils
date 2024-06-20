@@ -76,7 +76,7 @@ public class OrbSaver extends ItemSaver {
 
 	private static String getOrbPrice(ItemStack stack) {
 		String price = ItemUtil.getLoreAtIndex(stack, 0);
-		if (!price.endsWith("Orbs zu verkaufen."))
+		if (!price.replaceAll("§.", "").endsWith("Orbs zu verkaufen."))
 			return null;
 
 		price = price.substring(price.lastIndexOf("§e"));

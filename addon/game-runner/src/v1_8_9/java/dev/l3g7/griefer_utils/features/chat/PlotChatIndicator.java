@@ -95,13 +95,14 @@ public class PlotChatIndicator extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onReceive(MessageReceiveEvent event) {
-		if (getServerFromScoreboard().isEmpty())
+		String server = getServerFromScoreboard();
+		if (server.isEmpty() || server.equalsIgnoreCase("Zauberwald"))
 			return;
 
 		// Update plot chat state
 		if (event.message.getFormattedText().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
 			plotchatState = event.message.getFormattedText().contains(" aktiviert");
-			states.setCharAt(getIndex(getServerFromScoreboard()), plotchatState ? 'Y' : 'N');
+			states.setCharAt(getIndex(server), plotchatState ? 'Y' : 'N');
 			Config.set("chat.plot_chat_indicator.states." + mc().getSession().getProfile().getId(), new JsonPrimitive(states.toString()));
 			Config.save();
 

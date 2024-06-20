@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.core.util;
 
 import com.google.common.collect.ImmutableList;
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import net.minecraft.event.ClickEvent;
@@ -67,11 +66,7 @@ public class IChatComponentUtil {
 		}
 
 		if (playerIndex == -1) {
-			new Throwable().printStackTrace();
-			System.err.println("IChatComponentUtil error:");
-			System.err.println(IChatComponent.Serializer.componentToJson(iChatComponent));
-			System.err.println("name = " + name + ", realName = " + realName + ", prefix = " + prefix + ", isTabList = " + isTabList);
-			LabyBridge.labyBridge.notifyError("Ein Fehler ist aufgetreten.");
+			// TODO: wtf
 			return;
 		}
 

@@ -31,7 +31,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 @Singleton
 public class StandardPrefixes extends Feature {
 
-	private static final Map<String, String> DEFAULT_PREFIXES = new HashMap<String, String>() {{
+	private static final Map<String, String> DEFAULT_PREFIXES = new HashMap<>() {{
 		put("Helfer", "2");
 		put("Supreme", "dl");
 		put("Griefer", "4l");
@@ -149,7 +149,7 @@ public class StandardPrefixes extends Feature {
 	private void setRankWithPrefix(IChatComponent iChatComponent, String rank, String prefix, boolean isTabList) {
 		List<IChatComponent> everything = iChatComponent.getSiblings();
 		if (everything.isEmpty()) {
-			BugReporter.reportError(new Throwable("No siblings in " + IChatComponent.Serializer.componentToJson(iChatComponent)));
+			// TODO: wtf
 			return;
 		}
 

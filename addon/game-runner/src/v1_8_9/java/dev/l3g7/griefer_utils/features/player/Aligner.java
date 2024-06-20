@@ -19,6 +19,8 @@ public class Aligner extends Feature {
 				return;
 
 			float yaw = player().getRotationYawHead();
+			while (yaw < 0)
+				yaw += 360;
 
 			float extraYaw = yaw % 45;
 			yaw = (float) Math.floor(yaw / 45);

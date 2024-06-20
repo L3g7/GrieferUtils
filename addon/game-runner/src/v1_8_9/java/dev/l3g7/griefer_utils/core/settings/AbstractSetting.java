@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 
 import java.util.ArrayList;
 import java.util.List;

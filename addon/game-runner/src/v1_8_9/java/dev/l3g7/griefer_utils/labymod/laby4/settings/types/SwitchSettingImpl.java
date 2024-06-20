@@ -80,7 +80,7 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 			.icon("key")
 			.inferConfig("key")
 			.pressCallback(p -> {
-				if (p || triggerMode.get() == HOLD)
+				if (p || (defaultTriggerMode != null && triggerMode.get() == HOLD))
 					this.set(!this.get());
 			});
 		addSetting(0, key);

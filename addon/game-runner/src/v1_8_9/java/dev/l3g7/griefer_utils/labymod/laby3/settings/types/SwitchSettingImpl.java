@@ -52,7 +52,7 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 			.icon("key")
 			.inferConfig("key")
 			.pressCallback(p -> {
-				if (p || triggerMode.get() == HOLD)
+				if (p || (defaultTriggerMode != null && triggerMode.get() == HOLD))
 					this.set(!this.get());
 			});
 

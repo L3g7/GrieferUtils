@@ -12,19 +12,21 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinUser;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import net.labymod.api.Laby;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
 import org.lwjgl.opengl.Display;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
 
@@ -76,8 +78,11 @@ public class AutoPortal extends Feature {
 
 		if (maximize.get()) {
 			if (Platform.isWindows()) {
-				// Source: com.sun.jna.platform.WindowUtils.W32WindowUtils.getHWnd(Component)
-				HWND hwnd = new HWND(new Pointer(Reflection.invoke(Reflection.invoke(Display.class, "getImplementation"), "getHwnd")));
+				long handle = LABY_4.isActive()
+					? Laby.gfx().backend().glfwNatives().getWin32Window(Display.getWindowHandle())
+					: Reflection.invoke(Reflection.invoke(Display.class, "getImplementation"), "getHwnd");
+
+				HWND hwnd = new HWND(new Pointer(handle));
 				ShowWindow(hwnd, WinUser.SW_SHOWMAXIMIZED);
 				SetForegroundWindow(hwnd);
 				SetActiveWindow(hwnd);

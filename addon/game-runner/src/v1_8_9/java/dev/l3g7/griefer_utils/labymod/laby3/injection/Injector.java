@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.service.IMixinService;
 import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,8 +55,9 @@ public class Injector extends InjectorBase implements IClassTransformer {
 			Class<?> mixinEnv = Class.forName("org.spongepowered.asm.mixin.MixinEnvironment");
 			Set<String> excludeTransformers = Reflection.get(mixinEnv, "excludeTransformers");
 
+			Field excludeTransformersField = mixinEnv.getDeclaredField("excludeTransformers");
 			Unsafe unsafe = Reflection.get(Unsafe.class, "theUnsafe");
-			unsafe.putObject(mixinEnv, 104 /* excludeTransformers */, new HashSet<>(excludeTransformers) {
+			unsafe.putObject(mixinEnv, unsafe.staticFieldOffset(excludeTransformersField), new HashSet<>(excludeTransformers) {
 				@Override
 				public boolean add(String s) {
 					if (s.contains("griefer_utils"))

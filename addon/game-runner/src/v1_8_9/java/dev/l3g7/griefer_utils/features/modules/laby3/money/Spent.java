@@ -24,17 +24,16 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.item.recraft.laby3.SmallButtonSetting;
 import dev.l3g7.griefer_utils.features.modules.Laby3Module;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
@@ -78,22 +77,20 @@ public class Spent extends Laby3Module {
 		});
 
 	public static SmallButtonSetting getResetButton() {
-		SmallButtonSetting sbs = new SmallButtonSetting(new IconData(Material.STONE));
+		SmallButtonSetting sbs = new SmallButtonSetting(new IconData("griefer_utils/arrow_circle.png"));
 		sbs.setDisplayName("Zurücksetzen");
 		sbs.setDescriptionText("Setzt das ausgegebene Geld zurück.");
-		// TODO .icon("arrow_circle")
 		sbs.buttonIcon(new IconData(ModTextures.BUTTON_TRASH));
-		sbs.callback(() -> setBalance(ZERO));
+		sbs.buttonCallback(() -> setBalance(ZERO));
 		return sbs;
 	}
 
 	public static SmallButtonSetting getResetAllButton() {
-		SmallButtonSetting sbs = new SmallButtonSetting(new IconData(Material.STONE));
+		SmallButtonSetting sbs = new SmallButtonSetting(new IconData("griefer_utils/arrow_circle.png"));
 		sbs.setDisplayName("Alles zurücksetzen");
 		sbs.setDescriptionText("Setzt das eingenommene und das ausgegebene Geld zurück.");
-		// TODO .icon("arrow_circle")
 		sbs.buttonIcon(new IconData(ModTextures.BUTTON_TRASH));
-		sbs.callback(() -> setBalance(Received.setBalance(ZERO)));
+		sbs.buttonCallback(() -> setBalance(Received.setBalance(ZERO)));
 		return sbs;
 	}
 

@@ -21,14 +21,13 @@ package dev.l3g7.griefer_utils.features.modules.laby3.money;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.item.recraft.laby3.SmallButtonSetting;
 import dev.l3g7.griefer_utils.features.modules.Laby3Module;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 
 import java.math.BigDecimal;
 
@@ -50,12 +49,11 @@ public class Earned extends Laby3Module {
 	}
 
 	public static SmallButtonSetting getResetAllButton() {
-		SmallButtonSetting sbs = new SmallButtonSetting(new IconData(Material.STONE));
+		SmallButtonSetting sbs = new SmallButtonSetting(new IconData("griefer_utils/arrow_circle.png"));
 		sbs.setDisplayName("Zurücksetzen");
 		sbs.setDescriptionText("Setzt das eingenommene und das ausgegebene Geld zurück.");
-		// TODO .icon("arrow_circle")
 		sbs.buttonIcon(new IconData(ModTextures.BUTTON_TRASH));
-		sbs.callback(() -> {
+		sbs.buttonCallback(() -> {
 			Received.moneyReceived = BigDecimal.ZERO;
 			Spent.moneySpent = BigDecimal.ZERO;
 		});

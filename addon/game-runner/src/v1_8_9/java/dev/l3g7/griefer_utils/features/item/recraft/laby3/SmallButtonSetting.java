@@ -27,7 +27,7 @@ public class SmallButtonSetting extends ControlElement {
 		setSettingEnabled(false);
 	}
 
-	public SmallButtonSetting callback(Runnable runnable) {
+	public SmallButtonSetting buttonCallback(Runnable runnable) {
 		callbacks.add(runnable);
 		return this;
 	}

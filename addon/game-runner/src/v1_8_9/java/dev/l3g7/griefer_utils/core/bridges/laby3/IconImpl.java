@@ -15,6 +15,10 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class IconImpl {
 
+	public static final Icon EMPTY_ICON = new Icon() {
+		public void draw(int x, int y, float scale) {}
+	};
+
 	public static Icon of(Object icon) {
 		if (icon == null)
 			return null;

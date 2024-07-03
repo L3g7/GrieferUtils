@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.features.item.recraft.laby3;
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.bridges.laby3.IconImpl;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.util.render.GlEngine;
@@ -42,9 +43,9 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 		super(new IconData(Material.BARRIER));
 		this.container = container;
 		setSettingEnabled(true);
+		subSettings();
 		setDisplayName("Aufzeichnung auswählen");
-//		subSettings();
-		callback(this::createSettings);
+		buttonCallback(this::createSettings);
 		setSelectedRecording(null);
 	}
 
@@ -80,8 +81,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	void setSelectedRecording(RecraftRecording selectedRecording) {
 		recording = selectedRecording;
 		setDisplayName(selectedRecording == null ? "§8[Nichts ausgewählt]" : selectedRecording.name().get());
-//		icon(new IconData());
-//		icon(selectedRecording == null ? Material.BARRIER : new IconData());
+		icon(selectedRecording == null ? Material.BARRIER : IconImpl.EMPTY_ICON);
 
 		if (container.mainSetting != null)
 			updateName(selectedRecording);
@@ -115,8 +115,8 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
-//		if (recording != null)
-//			recording.mainSetting.drawIcon(x, y);
+		if (recording != null)
+			recording.mainSetting.drawIcon(x, y);
 	}
 
 	int toInt() {
@@ -172,7 +172,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			super("§cNo name set", null);
 			setSettingEnabled(false);
 			this.recording = recording;
-//			icon(recording == null ? Material.BARRIER : new IconData());
+			icon(recording == null ? Material.BARRIER : IconImpl.EMPTY_ICON);
 			setDisplayName(recording == null ? "§8Nichts auswählen" : recording.name().get());
 		}
 
@@ -209,8 +209,8 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			}
 			drawButtonIcon(button.xPosition, button.yPosition);
 
-//			if (recording != null)
-//				recording.mainSetting.drawIcon(x, y);
+			if (recording != null)
+				recording.mainSetting.drawIcon(x, y);
 		}
 
 		private void drawButtonIcon(int buttonX, int buttonY) {

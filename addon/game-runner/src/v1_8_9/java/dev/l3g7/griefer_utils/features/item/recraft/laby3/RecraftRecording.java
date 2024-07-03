@@ -24,16 +24,19 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -42,13 +45,13 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.ignoreSubIds;
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.CRAFT;
 
 public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording {
 
 	private final String[] ROMAN_NUMERALS = new String[] {"", "I", "II", "III", "IV", "V", "VI", "VII"};
 	private final RecraftRecordingCore core = new RecraftRecordingCore(this);
+	private ItemStack icon;
 
 	@Override
 	public RecraftRecordingCore getCore() {
@@ -57,7 +60,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 
 	@Override
 	public void setIcon(ItemStack stack) {
-		mainSetting.icon(stack);
+		icon = stack;
 	}
 
 	public final RecraftRecordingSelectionSetting successor = new RecraftRecordingSelectionSetting(this);
@@ -105,9 +108,8 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 		object.addProperty("name", name().get());
 		object.add("keys", key().getStorage().encodeFunc.apply(key().get()));
 
-//		ItemStack icon = mainSetting.iconStorage.itemStack;
-//		if (icon != null)
-//			object.addProperty("icon", new RecraftAction.Ingredient(icon, icon.stackSize).toLong());
+		if (icon != null)
+			object.addProperty("icon", new RecraftAction.Ingredient(icon, icon.stackSize).toLong());
 
 		object.addProperty("ignore_sub_ids", ignoreSubIds().get());
 		object.addProperty("mode", mode().get().getName());
@@ -129,16 +131,16 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 		recording.name().set(object.get("name").getAsString());
 		recording.key().set(recording.key().getStorage().decodeFunc.apply(object.get("keys")));
 
-//		JsonElement icon = object.get("icon");
-//		if (icon != null) {
-//			if (icon.isJsonPrimitive()) {
-//				RecraftAction.Ingredient ingredient = RecraftAction.Ingredient.fromLong(icon.getAsLong());
-//				recording.mainSetting.icon(new ItemStack(Item.getItemById(ingredient.itemId), ingredient.compression, ingredient.meta));
-//			} else {
-//				JsonObject iconObj = icon.getAsJsonObject();
-//				recording.mainSetting.icon(new ItemStack(Item.getItemById(iconObj.get("id").getAsInt()), iconObj.get("compression").getAsInt(), iconObj.get("meta").getAsInt()));
-//			}
-//		}
+		JsonElement icon = object.get("icon");
+		if (icon != null) {
+			if (icon.isJsonPrimitive()) {
+				RecraftAction.Ingredient ingredient = RecraftAction.Ingredient.fromLong(icon.getAsLong());
+				recording.setIcon(new ItemStack(Item.getItemById(ingredient.itemId), ingredient.compression, ingredient.meta));
+			} else {
+				JsonObject iconObj = icon.getAsJsonObject();
+				recording.setIcon(new ItemStack(Item.getItemById(iconObj.get("id").getAsInt()), iconObj.get("compression").getAsInt(), iconObj.get("meta").getAsInt()));
+			}
+		}
 
 		if (object.has("ignore_sub_ids")) {
 			recording.ignoreSubIds().set(object.get("ignore_sub_ids").getAsBoolean());
@@ -156,10 +158,10 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 			return recording;
 		}
 
-//		if (icon != null && icon.isJsonPrimitive()) {
-//			RecraftAction.Ingredient ingredient = RecraftAction.Ingredient.fromLong(icon.getAsLong());
-//			recording.mainSetting.icon(new ItemStack(Item.getItemById(ingredient.itemId), ingredient.compression, ingredient.meta));
-//		}
+		if (icon != null && icon.isJsonPrimitive()) {
+			RecraftAction.Ingredient ingredient = RecraftAction.Ingredient.fromLong(icon.getAsLong());
+			recording.setIcon(new ItemStack(Item.getItemById(ingredient.itemId), ingredient.compression, ingredient.meta));
+		}
 
 		JsonArray jsonActions = object.getAsJsonArray("actions");
 		for (JsonElement jsonAction : jsonActions)
@@ -176,11 +178,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 		private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 		@Override
 		protected void drawButtonIcon(IconData buttonIcon, int buttonX, int buttonY) {
-			GlStateManager.enableBlend();
-			int gb = actions().isEmpty() ? 0 : 1;
-			GlStateManager.color(1, gb, gb);
-			mc().getTextureManager().bindTexture(buttonIcon.getTextureIcon());
-			LabyMod.getInstance().getDrawUtils().drawTexture(buttonX + 4, buttonY + 3, 0, 0, 256, 256, 14, 14, 2);
+			super.drawButtonIcon(new IconData("griefer_utils/icons/recording_" + (actions().isEmpty() ? "red" : "white") + ".png"), buttonX, buttonY);
 		}
 
 		public StartRecordingButtonSetting() {
@@ -188,7 +186,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 			setDisplayName("Aufzeichnung starten");
 			setDescriptionText("Beginnt die Aufzeichung.");
 			buttonIcon(new IconData("griefer_utils/icons/recording.png"));
-			callback(() -> getCore().startRecording());
+			buttonCallback(() -> getCore().startRecording());
 		}
 
 		@Override
@@ -208,6 +206,35 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 			subSettings();
 			getSubSettings().addAll(c(new ArrayList<>(Arrays.asList(RecraftRecording.this.name(), key(), mode(), ignoreSubIds(), HeaderSetting.create(), new StartRecordingButtonSetting(),
 				HeaderSetting.create().entryHeight(10), HeaderSetting.create("Nachfolgende Aufzeichnung"), successor))));
+		}
+
+		void drawIcon(int x, int y) {
+			if (recording.icon == null)
+				return;
+
+			DrawUtils.drawItem(recording.icon, x + 3, y + 2, ROMAN_NUMERALS[recording.icon.stackSize]);
+			GlStateManager.pushMatrix();
+			GlStateManager.scale(0.5, 0.5, 2);
+			double sX = (x + 13) * 2;
+			double sY = (y + 1) * 2;
+
+			if (recording.mode().get() == RecordingMode.CRAFT) {
+				DrawUtils.drawItem(ItemUtil.createItem(new ItemStack(Blocks.crafting_table), true, null), sX, sY, null);
+			} else {
+				String icon = recording.mode().get() == RecordingMode.RECIPE ? "knowledge_book" : "chest";
+				DrawUtils.bindTexture("griefer_utils/icons/" + icon + ".png");
+				DrawUtils.drawTexture(sX, sY, 256, 256, 16, 16);
+			}
+			GlStateManager.popMatrix();
+		}
+
+		@Override
+		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+			if (recording.icon != null)
+				iconData = new IconData();
+
+			super.draw(x, y, maxX, maxY, mouseX, mouseY);
+			drawIcon(x, y);
 		}
 
 		@Override

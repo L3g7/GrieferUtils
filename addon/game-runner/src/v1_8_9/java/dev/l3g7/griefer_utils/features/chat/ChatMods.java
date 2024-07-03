@@ -161,9 +161,7 @@ public class ChatMods extends Feature {
 			return true;
 
 		// remove case opening
-		return removeCaseOpening.get() && formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] §r§f§lDer Spieler §r");
-		
-		return removeCaseOpening.get() && formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] §r§f§lFolgender Preis wurde gezogen: §r");
+		return removeCaseOpening.get() && formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] §r§f§lDer Spieler §r") || formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] §r§f§lFolgender Preis wurde gezogen: §r");
 	}
 
 	private enum NewsMode implements Named {

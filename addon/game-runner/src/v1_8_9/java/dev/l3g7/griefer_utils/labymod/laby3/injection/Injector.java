@@ -2,7 +2,6 @@ package dev.l3g7.griefer_utils.labymod.laby3.injection;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
-import dev.l3g7.griefer_utils.post_processor.processors.runtime.MixinPluginProcessor;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -20,7 +19,6 @@ public class Injector extends InjectorBase implements IClassTransformer {
 	public Injector() throws ReflectiveOperationException {
 		// Add MixinPlugin processor
 		List<IClassTransformer> transformers = Reflection.get(Launch.classLoader, "transformers");
-		transformers.add(MixinPluginProcessor.INSTANCE);
 
 		// Load MixinBootstrap using the system classloader
 		Class<?> mixinBootstrap = Launch.classLoader.getClass().getClassLoader().loadClass("org.spongepowered.asm.launch.MixinBootstrap");

@@ -5,12 +5,9 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler;
+package dev.l3g7.griefer_utils.post_processor.processors;
 
-import dev.l3g7.griefer_utils.post_processor.processors.RuntimePostProcessor;
-import dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler.Java17to8Transpiler.BoundClassWriter;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
+import dev.l3g7.griefer_utils.post_processor.LatePostProcessor.Processor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -20,22 +17,15 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * Elevates the access of all classes, fields and methods to avoid having to generate synthetic accessors.
  */
-public class AccessElevator extends RuntimePostProcessor implements Opcodes {
+public class AccessElevator extends Processor implements Opcodes {
 
 	@Override
-	public byte[] transform(String fileName, byte[] classBytes) {
-		if (!fileName.startsWith("dev/l3g7/griefer_utils/"))
-			return classBytes;
-
-		ClassNode classNode = new ClassNode();
-		ClassReader reader = new ClassReader(classBytes);
-		reader.accept(classNode, 0);
-
+	public void process(ClassNode classNode) {
 		// Don't elevate in Mixin classes
 		if (classNode.invisibleAnnotations != null)
 			for (AnnotationNode visibleAnnotation : classNode.invisibleAnnotations)
 				if (visibleAnnotation.desc.equals("Lorg/spongepowered/asm/mixin/Mixin;"))
-					return classBytes;
+					return;
 
 		classNode.access = elevate(classNode.access);
 		for (FieldNode field : classNode.fields)
@@ -43,9 +33,7 @@ public class AccessElevator extends RuntimePostProcessor implements Opcodes {
 		for (MethodNode method : classNode.methods)
 			method.access = elevate(method.access);
 
-		ClassWriter writer = new BoundClassWriter();
-		classNode.accept(writer);
-		return writer.toByteArray();
+		setModified();
 	}
 
 	private int elevate(int access) {

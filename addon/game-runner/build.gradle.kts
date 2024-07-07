@@ -1,5 +1,5 @@
 import net.labymod.gradle.core.dsl.getBuildDirectory
-import java.util.Properties
+import java.util.*
 
 version = "0.0.0"
 
@@ -42,18 +42,22 @@ tasks.register("downloadLibs") {
 var props = Properties()
 file("../gradle.properties").inputStream().use { props.load(it) }
 
-tasks.register("run", JavaExec::class) {
-	group = "Application"
-	description = "Runs this project as a JVM application."
-	classpath(
-		getBuildDirectory() + "/build/classes/java/v1_8_9",
-		System.getProperty("user.home") + "/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/b3add478d4382b78ea20b1671390a858002feb6c/gson-2.10.1.jar",
-		System.getProperty("user.home") + "/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/9.7/73d7b3086e14beb604ced229c302feff6449723/asm-9.7.jar",
-		System.getProperty("user.home") + "/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/9.7/e446a17b175bfb733b87c5c2560ccb4e57d69f1a/asm-tree-9.7.jar"
-	)
+tasks.build.get().finalizedBy("runBuildPostProcessor")
+
+tasks.register("runBuildPostProcessor", JavaExec::class) {
+	dependsOn("compileV1_8_9Java", "v1_8_9Jar", "jar")
+
+	doFirst {
+		classpath(
+			getBuildDirectory() + "/build/classes/java/v1_8_9",
+			configurations["v1_8_9Implementation"].resolve()
+		)
+	}
+
+	group = "GrieferUtils"
 	jvmArgs(
 		"-Dgriefer_utils.version=" + props.getProperty("version"),
 		"-Dgriefer_utils.debug=" + props.getProperty("debug")
 	)
-	mainClass.set("dev.l3g7.griefer_utils.post_processor.PostProcessor")
+	mainClass.set("dev.l3g7.griefer_utils.post_processor.BuildPostProcessor")
 }

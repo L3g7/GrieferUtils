@@ -5,14 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler;
+package dev.l3g7.griefer_utils.post_processor.processors;
 
-import dev.l3g7.griefer_utils.post_processor.processors.RuntimePostProcessor;
-import dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler.Java17to8Transpiler.BoundClassWriter;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
+import dev.l3g7.griefer_utils.post_processor.LatePostProcessor.Processor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -24,19 +22,38 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.invoke.MethodType.methodType;
 
 /**
  * Redirects StringConcatFactory.makeConcatWithConstants calls to a shim.
  */
-public class StringConcatPolyfill extends RuntimePostProcessor implements Opcodes {
+public class StringConcatShim extends Processor implements Opcodes {
 
 	private static final String BOOTSTRAP_MTD = "java/lang/invoke/StringConcatFactory.makeConcatWithConstants(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite; (6)";
 
 	private static final MethodHandle mhRebind, mhEditor, mhBasicType,
 		mhFoldArgumentsForm, mhCopyWithExtendL;
+
+	@Override
+	public void process(ClassNode classNode) {
+		for (MethodNode method : classNode.methods) {
+			for (AbstractInsnNode node : method.instructions) {
+				if (!(node instanceof InvokeDynamicInsnNode e))
+					continue;
+
+				if (!e.name.equals("makeConcatWithConstants") || !e.bsm.toString().equals(BOOTSTRAP_MTD))
+					continue;
+
+				// noinspection deprecation // required for Java 8 compatibility
+				e.bsm = new Handle(6,
+					StringConcatShim.class.getName().replace('.', '/'),
+					e.bsm.getName(), e.bsm.getDesc()
+				);
+				setModified();
+			}
+		}
+	}
 
 	static {
 		try {
@@ -61,44 +78,6 @@ public class StringConcatPolyfill extends RuntimePostProcessor implements Opcode
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	public byte[] transform(String fileName, byte[] classBytes) {
-		if (!fileName.startsWith("dev/l3g7/griefer_utils/"))
-			return classBytes;
-
-		ClassNode classNode = new ClassNode();
-		ClassReader reader = new ClassReader(classBytes);
-		reader.accept(classNode, 0);
-		AtomicBoolean modified = new AtomicBoolean(false);
-
-		for (MethodNode method : classNode.methods) {
-			// Patch InvokeDynamic
-			method.instructions.iterator().forEachRemaining(node -> {
-				if (!(node instanceof InvokeDynamicInsnNode e))
-					return;
-
-				if (!e.name.equals("makeConcatWithConstants") || !e.bsm.toString().equals(BOOTSTRAP_MTD))
-					return;
-
-				// noinspection deprecation // required for Java 8 compatibility
-				e.bsm = new Handle(6,
-					StringConcatPolyfill.class.getName().replace('.', '/'),
-					e.bsm.getName(), e.bsm.getDesc()
-				);
-
-				modified.set(true);
-			});
-		}
-
-		// Write modified class
-		if (!modified.get())
-			return classBytes;
-
-		ClassWriter writer = new BoundClassWriter();
-		classNode.accept(writer);
-		return writer.toByteArray();
 	}
 
 	@SuppressWarnings("unused") // Invoked dynamically
@@ -126,11 +105,11 @@ public class StringConcatPolyfill extends RuntimePostProcessor implements Opcode
 			elements.add(recipe.substring(lastIdx));
 
 		// Create MethodHandle
-		MethodHandle result = lookup.findStatic(StringConcatPolyfill.class, "build", methodType(String.class, StringBuilder.class));
+		MethodHandle result = lookup.findStatic(StringConcatShim.class, "build", methodType(String.class, StringBuilder.class));
 		// result has type (StringBuilder) -> String
 
 		for (String element : elements) {
-			MethodHandle insert = lookup.findStatic(StringConcatPolyfill.class, "insert", methodType(StringBuilder.class, Object.class, StringBuilder.class));
+			MethodHandle insert = lookup.findStatic(StringConcatShim.class, "insert", methodType(StringBuilder.class, Object.class, StringBuilder.class));
 			// insert has type (Object, StringBuilder) -> StringBuilder
 
 			if (element == null) {

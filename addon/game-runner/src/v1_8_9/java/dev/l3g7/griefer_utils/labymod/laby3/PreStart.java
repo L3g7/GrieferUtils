@@ -9,10 +9,8 @@ package dev.l3g7.griefer_utils.labymod.laby3;
 
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.auto_update.UpdateImpl;
-import dev.l3g7.griefer_utils.post_processor.processors.runtime.transpiler.Java17to8Transpiler;
+import dev.l3g7.griefer_utils.post_processor.EarlyPostProcessor;
 import net.labymod.addon.AddonLoader;
-import net.labymod.api.Constants;
-import net.labymod.api.addon.exception.AddonLoadException;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -23,9 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static dev.l3g7.griefer_utils.core.auto_update.AutoUpdater.DELETION_MARKER;
@@ -43,7 +39,7 @@ public class PreStart implements IClassTransformer, UpdateImpl {
 		Field field = LaunchClassLoader.class.getDeclaredField("transformers");
 		field.setAccessible(true);
 		List<IClassTransformer> transformers = (List<IClassTransformer>) field.get(Launch.classLoader);
-		transformers.add(0, Java17to8Transpiler.INSTANCE);
+		transformers.add(0, EarlyPostProcessor.INSTANCE);
 
 		AutoUpdater.update(this);
 		EarlyStart.start();

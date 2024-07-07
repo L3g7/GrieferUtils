@@ -2,7 +2,6 @@
 
 .gradle
 .idea
-build
 logs
 out
 run

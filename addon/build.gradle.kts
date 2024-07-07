@@ -14,7 +14,7 @@ labyMod {
 		namespace = "griefer_utils"
 		displayName = "GrieferUtils"
 		author = "L3g7, L3g73"
-		description = "Please trigger the \"run\" task before using or distributing GrieferUtils" // Overwritten by post processor
+		description = "Post-processor failed to apply :(" // Overwritten by runBuildPostProcessor task
 		minecraftVersion = "1.8.9"
 		version = providers.gradleProperty("version").get()
 		meta(AddonMeta.RESTART_REQUIRED, AddonMeta.BACKGROUND)
@@ -66,16 +66,6 @@ fun configureRun(provider: net.labymod.gradle.core.minecraft.provider.VersionPro
 	provider.javaVersion = JavaVersion.VERSION_21
 
 	provider.mixin {
-		val mixinMinVersion = when (gameVersion) {
-			"1.8.9", "1.12.2", "1.16.5" -> {
-				"0.6.6"
-			}
-
-			else -> {
-				"0.8.2"
-			}
-		}
-
-		minVersion = mixinMinVersion
+		minVersion = "0.6.6"
 	}
 }

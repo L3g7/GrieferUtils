@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A collection of transformers allowing the use of GrieferUtils created using the LabyMod 4 SDK
- * in LabyMod 3 by post-processing classes if loaded in LabyMod 3.
+ * A collection of transformers allowing the use of GrieferUtils created using the LabyMod 4 SDK in
+ * LabyMod 3 by post-processing classes if loaded in LabyMod 3.
  */
 public class LatePostProcessor implements IClassTransformer {
 

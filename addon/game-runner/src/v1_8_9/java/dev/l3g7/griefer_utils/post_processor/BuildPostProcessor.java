@@ -75,14 +75,16 @@ public class BuildPostProcessor {
 	 * Merges the LabyMod 3 addon.json into the existing json.
 	 */
 	private static void mergeAddonJson() throws IOException {
-		// Merge addon.json
+		// Read
 		JsonObject addon;
 		try (Reader in = Files.newBufferedReader(fs.getPath("addon.json"), UTF_8)) {
 			addon = Streams.parse(new JsonReader(in)).getAsJsonObject();
 		}
+
+		// Merge
 		LABY_3_ADDON_JSON.forEach(addon::addProperty);
 
-		// Write addon.json
+		// Write
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		try (OutputStream out = Files.newOutputStream(fs.getPath("addon.json"))) {
 			out.write(gson.toJson(addon).getBytes(UTF_8));
@@ -95,7 +97,7 @@ public class BuildPostProcessor {
 	private static void processBootstrapClasses() throws IOException {
 		process(pathOf(PreStart.class));
 		process(pathOf(UpdateImpl.class));
-		try (Stream<Path> stream = Files.walk(fs.getPath(BuildPostProcessor.class.getPackageName().replace('.', '/')))) {
+		try (Stream<Path> stream = Files.walk(pathOf(EarlyPostProcessor.class).getParent())) {
 			stream
 				.filter(Files::isRegularFile)
 				.forEach(BuildPostProcessor::process);

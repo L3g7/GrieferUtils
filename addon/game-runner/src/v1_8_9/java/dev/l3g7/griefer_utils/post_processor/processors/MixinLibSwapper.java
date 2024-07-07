@@ -12,7 +12,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
- * Overwrites method descriptors in MixinPlugin to use the bundled ClassNode class.
+ * Overwrites method descriptors in MixinPlugin to use the ClassNode class of the bundled library.
  */
 public class MixinLibSwapper extends Processor {
 

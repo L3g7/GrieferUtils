@@ -16,8 +16,8 @@ import java.util.AbstractList;
 import java.util.List;
 
 /**
- * Overwrites the class version of the bootstrap classes to fix OW2 ASM parsing and handles invocation
- * and registration of the processors.
+ * Overwrites the class version of all classes to fix OW2 ASM parsing and handles invocation and
+ * registration of the processors.
  * @see LatePostProcessor
  */
 public class EarlyPostProcessor implements IClassTransformer {
@@ -26,13 +26,13 @@ public class EarlyPostProcessor implements IClassTransformer {
 
 	private static final Field modCountField;
 	private static final Field renameTransformerField;
-	private static boolean decoupled = false;
 
 	private final LatePostProcessor lateProcessor = new LatePostProcessor();
+	private boolean decoupled = false;
 
 	static {
 		if (Launch.classLoader == null) {
-			// Minecraft not started, LaunchClassLoader's transformers not available
+			// Minecraft not started, transformers of LaunchClassLoader not available
 			modCountField = null;
 			renameTransformerField = null;
 		} else {
@@ -70,7 +70,7 @@ public class EarlyPostProcessor implements IClassTransformer {
 
 		try {
 			if (renameTransformerField.get(Launch.classLoader) != null) {
-				// renameTransformer is available, add late transpiler to end of transformers
+				// renameTransformer is available, add processors to end of transformers
 				decoupled = true;
 
 				Field transformersField = LaunchClassLoader.class.getDeclaredField("transformers");
@@ -78,7 +78,7 @@ public class EarlyPostProcessor implements IClassTransformer {
 				@SuppressWarnings("unchecked")
 				List<IClassTransformer> transformers = (List<IClassTransformer>) transformersField.get(Launch.classLoader);
 
-				// Add transpilers
+				// Add processors
 				@SuppressWarnings("DataFlowIssue") // IntelliJ is stupid
 				int modCount = (int) modCountField.get(transformers);
 				transformers.add(lateProcessor);

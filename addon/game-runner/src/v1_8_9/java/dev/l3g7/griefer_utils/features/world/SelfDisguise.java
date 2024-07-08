@@ -46,10 +46,10 @@ import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**
- * Automatically sprints when walking.
+ * Shows a preview for disguises in third person view.
  */
 @Singleton
-public class SelfDisguise extends Feature {
+public class SelfDisguise extends Feature { // NOTE cleanup
 
 	private static final Pattern LUCKY_SWORD_DISGUISE_PATTERN = Pattern.compile("^§r§8\\[§r§e§lLuckySword§r§8] " + Constants.FORMATTED_PLAYER_PATTERN.pattern() + " §r§7ist nun als §r§e(?<disguise>\\w+) §r§7verkleidet!§r$");
 	private static final Map<String, String> RENAMED_ENTITIES = new HashMap<String, String>() {{
@@ -144,10 +144,12 @@ public class SelfDisguise extends Feature {
 			} else if (entity.equals("Zombie")) {
 				currentDisguise = new EntityZombie(world());
 			} else {
-				BugReporter.reportError(new Throwable("Sword disguise \"" + entity + "\" is now known"));
+				BugReporter.reportError(new Throwable("Sword disguise \"" + entity + "\" is not known"));
 				return;
 			}
 			world().addEntityToWorld(currentDisguise.getEntityId(), currentDisguise);
+			if (!isEnabled())
+				hideDisguise();
 			return;
 		}
 
@@ -256,6 +258,8 @@ public class SelfDisguise extends Feature {
 		}
 
 		world().addEntityToWorld(currentDisguise.getEntityId(), currentDisguise);
+		if (!isEnabled())
+			hideDisguise();
 
 		if (arguments.length > 2) {
 			Map<String, String> args = new HashMap<>();

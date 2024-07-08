@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.features.chat.filter_webhooks.laby3;
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -87,7 +88,7 @@ public class FilterWebhooks extends Feature {
     }
 
 	public static void onMessageReceiveTemp(IChatComponent component) {
-
+		FileProvider.getSingleton(FilterWebhooks.class).onMessageReceive(component);
 	}
 
     private void onMessageReceive(IChatComponent component) {

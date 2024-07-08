@@ -33,6 +33,9 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 
 	@Override
 	public void process(ClassNode classNode) {
+		if (classNode.name.startsWith("dev/l3g7/griefer_utils/core/api/"))
+			return;
+
 		// Find minecraft superclasses
 		List<String> minecraftClasses = new ArrayList<>();
 
@@ -40,6 +43,13 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 		do {
 			if (cb.name.startsWith("net/minecraft/"))
 				minecraftClasses.add(cb.name);
+
+			else if (!cb.name.contains("/")) {
+				String mappedName = Mapper.mapClass(cb.name, OBFUSCATED, UNOBFUSCATED);
+				if (mappedName.startsWith("net/minecraft/"))
+					minecraftClasses.add(mappedName);
+			}
+
 			cb = getClass(cb.superName);
 		} while (cb != null);
 

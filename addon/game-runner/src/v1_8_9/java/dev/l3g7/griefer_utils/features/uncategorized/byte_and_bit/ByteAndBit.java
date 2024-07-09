@@ -95,7 +95,7 @@ public class ByteAndBit extends Feature {
 
 	@EventListener
 	public void onEntityYeet(PacketReceiveEvent<S13PacketDestroyEntities> p) {
-		if (world() == null)
+		if (world() == null || player() == null)
 			return;
 
 		for (int id : p.packet.getEntityIDs()) {

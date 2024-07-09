@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.core.main.LabyMod;
 import net.labymod.serverapi.api.model.component.ServerAPIComponent;
 import net.labymod.serverapi.core.model.display.Subtitle;
+import net.labymod.utils.ModColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +61,8 @@ public class ClanTags extends Feature {
 			JsonObject obj = elem.getAsJsonObject();
 
 			UUID uuid = UUID.fromString(obj.get("targetId").getAsString());
-			Subtitle subtitle = Subtitle.create(uuid, ServerAPIComponent.text(obj.get("text").getAsString()), 0.8);
-
+			String text = obj.get("text").getAsString().replaceAll("(?i)&([a-z0-9])", "§$1");
+			Subtitle subtitle = Subtitle.create(uuid, ServerAPIComponent.text(text), 0.8);
 			subtitles.add(subtitle);
 			if (isEnabled())
 				mc().addScheduledTask(() -> LabyMod.references().subtitleService().addSubtitle(subtitle));

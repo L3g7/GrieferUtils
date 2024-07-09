@@ -94,15 +94,16 @@ public class ChatLineUtil {
 	@Mixin(value = DefaultChatController.class, remap = false)
 	private static class MixinDefaultChatController {
 
-		@Inject(method = "addMessage(Lnet/labymod/api/client/chat/ChatMessage;)Lnet/labymod/api/client/chat/ChatMessage;", at = @At(value = "INVOKE", target = "Lnet/labymod/api/event/client/chat/ChatReceiveEvent;isCancelled()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-		private void injectAddMessageCancel(ChatMessage chatMessage, CallbackInfoReturnable<ChatMessage> cir, ChatReceiveEvent event) {
+		@Inject(method = "addMessage(Lnet/labymod/api/client/chat/ChatMessage;Z)Lnet/labymod/api/client/chat/ChatMessage;", at = @At(value = "INVOKE", target = "Lnet/labymod/api/event/client/chat/ChatReceiveEvent;isCancelled()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
+		private void injectAddMessageCancel(ChatMessage chatMessage, boolean justReceived, CallbackInfoReturnable<ChatMessage> cir, DefaultChatMessage message, ChatReceiveEvent event) {
 			if (event.isCancelled())
 				UNMODIFIED_COMPONENTS.remove(UNMODIFIED_COMPONENTS.size() - 1);
 		}
 
-		@Inject(method = "addMessage(Lnet/labymod/api/client/chat/ChatMessage;)Lnet/labymod/api/client/chat/ChatMessage;", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V", shift = BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
-		private void injectAddMessagePost(ChatMessage chatMessage, CallbackInfoReturnable<ChatMessage> cir, ChatReceiveEvent ignored, DefaultChatMessage message) {
-			MODIFIED_COMPONENTS.add((IChatComponent) message.component());
+		@Inject(method = "addMessage(Lnet/labymod/api/client/chat/ChatMessage;Z)Lnet/labymod/api/client/chat/ChatMessage;", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V", shift = BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
+		private void injectAddMessagePost(ChatMessage chatMessage, boolean justReceived, CallbackInfoReturnable<ChatMessage> cir, DefaultChatMessage message) {
+			if (justReceived)
+				MODIFIED_COMPONENTS.add((IChatComponent) message.component());
 		}
 
 	}

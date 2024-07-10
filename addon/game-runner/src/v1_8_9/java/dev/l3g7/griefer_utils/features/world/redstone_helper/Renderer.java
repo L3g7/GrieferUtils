@@ -21,7 +21,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Map;
 
@@ -145,7 +144,7 @@ public class Renderer {
 			// Invoke position of superclass because ByteBuffer#position doesn't exist in Java 8
 			((Buffer) this.byteBuffer).position(0);
 			bytebuffer.put(this.byteBuffer);
-			bytebuffer.rewind();
+			bytebuffer.position(0);
 			this.byteBuffer = bytebuffer;
 		}
 

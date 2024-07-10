@@ -10,13 +10,8 @@ import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
-import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -35,7 +30,6 @@ import java.util.concurrent.ExecutionException;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.ByteAndBit.BAB_URL;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BABBot {
 
@@ -58,13 +52,17 @@ public class BABBot {
 	}
 
 	public boolean isVecInsideOrTouching(Vec3 vec) {
-		if (vec.xCoord < botZone.minX || vec.xCoord > botZone.maxX)
+		AxisAlignedBB zone = botZone; // Copy botZone to prevent errors because of concurrent modifications
+		if (zone == null)
 			return false;
 
-		if (vec.yCoord < botZone.minY || vec.yCoord > botZone.maxY)
+		if (vec.xCoord < zone.minX || vec.xCoord > zone.maxX)
 			return false;
 
-		return !(vec.zCoord < botZone.minZ) && !(vec.zCoord > botZone.maxZ);
+		if (vec.yCoord < zone.minY || vec.yCoord > zone.maxY)
+			return false;
+
+		return !(vec.zCoord < zone.minZ) && !(vec.zCoord > zone.maxZ);
 	}
 
 	private JsonObject getItems() throws IOException, GeneralSecurityException, ExecutionException, InterruptedException {
@@ -89,8 +87,7 @@ public class BABBot {
 			new BasicNameValuePair("expirationTime", Long.toString(expirationTime)),
 			new BasicNameValuePair("uuid", user.toString().replaceAll("-", "")),
 		});
-		JsonObject obj = IOUtil.jsonParser.parse(new InputStreamReader(is, StandardCharsets.UTF_8)).getAsJsonObject();
-		return obj;
+		return IOUtil.jsonParser.parse(new InputStreamReader(is, StandardCharsets.UTF_8)).getAsJsonObject();
 	}
 
 	public CompletableFuture<Boolean> sync() {

@@ -10,13 +10,13 @@ package dev.l3g7.griefer_utils.features.chat;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.api.Laby;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
 import net.labymod.ingamechat.GuiChatCustom;
@@ -48,7 +48,7 @@ public class SplitLongMessages extends Feature {
 		.icon(Items.shears);
 
 	@EventListener
-	public void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent.Post event) {
+	public void onGuiKeyboardInput(KeyboardInputEvent.Post event) {
 		if (!(event.gui instanceof GuiChat))
 			return;
 
@@ -65,7 +65,8 @@ public class SplitLongMessages extends Feature {
 		} else {
 			if (event.gui instanceof GuiChatCustom) {
 				Object[] chatButtons = Reflection.get(event.gui, "chatButtons");
-				width -= chatButtons.length * 14;
+				if (chatButtons != null)
+					width -= chatButtons.length * 14;
 			}
 		}
 

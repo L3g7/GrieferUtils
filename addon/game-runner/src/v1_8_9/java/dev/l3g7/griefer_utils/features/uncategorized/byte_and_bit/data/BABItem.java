@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -101,7 +100,7 @@ public class BABItem implements Comparable<BABItem> {
 			ItemEnchantment[] itemEnchantments = enchantments.stream().map((e) -> new ItemEnchantment(e.id, e.level)).toArray(ItemEnchantment[]::new);
 			for (var price : this.prices) {
 				if (price.price == null) continue;
-				if (price.price < 0) continue; // ankauf - TODO
+				if (price.price <= 0) continue; // ankauf - TODO
 
 				ItemStack stack = new ItemStack(Blocks.stone, price.amount, 10000);
 				if (material.name != null) {

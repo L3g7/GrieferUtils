@@ -13,14 +13,14 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.DrawScreenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -77,8 +77,8 @@ public class PlotChatIndicator extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onCitybuildJoin(CitybuildJoinEvent event) {
-		String server = getServerFromScoreboard();
-		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser") || server.equals("Portal")) {
+		String server = getServerFromScoreboard(); // NOTE: Rewrite to use Citybuild enum
+		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser") || server.equals("Portal") || server.equalsIgnoreCase("Zauberwald")) {
 			plotchatState = false;
 			return;
 		}

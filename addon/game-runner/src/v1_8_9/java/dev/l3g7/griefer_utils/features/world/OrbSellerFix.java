@@ -16,13 +16,13 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.network.Packet;
@@ -112,18 +112,17 @@ public class OrbSellerFix extends Feature {
 			return;
 
 		// Detect going to the orb seller
-		if (event.packet instanceof S0EPacketSpawnObject) {
-			S0EPacketSpawnObject p = (S0EPacketSpawnObject) event.packet;
+		if (event.packet instanceof S0EPacketSpawnObject p) {
 			// Check if it's a ArmorStand
 			if (p.getType() != 78)
 				return;
 
 			// Check position
-			if (p.getX() != 5443 || p.getY() != 787 || p.getZ() != -1194)
+			if (p.getX() != 5432 || p.getY() != 788 || p.getZ() != -1176)
 				return;
 
-			// Check position
-			if (p.getYaw() != 88 || p.getPitch() != 24)
+			// Check rotation
+			if (p.getYaw() != 62 || p.getPitch() != 26)
 				return;
 
 			Integer orbSellerId = cbToId.get(getServerFromScoreboard());
@@ -133,8 +132,7 @@ public class OrbSellerFix extends Feature {
 		}
 
 		// Get the uuid of the original orb seller
-		if (event.packet instanceof S38PacketPlayerListItem) {
-			S38PacketPlayerListItem packet = (S38PacketPlayerListItem) event.packet;
+		if (event.packet instanceof S38PacketPlayerListItem packet) {
 			if (packet.getAction() != ADD_PLAYER)
 				return;
 
@@ -149,13 +147,10 @@ public class OrbSellerFix extends Feature {
 		}
 
 		// Get the entity id of the original orb seller
-		if (event.packet instanceof S0CPacketSpawnPlayer) {
-			S0CPacketSpawnPlayer packet = (S0CPacketSpawnPlayer) event.packet;
-			if (packet.getPlayer().equals(orbSellerUUID)) {
-				orbSellerUUID = null;
-				cbToId.put(getServerFromScoreboard(), packet.getEntityID());
-				saveIds();
-			}
+		if (event.packet instanceof S0CPacketSpawnPlayer packet && packet.getPlayer().equals(orbSellerUUID)) {
+			orbSellerUUID = null;
+			cbToId.put(getServerFromScoreboard(), packet.getEntityID());
+			saveIds();
 		}
 	}
 

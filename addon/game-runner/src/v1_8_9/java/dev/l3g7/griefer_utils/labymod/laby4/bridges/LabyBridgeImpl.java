@@ -150,7 +150,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public void onMessageSend(Predicate<String> callback) {
-		register(ChatMessageSendEvent.class, v -> v.setCancelled(callback.test(v.getMessage())));
+		register(ChatMessageSendEvent.class, v -> v.setCancelled(v.isCancelled() || callback.test(v.getMessage())));
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 public class ConcurrentHashMapIterator<K, V> implements Iterator<Entry<K, V>> {
 
@@ -44,7 +43,8 @@ public class ConcurrentHashMapIterator<K, V> implements Iterator<Entry<K, V>> {
 	}
 
 	private void getNext() {
-		nextNode = Reflection.get(Objects.requireNonNullElse(currentNode, firstNode), "next");
+		Entry<K, V> node = currentNode == null ? firstNode : currentNode;
+		nextNode = Reflection.get(node, "next");
 	}
 
 }

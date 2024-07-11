@@ -122,10 +122,8 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver implements TempItemSa
 			return null;
 
 		for (SettingsElement element : ((SettingsElement) enabled).getSubSettings().getElements()) {
-			if (!(element instanceof ItemDisplaySetting))
+			if (!(element instanceof ItemDisplaySetting setting))
 				continue;
-
-			ItemDisplaySetting setting = (ItemDisplaySetting) element;
 
 			ItemStack settingStack = setting.getStack();
 			if (settingStack.getItem() != stack.getItem())
@@ -145,7 +143,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver implements TempItemSa
 		if (stackNBT == null)
 			return settingNBT == null;
 
-		stackNBT = (NBTTagCompound) stackNBT.copy();
+		stackNBT = ItemUtil.safeCopy(stackNBT);
 		NBTTagCompound cleanedStackNBT = new NBTTagCompound();
 		for (String s : stackNBT.getKeySet()) {
 			if (s.equals("display") || s.equals("RepairCost"))
@@ -380,10 +378,8 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver implements TempItemSa
 			return (action == Action.ATTACK ? setting.leftclick : setting.rightclick).get();
 		}
 
-		if (packet instanceof C08PacketPlayerBlockPlacement) {
-			C08PacketPlayerBlockPlacement p = (C08PacketPlayerBlockPlacement) packet;
+		if (packet instanceof C08PacketPlayerBlockPlacement p)
 			return (setting = getSetting(p.getStack())) != null && setting.rightclick.get();
-		}
 
 		return false;
 	}
@@ -430,10 +426,8 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver implements TempItemSa
 
 		JsonObject object = new JsonObject();
 		for (SettingsElement element : ((SettingsElement) enabled).getSubSettings().getElements()) {
-			if (!(element instanceof ItemDisplaySetting))
+			if (!(element instanceof ItemDisplaySetting itemDisplaySetting))
 				continue;
-
-			ItemDisplaySetting itemDisplaySetting = (ItemDisplaySetting) element;
 
 			JsonObject entry = new JsonObject();
 			entry.addProperty("name", itemDisplaySetting.name.get());

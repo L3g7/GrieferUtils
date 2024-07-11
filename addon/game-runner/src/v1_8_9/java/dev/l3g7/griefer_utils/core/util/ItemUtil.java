@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.util;
 
+import dev.l3g7.griefer_utils.core.api.misc.ConcurrentHashMapIterator;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -16,10 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static net.minecraft.init.Blocks.*;
 
@@ -132,6 +131,23 @@ public class ItemUtil {
 		return amount.startsWith("§7Anzahl: §e")
 			? Integer.parseInt(amount.substring(12).replace(".", "")) * itemStack.stackSize
 			: itemStack.stackSize;
+	}
+
+	public static NBTTagCompound safeCopy(NBTTagCompound tag) {
+		HashMap<String, NBTBase> tagMap = Reflection.get(tag, "tagMap");
+
+		int modCount;
+		NBTTagCompound newCompound;
+
+		do {
+			newCompound = new NBTTagCompound();
+			modCount = Reflection.get(tagMap, "modCount");
+
+			for (Map.Entry<String, NBTBase> entry : ConcurrentHashMapIterator.iterate(tagMap))
+				newCompound.setTag(entry.getKey(), entry.getValue());
+		} while (modCount != (int) Reflection.get(tagMap, "modCount"));
+
+		return newCompound;
 	}
 
 	public static ItemStack createItem(Item item, int meta, String name) { return createItem(new ItemStack(item, 1, meta), false, name); }

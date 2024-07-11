@@ -25,6 +25,9 @@ public class PlayerUtil {
 	 * @return the player's uuid.
 	 */
 	public static UUID getUUID(String name) {
+		if (mc().getNetHandler() == null)
+			return null;
+
 		for(NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
 			if(info.getGameProfile().getName().equalsIgnoreCase(name))
 				return info.getGameProfile().getId();

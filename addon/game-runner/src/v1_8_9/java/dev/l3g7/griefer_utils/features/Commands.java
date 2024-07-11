@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
@@ -120,11 +121,12 @@ public class Commands {
 			return;
 		}
 
-		for (String command : onCbCommands)
+		List<String> cbCommands = new ArrayList<>(onCbCommands);
+		for (String command : cbCommands)
 			if (!MessageSendEvent.post(command))
 				player().sendChatMessage(command);
 
-		onCbCommands.clear();
+		onCbCommands.removeAll(cbCommands);
 	}
 
 }

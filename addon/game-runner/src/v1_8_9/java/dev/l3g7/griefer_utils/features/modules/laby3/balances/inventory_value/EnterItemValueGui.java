@@ -26,9 +26,11 @@ import net.labymod.utils.Consumer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+
 public class EnterItemValueGui extends GuiScreen {
 
-	private final GuiScreen previousScreen = mc.currentScreen;
+	private final GuiScreen previousScreen = mc().currentScreen;
 	private final GuiScreen targetScreen;
 	private final Consumer<Long> callback;
 	private ModTextField textField = null;

@@ -6,13 +6,14 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
+import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MinecraftBridge;
 import dev.l3g7.griefer_utils.labymod.laby3.bridges.LabyBridgeImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.events.LabyModAddonsGuiOpenEvent;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModAddonsGui;
@@ -83,16 +84,15 @@ public class Laby3MinecraftBridgeImpl implements Laby3MinecraftBridge { // TODO 
 		mc().displayGuiScreen(new GuiChatNameHistory("", name));
 	}
 
+	@EventListener
+	private static void onMessage(MessageReceiveEvent event) {
+		originalMessage = event.message;
+	}
+
+	private static IChatComponent originalMessage;
+
 	@Mixin(value = TagManager.class, remap = false)
 	private static class MixinTagManager {
-
-		private static IChatComponent originalMessage;
-
-		@ModifyVariable(method = "tagComponent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-		private static Object injectTagComponent(Object value) {
-			originalMessage = ((IChatComponent) value).createCopy();
-			return value;
-		}
 
 		@ModifyVariable(method = "tagComponent", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;getConfigManager()Lnet/labymod/utils/manager/ConfigManager;", shift = At.Shift.BEFORE, ordinal = 0), ordinal = 0, argsOnly = true)
 		private static Object injectTagComponentReturn(Object value) {

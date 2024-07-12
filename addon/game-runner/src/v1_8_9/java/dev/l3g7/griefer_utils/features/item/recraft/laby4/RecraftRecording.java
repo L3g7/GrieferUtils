@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
+import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressPlayer;
 import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
@@ -52,9 +53,9 @@ import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.*;
-import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.CRAFT;
-import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.RECIPE;
+import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.ignoreSubIds;
+import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.playingSuccessor;
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.*;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class RecraftRecording extends net.labymod.api.configuration.loader.Config implements ListSettingConfig, dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording {
@@ -140,7 +141,15 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 			return true;
 		}
 
-		return !CraftPlayer.play(recording, recording::playSuccessor, false, false);
+		if (recording.mode().get() == CRAFT)
+			return !CraftPlayer.play(recording, recording::playSuccessor, false, false);
+
+		if (mode().get() == DECOMPRESS) {
+			TickScheduler.runAfterClientTicks(() -> DecompressPlayer.play(recording), 10);
+			return true;
+		}
+
+		return DecompressPlayer.play(recording);
 	}
 
 	public void startRecording() {

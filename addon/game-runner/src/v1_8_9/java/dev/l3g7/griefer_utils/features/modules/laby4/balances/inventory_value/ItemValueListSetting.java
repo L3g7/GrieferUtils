@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.ItemStackIcon;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
@@ -269,12 +270,19 @@ public class ItemValueListSetting extends ListSetting implements BaseSettingImpl
 		@Override
 		public Component displayName() {
 			// Use stripped name for settings
-			if ("initialize".equals(new Throwable().getStackTrace()[1].getMethodName()))
+			if ("initialize".equals(new Throwable().getStackTrace()[1].getMethodName())) // TODO find better way of detection
 				return Component.text(value.stack.getDisplayName());
 
 			return super.displayName();
 		}
 
+		@Override
+		public Icon getIcon() {
+			if ("initialize".equals(new Throwable().getStackTrace()[1].getMethodName()))
+				return new ItemStackIcon(c(value.stack), 2, -3, 1);
+
+			return super.getIcon();
+		}
 	}
 
 }

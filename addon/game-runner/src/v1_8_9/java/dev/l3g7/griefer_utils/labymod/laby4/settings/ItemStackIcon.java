@@ -19,20 +19,22 @@ public class ItemStackIcon extends Icon { // NOTE: move somewhere else
 
 	private final ItemStack icon;
 	private final int offsetX, offsetY;
+	private final float scale;
 
 	public ItemStackIcon(ItemStack icon) {
-		this(icon, 0, 0);
+		this(icon, 0, 0, 1);
 	}
 
 	public ItemStackIcon(ItemStack icon, boolean asEntry) {
-		this(icon, asEntry ? -2 : 0, asEntry ? -1 : 0);
+		this(icon, asEntry ? -2 : 0, asEntry ? -1 : 0, 1);
 	}
 
-	public ItemStackIcon(ItemStack icon, int offsetX, int offsetY) {
+	public ItemStackIcon(ItemStack icon, int offsetX, int offsetY, float scale) {
 		super(null);
 		this.icon = icon;
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
+		this.scale = scale;
 	}
 
 	@Override
@@ -49,9 +51,9 @@ public class ItemStackIcon extends Icon { // NOTE: move somewhere else
 		x += offsetX;
 		y += offsetY;
 
-		GlStateManager.scale(width / 16f, height / 16f, 1);
-		Laby.labyAPI().minecraft().itemStackRenderer().renderItemStack(stack, icon, (int) x, (int) y);
-		GlStateManager.scale(16f / width, 16f / height, 1);
+		GlStateManager.scale(width / 16f * scale, height / 16f * scale, 1);
+		Laby.labyAPI().minecraft().itemStackRenderer().renderItemStack(stack, icon, (int) (x / scale), (int) (y / scale));
+		GlStateManager.scale(16f / width / scale, 16f / height / scale, 1);
 	}
 
 }

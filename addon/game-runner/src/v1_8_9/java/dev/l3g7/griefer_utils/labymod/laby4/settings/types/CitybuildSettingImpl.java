@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.ItemStackIcon;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
@@ -26,6 +27,8 @@ import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWi
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.client.render.font.RenderableComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, Citybuild> implements CitybuildSetting {
 
@@ -58,7 +61,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 
 			if (activity != null) {
 				iconWidget.icon().set(getIcon());
-				activity.reload(); // NOTE: finer reload
+				activity.reload();
 			}
 		});
 		EventRegisterer.register(this);
@@ -66,7 +69,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 
 	@Override
 	protected Widget[] createWidgets() {
-		DropdownWidget<Citybuild> widget = new DropdownWidget<>(); // NOTE: render error
+		DropdownWidget<Citybuild> widget = new DropdownWidget<>();
 		widget.setSelected(get());
 		widget.setChangeListener(this::set);
 
@@ -88,7 +91,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 			}
 
 			private Component toComponent(Citybuild entry) {
-				return Component.icon(SettingsImpl.buildIcon(Citybuild.ANY.toItemStack()))
+				return Component.icon(new ItemStackIcon(c(entry.toItemStack()), -1, 0, 0.9f))
 					.append(Component.text(entry.getName()));
 			}
 

@@ -143,7 +143,7 @@ public class ItemValueListSetting extends ListSetting implements BaseSettingImpl
 
 			ItemValueEntry entry = new ItemValueEntry(value, i);
 			entry.name(value.stack.getDisplayName(),
-					"§o➡ " + Constants.DECIMAL_FORMAT_98.format(value.value) + "$")
+					"§f§o➡ " + Constants.DECIMAL_FORMAT_98.format(value.value) + "$")
 				.icon(value.stack);
 
 			entry.getChildSettings().forEach(s -> ((AbstractSetting<?, ?>) s).callback(this::notifyChange));

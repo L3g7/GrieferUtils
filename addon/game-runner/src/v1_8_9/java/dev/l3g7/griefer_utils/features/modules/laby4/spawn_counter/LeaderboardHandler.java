@@ -80,9 +80,9 @@ class LeaderboardHandler {
 	}
 
 	public void createLines() {
-		nextRank = new LeaderboardLine(false, +1);
+		nextRank = new LeaderboardLine(false, -1);
 		ownRank = new LeaderboardLine(true, 0);
-		previousRank = new LeaderboardLine(false, -1);
+		previousRank = new LeaderboardLine(false, +1);
 	}
 
 	public void tickLines() {

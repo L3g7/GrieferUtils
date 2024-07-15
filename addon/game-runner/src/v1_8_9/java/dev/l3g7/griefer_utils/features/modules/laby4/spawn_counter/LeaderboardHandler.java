@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.features.modules.laby4.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.DISABLED;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
@@ -95,7 +95,7 @@ class LeaderboardHandler {
 			tickOtherPlayerLine(data.next, nextRank);
 
 			ownRank.setState(VISIBLE);
-			ownRank.updateLeaderboardLine(UUID.fromString("88c0f579-0b37-4c12-81c0-84daa2801023"), "L3g7", data.score);
+			ownRank.updateLeaderboardLine(uuid(), name(), data.score);
 		} else {
 			previousRank.setState(DISABLED);  // FIXME widget editor fallback?
 			ownRank.setState(DISABLED);

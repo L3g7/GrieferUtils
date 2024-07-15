@@ -37,6 +37,7 @@ import org.lwjgl.input.Mouse;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.ADD_PLAYER;
 
 @Singleton
@@ -157,7 +158,7 @@ public class OrbSellerFix extends Feature {
 	private void spawnOrbSeller(int id) {
 		adding = true;
 		GameProfile gp = new GameProfile(UUID.randomUUID(), "§6Händler");
-		Property texture = new Property("textures", "ewogICJ0aW1lc3RhbXAiIDogMTU5OTY4NzI5NDUxNywKICAicHJvZmlsZUlkIiA6ICI4MmM2MDZjNWM2NTI0Yjc5OGI5MWExMmQzYTYxNjk3NyIsCiAgInByb2ZpbGVOYW1lIiA6ICJOb3ROb3RvcmlvdXNOZW1vIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2VmNjg2ZmJmMDE2ZTE0NThmN2Y5YTk4NTBmMzhlZjdmZDZhZTFkMjhiYzI0MWFjMGMwNjg2Zjc3ZmRiYjRiNjEiCiAgICB9CiAgfQp9", "T2RLCejF6IK/1AhIsSVIJWdPggI7p7Thg2tzi8VKxGtEvV4rTrZ+fu2o6J3vvPHt1JMZItouUumQzbiUsRF0gCF/xOJ+5O+sBl+iODrYVKbWp4ORcxSePKE3a5F0iBqalwGrQjAIXbLzARqW654Ma20FhlY4Th15RxVFJU/KFZ1Fv6bvKU0iW3c5GqxJy6Cb7bWjmg2sS1RnP3/44KvZtGEJOuW6WTQH1T12m3fGGbObsuxjVec3avtAu9nQ3vknPV6EYyVtv8VH/1wjEW2AkkMr0Zimy/3NpnUhUMOOpYcud4BHKAM/733ypfe+Qc4T6Fm8IYvopkvKNDxuZTd/ARlRHMlCUnTVScO+oox4HCEFnzgtLBBk3TPl6W8Ph3Rh55DabzWruf/WygVdFru1dfRs3hkmuEtNBlBfpH8FCjymz7b9ReQ3rHtZJbe+GBlIH8GuqZt1TrD1Xj2aSuOJwIku2GNnS0LUClTR5n17Nmr9yEzjsvdm0ac2ZJ2DOhLbUZufqcclo9eLdvzVO3dVo+lqOoWy/4yERRfUwc17cdGkLqhqFoWMnQftrYBFGDAi0nL3tmjd+2fTVSLhpFMgVl0fEu4aVN5C6t24oNwOUVvQi3hPTy2Rirs00sI8xrsU4Y1koRZBhZxOFg6Q77pePEQakeEHmhsIk1gW8JdrLDE=");
+		Property texture = new Property("textures", Base64.getEncoder().encodeToString("{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/ef686fbf016e1458f7f9a9850f38ef7fd6ae1d28bc241ac0c0686f77fdbb4b61\"}}}".getBytes(UTF_8)));
 		gp.getProperties().put("textures", texture);
 
 		// Add seller to tab list, required for the S0CPacketSpawnPlayer and the skin

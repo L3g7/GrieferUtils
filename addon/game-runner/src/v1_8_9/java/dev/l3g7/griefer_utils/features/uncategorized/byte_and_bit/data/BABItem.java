@@ -24,7 +24,7 @@ public class BABItem implements Comparable<BABItem> {
 
 	private static final DecimalFormat priceFormat = new DecimalFormat("###,###,###.##");
 	private final ItemStack stack;
-	final float price;
+	private final int price;
 	public AtomicInteger warehouseCount;
 
 	public Availability getAvailability() {
@@ -41,11 +41,11 @@ public class BABItem implements Comparable<BABItem> {
 		return stack;
 	}
 
-	public float getPrice() {
-		return price;
+	public double getPrice() {
+		return price / 100D;
 	}
 
-	public BABItem(float price, ItemStack stack, AtomicInteger warehouseCount) {
+	public BABItem(int price, ItemStack stack, AtomicInteger warehouseCount) {
 		this.price = price;
 		this.stack = stack;
 		this.warehouseCount = warehouseCount;
@@ -77,7 +77,7 @@ public class BABItem implements Comparable<BABItem> {
 		if (thisAmount > otherAmount) return 1;
 		if (thisAmount < otherAmount) return -1;
 
-		return Float.compare(this.price, o.getPrice());
+		return Integer.compare(this.price, o.price);
 	}
 
 	private static class VeloItem {
@@ -117,7 +117,7 @@ public class BABItem implements Comparable<BABItem> {
 
 				if (!enchantments.isEmpty()) ItemUtil.setEnchantments(stack, itemEnchantments);
 
-				items.add(new BABItem(price.price, stack, i));
+				items.add(new BABItem(Math.round(price.price * 100), stack, i));
 			}
 			return items;
 		}

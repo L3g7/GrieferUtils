@@ -53,7 +53,7 @@ public class BotshopGUI extends GuiBigChest {
 	final List<BABItem> boughtItems;
 	final List<BABItem> items;
 	final DecimalFormat priceFormat = new DecimalFormat("###,###,###.##");
-	List<Float> prices = new ArrayList<>();
+	List<Double> prices = new ArrayList<>();
 
 
 	private float price() {
@@ -277,7 +277,7 @@ public class BotshopGUI extends GuiBigChest {
 		} else if (!boughtItems.isEmpty()) {
 			addTextureItem(28, new TextureItem("coin_pile", "§a§lKaufen (" + priceStr() + ")", "§fBestätige deinen Einkauf"), () -> {
 				if (botname != null) {
-					for (float price : prices) {
+					for (double price : prices) {
 						ChatQueue.send("/pay " + botname + " " + price);
 					}
 				}

@@ -28,15 +28,19 @@ public class BABItem implements Comparable<BABItem> {
 	public AtomicInteger warehouseCount;
 
 	public Availability getAvailability() {
-		int count = warehouseCount.get();
-		return count > 0 ? (count > 7 * stack.stackSize ? Availability.AVAILABLE : Availability.SCARCE) : Availability.EMPTY;
+		if (stack.stackSize == 0)
+			return Availability.AVAILABLE;
+
+		int count = warehouseCount.get() / stack.stackSize;
+		return count > 0 ? (count > 7 ? Availability.AVAILABLE : Availability.SCARCE) : Availability.EMPTY;
 	}
 
 	public ItemStack getStack() {
 		ItemStack stack = this.stack.copy();
 		var lore = ItemUtil.getLore(stack);
 		lore.add("§r");
-		lore.add("§r" + String.format(getAvailability().name, (warehouseCount.get() / stack.stackSize)));
+		if(stack.stackSize != 0)
+			lore.add("§r" + String.format(getAvailability().name, (warehouseCount.get() / stack.stackSize)));
 		ItemUtil.setLore(stack, lore);
 		return stack;
 	}
@@ -100,7 +104,7 @@ public class BABItem implements Comparable<BABItem> {
 			ItemEnchantment[] itemEnchantments = enchantments.stream().map((e) -> new ItemEnchantment(e.id, e.level)).toArray(ItemEnchantment[]::new);
 			for (var price : this.prices) {
 				if (price.price == null) continue;
-				if (price.price <= 0) continue; // ankauf - TODO
+				if (price.price < 0) continue; // ankauf - TODO
 
 				ItemStack stack = new ItemStack(Blocks.stone, price.amount, 10000);
 				if (material.name != null) {

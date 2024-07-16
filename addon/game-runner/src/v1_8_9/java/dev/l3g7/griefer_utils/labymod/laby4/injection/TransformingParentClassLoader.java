@@ -109,6 +109,9 @@ public class TransformingParentClassLoader extends ClassLoader {
 			throw new ClassNotFoundException(name);
 		}
 
+		if (name.equals("net.labymod.api.loader.platform.PlatformClassloader$TransformerPhase"))
+			return getParent().loadClass(name);
+
 		if (classObject instanceof MutableClassObject)
 			((MutableClassObject) classObject).setData(transformedClass);
 

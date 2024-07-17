@@ -109,12 +109,13 @@ public class ChatReactor extends Feature {
 			return;
 
 		IChatComponent component = ChatLineUtil.getUnmodifiedIChatComponent(eventComponent);
+		if (component == null)
+			return;
 
 		for (SettingsElement element : ((SettingsElement) enabled).getSubSettings().getElements()) {
-			if (!(element instanceof ReactionDisplaySetting))
+			if (!(element instanceof ReactionDisplaySetting setting))
 				continue;
 
-			ReactionDisplaySetting setting = (ReactionDisplaySetting) element;
 			ChatReaction reaction = setting.reaction;
 
 			if (!reaction.citybuild.isOnCb())

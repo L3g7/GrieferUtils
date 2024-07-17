@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.util.ChatLineUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
@@ -80,6 +81,10 @@ public class ChatReactor extends Feature {
 	public static void triggerReactions(IChatComponent component) {
 		if (Laby4Util.isSettingOpened(enabled)
 			|| mc().currentScreen instanceof AddChatReactionGui)
+			return;
+
+		component = ChatLineUtil.getUnmodifiedIChatComponent(component);
+		if (component == null)
 			return;
 
 		for (BaseSetting<?> element : enabled.getChildSettings()) {

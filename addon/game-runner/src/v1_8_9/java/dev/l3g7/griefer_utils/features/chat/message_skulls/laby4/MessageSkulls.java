@@ -73,7 +73,7 @@ public class MessageSkulls extends Feature {
 		private final String name;
 
 		protected HeadIcon(String name) {
-			super(null);
+			super(() -> null, "https://fuck you labymod and your filter implementation");
 			this.name = name;
 		}
 

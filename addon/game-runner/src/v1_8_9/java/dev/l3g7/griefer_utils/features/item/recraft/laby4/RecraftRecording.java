@@ -82,6 +82,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 	public final ButtonSetting startRecording = ButtonSetting.create()
 		.name("Aufzeichnung starten")
 		.icon("camera")
+		.buttonIcon("recording_red")
 		.callback(this::startRecording);
 
 	public final RecraftSuccessorSetting successor = new RecraftSuccessorSetting();

@@ -187,7 +187,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 			super(new IconData("griefer_utils/icons/camera.png"));
 			setDisplayName("Aufzeichnung starten");
 			setDescriptionText("Beginnt die Aufzeichung.");
-			buttonIcon(new IconData("griefer_utils/icons/recording.png"));
+			buttonIcon(new IconData("griefer_utils/icons/recording_red.png"));
 			buttonCallback(() -> getCore().startRecording());
 		}
 

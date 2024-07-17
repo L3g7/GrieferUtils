@@ -98,7 +98,7 @@ public class MainPage {
 		settings.add(ButtonSetting.create()
 			.name("Wiki").icon("open_book")
 			.buttonIcon("open_book_outline")
-			.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/wiki")));
+			.callback(() -> labyBridge.openWebsite("https://grieferutils.wiki")));
 
 		// Ko-fi link
 		settings.add(ButtonSetting.create()

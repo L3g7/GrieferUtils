@@ -7,7 +7,6 @@ import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABBot;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABItem;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABItem.Availability;
@@ -23,6 +22,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.stream.DoubleStream;
 
@@ -35,6 +35,10 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
  * Currently very spaghet... May be cleaned up one day
  */
 public class BotshopGUI extends GuiBigChest {
+
+	public static final DecimalFormat PRICE_FORMAT_DE = new DecimalFormat("###,###,###.##", DecimalFormatSymbols.getInstance(Locale.GERMAN));
+	public static final DecimalFormat PRICE_FORMAT_EN = new DecimalFormat("###,###,###.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
 	private static final ResourceLocation SEARCH_TAB_TEXTURE = new ResourceLocation("textures/gui/container/creative_inventory/tab_item_search.png");
 	private static final ResourceLocation SCROLLBAR_TEXTURE = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
 	protected final ModTextField searchField;
@@ -52,7 +56,6 @@ public class BotshopGUI extends GuiBigChest {
 	public TreeSet<BABItem> itemsDisplayed;
 	final List<BABItem> boughtItems;
 	final List<BABItem> items;
-	final DecimalFormat priceFormat = new DecimalFormat("###,###,###.##");
 	List<Double> prices = new ArrayList<>();
 
 
@@ -61,7 +64,7 @@ public class BotshopGUI extends GuiBigChest {
 	}
 
 	private String priceStr() {
-		return priceFormat.format(price()) + "$";
+		return PRICE_FORMAT_DE.format(price()) + "$";
 	}
 
 	public BotshopGUI(BABBot bot) {
@@ -278,7 +281,7 @@ public class BotshopGUI extends GuiBigChest {
 			addTextureItem(28, new TextureItem("coin_pile", "§a§lKaufen (" + priceStr() + ")", "§fBestätige deinen Einkauf"), () -> {
 				if (botname != null) {
 					for (double price : prices) {
-						ChatQueue.send("/pay " + botname + " " + price);
+						ChatQueue.send("/pay " + botname + " " + PRICE_FORMAT_EN.format(price));
 					}
 				}
 				boughtItems.clear();

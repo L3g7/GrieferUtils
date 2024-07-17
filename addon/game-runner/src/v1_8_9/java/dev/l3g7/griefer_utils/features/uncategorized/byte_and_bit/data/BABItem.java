@@ -5,11 +5,11 @@ import com.google.gson.reflect.TypeToken;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.ItemUtil.ItemEnchantment;
+import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.gui.BotshopGUI;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
  */
 public class BABItem implements Comparable<BABItem> {
 
-	private static final DecimalFormat priceFormat = new DecimalFormat("###,###,###.##");
 	private final ItemStack stack;
 	private final int price;
 	public AtomicInteger warehouseCount;
@@ -114,7 +113,7 @@ public class BABItem implements Comparable<BABItem> {
 				}
 
 				stack.setRepairCost(repairCost);
-				stack.setStackDisplayName("§r" + displayName + " §r§a(" + priceFormat.format(price.price) + "$)");
+				stack.setStackDisplayName("§r" + displayName + " §r§a(" + BotshopGUI.PRICE_FORMAT_DE.format(price.price) + "$)");
 
 				if (!lore.isEmpty())
 					ItemUtil.setLore(stack, lore.stream().map(l -> l.lineContent).toArray(String[]::new));

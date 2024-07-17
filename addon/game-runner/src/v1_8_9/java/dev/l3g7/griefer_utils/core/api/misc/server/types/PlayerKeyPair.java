@@ -22,6 +22,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerKeyPair {
 
@@ -33,8 +34,10 @@ public class PlayerKeyPair {
 	@SerializedName("expiresAt")
 	private String expirationTime;
 
+	private static final ConcurrentHashMap<String, CompletableFuture<PlayerKeyPair>> cache = new ConcurrentHashMap<>();
+
 	public static CompletableFuture<PlayerKeyPair> getPlayerKeyPair(String authToken) {
-		return CompletableFuture.supplyAsync(() -> {
+		return cache.computeIfAbsent(authToken, key -> CompletableFuture.supplyAsync(() -> {
 			try {
 				HttpURLConnection c = (HttpURLConnection) URI.create("https://api.minecraftservices.com/player/certificates").toURL().openConnection();
 				c.setRequestMethod("POST");
@@ -52,7 +55,7 @@ public class PlayerKeyPair {
 			} catch (IOException e) {
 				return null;
 			}
-		});
+		}));
 	}
 
 	public PrivateKey getPrivateKey() throws NoSuchAlgorithmException, InvalidKeySpecException {

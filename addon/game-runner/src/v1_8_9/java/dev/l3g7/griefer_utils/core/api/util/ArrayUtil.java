@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.api.util;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
@@ -94,6 +96,27 @@ public class ArrayUtil {
 			.flatMap(Stream::of)
 			.collect(Collectors.toList())
 			.toArray((T[]) Array.newInstance(type, 0)));
+	}
+
+	/**
+	 * Merges two byte arrays into one.
+	 */
+	public static byte[] merge(byte[] a, byte[] b) {
+		byte[] result = new byte[a.length + b.length];
+		System.arraycopy(a, 0, result, 0, a.length);
+		System.arraycopy(b, 0, result, a.length, b.length);
+		return result;
+	}
+
+	/**
+	 * Splits a byte array at the given position.
+	 */
+	public static Pair<byte[], byte[]> split(byte[] array, int pos) {
+		byte[] a = new byte[pos];
+		byte[] b = new byte[array.length - pos];
+		System.arraycopy(array, 0, a, 0, pos);
+		System.arraycopy(array, pos, b, 0, b.length);
+		return Pair.of(a, b);
 	}
 
 }

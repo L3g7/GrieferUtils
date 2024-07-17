@@ -59,12 +59,11 @@ public class IOUtil {
 	}
 
 	/**
-	 * Writes the content to the file.
+	 * Writes the bytes to the file.
 	 */
-	public static void write(File file, String content) {
+	public static void write(File file, byte[] payload) {
 		file.getParentFile().mkdirs();
 
-		byte[] payload = content.getBytes(UTF_8);
 		try {
 			Files.write(file.toPath(), payload);
 		} catch (IOException e) {
@@ -76,6 +75,13 @@ public class IOUtil {
 
 			throw elevate(e);
 		}
+	}
+
+	/**
+	 * Writes the bytes to the file.
+	 */
+	public static void write(File file, String content) {
+		write(file, content.getBytes(UTF_8));
 	}
 
 	/**

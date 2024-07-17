@@ -7,8 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.transactions.laby3;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
@@ -31,6 +30,8 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.uncategorized.transactions.LocalTransactions;
+import dev.l3g7.griefer_utils.features.uncategorized.transactions.TempTransactionsBridge;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
@@ -47,9 +48,10 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
+@Bridge
 @Singleton
 @ExclusiveTo(LABY_3)
-public class Transactions extends Feature {
+public class Transactions extends Feature implements TempTransactionsBridge {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	private static final List<BaseSetting<?>> HEADER = Arrays.asList(
@@ -60,8 +62,8 @@ public class Transactions extends Feature {
 		HeaderSetting.create("§c§nDie Beträge sind abgerundet§c!").scale(.7)
 	);
 
-	private final Set<Transaction> transactions = Collections.synchronizedSet(new TreeSet<>());
-	private final Gson PRETTY_PRINTING_GSON = new GsonBuilder().setPrettyPrinting().create();
+	private Set<Transaction> transactions = Collections.synchronizedSet(new TreeSet<>());
+	private boolean firstRequest = false;
 
 	@MainElement
 	private final CategorySetting setting = CategorySetting.create()
@@ -74,7 +76,13 @@ public class Transactions extends Feature {
 
 	@EventListener
 	public void onMMPacket(MMPacketReceiveEvent<TransactionsPacket> event) {
-		transactions.addAll(event.packet.transactions);
+		if (firstRequest && event.packet.transactions.isEmpty()) {
+			transactions = LocalTransactions.transactions;
+			firstRequest = false;
+		} else {
+			transactions.addAll(event.packet.transactions);
+		}
+
 		updateSettings();
 	}
 
@@ -86,6 +94,7 @@ public class Transactions extends Feature {
 				.description("Zeigt die Transaktionen der letzen 30 Tage an.");
 			((ControlElement) setting).setSettingEnabled(true);
 
+			firstRequest = true;
 			MysteryModConnection.requestTransactions();
 		} else {
 			setting.name("§c§mTransaktionen")
@@ -93,7 +102,7 @@ public class Transactions extends Feature {
 		}
 	}
 
-	private void updateSettings() {
+	public void updateSettings() {
 		List<SettingsElement> list = ((ControlElement) setting).getSubSettings().getElements();
 
 		list.clear();
@@ -164,8 +173,12 @@ public class Transactions extends Feature {
 	}
 
 	public void onInit() {
-		if (path().get(path().size() - 1) == setting)
-			MysteryModConnection.requestTransactions();
+		if (path().get(path().size() - 1) == setting) {
+			if (transactions != LocalTransactions.transactions)
+				MysteryModConnection.requestTransactions();
+			else
+				updateSettings();
+		}
 	}
 
 	public static ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }

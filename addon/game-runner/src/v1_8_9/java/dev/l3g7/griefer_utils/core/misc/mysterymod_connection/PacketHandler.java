@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.Packet;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.auth.*;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.keep_alive.KeepAliveACKPacket;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.keep_alive.KeepAlivePacket;
-import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.util.CryptUtil;
+import dev.l3g7.griefer_utils.core.api.util.CryptUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.util.Session;
@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.security.PublicKey;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 
@@ -40,15 +41,14 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 		else if (packet instanceof LoginRequestPacket)
 			ctx.writeAndFlush(new LoginStartPacket(mc().getSession().getProfile().getId()));
 
-		else if (packet instanceof LoginEncryptionPacket) {
-			LoginEncryptionPacket res = (LoginEncryptionPacket) packet;
+		else if (packet instanceof LoginEncryptionPacket res) {
 			Session session = mc().getSession();
 			PublicKey publicKey = CryptUtil.decodePublicKey(res.sharedSecret);
 			SecretKey secretkey = CryptUtil.generateKey();
 			String serverId = new BigInteger(CryptUtil.getServerIdHash(res.serverId, CryptUtil.decodePublicKey(res.sharedSecret), secretkey)).toString(16);
 			try {
 				mc().getSessionService().joinServer(session.getProfile(), session.getToken(), serverId);
-				ctx.writeAndFlush(new LoginAuthenticationPacket(session.getProfile().getId(), session.getUsername(), CryptUtil.encryptData(publicKey, secretkey.getEncoded()), CryptUtil.encryptData(publicKey, res.verifyToken), MYSTERY_MOD_VERSION, MINECRAFT_VERSION));
+				ctx.writeAndFlush(new LoginAuthenticationPacket(session.getProfile().getId(), session.getUsername(), CryptUtil.rsaDigest(publicKey, secretkey.getEncoded(), ENCRYPT_MODE), CryptUtil.rsaDigest(publicKey, res.verifyToken, ENCRYPT_MODE), MYSTERY_MOD_VERSION, MINECRAFT_VERSION));
 			} catch (AuthenticationUnavailableException e) {
 				e.printStackTrace();
 				MysteryModConnection.setState(ctx, State.SESSION_SERVERS_UNAVAILABLE);

@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.transactions.laby4;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -23,6 +24,8 @@ import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.uncategorized.transactions.LocalTransactions;
+import dev.l3g7.griefer_utils.features.uncategorized.transactions.TempTransactionsBridge;
 import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
@@ -39,13 +42,15 @@ import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
+@Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
-public class Transactions extends Feature { // NOTE: search, export
+public class Transactions extends Feature implements TempTransactionsBridge { // NOTE: search, export
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-	private final Set<Transaction> transactions = Collections.synchronizedSet(new TreeSet<>());
+	private Set<Transaction> transactions = Collections.synchronizedSet(new TreeSet<>());
+	private boolean firstRequest = false;
 
 	@MainElement
 	private final CategorySetting setting = CategorySetting.create()
@@ -56,7 +61,13 @@ public class Transactions extends Feature { // NOTE: search, export
 
 	@EventListener
 	public void onMMPacket(MMPacketReceiveEvent<TransactionsPacket> event) {
-		transactions.addAll(event.packet.transactions);
+		if (firstRequest && event.packet.transactions.isEmpty()) {
+			transactions = LocalTransactions.transactions;
+			firstRequest = false;
+		} else {
+			transactions.addAll(event.packet.transactions);
+		}
+
 		updateSettings();
 	}
 
@@ -67,6 +78,7 @@ public class Transactions extends Feature { // NOTE: search, export
 			setting.name("Transaktionen")
 				.description("Zeigt die Transaktionen der letzen 30 Tage an.")
 				.enable();
+			firstRequest = true;
 			MysteryModConnection.requestTransactions();
 		} else {
 			setting.name("§cTransaktionen")
@@ -77,9 +89,11 @@ public class Transactions extends Feature { // NOTE: search, export
 
 	@EventListener
 	public void onInit(SettingActivityInitEvent event) {
-		if (event.holder() == setting) {
-			if (!event.isReload)
+		if (event.holder() == setting && !event.isReload) {
+			if (transactions != LocalTransactions.transactions)
 				MysteryModConnection.requestTransactions();
+			else
+				updateSettings();
 		}
 
 		// Fix title for subsettings
@@ -92,7 +106,7 @@ public class Transactions extends Feature { // NOTE: search, export
 		}
 	}
 
-	private void updateSettings() {
+	public void updateSettings() {
 		List<BaseSetting<?>> list = setting.getChildSettings();
 
 		list.clear();
@@ -105,7 +119,7 @@ public class Transactions extends Feature { // NOTE: search, export
 		// Add transactions
 		List<Transaction> transactions = new ArrayList<>(this.transactions);
 		for (Transaction t : transactions) {
-			if (t.recipientname == null || t.recipientname.equals("muchelchen") || t.recipientname.equals("1Stocki") || t.username.equals("L3g73"))
+			if (t.recipientname == null)
 				continue;
 
 			Direction direction = Direction.get(t);

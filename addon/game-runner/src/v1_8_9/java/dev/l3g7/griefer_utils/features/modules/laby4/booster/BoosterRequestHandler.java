@@ -8,36 +8,34 @@
 package dev.l3g7.griefer_utils.features.modules.laby4.booster;
 
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.api.misc.DebounceTimer;
 import dev.l3g7.griefer_utils.core.misc.server.GUClient;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 class BoosterRequestHandler {
 
-	private static long lastSendTime = 0;
+	private static final DebounceTimer TIMER = new DebounceTimer("Booster", 1000);
+
 	private static Citybuild currentCitybuild = Citybuild.ANY;
 
 	static void sendBoosterData(Collection<Booster.BoosterData> boosters) {
 		if (!GUClient.get().isAvailable())
 			return;
 
-		long sendTime = lastSendTime = System.currentTimeMillis();
+		TIMER.schedule(() -> {
+			Map<String, List<Long>> value = new HashMap<>();
 
-		new Timer("GrieferUtils-Booster-Timer", true).schedule(new TimerTask() {
-			public void run() {
-				if (lastSendTime != sendTime)
-					return;
+			for (Booster.BoosterData data : boosters)
+				value.put(data.displayName.toLowerCase(), data.expirationDates.stream().map(l -> l / 1000).collect(Collectors.toList()));
 
-				Map<String, List<Long>> value = new HashMap<>();
-
-				for (Booster.BoosterData data : boosters)
-					value.put(data.displayName.toLowerCase(), data.expirationDates.stream().map(l -> l / 1000).collect(Collectors.toList()));
-
-				GUClient.get().sendBoosterData(MinecraftUtil.getCurrentCitybuild(), value);
-			}
-		}, 1000);
+			GUClient.get().sendBoosterData(MinecraftUtil.getCurrentCitybuild(), value);
+		});
 	}
 
 	static void requestBoosterData(Citybuild citybuild, Collection<Booster.BoosterData> boosters, Runnable callback) {

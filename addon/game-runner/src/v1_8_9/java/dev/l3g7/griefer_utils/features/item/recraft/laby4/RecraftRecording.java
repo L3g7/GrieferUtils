@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -73,6 +74,11 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 		icon = stack;
 	}
 
+	@Override
+	public void updateStartRecordingIcon(String icon) {
+		startRecording.buttonIcon(icon);
+	}
+
 	public final ButtonSetting startRecording = ButtonSetting.create()
 		.name("Aufzeichnung starten")
 		.icon("camera")
@@ -82,14 +88,16 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 
 	public RecraftRecording(String name) {
 		name().set(name);
-		if (!"Leere Aufzeichnung".equals(name)) { // cursed
-			name().callback(RecraftBridgeImpl.pages::notifyChange);
-			key().callback(RecraftBridgeImpl.pages::notifyChange);
-			ignoreSubIds().callback(RecraftBridgeImpl.pages::notifyChange);
-			mode().callback(RecraftBridgeImpl.pages::notifyChange);
-			craftAll().callback(RecraftBridgeImpl.pages::notifyChange);
-			successor.callback(RecraftBridgeImpl.pages::notifyChange);
-		}
+		name().callback(s -> {
+			RecraftBridgeImpl.pages.notifyChange();
+			Laby4Util.setPageTitle(s);
+		});
+
+		key().callback(RecraftBridgeImpl.pages::notifyChange);
+		ignoreSubIds().callback(RecraftBridgeImpl.pages::notifyChange);
+		mode().callback(RecraftBridgeImpl.pages::notifyChange);
+		craftAll().callback(RecraftBridgeImpl.pages::notifyChange);
+		successor.callback(RecraftBridgeImpl.pages::notifyChange);
 	}
 
 	public void create(Object parent) {
@@ -120,7 +128,6 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 
 	@Override
 	public @NotNull List<Setting> toSettings(@Nullable Setting parent, SpriteTexture texture) {
-		startRecording.buttonIcon(actions().isEmpty() ? "recording_red" : "recording_white");
 		return Arrays.asList((Setting) name(), (Setting) key(), (Setting) ignoreSubIds(), (Setting) mode(), (Setting) craftAll(), (Setting) startRecording, new HeaderSettingImpl("Nachfolgende Aufzeichnung"), successor);
 	}
 
@@ -245,7 +252,6 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 					for (JsonElement jsonAction : jsonActions)
 						recording.actions().add(recording.mode().get().actionParser.apply(jsonAction));
 
-
 					if (object.has("successor")) {
 						int index = object.get("successor").getAsInt();
 
@@ -312,11 +318,12 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 		@Override
 		public ListSettingEntry createNew() {
 			RecraftRecording config = new RecraftRecording("Unbenannte Aufzeichnung");
+			config.updateStartRecordingIcon();
 			get().add(config);
 
 			ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), get().size()) {
 				public Icon getIcon() {
-					return SettingsImpl.buildIcon(config.icon);
+					return new RecraftRecordingIcon(config);
 				}
 			};
 
@@ -340,7 +347,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 					ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i) {
 						@Override
 						public Icon getIcon() {
-							return SettingsImpl.buildIcon(config.icon);
+							return new RecraftRecordingIcon(config);
 						}
 					};
 					entry.addSettings(config);

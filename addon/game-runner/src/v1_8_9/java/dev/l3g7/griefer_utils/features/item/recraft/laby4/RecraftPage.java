@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -55,7 +56,10 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 		.name("Name")
 		.description("Wie diese Seite heißen soll.")
 		.icon(Items.writable_book)
-		.callback(pages::notifyChange);
+		.callback(s -> {
+			pages.notifyChange();
+			Laby4Util.setPageTitle(s);
+		});
 
 	public final RecraftRecording.RecraftRecordingListSetting recordings = new RecraftRecording.RecraftRecordingListSetting()
 		.name("Aufzeichnungen")

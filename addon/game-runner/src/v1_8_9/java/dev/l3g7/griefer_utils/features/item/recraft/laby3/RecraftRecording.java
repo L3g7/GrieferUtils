@@ -32,6 +32,7 @@ import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.settings.LabyModAddonsGui;
+import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
@@ -49,7 +50,6 @@ import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.
 
 public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording {
 
-	private final String[] ROMAN_NUMERALS = new String[] {"", "I", "II", "III", "IV", "V", "VI", "VII"};
 	private final RecraftRecordingCore core = new RecraftRecordingCore(this);
 	private ItemStack icon;
 
@@ -63,8 +63,14 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 		icon = stack;
 	}
 
+	@Override
+	public void updateStartRecordingIcon(String icon) {
+		startRecordingSetting.buttonIcon(new IconData("griefer_utils/icons/" + icon + ".png"));
+	}
+
 	public final RecraftRecordingSelectionSetting successor = new RecraftRecordingSelectionSetting(this);
 
+	private final StartRecordingButtonSetting startRecordingSetting = new StartRecordingButtonSetting();
 	public final RecordingDisplaySetting mainSetting;
 
 	public RecraftRecording() {
@@ -176,10 +182,6 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 	private class StartRecordingButtonSetting extends SmallButtonSetting implements Laby3Setting<StartRecordingButtonSetting, Object> {
 
 		private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
-		@Override
-		protected void drawButtonIcon(IconData buttonIcon, int buttonX, int buttonY) {
-			super.drawButtonIcon(new IconData("griefer_utils/icons/recording_" + (actions().isEmpty() ? "red" : "white") + ".png"), buttonX, buttonY);
-		}
 
 		public StartRecordingButtonSetting() {
 			super(new IconData("griefer_utils/icons/camera.png"));
@@ -204,7 +206,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 			super(true, true, true, new IconData(Material.BARRIER));
 			setDisplayName("Unbenannte Aufzeichnung");
 			subSettings();
-			getSubSettings().addAll(c(new ArrayList<>(Arrays.asList(RecraftRecording.this.name(), key(), mode(), ignoreSubIds(), HeaderSetting.create(), new StartRecordingButtonSetting(),
+			getSubSettings().addAll(c(new ArrayList<>(Arrays.asList(RecraftRecording.this.name(), key(), mode(), ignoreSubIds(), HeaderSetting.create(), startRecordingSetting,
 				HeaderSetting.create().entryHeight(10), HeaderSetting.create("Nachfolgende Aufzeichnung"), successor))));
 		}
 

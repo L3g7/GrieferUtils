@@ -33,7 +33,7 @@ import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.
  */
 public class RecraftRecordingCore {
 
-	public LinkedList<RecraftAction> actions = new LinkedList<>();
+	public ActionList actions = new ActionList();
 	private final RecraftRecording wrapper;
 
 	final StringSetting name = StringSetting.create()
@@ -102,6 +102,23 @@ public class RecraftRecordingCore {
 		@Override
 		public String getName() {
 			return displayName;
+		}
+
+	}
+
+	private class ActionList extends LinkedList<RecraftAction> {
+
+		@Override
+		public boolean add(RecraftAction element) {
+			boolean result = super.add(element);
+			wrapper.updateStartRecordingIcon();
+			return result;
+		}
+
+		@Override
+		public void clear() {
+			super.clear();
+			wrapper.updateStartRecordingIcon();
 		}
 
 	}

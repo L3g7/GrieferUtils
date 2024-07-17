@@ -8,8 +8,8 @@
 package dev.l3g7.griefer_utils.labymod.laby4.events;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.labymod.laby4.bridges.LabyBridgeImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;

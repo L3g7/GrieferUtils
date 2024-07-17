@@ -11,22 +11,23 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.core.events.TileEntityDataSetEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer;
 import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderObject;
 import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -59,6 +60,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.*;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 @Singleton
@@ -139,6 +141,11 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 
 		if (!spawnerWithHeldItemFix.get() || event.stack == null)
 			return;
+
+		if (FileProvider.getBridge(TempItemSaverBridge.class).isProtected(event.stack)) {
+			labyBridge.notify("§cItemSaver", "§cDas Item in deiner Hand ist im ItemSaver!");
+			return;
+		}
 
 		event.cancel();
 

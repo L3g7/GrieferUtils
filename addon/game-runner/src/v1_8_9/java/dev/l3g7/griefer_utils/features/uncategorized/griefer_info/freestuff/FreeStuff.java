@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChes
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiList;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import net.labymod.api.Laby;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -80,7 +81,8 @@ public class FreeStuff {
 		if (!isCbFiltered)
 			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getName()), stack.getDisplayName()));
 
-		List<String> lines = items.keySet().stream().map(it -> "  §f" + it.germanName).collect(Collectors.toList());
+		boolean fancy = Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
+		List<String> lines = items.keySet().stream().map(it -> (fancy ? "  " : "") +  "  §f" + it.germanName).collect(Collectors.toList());
 
 		if (lines.size() > 10) {
 			int extraLines = lines.size() - 10;

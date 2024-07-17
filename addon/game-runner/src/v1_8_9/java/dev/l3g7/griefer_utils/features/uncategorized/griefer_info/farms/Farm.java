@@ -10,13 +10,14 @@ package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.chat.BetterSwitchCommand;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.FreeStuff;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest.TextureItem;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiList;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import net.labymod.api.Laby;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -138,15 +139,18 @@ public class Farm {
 		for (Spawner spwnr : this.spawner)
 			spawner.computeIfAbsent(spwnr.type, t -> new AtomicInteger()).getAndAdd(spwnr.amount);
 
+		boolean fancy = Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
+		String format = (fancy ? "  " : "") + "  §f%s §8(%dx)";
+
 		if (typeFilter != null && spawner.containsKey(typeFilter)) {
 			int amount = spawner.get(typeFilter).get();
 			spawner.remove(typeFilter);
 
-			lines.add(String.format("  §f%s §8(%dx)", typeFilter.germanName, amount));
+			lines.add(String.format(format, typeFilter.germanName, amount));
 			textureList.appendTag(new NBTTagString(typeFilter.texture));
 		}
 
-		lines.addAll(spawner.entrySet().stream().map(e -> String.format("  §f%s §8(%dx)", e.getKey().germanName, e.getValue().get())).collect(Collectors.toList()));
+		lines.addAll(spawner.entrySet().stream().map(e -> String.format(format, e.getKey().germanName, e.getValue().get())).collect(Collectors.toList()));
 		if (lines.size() > 10) {
 			int extraLines = lines.size() - 10;
 			while (lines.size() > 10)

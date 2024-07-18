@@ -140,12 +140,12 @@ public class OrbStats extends Laby4Module {
 		Config.save();
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onGuiOpen(GuiOpenEvent<GuiChest> event) {
 		lastScreen = event.gui;
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void loadConfig(GrieferGamesJoinEvent ignored) {
 		lastItem = null;
 		stats.clear();
@@ -173,7 +173,7 @@ public class OrbStats extends Laby4Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMsgReceive(MessageReceiveEvent event) {
 		Matcher matcher = ORB_SELL_PATTERN.matcher(event.message.getUnformattedText());
 		if (!matcher.matches())
@@ -193,7 +193,7 @@ public class OrbStats extends Laby4Module {
 		saveConfig();
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onTick(TickEvent.ClientTickEvent event) {
 		if (!ServerCheck.isOnCitybuild() || !(mc().currentScreen instanceof GuiChest))
 			return;

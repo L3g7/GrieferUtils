@@ -69,7 +69,7 @@ public class OrbStats extends Laby3Module {
 
 	private static final Pattern RANKING_PATTERN = Pattern.compile("§7(?<item>.*): §e(?<amount>[0-9]+).*");
 	public static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
-	private static final Map<String, String> GUI_TO_CHAT_MAPPING = new HashMap<String, String>() {{
+	private static final Map<String, String> GUI_TO_CHAT_MAPPING = new HashMap<>() {{
 		put("Hasenfelle", "Hasenfell");
 		put("Rohe Fische", "Roher Fisch");
 		put("Roche Lachse", "Roher Lachs");
@@ -139,10 +139,11 @@ public class OrbStats extends Laby3Module {
 		return new String[]{"?"};
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onGuiOpen(GuiOpenEvent<GuiChest> event) {
 		lastScreen = event.gui;
 	}
+
 	public static String getUUIDFromSkullTexture(ItemStack itemStack) {
 		if (itemStack == null || itemStack.getItem() != Items.skull || !itemStack.hasTagCompound())
 			return null;
@@ -163,7 +164,7 @@ public class OrbStats extends Laby3Module {
 		return uuidString.replaceFirst("^(.{8})(.{4})(.{4})(.{4})(.{12})$", "$1-$2-$3-$4-$5");
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onTick(TickEvent.ClientTickEvent event) {
 		if (!ServerCheck.isOnCitybuild() || !(mc.currentScreen instanceof GuiChest))
 			return;
@@ -217,7 +218,7 @@ public class OrbStats extends Laby3Module {
 	}
 
 	public static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>[\\S ]+) für (?<orbs>[\\d.]+) Orbs verkauft\\.$");
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onMsgReceive(MessageReceiveEvent event) {
 		Matcher matcher = ORB_SELL_PATTERN.matcher(event.message.getUnformattedText());
 		if (!matcher.matches())
@@ -273,7 +274,7 @@ public class OrbStats extends Laby3Module {
 		}
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void loadConfig(GrieferGamesJoinEvent ignored) {
 		lastItem = null;
 		stats.clear();

@@ -55,8 +55,7 @@ import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel
  * {@link dev.l3g7.griefer_utils.core.api.util.IOUtil} and
  * {@link dev.l3g7.griefer_utils.core.api.reflection.Reflection}.
  */
-public class AutoUpdater { // FIXME untested
-	// NOTE: probably won't work in Java 8
+public class AutoUpdater {
 
 	// DigiCert's Global Root G2 certificate
 	// Used by the api server, l3g7.dev, and missing on older versions of Java, so it has to be added manually.
@@ -107,7 +106,7 @@ public class AutoUpdater { // FIXME untested
 			return;
 
 		// Get info about the latest release
-		InputStream in = read("https://grieferutils.l3g7.dev/v4/latest_release");
+		InputStream in = read("https://grieferutils.l3g7.dev/v5/latest_release");
 
 		// Check if the server could be reached
 		if (in == null)
@@ -249,7 +248,12 @@ public class AutoUpdater { // FIXME untested
 	private static void removeURLFromClassLoaders(URL urlToRemove) throws Throwable {
 
 		// Create store accessors
-		Class<?> urlClassPathClass = Class.forName("jdk.internal.loader.URLClassPath");
+		Class<?> urlClassPathClass;
+		try {
+			urlClassPathClass = Class.forName("jdk.internal.loader.URLClassPath");
+		} catch (NoClassDefFoundError | ClassNotFoundException e) {
+			urlClassPathClass = Class.forName("sun.misc.URLClassPath"); // NOTE: beautify
+		}
 		MethodHandle ucpGetter = LOOKUP.findGetter(URLClassLoader.class, "ucp", urlClassPathClass);
 		MethodHandle pathGetter = LOOKUP.findGetter(urlClassPathClass, "path", ArrayList.class);
 		MethodHandle lmapGetter = LOOKUP.findGetter(urlClassPathClass, "lmap", HashMap.class);

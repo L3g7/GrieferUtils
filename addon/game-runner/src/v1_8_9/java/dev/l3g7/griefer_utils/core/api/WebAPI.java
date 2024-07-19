@@ -32,7 +32,7 @@ public class WebAPI {
 		if (data != null)
 			return;
 
-		IOUtil.read("https://grieferutils.l3g7.dev/v4").asJsonObject(object -> {
+		IOUtil.read("https://grieferutils.l3g7.dev/v5").asJsonObject(object -> {
 			data = GSON.fromJson(object, Data.class);
 			new WebDataReceiveEvent(data).fire();
 		});

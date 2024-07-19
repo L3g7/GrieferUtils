@@ -17,7 +17,7 @@ public class ReleaseInfo {
 	public enum ReleaseChannel implements Named {
 
 		STABLE("Stabil", "https://github.com/L3g7/GrieferUtils/releases/download/v{version}/griefer-utils-v{version}.jar"),
-		BETA("Beta", "https://grieferutils.l3g7.dev/v4/nightly_builds/griefer-utils-v{version}.jar");
+		BETA("Beta", "https://grieferutils.l3g7.dev/v5/nightly_builds/griefer-utils-v{version}.jar");
 
 		final String name;
 		final String downloadURL;

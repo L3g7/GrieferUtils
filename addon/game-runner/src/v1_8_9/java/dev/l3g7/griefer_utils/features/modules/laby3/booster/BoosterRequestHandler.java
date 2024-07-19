@@ -76,10 +76,10 @@ class BoosterRequestHandler {
 	}
 
 	static void deleteBoosterData() {
+		Citybuild citybuild = currentCitybuild;
 		if (currentCitybuild == null || !GUClient.get().isAvailable())
 			return;
 
-		Citybuild citybuild = currentCitybuild;
 		currentCitybuild = null;
 		new Thread(() -> GUClient.get().sendBoosterData(citybuild, null)).start();
 	}

@@ -63,7 +63,7 @@ public class LocalTransactions {
 				return;
 		}
 
-		double amount = Double.parseDouble(matcher.group("amount"));
+		double amount = Double.parseDouble(matcher.group("amount").replace(",", ""));
 		String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
 		UUID uuid = mc().getNetHandler().getPlayerInfo(name).getGameProfile().getId();
 

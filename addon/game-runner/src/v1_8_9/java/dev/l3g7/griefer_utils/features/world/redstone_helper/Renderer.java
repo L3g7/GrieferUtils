@@ -140,12 +140,12 @@ public class Renderer {
 
 			int newSize = byteBuffer.capacity() + increase;
 			LogManager.getLogger().warn("[GU] Needed to grow BufferBuilder buffer: Old size " + byteBuffer.capacity() + " bytes, new size " + newSize + " bytes.");
-			ByteBuffer bytebuffer = GLAllocation.createDirectByteBuffer(newSize);
+			ByteBuffer buf = GLAllocation.createDirectByteBuffer(newSize);
 			// Invoke position of superclass because ByteBuffer#position doesn't exist in Java 8
 			((Buffer) this.byteBuffer).position(0);
-			bytebuffer.put(this.byteBuffer);
-			bytebuffer.position(0);
-			this.byteBuffer = bytebuffer;
+			buf.put(this.byteBuffer);
+			((Buffer) buf).position(0);
+			this.byteBuffer = buf;
 		}
 
 		public void endVertex() {

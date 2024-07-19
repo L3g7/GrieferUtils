@@ -106,10 +106,20 @@ public class Transactions extends Feature implements TempTransactionsBridge {
 		List<SettingsElement> list = ((ControlElement) setting).getSubSettings().getElements();
 
 		list.clear();
-		list.addAll(c(HEADER));
+		list.addAll(c(Arrays.asList(
+			HeaderSetting.create("§r"),
+			HeaderSetting.create("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
+			HeaderSetting.create("§f§lTransaktionen").scale(.7).entryHeight(7),
+			HeaderSetting.create("§fder letzten 30 Tage").scale(.7).entryHeight(10)
+		)));
+		if (transactions != LocalTransactions.transactions)
+			list.add(c(HeaderSetting.create("§c§nDie Beträge sind abgerundet§c!").scale(.7)));
 
 		// Add transactions count
-		list.add(new HeaderSettingImpl("Insgesamt " + (transactions.size() == 1 ? "eine Transaktion" : transactions.size() + " Transaktionen")));
+		String subHeader = "Insgesamt " + (transactions.size() == 1 ? "eine Transaktion" : transactions.size() + " Transaktionen");
+		if (transactions == LocalTransactions.transactions)
+			subHeader += " §e(nicht synchronisiert)";
+		list.add(new HeaderSettingImpl(subHeader));
 		list.add((HeaderSettingImpl) new HeaderSettingImpl("§r").scale(.4).entryHeight(10));
 
 		// Add filter

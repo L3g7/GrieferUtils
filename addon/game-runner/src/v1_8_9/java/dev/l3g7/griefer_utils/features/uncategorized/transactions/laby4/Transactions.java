@@ -110,11 +110,20 @@ public class Transactions extends Feature implements TempTransactionsBridge { //
 		List<BaseSetting<?>> list = setting.getChildSettings();
 
 		list.clear();
-		list.add(HeaderSetting.createText("Transaktionen der letzten 30 Tage").center());
+
+		String header = "Transaktionen der letzten 30 Tage";
+		if (transactions != LocalTransactions.transactions)
+			header += "\n§c§nDie Beträge sind abgerundet!";
+
+		list.add(HeaderSetting.createText(header).center());
 
 		// Add transactions count
 		list.add(HeaderSetting.create("§r"));
-		list.add(HeaderSetting.create("Insgesamt " + (transactions.size() == 1 ? "eine Transaktion" : transactions.size() + " Transaktionen")));
+		String subHeader = "Insgesamt " + (transactions.size() == 1 ? "eine Transaktion" : transactions.size() + " Transaktionen");
+		if (transactions == LocalTransactions.transactions)
+			subHeader += " §e(nicht synchronisiert)";
+
+		list.add(HeaderSetting.create(subHeader));
 
 		// Add transactions
 		List<Transaction> transactions = new ArrayList<>(this.transactions);

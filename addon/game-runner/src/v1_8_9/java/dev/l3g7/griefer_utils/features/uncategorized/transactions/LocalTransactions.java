@@ -67,6 +67,10 @@ public class LocalTransactions {
 		String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
 		UUID uuid = mc().getNetHandler().getPlayerInfo(name).getGameProfile().getId();
 
+		if (name.equals(name()) && received)
+			// Show transactions to yourself only once
+			return;
+
 		Transaction transaction = new Transaction();
 		transaction.id = idCounter++;
 		transaction.username = received ? name : name();

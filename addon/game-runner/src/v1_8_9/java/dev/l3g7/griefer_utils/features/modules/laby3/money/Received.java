@@ -48,6 +48,7 @@ import static java.math.BigDecimal.ZERO;
 public class Received extends Laby3Module {
 
 	static BigDecimal moneyReceived = ZERO;
+	private static boolean initialized = false; // NOTE cleanup
 	private long nextReset = -1;
 
 	private final SwitchSetting resetSetting = SwitchSetting.create()
@@ -56,6 +57,9 @@ public class Received extends Laby3Module {
 		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
 		.config("modules.money_received.automatically_reset")
 		.callback(b -> {
+			if (!initialized)
+				return;
+
 			if (!b)
 				nextReset = -1;
 			else
@@ -70,6 +74,9 @@ public class Received extends Laby3Module {
 		.icon(ModTextures.SETTINGS_DEFAULT_USE_DEFAULT_SETTINGS)
 		.config("modules.money_received.reset_after_restart")
 		.callback(shouldReset -> {
+			if (!initialized)
+				return;
+
 			if (shouldReset)
 				Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".received", new JsonPrimitive(ZERO));
 			else
@@ -144,6 +151,8 @@ public class Received extends Laby3Module {
 			nextReset = Config.get(path + "next_reset").getAsLong();
 			resetSetting.set(nextReset != -1);
 		}
+
+		initialized = true;
 	}
 
 	protected static BigDecimal setBalance(BigDecimal newValue) {

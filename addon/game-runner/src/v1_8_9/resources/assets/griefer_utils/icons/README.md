@@ -103,8 +103,16 @@
     <td><a href="https://assets.mcasset.cloud/1.19.2/assets/minecraft/textures/item/bundle_filled.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><a href="byte_and_bit.png"><img src="byte_and_bit.png" height=16em width=16em />&nbsp;&nbsp;byte_and_bit.png </a></td>
+    <td><a href="https://byteandbit.store/">ByteAndBit Studio</a></td>
+  </tr>
+  <tr>
     <td><a href="calculator.png"><img src="calculator.png" height=16em width=16em />&nbsp;&nbsp;calculator.png </a></td>
     <td><a href="https://apps.apple.com/us/app/calculator/id1069511488">Apple calculator</a></td>
+  </tr>
+  <tr>
+    <td><a href="camera.png"><img src="camera.png" height=16em width=16em />&nbsp;&nbsp;camera.png </a></td>
+    <td><a href="https://www.shutterstock.com/de/image-vector/movie-camera-pixel-art-32-bit-2191871743">Shutterstock (pixelpnj)</a></td>
   </tr>
   <tr>
     <td><a href="chest.png"><img src="chest.png" height=16em width=16em />&nbsp;&nbsp;chest.png </a></td>
@@ -116,7 +124,7 @@
   </tr>
   <tr>
     <td><a href="clipboard.png"><img src="clipboard.png" height=16em width=16em />&nbsp;&nbsp;clipboard.png </a></td>
-    <td><a href="https://www.shutterstock.com/image-vector/clipboard-icon-notes-clean-sheet-paper-1044834838?irclickid=UI71-xzgtxyPTyXQdGTcA0UnUkF1D9zJFXwjR40&irgwc=1">Shutterstock (VectorPixelStar)</a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/clipboard-icon-notes-clean-sheet-paper-1044834838">Shutterstock (VectorPixelStar)</a></td>
   </tr>
   <tr>
     <td><a href="cog.png"><img src="cog.png" height=16em width=16em />&nbsp;&nbsp;cog.png </a></td>
@@ -124,6 +132,10 @@
   </tr>
   <tr>
     <td><a href="coin_pile.png"><img src="coin_pile.png" height=16em width=16em />&nbsp;&nbsp;coin_pile.png </a></td>
+    <td><a href="https://www.shutterstock.com/image-vector/pixel-art-golden-coin-retro-video-1024225483">Shutterstock (Gamegfx)</a></td>
+  </tr>
+  <tr>
+    <td><a href="coin_pile_crossed_out.png"><img src="coin_pile_crossed_out.png" height=16em width=16em />&nbsp;&nbsp;coin_pile_crossed_out.png </a></td>
     <td><a href="https://www.shutterstock.com/image-vector/pixel-art-golden-coin-retro-video-1024225483">Shutterstock (Gamegfx)</a></td>
   </tr>
   <tr>
@@ -310,6 +322,10 @@
   <tr>
     <td><a href="orbseller.png"><img src="orbseller.png" height=16em width=16em />&nbsp;&nbsp;orbseller.png </a></td>
     <td><a href="https://textures.minecraft.net/texture/ef686fbf016e1458f7f9a9850f38ef7fd6ae1d28bc241ac0c0686f77fdbb4b61">Minecraft Skin</a></td>
+  </tr>
+  <tr>
+    <td><a href="pencil.png"><img src="pencil.png" height=16em width=16em />&nbsp;&nbsp;pencil.png </a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><a href="pencil_vec.png"><img src="pencil_vec.png" height=16em width=16em />&nbsp;&nbsp;pencil_vec.png </a></td>

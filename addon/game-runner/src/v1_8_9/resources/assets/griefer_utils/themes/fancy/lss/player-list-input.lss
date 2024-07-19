@@ -13,10 +13,11 @@ VerticalList {
   top: 0;
   left: 0;
   space-between-entries: 5;
+  overwrite-width: false;
 }
 
 HorizontalList {
-  width: fit-content;
+  width: 100%;
   height: 18;
   space-between-entries: 5;
   layout: fill;

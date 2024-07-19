@@ -28,6 +28,7 @@ import dev.l3g7.griefer_utils.features.modules.Laby3Module;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.util.ResourceLocation;
 
 import java.math.BigDecimal;
 
@@ -49,7 +50,7 @@ public class Earned extends Laby3Module {
 	}
 
 	public static SmallButtonSetting getResetAllButton() {
-		SmallButtonSetting sbs = new SmallButtonSetting(new IconData("griefer_utils/arrow_circle.png"));
+		SmallButtonSetting sbs = new SmallButtonSetting(new IconData(new ResourceLocation("griefer_utils", "icons/arrow_circle.png")));
 		sbs.setDisplayName("Zurücksetzen");
 		sbs.setDescriptionText("Setzt das eingenommene und das ausgegebene Geld zurück.");
 		sbs.buttonIcon(new IconData(ModTextures.BUTTON_TRASH));

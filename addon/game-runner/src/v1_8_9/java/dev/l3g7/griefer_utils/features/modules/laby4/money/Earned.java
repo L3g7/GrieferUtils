@@ -33,8 +33,8 @@ public class Earned extends Laby4Module {
 			.icon("arrow_circle")
 			.buttonIcon(TRASH)
 			.callback(() -> {
-				moneyReceived = ZERO;
-				moneySpent = ZERO;
+				Received.setBalance(ZERO);
+				Spent.setBalance(ZERO);
 			}));
 
 	@Override

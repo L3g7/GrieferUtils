@@ -36,6 +36,7 @@ import static net.labymod.api.Textures.SpriteCommon.TRASH;
 public class Received extends Laby4Module {
 
 	static BigDecimal moneyReceived = ZERO;
+	private static boolean initialized = false; // NOTE cleanup
 	private long nextReset = -1;
 
 	private final SwitchSetting resetSetting = SwitchSetting.create()
@@ -44,6 +45,9 @@ public class Received extends Laby4Module {
 		.icon("labymod_3/use_default_settings")
 		.config("modules.money_received.automatically_reset")
 		.callback(b -> {
+			if (!initialized)
+				return;
+
 			if (!b)
 				nextReset = -1;
 			else
@@ -58,6 +62,9 @@ public class Received extends Laby4Module {
 		.icon("labymod_3/use_default_settings")
 		.config("modules.money_received.reset_after_restart")
 		.callback(shouldReset -> {
+			if (!initialized)
+				return;
+
 			if (shouldReset)
 				Config.set("modules.money.data." + mc().getSession().getProfile().getId() + ".received", new JsonPrimitive(ZERO));
 			else
@@ -112,11 +119,13 @@ public class Received extends Laby4Module {
 		String path = "modules.money.data." + mc().getSession().getProfile().getId() + ".";
 
 		if (Config.has(path + "received") && !resetAfterRestart.get())
-			setBalance(BigDecimal.valueOf(Config.get(path + "received").getAsLong()));
+			setBalance(Config.get(path + "received").getAsBigDecimal());
 		if (Config.has(path + "next_reset")) {
 			nextReset = Config.get(path + "next_reset").getAsLong();
 			resetSetting.set(nextReset != -1);
 		}
+
+		initialized = true;
 	}
 
 	protected static BigDecimal setBalance(BigDecimal newValue) {

@@ -116,8 +116,6 @@ public class BuildPostProcessor {
 
 	private static void cleanup() {
 		// delete LabyMod 4 autogen
-		delete(fs.getPath("dev/l3g7/griefer_utils/v1_8_9"));
-		delete(fs.getPath("META-INF/custom-services"));
 		delete(fs.getPath("fernflower_abstract_parameter_names.txt"));
 
 		// delete build post processors

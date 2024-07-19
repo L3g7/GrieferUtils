@@ -146,7 +146,7 @@ public class Spent extends Laby3Module {
 		String path = "modules.money.data." + mc.getSession().getProfile().getId() + ".";
 
 		if (Config.has(path + "spent") && !resetAfterRestart.get())
-			setBalance(BigDecimal.valueOf(Config.get(path + "spent").getAsLong()));
+			setBalance(Config.get(path + "spent").getAsBigDecimal());
 		if (Config.has(path + "next_reset")) {
 			nextReset = Config.get(path + "next_reset").getAsLong();
 			resetSetting.set(nextReset != -1);

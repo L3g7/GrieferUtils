@@ -71,9 +71,9 @@ public class Spent extends Laby3Module {
 		.config("modules.money_spent.reset_after_restart")
 		.callback(shouldReset -> {
 			if (shouldReset)
-				Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(ZERO));
+				Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(ZERO));
 			else
-				Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));
+				Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));
 			Config.save();
 		});
 
@@ -136,7 +136,7 @@ public class Spent extends Laby3Module {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void loadBalance(GrieferGamesJoinEvent ignored) {
-		String path = "modules.money.balances." + mc.getSession().getProfile().getId() + ".";
+		String path = "modules.money.data." + mc.getSession().getProfile().getId() + ".";
 
 		if (Config.has(path + "spent") && !resetAfterRestart.get())
 			setBalance(BigDecimal.valueOf(Config.get(path + "spent").getAsLong()));
@@ -150,7 +150,7 @@ public class Spent extends Laby3Module {
 		moneySpent = newValue;
 		// Save balance along with player uuid so no problems occur when using multiple accounts
 		if (!resetAfterRestart.get()) {
-			Config.set("modules.money.balances." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));
+			Config.set("modules.money.data." + mc.getSession().getProfile().getId() + ".spent", new JsonPrimitive(moneySpent));
 			Config.save();
 		}
 		return newValue;

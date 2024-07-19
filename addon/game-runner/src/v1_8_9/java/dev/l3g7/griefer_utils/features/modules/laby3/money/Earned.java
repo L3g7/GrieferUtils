@@ -55,8 +55,8 @@ public class Earned extends Laby3Module {
 		sbs.setDescriptionText("Setzt das eingenommene und das ausgegebene Geld zurück.");
 		sbs.buttonIcon(new IconData(ModTextures.BUTTON_TRASH));
 		sbs.buttonCallback(() -> {
-			Received.moneyReceived = BigDecimal.ZERO;
-			Spent.moneySpent = BigDecimal.ZERO;
+			Received.setBalance(BigDecimal.ZERO);
+			Spent.setBalance(BigDecimal.ZERO);
 		});
 		return sbs;
 	}

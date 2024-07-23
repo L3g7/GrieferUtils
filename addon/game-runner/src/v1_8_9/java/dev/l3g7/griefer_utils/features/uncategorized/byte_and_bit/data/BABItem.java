@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class BABItem implements Comparable<BABItem> {
 
 	private final ItemStack stack;
-	private final int price;
+	private final long price;
 	public AtomicInteger warehouseCount;
 
 	public Availability getAvailability() {
@@ -48,7 +48,7 @@ public class BABItem implements Comparable<BABItem> {
 		return price / 100D;
 	}
 
-	public BABItem(int price, ItemStack stack, AtomicInteger warehouseCount) {
+	public BABItem(long price, ItemStack stack, AtomicInteger warehouseCount) {
 		this.price = price;
 		this.stack = stack;
 		this.warehouseCount = warehouseCount;
@@ -80,7 +80,7 @@ public class BABItem implements Comparable<BABItem> {
 		if (thisAmount > otherAmount) return 1;
 		if (thisAmount < otherAmount) return -1;
 
-		return Integer.compare(this.price, o.price);
+		return Long.compare(this.price, o.price);
 	}
 
 	private static class VeloItem {
@@ -120,7 +120,7 @@ public class BABItem implements Comparable<BABItem> {
 
 				if (!enchantments.isEmpty()) ItemUtil.setEnchantments(stack, itemEnchantments);
 
-				items.add(new BABItem(Math.round(price.price * 100), stack, i));
+				items.add(new BABItem(Math.round(price.price * 100d), stack, i));
 			}
 			return items;
 		}

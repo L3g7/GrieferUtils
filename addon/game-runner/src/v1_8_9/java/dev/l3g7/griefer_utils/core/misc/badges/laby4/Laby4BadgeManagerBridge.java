@@ -118,7 +118,6 @@ public class Laby4BadgeManagerBridge implements BadgeManagerBridge {
 
 	private static void setGroup(GroupHolder groupHolder, Group group) {
 		Reflection.set(groupHolder, "visibleGroup", group);
-		Credits.addTeam();
 	}
 
 }

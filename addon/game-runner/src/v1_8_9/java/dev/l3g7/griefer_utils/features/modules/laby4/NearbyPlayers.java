@@ -93,7 +93,7 @@ public class NearbyPlayers extends Laby4Module {
 
 		@Override
 		public float getWidth() {
-			return maxDistWidth + player.getWidth();
+			return maxDistWidth + (player == null ? 0 : player.getWidth());
 		}
 
 		@Override

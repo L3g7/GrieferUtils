@@ -66,7 +66,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onGuiVillagerClick(WindowClickEvent event) {
-		if (!enabled.get() || !(mc().currentScreen instanceof GuiMerchant screen))
+		if (!enabled.get() || !(mc().currentScreen instanceof GuiMerchant screen) || screen.getMerchant().getRecipes(player()) == null)
 			return;
 
 		if (event.mode != 1 || event.slotId <= 2)

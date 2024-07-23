@@ -21,11 +21,10 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 
@@ -56,10 +55,14 @@ public class MixinPlugin implements IMixinConfigPlugin {
 					continue;
 			}
 
-			ArrayList<Type> mixinTargets = meta.getAnnotation(Mixin.class).getValue("value", false);
-			for (Type mixinTarget : mixinTargets) {
+			Object value = meta.getAnnotation(Mixin.class).getValue("value", false);
+			Stream<String> mixinTargets = value instanceof ArrayList<?> list
+				? list.stream().map(o -> ((Type) o).getClassName())
+				: Arrays.stream(((Class<?>[]) value)).map(Class::getName);
+
+			for (String mixinTarget : mixinTargets.collect(Collectors.toSet())) {
 				// Only add mixin if the target exists, as some mixins target classes that might be missing (e.g. EmoteChat)
-				if (!Reflection.exists(mixinTarget.getClassName())) {
+				if (!Reflection.exists(mixinTarget)) {
 					continue classFinder;
 				}
 			}

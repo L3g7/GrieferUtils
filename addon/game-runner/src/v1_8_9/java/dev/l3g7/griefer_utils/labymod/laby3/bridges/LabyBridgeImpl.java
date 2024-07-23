@@ -140,11 +140,11 @@ public class LabyBridgeImpl implements LabyBridge {
 		LabyMod.getInstance().getEventManager().register(callback::test);
 	}
 
-	public BiFunction<Object, Object, Object> temp;
+	public BiFunction<Object, Object, Object> messageModifyConsumer;
 
 	@Override
 	public void onMessageModify(BiFunction<Object, Object, Object> callback) {
-		temp = callback; // TODO
+		messageModifyConsumer = callback; // TODO
 	}
 
 	@Override

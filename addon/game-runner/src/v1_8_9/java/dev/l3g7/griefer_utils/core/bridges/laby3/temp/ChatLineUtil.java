@@ -42,7 +42,6 @@ public class ChatLineUtil {
 		UNMODIFIED_COMPONENTS.add(event.original);
 	}
 
-	@EventListener
 	private static void onMessageModified(IChatComponent component) {
 		MODIFIED_COMPONENTS.add(component);
 	}

@@ -8,22 +8,15 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
-import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MinecraftBridge;
-import dev.l3g7.griefer_utils.labymod.laby3.bridges.LabyBridgeImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.events.LabyModAddonsGuiOpenEvent;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModAddonsGui;
-import net.labymod.utils.manager.TagManager;
 import net.labymod.utils.texture.DynamicModTexture;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.UUID;
 
@@ -82,23 +75,6 @@ public class Laby3MinecraftBridgeImpl implements Laby3MinecraftBridge { // TODO 
 		}
 
 		mc().displayGuiScreen(new GuiChatNameHistory("", name));
-	}
-
-	@EventListener
-	private static void onMessage(MessageReceiveEvent event) {
-		originalMessage = event.message;
-	}
-
-	private static IChatComponent originalMessage;
-
-	@Mixin(value = TagManager.class, remap = false)
-	private static class MixinTagManager {
-
-		@ModifyVariable(method = "tagComponent", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;getConfigManager()Lnet/labymod/utils/manager/ConfigManager;", shift = At.Shift.BEFORE, ordinal = 0), ordinal = 0, argsOnly = true)
-		private static Object injectTagComponentReturn(Object value) {
-			return ((LabyBridgeImpl) labyBridge).temp.apply(originalMessage, value);
-		}
-
 	}
 
 }

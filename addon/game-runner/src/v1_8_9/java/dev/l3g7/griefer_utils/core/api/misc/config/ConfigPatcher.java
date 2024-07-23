@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 
 import java.io.File;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
@@ -163,6 +164,17 @@ public class ConfigPatcher {
 				}
 				set("item.recraft.repeat_last_recording", object);
 				get("item.recraft").remove("key");
+			}
+		}
+
+		if (cmp.compare("2.3-BETA-3", version) < 0) {
+			JsonObject o = get("modules.money.balances");
+			for (Entry<String, JsonElement> entry : o.entrySet()) {
+				JsonObject balances = entry.getValue().getAsJsonObject();
+				if (!balances.has("spent") || get("modules.money.data." + entry.getKey()).has("spent"))
+					continue;
+
+				get("modules.money.data." + entry.getKey()).add("spent", balances.get("spent"));
 			}
 		}
 	}

@@ -81,7 +81,7 @@ public class ItemProtection {
 		if (stackNBT == null)
 			return settingNBT == null;
 
-		stackNBT = (NBTTagCompound) stackNBT.copy();
+		stackNBT = ItemUtil.safeCopy(stackNBT);
 		NBTTagCompound cleanedStackNBT = new NBTTagCompound(); // A copy of stackNBT without display, RepairCost
 		for (String s : stackNBT.getKeySet()) {
 			if (s.equals("display") || s.equals("RepairCost"))

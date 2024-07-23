@@ -25,7 +25,15 @@ public class ConcurrentHashMapIterator<K, V> implements Iterator<Entry<K, V>> {
 
 	public ConcurrentHashMapIterator(HashMap<K, V> map) {
 		Entry<K, V>[] table = Reflection.get(map, "table");
-		firstNode = table.length == 0 ? null : table[0];
+
+		for (Entry<K, V> entry : table) {
+			if (entry != null) {
+				firstNode = entry;
+				return;
+			}
+		}
+
+		firstNode = null;
 	}
 
 	@Override
@@ -34,7 +42,7 @@ public class ConcurrentHashMapIterator<K, V> implements Iterator<Entry<K, V>> {
 			return false;
 
 		getNext();
-		return nextNode != null;
+ 		return nextNode != null;
 	}
 
 	@Override
@@ -43,8 +51,7 @@ public class ConcurrentHashMapIterator<K, V> implements Iterator<Entry<K, V>> {
 	}
 
 	private void getNext() {
-		Entry<K, V> node = currentNode == null ? firstNode : currentNode;
-		nextNode = Reflection.get(node, "next");
+		nextNode = currentNode == null ? firstNode : Reflection.get(currentNode, "next");
 	}
 
 }

@@ -154,6 +154,11 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 		if (recording.mode().get() == CRAFT)
 			return !CraftPlayer.play(recording, recording::playSuccessor, false, false);
 
+		if (previousMode == DECOMPRESS) {
+			TickScheduler.runAfterClientTicks(() -> DecompressPlayer.play(recording), 10);
+			return true;
+		}
+
 		return DecompressPlayer.play(recording);
 	}
 

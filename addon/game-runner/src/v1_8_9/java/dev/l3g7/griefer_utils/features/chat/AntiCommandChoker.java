@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
@@ -144,7 +145,7 @@ public class AntiCommandChoker extends Feature {
 		IChatComponent no = new ChatComponentText("§c[✖]").setChatStyle(new ChatStyle()
 			.setChatClickEvent(getClickEvent(msg, id)));
 
-		mc().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(question.appendSibling(yes).appendSibling(no), id);
+		TickScheduler.runAfterRenderTicks(() -> mc().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(question.appendSibling(yes).appendSibling(no), id), 1);
 		event.cancel();
 	}
 

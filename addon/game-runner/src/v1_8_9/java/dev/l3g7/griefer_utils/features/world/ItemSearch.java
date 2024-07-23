@@ -52,7 +52,7 @@ public class ItemSearch extends Feature {
 		.icon(Blocks.dispenser);
 
 	private final SwitchSetting hopper = SwitchSetting.create()
-		.name("Tricher")
+		.name("Trichter")
 		.description("Ob die Item-Suche auch bei Trichtern hinzugefügt werden soll.")
 		.icon(Blocks.hopper);
 

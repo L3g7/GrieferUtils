@@ -14,8 +14,8 @@ import dev.l3g7.griefer_utils.core.api.misc.DebounceTimer;
 import dev.l3g7.griefer_utils.core.api.misc.server.types.PlayerKeyPair;
 import dev.l3g7.griefer_utils.core.api.util.CryptUtil;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.misc.mysterymod_connection.packets.transactions.Transaction;
@@ -104,8 +104,13 @@ public class LocalTransactions {
 		});
 	}
 
+	@OnEnable
+	private static void load() {
+		load(null);
+	}
+
 	@EventListener
-	private static void load(GrieferGamesJoinEvent ignored) {
+	private static void load(AccountSwitchEvent ignored) {
 		transactions.clear();
 		PlayerKeyPair.getPlayerKeyPair(mc().getSession().getToken()).thenAccept(pair -> {
 			File file = new File("GrieferUtils/transactions/" + uuid() + ".transactions");

@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.post_processor.processors;
 
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.post_processor.LatePostProcessor.Processor;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -38,6 +39,12 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 
 		// Find minecraft superclasses
 		List<String> minecraftClasses = new ArrayList<>();
+		boolean obfuscatedClasses;
+		try {
+			obfuscatedClasses = !LabyModCoreMod.isForge();
+		} catch (NoClassDefFoundError error) {
+			obfuscatedClasses = false; // Running SuperclassRemapper from BuildPostProcessor
+		}
 
 		var cb = getClass(classNode.superName);
 		do {
@@ -64,7 +71,11 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 				// Map method invocations
 				if (node instanceof MethodInsnNode methodInsn) {
 					for (String minecraftClass : minecraftClasses) {
-						String mappedName = Mapper.mapMethodName(minecraftClass, methodInsn.name, methodInsn.desc, UNOBFUSCATED, SEARGE);
+						String mappedName;
+						if (obfuscatedClasses)
+							mappedName = Mapper.mapMethodName(minecraftClass, methodInsn.name, deobfuscateDesc(methodInsn.desc), UNOBFUSCATED, OBFUSCATED);
+						else
+							mappedName = Mapper.mapMethodName(minecraftClass, methodInsn.name, methodInsn.desc, UNOBFUSCATED, SEARGE);
 						if (methodInsn.name.equals(mappedName))
 							continue;
 
@@ -77,7 +88,7 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 				// Map field accesses
 				else if (node instanceof FieldInsnNode field) {
 					for (String minecraftClass : minecraftClasses) {
-						String mappedName = Mapper.mapField(minecraftClass, field.name, UNOBFUSCATED, SEARGE);
+						String mappedName = Mapper.mapField(minecraftClass, field.name, UNOBFUSCATED, obfuscatedClasses ? OBFUSCATED : SEARGE);
 						if (field.name.equals(mappedName))
 							continue;
 
@@ -90,7 +101,11 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 
 			// Map overrides
 			for (String minecraftClass : minecraftClasses) {
-				String mappedName = Mapper.mapMethodName(minecraftClass, method.name, method.desc, UNOBFUSCATED, SEARGE);
+				String mappedName;
+				if (obfuscatedClasses)
+					mappedName = Mapper.mapMethodName(minecraftClass, method.name, deobfuscateDesc(method.desc), UNOBFUSCATED, OBFUSCATED);
+				else
+					mappedName = Mapper.mapMethodName(minecraftClass, method.name, method.desc, UNOBFUSCATED, SEARGE);
 				if (method.name.equals(mappedName))
 					continue;
 
@@ -135,6 +150,12 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 			case VOID -> RETURN;
 			default -> throw new IllegalArgumentException(String.valueOf(type.getSort()));
 		};
+	}
+
+	private String deobfuscateDesc(String desc) {
+		var argumentTypes = Mapper.mapTypes(Type.getArgumentTypes(desc), OBFUSCATED, UNOBFUSCATED);
+		var returnType = Mapper.mapType(Type.getReturnType(desc), OBFUSCATED, UNOBFUSCATED);
+		return Type.getMethodDescriptor(returnType, argumentTypes);
 	}
 
 	private ClassNode getClass(String name) {

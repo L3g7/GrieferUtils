@@ -128,7 +128,7 @@ public class LocalTransactions {
 		if (!file.exists())
 			return;
 
-		byte[] bytes = IOUtil.toByteArray(IOUtil.read(file).getStream().orElseThrow());
+		byte[] bytes = IOUtil.toByteArray(IOUtil.read(file).getStream().orElseThrow(IOException::new));
 
 		transactions.clear();
 		decryptV1(bytes).thenAccept(success -> {
@@ -179,7 +179,7 @@ public class LocalTransactions {
 			keySignPayload.put(publicKeyBytes);
 
 			// Validate keySignature
-			var data = IOUtil.read("https://api.minecraftservices.com/publickeys").asJsonObject().orElseThrow();
+			var data = IOUtil.read("https://api.minecraftservices.com/publickeys").asJsonObject().orElseThrow(IOException::new);
 			boolean keySignatureValid = false;
 			for (JsonElement yggKeyObj : data.get("playerCertificateKeys").getAsJsonArray()) {
 				String yggKeyB64 = yggKeyObj.getAsJsonObject().get("publicKey").getAsString();

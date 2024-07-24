@@ -99,12 +99,19 @@ public class ArrayUtil {
 	}
 
 	/**
-	 * Merges two byte arrays into one.
+	 * Merges multiple byte arrays into one.
 	 */
-	public static byte[] merge(byte[] a, byte[] b) {
-		byte[] result = new byte[a.length + b.length];
-		System.arraycopy(a, 0, result, 0, a.length);
-		System.arraycopy(b, 0, result, a.length, b.length);
+	public static byte[] merge(byte[]... arrays) {
+		int length = 0;
+		for (byte[] array : arrays)
+			length += array.length;
+
+		byte[] result = new byte[length];
+		int idx = 0;
+		for (byte[] array : arrays) {
+			System.arraycopy(array, 0, result, idx, array.length);
+			idx += array.length;
+		}
 		return result;
 	}
 

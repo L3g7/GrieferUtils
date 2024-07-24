@@ -26,6 +26,7 @@ public class MessageModifyHandler {
 	private static IChatComponent lastMessage;
 	private static boolean isFromPacket;
 
+	@ExclusiveTo(LABY_3)
 	@Mixin(value = ForgeEventFactory.class, remap = false)
 	private static class MixinForgeEventFactory {
 

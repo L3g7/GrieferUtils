@@ -26,6 +26,7 @@ import net.minecraft.nbt.NBTTagList;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class FreeStuff {
@@ -81,7 +82,7 @@ public class FreeStuff {
 		if (!isCbFiltered)
 			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getName()), stack.getDisplayName()));
 
-		boolean fancy = Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
+		boolean fancy = LABY_4.isActive() && Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
 		List<String> lines = items.keySet().stream().map(it -> (fancy ? "  " : "") +  "  §f" + it.germanName).collect(Collectors.toList());
 
 		if (lines.size() > 10) {

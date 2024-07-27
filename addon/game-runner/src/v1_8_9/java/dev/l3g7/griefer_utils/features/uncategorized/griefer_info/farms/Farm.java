@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class Farm {
@@ -139,7 +140,7 @@ public class Farm {
 		for (Spawner spwnr : this.spawner)
 			spawner.computeIfAbsent(spwnr.type, t -> new AtomicInteger()).getAndAdd(spwnr.amount);
 
-		boolean fancy = Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
+		boolean fancy = LABY_4.isActive() && Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
 		String format = (fancy ? "  " : "") + "  §f%s §8(%dx)";
 
 		if (typeFilter != null && spawner.containsKey(typeFilter)) {

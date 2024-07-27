@@ -19,6 +19,7 @@ import net.minecraft.nbt.*;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import static net.minecraft.init.Blocks.*;
 
@@ -136,16 +137,19 @@ public class ItemUtil {
 	public static NBTTagCompound safeCopy(NBTTagCompound tag) {
 		HashMap<String, NBTBase> tagMap = Reflection.get(tag, "tagMap");
 
-		int modCount;
 		NBTTagCompound newCompound;
 
-		do {
-			newCompound = new NBTTagCompound();
-			modCount = Reflection.get(tagMap, "modCount");
-
-			for (Map.Entry<String, NBTBase> entry : ConcurrentHashMapIterator.iterate(tagMap))
-				newCompound.setTag(entry.getKey(), entry.getValue());
-		} while (modCount != (int) Reflection.get(tagMap, "modCount"));
+		try {
+			ConcurrentHashMapIterator<String, NBTBase> it;
+			do {
+				it = new ConcurrentHashMapIterator<>(tagMap);
+				newCompound = new NBTTagCompound();
+				for (Entry<String, NBTBase> entry : it.toIterator())
+					newCompound.setTag(entry.getKey(), entry.getValue());
+			} while (!it.isUpToDate());
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
 
 		return newCompound;
 	}

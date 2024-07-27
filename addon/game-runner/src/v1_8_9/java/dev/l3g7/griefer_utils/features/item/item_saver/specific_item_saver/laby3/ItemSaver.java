@@ -24,27 +24,27 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent.LeftClickEvent;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderItemOverlayEvent;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import net.labymod.core.LabyModCore;
 import net.labymod.core.WorldRendererAdapter;
 import net.labymod.settings.elements.SettingsElement;
@@ -339,7 +339,7 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver implements TempItemSa
 			event.cancel();
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onAddItem(WindowClickEvent event) {
 		if (previousScreen == null || event.itemStack == null)
 			return;

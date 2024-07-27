@@ -41,8 +41,8 @@ public class SettingsImpl implements Settings { // Note: replace with multiple b
 			public void add(int index, T element) {
 				super.add(index, element);
 				try {
-					callback.acceptWithException(element);
-				} catch (Exception e) {
+					callback.acceptWithThrowable(element);
+				} catch (Throwable e) {
 					e.printStackTrace();
 				}
 			}

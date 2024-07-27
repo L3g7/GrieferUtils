@@ -15,12 +15,12 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 @FunctionalInterface
 public interface Function<T, R> extends java.util.function.Function<T, R> {
 
-    R applyWithException(T t) throws Exception;
+    R applyWithThrowable(T t) throws Throwable;
 
 	default R apply(T t) {
 		try {
-			return applyWithException(t);
-		} catch (Exception e) {
+			return applyWithThrowable(t);
+		} catch (Throwable e) {
 			throw Util.elevate(e);
 		}
 	}

@@ -15,12 +15,12 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 @FunctionalInterface
 public interface Consumer<T> extends java.util.function.Consumer<T> {
 
-    void acceptWithException(T t) throws Exception;
+    void acceptWithThrowable(T t) throws Throwable;
 
 	default void accept(T t) {
 		try {
-			acceptWithException(t);
-		} catch (Exception e) {
+			acceptWithThrowable(t);
+		} catch (Throwable e) {
 			throw Util.elevate(e);
 		}
 	}

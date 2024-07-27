@@ -15,12 +15,12 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 @FunctionalInterface
 public interface Runnable extends java.lang.Runnable {
 
-    void runWithException() throws Exception;
+    void runWithThrowable() throws Throwable;
 
 	default void run() {
 		try {
-			runWithException();
-		} catch (Exception e) {
+			runWithThrowable();
+		} catch (Throwable e) {
 			throw Util.elevate(e);
 		}
 	}

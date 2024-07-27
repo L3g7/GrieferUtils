@@ -15,12 +15,12 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 @FunctionalInterface
 public interface Predicate<T> extends java.util.function.Predicate<T> {
 
-	boolean testWithException(T t) throws Exception;
+	boolean testWithThrowable(T t) throws Throwable;
 
 	default boolean test(T t) {
 		try {
-			return testWithException(t);
-		} catch (Exception e) {
+			return testWithThrowable(t);
+		} catch (Throwable e) {
 			throw Util.elevate(e);
 		}
 	}

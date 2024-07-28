@@ -7,8 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.modules.laby4.balances.inventory_value;
 
-import dev.l3g7.griefer_utils.features.chat.Calculator;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.chat.Calculator;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
@@ -18,6 +18,11 @@ import java.util.regex.Pattern;
 public class ItemValue {
 
 	private static final Pattern VALUE_PATTERN = Pattern.compile("\\b([\\d,.k]+)\\b");
+
+	/**
+	 * A pattern matching all obfuscated parts of a formatted text to prevent their detection.
+	 */
+	private static final Pattern OBFUSCATED_TEXT_PATTERN = Pattern.compile("§k.+?(?:§[^lonmk]|$)");
 
 	ItemStack stack;
 	int value;
@@ -47,34 +52,45 @@ public class ItemValue {
 		if (!lore.get(lore.size() - 1).startsWith("§7Signiert von"))
 			return 0;
 
+		long detectedValue = 0;
 		for (String string : new String[]{lore.get(lore.size() - 2), stack.getDisplayName()}) {
 			if (string.startsWith("§7Signiert von"))
 				continue;
 
-			string = string.toLowerCase()
-				.replaceAll("§.", "")
-				.replaceAll("(?<=\\d)\\.(\\d{3})", "$1")
-				.replaceAll(" ?mio", "m")
-				.replace("m", "kk");
+			for (String part : OBFUSCATED_TEXT_PATTERN.split(string)) {
+				part = part.replaceAll("§.", "").trim();
+				if (part.isEmpty())
+					continue;
 
-			Matcher matcher = VALUE_PATTERN.matcher(string.replaceAll("§.", ""));
-			if (matcher.find()) {
-				String result = matcher.group(1);
-				if (!matcher.find()) { // Cancel if multiple numbers are found
+				part = part.toLowerCase()
+					.replaceAll("(?<=\\d)\\.(\\d{3})", "$1")
+					.replaceAll(" ?mio", "m")
+					.replace("m", "kk");
+
+				Matcher matcher = VALUE_PATTERN.matcher(part);
+				if (matcher.find()) {
+					String result = matcher.group(1);
+
+					if (matcher.find())
+						// Cancel if multiple numbers are found
+						return 0;
+
 					try {
 						double value = Calculator.calculate(result, false);
-						if (Double.isNaN(value))
+						if (Double.isNaN(value) || value > 1_000_000_000 || value < 0)
 							return 0;
 
-						return (long) value;
+						if (detectedValue != 0)
+							// Cancel if multiple numbers are found
+							return 0;
+
+						detectedValue = (long) value;
 					} catch (NumberFormatException ignored) {}
 				}
 			}
-
 		}
 
-		// No value was found
-		return 0;
+		return detectedValue;
 	}
 
 }

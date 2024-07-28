@@ -164,7 +164,9 @@ public class BlockInfo extends Laby4Module implements TempBlockInfoBridge {
 		IBlockState state = SchematicaUtil.getWorld().getBlockState(mop.getBlockPos());
 		ItemStack pickedStack = getPickBlock(state.getBlock(), SchematicaUtil.getWorld(), mop.getBlockPos());
 		ItemStack stack = pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack;
-		stack.setStackDisplayName("§r" + stack.getDisplayName() + " §b(S)");
+		
+		if (stack.getItem() != null)
+			stack.setStackDisplayName("§r" + stack.getDisplayName() + " §b(S)");
 
 		data = Pair.of(mop.getBlockPos(), stack);
 		return true;

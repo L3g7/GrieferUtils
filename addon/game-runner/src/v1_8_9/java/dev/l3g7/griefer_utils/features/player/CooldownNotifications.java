@@ -164,7 +164,7 @@ public class CooldownNotifications extends Feature {
 		if (!inventory.getDisplayName().getFormattedText().equals("§6Cooldowns§r"))
 			return;
 
-		if (inventory.getSizeInventory() != 45 || inventory.getStackInSlot(11) == null || inventory.getStackInSlot(11).getItem() != Items.gold_ingot)
+		if (inventory.getSizeInventory() != 45 || inventory.getStackInSlot(10) == null || inventory.getStackInSlot(10).getItem() != Items.gold_ingot)
 			return;
 
 		// Iterate through slots
@@ -176,7 +176,7 @@ public class CooldownNotifications extends Feature {
 
 			// Load cooldown time from item
 			String name = DrawUtils.removeColor(s.getDisplayName()).replace("-Befehl", "");
-			if (name.startsWith("/clan") || name.equals("Riesige GSe (über 25er) überschreiben") || name.equals("/premium"))
+			if (name.startsWith("/clan") || name.equals("Riesige GSe (über 25er) überschreiben"))
 				continue;
 
 			endDates.put(name, getAvailability(s));

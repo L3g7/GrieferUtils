@@ -44,7 +44,7 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Check if RequestTime is reasonable
-	if request.RequestTime < 0 || time.UnixMilli(request.RequestTime).Add(30 * time.Second).Before(time.Now()) {
+	if request.RequestTime < 0 || time.UnixMilli(request.RequestTime).Add(30*time.Second).Before(time.Now()) {
 		// RequestTime is more than 30s ago
 		Error(w, http.StatusBadRequest, "Bad Request")
 		return nil

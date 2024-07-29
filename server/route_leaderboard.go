@@ -6,13 +6,13 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	bolt "go.etcd.io/bbolt"
 	"github.com/golang-jwt/jwt"
 	"github.com/sourcegraph/conc/pool"
+	bolt "go.etcd.io/bbolt"
 	"net/http"
 	"os"
-	"strings"
 	"strconv"
+	"strings"
 	"time"
 )
 

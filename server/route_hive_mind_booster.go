@@ -65,7 +65,7 @@ func HiveMindBoosterRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 
 	boosterKnowledgeMutex.Lock()
 	defer boosterKnowledgeMutex.Unlock()
-			
+
 	entries := boosterKnowledge[citybuild]
 	if entries == nil {
 		entries = make(map[string][]HiveMindBoosterEntry)

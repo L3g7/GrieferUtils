@@ -60,8 +60,10 @@ public class Config {
         return o;
     }
 
+	private static final Object SAVE_LOCK = new Object();
 	// .minecraft/config/GrieferUtils.json
     private static final File configFile = new File(new File("config"), "GrieferUtils.json");
+	private static int hash = 0;
     private static JsonObject config = null;
 
 	/**
@@ -71,7 +73,17 @@ public class Config {
 	    if (config == null)
 		    config = new JsonObject();
 
-		IOUtil.writeJson(configFile, config);
+	    String json = IOUtil.gson.toJson(config);
+		if (json.hashCode() == hash) // Check if content has changed
+			return;
+
+		synchronized (SAVE_LOCK) {
+			hash = json.hashCode();
+
+			do {
+				IOUtil.write(configFile, json);
+			} while (IOUtil.gson.toJson(read()).hashCode() != hash);
+		}
     }
 
 	/**
@@ -84,14 +96,21 @@ public class Config {
 				return config;
 			}
 
-			config = IOUtil.read(configFile)
-				.asJsonObject()
-				.orElse(new JsonObject());
+			config = read();
 
 			new ConfigPatcher(config).patch();
 		}
 
 		return config;
     }
+
+	/**
+	 * Reads the config from its file, returning an empty one if it fails.
+	 */
+	private static JsonObject read() {
+		return IOUtil.read(configFile)
+			.asJsonObject()
+			.orElse(new JsonObject());
+	}
 
 }

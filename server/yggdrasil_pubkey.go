@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-var YggdrasilSessionPubkeys = createYggdrasilPubKeys()
+var YggdrasilSessionPubKeys = createYggdrasilPubKeys()
 
 func LoadYggdrasilPubKeys() []*rsa.PublicKey {
 	// Request keys

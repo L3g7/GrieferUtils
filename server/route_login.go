@@ -94,11 +94,11 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	// Create payload signed by key signature
 	payload = binary.BigEndian.AppendUint64(rawUuid, request.ExpirationTime)
 	payload = append(payload, rawKey...)
-	vhash := sha1.Sum(payload)
+	keyHash := sha1.Sum(payload)
 
 	// Verify public key
-	for _, pubkey := range YggdrasilSessionPubkeys {
-		err = rsa.VerifyPKCS1v15(pubkey, crypto.SHA1, vhash[:], signature)
+	for _, pubKey := range YggdrasilSessionPubKeys {
+		err = rsa.VerifyPKCS1v15(pubKey, crypto.SHA1, keyHash[:], signature)
 		if err == nil {
 			break
 		}
@@ -125,6 +125,6 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
-	fmt.Fprintf(w, `{"session_token":"%s"}`, tokenString)
+	_, _ = fmt.Fprintf(w, `{"session_token":"%s"}`, tokenString)
 	return nil
 }

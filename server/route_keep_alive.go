@@ -15,6 +15,6 @@ func KeepAliveRoute(w http.ResponseWriter, _ *http.Request, token *jwt.Token) er
 
 	// Send response
 	w.WriteHeader(http.StatusNoContent)
-	fmt.Fprintf(w, `\n`)
+	_, _ = fmt.Fprintf(w, `\n`)
 	return nil
 }

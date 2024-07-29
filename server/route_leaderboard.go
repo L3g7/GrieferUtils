@@ -375,9 +375,9 @@ func resolveEmoji(uuid []byte) uint64 {
 	}
 
 	// Upload skin to discord
-	imgb64 := base64.StdEncoding.EncodeToString(img.Bytes())
+	imgB64 := base64.StdEncoding.EncodeToString(img.Bytes())
 	req, err := http.NewRequest("POST", "https://discord.com/api/v10/guilds/1188280298631336007/emojis", bytes.NewBuffer([]byte(fmt.Sprintf("{"+
-		"\"name\":\"tinyurl_com_2vxtwcec___\",\"image\":\"data:image/png;base64,%s\",\"roles\":[]}", imgb64))))
+		"\"name\":\"tinyurl_com_2vxtwcec___\",\"image\":\"data:image/png;base64,%s\",\"roles\":[]}", imgB64))))
 	if err != nil {
 		return UnknownSkinEmoji
 	}

@@ -114,7 +114,7 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS384, &jwt.MapClaims{
 		"exp": time.Now().Add(24 * time.Hour).Unix(),
 		"iat": time.Now().Unix(),
-		"iss": "https://s1.grieferutils.l3g7.dev/login",
+		"iss": os.Getenv("ISS"),
 		"sub": request.User,
 	})
 

@@ -10,6 +10,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -161,11 +162,11 @@ func Beautify(num uint32) string {
 	return strings.TrimLeft(str, "0")
 }
 
-func ReportBug(user string, data ...any) {
-	req, _ := http.NewRequest("POST", "https://grieferutils.l3g7.dev/v3/bug_report", bytes.NewBuffer([]byte(fmt.Sprint(data...))))
+func ReportBug(data ...any) {
+	req, _ := http.NewRequest("POST", os.Getenv("API_ROUTE")+"/bug_report", bytes.NewBuffer([]byte(fmt.Sprint(data...))))
+	req.Header.Set("Authorization", os.Getenv("ADMIN_TOKEN"))
 	req.Header.Set("User-Agent", "GrieferUtils Server v"+VERSION)
 	req.Header.Set("Content-Type", "text/plain")
-	req.Header.Set("X-MINECRAFT-UUID", user)
 
 	_, _ = http.DefaultClient.Do(req)
 }

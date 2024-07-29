@@ -9,12 +9,15 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/sourcegraph/conc/pool"
 	bolt "go.etcd.io/bbolt"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 )
+
+const UnknownSkinEmoji uint64 = 1188976812928278638
 
 type LeaderboardRequest struct {
 	Flown bool `json:"flown"`
@@ -53,7 +56,10 @@ type LeaderboardEntry struct {
 	emojiId uint64
 }
 
+// lastSync stores when the database was last synchronized with Discord, see syncEmojis.
 var lastSync = int64(0)
+
+// lastUpdate stores when the entries for the Discord leaderboard were last gathered.
 var lastUpdate = lastSync
 
 func LeaderboardRoute(w http.ResponseWriter, r *http.Request, token *jwt.Token) error {
@@ -79,6 +85,7 @@ func LeaderboardGetRoute(w http.ResponseWriter, token *jwt.Token) error {
 		Previous: &LeaderboardResponseEntry{},
 	}
 
+	// Retrieve score and calculate position
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("leaderboard"))
 		scores := b.Bucket([]byte("scores"))
@@ -139,6 +146,7 @@ func LeaderboardPostRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 		return err
 	}
 
+	// Calculate and save score
 	var score uint32 = 0
 	err = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("leaderboard"))
@@ -159,12 +167,15 @@ func LeaderboardPostRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 		return err
 	}
 
-	// Check if last update was over 30 minutes ago
+	// Trigger update if last one was over 30 minutes ago
 	if time.Now().Unix()-lastUpdate > 60*30 {
+		lastUpdate = math.MaxInt64 // Don't call updateLeaderboard twice
 		go updateLeaderboard()
 	}
 
+	// Trigger sync if last one was over 24 hours ago
 	if time.Now().Unix()-lastSync > 3600*24 {
+		lastSync = math.MaxInt64 // Don't call syncEmojis twice
 		go syncEmojis()
 	}
 
@@ -203,6 +214,9 @@ func updateLeaderboard() {
 		})
 	})
 
+	// Update lastUpdate
+	lastUpdate = time.Now().Unix()
+
 	// Delete expired emojis
 	_ = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("leaderboard"))
@@ -223,7 +237,7 @@ func updateLeaderboard() {
 		})
 	})
 
-	// Load emojis
+	// Load existing emojis
 	var missingEmojis []int
 	var emojiCount int
 	for i, entry := range leaderboard {
@@ -279,41 +293,15 @@ func updateLeaderboard() {
 		syncEmojis()
 	}
 
+	// Generate missing emojis
 	syncPool := pool.New()
 	for _, idx := range missingEmojis {
 		i := idx
 		entry := leaderboard[idx]
 		syncPool.Go(func() {
-			imgRes, _ := http.Get(fmt.Sprintf("https://render.skinmc.net/3d.php?user=%s&vr=0&hr0&aa=false&hrh=0&headOnly=true&ratio=9", string(entry.key)))
-
-			img := new(bytes.Buffer)
-			_, _ = img.ReadFrom(imgRes.Body)
-
-			imgb64 := base64.StdEncoding.EncodeToString(img.Bytes())
-			req, _ := http.NewRequest("POST", "https://discord.com/api/v10/guilds/1188280298631336007/emojis", bytes.NewBuffer([]byte(fmt.Sprintf("{"+
-				"\"name\":\"tinyurl_com_2vxtwcec___\",\"image\":\"data:image/png;base64,%s\",\"roles\":[]}", imgb64))))
-			req.Header.Set("Authorization", "Bot "+os.Getenv("DISCORD_TOKEN"))
-			req.Header.Set("Content-Type", "application/json")
-
-			dcRes, _ := http.DefaultClient.Do(req)
-			var emoji Emoji
-			err := Decode(dcRes.Body, &emoji)
-			if err != nil {
-				emoji.Id = "1188976812928278638"
-			}
-
-			emojiId, _ := strconv.ParseUint(emoji.Id, 10, 64)
+			emojiId := resolveEmoji(entry.key)
 			entry.emojiId = emojiId
 			leaderboard[i].emojiId = emojiId
-			_ = db.Update(func(tx *bolt.Tx) error {
-				b := tx.Bucket([]byte("leaderboard"))
-				emojis := b.Bucket([]byte("emojis"))
-				timestamps := b.Bucket([]byte("emoji_timestamps"))
-				_ = emojis.Put(entry.key, binary.LittleEndian.AppendUint64([]byte{}, entry.emojiId))
-				_ = timestamps.Put(entry.key, binary.LittleEndian.AppendUint64([]byte{}, uint64(time.Now().Add(time.Hour*24).Unix())))
-
-				return nil
-			})
 		})
 	}
 	syncPool.Wait()
@@ -329,25 +317,12 @@ func updateLeaderboard() {
 		i := idx
 		entry := lEntry
 		syncPool.Go(func() {
-			res, err := http.Get(fmt.Sprintf("https://sessionserver.mojang.com/session/minecraft/profile/%s", string(entry.key)))
-			if err != nil {
-				leaderboard[i].name = string(entry.key)
-				ReportBug(string(entry.key), err)
-				return
-			}
-
-			profile := MinecraftProfile{}
-			err = Decode(res.Body, &profile)
-			if err == nil {
-				leaderboard[i].name = profile.Name
-			} else {
-				leaderboard[i].name = string(entry.key)
-				ReportBug(string(entry.key), res, err)
-			}
+			leaderboard[i].name = resolveName(entry.key)
 		})
 	}
 	syncPool.Wait()
 
+	// Create message
 	position := 0
 	var lastScore uint32 = 4294967295
 	for i, entry := range leaderboard {
@@ -366,8 +341,7 @@ func updateLeaderboard() {
 		})
 	}
 
-	lastUpdate = time.Now().Unix()
-
+	// Send message
 	b, _ := json.Marshal(fields)
 	req, _ := http.NewRequest("PATCH", "https://discord.com/api/v10/channels/1185718903805067324/messages/1188298133193629726", bytes.NewBuffer([]byte(fmt.Sprintf(`
 {
@@ -384,31 +358,106 @@ func updateLeaderboard() {
 	req.Header.Set("Content-Type", "application/json")
 
 	_, _ = http.DefaultClient.Do(req)
-
 }
 
-func syncEmojis() int64 {
+// resolveEmoji retrieves a player skin and stores it as a Discord emoji, returning its id.
+func resolveEmoji(uuid []byte) uint64 {
+	// Request skin
+	imgRes, err := http.Get(fmt.Sprintf("https://render.skinmc.net/3d.php?user=%s&vr=0&hr0&aa=false&hrh=0&headOnly=true&ratio=9", string(uuid)))
+	if err != nil {
+		return UnknownSkinEmoji
+	}
+
+	img := new(bytes.Buffer)
+	_, err = img.ReadFrom(imgRes.Body)
+	if err != nil {
+		return UnknownSkinEmoji
+	}
+
+	// Upload skin to discord
+	imgb64 := base64.StdEncoding.EncodeToString(img.Bytes())
+	req, err := http.NewRequest("POST", "https://discord.com/api/v10/guilds/1188280298631336007/emojis", bytes.NewBuffer([]byte(fmt.Sprintf("{"+
+		"\"name\":\"tinyurl_com_2vxtwcec___\",\"image\":\"data:image/png;base64,%s\",\"roles\":[]}", imgb64))))
+	if err != nil {
+		return UnknownSkinEmoji
+	}
+
+	req.Header.Set("Authorization", "Bot "+os.Getenv("DISCORD_TOKEN"))
+	req.Header.Set("Content-Type", "application/json")
+
+	dcRes, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return UnknownSkinEmoji
+	}
+
+	// Parse response
+	var emoji Emoji
+	err = Decode(dcRes.Body, &emoji)
+	if err != nil {
+		return UnknownSkinEmoji
+	}
+
+	emojiId, err := strconv.ParseUint(emoji.Id, 10, 64)
+	if err != nil {
+		return UnknownSkinEmoji
+	}
+
+	// Save emoji in database
+	_ = db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("leaderboard"))
+		emojis := b.Bucket([]byte("emojis"))
+		timestamps := b.Bucket([]byte("emoji_timestamps"))
+		_ = emojis.Put(uuid, binary.LittleEndian.AppendUint64([]byte{}, emojiId))
+		_ = timestamps.Put(uuid, binary.LittleEndian.AppendUint64([]byte{}, uint64(time.Now().Add(time.Hour*24).Unix())))
+
+		return nil
+	})
+
+	return emojiId
+}
+
+// resolveName retrieves and returns the display name of a player.
+func resolveName(uuid []byte) string {
+	res, err := http.Get(fmt.Sprintf("https://sessionserver.mojang.com/session/minecraft/profile/%s", string(uuid)))
+	if err != nil {
+		return string(uuid)
+	}
+
+	profile := MinecraftProfile{}
+	err = Decode(res.Body, &profile)
+	if err != nil {
+		return string(uuid)
+	}
+
+	return profile.Name
+}
+
+// syncEmojis synchronizes the database to reflect any changes made in Discord.
+func syncEmojis() {
+	// Retrieve Discord's emojis
 	req, _ := http.NewRequest("GET", "https://discord.com/api/v10/guilds/1188280298631336007/emojis", nil)
 	req.Header.Set("Authorization", "Bot "+os.Getenv("DISCORD_TOKEN"))
 
-	res, _ := http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
 
 	var emojis []Emoji
-	err := Decode(res.Body, &emojis)
+	err = Decode(res.Body, &emojis)
 	if err != nil {
-		ReportBug("syncEmojis() GET emojis", err)
-		return time.Now().Unix()
+		return
 	}
 
 	var emojisToDelete = append([]Emoji{}, emojis...)
 
-	err = db.Update(func(tx *bolt.Tx) error {
+	// Compare to emojis in database
+	_ = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("leaderboard"))
 		dbEmojis := b.Bucket([]byte("emojis"))
 		timestamps := b.Bucket([]byte("emoji_timestamps"))
 
-		// Validate dbEmojis
-		err := dbEmojis.ForEach(func(k, v []byte) error {
+		_ = dbEmojis.ForEach(func(k, v []byte) error {
 			id := binary.LittleEndian.Uint64(v)
 
 			// Check if discord Emoji exists
@@ -426,11 +475,7 @@ func syncEmojis() int64 {
 				if err != nil {
 					return err
 				}
-				err = timestamps.Delete(k)
-				if err != nil {
-					return err
-				}
-				return nil
+				return timestamps.Delete(k)
 			}
 
 			// Check if expired
@@ -447,35 +492,26 @@ func syncEmojis() int64 {
 				}
 			}
 
+			// Don't delete emoji
 			emojisToDelete = Remove(emojisToDelete, func(emoji Emoji) bool {
 				return emoji.Id == discordEmoji.Id
 			})
 			return nil
 		})
-		if err != nil {
-			return err
-		}
 
 		return nil
 	})
-	if err != nil {
-		ReportBug("syncEmojis() db update", err)
-		return time.Now().Unix()
-	}
 
-	// delete all flagged emojis
+	// Delete flagged emojis
 	syncPool := pool.New()
 	for _, emoji := range emojisToDelete {
 		syncPool.Go(func() {
 			req, _ := http.NewRequest("DELETE", fmt.Sprintf("https://discord.com/api/v10/guilds/1188280298631336007/emojis/%s", emoji.Id), nil)
 			req.Header.Set("Authorization", "Bot "+os.Getenv("DISCORD_TOKEN"))
-			res, _ = http.DefaultClient.Do(req)
-			if res.StatusCode != 204 {
-				ReportBug("syncEmojis() DELETE", res.StatusCode, res.Body)
-			}
+			_, _ = http.DefaultClient.Do(req)
 		})
 	}
 	syncPool.Wait()
 
-	return time.Now().Unix()
+	lastSync = time.Now().Unix()
 }

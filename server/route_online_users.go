@@ -24,7 +24,7 @@ func OnlineUsersRoute(w http.ResponseWriter, r *http.Request, _ *jwt.Token) erro
 	var request OnlineUsersRequest
 	err := Decode(r.Body, &request)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	// Check whether the users requested are online

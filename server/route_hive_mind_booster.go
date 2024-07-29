@@ -52,7 +52,7 @@ func HiveMindBoosterRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 	var request HiveMindBoosterRequest
 	err := Decode(r.Body, &request)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	citybuild := request.Citybuild

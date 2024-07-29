@@ -34,7 +34,7 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	var request LoginRequest
 	err := Decode(r.Body, &request)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	// Check if user is valid
@@ -53,26 +53,26 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	// Extract user
 	rawUuid, err := hex.DecodeString(strings.ReplaceAll(request.User, "-", ""))
 	if err != nil {
-		return err
+		return nil
 	}
 
 	// Extract public key
 	rawKey, err := base64.StdEncoding.DecodeString(request.PublicKey)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	// Parse public key
 	key, err := x509.ParsePKIXPublicKey(rawKey)
 	if err != nil {
-		return err
+		return nil
 	}
 	rsaKey := key.(*rsa.PublicKey)
 
 	// Extract signature
 	signature, err := base64.StdEncoding.DecodeString(request.Signature)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	// Create signed payload
@@ -82,13 +82,13 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	// Validate signed payload
 	err = rsa.VerifyPKCS1v15(rsaKey, crypto.SHA256, hash[:], signature)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	// Extract key signature
 	signature, err = base64.StdEncoding.DecodeString(request.KeySignature)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	// Create payload signed by key signature
@@ -104,7 +104,7 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 	if err != nil {
-		return err
+		return nil
 	}
 
 	// Authentication complete, create session token

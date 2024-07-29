@@ -11,7 +11,7 @@ func LogoutRoute(w http.ResponseWriter, r *http.Request, token *jwt.Token) error
 	var request OnlineUsersRequest
 	err := Decode(r.Body, &request)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	claims, _ := token.Claims.(jwt.MapClaims)

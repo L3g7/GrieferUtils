@@ -143,7 +143,7 @@ func LeaderboardPostRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 	var request LeaderboardRequest
 	err := Decode(r.Body, &request)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	// Calculate and save score

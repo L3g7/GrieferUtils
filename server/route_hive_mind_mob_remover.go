@@ -39,7 +39,7 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 	var request HiveMindMobRemoverRequest
 	err := Decode(r.Body, &request)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	citybuild := request.Citybuild

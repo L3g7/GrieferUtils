@@ -6,9 +6,11 @@ import (
 	"net/http"
 )
 
+type LogoutRequest struct{}
+
 func LogoutRoute(w http.ResponseWriter, r *http.Request, token *jwt.Token) error {
 	// Parse request
-	var request OnlineUsersRequest
+	var request LogoutRequest
 	err := Decode(r.Body, &request)
 	if err != nil {
 		return nil

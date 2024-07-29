@@ -95,6 +95,14 @@ func checkAuth(handler func(http.ResponseWriter, *http.Request, *jwt.Token) erro
 			return nil
 		}
 
+		// Check if user is banned
+		claims, _ := token.Claims.(jwt.MapClaims)
+		user := claims["sub"].(string)
+		if IsBanned(user) {
+			Error(w, http.StatusUnauthorized, "Unauthorized")
+			return nil
+		}
+
 		return handler(w, r, token)
 	}
 }

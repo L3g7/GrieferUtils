@@ -6,11 +6,13 @@ import (
 	"encoding/base64"
 	"log"
 	"net/http"
+	"sync"
 )
 
-var YggdrasilSessionPubKeys = createYggdrasilPubKeys()
+var YggdrasilSessionPubKeys = CreateYggdrasilPubKeys()
+var YggdrasilSessionPubKeyMutex sync.RWMutex
 
-func LoadYggdrasilPubKeys() []*rsa.PublicKey {
+func loadYggdrasilPubKeys() []*rsa.PublicKey {
 	// Request keys
 	res, err := http.Get("https://api.minecraftservices.com/publickeys")
 	if err != nil {
@@ -46,10 +48,10 @@ func LoadYggdrasilPubKeys() []*rsa.PublicKey {
 	return keys
 }
 
-func createYggdrasilPubKeys() []*rsa.PublicKey {
-	pubKeys := LoadYggdrasilPubKeys()
+func CreateYggdrasilPubKeys() []*rsa.PublicKey {
+	pubKeys := loadYggdrasilPubKeys()
 	if pubKeys == nil {
-		log.Fatal("Could not load yggdrail public keys file")
+		log.Fatal("Could not load yggdrasil keys")
 	}
 
 	return pubKeys

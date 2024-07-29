@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 )
@@ -97,13 +98,20 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	keyHash := sha1.Sum(payload)
 
 	// Verify public key
+	YggdrasilSessionPubKeyMutex.RLock()
 	for _, pubKey := range YggdrasilSessionPubKeys {
 		err = rsa.VerifyPKCS1v15(pubKey, crypto.SHA1, keyHash[:], signature)
 		if err == nil {
 			break
 		}
 	}
+	YggdrasilSessionPubKeyMutex.RUnlock()
 	if err != nil {
+		return nil
+	}
+
+	// Check if user is banned
+	if IsBanned(request.User) {
 		return nil
 	}
 
@@ -127,4 +135,8 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 
 	_, _ = fmt.Fprintf(w, `{"session_token":"%s"}`, tokenString)
 	return nil
+}
+
+func IsBanned(user string) bool {
+	return slices.Contains(strings.Split(os.Getenv("BANNED_USERS"), ","), user)
 }

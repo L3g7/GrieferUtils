@@ -27,9 +27,9 @@ type HiveMindBooster struct {
 }
 
 type HiveMindBoosterEntry struct {
-	User      string
-	Timestamp uint64
-	Value     []uint64
+	User      string `json:"user"`
+	Timestamp uint64 `json:"timestamp"`
+	Value     []uint64 `json:"value"`
 }
 
 type HiveMindBoosterResponse struct {

@@ -13,7 +13,7 @@ import (
 
 type AdminRequest struct {
 	Action string  `json:"action"`
-	User   *string `json:"user,omitempty"`
+	Data   *string `json:"data,omitempty"`
 	Score  *uint32 `json:"score,omitempty"`
 }
 
@@ -30,6 +30,17 @@ func AdminRoute(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	if request.Action == "genToken" {
+		tokenString, _ := jwt.NewWithClaims(jwt.SigningMethodHS384, &jwt.MapClaims{
+			"exp": time.Now().Add(24 * time.Hour).Unix(),
+			"iat": time.Now().Unix(),
+			"iss": "https://s1.grieferutils.l3g7.dev/login",
+			"sub": *request.Data,
+		}).SignedString([]byte(os.Getenv("JWT_SECRET")))
+		_, _ = w.Write([]byte(tokenString))
+		return nil
+	}
+
 	if request.Action == "updateLeaderboard" {
 		go updateLeaderboard()
 		w.WriteHeader(http.StatusNoContent)
@@ -37,14 +48,20 @@ func AdminRoute(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
-	if request.Action == "genToken" {
-		tokenString, _ := jwt.NewWithClaims(jwt.SigningMethodHS384, &jwt.MapClaims{
-			"exp": time.Now().Add(24 * time.Hour).Unix(),
-			"iat": time.Now().Unix(),
-			"iss": "https://s1.grieferutils.l3g7.dev/login",
-			"sub": *request.User,
-		}).SignedString([]byte(os.Getenv("JWT_SECRET")))
-		_, _ = w.Write([]byte(tokenString))
+	if request.Action == "setLeaderboardEntry" {
+		user := *request.Data
+		_ = db.Update(func(tx *bolt.Tx) error {
+			b := tx.Bucket([]byte("leaderboard"))
+			scores := b.Bucket([]byte("scores"))
+
+			if request.Score == nil {
+				return scores.Delete([]byte(user))
+			} else {
+				return scores.Put([]byte(user), binary.LittleEndian.AppendUint32([]byte{}, *request.Score))
+			}
+		})
+		w.WriteHeader(http.StatusNoContent)
+		_, _ = fmt.Fprintf(w, `\n`)
 		return nil
 	}
 
@@ -56,20 +73,71 @@ func AdminRoute(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
-	if request.Action == "setLeaderboardEntry" {
-		user := *request.User
-		return db.Update(func(tx *bolt.Tx) error {
-			b := tx.Bucket([]byte("leaderboard"))
-			scores := b.Bucket([]byte("scores"))
+	if request.Action == "updateYggdrasilKeys" {
+		data := loadYggdrasilPubKeys()
+		if data == nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = fmt.Fprintf(w, `\n`)
+			return nil
+		}
 
-			if request.Score == nil {
-				return scores.Delete([]byte(user))
-			} else {
-				return scores.Put([]byte(user), binary.LittleEndian.AppendUint32([]byte{}, *request.Score))
-			}
-		})
+		YggdrasilSessionPubKeyMutex.Lock()
+		YggdrasilSessionPubKeys = data
+		YggdrasilSessionPubKeyMutex.Unlock()
+
+		w.WriteHeader(http.StatusNoContent)
+		_, _ = fmt.Fprintf(w, `\n`)
+		return nil
 	}
 
-	Error(w, http.StatusBadRequest, "Bad Request")
+	if request.Action == "getBooster" {
+		boosterKnowledgeMutex.Lock()
+		data, _ := json.Marshal(boosterKnowledge)
+		boosterKnowledgeMutex.Unlock()
+		_, _ = w.Write(data)
+		return nil
+	}
+
+	if request.Action == "setBooster" {
+		var data map[string]map[string][]HiveMindBoosterEntry
+		err := json.Unmarshal([]byte(*request.Data), &data)
+		if err != nil {
+			return err
+		}
+
+		boosterKnowledgeMutex.Lock()
+		boosterKnowledge = data
+		boosterKnowledgeMutex.Unlock()
+
+		w.WriteHeader(http.StatusNoContent)
+		_, _ = fmt.Fprintf(w, `\n`)
+		return nil
+	}
+
+	if request.Action == "getMobRemover" {
+		mobRemoverKnowledgeMutex.Lock()
+		data, _ := json.Marshal(mobRemoverKnowledge)
+		mobRemoverKnowledgeMutex.Unlock()
+		_, _ = w.Write(data)
+		return nil
+	}
+
+	if request.Action == "setMobRemover" {
+		var data map[string][]HiveMindMobRemoverEntry
+		err := json.Unmarshal([]byte(*request.Data), &data)
+		if err != nil {
+			return err
+		}
+
+		mobRemoverKnowledgeMutex.Lock()
+		mobRemoverKnowledge = data
+		mobRemoverKnowledgeMutex.Unlock()
+
+		w.WriteHeader(http.StatusNoContent)
+		_, _ = fmt.Fprintf(w, `\n`)
+		return nil
+	}
+
+	Error(w, http.StatusBadRequest, "Unknown action")
 	return nil
 }

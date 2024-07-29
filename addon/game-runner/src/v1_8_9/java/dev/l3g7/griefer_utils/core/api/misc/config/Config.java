@@ -12,6 +12,8 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.last;
 
@@ -63,6 +65,7 @@ public class Config {
 	private static final Object SAVE_LOCK = new Object();
 	// .minecraft/config/GrieferUtils.json
     private static final File configFile = new File(new File("config"), "GrieferUtils.json");
+	private static final File newConfigFile = new File(new File("config"), "GrieferUtils-new.json");
 	private static int hash = 0;
     private static JsonObject config = null;
 
@@ -74,17 +77,28 @@ public class Config {
 		    config = new JsonObject();
 
 	    String json = IOUtil.gson.toJson(config);
-		if (json.hashCode() == hash) // Check if content has changed
-			return;
 
-		synchronized (SAVE_LOCK) {
-			hash = json.hashCode();
+	    synchronized (SAVE_LOCK) {
+		    if (json.hashCode() == hash) // Check if content has changed
+			    return;
 
-			do {
-				IOUtil.write(configFile, json);
-			} while (IOUtil.gson.toJson(read()).hashCode() != hash);
-		}
+		    hash = json.hashCode();
+		    save(json, newConfigFile);
+		    save(json, configFile);
+	    }
+	    try {
+		    Files.deleteIfExists(newConfigFile.toPath());
+	    } catch (IOException ignored) {}
     }
+
+	/**
+	 * Writes the configuration to the given file.
+	 */
+	public static void save(String json, File file) {
+		do {
+			IOUtil.write(file, json);
+		} while (IOUtil.gson.toJson(read(file)).hashCode() != hash);
+	}
 
 	/**
 	 * Lazy loads the config if required and returns it.
@@ -96,7 +110,8 @@ public class Config {
 				return config;
 			}
 
-			config = read();
+			if (!newConfigFile.exists() || !loadFile(newConfigFile))
+				loadFile(configFile);
 
 			new ConfigPatcher(config).patch();
 		}
@@ -105,10 +120,22 @@ public class Config {
     }
 
 	/**
+	 * Tries to load the config from the given file, returning whether it was successful.
+	 */
+	private static boolean loadFile(File file) {
+		try {
+			config = IOUtil.read(file).asJsonObject().orElseThrow(Throwable::new);
+			return config.entrySet().size() != 0;
+		} catch (Throwable t) {
+			return false;
+		}
+	}
+
+	/**
 	 * Reads the config from its file, returning an empty one if it fails.
 	 */
-	private static JsonObject read() {
-		return IOUtil.read(configFile)
+	private static JsonObject read(File file) {
+		return IOUtil.read(file)
 			.asJsonObject()
 			.orElse(new JsonObject());
 	}

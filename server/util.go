@@ -13,10 +13,12 @@ import (
 	"strings"
 )
 
+// DecodeLossy decodes an io.Reader containing JSON, ignoring unknown fields and excessive data.
 func DecodeLossy(r io.Reader, v any) error {
 	return json.NewDecoder(r).Decode(v)
 }
 
+// Decode decodes an io.Reader containing JSON.
 func Decode(r io.Reader, v any) error {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
@@ -147,6 +149,7 @@ func createDb() *bolt.DB {
 	return db
 }
 
+// Beautify adds delimiters to a number, e.g. 100.000
 func Beautify(num uint32) string {
 	str := fmt.Sprintf("%03d", num%1000)
 	num /= 1000

@@ -43,7 +43,7 @@ var boosterKnowledge = make(map[string]map[string][]HiveMindBoosterEntry)
 var boosterKnowledgeMutex sync.Mutex
 
 func HiveMindBoosterRoute(w http.ResponseWriter, r *http.Request, token *jwt.Token) error {
-	validCitybuilds := strings.Split(os.Getenv("HIVE_MIND_VALID_CITYBUILDS"), ",")
+	validCitybuilds := strings.Split(os.Getenv("VALID_CITYBUILDS"), ",")
 
 	claims, _ := token.Claims.(jwt.MapClaims)
 	user := claims["sub"].(string)

@@ -97,7 +97,12 @@ func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	vhash := sha1.Sum(payload)
 
 	// Verify public key
-	err = rsa.VerifyPKCS1v15(YggdrasilSessionPubkey, crypto.SHA1, vhash[:], signature)
+	for _, pubkey := range YggdrasilSessionPubkeys {
+		err = rsa.VerifyPKCS1v15(pubkey, crypto.SHA1, vhash[:], signature)
+		if err == nil {
+			break
+		}
+	}
 	if err != nil {
 		return err
 	}

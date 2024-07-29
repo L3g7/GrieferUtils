@@ -50,7 +50,7 @@ func HiveMindBoosterRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 
 	// Parse request
 	var request HiveMindBoosterRequest
-	err := DecodeFully(r.Body, &request)
+	err := Decode(r.Body, &request)
 	if err != nil {
 		return err
 	}

@@ -32,7 +32,7 @@ type LoginRequest struct {
 func LoginRoute(w http.ResponseWriter, r *http.Request) error {
 	// Parse request
 	var request LoginRequest
-	err := DecodeFully(r.Body, &request)
+	err := Decode(r.Body, &request)
 	if err != nil {
 		return err
 	}

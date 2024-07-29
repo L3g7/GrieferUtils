@@ -13,11 +13,11 @@ import (
 	"strings"
 )
 
-func Decode(r io.Reader, v any) error {
+func DecodeLossy(r io.Reader, v any) error {
 	return json.NewDecoder(r).Decode(v)
 }
 
-func DecodeFully(r io.Reader, v any) error {
+func Decode(r io.Reader, v any) error {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 

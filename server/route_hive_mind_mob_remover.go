@@ -37,7 +37,7 @@ func HiveMindMobRemoverRoute(w http.ResponseWriter, r *http.Request, token *jwt.
 
 	// Parse request
 	var request HiveMindMobRemoverRequest
-	err := DecodeFully(r.Body, &request)
+	err := Decode(r.Body, &request)
 	if err != nil {
 		return err
 	}

@@ -22,7 +22,7 @@ type OnlineUsersResponse struct {
 func OnlineUsersRoute(w http.ResponseWriter, r *http.Request, _ *jwt.Token) error {
 	// Parse request
 	var request OnlineUsersRequest
-	err := DecodeFully(r.Body, &request)
+	err := Decode(r.Body, &request)
 	if err != nil {
 		return err
 	}

@@ -22,7 +22,7 @@ func LoadYggdrasilPubKeys() []*rsa.PublicKey {
 			PubKey string `json:"publicKey"`
 		} `json:"playerCertificateKeys"`
 	}{}
-	err = Decode(res.Body, &certs)
+	err = DecodeLossy(res.Body, &certs)
 	if err != nil {
 		return nil
 	}

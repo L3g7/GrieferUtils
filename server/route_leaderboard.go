@@ -141,7 +141,7 @@ func LeaderboardPostRoute(w http.ResponseWriter, r *http.Request, token *jwt.Tok
 
 	// Parse request
 	var request LeaderboardRequest
-	err := DecodeFully(r.Body, &request)
+	err := Decode(r.Body, &request)
 	if err != nil {
 		return err
 	}
@@ -392,7 +392,7 @@ func resolveEmoji(uuid []byte) uint64 {
 
 	// Parse response
 	var emoji Emoji
-	err = Decode(dcRes.Body, &emoji)
+	err = DecodeLossy(dcRes.Body, &emoji)
 	if err != nil {
 		return UnknownSkinEmoji
 	}
@@ -424,7 +424,7 @@ func resolveName(uuid []byte) string {
 	}
 
 	profile := MinecraftProfile{}
-	err = Decode(res.Body, &profile)
+	err = DecodeLossy(res.Body, &profile)
 	if err != nil {
 		return string(uuid)
 	}
@@ -444,7 +444,7 @@ func syncEmojis() {
 	}
 
 	var emojis []Emoji
-	err = Decode(res.Body, &emojis)
+	err = DecodeLossy(res.Body, &emojis)
 	if err != nil {
 		return
 	}

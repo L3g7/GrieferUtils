@@ -25,7 +25,7 @@ func AdminRoute(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	var request AdminRequest
-	err := DecodeFully(r.Body, &request)
+	err := Decode(r.Body, &request)
 	if err != nil {
 		return err
 	}

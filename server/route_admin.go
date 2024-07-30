@@ -90,6 +90,52 @@ func AdminRoute(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
+	if request.Action == "getBlockOfTheDay" {
+		BOTDMutex.Lock()
+		data, _ := json.Marshal(struct {
+			A map[string][]string `json:"reported_blocks"`
+			B map[string]string   `json:"reverse_map"`
+			C bool                `json:"faulty"`
+			D uint64              `json:"last_published_timestamp"`
+			E uint64              `json:"current_day"`
+		}{
+			BOTDReportedBlocks,
+			BOTDReverseMap,
+			BOTDFaulty,
+			BOTDLastPublishedTimestamp,
+			BOTDCurrentDay,
+		})
+		BOTDMutex.Unlock()
+		_, _ = w.Write(data)
+		return nil
+	}
+
+	if request.Action == "setBlockOfTheDay" {
+		var data struct {
+			A map[string][]string `json:"reported_blocks"`
+			B map[string]string   `json:"reverse_map"`
+			C bool                `json:"faulty"`
+			D uint64              `json:"last_published_timestamp"`
+			E uint64              `json:"current_day"`
+		}
+		err := json.Unmarshal([]byte(*request.Data), &data)
+		if err != nil {
+			return err
+		}
+
+		BOTDMutex.Lock()
+		BOTDReportedBlocks = data.A
+		BOTDReverseMap = data.B
+		BOTDFaulty = data.C
+		BOTDLastPublishedTimestamp = data.D
+		BOTDCurrentDay = data.E
+		BOTDMutex.Unlock()
+
+		w.WriteHeader(http.StatusNoContent)
+		_, _ = fmt.Fprintf(w, `\n`)
+		return nil
+	}
+
 	if request.Action == "getBooster" {
 		boosterKnowledgeMutex.Lock()
 		data, _ := json.Marshal(boosterKnowledge)

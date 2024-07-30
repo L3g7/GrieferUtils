@@ -9,9 +9,7 @@ package dev.l3g7.griefer_utils.core.misc.server;
 
 import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
@@ -19,9 +17,14 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.OnlineUsersRequest;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.BlockOfTheDayRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.BoosterRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.MobRemoverRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.types.GUSession;
+import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Session;
 
 import java.io.IOException;
@@ -108,6 +111,12 @@ public class GUClient {
 
 	public LeaderboardData sendLeaderboardData(boolean flown) {
 		return new LeaderboardRequest(flown).send(session);
+	}
+
+	public void sendBlockOfTheDay(ItemStack item) {
+		var nbt = new NBTTagCompound();
+		item.writeToNBT(nbt);
+		new BlockOfTheDayRequest(nbt.toString(), System.currentTimeMillis() / 1000).send(session);
 	}
 
 }

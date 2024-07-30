@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -78,8 +79,9 @@ public abstract class Request<R> {
 	}
 
 	protected R request(GUSession session, boolean sessionRenewed, boolean post) throws IOException {
-		HttpsURLConnection conn = (HttpsURLConnection) new URL(session.host + path).openConnection();
-		conn.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
+		HttpURLConnection conn = (HttpURLConnection) new URL(session.host + path).openConnection();
+		if (conn instanceof HttpsURLConnection httpsConn)
+			httpsConn.setSSLSocketFactory(CustomSSLSocketFactoryProvider.getCustomFactory());
 
 		conn.setRequestProperty("Content-Type", "application/json");
 		if (session.sessionToken != null)

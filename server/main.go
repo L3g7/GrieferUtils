@@ -37,7 +37,7 @@ func main() {
 	http.HandleFunc("/online_users", preprocess(true, checkAuth(OnlineUsersRoute)))
 	http.HandleFunc("/admin", preprocess(true, AdminRoute))
 
-	err := http.ListenAndServe(":3333", nil)
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("server closed\n")
 	} else if err != nil {

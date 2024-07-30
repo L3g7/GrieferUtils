@@ -19,7 +19,8 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 public class ChatReaction {
 
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("(\\$\\$|\\$\\d+)");
-	private static final Pattern COLOR_PATTERN = Pattern.compile("(?<!\\\\)[§&][\\da-fk-or]");
+	private static final Pattern AND_COLOR_PATTERN = Pattern.compile("(?i)(?<!\\\\)&[\\da-fk-or]");
+	private static final Pattern PARAGRAPH_COLOR_PATTERN = Pattern.compile("(?i)(?<!\\\\)(?:§|\\\\u00A7)[\\da-fk-or]");
 
 	boolean enabled;
 	Boolean regEx;
@@ -60,9 +61,13 @@ public class ChatReaction {
 		if (!completed || !enabled)
 			return;
 
-		// Remove color if trigger doesn't have any
-		if (!COLOR_PATTERN.matcher(trigger).find())
-			text = text.replaceAll(COLOR_PATTERN.pattern(), "");
+		String trigger = this.trigger;
+
+		if (PARAGRAPH_COLOR_PATTERN.matcher(trigger).find())
+			trigger = trigger.replace(PARAGRAPH_COLOR_PATTERN.pattern(), "&$1");
+
+		boolean triggerHasColor = AND_COLOR_PATTERN.matcher(trigger).find();
+		text = text.replaceAll("(?i)§([\\da-fk-or])", triggerHasColor ? "&$1" : "");
 
 		String command = this.command;
 		if (!regEx) {
@@ -80,10 +85,9 @@ public class ChatReaction {
 		while (replaceMatcher.find()) {
 			String group = replaceMatcher.group(1).substring(1);
 			String replacement = group.equals("$") ? "\\$" : matcher.group(Integer.parseInt(group));
-			command = command.replaceFirst("\\$" + Pattern.quote(group), replacement);
+			command = command.replaceFirst("\\$" + Pattern.quote(group), replacement.replaceAll("(?i)[&§]([\\da-fk-or])", ""));
 		}
 
-		command = command.replace('§', '&');
 		if (!MessageSendEvent.post(command))
 			player().sendChatMessage(command);
 	}

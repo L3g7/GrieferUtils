@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.core.util;
 
-import dev.l3g7.griefer_utils.core.api.misc.ConcurrentHashMapIterator;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,7 +18,6 @@ import net.minecraft.nbt.*;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import static net.minecraft.init.Blocks.*;
 
@@ -137,19 +135,13 @@ public class ItemUtil {
 	public static NBTTagCompound safeCopy(NBTTagCompound tag) {
 		HashMap<String, NBTBase> tagMap = Reflection.get(tag, "tagMap");
 
-		NBTTagCompound newCompound;
+		NBTTagCompound newCompound = null;
 
-		try {
-			ConcurrentHashMapIterator<String, NBTBase> it;
-			do {
-				it = new ConcurrentHashMapIterator<>(tagMap);
-				newCompound = new NBTTagCompound();
-				for (Entry<String, NBTBase> entry : it.toIterator())
-					newCompound.setTag(entry.getKey(), entry.getValue());
-			} while (!it.isUpToDate());
-		} catch (Throwable e) {
-			throw new RuntimeException(e);
-		}
+		do {
+			try {
+				newCompound = (NBTTagCompound) tag.copy();
+			} catch (ConcurrentModificationException ignored) {}
+		} while (newCompound == null);
 
 		return newCompound;
 	}

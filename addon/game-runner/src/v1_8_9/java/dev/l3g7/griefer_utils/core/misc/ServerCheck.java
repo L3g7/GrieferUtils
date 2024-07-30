@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGHEST;
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
 public class ServerCheck {
@@ -26,11 +26,11 @@ public class ServerCheck {
 	private static boolean onCitybuild;
 
 	public static boolean isOnGrieferGames() {
-		return onGrieferGames || (!LabyBridge.labyBridge.obfuscated() && world() != null);
+		return onGrieferGames || (!LabyBridge.labyBridge.obfuscated() && mc().isIntegratedServerRunning());
 	}
 
 	public static boolean isOnCitybuild() {
-		return onCitybuild || (!LabyBridge.labyBridge.obfuscated() && world() != null);
+		return onCitybuild || (!LabyBridge.labyBridge.obfuscated() && mc().isIntegratedServerRunning());
 	}
 
 	@EventListener(priority = HIGHEST)

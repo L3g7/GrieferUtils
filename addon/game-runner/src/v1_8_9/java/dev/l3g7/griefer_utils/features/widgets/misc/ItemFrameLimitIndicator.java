@@ -5,16 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4;
+package dev.l3g7.griefer_utils.features.widgets.misc;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import net.labymod.api.client.component.Component;
-import net.labymod.api.client.component.format.TextColor;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityPainting;
@@ -26,7 +24,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 @Singleton
-public class ItemFrameLimitIndicator extends Laby4Module {
+public class ItemFrameLimitIndicator extends SimpleWidget {
 
 	private final NumberSetting limit = NumberSetting.create()
 		.name("Limit")
@@ -47,21 +45,19 @@ public class ItemFrameLimitIndicator extends Laby4Module {
 		.icon(Items.item_frame)
 		.subSettings(applyColor, limit);
 
-	@Override
-	public Object getValue() {
-		if (player() == null || world() == null)
-			return Component.empty().append(Component.text("0 / " + limit.get(), TextColor.color(applyColor.get() ? calculateColor(0) : -1)));
+	private int entities;
 
-		Chunk chunk = world().getChunkFromChunkCoords(player().chunkCoordX, player().chunkCoordZ);
-		int entities = 0;
-		for (ClassInheritanceMultiMap<Entity> entityList : chunk.getEntityLists())
-			for (Entity entity : entityList)
-				if (entity instanceof EntityItemFrame || entity instanceof EntityPainting)
-					entities++;
-		return Component.empty().append(Component.text(entities + " / " + limit.get(), TextColor.color(applyColor.get() ? calculateColor(entities) : -1)));
+	@Override
+	public String getValue() {
+		entities = getEntities();
+		return entities + " / " + limit.get();
 	}
 
-	private int calculateColor(int entities) {
+	@Override
+	public int getColor() {
+		if (!applyColor.get())
+			return -1;
+
 		double percent = Math.min(entities / (double) limit.get(), 1);
 		int r, g, b;
 
@@ -77,6 +73,21 @@ public class ItemFrameLimitIndicator extends Laby4Module {
 		}
 
 		return DrawUtils.toRGB(r, g, b, 0xFF);
+	}
+
+	private int getEntities() {
+		if (player() == null || world() == null)
+			return 0;
+
+		// Count item frames and paintings in current chunk
+		Chunk chunk = world().getChunkFromChunkCoords(player().chunkCoordX, player().chunkCoordZ);
+		int entities = 0;
+		for (ClassInheritanceMultiMap<Entity> entityList : chunk.getEntityLists())
+			for (Entity entity : entityList)
+				if (entity instanceof EntityItemFrame || entity instanceof EntityPainting)
+					entities++;
+
+		return entities;
 	}
 
 }

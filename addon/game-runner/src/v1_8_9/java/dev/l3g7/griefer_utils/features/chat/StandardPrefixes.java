@@ -61,7 +61,7 @@ public class StandardPrefixes extends Feature {
 
 	private final SwitchSetting self = SwitchSetting.create()
 		.name("Eigenen Prefix ändern")
-		.description("Ob der eigene Prefix auch geändert werden sollen.")
+		.description("Ob der eigene Prefix auch geändert werden soll.")
 		.icon("steve")
 		.defaultValue(true)
 		.callback(TabListEvent::updatePlayerInfoList);

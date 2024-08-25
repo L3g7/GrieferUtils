@@ -5,18 +5,18 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4.balances;
+package dev.l3g7.griefer_utils.features.widgets.balance_info;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard;
+import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 
 @Singleton
-public class BankBalance extends Laby4Module {
+public class BankBalance extends SimpleWidget {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

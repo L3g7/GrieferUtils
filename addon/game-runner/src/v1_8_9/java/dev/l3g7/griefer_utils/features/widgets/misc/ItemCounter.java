@@ -5,14 +5,16 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4;
+package dev.l3g7.griefer_utils.features.widgets.misc;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.hud.hudwidget.HudWidget;
 import net.labymod.api.client.gui.hud.hudwidget.HudWidgetConfig;
@@ -23,13 +25,18 @@ import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.configuration.loader.property.ConfigProperty;
 import net.labymod.core.client.gui.hud.hudwidget.ItemCounterHudWidget;
+import net.labymod.core.client.gui.hud.hudwidget.ItemCounterHudWidget.CountingItem;
 import net.labymod.core.client.gui.hud.hudwidget.item.equipment.MainHandHudWidget;
+import net.labymod.ingamegui.modules.item.HeldItemModule;
+import net.labymod.ingamegui.moduletypes.ItemModule;
+import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
@@ -37,12 +44,67 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
-public class ItemCounterInjector {
+/**
+ * This isn't a real module, it injects into LabyMod's {@link ItemModule} / {@link CountingItem}.
+ */
+public class ItemCounter {
+
+	// --------- LabyMod 3 ---------
+
+	public static SwitchSetting enabled = SwitchSetting.create()
+		.name("Item-Zähler")
+		.description("Zeigt anstatt der Haltbarkeit an, wie viele Items von dem Typ in dem derzeitigen Inventar vorhanden sind.")
+		.icon("spyglass")
+		.config("modules.held_item_counter.enabled");
+
+	@ExclusiveTo(LABY_3)
+	@SuppressWarnings("ConstantValue")
+	@Mixin(value = ItemModule.class, remap = false)
+	private abstract static class MixinItemModule {
+
+		@Inject(method = "fillSubSettings", at = @At("RETURN"))
+		private void injectFillSubSettings(List<SettingsElement> settings, CallbackInfo ci) {
+			if (!((Object) this instanceof HeldItemModule))
+				return;
+
+			settings.add((SettingsElement) HeaderSetting.create().entryHeight(8));
+			settings.add((SettingsElement) HeaderSetting.create("§r§l" + Constants.ADDON_NAME).scale(1.3));
+			settings.add((SettingsElement) HeaderSetting.create().entryHeight(8));
+			settings.add((SettingsElement) enabled);
+
+			// Copy settings of the original ItemCounter
+			List<SettingsElement> subSettings = ((SettingsElement) enabled).getSubSettings().getElements();
+			if (subSettings.isEmpty()) {
+				subSettings.add((SettingsElement) HeaderSetting.create().entryHeight(8));
+				subSettings.add((SettingsElement) HeaderSetting.create("§r§l" + Constants.ADDON_NAME).scale(1.3));
+				subSettings.add((SettingsElement) HeaderSetting.create("Item-Zähler"));
+				subSettings.add((SettingsElement) HeaderSetting.create().entryHeight(8));
+				List<SettingsElement> originalSettings = ((SettingsElement) FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.class).mainElement).getSubSettings().getElements();
+				subSettings.addAll(originalSettings.subList(originalSettings.size() - 3, originalSettings.size()));
+			}
+		}
+
+		@Redirect(method = "draw(DDDLnet/labymod/ingamegui/enums/EnumItemSlot;)V", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/DrawUtils;drawItem(Lnet/minecraft/item/ItemStack;DDLjava/lang/String;)V"))
+		private void drawItem(net.labymod.utils.DrawUtils instance, ItemStack stack, double xPosition, double yPosition, String value) {
+			if (!((Object) this instanceof HeldItemModule) || !enabled.get() || stack.isItemStackDamageable()) {
+				instance.drawItem(stack, xPosition, yPosition, null);
+				return;
+			}
+
+			List<ItemStack> itemStacks = Arrays.asList(MinecraftUtil.player().inventory.mainInventory);
+			int totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, stack);
+			instance.drawItem(stack, xPosition, yPosition, Constants.DECIMAL_FORMAT_98.format(totalAmount));
+		}
+
+	}
+
+	// --------- LabyMod 4 ---------
 
 	private static final Map<Object, SwitchSetting> settings = new HashMap<>();
 
@@ -59,9 +121,9 @@ public class ItemCounterInjector {
 			.config("modules." + configKey + ".enabled");
 
 		// Copy item counter's settings
-		switchSetting.addSetting(ItemCounter.ignoreDamage);
-		switchSetting.addSetting(ItemCounter.ignoreEnchants);
-		switchSetting.addSetting(ItemCounter.ignoreLore);
+		switchSetting.addSetting(dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.ignoreDamage);
+		switchSetting.addSetting(dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.ignoreEnchants);
+		switchSetting.addSetting(dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.ignoreLore);
 
 		switchSetting.create(switchSetting);
 
@@ -75,19 +137,19 @@ public class ItemCounterInjector {
 	@Mixin(value = HudWidget.class, remap = false)
 	private static class MixinHudWidget {
 
-	    @SuppressWarnings("ConstantValue")
-	    @Inject(method = "load", at = @At("TAIL"))
-	    private void injectLoad(HudWidgetConfig config, CallbackInfo ci) {
-	    	if (c(this) instanceof ItemCounterHudWidget)
+		@SuppressWarnings("ConstantValue")
+		@Inject(method = "load", at = @At("TAIL"))
+		private void injectLoad(HudWidgetConfig config, CallbackInfo ci) {
+			if (c(this) instanceof ItemCounterHudWidget)
 				addSetting(this, "item_counter");
-		    if (c(this) instanceof MainHandHudWidget)
-			    addSetting(this, "held_item_counter");
-	    }
+			if (c(this) instanceof MainHandHudWidget)
+				addSetting(this, "held_item_counter");
+		}
 
 	}
 
 	@ExclusiveTo(LABY_4)
-	@Mixin(value = ItemCounterHudWidget.CountingItem.class, remap = false)
+	@Mixin(value = CountingItem.class, remap = false)
 	private static abstract class MixinCountingItem {
 
 		@Shadow
@@ -111,7 +173,7 @@ public class ItemCounterInjector {
 				return;
 
 			List<ItemStack> itemStacks = Arrays.asList(player().inventory.mainInventory);
-			int totalAmount = ItemCounter.getAmount(itemStacks, stack);
+			int totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, stack);
 			if (totalAmount == count)
 				return;
 
@@ -140,7 +202,7 @@ public class ItemCounterInjector {
 
 			ItemStack mcStack = (ItemStack) (Object) itemStack;
 			List<ItemStack> itemStacks = Arrays.asList(player().inventory.mainInventory);
-			int totalAmount = ItemCounter.getAmount(itemStacks, mcStack);
+			int totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, mcStack);
 			if (totalAmount == itemStack.getSize())
 				return;
 

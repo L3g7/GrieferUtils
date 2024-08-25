@@ -5,30 +5,21 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4;
+package dev.l3g7.griefer_utils.features.widgets.misc;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
-import dev.l3g7.griefer_utils.features.modules.TempMissingAdventurerBlocksBridge;
-import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
+import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
-@Bridge
 @Singleton
-@ExclusiveTo(LABY_4)
-public class MissingAdventurerBlocks extends Laby4Module implements TempMissingAdventurerBlocksBridge {
-
-	private TextLine missingBlocksLine;
+public class MissingAdventurerBlocks extends SimpleWidget {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -36,19 +27,18 @@ public class MissingAdventurerBlocks extends Laby4Module implements TempMissingA
 		.description("Zeigt dir an, wie viele Blöcke mit dem in der Hand gehaltenen Adventure-Werkzeug noch abgebaut werden müssen.")
 		.icon(Items.fire_charge);
 
+	public MissingAdventurerBlocks() {
+		super("Fehlende Blöcke", "0");
+	}
+
 	@Override
 	public boolean isVisibleInGame() {
 		return getMissingBlocks() != -1;
 	}
 
 	@Override
-	protected void createText() {
-		missingBlocksLine = createLine("Fehlende Blöcke", "0");
-	}
-
-	@Override
-	public void onTick(boolean isEditorContext) {
-		missingBlocksLine.updateAndFlush(DECIMAL_FORMAT_98.format(Math.max(getMissingBlocks(), 0)));
+	public String getValue() {
+		return DECIMAL_FORMAT_98.format(Math.max(getMissingBlocks(), 0));
 	}
 
 	private int getMissingBlocks() {

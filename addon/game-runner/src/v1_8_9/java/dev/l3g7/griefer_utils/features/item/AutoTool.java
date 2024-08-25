@@ -16,18 +16,18 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
-import dev.l3g7.griefer_utils.features.modules.TempMissingAdventurerBlocksBridge;
-import dev.l3g7.griefer_utils.core.misc.ServerCheck;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.widgets.misc.MissingAdventurerBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -284,7 +284,7 @@ public class AutoTool extends Feature {
 			return false;
 
 		// Finished
-		if (FileProvider.getBridge(TempMissingAdventurerBlocksBridge.class).getMissingBlocks(stack) <= 0)
+		if (FileProvider.getSingleton(MissingAdventurerBlocks.class).getMissingBlocks(stack) <= 0)
 			return false;
 
 		// Not owned by the player

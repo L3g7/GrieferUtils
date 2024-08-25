@@ -5,12 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4;
+package dev.l3g7.griefer_utils.features.widgets.misc;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -26,9 +26,10 @@ import net.minecraft.util.Vec3;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 @Singleton
-public class HeadOwner extends Laby4Module {
+public class HeadOwner extends SimpleWidget {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -36,14 +37,17 @@ public class HeadOwner extends Laby4Module {
 		.description("Zeigt dir den Spieler, dessen Kopf du ansiehst.")
 		.icon("steve");
 
+	public HeadOwner() {
+		super("Kein Spielerkopf");
+	}
+
 	@Override
 	public String getValue() {
-		TileEntity e = rayTraceTileEntity();
-		if (e instanceof TileEntitySkull s) {
-			if (s.getPlayerProfile() == null || s.getPlayerProfile().getName() == null || s.getPlayerProfile().getName().isEmpty())
+		if (rayTraceTileEntity() instanceof TileEntitySkull skull) {
+			if (skull.getPlayerProfile() == null || skull.getPlayerProfile().getName() == null || skull.getPlayerProfile().getName().isEmpty())
 				return "Kein Spielerkopf";
 
-			return s.getPlayerProfile().getName();
+			return skull.getPlayerProfile().getName();
 		}
 
 		Entity entity = rayTraceEntity();
@@ -86,17 +90,17 @@ public class HeadOwner extends Laby4Module {
 		return rayTraceTileEntity() instanceof TileEntitySkull || rayTraceEntity() != null;
 	}
 
-    private TileEntity rayTraceTileEntity() {
-        if (mc().thePlayer == null)
-            return null;
+	private TileEntity rayTraceTileEntity() {
+		if (mc().thePlayer == null)
+			return null;
 
-        MovingObjectPosition rayTraceResult = mc().thePlayer.rayTrace(1000, 1);
-        if (rayTraceResult == null // Should only happen when one of the player's coordinates is NaN, but it happens
-	        || rayTraceResult.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
-            return null;
+		MovingObjectPosition rayTraceResult = mc().thePlayer.rayTrace(1000, 1);
+		if (rayTraceResult == null // Should only happen when one of the player's coordinates is NaN, but it happens
+			|| rayTraceResult.typeOfHit != BLOCK)
+			return null;
 
-        return mc().theWorld.getTileEntity(rayTraceResult.getBlockPos());
-    }
+		return mc().theWorld.getTileEntity(rayTraceResult.getBlockPos());
+	}
 
 	/**
 	 * Source: EntityRenderer.getMouseOver(float partialTicks)

@@ -5,35 +5,34 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4.money;
+package dev.l3g7.griefer_utils.features.widgets.balance_stats;
 
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.PAYMENT_RECEIVE_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getNextServerRestart;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static java.math.BigDecimal.ZERO;
 import static net.labymod.api.Textures.SpriteCommon.TRASH;
+import static net.labymod.main.ModTextures.BUTTON_TRASH;
 
 @Singleton
-@ExclusiveTo(LABY_4)
-public class Received extends Laby4Module {
+public class Received extends SimpleWidget {
 
 	static BigDecimal moneyReceived = ZERO;
 	private static boolean initialized = false; // NOTE cleanup
@@ -82,31 +81,31 @@ public class Received extends Laby4Module {
 				.name("Zurücksetzen")
 				.description("Setzt das eingenommene Geld zurück.")
 				.icon("arrow_circle")
-				.buttonIcon(TRASH)
+				.buttonIcon(LABY_4.isActive() ? TRASH : BUTTON_TRASH)
 				.callback(() -> setBalance(ZERO)),
 			ButtonSetting.create()
 				.name("Alles zurücksetzen")
 				.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
 				.icon("arrow_circle")
-				.buttonIcon(TRASH)
+				.buttonIcon(LABY_4.isActive() ? TRASH : BUTTON_TRASH)
 				.callback(() -> setBalance(Spent.setBalance(ZERO)))
 		);
 
 	@Override
-	public Object getValue() {
+	public String getValue() {
 		return DECIMAL_FORMAT_98.format(moneyReceived) + "$";
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
-		Matcher matcher = Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
+		Matcher matcher = PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
 			setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onTick(TickEvent.ClientTickEvent tickEvent) {
-		if (nextReset != -1 && System.currentTimeMillis() > nextReset ) {
+	public void onTick(ClientTickEvent tickEvent) {
+		if (nextReset != -1 && System.currentTimeMillis() > nextReset) {
 			nextReset = getNextServerRestart();
 			Config.set("modules.money.data." + mc().getSession().getProfile().getId() + ".next_reset", new JsonPrimitive(nextReset));
 			setBalance(ZERO);

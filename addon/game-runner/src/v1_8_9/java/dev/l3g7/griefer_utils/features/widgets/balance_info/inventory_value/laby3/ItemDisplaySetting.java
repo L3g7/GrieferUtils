@@ -22,7 +22,7 @@ public class ItemDisplaySetting extends ListEntrySetting {
 	public long value;
 
 	public ItemDisplaySetting(String stackNbt, long value) {
-		super(true, false, false, new Icon.WrappedIcon(Icon.of(Blocks.stone)));
+		super(true, false, false, Icon.of(Blocks.stone).toIconData());
 		container = FileProvider.getSingleton(InventoryValue.class).rawBooleanElement;
 		this.stackNbt = stackNbt;
 		this.value = value;
@@ -32,14 +32,14 @@ public class ItemDisplaySetting extends ListEntrySetting {
 		this((String) null, value);
 
 		this.stack = stack;
-		this.iconData = new Icon.WrappedIcon(Icon.of(stack));
+		this.iconData = Icon.of(stack).toIconData();
 		setDisplayName(stack.getDisplayName());
 	}
 
 	private void initStack() {
 		if (stack == null) {
 			stack = ItemUtil.fromNBT(stackNbt);
-			this.iconData = new Icon.WrappedIcon(Icon.of(stack));
+			this.iconData = Icon.of(stack).toIconData();
 			setDisplayName(stack.getDisplayName());
 		}
 	}

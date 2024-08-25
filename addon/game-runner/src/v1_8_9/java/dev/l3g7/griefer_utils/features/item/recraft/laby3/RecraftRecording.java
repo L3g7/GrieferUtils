@@ -203,7 +203,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 		final RecraftRecording recording = RecraftRecording.this;
 
 		public RecordingDisplaySetting() {
-			super(true, true, true, new Icon.WrappedIcon(Icon.of(Blocks.barrier)));
+			super(true, true, true, Icon.of(Blocks.barrier).toIconData());
 			setDisplayName("Unbenannte Aufzeichnung");
 			subSettings();
 			getSubSettings().addAll(c(new ArrayList<>(Arrays.asList(RecraftRecording.this.name(), key(), mode(), ignoreSubIds(), HeaderSetting.create(), startRecordingSetting,

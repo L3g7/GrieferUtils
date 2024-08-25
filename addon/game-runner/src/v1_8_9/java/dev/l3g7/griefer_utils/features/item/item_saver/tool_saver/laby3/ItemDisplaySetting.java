@@ -29,7 +29,7 @@ class ItemDisplaySetting extends ListEntrySetting {
 	final ItemStack stack;
 
 	ItemDisplaySetting(String name, ItemStack stack) {
-		super(true, false, false, new Icon.WrappedIcon(Icon.of(stack)));
+		super(true, false, false, Icon.of(stack).toIconData());
 		setDisplayName(name);
 		container = (SettingsElement) FileProvider.getSingleton(ToolSaver.class).enabled;
 		this.name = name;

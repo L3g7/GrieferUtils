@@ -42,7 +42,7 @@ public class ItemDisplaySetting extends ListEntrySetting {
 	private final ItemStack stack;
 
 	public ItemDisplaySetting(ItemStack stack) {
-		super(true, true, false, new Icon.WrappedIcon(Icon.of(stack)));
+		super(true, true, false, Icon.of(stack).toIconData());
 		this.stack = stack;
 		// icon(stack); // TODO
 		setDisplayName(stack.getDisplayName());

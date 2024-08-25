@@ -35,11 +35,6 @@ public class Laby3MinecraftBridgeImpl implements Laby3MinecraftBridge { // TODO 
 	}
 
 	@Override
-	public Icon createIcon(Object icon) {
-		return IconImpl.of(icon);
-	}
-
-	@Override
 	public void displayAchievement(String title, String message) {
 		LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("griefer_utils_icon", title, message);
 	}

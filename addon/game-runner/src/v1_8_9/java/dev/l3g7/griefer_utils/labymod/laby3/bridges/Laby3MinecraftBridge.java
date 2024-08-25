@@ -16,8 +16,6 @@ public interface Laby3MinecraftBridge {
 
 	DynamicModTexture createDynamicTexture(String path, String url);
 
-	Icon createIcon(Object icon);
-
 	void displayAchievement(String title, String message);
 
 	HeaderSetting createDropDownPadding();

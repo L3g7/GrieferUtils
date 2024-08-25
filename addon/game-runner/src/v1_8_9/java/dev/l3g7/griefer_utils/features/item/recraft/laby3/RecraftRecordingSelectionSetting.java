@@ -3,7 +3,6 @@ package dev.l3g7.griefer_utils.features.item.recraft.laby3;
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.bridges.laby3.IconImpl;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.util.render.GlEngine;
@@ -42,7 +41,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	public ArrayList<SettingsElement> path() { return Reflection.get(mc.currentScreen, "path"); }
 
 	public RecraftRecordingSelectionSetting(RecraftRecording container) {
-		super(new Icon.WrappedIcon(Icon.of(Blocks.barrier)));
+		super(Icon.of(Blocks.barrier).toIconData());
 		this.container = container;
 		setSettingEnabled(true);
 		subSettings();
@@ -83,7 +82,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	void setSelectedRecording(RecraftRecording selectedRecording) {
 		recording = selectedRecording;
 		setDisplayName(selectedRecording == null ? "§8[Nichts ausgewählt]" : selectedRecording.name().get());
-		icon(selectedRecording == null ? Blocks.barrier : IconImpl.EMPTY_ICON);
+		icon(selectedRecording == null ? Blocks.barrier : Icon.EMPTY_ICON);
 
 		if (container.mainSetting != null)
 			updateName(selectedRecording);
@@ -179,7 +178,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			super("§cNo name set", null);
 			setSettingEnabled(false);
 			this.recording = recording;
-			icon(recording == null ? Blocks.barrier : IconImpl.EMPTY_ICON);
+			icon(recording == null ? Blocks.barrier : Icon.EMPTY_ICON);
 			setDisplayName(recording == null ? "§8Nichts auswählen" : recording.name().get());
 		}
 

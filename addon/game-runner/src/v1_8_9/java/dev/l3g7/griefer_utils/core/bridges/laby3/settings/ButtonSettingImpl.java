@@ -1,13 +1,11 @@
 package dev.l3g7.griefer_utils.core.bridges.laby3.settings;
 
 import com.google.gson.JsonNull;
+import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.core.util.render.GlEngine;
 import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.GlStateManager;
 
 public class ButtonSettingImpl extends ControlElement implements Laby3Setting<ButtonSetting, Object>, ButtonSetting {
 

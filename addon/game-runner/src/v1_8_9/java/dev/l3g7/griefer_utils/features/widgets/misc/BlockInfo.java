@@ -5,10 +5,8 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4;
+package dev.l3g7.griefer_utils.features.widgets.misc;
 
-
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
@@ -17,8 +15,9 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
-import dev.l3g7.griefer_utils.features.modules.TempBlockInfoBridge;
+import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
+import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
+import dev.l3g7.griefer_utils.features.widgets.LabyWidget;
 import net.labymod.api.client.gui.hud.HudWidgetRendererAccessor;
 import net.labymod.api.client.gui.hud.binding.dropzone.HudWidgetDropzone;
 import net.labymod.api.client.gui.hud.binding.dropzone.NamedHudWidgetDropzones;
@@ -27,6 +26,7 @@ import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.hud.position.HudWidgetAnchor;
 import net.labymod.api.client.gui.mouse.MutableMouse;
 import net.labymod.api.client.render.matrix.Stack;
+import net.labymod.settings.LabyModModuleEditorGui;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -43,58 +43,42 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
-@Bridge
 @Singleton
-@ExclusiveTo(LABY_4)
-public class BlockInfo extends Laby4Module implements TempBlockInfoBridge {
+public class BlockInfo extends LabyWidget {
 
 	private static final Pair<BlockPos, ItemStack> DEFAULT_DATA = Pair.of(new BlockPos(0, 0, 0), new ItemStack(Blocks.command_block));
-	public static boolean gettingTooltip = false;
+	public boolean gettingTooltip = false; // NOTE: suppress event instead?
 
 	private List<String> lines = new ArrayList<>();
 	private Pair<BlockPos, ItemStack> data = null;
 
 	private final SwitchSetting showCoords = SwitchSetting.create()
-		.name("Koordinaten anzeigen")
-		.description("Ob die Koordinaten des anvisierten Blocks auch angezeigt werden sollen.")
-		.icon(Items.compass);
+			.name("Koordinaten anzeigen")
+			.description("Ob die Koordinaten des anvisierten Blocks auch angezeigt werden sollen.")
+			.icon(Items.compass);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Block-Infos")
-		.description("Zeigt dir Infos des anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
-		.icon("magnifying_glass")
-		.subSettings(showCoords);
+			.name("Block-Infos")
+			.description("Zeigt dir Infos des anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
+			.icon("magnifying_glass")
+			.subSettings(showCoords);
 
-	public BlockInfo() {
-		bindDropzones(new BlockInfoDropzone());
-	}
-
-	@Override
-	public void render(Stack stack, MutableMouse mouse, float partialTicks, boolean isEditorContext, HudSize size) {
-		size.set(getWidth(), showCoords.get() ? 40 : 30);
-		if (stack != null) {
-			this.renderEntireBackground(stack, size);
-			draw(0, 0, isEditorContext);
-		}
-	}
-
-	@Override
-	public void load(ModuleConfig config) {
-		super.load(config);
-		getSettings().remove(0);
-	}
-
-	private float getWidth() {
+	private int getWidth() {
 		int maxLength = 0;
 		for (String line : lines)
 			maxLength = Math.max(maxLength, mc().fontRendererObj.getStringWidth(line));
 
 		return 35 + maxLength;
+	}
+
+	private int getHeight() {
+		return showCoords.get() ? 40 : 30;
 	}
 
 	private void draw(double x, double y, boolean isEditorContext) {
@@ -139,6 +123,7 @@ public class BlockInfo extends Laby4Module implements TempBlockInfoBridge {
 		ItemStack pickedStack = getPickBlock(state.getBlock(), world(), mop.getBlockPos());
 		if (state.getBlock() instanceof BlockSkull) {
 			TileEntitySkull tes = (TileEntitySkull) world().getTileEntity(mop.getBlockPos());
+			//noinspection DataFlowIssue
 			pickedStack.setItemDamage(tes.getSkullType());
 			if (tes.getSkullType() == 3 && tes.getPlayerProfile() != null) {
 				NBTTagCompound tag = new NBTTagCompound();
@@ -164,7 +149,7 @@ public class BlockInfo extends Laby4Module implements TempBlockInfoBridge {
 		IBlockState state = SchematicaUtil.getWorld().getBlockState(mop.getBlockPos());
 		ItemStack pickedStack = getPickBlock(state.getBlock(), SchematicaUtil.getWorld(), mop.getBlockPos());
 		ItemStack stack = pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack;
-		
+
 		if (stack.getItem() != null)
 			stack.setStackDisplayName("§r" + stack.getDisplayName() + " §b(S)");
 
@@ -173,43 +158,108 @@ public class BlockInfo extends Laby4Module implements TempBlockInfoBridge {
 	}
 
 	@Override
-	public boolean gettingTooltip() {
-		return gettingTooltip;
+	protected Object getLaby3() {
+		return new BlockInfoL3();
 	}
 
-	private static class BlockInfoDropzone extends HudWidgetDropzone {
+	@Override
+	protected Object getLaby4() {
+		return new BlockInfoL4();
+	}
 
-		public BlockInfoDropzone() {
-			super("griefer_utils_block_info");
+	@ExclusiveTo(LABY_3)
+	private class BlockInfoL3 extends Laby3Widget {
+
+		@Override
+		public String[] getValues() {
+			return new String[]{""};
 		}
 
-		public float getX(HudWidgetRendererAccessor renderer, HudSize hudWidgetSize) {
-			return renderer.getArea().getCenterX() - hudWidgetSize.getScaledWidth() / 2;
+		@Override
+		public String[] getDefaultValues() {
+			return new String[]{""};
 		}
 
-		public float getY(HudWidgetRendererAccessor renderer, HudSize hudWidgetSize) {
-			float offset = 0.0f;
-
-			HudWidget<?> bossBar = renderer.getRelevantHudWidgetForDropzone(NamedHudWidgetDropzones.BOSS_BAR);
-			if (bossBar != null)
-				offset += renderer.getWidget(bossBar).scaledBounds().getHeight();
-
-			HudWidget<?> direction = renderer.getRelevantHudWidgetForDropzone(NamedHudWidgetDropzones.DIRECTION);
-			if (direction != null)
-				offset += renderer.getWidget(direction).scaledBounds().getHeight() + 4;
-			else if (bossBar != null)
-				offset += 2;
-
-			return renderer.getArea().getTop() + offset + 1;
+		@Override
+		public double getRawWidth() {
+			return getWidth();
 		}
 
-		public HudWidgetDropzone copy() {
-			return new BlockInfoDropzone();
+		@Override
+		public double getRawHeight() {
+			return getHeight();
 		}
 
-		public HudWidgetAnchor getAnchor() {
-			return HudWidgetAnchor.CENTER_TOP;
+		@Override
+		public boolean isShown() {
+			return true;
 		}
+
+		@Override
+		public void draw(double x, double y, double rightX) {
+			BlockInfo.this.draw(x, y, mc.currentScreen instanceof LabyModModuleEditorGui);
+		}
+
+	}
+
+	@ExclusiveTo(LABY_4)
+	private class BlockInfoL4 extends Laby4Widget {
+
+		public BlockInfoL4() {
+			bindDropzones(new BlockInfoDropzone());
+		}
+
+		@Override
+		public void render(Stack stack, MutableMouse mouse, float partialTicks, boolean isEditorContext, HudSize size) {
+			size.set((float) getWidth(), getHeight());
+			if (stack != null) {
+				this.renderEntireBackground(stack, size);
+				draw(0, 0, isEditorContext);
+			}
+		}
+
+		@Override
+		public void load(ModuleConfig config) {
+			super.load(config);
+			getSettings().remove(0);
+		}
+
+		@ExclusiveTo(LABY_4)
+		private static class BlockInfoDropzone extends HudWidgetDropzone {
+
+			public BlockInfoDropzone() {
+				super("griefer_utils_block_info");
+			}
+
+			public float getX(HudWidgetRendererAccessor renderer, HudSize hudWidgetSize) {
+				return renderer.getArea().getCenterX() - hudWidgetSize.getScaledWidth() / 2;
+			}
+
+			public float getY(HudWidgetRendererAccessor renderer, HudSize hudWidgetSize) {
+				float offset = 0.0f;
+
+				HudWidget<?> bossBar = renderer.getRelevantHudWidgetForDropzone(NamedHudWidgetDropzones.BOSS_BAR);
+				if (bossBar != null)
+					offset += renderer.getWidget(bossBar).scaledBounds().getHeight();
+
+				HudWidget<?> direction = renderer.getRelevantHudWidgetForDropzone(NamedHudWidgetDropzones.DIRECTION);
+				if (direction != null)
+					offset += renderer.getWidget(direction).scaledBounds().getHeight() + 4;
+				else if (bossBar != null)
+					offset += 2;
+
+				return renderer.getArea().getTop() + offset + 1;
+			}
+
+			public HudWidgetDropzone copy() {
+				return new BlockInfoDropzone();
+			}
+
+			public HudWidgetAnchor getAnchor() {
+				return HudWidgetAnchor.CENTER_TOP;
+			}
+		}
+
 	}
 
 }

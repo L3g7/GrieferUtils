@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules;
+package dev.l3g7.griefer_utils.features.widgets;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
@@ -21,7 +21,7 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module.ModuleConfig;
+import dev.l3g7.griefer_utils.features.widgets.Laby4Widget.ModuleConfig;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
@@ -49,9 +49,9 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
 @ExclusiveTo(LABY_4)
-public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements Disableable {
+public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements Disableable {
 
-	private static final HudWidgetCategory CATEGORY = new HudWidgetCategory(Laby4Module.class, Laby4Util.getNamespace()) {
+	private static final HudWidgetCategory CATEGORY = new HudWidgetCategory(Laby4Widget.class, Laby4Util.getNamespace()) {
 		@Override
 		public @NotNull Component title() {
 			return Component.text("§l" + Constants.ADDON_NAME);
@@ -67,7 +67,7 @@ public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements
 
 	private SwitchSettingImpl setting;
 
-	public Laby4Module() {
+	public Laby4Widget() {
 		super(UUID.randomUUID().toString(), ModuleConfig.class);
 		Reflection.set(this, "id", "griefer_utils_" + StringUtil.convertCasing(getClass().getSimpleName()));
 
@@ -194,8 +194,8 @@ public abstract class Laby4Module extends TextHudWidget<ModuleConfig> implements
 	public static void register() {
 		Laby.labyAPI().hudWidgetRegistry().categoryRegistry().register(CATEGORY);
 
-		FileProvider.getClassesWithSuperClass(Laby4Module.class).stream()
-			.map(meta -> (Laby4Module) FileProvider.getSingleton(meta.load()))
+		FileProvider.getClassesWithSuperClass(Laby4Widget.class).stream()
+			.map(meta -> (Laby4Widget) FileProvider.getSingleton(meta.load()))
 			.sorted((a, b) -> a.getComparisonName().compareToIgnoreCase(b.getComparisonName())) // TODO grouping?
 			.forEach(Laby.labyAPI().hudWidgetRegistry()::register);
 	}

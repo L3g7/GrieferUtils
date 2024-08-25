@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules;
+package dev.l3g7.griefer_utils.features.widgets;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
@@ -51,7 +51,7 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 @ExclusiveTo(LABY_3)
-public abstract class Laby3Module extends SimpleTextModule implements Disableable {
+public abstract class Laby3Widget extends SimpleTextModule implements Disableable {
 
 	public static final ModuleCategory CATEGORY = new ModuleCategory(Constants.ADDON_NAME, true, null) {
 		@Override
@@ -123,9 +123,9 @@ public abstract class Laby3Module extends SimpleTextModule implements Disableabl
 	public static void register() {
 		ModuleCategoryRegistry.loadCategory(CATEGORY);
 
-		FileProvider.getClassesWithSuperClass(Laby3Module.class).stream()
-			.map(meta -> (Laby3Module) FileProvider.getSingleton(meta.load()))
-			.map(Laby3Module::initModule)
+		FileProvider.getClassesWithSuperClass(Laby3Widget.class).stream()
+			.map(meta -> (Laby3Widget) FileProvider.getSingleton(meta.load()))
+			.map(Laby3Widget::initModule)
 			.sorted((a, b) -> a.getComparisonName().compareToIgnoreCase(b.getComparisonName()))
 			.forEach(LabyMod.getInstance().getLabyModAPI()::registerModule);
 	}
@@ -140,7 +140,7 @@ public abstract class Laby3Module extends SimpleTextModule implements Disableabl
 			ModuleCategoryRegistry.ADDON_CATEGORY_LIST.add(CATEGORY);
 
 		// Fix the modules' settings not having descriptions
-		for (net.labymod.ingamegui.Module module : Laby3Module.getModules())
+		for (net.labymod.ingamegui.Module module : Laby3Widget.getModules())
 			if (module.getCategory() == CATEGORY)
 				module.getBooleanElement().setDescriptionText(module.getDescription());
 	}
@@ -148,7 +148,7 @@ public abstract class Laby3Module extends SimpleTextModule implements Disableabl
 	public SwitchSettingImpl mainElement;
 	private String configKey;
 
-	private Laby3Module initModule() {
+	private Laby3Widget initModule() {
 		SettingLoader.MainElementData data = SettingLoader.initMainElement(this, "modules");
 		mainElement = (SwitchSettingImpl) data.mainElement;
 		configKey = data.configKey;

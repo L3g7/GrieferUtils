@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.core.bridges.laby3.temp;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.ingamechat.renderer.ChatLine;
 import net.labymod.ingamechat.renderer.ChatRenderer;
@@ -34,35 +34,13 @@ public class ChatLineUtil {
 	public static IChatComponent currentComponent;
 
 	public static final Map<ChatLine, IChatComponent> LINE_TO_COMPONENT = new HashMap<>();
-	private static final List<IChatComponent> MODIFIED_COMPONENTS = new ArrayList<>();
-	private static final List<IChatComponent> UNMODIFIED_COMPONENTS = new ArrayList<>();
+	public static final List<IChatComponent> MODIFIED_COMPONENTS = new ArrayList<>();
+	public static final List<IChatComponent> UNMODIFIED_COMPONENTS = new ArrayList<>();
 
 	@EventListener
-	private static void onMessageModify(MessageEvent.MessageModifyEvent event) {
+	private static void onMessageModify(MessageModifyEvent event) {
 		UNMODIFIED_COMPONENTS.add(event.original);
 	}
-
-	private static void onMessageModified(IChatComponent component) {
-		MODIFIED_COMPONENTS.add(component);
-	}
-
-
-	@ExclusiveTo(LABY_3)
-	@Mixin(value = GuiChatAdapter.class, remap = false)
-	private static class MixinGuiChatAdapter {
-
-		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"))
-		public void postMessageModifiedEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-			onMessageModified(component);
-		}
-
-		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
-		public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-			currentComponent = component;
-		}
-
-	}
-
 
 	public static IChatComponent getComponentFromLine(ChatLine chatLine) {
 		return LINE_TO_COMPONENT.get(chatLine);
@@ -127,6 +105,22 @@ public class ChatLineUtil {
 		public void postChatLineAddEvent(List<Object> instance, int i, Object o) {
 			LINE_TO_COMPONENT.put((ChatLine) o, currentComponent);
 			instance.add(i, o);
+		}
+
+	}
+
+	@ExclusiveTo(LABY_3)
+	@Mixin(value = GuiChatAdapter.class, remap = false)
+	private static class MixinGuiChatAdapter {
+
+		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"))
+		public void postMessageModifiedEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
+			MODIFIED_COMPONENTS.add(component);
+		}
+
+		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
+		public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
+			currentComponent = component;
 		}
 
 	}

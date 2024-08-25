@@ -8,13 +8,13 @@
 package dev.l3g7.griefer_utils.labymod.laby3;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.WebDataReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.events.LabyModAddonsGuiOpenEvent;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.MainPage;
@@ -26,6 +26,7 @@ import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.texture.DynamicModTexture;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,6 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MinecraftBridge.laby3MinecraftBridge;
 import static net.labymod.utils.ModColor.YELLOW;
 
 /**
@@ -66,7 +66,7 @@ public class Main extends LabyModAddon {
 
 		// Fix icon
 		Map<String, DynamicModTexture> map = LabyMod.getInstance().getDynamicTextureManager().getResourceLocations();
-		map.put("griefer_utils_icon", laby3MinecraftBridge.createDynamicTexture("griefer_utils/icons/icon.png", "griefer_utils_icon"));
+		map.put("griefer_utils_icon", new DynamicModTexture(new ResourceLocation("griefer_utils/icons/icon.png"), "griefer_utils_icon"));
 
 		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}

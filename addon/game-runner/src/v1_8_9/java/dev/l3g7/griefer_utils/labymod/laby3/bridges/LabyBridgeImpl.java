@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.labymod.laby3.bridges;
 
+import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -12,13 +13,16 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import net.labymod.accountmanager.storage.account.Account;
 import net.labymod.api.events.MessageSendEvent;
 import net.labymod.core.asm.LabyModCoreMod;
+import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.JsonParse;
+import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -35,7 +39,7 @@ import java.util.function.BiFunction;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.*;
-import static dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MinecraftBridge.laby3MinecraftBridge;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Bridge
@@ -86,7 +90,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public void notify(String title, String message, int ms) {
-		laby3MinecraftBridge.displayAchievement(title, message);
+		LabyMod.getInstance().getGuiCustomAchievement().displayAchievement("griefer_utils_icon", title, message);
 	}
 
 	@Override
@@ -158,17 +162,30 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public HeaderSetting createLaby3DropDownPadding() {
-		return laby3MinecraftBridge.createDropDownPadding();
+		return new HeaderSettingImpl() {
+			public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+				entryHeight(5);
+			}
+		};
 	}
 
 	@Override
 	public Pair<String, String> getCachedTexture(UUID uuid) {
-		return laby3MinecraftBridge.getCachedTexture(uuid);
+		ResourceLocation resourceSkin = LabyMod.getInstance().getDrawUtils().getPlayerSkinTextureCache().getSkinTexture(new GameProfile(uuid, ""));
+		if (resourceSkin == null)
+			return null;
+
+		return new Pair<>(resourceSkin.getResourceDomain(), resourceSkin.getResourcePath());
 	}
 
 	@Override
 	public void openNameHistory(String name) {
-		laby3MinecraftBridge.openNameHistory(name);
+		if (name.startsWith("!")) {
+			labyBridge.notify("§eUngültiger Name", "§fVon Bedrock-Spielern kann kein Namensverlauf abgefragt werden.");
+			return;
+		}
+
+		mc().displayGuiScreen(new GuiChatNameHistory("", name));
 	}
 
 	@ExclusiveTo(LABY_3)

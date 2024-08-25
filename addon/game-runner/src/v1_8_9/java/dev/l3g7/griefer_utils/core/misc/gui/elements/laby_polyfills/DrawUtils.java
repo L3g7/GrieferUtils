@@ -453,9 +453,14 @@ public class DrawUtils {
 		Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(text, (float)x, (float)y, color);
 	}
 
+	public static int toRGB(int r, int g, int b) {
+		return toRGB(r, g, b, 0xFF);
+	}
+
 	public static int toRGB(int r, int g, int b, int a) {
 		return (a & 255) << 24 | (r & 255) << 16 | (g & 255) << 8 | (b & 255);
 	}
+
 	public static int getWidth() {
 		return MinecraftUtil.screenWidth();
 	}

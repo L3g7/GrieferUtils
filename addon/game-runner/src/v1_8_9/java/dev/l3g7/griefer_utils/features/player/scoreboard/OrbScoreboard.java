@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.player.scoreboard;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.modules.TempOrbBalanceBridge;
+import dev.l3g7.griefer_utils.features.widgets.orb_stats.OrbBalance;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -33,7 +33,7 @@ public class OrbScoreboard extends ScoreboardHandler.ScoreboardMod {
 
 	@Override
 	protected String getValue() {
-		long balance = FileProvider.getBridge(TempOrbBalanceBridge.class).getBalance();
+		long balance = FileProvider.getSingleton(OrbBalance.class).getBalance();
 		return balance == -1 ? "?" : DECIMAL_FORMAT_3.format(balance);
 	}
 

@@ -5,25 +5,22 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4.balances;
+package dev.l3g7.griefer_utils.features.widgets.balance_info;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
 import net.minecraft.network.play.server.S3EPacketTeams;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 @Singleton
-@ExclusiveTo(LABY_4)
-public class CoinBalance extends Laby4Module {
+public class CoinBalance extends SimpleWidget {
 
 	private static double coins = -1;
 
@@ -34,7 +31,7 @@ public class CoinBalance extends Laby4Module {
 		.icon("coin_pile");
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onPacket(PacketEvent.PacketReceiveEvent<S3EPacketTeams> event) {
+	public void onPacket(PacketReceiveEvent<S3EPacketTeams> event) {
 		if (world() == null)
 			return;
 

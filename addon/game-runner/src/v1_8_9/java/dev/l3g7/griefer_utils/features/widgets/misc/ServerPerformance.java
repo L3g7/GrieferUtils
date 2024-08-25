@@ -5,28 +5,24 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4;
+package dev.l3g7.griefer_utils.features.widgets.misc;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
-import net.labymod.api.client.component.Component;
-import net.labymod.api.client.component.format.TextColor;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S05PacketSpawnPosition;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
@@ -34,8 +30,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
  * Concept by <a href="https://github.com/Pleezon/ServerTPS/blob/bebc5e75e592fdc1bf9401b1a5d42454028227b0/src/main/java/de/techgamez/pleezon/Main.java">Pleezon/ServerTPS</a>
  */
 @Singleton
-@ExclusiveTo(LABY_4)
-public class ServerPerformance extends Laby4Module {
+public class ServerPerformance extends SimpleWidget {
 
 	private Double currentTPS = null;
 	private Long lastWorldTime = null;
@@ -63,11 +58,21 @@ public class ServerPerformance extends Laby4Module {
 		.subSettings(displayMode, applyColor);
 
 	@Override
-	public Object getValue() {
+	public String getValue() {
 		if (currentTPS == null)
 			return "?";
 
-		// calculate color
+		if (displayMode.get() == DisplayMode.PERCENT)
+			return Math.round(currentTPS / .002) / 100 + "%";
+		else
+			return String.valueOf(currentTPS);
+	}
+
+	@Override
+	public int getColor() {
+		if (!applyColor.get())
+			return -1;
+
 		int r, g, b;
 		if (currentTPS < 15) {
 			r = 0xFF;
@@ -79,34 +84,31 @@ public class ServerPerformance extends Laby4Module {
 			b = (int) (0x55 * (currentTPS - 15) / 5d);
 		}
 
-		// create text representation
-		String displayTPS = displayMode.get() == DisplayMode.PERCENT ? Math.round(currentTPS / .002) / 100 + "%" : String.valueOf(currentTPS);
-		return applyColor.get() ? Component.empty().append(Component.text(displayTPS, TextColor.color(r, g, b))) : Component.text(displayTPS);
+		return DrawUtils.toRGB(r, g, b);
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onPacket(PacketReceiveEvent<Packet<?>> event) {
-		if (event.packet instanceof S05PacketSpawnPosition) {
-			// Reset tps
-			lastWorldTime = null;
-			tps.clear();
-		} else if (event.packet instanceof S03PacketTimeUpdate timePacket)
-			calcTps(timePacket);
+	public void onSpawn(PacketReceiveEvent<S05PacketSpawnPosition> event) {
+		// Reset tps
+		lastWorldTime = null;
+		tps.clear();
 	}
 
-	private void calcTps(S03PacketTimeUpdate packet) {
+	@EventListener(triggerWhenDisabled = true)
+	public void onTimeUpdate(PacketReceiveEvent<S03PacketTimeUpdate> event) {
 		if (player() == null || mc().getNetHandler() == null)
 			return;
 
-		// Time it takes for the packet to reach the client
+		// Calculate time it takes for the packet to reach the client
 		NetworkPlayerInfo playerInfo = mc().getNetHandler().getPlayerInfo(mc().getSession().getProfile().getId());
 		if (playerInfo == null)
 			return;
 
 		int tripTime = playerInfo.getResponseTime() / 2;
 
-		long currentWorldTime = packet.getTotalWorldTime();
-		if (currentWorldTime < 0) // the doDayLightCycle gamerule is disabled
+		long currentWorldTime = event.packet.getTotalWorldTime();
+		if (currentWorldTime < 0)
+			// the doDayLightCycle game rule is disabled
 			return;
 
 		long currentMillis = System.currentTimeMillis();
@@ -144,6 +146,7 @@ public class ServerPerformance extends Laby4Module {
 		TPS("TPS");
 
 		private final String name;
+
 		DisplayMode(String name) {
 			this.name = name;
 		}

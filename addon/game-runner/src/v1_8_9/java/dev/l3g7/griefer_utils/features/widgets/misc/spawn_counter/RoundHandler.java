@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4.spawn_counter;
+package dev.l3g7.griefer_utils.features.widgets.misc.spawn_counter;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonPrimitive;
@@ -111,7 +111,7 @@ class RoundHandler {
 				accountForStartBonus = false;
 			}
 
-			spawnCounter.leaderboardHandler.onRoundComplete(hasFlown);
+			spawnCounter.onRoundComplete(hasFlown);
 
 			if (hasFlown) {
 				roundsFlown++;

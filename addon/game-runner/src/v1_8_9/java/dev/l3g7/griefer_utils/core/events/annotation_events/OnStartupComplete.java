@@ -7,6 +7,10 @@
 
 package dev.l3g7.griefer_utils.core.events.annotation_events;
 
+import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.DrawScreenEvent;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,4 +21,25 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface OnStartupComplete { }
+public @interface OnStartupComplete {
+
+	/**
+	 * Triggers {@link OnStartupComplete} when the main menu is drawn for the first time.
+	 */
+	class Trigger {
+
+		private static boolean startupComplete = false;
+
+		@EventListener
+		private static void onGuiOpen(DrawScreenEvent event) {
+			if (startupComplete)
+				return;
+
+			// Call all methods annotated with @OnStartupComplete
+			startupComplete = true;
+			Event.fire(OnStartupComplete.class);
+		}
+
+	}
+
+}

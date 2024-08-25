@@ -5,15 +5,15 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.modules.laby4.balances.inventory_value;
+package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby4;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.modules.Laby4Module;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
+import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -32,7 +32,7 @@ import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.HIDDE
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
 
 @Singleton
-public class InventoryValue extends Laby4Module {
+public class InventoryValue extends Laby4Widget {
 
 	private TextLine ownInventory, openInventory;
 

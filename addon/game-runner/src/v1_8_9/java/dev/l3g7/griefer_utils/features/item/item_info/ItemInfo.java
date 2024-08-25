@@ -11,15 +11,15 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
+import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
-import dev.l3g7.griefer_utils.features.modules.TempBlockInfoBridge;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
+import dev.l3g7.griefer_utils.features.widgets.misc.BlockInfo;
 import net.minecraft.item.ItemStack;
 
 import java.util.Comparator;
@@ -55,10 +55,9 @@ public class ItemInfo extends Feature {
 		enabled.subSettings(infoSuppliers.stream().map(s -> s.mainElement).collect(Collectors.toList()));
 	}
 
-
 	@EventListener
 	public void onTooltip(ItemTooltipEvent e) {
-		if (FileProvider.getBridge(TempBlockInfoBridge.class).gettingTooltip())
+		if (FileProvider.getSingleton(BlockInfo.class).gettingTooltip)
 			return;
 
 		if (MinecraftUtil.mc().currentScreen instanceof GuiBigChest)

@@ -25,10 +25,10 @@ import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChes
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -56,7 +56,7 @@ public class InventoryValue extends Laby3Widget {
 		.name("Wert automatisch bestimmen")
 		.description("Ob der Item-Wert automatisch bestimmt werden soll, oder ob nur Items mit einem manuell eingetragenen Wert gezählt werden sollen.")
 		.defaultValue(true)
-		.icon(Material.GOLD_INGOT);
+		.icon(Items.gold_ingot);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

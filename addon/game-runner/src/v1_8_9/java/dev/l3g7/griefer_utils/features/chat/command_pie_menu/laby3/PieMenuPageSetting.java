@@ -23,13 +23,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.core.bridges.laby3.temp.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.EntryAddSetting;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
+import net.minecraft.init.Items;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 		this.name = StringSetting.create()
 			.name("Name")
 			.description("Wie diese Seite heißen soll.")
-			.icon(Material.BOOK_AND_QUILL)
+			.icon(Items.writable_book)
 			.callback(title -> {
 				if (title.trim().isEmpty())
 					title = "Unbenannte Seite";
@@ -54,7 +54,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 				titleSetting.name("§e§l" + title);
 			});
 
-		icon(Material.EMPTY_MAP);
+		icon(Items.map);
 
 		entrySettings.forEach(e -> ((PieMenuSetting) e).container = this);
 		entrySettings.add(0, this.name);

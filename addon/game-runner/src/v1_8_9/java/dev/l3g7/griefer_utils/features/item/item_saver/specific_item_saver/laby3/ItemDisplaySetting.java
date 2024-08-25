@@ -25,7 +25,8 @@ import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
@@ -52,13 +53,13 @@ public class ItemDisplaySetting extends ListEntrySetting {
 			.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretten Items.")
 			.defaultValue(stack.getDisplayName())
 			.callback(this::setDisplayName)
-			.icon(Material.BOOK_AND_QUILL);
+			.icon(Items.writable_book);
 
 		drop = SwitchSetting.create()
 			.name("Droppen unterbinden")
 			.description("Ob das Droppen dieses Items unterbunden werden soll.")
 			.defaultValue(true)
-			.icon(Material.DROPPER);
+			.icon(Blocks.dropper);
 
 		extremeDrop = SwitchSetting.create()
 			.name("Droppen unterbinden (extrem)")
@@ -73,13 +74,13 @@ public class ItemDisplaySetting extends ListEntrySetting {
 			.name("Linksklicks unterbinden")
 			.description("Ob Linksklicks mit diesem Item unterbunden werden soll.")
 			.defaultValue(stack.isItemStackDamageable())
-			.icon(Material.DIAMOND_SWORD);
+			.icon(Items.diamond_sword);
 
 		rightclick = SwitchSetting.create( )
 			.name("Rechtsklicks unterbinden")
 			.description("Ob Rechtsklicks mit diesem Item unterbunden werden soll.")
 			.defaultValue(!stack.isItemStackDamageable())
-			.icon(Material.BOW);
+			.icon(Items.bow);
 
 		getSubSettings().getElements().clear();
 		getSubSettings().getElements().addAll(Reflection.c(Arrays.asList(

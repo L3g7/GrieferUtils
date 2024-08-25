@@ -30,11 +30,11 @@ import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -203,7 +203,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 		final RecraftRecording recording = RecraftRecording.this;
 
 		public RecordingDisplaySetting() {
-			super(true, true, true, new IconData(Material.BARRIER));
+			super(true, true, true, new Icon.WrappedIcon(Icon.of(Blocks.barrier)));
 			setDisplayName("Unbenannte Aufzeichnung");
 			subSettings();
 			getSubSettings().addAll(c(new ArrayList<>(Arrays.asList(RecraftRecording.this.name(), key(), mode(), ignoreSubIds(), HeaderSetting.create(), startRecordingSetting,

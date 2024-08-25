@@ -11,13 +11,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.settings.types.*;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
+import net.minecraft.init.Items;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting implements Laby3Setti
 		this.name = StringSetting.create()
 			.name("Name")
 			.description("Wie dieser Hotkey heißen soll.")
-			.icon(Material.BOOK_AND_QUILL)
+			.icon(Items.writable_book)
 			.callback(title -> {
 				if (title.trim().isEmpty())
 					title = "Unbenannter Hotkey";

@@ -19,7 +19,6 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu.laby3;
 
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import net.labymod.utils.Material;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IChatComponent;
@@ -109,8 +108,6 @@ public class ChatMenuRenderer {
 
 		if (entry.icon instanceof ItemStack) {
 			stack = ((ItemStack) entry.icon);
-		} else if (entry.icon instanceof Material) {
-			stack = ((Material) entry.icon).createItemStack();
 		} else {
 			entry.drawIcon(x, y, 12, 12);
 			return;

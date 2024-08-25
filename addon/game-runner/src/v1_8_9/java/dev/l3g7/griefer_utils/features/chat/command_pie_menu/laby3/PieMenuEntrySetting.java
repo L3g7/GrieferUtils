@@ -19,14 +19,14 @@
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu.laby3;
 
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.CitybuildSettingImpl;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import net.labymod.utils.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 
 public class PieMenuEntrySetting extends PieMenuSetting {
 
@@ -42,7 +42,7 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 		this.name = StringSetting.create()
 			.name("Name")
 			.description("Wie dieser Eintrag heißen soll.")
-			.icon(Material.BOOK_AND_QUILL)
+			.icon(Items.writable_book)
 			.callback(title -> {
 				if (title.trim().isEmpty())
 					title = "Unbenannter Eintrag";
@@ -55,7 +55,7 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 			.name("Befehl")
 			.description("Welcher Befehl ausgeführt werden soll, wenn dieser Eintrag ausgewählt wird.")
 			.defaultValue(defaultCommand = command)
-			.icon(Material.COMMAND);
+			.icon(Blocks.command_block);
 
 		this.citybuild = CitybuildSetting.create()
 			.name("Citybuild")

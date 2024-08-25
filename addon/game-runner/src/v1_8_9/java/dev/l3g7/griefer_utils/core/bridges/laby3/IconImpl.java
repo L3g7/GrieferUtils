@@ -4,7 +4,6 @@ import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.render.GlEngine;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
-import net.labymod.utils.Material;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
@@ -23,10 +22,6 @@ public class IconImpl {
 		if (icon == null)
 			return null;
 
-		if (icon instanceof Material m) {
-			// TODO don't use materials
-			return of(m.createItemStack());
-		}
 		if (icon instanceof String)
 			return new TexturedIcon(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
 		else if (icon instanceof Citybuild citybuild)

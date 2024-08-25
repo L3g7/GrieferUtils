@@ -29,9 +29,10 @@ import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackBut
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
+import net.minecraft.init.Items;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 	final StringSetting name;
 
 	RecraftPageSetting(String name, List<SettingsElement> entrySettings) {
-		super(true, true, true, new IconData(Material.EMPTY_MAP));
+		super(true, true, true, new Icon.WrappedIcon(Icon.of(Items.map)));
 		subSettings();
 
 		entrySettings.forEach(e -> ((RecraftRecording.RecordingDisplaySetting) e).container = this);
@@ -52,7 +53,7 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 		entrySettings.add(0, (SettingsElement) (this.name = StringSetting.create()
 			.name("Name")
 			.description("Wie diese Seite heißen soll.")
-			.icon(Material.BOOK_AND_QUILL)
+			.icon(Items.writable_book)
 			.callback(title -> {
 				if (title.trim().isEmpty())
 					title = "Unbenannte Seite";

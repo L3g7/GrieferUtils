@@ -21,13 +21,13 @@ package dev.l3g7.griefer_utils.features.chat.chat_menu.laby3;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.ChatLineUtil;
-import net.labymod.utils.Material;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
+import net.minecraft.init.Items;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 
@@ -42,13 +42,13 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.description("Wie der kopierte Text sein soll.")
 		.config(configKey + "format")
 		.defaultValue(CopyFormat.UNFORMATTED)
-		.icon(Material.PAPER);
+		.icon(Items.paper);
 
 	private final SwitchSetting modifiedMessage = SwitchSetting.create()
 		.name("Bearbeitungen kopieren")
 		.description("Ob der Text mit den Bearbeitungen u.a. von GrieferUtils kopiert werden soll.")
 		.config(configKey + "modified_message")
-		.icon(Material.BOOK_AND_QUILL);
+		.icon(Items.writable_book);
 
 	private final SwitchSetting settingContainer = SwitchSetting.create()
 		.name(name)

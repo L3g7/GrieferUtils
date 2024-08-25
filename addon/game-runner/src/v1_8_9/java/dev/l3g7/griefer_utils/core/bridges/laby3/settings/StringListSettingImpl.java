@@ -4,8 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.main.LabyMod;
@@ -13,11 +13,11 @@ import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.PreviewRenderer;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 		public StringDisplaySetting(String entry) {
 			super(true, true, false);
 			container = StringListSettingImpl.this;
-			icon(Material.PAPER);
+			icon(Items.paper);
 			name(data = entry);
 		}
 

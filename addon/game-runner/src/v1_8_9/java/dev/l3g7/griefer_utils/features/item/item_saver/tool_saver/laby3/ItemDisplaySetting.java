@@ -21,7 +21,6 @@ package dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.laby3;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.minecraft.item.ItemStack;
 
 class ItemDisplaySetting extends ListEntrySetting {

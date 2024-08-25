@@ -11,15 +11,17 @@ import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.Recordi
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording.RecordingDisplaySetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -40,7 +42,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	public ArrayList<SettingsElement> path() { return Reflection.get(mc.currentScreen, "path"); }
 
 	public RecraftRecordingSelectionSetting(RecraftRecording container) {
-		super(new IconData(Material.BARRIER));
+		super(new Icon.WrappedIcon(Icon.of(Blocks.barrier)));
 		this.container = container;
 		setSettingEnabled(true);
 		subSettings();
@@ -61,7 +63,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 		for (RecraftPageSetting page : pages) {
 			CategorySetting category = CategorySetting.create()
 				.name(page.name.get())
-				.icon(Material.EMPTY_MAP);
+				.icon(Items.map);
 
 			List<RecordingDisplaySetting> displays = getSubSettingsOfType(page, RecordingDisplaySetting.class);
 			if (container.mode().get() == DECOMPRESS)
@@ -81,7 +83,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	void setSelectedRecording(RecraftRecording selectedRecording) {
 		recording = selectedRecording;
 		setDisplayName(selectedRecording == null ? "§8[Nichts ausgewählt]" : selectedRecording.name().get());
-		icon(selectedRecording == null ? Material.BARRIER : IconImpl.EMPTY_ICON);
+		icon(selectedRecording == null ? Blocks.barrier : IconImpl.EMPTY_ICON);
 
 		if (container.mainSetting != null)
 			updateName(selectedRecording);
@@ -177,7 +179,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			super("§cNo name set", null);
 			setSettingEnabled(false);
 			this.recording = recording;
-			icon(recording == null ? Material.BARRIER : IconImpl.EMPTY_ICON);
+			icon(recording == null ? Blocks.barrier : IconImpl.EMPTY_ICON);
 			setDisplayName(recording == null ? "§8Nichts auswählen" : recording.name().get());
 		}
 

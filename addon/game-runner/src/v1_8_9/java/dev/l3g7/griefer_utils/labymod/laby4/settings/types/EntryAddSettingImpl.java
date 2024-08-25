@@ -5,12 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.labymod.laby4.settings.types.list;
+package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
@@ -38,7 +38,7 @@ public class EntryAddSettingImpl extends AbstractSettingImpl<EntryAddSetting, Ob
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != parent)
 			return;
 

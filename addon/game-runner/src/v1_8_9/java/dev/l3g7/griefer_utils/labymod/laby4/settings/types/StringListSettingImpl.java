@@ -11,9 +11,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
@@ -45,7 +45,7 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
-public class StringListSettingImpl extends ListSetting implements StringListSetting, BaseSettingImpl<StringListSetting, List<String>> {
+public class StringListSettingImpl extends ListSetting implements StringListSetting, Laby4Setting<StringListSetting, List<String>> {
 
 	private final ExtendedStorage<List<String>> storage;
 	private String placeholder = "";
@@ -114,12 +114,12 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 
 	@Override
 	public StringListSetting entryIcon(Object icon) {
-		this.entryIcon = SettingsImpl.buildIcon(icon);
+		this.entryIcon = Icons.of(icon);
 		return this;
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 
@@ -135,7 +135,7 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 			int idx = i;
 			event.settings().addChild(entry.createUnwrappedWidget(
 				ButtonWidget.icon(
-					SettingsImpl.buildIcon("pencil_vec"),
+					Icons.of("pencil_vec"),
 					() -> new StringListInputActivity(idx, event.activity).open()
 				).addId("delete-button"), // Actually an edit button, but id is required for styling
 

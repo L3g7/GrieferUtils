@@ -24,8 +24,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
@@ -79,7 +79,7 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 				settings.add(settings.size() - 1, recording.mainSetting);
 
 				recording.setTitle("Aufzeichnung hinzufügen");
-				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
+				mc.displayGuiScreen(new TempAddonsGuiWithCustomBackButton(() -> {
 					recording.setTitle(recording.name().get());
 					RecraftBridgeImpl.save();
 				}, recording.mainSetting));
@@ -101,7 +101,7 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 
 	@Override
 	protected void openSettings() {
-		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, this));
+		mc.displayGuiScreen(new TempAddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, this));
 	}
 
 	JsonObject toJson() {

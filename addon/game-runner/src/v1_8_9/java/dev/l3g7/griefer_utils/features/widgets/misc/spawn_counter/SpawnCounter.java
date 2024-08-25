@@ -31,8 +31,7 @@ import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.features.widgets.LabyWidget;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.OffsetIcon;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
@@ -72,33 +71,33 @@ public class SpawnCounter extends LabyWidget { // NOTE: cleanup
 	static final String configKey = "modules.spawn_counter.rounds_";
 
 	final DropDownSetting<NotificationType> notificationType = DropDownSetting.create(NotificationType.class)
-			.name("Nachricht")
-			.description("Wie die Benachrichtung aussehen soll, wenn eine Runde abgeschlossen wurde.")
-			.icon(Items.clock)
-			.defaultValue(NotificationType.ACTIONBAR);
+		.name("Nachricht")
+		.description("Wie die Benachrichtung aussehen soll, wenn eine Runde abgeschlossen wurde.")
+		.icon(Items.clock)
+		.defaultValue(NotificationType.ACTIONBAR);
 
 	private final DropDownSetting<RoundDisplayType> displayType = DropDownSetting.create(RoundDisplayType.class)
-			.name("Rundenart")
-			.description("Welche Arten von Runden angezeigt werden sollen.")
-			.icon("speed")
-			.defaultValue(RoundDisplayType.BOTH);
+		.name("Rundenart")
+		.description("Welche Arten von Runden angezeigt werden sollen.")
+		.icon("speed")
+		.defaultValue(RoundDisplayType.BOTH);
 
 	final DropDownSetting<LeaderboardDisplayType> leaderboard = DropDownSetting.create(LeaderboardDisplayType.class)
-			.name("Leaderboard")
-			.description("Das Aussehen des Leaderboards.\nBei §oAus§r wird auch die Teilnahme am Leaderboard deaktiviert.")
-			.icon("trophy")
-			.defaultValue(LeaderboardDisplayType.ON)
-			.callback(t -> {
-				if (t != LeaderboardDisplayType.OFF && ServerCheck.isOnGrieferGames() && leaderboardHandler.data != null)
-					onGrieferGamesJoin(null);
-			});
+		.name("Leaderboard")
+		.description("Das Aussehen des Leaderboards.\nBei §oAus§r wird auch die Teilnahme am Leaderboard deaktiviert.")
+		.icon("trophy")
+		.defaultValue(LeaderboardDisplayType.ON)
+		.callback(t -> {
+			if (t != LeaderboardDisplayType.OFF && ServerCheck.isOnGrieferGames() && leaderboardHandler.data != null)
+				onGrieferGamesJoin(null);
+		});
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-			.name("Spawn-Runden Zähler")
-			.description("Zählt, wie viele Runden um den Spawn gelaufen wurden.")
-			.icon("speed")
-			.subSettings(notificationType, displayType, leaderboard, HeaderSetting.create());
+		.name("Spawn-Runden Zähler")
+		.description("Zählt, wie viele Runden um den Spawn gelaufen wurden.")
+		.icon("speed")
+		.subSettings(notificationType, displayType, leaderboard, HeaderSetting.create());
 
 	public SpawnCounter() {
 		if (Config.has(configKey + "flown"))
@@ -111,6 +110,7 @@ public class SpawnCounter extends LabyWidget { // NOTE: cleanup
 	public void onGrieferGamesJoin(ServerEvent.GrieferGamesJoinEvent event) {
 		leaderboardHandler.request(() -> GUClient.get().getLeaderboardData());
 	}
+
 	public void onRoundComplete(boolean flown) {
 		leaderboardHandler.request(() -> GUClient.get().sendLeaderboardData(flown));
 	}
@@ -188,6 +188,7 @@ public class SpawnCounter extends LabyWidget { // NOTE: cleanup
 
 	static abstract class LeaderboardHandler {
 		public LeaderboardRequest.LeaderboardData data;
+
 		public abstract void request(Supplier<LeaderboardRequest.LeaderboardData> request);
 	}
 
@@ -242,7 +243,7 @@ public class SpawnCounter extends LabyWidget { // NOTE: cleanup
 			if (displayType.get() != RoundDisplayType.RAN)
 				value.append("  ").append(DECIMAL_FORMAT_98.format(roundHandler.roundsFlown));
 
-			return new String[] { value.toString() };
+			return new String[]{value.toString()};
 		}
 
 		@Override
@@ -448,15 +449,15 @@ public class SpawnCounter extends LabyWidget { // NOTE: cleanup
 			Component value = Component.empty();
 
 			if (displayType.get() != RoundDisplayType.FLOWN)
-				value.append(Component.icon(new OffsetIcon(SettingsImpl.buildIcon("speed"), -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT))
-						.append(Component.text(roundHandler.roundsRan));
+				value.append(Component.icon(Icons.of("speed", -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT))
+					.append(Component.text(roundHandler.roundsRan));
 
 			if (displayType.get() == RoundDisplayType.BOTH)
 				value.append(Component.text(" "));
 
 			if (displayType.get() != RoundDisplayType.RAN)
-				value.append(Component.icon(new OffsetIcon(SettingsImpl.buildIcon("booster/fly"), -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)) // NOTE: cleanup
-						.append(Component.text(roundHandler.roundsFlown));
+				value.append(Component.icon(Icons.of("booster/fly", -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)) // NOTE: cleanup
+					.append(Component.text(roundHandler.roundsFlown));
 
 			if (leaderboard.get() == LeaderboardDisplayType.COMPACT)
 				value.append(Component.text(" ┃ " + leaderboardHandler.data.position + ".: " + leaderboardHandler.data.score));
@@ -564,10 +565,10 @@ public class SpawnCounter extends LabyWidget { // NOTE: cleanup
 					setState(VISIBLE);
 
 					this.first = createRenderableComponent(
-							Component.text(DECIMAL_FORMAT_98.format(data.position + offset) + ". ", textColor));
+						Component.text(DECIMAL_FORMAT_98.format(data.position + offset) + ". ", textColor));
 					this.second = createRenderableComponent(
-							Component.icon(new OffsetIcon(Icon.head(uuid), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
-									.append(Component.text(" " + name + ": " + score, textColor)));
+						Component.icon(Icons.of(Icon.head(uuid), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
+							.append(Component.text(" " + name + ": " + score, textColor)));
 
 					maxPosWidth = Math.max(maxPosWidth, this.first.getWidth());
 				}

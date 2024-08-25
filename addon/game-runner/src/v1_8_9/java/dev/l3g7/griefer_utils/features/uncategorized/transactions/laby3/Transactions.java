@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent.MMPacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModConnectionEvent.MMStateChangeEvent;
 import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;

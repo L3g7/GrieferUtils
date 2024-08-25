@@ -30,13 +30,13 @@ public abstract class Icon {
 	public static Icon of(Object icon) {
 		return switch (icon) {
 			case null -> null;
-			case String fileName -> new TextureIcon(new ResourceLocation("griefer_utils", "icons/" + fileName + ".png"));
+			case String fileName -> of(new ResourceLocation("griefer_utils", "icons/" + fileName + ".png"));
 			case ResourceLocation location -> new TextureIcon(location);
 			case Icon i -> i;
+			case Citybuild citybuild -> of(citybuild.toItemStack()); // TODO missing in Laby4?
+			case Item item -> of(new ItemStack(item));
+			case Block block -> of(new ItemStack(block));
 			case ItemStack stack -> new ItemStackIcon(stack);
-			case Citybuild citybuild -> new ItemStackIcon(citybuild.toItemStack());
-			case Item item -> new ItemStackIcon(new ItemStack(item));
-			case Block block -> new ItemStackIcon(new ItemStack(block));
 			default ->
 				throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
 		};

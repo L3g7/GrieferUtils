@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.KeySettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.KeySettingImpl;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;

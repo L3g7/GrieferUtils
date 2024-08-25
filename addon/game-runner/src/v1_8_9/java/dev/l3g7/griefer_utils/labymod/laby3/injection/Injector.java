@@ -35,7 +35,7 @@ public class Injector extends InjectorBase implements IClassTransformer {
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
 
 		if (!Reflection.exists("net.minecraftforge.common.ForgeHooks")) {
-			// Account for transformers loading classes while grieferutils' mixin config is being initialised, causing the mixins not be applied // TODO what?
+			// Account for transformers loading classes while GrieferUtils' mixin config is being initialised, causing the mixins not be applied // TODO what?
 			Set<String> set = Reflection.get(MixinEnvironment.class, "excludeTransformers");
 			set.add("net.labymod.addons.");
 			MixinEnvironment.getDefaultEnvironment().setObfuscationContext("notch");
@@ -64,7 +64,7 @@ public class Injector extends InjectorBase implements IClassTransformer {
 				}
 			});
 		} catch (Throwable t) {
-			t.printStackTrace();
+			t.printStackTrace(); // TODO better error handling
 		}
 	}
 

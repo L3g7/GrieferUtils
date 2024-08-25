@@ -5,11 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.bridges.laby3.temp;
+package dev.l3g7.griefer_utils.labymod.laby3.temp;
 
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-public abstract class ListEntrySetting extends ControlElement implements Laby3Setting<ListEntrySetting, Object> {
+public abstract class TempListEntrySetting extends ControlElement implements Laby3Setting<TempListEntrySetting, Object> {
 
 	private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 
@@ -34,7 +33,7 @@ public abstract class ListEntrySetting extends ControlElement implements Laby3Se
 
 	public SettingsElement container;
 
-	public ListEntrySetting(boolean deletable, boolean editable, boolean movable) {
+	public TempListEntrySetting(boolean deletable, boolean editable, boolean movable) {
 		super("§f", null);
 		setSettingEnabled(false);
 		this.deletable = deletable;

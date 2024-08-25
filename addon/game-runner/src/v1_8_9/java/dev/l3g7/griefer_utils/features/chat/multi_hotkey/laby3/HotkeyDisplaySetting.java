@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
@@ -105,7 +105,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting implements Laby3Setti
 		defaultKeys = keys.get();
 		defaultCommands = new ArrayList<>(commands.get());
 		defaultCitybuild = citybuild.get();
-		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
+		mc.displayGuiScreen(new TempAddonsGuiWithCustomBackButton(() -> {
 			if (!name.get().isEmpty() && !keys.get().isEmpty() && !commands.get().isEmpty() && citybuild.get() != null) {
 				onChange();
 				return;

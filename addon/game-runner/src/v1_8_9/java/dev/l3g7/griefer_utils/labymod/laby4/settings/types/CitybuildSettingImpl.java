@@ -12,10 +12,10 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.ItemStackIcon;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -27,8 +27,6 @@ import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWi
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.client.render.font.RenderableComponent;
 import org.jetbrains.annotations.NotNull;
-
-import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, Citybuild> implements CitybuildSetting {
 
@@ -91,7 +89,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 			}
 
 			private Component toComponent(Citybuild entry) {
-				return Component.icon(new ItemStackIcon(c(entry.toItemStack()), -1, 0, 0.9f))
+				return Component.icon(Icons.of(entry.toItemStack(), -1, 0, 0.9f))
 					.append(Component.text(entry.getName()));
 			}
 
@@ -112,7 +110,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		activity = null;
 		if (event.holder() != parent)
 			return;

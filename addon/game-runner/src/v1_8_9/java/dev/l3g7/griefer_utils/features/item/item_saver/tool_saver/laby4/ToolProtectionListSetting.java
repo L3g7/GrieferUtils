@@ -13,9 +13,9 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
@@ -46,7 +46,7 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
-public class ToolProtectionListSetting extends ListSetting implements BaseSettingImpl<ToolProtectionListSetting, List<ToolProtectionListSetting.ToolProtection>> {
+public class ToolProtectionListSetting extends ListSetting implements Laby4Setting<ToolProtectionListSetting, List<ToolProtectionListSetting.ToolProtection>> {
 
 	private final ExtendedStorage<List<ToolProtection>> storage;
 
@@ -139,7 +139,7 @@ public class ToolProtectionListSetting extends ListSetting implements BaseSettin
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 

@@ -10,7 +10,8 @@ package dev.l3g7.griefer_utils.features.chat.chat_menu.laby4;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -68,7 +69,7 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != parent)
 			return;
 
@@ -76,7 +77,7 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 			if (w instanceof SettingWidget s && s.setting() == this) {
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
-						ButtonWidget btn = ButtonWidget.icon(SettingsImpl.buildIcon("pencil_vec"), () ->
+						ButtonWidget btn = ButtonWidget.icon(Icons.of("pencil_vec"), () ->
 							mc().displayGuiScreen(new AddChatMenuEntryGui(this, mc().currentScreen)));
 
 						btn.addId("advanced-button"); // required so LSS is applied

@@ -16,11 +16,8 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.ItemStackIcon;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.*;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
@@ -62,7 +59,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
 @ExclusiveTo(LABY_4)
-public class ItemValueListSetting extends ListSetting implements BaseSettingImpl<ItemValueListSetting, List<ItemValue>> {
+public class ItemValueListSetting extends ListSetting implements Laby4Setting<ItemValueListSetting, List<ItemValue>> {
 
 	private final ExtendedStorage<List<ItemValue>> storage;
 
@@ -156,7 +153,7 @@ public class ItemValueListSetting extends ListSetting implements BaseSettingImpl
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 
@@ -166,7 +163,7 @@ public class ItemValueListSetting extends ListSetting implements BaseSettingImpl
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(SettingsImpl.buildIcon("pencil_vec"));
+						btn.updateIcon(Icons.of("pencil_vec"));
 
 						content.addContent(ButtonWidget.icon(X, () -> {
 							get().remove(entry.index);
@@ -279,7 +276,7 @@ public class ItemValueListSetting extends ListSetting implements BaseSettingImpl
 		@Override
 		public Icon getIcon() {
 			if ("initialize".equals(new Throwable().getStackTrace()[1].getMethodName()))
-				return new ItemStackIcon(c(value.stack), 2, -3, 1);
+				return Icons.of(value.stack, 2, -3);
 
 			return super.getIcon();
 		}

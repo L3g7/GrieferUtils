@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.misc.SkullIcon;
@@ -72,7 +72,7 @@ public class Laby4Credits implements CreditsBridge {
 	}
 
 	@EventListener
-	private static void onInit(SettingActivityInitEvent event) {
+	private static void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != credits)
 			return;
 

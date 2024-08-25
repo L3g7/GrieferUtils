@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.bridges.laby3.temp;
+package dev.l3g7.griefer_utils.labymod.laby3.temp;
 
 import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
@@ -23,20 +23,20 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
+public class TempAddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 
 	private final HashSet<Supplier<Boolean>> closeChecks = new HashSet<>();
 	private final GuiScreen previousScreen = mc().currentScreen;
 	private final int startPathSize;
 
-	public AddonsGuiWithCustomBackButton(Runnable onBack, SettingsElement element) {
+	public TempAddonsGuiWithCustomBackButton(Runnable onBack, SettingsElement element) {
 		this(element);
 		addCheck(() -> { onBack.run(); return true; });
 	}
 
 	public static ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }
 
-	public AddonsGuiWithCustomBackButton(SettingsElement element) {
+	public TempAddonsGuiWithCustomBackButton(SettingsElement element) {
 		List<SettingsElement> path = new ArrayList<>(path());
 		if (element != null)
 			path.add(element);
@@ -119,7 +119,7 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 			Class<? extends GuiScreen>[] newAddonTabs = new Class[addonTabs.length + 1];
 
 			System.arraycopy(addonTabs, 0, newAddonTabs, 0, addonTabs.length);
-			newAddonTabs[newAddonTabs.length - 1] = AddonsGuiWithCustomBackButton.class;
+			newAddonTabs[newAddonTabs.length - 1] = TempAddonsGuiWithCustomBackButton.class;
 			m.put("tab_addons", newAddonTabs);
 		});
 	}

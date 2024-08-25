@@ -13,8 +13,9 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
@@ -92,7 +93,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 
 	// NOTE: cleanup? merge?
 	@ExclusiveTo(LABY_4)
-	public static class RecraftPageListSetting extends ListSetting implements BaseSettingImpl<RecraftPageListSetting, List<RecraftPage>> {
+	public static class RecraftPageListSetting extends ListSetting implements Laby4Setting<RecraftPageListSetting, List<RecraftPage>> {
 
 		private final ExtendedStorage<List<RecraftPage>> storage;
 
@@ -158,7 +159,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 
 			ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), get().size()) {
 				public Icon getIcon() {
-					return SettingsImpl.buildIcon(Items.map); // NOTE: filled map if not empty?
+					return Icons.of(Items.map); // NOTE: filled map if not empty?
 				}
 			};
 
@@ -204,7 +205,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 		}
 
 		@EventListener
-		private void onInit(SettingActivityInitEvent event) {
+		private void onInit(TempSettingActivityInitEvent event) {
 			if (event.holder() != this)
 				return;
 
@@ -214,14 +215,14 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 					SettingsImpl.hookChildAdd(s, e -> {
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
 							// Fix icon
-							IconWidget widget = new IconWidget(SettingsImpl.buildIcon(Items.map)); // NOTE: duplicate code
+							IconWidget widget = new IconWidget(Icons.of(Items.map)); // NOTE: duplicate code
 							widget.addId("setting-icon");
 							content.addChild(0, new FlexibleContentEntry(widget, false));
 							widget.initialize(content);
 
 							// Update button icons
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec")); // NOTE: use original icons?
+							btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
 							content.removeChild("delete-button");
 
 							content.addContent(ButtonWidget.icon(X, () -> {

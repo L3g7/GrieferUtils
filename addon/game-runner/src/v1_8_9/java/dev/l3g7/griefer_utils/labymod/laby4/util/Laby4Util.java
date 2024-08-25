@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.labymod.laby4.util;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.navigation.elements.ScreenBaseNavigationElement;
 import net.labymod.api.client.gui.screen.ScreenInstance;
@@ -28,10 +28,10 @@ import net.labymod.core.client.gui.screen.activity.activities.labymod.child.Sett
 
 public class Laby4Util {
 
-	private static SettingActivityInitEvent lastSettingActivityInitEvent;
+	private static TempSettingActivityInitEvent lastSettingActivityInitEvent;
 
 	@EventListener
-	private static void onSettingActivityInitEvent(SettingActivityInitEvent event) {
+	private static void onSettingActivityInitEvent(TempSettingActivityInitEvent event) {
 		lastSettingActivityInitEvent = event;
 	}
 

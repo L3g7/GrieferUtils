@@ -23,8 +23,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.EntryAddSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempEntryAddSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
@@ -58,7 +58,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 
 		entrySettings.forEach(e -> ((PieMenuSetting) e).container = this);
 		entrySettings.add(0, this.name);
-		entrySettings.add(new EntryAddSetting()
+		entrySettings.add(new TempEntryAddSetting()
 			.name("Eintrag hinzufügen")
 			.callback(() -> {
 				List<SettingsElement> settings = getSubSettings().getElements();
@@ -75,7 +75,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 
 	public void openSettings() {
 		defaultName = name.get();
-		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
+		mc.displayGuiScreen(new TempAddonsGuiWithCustomBackButton(() -> {
 			if (!name.get().isEmpty()) {
 				onChange();
 				return;

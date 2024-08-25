@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.StringSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.StringSettingImpl;
 import dev.l3g7.griefer_utils.features.player.player_list.PlayerList;
 import dev.l3g7.griefer_utils.features.player.player_list.TempScammerListBridge;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.ImageSelection.FileSelectionDialog;

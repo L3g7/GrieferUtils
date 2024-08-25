@@ -12,11 +12,11 @@ import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.WebDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.labymod.laby3.events.LabyModAddonsGuiOpenEvent;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.MainPage;
 import net.labymod.addon.AddonLoader;
 import net.labymod.addon.online.AddonInfoManager;
@@ -101,7 +101,7 @@ public class Main extends LabyModAddon {
 	 * Ensures GrieferUtils is shown in the {@link LabyModAddonsGui}.
 	 */
 	@EventListener
-	private static void onGuiOpen(LabyModAddonsGuiOpenEvent event) {
+	private static void onGuiOpen(GuiOpenEvent<LabyModAddonsGui> event) {
 		UUID uuid = Main.getInstance().about.uuid;
 		for (AddonInfo addonInfo : AddonInfoManager.getInstance().getAddonInfoList())
 			if (addonInfo.getUuid().equals(uuid))

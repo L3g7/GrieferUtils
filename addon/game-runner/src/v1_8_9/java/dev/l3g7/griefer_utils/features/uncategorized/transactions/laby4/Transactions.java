@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.transactions.LocalTransactions;
 import dev.l3g7.griefer_utils.features.uncategorized.transactions.TempTransactionsBridge;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.TextComponent;
@@ -88,7 +88,7 @@ public class Transactions extends Feature implements TempTransactionsBridge { //
 	}
 
 	@EventListener
-	public void onInit(SettingActivityInitEvent event) {
+	public void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() == setting && !event.isReload) {
 			if (transactions != LocalTransactions.transactions)
 				MysteryModConnection.requestTransactions();

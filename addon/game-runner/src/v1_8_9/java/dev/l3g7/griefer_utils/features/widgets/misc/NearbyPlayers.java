@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.features.widgets.LabyWidget;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.OffsetIcon;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
@@ -180,7 +180,7 @@ public class NearbyPlayers extends LabyWidget {
 
 				this.distance = createRenderableComponent(Component.text(distance + "m "));
 				this.player = createRenderableComponent(
-						Component.icon(new OffsetIcon(Icon.head(player.getUniqueID()), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
+						Component.icon(Icons.of(Icon.head(player.getUniqueID()), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
 								.append(Component.text(" ")).append(c(displayName)));
 
 				maxDistWidth = Math.max(maxDistWidth, this.distance.getWidth());

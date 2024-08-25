@@ -23,7 +23,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -249,7 +249,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 
 		@Override
 		protected void openSettings() {
-			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, mainSetting));
+			mc().displayGuiScreen(new TempAddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, mainSetting));
 		}
 
 		@Override

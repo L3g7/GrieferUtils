@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 @SuppressWarnings("unchecked")
-public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends AbstractSetting<S, V>, Setting {
+public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends AbstractSetting<S, V>, Setting {
 
 	// Helper methods
 
@@ -104,7 +104,7 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 
 	@Override
 	default S icon(Object icon) {
-		getStorage().icon = SettingsImpl.buildIcon(icon);
+		getStorage().icon = Icons.of(icon);
 		return (S) this;
 	}
 
@@ -197,10 +197,10 @@ public interface BaseSettingImpl<S extends AbstractSetting<S, V>, V> extends Abs
 
 	class Accessor implements SettingAccessor {
 
-		private final BaseSettingImpl<?, ?> impl;
+		private final Laby4Setting<?, ?> impl;
 		private final ConfigProperty<Object> property;
 
-		public Accessor(BaseSettingImpl<?, ?> impl) {
+		public Accessor(Laby4Setting<?, ?> impl) {
 			this.impl = impl;
 			property = new ConfigProperty<>(get());
 		}

@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftBridge;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
@@ -56,7 +56,7 @@ public class RecraftBridgeImpl implements RecraftBridge {
 				long pageNumber = settings.stream().filter(s -> s instanceof RecraftPageSetting).count() + 1;
 				RecraftPageSetting setting = new RecraftPageSetting("Seite " + pageNumber, new ArrayList<>());
 				settings.add(settings.size() - 1, setting);
-				mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, setting));
+				mc().displayGuiScreen(new TempAddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, setting));
 			});
 	}
 

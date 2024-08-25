@@ -11,7 +11,7 @@ import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;

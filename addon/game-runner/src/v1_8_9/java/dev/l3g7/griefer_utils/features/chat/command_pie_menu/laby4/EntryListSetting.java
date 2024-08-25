@@ -14,8 +14,9 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -43,7 +44,7 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
 @ExclusiveTo(LABY_4)
-public class EntryListSetting extends ListSetting implements BaseSettingImpl<EntryListSetting, List<EntryConfig>> {
+public class EntryListSetting extends ListSetting implements Laby4Setting<EntryListSetting, List<EntryConfig>> {
 
 	final ExtendedStorage<List<EntryConfig>> storage;
 
@@ -136,7 +137,7 @@ public class EntryListSetting extends ListSetting implements BaseSettingImpl<Ent
 
 		ListSettingEntry entry = new ListSettingEntry(this, config.newEntryTitle(), get().size() - 1) {
 			public Icon getIcon() {
-				return SettingsImpl.buildIcon(Items.map);
+				return Icons.of(Items.map);
 			}
 		};
 
@@ -145,7 +146,7 @@ public class EntryListSetting extends ListSetting implements BaseSettingImpl<Ent
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 
@@ -155,14 +156,14 @@ public class EntryListSetting extends ListSetting implements BaseSettingImpl<Ent
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						// Fix icon
-						IconWidget widget = new IconWidget(SettingsImpl.buildIcon("command_pie_menu"));
+						IconWidget widget = new IconWidget(Icons.of("command_pie_menu"));
 						widget.addId("setting-icon");
 						content.addChild(0, new FlexibleContentEntry(widget, false));
 						widget.initialize(content);
 
 						// Update button icons
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(SettingsImpl.buildIcon("pencil_vec"));
+						btn.updateIcon(Icons.of("pencil_vec"));
 						content.removeChild("delete-button");
 
 						content.addContent(ButtonWidget.icon(X, () -> {

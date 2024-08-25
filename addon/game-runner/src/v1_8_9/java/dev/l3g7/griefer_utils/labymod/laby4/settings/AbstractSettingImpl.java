@@ -22,7 +22,7 @@ import java.util.UUID;
 /**
  * A superclass for all settings directly based on SettingElement.
  */
-public abstract class AbstractSettingImpl<S extends AbstractSetting<S, V>, V> extends SettingElement implements BaseSettingImpl<S, V> {
+public abstract class AbstractSettingImpl<S extends AbstractSetting<S, V>, V> extends SettingElement implements Laby4Setting<S, V> {
 
 	private final ExtendedStorage<V> storage;
 
@@ -60,7 +60,7 @@ public abstract class AbstractSettingImpl<S extends AbstractSetting<S, V>, V> ex
 		if (getWidgets() == null)
 			setWidgets(createWidgets());
 
-		BaseSettingImpl.super.create(parent);
+		Laby4Setting.super.create(parent);
 		for (KeyValue<Setting> element : getElements()) {
 			Setting child = element.getValue();
 			if (child instanceof AbstractSettingImpl<?,?> s)

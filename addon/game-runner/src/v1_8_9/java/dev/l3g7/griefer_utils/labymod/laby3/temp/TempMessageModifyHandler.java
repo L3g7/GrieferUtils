@@ -5,9 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.labymod.laby3.bridges;
+package dev.l3g7.griefer_utils.labymod.laby3.temp;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.labymod.laby3.bridges.LabyBridgeImpl;
 import net.labymod.utils.manager.TagManager;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -21,7 +22,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
 @ExclusiveTo(LABY_3)
-public class MessageModifyHandler {
+public class TempMessageModifyHandler {
 
 	private static IChatComponent lastMessage;
 	private static boolean isFromPacket;

@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.EntryAddSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempEntryAddSetting;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import net.labymod.settings.elements.SettingsElement;
 
@@ -68,7 +68,7 @@ public class CommandPieMenu extends Feature {
 			pieMenu.close();
 		});
 
-	private final EntryAddSetting newEntrySetting = new EntryAddSetting()
+	private final TempEntryAddSetting newEntrySetting = new TempEntryAddSetting()
 		.name("Seite hinzufügen")
 		.callback(() -> {
 			List<SettingsElement> settings = ((SettingsElement) getMainElement()).getSubSettings().getElements();

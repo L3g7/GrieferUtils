@@ -11,9 +11,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import net.labymod.api.Laby;
@@ -49,7 +49,7 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
-public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetting<PlayerListSettingLaby4, List<PlayerListEntry>>, BaseSettingImpl<PlayerListSettingLaby4, List<PlayerListEntry>> { // NOTE: cleanup
+public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetting<PlayerListSettingLaby4, List<PlayerListEntry>>, Laby4Setting<PlayerListSettingLaby4, List<PlayerListEntry>> { // NOTE: cleanup
 
 	private final ExtendedStorage<List<PlayerListEntry>> storage;
 
@@ -110,7 +110,7 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 
@@ -129,7 +129,7 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 			int idx = i;
 			event.settings().addChild(entry.createUnwrappedWidget(
 				ButtonWidget.icon(
-					SettingsImpl.buildIcon("pencil_vec"),
+					Icons.of("pencil_vec"),
 					() -> new PlayerListInputActivity(idx, event.activity).open()
 				).addId("delete-button"), // Actually an edit button, but id is required for styling
 

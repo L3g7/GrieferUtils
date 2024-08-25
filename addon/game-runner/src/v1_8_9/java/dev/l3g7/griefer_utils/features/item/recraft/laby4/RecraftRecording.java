@@ -20,8 +20,9 @@ import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressPlayer;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
@@ -166,7 +167,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 
 	// NOTE: cleanup? merge?
 	@ExclusiveTo(LABY_4)
-	public static class RecraftRecordingListSetting extends ListSetting implements BaseSettingImpl<RecraftRecordingListSetting, List<RecraftRecording>> {
+	public static class RecraftRecordingListSetting extends ListSetting implements Laby4Setting<RecraftRecordingListSetting, List<RecraftRecording>> {
 
 		private final ExtendedStorage<List<RecraftRecording>> storage;
 
@@ -375,7 +376,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 		}
 
 		@EventListener
-		private void onInit(SettingActivityInitEvent event) {
+		private void onInit(TempSettingActivityInitEvent event) {
 			if (event.holder() != this)
 				return;
 
@@ -386,7 +387,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
 							// Update button icons
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec")); // NOTE: use original icons?
+							btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
 							content.removeChild("delete-button");
 
 							content.addContent(ButtonWidget.icon(X, () -> {

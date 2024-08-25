@@ -29,7 +29,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.EntryAddSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempEntryAddSetting;
 import dev.l3g7.griefer_utils.core.util.ChatLineUtil;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.settings.LabyModAddonsGui;
@@ -53,7 +53,7 @@ public class ChatReactor extends Feature {
 
 	private static boolean loaded = false;
 
-	private static final EntryAddSetting newEntrySetting = new EntryAddSetting()
+	private static final TempEntryAddSetting newEntrySetting = new TempEntryAddSetting()
 		.name("Neue Reaktion erstellen")
 		.callback(() -> Minecraft.getMinecraft().displayGuiScreen(new AddChatReactionGui(null, Minecraft.getMinecraft().currentScreen)));
 

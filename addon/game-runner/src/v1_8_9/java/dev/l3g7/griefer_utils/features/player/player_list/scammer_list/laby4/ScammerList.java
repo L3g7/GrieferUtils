@@ -14,7 +14,8 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
@@ -110,7 +111,7 @@ public class ScammerList extends PlayerList implements TempScammerListBridge {
 		}
 
 		@EventListener
-		private void onInit(SettingActivityInitEvent event) {
+		private void onInit(TempSettingActivityInitEvent event) {
 			if (event.holder() != parent)
 				return;
 
@@ -118,7 +119,7 @@ public class ScammerList extends PlayerList implements TempScammerListBridge {
 				if (w instanceof SettingWidget s && s.setting() == this) {
 					SettingsImpl.hookChildAdd(s, e -> {
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
-							ButtonWidget btn = ButtonWidget.icon(SettingsImpl.buildIcon("explorer"), () -> {
+							ButtonWidget btn = ButtonWidget.icon(Icons.of("explorer"), () -> {
 								FileSelectionDialog.chooseFile(f -> {
 									if (f == null)
 										return;

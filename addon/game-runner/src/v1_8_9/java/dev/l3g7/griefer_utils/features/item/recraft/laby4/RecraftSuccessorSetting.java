@@ -12,8 +12,9 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
 import net.labymod.api.client.component.Component;
@@ -45,7 +46,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 @ExclusiveTo(LABY_4)
-public class RecraftSuccessorSetting extends ListSetting implements BaseSettingImpl<RecraftSuccessorSetting, RecraftRecording> {
+public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting<RecraftSuccessorSetting, RecraftRecording> {
 
 	private final ExtendedStorage<RecraftRecording> storage;
 	private Runnable backButtonCb;
@@ -134,7 +135,7 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 
@@ -155,14 +156,14 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 							return;
 
 						// Fix icon
-						IconWidget widget = new IconWidget(SettingsImpl.buildIcon(Items.map)); // NOTE: duplicate code
+						IconWidget widget = new IconWidget(Icons.of(Items.map)); // NOTE: duplicate code
 						widget.addId("setting-icon");
 						content.addChild(0, new FlexibleContentEntry(widget, false));
 						widget.initialize(content);
 
 						// Update button icons
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(SettingsImpl.buildIcon("pencil_vec")); // NOTE: use original icons?
+						btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
 						content.removeChild("delete-button");
 					}
 				});
@@ -172,7 +173,7 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 
 
 	@ExclusiveTo(LABY_4)
-	private class RecraftSuccessorPage extends ListSetting implements BaseSettingImpl<RecraftSuccessorPage, Object> {
+	private class RecraftSuccessorPage extends ListSetting implements Laby4Setting<RecraftSuccessorPage, Object> {
 
 		private final ExtendedStorage<Object> storage;
 		private final RecraftPage page;
@@ -207,7 +208,7 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 			this.storage = storage;
 			this.page = page;
 			this.name(page.name.get());
-			this.icon(SettingsImpl.buildIcon(Items.map));
+			this.icon(Icons.of(Items.map));
 		}
 
 		@Override
@@ -248,7 +249,7 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 		}
 
 		@EventListener
-		private void onInit(SettingActivityInitEvent event) {
+		private void onInit(TempSettingActivityInitEvent event) {
 			if (event.holder() != this)
 				return;
 
@@ -266,14 +267,14 @@ public class RecraftSuccessorSetting extends ListSetting implements BaseSettingI
 								return;
 
 							// Fix icon
-							IconWidget widget = new IconWidget(SettingsImpl.buildIcon(Items.map)); // NOTE: duplicate code; not required?
+							IconWidget widget = new IconWidget(Icons.of(Items.map)); // NOTE: duplicate code; not required?
 							widget.addId("setting-icon");
 							content.addChild(0, new FlexibleContentEntry(widget, false));
 							widget.initialize(content);
 
 							// Update button icons
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec")); // NOTE: use original icons?
+							btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
 							content.removeChild("delete-button");
 						}
 					});

@@ -14,8 +14,9 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -46,7 +47,7 @@ import static net.labymod.api.Textures.SpriteCommon.X;
 
 @Bridge
 @ExclusiveTo(LABY_4)
-public class PageListSettingImpl extends ListSetting implements PageListSetting, BaseSettingImpl<PageListSetting, List<Page>> {
+public class PageListSettingImpl extends ListSetting implements PageListSetting, Laby4Setting<PageListSetting, List<Page>> {
 
 	private final ExtendedStorage<List<Page>> storage;
 
@@ -144,7 +145,7 @@ public class PageListSettingImpl extends ListSetting implements PageListSetting,
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 
@@ -154,14 +155,14 @@ public class PageListSettingImpl extends ListSetting implements PageListSetting,
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						// Fix icon
-						IconWidget widget = new IconWidget(SettingsImpl.buildIcon(Items.map));
+						IconWidget widget = new IconWidget(Icons.of(Items.map));
 						widget.addId("setting-icon");
 						content.addChild(0, new FlexibleContentEntry(widget, false));
 						widget.initialize(content);
 
 						// Update button icons
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(SettingsImpl.buildIcon("pencil_vec")); // NOTE: use original icons?
+						btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
 						content.removeChild("delete-button");
 
 						content.addContent(ButtonWidget.icon(X, () -> {

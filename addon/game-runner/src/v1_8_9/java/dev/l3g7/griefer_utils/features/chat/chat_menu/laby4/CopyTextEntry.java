@@ -13,7 +13,8 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
@@ -98,7 +99,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 		 * Replaces the advanced-button icon with pencil_vec.
 		 */
 		@EventListener
-		private void onInit(SettingActivityInitEvent event) {
+		private void onInit(TempSettingActivityInitEvent event) {
 			if (event.holder() != parent)
 				return;
 
@@ -107,7 +108,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 					SettingsImpl.hookChildAdd(s, e -> {
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec"));
+							btn.updateIcon(Icons.of("pencil_vec"));
 						}
 					});
 					break;

@@ -19,9 +19,9 @@
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu.laby3;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.ListEntrySetting;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempListEntrySetting;
 
-public abstract class PieMenuSetting extends ListEntrySetting {
+public abstract class PieMenuSetting extends TempListEntrySetting {
 
 	public PieMenuSetting() {
 		super(true, true, true);

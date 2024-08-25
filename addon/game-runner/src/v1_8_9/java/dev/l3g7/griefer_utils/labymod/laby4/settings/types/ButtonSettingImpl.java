@@ -10,7 +10,8 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
@@ -38,7 +39,7 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 
 	@Override
 	public ButtonSetting buttonIcon(Object icon) {
-		buttonIcon = SettingsImpl.buildIcon(icon);
+		buttonIcon = Icons.of(icon);
 		return this;
 	}
 
@@ -54,7 +55,7 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != parent)
 			return;
 

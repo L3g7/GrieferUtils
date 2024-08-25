@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.core.bridges.laby3.settings.HeaderSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import net.labymod.accountmanager.storage.account.Account;

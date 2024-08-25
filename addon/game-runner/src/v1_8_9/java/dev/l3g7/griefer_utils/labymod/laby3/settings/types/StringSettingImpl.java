@@ -1,4 +1,11 @@
-package dev.l3g7.griefer_utils.core.bridges.laby3.settings;
+/*
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
+ * Copyright (c) L3g7.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ */
+
+package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
@@ -7,7 +14,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
-import dev.l3g7.griefer_utils.core.bridges.laby3.temp.AddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.settings.elements.StringElement;
 import net.labymod.utils.Consumer;
@@ -66,10 +73,10 @@ public class StringSettingImpl extends StringElement implements Laby3Setting<Str
 		if (mc.currentScreen instanceof ExpandedStringElementGui)
 			return;
 
-		if (!(mc().currentScreen instanceof AddonsGuiWithCustomBackButton))
-			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(null));
+		if (!(mc().currentScreen instanceof TempAddonsGuiWithCustomBackButton))
+			mc().displayGuiScreen(new TempAddonsGuiWithCustomBackButton(null));
 
-		((AddonsGuiWithCustomBackButton) mc().currentScreen).addCheck(closeCheck);
+		((TempAddonsGuiWithCustomBackButton) mc().currentScreen).addCheck(closeCheck);
 	}
 
 	@Override

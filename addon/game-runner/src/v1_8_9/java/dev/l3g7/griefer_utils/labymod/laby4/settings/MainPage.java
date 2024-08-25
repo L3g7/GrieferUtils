@@ -47,7 +47,7 @@ public class MainPage {
 
 		// Initialize settings
 		settings.forEach(s -> {
-			if (s instanceof BaseSettingImpl<?, ?> b)
+			if (s instanceof Laby4Setting<?, ?> b)
 				b.create(registry);
 		});
 		registry.addSettings(Reflection.<List<Setting>>c(settings));
@@ -133,7 +133,7 @@ public class MainPage {
 
 		@Override
 		public Icon getIcon() {
-			return SettingsImpl.buildIcon("icon");
+			return Icons.of("icon");
 		}
 
 	}

@@ -18,8 +18,9 @@ import dev.l3g7.griefer_utils.core.events.InputEvent.KeyInputEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
 import net.labymod.api.client.component.Component;
@@ -149,7 +150,7 @@ public class MultiHotkey extends Feature {
 
 	// NOTE: cleanup? merge?
 	@ExclusiveTo(LABY_4)
-	private class HotkeyListSetting extends ListSetting implements BaseSettingImpl<HotkeyListSetting, List<HotkeyConfig>> {
+	private class HotkeyListSetting extends ListSetting implements Laby4Setting<HotkeyListSetting, List<HotkeyConfig>> {
 
 		private final ExtendedStorage<List<HotkeyConfig>> storage;
 
@@ -219,7 +220,7 @@ public class MultiHotkey extends Feature {
 
 			ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), get().size()) {
 				public Icon getIcon() {
-					return SettingsImpl.buildIcon("labymod_3/autotext");
+					return Icons.of("labymod_3/autotext");
 				}
 			};
 
@@ -265,7 +266,7 @@ public class MultiHotkey extends Feature {
 		}
 
 		@EventListener
-		private void onInit(SettingActivityInitEvent event) {
+		private void onInit(TempSettingActivityInitEvent event) {
 			if (event.holder() != this)
 				return;
 
@@ -275,14 +276,14 @@ public class MultiHotkey extends Feature {
 					SettingsImpl.hookChildAdd(s, e -> {
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
 							// Fix icon
-							IconWidget widget = new IconWidget(SettingsImpl.buildIcon("labymod_3/autotext")); // NOTE: duplicate code; use LM4's icon?
+							IconWidget widget = new IconWidget(Icons.of("labymod_3/autotext")); // NOTE: duplicate code; use LM4's icon?
 							widget.addId("setting-icon");
 							content.addChild(0, new FlexibleContentEntry(widget, false));
 							widget.initialize(content);
 
 							// Update button icons
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(SettingsImpl.buildIcon("pencil_vec")); // NOTE: use original icons?
+							btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
 							content.removeChild("delete-button");
 
 							content.addContent(ButtonWidget.icon(X, () -> {

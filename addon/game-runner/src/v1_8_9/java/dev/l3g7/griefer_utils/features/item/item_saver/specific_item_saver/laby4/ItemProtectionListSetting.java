@@ -14,9 +14,10 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.labymod.laby4.events.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.BaseSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
@@ -47,7 +48,7 @@ import static dev.l3g7.griefer_utils.features.item.item_saver.specific_item_save
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
-public class ItemProtectionListSetting extends ListSetting implements BaseSettingImpl<ItemProtectionListSetting, List<ItemProtection>> {
+public class ItemProtectionListSetting extends ListSetting implements Laby4Setting<ItemProtectionListSetting, List<ItemProtection>> {
 
 	private final ExtendedStorage<List<ItemProtection>> storage;
 
@@ -154,7 +155,7 @@ public class ItemProtectionListSetting extends ListSetting implements BaseSettin
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
+	private void onInit(TempSettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 
@@ -164,7 +165,7 @@ public class ItemProtectionListSetting extends ListSetting implements BaseSettin
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(SettingsImpl.buildIcon("pencil_vec"));
+						btn.updateIcon(Icons.of("pencil_vec"));
 
 						content.addContent(ButtonWidget.icon(X, () -> {
 							get().remove(entry.index);

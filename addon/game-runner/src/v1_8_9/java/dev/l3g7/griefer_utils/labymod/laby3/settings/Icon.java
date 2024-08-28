@@ -28,19 +28,25 @@ public abstract class Icon {
 	};
 
 	public static Icon of(Object icon) {
-		return switch (icon) {
-			case null -> null;
-			case String fileName -> of(new ResourceLocation("griefer_utils", "icons/" + fileName + ".png"));
-			case ResourceLocation location -> new TextureIcon(location);
-			case Icon i -> i;
-			case Citybuild citybuild -> of(citybuild.toItemStack()); // TODO missing in Laby4?
-			case Item item -> of(new ItemStack(item));
-			case Block block -> of(new ItemStack(block));
-			case ItemStack stack -> new ItemStackIcon(stack);
-			default ->
-				throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
-		};
-
+		if (icon == null) { // FIXME: switches don't transpile correctly
+			return null;
+		} else if (icon instanceof String fileName) {
+			return of(new ResourceLocation("griefer_utils", "icons/" + fileName + ".png"));
+		} else if (icon instanceof ResourceLocation location) {
+			return new TextureIcon(location);
+		} else if (icon instanceof Icon i) {
+			return i;
+		} else if (icon instanceof Citybuild citybuild) {
+			return of(citybuild.toItemStack());
+			// TODO missing in Laby4?
+		} else if (icon instanceof Item item) {
+			return of(new ItemStack(item));
+		} else if (icon instanceof Block block) {
+			return of(new ItemStack(block));
+		} else if (icon instanceof ItemStack stack) {
+			return new ItemStackIcon(stack);
+		}
+		throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
 	}
 
 	public abstract void draw(int x, int y, float scale);

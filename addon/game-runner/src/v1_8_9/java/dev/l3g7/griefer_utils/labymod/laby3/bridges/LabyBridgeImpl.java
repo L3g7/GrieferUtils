@@ -13,13 +13,13 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.util.Laby3Util;
 import net.labymod.accountmanager.storage.account.Account;
 import net.labymod.api.events.MessageSendEvent;
 import net.labymod.core.asm.LabyModCoreMod;
-import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.JsonParse;
 import net.minecraft.util.ResourceLocation;
@@ -39,7 +39,6 @@ import java.util.function.BiFunction;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.*;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Bridge
@@ -180,12 +179,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public void openNameHistory(String name) {
-		if (name.startsWith("!")) {
-			labyBridge.notify("§eUngültiger Name", "§fVon Bedrock-Spielern kann kein Namensverlauf abgefragt werden.");
-			return;
-		}
-
-		mc().displayGuiScreen(new GuiChatNameHistory("", name));
+		Laby3Util.openNameHistory(name);
 	}
 
 	@ExclusiveTo(LABY_3)

@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.MainPage;
+import dev.l3g7.griefer_utils.labymod.laby3.util.Laby3Util;
 import net.labymod.addon.AddonLoader;
 import net.labymod.addon.online.AddonInfoManager;
 import net.labymod.addon.online.info.AddonInfo;
@@ -26,7 +27,6 @@ import net.labymod.main.LabyMod;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.texture.DynamicModTexture;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 import java.util.Map;
@@ -66,7 +66,7 @@ public class Main extends LabyModAddon {
 
 		// Fix icon
 		Map<String, DynamicModTexture> map = LabyMod.getInstance().getDynamicTextureManager().getResourceLocations();
-		map.put("griefer_utils_icon", new DynamicModTexture(new ResourceLocation("griefer_utils/icons/icon.png"), "griefer_utils_icon"));
+		map.put("griefer_utils_icon", Laby3Util.createDynamicTexture("griefer_utils/icons/icon.png", "griefer_utils_icon"));
 
 		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}

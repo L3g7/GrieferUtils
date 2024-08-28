@@ -12,14 +12,14 @@ import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
+import net.labymod.api.Textures;
+import net.labymod.main.ModTextures;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.features.widgets.balance_stats.Received.moneyReceived;
 import static dev.l3g7.griefer_utils.features.widgets.balance_stats.Spent.moneySpent;
 import static java.math.BigDecimal.ZERO;
-import static net.labymod.api.Textures.SpriteCommon.TRASH;
-import static net.labymod.main.ModTextures.BUTTON_TRASH;
 
 @Singleton
 public class Earned extends SimpleWidget {
@@ -33,7 +33,7 @@ public class Earned extends SimpleWidget {
 			.name("Zurücksetzen")
 			.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
 			.icon("arrow_circle")
-			.buttonIcon(LABY_4.isActive() ? TRASH : BUTTON_TRASH)
+			.buttonIcon(getResetIcon())
 			.callback(() -> {
 				Received.setBalance(ZERO);
 				Spent.setBalance(ZERO);
@@ -42,6 +42,14 @@ public class Earned extends SimpleWidget {
 	@Override
 	public String getValue() {
 		return DECIMAL_FORMAT_98.format(moneyReceived.subtract(moneySpent)) + "$";
+	}
+
+	static Object getResetIcon() {
+		if (LABY_4.isActive()) {
+			return Textures.SpriteCommon.TRASH;
+		} else {
+			return ModTextures.BUTTON_TRASH;
+		}
 	}
 
 }

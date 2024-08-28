@@ -22,14 +22,12 @@ import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.PAYMENT_RECEIVE_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getNextServerRestart;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.features.widgets.balance_stats.Earned.getResetIcon;
 import static java.math.BigDecimal.ZERO;
-import static net.labymod.api.Textures.SpriteCommon.TRASH;
-import static net.labymod.main.ModTextures.BUTTON_TRASH;
 
 @Singleton
 public class Received extends SimpleWidget {
@@ -81,13 +79,13 @@ public class Received extends SimpleWidget {
 				.name("Zurücksetzen")
 				.description("Setzt das eingenommene Geld zurück.")
 				.icon("arrow_circle")
-				.buttonIcon(LABY_4.isActive() ? TRASH : BUTTON_TRASH)
+				.buttonIcon(getResetIcon())
 				.callback(() -> setBalance(ZERO)),
 			ButtonSetting.create()
 				.name("Alles zurücksetzen")
 				.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
 				.icon("arrow_circle")
-				.buttonIcon(LABY_4.isActive() ? TRASH : BUTTON_TRASH)
+				.buttonIcon(getResetIcon())
 				.callback(() -> setBalance(Spent.setBalance(ZERO)))
 		);
 

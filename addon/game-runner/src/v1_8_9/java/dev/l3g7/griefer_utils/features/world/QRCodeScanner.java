@@ -7,16 +7,18 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
+import com.google.zxing.qrcode.decoder.Decoder;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.BufferedImageLuminanceSource;
-import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
+import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiInventory;
@@ -24,8 +26,13 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.storage.MapData;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ADDON_PREFIX;
@@ -35,6 +42,9 @@ import static net.minecraft.util.MovingObjectPosition.MovingObjectType.ENTITY;
 
 @Singleton
 public class QRCodeScanner extends Feature {
+
+	private static final Map<DecodeHintType, ?> DECODE_HINTS = ImmutableMap.of(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+	public static boolean suppressCorrectionErrors = false;
 
 	@MainElement
 	private final KeySetting enabled = KeySetting.create()
@@ -85,25 +95,51 @@ public class QRCodeScanner extends Feature {
 					: MapColor.mapColorArray[colorId / 4].getMapColor(colorId & 3));
 			}
 
+			LuminanceSource source = new BufferedImageLuminanceSource(img);
+			LuminanceSource inverted = source.invert();
 			try {
-				BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(img);
-				if (scan(source) && scan(source.invert())) // Adding DecodeHintType.ALSO_INVERTED doesn't suffice, for some reason
+				if (scan(source) && scan(inverted)) // Adding DecodeHintType.ALSO_INVERTED doesn't suffice, for some reason
 					display(ADDON_PREFIX + "§cEs konnte kein QR-Code gefunden werden.");
-			} catch (ChecksumException e) {
-				display(ADDON_PREFIX + "§cDie Prüfsumme des QR-Codes ist ungültig.");
 			} catch (FormatException e) {
 				display(ADDON_PREFIX + "§cDas Format des QR-Codes ist ungültig.");
+			} catch (ChecksumException e) {
+				display(ADDON_PREFIX + "§eUngültige Fehlerkorrektur, Ergebnis kann fehlerhaft sein.");
+				suppressCorrectionErrors = true;
+				if (scan(source) && scan(inverted)) {
+					display(ADDON_PREFIX + "§cEs konnte kein QR-Code gefunden werden.");
+					display(ADDON_PREFIX + "§cWie hast du das geschafft? Bitte melde dich beim GrieferUtils-Team.");
+				}
+
+				suppressCorrectionErrors = false;
 			}
 		});
 
 	private static boolean scan(LuminanceSource source) throws ChecksumException, FormatException {
 		BinaryBitmap data = new BinaryBitmap(new HybridBinarizer(source));
 		try {
-			display(ADDON_PREFIX + "QR-Code-Text: " + new QRCodeReader().decode(data).getText());
+			display(ADDON_PREFIX + "QR-Code-Text: " + new QRCodeReader().decode(data, DECODE_HINTS).getText());
 			return false;
 		} catch (NotFoundException e) {
 			return true;
 		}
+	}
+
+	@Mixin(value = Decoder.class, remap = false)
+	private static abstract class MixinDecoder {
+
+		@Shadow
+		protected abstract void correctErrors(byte[] codewordBytes, int numDataCodewords) throws ChecksumException;
+
+		@Redirect(method = "decode(Lcom/google/zxing/qrcode/decoder/BitMatrixParser;Ljava/util/Map;)Lcom/google/zxing/common/DecoderResult;", at = @At(value = "INVOKE", target = "Lcom/google/zxing/qrcode/decoder/Decoder;correctErrors([BI)V"))
+	    private void injectCorrectErrors(Decoder instance, byte[] codewordBytes, int numDataCodewords) throws ChecksumException {
+			try {
+				correctErrors(codewordBytes, numDataCodewords);
+			} catch (ChecksumException e) {
+				if (!suppressCorrectionErrors)
+					throw e;
+			}
+	    }
+
 	}
 
 }

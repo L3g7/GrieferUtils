@@ -21,11 +21,13 @@ import net.labymod.api.event.client.chat.ChatReceiveEvent;
 import net.labymod.core.client.chat.DefaultChatController;
 import net.labymod.core.client.chat.DefaultChatMessage;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
+import net.labymod.utils.manager.TagManager;
 import net.minecraft.util.IChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -46,7 +48,8 @@ public class ChatLineUtil {
 
 	@EventListener
 	private static void onMessageModify(MessageModifyEvent event) {
-		UNMODIFIED_COMPONENTS.add(event.original);
+		if (LABY_4.isActive())
+			UNMODIFIED_COMPONENTS.add(event.original);
 	}
 
 	public static IChatComponent getUnmodifiedIChatComponent(IChatComponent iChatComponent) {
@@ -104,6 +107,20 @@ public class ChatLineUtil {
 		private void injectAddMessagePost(ChatMessage chatMessage, boolean justReceived, CallbackInfoReturnable<ChatMessage> cir, DefaultChatMessage message) {
 			if (justReceived)
 				MODIFIED_COMPONENTS.add((IChatComponent) message.component());
+		}
+
+	}
+
+	@ExclusiveTo(LABY_3)
+	@Mixin(value = TagManager.class, remap = false)
+	private static class MixinTagManager {
+
+		private static IChatComponent originalMessage;
+
+		@ModifyVariable(method = "tagComponent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+		private static Object injectTagComponent(Object value) {
+			UNMODIFIED_COMPONENTS.add(((IChatComponent) value).createCopy());
+			return value;
 		}
 
 	}

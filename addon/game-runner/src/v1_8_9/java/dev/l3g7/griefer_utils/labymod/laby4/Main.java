@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby4;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
@@ -51,9 +52,9 @@ public class Main {
 
 			EventRegisterer.init();
 			Event.fire(OnEnable.class);
-		} catch (RuntimeException e) {
+		} catch (Throwable e) {
 			e.printStackTrace(System.err);
-			throw e;
+			throw Util.elevate(e);
 		}
 
 		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");

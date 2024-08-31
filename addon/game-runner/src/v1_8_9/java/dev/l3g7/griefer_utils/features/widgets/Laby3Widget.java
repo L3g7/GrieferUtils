@@ -19,16 +19,16 @@
 package dev.l3g7.griefer_utils.features.widgets;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
+import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import net.labymod.ingamegui.ModuleCategory;
 import net.labymod.ingamegui.ModuleCategoryRegistry;
 import net.labymod.ingamegui.enums.EnumDisplayType;
@@ -46,6 +46,8 @@ import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
@@ -119,12 +121,31 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 		}
 	};
 
+	private Object owner; // TODO beautify
+
 	@OnEnable
 	public static void register() {
 		ModuleCategoryRegistry.loadCategory(CATEGORY);
 
-		FileProvider.getClassesWithSuperClass(Laby3Widget.class).stream()
-			.map(meta -> (Laby3Widget) FileProvider.getSingleton(meta.load()))
+		List<Laby3Widget> widgets = new ArrayList<>();
+
+		// Collect simple widgets
+		FileProvider.getClassesWithSuperClass(SimpleWidget.class).stream()
+			.map(meta -> (SimpleWidget) FileProvider.getSingleton(meta.load()))
+			.map(SimpleLaby3Widget::new)
+			.forEach(widgets::add);
+
+		// Collect Laby widgets
+		FileProvider.getClassesWithSuperClass(LabyWidget.class).stream()
+			.map(meta -> (LabyWidget) FileProvider.getSingleton(meta.load()))
+			.map(w -> {
+				Laby3Widget widget = w.getVersionedWidget();
+				widget.owner = w;
+				return widget;
+			})
+			.forEach(widgets::add);
+
+		widgets.stream()
 			.map(Laby3Widget::initModule)
 			.sorted((a, b) -> a.getComparisonName().compareToIgnoreCase(b.getComparisonName()))
 			.forEach(LabyMod.getInstance().getLabyModAPI()::registerModule);
@@ -149,7 +170,7 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 	private String configKey;
 
 	private Laby3Widget initModule() {
-		SettingLoader.MainElementData data = SettingLoader.initMainElement(this, "modules");
+		SettingLoader.MainElementData data = SettingLoader.initMainElement(owner, "modules");
 		mainElement = (SwitchSettingImpl) data.mainElement;
 		configKey = data.configKey;
 		return this;
@@ -193,6 +214,46 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 		List<SettingsElement> settings = mainElement.getSubSettings().getElements();
 		if (!settings.isEmpty())
 			list.addAll(settings.subList(4, settings.size()));
+	}
+
+	private static class SimpleLaby3Widget extends Laby3Widget {
+
+		private final SimpleWidget widget;
+
+		public SimpleLaby3Widget(SimpleWidget widget) {
+			this.widget = widget;
+			super.owner = widget;
+		}
+
+		@Override
+		public String[] getDefaultKeys() {
+			if (widget.name == null)
+				return super.getDefaultKeys();
+
+			return new String[]{widget.name};
+		}
+
+		@Override
+		public String[] getDefaultValues() {
+			return new String[]{widget.defaultValue};
+		}
+
+		@Override
+		public String[] getValues() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public List<List<Text>> getTextValues() {
+			Text text = Text.getText(widget.getValue(), widget.getColor());
+			return Collections.singletonList(Collections.singletonList(text));
+		}
+
+		@Override
+		public boolean isShown() {
+			return super.isShown() && widget.isVisibleInGame();
+		}
+
 	}
 
 }

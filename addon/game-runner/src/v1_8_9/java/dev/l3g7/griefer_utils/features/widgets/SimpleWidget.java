@@ -9,9 +9,8 @@ package dev.l3g7.griefer_utils.features.widgets;
 
 public abstract class SimpleWidget {
 
-	private final String name;
-	private final String defaultValue;
-	private String value;
+	public final String name;
+	public final String defaultValue;
 
 	public SimpleWidget() {
 		this(null, "");
@@ -24,7 +23,6 @@ public abstract class SimpleWidget {
 	public SimpleWidget(String name, String defaultValue) {
 		this.name = name;
 		this.defaultValue = defaultValue;
-		this.value = defaultValue;
 	}
 
 	public abstract String getValue();

@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.features.widgets.Laby4Widget.ModuleConfig;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
+import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.gui.hud.binding.category.HudWidgetCategory;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextHudWidget;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextHudWidgetConfig;
@@ -43,6 +44,7 @@ import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModAct
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.WidgetsEditorActivity;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,8 +66,8 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 	};
 
 	private TextLine line;
-
 	private SwitchSettingImpl setting;
+	private Object owner; // TODO beautify
 
 	public Laby4Widget() {
 		super(UUID.randomUUID().toString(), ModuleConfig.class);
@@ -156,7 +158,7 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 		if (setting != null)
 			return setting;
 
-		BaseSetting<?> setting = SettingLoader.initMainElement(this, "modules").mainElement;
+		BaseSetting<?> setting = SettingLoader.initMainElement(owner, "modules").mainElement;
 		if (!(setting instanceof SwitchSettingImpl mainSetting))
 			throw new UnsupportedOperationException(setting.getClass().toString());
 
@@ -194,8 +196,23 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 	public static void register() {
 		Laby.labyAPI().hudWidgetRegistry().categoryRegistry().register(CATEGORY);
 
-		FileProvider.getClassesWithSuperClass(Laby4Widget.class).stream()
-			.map(meta -> (Laby4Widget) FileProvider.getSingleton(meta.load()))
+		List<Laby4Widget> widgets = new ArrayList<>();
+
+		FileProvider.getClassesWithSuperClass(SimpleWidget.class).stream()
+			.map(meta -> (SimpleWidget) FileProvider.getSingleton(meta.load()))
+			.map(SimpleLaby4Widget::new)
+			.forEach(widgets::add);
+
+		FileProvider.getClassesWithSuperClass(LabyWidget.class).stream()
+			.map(meta -> (LabyWidget) FileProvider.getSingleton(meta.load()))
+			.map(w -> {
+				Laby4Widget widget = w.getVersionedWidget();
+				widget.owner = w;
+				return widget;
+			})
+			.forEach(widgets::add);
+
+		widgets.stream()
 			.sorted((a, b) -> a.getComparisonName().compareToIgnoreCase(b.getComparisonName())) // TODO grouping?
 			.forEach(Laby.labyAPI().hudWidgetRegistry()::register);
 	}
@@ -249,6 +266,27 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 
 		@Override
 		public abstract void renderLine(Stack stack, float x, float y, float space, HudSize hudWidgetSize);
+
+	}
+
+	private static class SimpleLaby4Widget extends Laby4Widget {
+
+		private final SimpleWidget widget;
+
+		public SimpleLaby4Widget(SimpleWidget widget) {
+			this.widget = widget;
+			super.owner = widget;
+		}
+
+		@Override
+		public Object getValue() {
+			return Component.text(widget.getValue(), TextColor.color(widget.getColor()));
+		}
+
+		@Override
+		public boolean isVisibleInGame() {
+			return widget.isVisibleInGame();
+		}
 
 	}
 }

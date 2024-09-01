@@ -69,7 +69,7 @@ public class ChatReaction {
 		boolean triggerHasColor = AND_COLOR_PATTERN.matcher(trigger).find();
 		text = text.replaceAll("(?i)§([\\da-fk-or])", triggerHasColor ? "&$1" : "");
 
-		String command = this.command;
+		String command = this.command.trim();
 		if (!regEx) {
 			if (matchAll ? trigger.equalsIgnoreCase(text) : text.toLowerCase().contains(trigger.toLowerCase()) && !MessageSendEvent.post(command))
 				player().sendChatMessage(command);
@@ -88,6 +88,7 @@ public class ChatReaction {
 			command = command.replaceFirst("\\$" + Pattern.quote(group), replacement.replaceAll("(?i)[&§]([\\da-fk-or])", ""));
 		}
 
+		command = command.trim();
 		if (!MessageSendEvent.post(command))
 			player().sendChatMessage(command);
 	}

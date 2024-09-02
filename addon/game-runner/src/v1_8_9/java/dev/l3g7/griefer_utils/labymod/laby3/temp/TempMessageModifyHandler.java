@@ -29,14 +29,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
 @ExclusiveTo(LABY_3)
 public class TempMessageModifyHandler {
 
+	private static final List<IChatComponent> packetMessages = Collections.synchronizedList(new LinkedList<>());
 	private static IChatComponent lastMessage;
-	private static boolean isFromPacket;
 
 	@ExclusiveTo(LABY_3)
 	@Mixin(value = ForgeEventFactory.class, remap = false)
@@ -44,13 +48,13 @@ public class TempMessageModifyHandler {
 
 		@Inject(method = "onClientChat", at = @At("HEAD"))
 		private static void injectOnClientChatHead(byte type, IChatComponent message, CallbackInfoReturnable<IChatComponent> cir) {
-			lastMessage = message;
+			packetMessages.add(message.createCopy());
 		}
 
 	    @Inject(method = "onClientChat", at = @At("RETURN"))
 	    private static void injectOnClientChat(byte type, IChatComponent message, CallbackInfoReturnable<IChatComponent> cir) {
-			if (type != 2 && cir.getReturnValue() != null)
-				isFromPacket = true;
+		    if (type == 2 || cir.getReturnValue() == null)
+			    packetMessages.remove(packetMessages.size() - 1);
 	    }
 
 	}
@@ -68,10 +72,10 @@ public class TempMessageModifyHandler {
 
 		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;tagComponent(Ljava/lang/Object;)Ljava/lang/Object;", shift = At.Shift.BEFORE))
 		private void injectSetChatLinePre(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-			if (!isFromPacket)
+			if (packetMessages.isEmpty())
 				lastMessage = component.createCopy();
 			else
-				isFromPacket = false;
+				lastMessage = packetMessages.remove(0);
 		}
 
 		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"), locals = LocalCapture.CAPTURE_FAILHARD)
@@ -82,6 +86,7 @@ public class TempMessageModifyHandler {
 		@Redirect(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;tagComponent(Ljava/lang/Object;)Ljava/lang/Object;"))
 		private Object redirectTagging(Object component) {
 			component = TagManager.tagComponent(component);
+			IChatComponent icc = (IChatComponent) component;
 			modifiedIChatComponent = (IChatComponent) ((LabyBridgeImpl) labyBridge).messageModifyConsumer.apply(lastMessage, component);
 			return modifiedIChatComponent;
 		}

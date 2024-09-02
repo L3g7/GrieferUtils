@@ -9,14 +9,25 @@ package dev.l3g7.griefer_utils.labymod.laby3.temp;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.labymod.laby3.bridges.LabyBridgeImpl;
+import net.labymod.core.LabyModCore;
+import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
+import net.labymod.ingamechat.IngameChatManager;
+import net.labymod.ingamechat.renderer.ChatRenderer;
+import net.labymod.ingamechat.renderer.MessageData;
+import net.labymod.ingamechat.tools.filter.Filters;
+import net.labymod.servermanager.ChatDisplayAction;
 import net.labymod.utils.manager.TagManager;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
@@ -45,20 +56,45 @@ public class TempMessageModifyHandler {
 	}
 
 	@ExclusiveTo(LABY_3)
-	@Mixin(value = TagManager.class, remap = false)
-	private static class MixinTagManager {
+	@Mixin(value = GuiChatAdapter.class, remap = false)
+	private static class MixinGuiChatAdapter {
 
-		@Inject(method = "tagComponent", at = @At("HEAD"))
-		private static void injectTagComponentHead(Object chatComponent, CallbackInfoReturnable<Object> cir) {
+		@Shadow
+		private IngameChatManager manager;
+
+		private ChatDisplayAction cachedDisplayAction;
+		private IChatComponent modifiedIChatComponent;
+		private MessageData modifiedMessageData;
+
+		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;tagComponent(Ljava/lang/Object;)Ljava/lang/Object;", shift = At.Shift.BEFORE))
+		private void injectSetChatLinePre(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
 			if (!isFromPacket)
-				lastMessage = ((IChatComponent) chatComponent).createCopy();
+				lastMessage = component.createCopy();
 			else
 				isFromPacket = false;
 		}
 
-		@ModifyVariable(method = "tagComponent", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;getConfigManager()Lnet/labymod/utils/manager/ConfigManager;", shift = At.Shift.BEFORE, ordinal = 0), ordinal = 0, argsOnly = true)
-		private static Object injectTagComponentReturn(Object value) {
-			return ((LabyBridgeImpl) labyBridge).messageModifyConsumer.apply(lastMessage, value);
+		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"), locals = LocalCapture.CAPTURE_FAILHARD)
+		private void injectSetChatLinePost(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci, ChatRenderer target, ChatDisplayAction displayAction, MessageData messageData) {
+			cachedDisplayAction = displayAction;
+		}
+
+		@Redirect(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;tagComponent(Ljava/lang/Object;)Ljava/lang/Object;"))
+		private Object redirectTagging(Object component) {
+			component = TagManager.tagComponent(component);
+			modifiedIChatComponent = (IChatComponent) ((LabyBridgeImpl) labyBridge).messageModifyConsumer.apply(lastMessage, component);
+			return modifiedIChatComponent;
+		}
+
+		@Redirect(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"))
+		private Filters.Filter redirectGetFilter(MessageData instance) {
+			modifiedMessageData = manager.handleSwap(cachedDisplayAction, LabyModCore.getMinecraft().getChatComponent(modifiedIChatComponent));
+			return modifiedMessageData.getFilter();
+		}
+
+		@ModifyVariable(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;", shift = At.Shift.AFTER), ordinal = 1, argsOnly = true)
+		private boolean modifySecondChat(boolean oldValue) {
+			return modifiedMessageData.isDisplayInSecondChat();
 		}
 
 	}

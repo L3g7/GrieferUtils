@@ -70,7 +70,7 @@ public class ServerPerformance extends SimpleWidget {
 
 	@Override
 	public int getColor() {
-		if (!applyColor.get())
+		if (!applyColor.get() || currentTPS == null)
 			return -1;
 
 		int r, g, b;

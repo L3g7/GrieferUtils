@@ -92,6 +92,10 @@ public class Util {
 
 	public static String formatTime(long endTime) {
 		long seconds = (endTime - System.currentTimeMillis()) / 1000L;
+		return formatTimeSeconds(seconds);
+	}
+
+	public static String formatTimeSeconds(long seconds) {
 		long h = seconds / 60 / 60;
 		long m = seconds / 60 % 60;
 		long s = seconds % 60;
@@ -105,9 +109,13 @@ public class Util {
 
 	public static String formatTime(long endTime, boolean shorten) {
 		long secondsRaw = (endTime - System.currentTimeMillis()) / 1000L;
-		if (secondsRaw <= 0L)
+		return formatTimeSeconds(secondsRaw, shorten);
+	}
+
+	public static String formatTimeSeconds(long seconds, boolean shorten) {
+		if (seconds <= 0L)
 			return shorten ? "0s" : "0 Sekunden";
-		return formatTime(secondsRaw / 60L / 60L, secondsRaw / 60L % 60L, secondsRaw % 60L, shorten);
+		return formatTime(seconds / 60L / 60L, seconds / 60L % 60L, seconds % 60L, shorten);
 	}
 
 	public static String formatTime(long hours, long minutes, long seconds, boolean shorten) {

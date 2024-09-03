@@ -17,10 +17,7 @@ import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -29,7 +26,7 @@ public class EventRegisterer {
 	/**
 	 * The pending registrations associated with each event.
 	 */
-	private static final Map<String, Collection<LazyRegistration>> lazyRegistrations = new ConcurrentHashMap<>();
+	private static final Map<String, Collection<LazyRegistration>> lazyRegistrations = Collections.synchronizedMap(new ConcurrentHashMap<>());
 
 	/**
 	 * Registers the pending registrations for the given event class.<br>
@@ -89,10 +86,12 @@ public class EventRegisterer {
 	 * Unregisters all event listeners and removes all pending registrations associated to the given object.
 	 */
 	public static void unregister(Object object) {
-		EventBus.events.values().removeIf(consumers -> {
-			consumers.removeEventsOf(object);
-			return consumers.isEmpty();
-		});
+		synchronized (EventBus.events) {
+			EventBus.events.values().removeIf(consumers -> {
+				consumers.removeEventsOf(object);
+				return consumers.isEmpty();
+			});
+		}
 
 		boolean isClass = object instanceof Class<?>;
 		ClassMeta classMeta = new ClassMeta(isClass ? (Class<?>) object : object.getClass());
@@ -107,7 +106,9 @@ public class EventRegisterer {
 			methods.add(method);
 		}
 
-		lazyRegistrations.values().forEach(registrations -> registrations.removeIf(l -> methods.contains(l.meta)));
+		synchronized (lazyRegistrations) {
+			lazyRegistrations.values().forEach(registrations -> registrations.removeIf(l -> methods.contains(l.meta)));
+		}
 	}
 
 	/**

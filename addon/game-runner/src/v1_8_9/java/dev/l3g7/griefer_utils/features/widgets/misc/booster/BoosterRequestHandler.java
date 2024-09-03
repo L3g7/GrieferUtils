@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.widgets.misc.booster;
 
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.DebounceTimer;
+import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
 import dev.l3g7.griefer_utils.core.misc.server.GUClient;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.widgets.misc.booster.Booster.BoosterData;
@@ -32,8 +33,9 @@ class BoosterRequestHandler {
 		TIMER.schedule(() -> {
 			Map<String, List<Long>> value = new HashMap<>();
 
+			long passedSeconds = (int) (System.currentTimeMillis() / 1000);
 			for (BoosterData data : boosters)
-				value.put(data.displayName.toLowerCase(), data.expirationDates.stream().map(l -> l / 1000).collect(Collectors.toList()));
+				value.put(data.displayName.toLowerCase(), data.expirationDates.stream().map(c -> c.secondsRemaining() + passedSeconds).collect(Collectors.toList()));
 
 			GUClient.get().sendBoosterData(MinecraftUtil.getCurrentCitybuild(), value);
 		});
@@ -60,7 +62,9 @@ class BoosterRequestHandler {
 					continue;
 
 				booster.expirationDates.clear();
-				booster.expirationDates.addAll(expirationDates);
+				expirationDates.stream()
+					.map(TPSCountdown::fromEnd)
+					.forEach(booster.expirationDates::add);
 			}
 		}).start();
 	}

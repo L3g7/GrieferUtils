@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
+import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
 import dev.l3g7.griefer_utils.core.misc.server.GUClient;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
@@ -52,44 +53,49 @@ public class MobRemover extends SimpleWidget {
 		.icon("skull_crossed_out")
 		.subSettings(timeFormat, warnTime);
 
-	private long mobRemoverEnd = -1;
+	private TPSCountdown countdown = null;
 
 	@Override
 	public String getValue() {
-		if (mobRemoverEnd == -1)
+		if (countdown == null || countdown.destroyIfExpired())
 			return "Unbekannt";
 
-		long diff = mobRemoverEnd - System.currentTimeMillis();
-		if (diff < 0)
-			return "Unbekannt";
+		long remainingSeconds = countdown.secondsRemaining();
 
 		// Warn if mob remover is less than the set amount of seconds away
-		if (diff < warnTime.get() * 1000) {
-			String s = Util.formatTime(mobRemoverEnd, true);
-			if (!s.equals("0s"))
-				title("§c§l" + s);
+		if (remainingSeconds < warnTime.get()) {
+			String s = Util.formatTimeSeconds(remainingSeconds, true);
+			if (!s.equals("0s")) {
+				mc().ingameGUI.displayTitle("§cMobRemover!", null, -1, -1, -1);
+				mc().ingameGUI.displayTitle(null, "§c§l" + s, -1, -1, -1);
+				mc().ingameGUI.displayTitle(null, null, 0, 2, 3);
+			}
 		}
 
-		return Util.formatTime(mobRemoverEnd, timeFormat.get() == TimeFormat.SHORT);
+		return Util.formatTimeSeconds(remainingSeconds, timeFormat.get() == TimeFormat.SHORT);
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerSwitchEvent p) {
-		mobRemoverEnd = -1;
+		countdown = null;
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = MOB_REMOVER_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
-			mobRemoverEnd = System.currentTimeMillis() + Long.parseLong(matcher.group("minutes")) * 60L * 1000L;
+			countdown = TPSCountdown.fromMinutes(Integer.parseInt(matcher.group("minutes")));
 		else if (event.message.getFormattedText().matches("^§r§8\\[§r§6MobRemover§r§8] §r§7Es wurden (?:§r§\\d+§r§7|keine) Tiere entfernt\\.§r$"))
-			mobRemoverEnd = System.currentTimeMillis() + 15L * 60L * 1000L;
+			countdown = TPSCountdown.fromMinutes(15);
 		else
 			return;
 
-		if (GUClient.get().isAvailable())
-			new Thread(() -> GUClient.get().sendMobRemoverData(MinecraftUtil.getCurrentCitybuild(), mobRemoverEnd / 1000)).start();
+		if (GUClient.get().isAvailable()) {
+			new Thread(() -> {
+				long passedSeconds = System.currentTimeMillis() / 1000;
+				GUClient.get().sendMobRemoverData(MinecraftUtil.getCurrentCitybuild(), countdown.secondsRemaining() + passedSeconds);
+			}).start();
+		}
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -99,14 +105,8 @@ public class MobRemover extends SimpleWidget {
 
 		CompletableFuture.supplyAsync((Supplier<Long>) () -> GUClient.get().getMobRemoverData(event.citybuild)).thenAccept(end -> {
 			if (end != null)
-				mobRemoverEnd = end * 1000;
+				countdown = TPSCountdown.fromEnd(end);
 		});
-	}
-
-	private void title(String title) {
-		mc().ingameGUI.displayTitle("§cMobRemover!", null, -1, -1, -1);
-		mc().ingameGUI.displayTitle(null, title, -1, -1, -1);
-		mc().ingameGUI.displayTitle(null, null, 0, 2, 3);
 	}
 
 	private enum TimeFormat implements Named {

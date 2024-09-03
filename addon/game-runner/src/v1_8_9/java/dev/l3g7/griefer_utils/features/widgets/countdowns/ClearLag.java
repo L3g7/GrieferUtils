@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
+import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -56,20 +57,18 @@ public class ClearLag extends SimpleWidget {
 		.icon("gold_ingot_crossed_out")
 		.subSettings(timeFormat, warnTime, preventDrop);
 
-	private long clearLagEnd = -1;
+	private TPSCountdown countdown = null;
 
 	@Override
 	public String getValue() {
-		if (clearLagEnd == -1)
+		if (countdown == null || countdown.destroyIfExpired())
 			return "Unbekannt";
 
-		long diff = clearLagEnd - System.currentTimeMillis();
-		if (diff < 0)
-			return "Unbekannt";
+		long remainingSeconds = countdown.secondsRemaining();
 
 		// Warn if clearlag is less than the set amount of seconds away
-		if (diff < warnTime.get() * 1000) {
-			String s = Util.formatTime(clearLagEnd, true);
+		if (remainingSeconds < warnTime.get()) {
+			String s = Util.formatTimeSeconds(remainingSeconds, true);
 			if (!s.equals("0s")) {
 				mc().ingameGUI.displayTitle("§cClearlag!", null, -1, -1, -1);
 				mc().ingameGUI.displayTitle(null, "§c§l" + s, -1, -1, -1);
@@ -77,12 +76,12 @@ public class ClearLag extends SimpleWidget {
 			}
 		}
 
-		return Util.formatTime(clearLagEnd, timeFormat.get() == TimeFormat.SHORT);
+		return Util.formatTimeSeconds(remainingSeconds, timeFormat.get() == TimeFormat.SHORT);
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onServerSwitch(ServerSwitchEvent event) {
-		clearLagEnd = -1;
+		countdown = null;
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -92,7 +91,7 @@ public class ClearLag extends SimpleWidget {
 
 		JsonObject countdown = event.payload.getAsJsonObject();
 		if (countdown.get("name").getAsString().equals("ClearLag"))
-			clearLagEnd = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString()));
+			this.countdown = TPSCountdown.fromSeconds(TimeUnit.SECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString())));
 	}
 
 	@EventListener
@@ -100,8 +99,8 @@ public class ClearLag extends SimpleWidget {
 		if (event.mode != 4 || !preventDrop.get())
 			return;
 
-		long diff = clearLagEnd - System.currentTimeMillis();
-		if (diff > 0 && diff < warnTime.get() * 1000)
+		long remainingSeconds = countdown.secondsRemaining();
+		if (remainingSeconds < warnTime.get())
 			event.cancel();
 	}
 
@@ -110,8 +109,8 @@ public class ClearLag extends SimpleWidget {
 		if (!preventDrop.get() || (event.packet.getStatus() != DROP_ITEM && event.packet.getStatus() != DROP_ALL_ITEMS))
 			return;
 
-		long diff = clearLagEnd - System.currentTimeMillis();
-		if (diff > 0 && diff < warnTime.get() * 1000)
+		long remainingSeconds = countdown.secondsRemaining();
+		if (remainingSeconds < warnTime.get())
 			event.cancel();
 	}
 

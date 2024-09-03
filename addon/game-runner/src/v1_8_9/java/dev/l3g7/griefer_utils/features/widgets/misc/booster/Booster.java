@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -138,18 +139,18 @@ public class Booster extends LabyWidget {
 			String name = m.group("name");
 
 			BoosterData booster = boosters.get(name);
-			Queue<Long> dates = booster.expirationDates;
+			Queue<TPSCountdown> dates = booster.expirationDates;
 
 			if (booster.stackable) {
-				dates.add(System.currentTimeMillis() + 15 * 60 * 1000);
+				dates.add(TPSCountdown.fromMinutes(15));
 				BoosterRequestHandler.sendBoosterData(boosters.values());
 				return;
 			}
 
 			if (dates.isEmpty())
-				dates.add(System.currentTimeMillis() + 15 * 60 * 1000);
+				dates.add(TPSCountdown.fromMinutes(15));
 			else
-				dates.add(dates.poll() + 15 * 60 * 1000);
+				dates.peek().addMinutes(15);
 
 			BoosterRequestHandler.sendBoosterData(boosters.values());
 			return;
@@ -165,7 +166,7 @@ public class Booster extends LabyWidget {
 
 		String name = m.group("name");
 		String durations = m.group("durations");
-		Queue<Long> expirationDates = boosters.get(name).expirationDates;
+		Queue<TPSCountdown> expirationDates = boosters.get(name).expirationDates;
 		expirationDates.clear();
 
 		if (durations == null)
@@ -176,8 +177,7 @@ public class Booster extends LabyWidget {
 			int min = Integer.parseInt(m.group(1));
 			int sek = Integer.parseInt(m.group(2));
 
-			int ms = (min * 60 + sek) * 1000;
-			expirationDates.add(System.currentTimeMillis() + ms);
+			expirationDates.add(TPSCountdown.fromSeconds(min * 60 + sek));
 		}
 
 		BoosterRequestHandler.sendBoosterData(boosters.values());
@@ -197,7 +197,7 @@ public class Booster extends LabyWidget {
 
 		final String displayName;
 		final boolean stackable;
-		final Queue<Long> expirationDates = new ConcurrentLinkedQueue<>();
+		final Queue<TPSCountdown> expirationDates = new ConcurrentLinkedQueue<>();
 
 		public BoosterData(String displayName, boolean stackable) {
 			this.displayName = displayName;
@@ -205,9 +205,7 @@ public class Booster extends LabyWidget {
 		}
 
 		private boolean isExpired() {
-			long currentTime = System.currentTimeMillis();
-			expirationDates.removeIf(d -> d < currentTime);
-
+			expirationDates.removeIf(TPSCountdown::destroyIfExpired);
 			return expirationDates.isEmpty();
 		}
 
@@ -328,8 +326,8 @@ public class Booster extends LabyWidget {
 		}
 
 		private String getFormattedTime(BoosterData data) {
-			return Util.formatTime(data.expirationDates.stream()
-				.mapToLong(Long::longValue)
+			return Util.formatTimeSeconds(data.expirationDates.stream()
+				.mapToLong(TPSCountdown::secondsRemaining)
 				.min().orElse(0));
 		}
 
@@ -419,8 +417,8 @@ public class Booster extends LabyWidget {
 					line.updateAndFlush("00:00"); // Fallback value for showcase in Widget editor | FIXME: tick down? fix booster count?
 				} else {
 					line.setState(VISIBLE);
-					line.updateAndFlush(Util.formatTime(data.expirationDates.stream()
-						.mapToLong(Long::longValue)
+					line.updateAndFlush(Util.formatTimeSeconds(data.expirationDates.stream()
+						.mapToLong(TPSCountdown::secondsRemaining)
 						.min().orElse(0)));
 				}
 

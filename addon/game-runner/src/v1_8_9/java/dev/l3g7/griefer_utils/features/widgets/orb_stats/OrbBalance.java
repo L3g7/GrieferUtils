@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemSkull;

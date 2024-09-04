@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
-import dev.l3g7.griefer_utils.features.widgets.misc.BlockInfo;
+import dev.l3g7.griefer_utils.features.widgets.other.BlockInfo;
 import net.minecraft.item.ItemStack;
 
 import java.util.Comparator;

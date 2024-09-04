@@ -27,7 +27,7 @@ import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
-import dev.l3g7.griefer_utils.features.widgets.misc.MissingAdventurerBlocks;
+import dev.l3g7.griefer_utils.features.widgets.other.MissingAdventurerBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;

@@ -28,6 +28,8 @@ import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.features.widgets.Widget.LabyWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import net.labymod.ingamegui.ModuleCategory;
 import net.labymod.ingamegui.ModuleCategoryRegistry;
@@ -46,14 +48,14 @@ import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 @ExclusiveTo(LABY_3)
-public abstract class Laby3Widget extends SimpleTextModule implements Disableable {
+public abstract class Laby3Widget extends SimpleTextModule implements Disableable, LabyWidget { // TODO simplify
 
 	public static final ModuleCategory CATEGORY = new ModuleCategory(Constants.ADDON_NAME, true, null) {
 		@Override
@@ -111,9 +113,9 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 			elems.add(offset++, (SettingsElement) HeaderSetting.create("§r§l" + Constants.ADDON_NAME).scale(1.3));
 			elems.add(offset++, (SettingsElement) HeaderSetting.create("Geld-Informationen"));
 			elems.add(3 + offset++, (SettingsElement) HeaderSetting.create("Geld-Statistiken"));
-			elems.add(6 + offset++, (SettingsElement) HeaderSetting.create("Orb-Statistiken"));
-			elems.add(8 + offset++, (SettingsElement) HeaderSetting.create("Countdowns"));
-			elems.add(11 + offset, (SettingsElement) HeaderSetting.create("Misc"));
+			elems.add(6 + offset++, (SettingsElement) HeaderSetting.create("Countdowns"));
+			elems.add(10 + offset++, (SettingsElement) HeaderSetting.create("Orb-Statistiken"));
+			elems.add(12 + offset, (SettingsElement) HeaderSetting.create("Misc"));
 
 			for (SettingsElement elem : elems)
 				if (((ControlElement) elem).getModule() == null)
@@ -121,33 +123,23 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 		}
 	};
 
-	private Object owner; // TODO beautify
+	private Widget owner;
+
+	@Override
+	public void setOwner(Widget widget) {
+		this.owner = widget;
+	}
 
 	@OnEnable
 	public static void register() {
 		ModuleCategoryRegistry.loadCategory(CATEGORY);
 
-		List<Laby3Widget> widgets = new ArrayList<>();
-
-		// Collect simple widgets
-		FileProvider.getClassesWithSuperClass(SimpleWidget.class).stream()
-			.map(meta -> (SimpleWidget) FileProvider.getSingleton(meta.load()))
-			.map(SimpleLaby3Widget::new)
-			.forEach(widgets::add);
-
-		// Collect Laby widgets
-		FileProvider.getClassesWithSuperClass(LabyWidget.class).stream()
-			.map(meta -> (LabyWidget) FileProvider.getSingleton(meta.load()))
-			.map(w -> {
-				Laby3Widget widget = w.getVersionedWidget();
-				widget.owner = w;
-				return widget;
-			})
-			.forEach(widgets::add);
-
-		widgets.stream()
+		FileProvider.getClassesWithSuperClass(Widget.class).stream()
+			.filter(meta -> !meta.isAbstract())
+			.map(meta -> (Widget) FileProvider.getSingleton(meta.load()))
+			.map(Widget::<Laby3Widget>getVersionedWidget)
 			.map(Laby3Widget::initModule)
-			.sorted((a, b) -> a.getComparisonName().compareToIgnoreCase(b.getComparisonName()))
+			.sorted(Comparator.comparing(Laby3Widget::getComparisonName))
 			.forEach(LabyMod.getInstance().getLabyModAPI()::registerModule);
 	}
 
@@ -181,7 +173,7 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 	}
 
 	public String getComparisonName() {
-		return getClass().getPackage().getName() + getControlName();
+		return owner.getClass().getPackage().getName() + "." + getControlName();
 	}
 
 	public String getControlName() { return mainElement.getDisplayName(); }
@@ -216,13 +208,12 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 			list.addAll(settings.subList(4, settings.size()));
 	}
 
-	private static class SimpleLaby3Widget extends Laby3Widget {
+	public static class SimpleLaby3Widget extends Laby3Widget {
 
 		private final SimpleWidget widget;
 
 		public SimpleLaby3Widget(SimpleWidget widget) {
 			this.widget = widget;
-			super.owner = widget;
 		}
 
 		@Override

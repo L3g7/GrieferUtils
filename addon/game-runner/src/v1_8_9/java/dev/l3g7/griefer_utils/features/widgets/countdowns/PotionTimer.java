@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.widgets.misc;
+package dev.l3g7.griefer_utils.features.widgets.countdowns;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
-import dev.l3g7.griefer_utils.features.widgets.LabyWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
@@ -54,7 +54,7 @@ import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIB
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @Singleton
-public class PotionTimer extends LabyWidget {
+public class PotionTimer extends Widget {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private static final Pattern END_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§7Bis: §r§e(?<end>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})§r");
@@ -136,12 +136,12 @@ public class PotionTimer extends LabyWidget {
 	}
 
 	@Override
-	protected Object getLaby3() {
+	protected LabyWidget getLaby3() {
 		return new PotionTimerL3();
 	}
 
 	@Override
-	protected Object getLaby4() {
+	protected LabyWidget getLaby4() {
 		return new PotionTimerL4();
 	}
 
@@ -350,7 +350,7 @@ public class PotionTimer extends LabyWidget {
 					name.append(Component.text(" "));
 
 				if (mode != KeyMode.ICON)
-					name.append(Component.text(displayName));
+					name.append(Component.text(data.displayName));
 
 				keyComponent.setChildren(Collections.singleton(name));
 

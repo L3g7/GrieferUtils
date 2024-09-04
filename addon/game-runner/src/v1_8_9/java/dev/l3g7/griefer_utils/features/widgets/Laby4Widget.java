@@ -8,20 +8,22 @@
 package dev.l3g7.griefer_utils.features.widgets;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget.ModuleConfig;
+import dev.l3g7.griefer_utils.features.widgets.Widget.LabyWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
@@ -44,14 +46,14 @@ import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModAct
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.WidgetsEditorActivity;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
 @ExclusiveTo(LABY_4)
-public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements Disableable {
+public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements Disableable, LabyWidget { // TODO simplify
 
 	private static final HudWidgetCategory CATEGORY = new HudWidgetCategory(Laby4Widget.class, Laby4Util.getNamespace()) {
 		@Override
@@ -74,6 +76,11 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 		Reflection.set(this, "id", "griefer_utils_" + StringUtil.convertCasing(getClass().getSimpleName()));
 
 		bindCategory(CATEGORY);
+	}
+
+	@Override
+	public void setOwner(Widget widget) {
+		this.owner = widget;
 	}
 
 	@Override
@@ -104,11 +111,15 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 
 	// Text line
 
+	protected String getKeyName() {
+		return getSetting().name().replaceAll("\n", "");
+	}
+
 	protected void createText() {
 		Object value = getValue();
 		if (value == null)
 			value = Component.empty();
-		line = createLine(getSetting().name().replaceAll("\n", ""), value);
+		line = createLine(getKeyName(), value);
 	}
 
 	@Override
@@ -196,24 +207,11 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 	public static void register() {
 		Laby.labyAPI().hudWidgetRegistry().categoryRegistry().register(CATEGORY);
 
-		List<Laby4Widget> widgets = new ArrayList<>();
-
-		FileProvider.getClassesWithSuperClass(SimpleWidget.class).stream()
-			.map(meta -> (SimpleWidget) FileProvider.getSingleton(meta.load()))
-			.map(SimpleLaby4Widget::new)
-			.forEach(widgets::add);
-
-		FileProvider.getClassesWithSuperClass(LabyWidget.class).stream()
-			.map(meta -> (LabyWidget) FileProvider.getSingleton(meta.load()))
-			.map(w -> {
-				Laby4Widget widget = w.getVersionedWidget();
-				widget.owner = w;
-				return widget;
-			})
-			.forEach(widgets::add);
-
-		widgets.stream()
-			.sorted((a, b) -> a.getComparisonName().compareToIgnoreCase(b.getComparisonName())) // TODO grouping?
+		FileProvider.getClassesWithSuperClass(Widget.class).stream()
+			.filter(meta -> !meta.isAbstract())
+			.map(meta -> (Widget) FileProvider.getSingleton(meta.load()))
+			.map(Widget::<Laby4Widget>getVersionedWidget)
+			.sorted(Comparator.comparing(Laby4Widget::getComparisonName)) // TODO grouping?
 			.forEach(Laby.labyAPI().hudWidgetRegistry()::register);
 	}
 
@@ -269,7 +267,7 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 
 	}
 
-	private static class SimpleLaby4Widget extends Laby4Widget {
+	public static class SimpleLaby4Widget extends Laby4Widget {
 
 		private final SimpleWidget widget;
 
@@ -288,5 +286,12 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 			return widget.isVisibleInGame();
 		}
 
+		@Override
+		protected String getKeyName() {
+			if (widget.name != null)
+				return widget.name;
+			return super.getKeyName();
+		}
 	}
+
 }

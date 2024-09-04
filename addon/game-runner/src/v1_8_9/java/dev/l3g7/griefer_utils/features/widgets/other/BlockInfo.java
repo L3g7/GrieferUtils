@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.widgets.misc;
+package dev.l3g7.griefer_utils.features.widgets.other;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
-import dev.l3g7.griefer_utils.features.widgets.LabyWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget;
 import net.labymod.api.client.gui.hud.HudWidgetRendererAccessor;
 import net.labymod.api.client.gui.hud.binding.dropzone.HudWidgetDropzone;
 import net.labymod.api.client.gui.hud.binding.dropzone.NamedHudWidgetDropzones;
@@ -49,7 +49,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 @Singleton
-public class BlockInfo extends LabyWidget {
+public class BlockInfo extends Widget {
 
 	private static final Pair<BlockPos, ItemStack> DEFAULT_DATA = Pair.of(new BlockPos(0, 0, 0), new ItemStack(Blocks.command_block));
 	public boolean gettingTooltip = false; // NOTE: suppress event instead?
@@ -158,12 +158,12 @@ public class BlockInfo extends LabyWidget {
 	}
 
 	@Override
-	protected Object getLaby3() {
+	protected LabyWidget getLaby3() {
 		return new BlockInfoL3();
 	}
 
 	@Override
-	protected Object getLaby4() {
+	protected LabyWidget getLaby4() {
 		return new BlockInfoL4();
 	}
 

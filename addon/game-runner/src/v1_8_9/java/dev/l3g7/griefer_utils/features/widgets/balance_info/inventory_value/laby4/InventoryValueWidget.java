@@ -7,13 +7,15 @@
 
 package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby4;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
+import dev.l3g7.griefer_utils.features.widgets.Widget;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -26,15 +28,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.HIDDEN;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
 
 @Singleton
-public class InventoryValue extends Laby4Widget {
-
-	private TextLine ownInventory, openInventory;
+@ExclusiveTo(LABY_4)
+public class InventoryValueWidget extends Widget {
 
 	private static final SwitchSetting auto = SwitchSetting.create()
 		.name("Wert automatisch bestimmen")
@@ -47,7 +49,7 @@ public class InventoryValue extends Laby4Widget {
 		.disableSubsettingConfig()
 		.icon("coin_pile");
 
-	@MainElement
+	@Feature.MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Inventar-Wert")
 		.description("Zeigt dir an, wie viel ein Inventar wert ist.")
@@ -55,57 +57,68 @@ public class InventoryValue extends Laby4Widget {
 		.subSettings(auto, HeaderSetting.create(), entries);
 
 	@Override
-	protected void createText() {
-		ownInventory = createLine("Eigenes Inventar", "0$");
-		openInventory = createLine("Geöffnetes Inventar", "0$");
+	protected LabyWidget getLaby4() {
+		return new InventoryValue();
 	}
 
-	@Override
-	public void onTick(boolean isEditorContext) {
-		if (player() == null) {
-			ownInventory.updateAndFlush("0$");
-			openInventory.updateAndFlush("0$");
-			return;
+	@ExclusiveTo(LABY_4)
+	public class InventoryValue extends Laby4Widget {
+
+		private TextLine ownInventory, openInventory;
+
+		@Override
+		protected void createText() {
+			ownInventory = createLine("Eigenes Inventar", "0$");
+			openInventory = createLine("Geöffnetes Inventar", "0$");
 		}
 
-		ownInventory.updateAndFlush(getValue(Arrays.asList(player().inventory.mainInventory)));
-
-		// Check if an inventory is open
-		GuiScreen screen = mc().currentScreen;
-		if (player() == null || !(screen instanceof GuiContainer) || screen instanceof GuiInventory || screen instanceof GuiBigChest) {
-			openInventory.setState(HIDDEN);
-			openInventory.updateAndFlush("0$");
-			return;
-		}
-
-		// Update openInventory
-		List<Slot> slots = ((GuiContainer) mc().currentScreen).inventorySlots.inventorySlots;
-		slots = slots.subList(0, slots.size() - 9 * 4);
-
-		openInventory.setState(VISIBLE);
-		openInventory.updateAndFlush(getValue(slots.stream().map(Slot::getStack).collect(Collectors.toList())));
-	}
-
-	private String getValue(List<ItemStack> itemStacks) {
-		long total = 0;
-
-		itemLoop:
-		for (ItemStack stack : itemStacks) {
-			if (stack == null)
-				continue;
-
-			for (ItemValue value : entries.get()) {
-				if (value.appliesTo(stack)) {
-					total += (long) value.value * stack.stackSize;
-					continue itemLoop;
-				}
+		@Override
+		public void onTick(boolean isEditorContext) {
+			if (player() == null) {
+				ownInventory.updateAndFlush("0$");
+				openInventory.updateAndFlush("0$");
+				return;
 			}
 
-			if (auto.get())
-				total += ItemValue.autoDetect(stack) * stack.stackSize;
+			ownInventory.updateAndFlush(getValue(Arrays.asList(player().inventory.mainInventory)));
+
+			// Check if an inventory is open
+			GuiScreen screen = mc().currentScreen;
+			if (player() == null || !(screen instanceof GuiContainer) || screen instanceof GuiInventory || screen instanceof GuiBigChest) {
+				openInventory.setState(HIDDEN);
+				openInventory.updateAndFlush("0$");
+				return;
+			}
+
+			// Update openInventory
+			List<Slot> slots = ((GuiContainer) mc().currentScreen).inventorySlots.inventorySlots;
+			slots = slots.subList(0, slots.size() - 9 * 4);
+
+			openInventory.setState(VISIBLE);
+			openInventory.updateAndFlush(getValue(slots.stream().map(Slot::getStack).collect(Collectors.toList())));
 		}
 
-		return Constants.DECIMAL_FORMAT_98.format(total) + "$";
-	}
+		private String getValue(List<ItemStack> itemStacks) {
+			long total = 0;
 
+			itemLoop:
+			for (ItemStack stack : itemStacks) {
+				if (stack == null)
+					continue;
+
+				for (ItemValue value : entries.get()) {
+					if (value.appliesTo(stack)) {
+						total += (long) value.value * stack.stackSize;
+						continue itemLoop;
+					}
+				}
+
+				if (auto.get())
+					total += ItemValue.autoDetect(stack) * stack.stackSize;
+			}
+
+			return Constants.DECIMAL_FORMAT_98.format(total) + "$";
+		}
+
+	}
 }

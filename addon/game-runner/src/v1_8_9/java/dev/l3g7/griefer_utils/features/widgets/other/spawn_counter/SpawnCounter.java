@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.widgets.misc.spawn_counter;
+package dev.l3g7.griefer_utils.features.widgets.other.spawn_counter;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
@@ -30,7 +30,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
-import dev.l3g7.griefer_utils.features.widgets.LabyWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
@@ -58,12 +58,12 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.core.settings.player_list.PlayerListEntry.INVALID_PLAYER;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static dev.l3g7.griefer_utils.features.widgets.misc.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
+import static dev.l3g7.griefer_utils.features.widgets.other.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.DISABLED;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
 
 @Singleton
-public class SpawnCounter extends LabyWidget { // NOTE: cleanup
+public class SpawnCounter extends Widget { // NOTE: cleanup
 
 	final RoundHandler roundHandler = new RoundHandler(this);
 	LeaderboardHandler leaderboardHandler;
@@ -116,12 +116,12 @@ public class SpawnCounter extends LabyWidget { // NOTE: cleanup
 	}
 
 	@Override
-	protected Object getLaby3() {
+	protected LabyWidget getLaby3() {
 		return new SpawnCounterL3();
 	}
 
 	@Override
-	protected Object getLaby4() {
+	protected LabyWidget getLaby4() {
 		return new SpawnCounterL4();
 	}
 
@@ -201,7 +201,9 @@ public class SpawnCounter extends LabyWidget { // NOTE: cleanup
 
 		@Override
 		public String getComparisonName() {
-			return "dev.l3g7.griefer_utils.features.widgets" + getControlName();
+			String pkg = getClass().getPackage().getName();
+			pkg = pkg.substring(0, pkg.lastIndexOf("."));
+			return pkg + "." + getControlName();
 		}
 
 		@Override

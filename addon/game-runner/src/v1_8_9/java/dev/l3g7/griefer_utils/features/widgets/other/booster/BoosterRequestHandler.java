@@ -5,14 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.widgets.misc.booster;
+package dev.l3g7.griefer_utils.features.widgets.other.booster;
 
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.DebounceTimer;
 import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
 import dev.l3g7.griefer_utils.core.misc.server.GUClient;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.widgets.misc.booster.Booster.BoosterData;
+import dev.l3g7.griefer_utils.features.widgets.other.booster.Booster.BoosterData;
 
 import java.util.Collection;
 import java.util.HashMap;

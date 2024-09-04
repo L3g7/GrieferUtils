@@ -5,14 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.widgets.misc;
+package dev.l3g7.griefer_utils.features.widgets.other;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import net.minecraft.init.Items;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;

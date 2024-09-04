@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEv
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;

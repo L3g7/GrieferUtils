@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.widgets.misc;
+package dev.l3g7.griefer_utils.features.widgets.other;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
-import dev.l3g7.griefer_utils.features.widgets.LabyWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
@@ -38,7 +38,7 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 @Singleton
-public class NearbyPlayers extends LabyWidget {
+public class NearbyPlayers extends Widget {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -57,12 +57,12 @@ public class NearbyPlayers extends LabyWidget {
 	}
 
 	@Override
-	protected Object getLaby3() {
+	protected LabyWidget getLaby3() {
 		return new NearbyPlayersL3();
 	}
 
 	@Override
-	protected Object getLaby4() {
+	protected LabyWidget getLaby4() {
 		return new NearbyPlayersL4();
 	}
 

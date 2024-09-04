@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.widgets.SimpleWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;

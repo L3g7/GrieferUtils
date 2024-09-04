@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.widgets.misc.booster;
+package dev.l3g7.griefer_utils.features.widgets.other.booster;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -28,7 +28,7 @@ import dev.l3g7.griefer_utils.features.Commands;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
-import dev.l3g7.griefer_utils.features.widgets.LabyWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
@@ -55,7 +55,7 @@ import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIB
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @Singleton
-public class Booster extends LabyWidget {
+public class Booster extends Widget {
 
 	private final static Pattern BOOSTER_INFO_PATTERN = Pattern.compile("^(?<name>[A-z]+)-Booster: (?:Deaktiviert|\\dx Multiplikator (?<durations>\\(.+\\) ?)+)");
 	private final static Pattern BOOSTER_INFO_TIME_PATTERN = Pattern.compile("\\((\\d+):(\\d+)\\)");
@@ -184,12 +184,12 @@ public class Booster extends LabyWidget {
 	}
 
 	@Override
-	protected Object getLaby3() {
+	protected LabyWidget getLaby3() {
 		return new BoosterL3();
 	}
 
 	@Override
-	protected Object getLaby4() {
+	protected LabyWidget getLaby4() {
 		return new BoosterL4();
 	}
 
@@ -234,7 +234,9 @@ public class Booster extends LabyWidget {
 
 		@Override
 		public String getComparisonName() {
-			return "dev.l3g7.griefer_utils.features.widgets" + getControlName();
+			String pkg = getClass().getPackage().getName();
+			pkg = pkg.substring(0, pkg.lastIndexOf("."));
+			return pkg + "." + getControlName();
 		}
 
 		@Override

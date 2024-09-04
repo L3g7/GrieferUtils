@@ -23,7 +23,7 @@ public class ItemDisplaySetting extends ListEntrySetting {
 
 	public ItemDisplaySetting(String stackNbt, long value) {
 		super(true, false, false, Icon.of(Blocks.stone).toIconData());
-		container = FileProvider.getSingleton(InventoryValue.class).rawBooleanElement;
+		container = FileProvider.getSingleton(InventoryValueWidget.InventoryValue.class).rawBooleanElement;
 		this.stackNbt = stackNbt;
 		this.value = value;
 	}
@@ -51,7 +51,7 @@ public class ItemDisplaySetting extends ListEntrySetting {
 
 	@Override
 	protected void onChange() {
-		InventoryValue.onChange();
+		InventoryValueWidget.InventoryValue.onChange();
 	}
 
 	public ItemStack getStack() {

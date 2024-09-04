@@ -91,7 +91,7 @@ public class ClearLag extends SimpleWidget {
 
 		JsonObject countdown = event.payload.getAsJsonObject();
 		if (countdown.get("name").getAsString().equals("ClearLag"))
-			this.countdown = TPSCountdown.fromSeconds(TimeUnit.SECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString())));
+			this.countdown = TPSCountdown.fromSeconds((int) TimeUnit.SECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString())));
 	}
 
 	@EventListener

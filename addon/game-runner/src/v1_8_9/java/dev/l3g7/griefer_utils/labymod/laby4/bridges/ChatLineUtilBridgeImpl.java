@@ -5,11 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.util;
+package dev.l3g7.griefer_utils.labymod.laby4.bridges;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
+import dev.l3g7.griefer_utils.core.util.ChatLineUtilBridge;
 import net.labymod.api.client.chat.ChatMessage;
 import net.labymod.api.client.chat.advanced.ChatMessagesWidget;
 import net.labymod.api.client.gui.mouse.MutableMouse;
@@ -20,39 +23,39 @@ import net.labymod.api.configuration.labymod.chat.AdvancedChatMessage;
 import net.labymod.api.event.client.chat.ChatReceiveEvent;
 import net.labymod.core.client.chat.DefaultChatController;
 import net.labymod.core.client.chat.DefaultChatMessage;
-import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
-import net.labymod.utils.manager.TagManager;
 import net.minecraft.util.IChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static org.spongepowered.asm.mixin.injection.At.Shift.BEFORE;
 
-public class ChatLineUtil {
+@Bridge
+@Singleton
+@ExclusiveTo(LABY_4)
+public class ChatLineUtilBridgeImpl implements ChatLineUtilBridge {
 
 	public static AdvancedChatMessage hoveredMessage;
-
 	public static final List<IChatComponent> MODIFIED_COMPONENTS = new ArrayList<>();
 	public static final List<IChatComponent> UNMODIFIED_COMPONENTS = new ArrayList<>();
 
-	@EventListener
-	private static void onMessageModify(MessageModifyEvent event) {
-		if (LABY_4.isActive())
-			UNMODIFIED_COMPONENTS.add(event.original);
+	@Override
+	public IChatComponent getHoveredComponent() {
+		if (hoveredMessage == null)
+			return null;
+
+		return (IChatComponent) hoveredMessage.component();
 	}
 
-	public static IChatComponent getUnmodifiedIChatComponent(IChatComponent iChatComponent) {
+	@Override
+	public IChatComponent getUnmodified(IChatComponent iChatComponent) {
 		if (iChatComponent == null)
 			return null;
 
@@ -64,11 +67,9 @@ public class ChatLineUtil {
 		return UNMODIFIED_COMPONENTS.get(index);
 	}
 
-	public static IChatComponent getHoveredComponent() {
-		if (hoveredMessage == null)
-			return null;
-
-		return (IChatComponent) hoveredMessage.component();
+	@EventListener
+	private static void onMessageModify(MessageModifyEvent event) {
+		UNMODIFIED_COMPONENTS.add(event.original);
 	}
 
 	@ExclusiveTo(LABY_4)
@@ -82,10 +83,13 @@ public class ChatLineUtil {
 
 		@Inject(method = "renderMessage", at = @At("TAIL"))
 		private void injectRenderMessage(Stack stack, MutableMouse mouse, AdvancedChatMessage message, int lineIndex, BatchRectangleRenderer rectangleRenderer, int phase, CallbackInfoReturnable<Integer> cir) {
-			if (lastHoveredComponentMeta == null
-				|| lastHoveredRenderMeta == lastHoveredComponentMeta
-				|| lastHoveredComponentMeta.getHovered().isEmpty())
+			if (lastHoveredRenderMeta == lastHoveredComponentMeta)
 				return;
+
+			if (lastHoveredComponentMeta == null || lastHoveredComponentMeta.getHovered().isEmpty()) {
+				hoveredMessage = null;
+				return;
+			}
 
 			hoveredMessage = message;
 			lastHoveredRenderMeta = lastHoveredComponentMeta;
@@ -107,31 +111,6 @@ public class ChatLineUtil {
 		private void injectAddMessagePost(ChatMessage chatMessage, boolean justReceived, CallbackInfoReturnable<ChatMessage> cir, DefaultChatMessage message) {
 			if (justReceived)
 				MODIFIED_COMPONENTS.add((IChatComponent) message.component());
-		}
-
-	}
-
-	@ExclusiveTo(LABY_3)
-	@Mixin(value = TagManager.class, remap = false)
-	private static class MixinTagManager {
-
-		private static IChatComponent originalMessage;
-
-		@ModifyVariable(method = "tagComponent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-		private static Object injectTagComponent(Object value) {
-			UNMODIFIED_COMPONENTS.add(((IChatComponent) value).createCopy());
-			return value;
-		}
-
-	}
-
-	@ExclusiveTo(LABY_3)
-	@Mixin(value = GuiChatAdapter.class, remap = false)
-	private static class MixinGuiChatAdapter {
-
-		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"))
-		public void postMessageModifiedEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-			MODIFIED_COMPONENTS.add(component);
 		}
 
 	}

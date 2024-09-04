@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.labymod.laby3.util.ChatLineUtil;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -43,6 +42,7 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
+import static dev.l3g7.griefer_utils.core.util.ChatLineUtilBridge.CLUBridge;
 
 @Singleton
 @ExclusiveTo(LABY_3)
@@ -110,7 +110,7 @@ public class MessageSkulls extends Feature {
 		if (idStart == -1)
 			return;
 
-		IChatComponent wholeComponent = ChatLineUtil.getComponentFromLine(chatLine);
+		IChatComponent wholeComponent = null;
 		// Part of an emote chat line
 		if (wholeComponent == null)
 			return;
@@ -121,7 +121,7 @@ public class MessageSkulls extends Feature {
 		int endIndex;
 		int arrowIndex = msg.indexOf('\u00bb');
 
-		IChatComponent unmodified = ChatLineUtil.getUnmodifiedIChatComponent(wholeComponent);
+		IChatComponent unmodified = CLUBridge.getUnmodified(wholeComponent);
 		if (unmodified == null)
 			throw new RuntimeException("ChatLine could not be unmodified! " + wholeComponent);
 

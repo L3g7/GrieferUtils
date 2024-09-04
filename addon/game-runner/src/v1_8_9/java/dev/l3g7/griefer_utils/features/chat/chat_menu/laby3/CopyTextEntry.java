@@ -25,13 +25,14 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.ChatLineUtil;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import net.minecraft.init.Items;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
+
+import static dev.l3g7.griefer_utils.core.util.ChatLineUtilBridge.CLUBridge;
 
 public class CopyTextEntry extends ChatMenuEntry {
 
@@ -67,7 +68,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 
 	@Override
 	public void trigger(String name, IChatComponent entireText) {
-		IChatComponent icc = modifiedMessage.get() ? entireText : ChatLineUtil.getUnmodifiedIChatComponent(entireText);
+		IChatComponent icc = modifiedMessage.get() ? entireText : CLUBridge.getUnmodified(entireText);
 		ChatMenu.copyToClipboard(copyFormat.get().componentToString.apply(icc));
 	}
 

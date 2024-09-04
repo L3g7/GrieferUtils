@@ -27,7 +27,6 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.labymod.laby3.util.ChatLineUtil;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
@@ -61,6 +60,7 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
+import static dev.l3g7.griefer_utils.core.util.ChatLineUtilBridge.CLUBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.chat.chat_menu.laby3.ChatMenuEntry.Action.*;
 
@@ -164,7 +164,7 @@ public class ChatMenu extends Feature {
 		if (Mouse.getEventButton() != 1 || !(mc().currentScreen instanceof GuiChat))
 			return;
 
-		IChatComponent icc = ChatLineUtil.getUnmodifiedIChatComponent(ChatLineUtil.getHoveredComponent());
+		IChatComponent icc = CLUBridge.getUnmodified(CLUBridge.getHoveredComponent());
 		if (icc == null) // Didn't click on a line
 			return;
 
@@ -192,7 +192,7 @@ public class ChatMenu extends Feature {
 		if (realName == null)
 			realName = name;
 
-		renderer = new ChatMenuRenderer(entries, realName, ChatLineUtil.getHoveredComponent());
+		renderer = new ChatMenuRenderer(entries, realName, CLUBridge.getHoveredComponent());
 		event.cancel();
 	}
 

@@ -13,13 +13,12 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.core.util.ChatLineUtil;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.chat.ChatMessage;
 import net.minecraft.client.Minecraft;
@@ -32,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
+import static dev.l3g7.griefer_utils.core.util.ChatLineUtilBridge.CLUBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
@@ -83,7 +83,7 @@ public class ChatReactor extends Feature {
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
-		component = ChatLineUtil.getUnmodifiedIChatComponent(component);
+		component = CLUBridge.getUnmodified(component);
 		if (component == null)
 			return;
 

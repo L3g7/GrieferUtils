@@ -123,7 +123,7 @@ public class RenderObjectObserver {
 						chunk.partsToRecompile.add(part);
 		}
 
-		private final Map<Integer, ChunkPart> parts = new HashMap<>();
+		private final Map<Integer, ChunkPart> parts = Collections.synchronizedMap(new HashMap<>());
 		private final Set<ChunkPart> partsToRecompile = Collections.synchronizedSet(new HashSet<>());
 
 		void add(RenderObject newObj) {
@@ -168,21 +168,23 @@ public class RenderObjectObserver {
 				}
 			}
 
-			for (Map.Entry<Integer, ChunkPart> entry : parts.entrySet()) {
-				boolean isVisible = frustum.isBoundingBoxInFrustum(new AxisAlignedBB(
-					pair.getXStart(),
-					entry.getKey() << 4,
-					pair.getZStart(),
-					pair.getXEnd(),
-					entry.getKey() << 4 | 15,
-					pair.getZEnd()));
+			synchronized (parts) {
+				for (Map.Entry<Integer, ChunkPart> entry : parts.entrySet()) {
+					boolean isVisible = frustum.isBoundingBoxInFrustum(new AxisAlignedBB(
+						pair.getXStart(),
+						entry.getKey() << 4,
+						pair.getZStart(),
+						pair.getXEnd(),
+						entry.getKey() << 4 | 15,
+						pair.getZEnd()));
 
-				if (isVisible) {
-					if (entry.getValue().compiledChunks == null)
-						entry.getValue().recompile();
+					if (isVisible) {
+						if (entry.getValue().compiledChunks == null)
+							entry.getValue().recompile();
 
-					for (TextureType value : TextureType.values())
-						value.draw(entry.getValue().compiledChunks, rotation);
+						for (TextureType value : TextureType.values())
+							value.draw(entry.getValue().compiledChunks, rotation);
+					}
 				}
 			}
 		}

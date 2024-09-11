@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.widgets.other.booster;
+package dev.l3g7.griefer_utils.features.widgets.other;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -86,28 +86,16 @@ public class Booster extends Widget {
 	private boolean waitingForBoosterGUI = false;
 	private boolean waitingForBoosterInfo = false;
 
-	public Booster() {
-		Runtime.getRuntime().addShutdownHook(new Thread(BoosterRequestHandler::deleteBoosterData));
-	}
-
 	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
 		// Clear all booster
 		boosters.values().forEach(d -> d.expirationDates.clear());
-		BoosterRequestHandler.deleteBoosterData();
-	}
-
-	@EventListener(triggerWhenDisabled = true)
-	private void onServerQuit(ServerEvent.ServerQuitEvent event) {
-		BoosterRequestHandler.deleteBoosterData();
 	}
 
 	@EventListener
 	private void onCbEarlyJoin(CitybuildJoinEvent.Early event) {
-		BoosterRequestHandler.requestBoosterData(event.citybuild, boosters.values(), () -> {
-			Commands.runOnCb("/booster");
-			waitingForBoosterGUI = waitingForBoosterInfo = true;
-		});
+		Commands.runOnCb("/booster");
+		waitingForBoosterGUI = waitingForBoosterInfo = true;
 	}
 
 	@EventListener
@@ -143,7 +131,6 @@ public class Booster extends Widget {
 
 			if (booster.stackable) {
 				dates.add(TPSCountdown.fromMinutes(15));
-				BoosterRequestHandler.sendBoosterData(boosters.values());
 				return;
 			}
 
@@ -152,7 +139,6 @@ public class Booster extends Widget {
 			else
 				dates.peek().addMinutes(15);
 
-			BoosterRequestHandler.sendBoosterData(boosters.values());
 			return;
 		}
 
@@ -180,7 +166,6 @@ public class Booster extends Widget {
 			expirationDates.add(TPSCountdown.fromSeconds(min * 60 + sek));
 		}
 
-		BoosterRequestHandler.sendBoosterData(boosters.values());
 	}
 
 	@Override

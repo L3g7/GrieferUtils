@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.item.inventory_tweaks.tweaks;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
@@ -48,6 +49,11 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 			return;
 
 		if (event.mode != 1 || event.slotId <= 9)
+			return;
+
+		// the addon by tmbrandy causes this sometimes to click on an invalid slot
+		// this is only a hotfix, because the bug is not reproducible
+		if (Util.isInvokedFrom("tmb.randy.tmbgriefergames.v1_8_9.util.click.ClickQueue", "tick"))
 			return;
 
 		move(10, event);

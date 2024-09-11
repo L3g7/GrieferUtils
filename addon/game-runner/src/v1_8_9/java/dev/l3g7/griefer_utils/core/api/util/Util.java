@@ -90,6 +90,18 @@ public class Util {
 		return new RuntimeException(formattedMessage, throwable, true, false) {};
 	}
 
+	/**
+	 * @return whether the given class and method can be found in the stacktrace.
+	 */
+	public static boolean isInvokedFrom(String clazz, String method) {
+		for (StackTraceElement stackTraceElement : new Throwable().getStackTrace())
+			if (stackTraceElement.getClassName().equals(clazz))
+				if (method == null || stackTraceElement.getMethodName().equals(method))
+					return true;
+
+		return false;
+	}
+
 	public static String formatTime(long endTime) {
 		long seconds = (endTime - System.currentTimeMillis()) / 1000L;
 		return formatTimeSeconds(seconds);

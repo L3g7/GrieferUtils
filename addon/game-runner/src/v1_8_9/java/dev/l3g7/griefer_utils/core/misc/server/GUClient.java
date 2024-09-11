@@ -13,12 +13,10 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.OnlineUsersRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.BlockOfTheDayRequest;
-import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.BoosterRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.MobRemoverRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.types.GUSession;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
@@ -27,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Session;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
 
@@ -95,14 +92,6 @@ public class GUClient {
 
 	public Long getMobRemoverData(Citybuild citybuild) {
 		return new MobRemoverRequest(citybuild.getInternalName(), null).send(session);
-	}
-
-	public void sendBoosterData(Citybuild citybuild, Map<String, List<Long>> value) {
-		new BoosterRequest(citybuild.getInternalName(), value).send(session);
-	}
-
-	public Map<String, List<Long>> getBoosterData(Citybuild citybuild, Consumer<IOException> errorHandler) {
-		return new BoosterRequest(citybuild, 1000L).request(session, errorHandler, true);
 	}
 
 	public LeaderboardData getLeaderboardData() {

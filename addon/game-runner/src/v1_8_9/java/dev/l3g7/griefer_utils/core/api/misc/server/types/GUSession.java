@@ -47,7 +47,7 @@ public class GUSession {
 
 		keepAlive = SCHEDULER.scheduleAtFixedRate(() -> {
 			new KeepAliveRequest().send(this);
-		}, 0, 10, TimeUnit.SECONDS);
+		}, 0, 30, TimeUnit.MINUTES);
 	}
 
 	public void renewToken() throws GeneralSecurityException {

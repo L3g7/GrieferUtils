@@ -82,7 +82,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting implements Laby3Setti
 				if (!this.citybuild.get().isOnCb())
 					return;
 
-				if (this.commands.get().size() == 0) {
+				if (this.commands.get().isEmpty()) {
 					labyBridge.notify("§cFehler", "§cBitte füge den Eintrag neu hinzu.");
 					return;
 				}

@@ -84,6 +84,9 @@ public class MultiHotkey extends Feature {
 			if (!hotkey.citybuild.get().isOnCb())
 				continue;
 
+			if (hotkey.commands.get().isEmpty())
+				continue;
+
 			String command = hotkey.commands.get().get(hotkey.amountsTriggered %= hotkey.commands.get().size());
 			if (!MessageEvent.MessageSendEvent.post(command))
 				player().sendChatMessage(command);

@@ -49,7 +49,7 @@ public class Chatlog extends SimpleWidget {
 
 	@Override
 	public String getValue() {
-		return Util.formatTimeSeconds(countdown.secondsRemaining(), timeFormat.get() == TimeFormat.SHORT);
+		return Util.formatTimeSeconds(countdown == null ? 0 : countdown.secondsRemaining(), timeFormat.get() == TimeFormat.SHORT);
 	}
 
 	@Override

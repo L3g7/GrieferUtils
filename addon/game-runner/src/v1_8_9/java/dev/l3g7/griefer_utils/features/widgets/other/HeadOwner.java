@@ -37,10 +37,6 @@ public class HeadOwner extends SimpleWidget {
 		.description("Zeigt dir den Spieler, dessen Kopf du ansiehst.")
 		.icon("steve");
 
-	public HeadOwner() {
-		super("Kein Spielerkopf");
-	}
-
 	@Override
 	public String getValue() {
 		if (rayTraceTileEntity() instanceof TileEntitySkull skull) {

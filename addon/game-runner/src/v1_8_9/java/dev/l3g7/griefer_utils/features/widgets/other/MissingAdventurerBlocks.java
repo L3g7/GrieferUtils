@@ -28,7 +28,7 @@ public class MissingAdventurerBlocks extends SimpleWidget {
 		.icon(Items.fire_charge);
 
 	public MissingAdventurerBlocks() {
-		super("Fehlende Blöcke", "0");
+		super("Fehlende Blöcke");
 	}
 
 	@Override

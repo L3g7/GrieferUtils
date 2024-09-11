@@ -19,8 +19,9 @@ import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget.ModuleConfig;
+import dev.l3g7.griefer_utils.features.widgets.Widget.ComplexWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget.ComplexWidget.KVPair;
 import dev.l3g7.griefer_utils.features.widgets.Widget.LabyWidget;
-import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
@@ -267,18 +268,13 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 
 	}
 
-	public static class SimpleLaby4Widget extends Laby4Widget {
+	public static class ComplexLaby4Widget extends Laby4Widget {
 
-		private final SimpleWidget widget;
+		private final ComplexWidget widget;
 
-		public SimpleLaby4Widget(SimpleWidget widget) {
+		public ComplexLaby4Widget(ComplexWidget widget) {
 			this.widget = widget;
 			super.owner = widget;
-		}
-
-		@Override
-		public Object getValue() {
-			return Component.text(widget.getValue(), TextColor.color(widget.getColor()));
 		}
 
 		@Override
@@ -287,10 +283,21 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 		}
 
 		@Override
-		protected String getKeyName() {
-			if (widget.name != null)
-				return widget.name;
-			return super.getKeyName();
+		public void onTick(boolean isEditorContext) {
+			lines.clear();
+			for (KVPair line : widget.getLines()) {
+				Component key = (Component) line.key;
+				if (key == null)
+					key = Component.text(getKeyName());
+
+				Component value;
+				if (line.value instanceof Component component)
+					value = component;
+				else
+					value = Component.text(String.valueOf(line.value), TextColor.color(line.color));
+
+				createLine(key, value);
+			}
 		}
 	}
 

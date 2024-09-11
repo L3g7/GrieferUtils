@@ -28,11 +28,13 @@ import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.features.widgets.Widget.ComplexWidget;
 import dev.l3g7.griefer_utils.features.widgets.Widget.LabyWidget;
-import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
+import net.labymod.core.LabyModCore;
 import net.labymod.ingamegui.ModuleCategory;
 import net.labymod.ingamegui.ModuleCategoryRegistry;
+import net.labymod.ingamegui.ModuleConfig;
 import net.labymod.ingamegui.enums.EnumDisplayType;
 import net.labymod.ingamegui.enums.EnumModuleFormatting;
 import net.labymod.ingamegui.moduletypes.SimpleModule;
@@ -46,13 +48,15 @@ import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.DrawUtils;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @ExclusiveTo(LABY_3)
 public abstract class Laby3Widget extends SimpleTextModule implements Disableable, LabyWidget { // TODO simplify
@@ -208,25 +212,12 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 			list.addAll(settings.subList(4, settings.size()));
 	}
 
-	public static class SimpleLaby3Widget extends Laby3Widget {
+	public static class ComplexLaby3Widget extends Laby3Widget {
 
-		private final SimpleWidget widget;
+		private final ComplexWidget widget;
 
-		public SimpleLaby3Widget(SimpleWidget widget) {
+		public ComplexLaby3Widget(ComplexWidget widget) {
 			this.widget = widget;
-		}
-
-		@Override
-		public String[] getDefaultKeys() {
-			if (widget.name == null)
-				return super.getDefaultKeys();
-
-			return new String[]{widget.name};
-		}
-
-		@Override
-		public String[] getDefaultValues() {
-			return new String[]{widget.defaultValue};
 		}
 
 		@Override
@@ -235,14 +226,151 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 		}
 
 		@Override
-		public List<List<Text>> getTextValues() {
-			Text text = Text.getText(widget.getValue(), widget.getColor());
-			return Collections.singletonList(Collections.singletonList(text));
+		public String[] getDefaultValues() {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public boolean isShown() {
 			return super.isShown() && widget.isVisibleInGame();
+		}
+
+		public void draw(double x, double y, double rightX) {
+			List<List<TextPart>> allLines = getTextsParts();
+			if (!this.getModuleConfigElement().isUsingExtendedSettings()) {
+				this.padding = ModuleConfig.getConfig().getPadding();
+				this.backgroundVisible = ModuleConfig.getConfig().isBackgroundVisible();
+				if (this.backgroundVisible)
+					this.backgroundTransparency = ModuleConfig.getConfig().getBackgroundTransparency();
+			}
+
+			if (this.backgroundVisible) {
+				int color = this.backgroundColor;
+				if (!this.getModuleConfigElement().isUsingExtendedSettings())
+					color = ModuleConfig.getConfig().getBackgroundColor();
+
+				int red = 255 & color >> 16;
+				int blue = 255 & color;
+				int green = 255 & color >> 8;
+				color = this.backgroundTransparency << 24 | red << 16 | green << 8 | blue;
+				double width = this.getRawWidth() + this.scaleModuleSize((float)this.padding * 2.0F, true);
+				double height = this.getRawHeight() + this.scaleModuleSize((float)this.padding * 2.0F, true);
+				LabyMod.getInstance().getDrawUtils().drawRect(x - 1.0, y - 1.0, x + width + 1.0, y + height - 1.0, color);
+			}
+
+			double paddingSize = this.scaleModuleSize(this.padding, true);
+			drawTextParts(allLines, x + paddingSize, y + paddingSize, rightX);
+		}
+
+		private List<List<TextPart>> getTextsParts() {
+			this.setColors();
+			if (!this.getModuleConfigElement().isUsingExtendedSettings())
+				this.keyVisible = ModuleConfig.getConfig().isKeyVisible();
+
+			this.setFormattings();
+			EnumModuleFormatting displayFormatting = this.getDisplayFormatting();
+			List<List<TextPart>> texts = new ArrayList<>();
+
+			for (ComplexWidget.KVPair line : widget.getLines()) {
+				IChatComponent key = line.key;
+				if (key == null)
+					key = new ChatComponentText(mainElement.getDisplayName().replace("\n", ""));
+
+				TextPart value;
+				if (line.value instanceof IChatComponent component)
+					value = new TextPart(component, -1);
+				else
+					value = new TextPart(new ChatComponentText(String.valueOf(line.value)), line.color);
+
+				String beforeKey = displayFormatting == SQUARE_BRACKETS ? "[" : "";
+				String afterKey = switch (displayFormatting) {
+					case DEFAULT -> "";
+					case COLON -> ": ";
+					case BRACKETS -> "> ";
+					case SQUARE_BRACKETS -> "] ";
+					case HYPHEN -> " - ";
+				};
+				texts.add(stylizeTextPart(beforeKey, afterKey, key, value));
+			}
+
+			return texts;
+		}
+
+		private List<TextPart> stylizeTextPart(String beforeKey, String afterKey, IChatComponent key, TextPart value) {
+			List<TextPart> texts = new ArrayList<>();
+			int bracketsColor = this.bracketsColor != -1 ? this.bracketsColor : ModuleConfig.getConfig().getBracketsColor();
+			int prefixColor = this.prefixColor != -1 ? this.prefixColor : ModuleConfig.getConfig().getPrefixColor();
+			int valueColor = this.valueColor != -1 ? this.valueColor : ModuleConfig.getConfig().getValuesColor();
+
+			if (!beforeKey.isEmpty() && keyVisible)
+				texts.add(new TextPart(new ChatComponentText(beforeKey), bracketsColor, true));
+
+			if (keyVisible)
+				texts.add(new TextPart(key, prefixColor, true));
+
+			if (!afterKey.isEmpty() && keyVisible)
+				texts.add(new TextPart(new ChatComponentText(afterKey), bracketsColor, true));
+
+			if (value.color == -1)
+				value.color = valueColor;
+			texts.add(value);
+			return texts;
+		}
+
+		private void drawTextParts(List<List<TextPart>> lines, double x, double y, double rightX) {
+			boolean rightBound = rightX != -1.0;
+			double finalX = x;
+			FontRenderer fontRenderer = LabyModCore.getMinecraft().getFontRenderer();
+
+			for (List<TextPart> texts : lines) {
+				x = rightBound ? rightX : finalX;
+
+				if (rightBound)
+					Collections.reverse(texts);
+
+				for (TextPart text : texts) {
+					int stringWidth = fontRenderer.getStringWidth(text.text.getUnformattedText());
+					if (rightBound)
+						x -= stringWidth;
+
+					LabyMod.getInstance().getDrawUtils().drawStringWithShadow(text.text.getUnformattedText(), x, y, text.color);
+					if (!rightBound)
+						x += stringWidth;
+				}
+
+				y += 10.0;
+			}
+		}
+
+		@Override
+		public int getLines() {
+			return widget.getLines().length;
+		}
+
+		private class TextPart {
+			private final IChatComponent text;
+			private int color;
+
+			public TextPart(IChatComponent text, int color) {
+				this(text, color, false);
+			}
+
+			public TextPart(IChatComponent text, int color, boolean inferStyle) {
+				if (inferStyle) {
+					if (bold)
+						text.getChatStyle().setBold(true);
+
+					if (italic)
+						text.getChatStyle().setItalic(true);
+
+					if (underline)
+						text.getChatStyle().setUnderlined(true);
+				}
+
+				this.text = text;
+				this.color = color;
+			}
+
 		}
 
 	}

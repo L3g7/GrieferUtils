@@ -90,8 +90,8 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		if (screen instanceof GuiContainerCreative)
 			containerName = I18n.format(CreativeTabs.creativeTabArray[((GuiContainerCreative) screen).getSelectedTabIndex()].getTranslatedTabLabel());
 
-		int containerAmount = getAmountFromSlots(chestSlots, itemStack);
-		int playerAmount = getAmountFromSlots(playerSlots, itemStack);
+		long containerAmount = getAmountFromSlots(chestSlots, itemStack);
+		long playerAmount = getAmountFromSlots(playerSlots, itemStack);
 
 		// Don't add if the item is not compressed and the only one in the inv
 		if (playerAmount + containerAmount == itemStack.stackSize)
@@ -113,7 +113,7 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		return toolTip;
 	}
 
-	private String getFormattedAmount(int amount, int stackSize) {
+	private String getFormattedAmount(long amount, int stackSize) {
 		String formatString = "";
 		if (formatting.get() != FormatMode.UNFORMATTED) formatString += formatAmount(amount, stackSize);
 		if (formatting.get() == FormatMode.BOTH) formatString += " / ";
@@ -122,13 +122,13 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		return formatString;
 	}
 
-	public static String formatAmount(int amount, int stackSize) {
+	public static String formatAmount(long amount, int stackSize) {
 		if (amount == 0)
 			return "0 Stück";
 
-		int pieces = amount % stackSize;
-		int stacks = amount / stackSize % 54;
-		int dks = amount / stackSize / 54;
+		long pieces = amount % stackSize;
+		long stacks = amount / stackSize % 54;
+		long dks = amount / stackSize / 54;
 
 		if (stackSize == 1) {
 			pieces = stacks;
@@ -153,12 +153,12 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		return formattedString.trim();
 	}
 
-	private int getAmountFromSlots(List<Slot> items, ItemStack searchedItem) {
+	private long getAmountFromSlots(List<Slot> items, ItemStack searchedItem) {
 		return getAmount(items.stream().map(Slot::getStack).collect(Collectors.toList()), searchedItem);
 	}
 
-	public static int getAmount(List<ItemStack> items, ItemStack searchedItem) {
-		int amount = 0;
+	public static long getAmount(List<ItemStack> items, ItemStack searchedItem) {
+		long amount = 0;
 
 		for (ItemStack stack : items) {
 			if (stack == null || stack.getItem() == null)

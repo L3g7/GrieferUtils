@@ -98,7 +98,7 @@ public class ItemCounter {
 			}
 
 			List<ItemStack> itemStacks = Arrays.asList(MinecraftUtil.player().inventory.mainInventory);
-			int totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, stack);
+			long totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, stack);
 			instance.drawItem(stack, xPosition, yPosition, Constants.DECIMAL_FORMAT_98.format(totalAmount));
 		}
 
@@ -173,11 +173,13 @@ public class ItemCounter {
 				return;
 
 			List<ItemStack> itemStacks = Arrays.asList(player().inventory.mainInventory);
-			int totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, stack);
+			long totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, stack);
 			if (totalAmount == count)
 				return;
 
-			itemCount = totalAmount;
+			itemCount = (int) totalAmount;
+			if (itemCount != totalAmount)
+				itemCount = -1; // amount exceeds int limit
 			renderableCount = RenderableComponent.of(Component.text(DECIMAL_FORMAT_98.format(totalAmount)));
 			ci.cancel();
 		}
@@ -202,7 +204,7 @@ public class ItemCounter {
 
 			ItemStack mcStack = (ItemStack) (Object) itemStack;
 			List<ItemStack> itemStacks = Arrays.asList(player().inventory.mainInventory);
-			int totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, mcStack);
+			long totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, mcStack);
 			if (totalAmount == itemStack.getSize())
 				return;
 

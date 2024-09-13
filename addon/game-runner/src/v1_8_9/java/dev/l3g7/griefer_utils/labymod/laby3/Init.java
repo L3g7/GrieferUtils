@@ -40,8 +40,8 @@ public class Init implements IClassTransformer, AutoUpdater.Init {
 		List<IClassTransformer> transformers = (List<IClassTransformer>) field.get(Launch.classLoader);
 		transformers.add(0, EarlyPostProcessor.INSTANCE);
 
-		AutoUpdater.update(this);
-		new Entrypoint().start();
+		if (!AutoUpdater.update(this))
+			new Entrypoint().start();
 	}
 
 	@Override

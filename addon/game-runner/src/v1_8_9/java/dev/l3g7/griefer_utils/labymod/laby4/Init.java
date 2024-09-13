@@ -32,8 +32,8 @@ public class Init implements net.labymod.api.addon.entrypoint.Entrypoint, AutoUp
 		if (System.setProperty("griefer_utils_load_flag", "") != null)
 			throw new Error("GrieferUtils wurde bereits geladen!");
 
-		AutoUpdater.update(this);
-		new Entrypoint().start();
+		if (!AutoUpdater.update(this))
+			new Entrypoint().start();
 	}
 
 	@Override

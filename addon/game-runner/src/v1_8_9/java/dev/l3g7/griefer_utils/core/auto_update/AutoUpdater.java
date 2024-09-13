@@ -84,21 +84,29 @@ public class AutoUpdater {
 		}
 	}
 
-	public static void update(Init infoProvider) {
+	@SuppressWarnings("unchecked")
+	public static boolean update(Init infoProvider) {
 		try {
-			doUpdate(infoProvider);
+			String entrypoint = doUpdate(infoProvider);
+			if (entrypoint == null)
+				return false;
+
+			Class<Entrypoint> c = (Class<Entrypoint>) Class.forName(entrypoint);
+			c.getConstructor().newInstance().start();
+			return true;
 		} catch (IOException e) {
 			// Allow start if updating failed due to network errors
 			e.printStackTrace(System.err);
+			return false;
 		} catch (Throwable e) {
 			throw new RuntimeException("Could not update GrieferUtils!", e);
 		}
 	}
 
-	private static void doUpdate(Init infoProvider) throws Throwable {
+	private static String doUpdate(Init infoProvider) throws Throwable {
 		// Check if addon was loaded from a .jar file
 		if (!AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile().contains(".jar"))
-			return;
+			return null;
 
 		// Get own jar file
 		File jarFile = new File(getOwnJar());
@@ -110,7 +118,7 @@ public class AutoUpdater {
 				checkJarForDeletion(addonJar, infoProvider);
 
 		if (!isEnabled())
-			return;
+			return null;
 
 		JsonObject addonJson = getAddonJson();
 
@@ -120,7 +128,7 @@ public class AutoUpdater {
 
 		// Check if the server could be reached
 		if (in == null)
-			return;
+			return null;
 
 		Map<String, ReleaseInfo> releases = GSON.fromJson(new InputStreamReader(in), new TypeToken<Map<String, ReleaseInfo>>(){}.getType());
 		in.close();
@@ -133,11 +141,11 @@ public class AutoUpdater {
 		if (addonJson.has("debug") && addonJson.get("debug").getAsBoolean()) {
 			// Compare current version with latest version
 			if (addonJson.get("addonVersion").getAsString().equals(preferredRelease.version))
-				return;
+				return null;
 		} else {
 			// Compare hash of own file with latest file hash
 			if (hash(jarFile).equals(preferredRelease.hash))
-				return;
+				return null;
 		}
 
 		String version = preferredRelease.version;
@@ -163,7 +171,7 @@ public class AutoUpdater {
 
 			// Check if the server could be reached
 			if (in == null)
-				return;
+				return null;
 
 			Files.copy(in, targetFile.toPath());
 			in.close();
@@ -187,6 +195,7 @@ public class AutoUpdater {
 		addURL.invoke(AutoUpdater.class.getClassLoader(), targetFile.toURI().toURL());
 
 		hasUpdated = true;
+		return preferredRelease.entrypoint.get(infoProvider.getLabyVersion());
 	}
 
 	private static void checkJarForDeletion(File file, Init infoProvider) throws IOException {

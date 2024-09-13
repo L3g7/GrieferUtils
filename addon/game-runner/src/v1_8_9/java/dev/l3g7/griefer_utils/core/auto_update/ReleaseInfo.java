@@ -9,10 +9,13 @@ package dev.l3g7.griefer_utils.core.auto_update;
 
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 
+import java.util.Map;
+
 public class ReleaseInfo {
 
 	String version;
 	String hash; // SHA-256
+	Map<String, String> entrypoint;
 
 	public enum ReleaseChannel implements Named {
 

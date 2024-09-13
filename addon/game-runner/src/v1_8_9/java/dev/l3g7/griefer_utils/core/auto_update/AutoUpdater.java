@@ -134,7 +134,7 @@ public class AutoUpdater {
 		in.close();
 
 		// Get preferred release channel
-		ReleaseChannel preferredChannel = ReleaseChannel.BETA;
+		ReleaseChannel preferredChannel = getPreferredChannel();
 		ReleaseInfo preferredRelease = releases.get(preferredChannel.name().toLowerCase());
 
 		// If addon has debug mode enabled, compare versions

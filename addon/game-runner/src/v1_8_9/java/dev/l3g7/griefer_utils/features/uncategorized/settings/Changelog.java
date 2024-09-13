@@ -88,7 +88,7 @@ public class Changelog {
 
 	@OnEnable
 	public void onEnable() {
-		if (AutoUpdater.hasUpdated && ConfigPatcher.versionChanged)
+		if (AutoUpdater.hasUpdated() && ConfigPatcher.versionChanged)
 			ChangelogScreen.trigger(false);
 	}
 }

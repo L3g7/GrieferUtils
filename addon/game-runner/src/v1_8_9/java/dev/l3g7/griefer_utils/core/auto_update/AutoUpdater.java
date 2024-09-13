@@ -25,10 +25,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,26 +52,33 @@ import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel
  * {@link dev.l3g7.griefer_utils.core.api.util.IOUtil} and
  * {@link dev.l3g7.griefer_utils.core.api.reflection.Reflection}.
  */
+@SuppressWarnings("CharsetObjectCanBeUsed") // Must be compatible with Java 8
 public class AutoUpdater {
 
 	// DigiCert's Global Root G2 certificate
 	// Used by the api server, l3g7.dev, and missing on older versions of Java, so it has to be added manually.
 	private static final byte[] DIGI_CERT_CERTIFICATE = Base64.getDecoder().decode("MIIDjjCCAnagAwIBAgIQAzrx5qcRqaC7KGSxHQn65TANBgkqhkiG9w0BAQsFADBhMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBHMjAeFw0xMzA4MDExMjAwMDBaFw0zODAxMTUxMjAwMDBaMGExCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IEcyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuzfNNNx7a8myaJCtSnX/RrohCgiN9RlUyfuI2/Ou8jqJkTx65qsGGmvPrC3oXgkkRLpimn7Wo6h+4FR1IAWsULecYxpsMNzaHxmx1x7e/dfgy5SDN67sH0NO3Xss0r0upS/kqbitOtSZpLYl6ZtrAGCSYP9PIUkY92eQq2EGnI/yuum06ZIya7XzV+hdG82MHauVBJVJ8zUtluNJbd134/tJS7SsVQepj5WztCO7TG1F8PapspUwtP1MVYwnSlcUfIKdzXOS0xZKBgyMUNGPHgm+F6HmIcr9g+UQvIOlCsRnKPZzFBQ9RnbDhxSJITRNrw9FDKZJobq7nMWxM4MphQIDAQABo0IwQDAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBhjAdBgNVHQ4EFgQUTiJUIBiV5uNu5g/6+rkS7QYXjzkwDQYJKoZIhvcNAQELBQADggEBAGBnKJRvDkhj6zHd6mcY1Yl9PMWLSn/pvtsrF9+wX3N3KjITOYFnQoQj8kVnNeyIv/iPsGEMNKSuIEyExtv4NeF22d+mQrvHRAiGfzZ0JFrabA0UWTW98kndth/Jsw1HKj2ZL7tcu7XUIOGZX1NGFdtom/DzMNU+MeKNhJ7jitralj41E6Vf8PlwUHBHQRFXGU7Aj64GxJUTFy8bJZ918rGOmaFvE7FBcf6IKshPECBV1/MUReXgRPTqh5Uykw7+U0b6LJ3/iyK5S9kJRaTepLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTflMrY=");
-
 	public static final String DELETION_MARKER = "File marked for deletion by GrieferUtils updater";
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-	private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+	private static MethodHandles.Lookup lookup;
 
-	public static boolean hasUpdated = false;
+	private static boolean hasUpdated = false;
 
-	// Create unrestricted lookup
-	static {
+	/**
+	 * Lazily creates an unrestricted lookup and returns it.
+	 */
+	private static MethodHandles.Lookup getLookup() {
+		if (lookup != null)
+			return lookup;
+
 		try {
+			lookup = MethodHandles.lookup();
 			Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
 			theUnsafe.setAccessible(true);
 			Unsafe unsafe = (Unsafe) theUnsafe.get(null);
-			unsafe.putInt(LOOKUP, 12, -1);
+			unsafe.putInt(lookup, 12, -1);
+			return lookup;
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
@@ -177,7 +181,7 @@ public class AutoUpdater {
 			infoProvider.forceDeleteJar(jarFile);
 
 		// Load new version
-		MethodHandle addURL = LOOKUP.findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
+		MethodHandle addURL = getLookup().findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
 		addURL.invoke(AutoUpdater.class.getClassLoader(), targetFile.toURI().toURL());
 
 		hasUpdated = true;
@@ -261,10 +265,10 @@ public class AutoUpdater {
 		} catch (NoClassDefFoundError | ClassNotFoundException e) {
 			urlClassPathClass = Class.forName("sun.misc.URLClassPath"); // NOTE: beautify
 		}
-		MethodHandle ucpGetter = LOOKUP.findGetter(URLClassLoader.class, "ucp", urlClassPathClass);
-		MethodHandle pathGetter = LOOKUP.findGetter(urlClassPathClass, "path", ArrayList.class);
-		MethodHandle lmapGetter = LOOKUP.findGetter(urlClassPathClass, "lmap", HashMap.class);
-		MethodHandle loadersGetter = LOOKUP.findGetter(urlClassPathClass, "loaders", ArrayList.class);
+		MethodHandle ucpGetter = getLookup().findGetter(URLClassLoader.class, "ucp", urlClassPathClass);
+		MethodHandle pathGetter = getLookup().findGetter(urlClassPathClass, "path", ArrayList.class);
+		MethodHandle lmapGetter = getLookup().findGetter(urlClassPathClass, "lmap", HashMap.class);
+		MethodHandle loadersGetter = getLookup().findGetter(urlClassPathClass, "loaders", ArrayList.class);
 
 		URLClassLoader classLoader = (URLClassLoader) AutoUpdater.class.getClassLoader();
 
@@ -289,7 +293,7 @@ public class AutoUpdater {
 	 */
 	private static final char[] HEX_CHARSET = "0123456789abcdef".toCharArray();
 
-	public static String hash(File file) throws NoSuchAlgorithmException, IOException {
+	private static String hash(File file) throws NoSuchAlgorithmException, IOException {
 		byte[] bytes = MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(file.toPath()));
 		char[] res = new char[bytes.length * 2];
 		for (int i = 0; i < res.length; i += 2) {
@@ -303,9 +307,9 @@ public class AutoUpdater {
 	/**
 	 * @see dev.l3g7.griefer_utils.core.api.util.IOUtil
 	 */
-	public static InputStream read(String url) {
+	private static InputStream read(String url) {
 		try {
-			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+			HttpURLConnection conn = (HttpURLConnection) URI.create(url).toURL().openConnection();
 
 			if (conn instanceof HttpsURLConnection)
 				((HttpsURLConnection) conn).setSSLSocketFactory(getCustomFactory());
@@ -381,6 +385,10 @@ public class AutoUpdater {
 		}
 
 		throw new FileNotFoundException("addon.json");
+	}
+
+	public static boolean hasUpdated() {
+		return hasUpdated;
 	}
 
 	public interface Init {

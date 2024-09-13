@@ -52,4 +52,9 @@ public class Init implements net.labymod.api.addon.entrypoint.Entrypoint, AutoUp
 		Files.write(Constants.Files.ADDONS_SCHEDULE_FOR_REMOVAL, deleteLine.getBytes(), CREATE, APPEND);
 	}
 
+	@Override
+	public String getLabyVersion() {
+		return "laby4";
+	}
+
 }

@@ -75,4 +75,9 @@ public class Init implements IClassTransformer, AutoUpdater.Init {
 		Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
 	}
 
+	@Override
+	public String getLabyVersion() {
+		return "laby3";
+	}
+
 }

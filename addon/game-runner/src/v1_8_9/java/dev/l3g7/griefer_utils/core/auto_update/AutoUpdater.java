@@ -112,8 +112,11 @@ public class AutoUpdater {
 		if (!isEnabled())
 			return;
 
+		JsonObject addonJson = getAddonJson();
+
 		// Get info about the latest release
-		InputStream in = read("https://grieferutils.l3g7.dev/v5/latest_release");
+		String url = System.getProperty("griefer_utils.latest_release_url", "https://grieferutils.l3g7.dev/v5/latest_release/");
+		InputStream in = read(url + addonJson.get("addonVersion").getAsString() + "/" + infoProvider.getLabyVersion());
 
 		// Check if the server could be reached
 		if (in == null)
@@ -127,7 +130,6 @@ public class AutoUpdater {
 		ReleaseInfo preferredRelease = releases.get(preferredChannel.name().toLowerCase());
 
 		// If addon has debug mode enabled, compare versions
-		JsonObject addonJson = getAddonJson();
 		if (addonJson.has("debug") && addonJson.get("debug").getAsBoolean()) {
 			// Compare current version with latest version
 			if (addonJson.get("addonVersion").getAsString().equals(preferredRelease.version))
@@ -394,6 +396,8 @@ public class AutoUpdater {
 	public interface Init {
 
 		void forceDeleteJar(File jar) throws IOException;
+
+		String getLabyVersion();
 
 	}
 

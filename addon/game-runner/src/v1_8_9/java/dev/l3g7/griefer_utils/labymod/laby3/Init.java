@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.labymod.laby3;
 
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
-import dev.l3g7.griefer_utils.core.auto_update.UpdateImpl;
 import dev.l3g7.griefer_utils.post_processor.EarlyPostProcessor;
 import net.labymod.addon.AddonLoader;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -28,10 +27,10 @@ import static dev.l3g7.griefer_utils.core.auto_update.AutoUpdater.DELETION_MARKE
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 
-@SuppressWarnings({"unused", "unchecked"})
-public class PreStart implements IClassTransformer, UpdateImpl {
+@SuppressWarnings("unchecked")
+public class Init implements IClassTransformer, AutoUpdater.Init {
 
-	public PreStart() throws IOException, ReflectiveOperationException {
+	public Init() throws ReflectiveOperationException {
 		if (System.setProperty("griefer_utils_load_flag", "") != null)
 			throw new Error("GrieferUtils wurde bereits geladen!");
 
@@ -42,7 +41,7 @@ public class PreStart implements IClassTransformer, UpdateImpl {
 		transformers.add(0, EarlyPostProcessor.INSTANCE);
 
 		AutoUpdater.update(this);
-		EarlyStart.start();
+		new Entrypoint().start();
 	}
 
 	@Override

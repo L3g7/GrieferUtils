@@ -80,7 +80,7 @@ public class AutoUpdater {
 		}
 	}
 
-	public static void update(UpdateImpl infoProvider) {
+	public static void update(Init infoProvider) {
 		try {
 			doUpdate(infoProvider);
 		} catch (Throwable e) {
@@ -88,7 +88,7 @@ public class AutoUpdater {
 		}
 	}
 
-	private static void doUpdate(UpdateImpl infoProvider) throws Throwable {
+	private static void doUpdate(Init infoProvider) throws Throwable {
 		// Check if addon was loaded from a .jar file
 		if (!AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile().contains(".jar"))
 			return;
@@ -178,7 +178,7 @@ public class AutoUpdater {
 		hasUpdated = true;
 	}
 
-	private static void checkJarForDeletion(File file, UpdateImpl infoProvider) throws IOException {
+	private static void checkJarForDeletion(File file, Init infoProvider) throws IOException {
 		ZipInputStream in = new ZipInputStream(Files.newInputStream(file.toPath()));
 		ZipEntry entry = in.getNextEntry();
 
@@ -374,6 +374,18 @@ public class AutoUpdater {
 		}
 
 		throw new FileNotFoundException("addon.json");
+	}
+
+	public interface Init {
+
+		void deleteJar(File jar) throws IOException;
+
+		void handleError(Throwable e);
+
+	}
+
+	public interface Entrypoint {
+		void start();
 	}
 
 }

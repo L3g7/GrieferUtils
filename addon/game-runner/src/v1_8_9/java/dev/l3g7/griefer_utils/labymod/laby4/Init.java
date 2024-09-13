@@ -8,9 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby4;
 
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
-import dev.l3g7.griefer_utils.core.auto_update.UpdateImpl;
 import net.labymod.api.Constants;
-import net.labymod.api.addon.entrypoint.Entrypoint;
 import net.labymod.api.addon.exception.AddonLoadException;
 import net.labymod.api.models.addon.annotation.AddonEntryPoint;
 import net.labymod.api.models.version.Version;
@@ -28,7 +26,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 
 @AddonEntryPoint(priority = 900)
 @SuppressWarnings("UnstableApiUsage")
-public class PreStart implements Entrypoint, UpdateImpl {
+public class Init implements net.labymod.api.addon.entrypoint.Entrypoint, AutoUpdater.Init {
 
 	@Override
 	public void initialize(Version semVer) {
@@ -36,7 +34,7 @@ public class PreStart implements Entrypoint, UpdateImpl {
 			throw new Error("GrieferUtils wurde bereits geladen!");
 
 		AutoUpdater.update(this);
-		EarlyStart.start();
+		new Entrypoint().start();
 	}
 
 	@Override

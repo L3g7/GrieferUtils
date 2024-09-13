@@ -12,8 +12,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
-import dev.l3g7.griefer_utils.core.auto_update.UpdateImpl;
-import dev.l3g7.griefer_utils.labymod.laby3.PreStart;
+import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
+import dev.l3g7.griefer_utils.labymod.laby3.Init;
 import dev.l3g7.griefer_utils.post_processor.processors.build.RefmapConverter;
 
 import java.io.File;
@@ -95,8 +95,8 @@ public class BuildPostProcessor {
 	 * Transforms the entrypoint class and transformers.
 	 */
 	private static void processBootstrapClasses() throws IOException {
-		process(pathOf(PreStart.class));
-		process(pathOf(UpdateImpl.class));
+		process(pathOf(Init.class));
+		process(pathOf(AutoUpdater.Init.class));
 		try (Stream<Path> stream = Files.walk(pathOf(EarlyPostProcessor.class).getParent())) {
 			stream
 				.filter(Files::isRegularFile)

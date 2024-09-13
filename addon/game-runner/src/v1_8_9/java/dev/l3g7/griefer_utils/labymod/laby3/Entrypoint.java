@@ -14,6 +14,8 @@ import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.misc.LibLoader;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.Util;
+import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.injection.Injector;
 import net.labymod.addon.AddonLoader;
 import net.labymod.core.asm.LabyModCoreMod;
@@ -25,6 +27,7 @@ import net.minecraftforge.fml.relauncher.CoreModManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
 import java.util.UUID;
@@ -32,9 +35,10 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
-public class EarlyStart {
+@SuppressWarnings({"CharsetObjectCanBeUsed", "OptionalGetWithoutIsPresent"}) // Must be compatible with Java 8
+public class Entrypoint implements AutoUpdater.Entrypoint {
 
-	public static void start() throws IOException, ReflectiveOperationException {
+	public void start() {
 		Bridge.Initializer.init(LABY_3);
 
 		// Load mcp mappings for automatic name resolution in Reflection
@@ -69,10 +73,14 @@ public class EarlyStart {
 		// classes with a modified major version have to be loaded and cached manually to prevent crashes
 		Map<String, byte[]> resourceCache = Reflection.get(Launch.classLoader, "resourceCache");
 
-		for (String file : FileProvider.getFiles(f -> f.endsWith(".class"))) {
-			byte[] bytes = IOUtil.toByteArray(FileProvider.getData(file));
-			bytes[7 /* major_version */] = 52 /* Java 1.8 */;
-			resourceCache.put(file.substring(0, file.length() - 6), bytes);
+		try {
+			for (String file : FileProvider.getFiles(f -> f.endsWith(".class"))) {
+				byte[] bytes = IOUtil.toByteArray(FileProvider.getData(file));
+				bytes[7 /* major_version */] = 52 /* Java 1.8 */;
+				resourceCache.put(file.substring(0, file.length() - 6), bytes);
+			}
+		} catch (IOException e) {
+			throw Util.elevate(e);
 		}
 
 		// Add Injector as transformer
@@ -80,13 +88,17 @@ public class EarlyStart {
 
 		if (labyBridge.forge()) {
 			// Add own file to ignored mods so Forge doesn't try to read this jar
-			String jarPath = EarlyStart.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+			String jarPath = Entrypoint.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 			if (!jarPath.contains(".jar"))
 				return;
 
-			jarPath = jarPath.substring(5, jarPath.lastIndexOf("!"));
-			jarPath = URLDecoder.decode(jarPath, "UTF-8");
-			CoreModManager.getIgnoredMods().add(new File(jarPath).getName());
+			try {
+				jarPath = jarPath.substring(5, jarPath.lastIndexOf("!"));
+				jarPath = URLDecoder.decode(jarPath, "UTF-8");
+				CoreModManager.getIgnoredMods().add(new File(jarPath).getName());
+			} catch (UnsupportedEncodingException e) {
+				throw Util.elevate(e);
+			}
 		}
 
 		// Fix main class

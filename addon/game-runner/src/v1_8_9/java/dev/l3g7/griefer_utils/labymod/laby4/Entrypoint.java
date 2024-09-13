@@ -15,15 +15,16 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.misc.LibLoader;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import net.labymod.api.Laby;
 
 import java.io.InputStreamReader;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
-public class EarlyStart {
+public class Entrypoint implements AutoUpdater.Entrypoint {
 
-	public static void start() {
+	public void start() {
 		Bridge.Initializer.init(LABY_4);
 
 		// Ensure addon version is up-to-date

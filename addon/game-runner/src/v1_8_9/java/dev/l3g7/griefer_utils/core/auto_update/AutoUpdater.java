@@ -123,8 +123,8 @@ public class AutoUpdater {
 		JsonObject addonJson = getAddonJson();
 
 		// Get info about the latest release
-		String url = System.getProperty("griefer_utils.latest_release_url", "https://grieferutils.l3g7.dev/v5/latest_release/");
-		InputStream in = read(url + addonJson.get("addonVersion").getAsString() + "/" + infoProvider.getLabyVersion());
+		String url = System.getProperty("griefer_utils.latest_release_url", "https://api.grieferutils.l3g7.dev/v6/latest_release/");
+		InputStream in = read(url + addonJson.get("addonVersion").getAsString() + "/" + infoProvider.getLabyVersion() + "/");
 
 		// Check if the server could be reached
 		if (in == null)

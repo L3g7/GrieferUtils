@@ -60,7 +60,7 @@ public class FilterWebhooks extends Feature {
 
     public FilterWebhooks() {
 	    EMBED_FOOTER.addProperty("text", Constants.ADDON_NAME + " v" + LabyBridge.labyBridge.addonVersion());
-	    EMBED_FOOTER.addProperty("icon_url", "https://grieferutils.l3g7.dev/icon/padded/64x64/");
+	    EMBED_FOOTER.addProperty("icon_url", "https://api.grieferutils.l3g7.dev/icon/padded/64x64.png");
     }
 
     static void saveWebhooks() {

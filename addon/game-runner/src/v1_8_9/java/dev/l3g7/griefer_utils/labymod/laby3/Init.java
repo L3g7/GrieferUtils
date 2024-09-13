@@ -50,36 +50,29 @@ public class Init implements IClassTransformer, AutoUpdater.Init {
 	}
 
 	@Override
-	public void deleteJar(File jar) throws IOException {
+	public void forceDeleteJar(File jar) throws IOException {
 		// Try to delete file directly
 		if (jar.delete())
 			return;
 
+		// Minecraft's ClassLoader can create file leaks so the jar is probably locked.
+
+		// Overwrite with empty zip file
 		try {
-			// Probably locked; Overwrite it with an empty zip file until Minecraft is closed
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			ZipOutputStream out = new ZipOutputStream(bout);
 			out.setComment(DELETION_MARKER);
 			out.close();
 			Files.write(jar.toPath(), bout.toByteArray());
 		} catch (Throwable t) {
-			// Deleting failed, but it doesn't matter, so nothing is done
-			t.printStackTrace();
+			// Overwrite failed, but it doesn't matter
+			t.printStackTrace(System.err);
 		}
 
 		// Add old file to LabyMod's .delete
 		Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();
 		String deleteLine = jar.getName() + System.lineSeparator();
 		Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
-	}
-
-	@Override
-	public void handleError(Throwable e) {
-		if (e instanceof IOException) {
-			// Allow start if updating failed due to network errors
-			e.printStackTrace(System.err);
-		} else
-			throw new RuntimeException("Could not update GrieferUtils!", e);
 	}
 
 }

@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.labymod.laby4;
 
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import net.labymod.api.Constants;
-import net.labymod.api.addon.exception.AddonLoadException;
 import net.labymod.api.models.addon.annotation.AddonEntryPoint;
 import net.labymod.api.models.version.Version;
 
@@ -38,13 +37,7 @@ public class Init implements net.labymod.api.addon.entrypoint.Entrypoint, AutoUp
 	}
 
 	@Override
-	public void deleteJar(File jar) throws IOException {
-		// Try to delete file directly
-		if (jar.delete())
-			return;
-
-		// Minecraft's ClassLoader can create file leaks so the jar is probably locked.
-
+	public void forceDeleteJar(File jar) throws IOException {
 		// Prepare jar for deletion by LabyMod
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		ZipOutputStream out = new ZipOutputStream(bout);
@@ -57,15 +50,6 @@ public class Init implements net.labymod.api.addon.entrypoint.Entrypoint, AutoUp
 		// Add jar to .asfr
 		String deleteLine = "griefer_utils-marked_for_deletion" + System.lineSeparator();
 		Files.write(Constants.Files.ADDONS_SCHEDULE_FOR_REMOVAL, deleteLine.getBytes(), CREATE, APPEND);
-	}
-
-	@Override
-	public void handleError(Throwable e) {
-		if (e instanceof IOException) {
-			// Allow start if updating failed due to network errors
-			e.printStackTrace(System.err);
-		} else
-			throw new AddonLoadException("Could not update GrieferUtils!", e);
 	}
 
 }

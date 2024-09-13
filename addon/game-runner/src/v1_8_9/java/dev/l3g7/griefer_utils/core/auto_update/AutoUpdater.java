@@ -83,8 +83,11 @@ public class AutoUpdater {
 	public static void update(Init infoProvider) {
 		try {
 			doUpdate(infoProvider);
+		} catch (IOException e) {
+			// Allow start if updating failed due to network errors
+			e.printStackTrace(System.err);
 		} catch (Throwable e) {
-			infoProvider.handleError(e);
+			throw new RuntimeException("Could not update GrieferUtils!", e);
 		}
 	}
 
@@ -169,7 +172,9 @@ public class AutoUpdater {
 
 		// New version downloaded successfully, remove old version
 		removeURLFromClassLoaders(jarFile.toURI().toURL());
-		infoProvider.deleteJar(jarFile);
+		if (!jarFile.delete())
+			// Minecraft's ClassLoader can create file leaks so the jar is probably locked.
+			infoProvider.forceDeleteJar(jarFile);
 
 		// Load new version
 		MethodHandle addURL = LOOKUP.findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
@@ -185,7 +190,9 @@ public class AutoUpdater {
 		if (entry == null || !DELETION_MARKER.equals(entry.getComment()))
 			return;
 
-		infoProvider.deleteJar(file);
+		if (!file.delete())
+			// Minecraft's ClassLoader can create file leaks so the jar is probably locked.
+			infoProvider.forceDeleteJar(file);
 	}
 
 	private static ReleaseChannel getPreferredChannel() throws IOException {
@@ -378,9 +385,7 @@ public class AutoUpdater {
 
 	public interface Init {
 
-		void deleteJar(File jar) throws IOException;
-
-		void handleError(Throwable e);
+		void forceDeleteJar(File jar) throws IOException;
 
 	}
 

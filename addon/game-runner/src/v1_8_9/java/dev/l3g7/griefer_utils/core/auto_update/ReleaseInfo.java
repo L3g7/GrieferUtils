@@ -15,6 +15,7 @@ public class ReleaseInfo {
 
 	String version;
 	String hash; // SHA-256
+	boolean hotswap;
 	Map<String, String> entrypoint;
 
 	public enum ReleaseChannel implements Named {

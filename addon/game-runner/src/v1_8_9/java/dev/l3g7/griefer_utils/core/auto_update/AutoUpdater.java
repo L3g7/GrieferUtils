@@ -185,12 +185,17 @@ public class AutoUpdater {
 		}
 
 		// New version downloaded successfully, remove old version
-		removeURLFromClassLoaders(jarFile.toURI().toURL());
-		if (!jarFile.delete())
+		if (!jarFile.delete()) {
 			// Minecraft's ClassLoader can create file leaks so the jar is probably locked.
 			infoProvider.forceDeleteJar(jarFile);
+		}
 
-		// Load new version
+		// Hotswap new version
+		if (!preferredRelease.hotswap)
+			return null;
+
+		removeURLFromClassLoaders(jarFile.toURI().toURL());
+
 		MethodHandle addURL = getLookup().findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
 		addURL.invoke(AutoUpdater.class.getClassLoader(), targetFile.toURI().toURL());
 

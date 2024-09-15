@@ -28,8 +28,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-
 @Singleton
 public class MobRemover extends SimpleWidget {
 
@@ -57,22 +55,12 @@ public class MobRemover extends SimpleWidget {
 
 	@Override
 	public String getValue() {
-		if (countdown == null || countdown.destroyIfExpired())
+		if (countdown == null || countdown.isExpired())
 			return "Unbekannt";
 
-		long remainingSeconds = countdown.secondsRemaining();
-
 		// Warn if mob remover is less than the set amount of seconds away
-		if (remainingSeconds < warnTime.get()) {
-			String s = Util.formatTimeSeconds(remainingSeconds, true);
-			if (!s.equals("0s")) {
-				mc().ingameGUI.displayTitle("§cMobRemover!", null, -1, -1, -1);
-				mc().ingameGUI.displayTitle(null, "§c§l" + s, -1, -1, -1);
-				mc().ingameGUI.displayTitle(null, null, 0, 2, 3);
-			}
-		}
-
-		return Util.formatTimeSeconds(remainingSeconds, timeFormat.get() == TimeFormat.SHORT);
+		countdown.checkWarning("MobRemover!", warnTime.get());
+		return Util.formatTimeSeconds(countdown.secondsRemaining(), timeFormat.get() == TimeFormat.SHORT);
 	}
 
 	@EventListener(triggerWhenDisabled = true)

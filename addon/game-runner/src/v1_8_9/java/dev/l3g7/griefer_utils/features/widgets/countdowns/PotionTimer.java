@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -48,7 +49,8 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getGuiChestTitle;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.HIDDEN;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
@@ -89,15 +91,9 @@ public class PotionTimer extends Widget {
 
 	private void checkFlyWarning() {
 		// Warn if the fly potion end is less than the set amount of seconds away
-		long flyPotionEnd = potions.get("fly_potion").expirationDate;
-		if (flyPotionEnd > System.currentTimeMillis() && flyPotionEnd - System.currentTimeMillis() < warnTime.get() * 1000) {
-			String s = Util.formatTime(flyPotionEnd, true);
-			if (!s.equals("0s")) {
-				mc().ingameGUI.displayTitle("§cFly Trank", null, -1, -1, -1);
-				mc().ingameGUI.displayTitle(null, "§c§l" + s, -1, -1, -1);
-				mc().ingameGUI.displayTitle(null, null, 0, 2, 3);
-			}
-		}
+		TPSCountdown flyPotion = potions.get("fly_potion").countdown;
+		if (flyPotion != null)
+			flyPotion.checkWarning("Fly Trank", warnTime.get());
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -108,7 +104,7 @@ public class PotionTimer extends Widget {
 
 		String end = matcher.group("end");
 		try {
-			potions.get("fly_potion").expirationDate = DATE_FORMAT.parse(end).getTime();
+			potions.get("fly_potion").countdown = TPSCountdown.fromEnd(DATE_FORMAT.parse(end).getTime());
 		} catch (ParseException e) {
 			BugReporter.reportError(new Throwable("Error while parsing fly potion end from " + event.message.getFormattedText(), e));
 		}
@@ -129,7 +125,7 @@ public class PotionTimer extends Widget {
 		NBTTagCompound tag = heldItem.getTagCompound();
 		for (Map.Entry<String, PotionData> entry : potions.entrySet()) {
 			if (tag.hasKey(entry.getKey())) {
-				entry.getValue().expirationDate = System.currentTimeMillis() + 15 * 60 * 1000;
+				entry.getValue().countdown = TPSCountdown.fromMinutes(15);
 				break;
 			}
 		}
@@ -148,7 +144,7 @@ public class PotionTimer extends Widget {
 	private static class PotionData {
 
 		private final String displayName;
-		private long expirationDate = -1;
+		private TPSCountdown countdown = null;
 
 		public PotionData(String displayName) {
 			this.displayName = displayName;
@@ -179,7 +175,7 @@ public class PotionTimer extends Widget {
 
 		@Override
 		public boolean isShown() {
-			return super.isShown() && (!hide.get() || potions.values().stream().anyMatch(p -> p.expirationDate >= System.currentTimeMillis()));
+			return super.isShown() && (!hide.get() || potions.values().stream().anyMatch(p -> p.countdown != null && !p.countdown.isExpired()));
 		}
 
 		@Override
@@ -189,7 +185,7 @@ public class PotionTimer extends Widget {
 
 			// Get names as Strings
 			List<String> keys = potions.values().stream()
-					.filter(d -> d.expirationDate >= System.currentTimeMillis())
+					.filter(d -> d.countdown != null && d.countdown.isExpired())
 					.map(this::getDisplayName)
 					.collect(Collectors.toList());
 
@@ -209,7 +205,7 @@ public class PotionTimer extends Widget {
 
 			// Get expirations dates as Strings
 			List<String> values = potions.values().stream()
-					.filter(d -> d.expirationDate >= System.currentTimeMillis())
+					.filter(d -> d.countdown != null && d.countdown.isExpired())
 					.map(this::getFormattedTime)
 					.collect(Collectors.toList());
 
@@ -232,7 +228,7 @@ public class PotionTimer extends Widget {
 				return;
 
 			List<PotionData> data = potions.values().stream()
-					.filter(d -> d.expirationDate >= System.currentTimeMillis())
+					.filter(d -> d.countdown != null && d.countdown.isExpired())
 					.collect(Collectors.toList());
 
 			if (data.isEmpty())
@@ -276,7 +272,7 @@ public class PotionTimer extends Widget {
 		}
 
 		private String getFormattedTime(PotionData data) {
-			return Util.formatTime(data.expirationDate);
+			return Util.formatTimeSeconds(data.countdown.secondsRemaining());
 		}
 
 		private String getDisplayName(PotionData data) {
@@ -303,7 +299,7 @@ public class PotionTimer extends Widget {
 
 		@Override
 		public boolean isVisibleInGame() {
-			return !hide.get() || potions.values().stream().anyMatch(p -> p.expirationDate >= System.currentTimeMillis());
+			return !hide.get() || potions.values().stream().anyMatch(p -> p.countdown != null && !p.countdown.isExpired());
 		}
 
 		@Override
@@ -355,12 +351,12 @@ public class PotionTimer extends Widget {
 				keyComponent.setChildren(Collections.singleton(name));
 
 				// Update value
-				if (data.expirationDate < System.currentTimeMillis()) {
+				if (data.countdown == null || data.countdown.isExpired()) {
 					line.setState(HIDDEN);
 					line.updateAndFlush("00:00"); // Fallback value for showcase in Widget editor | FIXME: tick down?
 				} else {
 					line.setState(VISIBLE);
-					line.updateAndFlush(Util.formatTime(data.expirationDate));
+					line.updateAndFlush(Util.formatTimeSeconds(data.countdown.secondsRemaining()));
 				}
 
 				reinitialize();

@@ -190,7 +190,7 @@ public class Booster extends Widget {
 		}
 
 		private boolean isExpired() {
-			expirationDates.removeIf(TPSCountdown::destroyIfExpired);
+			expirationDates.removeIf(TPSCountdown::isExpired);
 			return expirationDates.isEmpty();
 		}
 

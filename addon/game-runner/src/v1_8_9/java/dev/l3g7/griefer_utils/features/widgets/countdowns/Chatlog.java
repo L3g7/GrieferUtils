@@ -54,7 +54,7 @@ public class Chatlog extends SimpleWidget {
 
 	@Override
 	public boolean isVisibleInGame() {
-		return !hide.get() || countdown == null || countdown.destroyIfExpired();
+		return !hide.get() || countdown == null || countdown.isExpired();
 	}
 
 	@EventListener(triggerWhenDisabled = true)

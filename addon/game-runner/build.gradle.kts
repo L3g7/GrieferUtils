@@ -1,4 +1,3 @@
-import net.labymod.gradle.core.dsl.getBuildDirectory
 import java.util.*
 
 version = "0.0.0"
@@ -49,8 +48,8 @@ tasks.register("runBuildPostProcessor", JavaExec::class) {
 
 	doFirst {
 		classpath(
-			getBuildDirectory() + "/build/classes/java/v1_8_9",
-			configurations["v1_8_9Implementation"].resolve()
+			project.layout.buildDirectory.get().toString() + "/classes/java/v1_8_9",
+			configurations["v1_8_9RuntimeClasspath"].resolve()
 		)
 	}
 

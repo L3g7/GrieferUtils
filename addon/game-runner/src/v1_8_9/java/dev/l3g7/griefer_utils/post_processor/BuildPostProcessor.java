@@ -16,10 +16,7 @@ import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.Init;
 import dev.l3g7.griefer_utils.post_processor.processors.build.RefmapConverter;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -28,6 +25,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.zip.ZipOutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -53,7 +51,7 @@ public class BuildPostProcessor {
 		String version = System.getProperty("griefer_utils.version");
 
 		// Rename jar
-		File jar = new File("build/libs/v1_8_9-0.0.0-obf.jar");
+		File jar = new File("build/libs/game-runner-" + version + "-1.8.9-obfuscated.jar");
 		File newJar = new File("../build/libs/griefer-utils-v" + version + ".jar");
 		Files.copy(jar.toPath(), newJar.toPath(), REPLACE_EXISTING);
 
@@ -122,12 +120,8 @@ public class BuildPostProcessor {
 		delete(pathOf(RefmapConverter.class).getParent());
 		delete(pathOf(BuildPostProcessor.class));
 
-		// delete other build artifacts to emphasize processed jar file
-		delete(Path.of("../build/libs/GrieferUtils-" + System.getProperty("griefer_utils.version") + ".jar"));
-		delete(Path.of("../build/libs/GrieferUtils-release.jar"));
-		delete(Path.of("../build/libs/GrieferUtils-release-dev.jar"));
-		delete(Path.of("build/libs/v1_8_9-0.0.0-obf.jar"));
-		delete(Path.of("build/libs/v1_8_9-0.0.0.jar"));
+		// mark other build artifacts to emphasize processed jar file
+		empty(Path.of("build/libs/game-runner-" + System.getProperty("griefer_utils.version") + "-1.8.9-obfuscated.jar"));
 	}
 
 	private static void delete(Path path) {
@@ -146,6 +140,19 @@ public class BuildPostProcessor {
 					.forEach(BuildPostProcessor::delete);
 			}
 			Files.delete(path);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void empty(Path path) {
+		try {
+			if (!Files.exists(path))
+				return;
+
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			new ZipOutputStream(bout).close();
+			Files.write(path, bout.toByteArray());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

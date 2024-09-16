@@ -39,9 +39,6 @@ public class RefmapConverter {
 		System.setProperty("griefer_utils.custom_ssl", "false");
 		Mapper.loadMappings("1.8.9", "22", new File("build/1.8.9_stable_22.json"));
 
-		// Move mixins.json
-		Files.move(fs.getPath("1.8.9-GrieferUtils.mixins.json"), fs.getPath("griefer_utils.mixins.json"));
-
 		// Move refmaps
 		Files.createDirectory(fs.getPath("/refmaps/"));
 		Files.move(fs.getPath("1.8.9-GrieferUtils.refmap.json"), fs.getPath("/refmaps/LabyMod-4.json"));

@@ -1,9 +1,8 @@
-import net.labymod.gradle.core.addon.info.AddonMeta
+import net.labymod.labygradle.common.internal.labymod.addon.model.AddonMeta
 
 plugins {
-	id("java-library")
-	id("net.labymod.gradle")
-	id("net.labymod.gradle.addon")
+	id("net.labymod.labygradle")
+	id("net.labymod.labygradle.addon")
 }
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -21,51 +20,12 @@ labyMod {
 	}
 
 	minecraft {
-		registerVersions(
-			"1.8.9"
-		) { version, provider ->
-			configureRun(provider, version)
-		}
-
-		subprojects.forEach {
-			if (it.name != "game-runner") {
-				filter(it.name)
-			}
-		}
+		registerVersion("1.8.9") {}
 	}
 
-	addonDev {
-		productionRelease()
-	}
 }
 
 subprojects {
-	plugins.apply("java-library")
-	plugins.apply("net.labymod.gradle")
-	plugins.apply("net.labymod.gradle.addon")
-
-	repositories {
-		maven("https://libraries.minecraft.net/")
-		maven("https://repo.spongepowered.org/repository/maven-public/")
-	}
-}
-
-fun configureRun(provider: net.labymod.gradle.core.minecraft.provider.VersionProvider, gameVersion: String) {
-	provider.runConfiguration {
-		mainClass = "net.minecraft.launchwrapper.Launch"
-		jvmArgs("-Dnet.labymod.running-version=${gameVersion}")
-		jvmArgs("-Dmixin.debug=true")
-		jvmArgs("-Dnet.labymod.debugging.all=true")
-		jvmArgs("-Dmixin.env.disableRefMap=true")
-
-		args("--tweakClass", "net.labymod.core.loader.vanilla.launchwrapper.LabyModLaunchWrapperTweaker")
-		args("--labymod-dev-environment", "true")
-		args("--addon-dev-environment", "true")
-	}
-
-	provider.javaVersion = JavaVersion.VERSION_21
-
-	provider.mixin {
-		minVersion = "0.6.6"
-	}
+	plugins.apply("net.labymod.labygradle")
+	plugins.apply("net.labymod.labygradle.addon")
 }

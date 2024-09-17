@@ -115,10 +115,9 @@ public class QRCodeScanner extends Feature {
 		});
 
 	private static boolean scanAggressively(BufferedImage img) throws ChecksumException, FormatException {
-		System.out.println("Scanning aggressively");
 		AggressiveBinarizer[] binarizers = AggressiveBinarizer.get(img);
 		if (binarizers == null) // Map only has one color
-			return false;
+			return true;
 
 		return scan(binarizers[0]) && scan(binarizers[1]);
 	}

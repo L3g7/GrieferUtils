@@ -25,7 +25,10 @@ public class AggressiveBinarizer extends Binarizer {
 	private final BitMatrix matrix;
 
 	public static AggressiveBinarizer[] get(BufferedImage img) {
-		int[] colors = img.getRGB(0, 0, 128, 128, null, 0, 1);
+		int[] colors = new int[128 * 128];
+		for (int y = 0; y < 128; y++)
+			for (int x = 0; x < 128; x++)
+				colors[y * 128 + x] = img.getRGB(x, y);
 
 		HashMap<Integer, AtomicInteger> usedColors = new HashMap<>();
 		for (int color : colors)
@@ -36,13 +39,26 @@ public class AggressiveBinarizer extends Binarizer {
 
 		Map.Entry<Integer, AtomicInteger> mostUsedColor = null;
 		Map.Entry<Integer, AtomicInteger>  secondColor = null;
+
+		// Get most and second-most used colors
 		for (Map.Entry<Integer, AtomicInteger> color : usedColors.entrySet()) {
 			if (mostUsedColor == null) {
-				mostUsedColor = secondColor = color;
+				mostUsedColor = color;
 				continue;
 			}
 
 			int uses = color.getValue().get();
+
+			if (secondColor == null) {
+				if (mostUsedColor.getValue().get() < uses) {
+					secondColor = mostUsedColor;
+					mostUsedColor = color;
+				} else {
+					secondColor = color;
+				}
+				continue;
+			}
+
 			if (secondColor.getValue().get() < uses) {
 				if (mostUsedColor.getValue().get() < uses) {
 					secondColor = mostUsedColor;
@@ -56,8 +72,8 @@ public class AggressiveBinarizer extends Binarizer {
 
 		//noinspection DataFlowIssue
 		return new AggressiveBinarizer[] {
-			new AggressiveBinarizer(colors, mostUsedColor.getValue().get()),
-			new AggressiveBinarizer(colors, secondColor.getValue().get()),
+			new AggressiveBinarizer(colors, mostUsedColor.getKey()),
+			new AggressiveBinarizer(colors, secondColor.getKey()),
 		};
 	}
 

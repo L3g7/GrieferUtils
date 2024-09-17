@@ -42,9 +42,13 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 
 @ExclusiveTo(LABY_3)
@@ -87,7 +91,7 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 					this.rawCategoryElement.getSubSettings().add(module.getBooleanElement().custom("An", "Aus"));
 
 			// Inject headers
-			SimpleModule stylingModule = new SimpleModule(){
+			SimpleModule stylingModule = new SimpleModule() {
 				public String getDisplayName() { return ""; }
 				public String getDisplayValue() { return ""; }
 				public String getDefaultValue() { return ""; }
@@ -151,7 +155,7 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 				module.getBooleanElement().setDescriptionText(module.getDescription());
 	}
 
-	public SwitchSettingImpl mainElement;
+	private SwitchSettingImpl mainElement;
 	private String configKey;
 
 	private Laby3Widget initModule() {
@@ -161,6 +165,11 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 		return this;
 	}
 
+	@Override
+	public String getName() {
+		return getControlName().replace("\n", "");
+	}
+
 	protected Text toText(String text) {
 		return new Text(text, valueColor, bold, italic, underline);
 	}
@@ -168,18 +177,14 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 	public String getComparisonName() {
 		return owner.getClass().getPackage().getName() + "." + getControlName();
 	}
-
 	public String getControlName() { return mainElement.getDisplayName(); }
-
 	public String[] getKeys() { return getDefaultKeys(); }
-	public String[] getDefaultKeys() { return new String[]{ mainElement.getDisplayName().replace("\n", "")}; }
-
+	public String[] getDefaultKeys() { return new String[]{getName()}; }
 	public IconData getIconData() { return mainElement.getIconData(); }
 	public String getSettingName() { return configKey; }
 	public String getDescription() { return mainElement.getDescriptionText(); }
 	public boolean isShown() { return !LabyMod.getInstance().isInGame() || ServerCheck.isOnGrieferGames(); }
-	public boolean isEnabled() { return mainElement.get(); }
-
+	public boolean isEnabled() { return getBooleanElement().getCurrentValue(); }
 	public void loadSettings() {}
 	public int getSortingId() { return 0; }
 	public ModuleCategory getCategory() { return CATEGORY; }
@@ -191,10 +196,6 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 		list.add((SettingsElement) HeaderSetting.create(getControlName().replace("\n", "")));
 		super.fillSubSettings(list);
 		list.add((SettingsElement) HeaderSetting.create());
-
-		getBooleanElement().addCallback(mainElement::set);
-		mainElement.callback(b -> Reflection.set(rawBooleanElement, "currentValue", b));
-		Reflection.set(rawBooleanElement, "currentValue", mainElement.get());
 
 		List<SettingsElement> settings = mainElement.getSubSettings().getElements();
 		if (!settings.isEmpty())
@@ -242,13 +243,33 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 				int blue = 255 & color;
 				int green = 255 & color >> 8;
 				color = this.backgroundTransparency << 24 | red << 16 | green << 8 | blue;
-				double width = this.getRawWidth() + this.scaleModuleSize((float)this.padding * 2.0F, true);
-				double height = this.getRawHeight() + this.scaleModuleSize((float)this.padding * 2.0F, true);
+				double width = this.getRawWidth() + this.scaleModuleSize((float) this.padding * 2.0F, true);
+				double height = this.getRawHeight() + this.scaleModuleSize((float) this.padding * 2.0F, true);
 				LabyMod.getInstance().getDrawUtils().drawRect(x - 1.0, y - 1.0, x + width + 1.0, y + height - 1.0, color);
 			}
 
 			double paddingSize = this.scaleModuleSize(this.padding, true);
 			drawTextParts(allLines, x + paddingSize, y + paddingSize, rightX);
+		}
+
+		@Override
+		public double getRawWidth() {
+			List<List<TextPart>> allLines = getTextsParts();
+			if (allLines.isEmpty())
+				return 0;
+
+			double highestWidth = 0;
+			for (List<TextPart> texts : allLines) {
+				double lineWidth = 0;
+
+				for (TextPart text : texts)
+					lineWidth += mc().fontRendererObj.getStringWidth(text.text.getUnformattedText());
+
+				if (lineWidth > highestWidth)
+					highestWidth = lineWidth;
+			}
+
+			return highestWidth;
 		}
 
 		private List<List<TextPart>> getTextsParts() {
@@ -263,7 +284,7 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 			for (ComplexWidget.KVPair line : widget.getLines()) {
 				IChatComponent key = line.key;
 				if (key == null)
-					key = new ChatComponentText(mainElement.getDisplayName().replace("\n", ""));
+					key = new ChatComponentText(getName());
 
 				TextPart value;
 				if (line.value instanceof IChatComponent component)

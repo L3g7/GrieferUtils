@@ -17,11 +17,16 @@ import dev.l3g7.griefer_utils.core.api.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
+import net.labymod.ingamegui.ModuleConfig;
+import net.labymod.ingamegui.ModuleConfigElement;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
 public class ConfigPatcher {
@@ -158,7 +163,7 @@ public class ConfigPatcher {
 				JsonObject object = null;
 				if (element.isJsonObject()) {
 					object = element.getAsJsonObject();
-				} else  if (element.isJsonArray()) {
+				} else if (element.isJsonArray()) {
 					object = new JsonObject();
 					object.add("value", element);
 				}
@@ -175,6 +180,49 @@ public class ConfigPatcher {
 					continue;
 
 				get("modules.money.data." + entry.getKey()).add("spent", balances.get("spent"));
+			}
+		}
+
+		if (cmp.compare("2.3-BETA-6", version) < 0 && LABY_3.isActive()) {
+			Map<String, String> map = new HashMap<>() {{
+				put("BankBalance", "Bankguthaben");
+				put("BlockInfo", "Block-Infos");
+				put("ClearLag", "Clearlag");
+				put("CoinBalance", "Kontostand");
+				put("Earned", "Verdient");
+				put("InventoryValue", "Inventar-Wert");
+				put("ItemFrameLimitIndicator", "Rahmen im Chunk");
+				put("MissingAdventurerBlocks", "Fehlende Adv. Blöcke");
+				put("NearbyPlayers", "Spieler in der Nähe");
+				put("OrbBalance", "Orbguthaben");
+				put("OrbStats", "Orb-Statistik");
+				put("PotionTimer", "Orbtrank-Timer");
+				put("Received", "Eingenommen");
+				put("ServerPerformance", "Server-Performance");
+				put("SpawnCounter", "Spawn-Runden Zähler");
+				put("Spent", "Ausgegeben");
+			}};
+
+			Map<String, ModuleConfigElement> modules = ModuleConfig.getConfig().getModules();
+			for (String oldName : map.keySet()) {
+				ModuleConfigElement oldConfig = modules.remove(oldName);
+				if (oldConfig == null)
+					return;
+
+				ModuleConfigElement newConfig = modules.computeIfAbsent(map.get(oldName), k -> new ModuleConfigElement());
+
+				for (int i = 0; i < 2; i++) {
+					newConfig.setRegion(i, oldConfig.getRegions()[i]);
+					newConfig.setAlignment(i, oldConfig.getAlignment(i));
+					newConfig.setX(i, oldConfig.getX(i));
+					newConfig.setY(i, oldConfig.getY(i));
+				}
+				newConfig.setEnabled(oldConfig.getEnabled());
+				newConfig.setListedAfter(oldConfig.getListedAfter());
+				newConfig.setLastListedAfter(oldConfig.getLastListedAfter());
+				newConfig.setUseExtendedSettings(oldConfig.isUsingExtendedSettings());
+				newConfig.setScale(oldConfig.getScale());
+				newConfig.setAttributes(oldConfig.getAttributes());
 			}
 		}
 	}

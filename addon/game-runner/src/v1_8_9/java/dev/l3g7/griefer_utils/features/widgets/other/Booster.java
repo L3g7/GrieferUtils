@@ -218,13 +218,6 @@ public class Booster extends Widget {
 	public class BoosterL3 extends Laby3Widget {
 
 		@Override
-		public String getComparisonName() {
-			String pkg = getClass().getPackage().getName();
-			pkg = pkg.substring(0, pkg.lastIndexOf("."));
-			return pkg + "." + getControlName();
-		}
-
-		@Override
 		public String[] getKeys() {
 			// Get names (and counts) as Strings
 			List<String> keys = boosters.values().stream()

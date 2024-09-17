@@ -40,7 +40,6 @@ public class Spent extends SimpleWidget {
 		.name("Automatisch zurücksetzen")
 		.description("Ob automatisch um 04:00 das ausgegebene Geld zurückgesetzt werden soll.")
 		.icon("labymod_3/use_default_settings")
-		.config("modules.money_spent.automatically_reset")
 		.callback(b -> {
 			if (!initialized)
 				return;
@@ -57,7 +56,6 @@ public class Spent extends SimpleWidget {
 		.name("Nach Neustart zurücksetzen")
 		.description("Ob nach einem Minecraft-Neustart das ausgegebene Geld zurückgesetzt werden soll.")
 		.icon("labymod_3/use_default_settings")
-		.config("modules.money_spent.reset_after_restart")
 		.callback(shouldReset -> {
 			if (!initialized)
 				return;

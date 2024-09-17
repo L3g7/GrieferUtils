@@ -8,19 +8,13 @@
 package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby4;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
-import dev.l3g7.griefer_utils.features.widgets.Widget;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -31,38 +25,15 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby4.InventoryValue.auto;
+import static dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby4.InventoryValue.entries;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.HIDDEN;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
 
-@Singleton
-@ExclusiveTo(LABY_4)
-public class InventoryValueWidget extends Widget {
-
-	private static final SwitchSetting auto = SwitchSetting.create()
-		.name("Wert automatisch bestimmen")
-		.description("Ob der Item-Wert automatisch bestimmt werden soll, oder ob nur Items mit einem manuell eingetragenen Wert gezählt werden sollen.")
-		.defaultValue(true)
-		.icon(Items.gold_ingot);
-
-	private final ItemValueListSetting entries = new ItemValueListSetting()
-		.name("Werte")
-		.disableSubsettingConfig()
-		.icon("coin_pile");
-
-	@Feature.MainElement
-	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Inventar-Wert")
-		.description("Zeigt dir an, wie viel ein Inventar wert ist.")
-		.icon("chest")
-		.subSettings(auto, HeaderSetting.create(), entries);
-
-	@Override
-	protected LabyWidget getLaby4() {
-		return new InventoryValue();
-	}
+public class InventoryValueWidget {
 
 	@ExclusiveTo(LABY_4)
-	public class InventoryValue extends Laby4Widget {
+	public static class InventoryValue extends Laby4Widget {
 
 		private TextLine ownInventory, openInventory;
 

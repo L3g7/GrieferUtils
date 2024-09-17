@@ -182,12 +182,12 @@ public class BlockInfo extends Widget {
 
 		@Override
 		public double getRawWidth() {
-			return getWidth();
+			return BlockInfo.this.getWidth();
 		}
 
 		@Override
 		public double getRawHeight() {
-			return getHeight();
+			return BlockInfo.this.getHeight();
 		}
 
 		@Override

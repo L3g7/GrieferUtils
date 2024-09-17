@@ -17,19 +17,15 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.chat.Calculator;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
-import dev.l3g7.griefer_utils.features.widgets.Widget;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -44,28 +40,9 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby3.InventoryValue.auto;
 
-@Singleton
-@ExclusiveTo(LABY_3)
-public class InventoryValueWidget extends Widget {
-
-	private static final SwitchSetting auto = SwitchSetting.create()
-		.name("Wert automatisch bestimmen")
-		.description("Ob der Item-Wert automatisch bestimmt werden soll, oder ob nur Items mit einem manuell eingetragenen Wert gezählt werden sollen.")
-		.defaultValue(true)
-		.icon(Items.gold_ingot);
-
-	@MainElement
-	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Inventar-Wert")
-		.description("Zeigt dir an, wie viel ein Inventar wert ist.")
-		.icon("chest")
-		.subSettings(auto);
-
-	@Override
-	protected LabyWidget getLaby3() {
-		return FileProvider.getSingleton(InventoryValue.class);
-	}
+public class InventoryValueWidget {
 
 	@Singleton
 	@ExclusiveTo(LABY_3)

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.world;
+package dev.l3g7.griefer_utils.features.world.qr_code_scanner;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.zxing.*;
@@ -14,11 +14,11 @@ import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.decoder.Decoder;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.BufferedImageLuminanceSource;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.world.ItemSearch;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiInventory;
@@ -98,14 +98,14 @@ public class QRCodeScanner extends Feature {
 			LuminanceSource source = new BufferedImageLuminanceSource(img);
 			LuminanceSource inverted = source.invert();
 			try {
-				if (scan(source) && scan(inverted)) // Adding DecodeHintType.ALSO_INVERTED doesn't suffice, for some reason
+				if (scan(source) && scan(inverted) && scanAggressively(img)) // Adding DecodeHintType.ALSO_INVERTED doesn't suffice, for some reason
 					display(ADDON_PREFIX + "§cEs konnte kein QR-Code gefunden werden.");
 			} catch (FormatException e) {
 				display(ADDON_PREFIX + "§cDas Format des QR-Codes ist ungültig.");
 			} catch (ChecksumException e) {
 				display(ADDON_PREFIX + "§eUngültige Fehlerkorrektur, Ergebnis kann fehlerhaft sein.");
 				suppressCorrectionErrors = true;
-				if (scan(source) && scan(inverted)) {
+				if (scan(source) && scan(inverted) && scanAggressively(img)) {
 					display(ADDON_PREFIX + "§cEs konnte kein QR-Code gefunden werden.");
 					display(ADDON_PREFIX + "§cWie hast du das geschafft? Bitte melde dich beim GrieferUtils-Team.");
 				}
@@ -114,10 +114,22 @@ public class QRCodeScanner extends Feature {
 			}
 		});
 
+	private static boolean scanAggressively(BufferedImage img) throws ChecksumException, FormatException {
+		System.out.println("Scanning aggressively");
+		AggressiveBinarizer[] binarizers = AggressiveBinarizer.get(img);
+		if (binarizers == null) // Map only has one color
+			return false;
+
+		return scan(binarizers[0]) && scan(binarizers[1]);
+	}
+
 	private static boolean scan(LuminanceSource source) throws ChecksumException, FormatException {
-		BinaryBitmap data = new BinaryBitmap(new HybridBinarizer(source));
+		return scan(new HybridBinarizer(source));
+	}
+
+	private static boolean scan(Binarizer binarizer) throws ChecksumException, FormatException {
 		try {
-			display(ADDON_PREFIX + "QR-Code-Text: " + new QRCodeReader().decode(data, DECODE_HINTS).getText());
+			display(ADDON_PREFIX + "QR-Code-Text: " + new QRCodeReader().decode(new BinaryBitmap(binarizer), DECODE_HINTS).getText());
 			return false;
 		} catch (NotFoundException e) {
 			return true;

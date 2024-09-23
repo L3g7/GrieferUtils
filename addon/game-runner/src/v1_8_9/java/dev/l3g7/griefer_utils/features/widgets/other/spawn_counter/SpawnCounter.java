@@ -197,7 +197,6 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 		public SpawnCounterL3() {
 			leaderboardHandler = new LeaderboardHandlerL3();
-			LeaderboardHandlerL3.sc = this;
 		}
 
 		@Override
@@ -294,7 +293,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 			}
 
 			if (leaderboard.get() == LeaderboardDisplayType.ON && LeaderboardHandlerL3.data != null && player() != null)
-				LeaderboardHandlerL3.draw(x + padding, y);
+				((LeaderboardHandlerL3) leaderboardHandler).draw(x + padding, y);
 		}
 
 		int getStringWidth(String text) {
@@ -306,7 +305,6 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 			private static final Map<String, PlayerListEntry> ENTRIES = new ConcurrentHashMap<>();
 			public static LeaderboardData data;
-			public static SpawnCounterL3 sc;
 			public static int renderWidth;
 
 			@Override
@@ -345,12 +343,12 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 				return i;
 			}
 
-			public static void draw(double x, double y) {
+			public void draw(double x, double y) {
 				List<Triple<Integer, PlayerListEntry, Integer>> renderData = getRenderData();
 
 				int maxPosWidth = 0;
 				for (Triple<Integer, PlayerListEntry, Integer> datum : renderData) {
-					String text = sc.toText(DECIMAL_FORMAT_98.format(datum.getLeft()) + ".").getText();
+					String text = toText(DECIMAL_FORMAT_98.format(datum.getLeft()) + ".").getText();
 					DrawUtils.drawStringWithShadow(text, x, y += 10, datum.getMiddle() == null ? -1 : 0xAAAAAA);
 
 					maxPosWidth = Math.max(DrawUtils.getStringWidth(text), maxPosWidth);
@@ -366,7 +364,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 				renderWidth = maxPosWidth + maxNameWidth + 13;
 			}
 
-			private static int drawEntry(int score, PlayerListEntry entry, double x, double y) {
+			private int drawEntry(int score, PlayerListEntry entry, double x, double y) {
 				// Render skull
 				if (entry != null) {
 					renderSkull(entry, x, y);
@@ -376,7 +374,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 					DrawUtils.drawTexture(x, y, 160, 32, 32, 32, 8, 8); // Second layer
 				}
 
-				String text = sc.toText((entry == null ? mc.getSession().getUsername() : entry.name) + ": " + DECIMAL_FORMAT_98.format(score)).getText();
+				String text = toText((entry == null ? mc.getSession().getUsername() : entry.name) + ": " + DECIMAL_FORMAT_98.format(score)).getText();
 				DrawUtils.drawStringWithShadow(text, x + 11, y, entry == null ? -1 : 0xAAAAAA);
 				return DrawUtils.getStringWidth(text);
 			}

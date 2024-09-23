@@ -185,8 +185,19 @@ public class ConfigPatcher {
 
 		if (cmp.compare("2.3-BETA-6", version) < 0 && LABY_3.isActive()) {
 			Map<String, String> map = new HashMap<>() {{
+				for (String key : new String[]{
+					"Bankguthaben", "Kontostand", "Inventar-Wert", "Ausgegeben", "Eingenommen", "Verdient", "Chatlog",
+					"Clearlag", "MobRemover", "Orbtrank-Timer", "Orb-Statistik", "Orbguthaben", "Block-Infos",
+					"Booster", "Fehlende Adv. Blöcke", "HeadOwner", "Rahmen im Chunk", "Redstone", "Server-Performance",
+					"Spawn-Runden Zähler", "Spieler in der Nähe"
+				}) {
+					put(key, key);
+				}
+
+				put("BoosterL3", "Booster");
 				put("BankBalance", "Bankguthaben");
 				put("BlockInfo", "Block-Infos");
+				put("BlockInfoL3", "Block-Infos");
 				put("ClearLag", "Clearlag");
 				put("CoinBalance", "Kontostand");
 				put("Earned", "Verdient");
@@ -194,12 +205,15 @@ public class ConfigPatcher {
 				put("ItemFrameLimitIndicator", "Rahmen im Chunk");
 				put("MissingAdventurerBlocks", "Fehlende Adv. Blöcke");
 				put("NearbyPlayers", "Spieler in der Nähe");
+				put("NearbyPlayersL3", "Spieler in der Nähe");
 				put("OrbBalance", "Orbguthaben");
 				put("OrbStats", "Orb-Statistik");
 				put("PotionTimer", "Orbtrank-Timer");
+				put("PotionTimerL3", "Orbtrank-Timer");
 				put("Received", "Eingenommen");
 				put("ServerPerformance", "Server-Performance");
 				put("SpawnCounter", "Spawn-Runden Zähler");
+				put("SpawnCounterL3", "Spawn-Runden Zähler");
 				put("Spent", "Ausgegeben");
 			}};
 
@@ -207,7 +221,7 @@ public class ConfigPatcher {
 			for (String oldName : map.keySet()) {
 				ModuleConfigElement oldConfig = modules.remove(oldName);
 				if (oldConfig == null)
-					return;
+					continue;
 
 				ModuleConfigElement newConfig = modules.computeIfAbsent(map.get(oldName), k -> new ModuleConfigElement());
 
@@ -218,12 +232,13 @@ public class ConfigPatcher {
 					newConfig.setY(i, oldConfig.getY(i));
 				}
 				newConfig.setEnabled(oldConfig.getEnabled());
-				newConfig.setListedAfter(oldConfig.getListedAfter());
+				newConfig.setListedAfter(map.getOrDefault(oldConfig.getListedAfter(), oldConfig.getListedAfter()));
 				newConfig.setLastListedAfter(oldConfig.getLastListedAfter());
 				newConfig.setUseExtendedSettings(oldConfig.isUsingExtendedSettings());
 				newConfig.setScale(oldConfig.getScale());
 				newConfig.setAttributes(oldConfig.getAttributes());
 			}
+			ModuleConfig.getConfigManager().save();
 		}
 	}
 

@@ -103,37 +103,38 @@ public class NearbyPlayers extends Widget {
 			float fY = (float) y;
 
 			for (EntityOtherPlayerMP player : players) {
+				float lineX = fX;
 				fY += 10;
 				int distance = (int) player.getDistanceToEntity(player());
 				if (rightX == -1) { // Aligned left
 					if (distance < 10)
-						fX += mc.fontRendererObj.getCharWidth('0');
+						lineX += mc.fontRendererObj.getCharWidth('0');
 
 					Text text = toText(distance + "m");
-					mc.fontRendererObj.drawStringWithShadow(text.getText(), fX, fY, text.getColor());
-					fX += mc.fontRendererObj.getStringWidth(text.getText()) + 2;
+					mc.fontRendererObj.drawStringWithShadow(text.getText(), lineX, fY, text.getColor());
+					lineX += mc.fontRendererObj.getStringWidth(text.getText()) + 2;
 
 					DrawUtils.bindTexture(player.getLocationSkin());
-					DrawUtils.drawTexture(fX, fY, 32, 32, 32, 32, 8, 8); // First layer
-					DrawUtils.drawTexture(fX, fY, 160, 32, 32, 32, 8, 8); // Second layer
+					DrawUtils.drawTexture(lineX, fY, 32, 32, 32, 32, 8, 8); // First layer
+					DrawUtils.drawTexture(lineX, fY, 160, 32, 32, 32, 8, 8); // Second layer
 
 					// Use display name from tab list for applied text mods
 					IChatComponent displayName = mc.getNetHandler().getPlayerInfo(player.getUniqueID()).getDisplayName();
 					if (displayName != null)
-						mc.fontRendererObj.drawStringWithShadow(displayName.getFormattedText(), fX + 10, fY, Integer.MAX_VALUE);
+						mc.fontRendererObj.drawStringWithShadow(displayName.getFormattedText(), lineX + 10, fY, Integer.MAX_VALUE);
 				} else { // Aligned right
-					fX -= mc.fontRendererObj.getStringWidth(distance + "m");
-					mc.fontRendererObj.drawStringWithShadow(distance + "m", fX, fY, Integer.MAX_VALUE);
+					lineX -= mc.fontRendererObj.getStringWidth(distance + "m");
+					mc.fontRendererObj.drawStringWithShadow(distance + "m", lineX, fY, Integer.MAX_VALUE);
 					if (distance < 10)
-						fX -= mc.fontRendererObj.getCharWidth('0');
+						lineX -= mc.fontRendererObj.getCharWidth('0');
 
-					fX -= mc.fontRendererObj.getStringWidth(player.getDisplayName().getFormattedText() + " ");
-					mc.fontRendererObj.drawStringWithShadow(player.getDisplayName().getFormattedText(), fX, fY, Integer.MAX_VALUE);
-					fX -= 10;
+					lineX -= mc.fontRendererObj.getStringWidth(player.getDisplayName().getFormattedText() + " ");
+					mc.fontRendererObj.drawStringWithShadow(player.getDisplayName().getFormattedText(), lineX, fY, Integer.MAX_VALUE);
+					lineX -= 10;
 
 					DrawUtils.bindTexture(player.getLocationSkin());
-					DrawUtils.drawTexture(fX, fY, 32, 32, 32, 32, 8, 8); // First layer
-					DrawUtils.drawTexture(fX, fY, 160, 32, 32, 32, 8, 8); // Second layer
+					DrawUtils.drawTexture(lineX, fY, 32, 32, 32, 32, 8, 8); // First layer
+					DrawUtils.drawTexture(lineX, fY, 160, 32, 32, 32, 8, 8); // Second layer
 				}
 			}
 		}

@@ -197,6 +197,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 		public SpawnCounterL3() {
 			leaderboardHandler = new LeaderboardHandlerL3();
+			LeaderboardHandlerL3.sc = this;
 		}
 
 		@Override

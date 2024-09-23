@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.bridges;
 
-import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -29,7 +28,6 @@ import net.labymod.api.events.MessageSendEvent;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.JsonParse;
-import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -177,11 +175,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public Pair<String, String> getCachedTexture(UUID uuid) {
-		ResourceLocation resourceSkin = LabyMod.getInstance().getDrawUtils().getPlayerSkinTextureCache().getSkinTexture(new GameProfile(uuid, ""));
-		if (resourceSkin == null)
-			return null;
-
-		return new Pair<>(resourceSkin.getResourceDomain(), resourceSkin.getResourcePath());
+		return Laby3Util.getCachedTexture(uuid);
 	}
 
 	@Override

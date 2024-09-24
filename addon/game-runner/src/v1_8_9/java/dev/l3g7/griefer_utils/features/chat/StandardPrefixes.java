@@ -11,12 +11,12 @@ import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.IChatComponentUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
@@ -33,6 +33,7 @@ public class StandardPrefixes extends Feature {
 
 	private static final Map<String, String> DEFAULT_PREFIXES = new HashMap<>() {{
 		put("Helfer", "2");
+		put("Hero", "el");
 		put("Supreme", "dl");
 		put("Griefer", "4l");
 		put("Titan", "9");
@@ -119,6 +120,7 @@ public class StandardPrefixes extends Feature {
 		if (!text.contains("\u2503"))
 			return;
 
+		// FIXME: Space is part of the rank and thus bold (it shouldn't be)
 		String name = text.substring(text.indexOf('\u2503') + 2);
 		int bracketIndex = name.indexOf(']') == -1 ? Integer.MAX_VALUE : name.indexOf(']');
 		int spaceIndex = name.indexOf(' ');

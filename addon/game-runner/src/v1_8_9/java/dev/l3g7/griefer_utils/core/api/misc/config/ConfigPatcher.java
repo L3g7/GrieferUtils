@@ -17,8 +17,10 @@ import dev.l3g7.griefer_utils.core.api.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
+import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.ingamegui.ModuleConfig;
 import net.labymod.ingamegui.ModuleConfigElement;
+import net.labymod.main.LabyMod;
 
 import java.io.File;
 import java.util.HashMap;
@@ -184,6 +186,7 @@ public class ConfigPatcher {
 		}
 
 		if (cmp.compare("2.3-BETA-6", version) < 0 && LABY_3.isActive()) {
+			// Patch modules
 			Map<String, String> map = new HashMap<>() {{
 				for (String key : new String[]{
 					"Bankguthaben", "Kontostand", "Inventar-Wert", "Ausgegeben", "Eingenommen", "Verdient", "Chatlog",
@@ -238,7 +241,31 @@ public class ConfigPatcher {
 				newConfig.setScale(oldConfig.getScale());
 				newConfig.setAttributes(oldConfig.getAttributes());
 			}
+			// Save modules
 			ModuleConfig.getConfigManager().save();
+
+			// Patch filters
+			for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
+				String[] containsNot = filter.getWordsContainsNot();
+				if (containsNot.length == 0)
+					continue;
+
+				String[] newContainsNot = new String[containsNot.length - 1];
+				int idx = 0;
+				boolean foundDelimiter = false;
+				for (String s : filter.getWordsContainsNot()) {
+					if (s.equals("\u00bb"))
+						foundDelimiter = true;
+					if (!s.equals(":"))
+						newContainsNot[idx++] = s;
+				}
+
+				if (foundDelimiter)
+					filter.setWordsContainsNot(newContainsNot);
+			}
+
+			// Save filters
+			LabyMod.getInstance().getChatToolManager().saveTools();
 		}
 	}
 

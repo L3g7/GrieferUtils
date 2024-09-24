@@ -11,9 +11,9 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.Filters.Filter;
 
@@ -28,10 +28,10 @@ public class ChatFilterTemplates extends Feature {
 		new FilterTemplate("Ausgehende MSG").contains("[mir ->").containsNot("»"),
 		new FilterTemplate("Globalchat").contains("@["),
 		new FilterTemplate("Plotchat").contains("[Plot-Chat]").containsNot("»"),
-		new FilterTemplate("Eingehende Zahlung").contains(" gegeben.").containsNot("»", "->", ":", "Du hast"),
-		new FilterTemplate("Ausgehende Zahlung").contains(" gegeben.").containsNot("»", "->", ":", "[GrieferGames]", "hat dir"),
-		new FilterTemplate("MobRemover").contains("[MobRemover]").containsNot("»", "->", ":"),
-		new FilterTemplate("Clearlag").contains("auf dem Boden liegende Items entfernt!", "[GrieferGames] Warnung! Die auf dem Boden liegenden Items werden in").containsNot("»", "->", ":"),
+		new FilterTemplate("Eingehende Zahlung").contains(" gegeben.").containsNot("»", "->", "Du hast"),
+		new FilterTemplate("Ausgehende Zahlung").contains(" gegeben.").containsNot("»", "->", "[GrieferGames]", "hat dir"),
+		new FilterTemplate("MobRemover").contains("[MobRemover]").containsNot("»", "->"),
+		new FilterTemplate("Clearlag").contains("auf dem Boden liegende Items entfernt!", "[GrieferGames] Warnung! Die auf dem Boden liegenden Items werden in").containsNot("»", "->"),
 		new FilterTemplate("Greeting").contains("[Greeting]").containsNot("»").highlight(255, 0, 0),
 		new FilterTemplate("Farewell").contains("[Farewell]").containsNot("»").highlight(255, 0, 0),
 		new FilterTemplate("GrieferUtils").contains("[GrieferUtils]").containsNot("»")

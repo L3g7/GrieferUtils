@@ -10,11 +10,11 @@ package dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby4;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
 import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.screen.Parent;
@@ -49,10 +49,10 @@ public class ChatFilterTemplates extends Feature { // NOTE: patch to FilterTempl
 		new FilterTemplate("Ausgehende MSG", of("[mir ->"), of("»")),
 		new FilterTemplate("Globalchat", of("@["), of()),
 		new FilterTemplate("Plotchat", of("[Plot-Chat]"), of("»")),
-		new FilterTemplate("Eingehende Zahlung", of(" gegeben."), of("»", "->", ":", "Du hast")),
-		new FilterTemplate("Ausgehende Zahlung", of(" gegeben."), of("»", "->", ":", "[GrieferGames]", "hat dir")),
-		new FilterTemplate("MobRemover", of("[MobRemover]"), of("»", "->", ":")),
-		new FilterTemplate("Clearlag", of("auf dem Boden liegende Items entfernt!", "[GrieferGames] Warnung! Die auf dem Boden liegenden Items werden in"), of("»", "->", ":")),
+		new FilterTemplate("Eingehende Zahlung", of(" gegeben."), of("»", "->", "Du hast")),
+		new FilterTemplate("Ausgehende Zahlung", of(" gegeben."), of("»", "->", "[GrieferGames]", "hat dir")),
+		new FilterTemplate("MobRemover", of("[MobRemover]"), of("»", "->")),
+		new FilterTemplate("Clearlag", of("auf dem Boden liegende Items entfernt!", "[GrieferGames] Warnung! Die auf dem Boden liegenden Items werden in"), of("»", "->")),
 		new FilterTemplate("Greeting", of("[Greeting]"), of("»")),
 		new FilterTemplate("Farewell", of("[Farewell]"), of("»")),
 		new FilterTemplate("GrieferUtils", of("[GrieferUtils]"), of("»"))

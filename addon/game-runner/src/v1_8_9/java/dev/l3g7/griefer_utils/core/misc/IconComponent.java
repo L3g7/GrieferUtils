@@ -7,6 +7,9 @@
 
 package dev.l3g7.griefer_utils.core.misc;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import net.labymod.api.client.component.Component;
@@ -25,7 +28,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -120,7 +125,19 @@ public abstract class IconComponent extends ChatComponentStyle {
 	}
 
 	@ExclusiveTo(LABY_3)
-	@Mixin(FontRenderer.class)
+	@Mixin(Serializer.class)
+	private static class MixinIChatComponentSerializer {
+
+	    @Inject(method = "serialize(Lnet/minecraft/util/IChatComponent;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement;", at = @At("HEAD"), cancellable = true)
+	    private void injectSerialize(IChatComponent icc, Type type, JsonSerializationContext context, CallbackInfoReturnable<JsonElement> cir) {
+		    if (icc instanceof IconComponent ic)
+			    cir.setReturnValue(new JsonPrimitive(""));
+	    }
+
+	}
+
+	@ExclusiveTo(LABY_3)
+	@org.spongepowered.asm.mixin.Mixin(FontRenderer.class)
 	public static abstract class MixinFontRenderer {
 
 		@Shadow

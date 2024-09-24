@@ -85,7 +85,7 @@ public class ClearLag extends SimpleWidget {
 
 	@EventListener
 	private void onWindowClick(WindowClickEvent event) {
-		if (event.mode != 4 || !preventDrop.get())
+		if (countdown == null || event.mode != 4 || !preventDrop.get())
 			return;
 
 		long remainingSeconds = countdown.secondsRemaining();
@@ -95,7 +95,7 @@ public class ClearLag extends SimpleWidget {
 
 	@EventListener
 	private void onPacketDigging(PacketSendEvent<C07PacketPlayerDigging> event) {
-		if (!preventDrop.get() || (event.packet.getStatus() != DROP_ITEM && event.packet.getStatus() != DROP_ALL_ITEMS))
+		if (countdown == null || !preventDrop.get() || (event.packet.getStatus() != DROP_ITEM && event.packet.getStatus() != DROP_ALL_ITEMS))
 			return;
 
 		long remainingSeconds = countdown.secondsRemaining();

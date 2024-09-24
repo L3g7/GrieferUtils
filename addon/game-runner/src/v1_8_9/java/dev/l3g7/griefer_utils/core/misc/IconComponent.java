@@ -11,6 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
@@ -55,8 +56,11 @@ public abstract class IconComponent extends ChatComponentStyle {
 	protected String id;
 
 	public static ChatComponentStyle head(String name) {
-		if (LABY_4.isActive())
-			return (ChatComponentStyle) Component.icon(Icon.head(name), Style.empty(), 8);
+		if (LABY_4.isActive()) {
+			Icon icon = Icon.head(name);
+			Reflection.set(icon, "url", "https://fuck you labymod and your serialization impl");
+			return (ChatComponentStyle) Component.icon(icon, Style.empty(), 8);
+		}
 
 		return iconMap.computeIfAbsent("head/" + name, v -> new HeadIconComponent(name).generateId());
 	}

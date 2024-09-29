@@ -115,6 +115,9 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 		Tabs.getTabUpdateListener().add(m -> {
 
 			Class<? extends GuiScreen>[] addonTabs = m.get("tab_addons");
+			if (addonTabs == null)
+				return;
+
 			Class<? extends GuiScreen>[] newAddonTabs = new Class[addonTabs.length + 1];
 
 			System.arraycopy(addonTabs, 0, newAddonTabs, 0, addonTabs.length);

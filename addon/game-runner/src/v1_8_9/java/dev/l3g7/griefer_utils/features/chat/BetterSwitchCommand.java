@@ -57,6 +57,7 @@ public class BetterSwitchCommand extends Feature {
 				send(command);
 				return;
 				} else {
+				cb.join();
 				return;	
 				}
 			}

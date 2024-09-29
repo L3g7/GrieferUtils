@@ -51,6 +51,15 @@ public class BetterSwitchCommand extends Feature {
 			event.cancel();
 
 			Citybuild cb = Citybuild.getCitybuild(matcher.group(1));
+			if (cb.matches(getServerFromScoreboard())) {
+				command = matcher.group(2);
+				if(command != null) {
+				send(command);
+				return;
+				} else {
+				return;	
+				}
+			}
 			if (cb != Citybuild.ANY) {
 				cb.join();
 				targetCitybuild = cb;

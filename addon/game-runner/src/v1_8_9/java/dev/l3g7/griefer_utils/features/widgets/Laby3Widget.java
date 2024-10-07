@@ -339,11 +339,11 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 					Collections.reverse(texts);
 
 				for (TextPart text : texts) {
-					int stringWidth = fontRenderer.getStringWidth(text.text.getUnformattedText());
+					int stringWidth = fontRenderer.getStringWidth(text.text.getFormattedText());
 					if (rightBound)
 						x -= stringWidth;
 
-					LabyMod.getInstance().getDrawUtils().drawStringWithShadow(text.text.getUnformattedText(), x, y, text.color);
+					LabyMod.getInstance().getDrawUtils().drawStringWithShadow(text.text.getFormattedText(), x, y, text.color);
 					if (!rightBound)
 						x += stringWidth;
 				}

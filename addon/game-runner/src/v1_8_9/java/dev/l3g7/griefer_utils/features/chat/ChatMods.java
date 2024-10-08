@@ -13,17 +13,19 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
-import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +42,7 @@ public class ChatMods extends Feature {
 		"§r§8[§r§6GrieferGames§r§8] §r§fWir sind optimiert für MysteryMod. Lade Dir gerne die Mod runter!§r"
 	);
 
-	private static final String RAINBOW_COLORS = "c6eabd";
+	private static final List<String> COLORED_FONTS = ImmutableList.of("c6eabd", "bbaaeecc", "bae6d5");
 
 	private final SwitchSetting antiClearChat = SwitchSetting.create()
 		.name("Clearchat unterbinden")
@@ -81,9 +83,9 @@ public class ChatMods extends Feature {
 		.icon("labymod_3/exclamation_mark")
 		.defaultValue(NewsMode.NORMAL);
 
-	private final SwitchSetting antiRainbow = SwitchSetting.create()
-		.name("Rainbow-Farben entfernen")
-		.description("Entfernt die Farben von Nachrichten mit Rainbow-Schrift.")
+	private final SwitchSetting antiColoredFont = SwitchSetting.create()
+		.name("Farbige Schrift entfernen")
+		.description("Entfernt die Farben von Nachrichten mit farbiger Schrift §8(/schrift).")
 		.icon("labymod_3/tabping_colored");
 
 	@MainElement
@@ -91,7 +93,7 @@ public class ChatMods extends Feature {
 		.name("Chat aufräumen")
 		.icon("speech_bubble")
 		.description("Räumt den Chat auf.")
-		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeMysteryMod, removeLuckyBlock, removeCaseOpening, news, antiRainbow, LabyBridge.labyBridge.createLaby3DropDownPadding());
+		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeMysteryMod, removeLuckyBlock, removeCaseOpening, news, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
 
 	private boolean isNews = false;
 
@@ -103,7 +105,7 @@ public class ChatMods extends Feature {
 
 	@EventListener(priority = Priority.HIGH)
 	public void onMessageModify(MessageModifyEvent event) {
-		if (!antiRainbow.get())
+		if (!antiColoredFont.get())
 			return;
 
 		for (Pattern pattern : new Pattern[] {GLOBAL_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, PLOTCHAT_RECEIVE_PATTERN}) {
@@ -112,16 +114,27 @@ public class ChatMods extends Feature {
 				continue;
 
 			String message = matcher.group("message");
-			String msg = message.replace("§l", "").replace("§r", "").replaceAll("§. ", "");
+			String msg = message.replace("§l", "").replace("§r", "").replaceAll("(§.)? ", "");
 			if (msg.length() % 3 != 0)
 				return;
 
-			for (int i = 0; i < msg.length() / 3; i++) {
+			List<String> fonts = new ArrayList<>(COLORED_FONTS);
+			for (int i = 0; i < msg.length() / 3 && !fonts.isEmpty(); i++) {
 				int index = i * 3;
 
-				if (msg.charAt(index) != '§' || msg.charAt(++index) != RAINBOW_COLORS.charAt(i % 6))
+				if (msg.charAt(index++) != '§')
 					return;
+
+				Iterator<String> it = fonts.iterator();
+				while (it.hasNext()) {
+					String font = it.next();
+					if (msg.charAt(index) != font.charAt(i % font.length()))
+						it.remove();
+				}
 			}
+
+			if (fonts.isEmpty())
+				return;
 
 			IChatComponent messageICC = new ChatComponentText(message.replaceAll("§.", ""));
 			messageICC.getChatStyle().setBold(true).setColor(EnumChatFormatting.AQUA);

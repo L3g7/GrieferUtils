@@ -16,7 +16,7 @@ import net.minecraft.init.Items;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
 
 @Singleton
-public class SupressBooks extends Feature {
+public class SuppressBooks extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

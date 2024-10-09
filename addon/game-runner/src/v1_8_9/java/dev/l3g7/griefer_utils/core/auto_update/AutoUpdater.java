@@ -63,7 +63,7 @@ public class AutoUpdater {
 
 	private static MethodHandles.Lookup lookup;
 
-	private static boolean hasUpdated = false;
+	public static boolean hasUpdated = false;
 
 	/**
 	 * Lazily creates an unrestricted lookup and returns it.
@@ -401,10 +401,6 @@ public class AutoUpdater {
 		}
 
 		throw new FileNotFoundException("addon.json");
-	}
-
-	public static boolean hasUpdated() {
-		return hasUpdated;
 	}
 
 	public interface Init {

@@ -31,7 +31,7 @@ public class RemoveWalkingMiniMes extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Walking Minimes entfernen")
-		.description("Entfernt alle \"Walking Minimes\", da diese in Labymod 3 starke Lags und sogar Crashes verursachen können.")
+		.description("Entfernt alle \"Walking Minimes\", da diese in Labymod 3 Lags und Crashes verursachen können.")
 		.icon("crossed_out_walking_minime");
 
 	 @Mixin(value = UserManager.class, remap = false)
@@ -45,7 +45,7 @@ public class RemoveWalkingMiniMes extends Feature {
 			 JsonArray copy = new JsonArray();
 		     for (JsonElement element : instance) {
 			     JsonObject data = element.getAsJsonObject();
-			     if (data.has("i") && data.get("i").getAsInt() != WALKING_MINIME_ID)
+			     if (!data.has("i") || data.get("i").getAsInt() != WALKING_MINIME_ID)
 				     copy.add(element);
 		     }
 

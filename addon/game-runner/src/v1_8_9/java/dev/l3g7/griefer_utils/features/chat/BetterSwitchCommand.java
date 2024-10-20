@@ -27,16 +27,22 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 @Singleton
 public class BetterSwitchCommand extends Feature {
 
+		private final SwitchSetting rejoin = SwitchSetting.create()
+		.name("Rejoin")
+		.description("Führt nur die angegebene Aktion aus, sofern man auf sich bereits auf dem Zielcitybuild befindet.", "Sofern keine Aktion angegeben ist, passiert nichts.")
+		.icon(Items.book);
+
 	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", Pattern.CASE_INSENSITIVE);
 
 	private static Citybuild targetCitybuild = null;
 	private static String command = null;
 
-	@MainElement
-	private final SwitchSetting enabled = SwitchSetting.create()
+		@MainElement(configureSubSettings = true)
+		private final SwitchSetting enabled = SwitchSetting.create()
 		.name("/switch verbessern")
 		.description("Verbessert den '/switch <cb>' Befehl durch Aliasse und einem optionalem Join-Text. (z.B. '/cbe Hallo')", "Der Join-Text wird nach dem Beitreten automatisch in den Chat geschrieben.", "", "Für Hilfe gib '/cb' ein.")
-		.icon(Items.compass);
+		.icon(Items.compass)
+		.subSettings(rejoin);	
 
 	@EventListener
 	public void onMessageSend(MessageEvent.MessageSendEvent event) {
@@ -51,14 +57,15 @@ public class BetterSwitchCommand extends Feature {
 			event.cancel();
 
 			Citybuild cb = Citybuild.getCitybuild(matcher.group(1));
-			if (cb.matches(getServerFromScoreboard())) {
-				command = matcher.group(2);
-				if(command != null) {
-				send(command);
-				return;
-				} else {
-				cb.join();
-				return;	
+			if (rejoin.get()) {
+				if (cb.matches(getServerFromScoreboard())) {
+					command = matcher.group(2);
+					if(command != null) {
+					send(command);
+					return;
+					} else {
+					return;	
+					}
 				}
 			}
 			if (cb != Citybuild.ANY) {

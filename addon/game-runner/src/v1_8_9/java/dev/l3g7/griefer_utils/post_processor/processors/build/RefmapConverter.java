@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.objectweb.asm.ClassReader.*;
@@ -149,7 +148,7 @@ public class RefmapConverter {
 			if (annotation.values.get(i).equals(key))
 				return annotation.values.get(i + 1);
 
-		throw new NoSuchElementException(key);
+		return null;
 	}
 
 }

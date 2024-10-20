@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
+import dev.l3g7.griefer_utils.core.misc.JoinCooldownTimer;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -58,7 +59,8 @@ public class BotshopGUI extends GuiBigChest {
 	private int backspaceSpeed = 0;
 	private int backspaceTimer = 0;
 	private final String botname;
-	private boolean[] availabilities = new boolean[7 * 7];
+	private final boolean[] availabilities = new boolean[7 * 7];
+	private boolean wasWaitingForJoinCooldown = !JoinCooldownTimer.isCooldownExpired();
 
 	public TreeSet<BABItem> itemsDisplayed;
 	final List<BABItem> boughtItems;
@@ -94,7 +96,7 @@ public class BotshopGUI extends GuiBigChest {
 	@Override
 	public void onGuiClosed() {
 		boughtItems.forEach((i) -> {
-			i.warehouseCount.getAndAdd(i.getStack().stackSize);
+			i.warehouseCount.getAndAdd(-i.getStack().stackSize);
 		});
 		EventRegisterer.unregister(this);
 	}
@@ -110,6 +112,16 @@ public class BotshopGUI extends GuiBigChest {
 				backspaceTimer += backspaceSpeed;
 			}
 		}
+
+		if (JoinCooldownTimer.isCooldownExpired()) {
+			if (wasWaitingForJoinCooldown) {
+				wasWaitingForJoinCooldown = false;
+				updatePage();
+			}
+			return;
+		}
+
+		addTextureItem(28, new TextureItem("coin_pile_crossed_out", "§4§lGesperrt", "§fBitte warte noch " + JoinCooldownTimer.getRemainingSeconds() + " Sekunden!"), null);
 	}
 
 	private Iterable<BABItem> getAllEntries() {
@@ -282,7 +294,10 @@ public class BotshopGUI extends GuiBigChest {
 		for (int i = 0; i < 7; i++) {
 			addItem(9 * i + 1, ItemUtil.createItem(Blocks.stained_glass_pane, 15, "§f§l⬅ Einkaufsliste"), () -> {});
 		}
-		if (price() > bankBal()) {
+
+		if (!JoinCooldownTimer.isCooldownExpired()) {
+			addTextureItem(28, new TextureItem("coin_pile_crossed_out", "§4§lGesperrt", "§fBitte warte noch " + JoinCooldownTimer.getRemainingSeconds() + " Sekunden!"), null);
+		} else if (price() > bankBal()) {
 			addTextureItem(28, new TextureItem("coin_pile_crossed_out", "§4§lGesperrt", "§fNicht genügend Guthaben"), null);
 		} else if (!boughtItems.isEmpty()) {
 			addTextureItem(28, new TextureItem("coin_pile", "§a§lKaufen (" + priceStr() + ")", "§fBestätige deinen Einkauf"), () -> {

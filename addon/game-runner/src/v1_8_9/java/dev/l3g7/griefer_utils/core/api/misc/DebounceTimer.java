@@ -26,13 +26,17 @@ public class DebounceTimer {
 	public void schedule(Runnable runnable) {
 		long scheduleTime = lastScheduleTime = System.currentTimeMillis();
 
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				if (lastScheduleTime == scheduleTime)
-					runnable.run();
-			}
-		}, debounce);
+		try {
+			timer.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					if (lastScheduleTime == scheduleTime)
+						runnable.run();
+				}
+			}, debounce);
+		} catch (IllegalStateException ignored) {
+			// Minecraft is closing and the timer has been killed
+		}
 	}
 
 }

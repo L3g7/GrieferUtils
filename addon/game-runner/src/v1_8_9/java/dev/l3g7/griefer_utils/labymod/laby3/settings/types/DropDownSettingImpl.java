@@ -9,10 +9,11 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.DropDownElement;
@@ -22,9 +23,14 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.opengl.GL11;
 
+import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.lang.invoke.MethodType.methodType;
 
 public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElement<E> implements Laby3Setting<DropDownSetting<E>, E>, DropDownSetting<E> {
 
@@ -35,6 +41,28 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElem
 		super("§cNo name set", null);
 		setChangeListener(this::set);
 
+		// Initialize name getter
+		Function<Object, String> getName;
+		if (Arrays.stream(enumClass.getInterfaces()).anyMatch(c -> c == Named.class)) {
+			getName = e -> ((Named) e).getName();
+		} else {
+			// Fallback to old Named
+			Optional<Class<?>> oldNamed = Arrays.stream(enumClass.getInterfaces())
+				.filter(c -> c.getName().equals("dev.l3g7.griefer_utils.misc.Named"))
+				.findFirst();
+
+			//noinspection SimplifyOptionalCallChains
+			if (!oldNamed.isPresent())
+				throw new ClassCastException("Cannot convert " + enumClass + " to Named!");
+
+			try {
+				MethodHandle MH_getName = lookup().findVirtual(oldNamed.get(), "getName", methodType(String.class));
+				getName = e -> (String) MH_getName.invoke(e);
+			} catch (NoSuchMethodException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
 		// Initialize storage
 		storage = new ExtendedStorage<>(e -> new JsonPrimitive(e.name()), s -> Enum.valueOf(enumClass, s.getAsString()), enumClass.getEnumConstants()[0]);
 
@@ -44,9 +72,9 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElem
 
 		// Use Named interface as provider for display names
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
-		menu.setEntryDrawer((o, x, y, trimmedEntry) -> drawUtils.drawString(((Named) o).getName(), x, y));
+		menu.setEntryDrawer((o, x, y, trimmedEntry) -> drawUtils.drawString(getName.apply(o), x, y));
 		int width = ((List<?>) Reflection.get(menu, "list"))
-			.stream().mapToInt(e -> drawUtils.getStringWidth(((Named) e).getName()))
+			.stream().mapToInt(e -> drawUtils.getStringWidth((getName.apply(e))))
 			.max()
 			.orElse(0)
 			+ 9;

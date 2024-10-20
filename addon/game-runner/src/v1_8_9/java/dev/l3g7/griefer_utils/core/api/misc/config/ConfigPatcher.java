@@ -250,7 +250,7 @@ public class ConfigPatcher {
 				if (containsNot.length == 0)
 					continue;
 
-				String[] newContainsNot = new String[containsNot.length - 1];
+				String[] newContainsNot = new String[containsNot.length];
 				int idx = 0;
 				boolean foundDelimiter = false;
 				for (String s : filter.getWordsContainsNot()) {

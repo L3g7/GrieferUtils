@@ -37,7 +37,7 @@ public class MainPage {
 
 	private static Timer timer = new Timer();
 
-	private static final StringSetting filter = StringSetting.create()
+	public static final StringSetting filter = StringSetting.create()
 		.name("Suche")
 		.icon("magnifying_glass")
 		.callback(MainPage::onSearch);

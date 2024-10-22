@@ -17,7 +17,7 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 public abstract class Widget {
 
-	private LabyWidget versionedWidget = null;
+	protected LabyWidget versionedWidget = null;
 
 	protected LabyWidget getLaby3() {
 		throw new UnsupportedOperationException();

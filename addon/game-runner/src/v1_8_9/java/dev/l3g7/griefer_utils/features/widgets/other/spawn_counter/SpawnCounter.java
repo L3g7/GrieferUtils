@@ -66,7 +66,7 @@ import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIB
 public class SpawnCounter extends Widget { // NOTE: cleanup
 
 	final RoundHandler roundHandler = new RoundHandler(this);
-	LeaderboardHandler leaderboardHandler;
+	protected LeaderboardHandler leaderboardHandler;
 
 	static final String configKey = "modules.spawn_counter.rounds_";
 
@@ -88,7 +88,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 		.icon("trophy")
 		.defaultValue(LeaderboardDisplayType.ON)
 		.callback(t -> {
-			if (t != LeaderboardDisplayType.OFF && ServerCheck.isOnGrieferGames() && leaderboardHandler.data != null)
+			if (t != LeaderboardDisplayType.OFF && ServerCheck.isOnGrieferGames() && getLeaderboardHandler().data != null)
 				onGrieferGamesJoin(null);
 		});
 
@@ -106,13 +106,20 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 			roundHandler.roundsRan = Config.get(configKey + "ran").getAsInt();
 	}
 
+	private LeaderboardHandler getLeaderboardHandler() {
+		if (versionedWidget == null)
+			getVersionedWidget();
+
+		return leaderboardHandler;
+	}
+
 	@EventListener
 	public void onGrieferGamesJoin(ServerEvent.GrieferGamesJoinEvent event) {
-		leaderboardHandler.request(() -> GUClient.get().getLeaderboardData());
+		getLeaderboardHandler().request(() -> GUClient.get().getLeaderboardData());
 	}
 
 	public void onRoundComplete(boolean flown) {
-		leaderboardHandler.request(() -> GUClient.get().sendLeaderboardData(flown));
+		getLeaderboardHandler().request(() -> GUClient.get().sendLeaderboardData(flown));
 	}
 
 	@Override
@@ -186,7 +193,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 	}
 
-	static abstract class LeaderboardHandler {
+	protected static abstract class LeaderboardHandler {
 		public LeaderboardRequest.LeaderboardData data;
 
 		public abstract void request(Supplier<LeaderboardRequest.LeaderboardData> request);

@@ -83,7 +83,10 @@ public class BugReporter {
 				String stackTrace = out.toString("UTF-8");
 
 				// Remove object hash codes
-				stackTrace = stackTrace.replaceAll("\\$\\$Lambda[\\d/$]*\\.(\\w+)(?=\\()", "\\$\\$Lambda").replaceAll("@[\\da-f]+", "");
+				stackTrace = stackTrace
+					.replaceAll("\tat sun.*\r?\n", "")
+					.replaceAll("@[\\da-f]+", "")
+					.replaceAll("\\$\\$Lambda[\\d/$]*\\.(\\w+)(?=\\()", "\\$\\$Lambda.$1");
 
 				// Don't report if already reported
 				String hash = Base64.getEncoder().encodeToString(digest.digest(stackTrace.getBytes()));

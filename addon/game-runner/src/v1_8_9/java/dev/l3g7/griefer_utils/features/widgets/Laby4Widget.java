@@ -74,14 +74,13 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 
 	public Laby4Widget() {
 		super(UUID.randomUUID().toString(), ModuleConfig.class);
-		Reflection.set(this, "id", "griefer_utils_" + StringUtil.convertCasing(getClass().getSimpleName()));
-
 		bindCategory(CATEGORY);
 	}
 
 	@Override
 	public void setOwner(Widget widget) {
 		this.owner = widget;
+		Reflection.set(this, "id", "griefer_utils_" + StringUtil.convertCasing(widget.getClass().getSimpleName()));
 	}
 
 	@Override

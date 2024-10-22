@@ -51,7 +51,9 @@ public class RefmapConverter {
 			refmap = Streams.parse(new JsonReader(in)).getAsJsonObject();
 		}
 
-		JsonObject seargeMappings = refmap.get("data").getAsJsonObject().get("searge").getAsJsonObject();
+		JsonObject data = refmap.get("data").getAsJsonObject();
+		JsonObject seargeMappings = data.get("searge").getAsJsonObject();
+		data.add("notch", seargeMappings.deepCopy());
 		for (String key : seargeMappings.keySet()) {
 			JsonObject mappings = seargeMappings.get(key).getAsJsonObject();
 			for (Map.Entry<String, JsonElement> entry : mappings.entrySet()) {

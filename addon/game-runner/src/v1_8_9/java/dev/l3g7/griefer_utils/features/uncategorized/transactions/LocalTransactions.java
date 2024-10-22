@@ -70,8 +70,11 @@ public class LocalTransactions {
 		}
 
 		double amount = Double.parseDouble(matcher.group("amount").replace(",", ""));
-		String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
-		UUID uuid = mc().getNetHandler().getPlayerInfo(name).getGameProfile().getId();
+		String nick = matcher.group("name").replaceAll("§.", "");
+		String name = NameCache.ensureRealName(nick);
+		UUID uuid = NameCache.getUUID(nick);
+		if (uuid == null)
+			uuid = mc().getNetHandler().getPlayerInfo(name).getGameProfile().getId();
 
 		if (name.equals(name()) && received)
 			// Show transactions to yourself only once

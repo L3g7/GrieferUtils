@@ -93,7 +93,7 @@ public abstract class IconComponent extends ChatComponentStyle {
 			icons.add(this);
 		}
 
-		id = "§" + ICON_MARKER + idx + "\0";
+		id = "§" + ICON_MARKER + idx + "\3";
 		return this;
 	}
 
@@ -141,7 +141,7 @@ public abstract class IconComponent extends ChatComponentStyle {
 	}
 
 	@ExclusiveTo(LABY_3)
-	@org.spongepowered.asm.mixin.Mixin(FontRenderer.class)
+	@Mixin(FontRenderer.class)
 	public static abstract class MixinFontRenderer {
 
 		@Shadow
@@ -177,7 +177,7 @@ public abstract class IconComponent extends ChatComponentStyle {
 				if (c0 == 167 && i + 1 < text.length()) {
 					// Changes begin here
 					if (text.charAt(i + 1) == ICON_MARKER) {
-						int endIdx = text.indexOf('\0', i + 1);
+						int endIdx = text.indexOf('\3', i + 1);
 						IconComponent icon = icons.get(Integer.parseInt(text.substring(i + 2, endIdx)));
 
 						if (!shadow) { // Skip shadow layer

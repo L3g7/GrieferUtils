@@ -36,7 +36,7 @@ import static net.labymod.ingamechat.IngameChatManager.INSTANCE;
 @ExclusiveTo(LABY_3)
 public class ChatLineUtilBridgeImpl implements ChatLineUtilBridge {
 
-	public static final ThreadLocal<IChatComponent> currentComponent = new ThreadLocal<>();
+	public static IChatComponent currentComponent;
 
 	public static final Map<ChatLine, IChatComponent> LINE_TO_COMPONENT = new HashMap<>();
 	public static final List<IChatComponent> MODIFIED_COMPONENTS = new ArrayList<>();
@@ -101,7 +101,7 @@ public class ChatLineUtilBridgeImpl implements ChatLineUtilBridge {
 
 		@Redirect(method = "addChatLine", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V"))
 		public void postChatLineAddEvent(List<Object> instance, int i, Object o) {
-			LINE_TO_COMPONENT.put((ChatLine) o, currentComponent.get());
+			LINE_TO_COMPONENT.put((ChatLine) o, currentComponent);
 			instance.add(i, o);
 		}
 
@@ -113,12 +113,12 @@ public class ChatLineUtilBridgeImpl implements ChatLineUtilBridge {
 
 		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
 		public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-			currentComponent.set(component);
+			currentComponent = component;
 		}
 
 		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/MessageData;getFilter()Lnet/labymod/ingamechat/tools/filter/Filters$Filter;"))
 		public void postMessageModifiedEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-			MODIFIED_COMPONENTS.set(MODIFIED_COMPONENTS.size() - 1, component);
+			MODIFIED_COMPONENTS.add(component);
 		}
 
 	}
@@ -132,7 +132,6 @@ public class ChatLineUtilBridgeImpl implements ChatLineUtilBridge {
 		@ModifyVariable(method = "tagComponent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 		private static Object injectTagComponent(Object value) {
 			UNMODIFIED_COMPONENTS.add(((IChatComponent) value).createCopy());
-			MODIFIED_COMPONENTS.add(null);
 			return value;
 		}
 

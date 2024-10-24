@@ -21,8 +21,6 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 
-import static dev.l3g7.griefer_utils.core.util.ChatLineUtilBridge.CLUBridge;
-
 public class CopyTextEntry extends ChatMenuEntry {
 
 	protected final String configKey = "chat.chat_menu.entries." + name + ".";
@@ -56,8 +54,8 @@ public class CopyTextEntry extends ChatMenuEntry {
 	}
 
 	@Override
-	public void trigger(String name, IChatComponent entireText) {
-		IChatComponent icc = modifiedMessage.get() ? entireText : CLUBridge.getUnmodified(entireText);
+	public void trigger(String name, IChatComponent modifiedText, IChatComponent unmodifiedText) {
+		IChatComponent icc = modifiedMessage.get() ? modifiedText : unmodifiedText;
 		ChatMenu.copyToClipboard(copyFormat.get().componentToString.apply(icc));
 	}
 

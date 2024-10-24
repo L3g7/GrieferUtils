@@ -193,7 +193,7 @@ public class ChatMenuEntry {
 		return img;
 	}
 
-	public void trigger(String name, IChatComponent entireText) {
+	public void trigger(String name, IChatComponent modifiedText, IChatComponent unmodifiedText) {
 		switch (action) {
 			case CONSUMER:
 				((Consumer<String>) command).accept(name);

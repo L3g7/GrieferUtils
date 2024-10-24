@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
@@ -49,7 +50,6 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
-import static dev.l3g7.griefer_utils.core.util.ChatLineUtilBridge.CLUBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.chat.chat_menu.laby3.ChatMenuEntry.Action.*;
 
@@ -76,9 +76,9 @@ public class ChatMenu extends Feature {
 
 	@MainElement(configureSubSettings = false)
 	private static final SwitchSetting enabled = SwitchSetting.create()
-			.name("Chatmenü")
-			.description("Öffnet ein Chatmenü bei Rechtsklick auf einen Spieler im Chat.")
-			.icon("player_menu");
+		.name("Chatmenü")
+		.description("Öffnet ein Chatmenü bei Rechtsklick auf einen Spieler im Chat.")
+		.icon("player_menu");
 
 	public ChatMenu() {
 		loadEntries();
@@ -153,14 +153,14 @@ public class ChatMenu extends Feature {
 		if (Mouse.getEventButton() != 1 || !(mc().currentScreen instanceof GuiChat))
 			return;
 
-		IChatComponent icc = CLUBridge.getUnmodified(CLUBridge.getHoveredComponent());
-		if (icc == null) // Didn't click on a line
+		Pair<IChatComponent, IChatComponent> component = ChatLineUtil.getHoveredComponent();
+		if (component == null) // Didn't click on a line
 			return;
 
 		String name = null;
 
-		for (Pattern p : new Pattern[] {GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN, GLOBAL_CHAT_PATTERN}) {
-			Matcher matcher = p.matcher(icc.getFormattedText());
+		for (Pattern p : new Pattern[]{GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN, GLOBAL_CHAT_PATTERN}) {
+			Matcher matcher = p.matcher(component.b.getFormattedText());
 			if (!matcher.find())
 				continue;
 
@@ -172,16 +172,16 @@ public class ChatMenu extends Feature {
 			return;
 
 		List<ChatMenuEntry> entries = new ArrayList<>();
-		DEFAULT_ENTRIES.forEach(e -> { if (e.enabled) entries.add(e); });
+		DEFAULT_ENTRIES.forEach(e -> {if (e.enabled) entries.add(e);});
 		if (COPY_TEXT_ENTRY.enabled) entries.add(COPY_TEXT_ENTRY);
-		getCustom().forEach(e -> { if (e.enabled) entries.add(e); });
+		getCustom().forEach(e -> {if (e.enabled) entries.add(e);});
 
 		name = name.replaceAll("§.", "").trim();
 		String realName = NameCache.ensureRealName(name);
 		if (realName == null)
 			realName = name;
 
-		renderer = new ChatMenuRenderer(entries, realName, CLUBridge.getHoveredComponent());
+		renderer = new ChatMenuRenderer(entries, realName, component);
 		event.cancel();
 	}
 

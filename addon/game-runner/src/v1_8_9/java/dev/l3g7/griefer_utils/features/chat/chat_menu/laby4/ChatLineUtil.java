@@ -5,14 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.labymod.laby4.bridges;
+package dev.l3g7.griefer_utils.features.chat.chat_menu.laby4;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
-import dev.l3g7.griefer_utils.core.util.ChatLineUtilBridge;
+import dev.l3g7.griefer_utils.core.api.misc.Pair;
+import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import net.labymod.api.client.chat.ChatMessage;
 import net.labymod.api.client.chat.advanced.ChatMessagesWidget;
 import net.labymod.api.client.gui.mouse.MutableMouse;
@@ -37,25 +35,22 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static org.spongepowered.asm.mixin.injection.At.Shift.BEFORE;
 
-@Bridge
-@Singleton
 @ExclusiveTo(LABY_4)
-public class ChatLineUtilBridgeImpl implements ChatLineUtilBridge {
+public class ChatLineUtil {
 
 	public static AdvancedChatMessage hoveredMessage;
 	public static final List<IChatComponent> MODIFIED_COMPONENTS = new ArrayList<>();
 	public static final List<IChatComponent> UNMODIFIED_COMPONENTS = new ArrayList<>();
 
-	@Override
-	public IChatComponent getHoveredComponent() {
+	public static Pair<IChatComponent, IChatComponent> getHoveredComponent() {
 		if (hoveredMessage == null)
 			return null;
 
-		return (IChatComponent) hoveredMessage.component();
+		IChatComponent hov = (IChatComponent) hoveredMessage.component();
+		return new Pair<>(hov, getUnmodified(hov));
 	}
 
-	@Override
-	public IChatComponent getUnmodified(IChatComponent iChatComponent) {
+	private static IChatComponent getUnmodified(IChatComponent iChatComponent) {
 		if (iChatComponent == null)
 			return null;
 
@@ -68,7 +63,7 @@ public class ChatLineUtilBridgeImpl implements ChatLineUtilBridge {
 	}
 
 	@EventListener
-	private static void onMessageModify(MessageModifyEvent event) {
+	private static void onMessageModify(MessageEvent.MessageModifyEvent event) {
 		UNMODIFIED_COMPONENTS.add(event.original);
 	}
 

@@ -10,28 +10,22 @@ package dev.l3g7.griefer_utils.features.chat.chat_reactor.laby4;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
-import net.labymod.api.Laby;
-import net.labymod.api.client.chat.ChatMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.IChatComponent;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
-import static dev.l3g7.griefer_utils.core.util.ChatLineUtilBridge.CLUBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
@@ -78,12 +72,13 @@ public class ChatReactor extends Feature {
 		loaded = true;
 	}
 
-	public static void triggerReactions(IChatComponent component) {
+	@EventListener
+	public static void triggerReactions(MessageModifyEvent event) {
 		if (Laby4Util.isSettingOpened(enabled)
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
-		component = CLUBridge.getUnmodified(component);
+		IChatComponent component = event.original;
 		if (component == null)
 			return;
 
@@ -102,18 +97,6 @@ public class ChatReactor extends Feature {
 				setting.set(false);
 			}
 		}
-	}
-
-	@ExclusiveTo(LABY_4)
-	@Mixin(value = GuiNewChat.class, remap = false)
-	private static class MixinGuiNewChat {
-
-		@Inject(method = "printChatMessageWithOptionalDeletion", at = @At("HEAD"))
-		private void injectPrintChatMessageWithOptionalDeletion(IChatComponent lvt_1_1_, int lvt_2_1_, CallbackInfo ci) {
-			ChatMessage chatMessage = Laby.labyAPI().chatProvider().chatController().messageAt(0);
-			triggerReactions((IChatComponent) chatMessage.component());
-		}
-
 	}
 
 }

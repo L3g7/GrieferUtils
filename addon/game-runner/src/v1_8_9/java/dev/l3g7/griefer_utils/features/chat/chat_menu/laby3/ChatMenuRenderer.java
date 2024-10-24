@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu.laby3;
 
+import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -21,7 +22,7 @@ public class ChatMenuRenderer {
 
 	private final List<ChatMenuEntry> entries;
 	private final String playerName;
-	private final IChatComponent entireText;
+	private final Pair<IChatComponent, IChatComponent> component;
 	private final String titleText;
 
 	private int boxHeight;
@@ -30,11 +31,11 @@ public class ChatMenuRenderer {
 	private int y;
 	private int hoveredEntry = -1;
 
-	public ChatMenuRenderer(List<ChatMenuEntry> entries, String playerName, IChatComponent entireText) {
+	public ChatMenuRenderer(List<ChatMenuEntry> entries, String playerName, Pair<IChatComponent, IChatComponent> component) {
 		this.entries = entries;
 		this.playerName = playerName;
 		this.titleText = "ChatMenü §a" + playerName;
-		this.entireText = entireText;
+		this.component = component;
 
 		// Box size
 		boxHeight = 16 + 15 * entries.size();
@@ -131,7 +132,7 @@ public class ChatMenuRenderer {
 			return false;
 
 		// Trigger the consumer and close the gui
-		entries.get(hoveredEntry).trigger(playerName, entireText);
+		entries.get(hoveredEntry).trigger(playerName, component.a, component.b);
 		return true;
 	}
 

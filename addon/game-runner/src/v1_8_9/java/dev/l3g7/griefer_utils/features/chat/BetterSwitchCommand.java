@@ -27,22 +27,23 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 @Singleton
 public class BetterSwitchCommand extends Feature {
 
-		private final SwitchSetting rejoin = SwitchSetting.create()
+	private final SwitchSetting rejoin = SwitchSetting.create()
 		.name("Rejoin")
-		.description("Führt nur die angegebene Aktion aus, sofern man auf sich bereits auf dem Zielcitybuild befindet.", "Sofern keine Aktion angegeben ist, passiert nichts.")
-		.icon(Items.book);
+		.description("Ob der Citybuild auch gewechselt werden soll, wenn man sich schon auf dem Zielcitybuild befindet.")
+		.icon(Items.book)
+		.defaultValue(true);
 
 	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", Pattern.CASE_INSENSITIVE);
 
 	private static Citybuild targetCitybuild = null;
 	private static String command = null;
 
-		@MainElement(configureSubSettings = true)
-		private final SwitchSetting enabled = SwitchSetting.create()
+	@MainElement
+	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("/switch verbessern")
 		.description("Verbessert den '/switch <cb>' Befehl durch Aliasse und einem optionalem Join-Text. (z.B. '/cbe Hallo')", "Der Join-Text wird nach dem Beitreten automatisch in den Chat geschrieben.", "", "Für Hilfe gib '/cb' ein.")
 		.icon(Items.compass)
-		.subSettings(rejoin);	
+		.subSettings(rejoin);
 
 	@EventListener
 	public void onMessageSend(MessageEvent.MessageSendEvent event) {
@@ -57,21 +58,17 @@ public class BetterSwitchCommand extends Feature {
 			event.cancel();
 
 			Citybuild cb = Citybuild.getCitybuild(matcher.group(1));
-			if (rejoin.get()) {
-				if (cb.matches(getServerFromScoreboard())) {
-					command = matcher.group(2);
-					if(command != null) {
-					send(command);
-					return;
-					} else {
-					return;	
-					}
-				}
-			}
 			if (cb != Citybuild.ANY) {
-				cb.join();
-				targetCitybuild = cb;
-				command = matcher.group(2);
+				if (!rejoin.get() && cb.isOnCb()) {
+					command = matcher.group(2);
+					if (command != null)
+						send(command);
+				} else {
+					cb.join();
+					targetCitybuild = cb;
+					command = matcher.group(2);
+				}
+
 				return;
 			}
 		}

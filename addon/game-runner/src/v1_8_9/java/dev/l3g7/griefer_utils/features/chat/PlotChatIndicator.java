@@ -78,7 +78,7 @@ public class PlotChatIndicator extends Feature {
 	@EventListener(triggerWhenDisabled = true)
 	public void onCitybuildJoin(CitybuildJoinEvent event) {
 		String server = getServerFromScoreboard(); // NOTE: Rewrite to use Citybuild enum
-		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser") || server.equals("Portal") || server.equalsIgnoreCase("Zauberwald")) {
+		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser") || server.equals("Portal") || server.equals("Lobby") || server.equalsIgnoreCase("Zauberwald")) {
 			plotchatState = false;
 			return;
 		}

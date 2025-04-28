@@ -11,11 +11,11 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Items;
 
 import java.util.regex.Matcher;
@@ -85,6 +85,7 @@ public class BetterSwitchCommand extends Feature {
 		display(Constants.ADDON_PREFIX + "§7Wasser: 'w'");
 		display(Constants.ADDON_PREFIX + "§7Lava: 'l'");
 		display(Constants.ADDON_PREFIX + "§7Event: 'v'");
+		display(Constants.ADDON_PREFIX + "§7Zauberwald: 'z'");
 
 		event.cancel();
 	}

@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 import static net.minecraft.init.Blocks.*;
@@ -50,7 +51,8 @@ public enum Citybuild implements Named {
 
 	WATER(new ItemStack(water_bucket), "farm1", "Wasser", "w"),
 	LAVA(new ItemStack(lava_bucket), "nether1", "Lava", "l"),
-	EVENT(new ItemStack(beacon), "eventserver", "Event", "v");
+	EVENT(new ItemStack(beacon), "eventserver", "Event", "v"),
+	MAGIC_FOREST(new ItemStack(Blocks.mycelium), "zauberwald", "Zauberwald", "z", "zw");
 
 	private final String internalName;
 	private final String displayName;

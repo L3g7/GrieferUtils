@@ -11,8 +11,8 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.gui.elements.ModTextField;
@@ -75,6 +75,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 		CB_ITEMS.add(new Pair<>(createItem(Items.water_bucket, 0, "Wasser"), Citybuild.WATER));
 		CB_ITEMS.add(new Pair<>(createItem(Items.lava_bucket, 0, "Lava"), Citybuild.LAVA));
 		CB_ITEMS.add(new Pair<>(createItem(beacon, 0, "Event"), Citybuild.EVENT));
+		CB_ITEMS.add(new Pair<>(createItem(mycelium, 0, "Zauberwald"), Citybuild.MAGIC_FOREST));
 	}
 
 	public static ItemStack MISSING_TEXTURE = new ItemStack(Blocks.stone, 1, 10000);

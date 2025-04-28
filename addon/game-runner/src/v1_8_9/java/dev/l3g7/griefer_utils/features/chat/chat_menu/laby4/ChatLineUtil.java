@@ -57,7 +57,7 @@ public class ChatLineUtil {
 		int index = MODIFIED_COMPONENTS.indexOf(iChatComponent);
 
 		if (index == -1)
-			return null;
+			return iChatComponent;
 
 		return UNMODIFIED_COMPONENTS.get(index);
 	}

@@ -279,7 +279,12 @@ public class OrbStats extends SimpleWidget {
 		if (b64.isEmpty())
 			return null;
 
-		JsonObject object = Streams.parse(new JsonReader(new StringReader(new String(Base64.getDecoder().decode(b64))))).getAsJsonObject();
+		JsonObject object;
+		try {
+			object = Streams.parse(new JsonReader(new StringReader(new String(Base64.getDecoder().decode(b64))))).getAsJsonObject();
+		} catch (Throwable t) {
+			return null; // Invalid Base64
+		}
 		if (!object.has("profileId"))
 			return null;
 

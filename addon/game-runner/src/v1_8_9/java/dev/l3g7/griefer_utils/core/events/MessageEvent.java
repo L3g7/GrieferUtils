@@ -8,9 +8,9 @@
 package dev.l3g7.griefer_utils.core.events;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.network.play.server.S02PacketChat;
@@ -90,7 +90,7 @@ public class MessageEvent extends Event {
 
 			@Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
 			public void injectSendChatMessage(String message, CallbackInfo ci) {
-				if (new MessageEvent.MessageAboutToBeSentEvent(message).fire().isCanceled())
+				if (message != null && !message.trim().isEmpty() && new MessageEvent.MessageAboutToBeSentEvent(message).fire().isCanceled())
 					ci.cancel();
 			}
 

@@ -69,7 +69,9 @@ public class ChatLineUtil {
 			if (x <= mouseX)
 				continue;
 
-			GUChatLine guChatLine = (GUChatLine) chatline;
+			if (!(chatline instanceof GUChatLine guChatLine))
+				continue;
+
 			return new Pair<>(guChatLine.getModifiedComponent(), guChatLine.getOriginalComponent());
 		}
 

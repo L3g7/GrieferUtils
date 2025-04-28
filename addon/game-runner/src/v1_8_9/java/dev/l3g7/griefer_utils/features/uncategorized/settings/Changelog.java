@@ -8,17 +8,17 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.api.misc.config.ConfigPatcher;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.ChangelogScreen;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.core.misc.gui.guis.ChangelogScreen;
 import net.labymod.api.Textures;
 import net.labymod.main.ModTextures;
 
@@ -30,6 +30,7 @@ import java.util.function.Function;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.BETA;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
 public class Changelog {
@@ -71,11 +72,13 @@ public class Changelog {
 		}
 
 		entries.sort(Comparator.comparing(BaseSetting::name, new VersionComparator()));
-		changelog.subSettings(entries);
+		mc().addScheduledTask(() -> {
+			changelog.subSettings(entries);
 
-		changelog.name("Changelog")
-			.description("Was sich in den einzelnen Updates von GrieferUtils verändert hat.")
-			.enable();
+			changelog.name("Changelog")
+				.description("Was sich in den einzelnen Updates von GrieferUtils verändert hat.")
+				.enable();
+		});
 	}
 
 	private ButtonSetting addIconLaby4(ButtonSetting button) { // TODO refactor

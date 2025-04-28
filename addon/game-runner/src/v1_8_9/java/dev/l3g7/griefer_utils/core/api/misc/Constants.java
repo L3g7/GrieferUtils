@@ -40,7 +40,7 @@ public class Constants {
 	public static final Pattern FORMATTED_PLAYER_PATTERN = Pattern.compile(String.format("(?<player>%s ?%s %s)", FORMATTED_RANK_PATTERN, FORMATTED_DELIMITER_PATTERN, FORMATTED_PLAYER_NAME_PATTERN));
 
 	// Miscellaneous patterns
-	public static final Pattern FORMATTED_CLAN_TAG_PATTERN = Pattern.compile("(?:§r§6\\[(?<clantag>[ÄÖÜäöü#$§\\-\\w]{2,})§r§6] )?");
+	public static final Pattern FORMATTED_CLAN_TAG_PATTERN = Pattern.compile("(?:§r§6\\[(?<clantag>[ÄÖÜäöü#$§+\\-\\w]{2,})§r§6] )?");
 	public static final Pattern CHAT_MESSAGE_PATTERN = Pattern.compile("(?<message>.*)§*r*");
 	public static final Pattern BLACKLIST_ERROR_PATTERN = Pattern.compile(String.format("§r%s \\| %s%s", FORMATTED_RANK_PATTERN, UNFORMATTED_PLAYER_NAME_PATTERN, CHAT_MESSAGE_PATTERN));
 

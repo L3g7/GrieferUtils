@@ -257,7 +257,7 @@ public class OrbStats extends SimpleWidget {
 			item = GUI_TO_CHAT_MAPPING.getOrDefault(item, item);
 
 			// If no item was last used, it is set to the one with the highest amount
-			if (lastItem == null || stats.get(lastItem.hashCode()) < amount)
+			if (lastItem == null || !stats.containsKey(lastItem.hashCode()) || stats.get(lastItem.hashCode()) < amount)
 				lastItem = item;
 
 			stats.put(item.hashCode(), amount);

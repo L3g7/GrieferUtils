@@ -72,7 +72,7 @@ public class BlockOfTheDay {
 	@EventListener
 	private static void onMessageReceive(MessageReceiveEvent event) {
 		String msg = event.message.getFormattedText();
-		if (msg.equals("§r§8[§r§6Block des Tages§r§8] §r§aDu hast ein seltenes Sammel-Item erhalten!§")) {
+		if (msg.equals("§r§8[§r§6Block des Tages§r§8] §r§aDu hast ein seltenes Sammel-Item erhalten!§r")) {
 			new Reward(Reward.RewardType.BLOCK, 2).send();
 			return;
 		}

@@ -8,9 +8,8 @@
 package dev.l3g7.griefer_utils.features.uncategorized.botd;
 
 import dev.l3g7.griefer_utils.core.api.BugReporter;
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,12 +33,8 @@ class Reward {
 	}
 
 	public void send() {
-		if (RewardCounter.shouldSend()) {
-			LabyBridge.display("Sending %d %d %s (%s)%n", RewardCounter.getCounter(type), amount, type.name(), eventItem == null ? "null" : eventItem.writeToNBT(new NBTTagCompound()).toString());
-//			GUServer.sendBlockOfTheDayReward(type.toString().toLowerCase(), 0, amount, eventItem);
-		} else {
-			LabyBridge.display("Not sending %dx %s (%s)%n", amount, type.name(), eventItem == null ? "null" : eventItem.writeToNBT(new NBTTagCompound()).toString());
-		}
+		if (RewardCounter.shouldSend())
+			GUServer.sendBlockOfTheDayReward(type.toString().toLowerCase(), RewardCounter.getCounter(type), amount, eventItem);
 	}
 
 	public enum RewardType {

@@ -54,7 +54,7 @@ public abstract class BlockOfTheDayRequest extends Request<Void> {
 			this.counter = counter;
 			this.type = type;
 			this.amount = amount;
-			this.item = eventItem == null ? "" : eventItem.writeToNBT(new NBTTagCompound()).toString();
+			this.item = eventItem == null ? null : eventItem.writeToNBT(new NBTTagCompound()).toString();
 		}
 
 	}

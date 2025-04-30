@@ -19,23 +19,28 @@ import net.minecraft.network.play.server.S1CPacketEntityMetadata;
 
 class SpecialRewardHandler {
 
-	private static S1CPacketEntityMetadata lastS1C = null;
+	private static S1CPacketEntityMetadata lastMetadata = null;
 	private static int lastItemId = -1;
 
 	@EventListener
-	private static void onSpawnObject(PacketReceiveEvent<Packet<?>> p) {
-		if (p.packet instanceof S0EPacketSpawnObject pso) {
-			if (pso.getType() == 2)
-				lastItemId = pso.getEntityID();
-		} else if (p.packet instanceof S1CPacketEntityMetadata s1c) {
-			if (s1c.getEntityId() == lastItemId)
-				lastS1C = s1c;
+	private static void onSpawnObject(PacketReceiveEvent<Packet<?>> event) {
+		if (event.packet instanceof S0EPacketSpawnObject packet) {
+			if (packet.getType() == 2) // Item
+				lastItemId = packet.getEntityID();
+		} else if (event.packet instanceof S1CPacketEntityMetadata packet) {
+			if (packet.getEntityId() == lastItemId)
+				lastMetadata = packet;
 		}
 	}
 
 	public static Reward parseReward() {
-		for (DataWatcher.WatchableObject wo : lastS1C.func_149376_c()) {
-			if (wo.getDataValueId() != 10)
+		if (lastMetadata == null) {
+			BugReporter.reportError(new Throwable("BOTD message w/o metadata :("));
+			return null;
+		}
+
+		for (DataWatcher.WatchableObject wo : lastMetadata.func_149376_c()) {
+			if (wo.getDataValueId() != 10) // Item
 				continue;
 
 			ItemStack stack = (ItemStack) wo.getObject();
@@ -45,7 +50,7 @@ class SpecialRewardHandler {
 			return new Reward(stack);
 		}
 
-		BugReporter.reportError(new Throwable("BOTD message w/o valid s1c :("));
+		BugReporter.reportError(new Throwable("BOTD message w/o valid metadata :("));
 		return null;
 	}
 

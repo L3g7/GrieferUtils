@@ -83,9 +83,11 @@ public class BlockOfTheDay {
 			return;
 		}
 
-		Reward newReward;
-		if ((newReward = Reward.RewardType.MONEY.getReward(msg)) != null
-			|| (newReward = Reward.RewardType.CRYSTALS.getReward(msg)) != null) {
+		Reward newReward = Reward.RewardType.MONEY.getReward(msg);
+		if (newReward == null)
+			newReward = Reward.RewardType.CRYSTALS.getReward(msg);
+
+		if (newReward != null) {
 			rewardReceived = System.currentTimeMillis();
 			reward = newReward;
 		}

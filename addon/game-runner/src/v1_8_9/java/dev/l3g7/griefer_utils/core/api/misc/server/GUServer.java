@@ -21,6 +21,7 @@ import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerJoinEvent;
+import net.minecraft.item.ItemStack;
 
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -152,9 +153,9 @@ public class GUServer {
 		});
 	}
 
-	public static CompletableFuture<Void> sendBlockOfTheDayReward(String type, int amount) {
+	public static CompletableFuture<Void> sendBlockOfTheDayReward(String type, int counter, int amount, ItemStack eventItem) {
 		return CompletableFuture.supplyAsync(() -> {
-			new BlockOfTheDayRequest.Reward(type, amount).send();
+			new BlockOfTheDayRequest.Reward(type, counter, amount, eventItem).send();
 			return null;
 		});
 	}

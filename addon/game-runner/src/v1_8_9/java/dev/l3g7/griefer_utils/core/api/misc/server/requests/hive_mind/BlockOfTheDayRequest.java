@@ -8,6 +8,8 @@
 package dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind;
 
 import dev.l3g7.griefer_utils.core.api.misc.server.Request;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.HIVEMIND_URL;
 
@@ -43,12 +45,16 @@ public abstract class BlockOfTheDayRequest extends Request<Void> {
 	public static class Reward extends BlockOfTheDayRequest {
 
 		private final String type;
+		private final int counter;
 		private final int amount;
+		private final String item;
 
-		public Reward(String type, int amount) {
+		public Reward(String type, int counter, int amount, ItemStack eventItem) {
 			super("reward");
+			this.counter = counter;
 			this.type = type;
 			this.amount = amount;
+			this.item = eventItem == null ? "" : eventItem.writeToNBT(new NBTTagCompound()).toString();
 		}
 
 	}

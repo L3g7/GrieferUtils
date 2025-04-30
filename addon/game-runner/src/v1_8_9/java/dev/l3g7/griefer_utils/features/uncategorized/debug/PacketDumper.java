@@ -11,11 +11,14 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.UnsafeJsonSerializer;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.network.Packet;
@@ -23,6 +26,8 @@ import net.minecraft.network.Packet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 class PacketDumper {
 
@@ -72,10 +77,10 @@ class PacketDumper {
 					StringSetting.create()
 						.name("Blacklist")
 						.description("Die IDs der Packete, die nicht angezeigt werden sollen, getrennt durch \",\".")
-						.defaultValue(defaultBlackList)
 						.icon(Blocks.hopper)
 						.maxLength(Integer.MAX_VALUE)
 						.callback(s -> blacklistList = Arrays.asList(s.split(",")))
+						.defaultValue(defaultBlackList)
 				);
 		}
 
@@ -88,7 +93,7 @@ class PacketDumper {
 			if (blacklistList.contains(id))
 				return;
 
-			System.out.println(prefix + name);
+			System.out.println(prefix + "[" + getLastReadTime() + "] " + name);
 			if (!dumpFieldsList.contains(id))
 				return;
 
@@ -97,6 +102,18 @@ class PacketDumper {
 			} catch (Throwable t) {
 				System.out.println("Packet's fields could not be dumped");
 			}
+		}
+
+		private long getLastReadTime() {
+			if (mc().getNetHandler() == null)
+				return 0;
+
+			Channel channel = Reflection.get(mc().getNetHandler().getNetworkManager(), "channel"); // Getter is only available in Forge
+			ChannelHandler timeoutHandler = channel.pipeline().get("timeout");
+			if (timeoutHandler == null)
+				return 0;
+
+			return Reflection.get(timeoutHandler, "lastReadTime");
 		}
 
 	}

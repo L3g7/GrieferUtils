@@ -309,8 +309,12 @@ public class OrbStats extends SimpleWidget {
 			HashMap<Integer, Long> map = new HashMap<>();
 			ByteBuffer buf = ByteBuffer.wrap(Base64.getDecoder().decode(b64));
 
-			while (buf.hasRemaining())
-				map.put(buf.getInt(), buf.getLong());
+			try {
+				while (buf.hasRemaining())
+					map.put(buf.getInt(), buf.getLong());
+			} catch (Throwable t) {
+				return new HashMap<>();
+			}
 
 			return map;
 		}

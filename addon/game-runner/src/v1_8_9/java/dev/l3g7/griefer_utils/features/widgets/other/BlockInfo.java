@@ -27,6 +27,7 @@ import net.labymod.api.client.gui.hud.position.HudWidgetAnchor;
 import net.labymod.api.client.gui.mouse.MutableMouse;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.settings.LabyModModuleEditorGui;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -119,9 +120,13 @@ public class BlockInfo extends Widget {
 			return;
 		}
 
-		IBlockState state = world().getBlockState(mop.getBlockPos());
-		ItemStack pickedStack = getPickBlock(state.getBlock(), world(), mop.getBlockPos());
-		if (state.getBlock() instanceof BlockSkull) {
+		Block block = world().getBlockState(mop.getBlockPos()).getBlock();
+		if (block == Blocks.lit_redstone_ore)
+			block = Blocks.redstone_ore;
+
+		ItemStack pickedStack = getPickBlock(block, world(), mop.getBlockPos());
+
+		if (block instanceof BlockSkull) {
 			TileEntitySkull tes = (TileEntitySkull) world().getTileEntity(mop.getBlockPos());
 			//noinspection DataFlowIssue
 			pickedStack.setItemDamage(tes.getSkullType());
@@ -135,7 +140,7 @@ public class BlockInfo extends Widget {
 			}
 		}
 
-		data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(state.getBlock()) : pickedStack);
+		data = Pair.of(mop.getBlockPos(), pickedStack == null ? new ItemStack(block) : pickedStack);
 	}
 
 	private boolean updateObjectMouseOverFromSchematica() {

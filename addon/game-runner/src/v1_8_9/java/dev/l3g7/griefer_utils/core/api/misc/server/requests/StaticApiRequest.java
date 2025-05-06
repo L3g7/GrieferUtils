@@ -31,6 +31,7 @@ public class StaticApiRequest extends Request<StaticApiRequest.StaticApiData> {
 		public Changelog changelog;
 		public Map<String, GrieferInfoItem> grieferInfoItems;
 		public String[] repeatingPrefixes;
+		public String[] coloredFonts;
 		public Map<UUID, SpecialBadge> specialBadges;
 
 		public static class Changelog {

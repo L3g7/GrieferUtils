@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -24,6 +25,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,6 +42,8 @@ public class ChatMods extends Feature {
 		"§r§8[§r§6GrieferGames§r§8] §r§fDownload: §r§ahttps://mysterymod.net/download/§r",
 		"§r§8[§r§6GrieferGames§r§8] §r§fWir sind optimiert für MysteryMod. Lade Dir gerne die Mod runter!§r"
 	);
+
+	private List<String> COLORED_FONTS = ImmutableList.of();
 
 	private final SwitchSetting antiClearChat = SwitchSetting.create()
 		.name("Clearchat unterbinden")
@@ -95,6 +99,11 @@ public class ChatMods extends Feature {
 	private boolean isNews = false;
 
 	@EventListener
+	private void onStaticData(StaticDataReceiveEvent event) {
+		COLORED_FONTS = ImmutableList.copyOf(event.data.coloredFonts);
+	}
+
+	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
 		if (shouldCancel(event.message.getFormattedText()))
 			event.cancel();
@@ -112,7 +121,7 @@ public class ChatMods extends Feature {
 
 			String message = matcher.group("message");
 			String msg = message.replace("§l", "").replace("§r", "").replaceAll("(§.)? ", "");
-			if (msg.length() % 3 != 0)
+			if (!usesFont(msg))
 				return;
 
 			int messageStart = matcher.start("message");
@@ -135,9 +144,31 @@ public class ChatMods extends Feature {
 
 			IChatComponent messageICC = new ChatComponentText(message.replaceAll("§.", ""));
 			messageICC.getChatStyle().setBold(true).setColor(EnumChatFormatting.AQUA);
-			event.setMessage(startICC.appendSibling(messageICC));
+			event.setMessage(new ChatComponentText(event.original.getFormattedText().substring(0, matcher.start("message"))).appendSibling(messageICC));
 			return;
 		}
+	}
+
+	private boolean usesFont(String msg) {
+		if (msg.length() % 3 != 0)
+			return false;
+
+		List<String> fonts = new ArrayList<>(COLORED_FONTS);
+		for (int i = 0; i < msg.length() / 3 && !fonts.isEmpty(); i++) {
+			int index = i * 3;
+
+			if (msg.charAt(index++) != '§')
+				return false;
+
+			Iterator<String> it = fonts.iterator();
+			while (it.hasNext()) {
+				String font = it.next();
+				if (msg.charAt(index) != font.charAt(i % font.length()))
+					it.remove();
+			}
+		}
+
+		return !fonts.isEmpty();
 	}
 
 	private boolean shouldCancel(String formattedText) {

@@ -47,7 +47,7 @@ public class InteractableMessages extends Feature {
 			+ "\n- TPAs (§a/tpaccept§r und §c/tpdeny§r)"
 			+ "\n- Den Citybuild bei Globalchat-Nachrichten (Switcht zum CB)"
 			+ "\n- Den Clan-Namen bei Globalchat-Nachrichten (Führt /clan info aus)"
-			+ "\n- Den Status, Msgs, und Plotchat-Nachrichten (Schlägt /msg vor)"
+			+ "\n- Den Status, Msgs, Plotchat- und Globalchat-nachrichten (Schlägt /msg vor)"
 			+ "\n- \"/p h\" in Nachrichten (Teleportiert zum Plot)"
 			+ "\n- Spielernamen bei /clan info (Öffnet das Profil)"
 			+ "\n- Spielernamen bei /p i (Öffnet das Profil)")
@@ -219,7 +219,7 @@ public class InteractableMessages extends Feature {
 	public void addMsgSuggestions(MessageModifyEvent event) {
 		String text = event.original.getFormattedText();
 
-		for (Pattern p : new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN}) {
+		for (Pattern p : new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN, GLOBAL_CHAT_PATTERN}) {
 			Matcher matcher = p.matcher(text);
 			if (!matcher.find())
 				continue;

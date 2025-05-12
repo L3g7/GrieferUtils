@@ -86,7 +86,7 @@ public class ChatMods extends Feature {
 
 	private final SwitchSetting antiColoredFont = SwitchSetting.create()
 		.name("Farbige Schrift entfernen")
-		.description("Entfernt die Farben von Nachrichten mit farbiger Schrift §8(/schrift).")
+		.description("Entfernt die Farben von Nachrichten mit farbiger Schrift §8(/schrift)§r.")
 		.icon("labymod_3/tabping_colored");
 
 	@MainElement
@@ -129,7 +129,7 @@ public class ChatMods extends Feature {
 
 			IChatComponent startICC = event.original.createCopy();
 
-			Iterator<IChatComponent> iterator = startICC.iterator();
+			Iterator<IChatComponent> iterator = startICC.getSiblings().iterator();
 			while (iterator.hasNext()) {
 				IChatComponent iChatComponent = iterator.next();
 				if (length >= messageStart) {

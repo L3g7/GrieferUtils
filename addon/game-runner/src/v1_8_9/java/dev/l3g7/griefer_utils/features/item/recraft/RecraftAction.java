@@ -36,7 +36,7 @@ public abstract class RecraftAction {
 			if (!EnchantmentHelper.getEnchantments(stack).isEmpty())
 				return null;
 
-			if (stack.getTagCompound().hasKey("unlimited-storage-item"))
+			if (stack.hasTagCompound() && stack.getTagCompound().hasKey("unlimited-storage-item"))
 				return null;
 
 			// Check if the item is compressed

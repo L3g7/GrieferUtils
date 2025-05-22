@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
@@ -50,6 +51,7 @@ public class CooldownNotifications extends Feature {
 
 	private static final String TITLE = "§8§m------------§r§8[ §r§6Cooldowns §r§8]§r§8§m------------§r";
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+	private final List<String> validCooldowns = new ArrayList<>();
 	private final Map<String, Long> endDates = Collections.synchronizedMap(new HashMap<>());
 	private boolean cooldownsDisplayed = false;
 
@@ -73,6 +75,14 @@ public class CooldownNotifications extends Feature {
 				waitingForCooldownsGui = true;
 			}
 		});
+
+	@EventListener
+	private void onStaticData(StaticDataReceiveEvent event) {
+		validCooldowns.addAll(Arrays.asList(event.data.cooldowns));
+		for (String key : new ArrayList<>(endDates.keySet()))
+			if (!validCooldowns.contains(key))
+				endDates.remove(key);
+	}
 
 	/**
 	 * Parses cooldowns from chat messages.
@@ -139,7 +149,7 @@ public class CooldownNotifications extends Feature {
 
 		// Load cooldown time from item
 		String name = DrawUtils.removeColor(s.getDisplayName()).replace("-Befehl", "");
-		if (name.startsWith("/clan") || name.equals("Riesige GS (über 25er) überschreiben") || name.equals("Riesige GSe (über 25er) überschreiben"))
+		if (!validCooldowns.isEmpty() && !validCooldowns.contains(name))
 			return;
 
 		endDates.put(name, getAvailability(s));
@@ -247,7 +257,8 @@ public class CooldownNotifications extends Feature {
 			if (e.getKey().startsWith("/clan") || e.getKey().contains("Riesige GS") || e.getKey().equals("/premium"))
 				continue;
 
-			endDates.put(e.getKey(), e.getValue().getAsLong());
+			if (validCooldowns.isEmpty() || validCooldowns.contains(e.getKey()))
+				endDates.put(e.getKey(), e.getValue().getAsLong());
 		}
 	}
 

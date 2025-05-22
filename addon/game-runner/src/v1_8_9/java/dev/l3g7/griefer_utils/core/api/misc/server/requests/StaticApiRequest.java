@@ -33,6 +33,7 @@ public class StaticApiRequest extends Request<StaticApiRequest.StaticApiData> {
 		public String[] repeatingPrefixes;
 		public String[] coloredFonts;
 		public Map<UUID, SpecialBadge> specialBadges;
+		public String[] cooldowns;
 
 		public static class Changelog {
 			public Map<String, String> all;

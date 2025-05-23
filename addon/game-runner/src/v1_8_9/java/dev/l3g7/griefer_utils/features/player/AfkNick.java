@@ -25,8 +25,8 @@ import net.minecraft.init.Items;
 import java.util.regex.Matcher;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton.path;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton.path;
 
 @Singleton
 public class AfkNick extends Feature {
@@ -106,11 +106,13 @@ public class AfkNick extends Feature {
 		if (!matcher.matches())
 			return;
 
-		String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
-		if (name.equals(name()))
+		String nick = matcher.group("name");
+		String realName = NameCache.ensureRealName(nick);
+
+		if (realName != null && realName.replaceAll("§.", "").equals(name()))
 			return;
 
-		send("/msg " + name + " " + messageReplay.get());
+		send("/msg " + (realName == null ? nick : realName) + " " + messageReplay.get());
 	}
 
 	@EventListener

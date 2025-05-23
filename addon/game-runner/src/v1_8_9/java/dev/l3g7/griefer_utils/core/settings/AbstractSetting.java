@@ -137,9 +137,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	 * If unset, sets the current value to the given one.
 	 */
 	default S defaultValue(V value) {
-		if (getStorage().value == null)
-			set(value);
-
+		getStorage().fallbackValue = value;
 		return (S) this;
 	}
 
@@ -164,10 +162,12 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	class Storage<T> {
 
 		public T value = null;
+		public T fallbackValue;
+
 		public String configKey = null;
 		private String inferredKey = null;
+
 		public boolean subsettingConfig = true;
-		public final T fallbackValue;
 		public final List<Consumer<T>> callbacks = new ArrayList<>();
 
 		public final Function<T, JsonElement> encodeFunc;

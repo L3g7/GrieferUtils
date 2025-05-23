@@ -15,23 +15,40 @@ import java.util.TimerTask;
 public class DebounceTimer {
 
 	private final Timer timer;
+	private Runnable activeRunnable = null;
 	private final int debounce;
-	private long lastScheduleTime = 0;
 
 	public DebounceTimer(String name, int debounce) {
 		this.timer = new Timer("GrieferUtils-DebounceTimer-" + name, true);
 		this.debounce = debounce;
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			Runnable runnable;
+			synchronized (this) {
+				runnable = activeRunnable;
+				activeRunnable = null;
+			}
+
+			if (runnable != null)
+				runnable.run();
+		}));
 	}
 
 	public void schedule(Runnable runnable) {
-		long scheduleTime = lastScheduleTime = System.currentTimeMillis();
+		synchronized (this) {
+			activeRunnable = runnable;
+		}
 
 		try {
 			timer.schedule(new TimerTask() {
 				@Override
 				public void run() {
-					if (lastScheduleTime == scheduleTime)
-						runnable.run();
+					synchronized (this) {
+						if (activeRunnable == runnable)
+							return;
+
+						activeRunnable = null;
+					}
+					runnable.run();
 				}
 			}, debounce);
 		} catch (IllegalStateException ignored) {

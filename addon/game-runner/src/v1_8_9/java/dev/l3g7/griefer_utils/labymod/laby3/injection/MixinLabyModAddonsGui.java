@@ -44,7 +44,8 @@ public class MixinLabyModAddonsGui {
 		if (button != buttonBack
 			|| path.size() > 1
 			|| openedAddonSettings == null
-			|| !openedAddonSettings.getAddonInfo().getImageURL().equals("griefer_utils_icon"))
+			|| openedAddonSettings.getAddonInfo() == null
+			|| !"griefer_utils_icon".equals(openedAddonSettings.getAddonInfo().getImageURL()))
 			return;
 
 		MainPage.filter.set(path.isEmpty() ? "" : MainPage.filter.get());

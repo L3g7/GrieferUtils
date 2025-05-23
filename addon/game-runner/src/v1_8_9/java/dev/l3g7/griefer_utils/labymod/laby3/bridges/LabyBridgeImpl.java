@@ -139,7 +139,11 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void copyText(String text) {
 		StringSelection sel = new StringSelection(text);
-		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
+		try {
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
+		} catch (HeadlessException e) {
+			notifyError("Keine Zwischenablage verfügbar!");
+		}
 	}
 
 	@Override

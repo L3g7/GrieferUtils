@@ -33,15 +33,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public abstract class Feature implements Disableable {
 
 	// Name to setting
-	private static final Map<String, SwitchSetting> categories = new HashMap<>();
+	private static final Map<String, CategoryData> categories = new HashMap<>();
 
-	private final SwitchSetting category = findCategory(getClass().getPackage());
+	private final CategoryData category = findCategory(getClass().getPackage());
 	private BaseSetting<?> mainElement;
 	private String configKey;
 
-	private SwitchSetting findCategory(Package pkg) {
+	private CategoryData findCategory(Package pkg) {
 		if (pkg == null)
-			return categories.computeIfAbsent(null, p -> SwitchSetting.create().defaultValue(true));
+			return null;
 
 		if (pkg.isAnnotationPresent(Category.class)) {
 			Category meta = pkg.getAnnotation(Category.class);
@@ -53,8 +53,7 @@ public abstract class Feature implements Disableable {
 						.defaultValue(true)
 						.subSettings(); // creates a header
 
-					category.getStorage().configKeySupplierTEMP = v -> meta.configKey();
-					return category;
+					return new CategoryData(category, meta.configKey());
 				}
 			);
 		}
@@ -66,7 +65,7 @@ public abstract class Feature implements Disableable {
 	 * Initialises the main element and config key.
 	 */
 	public void init() {
-		MainElementData data = SettingLoader.initMainElement(this, category.configKey());
+		MainElementData data = SettingLoader.initMainElement(this, category == null ? null : category.configKey);
 		mainElement = data.mainElement;
 		configKey = data.configKey;
 	}
@@ -75,7 +74,8 @@ public abstract class Feature implements Disableable {
 	 * Must happen after initialization for sorting using the main element.
 	 */
 	public void addToCategory() {
-		category.addSetting(mainElement);
+		if (category != null)
+			category.setting.addSetting(mainElement);
 	}
 
 	public BaseSetting<?> getMainElement() {
@@ -83,7 +83,7 @@ public abstract class Feature implements Disableable {
 	}
 
 	public SwitchSetting getCategory() {
-		return category;
+		return category.setting;
 	}
 
 	public String getConfigKey() {
@@ -94,7 +94,7 @@ public abstract class Feature implements Disableable {
 	 * Checks if the parent category and the feature itself is enabled.
 	 */
 	public boolean isEnabled() {
-		if (!category.get())
+		if (category != null && !category.setting.get())
 			return false;
 
 		if (mainElement instanceof SwitchSetting)
@@ -108,11 +108,14 @@ public abstract class Feature implements Disableable {
 		return categories.entrySet().stream()
 			.filter(e -> e.getKey() != null)
 			.map(Map.Entry::getValue)
+			.map(c -> c.setting)
 			.collect(Collectors.toList());
 	}
 
 	public static List<BaseSetting<?>> getUncategorized() {
-		return categories.computeIfAbsent(null, p -> SwitchSetting.create()).getChildSettings();
+		return getFeatures().filter(f -> f.category == null)
+			.map(f -> f.mainElement)
+			.collect(Collectors.toList());
 	}
 
 	public static Stream<Feature> getFeatures() {
@@ -144,5 +147,17 @@ public abstract class Feature implements Disableable {
 	@Retention(RUNTIME)
 	@Target(TYPE)
 	public @interface FeatureCategory {}
+
+	private static final class CategoryData {
+
+		public final SwitchSetting setting;
+		public final String configKey;
+
+		private CategoryData(SwitchSetting setting, String configKey) {
+			this.setting = setting;
+			this.configKey = configKey;
+		}
+
+	}
 
 }

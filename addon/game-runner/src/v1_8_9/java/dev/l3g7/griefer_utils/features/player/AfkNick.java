@@ -66,7 +66,7 @@ public class AfkNick extends Feature {
 		.description("Nach wie vielen Sekunden du als AFK eingestuft werden sollst.")
 		.icon(Items.clock);
 
-	private final StringSetting messageReplay = StringSetting.create()
+	private final StringSetting messageReply = StringSetting.create()
 		.name("Nachricht-\nbeantworter")
 		.description("Mit welcher Nachricht geantwortet wird, wenn dir jemand eine /msg schreibt, während du AFK bist."
 			+ "\n(Leerlassen zum deaktivieren)")
@@ -77,7 +77,7 @@ public class AfkNick extends Feature {
 		.name("Automatisch nicken wenn AFK")
 		.description("Nickt dich, wenn du eine bestimmte, einstellbare Zeit AFK bist.")
 		.icon("labymod_3/afk_timer")
-		.subSettings(nickName, messageReplay, triggerAfk, HeaderSetting.create(), minutes, seconds);
+		.subSettings(nickName, messageReply, triggerAfk, HeaderSetting.create(), minutes, seconds);
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onKeyboardInput(KeyInputEvent event) {
@@ -99,7 +99,7 @@ public class AfkNick extends Feature {
 
 	@EventListener
 	private void onMsg(MessageReceiveEvent event) {
-		if (!isAFK || messageReplay.get().isEmpty())
+		if (!isAFK || messageReply.get().isEmpty())
 			return;
 
 		Matcher matcher = Constants.MESSAGE_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
@@ -112,7 +112,7 @@ public class AfkNick extends Feature {
 		if (realName != null && realName.replaceAll("§.", "").equals(name()))
 			return;
 
-		send("/msg " + (realName == null ? nick : realName) + " " + messageReplay.get());
+		send("/msg " + (realName == null ? nick : realName) + " " + messageReply.get());
 	}
 
 	@EventListener

@@ -111,6 +111,7 @@ public class Config {
 		if (config == null) {
 			if (!configFile.exists()) {
 				config = new JsonObject();
+				new ConfigPatcher(config).patch();
 				return config;
 			}
 

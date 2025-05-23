@@ -31,7 +31,8 @@ public class Config {
 			return false;
 
 		String[] parts = path.split("\\.");
-		return getPath(parts).has(last(parts));
+		JsonObject obj = getPath(parts, false);
+		return obj != null && obj.has(last(parts));
 	}
 
 	/**
@@ -39,7 +40,7 @@ public class Config {
 	 */
 	public static JsonElement get(String path) {
 		String[] parts = path.split("\\.");
-		return getPath(parts).get(last(parts));
+		return getPath(parts, true).get(last(parts));
 	}
 
 	/**
@@ -47,17 +48,34 @@ public class Config {
 	 */
 	public static void set(String path, JsonElement val) {
 		String[] parts = path.split("\\.");
-		getPath(parts).add(last(parts), val);
+		getPath(parts, true).add(last(parts), val);
+	}
+
+	/**
+	 * Removes the json element at the given path.
+	 */
+	public static void unset(String path) {
+		String[] parts = path.split("\\.");
+		JsonObject obj = getPath(parts, false);
+		if (obj != null) {
+			obj.remove(last(parts));
+			if (parts.length > 1 && obj.entrySet().isEmpty())
+				unset(path.substring(0, path.length() - last(parts).length() - 1));
+		}
 	}
 
 	/**
 	 * @return the parent object of the given path.
 	 */
-	private static JsonObject getPath(String[] parts) {
+	private static JsonObject getPath(String[] parts, boolean initialize) {
 		JsonObject o = get();
 		for (int i = 0; i < parts.length - 1; i++) {
-			if (!o.has(parts[i]) || !(o.get(parts[i]).isJsonObject()))
-				o.add(parts[i], new JsonObject());
+			if (!o.has(parts[i]) || !(o.get(parts[i]).isJsonObject())) {
+				if (initialize)
+					o.add(parts[i], new JsonObject());
+				else
+					return null;
+			}
 			o = o.get(parts[i]).getAsJsonObject();
 		}
 		return o;

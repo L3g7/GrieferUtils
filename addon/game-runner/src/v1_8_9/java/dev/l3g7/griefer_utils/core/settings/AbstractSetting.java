@@ -126,7 +126,10 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		Storage<V> s = getStorage();
 
 		if (s.configKey != null) {
-			Config.set(s.configKey, s.encodeFunc.apply(get()));
+			if (s.fallbackValue != null && s.fallbackValue.equals(get()))
+				Config.unset(s.configKey);
+			else
+				Config.set(s.configKey, s.encodeFunc.apply(get()));
 			Config.save();
 		}
 

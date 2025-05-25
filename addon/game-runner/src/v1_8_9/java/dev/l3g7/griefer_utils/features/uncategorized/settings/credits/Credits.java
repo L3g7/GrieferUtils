@@ -27,7 +27,7 @@ public class Credits {
 		.description("Das Team hinter GrieferUtils, sowie Copyright und Lizenzen.")
 		.subSettings(
 			HeaderSetting.create().entryHeight(5),
-			creditsBridge.createIconSetting("Lizensiert unter Apache License 2.0", "scroll"),
+			creditsBridge.createIconSetting("Lizensiert unter Apache License 2.0", "../scroll"),
 			HeaderSetting.create().entryHeight(11),
 
 			HeaderSetting.create("Entwickler"),

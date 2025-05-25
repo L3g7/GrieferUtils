@@ -14,6 +14,7 @@ import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.Init;
+import dev.l3g7.griefer_utils.post_processor.processors.build.AssetsChecker;
 import dev.l3g7.griefer_utils.post_processor.processors.build.RefmapConverter;
 
 import java.io.*;
@@ -62,6 +63,7 @@ public class BuildPostProcessor {
 			mergeAddonJson();
 			processBootstrapClasses();
 			RefmapConverter.convertRefmap(fs);
+			AssetsChecker.validateAssets(fs);
 			cleanup();
 		}
 	}

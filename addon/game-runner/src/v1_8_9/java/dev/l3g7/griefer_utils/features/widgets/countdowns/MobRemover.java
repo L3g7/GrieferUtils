@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
+import dev.l3g7.griefer_utils.core.misc.Countdown;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -49,11 +49,11 @@ public class MobRemover extends SimpleWidget {
 		.icon("skull_crossed_out")
 		.subSettings(timeFormat, warnTime);
 
-	private TPSCountdown countdown = null;
+	private final Countdown countdown = Countdown.ticking();
 
 	@Override
 	public String getValue() {
-		if (countdown == null || countdown.isExpired())
+		if (countdown.isExpired())
 			return "Unbekannt";
 
 		// Warn if mob remover is less than the set amount of seconds away
@@ -63,16 +63,16 @@ public class MobRemover extends SimpleWidget {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerSwitchEvent p) {
-		countdown = null;
+		countdown.destroy();
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = MOB_REMOVER_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())
-			countdown = TPSCountdown.replaceFromMins(countdown, Integer.parseInt(matcher.group("minutes")));
+			countdown.set(60 * Integer.parseInt(matcher.group("minutes")));
 		else if (event.message.getFormattedText().matches("^§r§8\\[§r§6MobRemover§r§8] §r§7Es wurden (?:§r§\\d+§r§7|keine) Tiere entfernt\\.§r$"))
-			countdown = TPSCountdown.replaceFromMins(countdown, 15);
+			countdown.set(60 * 15);
 		else
 			return;
 
@@ -89,7 +89,7 @@ public class MobRemover extends SimpleWidget {
 
 		GUServer.getMobRemoverData(event.citybuild).thenAccept(end -> {
 			if (end != null)
-				countdown = TPSCountdown.replaceFromEnd(countdown, end);
+				countdown.setEnd(end);
 		});
 	}
 

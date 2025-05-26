@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
-import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
+import dev.l3g7.griefer_utils.core.misc.Countdown;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -127,15 +127,15 @@ public class Booster extends Widget {
 			String name = m.group("name");
 
 			BoosterData booster = boosters.get(name);
-			Queue<TPSCountdown> dates = booster.expirationDates;
+			Queue<Countdown> dates = booster.expirationDates;
 
 			if (booster.stackable) {
-				dates.add(TPSCountdown.replaceFromMins(null, 15));
+				dates.add(Countdown.ticking().set(15 * 60));
 				return;
 			}
 
 			if (dates.isEmpty())
-				dates.add(TPSCountdown.replaceFromMins(null, 15));
+				dates.add(Countdown.ticking().set(15 * 60));
 			else
 				dates.peek().addMinutes(15);
 
@@ -152,7 +152,8 @@ public class Booster extends Widget {
 
 		String name = m.group("name");
 		String durations = m.group("durations");
-		Queue<TPSCountdown> expirationDates = boosters.get(name).expirationDates;
+		Queue<Countdown> expirationDates = boosters.get(name).expirationDates;
+		expirationDates.forEach(Countdown::destroy);
 		expirationDates.clear();
 
 		if (durations == null)
@@ -163,7 +164,7 @@ public class Booster extends Widget {
 			int min = Integer.parseInt(m.group(1));
 			int sek = Integer.parseInt(m.group(2));
 
-			expirationDates.add(TPSCountdown.replaceFromSeconds(null, min * 60 + sek));
+			expirationDates.add(Countdown.ticking().set(min * 60 + sek));
 		}
 
 	}
@@ -182,7 +183,7 @@ public class Booster extends Widget {
 
 		final String displayName;
 		final boolean stackable;
-		final Queue<TPSCountdown> expirationDates = new ConcurrentLinkedQueue<>();
+		final Queue<Countdown> expirationDates = new ConcurrentLinkedQueue<>();
 
 		public BoosterData(String displayName, boolean stackable) {
 			this.displayName = displayName;
@@ -314,7 +315,7 @@ public class Booster extends Widget {
 
 		private String getFormattedTime(BoosterData data) {
 			return Util.formatTimeSeconds(data.expirationDates.stream()
-				.mapToLong(TPSCountdown::secondsRemaining)
+				.mapToLong(Countdown::secondsRemaining)
 				.min().orElse(0));
 		}
 
@@ -405,7 +406,7 @@ public class Booster extends Widget {
 				} else {
 					line.setState(VISIBLE);
 					line.updateAndFlush(Util.formatTimeSeconds(data.expirationDates.stream()
-						.mapToLong(TPSCountdown::secondsRemaining)
+						.mapToLong(Countdown::secondsRemaining)
 						.min().orElse(0)));
 				}
 

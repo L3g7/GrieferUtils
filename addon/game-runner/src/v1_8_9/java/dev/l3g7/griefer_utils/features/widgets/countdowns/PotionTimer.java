@@ -17,8 +17,8 @@ import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.core.misc.Countdown;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
-import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -40,9 +40,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -62,8 +60,8 @@ public class PotionTimer extends Widget {
 	private static final Pattern END_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§7Bis: §r§e(?<end>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})§r");
 
 	private final Map<String, PotionData> potions = ImmutableMap.of(
-			"break_potion", new PotionData("Break"),
-			"fly_potion", new PotionData("Fly")
+			"break_potion", new PotionData("Break", Countdown.ticking()),
+			"fly_potion", new PotionData("Fly", Countdown.ticking())
 	);
 
 	private final DropDownSetting<KeyMode> design = DropDownSetting.create(KeyMode.class)
@@ -91,7 +89,7 @@ public class PotionTimer extends Widget {
 
 	private void checkFlyWarning() {
 		// Warn if the fly potion end is less than the set amount of seconds away
-		TPSCountdown flyPotion = potions.get("fly_potion").countdown;
+		Countdown flyPotion = potions.get("fly_potion").countdown;
 		if (flyPotion != null)
 			flyPotion.checkWarning("Fly Trank", warnTime.get());
 	}
@@ -104,7 +102,7 @@ public class PotionTimer extends Widget {
 
 		String end = matcher.group("end");
 		try {
-			potions.get("fly_potion").countdown = TPSCountdown.replaceFromEnd(potions.get("fly_potion").countdown, DATE_FORMAT.parse(end).getTime());
+			potions.get("fly_potion").countdown.setEnd(DATE_FORMAT.parse(end).getTime());
 		} catch (ParseException e) {
 			BugReporter.reportError(new Throwable("Error while parsing fly potion end from " + event.message.getFormattedText(), e));
 		}
@@ -125,7 +123,7 @@ public class PotionTimer extends Widget {
 		NBTTagCompound tag = heldItem.getTagCompound();
 		for (Map.Entry<String, PotionData> entry : potions.entrySet()) {
 			if (tag.hasKey(entry.getKey())) {
-				entry.getValue().countdown = TPSCountdown.replaceFromMins(entry.getValue().countdown, 15);
+				entry.getValue().countdown.set(15 * 60);
 				break;
 			}
 		}
@@ -144,10 +142,11 @@ public class PotionTimer extends Widget {
 	private static class PotionData {
 
 		private final String displayName;
-		private TPSCountdown countdown = null;
+		private final Countdown countdown;
 
-		public PotionData(String displayName) {
+		public PotionData(String displayName, Countdown countdown) {
 			this.displayName = displayName;
+			this.countdown = countdown;
 		}
 
 	}

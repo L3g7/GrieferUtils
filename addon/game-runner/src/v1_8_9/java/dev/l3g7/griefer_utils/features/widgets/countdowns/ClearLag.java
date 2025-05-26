@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
+import dev.l3g7.griefer_utils.core.misc.Countdown;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -56,11 +56,11 @@ public class ClearLag extends SimpleWidget {
 		.icon("gold_ingot_crossed_out")
 		.subSettings(timeFormat, warnTime, preventDrop);
 
-	private TPSCountdown countdown = null;
+	private final Countdown countdown = Countdown.ticking();
 
 	@Override
 	public String getValue() {
-		if (countdown == null || countdown.isExpired())
+		if (countdown.isExpired())
 			return "Unbekannt";
 
 		// Warn if clearlag is less than the set amount of seconds away
@@ -70,7 +70,7 @@ public class ClearLag extends SimpleWidget {
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onServerSwitch(ServerSwitchEvent event) {
-		countdown = null;
+		countdown.destroy();
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -80,12 +80,12 @@ public class ClearLag extends SimpleWidget {
 
 		JsonObject countdown = event.payload.getAsJsonObject();
 		if (countdown.get("name").getAsString().equals("ClearLag"))
-			this.countdown = TPSCountdown.replaceFromSeconds(this.countdown, (int) TimeUnit.SECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString())));
+			this.countdown.set((int) TimeUnit.SECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString())));
 	}
 
 	@EventListener
 	private void onWindowClick(WindowClickEvent event) {
-		if (countdown == null || event.mode != 4 || !preventDrop.get())
+		if (countdown.isExpired() || event.mode != 4 || !preventDrop.get())
 			return;
 
 		long remainingSeconds = countdown.secondsRemaining();
@@ -95,7 +95,7 @@ public class ClearLag extends SimpleWidget {
 
 	@EventListener
 	private void onPacketDigging(PacketSendEvent<C07PacketPlayerDigging> event) {
-		if (countdown == null || !preventDrop.get() || (event.packet.getStatus() != DROP_ITEM && event.packet.getStatus() != DROP_ALL_ITEMS))
+		if (countdown.isExpired() || !preventDrop.get() || (event.packet.getStatus() != DROP_ITEM && event.packet.getStatus() != DROP_ALL_ITEMS))
 			return;
 
 		long remainingSeconds = countdown.secondsRemaining();

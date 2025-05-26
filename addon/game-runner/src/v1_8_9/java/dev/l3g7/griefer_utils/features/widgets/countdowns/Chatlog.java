@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.core.misc.TPSCountdown;
+import dev.l3g7.griefer_utils.core.misc.Countdown;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
@@ -45,16 +45,16 @@ public class Chatlog extends SimpleWidget {
 		.icon(Items.clock)
 		.subSettings(timeFormat, hide);
 
-	private TPSCountdown countdown = null;
+	private final Countdown countdown = Countdown.ticking();
 
 	@Override
 	public String getValue() {
-		return Util.formatTimeSeconds(countdown == null ? 0 : countdown.secondsRemaining(), timeFormat.get() == TimeFormat.SHORT);
+		return Util.formatTimeSeconds(countdown.secondsRemaining(), timeFormat.get() == TimeFormat.SHORT);
 	}
 
 	@Override
 	public boolean isVisibleInGame() {
-		return !hide.get() || (countdown != null && !countdown.isExpired());
+		return !hide.get() || !countdown.isExpired();
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -72,7 +72,7 @@ public class Chatlog extends SimpleWidget {
 		String msg = event.message.getUnformattedText();
 
 		if (msg.startsWith("[Chat-Log] Der Chat-Log wurde erfolgreich gespeichert: ") || msg.equals("------------ Chat-Log-Hilfe ------------")) {
-			countdown = TPSCountdown.replaceFromSeconds(countdown, 30);
+			countdown.set(30);
 			sentCmd = false;
 		}
 	}

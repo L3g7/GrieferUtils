@@ -137,10 +137,16 @@ public class ItemUtil {
 
 		NBTTagCompound newCompound = null;
 
+		long start = System.currentTimeMillis();
+
 		do {
 			try {
 				newCompound = (NBTTagCompound) tag.copy();
 			} catch (ConcurrentModificationException ignored) {}
+			catch (NullPointerException e) {
+				if (System.currentTimeMillis() - start >= 1000)
+					throw new RuntimeException("NPE while safe copying " + tag);
+			}
 		} while (newCompound == null);
 
 		return newCompound;

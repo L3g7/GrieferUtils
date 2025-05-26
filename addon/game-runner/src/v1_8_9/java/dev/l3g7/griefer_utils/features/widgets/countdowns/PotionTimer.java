@@ -61,7 +61,7 @@ public class PotionTimer extends Widget {
 
 	private final Map<String, PotionData> potions = ImmutableMap.of(
 			"break_potion", new PotionData("Break", Countdown.ticking()),
-			"fly_potion", new PotionData("Fly", Countdown.ticking())
+			"fly_potion", new PotionData("Fly", Countdown.realtime())
 	);
 
 	private final DropDownSetting<KeyMode> design = DropDownSetting.create(KeyMode.class)

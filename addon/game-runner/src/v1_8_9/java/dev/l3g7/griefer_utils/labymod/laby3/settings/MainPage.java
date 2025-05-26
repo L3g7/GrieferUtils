@@ -146,9 +146,10 @@ public class MainPage {
 						if (!(mc().currentScreen instanceof LabyModAddonsGui))
 							return;
 
-						GrieferUtilsGroup.icon = GrieferUtilsGroup.icon.equals("icon") ? filter.get() : "icon";
+						boolean activate = GrieferUtilsGroup.icon.equals("icon");
+						GrieferUtilsGroup.icon = activate ? filter.get() : "icon";
 						filter.set("");
-						labyBridge.notify("§aEaster Egg", "Easter Egg wurde umgeschalten.");
+						labyBridge.notify("§aEaster Egg", "Easter Egg wurde " + (!activate ? "de" : "") + "aktiviert.");
 						if (world() != null)
 							mc().displayGuiScreen(null);
 

@@ -30,10 +30,12 @@ public class LatePostProcessor implements IClassTransformer {
 		new SuperclassRemapper()
 	);
 
+	private String transformedClass;
+
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] classBytes) {
-		String fileName = transformedName.replace('.', '/').concat(".class");
-		if (!fileName.startsWith("dev/l3g7/griefer_utils/"))
+		transformedClass = transformedName.replace('.', '/');
+		if (!transformedClass.startsWith("dev/l3g7/griefer_utils/"))
 			return classBytes;
 
 		ClassNode classNode = new ClassNode();
@@ -76,9 +78,17 @@ public class LatePostProcessor implements IClassTransformer {
 	 * loaded by the parent ClassLoader of the one loading this addon, it wouldn't find the classes
 	 * defined by its child ClassLoader and getCommonSuperClass calls would fail.
 	 */
-	protected static class BoundClassWriter extends ClassWriter {
+	protected class BoundClassWriter extends ClassWriter {
 		public BoundClassWriter() {
 			super(COMPUTE_MAXS | COMPUTE_FRAMES);
+		}
+
+		@Override
+		protected String getCommonSuperClass(String type1, String type2) {
+			if (type1.equals(transformedClass) || type2.equals(transformedClass))
+				return "java/lang/Object";
+
+			return super.getCommonSuperClass(type1, type2);
 		}
 	}
 

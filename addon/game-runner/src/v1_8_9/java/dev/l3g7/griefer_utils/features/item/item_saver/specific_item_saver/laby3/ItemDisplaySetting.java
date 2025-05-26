@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
+import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

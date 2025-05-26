@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
-import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.settings.elements.StringElement;
 import net.labymod.utils.Consumer;
@@ -73,10 +73,10 @@ public class StringSettingImpl extends StringElement implements Laby3Setting<Str
 		if (mc.currentScreen instanceof ExpandedStringElementGui)
 			return;
 
-		if (!(mc().currentScreen instanceof TempAddonsGuiWithCustomBackButton))
-			mc().displayGuiScreen(new TempAddonsGuiWithCustomBackButton(null));
+		if (!(mc().currentScreen instanceof AddonsGuiWithCustomBackButton))
+			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(null));
 
-		((TempAddonsGuiWithCustomBackButton) mc().currentScreen).addCheck(closeCheck);
+		((AddonsGuiWithCustomBackButton) mc().currentScreen).addCheck(closeCheck);
 	}
 
 	@Override

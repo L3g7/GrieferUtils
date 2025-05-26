@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton.path;
+import static dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton.path;
 
 @Singleton
 public class AfkNick extends Feature {

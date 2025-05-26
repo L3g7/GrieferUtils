@@ -20,7 +20,7 @@ import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
@@ -241,7 +241,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 
 		@Override
 		protected void openSettings() {
-			mc().displayGuiScreen(new TempAddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, mainSetting));
+			mc().displayGuiScreen(new AddonsGuiWithCustomBackButton(RecraftBridgeImpl::save, mainSetting));
 		}
 
 		@Override

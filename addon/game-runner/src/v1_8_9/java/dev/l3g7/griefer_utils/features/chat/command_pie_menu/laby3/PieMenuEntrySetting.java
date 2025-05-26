@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu.laby3;
 
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -60,7 +60,7 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 		defaultName = name.get();
 		defaultCommand = command.get();
 		defaultCitybuild = citybuild.get();
-		mc.displayGuiScreen(new TempAddonsGuiWithCustomBackButton(() -> {
+		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
 			if (!name.get().isEmpty() && !command.get().isEmpty() && citybuild.get() != null) {
 				onChange();
 				return;

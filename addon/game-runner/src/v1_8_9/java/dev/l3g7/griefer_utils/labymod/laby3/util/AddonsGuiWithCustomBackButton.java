@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.labymod.laby3.temp;
+package dev.l3g7.griefer_utils.labymod.laby3.util;
 
 import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
@@ -23,20 +23,20 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-public class TempAddonsGuiWithCustomBackButton extends LabyModAddonsGui {
+public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 
 	private final HashSet<Supplier<Boolean>> closeChecks = new HashSet<>();
 	private final GuiScreen previousScreen = mc().currentScreen;
 	private final int startPathSize;
 
-	public TempAddonsGuiWithCustomBackButton(Runnable onBack, SettingsElement element) {
+	public AddonsGuiWithCustomBackButton(Runnable onBack, SettingsElement element) {
 		this(element);
 		addCheck(() -> { onBack.run(); return true; });
 	}
 
 	public static ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }
 
-	public TempAddonsGuiWithCustomBackButton(SettingsElement element) {
+	public AddonsGuiWithCustomBackButton(SettingsElement element) {
 		List<SettingsElement> path = new ArrayList<>(path());
 		if (element != null)
 			path.add(element);
@@ -50,7 +50,7 @@ public class TempAddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 		Reflection.set(previousScreen, "path", previousPath);
 
 
-		AddonElement openAddon = Reflection.get(mc().currentScreen, "openedAddonSettings");
+		AddonElement openAddon = Reflection.get(mc.currentScreen, "openedAddonSettings");
 		Reflection.set(this, "openedAddonSettings", openAddon);
 	}
 
@@ -116,10 +116,13 @@ public class TempAddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 		Tabs.getTabUpdateListener().add(m -> {
 
 			Class<? extends GuiScreen>[] addonTabs = m.get("tab_addons");
+			if (addonTabs == null)
+				return;
+
 			Class<? extends GuiScreen>[] newAddonTabs = new Class[addonTabs.length + 1];
 
 			System.arraycopy(addonTabs, 0, newAddonTabs, 0, addonTabs.length);
-			newAddonTabs[newAddonTabs.length - 1] = TempAddonsGuiWithCustomBackButton.class;
+			newAddonTabs[newAddonTabs.length - 1] = AddonsGuiWithCustomBackButton.class;
 			m.put("tab_addons", newAddonTabs);
 		});
 	}

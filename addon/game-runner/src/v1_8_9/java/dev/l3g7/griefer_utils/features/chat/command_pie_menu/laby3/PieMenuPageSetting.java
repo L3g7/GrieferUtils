@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.labymod.laby3.temp.TempAddonsGuiWithCustomBackButton;
+import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.labymod.laby3.temp.TempEntryAddSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -64,7 +64,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 
 	public void openSettings() {
 		defaultName = name.get();
-		mc.displayGuiScreen(new TempAddonsGuiWithCustomBackButton(() -> {
+		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
 			if (!name.get().isEmpty()) {
 				onChange();
 				return;

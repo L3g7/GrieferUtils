@@ -5,13 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.labymod.laby4.temp;
+package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.labymod.laby4.bridges.LabyBridgeImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
 import net.labymod.api.client.gui.screen.widget.AbstractWidget;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -26,7 +25,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 @ExclusiveTo(LABY_4)
-public class TempSettingActivityInitEvent extends Event { // NOTE: use SettingWidgetInitializeEvent?
+public class SettingActivityInitEvent extends Event { // NOTE: use SettingWidgetInitializeEvent?
 
 	private static Setting lastHolder;
 
@@ -34,7 +33,7 @@ public class TempSettingActivityInitEvent extends Event { // NOTE: use SettingWi
 	public final FlexibleContentWidget container;
 	public final boolean isReload;
 
-	private TempSettingActivityInitEvent(SettingContentActivity activity, FlexibleContentWidget container) {
+	private SettingActivityInitEvent(SettingContentActivity activity, FlexibleContentWidget container) {
 		this.activity = activity;
 		this.container = container;
 		this.isReload = lastHolder == holder();
@@ -69,7 +68,7 @@ public class TempSettingActivityInitEvent extends Event { // NOTE: use SettingWi
 			SettingContentActivity activity = (SettingContentActivity) event.parentScreen().currentScreen().unwrap();
 
 			// Intercept children#add call at end of initialization
-			SettingsImpl.hookChildAdd(activity.document(), e -> new TempSettingActivityInitEvent(activity, c(e)).fire());
+			SettingsImpl.hookChildAdd(activity.document(), e -> new SettingActivityInitEvent(activity, c(e)).fire());
 		});
 	}
 

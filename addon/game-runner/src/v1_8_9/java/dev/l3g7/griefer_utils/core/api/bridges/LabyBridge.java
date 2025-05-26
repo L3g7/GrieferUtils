@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import net.minecraft.util.IChatComponent;
 
 import java.io.File;
 import java.util.UUID;
@@ -87,7 +88,7 @@ public interface LabyBridge {
 
 	void onMessageSend(Predicate<String> callback);
 
-	void onMessageModify(BiFunction<Object, Object, Object> callback);
+	void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback);
 
 	// Specific methods
 

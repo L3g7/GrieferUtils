@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
-import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
@@ -135,7 +135,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 	}
 
 	@EventListener
-	private void onInit(TempSettingActivityInitEvent event) {
+	private void onInit(SettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 
@@ -249,7 +249,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 		}
 
 		@EventListener
-		private void onInit(TempSettingActivityInitEvent event) {
+		private void onInit(SettingActivityInitEvent event) {
 			if (event.holder() != this)
 				return;
 

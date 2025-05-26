@@ -29,6 +29,7 @@ import net.labymod.api.events.MessageSendEvent;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.JsonParse;
+import net.minecraft.util.IChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -161,11 +162,9 @@ public class LabyBridgeImpl implements LabyBridge {
 		LabyMod.getInstance().getEventManager().register(callback::test);
 	}
 
-	public BiFunction<Object, Object, Object> messageModifyConsumer;
-
 	@Override
-	public void onMessageModify(BiFunction<Object, Object, Object> callback) {
-		messageModifyConsumer = callback; // TODO
+	public void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback) {
+		Laby3MessageModifyHandler.callbacks.add(callback);
 	}
 
 	@Override

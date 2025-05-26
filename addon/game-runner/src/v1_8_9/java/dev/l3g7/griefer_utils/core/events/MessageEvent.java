@@ -29,7 +29,6 @@ public class MessageEvent extends Event {
 
 		public final IChatComponent original;
 		public IChatComponent message;
-		private boolean modified = false;
 
 		public MessageModifyEvent(IChatComponent original, IChatComponent message) {
 			this.original = original;
@@ -39,10 +38,7 @@ public class MessageEvent extends Event {
 		@OnEnable
 		private static void register() {
 			LabyBridge.labyBridge.onMessageModify((prevMsg, newMsg) -> {
-				MessageModifyEvent msg = new MessageModifyEvent(
-					(IChatComponent) prevMsg,
-					(IChatComponent) newMsg
-				);
+				MessageModifyEvent msg = new MessageModifyEvent(prevMsg, newMsg);
 				msg.fire();
 				return msg.message;
 			});
@@ -50,7 +46,6 @@ public class MessageEvent extends Event {
 
 		public void setMessage(IChatComponent message) {
 			this.message = message;
-			modified = true;
 		}
 
 	}

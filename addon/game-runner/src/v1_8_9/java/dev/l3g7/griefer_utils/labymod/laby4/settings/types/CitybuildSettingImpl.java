@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -110,7 +110,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 	}
 
 	@EventListener
-	private void onInit(TempSettingActivityInitEvent event) {
+	private void onInit(SettingActivityInitEvent event) {
 		activity = null;
 		if (event.holder() != parent)
 			return;

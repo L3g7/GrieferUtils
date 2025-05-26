@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -379,7 +379,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 		}
 
 		@EventListener
-		private void onInit(TempSettingActivityInitEvent event) {
+		private void onInit(SettingActivityInitEvent event) {
 			if (event.holder() != this)
 				return;
 

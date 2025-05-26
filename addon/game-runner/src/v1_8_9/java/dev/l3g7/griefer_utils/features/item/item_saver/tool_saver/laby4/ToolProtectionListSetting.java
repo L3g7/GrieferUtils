@@ -13,7 +13,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
@@ -139,7 +139,7 @@ public class ToolProtectionListSetting extends ListSetting implements Laby4Setti
 	}
 
 	@EventListener
-	private void onInit(TempSettingActivityInitEvent event) {
+	private void onInit(SettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 

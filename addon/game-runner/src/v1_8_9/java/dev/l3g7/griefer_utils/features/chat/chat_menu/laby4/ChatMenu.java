@@ -23,7 +23,7 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -219,7 +219,7 @@ public class ChatMenu extends Feature {
 	 * Ensures newEntrySetting is always the last child.
 	 */
 	@EventListener(triggerWhenDisabled = true)
-	private void onInit(TempSettingActivityInitEvent event) {
+	private void onInit(SettingActivityInitEvent event) {
 		if (event.holder() != enabled)
 			return;
 

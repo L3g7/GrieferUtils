@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
@@ -68,7 +67,7 @@ public class MainPage {
 	}
 
 	@EventListener
-	private static void onWidget(TempSettingActivityInitEvent event) {
+	private static void onWidget(SettingActivityInitEvent event) {
 		if (!(Laby4Util.getActivity() instanceof NavigationActivity n))
 			return;
 

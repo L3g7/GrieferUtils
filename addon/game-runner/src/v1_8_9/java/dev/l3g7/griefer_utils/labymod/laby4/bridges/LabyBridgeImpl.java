@@ -47,6 +47,7 @@ import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.
 import net.labymod.core.main.LabyMod;
 import net.labymod.v1_8_9.client.player.VersionedNetworkPlayerInfo;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.util.IChatComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -171,9 +172,9 @@ public class LabyBridgeImpl implements LabyBridge {
 	}
 
 	@Override
-	public void onMessageModify(BiFunction<Object, Object, Object> callback) {
+	public void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback) {
 		register(ChatReceiveEvent.class, v -> {
-			Object newMsg = callback.apply(v.message(), v.message());
+			Object newMsg = callback.apply((IChatComponent) v.message(), (IChatComponent) v.message());
 			if (newMsg != null)
 				v.setMessage((Component) newMsg);
 		});

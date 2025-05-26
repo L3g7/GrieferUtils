@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.*;
-import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
@@ -153,7 +153,7 @@ public class ItemValueListSetting extends ListSetting implements Laby4Setting<It
 	}
 
 	@EventListener
-	private void onInit(TempSettingActivityInitEvent event) {
+	private void onInit(SettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
 

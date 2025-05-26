@@ -5,10 +5,9 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.labymod.laby3.temp;
+package dev.l3g7.griefer_utils.labymod.laby3.bridges;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.labymod.laby3.bridges.LabyBridgeImpl;
 import net.labymod.utils.manager.TagManager;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.server.S02PacketChat;
@@ -21,14 +20,28 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
+/**
+ * Handles firing of MessageModifyEvents.
+ */
 @ExclusiveTo(LABY_3)
-public class TempMessageModifyHandler {
+public class Laby3MessageModifyHandler {
+
+	static final List<BiFunction<IChatComponent, IChatComponent, IChatComponent>> callbacks = new ArrayList<>();
+
+	private static IChatComponent runCallbacks(IChatComponent original, IChatComponent modified) {
+		for (BiFunction<IChatComponent, IChatComponent, IChatComponent> callback : callbacks)
+			modified = callback.apply(original, modified);
+
+		return modified;
+	}
 
 	private static final LinkedHashMap<ComponentHash, IChatComponent> unmodifiedChatComponents = new LinkedHashMap<>() {
 		protected boolean removeEldestEntry(Map.Entry<ComponentHash, IChatComponent> eldest) {
@@ -51,8 +64,7 @@ public class TempMessageModifyHandler {
 		@Inject(method = "tagComponent", at = @At("RETURN"), cancellable = true)
 		private static void injectTagComponent(Object chatComponent, CallbackInfoReturnable<Object> cir) {
 			IChatComponent original = unmodifiedChatComponents.remove(new ComponentHash(grieferUtils$currentComponent));
-			cir.setReturnValue(((LabyBridgeImpl) labyBridge).messageModifyConsumer
-				.apply(original == null ? chatComponent : original, cir.getReturnValue()));
+			cir.setReturnValue(runCallbacks(original == null ? (IChatComponent) chatComponent : original, (IChatComponent) cir.getReturnValue()));
 		}
 
 	}

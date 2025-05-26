@@ -8,32 +8,46 @@
 package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
+import net.labymod.api.client.gui.screen.widget.widgets.input.TextFieldWidget;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.RootSettingRegistry;
 import net.labymod.api.configuration.settings.type.SettingElement;
+import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.AbstractSidebarActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModActivity;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.misc.badges.laby4.GrieferUtilsGroup.icon;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 @ExclusiveTo(LABY_4)
 public class MainPage {
+
+	private static Timer timer = new Timer();
+	private static final Set<TextFieldWidget> injectedWidgets = new HashSet<>();
 
 	@OnEnable
 	public static void registerSettings() {
@@ -51,6 +65,48 @@ public class MainPage {
 				b.create(registry);
 		});
 		registry.addSettings(Reflection.<List<Setting>>c(settings));
+	}
+
+	@EventListener
+	private static void onWidget(TempSettingActivityInitEvent event) {
+		if (!(Laby4Util.getActivity() instanceof NavigationActivity n))
+			return;
+
+		LabyModActivity lm = (LabyModActivity) n.mostInnerScreenInstance();
+		AbstractSidebarActivity settingsActivity = (AbstractSidebarActivity) lm.getById("settings").provideScreen();
+		TextFieldWidget searchWidget = Reflection.get(settingsActivity, "searchWidget");
+
+		if (!injectedWidgets.add(searchWidget))
+			return;
+
+		Consumer<String> previousListener = Reflection.get(searchWidget, "updateListener");
+		searchWidget.updateListener(previousListener.andThen(s -> {
+			try {
+				MessageDigest digest = MessageDigest.getInstance("SHA-256");
+				byte[] bytes = digest.digest(("griefer_utils_salt_" + s).getBytes(StandardCharsets.UTF_8));
+				String hash = Base64.getEncoder().encodeToString(bytes);
+
+				if (hash.equals("IBmzqW3cyeMT0Gj/VqDLhnOhI0Qdhx6FgqFsdLbvzGA=")) {
+					timer = new Timer();
+					timer.schedule(new TimerTask() {
+						public void run() {
+							icon = icon.equals("icon") ? s : "icon";
+							Laby.labyAPI().minecraft().executeOnRenderThread(() -> searchWidget.setText(""));
+							labyBridge.notify("§aEaster Egg", "Easter Egg wurde umgeschalten.");
+							if (world() != null)
+								mc().displayGuiScreen(null);
+
+							timer = null;
+						}
+					}, 3179);
+				} else if (timer != null) {
+					timer.cancel();
+					timer = null;
+				}
+			} catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+		}));
 	}
 
 	private static void collectSettings(List<BaseSetting<?>> settings) {

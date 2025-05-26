@@ -7,9 +7,9 @@
 
 package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 
-import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData.SpecialBadge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData.SpecialBadge;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
@@ -112,7 +112,7 @@ public class GrieferUtilsGroup extends Group {
 
 		GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
-		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
+		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
 		DrawUtils.drawTexture(x, y, 255, 255, 8, 8, 1.1f);
 		GlStateManager.color(1, 1, 1, 1);
 	}

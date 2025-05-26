@@ -10,16 +10,14 @@ package dev.l3g7.griefer_utils.features.item.recraft.laby3;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.init.Items;
@@ -29,13 +27,13 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
-class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<RecraftPageSetting, Object> {
+class RecraftPageSetting extends ListEntrySetting {
 
-	private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 	final StringSetting name;
 
 	RecraftPageSetting(String name, List<SettingsElement> entrySettings) {
-		super(true, true, true, Icon.of(Items.map).toIconData());
+		super(true, true, true);
+		icon(Items.map);
 		subSettings();
 
 		entrySettings.forEach(e -> ((RecraftRecording.RecordingDisplaySetting) e).container = this);
@@ -118,11 +116,6 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 			settings.add(RecraftRecording.read(recording.getAsJsonObject()).mainSetting);
 
 		return new RecraftPageSetting(name, settings);
-	}
-
-	@Override
-	public ExtendedStorage<Object> getStorage() {
-		return storage;
 	}
 
 }

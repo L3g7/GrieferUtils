@@ -18,8 +18,8 @@ import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.ControlElement.IconData;
@@ -189,14 +189,15 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 		}
 	}
 
-	public class RecordingDisplaySetting extends ListEntrySetting implements Laby3Setting<RecordingDisplaySetting, Object> {
+	public class RecordingDisplaySetting extends ListEntrySetting {
 
 		private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 		final RecraftRecording recording = RecraftRecording.this;
 
 		public RecordingDisplaySetting() {
-			super(true, true, true, Icon.of(Blocks.barrier).toIconData());
-			setDisplayName("Unbenannte Aufzeichnung");
+			super(true, true, true);
+			name("Unbenannte Aufzeichnung");
+			icon(Blocks.barrier);
 			subSettings();
 			getSubSettings().addAll(c(new ArrayList<>(Arrays.asList(RecraftRecording.this.name(), key(), mode(), ignoreSubIds(), HeaderSetting.create(), startRecordingSetting,
 				HeaderSetting.create().entryHeight(10), HeaderSetting.create("Nachfolgende Aufzeichnung"), successor))));

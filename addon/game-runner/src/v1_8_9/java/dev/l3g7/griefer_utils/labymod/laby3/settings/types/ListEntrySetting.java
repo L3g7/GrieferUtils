@@ -5,21 +5,24 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.settings.player_list;
+package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import com.google.gson.JsonNull;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ListEntrySetting extends ControlElement implements BaseSetting<ListEntrySetting> {
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+
+public abstract class ListEntrySetting extends ControlElement implements Laby3Setting<ListEntrySetting, Object> {
+
+	private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 
 	private final boolean deletable, editable, movable;
 
@@ -27,16 +30,20 @@ public abstract class ListEntrySetting extends ControlElement implements BaseSet
 	private boolean hoveringEdit = false;
 	private boolean hoveringUp = false;
 	private boolean hoveringDown = false;
-	private boolean hasIcon;
 
 	public SettingsElement container;
 
-	public ListEntrySetting(boolean deletable, boolean editable, boolean movable, IconData icon) {
-		super("§f", icon);
+	public ListEntrySetting(boolean deletable, boolean editable, boolean movable) {
+		super("§f", null);
 		setSettingEnabled(false);
 		this.deletable = deletable;
 		this.editable = editable;
 		this.movable = movable;
+	}
+
+	@Override
+	public ExtendedStorage<Object> getStorage() {
+		return storage;
 	}
 
 	abstract protected void onChange();
@@ -48,7 +55,7 @@ public abstract class ListEntrySetting extends ControlElement implements BaseSet
 	protected void remove() {
 		container.getSubSettings().getElements().remove(this);
 		onChange();
-		mc.currentScreen.initGui();
+		mc().currentScreen.initGui();
 	}
 
 	@Override
@@ -78,7 +85,7 @@ public abstract class ListEntrySetting extends ControlElement implements BaseSet
 		settings.remove(this);
 		settings.add(index + (hoveringDown ? 1 : -1), this);
 		onChange();
-		mc.currentScreen.initGui();
+		mc().currentScreen.initGui();
 	}
 
 	@Override
@@ -136,54 +143,6 @@ public abstract class ListEntrySetting extends ControlElement implements BaseSet
 			hoveringDown = mouseX >= xPosition && mouseY >= yPosition && mouseX <= xPosition + 44 / 3d && mouseY <= yPosition + 28 / 3d;
 			LabyMod.getInstance().getDrawUtils().drawTexture(maxX - 59, y + 12.5, 67, hoveringDown ? 52 : 20, 14, 7, 14 / 0.75d, 7 / 0.75d);
 		}
-	}
-
-	@Override
-	public ListEntrySetting icon(Object icon) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public ListEntrySetting name(String s) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String name() {
-		return getDisplayName();
-	}
-
-	@Override
-	public ListEntrySetting description(String... description) {
-		return null;
-	}
-
-	@Override
-	public void create(Object parent) {}
-
-	@Override
-	public ListEntrySetting subSettings(BaseSetting<?>... settings) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public ListEntrySetting subSettings(List<BaseSetting<?>> settings) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public ListEntrySetting addSetting(BaseSetting<?> setting) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public ListEntrySetting addSetting(int index, BaseSetting<?> setting) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public List<BaseSetting<?>> getChildSettings() {
-		return Collections.emptyList();
 	}
 
 }

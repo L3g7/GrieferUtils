@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.init.Blocks;
@@ -32,9 +32,9 @@ public class ItemDisplaySetting extends ListEntrySetting {
 	private final ItemStack stack;
 
 	public ItemDisplaySetting(ItemStack stack) {
-		super(true, true, false, Icon.of(stack).toIconData());
+		super(true, true, false);
+		icon(stack);
 		this.stack = stack;
-		// icon(stack); // TODO
 		setDisplayName(stack.getDisplayName());
 		container = (SettingsElement) ItemSaver.enabled;
 

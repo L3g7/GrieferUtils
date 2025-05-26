@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.EntryAddSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.main.ModTextures;
@@ -100,7 +101,8 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 		private final PlayerListEntry data;
 
 		public PlayerDisplaySetting(PlayerListEntry entry) {
-			super(true, false, false, new IconData(ModTextures.MISC_HEAD_QUESTION));
+			super(true, false, false);
+			icon(ModTextures.MISC_HEAD_QUESTION);
 			container = PlayerListSettingLaby3.this.container;
 			data = entry;
 		}

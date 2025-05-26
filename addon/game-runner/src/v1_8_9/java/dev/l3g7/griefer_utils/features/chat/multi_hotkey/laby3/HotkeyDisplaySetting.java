@@ -8,30 +8,25 @@
 package dev.l3g7.griefer_utils.features.chat.multi_hotkey.laby3;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.settings.types.*;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.KeySettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
+import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.init.Items;
-import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
-public class HotkeyDisplaySetting extends ListEntrySetting implements Laby3Setting<HotkeyDisplaySetting, Object> {
-
-	private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
+public class HotkeyDisplaySetting extends ListEntrySetting {
 
 	public final StringSetting name;
 	public final KeySetting keys;
@@ -143,26 +138,12 @@ public class HotkeyDisplaySetting extends ListEntrySetting implements Laby3Setti
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 
-		String subtitle = String.format("§e[%s] §f§o➡ %s", formatKeys(keys.get()), commands.get().size() + (commands.get().size() == 1 ? " Befehl" : " Befehle"));
+		String subtitle = String.format("§e[%s] §f§o➡ %s", KeySettingImpl.formatKeys(keys.get()), commands.get().size() + (commands.get().size() == 1 ? " Befehl" : " Befehle"));
 
 		String trimmedName = LabyMod.getInstance().getDrawUtils().trimStringToWidth(name.get(), maxX - x - 25 - 48);
 		String trimmedSubtitle = LabyMod.getInstance().getDrawUtils().trimStringToWidth(subtitle, maxX - x - 25 - 48);
 		LabyMod.getInstance().getDrawUtils().drawString(trimmedName + (trimmedName.equals(name.get()) ? "" : "…"), x + 25, y + 7 - 5);
 		LabyMod.getInstance().getDrawUtils().drawString(trimmedSubtitle + (trimmedSubtitle.equals(subtitle) ? "" : "…"), x + 25, y + 7 + 5);
-	}
-
-	public static String formatKeys(Collection<Integer> keys) {
-		if (keys.isEmpty())
-			return "NONE";
-
-		return keys.stream()
-			.map(i -> i > 0 ? Keyboard.getKeyName(i) : "MOUSE " + -i)
-			.collect(Collectors.joining(" + "));
-	}
-
-	@Override
-	public ExtendedStorage<Object> getStorage() {
-		return storage;
 	}
 
 }

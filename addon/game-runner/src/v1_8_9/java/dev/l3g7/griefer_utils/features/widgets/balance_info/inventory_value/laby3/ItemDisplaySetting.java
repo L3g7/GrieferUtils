@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
@@ -22,7 +22,8 @@ public class ItemDisplaySetting extends ListEntrySetting {
 	public long value;
 
 	public ItemDisplaySetting(String stackNbt, long value) {
-		super(true, false, false, Icon.of(Blocks.stone).toIconData());
+		super(true, false, false);
+		icon(Blocks.stone);
 		container = FileProvider.getSingleton(InventoryValueWidget.InventoryValue.class).rawBooleanElement;
 		this.stackNbt = stackNbt;
 		this.value = value;
@@ -32,15 +33,15 @@ public class ItemDisplaySetting extends ListEntrySetting {
 		this((String) null, value);
 
 		this.stack = stack;
-		this.iconData = Icon.of(stack).toIconData();
+		icon(stack);
 		setDisplayName(stack.getDisplayName());
 	}
 
 	private void initStack() {
 		if (stack == null) {
 			stack = ItemUtil.fromNBT(stackNbt);
-			this.iconData = Icon.of(stack).toIconData();
-			setDisplayName(stack.getDisplayName());
+			icon(stack);
+			name(stack.getDisplayName());
 		}
 	}
 

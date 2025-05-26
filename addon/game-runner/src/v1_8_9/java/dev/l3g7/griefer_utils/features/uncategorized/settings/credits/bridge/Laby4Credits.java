@@ -11,16 +11,14 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby4.temp.TempSettingActivityInitEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.misc.SkullIcon;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.core.misc.SkullIcon;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
 import net.labymod.api.client.component.Component;
-import net.labymod.api.client.component.TextComponent;
-import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingHeaderWidget;
+import net.labymod.api.client.component.event.ClickEvent;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.AbstractSetting;
 
@@ -31,8 +29,8 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits.credits;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits.credits;
 
 @Bridge
 @Singleton
@@ -71,34 +69,9 @@ public class Laby4Credits implements CreditsBridge {
 		}
 	}
 
-	@EventListener
-	private static void onInit(TempSettingActivityInitEvent event) {
-		if (event.holder() != credits)
-			return;
-
-		for (Widget child : event.settings().getChildren()) {
-			if (child.actualWidget() instanceof SettingHeaderWidget header) {
-				Component displayName = Reflection.get(header, "displayName");
-				if (displayName instanceof TextComponent text && "  - Stellt gratis Kekse bereit: Klicke hier".equals(text.getText())) {
-					child.setPressable(() -> {
-						if (player() == null) {
-							labyBridge.notify("§6Keks", "§eDu musst ingame sein!");
-							return;
-						}
-
-						String nbt = "{id:\"minecraft:cookie\",Count:1b,tag:{display:{Lore:[\"\",\"§f§lGuten Appetit!\",\"§7Signiert von §aGrieferUtils §7am §e%s\"],Name:\"§6§lKeks\"}},Damage:0s}";
-						nbt = String.format(nbt, new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
-						boolean success = player().inventory.addItemStackToInventory(ItemUtil.fromNBT(nbt));
-						labyBridge.notify("§6Keks", success ? "Guten Appetit!" : "§eDu musst Platz im Inventar haben!");
-					});
-				}
-			}
-		}
-	}
-
 	@Override
 	public BaseSetting<?> createCookieLib() {
-		return createTextSetting("com.github.l3g73:freecookies", "Stellt gratis Kekse bereit: Klicke hier", "Cookie License 4.2");
+		return new CookieSettingImpl();
 	}
 
 	@Override
@@ -106,6 +79,31 @@ public class Laby4Credits implements CreditsBridge {
 		return CategorySetting.create()
 			.name("Vielen Dank für das Nutzen von GrieferUtils!")
 			.icon(SkullIcon.OWN);
+	}
+
+	private static class CookieSettingImpl extends CategorySettingImpl {
+
+		@Override
+		public Component displayName() {
+			return Component.text(String.join("\n",
+					"com.github.l3g73:freecookies",
+					"  - Stellt gratis Kekse bereit: Klicke hier",
+					"  - Lizenziert unter Cookie License 4.2"))
+				.clickEvent(ClickEvent.runCommand("/gu:y6Y7s8G88J1OLHwhMTEQYPbJ"));
+		}
+
+		@EventListener
+		private void onMessageSend(MessageEvent.MessageSendEvent event) {
+			if (!event.message.equals("/gu:y6Y7s8G88J1OLHwhMTEQYPbJ"))
+				return;
+
+			event.cancel();
+			String nbt = "{id:\"minecraft:cookie\",Count:1b,tag:{display:{Lore:[\"\",\"§f§lGuten Appetit!\",\"§7Signiert von §aGrieferUtils §7am §e%s\"],Name:\"§6§lKeks\"}},Damage:0s}";
+			nbt = String.format(nbt, new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+			boolean success = player().inventory.addItemStackToInventory(ItemUtil.fromNBT(nbt));
+			labyBridge.notify("§6Keks", success ? "Guten Appetit!" : "§eDu musst Platz im Inventar haben!");
+		}
+
 	}
 
 }

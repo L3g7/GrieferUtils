@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.chat.Calculator;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
@@ -72,7 +73,8 @@ public class InventoryValueWidget {
 					list.add(new ItemDisplaySetting(entry.getKey(), entry.getValue().getAsLong()));
 			}
 
-			list.add(new EntryAddSetting("Item hinzufügen")
+			list.add((SettingsElement) EntryAddSetting.create()
+				.name("Item hinzufügen")
 				.callback(() -> {
 					if (mc.thePlayer == null) {
 						LabyBridge.labyBridge.notify("§e§lFehler ⚠", "§eHinzufügen von Items ist nur Ingame möglich!", 5000);

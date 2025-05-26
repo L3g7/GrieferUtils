@@ -30,6 +30,7 @@ import dev.l3g7.griefer_utils.core.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
@@ -90,7 +91,8 @@ public class ItemSaver extends ItemSaverCategory.ItemSaver implements TempItemSa
 			Config.save();
 		});
 
-	private static final EntryAddSetting newEntrySetting = new EntryAddSetting("Item hinzufügen")
+	private static final EntryAddSetting newEntrySetting = EntryAddSetting.create()
+		.name("Item hinzufügen")
 		.callback(() -> {
 			if (mc().thePlayer == null) {
 				LabyBridge.labyBridge.notify("§e§lFehler ⚠", "§eHinzufügen von Items ist nur Ingame möglich!", 5000);

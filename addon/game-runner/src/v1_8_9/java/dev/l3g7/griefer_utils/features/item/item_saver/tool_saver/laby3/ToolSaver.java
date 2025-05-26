@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
@@ -161,7 +162,8 @@ public class ToolSaver extends ItemSaver implements TempToolSaverBridge {
 				settings.add(new ItemDisplaySetting(entry.getKey(), ItemUtil.fromNBT(entry.getValue().getAsString())));
 		}
 
-		settings.add(new EntryAddSetting("Item hinzufügen")
+		settings.add((SettingsElement) EntryAddSetting.create()
+			.name("Item hinzufügen")
 			.callback(() -> {
 				if (mc().thePlayer == null) {
 					labyBridge.notify("§e§lFehler \u26A0", "§eHinzufügen von Ausnahmen ist nur Ingame möglich!");

@@ -14,10 +14,11 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftBridge;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 
@@ -50,7 +51,8 @@ public class RecraftBridgeImpl implements RecraftBridge {
 
 	@Override
 	public BaseSetting<?> getPagesSetting() {
-		return new EntryAddSetting("Seite hinzufügen")
+		return EntryAddSetting.create()
+			.name("Seite hinzufügen")
 			.callback(() -> {
 				List<SettingsElement> settings = ((ControlElement) getMainSetting()).getSubSettings().getElements();
 				long pageNumber = settings.stream().filter(s -> s instanceof RecraftPageSetting).count() + 1;

@@ -8,9 +8,8 @@
 package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
 import com.google.gson.JsonNull;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.ModColor;
@@ -19,16 +18,13 @@ public class EntryAddSettingImpl extends ControlElement implements Laby3Setting<
 
 	private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 
-	private Runnable callback;
-
 	public EntryAddSettingImpl() {
 		super("§cno name set", new IconData("labymod/textures/settings/category/addons.png"));
 	}
 
 	@Override
-	public EntryAddSetting callback(Runnable callback) {
-		this.callback = callback;
-		return this;
+	public ExtendedStorage<Object> getStorage() {
+		return storage;
 	}
 
 	@Override
@@ -51,12 +47,7 @@ public class EntryAddSettingImpl extends ControlElement implements Laby3Setting<
 	@Override
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		if (mouseOver)
-			callback.run();
-	}
-
-	@Override
-	public ExtendedStorage<Object> getStorage() {
-		return storage;
+			notifyChange();
 	}
 
 }

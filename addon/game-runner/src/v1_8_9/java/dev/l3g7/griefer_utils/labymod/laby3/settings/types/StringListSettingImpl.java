@@ -123,17 +123,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 
 	}
 
-	private class StringAddSetting extends EntryAddSetting {
-
-		StringAddSetting() {
-			super("Eintrag hinzufügen");
-			callback(() -> mc().displayGuiScreen(new AddStringGui(mc().currentScreen, null)));
-		}
-
-		@Override
-		public ExtendedStorage<List<String>> getStorage() {
-			return storage;
-		}
+	private class StringAddSetting extends EntryAddSettingImpl {
 
 		private class AddStringGui extends GuiScreen {
 
@@ -191,16 +181,16 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 						int lastIndex = getSettings().indexOf(StringAddSetting.this);
 						if (setting == null) {
 							getSettings().add(lastIndex, new StringDisplaySetting(inputField.getText()));
-							get().add(inputField.getText());
+							StringListSettingImpl.this.get().add(inputField.getText());
 						} else {
 							setting.name(setting.data = inputField.getText());
 							int settingIndex = getSettings().indexOf(setting);
-							int listIndex = get().size() - (lastIndex - settingIndex);
-							get().set(listIndex, inputField.getText());
+							int listIndex = StringListSettingImpl.this.get().size() - (lastIndex - settingIndex);
+							StringListSettingImpl.this.get().set(listIndex, inputField.getText());
 						}
 
-						save();
-						getStorage().callbacks.forEach(c -> c.accept(get()));
+						StringListSettingImpl.this.save();
+						StringListSettingImpl.this.getStorage().callbacks.forEach(c -> c.accept(StringListSettingImpl.this.get()));
 						// Fall-through
 					case 0:
 						mc().displayGuiScreen(backgroundScreen);
@@ -219,49 +209,6 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 
 				inputField.textboxKeyTyped(typedChar, keyCode);
 			}
-		}
-
-	}
-
-	public static abstract class EntryAddSetting extends ControlElement implements Laby3Setting<EntryAddSetting, List<String>> {
-
-		private Runnable callback;
-
-		public EntryAddSetting() {
-			this("§cno name set");
-		}
-
-		public EntryAddSetting(String displayName) {
-			super(displayName, new IconData("labymod/textures/settings/category/addons.png"));
-		}
-
-		@Override
-		public EntryAddSetting callback(Runnable callback) {
-			this.callback = callback;
-			return this;
-		}
-
-		@Override
-		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
-
-			LabyMod.getInstance().getDrawUtils().drawRectangle(x, y, maxX, maxY, ModColor.toRGB(80, 80, 80, 60));
-			int iconWidth = iconData != null ? 25 : 2;
-			mc.getTextureManager().bindTexture(iconData.getTextureIcon());
-
-			if (mouseOver) {
-				LabyMod.getInstance().getDrawUtils().drawTexture(x + 2, y + 2, 256.0, 256.0, 18, 18);
-				LabyMod.getInstance().getDrawUtils().drawString(displayName, x + iconWidth + 1, (double) y + 7 - 0);
-			} else {
-				LabyMod.getInstance().getDrawUtils().drawTexture(x + 3, y + 3, 256.0, 256.0, 16.0, 16.0);
-				LabyMod.getInstance().getDrawUtils().drawString(displayName, x + iconWidth, (double) y + 7 - 0);
-			}
-		}
-
-		@Override
-		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-			if (mouseOver)
-				callback.run();
 		}
 
 	}

@@ -13,13 +13,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.init.Items;
 
@@ -55,7 +56,8 @@ class RecraftPageSetting extends ListEntrySetting implements Laby3Setting<Recraf
 
 		entrySettings.add(1, new HeaderSettingImpl());
 
-		entrySettings.add(new EntryAddSetting("Aufzeichnung hinzufügen")
+		entrySettings.add((SettingsElement) EntryAddSetting.create()
+			.name("Aufzeichnung hinzufügen")
 			.callback(() -> {
 				if (!ServerCheck.isOnCitybuild()) {
 					labyBridge.notify("§cAufzeichnungen", "§ckönnen nur auf einem Citybuild hinzugefügt werden.");

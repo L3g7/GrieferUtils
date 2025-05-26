@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import net.labymod.settings.elements.SettingsElement;
@@ -32,7 +33,7 @@ public class MultiHotkey extends Feature {
 
 	private String entryKey;
 
-	private final EntryAddSetting entryAddSetting = new EntryAddSetting()
+	private final EntryAddSetting entryAddSetting = EntryAddSetting.create()
 		.name("Hotkey hinzufügen")
 		.callback(() -> {
 			List<SettingsElement> settings = ((SwitchSettingImpl) getMainElement()).getSubSettings().getElements();

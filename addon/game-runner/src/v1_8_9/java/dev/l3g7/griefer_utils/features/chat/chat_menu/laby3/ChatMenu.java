@@ -22,6 +22,7 @@ import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.laby3.chat_line_util.ChatLineUtil;
 import net.labymod.core_implementation.mc18.MinecraftImplementation;
@@ -72,7 +73,9 @@ public class ChatMenu extends Feature {
 
 	protected static ChatMenuRenderer renderer = null;
 
-	protected static final EntryAddSetting newEntrySetting = new EntryAddSetting("Neuen Menüpunkt erstellen")
+	protected static final EntryAddSetting newEntrySetting = EntryAddSetting
+		.create()
+		.name("Neuen Menüpunkt erstellen")
 		.callback(() -> Minecraft.getMinecraft().displayGuiScreen(new AddChatMenuEntryGui(null, Minecraft.getMinecraft().currentScreen)));
 
 	@MainElement(configureSubSettings = false)

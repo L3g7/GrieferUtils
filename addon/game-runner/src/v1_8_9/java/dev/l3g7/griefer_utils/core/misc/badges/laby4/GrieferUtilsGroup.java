@@ -18,7 +18,6 @@ import net.labymod.api.LabyAPI;
 import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.TextColor;
-import net.labymod.api.client.component.format.TextDecoration;
 import net.labymod.api.client.entity.Entity;
 import net.labymod.api.client.entity.player.tag.tags.IconTag;
 import net.labymod.api.client.gui.screen.widget.attributes.bounds.Bounds;
@@ -190,7 +189,6 @@ public class GrieferUtilsGroup extends Group {
 
 			cir.setReturnValue(RenderableComponent.of(Component.text("GrieferUtils ")
 				.color(TextColor.color(0xFFFFFF))
-				.decorate(TextDecoration.BOLD)
 				.append(Component.text(guGroup.title)
 					.color(guGroup.titleColor))));
 		}

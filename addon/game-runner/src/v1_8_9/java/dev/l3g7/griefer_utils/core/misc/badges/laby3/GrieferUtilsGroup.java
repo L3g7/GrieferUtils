@@ -43,7 +43,7 @@ public class GrieferUtilsGroup extends LabyGroup {
 
 	@Override
 	public String getDisplayTag() {
-		return "§f§lGrieferUtils " + title;
+		return "§fGrieferUtils " + title;
 	}
 
 	@Override

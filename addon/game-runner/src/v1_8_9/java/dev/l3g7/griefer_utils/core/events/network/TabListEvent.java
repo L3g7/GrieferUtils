@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.*;
 
@@ -53,6 +54,8 @@ public class TabListEvent extends Event {
 			event.fire();
 			info.setDisplayName(event.component);
 		}
+
+		labyBridge.syncTabList();
 	}
 
 	public static IChatComponent getCachedName(UUID uuid) {

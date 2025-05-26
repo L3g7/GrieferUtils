@@ -106,4 +106,6 @@ public interface LabyBridge {
 
 	void openNameHistory(String name);
 
+	void syncTabList();
+
 }

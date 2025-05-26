@@ -196,6 +196,11 @@ public class LabyBridgeImpl implements LabyBridge {
 		Laby3Util.openNameHistory(name);
 	}
 
+	@Override
+	public void syncTabList() {
+		// No-op
+	}
+
 	@ExclusiveTo(LABY_3)
 	@Mixin(LabyMod.class)
 	private static class MixinLabyMod {

@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.resources.ResourceLocation;
@@ -33,6 +34,7 @@ import net.labymod.api.event.Event;
 import net.labymod.api.event.LabyEvent;
 import net.labymod.api.event.client.chat.ChatMessageSendEvent;
 import net.labymod.api.event.client.chat.ChatReceiveEvent;
+import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
 import net.labymod.api.event.client.network.server.ServerDisconnectEvent;
 import net.labymod.api.event.client.network.server.ServerJoinEvent;
 import net.labymod.api.event.client.session.SessionUpdateEvent;
@@ -43,6 +45,8 @@ import net.labymod.api.notification.Notification;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.tab.NameHistoryActivity;
 import net.labymod.core.main.LabyMod;
+import net.labymod.v1_8_9.client.player.VersionedNetworkPlayerInfo;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -56,7 +60,9 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.labymod.api.Laby.labyAPI;
+import static net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent.UpdateType.DISPLAY_NAME;
 
 @Bridge
 @Singleton
@@ -196,6 +202,12 @@ public class LabyBridgeImpl implements LabyBridge {
 		NameHistoryActivity activity = LabyMod.references().nameHistoryActivity();
 		activity.scheduleQuery(name);
 		labyAPI().minecraft().minecraftWindow().displayScreen(activity);
+	}
+
+	@Override
+	public void syncTabList() {
+		for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap())
+			Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME));
 	}
 
 	public static <T> void register(Class<T> event, Consumer<T> callback) {

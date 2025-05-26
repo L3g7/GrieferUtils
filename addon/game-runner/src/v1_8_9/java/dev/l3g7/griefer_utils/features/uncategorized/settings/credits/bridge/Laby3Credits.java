@@ -11,25 +11,20 @@ import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.CategorySettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.ModColor;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Bridge
 @Singleton
@@ -133,15 +128,7 @@ public class Laby3Credits implements CreditsBridge {
 
 		@Override
 		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-			if (player() == null) {
-				labyBridge.notify("§6Keks", "§eDu musst ingame sein!");
-				return;
-			}
-
-			String nbt = "{id:\"minecraft:cookie\",Count:1b,tag:{display:{Lore:[\"\",\"§f§lGuten Appetit!\",\"§7Signiert von §aGrieferUtils §7am §e%s\"],Name:\"§6§lKeks\"}},Damage:0s}";
-			nbt = String.format(nbt, new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
-			boolean success = player().inventory.addItemStackToInventory(ItemUtil.fromNBT(nbt));
-			labyBridge.notify("§6Keks", success ? "Guten Appetit!" : "§eDu musst Platz im Inventar haben!");
+			Credits.giveCookie();
 		}
 
 		@Override

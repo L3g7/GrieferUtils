@@ -35,7 +35,7 @@ public abstract class Feature implements Disableable {
 	// Name to setting
 	private static final Map<String, CategoryData> categories = new HashMap<>();
 
-	private final CategoryData category = findCategory(getClass().getPackage());
+	protected final CategoryData category = findCategory(getClass().getPackage());
 	private BaseSetting<?> mainElement;
 	private String configKey;
 
@@ -148,7 +148,7 @@ public abstract class Feature implements Disableable {
 	@Target(TYPE)
 	public @interface FeatureCategory {}
 
-	private static final class CategoryData {
+	protected static final class CategoryData {
 
 		public final SwitchSetting setting;
 		public final String configKey;

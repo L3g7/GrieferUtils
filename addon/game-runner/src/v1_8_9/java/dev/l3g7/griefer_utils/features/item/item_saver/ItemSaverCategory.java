@@ -64,7 +64,7 @@ public class ItemSaverCategory extends Feature {
 
 		// Add savers to category
 		category.subSettings(savers.stream()
-			.map(saver -> saver.init(getCategory().configKey()))
+			.map(saver -> saver.init(super.category.configKey))
 			.sorted(Comparator.comparing(BaseSetting::name))
 			.collect(Collectors.toList()));
 	}

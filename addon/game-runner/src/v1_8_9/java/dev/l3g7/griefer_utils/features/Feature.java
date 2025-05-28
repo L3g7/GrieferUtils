@@ -9,6 +9,8 @@ package dev.l3g7.griefer_utils.features;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
@@ -35,7 +37,7 @@ public abstract class Feature implements Disableable {
 	// Name to setting
 	private static final Map<String, CategoryData> categories = new HashMap<>();
 
-	protected final CategoryData category = findCategory(getClass().getPackage());
+	private final CategoryData category = findCategory(getClass().getPackage());
 	private BaseSetting<?> mainElement;
 	private String configKey;
 
@@ -82,8 +84,8 @@ public abstract class Feature implements Disableable {
 		return mainElement;
 	}
 
-	public SwitchSetting getCategory() {
-		return category.setting;
+	public CategoryData getCategory() {
+		return category;
 	}
 
 	public String getConfigKey() {
@@ -148,7 +150,7 @@ public abstract class Feature implements Disableable {
 	@Target(TYPE)
 	public @interface FeatureCategory {}
 
-	protected static final class CategoryData {
+	public static final class CategoryData {
 
 		public final SwitchSetting setting;
 		public final String configKey;
@@ -156,6 +158,18 @@ public abstract class Feature implements Disableable {
 		private CategoryData(SwitchSetting setting, String configKey) {
 			this.setting = setting;
 			this.configKey = configKey;
+		}
+
+		public String configKey() {
+			return configKey;
+		}
+
+		public void callback(Runnable callback) {
+			setting.callback(callback);
+		}
+
+		public void callback(Consumer<Boolean> callback) {
+			setting.callback(callback);
 		}
 
 	}

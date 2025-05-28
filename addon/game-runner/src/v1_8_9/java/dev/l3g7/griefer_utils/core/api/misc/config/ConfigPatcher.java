@@ -322,6 +322,16 @@ public class ConfigPatcher {
 			}
 
 		}
+
+		if (version.equals("2.3-BETA-15")) {
+			for (String key : new String[]{"chat", "item", "render", "player", "world"}) {
+				JsonObject root = get(key).getAsJsonObject();
+				if (get(key + ".active").isJsonObject()) {
+					merge(root, get(key + ".active").getAsJsonObject());
+					set(key + ".active", new JsonPrimitive(true));
+				}
+			}
+		}
 	}
 
 	private void rename(String oldKey, String newKey) {
@@ -357,6 +367,16 @@ public class ConfigPatcher {
 
 	private boolean getBooleanValue(JsonElement element) {
 		return element != null && element.getAsBoolean();
+	}
+
+	private void merge(JsonObject target, JsonObject data) {
+		for (Entry<String, JsonElement> entry : data.entrySet()) {
+			if (entry.getValue().isJsonObject() && target.has(entry.getKey())) {
+				merge(target.get(entry.getKey()).getAsJsonObject(), entry.getValue().getAsJsonObject());
+			} else {
+				target.add(entry.getKey(), entry.getValue());
+			}
+		}
 	}
 
 }

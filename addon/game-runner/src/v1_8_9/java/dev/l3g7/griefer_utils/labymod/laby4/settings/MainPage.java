@@ -71,7 +71,9 @@ public class MainPage {
 		if (!(Laby4Util.getActivity() instanceof NavigationActivity n))
 			return;
 
-		LabyModActivity lm = (LabyModActivity) n.mostInnerScreenInstance();
+		if (!(n.mostInnerScreenInstance() instanceof LabyModActivity lm))
+			return;
+
 		AbstractSidebarActivity settingsActivity = (AbstractSidebarActivity) lm.getById("settings").provideScreen();
 		TextFieldWidget searchWidget = Reflection.get(settingsActivity, "searchWidget");
 

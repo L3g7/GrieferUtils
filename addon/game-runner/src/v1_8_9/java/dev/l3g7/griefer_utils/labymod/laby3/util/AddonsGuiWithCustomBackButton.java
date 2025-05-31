@@ -50,7 +50,7 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 		Reflection.set(previousScreen, "path", previousPath);
 
 
-		AddonElement openAddon = Reflection.get(mc.currentScreen, "openedAddonSettings");
+		AddonElement openAddon = Reflection.get(mc().currentScreen, "openedAddonSettings");
 		Reflection.set(this, "openedAddonSettings", openAddon);
 	}
 

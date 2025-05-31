@@ -29,8 +29,6 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 @Singleton
 public class ChatTime extends Feature {
 
-	private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat();
-
 	private final StringSetting style = StringSetting.create()
 		.name("Design")
 		.description("Das Design des Prefixes, mit Unterstützung von &-Formatierungscodes.\n" +
@@ -49,10 +47,9 @@ public class ChatTime extends Feature {
 		.name("Zeitformat")
 		.description("Das Format der Zeit, gemäß Javas Date Format.")
 		.icon(Items.map)
-		.callback(DATE_FORMAT::applyPattern)
 		.validator(v -> {
 			try {
-				DATE_FORMAT.applyPattern(v);
+				new SimpleDateFormat(v);
 				return true;
 			} catch (IllegalArgumentException e) {
 				return false;
@@ -83,7 +80,7 @@ public class ChatTime extends Feature {
 
 	@EventListener(priority = LOW)
 	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
-		String time = String.format(style.get(), DATE_FORMAT.format(new Date())).replace('&', '§') + "§r";
+		String time = String.format(style.get(), new SimpleDateFormat(format.get()).format(new Date())).replace('&', '§') + "§r";
 		event.setMessage(new ChatComponentText(time).appendSibling(event.message));
 	}
 

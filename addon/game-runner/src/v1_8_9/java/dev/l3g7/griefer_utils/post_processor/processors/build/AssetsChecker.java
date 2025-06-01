@@ -18,7 +18,7 @@ import java.util.List;
 public class AssetsChecker {
 
 	private static final List<String> KNOWN_DIRECTORIES = Arrays.asList("litematica", "mob_icons", "griefer_info");
-	private static final List<String> KNOWN_FILES = Arrays.asList("thonk", "pencil");
+	private static final List<String> KNOWN_FILES = Arrays.asList("thonk", "pencil", "lens", "earth");
 
 	public static void validateAssets(FileSystem fs) throws IOException {
 		List<String> directories = new ArrayList<>();
@@ -87,25 +87,34 @@ public class AssetsChecker {
 				// Decode content pool and check CONSTANT_Utf8_info entries
 				byte[] content = Files.readAllBytes(path);
 				short poolCount = (short) (((content[8] & 0xFF) << 8) | (content[9] & 0xFF));
+				int[] startIndices = new int[poolCount];
 				int cursor = 10;
 				for (int idx = 0; idx < poolCount; idx++) {
+					startIndices[idx] = cursor;
 					byte b = content[cursor++];
-					if (b == 1) {
+					if (b == 1) { // CONSTANT_UTF8
 						short length = (short) (((content[cursor++] & 0xFF) << 8) | (content[cursor++] & 0xFF));
-						String data = new String(content, cursor, length);
-						for (int i = 0; i < files.size(); i++) {
+						cursor += length;
+					} else if (b == 8) { // CONSTANT_String
+						short index = (short) (((content[cursor++] & 0xFF) << 8) | (content[cursor++] & 0xFF));
+						int start = startIndices[index - 1] + 1;
+						short length = (short) (((content[start++] & 0xFF) << 8) | (content[start++] & 0xFF));
+						String data = new String(content, start, length);
+						for (int i = 0; i < files.size(); i++)
 							if (files.remove(data))
 								break;
-						}
-						cursor += length;
-					} else if (b == 7 || b == 8 || b == 16 || b == 19 || b == 20)
+					}
+					else if (b == 5 || b == 6) {
+						// CONSTANT_Long_info / CONSTANT_Double_info take two entries
+						cursor += 8;
+						idx += 1;
+					}
+					else if (b == 7 || b == 16 || b == 19 || b == 20)
 						cursor += 2;
 					else if (b == 15)
 						cursor += 3;
 					else if (b == 3 || b == 4 || b == 9 || b == 10 || b == 11 || b == 12 || b == 17 || b == 18)
 						cursor += 4;
-					else if (b == 5 || b == 6)
-						cursor += 8;
 				}
 			} catch (IOException e) {
 				throw new RuntimeException(e);

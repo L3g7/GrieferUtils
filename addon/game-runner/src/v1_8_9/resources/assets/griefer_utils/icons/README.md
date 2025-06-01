@@ -267,10 +267,6 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
-    <td><img src="matrix.png" height=16em width=16em />&nbsp;&nbsp;<a href="matrix.png">matrix.png</a></td>
-    <td>selfmade</td>
-  </tr>
-  <tr>
     <td><img src="maximize.png" height=16em width=16em />&nbsp;&nbsp;<a href="maximize.png">maximize.png</a></td>
     <td>selfmade</td>
   </tr>

@@ -128,6 +128,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 			draw.drawItem(stack, scaledX, scaledY, null);
 			GlStateManager.popMatrix();
 		});
+		set(ANY);
 	}
 
 	public void reset() {

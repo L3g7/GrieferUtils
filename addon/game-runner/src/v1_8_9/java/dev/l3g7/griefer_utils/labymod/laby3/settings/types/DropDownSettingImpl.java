@@ -128,7 +128,7 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElem
 		DrawUtils drawUtils = LabyMod.getInstance().getDrawUtils();
 
 		// Reset selection, so selected value isn't rendered
-		E selected = menu.getSelected();
+		E selected = get();
 		menu.setSelected(null);
 		int width = menu.getWidth();
 

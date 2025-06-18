@@ -97,7 +97,7 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		if (playerAmount + containerAmount == itemStack.stackSize)
 			return Collections.emptyList();
 
-		if (containerName != null && containerName.startsWith("§0Lager: §6")) {
+		if (containerName != null && containerName.startsWith("§0Lager: §6") && containerAmount != 0) {
 			containerAmount += Long.parseLong(containerName.substring("§0Lager: §6".length()).replace(".", ""));
 			containerName = "Unendliches Lager";
 		}

@@ -37,6 +37,13 @@ public class NumberSettingImpl extends NumberElement implements Laby3Setting<Num
 	}
 
 	@Override
+	public void init() {
+		super.init();
+		Reflection.set(this, "currentValue", get());
+		callback(v -> Reflection.set(this, "currentValue", v));
+	}
+
+	@Override
 	public NumberSetting min(int min) {
 		setMinValue(min);
 		set(getCurrentValue());

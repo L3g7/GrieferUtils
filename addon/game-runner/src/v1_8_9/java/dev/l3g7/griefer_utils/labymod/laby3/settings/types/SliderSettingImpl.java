@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.types.SliderSetting;
 import net.labymod.settings.elements.SliderElement;
@@ -25,6 +26,13 @@ public class SliderSettingImpl extends SliderElement implements Laby3Setting<Sli
 	@Override
 	public ExtendedStorage<Integer> getStorage() {
 		return storage;
+	}
+
+	@Override
+	public void init() {
+		super.init();
+		Reflection.set(this, "currentValue", get());
+		callback(v -> Reflection.set(this, "currentValue", v));
 	}
 
 	@Override

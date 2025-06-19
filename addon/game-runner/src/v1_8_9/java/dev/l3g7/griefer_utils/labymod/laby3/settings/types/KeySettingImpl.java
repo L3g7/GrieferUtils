@@ -71,6 +71,12 @@ public class KeySettingImpl extends ControlElement implements Laby3Setting<KeySe
 	}
 
 	@Override
+	public void init() {
+		super.init();
+		previewField.setText(formatKeys(get()));
+	}
+
+	@Override
 	public KeySetting set(Set<Integer> value) {
 		previewField.setText(formatKeys(value));
 		return Laby3Setting.super.set(value);

@@ -141,6 +141,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	@Override
 	public void init() {
 		menu.setOpen(false);
+		set(get());
 	}
 
 	public Citybuild get() {

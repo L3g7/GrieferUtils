@@ -38,6 +38,13 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 	}
 
 	@Override
+	public void init() {
+		super.init();
+		Reflection.set(this, "currentValue", get());
+		callback(v -> Reflection.set(this, "currentValue", v));
+	}
+
+	@Override
 	public SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode) {
 		if (getSubSettings().getElements().isEmpty())
 			subSettings();

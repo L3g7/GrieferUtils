@@ -80,6 +80,13 @@ public class StringSettingImpl extends StringElement implements Laby3Setting<Str
 	}
 
 	@Override
+	public void init() {
+		super.init();
+		Reflection.set(this, "currentValue", get());
+		callback(v -> Reflection.set(this, "currentValue", v));
+	}
+
+	@Override
 	public StringSettingImpl maxLength(int maxLength) {
 		ModTextField textField = Reflection.get(this, "textField");
 		textField.setMaxStringLength(maxLength);

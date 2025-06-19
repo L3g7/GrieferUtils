@@ -48,6 +48,7 @@ public class NumberSettingImpl extends NumberElement implements Laby3Setting<Num
 
 	@Override
 	public NumberSetting min(int min) {
+		setLaby(get());
 		setMinValue(min);
 		set(getCurrentValue());
 		return this;
@@ -55,6 +56,7 @@ public class NumberSettingImpl extends NumberElement implements Laby3Setting<Num
 
 	@Override
 	public NumberSetting max(int max) {
+		setLaby(get());
 		setMaxValue(max);
 		set(getCurrentValue());
 		return this;

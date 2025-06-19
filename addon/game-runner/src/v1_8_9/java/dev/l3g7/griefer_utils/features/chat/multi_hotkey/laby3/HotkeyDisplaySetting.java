@@ -63,7 +63,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 		this.citybuild = CitybuildSetting.create()
 			.name("Citybuild")
 			.description("Auf welchem Citybuild dieser Hotkey funktionieren soll.")
-			.defaultValue((defaultCitybuild = citybuild) == null ? Citybuild.ANY : defaultCitybuild);
+			.set((defaultCitybuild = citybuild) == null ? Citybuild.ANY : defaultCitybuild);
 
 		this.keys = KeySetting.create()
 			.name("Taste")

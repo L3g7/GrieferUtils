@@ -34,6 +34,7 @@ public class ChatTime extends Feature {
 		.description("Das Design des Prefixes, mit Unterstützung von &-Formatierungscodes.\n" +
 			"%s ist die Zeit an sich.")
 		.icon(Items.map)
+		.defaultValue("&7[&6%s&7] ")
 		.validator(v -> {
 			try {
 				String.format(v, "");
@@ -47,6 +48,7 @@ public class ChatTime extends Feature {
 		.name("Zeitformat")
 		.description("Das Format der Zeit, gemäß Javas Date Format.")
 		.icon(Items.map)
+		.defaultValue("HH:mm:ss")
 		.validator(v -> {
 			try {
 				new SimpleDateFormat(v);
@@ -69,13 +71,13 @@ public class ChatTime extends Feature {
 			if(configFile.exists()) {
 				IOUtil.read(configFile).asJsonObject().ifPresent(obj -> {
 					JsonObject cfg = obj.get("config").getAsJsonObject();
-					format.defaultValue(cfg.has("chatData") ? cfg.get("chatData").getAsString() : "HH:mm:ss");
-					style.defaultValue(cfg.has("chatData2") ? cfg.get("chatData2").getAsString().replace("%time%", "%s") : "&4[&e%s&4] ");
+					if (cfg.has("chatData"))
+						format.set(cfg.get("chatData").getAsString());
+					if (cfg.has("chatData2"))
+						style.defaultValue(cfg.get("chatData2").getAsString().replace("%time%", "%s"));
 				});
 			}
 		}
-		format.defaultValue("HH:mm:ss");
-		style.defaultValue("&7[&6%s&7] ");
 	}
 
 	@EventListener(priority = LOW)

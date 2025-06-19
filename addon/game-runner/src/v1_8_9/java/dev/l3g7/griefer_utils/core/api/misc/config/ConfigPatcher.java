@@ -332,6 +332,13 @@ public class ConfigPatcher {
 				}
 			}
 		}
+
+		if (cmp.compare("2.3-BETA-18", version) < 0) {
+			JsonObject autoUnnick = getParent("chat.auto_unnick.tab");
+			if (!autoUnnick.has("tab"))
+				autoUnnick.addProperty("tab", false);
+		}
+
 	}
 
 	private void rename(String oldKey, String newKey) {

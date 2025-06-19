@@ -31,7 +31,8 @@ public class AutoUnnick extends Feature {
 		.name("In Tabliste")
 		.description("Ob Spieler in der Tabliste entnickt werden sollen.")
 		.icon("tab_list")
-		.callback(TabListEvent::updatePlayerInfoList);
+		.callback(TabListEvent::updatePlayerInfoList)
+		.defaultValue(true);
 
 	private final SwitchSetting chat = SwitchSetting.create()
 		.name("In Chat")

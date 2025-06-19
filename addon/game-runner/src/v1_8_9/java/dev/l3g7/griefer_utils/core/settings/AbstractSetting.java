@@ -126,7 +126,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		Storage<V> s = getStorage();
 
 		if (s.configKey != null) {
-			if (s.fallbackValue != null && s.fallbackValue.equals(get()))
+			if (isFallbackValue())
 				Config.unset(s.configKey);
 			else
 				Config.set(s.configKey, s.encodeFunc.apply(get()));
@@ -134,6 +134,14 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		}
 
 		return (S) this;
+	}
+
+	/**
+	 * Checks whether the selected value matches the fallback value.
+	 */
+	default boolean isFallbackValue() {
+		Storage<V> s = getStorage();
+		return s.fallbackValue != null && s.fallbackValue.equals(get());
 	}
 
 	/**

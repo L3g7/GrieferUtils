@@ -86,7 +86,7 @@ public class ChatMenu extends Feature {
 			settings.add(SwitchSetting.create()
 				.name(entry.name)
 				.callback(v -> entry.enabled = v)
-				.defaultValue(entry.enabled)
+				.set(entry.enabled)
 				.config("chat.chat_menu.entries." + entry.name)
 				.icon(entry.icon));
 		}

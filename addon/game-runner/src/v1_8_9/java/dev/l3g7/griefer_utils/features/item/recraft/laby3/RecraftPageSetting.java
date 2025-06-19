@@ -76,7 +76,7 @@ class RecraftPageSetting extends ListEntrySetting {
 		);
 
 		getSubSettings().addAll((ArrayList<SettingsElement>) entrySettings);
-		this.name.defaultValue(name);
+		this.name.set(name);
 		container = (SettingsElement) FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.recraft.Recraft.class).getMainElement();
 	}
 

@@ -58,7 +58,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 
 		this.commands = StringListSetting.create()
 			.name("Befehl hinzufügen")
-			.defaultValue(defaultCommands = commands);
+			.set(defaultCommands = commands);
 
 		this.citybuild = CitybuildSetting.create()
 			.name("Citybuild")
@@ -68,7 +68,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 		this.keys = KeySetting.create()
 			.name("Taste")
 			.description("Durch das Drücken welcher Taste/-n dieser Hotkey ausgelöst werden soll.")
-			.defaultValue(defaultKeys = keys)
+			.set(defaultKeys = keys)
 			.icon("key")
 			.pressCallback(b -> {
 				if (!b || !FileProvider.getSingleton(MultiHotkey.class).isEnabled())
@@ -91,7 +91,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 
 
 		subSettings(this.name, this.keys, this.commands, this.citybuild, HeaderSetting.create("§e§lBefehle").scale(0.7));
-		this.name.defaultValue(defaultName = name);
+		this.name.set(defaultName = name);
 		this.commands.create(this);
 	}
 

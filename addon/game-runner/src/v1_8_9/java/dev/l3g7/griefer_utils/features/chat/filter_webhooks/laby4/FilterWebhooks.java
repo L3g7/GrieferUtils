@@ -124,7 +124,7 @@ public class FilterWebhooks extends Feature {
 			.name("Webhook-URL")
 			.placeholder("https://discord.com/api/webhooks/...")
 			.validator(v -> HOOK_URL_PATTERN.matcher(v).matches())
-			.defaultValue(url == null ? "" : url)
+			.set(url == null ? "" : url)
 			.enabled(url != null)
 			.extend()
 			.callback(v -> {
@@ -134,7 +134,7 @@ public class FilterWebhooks extends Feature {
 
 		SwitchSetting shouldSend = SwitchSetting.create()
 			.name("An Discord-Webhook senden")
-			.defaultValue(url != null)
+			.set(url != null)
 			.callback(v -> {
 				urlInput.enabled(v);
 				webhooks.put(filter.id(), v && !urlInput.get().isEmpty() ? urlInput.get() : null);

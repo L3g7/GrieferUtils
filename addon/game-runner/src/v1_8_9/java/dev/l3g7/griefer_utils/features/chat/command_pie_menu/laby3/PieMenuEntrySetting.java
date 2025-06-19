@@ -43,17 +43,17 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 		this.command = StringSetting.create()
 			.name("Befehl")
 			.description("Welcher Befehl ausgeführt werden soll, wenn dieser Eintrag ausgewählt wird.")
-			.defaultValue(defaultCommand = command)
+			.set(defaultCommand = command)
 			.icon(Blocks.command_block);
 
 		this.citybuild = CitybuildSetting.create()
 			.name("Citybuild")
 			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll.")
-			.defaultValue(defaultCitybuild = citybuild);
+			.set(defaultCitybuild = citybuild);
 
 		icon("command_pie_menu");
 		subSettings(this.name, this.command, this.citybuild);
-		this.name.defaultValue(defaultName = name);
+		this.name.set(defaultName = name);
 	}
 
 	public void openSettings() {

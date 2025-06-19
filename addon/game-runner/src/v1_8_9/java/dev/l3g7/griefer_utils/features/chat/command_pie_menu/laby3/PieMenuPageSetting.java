@@ -58,7 +58,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 			}));
 
 		subSettings(entrySettings.toArray(new BaseSetting[0]));
-		this.name.defaultValue(defaultName = name);
+		this.name.set(defaultName = name);
 		container = (SettingsElement) FileProvider.getSingleton(CommandPieMenu.class).getMainElement();
 	}
 

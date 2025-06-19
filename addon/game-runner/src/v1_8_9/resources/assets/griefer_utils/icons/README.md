@@ -287,11 +287,6 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
-	<!-- https://d1fdloi71mui9q.cloudfront.net/IBa9YlxRAOTxKwqdO1LA_zGa80ENAU97bC0AU -->
-    <td><img src="mysterymod.png" height=16em width=16em />&nbsp;&nbsp;<a href="mysterymod.png">mysterymod.png</a></td>
-    <td><a href="https://linktr.ee/MysteryMod">Mysterymod</a></td>
-  </tr>
-  <tr>
     <td><img src="open_book.png" height=16em width=16em />&nbsp;&nbsp;<a href="open_book.png">open_book.png</a></td>
     <td><a href="https://stock.adobe.com/es/images/different-books-pixel-art-set-fantasy-tome-folio-collection-open-closed-textbooks-8-bit-sprite-game-development-mobile-app-isolated-vector-illustration/502502076">Adobe Stock (SickleMoon)</a></td>
   </tr>

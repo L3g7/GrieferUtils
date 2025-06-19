@@ -62,12 +62,6 @@ public class ChatMods extends Feature {
 		.description("Unterdrückt Benachrichtigungen über Livestreams.")
 		.icon("twitch");
 
-	private final SwitchSetting removeMysteryMod = SwitchSetting.create()
-		.name("Download-Benachrichtigungen entfernen")
-		.description("Unterdrückt Erinnerungen an den Download MysteryMods.")
-		.icon("mysterymod")
-		.defaultValue(true);
-
 	private final SwitchSetting removeLuckyBlock = SwitchSetting.create()
 		.name("LuckyBlock-Benachrichtigungen entfernen")
 		.description("Unterdrückt Benachrichtigungen über LuckyBlock-Gewinne.")
@@ -94,7 +88,7 @@ public class ChatMods extends Feature {
 		.name("Chat aufräumen")
 		.icon("speech_bubble")
 		.description("Räumt den Chat auf.")
-		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeMysteryMod, removeLuckyBlock, removeCaseOpening, news, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
+		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
 
 	private boolean isNews = false;
 
@@ -192,10 +186,6 @@ public class ChatMods extends Feature {
 
 		// remove streamer
 		if (removeStreamerNotifications.get() && formattedText.startsWith("§r§8[§6Streamer§8]"))
-			return true;
-
-		// Remove MysteryMod download notification
-		if (removeMysteryMod.get() && MYSTERY_MOD_DOWNLOAD_NOTIFICATION.contains(formattedText))
 			return true;
 
 		// remove luckyblock

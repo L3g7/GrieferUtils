@@ -57,7 +57,7 @@ public class ByteAndBit extends Feature {
 		.name("Botshop-GUI")
 		.description("Öffnet das BotShop-GUI von unterstützten BotShops.")
 		.icon("byte_and_bit")
-		.defaultValue(new HashSet<>(Collections.singletonList(Keyboard.KEY_RETURN)))
+		.defaultValue(Keyboard.KEY_RETURN)
 		.pressCallback(this::onKeyPress);
 
 	@OnEnable

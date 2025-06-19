@@ -10,7 +10,8 @@ package dev.l3g7.griefer_utils.core.settings.types;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
@@ -19,6 +20,12 @@ public interface KeySetting extends AbstractSetting<KeySetting, Set<Integer>> {
 	static KeySetting create() {return settings.createKeySetting();}
 
 	KeySetting placeholder(String placeholder);
+
+	default KeySetting defaultValue(int... values) {
+		return defaultValue(new HashSet<>(Arrays.stream(values)
+			.mapToObj(i -> i)
+			.collect(Collectors.toList())));
+	}
 
 	/**
 	 * Registers a callback for button presses.

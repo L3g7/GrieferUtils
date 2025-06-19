@@ -54,11 +54,7 @@ public class StandardPrefixes extends Feature {
 		.name("Im Chat")
 		.description("Ob die Prefixe im Chat geändert werden sollen.")
 		.icon("speech_bubble")
-		.defaultValue(true)
-		.callback(enabled -> {
-			if (!enabled && !tab.get())
-				tab.set(true);
-		});
+		.defaultValue(true);
 
 	private final SwitchSetting self = SwitchSetting.create()
 		.name("Eigenen Prefix ändern")
@@ -79,10 +75,6 @@ public class StandardPrefixes extends Feature {
 	public void init() {
 		super.init();
 		getCategory().callback(TabListEvent::updatePlayerInfoList);
-		tab.callback(enabled -> {
-			if (!enabled && !chat.get())
-				chat.set(true);
-		});
 	}
 
 	@EventListener(priority = Priority.HIGHEST)

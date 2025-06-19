@@ -34,7 +34,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
 
 /**
- * Automatically sprints when walking.
+ * Automatically enters the portal room when joining.
  */
 @Singleton
 public class AutoPortal extends Feature {

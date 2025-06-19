@@ -27,12 +27,6 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 @SuppressWarnings("unchecked")
 public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends AbstractSetting<S, V> {
 
-	// Helper methods
-
-	default void init() {
-		((SettingsElement) this).setDisplayName(null);
-	}
-
 	// BaseSetting
 
 	@Override
@@ -71,7 +65,7 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		subSettings(Arrays.asList(
 			HeaderSetting.create("§r"),
 			HeaderSetting.create("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-			HeaderSetting.create("§e§l" + ((S) this).name().replaceAll("§.", "").replaceAll("[^\\w-äÄöÖüÜß ]", "")).scale(.7),
+			HeaderSetting.create("§e§l" + ((S) this).name().replaceAll("§.", "").replaceAll("[^\\w-äÄöÖüÜß./ ]", "")).scale(.7),
 			HeaderSetting.create("§r").scale(.4).entryHeight(10)
 		));
 		return subSettings(Arrays.asList(settings));

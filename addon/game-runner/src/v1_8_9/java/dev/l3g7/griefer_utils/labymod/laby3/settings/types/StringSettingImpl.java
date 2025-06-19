@@ -82,8 +82,15 @@ public class StringSettingImpl extends StringElement implements Laby3Setting<Str
 	@Override
 	public void init() {
 		super.init();
-		Reflection.set(this, "currentValue", get());
-		callback(v -> Reflection.set(this, "currentValue", v));
+		setLaby(get());
+		callback(this::setLaby);
+	}
+
+	private void setLaby(String value) {
+		ModTextField textField = Reflection.get(this, "textField");
+		Reflection.set(this, "currentValue", value);
+		if (!textField.getText().equals(value))
+			textField.setText(value);
 	}
 
 	@Override

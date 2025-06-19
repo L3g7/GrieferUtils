@@ -63,6 +63,10 @@
     <td><a href="https://www.shutterstock.com/image-vector/pixel-art-game-cash-money-icons-2197122619">Shutterstock (NSTIvectors)</a></td>
   </tr>
   <tr>
+    <td><img src="7r.png" height=16em width=16em />&nbsp;&nbsp;<a href="7r.png">7r.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><img src="arrow_circle.png" height=16em width=16em />&nbsp;&nbsp;<a href="arrow_circle.png">arrow_circle.png</a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>

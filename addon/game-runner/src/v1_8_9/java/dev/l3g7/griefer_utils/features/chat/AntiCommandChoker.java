@@ -62,7 +62,7 @@ public class AntiCommandChoker extends Feature {
 			&p h
 			t/p h
 			t(p h""")
-		.icon("7r")
+		.icon(new ItemStack(Blocks.barrier, 7))
 		.subSettings(LABY_4.isActive() ? null : HeaderSetting.create("§e§lEigene Einträge").scale(0.7), customEntries);
 
 	@EventListener

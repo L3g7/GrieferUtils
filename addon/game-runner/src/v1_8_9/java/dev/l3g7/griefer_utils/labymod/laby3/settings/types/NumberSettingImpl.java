@@ -10,9 +10,8 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
-import net.labymod.gui.elements.ModTextField;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.settings.elements.NumberElement;
 
 public class NumberSettingImpl extends NumberElement implements Laby3Setting<NumberSetting, Integer>, NumberSetting {
@@ -31,16 +30,20 @@ public class NumberSettingImpl extends NumberElement implements Laby3Setting<Num
 
 	@Override
 	public NumberSetting placeholder(String placeholder) {
-		ModTextField textField = Reflection.get(this, "textField");
-		textField.setPlaceHolder(placeholder);
-		return this;
+		// The backing GuiTextField does not support placeholders
+		throw new UnsupportedOperationException("unimplemented");
 	}
 
 	@Override
 	public void init() {
 		super.init();
-		Reflection.set(this, "currentValue", get());
-		callback(v -> Reflection.set(this, "currentValue", v));
+		setLaby(get());
+		callback(this::setLaby);
+	}
+
+	private void setLaby(Integer value) {
+		Reflection.set(this, "currentValue", value);
+		getTextField().setText(String.valueOf(value));
 	}
 
 	@Override

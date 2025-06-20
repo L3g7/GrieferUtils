@@ -84,7 +84,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 
 	@Override
 	public boolean isFallbackValue() {
-		return get() != null && get().isEmpty();
+		return get() == null || get().isEmpty();
 	}
 
 	private List<SettingsElement> getSettings() {

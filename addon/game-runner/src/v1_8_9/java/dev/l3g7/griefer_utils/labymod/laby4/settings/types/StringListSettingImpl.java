@@ -86,6 +86,11 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 	}
 
 	@Override
+	public boolean isFallbackValue() {
+		return get() == null || get().isEmpty();
+	}
+
+	@Override
 	public ExtendedStorage<List<String>> getStorage() {
 		return storage;
 	}

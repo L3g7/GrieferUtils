@@ -36,13 +36,6 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 @Singleton
 public class ChatMods extends Feature {
 
-	private final List<String> MYSTERY_MOD_DOWNLOAD_NOTIFICATION = ImmutableList.of(
-		"§r§8[§r§6GrieferGames§r§8] §r§cOhje. Du benutzt noch kein MysteryMod!§r",
-		"§r§8[§r§6GrieferGames§r§8] §r§fWir sind optimiert für MysteryMod und die neusten Funktionen hast Du nur damit.§r",
-		"§r§8[§r§6GrieferGames§r§8] §r§fDownload: §r§ahttps://mysterymod.net/download/§r",
-		"§r§8[§r§6GrieferGames§r§8] §r§fWir sind optimiert für MysteryMod. Lade Dir gerne die Mod runter!§r"
-	);
-
 	private List<String> COLORED_FONTS = ImmutableList.of();
 
 	private final SwitchSetting antiClearChat = SwitchSetting.create()

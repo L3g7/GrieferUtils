@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends BaseSetting<S> { // NOTE: add untyped version
@@ -126,22 +127,17 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		Storage<V> s = getStorage();
 
 		if (s.configKey != null) {
-			if (isFallbackValue())
+			V value = get();
+
+			// Check if value matches the fallback value
+			if (value instanceof List<?> list ? list.isEmpty() : Objects.equals(s.fallbackValue, value))
 				Config.unset(s.configKey);
 			else
-				Config.set(s.configKey, s.encodeFunc.apply(get()));
+				Config.set(s.configKey, s.encodeFunc.apply(value));
 			Config.save();
 		}
 
 		return (S) this;
-	}
-
-	/**
-	 * Checks whether the selected value matches the fallback value.
-	 */
-	default boolean isFallbackValue() {
-		Storage<V> s = getStorage();
-		return s.fallbackValue != null && s.fallbackValue.equals(get());
 	}
 
 	/**

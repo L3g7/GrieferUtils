@@ -46,11 +46,6 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 
 	private SettingsElement container = this;
 
-	@Override
-	public boolean isFallbackValue() {
-		return get() != null && get().isEmpty();
-	}
-
 	public PlayerListSettingLaby3() {
 		super("§cEs gab einen Fehler!", null);
 		setSettingEnabled(true);

@@ -22,6 +22,7 @@ import io.netty.util.internal.ConcurrentSet;
 import net.labymod.api.Laby;
 import net.labymod.api.user.group.Group;
 import net.labymod.core.main.user.DefaultGameUser;
+import net.labymod.core.main.user.DefaultGameUserProfile;
 import net.labymod.core.main.user.group.GroupHolder;
 
 import java.util.HashMap;
@@ -69,7 +70,8 @@ public class Laby4BadgeManagerBridge implements BadgeManagerBridge {
 
 	private static GroupHolder user(UUID uuid) {
 		DefaultGameUser user = (DefaultGameUser) Laby.references().gameUserService().gameUser(uuid);
-		return user.groupHolder();
+		DefaultGameUserProfile profile = (DefaultGameUserProfile) user.profile();
+		return profile.groupHolder();
 	}
 
 	@EventListener

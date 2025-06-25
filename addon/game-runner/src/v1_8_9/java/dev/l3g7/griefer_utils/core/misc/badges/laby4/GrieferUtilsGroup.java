@@ -30,13 +30,11 @@ import net.labymod.api.user.group.Group;
 import net.labymod.api.user.group.GroupDisplayType;
 import net.labymod.api.util.ColorUtil;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.playerlist.PlayerListRenderer;
-import net.labymod.core.main.user.DefaultGameUser;
 import net.labymod.core.main.user.badge.RankBadgeRenderer;
 import net.labymod.core.main.user.group.tag.GroupIconTag;
 import net.labymod.core.main.user.group.tag.GroupTextTag;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -154,23 +152,6 @@ public class GrieferUtilsGroup extends Group {
 		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
 		x -= Laby.references().renderPipeline().textRenderer().width(text) * 0.7;
 		DrawUtils.drawTexture(x - 8, 1.25, 256, 256, 7, 7);
-	}
-
-	/**
-	 * Ensure the ingame badge is displayed
-	 */
-	@Mixin(value = DefaultGameUser.class, remap = false)
-	private static abstract class MixinDefaultGameUser {
-
-		@Shadow
-		public abstract @NotNull Group visibleGroup();
-
-		@Inject(method = "isUsingLabyMod", at = @At("RETURN"), cancellable = true)
-		private void injectIsUsingLabyMod(CallbackInfoReturnable<Boolean> cir) {
-			if (!cir.getReturnValueZ() && visibleGroup() instanceof GrieferUtilsGroup)
-				cir.setReturnValue(true);
-		}
-
 	}
 
 	/**

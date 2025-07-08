@@ -15,13 +15,18 @@ import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFGetReadyRequest;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFProcessRequest;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFSearchRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.*;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerJoinEvent;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -34,6 +39,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @SuppressWarnings("UnusedReturnValue") // Callers may ignore Future<Void>s
@@ -158,6 +164,40 @@ public class GUServer {
 			new BlockOfTheDayRequest.Reward(type, counter, amount, eventItem).send();
 			return null;
 		});
+	}
+
+	public static CompletableFuture<List<String>> getBSFReady() {
+		return CompletableFuture.supplyAsync(() -> new BSFGetReadyRequest().get());
+	}
+
+	public static CompletableFuture<Boolean> processBSFData(String cb, int centerX, int centerZ, BlockPos origin, Set<BSFProcessRequest.Data> data) {
+		return CompletableFuture.supplyAsync(() -> new BSFProcessRequest(
+			cb, // Might have been queued -> Not always the current one
+			centerX,
+			centerZ,
+			new int[] {origin.getX(), origin.getY(), origin.getZ()},
+			data
+		).send());
+	}
+
+	public static CompletableFuture<BSFSearchRequest.SearchResponse> searchStructure(int structure, List<Integer> excluded) {
+		return CompletableFuture.supplyAsync(() -> new BSFSearchRequest.Structure(
+			MinecraftUtil.getCurrentCitybuild().getInternalName(),
+			player().chunkCoordX,
+			player().chunkCoordZ,
+			structure,
+			excluded
+		).send());
+	}
+
+	public static CompletableFuture<BSFSearchRequest.SearchResponse> searchBiome(List<Integer> ids, List<Integer> excluded) {
+		return CompletableFuture.supplyAsync(() -> new BSFSearchRequest.Biome(
+			MinecraftUtil.getCurrentCitybuild().getInternalName(),
+			player().chunkCoordX,
+			player().chunkCoordZ,
+			ids,
+			excluded
+		).send());
 	}
 
 }

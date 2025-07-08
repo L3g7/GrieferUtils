@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.lab
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.minecraft.client.gui.GuiScreen;

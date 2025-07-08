@@ -112,7 +112,7 @@ public abstract class Request<R> {
 		}
 
 		InputStream in = conn.getResponseCode() >= 400 ? conn.getErrorStream() : conn.getInputStream();
-		Response r = new Response(new String(IOUtil.toByteArray(in), StandardCharsets.UTF_8));
+		Response r = new Response(conn.getResponseCode(), new String(IOUtil.toByteArray(in), StandardCharsets.UTF_8));
 
 		try {
 			return parseResponse(r);
@@ -123,10 +123,16 @@ public abstract class Request<R> {
 
 	public static class Response {
 
+		private final int status;
 		private final String body;
 
-		public Response(String body) {
+		public Response(int status, String body) {
+			this.status = status;
 			this.body = body;
+		}
+
+		public int getStatus() {
+			return status;
 		}
 
 		public <T> T convertTo(Class<T> type) {

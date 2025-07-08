@@ -7,13 +7,13 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.farms;
 
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiGrieferInfo;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiSearchable;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiSearchable;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiGrieferInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.init.Blocks;

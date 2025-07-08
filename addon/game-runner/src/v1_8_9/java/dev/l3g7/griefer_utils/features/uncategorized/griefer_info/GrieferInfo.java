@@ -10,15 +10,14 @@ package dev.l3g7.griefer_utils.features.uncategorized.griefer_info;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
+import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
-import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiGrieferInfo;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 

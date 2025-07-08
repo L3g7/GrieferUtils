@@ -7,11 +7,11 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops;
 
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiGrieferInfo;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiSearchable;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiSearchable;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.GuiGrieferInfo;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

@@ -9,12 +9,12 @@ package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.features.chat.BetterSwitchCommand;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest.TextureItem;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest.TextureItem;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.chat.BetterSwitchCommand;
+import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.BigChestUtil;
 import net.minecraft.init.Blocks;
 
 import java.util.ArrayList;

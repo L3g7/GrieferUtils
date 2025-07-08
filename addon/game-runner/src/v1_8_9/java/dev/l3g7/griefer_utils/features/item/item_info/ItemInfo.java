@@ -12,13 +12,13 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiBigChest;
 import dev.l3g7.griefer_utils.features.widgets.other.BlockInfo;
 import net.minecraft.item.ItemStack;
 

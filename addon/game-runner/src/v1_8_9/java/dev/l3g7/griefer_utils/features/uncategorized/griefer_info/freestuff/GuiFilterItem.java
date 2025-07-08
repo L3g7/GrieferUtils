@@ -7,8 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff;
 
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiSearchable;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.freestuff.ItemFilter.Category;
-import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.gui.GuiSearchable;
 
 import java.util.ArrayList;
 import java.util.Comparator;

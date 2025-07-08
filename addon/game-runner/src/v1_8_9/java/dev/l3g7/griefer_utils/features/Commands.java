@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
@@ -51,6 +50,17 @@ public class Commands {
 				return "Usage: /gu:run_on_cb <text>";
 
 			runOnCb(argsString);
+			return null;
+		}
+
+		if (command.equalsIgnoreCase("test")) {
+			int i = switch (argsString) {
+				case "a" -> 0;
+				case "b" -> 1;
+				case "c" -> 2;
+				default -> -1;
+			};
+			display("" + i);
 			return null;
 		}
 

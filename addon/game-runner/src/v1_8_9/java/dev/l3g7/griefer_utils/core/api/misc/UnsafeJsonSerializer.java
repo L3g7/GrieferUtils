@@ -138,7 +138,7 @@ public class UnsafeJsonSerializer {
 	}
 
 	private static List<Object> arrayToList(Object o) {
-		Class<?> component = o.getClass().componentType();
+		Class<?> component = o.getClass().getComponentType();
 		if (!component.isPrimitive())
 			return Arrays.asList((Object[]) o);
 

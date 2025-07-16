@@ -185,6 +185,8 @@ public class GuiBigChest extends GuiContainer {
 	 */
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+		ItemStack FILLER = ItemUtil.createItem(Blocks.stained_glass_pane, 8, null);
+
 		mc.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
@@ -261,10 +263,15 @@ public class GuiBigChest extends GuiContainer {
 		}
 
 		public TextureItem(String texture, int renderSize, ItemStack toolTipStack) {
-			this.texture = "icons/" + texture + ".png";
+			this.texture = texture.endsWith(".png") ? texture : "icons/" + texture + ".png";
 			this.renderSize = renderSize;
 			this.toolTipStack = toolTipStack;
 		}
+
+		public TextureItem copy() {
+			return new TextureItem(texture, renderSize, toolTipStack.copy());
+		}
+
 	}
 
 }

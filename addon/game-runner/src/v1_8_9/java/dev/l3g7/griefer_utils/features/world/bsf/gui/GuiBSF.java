@@ -12,13 +12,17 @@ import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.world.bsf.BSF;
 import dev.l3g7.griefer_utils.features.world.bsf.BSFCollector;
-import dev.l3g7.griefer_utils.features.world.bsf.Waypoint;
 import dev.l3g7.griefer_utils.features.world.bsf.data.Category;
+import dev.l3g7.griefer_utils.features.world.bsf.waypoint.Waypoint;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.distanceToPlayer;
 
 public class GuiBSF extends GuiBigChest {
 
@@ -28,47 +32,52 @@ public class GuiBSF extends GuiBigChest {
 		super("Biom- und Strukturen-Suche", 3);
 	}
 
-	private void updateStatusItem() {
-		if (BSF.hasData()) {
-			addItem(16, ItemUtil.createItem(Blocks.wool, 5, "§fStatus: §aBereit"), null);
-		} else {
-			ItemStack stack = ItemUtil.createItem(Blocks.wool, 14, "§fStatus: §cNicht bereit");
-			ItemUtil.setLore(stack, "",
-				"§7Bitte erkunde die Farmwelt weiter.",
-				"§7Wenn du eine Benachrichtigung bekommen willst,",
-				"§7sobald die Suche bereit ist, klicke auf das Item.");
-			addItem(16, stack, () -> {
-				BSFCollector.notify = true;
-				labyBridge.notify("§aBenachrichtigung", "§aDu bekommst nun eine Benachrichtigung,\nwenn die Suche bereit ist!");
-				mc().displayGuiScreen(null);
-			});
-		}
-	}
-
 	@Override
 	public void open() {
-		if (lastUpdate - 10_000 <= System.currentTimeMillis()) {
+		if (lastUpdate + 10_000 <= System.currentTimeMillis()) {
 			GUServer.getBSFReady().thenAccept(cbs -> {
 				BSF.readyCbs.addAll(cbs);
-				updateStatusItem();
-
+				new GuiBSF().open(); // Rebuild GUI
 			});
 			lastUpdate = System.currentTimeMillis();
 		}
 
 		super.open();
-		addItem(10, ItemUtil.createItem(Blocks.grass, 0, "§fBiome"), new GuiSelect("Biom-Suche", Category.ALL, this)::open);
-		addItem(12, ItemUtil.createItem(Blocks.prismarine, 1, "§fStrukturen"), new GuiSelect("Strukturen-Suche", Category.ALL_STRUCTURES, this)::open);
-		if (Waypoint.enabled) {
-			addItem(14, ItemUtil.createItem(Blocks.beacon, 0, "§fWegpunkt deaktivieren"), () -> {
-				Waypoint.enabled = false;
-				mc().displayGuiScreen(null);
-				labyBridge.notify("§aWegpunkt deaktiviert", "§aDer Wegpunkt wurde deaktiviert.");
+		if (!BSF.hasData()) {
+			List<String> lore = new ArrayList<>(Arrays.asList("§fBitte erkunde die Farmwelt."));
+
+			if (!BSFCollector.notify) {
+				lore.addAll(Arrays.asList("",
+					"§7Wenn du eine Benachrichtigung bekommen willst,",
+					"§7sobald die Suche bereit ist, klicke auf das Item."));
+			}
+
+			TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", lore.toArray(String[]::new));
+
+			addTextureItem(13, item, () -> {
+				if (!BSFCollector.notify) {
+					BSFCollector.notify = true;
+					labyBridge.notify("§aBenachrichtigung", "§aDu bekommst nun eine Benachrichtigung,\nwenn die Suche bereit ist!");
+					new GuiBSF().open(); // Rebuild GUI
+				}
 			});
-		} else {
-			addItem(14, ItemUtil.setLore(ItemUtil.createItem(Blocks.barrier, 0, "§cWegpunkt deaktivieren"), "", "§cEs ist derzeit kein Wegpunkt aktiv."), null);
+			return;
 		}
 
-		updateStatusItem();
+		addTextureItem(11, new TextureItem("earth", "§fBiome"), new GuiSelect("Biom-Suche", Category.ALL_BIOMES, this)::open);
+		addTextureItem(13, new TextureItem("structures/desert_pyramid", "§fStrukturen"), new GuiSelect("Strukturen-Suche", Category.ALL_STRUCTURES, this)::open);
+
+		if (Waypoint.enabled) {
+			ItemStack item = ItemUtil.createItem(Blocks.beacon, 0, "§fAktiver Wegpunkt: " + Waypoint.target.getName().singular + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)");
+			ItemUtil.setLore(item, "§fPosition: " + Waypoint.x + ", " + Waypoint.z,
+				"",
+				"§7Klicke auf das Item, um den Wegpunkt zu deaktivieren.");
+			addItem(15, item, () -> {
+				Waypoint.disable();
+				new GuiBSF().open();
+			});
+		} else {
+			addItem(15, ItemUtil.setLore(ItemUtil.createItem(Blocks.glass, 0, "§cKein Wegpunkt aktiv.")), null);
+		}
 	}
 }

@@ -18,15 +18,12 @@ import dev.l3g7.griefer_utils.features.world.bsf.data.BSFSearchable;
 import dev.l3g7.griefer_utils.features.world.bsf.gui.GuiBSF;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class BSF {
 
 	public static final Map<Citybuild, Map<BSFSearchable, List<SearchData>>> SEARCH_DATA = new HashMap<>();
-	public static final Set<String> readyCbs = Collections.newSetFromMap(new ConcurrentHashMap<>());
+	public static final Set<String> readyCbs = Collections.synchronizedSet(new HashSet<>());
 	private static boolean requestedOnJoin = false;
-
-	private static final GuiBSF MAIN_GUI = new GuiBSF();
 
 	public static boolean hasData() {
 		return readyCbs.contains(MinecraftUtil.getCurrentCitybuild().getInternalName());
@@ -50,7 +47,7 @@ public class BSF {
 	private static void onMessageSend(MessageEvent.MessageSendEvent event ) {
 		if (event.message.toLowerCase().startsWith("/bsf")) {
 			event.cancel();
-			TickScheduler.runAfterRenderTicks(MAIN_GUI::open, 1);
+			TickScheduler.runAfterRenderTicks(() -> new GuiBSF().open(), 1);
 		}
 	}
 

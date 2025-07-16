@@ -53,17 +53,6 @@ public class Commands {
 			return null;
 		}
 
-		if (command.equalsIgnoreCase("test")) {
-			int i = switch (argsString) {
-				case "a" -> 0;
-				case "b" -> 1;
-				case "c" -> 2;
-				default -> -1;
-			};
-			display("" + i);
-			return null;
-		}
-
 		if (command.equalsIgnoreCase("queue")) {
 			if (argsString.isEmpty())
 				return "Usage: /gu:queue <text>";

@@ -216,4 +216,10 @@ public class MinecraftUtil {
 		currentResolution = event.scaledResolution;
 	}
 
+	public static int distanceToPlayer(int x, int z) {
+		double xDiff = player().posX - x;
+		double zDiff = player().posZ - z;
+		return (int) Math.ceil(Math.sqrt(xDiff*xDiff + zDiff*zDiff));
+	}
+
 }

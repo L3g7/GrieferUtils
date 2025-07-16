@@ -1,6 +1,17 @@
-package dev.l3g7.griefer_utils.features.world.bsf;
+/*
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
+ * Copyright (c) L3g7.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ */
+
+package dev.l3g7.griefer_utils.features.world.bsf.waypoint;
 
 import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.features.world.bsf.data.BSFSearchable;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -15,7 +26,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.awt.*;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
@@ -31,12 +41,19 @@ public class Waypoint extends TileEntityBeacon {
 	public static boolean enabled = false;
 	public static int x;
 	public static int z;
+	public static BSFSearchable target;
 
-	public static void setWaypoint(int x, int z, Color color) {
+	public static void setWaypoint(int x, int z, BSFSearchable target) {
 		enabled = true;
 		Waypoint.x = x;
 		Waypoint.z = z;
-		System.arraycopy(color.getRGBColorComponents(null), 0, colors, 0, 3);
+		Waypoint.target = target;
+		target.getColor().getRGBColorComponents(colors);
+	}
+
+	public static void disable() {
+		enabled = false;
+		Reflection.set(mc().ingameGUI, "recordPlayingUpFor", 20);
 	}
 
 	@Override
@@ -66,6 +83,12 @@ public class Waypoint extends TileEntityBeacon {
 		}
 	}
 
+	@EventListener
+	private static void onTickEvent(TickEvent.ClientTickEvent event) {
+		if (enabled)
+			mc().ingameGUI.setRecordPlaying(target.getName().singular + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)", false);
+	}
+
 	@Mixin(RenderGlobal.class)
 	private static class MixinRenderGlobal {
 
@@ -90,7 +113,7 @@ public class Waypoint extends TileEntityBeacon {
 
 			double dist = Math.sqrt(xDist*xDist + zDist*zDist);
 			if (dist <= MIN_DIST) {
-				enabled = false;
+				disable();
 				return;
 			}
 

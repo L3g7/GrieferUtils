@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFProcessReques
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.world.bsf.waypoint.Waypoint;
 import net.minecraft.network.play.server.S44PacketWorldBorder;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.chunk.Chunk;

@@ -14,13 +14,12 @@ import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.world.bsf.BSF;
-import dev.l3g7.griefer_utils.features.world.bsf.Waypoint;
 import dev.l3g7.griefer_utils.features.world.bsf.data.BSFSearchable;
 import dev.l3g7.griefer_utils.features.world.bsf.data.Biome;
 import dev.l3g7.griefer_utils.features.world.bsf.data.Category;
 import dev.l3g7.griefer_utils.features.world.bsf.data.Structure;
+import dev.l3g7.griefer_utils.features.world.bsf.waypoint.Waypoint;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,22 +27,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.distanceToPlayer;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 public class GuiSearches extends GuiBigChest {
 
 	private final BSFSearchable searchable;
 	private final List<BSF.SearchData> searchData;
 
-	public GuiSearches(BSFSearchable searchable, String title, ItemStack stack, GuiBigChest previousGui) {
-		this(searchable, title, stack, previousGui, !BSF.isInFarmwelt()
+	public GuiSearches(BSFSearchable searchable, String title, TextureItem icon, GuiBigChest previousGui) {
+		this(searchable, title, icon, previousGui, !BSF.isInFarmwelt()
 			? ImmutableList.of()
 			: BSF.SEARCH_DATA.computeIfAbsent(MinecraftUtil.getCurrentCitybuild(), k -> new HashMap<>())
 			.computeIfAbsent(searchable, k -> new ArrayList<>()));
 	}
 
-	private GuiSearches(BSFSearchable searchable, String title, ItemStack stack, GuiBigChest previousGui, List<BSF.SearchData> searchData) {
+	private GuiSearches(BSFSearchable searchable, String title, TextureItem icon, GuiBigChest previousGui, List<BSF.SearchData> searchData) {
 		super(title, Math.max(4, (searchData.size() % 5 == 0 ? 2 : 3 /* fix rounding */) + (searchData.size() / 5)), previousGui);
 		this.searchable = searchable;
 		this.searchData = searchData;
@@ -81,9 +80,10 @@ public class GuiSearches extends GuiBigChest {
 		int counter = 12;
 
 		for (BSF.SearchData coordinates : searchData) {
-			ItemStack searchStack = stack.copy().setStackDisplayName("§fKoordinaten: " + coordinates.x + ", " + coordinates.z + " (" + distance(coordinates.x, coordinates.z) + "m)");
-			addItem(counter++, searchStack, () -> {
-				Waypoint.setWaypoint(coordinates.x, coordinates.z, searchable.getColor());
+			TextureItem searchItem = icon.copy();
+			searchItem.toolTipStack.setStackDisplayName("§fKoordinaten: " + coordinates.x + ", " + coordinates.z + " (" + distanceToPlayer(coordinates.x, coordinates.z) + "m)");
+			addTextureItem(counter++, searchItem, () -> {
+				Waypoint.setWaypoint(coordinates.x, coordinates.z, searchable);
 				labyBridge.notify("§aWegpunkt gesetzt", "§aWegpunkt wurde auf " + coordinates.x + " " + coordinates.z + " gesetzt.");
 				mc().displayGuiScreen(null);
 			});
@@ -113,14 +113,8 @@ public class GuiSearches extends GuiBigChest {
 		}
 
 		searchData.add(new BSF.SearchData(mc_x, mc_z, r.index));
-		labyBridge.notify("§a" + mc_x + " " + mc_z, "§a(Folge dem Beacon " + distance(mc_x, mc_z) + "m)");
-		Waypoint.setWaypoint(mc_x, mc_z, searchable.getColor());
-	}
-
-	private static int distance(int x, int z) {
-		double xDiff = player().posX - x;
-		double zDiff = player().posZ - z;
-		return (int) Math.ceil(Math.sqrt(xDiff*xDiff + zDiff*zDiff));
+		labyBridge.notify("§a" + mc_x + " " + mc_z, "§a(Folge dem Beacon " + distanceToPlayer(mc_x, mc_z) + "m)");
+		Waypoint.setWaypoint(mc_x, mc_z, searchable);
 	}
 
 }

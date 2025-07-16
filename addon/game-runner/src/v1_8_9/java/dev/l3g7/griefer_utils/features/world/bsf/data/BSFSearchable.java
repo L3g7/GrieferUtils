@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.world.bsf.data;
 
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,7 @@ public interface BSFSearchable {
 
 	BSFName getName();
 
-	ItemStack getIcon();
+	GuiBigChest.TextureItem getIcon();
 
 	Color getColor();
 

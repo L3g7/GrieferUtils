@@ -13,8 +13,8 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.HIVEMIND_URL;
 
 public class MobRemoverRequest extends Request<Long> {
 
-	private String citybuild;
-	private Long value;
+	private final String citybuild;
+	private final Long value;
 
 	public MobRemoverRequest(String citybuild, Long value) {
 		super(HIVEMIND_URL, "/hive_mind/mob_remover");

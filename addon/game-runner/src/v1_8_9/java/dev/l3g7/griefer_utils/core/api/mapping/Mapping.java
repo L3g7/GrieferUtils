@@ -24,6 +24,6 @@ public enum Mapping {
 	 * The names, deobfuscated using MCP mappings.
 	 * If no MCP mapping exists for a specific member, the intermediary name will be used.
 	 */
-	UNOBFUSCATED;
+	UNOBFUSCATED
 
 }

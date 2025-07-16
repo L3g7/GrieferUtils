@@ -154,8 +154,7 @@ public class InventoryValueWidget {
 			while (iterator.hasNext()) {
 				SettingsElement element = iterator.next();
 
-				if (element instanceof ItemDisplaySetting) {
-					ItemDisplaySetting ids = (ItemDisplaySetting) element;
+				if (element instanceof ItemDisplaySetting ids) {
 					if (nbt.equals(ItemUtil.serializeNBT(ids.getStack())))
 						return ids;
 				}
@@ -173,10 +172,9 @@ public class InventoryValueWidget {
 
 			JsonObject object = new JsonObject();
 			for (SettingsElement element : FileProvider.getSingleton(InventoryValue.class).rawBooleanElement.getSubSettings().getElements()) {
-				if (!(element instanceof ItemDisplaySetting))
+				if (!(element instanceof ItemDisplaySetting ids))
 					continue;
 
-				ItemDisplaySetting ids = (ItemDisplaySetting) element;
 				object.addProperty(ItemUtil.serializeNBT(ids.getStack()), ids.value);
 			}
 

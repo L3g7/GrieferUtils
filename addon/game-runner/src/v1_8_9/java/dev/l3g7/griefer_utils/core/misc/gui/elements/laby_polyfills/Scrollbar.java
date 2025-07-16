@@ -43,7 +43,7 @@ public class Scrollbar {
     }
 
     public Scrollbar(int entryHeight) {
-        this.entryHeight = (double)entryHeight;
+        this.entryHeight = entryHeight;
         this.setDefaultPosition();
     }
 
@@ -60,16 +60,16 @@ public class Scrollbar {
     }
 
     public void setPosition(int left, int top, int right, int bottom) {
-        this.left = (double)left;
+        this.left = left;
         this.posTop = top;
-        this.right = (double)right;
+        this.right = right;
         this.posBottom = bottom;
         this.calc();
     }
 
     public void calc() {
         double totalPixels = (double)this.listSize * this.entryHeight + (double)this.spaceBelow;
-        double backLength = (double)(this.posBottom - this.posTop);
+        double backLength = this.posBottom - this.posTop;
         if (!(backLength >= totalPixels)) {
             double scale = backLength / totalPixels;
             double barLength = scale * backLength;
@@ -109,10 +109,10 @@ public class Scrollbar {
             GlStateManager.shadeModel(7425);
             GlStateManager.disableTexture2D();
             worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            worldrenderer.pos(this.left, (double)this.posBottom, 0.0).tex(0.0, 1.0).color(0, 0, 0, 255).endVertex();
-            worldrenderer.pos(this.right, (double)this.posBottom, 0.0).tex(1.0, 1.0).color(0, 0, 0, 255).endVertex();
-            worldrenderer.pos(this.right, (double)this.posTop, 0.0).tex(1.0, 0.0).color(0, 0, 0, 255).endVertex();
-            worldrenderer.pos(this.left, (double)this.posTop, 0.0).tex(0.0, 0.0).color(0, 0, 0, 255).endVertex();
+            worldrenderer.pos(this.left, this.posBottom, 0.0).tex(0.0, 1.0).color(0, 0, 0, 255).endVertex();
+            worldrenderer.pos(this.right, this.posBottom, 0.0).tex(1.0, 1.0).color(0, 0, 0, 255).endVertex();
+            worldrenderer.pos(this.right, this.posTop, 0.0).tex(1.0, 0.0).color(0, 0, 0, 255).endVertex();
+            worldrenderer.pos(this.left, this.posTop, 0.0).tex(0.0, 0.0).color(0, 0, 0, 255).endVertex();
             tessellator.draw();
             worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
             worldrenderer.pos(this.left, this.top + this.barLength, 0.0).tex(0.0, 1.0).color(128, 128, 128, 255).endVertex();
@@ -144,7 +144,7 @@ public class Scrollbar {
     public void mouseAction(int mouseX, int mouseY, EnumMouseAction mouseAction) {
         this.calc();
         double scale = this.backLength / ((double)this.listSize * this.entryHeight + (double)this.spaceBelow);
-        double value = (double)((int)((double)(-mouseY) / scale));
+        double value = (int)((double)(-mouseY) / scale);
         switch (mouseAction) {
             case CLICKED:
                 if (this.hold) {
@@ -169,9 +169,9 @@ public class Scrollbar {
     public void mouseInput() {
         int wheel = Mouse.getEventDWheel();
         if (wheel > 0) {
-            this.scrollY += (double)this.speed;
+            this.scrollY += this.speed;
         } else if (wheel < 0) {
-            this.scrollY -= (double)this.speed;
+            this.scrollY -= this.speed;
         }
 
         if (wheel != 0) {
@@ -324,12 +324,12 @@ public class Scrollbar {
         this.spaceBelow = spaceBelow;
     }
 
-    public static enum EnumMouseAction {
+    public enum EnumMouseAction {
         CLICKED,
         RELEASED,
         DRAGGING;
 
-        private EnumMouseAction() {
+        EnumMouseAction() {
         }
     }
 }

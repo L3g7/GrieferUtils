@@ -115,14 +115,12 @@ class EventBus {
 			// Create check for every type argument
 			for (int i = 0; i < typeParams.length; i++) {
 				Type typeParam = typeParams[i];
-				if (typeParam instanceof Class) {
-					Class<?> requiredClass = (Class<?>) typeParam;
+				if (typeParam instanceof Class<?> requiredClass) {
 					Field definingField = findGenericDefiningField(eventClass, eventClass.getTypeParameters()[i]);
 					definingField.setAccessible(true);
 					// Check if type of given event is applicable to required type
 					typeChecks[i] = event -> requiredClass.isInstance(definingField.get(event));
-				} else if (typeParam instanceof WildcardType) {
-					WildcardType wc = (WildcardType) typeParam;
+				} else if (typeParam instanceof WildcardType wc) {
 					// Assert wildcard is unbounded (<?>)
 					if (wc.getLowerBounds().length > 0 || !Arrays.equals(wc.getUpperBounds(), new Object[]{Object.class}))
 						// I can't think of any use case for bounded wildcards in event listeners

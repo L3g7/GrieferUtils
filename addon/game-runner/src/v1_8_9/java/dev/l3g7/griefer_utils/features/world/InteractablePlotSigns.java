@@ -9,8 +9,8 @@ package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.tileentity.TileEntity;
@@ -37,10 +37,9 @@ public class InteractablePlotSigns extends Feature {
 	public void onPacketSend(PacketEvent.PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
 		TileEntity te = world().getTileEntity(event.packet.getPosition());
 
-		if (!(te instanceof TileEntitySign))
+		if (!(te instanceof TileEntitySign tes))
 			return;
 
-		TileEntitySign tes = (TileEntitySign) te;
 		if (tes.signText[0] == null)
 			return;
 

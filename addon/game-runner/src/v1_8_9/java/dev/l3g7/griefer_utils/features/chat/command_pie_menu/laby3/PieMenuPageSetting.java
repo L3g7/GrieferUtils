@@ -87,10 +87,8 @@ public class PieMenuPageSetting extends PieMenuSetting {
 
 		JsonArray entries = new JsonArray();
 		for (SettingsElement entry : getSubSettings().getElements()) {
-			if (!(entry instanceof PieMenuEntrySetting))
+			if (!(entry instanceof PieMenuEntrySetting pieEntry))
 				continue;
-
-			PieMenuEntrySetting pieEntry = (PieMenuEntrySetting) entry;
 
 			JsonObject entryObj = new JsonObject();
 			entryObj.addProperty("name", pieEntry.name.get());

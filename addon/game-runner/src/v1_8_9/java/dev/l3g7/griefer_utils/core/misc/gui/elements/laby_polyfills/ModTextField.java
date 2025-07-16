@@ -386,7 +386,7 @@ public class ModTextField extends Gui {
                     drawRect(this.xPosition - 1, this.yPosition - 1, this.xPosition + this.width + 1, this.yPosition + this.height + 1, -6250336);
                     drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, -16777216);
                 } else if (this.isFocused) {
-	                DrawUtils.drawRectBorder((double)(this.xPosition - 1), (double)(this.yPosition - 1), (double)(this.xPosition + this.width + 1), (double)(this.yPosition + this.height + 1), toRGB(220, 220, 225, 62), 1.0);
+	                DrawUtils.drawRectBorder(this.xPosition - 1, this.yPosition - 1, this.xPosition + this.width + 1, this.yPosition + this.height + 1, toRGB(220, 220, 225, 62), 1.0);
 	                DrawUtils.drawRectangle(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, toRGB(0, 0, 3, 180));
                 } else {
                     drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, toRGB(70, 60, 53, 122));
@@ -475,7 +475,7 @@ public class ModTextField extends Gui {
                 }
 
                 drawRect(pX - ll / 2, pY - 1, pX + ll / 2, pY + 9, !hovered ? toRGB(120, 120, 120, 120) : Integer.MAX_VALUE);
-                DrawUtils.drawCenteredString(color.toString() + colorChar, (double)pX, (double)pY);
+                DrawUtils.drawCenteredString(color + colorChar, pX, pY);
                 pX += ll;
             }
         }
@@ -539,10 +539,10 @@ public class ModTextField extends Gui {
         GlStateManager.enableColorLogic();
         GlStateManager.colorLogicOp(5387);
         worldrenderer.begin(7, DefaultVertexFormats.POSITION);
-        worldrenderer.pos((double)p_146188_1_, (double)p_146188_4_, 0.0).endVertex();
-        worldrenderer.pos((double)p_146188_3_, (double)p_146188_4_, 0.0).endVertex();
-        worldrenderer.pos((double)p_146188_3_, (double)p_146188_2_, 0.0).endVertex();
-        worldrenderer.pos((double)p_146188_1_, (double)p_146188_2_, 0.0).endVertex();
+        worldrenderer.pos(p_146188_1_, p_146188_4_, 0.0).endVertex();
+        worldrenderer.pos(p_146188_3_, p_146188_4_, 0.0).endVertex();
+        worldrenderer.pos(p_146188_3_, p_146188_2_, 0.0).endVertex();
+        worldrenderer.pos(p_146188_1_, p_146188_2_, 0.0).endVertex();
         tessellator.draw();
         GlStateManager.disableColorLogic();
         GlStateManager.enableTexture2D();

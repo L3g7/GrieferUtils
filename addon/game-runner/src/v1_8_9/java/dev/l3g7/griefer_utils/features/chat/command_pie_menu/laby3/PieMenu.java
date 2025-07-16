@@ -29,10 +29,9 @@ public class PieMenu extends dev.l3g7.griefer_utils.core.misc.gui.guis.PieMenu {
 			List<Pair<String, Runnable>> entries = new ArrayList<>();
 
 			for (SettingsElement element : pageElement.getSubSettings().getElements()) {
-				if (!(element instanceof PieMenuEntrySetting))
+				if (!(element instanceof PieMenuEntrySetting entry))
 					continue;
 
-				PieMenuEntrySetting entry = (PieMenuEntrySetting) element;
 				if (!entry.citybuild.get().isOnCb())
 					continue;
 

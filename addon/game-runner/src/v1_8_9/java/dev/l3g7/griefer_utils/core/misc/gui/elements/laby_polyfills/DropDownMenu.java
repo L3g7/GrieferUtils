@@ -13,6 +13,7 @@ import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -22,7 +23,7 @@ import java.util.Iterator;
 public class DropDownMenu<T> extends Gui {
     private static final DropDownEntryDrawer defaultDrawer = new DropDownEntryDrawer() {
         public void draw(Object object, int x, int y, String trimmedEntry) {
-            DrawUtils.drawString(trimmedEntry, (double)x, (double)y);
+            DrawUtils.drawString(trimmedEntry, x, y);
         }
     };
     private String title;
@@ -35,7 +36,7 @@ public class DropDownMenu<T> extends Gui {
     private int width = 0;
     private int height = 0;
     private int maxY = Integer.MAX_VALUE;
-    private ArrayList<T> list = new ArrayList();
+    private final ArrayList<T> list = new ArrayList();
     private DropDownEntryDrawer entryDrawer = null;
     private Scrollbar scrollbar;
     private Consumer<T> hoverCallback;
@@ -51,10 +52,7 @@ public class DropDownMenu<T> extends Gui {
     public DropDownMenu<T> fill(T[] values) {
         int var3 = values.length;
 
-        for(int var4 = 0; var4 < var3; ++var4) {
-            T value = values[var4];
-            this.list.add(value);
-        }
+	    this.list.addAll(Arrays.asList(values).subList(0, var3));
 
         return this;
     }
@@ -62,7 +60,7 @@ public class DropDownMenu<T> extends Gui {
     public void onScroll() {
         if (this.scrollbar != null) {
             this.scrollbar.mouseInput();
-            this.scrollbar.setScrollY((double)((int)(this.scrollbar.getScrollY() / (double)this.scrollbar.getSpeed()) * this.scrollbar.getSpeed()));
+            this.scrollbar.setScrollY((int)(this.scrollbar.getScrollY() / (double)this.scrollbar.getSpeed()) * this.scrollbar.getSpeed());
         }
 
     }
@@ -105,7 +103,7 @@ public class DropDownMenu<T> extends Gui {
                 return true;
             } else {
                 this.open = false;
-                if (!this.open && this.hoverCallback != null) {
+                if (this.hoverCallback != null) {
                     this.hoverCallback.accept(null);
                 }
 
@@ -137,7 +135,7 @@ public class DropDownMenu<T> extends Gui {
         }
 
         if (this.title != null) {
-            DrawUtils.drawString(DrawUtils.trimStringToWidth(this.title, this.width), (double)this.x, (double)(this.y - 13));
+            DrawUtils.drawString(DrawUtils.trimStringToWidth(this.title, this.width), this.x, this.y - 13);
         }
 
         if (this.open) {

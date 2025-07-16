@@ -10,11 +10,11 @@ package dev.l3g7.griefer_utils.features.player;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Slot;
@@ -38,14 +38,13 @@ public class InteractableProfiles extends Feature {
 
 	@EventListener
 	public void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
-		if (!Mouse.getEventButtonState() || !(event.gui instanceof GuiChest))
+		if (!Mouse.getEventButtonState() || !(event.gui instanceof GuiChest gui))
 			return;
 
 		int button = Mouse.getEventButton();
 		if (button != 0 && button != 1)
 			return;
 
-		GuiChest gui = (GuiChest) event.gui;
 		if (getSlotUnderMouse(gui) == null)
 			return;
 

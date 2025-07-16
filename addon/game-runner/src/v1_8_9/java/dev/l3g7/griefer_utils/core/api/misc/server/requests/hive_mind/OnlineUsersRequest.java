@@ -21,7 +21,7 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.HIVEMIND_URL;
 public class OnlineUsersRequest extends Request<List<UUID>> {
 
 	@SerializedName("users_requested")
-	private Set<UUID> usersRequested;
+	private final Set<UUID> usersRequested;
 
 	public OnlineUsersRequest(Set<UUID> usersRequested) {
 		super(HIVEMIND_URL, "/online_users");

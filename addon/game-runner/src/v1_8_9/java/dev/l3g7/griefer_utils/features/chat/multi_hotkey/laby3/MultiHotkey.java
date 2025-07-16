@@ -87,10 +87,8 @@ public class MultiHotkey extends Feature {
 
 		JsonArray array = new JsonArray();
 		for (SettingsElement element : enabled.getSubSettings().getElements()) {
-			if (!(element instanceof HotkeyDisplaySetting))
+			if (!(element instanceof HotkeyDisplaySetting hotkey))
 				continue;
-
-			HotkeyDisplaySetting hotkey = (HotkeyDisplaySetting) element;
 
 			JsonObject entry = new JsonObject();
 			entry.addProperty("name", hotkey.name.get());

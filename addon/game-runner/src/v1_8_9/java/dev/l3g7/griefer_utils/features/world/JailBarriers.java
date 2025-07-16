@@ -9,12 +9,12 @@ package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.EggImpactEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.Packet;
@@ -61,8 +61,7 @@ public class JailBarriers extends Feature {
 			checkIfChunksAreLoaded();
 
 		// Detect going away from the jail
-		if (event.packet instanceof S13PacketDestroyEntities) {
-			S13PacketDestroyEntities packet = (S13PacketDestroyEntities) event.packet;
+		if (event.packet instanceof S13PacketDestroyEntities packet) {
 			for (int entityID : packet.getEntityIDs()) {
 				if (armorStandId == entityID) {
 					armorStandId = -1;
@@ -73,8 +72,7 @@ public class JailBarriers extends Feature {
 		}
 
 		// Detect going to the jail
-		if (event.packet instanceof S0EPacketSpawnObject) {
-			S0EPacketSpawnObject p = (S0EPacketSpawnObject) event.packet;
+		if (event.packet instanceof S0EPacketSpawnObject p) {
 			// Check if it's a ArmorStand
 			if (p.getType() != 78)
 				return;
@@ -97,14 +95,12 @@ public class JailBarriers extends Feature {
 		if (!isNearJail())
 			return;
 
-		if (event.packet instanceof C08PacketPlayerBlockPlacement) {
-			C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
+		if (event.packet instanceof C08PacketPlayerBlockPlacement packet) {
 			if (world().getBlockState(packet.getPosition()).equals(Blocks.barrier.getDefaultState()))
 				event.cancel();
 		}
 
-		if (event.packet instanceof C07PacketPlayerDigging) {
-			C07PacketPlayerDigging packet = (C07PacketPlayerDigging) event.packet;
+		if (event.packet instanceof C07PacketPlayerDigging packet) {
 			if (world().getBlockState(packet.getPosition()).equals(Blocks.barrier.getDefaultState()))
 				event.cancel();
 		}

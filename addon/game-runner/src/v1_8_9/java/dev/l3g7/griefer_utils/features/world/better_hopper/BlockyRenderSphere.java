@@ -152,10 +152,9 @@ public class BlockyRenderSphere {
 			if (this == obj)
 				return true;
 
-			if (!(obj instanceof SpherePart))
+			if (!(obj instanceof SpherePart sp))
 				return false;
 
-			SpherePart sp = (SpherePart) obj;
 			return hashCode() == sp.hashCode();
 		}
 	}

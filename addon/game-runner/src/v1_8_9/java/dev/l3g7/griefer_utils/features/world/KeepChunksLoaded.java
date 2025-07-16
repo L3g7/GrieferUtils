@@ -10,8 +10,8 @@ package dev.l3g7.griefer_utils.features.world;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.multiplayer.ChunkProviderClient;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -59,8 +59,7 @@ public class KeepChunksLoaded extends Feature {
 
 	@EventListener
 	public void onPacketReceive(PacketReceiveEvent<Packet<?>> event) {
-		if (event.packet instanceof S21PacketChunkData) {
-			S21PacketChunkData packet = (S21PacketChunkData) event.packet;
+		if (event.packet instanceof S21PacketChunkData packet) {
 			// Only check if update contains block updates
 			if (!packet.func_149274_i())
 				return;
@@ -74,9 +73,8 @@ public class KeepChunksLoaded extends Feature {
 				forceLoadedChunks.remove(chunkCoords);
 		}
 
-		else if (event.packet instanceof S26PacketMapChunkBulk) {
+		else if (event.packet instanceof S26PacketMapChunkBulk packet) {
 			// Chunk should be loaded, forcing isn't needed
-			S26PacketMapChunkBulk packet = (S26PacketMapChunkBulk) event.packet;
 			for (int i = 0; i < packet.getChunkCount(); i++)
 				forceLoadedChunks.remove(new ChunkCoordIntPair(packet.getChunkX(i), packet.getChunkZ(i)));
 		}

@@ -13,7 +13,7 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.DYNAMIC_API_URL;
 
 public class LeaderboardRequest extends Request<LeaderboardRequest.LeaderboardData> {
 
-	private boolean flown;
+	private final boolean flown;
 
 	public LeaderboardRequest(boolean flown) {
 		super(DYNAMIC_API_URL, "/leaderboard");

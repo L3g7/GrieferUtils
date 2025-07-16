@@ -7,8 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_menu.laby3;
 
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;

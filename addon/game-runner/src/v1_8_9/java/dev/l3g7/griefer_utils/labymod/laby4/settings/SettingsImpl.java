@@ -17,7 +17,6 @@ import dev.l3g7.griefer_utils.core.settings.Settings;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.*;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.EntryAddSettingImpl;
 import net.labymod.api.client.gui.screen.widget.AbstractWidget;
 import net.labymod.api.client.gui.screen.widget.Widget;
 

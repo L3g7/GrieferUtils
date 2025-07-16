@@ -20,9 +20,9 @@ import java.util.Date;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.misc.badges.BadgeManagerBridge.badgeManager;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.bridge.CreditsBridge.creditsBridge;
-import static dev.l3g7.griefer_utils.core.misc.badges.BadgeManagerBridge.badgeManager;
 
 public class Credits {
 

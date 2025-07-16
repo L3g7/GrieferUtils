@@ -7,11 +7,11 @@
 
 package dev.l3g7.griefer_utils.core.api.event_bus;
 
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.annotation.Annotation;

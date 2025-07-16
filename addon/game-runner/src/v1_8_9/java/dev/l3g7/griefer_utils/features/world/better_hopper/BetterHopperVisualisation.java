@@ -36,9 +36,9 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static dev.l3g7.griefer_utils.features.world.better_hopper.BetterHopper.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static dev.l3g7.griefer_utils.features.world.better_hopper.BetterHopper.*;
 import static org.lwjgl.opengl.GL11.*;
 
 @Singleton

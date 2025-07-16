@@ -12,7 +12,9 @@ import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;

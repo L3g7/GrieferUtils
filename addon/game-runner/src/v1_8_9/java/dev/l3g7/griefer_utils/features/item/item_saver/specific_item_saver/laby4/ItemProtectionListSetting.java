@@ -14,17 +14,13 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.*;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -44,8 +40,8 @@ import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType.*;
 import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class ItemProtectionListSetting extends ListSetting implements Laby4Setting<ItemProtectionListSetting, List<ItemProtection>> {

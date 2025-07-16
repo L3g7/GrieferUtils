@@ -10,11 +10,11 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.settings.elements.BooleanElement;
 import net.labymod.utils.Consumer;
 

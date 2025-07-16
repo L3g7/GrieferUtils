@@ -9,8 +9,8 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.misc.SkullMaterial;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.labymod.api.Laby;
 import net.labymod.api.Textures;

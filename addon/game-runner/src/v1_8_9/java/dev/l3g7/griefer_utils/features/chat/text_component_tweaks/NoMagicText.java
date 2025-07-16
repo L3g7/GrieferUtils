@@ -9,8 +9,8 @@ package dev.l3g7.griefer_utils.features.chat.text_component_tweaks;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;

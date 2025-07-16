@@ -9,9 +9,9 @@ package dev.l3g7.griefer_utils.features.player;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.events.ShiftAirCheckEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SliderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.events.ShiftAirCheckEvent;
 import dev.l3g7.griefer_utils.features.Feature;
 
 @Singleton

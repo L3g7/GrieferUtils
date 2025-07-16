@@ -7,8 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft.laby4;
 
-import dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftPage.RecraftPageListSetting;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.PieMenu;
+import dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftPage.RecraftPageListSetting;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;

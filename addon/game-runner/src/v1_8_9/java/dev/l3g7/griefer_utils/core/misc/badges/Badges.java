@@ -9,10 +9,10 @@ package dev.l3g7.griefer_utils.core.misc.badges;
 
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListClearEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import net.minecraft.client.network.NetworkPlayerInfo;
 
 import static dev.l3g7.griefer_utils.core.misc.badges.BadgeManagerBridge.badgeManager;

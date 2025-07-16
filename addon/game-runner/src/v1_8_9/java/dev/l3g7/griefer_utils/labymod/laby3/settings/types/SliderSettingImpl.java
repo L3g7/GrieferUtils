@@ -10,8 +10,8 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.core.settings.types.SliderSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.settings.elements.SliderElement;
 
 public class SliderSettingImpl extends SliderElement implements Laby3Setting<SliderSetting, Integer>, SliderSetting {

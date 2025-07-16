@@ -9,11 +9,11 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.CheckBoxWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SwitchWidget;

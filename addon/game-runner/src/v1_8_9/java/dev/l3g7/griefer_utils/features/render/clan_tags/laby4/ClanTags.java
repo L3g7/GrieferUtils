@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.core.main.LabyMod;
 import net.labymod.serverapi.api.model.component.ServerAPIComponent;
 import net.labymod.serverapi.core.model.display.Subtitle;
-import net.labymod.utils.ModColor;
 
 import java.util.ArrayList;
 import java.util.List;

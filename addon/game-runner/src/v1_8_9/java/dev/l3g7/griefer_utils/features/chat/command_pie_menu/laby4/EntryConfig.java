@@ -8,11 +8,11 @@
 package dev.l3g7.griefer_utils.features.chat.command_pie_menu.laby4;
 
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CitybuildSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CitybuildSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.configuration.loader.annotation.SpriteTexture;
 import net.labymod.api.configuration.settings.Setting;

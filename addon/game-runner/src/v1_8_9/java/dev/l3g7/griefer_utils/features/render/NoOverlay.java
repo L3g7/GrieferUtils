@@ -9,12 +9,12 @@ package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.render.BurningCheckEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderPortalCheckEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderPortalDistortionEvent;
 import dev.l3g7.griefer_utils.core.events.render.SetupFogEvent;
 import dev.l3g7.griefer_utils.core.events.render.SetupFogEvent.FogType;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.item.ItemStack;
 

@@ -11,8 +11,8 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 
 @Singleton
 public class BankScoreboard extends ScoreboardHandler.ScoreboardMod {

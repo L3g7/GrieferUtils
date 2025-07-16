@@ -9,12 +9,12 @@ package dev.l3g7.griefer_utils.features.item.inventory_tweaks.tweaks;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

@@ -10,7 +10,9 @@ package dev.l3g7.griefer_utils.core.settings.types;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.settings.Settings.settings;

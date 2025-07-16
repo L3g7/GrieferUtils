@@ -59,16 +59,14 @@ class ActionExecutor {
 
 		ActionState startState = state;
 		switch (state) {
-			case BACK_TO_CATEGORY:
-				state = CATEGORY;
-				break;
-			case BACK_TO_PAGE:
+			case BACK_TO_CATEGORY -> state = CATEGORY;
+			case BACK_TO_PAGE -> {
 				if (current.category != target.category)
 					state = BACK_TO_CATEGORY;
 				else
 					attemptShortcut((current.page == target.page) ? SLOT : PAGE);
-				break;
-			case CATEGORY:
+			}
+			case CATEGORY -> {
 				attemptShortcut((current.page == target.page) ? SLOT : PAGE);
 				if (state != SHORTCUT && target.slot == -1) {
 					RecraftLogger.log("Forced shortcut failed");
@@ -76,12 +74,9 @@ class ActionExecutor {
 					state = CRAFT;
 					return false;
 				}
-				break;
-			case SHORTCUT, SLOT:
-				state = current.variant == target.variant ? CRAFT : VARIANT;
-				break;
-			default:
-				state = ActionState.values()[state.ordinal() + 1];
+			}
+			case SHORTCUT, SLOT -> state = current.variant == target.variant ? CRAFT : VARIANT;
+			default -> state = ActionState.values()[state.ordinal() + 1];
 		}
 
 		RecraftLogger.log("Continued from " + startState + " to " + state);

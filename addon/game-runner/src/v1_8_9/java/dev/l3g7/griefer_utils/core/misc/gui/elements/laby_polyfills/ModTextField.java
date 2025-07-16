@@ -7,8 +7,6 @@
 
 package dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,6 +19,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 
 import java.awt.*;
+import java.util.function.Predicate;
 
 /**
  * Based on LabyMod 3's ModTextField.
@@ -46,7 +45,7 @@ public class ModTextField extends Gui {
     private int enabledColor = 14737632;
     private int disabledColor = 7368816;
     private boolean visible = true;
-    private Predicate<String> field_175209_y = Predicates.alwaysTrue();
+    private Predicate<String> field_175209_y = s -> true;
     private boolean blackBox = true;
     private boolean modPasswordBox = false;
     private String modBlacklistWord = "";
@@ -78,7 +77,7 @@ public class ModTextField extends Gui {
     }
 
     public void setText(String p_146180_1_) {
-        if (this.field_175209_y.apply(p_146180_1_)) {
+        if (this.field_175209_y.test(p_146180_1_)) {
             if (p_146180_1_.length() > this.maxStringLength) {
                 this.text = p_146180_1_.substring(0, this.maxStringLength);
             } else {
@@ -103,8 +102,8 @@ public class ModTextField extends Gui {
     }
 
     public String getSelectedText() {
-        int i = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
-        int j = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
+        int i = Math.min(this.cursorPosition, this.selectionEnd);
+        int j = Math.max(this.cursorPosition, this.selectionEnd);
         return this.text.substring(i, j);
     }
 
@@ -115,8 +114,8 @@ public class ModTextField extends Gui {
     public void writeText(String p_146191_1_) {
         String s = "";
         String s1 = ChatAllowedCharacters.filterAllowedCharacters(p_146191_1_);
-        int i = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
-        int j = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
+        int i = Math.min(this.cursorPosition, this.selectionEnd);
+        int j = Math.max(this.cursorPosition, this.selectionEnd);
         int k = this.maxStringLength - this.text.length() - (i - j);
         if (this.text.length() > 0) {
             s = s + this.text.substring(0, i);
@@ -135,7 +134,7 @@ public class ModTextField extends Gui {
             s = s + this.text.substring(j);
         }
 
-        if (this.field_175209_y.apply(s)) {
+        if (this.field_175209_y.test(s)) {
             this.text = s;
             this.moveCursorBy(i - this.selectionEnd + l);
         }
@@ -170,7 +169,7 @@ public class ModTextField extends Gui {
                     s = s + this.text.substring(j);
                 }
 
-                if (this.field_175209_y.apply(s)) {
+                if (this.field_175209_y.test(s)) {
                     this.text = s;
                     if (flag) {
                         this.moveCursorBy(p_146175_1_);
@@ -272,82 +271,83 @@ public class ModTextField extends Gui {
 
             return true;
         } else {
-            switch (p_146201_2_) {
-                case 14:
-                    if (GuiScreen.isCtrlKeyDown()) {
-                        if (this.isEnabled) {
-                            this.deleteWords(-1);
-                        }
-                    } else if (this.isEnabled) {
-                        this.deleteFromCursor(-1);
-                    }
+	        switch (p_146201_2_) {
+		        case 14 -> {
+			        if (GuiScreen.isCtrlKeyDown()) {
+				        if (this.isEnabled) {
+					        this.deleteWords(-1);
+				        }
+			        } else if (this.isEnabled) {
+				        this.deleteFromCursor(-1);
+			        }
+			        return true;
+		        }
+		        case 199 -> {
+			        if (GuiScreen.isShiftKeyDown()) {
+				        this.setSelectionPos(0);
+			        } else {
+				        this.setCursorPositionZero();
+			        }
+			        return true;
+		        }
+		        case 203 -> {
+			        if (GuiScreen.isShiftKeyDown()) {
+				        if (GuiScreen.isCtrlKeyDown()) {
+					        this.setSelectionPos(this.getNthWordFromPos(-1, this.getSelectionEnd()));
+				        } else {
+					        this.setSelectionPos(this.getSelectionEnd() - 1);
+				        }
+			        } else if (GuiScreen.isCtrlKeyDown()) {
+				        this.setCursorPosition(this.getNthWordFromCursor(-1));
+			        } else {
+				        this.moveCursorBy(-1);
+			        }
+			        return true;
+		        }
+		        case 205 -> {
+			        if (GuiScreen.isShiftKeyDown()) {
+				        if (GuiScreen.isCtrlKeyDown()) {
+					        this.setSelectionPos(this.getNthWordFromPos(1, this.getSelectionEnd()));
+				        } else {
+					        this.setSelectionPos(this.getSelectionEnd() + 1);
+				        }
+			        } else if (GuiScreen.isCtrlKeyDown()) {
+				        this.setCursorPosition(this.getNthWordFromCursor(1));
+			        } else {
+				        this.moveCursorBy(1);
+			        }
+			        return true;
+		        }
+		        case 207 -> {
+			        if (GuiScreen.isShiftKeyDown()) {
+				        this.setSelectionPos(this.text.length());
+			        } else {
+				        this.setCursorPositionEnd();
+			        }
+			        return true;
+		        }
+		        case 211 -> {
+			        if (GuiScreen.isCtrlKeyDown()) {
+				        if (this.isEnabled) {
+					        this.deleteWords(1);
+				        }
+			        } else if (this.isEnabled) {
+				        this.deleteFromCursor(1);
+			        }
+			        return true;
+		        }
+		        default -> {
+			        if (ChatAllowedCharacters.isAllowedCharacter(p_146201_1_)) {
+				        if (this.isEnabled) {
+					        this.writeText(Character.toString(p_146201_1_));
+				        }
 
-                    return true;
-                case 199:
-                    if (GuiScreen.isShiftKeyDown()) {
-                        this.setSelectionPos(0);
-                    } else {
-                        this.setCursorPositionZero();
-                    }
-
-                    return true;
-                case 203:
-                    if (GuiScreen.isShiftKeyDown()) {
-                        if (GuiScreen.isCtrlKeyDown()) {
-                            this.setSelectionPos(this.getNthWordFromPos(-1, this.getSelectionEnd()));
-                        } else {
-                            this.setSelectionPos(this.getSelectionEnd() - 1);
-                        }
-                    } else if (GuiScreen.isCtrlKeyDown()) {
-                        this.setCursorPosition(this.getNthWordFromCursor(-1));
-                    } else {
-                        this.moveCursorBy(-1);
-                    }
-
-                    return true;
-                case 205:
-                    if (GuiScreen.isShiftKeyDown()) {
-                        if (GuiScreen.isCtrlKeyDown()) {
-                            this.setSelectionPos(this.getNthWordFromPos(1, this.getSelectionEnd()));
-                        } else {
-                            this.setSelectionPos(this.getSelectionEnd() + 1);
-                        }
-                    } else if (GuiScreen.isCtrlKeyDown()) {
-                        this.setCursorPosition(this.getNthWordFromCursor(1));
-                    } else {
-                        this.moveCursorBy(1);
-                    }
-
-                    return true;
-                case 207:
-                    if (GuiScreen.isShiftKeyDown()) {
-                        this.setSelectionPos(this.text.length());
-                    } else {
-                        this.setCursorPositionEnd();
-                    }
-
-                    return true;
-                case 211:
-                    if (GuiScreen.isCtrlKeyDown()) {
-                        if (this.isEnabled) {
-                            this.deleteWords(1);
-                        }
-                    } else if (this.isEnabled) {
-                        this.deleteFromCursor(1);
-                    }
-
-                    return true;
-                default:
-                    if (ChatAllowedCharacters.isAllowedCharacter(p_146201_1_)) {
-                        if (this.isEnabled) {
-                            this.writeText(Character.toString(p_146201_1_));
-                        }
-
-                        return true;
-                    } else {
-                        return false;
-                    }
-            }
+				        return true;
+			        } else {
+				        return false;
+			        }
+		        }
+	        }
         }
     }
 
@@ -460,54 +460,52 @@ public class ModTextField extends Gui {
             int pX = this.xPosition + this.width / 2 - (EnumChatFormatting.values().length * ll - ll) / 2;
             int pY = this.yPosition + this.height + 5;
 	        EnumChatFormatting[] var6 = EnumChatFormatting.values();
-            int var7 = var6.length;
 
-            for(int var8 = 0; var8 < var7; ++var8) {
-	            EnumChatFormatting color = var6[var8];
-				String colorChar = color.toString().substring(1);
-                boolean hovered = mouseX > pX - ll / 2 && mouseX < pX + ll / 2 && mouseY > pY - 1 && mouseY < pY + 9;
-                if (hovered) {
-                    this.hoveredModColor = color;
-                }
+	        for (EnumChatFormatting color : var6) {
+		        String colorChar = color.toString().substring(1);
+		        boolean hovered = mouseX > pX - ll / 2 && mouseX < pX + ll / 2 && mouseY > pY - 1 && mouseY < pY + 9;
+		        if (hovered) {
+			        this.hoveredModColor = color;
+		        }
 
-                if (this.colorAtCursor != null && this.colorAtCursor.equals(colorChar)) {
-                    hovered = true;
-                }
+		        if (this.colorAtCursor != null && this.colorAtCursor.equals(colorChar)) {
+			        hovered = true;
+		        }
 
-                drawRect(pX - ll / 2, pY - 1, pX + ll / 2, pY + 9, !hovered ? toRGB(120, 120, 120, 120) : Integer.MAX_VALUE);
-                DrawUtils.drawCenteredString(color + colorChar, pX, pY);
-                pX += ll;
-            }
+		        drawRect(pX - ll / 2, pY - 1, pX + ll / 2, pY + 9, !hovered ? toRGB(120, 120, 120, 120) : Integer.MAX_VALUE);
+		        DrawUtils.drawCenteredString(color + colorChar, pX, pY);
+		        pX += ll;
+	        }
         }
 
     }
 
     private String visualColorForText(String text, boolean saveCursorColor) {
-        String coloredString = "";
+        StringBuilder coloredString = new StringBuilder();
         boolean foundColor = false;
 
         for(int i = 0; i < text.length(); ++i) {
             char c = text.charAt(i);
             if (c == '&' && i != text.length() - 1) {
                 if (foundColor) {
-                    coloredString = coloredString + "&";
+                    coloredString.append("&");
                 }
 
                 foundColor = true;
             } else {
                 if (foundColor) {
                     foundColor = false;
-                    coloredString = coloredString + "§" + c + '&';
+                    coloredString.append("§").append(c).append('&');
                     if (saveCursorColor) {
                         this.colorAtCursor = "" + c;
                     }
                 }
 
-                coloredString = coloredString + c;
+                coloredString.append(c);
             }
         }
 
-        return coloredString;
+        return coloredString.toString();
     }
 
     private void drawCursorVertical(int p_146188_1_, int p_146188_2_, int p_146188_3_, int p_146188_4_) {
@@ -683,6 +681,6 @@ public class ModTextField extends Gui {
     }
 
 	public static int toRGB(int r, int g, int b, int a) {
-		return (a & 255) << 24 | (r & 255) << 16 | (g & 255) << 8 | (b & 255) << 0;
+		return (a & 255) << 24 | (r & 255) << 16 | (g & 255) << 8 | (b & 255);
 	}
 }

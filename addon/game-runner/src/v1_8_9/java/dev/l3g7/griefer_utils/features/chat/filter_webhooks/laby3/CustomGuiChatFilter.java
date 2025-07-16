@@ -571,19 +571,11 @@ public class CustomGuiChatFilter extends GuiChatCustom {
         int r = highlightColor.getRed();
         int g = highlightColor.getGreen();
         int b = highlightColor.getBlue();
-        switch (id) {
-        case 0: {
-            r = colorValue;
-            break;
-        }
-        case 1: {
-            g = colorValue;
-            break;
-        }
-        case 2: {
-            b = colorValue;
-        }
-        }
+	    switch (id) {
+		    case 0 -> r = colorValue;
+		    case 1 -> g = colorValue;
+		    case 2 -> b = colorValue;
+	    }
         selectedFilter.setHighlightColorR((short) r);
         selectedFilter.setHighlightColorG((short) g);
         selectedFilter.setHighlightColorB((short) b);

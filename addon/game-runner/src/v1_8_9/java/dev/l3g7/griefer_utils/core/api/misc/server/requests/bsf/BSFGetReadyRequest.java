@@ -20,7 +20,7 @@ public class BSFGetReadyRequest extends Request<List<String>> {
 	}
 
 	@Override
-	protected List<String> parseResponse(Response response) throws Throwable {
+	protected List<String> parseResponse(Response response) {
 		return response.convertTo(List.class);
 	}
 

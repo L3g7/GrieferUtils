@@ -52,7 +52,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 public class SelfDisguise extends Feature { // NOTE cleanup
 
 	private static final Pattern LUCKY_SWORD_DISGUISE_PATTERN = Pattern.compile("^§r§8\\[§r§e§lLuckySword§r§8] " + Constants.FORMATTED_PLAYER_PATTERN.pattern() + " §r§7ist nun als §r§e(?<disguise>\\w+) §r§7verkleidet!§r$");
-	private static final Map<String, String> RENAMED_ENTITIES = new HashMap<String, String>() {{
+	private static final Map<String, String> RENAMED_ENTITIES = new HashMap<>() {{
 		put("minecart", "MinecartRideable");
 		put("horse", "EntityHorse");
 		put("iron_golem", "VillagerGolem");
@@ -219,27 +219,25 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 		currentDisguise = null;
 		blockCoordinates = false;
 		switch (arguments[1]) {
-			case "elder_guardian":
+			case "elder_guardian" -> {
 				currentDisguise = new EntityGuardian(world());
 				((EntityGuardian) currentDisguise).setElder();
-				break;
-			case "armor_stand":
+			}
+			case "armor_stand" -> {
 				currentDisguise = new EntityArmorStand(world());
 				for (int i = 0; i < 4; i++)
 					currentDisguise.setCurrentItemOrArmor(i + 1, player().inventory.armorInventory[i]);
-				break;
-			case "block":
-			case "falling_block":
+			}
+			case "block", "falling_block" ->
 				currentDisguise = new EntityFallingBlock(world(), player().posX, player().posY, player().posZ, Blocks.stone.getDefaultState());
-				break;
-			case "skeletal_horse":
-			case "undead_horse":
+			case "skeletal_horse", "undead_horse" -> {
 				currentDisguise = new EntityHorse(world());
 				((EntityHorse) currentDisguise).setHorseType(arguments[1].equals("undead_horse") ? 3 : 4);
-				break;
-			case "bat":
+			}
+			case "bat" -> {
 				currentDisguise = new EntityBat(world());
 				((EntityBat) currentDisguise).setIsBatHanging(false);
+			}
 		}
 
 		if (currentDisguise == null) {

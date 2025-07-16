@@ -145,23 +145,22 @@ public class Scrollbar {
         this.calc();
         double scale = this.backLength / ((double)this.listSize * this.entryHeight + (double)this.spaceBelow);
         double value = (int)((double)(-mouseY) / scale);
-        switch (mouseAction) {
-            case CLICKED:
-                if (this.hold) {
-                    this.hold = false;
-                } else if (this.isHoverSlider(mouseX, mouseY)) {
-                    this.hold = true;
-                    this.clickY = value - this.scrollY;
-                }
-                break;
-            case DRAGGING:
-                if (this.hold) {
-                    this.scrollY = value - this.clickY;
-                }
-                break;
-            case RELEASED:
-                this.hold = false;
-        }
+	    switch (mouseAction) {
+		    case CLICKED -> {
+			    if (this.hold) {
+				    this.hold = false;
+			    } else if (this.isHoverSlider(mouseX, mouseY)) {
+				    this.hold = true;
+				    this.clickY = value - this.scrollY;
+			    }
+		    }
+		    case DRAGGING -> {
+			    if (this.hold) {
+				    this.scrollY = value - this.clickY;
+			    }
+		    }
+		    case RELEASED -> this.hold = false;
+	    }
 
         this.checkOutOfBorders();
     }

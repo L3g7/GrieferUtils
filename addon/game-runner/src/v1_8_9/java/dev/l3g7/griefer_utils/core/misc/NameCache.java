@@ -40,15 +40,9 @@ public class NameCache {
 	@EventListener(priority = Priority.HIGH)
 	public static void onPacket(PacketReceiveEvent<S38PacketPlayerListItem> event) {
 		switch (event.packet.getAction()) {
-			case ADD_PLAYER:
-				processAddPacket(event.packet);
-				break;
-			case UPDATE_DISPLAY_NAME:
-				processUpdatePacket(event.packet);
-				break;
-			case REMOVE_PLAYER:
-				processRemovePacket(event.packet);
-				break;
+			case ADD_PLAYER -> processAddPacket(event.packet);
+			case UPDATE_DISPLAY_NAME -> processUpdatePacket(event.packet);
+			case REMOVE_PLAYER -> processRemovePacket(event.packet);
 		}
 	}
 

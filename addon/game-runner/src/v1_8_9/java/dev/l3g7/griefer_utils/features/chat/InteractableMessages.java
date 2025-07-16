@@ -43,14 +43,15 @@ public class InteractableMessages extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Interagierbare Nachrichten")
-		.description("Macht Folgendes interagierbar:"
-			+ "\n- TPAs (§a/tpaccept§r und §c/tpdeny§r)"
-			+ "\n- Den Citybuild bei Globalchat-Nachrichten (Switcht zum CB)"
-			+ "\n- Den Clan-Namen bei Globalchat-Nachrichten (Führt /clan info aus)"
-			+ "\n- Den Status, Msgs, Plotchat- und Globalchat-nachrichten (Schlägt /msg vor)"
-			+ "\n- \"/p h\" in Nachrichten (Teleportiert zum Plot)"
-			+ "\n- Spielernamen bei /clan info (Öffnet das Profil)"
-			+ "\n- Spielernamen bei /p i (Öffnet das Profil)")
+		.description("""
+			Macht Folgendes interagierbar:
+			- TPAs (§a/tpaccept§r und §c/tpdeny§r)
+			- Den Citybuild bei Globalchat-Nachrichten (Switcht zum CB)
+			- Den Clan-Namen bei Globalchat-Nachrichten (Führt /clan info aus)
+			- Den Status, Msgs, Plotchat- und Globalchat-nachrichten (Schlägt /msg vor)
+			- "/p h" in Nachrichten (Teleportiert zum Plot)
+			- Spielernamen bei /clan info (Öffnet das Profil)
+			- Spielernamen bei /p i (Öffnet das Profil)""")
 		.icon("left_click");
 
 	@EventListener(priority = Priority.LOW)

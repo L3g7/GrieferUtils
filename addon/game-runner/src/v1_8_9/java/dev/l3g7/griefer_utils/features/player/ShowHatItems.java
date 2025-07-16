@@ -41,7 +41,6 @@ public class ShowHatItems extends Feature {
 	@Mixin(LayerCustomHead.class)
 	private static class MixinLayerCustomHead {
 
-		@SuppressWarnings("deprecation")
 		@Inject(method = "doRenderLayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V", shift = At.Shift.AFTER), cancellable = true)
 		public void injectDoRenderLayer(EntityLivingBase entity, float p_177141_2_, float p_177141_3_, float partialTicks, float p_177141_5_, float p_177141_6_, float p_177141_7_, float scale, CallbackInfo ci) {
 			if (!FileProvider.getSingleton(ShowHatItems.class).isEnabled() || entity instanceof EntityArmorStand)

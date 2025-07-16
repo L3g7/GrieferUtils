@@ -25,7 +25,7 @@ public interface KeySetting extends AbstractSetting<KeySetting, Set<Integer>> {
 
 	default KeySetting defaultValue(int... values) {
 		return defaultValue(new HashSet<>(Arrays.stream(values)
-			.mapToObj(i -> i)
+			.boxed()
 			.collect(Collectors.toList())));
 	}
 

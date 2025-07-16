@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.security.GeneralSecurityException;
 import java.util.Collection;
 
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
@@ -58,7 +57,7 @@ public class Mapper {
 			classes.addAll(mappedClasses);
 			classes.create();
 
-		} catch (IOException | GeneralSecurityException e) {
+		} catch (IOException e) {
 			throw Util.elevate(e, "Could not load mappings!");
 		}
 	}

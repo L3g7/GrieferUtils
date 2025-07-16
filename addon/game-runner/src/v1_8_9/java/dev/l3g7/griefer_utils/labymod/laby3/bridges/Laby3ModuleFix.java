@@ -38,11 +38,9 @@ public class Laby3ModuleFix {
 			.map(Module::getName)
 			.collect(Collectors.toList());
 
-		Queue<Module> detachedModules = new ArrayDeque<>(
-			Module.getModules().stream()
-				.filter(m -> m.getListedAfter() != null && !loadedModules.contains(m.getListedAfter()))
-				.collect(Collectors.toList())
-		);
+		Queue<Module> detachedModules = Module.getModules().stream()
+			.filter(m -> m.getListedAfter() != null && !loadedModules.contains(m.getListedAfter()))
+			.collect(Collectors.toCollection(ArrayDeque::new));
 
 		int detachedModuleCount = detachedModules.size();
 

@@ -269,18 +269,10 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 			if (isKeyVisible()) {
 				switch (getDisplayFormatting()) {
-					case SQUARE_BRACKETS:
-						xDiff += getStringWidth("[]");
-						break;
-					case BRACKETS:
-						xDiff += getStringWidth(">");
-						break;
-					case COLON:
-						xDiff += getStringWidth(":");
-						break;
-					case HYPHEN:
-						xDiff += getStringWidth(" -");
-						break;
+					case SQUARE_BRACKETS -> xDiff += getStringWidth("[]");
+					case BRACKETS -> xDiff += getStringWidth(">");
+					case COLON -> xDiff += getStringWidth(":");
+					case HYPHEN -> xDiff += getStringWidth(" -");
 				}
 
 				xDiff += getStringWidth(" ");

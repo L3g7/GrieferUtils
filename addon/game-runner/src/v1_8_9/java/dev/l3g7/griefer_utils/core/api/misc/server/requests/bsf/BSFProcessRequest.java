@@ -34,7 +34,7 @@ public class BSFProcessRequest extends Request<Boolean> {
 	}
 
 	@Override
-	protected Boolean parseResponse(Response response) throws Throwable {
+	protected Boolean parseResponse(Response response) {
 		return response.getStatus() == 200;
 	}
 

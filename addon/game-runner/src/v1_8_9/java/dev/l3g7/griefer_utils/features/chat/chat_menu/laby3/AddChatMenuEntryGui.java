@@ -154,12 +154,8 @@ public class AddChatMenuEntryGui extends Gui {
 		actionInput.setText((String) entry.command);
 		iconInput.select(entry.iconType);
 		switch (entry.iconType) {
-			case ITEM:
-				itemIconInput.setSelected((ItemStack) entry.icon);
-				break;
-			case IMAGE_FILE:
-				fileIconInput.select((File) entry.icon);
-				break;
+			case ITEM -> itemIconInput.setSelected((ItemStack) entry.icon);
+			case IMAGE_FILE -> fileIconInput.select((File) entry.icon);
 		}
 	}
 
@@ -177,33 +173,30 @@ public class AddChatMenuEntryGui extends Gui {
 			cancelButton.yPosition = saveButton.yPosition = (int) actionTypeInput.bottom() + PADDING;
 		else {
 			switch (actionTypeInput.getSelected()) {
-				case OPEN_URL:
+				case OPEN_URL -> {
 					actionInput.label("URL").placeholder("https://namemc.com/search?q=%name%");
 					nameInput.placeholder("NameMC öffnen");
-					break;
-				case RUN_CMD:
+				}
+				case RUN_CMD -> {
 					actionInput.label("Befehl").placeholder("/startkick %name%");
 					nameInput.placeholder("Spieler kicken");
-					break;
-				case SUGGEST_CMD:
+				}
+				case SUGGEST_CMD -> {
 					actionInput.label("Befehl").placeholder("§8/msg %name%");
 					nameInput.placeholder("MSG an Spieler");
-					break;
+				}
 			}
 
 			List<Button> buttons = Reflection.get(iconInput, "buttons");
 			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils/icons/" + actionTypeInput.getSelected().getIcon() + ".png"));
 			double bottom;
 			switch (iconInput.getSelected()) {
-				case ITEM:
-					bottom = itemIconInput.bottom();
-					break;
-				case IMAGE_FILE:
+				case ITEM -> bottom = itemIconInput.bottom();
+				case IMAGE_FILE -> {
 					bottom = fileIconInput.bottom();
 					saveButton.enabled &= fileIconInput.getSelection() != null;
-					break;
-				default:
-					bottom = iconInput.bottom();
+				}
+				default -> bottom = iconInput.bottom();
 			}
 			cancelButton.yPosition = saveButton.yPosition = (int) bottom + PADDING;
 			scrollbar.update(getButtonHeight(saveButton) + saveButton.yPosition - HEADER_HEIGHT);

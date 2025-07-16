@@ -236,17 +236,9 @@ public abstract class PieMenu extends Gui implements Disableable {
 		draw.drawRectBorder(tagX - tagPadding - 1, tagY - tagHeight - tagPadding - 1, tagX + stringWidth + tagPadding + 1, tagY + tagPadding + 1, hover ? MAX_VALUE : MIN_VALUE, 1);
 
 		switch (alignment) {
-			case -1: {
-				draw.drawRightString(displayName, x, y, size);
-				break;
-			}
-			case 0: {
-				draw.drawCenteredString(displayName, x, y, size);
-				break;
-			}
-			case 1: {
-				draw.drawString(displayName, x, y, size);
-			}
+			case -1 -> draw.drawRightString(displayName, x, y, size);
+			case 0 -> draw.drawCenteredString(displayName, x, y, size);
+			case 1 -> draw.drawString(displayName, x, y, size);
 		}
 	}
 

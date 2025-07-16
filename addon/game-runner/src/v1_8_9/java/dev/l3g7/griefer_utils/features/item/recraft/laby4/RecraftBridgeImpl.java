@@ -51,9 +51,4 @@ public class RecraftBridgeImpl implements RecraftBridge {
 		return new RecraftRecording("Leere Aufzeichnung");
 	}
 
-	@Override
-	public void init() {
-		RecraftBridge.super.init();
-	}
-
 }

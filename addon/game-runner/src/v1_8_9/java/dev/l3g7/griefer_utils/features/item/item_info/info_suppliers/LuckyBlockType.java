@@ -25,7 +25,7 @@ import java.util.Map;
 @Singleton
 public class LuckyBlockType extends ItemInfo.ItemInfoSupplier {
 
-	private static final Map<Integer, String> LURE_TO_NAME = new HashMap<Integer, String>() {{
+	private static final Map<Integer, String> LURE_TO_NAME = new HashMap<>() {{
 		put(6,  "§4§lUl§c§ltr§4§la-§c§lUn§4§llu§c§lck§4§lyB§c§llo§4§lck");
 		put(21, "§4§lMe§c§lga§4§l-U§c§lnl§4§luc§c§lky§4§lBl§c§loc§4§lk");
 		put(36, "§4§lSu§c§lpe§4§lr-§c§lUn§4§llu§c§lck§4§lyB§c§llo§4§lck");

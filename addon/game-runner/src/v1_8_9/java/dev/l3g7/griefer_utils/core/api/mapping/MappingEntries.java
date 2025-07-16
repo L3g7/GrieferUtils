@@ -142,14 +142,11 @@ public class MappingEntries {
 		}
 
 		public M get(String key, Mapping mapping) {
-			switch (mapping) {
-				case OBFUSCATED:
-					return obfMap.get(key);
-				case SEARGE:
-					return srgMap.get(key);
-				default:
-					return unobfMap.get(key);
-			}
+			return switch (mapping) {
+				case OBFUSCATED -> obfMap.get(key);
+				case SEARGE -> srgMap.get(key);
+				default -> unobfMap.get(key);
+			};
 		}
 	}
 

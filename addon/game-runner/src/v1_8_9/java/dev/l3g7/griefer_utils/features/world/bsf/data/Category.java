@@ -50,9 +50,7 @@ public enum Category implements BSFSearchable {
 			if (entry instanceof Category c) {
 				addAllIds(c);
 			} else if (entry instanceof Biome b) {
-				for (int id : b.getIds()) {
-					biomeIds.add(id);
-				}
+				biomeIds.addAll(b.getIds());
 			}
 		}
 	}

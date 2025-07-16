@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -48,7 +47,7 @@ public class MappingCreator {
 	/**
 	 * Downloads and merges the specified mappings.
 	 */
-	public Collection<MappingEntries.MappedClass> createMappings(String minecraftVersion, String mappingVersion) throws IOException, GeneralSecurityException {
+	public Collection<MappingEntries.MappedClass> createMappings(String minecraftVersion, String mappingVersion) throws IOException {
 		ZipEntry entry;
 
 		// Load searge mappings

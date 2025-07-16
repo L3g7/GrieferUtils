@@ -21,22 +21,18 @@ import java.util.Iterator;
  * NOTE: remove?
  */
 public class DropDownMenu<T> extends Gui {
-    private static final DropDownEntryDrawer defaultDrawer = new DropDownEntryDrawer() {
-        public void draw(Object object, int x, int y, String trimmedEntry) {
-            DrawUtils.drawString(trimmedEntry, x, y);
-        }
-    };
+    private static final DropDownEntryDrawer defaultDrawer = (object, x, y, trimmedEntry) -> DrawUtils.drawString(trimmedEntry, x, y);
     private String title;
     private T selected = null;
     private boolean enabled = true;
     private boolean open;
     private T hoverSelected = null;
-    private int x = 0;
-    private int y = 0;
-    private int width = 0;
-    private int height = 0;
+    private int x;
+    private int y;
+    private int width;
+    private int height;
     private int maxY = Integer.MAX_VALUE;
-    private final ArrayList<T> list = new ArrayList();
+    private final ArrayList<T> list = new ArrayList<>();
     private DropDownEntryDrawer entryDrawer = null;
     private Scrollbar scrollbar;
     private Consumer<T> hoverCallback;

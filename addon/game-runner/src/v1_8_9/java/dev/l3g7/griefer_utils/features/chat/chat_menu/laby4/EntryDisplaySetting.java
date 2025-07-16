@@ -44,17 +44,10 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 		set(entry.enabled);
 
 		switch (entry.iconType) {
-			case SYSTEM:
-				icon(entry.icon);
-				break;
-			case DEFAULT:
-				icon(entry.action.defaultIcon);
-				break;
-			case IMAGE_FILE:
-				icon(new ResourceLocation("griefer_utils/user_content/" + entry.icon.hashCode()));
-				break;
-			case ITEM:
-				icon(entry.getIconAsItemStack());
+			case SYSTEM -> icon(entry.icon);
+			case DEFAULT -> icon(entry.action.defaultIcon);
+			case IMAGE_FILE -> icon(new ResourceLocation("griefer_utils/user_content/" + entry.icon.hashCode()));
+			case ITEM -> icon(entry.getIconAsItemStack());
 		}
 	}
 

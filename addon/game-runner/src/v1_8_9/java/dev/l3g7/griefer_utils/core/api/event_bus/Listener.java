@@ -77,7 +77,7 @@ class Listener {
 
 		@Override
 		public Iterator<Listener> iterator() {
-			return new Iterator<Listener>() {
+			return new Iterator<>() {
 				public Node node = null;
 
 				@Override

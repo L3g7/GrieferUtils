@@ -19,10 +19,12 @@ public class SaferSneak extends Feature {
 
 	private final SliderSetting minFallDistance = SliderSetting.create()
 		.name("Minimale Falldistanz")
-		.description("Die minimale Differenz zwischen dir und dem Block unter dir, in Prozent einer Block-Höhe."
-			+ "\n\n§7Referenz-Höhen:"
-			+ "\n§7Kiste: 87%"
-			+ "\n§7Stufen: 50%")
+		.description("""
+			Die minimale Differenz zwischen dir und dem Block unter dir, in Prozent einer Block-Höhe.
+
+			§7Referenz-Höhen:
+			§7Kiste: 87%
+			§7Stufen: 50%""")
 		.icon("ruler")
 		.defaultValue(87)
 		.max(100)

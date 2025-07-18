@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.world.bsf;
 
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
@@ -15,7 +14,6 @@ import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFProcessRequest.Data;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.world.bsf.waypoint.Waypoint;
 import net.minecraft.network.play.server.S44PacketWorldBorder;
 import net.minecraft.util.BlockPos;
@@ -28,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getCurrentCitybuild;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 public class BSFCollector {
@@ -35,11 +34,9 @@ public class BSFCollector {
 	private static final int MASK_16 = (1 << 16) - 1;
 
 	private static final Queue<ProcessData> processQueue = new LinkedList<>();
-	private static boolean processing = false;
+	public static boolean processing = false;
 
 	private static Pair<Integer, Integer> worldCenter;
-
-	public static boolean notify = false;
 
 	static boolean isInFarmwelt() {
 		return worldCenter != null;
@@ -135,7 +132,7 @@ public class BSFCollector {
 		int cz = origin.getZ() >> 4;
 
 		HashSet<Chunk> diagonalEnds = new HashSet<>();
-		Citybuild cb = MinecraftUtil.getCurrentCitybuild();
+		Citybuild cb = getCurrentCitybuild();
 
 		// Check diagonal ends
 		for (int ix = 0; ix < (3 & ~1); ix++) {
@@ -180,33 +177,41 @@ public class BSFCollector {
 		}
 
 		ProcessData processData = new ProcessData(cb, origin, data);
-		if (processing)
-			processQueue.add(processData);
-		else
+		if (processing) {
+			synchronized (processQueue) {
+				processQueue.add(processData);
+			}
+		} else {
+			processing = true;
 			process(processData);
+		}
 
 		return true;
 	}
 
 	private static void process(ProcessData data) {
-		GUServer.processBSFData(data.cb.getInternalName(), worldCenter.a, worldCenter.b, data.origin, data.data).thenAccept(ready -> {
-			if (ready) {
-				BSF.readyCbs.add(data.cb.getInternalName());
-				processQueue.removeIf(p -> p.cb == data.cb);
+		GUServer.processBSFData(data.cb.getInternalName(), worldCenter.a, worldCenter.b, data.origin, data.data).thenAccept(cbs -> {
+			if (!cbs.isEmpty()) { // Fail
+				BSF.readyCbs.addAll(cbs);
+				processQueue.removeIf(p -> cbs.contains(p.cb.getInternalName()));
 				requiringMoreChunks.clear();
 				dataTails.clear();
 
-				if (notify) {
-					LabyBridge.labyBridge.notify("§aSuche ist nun bereit!", "§aDie Biom- und Strukturen-Suche\nkann nun verwendet werden.");
-					notify = false;
-				}
+				BSF.triggerNotification();
 			}
 
-			ProcessData next = processQueue.poll();
-			if (next == null)
-				processing = false;
-			else
-				process(next);
+			// Prefer processing current cb next
+			synchronized (processQueue) {
+				Optional<ProcessData> currentData = processQueue.stream().filter(p -> p.cb.equals(getCurrentCitybuild())).findAny();
+				ProcessData next = currentData.orElseGet(processQueue::peek);
+				processQueue.remove(next);
+
+				if (next == null) {
+					processing = false;
+				} else {
+					process(next);
+				}
+			}
 		});
 
 	}

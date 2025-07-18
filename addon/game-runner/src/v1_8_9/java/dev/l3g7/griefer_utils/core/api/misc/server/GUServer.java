@@ -170,7 +170,7 @@ public class GUServer {
 		return CompletableFuture.supplyAsync(() -> new BSFGetReadyRequest().get());
 	}
 
-	public static CompletableFuture<Boolean> processBSFData(String cb, int centerX, int centerZ, BlockPos origin, Set<BSFProcessRequest.Data> data) {
+	public static CompletableFuture<List<String>> processBSFData(String cb, int centerX, int centerZ, BlockPos origin, Set<BSFProcessRequest.Data> data) {
 		return CompletableFuture.supplyAsync(() -> new BSFProcessRequest(
 			cb, // Might have been queued -> Not always the current one
 			centerX,

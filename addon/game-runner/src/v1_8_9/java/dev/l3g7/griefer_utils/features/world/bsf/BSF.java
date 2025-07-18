@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.world.bsf;
 
+import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
@@ -25,12 +26,21 @@ public class BSF {
 	public static final Set<String> readyCbs = Collections.synchronizedSet(new HashSet<>());
 	private static boolean requestedOnJoin = false;
 
+	public static boolean notify = false;
+
 	public static boolean hasData() {
 		return readyCbs.contains(MinecraftUtil.getCurrentCitybuild().getInternalName());
 	}
 
 	public static boolean isInFarmwelt() {
 		return BSFCollector.isInFarmwelt();
+	}
+
+	public static void triggerNotification() {
+		if (BSF.notify) {
+			LabyBridge.labyBridge.notify("§aSuche ist nun bereit!", "§aDie Biom- und Strukturen-Suche\nkann nun verwendet werden.");
+			notify = false;
+		}
 	}
 
 	@EventListener

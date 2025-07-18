@@ -10,11 +10,12 @@ package dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf;
 import com.google.gson.annotations.SerializedName;
 import dev.l3g7.griefer_utils.core.api.misc.server.Request;
 
+import java.util.List;
 import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.BSF_URL;
 
-public class BSFProcessRequest extends Request<Boolean> {
+public class BSFProcessRequest extends Request<List<String>> {
 
 	private final String cb;
 	@SerializedName("center_x")
@@ -34,8 +35,8 @@ public class BSFProcessRequest extends Request<Boolean> {
 	}
 
 	@Override
-	protected Boolean parseResponse(Response response) {
-		return response.getStatus() == 200;
+	protected List<String> parseResponse(Response response) {
+		return response.convertTo(List.class);
 	}
 
 	public static class Data {

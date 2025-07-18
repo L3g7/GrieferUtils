@@ -108,8 +108,8 @@ public class GuiSearches extends GuiBigChest {
 		int mc_x = r.pos.x;
 		int mc_z = r.pos.z;
 		if (searchable != Structure.STRONGHOLD) {
-			mc_x = r.pos.x * 16 + 8 * Integer.signum(r.pos.x);
-			mc_z = r.pos.z * 16 + 8 * Integer.signum(r.pos.z);
+			mc_x = r.pos.x * 16 + 8;
+			mc_z = r.pos.z * 16 + 8;
 		}
 
 		searchData.add(new BSF.SearchData(mc_x, mc_z, r.index));

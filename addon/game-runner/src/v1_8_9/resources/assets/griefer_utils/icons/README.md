@@ -2,6 +2,54 @@
 
 <table>
   <tr>
+    <td><img src="biomes/forest.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/">biomes/*</a></td>
+    <td><a href="https://www.curseforge.com/minecraft/texture-packs/faithless">StitchSprites</a></td>
+  </tr>
+  <tr>
+    <td><img src="biomes/badlands.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/badlands.png">biomes/badlands.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><img src="biomes/beach.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/beach.png">biomes/beach.png</a></td>
+    <td><a href="https://stock.adobe.com/de/494050871">Adobe Stock (thepolovinkin)</a></td>
+  </tr>
+  <tr>
+    <td><img src="biomes/desert.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/desert.png">biomes/desert.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><img src="biomes/ice_spikes.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/ice_spikes.png">biomes/ice_spikes.png</a></td>
+    <td><a href="https://www.reddit.com/r/PixelArt/comments/9p1h7z/crystals/">[Unbekannt]</a></td>
+  </tr>
+  <tr>
+    <td><img src="biomes/mountains.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/">biomes/*mountains.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><img src="biomes/ocean.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/ocean.png">biomes/ocean.png</a></td>
+    <td><a href="https://stock.adobe.com/de/494050871">Adobe Stock (thepolovinkin)</a></td>
+  </tr>
+  <tr>
+    <td><img src="biomes/swamp.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/swamp.png">biomes/swamp.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><img src="structures/desert_pyramid.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/desert_pyramid.png">structures/desert_pyramid.png</a></td>
+    <td><a href="https://minecraft.wiki/images/EnvSprite_desert-pyramid.png?aed9b">Minecraft Wiki</a></td>
+  </tr>
+  <tr>
+    <td><img src="structures/jungle_temple.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/jungle_temple.png">structures/jungle_temple.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><img src="structures/stronghold.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/stronghold.png">structures/stronghold.png</a></td>
+    <td><a href="https://www.curseforge.com/minecraft/texture-packs/faithless">StitchSprites</a></td>
+  </tr>
+  <tr>
+    <td><img src="structures/village.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/village.png">structures/village.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><img src="booster/drop.png" height=16em width=16em />&nbsp;&nbsp;<a href="booster/">booster/*</a></td>
     <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
   </tr>

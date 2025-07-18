@@ -23,6 +23,7 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.distanceToPlayer;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class GuiBSF extends GuiBigChest {
 
@@ -34,10 +35,12 @@ public class GuiBSF extends GuiBigChest {
 
 	@Override
 	public void open() {
-		if (lastUpdate + 10_000 <= System.currentTimeMillis()) {
+		if (!BSFCollector.processing && lastUpdate + 10_000 <= System.currentTimeMillis()) {
 			GUServer.getBSFReady().thenAccept(cbs -> {
 				BSF.readyCbs.addAll(cbs);
-				new GuiBSF().open(); // Rebuild GUI
+				BSF.triggerNotification();
+				if (mc().currentScreen instanceof GuiBSF)
+					new GuiBSF().open(); // Rebuild GUI
 			});
 			lastUpdate = System.currentTimeMillis();
 		}
@@ -46,7 +49,7 @@ public class GuiBSF extends GuiBigChest {
 		if (!BSF.hasData()) {
 			List<String> lore = new ArrayList<>(Arrays.asList("§fBitte erkunde die Farmwelt."));
 
-			if (!BSFCollector.notify) {
+			if (!BSF.notify) {
 				lore.addAll(Arrays.asList("",
 					"§7Wenn du eine Benachrichtigung bekommen willst,",
 					"§7sobald die Suche bereit ist, klicke auf das Item."));
@@ -55,8 +58,8 @@ public class GuiBSF extends GuiBigChest {
 			TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", lore.toArray(String[]::new));
 
 			addTextureItem(13, item, () -> {
-				if (!BSFCollector.notify) {
-					BSFCollector.notify = true;
+				if (!BSF.notify) {
+					BSF.notify = true;
 					labyBridge.notify("§aBenachrichtigung", "§aDu bekommst nun eine Benachrichtigung,\nwenn die Suche bereit ist!");
 					new GuiBSF().open(); // Rebuild GUI
 				}

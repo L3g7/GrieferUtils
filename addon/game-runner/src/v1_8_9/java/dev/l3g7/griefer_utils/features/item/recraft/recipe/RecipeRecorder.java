@@ -168,7 +168,12 @@ public class RecipeRecorder {
 		else
 			action.variant = 1;
 
-		ItemStack targetStack = player().openContainer.getSlot(25).getStack().copy();
+		ItemStack targetStack = player().openContainer.getSlot(25).getStack();
+		if (targetStack == null) {
+			labyBridge.notify("§eFehler \u26A0", "§eBitte nehme die Aktion neu auf!");
+			return;
+		}
+		targetStack = targetStack.copy();
 		action.result = Ingredient.fromItemStack(targetStack);
 
 		if (!addedIcon) {

@@ -35,8 +35,8 @@ class PacketDumper {
 	private static final OneSidedPacketDumper outgoing = new OneSidedPacketDumper("[OUTGOING] ", "Ausgehende", "00,03,04,05,06");
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
-		.name("Packet-Dumper")
-		.description("Dumpt ein-/ausgehende Packete.")
+		.name("Paket-Dumper")
+		.description("Dumpt ein-/ausgehende Pakete.")
 		.icon(Items.feather)
 		.enabled(LabyBridge.labyBridge.activeMapping() != Mapping.OBFUSCATED)
 		.subSettings(incoming.enabled, outgoing.enabled);
@@ -64,19 +64,19 @@ class PacketDumper {
 		private OneSidedPacketDumper(String prefix, String settingPrefix, String defaultBlackList) {
 			this.prefix = prefix;
 			this.enabled = SwitchSetting.create()
-				.name(settingPrefix + " Packete dumpen")
+				.name(settingPrefix + " Pakete dumpen")
 				.icon(Items.paper)
 				.subSettings(
 					StringSetting.create()
 						.name("Fields dumpen")
-						.description("Die IDs der Packete, deren Fields gedumpt werden sollen, getrennt durch \",\".")
+						.description("Die IDs der Pakete, deren Fields gedumpt werden sollen, getrennt durch \",\".")
 						.icon(Blocks.command_block)
 						.maxLength(Integer.MAX_VALUE)
 						.callback(s -> dumpFieldsList = Arrays.asList(s.split(","))),
 
 					StringSetting.create()
 						.name("Blacklist")
-						.description("Die IDs der Packete, die nicht angezeigt werden sollen, getrennt durch \",\".")
+						.description("Die IDs der Pakete, die nicht angezeigt werden sollen, getrennt durch \",\".")
 						.icon(Blocks.hopper)
 						.maxLength(Integer.MAX_VALUE)
 						.callback(s -> blacklistList = Arrays.asList(s.split(",")))
@@ -101,6 +101,8 @@ class PacketDumper {
 				System.out.println(IOUtil.gson.toJson(UnsafeJsonSerializer.toJson(packet)));
 			} catch (Throwable t) {
 				System.out.println("Packet's fields could not be dumped");
+				t.printStackTrace();
+				blacklistList.add(id);
 			}
 		}
 

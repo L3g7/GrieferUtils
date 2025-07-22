@@ -141,17 +141,7 @@ public class PotionTimer extends Widget {
 		return new PotionTimerL4();
 	}
 
-	private static class PotionData {
-
-		private final String displayName;
-		private final Countdown countdown;
-
-		public PotionData(String displayName, Countdown countdown) {
-			this.displayName = displayName;
-			this.countdown = countdown;
-		}
-
-	}
+	private record PotionData(String displayName, Countdown countdown) {}
 
 	private enum KeyMode implements Named {
 		ICON("Icon"),

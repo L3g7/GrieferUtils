@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.world.bsf.waypoint;
+package dev.l3g7.griefer_utils.features.world.bsf;
 
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
@@ -86,7 +86,7 @@ public class Waypoint extends TileEntityBeacon {
 	@EventListener
 	private static void onTickEvent(TickEvent.ClientTickEvent event) {
 		if (enabled)
-			mc().ingameGUI.setRecordPlaying(target.getName().singular + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)", false);
+			mc().ingameGUI.setRecordPlaying(target.getName().singular() + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)", false);
 	}
 
 	@Mixin(RenderGlobal.class)

@@ -38,7 +38,7 @@ public enum Category implements BSFSearchable {
 		this.color = color;
 		this.icon = entries[0].getIcon().copy();
 		if (name != null)
-			this.icon.toolTipStack.setStackDisplayName("§f" + name.singular);
+			this.icon.toolTipStack.setStackDisplayName("§f" + name.singular());
 		this.entries = entries;
 
 		if (name != null)

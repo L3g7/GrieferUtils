@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFProcessRequest.Data;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
-import dev.l3g7.griefer_utils.features.world.bsf.waypoint.Waypoint;
 import net.minecraft.network.play.server.S44PacketWorldBorder;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.chunk.Chunk;
@@ -147,7 +146,6 @@ public class BSFCollector {
 		Set<Data> data = new HashSet<>(9);
 		int m1 = origin.getY() + ~0;
 		for (Chunk c : diagonalEnds) {
-			// Compute data
 			char[] bsaData = c.getBlockStorageArray()[m1 >> 4].getData();
 			char[] m1Data = new char[256];
 
@@ -166,7 +164,7 @@ public class BSFCollector {
 			keys.remove((Integer) cd.position);
 		});
 
-		// Fill up missing chunk data
+		// Acquire missing chunk data
 		for (int i = 0; i < 9 - diagonalEnds.size(); i++) {
 			index = (index * 25214903917L + 11L) & (1L << 48) - 1;
 
@@ -226,18 +224,6 @@ public class BSFCollector {
 
 	}
 
-	private static class ProcessData {
-
-		private final Citybuild cb;
-		private final BlockPos origin;
-		private final Set<Data> data;
-
-		private ProcessData(Citybuild cb, BlockPos origin, Set<Data> data) {
-			this.cb = cb;
-			this.origin = origin;
-			this.data = data;
-		}
-
-	}
+	private record ProcessData(Citybuild cb, BlockPos origin, Set<Data> data) {}
 
 }

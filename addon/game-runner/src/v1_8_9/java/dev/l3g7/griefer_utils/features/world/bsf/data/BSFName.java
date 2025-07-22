@@ -7,11 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.world.bsf.data;
 
-public class BSFName {
-
-	public final String pronomialSuffix;
-	public final String singular;
-	public final String plural;
+public record BSFName(String pronomialSuffix, String singular, String plural) {
 
 	public BSFName(String pronomialSuffix, String singular, String plural) {
 		this.pronomialSuffix = pronomialSuffix;

@@ -38,7 +38,7 @@ public class EventRegisterer {
 			return;
 
 		for (LazyRegistration registration : registrations)
-			EventBus.registerMethod(registration.owner.get(), registration.meta.load());
+			EventBus.registerMethod(registration.owner().get(), registration.meta().load());
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class EventRegisterer {
 		}
 
 		synchronized (lazyRegistrations) {
-			lazyRegistrations.values().forEach(registrations -> registrations.removeIf(l -> methods.contains(l.meta)));
+			lazyRegistrations.values().forEach(registrations -> registrations.removeIf(l -> methods.contains(l.meta())));
 		}
 	}
 
@@ -127,16 +127,6 @@ public class EventRegisterer {
 		registrations.add(new LazyRegistration(method, ownerSupplier));
 	}
 
-	private static class LazyRegistration {
-
-		private final MethodMeta meta;
-		private final Supplier<Object> owner; // Supplier is to lazy-load singletons
-
-		private LazyRegistration(MethodMeta meta, Supplier<Object> owner) {
-			this.meta = meta;
-			this.owner = owner;
-		}
-
-	}
+	private record LazyRegistration(MethodMeta meta, Supplier<Object> owner /* Supplier is to lazy-load singletons */) {}
 
 }

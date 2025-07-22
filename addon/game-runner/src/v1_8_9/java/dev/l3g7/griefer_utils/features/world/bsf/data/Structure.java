@@ -28,7 +28,7 @@ public enum Structure implements BSFSearchable {
 	Structure(BSFName name, Color color, String icon) {
 		this.name = name;
 		this.color = color;
-		this.stack = new GuiBigChest.TextureItem(icon, "§f" + name.singular);
+		this.stack = new GuiBigChest.TextureItem(icon, "§f" + name.singular());
 	}
 
 	@Override

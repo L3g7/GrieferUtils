@@ -163,17 +163,7 @@ public class UnsafeJsonSerializer {
 
 	}
 
-	private static class PrimitiveSerializer {
-
-		public final UnsafeGetter unsafeGetter;
-		public final BiFunction<Object, Integer, Object> arrayGetter;
-
-		private PrimitiveSerializer(UnsafeGetter unsafeGetter, BiFunction<Object, Integer, Object> arrayGetter) {
-			this.unsafeGetter = unsafeGetter;
-			this.arrayGetter = arrayGetter;
-		}
-
-	}
+	private record PrimitiveSerializer(UnsafeGetter unsafeGetter, BiFunction<Object, Integer, Object> arrayGetter) {}
 
 	@FunctionalInterface
 	private interface UnsafeGetter {

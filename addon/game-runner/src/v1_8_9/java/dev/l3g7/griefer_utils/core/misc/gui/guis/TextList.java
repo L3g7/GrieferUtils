@@ -107,19 +107,22 @@ public class TextList extends GuiListExtended {
 		return lines.size();
 	}
 
-	private static class Line implements IGuiListEntry {
-
-		private final String text;
-		private final String indentation;
+	private record Line(String text, String indentation) implements IGuiListEntry {
 
 		private Line(String text, String indentation) {
 			this.text = text;
 			this.indentation = text.startsWith(indentation) ? "" : indentation;
 		}
 
-		public void setSelected(int a, int b, int c) {}
-		public boolean mousePressed(int a, int b, int c, int d, int e, int f) {return false;}
-		public void mouseReleased(int a, int b, int c, int d, int e, int f) {}
+		public void setSelected(int a, int b, int c) {
+		}
+
+		public boolean mousePressed(int a, int b, int c, int d, int e, int f) {
+			return false;
+		}
+
+		public void mouseReleased(int a, int b, int c, int d, int e, int f) {
+		}
 
 		@Override
 		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {

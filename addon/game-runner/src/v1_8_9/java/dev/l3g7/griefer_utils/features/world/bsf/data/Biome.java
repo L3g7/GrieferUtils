@@ -49,7 +49,7 @@ public enum Biome implements BSFSearchable {
 	Biome(BSFName name, Color color, int... ids) {
 		this.name = name;
 		this.color = color;
-		this.icon = new GuiBigChest.TextureItem("biomes/" + name().toLowerCase(), "§f" + name.singular);
+		this.icon = new GuiBigChest.TextureItem("biomes/" + name().toLowerCase(), "§f" + name.singular());
 		this.ids = new ArrayList<>(ids.length);
 		for (int id : ids) {
 			this.ids.add(id);

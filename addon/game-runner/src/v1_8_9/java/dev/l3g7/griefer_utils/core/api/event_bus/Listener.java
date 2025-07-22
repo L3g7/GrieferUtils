@@ -11,17 +11,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 
 import java.util.Iterator;
 
-class Listener {
-
-	final Object owner;
-	final int priority;
-	final Consumer<Event> consumer;
-
-	Listener(Object owner, int priority, Consumer<Event> consumer) {
-		this.owner = owner;
-		this.priority = priority;
-		this.consumer = consumer;
-	}
+record Listener(Object owner, int priority, Consumer<Event> consumer) {
 
 	static class ListenerList implements Iterable<Listener> {
 
@@ -143,4 +133,5 @@ class Listener {
 		}
 
 	}
+
 }

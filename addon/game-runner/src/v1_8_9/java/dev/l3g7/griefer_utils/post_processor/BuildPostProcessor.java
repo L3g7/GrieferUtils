@@ -12,10 +12,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.Init;
 import dev.l3g7.griefer_utils.post_processor.processors.build.AssetsChecker;
+import dev.l3g7.griefer_utils.post_processor.processors.build.RecordConverter;
 import dev.l3g7.griefer_utils.post_processor.processors.build.RefmapConverter;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.ClassNode;
 
 import java.io.*;
 import java.nio.file.FileSystem;
@@ -30,6 +35,7 @@ import java.util.zip.ZipOutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 
 /**
  * A processor applied after building.
@@ -64,6 +70,7 @@ public class BuildPostProcessor {
 			processBootstrapClasses();
 			RefmapConverter.convertRefmap(fs);
 			AssetsChecker.validateAssets(fs);
+			convertRecords();
 			cleanup();
 		}
 	}
@@ -90,6 +97,31 @@ public class BuildPostProcessor {
 		try (OutputStream out = Files.newOutputStream(fs.getPath("addon.json"))) {
 			out.write(gson.toJson(addon).getBytes(UTF_8));
 		}
+	}
+
+	private static void convertRecords() throws IOException {
+		Files.walk(fs.getPath("dev")).forEach((Consumer<Path>) path -> {
+			// Only process classes
+			if (Files.isDirectory(path))
+				return;
+
+			if (!path.getFileName().toString().endsWith(".class"))
+				return;
+
+			// Read
+			ClassReader reader = new ClassReader(Files.readAllBytes(path));
+			ClassNode node = new ClassNode();
+			reader.accept(node, 0);
+
+			// Process
+			RecordConverter.process(node);
+
+			// Write
+			ClassWriter writer = new ClassWriter(COMPUTE_MAXS);
+			node.accept(writer);
+
+			Files.write(path, writer.toByteArray());
+		});
 	}
 
 	/**

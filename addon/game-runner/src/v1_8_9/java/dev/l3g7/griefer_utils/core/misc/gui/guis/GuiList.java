@@ -134,18 +134,6 @@ public class GuiList extends GuiBigChest {
 		onScroll(currentScroll);
 	}
 
-	private static class Entry {
-
-		private final TextureItem textureItem;
-		private final ItemStack stack;
-		private final Runnable onClick;
-
-		private Entry(TextureItem textureItem, ItemStack stack, Runnable onClick) {
-			this.textureItem = textureItem;
-			this.stack = stack;
-			this.onClick = onClick;
-		}
-
-	}
+	private record Entry(TextureItem textureItem, ItemStack stack, Runnable onClick) {}
 
 }

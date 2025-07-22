@@ -17,7 +17,7 @@ import java.util.List;
 @SuppressWarnings("resource")
 public class AssetsChecker {
 
-	private static final List<String> KNOWN_DIRECTORIES = Arrays.asList("litematica", "mob_icons", "griefer_info");
+	private static final List<String> KNOWN_DIRECTORIES = Arrays.asList("litematica", "mob_icons", "griefer_info", "biomes", "structures");
 	private static final List<String> KNOWN_FILES = Arrays.asList("thonk", "pencil", "lens", "earth");
 
 	public static void validateAssets(FileSystem fs) throws IOException {

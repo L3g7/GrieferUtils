@@ -49,7 +49,7 @@ class EventBus {
 
 		for (Listener listener : list) {
 			try {
-				listener.consumer.accept(event);
+				listener.consumer().accept(event);
 			} catch (Throwable t) {
 				BugReporter.reportError(t);
 			}
@@ -70,10 +70,10 @@ class EventBus {
 		for (Listener listener : list) {
 			try {
 				long listenerStart = System.currentTimeMillis();
-				listener.consumer.accept(event);
+				listener.consumer().accept(event);
 
 				if (profilingListeners)
-					profiler.onListenerProfile(listener.owner, System.currentTimeMillis() - listenerStart);
+					profiler.onListenerProfile(listener.owner(), System.currentTimeMillis() - listenerStart);
 			} catch (Throwable t) {
 				BugReporter.reportError(t);
 			}

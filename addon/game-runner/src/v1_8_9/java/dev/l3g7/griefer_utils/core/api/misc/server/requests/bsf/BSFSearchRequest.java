@@ -37,18 +37,9 @@ public class BSFSearchRequest extends Request<BSFSearchRequest.SearchResponse> {
 		return response.convertTo(SearchResponse.class);
 	}
 
-	public static class SearchResponse {
-		public static SearchResponse ALL_FOUND = new SearchResponse(new ChunkPos(0, 0), -1);
-		public static SearchResponse WORLD_NOT_READY = new SearchResponse(new ChunkPos(0, 0), -2);
-
-		public final ChunkPos pos;
-		public final int index;
-
-		public SearchResponse(ChunkPos pos, int index) {
-			this.pos = pos;
-			this.index = index;
-		}
-
+	public record SearchResponse(ChunkPos pos, int index) {
+			public static SearchResponse ALL_FOUND = new SearchResponse(new ChunkPos(0, 0), -1);
+			public static SearchResponse WORLD_NOT_READY = new SearchResponse(new ChunkPos(0, 0), -2);
 	}
 
 	public static class ChunkPos {

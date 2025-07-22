@@ -12,8 +12,8 @@ import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.world.bsf.BSF;
 import dev.l3g7.griefer_utils.features.world.bsf.BSFCollector;
+import dev.l3g7.griefer_utils.features.world.bsf.Waypoint;
 import dev.l3g7.griefer_utils.features.world.bsf.data.Category;
-import dev.l3g7.griefer_utils.features.world.bsf.waypoint.Waypoint;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
@@ -27,9 +27,11 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class GuiBSF extends GuiBigChest {
 
+	public static GuiBSF GUI = new GuiBSF();
+
 	public static long lastUpdate = 0;
 
-	public GuiBSF() {
+	private GuiBSF() {
 		super("Biom- und Strukturen-Suche", 3);
 	}
 
@@ -71,7 +73,7 @@ public class GuiBSF extends GuiBigChest {
 		addTextureItem(13, new TextureItem("structures/desert_pyramid", "§fStrukturen"), new GuiSelect("Strukturen-Suche", Category.ALL_STRUCTURES, this)::open);
 
 		if (Waypoint.enabled) {
-			ItemStack item = ItemUtil.createItem(Blocks.beacon, 0, "§fAktiver Wegpunkt: " + Waypoint.target.getName().singular + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)");
+			ItemStack item = ItemUtil.createItem(Blocks.beacon, 0, "§fAktiver Wegpunkt: " + Waypoint.target.getName().singular() + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)");
 			ItemUtil.setLore(item, "§fPosition: " + Waypoint.x + ", " + Waypoint.z,
 				"",
 				"§7Klicke auf das Item, um den Wegpunkt zu deaktivieren.");

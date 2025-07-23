@@ -29,9 +29,11 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.distanceToPlayer;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.features.world.bsf.Waypoint.rainbow;
 
 class GuiSearches extends GuiBigChest {
 
+	private static boolean addRainbow = false;
 	private final BSFSearchable searchable;
 	private final List<BSF.SearchData> searchData;
 
@@ -77,6 +79,8 @@ class GuiSearches extends GuiBigChest {
 			});
 		}
 
+		addRainbowItem();
+
 		int counter = 12;
 
 		for (BSF.SearchData coordinates : searchData) {
@@ -93,9 +97,30 @@ class GuiSearches extends GuiBigChest {
 		}
 	}
 
+	private void addRainbowItem() {
+		if (addRainbow) {
+			int position = rows >= 6 ? 28 : 19;
+			String name = "§cR§6e§eg§ae§bn§db§co§6g§ee§an§b-§dW§ce§6g§ep§au§bn§dk§ct§6: " + (rainbow
+				? "§aa§bk§dt§ci§6v§ei§ae§br§dt"
+				: "§7deaktiviert"
+			);
+			addTextureItem(position, new TextureItem("labymod_3/tabping_colored", name), () -> {
+				rainbow = !rainbow;
+				if (!rainbow)
+					searchable.getColor().getRGBColorComponents(Waypoint.colors);
+				addRainbowItem();
+			});
+		}
+	}
+
 	private void onSearchResponse(BSFSearchRequest.SearchResponse r) {
 		if (r == BSFSearchRequest.SearchResponse.ALL_FOUND) {
 			labyBridge.notify("§cAlles gefunden \u26A0", "§cDu hast schon alle " + searchable.getName().plural() + " gefunden!");
+
+			if (!addRainbow) {
+				addRainbow = true;
+				addRainbowItem();
+			}
 			return;
 		}
 
@@ -113,6 +138,9 @@ class GuiSearches extends GuiBigChest {
 		}
 
 		searchData.add(new BSF.SearchData(mc_x, mc_z, r.index()));
+		if (searchData.size() > 20)
+			searchData.remove(0);
+
 		labyBridge.notify("§a" + mc_x + " " + mc_z, "§a(Folge dem Beacon " + distanceToPlayer(mc_x, mc_z) + "m)");
 		Waypoint.setWaypoint(mc_x, mc_z, searchable);
 	}

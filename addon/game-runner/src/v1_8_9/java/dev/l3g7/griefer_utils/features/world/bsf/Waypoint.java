@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.awt.*;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
@@ -35,10 +36,11 @@ public class Waypoint extends TileEntityBeacon {
 	private static final double MIN_DIST = 16;
 
 	public static final Waypoint WAYPOINT = new Waypoint();
-	private static final float[] colors = {1, 1, 1};
+	public static final float[] colors = {1, 1, 1};
 	private static final List<BeamSegment> SEGMENTS = ImmutableList.of(new WaypointSegment(colors));
 
 	public static boolean enabled = false;
+	public static boolean rainbow = false;
 	public static int x;
 	public static int z;
 	public static BSFSearchable target;
@@ -115,6 +117,12 @@ public class Waypoint extends TileEntityBeacon {
 			if (dist <= MIN_DIST) {
 				disable();
 				return;
+			}
+
+			if (rainbow) {
+				long loopDuration = 3000;
+				Color color = Color.getHSBColor((System.currentTimeMillis() % loopDuration) / (float) loopDuration, 1, 1);
+				color.getRGBColorComponents(colors);
 			}
 
 			int maxDist = (settings().renderDistanceChunks - 1) * 16;

@@ -112,7 +112,7 @@ public class AfkNick extends Feature {
 		if (realName != null && realName.replaceAll("§.", "").equals(name()))
 			return;
 
-		send("/msg " + (realName == null ? nick : realName) + " " + messageReply.get());
+		send("/msg " + (realName == null ? nick : realName).replaceAll("§.", "") + " " + messageReply.get());
 	}
 
 	@EventListener

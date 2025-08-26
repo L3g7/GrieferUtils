@@ -60,6 +60,7 @@ public class ThreadDumper {
 		if (enabled.get() && thread != null)
 			return;
 
+		FILE.getParentFile().mkdirs();
 		FILE.createNewFile();
 		thread = new Thread(() -> {
 			while (enabled.get()) {

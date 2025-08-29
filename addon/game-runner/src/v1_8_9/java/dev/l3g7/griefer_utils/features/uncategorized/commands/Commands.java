@@ -13,7 +13,11 @@ import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.features.uncategorized.scripts.ConstantParser;
+import dev.l3g7.griefer_utils.features.uncategorized.scripts.Scripts;
 
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
@@ -134,7 +138,7 @@ public class Commands {
 			}));
 
 		registerCommand(command("schedule")
-			.longArg("delay")
+			.longArg("Delay")
 			.greedyString("command")
 			.build(args -> {
 				String command = args.get("command");
@@ -143,7 +147,49 @@ public class Commands {
 					public void run() {
 						trySend(command);
 					}
-				}, (long) args.get("delay"));
+				}, (long) args.get("Delay"));
+			}));
+
+		registerCommand(command("script")
+			.greedyString("<Datei> [Args]")
+			.build(args -> {
+				String stuff = args.get("<Datei> [Args]");
+				Iterator<String> parts = Arrays.asList(stuff.split(" ")).iterator();
+
+				String file = parts.next();
+				if (file.startsWith("\"")) {
+					Object constant = ConstantParser.readConstant(file, parts);
+					if (constant == null) {
+						display(ADDON_PREFIX + "§cUngültiger Dateipfad");
+						return;
+					}
+
+					file = constant.toString();
+				}
+
+				List<String> scriptArgs = new ArrayList<>();
+				parts.forEachRemaining(scriptArgs::add);
+
+				Throwable error;
+
+				try {
+					Scripts.run(Path.of(file), scriptArgs.toArray(String[]::new));
+					return;
+				} catch (Scripts.ScriptNotFoundException s) {
+					display(ADDON_PREFIX + "§cDas Script konnte nicht gefunden werden!");
+					return;
+				} catch (VerifyError v) {
+					v.printStackTrace();
+					display(ADDON_PREFIX + "§cUngültiger Bytecode: " + v.getMessage().split("\n")[0]);
+					return;
+				} catch (InvocationTargetException e) {
+					error = e.getCause();
+				} catch (Throwable t) {
+					error = t;
+				}
+
+				error.printStackTrace();
+				display(ADDON_PREFIX + "§c" + error.getClass().getSimpleName() + (error.getMessage() == null ? "" : (": " + error.getMessage())));
 			}));
 	}
 

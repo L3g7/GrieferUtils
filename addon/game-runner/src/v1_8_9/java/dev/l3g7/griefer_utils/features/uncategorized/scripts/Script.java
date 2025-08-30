@@ -20,11 +20,12 @@ class Script {
 	public static ClassNode load(Iterable<String> lines) throws ScriptSyntaxException {
 		Script loader = new Script();
 
-		loader.getLocal("args");
+		loader.getLocal("args", false);
 
 		Iterator<String> iterator = lines.iterator();
 		AtomicInteger lineNumber = new AtomicInteger(0);
 		while (iterator.hasNext()) {
+			// Inject line numbers to make stacktraces useful
 			if (lineNumber.incrementAndGet() < (1<<16)) {
 				LabelNode label = new LabelNode();
 				loader.method.instructions.add(label);
@@ -66,9 +67,23 @@ class Script {
 	public final MethodNode method = new MethodNode(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/Object;)V", null, null);
 	public final String className = "dev/l3g7/griefer_utils/features/uncategorized/scripts/LoadedScript" + new Random().nextInt();
 
-	int getLocal(String name) {
+	int getLocal(String name, boolean isWide) {
+		// Check if it's an index instead of a name
+		try {
+			int index = Integer.parseInt(name);
+
+			while (index >= locals.size())
+				locals.add(String.valueOf(index));
+			if (isWide)
+				locals.add(null);
+
+			return index;
+		} catch (NumberFormatException ignore) {}
+
 		if (!locals.contains(name))
 			locals.add(name);
+		if (isWide)
+			locals.add(null);
 
 		return locals.indexOf(name);
 	}

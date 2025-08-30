@@ -119,9 +119,13 @@ class OpcodeProcessors {
 			return new LdcInsnNode(constant);
 		});
 
-		code("iinc", 2, (script, opcode, args) -> new IincInsnNode(script.getLocal(args[0]), Integer.parseInt(args[1])));
-		code(1, (script, opcode, args) -> new VarInsnNode(opcode, script.getLocal(args[0])),
-			"iload", "lload", "fload", "dload", "aload", "istore", "lstore", "fstore", "dstore", "astore", "ret");
+		code("iinc", 2, (script, opcode, args) -> new IincInsnNode(script.getLocal(args[0], false), Integer.parseInt(args[1])));
+		for (String opcode : new String[]{"iload", "lload", "fload", "dload", "aload", "istore", "lstore", "fstore", "dstore", "astore", "ret"}) {
+			PROCESSORS.put(opcode, new Opcode(Script.TokenPhase.CODE, 1, (script, tokens) -> {
+				boolean isWide = tokens[0].startsWith("l") || tokens[0].startsWith("d");
+				script.method.instructions.add(new VarInsnNode(OPCODES.get(tokens[0]), script.getLocal(tokens[1], isWide)));
+			}));
+		}
 
 		// FieldInsnNode
 		code(2, (script, opcode, args) -> {

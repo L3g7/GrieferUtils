@@ -17,8 +17,9 @@ import static org.objectweb.asm.Opcodes.*;
 
 class Script {
 
-	public static ClassNode load(Iterable<String> lines) throws ScriptSyntaxException {
+	public static ClassNode load(List<String> lines) throws ScriptSyntaxException {
 		Script loader = new Script();
+		InsnList insns = loader.method.instructions;
 
 		loader.getLocal("args", false);
 
@@ -28,8 +29,8 @@ class Script {
 			// Inject line numbers to make stacktraces useful
 			if (lineNumber.incrementAndGet() < (1<<16)) {
 				LabelNode label = new LabelNode();
-				loader.method.instructions.add(label);
-				loader.method.instructions.add(new LineNumberNode(lineNumber.get(), label));
+				insns.add(label);
+				insns.add(new LineNumberNode(lineNumber.get(), label));
 			}
 
 			String line = iterator.next().trim();
@@ -42,6 +43,11 @@ class Script {
 				e.setLine(lineNumber.get(), line);
 				throw e;
 			}
+		}
+
+		AbstractInsnNode node;
+		while ((node = insns.getLast()) instanceof LabelNode || node instanceof LineNumberNode) {
+			insns.remove(node);
 		}
 
 		// Generate class node

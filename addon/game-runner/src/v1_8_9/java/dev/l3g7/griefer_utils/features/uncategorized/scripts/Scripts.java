@@ -19,6 +19,9 @@ public class Scripts {
 			throw new ScriptNotFoundException();
 
 		List<String> lines = Files.readAllLines(path);
+		if (lines.isEmpty())
+			return;
+
 		Pair<Integer, Method> currentScript = LOADED_SCRIPTS.get(path);
 
 		int hash = lines.hashCode();
@@ -43,10 +46,6 @@ public class Scripts {
 		public ScriptSyntaxException(String message) {
 			super(message);
 			this.message = message;
-		}
-
-		public ScriptSyntaxException(Throwable cause) {
-			super(cause);
 		}
 
 		public ScriptSyntaxException(String message, Throwable cause) {

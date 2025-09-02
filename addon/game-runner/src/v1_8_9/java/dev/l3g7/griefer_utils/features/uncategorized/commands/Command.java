@@ -133,7 +133,8 @@ public class Command {
 			arguments.add(new Argument<>(name, GREEDY, String.class, q -> {
 				StringBuilder sb = new StringBuilder();
 				while (!q.isEmpty()) {
-					if (!sb.isEmpty())
+					//noinspection SizeReplaceableByIsEmpty
+					if (sb.length() > 0)
 						sb.append(' ');
 					sb.append(q.remove());
 				}
@@ -144,7 +145,7 @@ public class Command {
 		}
 
 		public Command build(Consumer<Arguments> predicate) {
-			return new Command(base, arguments.toArray(Argument[]::new), predicate);
+			return new Command(base, arguments.toArray(new Argument[0]), predicate);
 		}
 
 	}

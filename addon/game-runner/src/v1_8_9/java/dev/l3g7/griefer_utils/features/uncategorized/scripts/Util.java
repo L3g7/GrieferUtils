@@ -3,13 +3,16 @@ package dev.l3g7.griefer_utils.features.uncategorized.scripts;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
 
-import java.lang.invoke.MethodHandles;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 import static org.objectweb.asm.Opcodes.*;
 
 class Util {
+
+	private static final ScriptLoader LOADER = new ScriptLoader();
 
 	public static String removeTrailingComma(String str) {
 		return str.endsWith(",") ? str.substring(0, str.length() - 1) : str;
@@ -40,12 +43,7 @@ class Util {
 		node.accept(writer);
 
 		byte[] classBytes = writer.toByteArray();
-
-		try {
-			return MethodHandles.privateLookupIn(Scripts.class, MethodHandles.lookup()).defineClass(classBytes);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+		return LOADER.defineClass(classBytes);
 	}
 
 	public static AbstractInsnNode getNumberInsn(int num) {
@@ -60,6 +58,19 @@ class Util {
 			return new IntInsnNode(SIPUSH, num);
 
 		return new LdcInsnNode(num);
+	}
+
+
+	private static class ScriptLoader extends URLClassLoader {
+
+		public ScriptLoader() {
+			super(new URL[0], Util.class.getClassLoader());
+		}
+
+		public Class<?> defineClass(byte[] bytes) {
+			return defineClass(null, bytes, 0, bytes.length);
+		}
+
 	}
 
 }

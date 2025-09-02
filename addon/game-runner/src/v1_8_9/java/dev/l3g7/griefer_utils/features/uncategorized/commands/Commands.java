@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.features.uncategorized.scripts.ConstantParser;
 import dev.l3g7.griefer_utils.features.uncategorized.scripts.Scripts;
 
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
@@ -173,7 +173,7 @@ public class Commands {
 				Throwable error;
 
 				try {
-					Scripts.run(Path.of(file), scriptArgs.toArray(String[]::new));
+					Scripts.run(Paths.get(file), scriptArgs.toArray(new String[0]));
 					return;
 				} catch (Scripts.ScriptNotFoundException s) {
 					display(ADDON_PREFIX + "§cDas Script konnte nicht gefunden werden!");

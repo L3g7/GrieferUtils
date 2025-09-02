@@ -104,13 +104,7 @@ class OpcodeProcessors {
 			}
 		}));
 
-		code("line", 1, (script, opcode, args) -> {
-			int line = Integer.parseInt(args[0]);
-			if (script.method.instructions.getLast() instanceof LabelNode ln)
-				return new LineNumberNode(line, ln);
-
-			throw new ScriptSyntaxException("Vor Line " + line + " befindet sich kein Label");
-		});
+		PROCESSORS.put("line", new Opcode(Script.TokenPhase.CODE, -1, (script, args) -> {}));
 		code("ldc", -1, (script, opcode, args) -> {
 			Object constant = ConstantParser.readConstant(Arrays.asList(args).iterator());
 			if (constant == null)

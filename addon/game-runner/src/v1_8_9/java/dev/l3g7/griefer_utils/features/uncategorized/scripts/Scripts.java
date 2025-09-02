@@ -30,7 +30,12 @@ public class Scripts {
 
 			ClassNode classNode = Script.load(lines);
 			classNode.sourceFile = path.toString().replace('\\', '/');
-			Class<?> clazz = Util.loadClass(classNode);
+			Class<?> clazz;
+			try {
+				clazz = Util.loadClass(classNode);
+			} catch (Throwable t) {
+				throw new ScriptSyntaxException(t);
+			}
 			Method method = clazz.getMethod("main", Object[].class);
 			LOADED_SCRIPTS.put(path, currentScript = new Pair<>(hash, method));
 		}
@@ -41,30 +46,22 @@ public class Scripts {
 	public static class ScriptNotFoundException extends Exception {}
 	public static class ScriptSyntaxException extends Exception {
 
-		private String message = null;
+		public String lineInfo = null;
 
 		public ScriptSyntaxException(String message) {
 			super(message);
-			this.message = message;
+		}
+
+		public ScriptSyntaxException(Throwable cause) {
+			super(cause.getClass().getSimpleName() + ": " + cause.getMessage(), cause);
 		}
 
 		public ScriptSyntaxException(String message, Throwable cause) {
 			super(message, cause);
-			this.message = message;
 		}
 
 		public void setLine(int lineNumber, String line) {
-			if (message == null)
-				message = "";
-			else
-				message += " ";
-
-			message += "in Zeile " + lineNumber + " (" + line + ")";
-		}
-
-		@Override
-		public String getMessage() {
-			return message;
+			lineInfo = "in Zeile " + lineNumber + " (" + line + ")";
 		}
 
 	}

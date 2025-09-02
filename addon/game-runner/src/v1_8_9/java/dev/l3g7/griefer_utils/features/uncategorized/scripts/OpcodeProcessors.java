@@ -51,7 +51,7 @@ class OpcodeProcessors {
 					OPCODES.put(field.getName().toLowerCase(), field.getInt(null));
 			}
 		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
+			throw dev.l3g7.griefer_utils.core.api.util.Util.elevate(e);
 		}
 
 		PROCESSORS.put("global", new Opcode(Script.TokenPhase.GLOBALS, 2, (script, tokens) -> {

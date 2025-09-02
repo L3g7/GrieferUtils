@@ -114,7 +114,7 @@ class Script {
 				if (t instanceof ScriptSyntaxException s)
 					throw s;
 
-				throw new ScriptSyntaxException(t.getMessage(), t);
+				throw new ScriptSyntaxException(t);
 			}
 			return;
 		}
@@ -136,7 +136,7 @@ class Script {
 			if (t instanceof ScriptSyntaxException s)
 				throw s;
 
-			throw new ScriptSyntaxException(t.getMessage(), t);
+			throw new ScriptSyntaxException(t);
 		}
 	}
 

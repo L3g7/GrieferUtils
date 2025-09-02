@@ -178,6 +178,19 @@ public class Commands {
 				} catch (Scripts.ScriptNotFoundException s) {
 					display(ADDON_PREFIX + "§cDas Script konnte nicht gefunden werden!");
 					return;
+				} catch (Scripts.ScriptSyntaxException s) {
+					StringBuilder message = new StringBuilder(ADDON_PREFIX);
+					message.append("§cFehlerhafte Syntax");
+					if (s.getMessage() != null && !s.getMessage().isEmpty()) {
+						message.append(": ");
+						message.append(s.getMessage());
+					}
+
+					display(message.toString());
+					if (s.lineInfo != null)
+						display(ADDON_PREFIX + "§c" + s.lineInfo);
+
+					return;
 				} catch (VerifyError v) {
 					v.printStackTrace();
 					display(ADDON_PREFIX + "§cUngültiger Bytecode: " + v.getMessage().split("\n")[0]);

@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.scripts;
 
+import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.features.uncategorized.scripts.Scripts.ScriptSyntaxException;
 import org.objectweb.asm.tree.*;
 
@@ -58,8 +59,8 @@ class Script {
 		classNode.version = V1_8;
 		classNode.methods.add(loader.method);
 
-		for (Map.Entry<String, String> entry : loader.globals.entrySet())
-			classNode.fields.add(new FieldNode(ACC_PRIVATE | ACC_STATIC, entry.getKey(), entry.getValue(), null, null));
+		for (Map.Entry<String, Pair<String, Object>> entry : loader.globals.entrySet())
+			classNode.fields.add(new FieldNode(ACC_PRIVATE | ACC_STATIC, entry.getKey(), entry.getValue().a, null, entry.getValue().b));
 
 		return classNode;
 	}
@@ -67,7 +68,7 @@ class Script {
 	TokenPhase currentPhase = TokenPhase.GLOBALS;
 
 	// Name -> Type
-	public final Map<String, String> globals = new LinkedHashMap<>();
+	public final Map<String, Pair<String, Object>> globals = new LinkedHashMap<>();
 	private final Map<String, LabelNode> labels = new HashMap<>();
 	private final List<String> locals = new ArrayList<>();
 	public final MethodNode method = new MethodNode(ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/Object;)V", null, null);

@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.features.uncategorized.scripts.ConstantParser;
 import dev.l3g7.griefer_utils.features.uncategorized.scripts.Scripts;
+import dev.l3g7.griefer_utils.features.uncategorized.scripts.Scripts.ScriptSyntaxException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
@@ -158,13 +159,12 @@ public class Commands {
 
 				String file = parts.next();
 				if (file.startsWith("\"")) {
-					Object constant = ConstantParser.readConstant(file, parts);
-					if (constant == null) {
+					try {
+						file = ConstantParser.readString(file, parts);
+					} catch (ScriptSyntaxException s) {
 						display(ADDON_PREFIX + "§cUngültiger Dateipfad");
 						return;
 					}
-
-					file = constant.toString();
 				}
 
 				List<String> scriptArgs = new ArrayList<>();
@@ -178,7 +178,7 @@ public class Commands {
 				} catch (Scripts.ScriptNotFoundException s) {
 					display(ADDON_PREFIX + "§cDas Script konnte nicht gefunden werden!");
 					return;
-				} catch (Scripts.ScriptSyntaxException s) {
+				} catch (ScriptSyntaxException s) {
 					StringBuilder message = new StringBuilder(ADDON_PREFIX);
 					message.append("§cFehlerhafte Syntax");
 					if (s.getMessage() != null && !s.getMessage().isEmpty()) {

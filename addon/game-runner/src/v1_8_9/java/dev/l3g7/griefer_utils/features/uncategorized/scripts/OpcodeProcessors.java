@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.features.uncategorized.scripts;
 
+import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.functions.BiConsumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.TriFunction;
 import dev.l3g7.griefer_utils.features.uncategorized.scripts.Scripts.ScriptSyntaxException;
@@ -54,8 +55,21 @@ class OpcodeProcessors {
 			throw dev.l3g7.griefer_utils.core.api.util.Util.elevate(e);
 		}
 
-		PROCESSORS.put("global", new Opcode(Script.TokenPhase.GLOBALS, 2, (script, tokens) -> {
-			script.globals.put(tokens[2], switch (tokens[1]) {
+		PROCESSORS.put("global", new Opcode(Script.TokenPhase.GLOBALS, -1, (script, tokens) -> {
+			if (tokens.length < 3)
+				throw new ScriptSyntaxException("Ungültigige Anzahl an Argumenten");
+
+			Object object = null;
+
+			if (tokens.length > 3) {
+				if (!tokens[3].equals("="))
+					throw new ScriptSyntaxException("Ungültige Anzahl an Argumenten");
+
+				Iterator<String> iterator = Arrays.asList(tokens).subList(4, tokens.length).iterator();
+				object = ConstantParser.readConstant(iterator);
+			}
+
+			script.globals.put(tokens[2], new Pair<>(switch (tokens[1]) {
 				case "boolean" -> "Z";
 				case "char" -> "C";
 				case "byte" -> "B";
@@ -65,7 +79,7 @@ class OpcodeProcessors {
 				case "long" -> "J";
 				case "double" -> "D";
 				default -> 'L' + Util.resolveClass(tokens[1]) + ';';
-			});
+			}, object));
 		}));
 		PROCESSORS.put("trycatch", new Opcode(Script.TokenPhase.TRY_CATCHES, 4, (script, tokens) -> {
 			LabelNode start = script.getLabel(removeTrailingComma(tokens[1]));
@@ -79,11 +93,11 @@ class OpcodeProcessors {
 
 		Consumer<String> globalsOpcodeGenerator = opcode -> {
 			code(opcode, 1, (script, opcd, args) -> {
-				String type = script.globals.get(args[0]);
-				if (type == null)
+				Pair<String, Object> global = script.globals.get(args[0]);
+				if (global == null)
 					throw new ScriptSyntaxException("Unbekannte global \"" + args[0] + "\"");
 
-				return new FieldInsnNode(opcode.equals("putglobal") ? PUTSTATIC : GETSTATIC, script.className, args[0], type);
+				return new FieldInsnNode(opcode.equals("putglobal") ? PUTSTATIC : GETSTATIC, script.className, args[0], global.a);
 			});
 		};
 		globalsOpcodeGenerator.accept("putglobal");
@@ -105,13 +119,7 @@ class OpcodeProcessors {
 		}));
 
 		PROCESSORS.put("line", new Opcode(Script.TokenPhase.CODE, -1, (script, args) -> {}));
-		code("ldc", -1, (script, opcode, args) -> {
-			Object constant = ConstantParser.readConstant(Arrays.asList(args).iterator());
-			if (constant == null)
-				throw new ScriptSyntaxException("Konstante konnte nicht gelesen werden");
-
-			return new LdcInsnNode(constant);
-		});
+		code("ldc", -1, (script, opcode, args) -> new LdcInsnNode(ConstantParser.readConstant(Arrays.asList(args).iterator())));
 
 		code("iinc", 2, (script, opcode, args) -> new IincInsnNode(script.getLocal(args[0], false), Integer.parseInt(args[1])));
 		for (String opcode : new String[]{"iload", "lload", "fload", "dload", "aload", "istore", "lstore", "fstore", "dstore", "astore", "ret"}) {
@@ -197,11 +205,7 @@ class OpcodeProcessors {
 				if (token.equals("}"))
 					break;
 
-				Object constant = ConstantParser.readConstant(token, iterator);
-				if (constant == null)
-					throw new ScriptSyntaxException("Konstante konnte nicht gelesen werden");
-
-				bsmArgs.add(constant);
+				bsmArgs.add(ConstantParser.readConstant(token, iterator));
 			}
 
 			if (iterator.hasNext())

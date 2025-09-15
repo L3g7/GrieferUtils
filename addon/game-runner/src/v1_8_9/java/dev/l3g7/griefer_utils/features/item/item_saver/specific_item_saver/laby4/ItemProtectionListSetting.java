@@ -29,6 +29,7 @@ import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
+import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
 import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.util.KeyValue;
 import net.minecraft.client.gui.GuiScreen;
@@ -55,7 +56,7 @@ public class ItemProtectionListSetting extends ListSetting implements Laby4Setti
 	private GuiScreen previousScreen = null;
 
 	public ItemProtectionListSetting() {
-		super(UUID.randomUUID().toString(), null, null, new String[0], null, false, null, (byte) -127,
+		super(UUID.randomUUID().toString(), null, null, new String[0], (SettingPermissionHolder) null, null, (byte) -127,
 			new ConfigPropertySettingAccessor(null, null, null, null) {
 				@Override
 				public <T> T get() {

@@ -35,6 +35,7 @@ import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.loader.annotation.SpriteTexture;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
+import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
 import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.configuration.settings.type.list.ListSettingConfig;
 import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
@@ -185,7 +186,7 @@ public class MultiHotkey extends Feature {
 		}
 
 		public HotkeyListSetting(ExtendedStorage<List<HotkeyConfig>> storage) {
-			super(UUID.randomUUID().toString(), null, null, new String[0], null, false, null, (byte) -127,
+			super(UUID.randomUUID().toString(), null, null, new String[0], (SettingPermissionHolder) null, null, (byte) -127,
 				new ConfigPropertySettingAccessor(null, null, null, null) {
 					@Override
 					public <T> T get() {

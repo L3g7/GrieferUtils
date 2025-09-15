@@ -34,6 +34,7 @@ import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWi
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.ScreenRendererWidget;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
+import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
 import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.util.KeyValue;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
@@ -69,7 +70,7 @@ public class ItemValueListSetting extends ListSetting implements Laby4Setting<It
 	private GuiScreen previousScreen = null;
 
 	public ItemValueListSetting() {
-		super(UUID.randomUUID().toString(), null, null, new String[0], null, false, null, (byte) -127,
+		super(UUID.randomUUID().toString(), null, null, new String[0], (SettingPermissionHolder) null, null, (byte) -127,
 			new ConfigPropertySettingAccessor(null, null, null, null) {
 				@Override
 				public <T> T get() {

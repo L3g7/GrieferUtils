@@ -20,6 +20,7 @@ import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.entity.Entity;
 import net.labymod.api.client.entity.player.tag.tags.IconTag;
+import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.widget.attributes.bounds.Bounds;
 import net.labymod.api.client.network.NetworkPlayerInfo;
 import net.labymod.api.client.render.font.RenderableComponent;
@@ -210,7 +211,7 @@ public class GrieferUtilsGroup extends Group {
 		private GameUserService gameUserService;
 
 		@Inject(method = "render", at = @At("HEAD"), cancellable = true)
-	    private void injectRender(Stack stack, float x, float y, NetworkPlayerInfo player, CallbackInfo ci) {
+	    private void injectRender(ScreenContext context, float x, float y, NetworkPlayerInfo player, CallbackInfo ci) {
 		    Group group = gameUserService.gameUser(player.profile().getUniqueId()).visibleGroup();
 			if (!(group instanceof GrieferUtilsGroup guGroup))
 				return;
@@ -225,7 +226,7 @@ public class GrieferUtilsGroup extends Group {
 	private static class MixinPlayerListRenderer {
 
 	    @Inject(method = "render", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-	    private void injectRender(Stack stack, LabyAPI labyAPI, Bounds bounds, boolean update, CallbackInfo ci, int screenWidth, float columnsWidth, float backgroundWidth, RenderableComponent headerRenderableComponent, RenderableComponent footerRenderableComponent, int x, int y) {
+	    private void injectRender(ScreenContext context, LabyAPI labyAPI, Bounds bounds, boolean update, CallbackInfo ci, int screenWidth, float columnsWidth, float backgroundWidth, RenderableComponent headerRenderableComponent, RenderableComponent footerRenderableComponent, int x, int y) {
 	    	renderUserPercentage(x, (int) backgroundWidth);
 	    }
 

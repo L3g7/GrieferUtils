@@ -20,9 +20,8 @@ import net.labymod.api.client.gui.hud.hudwidget.HudWidget;
 import net.labymod.api.client.gui.hud.hudwidget.HudWidgetConfig;
 import net.labymod.api.client.gui.hud.hudwidget.item.ItemHudWidget;
 import net.labymod.api.client.gui.hud.position.HudSize;
-import net.labymod.api.client.gui.mouse.MutableMouse;
+import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.render.font.RenderableComponent;
-import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.configuration.loader.property.ConfigProperty;
 import net.labymod.core.client.gui.hud.hudwidget.ItemCounterHudWidget;
 import net.labymod.core.client.gui.hud.hudwidget.ItemCounterHudWidget.CountingItem;
@@ -195,7 +194,7 @@ public class ItemCounter {
 
 		@SuppressWarnings("ConstantValue")
 		@Inject(method = "render", at = @At("HEAD"), cancellable = true)
-		private void injectRender(Stack stack, MutableMouse mouse, float partialTicks, boolean isEditorContext, HudSize size, CallbackInfo ci) {
+		private void injectRender(ScreenContext context, boolean isEditorContext, HudSize size, CallbackInfo ci) {
 			if (itemStack == null || itemStack.isAir() || itemStack.getMaximumDamage() != 0 || isEditorContext)
 				return;
 

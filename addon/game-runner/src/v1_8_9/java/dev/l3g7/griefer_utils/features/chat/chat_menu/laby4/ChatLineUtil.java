@@ -13,10 +13,8 @@ import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import net.labymod.api.client.chat.ChatMessage;
 import net.labymod.api.client.chat.advanced.ChatMessagesWidget;
-import net.labymod.api.client.gui.mouse.MutableMouse;
-import net.labymod.api.client.render.draw.batch.BatchRectangleRenderer;
+import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.render.font.ComponentRenderMeta;
-import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.configuration.labymod.chat.AdvancedChatMessage;
 import net.labymod.api.event.client.chat.ChatReceiveEvent;
 import net.labymod.core.client.chat.DefaultChatController;
@@ -77,7 +75,7 @@ public class ChatLineUtil {
 		private ComponentRenderMeta lastHoveredRenderMeta = null;
 
 		@Inject(method = "renderMessage", at = @At("TAIL"))
-		private void injectRenderMessage(Stack stack, MutableMouse mouse, AdvancedChatMessage message, int lineIndex, BatchRectangleRenderer rectangleRenderer, int phase, CallbackInfoReturnable<Integer> cir) {
+		private void injectRenderMessage(ScreenContext context, AdvancedChatMessage message, int lineIndex, CallbackInfoReturnable<Integer> cir) {
 			if (lastHoveredRenderMeta == lastHoveredComponentMeta)
 				return;
 

@@ -99,7 +99,7 @@ public class GrieferUtilsGroup extends Group {
 	}
 
 	public void render(float x, float y) {
-		render(Boolean.TRUE.equals(Laby.labyAPI().config().multiplayer().userIndicator().showUserIndicatorInPlayerList().get()), x, y);
+		render(Boolean.TRUE.equals(Laby.labyAPI().config().multiplayer().tabList().labyModBadge().get()), x, y);
 	}
 
 	private void render(boolean revealFamiliarUsers, float x, float y) {

@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.core.misc;
 
-import net.labymod.api.client.gfx.pipeline.buffer.BufferBuilder;
 import net.labymod.api.client.gfx.pipeline.texture.atlas.TextureAtlas;
 import net.labymod.api.client.gfx.pipeline.texture.atlas.TextureUV;
 import net.labymod.core.client.gfx.pipeline.texture.atlas.DefaultTextureUV;
@@ -17,6 +16,7 @@ import net.labymod.core.client.render.schematic.block.BlockRenderer;
 import net.labymod.core.client.render.schematic.block.Face;
 import net.labymod.core.client.render.schematic.block.material.BoundingBox;
 import net.labymod.core.client.render.schematic.block.material.material.SolidMaterial;
+import net.labymod.laby3d.api.vertex.VertexConsumer;
 
 import static net.labymod.core.client.render.schematic.block.Face.*;
 
@@ -58,11 +58,11 @@ public class SkullMaterial extends SolidMaterial {
 	}
 
 	@Override
-	public void render(BlockRenderer renderer, TextureAtlas atlas, BufferBuilder builder, Block block, SchematicAccessor level, int x, int y, int z, BoundingBox bb) {
+	public void render(BlockRenderer renderer, TextureAtlas atlas, VertexConsumer consumer, Block block, SchematicAccessor level, int x, int y, int z, BoundingBox bb) {
 		BoundingBox secondLayer = getBoundingBox(true);
 
 		for (int i = 0; i < FACES.length; i++)
-			renderer.renderFace(builder, block, FACES[i], x, y, z, i > 2 ? secondLayer : bb, UVs[i]);
+			renderer.renderFace(consumer, block, FACES[i], x, y, z, i > 2 ? secondLayer : bb, UVs[i]);
 	}
 
 	@Override

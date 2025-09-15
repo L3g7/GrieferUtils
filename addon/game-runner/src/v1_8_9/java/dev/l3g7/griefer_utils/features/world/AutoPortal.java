@@ -27,6 +27,7 @@ import net.labymod.api.Laby;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
+import org.lwjgl.glfw.GLFWNativeWin32;
 import org.lwjgl.opengl.Display;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
@@ -114,7 +115,7 @@ public class AutoPortal extends Feature {
 		if (maximize.get()) {
 			if (Platform.isWindows()) {
 				long handle = LABY_4.isActive()
-					? Laby.gfx().backend().glfwNatives().getWin32Window(Display.getWindowHandle())
+					? GLFWNativeWin32.glfwGetWin32Window(Display.getWindowHandle())
 					: Reflection.invoke(Reflection.invoke(Display.class, "getImplementation"), "getHwnd");
 
 				HWND hwnd = new HWND(new Pointer(handle));

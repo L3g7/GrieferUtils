@@ -36,10 +36,10 @@ import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
+import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.ScreenInstance;
 import net.labymod.api.client.gui.screen.widget.widgets.hud.HudWidgetWidget;
 import net.labymod.api.client.render.font.RenderableComponent;
-import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
@@ -285,7 +285,7 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 		public abstract float getWidth();
 
 		@Override
-		public abstract void renderLine(Stack stack, float x, float y, float space, HudSize hudWidgetSize);
+		public abstract void renderLine(ScreenContext context, float x, float y, float space, HudSize hudWidgetSize);
 
 	}
 

@@ -24,8 +24,7 @@ import net.labymod.api.client.gui.hud.binding.dropzone.NamedHudWidgetDropzones;
 import net.labymod.api.client.gui.hud.hudwidget.HudWidget;
 import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.hud.position.HudWidgetAnchor;
-import net.labymod.api.client.gui.mouse.MutableMouse;
-import net.labymod.api.client.render.matrix.Stack;
+import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSkull;
@@ -215,10 +214,10 @@ public class BlockInfo extends Widget {
 		}
 
 		@Override
-		public void render(Stack stack, MutableMouse mouse, float partialTicks, boolean isEditorContext, HudSize size) {
+		public void render(RenderPhase phase, ScreenContext context, boolean isEditorContext, HudSize size) {
 			size.set((float) getWidth(), getHeight());
-			if (stack != null) {
-				this.renderEntireBackground(stack, size);
+			if (context != null) {
+				this.renderEntireBackground(context, size);
 				draw(0, 0, isEditorContext);
 			}
 		}

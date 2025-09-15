@@ -37,6 +37,9 @@ import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.icon.Icon;
+import net.labymod.api.client.gui.screen.ScreenContext;
+import net.labymod.api.client.gui.screen.state.ScreenCanvas;
+import net.labymod.api.client.gui.screen.state.TextFlags;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.main.LabyMod;
@@ -575,9 +578,15 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 				}
 
 				@Override
-				public void renderLine(Stack stack, float x, float y, float space, HudSize hudWidgetSize) {
-					BUILDER.pos(x, y).shadow(true).useFloatingPointPosition(this.floatingPointPosition).text(first).render(stack);
-					BUILDER.pos(x + maxPosWidth, y).shadow(true).useFloatingPointPosition(this.floatingPointPosition).text(second).render(stack);
+				public void renderLine(ScreenContext context, float x, float y, float space, HudSize hudWidgetSize) {
+					ScreenCanvas renderState = context.canvas();
+
+					int flags = TextFlags.SHADOW;
+					if (this.floatingPointPosition)
+						flags |= TextFlags.USE_FLOATING_POINT_VALUES;
+
+					renderState.submitRenderableComponent(first, x, y, -1, flags);
+					renderState.submitRenderableComponent(second, x + maxPosWidth, y, -1, flags);
 				}
 
 			}

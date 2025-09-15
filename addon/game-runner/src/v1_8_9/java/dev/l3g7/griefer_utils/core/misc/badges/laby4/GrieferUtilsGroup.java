@@ -132,7 +132,7 @@ public class GrieferUtilsGroup extends Group {
 		if (TRUE.equals(tlc.labyModBadge().get()) && TRUE.equals(tlc.labyModPercentage().get())) {
 			int percent = totalCount == 0 ? 0 : (int) Math.round(familiarCount / (double) totalCount * 100);
 			String labyModText = String.format("§7%d§8/§7%d §a%d%%", familiarCount, totalCount, percent);
-			double delta = Laby.references().renderPipeline().textRenderer().width(labyModText) * 0.7 + 6.5;
+			double delta = Laby.references().renderPipeline().textRenderer().getWidth(labyModText) * 0.7 + 6.5;
 			x -= delta;
 
 			Textures.SpriteLabyMod.DEFAULT_WOLF_HIGH_RES.render(Stack.getDefaultEmptyStack(), x, 1.5f, 6.5f);
@@ -150,7 +150,7 @@ public class GrieferUtilsGroup extends Group {
 		DrawUtils.drawRightString(text, x, 1.5, 0.7);
 
 		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
-		x -= Laby.references().renderPipeline().textRenderer().width(text) * 0.7;
+		x -= Laby.references().renderPipeline().textRenderer().getWidth(text) * 0.7;
 		DrawUtils.drawTexture(x - 8, 1.25, 256, 256, 7, 7);
 	}
 

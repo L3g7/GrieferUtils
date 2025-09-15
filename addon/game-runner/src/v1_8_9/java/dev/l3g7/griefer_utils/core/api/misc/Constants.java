@@ -69,6 +69,6 @@ public class Constants {
 	public static final String STATIC_API_URL = "https://api.grieferutils.l3g7.dev";
 	public static final String DYNAMIC_API_URL = "https://s2.grieferutils.l3g7.dev";
 	public static final String HIVEMIND_URL = "https://s1.grieferutils.l3g7.dev";
-	public static final String BSF_URL = "http://127.0.0.1:8000";
+	public static final String BSF_URL = "https://s4.grieferutils.l3g7.dev";
 
 }

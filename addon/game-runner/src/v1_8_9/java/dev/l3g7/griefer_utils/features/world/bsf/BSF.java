@@ -24,15 +24,16 @@ import dev.l3g7.griefer_utils.features.world.bsf.data.BSFSearchable;
 import dev.l3g7.griefer_utils.features.world.bsf.gui.GuiBSF;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class BSF extends Feature {
 
 	public static final Map<Citybuild, Map<BSFSearchable, List<SearchData>>> SEARCH_DATA = new HashMap<>();
-	public static final Set<String> readyCbs = Collections.synchronizedSet(new HashSet<>());
+	public static final Set<Citybuild> readyCbs = Collections.synchronizedSet(new HashSet<>());
 	private static boolean requestedOnJoin = false;
 
-	public static boolean notify = false;
+	public static Set<Citybuild> notify = new HashSet<>();
 
 	private final KeySetting setting = KeySetting.create()
 		.name("Gui öffnen")
@@ -50,18 +51,36 @@ public class BSF extends Feature {
 				.center());
 
 	public static boolean hasData() {
-		return readyCbs.contains(MinecraftUtil.getCurrentCitybuild().getInternalName());
+		return readyCbs.contains(MinecraftUtil.getCurrentCitybuild());
 	}
 
 	public static boolean isInFarmwelt() {
 		return BSFCollector.isInFarmwelt();
 	}
 
-	public static void triggerNotification() {
-		if (BSF.notify) {
-			LabyBridge.labyBridge.notify("§aSuche ist nun bereit!", "§aDie Biom- und Strukturen-Suche\nkann nun verwendet werden.");
-			notify = false;
+	public static void updateCBs(List<String> internalCbs) {
+		List<Citybuild> cbs = internalCbs.stream().map(Citybuild::getCitybuild).collect(Collectors.toList());
+
+		readyCbs.clear();
+		readyCbs.addAll(cbs);
+
+		List<Citybuild> notifyCbs = cbs.stream().filter(notify::contains).collect(Collectors.toList());
+		if (notifyCbs.isEmpty())
+			return;
+
+		notifyCbs.forEach(notify::remove);
+		StringBuilder msg = new StringBuilder("§a");
+		if (notifyCbs.size() == 1) {
+			msg.append(notifyCbs.remove(0).getName());
+			msg.append(" ist nun bereit!");
+		} else {
+			Citybuild last = notifyCbs.remove(notifyCbs.size() - 1);
+			msg.append(notifyCbs.stream().map(Citybuild::getName).collect(Collectors.joining(", ")));
+			msg.append(" & ").append(last.getName());
+			msg.append(" sind nun bereit!");
 		}
+
+		LabyBridge.labyBridge.notify(msg.toString(), "§aDie Biom- und Strukturen-Suche\nkann dort nun verwendet werden.");
 	}
 
 	@EventListener
@@ -71,7 +90,7 @@ public class BSF extends Feature {
 
 		requestedOnJoin = true;
 		GuiBSF.lastUpdate = System.currentTimeMillis();
-		GUServer.getBSFReady().thenAccept(BSF.readyCbs::addAll);
+		GUServer.getBSFReady().thenAccept(BSF::updateCBs);
 	}
 
 	@EventListener

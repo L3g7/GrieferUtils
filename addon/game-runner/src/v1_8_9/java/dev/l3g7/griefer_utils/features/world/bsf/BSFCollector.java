@@ -189,13 +189,12 @@ public class BSFCollector {
 
 	private static void process(ProcessData data) {
 		GUServer.processBSFData(data.cb.getInternalName(), worldCenter.a, worldCenter.b, data.origin, data.data).thenAccept(cbs -> {
-			if (!cbs.isEmpty()) { // Fail
-				BSF.readyCbs.addAll(cbs);
-				processQueue.removeIf(p -> cbs.contains(p.cb.getInternalName()));
+			BSF.updateCBs(cbs);
+			processQueue.removeIf(p -> cbs.contains(p.cb.getInternalName()));
+
+			if (BSF.hasData()) { // Success
 				requiringMoreChunks.clear();
 				dataTails.clear();
-
-				BSF.triggerNotification();
 			}
 
 			// Prefer processing current cb next

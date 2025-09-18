@@ -88,7 +88,7 @@ public class SplitLongMessages extends Feature {
 
 	@EventListener
 	private void onMessageReceive(MessageReceiveEvent event) {
-		if (!lastParts.isEmpty() && cancelSending(event.message.getFormattedText())) {
+		if (!lastParts.isEmpty() && cancelSending(event.message.getUnformattedText())) {
 			lastParts.forEach(ChatQueue::remove);
 			lastParts.clear();
 			return;
@@ -105,8 +105,8 @@ public class SplitLongMessages extends Feature {
 	}
 
 	private boolean cancelSending(String msg) {
-		if (msg.equals("§r§cFehler:§r§4 §r§4Spieler nicht gefunden.§r")
-			|| msg.equals("§r§7Bitte schreibe keine IP-Adressen oder Webseiten in den Chat.§r"))
+		if (msg.equals("Fehler: Spieler nicht gefunden.")
+			|| msg.equals("Bitte schreibe keine IP-Adressen oder Webseiten in den Chat."))
 			return true;
 
 		Matcher matcher = BLACKLIST_ERROR_PATTERN.matcher(msg);

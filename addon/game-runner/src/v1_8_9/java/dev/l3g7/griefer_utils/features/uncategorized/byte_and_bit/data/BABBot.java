@@ -109,6 +109,9 @@ public class BABBot {
 				if (!res.get("success").getAsBoolean()) return false;
 				JsonArray array = res.get("items").getAsJsonArray();
 				JsonObject aabb = res.get("zone").getAsJsonObject();
+				if (aabb.isEmpty())
+					return false; // Multizone
+
 				this.items = BABItem.parse(array);
 				this.botZone = AxisAlignedBB.fromBounds(aabb.get("x1").getAsInt(), aabb.get("y1").getAsInt(), aabb.get("z1").getAsInt(), aabb.get("x2").getAsInt(), aabb.get("y2").getAsInt(), aabb.get("z2").getAsInt());
 				return true;

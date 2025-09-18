@@ -8,11 +8,13 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 import de.emotechat.addon.gui.chat.suggestion.EmoteSuggestionsMenu;
+import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
@@ -113,6 +115,14 @@ public class SplitLongMessages extends Feature {
 
 	@EventListener
 	public void onSend(MessageEvent.MessageAboutToBeSentEvent event) {
+		try {
+			onSendCaught(event);
+		} catch (Throwable t) {
+			BugReporter.reportError(Util.elevate(t, "Tried to process \"" + event.message + "\""));
+		}
+	}
+
+	private void onSendCaught(MessageEvent.MessageAboutToBeSentEvent event) {
 		String text = event.message;
 
 		if (!lastParts.isEmpty() && text.equals(lastParts.get(lastParts.size() - 1))) {

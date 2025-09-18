@@ -21,7 +21,7 @@ public class EventBusProfiler {
 
 	public static final NumberSetting minTime = NumberSetting.create()
 		.name("Mindestdauer")
-		.description("Wie lange Events mindestens zum Auslösen brauchen, damit sie geloggt werden.")
+		.description("Wie lange Events mindestens zum Auslösen brauchen, damit sie geloggt werden (in ms).")
 		.icon(Blocks.barrier)
 		.min(0)
 		.defaultValue(5);
@@ -33,7 +33,7 @@ public class EventBusProfiler {
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Eventbus-Profiler")
-		.description("Misst, wie das Auslösen von Events / ihrer Listener dauert.")
+		.description("Misst, wie lange das Auslösen von Events / ihrer Listener dauert.")
 		.icon(Items.clock)
 		.callback(EventBusProfiler::updateProfiler)
 		.subSettings(minTime, filter);

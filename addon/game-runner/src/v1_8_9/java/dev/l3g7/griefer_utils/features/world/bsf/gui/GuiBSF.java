@@ -58,7 +58,7 @@ public class GuiBSF extends GuiBigChest {
 			TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", lore.toArray(String[]::new));
 
 			addTextureItem(13, item, () -> {
-				if (!BSF.notify.add(getCurrentCitybuild())) {
+				if (BSF.notify.add(getCurrentCitybuild())) {
 					labyBridge.notify("§aBenachrichtigung", "§aDu bekommst nun eine Benachrichtigung,\nwenn die Suche bereit ist!");
 					new GuiBSF().open(); // Rebuild GUI
 				}

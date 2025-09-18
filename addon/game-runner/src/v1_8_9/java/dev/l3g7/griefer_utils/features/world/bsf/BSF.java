@@ -71,16 +71,20 @@ public class BSF extends Feature {
 		notifyCbs.forEach(notify::remove);
 		StringBuilder msg = new StringBuilder("§a");
 		if (notifyCbs.size() == 1) {
-			msg.append(notifyCbs.remove(0).getName());
+			msg.append(cb2name(notifyCbs.remove(0)));
 			msg.append(" ist nun bereit!");
 		} else {
 			Citybuild last = notifyCbs.remove(notifyCbs.size() - 1);
-			msg.append(notifyCbs.stream().map(Citybuild::getName).collect(Collectors.joining(", ")));
-			msg.append(" & ").append(last.getName());
+			msg.append(notifyCbs.stream().map(BSF::cb2name).collect(Collectors.joining(", ")));
+			msg.append(" & ").append(cb2name(last));
 			msg.append(" sind nun bereit!");
 		}
 
 		LabyBridge.labyBridge.notify(msg.toString(), "§aDie Biom- und Strukturen-Suche\nkann dort nun verwendet werden.");
+	}
+
+	private static String cb2name(Citybuild cb) {
+		return cb.getName().replace("Citybuild ", "CB");
 	}
 
 	@EventListener

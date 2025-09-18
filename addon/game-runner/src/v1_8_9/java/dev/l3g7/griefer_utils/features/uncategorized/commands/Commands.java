@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.commands;
 
+import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
@@ -149,6 +150,19 @@ public class Commands {
 						trySend(command);
 					}
 				}, (long) args.get("Delay"));
+			}));
+
+		registerCommand(command("notify")
+			.greedyString("<Titel>|<Message>")
+			.build(args -> {
+				String string = args.get("<Titel>|<Message>");
+				String[] parts = string.replace('&', '§').split("\\|");
+				if (parts.length != 2) {
+					display(ADDON_PREFIX + CMD_PREFIX + "notify <Titel>|<Message>");
+					return;
+				}
+
+				LabyBridge.labyBridge.notify(parts[0], parts[1]);
 			}));
 
 		registerCommand(command("script")

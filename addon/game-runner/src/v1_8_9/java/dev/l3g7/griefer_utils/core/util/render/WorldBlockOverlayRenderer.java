@@ -212,7 +212,7 @@ public class WorldBlockOverlayRenderer {
 	public abstract static class RenderObject {
 
 		private static RenderObject fromState(IBlockState state, BlockPos pos, WorldClient world) {
-			if (world == null)
+			if (world == null || state == null)
 				return null;
 
 			for (RenderObjectGenerator generator : generators) {

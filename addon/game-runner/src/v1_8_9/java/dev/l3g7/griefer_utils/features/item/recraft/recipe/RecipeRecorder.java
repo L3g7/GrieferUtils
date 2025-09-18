@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.RecraftLogger;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.client.C0EPacketClickWindow;
@@ -153,10 +154,15 @@ public class RecipeRecorder {
 			return;
 		}
 
-		if (!crafted)
+		var player = player();
+		if (player == null)
 			return;
 
-		ItemStack variantItem = player().openContainer.getSlot(49).getStack();
+		Container container = player.openContainer;
+		if (!crafted || container == null)
+			return;
+
+		ItemStack variantItem = container.getSlot(49).getStack();
 		if (variantItem == null) {
 			labyBridge.notify("§eFehler \u26A0", "§eBitte nehme die Aktion neu auf!");
 			return;
@@ -168,7 +174,7 @@ public class RecipeRecorder {
 		else
 			action.variant = 1;
 
-		ItemStack targetStack = player().openContainer.getSlot(25).getStack();
+		ItemStack targetStack = container.getSlot(25).getStack();
 		if (targetStack == null) {
 			labyBridge.notify("§eFehler \u26A0", "§eBitte nehme die Aktion neu auf!");
 			return;
@@ -184,7 +190,7 @@ public class RecipeRecorder {
 
 		Ingredient[] ingredients = new Ingredient[9];
 		for (int i = 0; i < 9; i++) {
-			ItemStack stack = player().openContainer.getSlot(10 + i % 3 + i / 3 * 9).getStack();
+			ItemStack stack = container.getSlot(10 + i % 3 + i / 3 * 9).getStack();
 			if (stack != null && !stack.getDisplayName().equals("§7"))
 				ingredients[i] = Ingredient.fromItemStack(stack);
 		}

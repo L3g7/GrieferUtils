@@ -47,6 +47,7 @@ public class SplitLongMessages extends Feature {
 
 	private static final List<String> lastParts = new ArrayList<>();
 	private static String lastRecipient = null;
+	private static int previousLength = 100;
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -55,12 +56,17 @@ public class SplitLongMessages extends Feature {
 			"Funktioniert im öffentlichen Chat sowie mit /msg und /r.")
 		.icon(Items.shears);
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onGuiKeyboardInput(KeyboardInputEvent.Post event) {
 		if (!(event.gui instanceof GuiChat))
 			return;
 
 		GuiTextField inputField = Reflection.get(event.gui, "inputField");
+		if (!enabled.get()) {
+			inputField.setMaxStringLength(previousLength);
+			return;
+		}
+
 		if (inputField.getText().length() <= 100 && (getEventKey() == KEY_UP || getEventKey() == KEY_DOWN)) {
 			Reflection.set(inputField, "lineScrollOffset", 0);
 			inputField.setCursorPositionEnd();
@@ -79,10 +85,12 @@ public class SplitLongMessages extends Feature {
 
 		String text = inputField.getText().toLowerCase();
 		if (!(text.startsWith("/msg ") || text.startsWith("/r ") || !(text.startsWith("/")))) { // NOTE: refactor
-			inputField.setMaxStringLength(100);
+			inputField.setMaxStringLength(previousLength);
 			return;
 		}
 
+		if (inputField.getMaxStringLength() != Integer.MAX_VALUE)
+			previousLength = inputField.getMaxStringLength();
 		inputField.setMaxStringLength(Integer.MAX_VALUE);
 	}
 

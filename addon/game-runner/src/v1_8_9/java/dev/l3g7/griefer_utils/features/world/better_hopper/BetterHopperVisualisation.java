@@ -154,10 +154,10 @@ class BetterHopperVisualisation implements Disableable {
 
 	@EventListener
 	public void onRenderTick(TickEvent.RenderTickEvent event) {
-		if (!betterVisualisation.get() || !(mc().currentScreen instanceof GuiChest))
+		if (!betterVisualisation.get() || !(mc().currentScreen instanceof GuiChest chest))
 			return;
 
-		IInventory inv = Reflection.get(mc().currentScreen, "lowerChestInventory");
+		IInventory inv = Reflection.get(chest, "lowerChestInventory");
 		boolean isSettings = inv.getName().equals("§6Trichter-Einstellungen");
 
 		if (!isSettings && !inv.getName().equals("§6Trichter-Mehrfach-Verbindungen"))
@@ -165,7 +165,7 @@ class BetterHopperVisualisation implements Disableable {
 
 		int slotId = isSettings ? 34 : 52;
 		ItemStack stack = ItemUtil.fromNBT(String.format(ENABLE_VISUALISATION_NBT, displayTime.get(), isSettings ? "die Verbindung" : "alle Verbindungen"));
-		((GuiChest) mc().currentScreen).inventorySlots.getSlot(slotId).putStack(stack);
+		chest.inventorySlots.getSlot(slotId).putStack(stack);
 	}
 
 	@EventListener

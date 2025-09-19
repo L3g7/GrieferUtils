@@ -36,7 +36,7 @@ public class GuiBSF extends GuiBigChest {
 
 	@Override
 	public void open() {
-		if (!BSFCollector.processing && lastUpdate + 10_000 <= System.currentTimeMillis()) {
+		if (!BSF.hasData() && !BSFCollector.processing && lastUpdate + 10_000 <= System.currentTimeMillis()) {
 			GUServer.getBSFReady().thenAccept(cbs -> {
 				BSF.updateCBs(cbs);
 				if (mc().currentScreen instanceof GuiBSF)

@@ -28,7 +28,7 @@ public class BSFSearchRequest extends Request<BSFSearchRequest.SearchResponse> {
 
 	@Override
 	protected SearchResponse parseResponse(Response response) {
-		if (response.getStatus() == 422)
+		if (response.getStatus() == 205)
 			return SearchResponse.WORLD_NOT_READY;
 
 		if (response.getStatus() == 204)

@@ -26,6 +26,8 @@ import dev.l3g7.griefer_utils.features.world.bsf.gui.GuiBSF;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+
 @Singleton
 public class BSF extends Feature {
 
@@ -81,6 +83,9 @@ public class BSF extends Feature {
 		}
 
 		LabyBridge.labyBridge.notify(msg.toString(), "§aDie Biom- und Strukturen-Suche\nkann dort nun verwendet werden.");
+
+		if (notifyCbs.contains(MinecraftUtil.getCurrentCitybuild()) && mc().currentScreen instanceof GuiBSF)
+			GuiBSF.GUI.open();
 	}
 
 	private static String cb2name(Citybuild cb) {

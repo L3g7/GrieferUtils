@@ -127,6 +127,7 @@ class GuiSearches extends GuiBigChest {
 		if (r == BSFSearchRequest.SearchResponse.WORLD_NOT_READY) {
 			labyBridge.notify("§cWelt gelöscht \u26A0", "§cBitte erkunde die Farmwelt erneut.");
 			BSF.readyCbs.remove(MinecraftUtil.getCurrentCitybuild());
+			Waypoint.disable();
 			return;
 		}
 

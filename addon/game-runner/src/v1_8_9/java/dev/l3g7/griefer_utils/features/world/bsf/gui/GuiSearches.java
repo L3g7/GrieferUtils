@@ -141,7 +141,7 @@ class GuiSearches extends GuiBigChest {
 		if (searchData.size() > 20)
 			searchData.remove(0);
 
-		labyBridge.notify("§a" + mc_x + " " + mc_z, "§a(Folge dem Beacon " + distanceToPlayer(mc_x, mc_z) + "m)");
+		labyBridge.notify("§a" + mc_x + ", " + mc_z, "§a(Folge dem Beacon " + distanceToPlayer(mc_x, mc_z) + "m)");
 		Waypoint.setWaypoint(mc_x, mc_z, searchable);
 	}
 

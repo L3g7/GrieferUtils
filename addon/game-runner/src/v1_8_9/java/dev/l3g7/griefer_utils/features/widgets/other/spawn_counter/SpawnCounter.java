@@ -21,6 +21,7 @@ import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.UserData;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.misc.ActionBar;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListEntry;
@@ -41,7 +42,6 @@ import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.state.ScreenCanvas;
 import net.labymod.api.client.gui.screen.state.TextFlags;
 import net.labymod.api.client.render.font.RenderableComponent;
-import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
 import net.minecraft.client.renderer.GlStateManager;
@@ -78,6 +78,10 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 		.name("Nachricht")
 		.description("Wie die Benachrichtung aussehen soll, wenn eine Runde abgeschlossen wurde.")
 		.icon(Items.clock)
+		.callback(t -> {
+			if (t != NotificationType.ACTIONBAR)
+				ActionBar.set(null);
+		})
 		.defaultValue(NotificationType.ACTIONBAR);
 
 	private final DropDownSetting<RoundDisplayType> displayType = DropDownSetting.create(RoundDisplayType.class)
@@ -140,7 +144,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 		NONE("Keine", s -> {}),
 		TOAST("Erfolg", s -> LabyBridge.labyBridge.notify("§aSpawn-Runden Zähler", s)),
-		ACTIONBAR("Aktionsleiste", s -> mc().ingameGUI.setRecordPlaying(s, true)),
+		ACTIONBAR("Aktionsleiste", ActionBar::set),
 		MESSAGE("Chatnachricht", s -> display(Constants.ADDON_PREFIX + s));
 
 		private final String name;

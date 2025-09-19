@@ -9,8 +9,8 @@ package dev.l3g7.griefer_utils.features.world.bsf;
 
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.misc.ActionBar;
 import dev.l3g7.griefer_utils.features.world.bsf.data.BSFSearchable;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -55,7 +55,7 @@ public class Waypoint extends TileEntityBeacon {
 
 	public static void disable() {
 		enabled = false;
-		Reflection.set(mc().ingameGUI, "recordPlayingUpFor", 20);
+		ActionBar.set(null);
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class Waypoint extends TileEntityBeacon {
 	@EventListener
 	private static void onTickEvent(TickEvent.ClientTickEvent event) {
 		if (enabled)
-			mc().ingameGUI.setRecordPlaying(target.getName().singular() + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)", false);
+			ActionBar.set(target.getName().singular() + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)");
 	}
 
 	@Mixin(RenderGlobal.class)

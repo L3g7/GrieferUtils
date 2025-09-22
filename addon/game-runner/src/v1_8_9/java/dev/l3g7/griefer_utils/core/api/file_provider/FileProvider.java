@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.core.api.file_provider;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.file_provider.impl.JarFileProvider;
+import dev.l3g7.griefer_utils.core.api.file_provider.impl.PatchFileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.impl.URLFileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
@@ -47,7 +48,7 @@ public abstract class FileProvider {
 	protected static final Set<String> exclusions = new HashSet<>();
 	private static final Set<FileProvider> providers = new HashSet<>();
 
-	private static final Map<String, ClassMeta> classMetaCache = new HashMap<>();
+	protected static final Map<String, ClassMeta> classMetaCache = new HashMap<>();
 	private static final Set<Predicate<ClassMeta>> classExclusions = new HashSet<>();
 	private static final Map<Class<?>, Object> singletonInstances = new HashMap<>();
 
@@ -55,11 +56,8 @@ public abstract class FileProvider {
 	 * Lazy loads all files if required and returns them.
 	 */
 	private static Map<String, Supplier<InputStream>> getFileCache() {
-		if (providers.isEmpty()) {
-			providers.add(JarFileProvider.INSTANCE);
-			providers.add(URLFileProvider.INSTANCE);
+		if (providers.isEmpty())
 			update(FileProvider.class);
-		}
 
 		return fileCache;
 	}
@@ -68,14 +66,14 @@ public abstract class FileProvider {
 	 * Triggers an update from all providers using the given class.
 	 */
 	public static void update(Class<?> refClass) {
-		List<Throwable> errors = new ArrayList<>();
-
 		// Initialize providers
 		if (providers.isEmpty()) {
 			providers.add(JarFileProvider.INSTANCE);
 			providers.add(URLFileProvider.INSTANCE);
-			update(FileProvider.class);
+			providers.add(PatchFileProvider.INSTANCE);
 		}
+
+		List<Throwable> errors = new ArrayList<>();
 
 		// Trigger all providers
 		for (FileProvider provider : providers) {

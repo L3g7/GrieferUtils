@@ -30,7 +30,7 @@ import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 
 public class UnsafeJsonSerializer {
 
-	private static final Unsafe UNSAFE;
+	public static final Unsafe UNSAFE;
 
 	private static final Map<Class<?>, PrimitiveSerializer> PRIMITIVE_SERIALIZERS = ImmutableMap.<Class<?>, PrimitiveSerializer>builder()
 		.put(byte.class,    new PrimitiveSerializer(Unsafe::getByte,    Array::getByte))
@@ -50,60 +50,48 @@ public class UnsafeJsonSerializer {
 	}
 
 	public JsonElement toJson0(Object o) {
-		if (o == null)
-			return JsonNull.INSTANCE;
+		return switch (o) {
+			case null -> JsonNull.INSTANCE;
+			case Number n -> new JsonPrimitive(n);
+			case Character c -> new JsonPrimitive(c);
+			case Boolean b -> new JsonPrimitive(b);
+			case String s -> new JsonPrimitive(s);
+			case IChatComponent icc -> new JsonPrimitive(IChatComponent.Serializer.componentToJson(icc));
+			case IBlockState ignored -> new JsonPrimitive("<STATE>");
+			case ItemStack stack -> new JsonPrimitive(stack.writeToNBT(new NBTTagCompound()).toString());
+			default -> {
+				for (int i = 0; i < currentPath.size(); i++) {
+					Object obj = currentPath.get(i);
+					if (obj != o)
+						continue;
 
-		if (o instanceof Number n)
-			return new JsonPrimitive(n);
-		if (o instanceof Character c)
-			return new JsonPrimitive(c);
-		if (o instanceof Boolean b)
-			return new JsonPrimitive(b);
-		if (o instanceof String s)
-			return new JsonPrimitive(s);
+					int dotdots = currentPath.size() - i;
+					StringBuilder sb = new StringBuilder(dotdots * 3);
+					for (int j = 0; j < dotdots; j++)
+						sb.append("../");
 
-		if (o instanceof IChatComponent icc)
-			return new JsonPrimitive(IChatComponent.Serializer.componentToJson(icc));
+					yield new JsonPrimitive(sb.toString());
+				}
 
-		if (o instanceof IBlockState state)
-			return new JsonPrimitive("<STATE>");
+				currentPath.add(o);
 
-		if (o instanceof ItemStack stack)
-			return new JsonPrimitive(stack.writeToNBT(new NBTTagCompound()).toString());
+				if (o.getClass().isArray())
+					o = arrayToList(o);
 
-		for (int i = 0; i < currentPath.size(); i++) {
-			Object obj = currentPath.get(i);
-			if (obj != o)
-				continue;
+				yield switch (o) {
+					case Iterable<?> it -> {
+						JsonArray array = new JsonArray();
+						for (Object itO : it)
+							array.add(toJson0(itO));
 
-			int dotdots = currentPath.size() - i;
-			StringBuilder sb = new StringBuilder(dotdots * 3);
-			for (int j = 0; j < dotdots; j++)
-				sb.append("../");
-
-			return new JsonPrimitive(sb.toString());
-		}
-
-		currentPath.add(o);
-
-		if (o.getClass().isArray())
-			o = arrayToList(o);
-
-		if (o instanceof Iterable<?> it) {
-			JsonArray array = new JsonArray();
-			for (Object itO : it)
-				array.add(toJson0(itO));
-
-			return array;
-		}
-
-		if (o instanceof Map<?,?> m)
-			return toJson0(m.entrySet());
-
-		if (o instanceof Enum<?> e)
-			return new JsonPrimitive(e.ordinal() + " / " + e.name());
-
-		return serializeUnsafe(o);
+						yield array;
+					}
+					case Map<?, ?> m -> toJson0(m.entrySet());
+					case Enum<?> e -> new JsonPrimitive(e.ordinal() + " / " + e.name());
+					default -> serializeUnsafe(o);
+				};
+			}
+		};
 	}
 
 	private JsonElement serializeUnsafe(Object o) {

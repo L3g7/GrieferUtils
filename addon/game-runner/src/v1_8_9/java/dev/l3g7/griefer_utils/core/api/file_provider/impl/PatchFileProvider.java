@@ -23,6 +23,9 @@ public class PatchFileProvider extends FileProvider {
 	private static final File PATCH_DIR = new File(new File("GrieferUtils"), "patches");
 	private static final PatchLoader LOADER = new PatchLoader();
 
+	private static final long CLASS_MODULE_OFFSET = 48;
+	private static final long PACKAGE_MODULE_OFFSET = 16;
+
 	private PatchFileProvider() {}
 
 	@Override
@@ -34,8 +37,10 @@ public class PatchFileProvider extends FileProvider {
 			try {
 				Class<?> clazz = LOADER.defineClass(IOUtil.toByteArray(new FileInputStream(file)));
 				LabyBridge.run(() -> {}, () -> {
-					UNSAFE.putObject(clazz, 48, getClass().getModule());
-					UNSAFE.putObject(clazz.getPackage(), 16, getClass().getModule());
+					// Spoof patch's module to current one
+					// (Otherwise the package info is lost)
+					UNSAFE.putObject(clazz, CLASS_MODULE_OFFSET, getClass().getModule());
+					UNSAFE.putObject(clazz.getPackage(), PACKAGE_MODULE_OFFSET, getClass().getModule());
 				});
 
 				String path = clazz.getName().replace('.', '/') + ".class";
@@ -57,7 +62,7 @@ public class PatchFileProvider extends FileProvider {
 			super(new URL[0], PatchFileProvider.class.getClassLoader());
 			if (LABY_3.isActive()) {
 				try {
-					// Copy packages
+					// Copy packages (and their info)
 					Field field = ClassLoader.class.getDeclaredField("packages");
 					field.setAccessible(true);
 

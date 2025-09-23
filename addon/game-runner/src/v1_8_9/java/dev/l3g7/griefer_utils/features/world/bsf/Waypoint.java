@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.world.bsf;
 
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.misc.ActionBar;
 import dev.l3g7.griefer_utils.features.world.bsf.data.BSFSearchable;
 import net.minecraft.client.renderer.GlStateManager;
@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -86,7 +87,10 @@ public class Waypoint extends TileEntityBeacon {
 	}
 
 	@EventListener
-	private static void onTickEvent(TickEvent.ClientTickEvent event) {
+	private static void onTickEvent(ClientTickEvent event) {
+		if (player() == null)
+			disable();
+
 		if (enabled)
 			ActionBar.set(target.getName().singular() + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)");
 	}
@@ -96,19 +100,20 @@ public class Waypoint extends TileEntityBeacon {
 
 		@Shadow
 		private boolean displayListEntitiesDirty;
-		private boolean renderedWaypoint;
+		@Unique
+		private boolean grieferUtils$renderedWaypoint;
 
 		@Inject(method = "renderEntities", at = @At("HEAD"))
 		private void injectEntityRender(Entity entity, ICamera camera, float renderTicks, CallbackInfo ci) {
-			renderedWaypoint = false;
+			grieferUtils$renderedWaypoint = false;
 		}
 
 		@Inject(method = "renderEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/CompiledChunk;getTileEntities()Ljava/util/List;"))
 		private void injectTileEntityRender(Entity entity, ICamera camera, float partialTicks, CallbackInfo ci) {
-			if (!enabled || renderedWaypoint)
+			if (!enabled || grieferUtils$renderedWaypoint)
 				return;
 
-			renderedWaypoint = true;
+			grieferUtils$renderedWaypoint = true;
 
 			double xDist = x - TileEntityRendererDispatcher.staticPlayerX;
 			double zDist = z - TileEntityRendererDispatcher.staticPlayerZ;

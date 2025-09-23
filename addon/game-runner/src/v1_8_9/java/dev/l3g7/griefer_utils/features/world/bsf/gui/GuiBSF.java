@@ -55,7 +55,7 @@ public class GuiBSF extends GuiBigChest {
 					"§7sobald die Suche bereit ist, klicke auf das Item."));
 			}
 
-			TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", lore.toArray(String[]::new));
+			TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", lore.toArray(new String[0]));
 
 			addTextureItem(11, null, null);
 			addTextureItem(13, item, () -> {

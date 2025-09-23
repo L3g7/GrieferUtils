@@ -109,7 +109,7 @@ public class BABBot {
 				if (!res.get("success").getAsBoolean()) return false;
 				JsonArray array = res.get("items").getAsJsonArray();
 				JsonObject aabb = res.get("zone").getAsJsonObject();
-				if (aabb.isEmpty())
+				if (aabb.entrySet().size() == 0)
 					return false; // Multizone
 
 				this.items = BABItem.parse(array);

@@ -16,16 +16,20 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.Map;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.misc.UnsafeJsonSerializer.UNSAFE;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static org.objectweb.asm.ClassReader.*;
 
 public class PatchFileProvider extends FileProvider {
 
 	public static final PatchFileProvider INSTANCE = new PatchFileProvider();
 	private static final File PATCH_DIR = new File(new File("GrieferUtils"), "patches");
 	private static final PatchLoader LOADER = new PatchLoader();
+
+	private static final Map<String, ClassMeta> PATCHES = new HashMap<>();
 
 	private static final long CLASS_MODULE_OFFSET = 48;
 	private static final long PACKAGE_MODULE_OFFSET = 16;
@@ -51,15 +55,16 @@ public class PatchFileProvider extends FileProvider {
 			try {
 				String name = "dev/l3g7/griefer_utils/path/" + file.getName();
 				byte[] bytes = IOUtil.toByteArray(new FileInputStream(file));
-				byte[] transformedBytes = (byte[]) runTransformers.invoke(Launch.classLoader, name, name, bytes);
+				bytes[7 /* major_version */] = 52 /* Java 1.8 */;
 
 				ClassNode cn = new ClassNode();
-				ClassReader cr = new ClassReader(transformedBytes);
-				cr.accept(cn, 0);
-
+				ClassReader cr = new ClassReader(bytes);
+				cr.accept(cn, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
 				String path = cn.name + ".class";
+
 				fileCache.put(path, () -> new FileInputStream(file));
-				classMetaCache.put(path, new ClassMeta(cn, () -> {
+				PATCHES.put(path, new ClassMeta(cn, () -> {
+					byte[] transformedBytes = (byte[]) runTransformers.invoke(Launch.classLoader, cn.name, cn.name, bytes);
 					Class<?> clazz = LOADER.defineClass(transformedBytes);
 					LabyBridge.run(() -> {}, () -> {
 						// Spoof patch's module to current one
@@ -77,6 +82,7 @@ public class PatchFileProvider extends FileProvider {
 			}
 		}
 
+		classMetaCache.putAll(PATCHES);
 		System.out.println("Loaded " + loadedPatches + " GrieferUtils patch(es)");
 
 		return null;
@@ -103,6 +109,12 @@ public class PatchFileProvider extends FileProvider {
 
 		public Class<?> defineClass(byte[] bytes) {
 			return defineClass(null, bytes, 0, bytes.length);
+		}
+
+		@Override
+		public Class<?> loadClass(String name) throws ClassNotFoundException {
+			ClassMeta patch = PATCHES.get(name.replace('.', '/') + ".class");
+			return patch == null ? super.loadClass(name) : patch.load();
 		}
 
 	}

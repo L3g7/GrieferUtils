@@ -5,10 +5,14 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import net.minecraft.launchwrapper.Launch;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.ClassNode;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -33,25 +37,47 @@ public class PatchFileProvider extends FileProvider {
 		if (!PATCH_DIR.exists() || !PATCH_DIR.isDirectory())
 			return null;
 
+		Method runTransformers;
+		try {
+			runTransformers = Launch.classLoader.getClass().getDeclaredMethod("runTransformers", String.class, String.class, byte[].class);
+			runTransformers.setAccessible(true);
+		} catch (ReflectiveOperationException e) {
+			return e;
+		}
+
+		int loadedPatches = 0;
+
 		for (File file : PATCH_DIR.listFiles((file, name) -> name.endsWith(".class"))) {
 			try {
-				Class<?> clazz = LOADER.defineClass(IOUtil.toByteArray(new FileInputStream(file)));
-				LabyBridge.run(() -> {}, () -> {
-					// Spoof patch's module to current one
-					// (Otherwise the package info is lost)
-					UNSAFE.putObject(clazz, CLASS_MODULE_OFFSET, getClass().getModule());
-					UNSAFE.putObject(clazz.getPackage(), PACKAGE_MODULE_OFFSET, getClass().getModule());
-				});
+				String name = "dev/l3g7/griefer_utils/path/" + file.getName();
+				byte[] bytes = IOUtil.toByteArray(new FileInputStream(file));
+				byte[] transformedBytes = (byte[]) runTransformers.invoke(Launch.classLoader, name, name, bytes);
 
-				String path = clazz.getName().replace('.', '/') + ".class";
+				ClassNode cn = new ClassNode();
+				ClassReader cr = new ClassReader(transformedBytes);
+				cr.accept(cn, 0);
+
+				String path = cn.name + ".class";
 				fileCache.put(path, () -> new FileInputStream(file));
-				classMetaCache.put(path, new ClassMeta(clazz));
+				classMetaCache.put(path, new ClassMeta(cn, () -> {
+					Class<?> clazz = LOADER.defineClass(transformedBytes);
+					LabyBridge.run(() -> {}, () -> {
+						// Spoof patch's module to current one
+						// (Otherwise the package info is lost)
+						UNSAFE.putObject(clazz, CLASS_MODULE_OFFSET, getClass().getModule());
+						UNSAFE.putObject(clazz.getPackage(), PACKAGE_MODULE_OFFSET, getClass().getModule());
+					});
+					return clazz;
+				}));
+				loadedPatches++;
 			} catch (Throwable e) {
 				System.err.println("Error while loading patch " + file.getAbsolutePath());
 				e.printStackTrace();
 				return e;
 			}
 		}
+
+		System.out.println("Loaded " + loadedPatches + " GrieferUtils patch(es)");
 
 		return null;
 	}

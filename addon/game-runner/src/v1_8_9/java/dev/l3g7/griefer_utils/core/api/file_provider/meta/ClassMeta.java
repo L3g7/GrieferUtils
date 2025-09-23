@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.core.api.file_provider.meta;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
@@ -35,12 +36,20 @@ public class ClassMeta implements IMeta {
 	public final List<AnnotationMeta> annotations;
 
 	public final ClassNode asmNode;
+	private Supplier<Class<?>> classLoader;
 	private Class<?> loadedClass = null;
 
 	/**
 	 * Load the information from ASM's {@link ClassNode}.
 	 */
 	public ClassMeta(ClassNode node) {
+		this(node, () -> Reflection.load(node.name));
+	}
+
+	/**
+	 * Load the information from ASM's {@link ClassNode} and uses the given supplier when loading the class.
+	 */
+	public ClassMeta(ClassNode node, Supplier<Class<?>> classLoader) {
 		this.name = node.name;
 		this.superName = node.superName;
 		this.interfaces = node.interfaces;
@@ -52,6 +61,7 @@ public class ClassMeta implements IMeta {
 			this.annotations.addAll(map(node.invisibleAnnotations, AnnotationMeta::new));
 
 		this.asmNode = node;
+		this.classLoader = classLoader;
 	}
 
 	/**
@@ -110,7 +120,7 @@ public class ClassMeta implements IMeta {
 	 */
 	public <T> Class<T> load() {
 		if (loadedClass == null)
-			loadedClass = Reflection.load(name);
+			loadedClass = classLoader.get();
 
 		return c(loadedClass);
 	}

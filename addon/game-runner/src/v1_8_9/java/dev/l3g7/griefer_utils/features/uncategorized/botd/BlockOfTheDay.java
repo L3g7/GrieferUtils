@@ -53,7 +53,7 @@ public class BlockOfTheDay {
 
 		lastReportedBlock = currentDay;
 		ItemStack stack = inventory.getStackInSlot(13);
-		if (stack.getDisplayName().toLowerCase().startsWith("fehler"))
+		if (stack.getDisplayName().replaceAll("§.", "").toLowerCase().startsWith("fehler"))
 			return;
 
 		String lastLore = ItemUtil.getLastLore(stack).replaceAll("§.", "");

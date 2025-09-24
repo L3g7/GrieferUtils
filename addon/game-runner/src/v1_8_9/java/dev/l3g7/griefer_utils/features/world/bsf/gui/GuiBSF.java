@@ -71,7 +71,7 @@ public class GuiBSF extends GuiBigChest {
 		addTextureItem(11, new TextureItem("earth", "§fBiome"), new GuiSelect("Biom-Suche", Category.ALL_BIOMES, this)::open);
 		addTextureItem(13, new TextureItem("structures/desert_pyramid", "§fStrukturen"), new GuiSelect("Strukturen-Suche", Category.ALL_STRUCTURES, this)::open);
 
-		if (Waypoint.enabled) {
+		if (Waypoint.isEnabled()) {
 			ItemStack item = ItemUtil.createItem(Blocks.beacon, 0, "§fAktiver Wegpunkt: " + Waypoint.target.getName().singular() + " (" + distanceToPlayer(Waypoint.x, Waypoint.z) + "m)");
 			ItemUtil.setLore(item, "§fPosition: " + Waypoint.x + ", " + Waypoint.z,
 				"",

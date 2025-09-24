@@ -46,7 +46,7 @@ public class BSFCollector {
 		dataTails.clear();
 		requiringMoreChunks.clear();
 		worldCenter = parseWorldCenter(packet.packet);
-		Waypoint.enabled = false;
+		Waypoint.disable();
 	}
 
 	private static Pair<Integer, Integer> parseWorldCenter(S44PacketWorldBorder packet) {

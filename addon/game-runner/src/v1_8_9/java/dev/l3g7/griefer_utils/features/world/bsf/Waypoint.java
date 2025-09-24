@@ -54,6 +54,10 @@ public class Waypoint extends TileEntityBeacon {
 		target.getColor().getRGBColorComponents(colors);
 	}
 
+	public static boolean isEnabled() {
+		return enabled;
+	}
+
 	public static void disable() {
 		enabled = false;
 		ActionBar.set(null);

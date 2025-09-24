@@ -189,6 +189,9 @@ public class BSFCollector {
 
 	private static void process(ProcessData data) {
 		GUServer.processBSFData(data.cb.getInternalName(), worldCenter.a, worldCenter.b, data.origin, data.data).thenAccept(cbs -> {
+			if (cbs == null)
+				return;
+
 			BSF.updateCBs(cbs);
 			processQueue.removeIf(p -> cbs.contains(p.cb.getInternalName()));
 
@@ -209,6 +212,12 @@ public class BSFCollector {
 					process(next);
 				}
 			}
+		}).exceptionally(t -> {
+			processQueue.clear();
+			requiringMoreChunks.clear();
+			dataTails.clear();
+			processing = false;
+			return null;
 		});
 
 	}

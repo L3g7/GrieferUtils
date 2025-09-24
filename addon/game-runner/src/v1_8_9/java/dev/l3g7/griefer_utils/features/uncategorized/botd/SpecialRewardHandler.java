@@ -16,10 +16,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S0EPacketSpawnObject;
 import net.minecraft.network.play.server.S1CPacketEntityMetadata;
+import net.minecraft.network.play.server.S2FPacketSetSlot;
+
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 class SpecialRewardHandler {
 
-	private static S1CPacketEntityMetadata lastMetadata = null;
+	private static ItemStack lastStack = null;
 	private static int lastItemId = -1;
 
 	@EventListener
@@ -27,31 +30,44 @@ class SpecialRewardHandler {
 		if (event.packet instanceof S0EPacketSpawnObject packet) {
 			if (packet.getType() == 2) // Item
 				lastItemId = packet.getEntityID();
-		} else if (event.packet instanceof S1CPacketEntityMetadata packet) {
-			if (packet.getEntityId() == lastItemId)
-				lastMetadata = packet;
+			return;
+		}
+
+		if (event.packet instanceof S1CPacketEntityMetadata packet) {
+			if (packet.getEntityId() != lastItemId)
+				return;
+
+			for (DataWatcher.WatchableObject wo : packet.func_149376_c()) {
+				if (wo.getDataValueId() != 10) // Item
+					continue;
+
+				lastStack = (ItemStack) wo.getObject();
+				return;
+			}
+			return;
+		}
+
+		if (event.packet instanceof S2FPacketSetSlot packet) {
+			if (player() == null || packet.func_149175_c() != 0 || packet.func_149174_e() == null)
+				return;
+
+			lastStack = packet.func_149174_e().copy();
+			ItemStack previousItemStack = player().inventoryContainer.getSlot(packet.func_149173_d()).getStack();
+			if (lastStack.isItemEqual(previousItemStack))
+				lastStack.stackSize -= previousItemStack.stackSize;
 		}
 	}
 
 	public static Reward parseReward() {
-		if (lastMetadata == null) {
-			BugReporter.reportError(new Throwable("BOTD message w/o metadata :("));
+		if (lastStack == null) {
+			BugReporter.reportError(new Throwable("BOTD message received stack :("));
 			return null;
 		}
 
-		for (DataWatcher.WatchableObject wo : lastMetadata.func_149376_c()) {
-			if (wo.getDataValueId() != 10) // Item
-				continue;
+		if (ItemUtil.getLastLore(lastStack).equals("§7Block des Tages X"))
+			return new Reward(Reward.RewardType.BLOCK, lastStack.stackSize);
 
-			ItemStack stack = (ItemStack) wo.getObject();
-			if (ItemUtil.getLastLore(stack).equals("§7Block des Tages X"))
-				return new Reward(Reward.RewardType.BLOCK, stack.stackSize);
-
-			return new Reward(stack);
-		}
-
-		BugReporter.reportError(new Throwable("BOTD message w/o valid metadata :("));
-		return null;
+		return new Reward(lastStack);
 	}
 
 }

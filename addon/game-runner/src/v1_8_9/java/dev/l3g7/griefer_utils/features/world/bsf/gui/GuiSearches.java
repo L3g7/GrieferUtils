@@ -88,7 +88,7 @@ class GuiSearches extends GuiBigChest {
 			searchItem.toolTipStack.setStackDisplayName("§fKoordinaten: " + coordinates.x() + ", " + coordinates.z() + " (" + distanceToPlayer(coordinates.x(), coordinates.z()) + "m)");
 			addTextureItem(counter++, searchItem, () -> {
 				Waypoint.setWaypoint(coordinates.x(), coordinates.z(), searchable);
-				labyBridge.notify("§aWegpunkt gesetzt", "§aWegpunkt wurde auf " + coordinates.x() + " " + coordinates.z() + " gesetzt.");
+				labyBridge.notify("§aWegpunkt gesetzt", "§aWegpunkt wurde auf " + coordinates.x() + ", " + coordinates.z() + " gesetzt.");
 				mc().displayGuiScreen(null);
 			});
 

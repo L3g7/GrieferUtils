@@ -22,7 +22,6 @@ import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -104,20 +103,11 @@ public class Waypoint extends TileEntityBeacon {
 
 		@Shadow
 		private boolean displayListEntitiesDirty;
-		@Unique
-		private boolean grieferUtils$renderedWaypoint;
 
 		@Inject(method = "renderEntities", at = @At("HEAD"))
-		private void injectEntityRender(Entity entity, ICamera camera, float renderTicks, CallbackInfo ci) {
-			grieferUtils$renderedWaypoint = false;
-		}
-
-		@Inject(method = "renderEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/CompiledChunk;getTileEntities()Ljava/util/List;"))
 		private void injectTileEntityRender(Entity entity, ICamera camera, float partialTicks, CallbackInfo ci) {
-			if (!enabled || grieferUtils$renderedWaypoint)
+			if (!enabled)
 				return;
-
-			grieferUtils$renderedWaypoint = true;
 
 			double xDist = x - TileEntityRendererDispatcher.staticPlayerX;
 			double zDist = z - TileEntityRendererDispatcher.staticPlayerZ;
@@ -134,7 +124,7 @@ public class Waypoint extends TileEntityBeacon {
 				color.getRGBColorComponents(colors);
 			}
 
-			int maxDist = (settings().renderDistanceChunks - 1) * 16;
+			int maxDist = (settings().renderDistanceChunks) * 16;
 			if (maxDist < dist) {
 				double distScale = maxDist / dist;
 				xDist *= distScale;
@@ -142,7 +132,7 @@ public class Waypoint extends TileEntityBeacon {
 				dist = maxDist + dist % 16;
 			}
 
-			double scale = Math.max(1, dist / 32);
+			double scale = Math.max(1, dist / 16);
 
 			GlStateManager.pushMatrix();
 			GlStateManager.scale(scale, scale, scale);

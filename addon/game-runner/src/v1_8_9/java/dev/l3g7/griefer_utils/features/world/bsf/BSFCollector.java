@@ -25,8 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getCurrentCitybuild;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 public class BSFCollector {
 
@@ -38,7 +37,7 @@ public class BSFCollector {
 	private static Pair<Integer, Integer> worldCenter;
 
 	static boolean isInFarmwelt() {
-		return worldCenter != null;
+		return worldCenter != null && world() != null && player().dimension == 0;
 	}
 
 	@EventListener

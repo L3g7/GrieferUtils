@@ -15,12 +15,12 @@ import java.util.TimerTask;
 public class DebounceTimer {
 
 	private final Timer timer;
-	private final int debounce;
+	private final int debounceMs;
 	private long lastScheduleTime = 0;
 
-	public DebounceTimer(String name, int debounce) {
+	public DebounceTimer(String name, int debounceMs) {
 		this.timer = new Timer("GrieferUtils-DebounceTimer-" + name, true);
-		this.debounce = debounce;
+		this.debounceMs = debounceMs;
 	}
 
 	public void schedule(Runnable runnable) {
@@ -33,7 +33,7 @@ public class DebounceTimer {
 					if (lastScheduleTime == scheduleTime)
 						runnable.run();
 				}
-			}, debounce);
+			}, debounceMs);
 		} catch (IllegalStateException ignored) {
 			// Minecraft is closing and the timer has been killed
 		}

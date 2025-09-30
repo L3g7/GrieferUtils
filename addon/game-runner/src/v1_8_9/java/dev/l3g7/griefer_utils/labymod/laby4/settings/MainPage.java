@@ -38,7 +38,7 @@ import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.misc.badges.laby4.GrieferUtilsGroup.icon;
+import static dev.l3g7.griefer_utils.core.misc.tags.laby4.Laby4TagManager.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
@@ -91,7 +91,6 @@ public class MainPage {
 					timer = new Timer();
 					timer.schedule(new TimerTask() {
 						public void run() {
-
 							icon = icon.equals("icon") ? s : "icon";
 							Laby.labyAPI().minecraft().executeOnRenderThread(() -> searchWidget.setText(""));
 							labyBridge.notify("§aEaster Egg", "Easter Egg wurde " + (!icon.equals("icon") ? "de" : "") + "aktiviert.");

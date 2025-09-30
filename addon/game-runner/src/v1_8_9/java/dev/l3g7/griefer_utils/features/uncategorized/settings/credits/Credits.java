@@ -7,6 +7,9 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings.credits;
 
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
+import dev.l3g7.griefer_utils.core.misc.tags.Tags;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
@@ -18,9 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.misc.badges.BadgeManagerBridge.badgeManager;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.bridge.CreditsBridge.creditsBridge;
 
@@ -76,13 +80,14 @@ public class Credits {
 			HeaderSetting.create().entryHeight(22)
 		);
 
-	public static void addTeam() {
+	@EventListener(priority = LOWEST)
+	private static void initTeam(StaticDataReceiveEvent event) {
 		List<String> supporter = new ArrayList<>();
 		List<BaseSetting<?>> elements = new ArrayList<>();
 
-		if (badgeManager.isSpecial("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db"))
+		if (Tags.getBadge(UUID.fromString("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db")).isPresent())
 			supporter.add("MoosLeitung");
-		if (badgeManager.isSpecial("bc1f3d61-0878-4006-ba46-fb479fc37a1e"))
+		if (Tags.getBadge(UUID.fromString("bc1f3d61-0878-4006-ba46-fb479fc37a1e")).isPresent())
 			supporter.add("0001EnderGirlLP");
 
 		if (!supporter.isEmpty()) {

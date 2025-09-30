@@ -107,6 +107,7 @@ public class GUServer {
 		if (staticApiData != null)
 			return;
 
+		// TODO: Request in @OnEnable
 		CompletableFuture.supplyAsync(() -> {
 			staticApiData = new StaticApiRequest().get();
 			new StaticDataReceiveEvent(staticApiData).fire();

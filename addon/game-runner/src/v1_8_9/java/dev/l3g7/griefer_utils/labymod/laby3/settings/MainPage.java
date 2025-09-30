@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.badges.laby3.GrieferUtilsGroup;
+import dev.l3g7.griefer_utils.core.misc.tags.laby3.GrieferUtilsGroup;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -146,8 +146,8 @@ public class MainPage {
 						if (!(mc().currentScreen instanceof LabyModAddonsGui))
 							return;
 
-						boolean activate = GrieferUtilsGroup.icon.equals("icon");
-						GrieferUtilsGroup.icon = activate ? filter.get() : "icon";
+						boolean activate = GrieferUtilsGroup.getIcon().equals("icon");
+						GrieferUtilsGroup.setIcon(activate ? filter.get() : "icon");
 						filter.set("");
 						labyBridge.notify("§aEaster Egg", "Easter Egg wurde " + (!activate ? "de" : "") + "aktiviert.");
 						if (world() != null)

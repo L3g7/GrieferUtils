@@ -48,7 +48,7 @@ public class InteractableMessages extends Feature {
 			- TPAs (§a/tpaccept§r und §c/tpdeny§r)
 			- Den Citybuild bei Globalchat-Nachrichten (Switcht zum CB)
 			- Den Clan-Namen bei Globalchat-Nachrichten (Führt /clan info aus)
-			- Den Status, Msgs, Plotchat- und Globalchat-nachrichten (Schlägt /msg vor)
+			- Den Status, Msgs, Plotchat- und Globalchat-Nachrichten (Schlägt /msg vor)
 			- "/p h" in Nachrichten (Teleportiert zum Plot)
 			- Spielernamen bei /clan info (Öffnet das Profil)
 			- Spielernamen bei /p i (Öffnet das Profil)""")

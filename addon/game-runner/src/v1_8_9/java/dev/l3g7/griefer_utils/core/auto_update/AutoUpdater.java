@@ -38,8 +38,10 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.BETA;
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
 
 /**
@@ -218,7 +220,7 @@ public class AutoUpdater {
 	private static ReleaseChannel getPreferredChannel() throws IOException {
 		JsonObject config = getConfig();
 		if (config == null || config.get("release_channel") == null)
-			return STABLE;
+			return isBeta() ? BETA : STABLE;
 
 		return ReleaseChannel.valueOf(config.get("release_channel").getAsString());
 	}
@@ -266,6 +268,19 @@ public class AutoUpdater {
 			ownJarUrl = ownJarUrl.substring(5);
 
 		return ownJarUrl;
+	}
+
+	/**
+	 * @return The "beta" property in the addon.json file of {@link AutoUpdater#getOwnJar}.
+	 */
+	private static boolean isBeta() {
+		try (ZipFile zip = new ZipFile(getOwnJar())) {
+			JsonObject addonJson = Streams.parse(new JsonReader(new InputStreamReader(zip.getInputStream(zip.getEntry("addon.json"))))).getAsJsonObject();
+			return !addonJson.has("beta") || addonJson.get("beta").getAsBoolean();
+		} catch (IOException e) {
+			// Should always work
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

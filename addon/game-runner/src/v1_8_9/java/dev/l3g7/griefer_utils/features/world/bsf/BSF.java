@@ -41,7 +41,7 @@ public class BSF extends Feature {
 		.name("Gui öffnen")
 		.icon("key")
 		.description("Die Taste, mit der das Gui geöffnet werden soll.")
-		.pressCallback(b -> { if (b) GuiBSF.GUI.open(); });
+		.pressCallback(b -> { if (b) new GuiBSF().open(); });
 
 	@MainElement
 	private final CategorySetting button = CategorySetting.create()
@@ -85,7 +85,7 @@ public class BSF extends Feature {
 		LabyBridge.labyBridge.notify(msg.toString(), "§aDie Biom- und Strukturen-Suche\nkann dort nun verwendet werden.");
 
 		if (notifyCbs.contains(MinecraftUtil.getCurrentCitybuild()) && mc().currentScreen instanceof GuiBSF)
-			GuiBSF.GUI.open();
+			new GuiBSF().open();
 	}
 
 	private static String cb2name(Citybuild cb) {
@@ -106,7 +106,7 @@ public class BSF extends Feature {
 	private static void onMessageSend(MessageEvent.MessageSendEvent event ) {
 		if (event.message.toLowerCase().startsWith("/bss")) {
 			event.cancel();
-			TickScheduler.runAfterRenderTicks(() -> GuiBSF.GUI.open(), 1);
+			TickScheduler.runAfterRenderTicks(() -> new GuiBSF().open(), 1);
 		}
 
 	}

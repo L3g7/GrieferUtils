@@ -23,15 +23,15 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.ANY;
+import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.MAGIC_FOREST;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 public class GuiBSF extends GuiBigChest {
 
-	public static GuiBSF GUI = new GuiBSF();
-
 	public static long lastUpdate = 0;
 
-	private GuiBSF() {
+	public GuiBSF() {
 		super("Biom- und Strukturen-Suche", 3);
 	}
 
@@ -48,6 +48,12 @@ public class GuiBSF extends GuiBigChest {
 
 		super.open();
 		if (!BSF.hasData()) {
+			if (getCurrentCitybuild() == ANY || getCurrentCitybuild() == MAGIC_FOREST) {
+				TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", "§fBitte betrete einen Citybuild.");
+				addTextureItem(13, item, null);
+				return;
+			}
+
 			List<String> lore = new ArrayList<>(Arrays.asList("§fBitte erkunde die Farmwelt."));
 
 			if (!BSF.notify.contains(getCurrentCitybuild())) {
@@ -58,14 +64,12 @@ public class GuiBSF extends GuiBigChest {
 
 			TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", lore.toArray(new String[0]));
 
-			addTextureItem(11, null, null);
 			addTextureItem(13, item, () -> {
 				if (BSF.notify.add(getCurrentCitybuild())) {
 					labyBridge.notify("§aBenachrichtigung", "§aDu bekommst nun " + (LABY_4.isActive() ? "eine Benachrichtigung" : "ein Popup") + ",\nwenn die Suche bereit ist!");
 					new GuiBSF().open(); // Rebuild GUI
 				}
 			});
-			addTextureItem(15, null, null);
 			return;
 		}
 

@@ -140,8 +140,8 @@ public class Commands {
 			}));
 
 		registerCommand(command("schedule")
-			.longArg("Delay")
-			.greedyString("command")
+			.longArg("Delay (ms)")
+			.greedyString("Befehl")
 			.build(args -> {
 				String command = args.get("command");
 				TIMER.schedule(new TimerTask() {
@@ -153,12 +153,12 @@ public class Commands {
 			}));
 
 		registerCommand(command("notify")
-			.greedyString("<Titel>|<Message>")
+			.greedyString("<Titel>|<Nachricht>")
 			.build(args -> {
-				String string = args.get("<Titel>|<Message>");
+				String string = args.get("<Titel>|<Nachricht>");
 				String[] parts = string.replace('&', '§').split("\\|");
 				if (parts.length != 2) {
-					display(ADDON_PREFIX + CMD_PREFIX + "notify <Titel>|<Message>");
+					display(ADDON_PREFIX + "§cVerwendung: " + CMD_PREFIX + "notify <Titel>|<Nachricht>");
 					return;
 				}
 

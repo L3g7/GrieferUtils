@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
@@ -60,7 +61,7 @@ public class GuiBSF extends GuiBigChest {
 			addTextureItem(11, null, null);
 			addTextureItem(13, item, () -> {
 				if (BSF.notify.add(getCurrentCitybuild())) {
-					labyBridge.notify("§aBenachrichtigung", "§aDu bekommst nun eine Benachrichtigung,\nwenn die Suche bereit ist!");
+					labyBridge.notify("§aBenachrichtigung", "§aDu bekommst nun " + (LABY_4.isActive() ? "eine Benachrichtigung" : "ein Popup") + ",\nwenn die Suche bereit ist!");
 					new GuiBSF().open(); // Rebuild GUI
 				}
 			});

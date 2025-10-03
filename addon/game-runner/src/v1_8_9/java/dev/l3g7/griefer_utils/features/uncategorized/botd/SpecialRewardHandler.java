@@ -38,7 +38,7 @@ class SpecialRewardHandler {
 				return;
 
 			for (DataWatcher.WatchableObject wo : packet.func_149376_c()) {
-				if (wo.getDataValueId() != 10) // Item
+				if (wo.getDataValueId() != 10 /* Item */ || wo.getObjectType() != 5 /* ItemStack */)
 					continue;
 
 				lastStack = (ItemStack) wo.getObject();

@@ -65,6 +65,7 @@ class PacketDumper {
 			this.prefix = prefix;
 			this.enabled = SwitchSetting.create()
 				.name(settingPrefix + " Pakete dumpen")
+				.description("Ob " + settingPrefix.toLowerCase() + " Pakete gedumpt werden sollen.")
 				.icon(Items.paper)
 				.subSettings(
 					StringSetting.create()

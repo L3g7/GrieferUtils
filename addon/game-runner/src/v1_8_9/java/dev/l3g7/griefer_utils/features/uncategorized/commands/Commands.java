@@ -14,12 +14,7 @@ import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.features.uncategorized.scripts.ConstantParser;
-import dev.l3g7.griefer_utils.features.uncategorized.scripts.Scripts;
-import dev.l3g7.griefer_utils.features.uncategorized.scripts.Scripts.ScriptSyntaxException;
 
-import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
@@ -163,60 +158,6 @@ public class Commands {
 				}
 
 				LabyBridge.labyBridge.notify(parts[0], parts[1]);
-			}));
-
-		registerCommand(command("script")
-			.greedyString("<Datei> [Args]")
-			.build(args -> {
-				String stuff = args.get("<Datei> [Args]");
-				Iterator<String> parts = Arrays.asList(stuff.split(" ")).iterator();
-
-				String file = parts.next();
-				if (file.startsWith("\"")) {
-					try {
-						file = ConstantParser.readString(file, parts);
-					} catch (ScriptSyntaxException s) {
-						display(ADDON_PREFIX + "§cUngültiger Dateipfad");
-						return;
-					}
-				}
-
-				List<String> scriptArgs = new ArrayList<>();
-				parts.forEachRemaining(scriptArgs::add);
-
-				Throwable error;
-
-				try {
-					Scripts.run(Paths.get(file), scriptArgs.toArray(new String[0]));
-					return;
-				} catch (Scripts.ScriptNotFoundException s) {
-					display(ADDON_PREFIX + "§cDas Script konnte nicht gefunden werden!");
-					return;
-				} catch (ScriptSyntaxException s) {
-					StringBuilder message = new StringBuilder(ADDON_PREFIX);
-					message.append("§cFehlerhafte Syntax");
-					if (s.getMessage() != null && !s.getMessage().isEmpty()) {
-						message.append(": ");
-						message.append(s.getMessage());
-					}
-
-					display(message.toString());
-					if (s.lineInfo != null)
-						display(ADDON_PREFIX + "§c" + s.lineInfo);
-
-					return;
-				} catch (VerifyError v) {
-					v.printStackTrace();
-					display(ADDON_PREFIX + "§cUngültiger Bytecode: " + v.getMessage().split("\n")[0]);
-					return;
-				} catch (InvocationTargetException e) {
-					error = e.getCause();
-				} catch (Throwable t) {
-					error = t;
-				}
-
-				error.printStackTrace();
-				display(ADDON_PREFIX + "§c" + error.getClass().getSimpleName() + (error.getMessage() == null ? "" : (": " + error.getMessage())));
 			}));
 	}
 

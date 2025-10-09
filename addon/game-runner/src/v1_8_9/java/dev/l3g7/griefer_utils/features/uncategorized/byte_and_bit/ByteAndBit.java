@@ -52,8 +52,8 @@ public class ByteAndBit extends Feature {
 
 	@MainElement
 	private final KeySetting keybind = KeySetting.create()
-		.name("Botshop-GUI")
-		.description("Öffnet das BotShop-GUI von unterstützten BotShops.")
+		.name("Botshop-Gui")
+		.description("Öffnet das Botshop-Gui von unterstützten BotShops.")
 		.icon("byte_and_bit")
 		.defaultValue(Keyboard.KEY_RETURN)
 		.pressCallback(this::onKeyPress);
@@ -138,7 +138,7 @@ public class ByteAndBit extends Feature {
 		} else {
 			keys = KeySettingImpl.formatKeys(keybind.get());
 		}
-		BossStatus.bossName = "BotShop-GUI verfügbar! [" + keys + "]";
+		BossStatus.bossName = "Botshop-Gui verfügbar! [" + keys + "]";
 		BossStatus.statusBarTime = 1;
 		BossStatus.healthScale = 0f;
 	}

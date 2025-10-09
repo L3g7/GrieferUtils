@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.core.api.file_provider;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.file_provider.impl.JarFileProvider;
-import dev.l3g7.griefer_utils.core.api.file_provider.impl.PatchFileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.impl.URLFileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
@@ -70,7 +69,6 @@ public abstract class FileProvider {
 		if (providers.isEmpty()) {
 			providers.add(JarFileProvider.INSTANCE);
 			providers.add(URLFileProvider.INSTANCE);
-			providers.add(PatchFileProvider.INSTANCE);
 		}
 
 		List<Throwable> errors = new ArrayList<>();

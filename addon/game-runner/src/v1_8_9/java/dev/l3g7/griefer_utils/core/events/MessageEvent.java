@@ -10,15 +10,20 @@ package dev.l3g7.griefer_utils.core.events;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.client.ClientCommandHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 /**
  * A forge event for message processing.
@@ -53,10 +58,17 @@ public class MessageEvent extends Event {
 	public static class MessageSendEvent extends MessageEvent {
 
 		public static boolean post(String message) {
-			if (!new MessageSendEvent(message).fire().isCanceled())
-				return LabyBridge.labyBridge.trySendMessage(message);
+			if (new MessageSendEvent(message).fire().isCanceled())
+				return true;
 
-			return true;
+			if (LabyBridge.labyBridge.forge()) {
+				// Wrap in supplier to not cause problems when forge doesn't exist
+				Supplier<Integer> runCommand = () -> Reflection.invoke(ClientCommandHandler.instance, "executeCommand", player(), message);
+				if (runCommand.get() != 0)
+					return true;
+			}
+
+			return LabyBridge.labyBridge.trySendMessage(message);
 		}
 
 		public final String message;

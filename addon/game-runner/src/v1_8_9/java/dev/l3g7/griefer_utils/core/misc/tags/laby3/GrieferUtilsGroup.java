@@ -41,7 +41,7 @@ public class GrieferUtilsGroup extends LabyGroup {
 		return icon;
 	}
 
-	private GrieferUtilsGroup(SpecialBadge badge) {
+	protected GrieferUtilsGroup(SpecialBadge badge) {
 		this.badge = badge;
 	}
 

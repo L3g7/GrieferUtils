@@ -66,7 +66,7 @@ public class Commands {
 	}
 
 	private static void trySend(String command) {
-		if (!MessageSendEvent.post(command))
+		if (player() != null && !MessageSendEvent.post(command))
 			player().sendChatMessage(command);
 	}
 
@@ -138,7 +138,7 @@ public class Commands {
 			.longArg("Delay (ms)")
 			.greedyString("Befehl")
 			.build(args -> {
-				String command = args.get("command");
+				String command = args.get("Befehl");
 				TIMER.schedule(new TimerTask() {
 					@Override
 					public void run() {

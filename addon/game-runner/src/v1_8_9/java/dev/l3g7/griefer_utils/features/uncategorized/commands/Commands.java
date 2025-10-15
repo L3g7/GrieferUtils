@@ -144,7 +144,7 @@ public class Commands {
 					public void run() {
 						trySend(command);
 					}
-				}, (long) args.get("Delay"));
+				}, (long) args.get("Delay (ms)"));
 			}));
 
 		registerCommand(command("notify")

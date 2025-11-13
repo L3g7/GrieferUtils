@@ -20,11 +20,11 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
+import net.labymod.api.client.gfx.pipeline.renderer.text.TextRenderingOptions;
 import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.state.ScreenCanvas;
-import net.labymod.api.client.gui.screen.state.TextFlags;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -203,9 +203,9 @@ public class NearbyPlayers extends Widget {
 			public void renderLine(ScreenContext context, float x, float y, float space, HudSize hudWidgetSize) {
 				ScreenCanvas renderState = context.canvas();
 
-				int flags = TextFlags.SHADOW;
+				int flags = TextRenderingOptions.SHADOW;
 				if (this.floatingPointPosition)
-					flags |= TextFlags.USE_FLOATING_POINT_VALUES;
+					flags |= TextRenderingOptions.USE_FLOATING_POINT_VALUES;
 
 				renderState.submitRenderableComponent(distance, x + maxDistWidth - distance.getWidth(), y, -1, flags);
 				renderState.submitRenderableComponent(player, x + maxDistWidth, y, -1, flags);

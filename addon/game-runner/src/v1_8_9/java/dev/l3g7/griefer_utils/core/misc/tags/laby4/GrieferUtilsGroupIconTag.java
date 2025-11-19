@@ -50,6 +50,9 @@ public class GrieferUtilsGroupIconTag extends GroupIconTag {
 	@Override
 	public int getColor(EntitySnapshot snapshot) {
 		if (badge != null) {
+			if (!icon.equals("icon"))
+				return 0xFFFFFFFF;
+
 			boolean revealFamiliarUsers = Boolean.TRUE.equals(Laby.labyAPI().config().multiplayer().tabList().labyModBadge().get());
 			Color color = new Color(revealFamiliarUsers ? badge.colorWithLabymod() : badge.colorWithoutLabymod());
 			return color.getRGB();

@@ -7,10 +7,13 @@
 
 package dev.l3g7.griefer_utils.core.api.bridges;
 
+import com.sun.jna.Platform;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.function.BooleanSupplier;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -23,15 +26,16 @@ public @interface Bridge {
 	@Target(TYPE)
 	@interface Bridged {}
 
+	@Retention(RUNTIME)
+	@Target(TYPE)
+	@interface Fallback {}
+
 	class Initializer {
 
-		public static void init(Version labyVersion) {
-			Version.current = labyVersion;
+		private static Version labyVersion;
 
-			// Exclude incompatible versions
-			for (Version value : Version.values())
-				if (!value.isActive())
-					FileProvider.exclude("dev/l3g7/griefer_utils/" + value.name().toLowerCase().replace("_", ""));
+		public static void init(Version labyVersion) {
+			Initializer.labyVersion = labyVersion;
 
 			// Remove incompatible files
 			FileProvider.exclude(m -> {
@@ -47,12 +51,29 @@ public @interface Bridge {
 
 	enum Version {
 
-		LABY_3, LABY_4;
+		// Laby versions
+		LABY_3(v -> Initializer.labyVersion == v),
+		LABY_4(v -> Initializer.labyVersion == v),
 
-		private static Version current;
+		// Operating systems
+		WINDOWS(Platform::isWindows);
+
+		private final Function<Version, Boolean> activeCheck;
+		private Boolean isActive;
+
+		Version(BooleanSupplier activeCheck) {
+			this(t -> activeCheck.getAsBoolean());
+		}
+
+		Version(Function<Version, Boolean> activeCheck) {
+			this.activeCheck = activeCheck;
+		}
 
 		public boolean isActive() {
-			return current == this;
+			if (isActive == null)
+				isActive = this.activeCheck.apply(this);
+
+			return isActive;
 		}
 
 	}

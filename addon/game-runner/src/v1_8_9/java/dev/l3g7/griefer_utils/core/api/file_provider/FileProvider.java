@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.api.file_provider;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Fallback;
 import dev.l3g7.griefer_utils.core.api.file_provider.impl.JarFileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.impl.URLFileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
@@ -269,6 +270,12 @@ public abstract class FileProvider {
 
 		if (bridges.isEmpty())
 			throw new IllegalStateException("No fitting implementation for " + type + " found!");
+
+		if (bridges.size() > 1)
+			bridges.removeIf(meta -> meta.hasAnnotation(Fallback.class));
+
+		if (bridges.size() > 1)
+			throw new IllegalStateException("Found multiple implementations for " + type + "!");
 
 		ClassMeta bridge = bridges.iterator().next();
 		if (!bridge.hasAnnotation(Bridge.class))

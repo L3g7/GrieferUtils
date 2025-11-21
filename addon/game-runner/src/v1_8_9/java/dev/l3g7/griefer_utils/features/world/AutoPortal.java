@@ -7,30 +7,22 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
-import com.sun.jna.Native;
-import com.sun.jna.Platform;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinUser;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
-import net.labymod.api.Laby;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
-import org.lwjgl.glfw.GLFWNativeWin32;
-import org.lwjgl.opengl.Display;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.api.misc.os.OS.OS;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
 
@@ -65,9 +57,7 @@ public class AutoPortal extends Feature {
 
 	public void init() {
 		super.init();
-		if (Platform.isWindows())
-			Native.register("user32");
-		else
+		if (OS.isFallback())
 			maximize.name("§c§o§m" + maximize.name())
 				.description("§c§oMaximierung ist für " + System.getProperty("os.name") + " nicht implementiert.")
 				.callback(v -> { if (v) maximize.set(false); });
@@ -83,17 +73,12 @@ public class AutoPortal extends Feature {
 
 		joined = false;
 
-		new Thread(() -> {
-			try {
-				Thread.sleep(1000L);
+		TickScheduler.runAfterClientTicks(() -> {
+			if (!joined)
+				send("/switch " + citybuild.get().getInternalName());
 
-				if (!joined)
-					send("/switch " + citybuild.get().getInternalName());
-
-				joined = true;
-
-			} catch (InterruptedException ignored) {}
-		}).start();
+			joined = true;
+		}, 20);
 	}
 
 	@EventListener
@@ -112,22 +97,8 @@ public class AutoPortal extends Feature {
 		if (join.get())
 			mc().addScheduledTask(() -> mc().displayGuiScreen(new GuiConnecting(new GuiMainMenu(), mc(), new ServerData("GrieferGames", "griefergames.net", false))));
 
-		if (maximize.get()) {
-			if (Platform.isWindows()) {
-				long handle = LABY_4.isActive()
-					? GLFWNativeWin32.glfwGetWin32Window(Display.getWindowHandle())
-					: Reflection.invoke(Reflection.invoke(Display.class, "getImplementation"), "getHwnd");
-
-				HWND hwnd = new HWND(new Pointer(handle));
-				ShowWindow(hwnd, WinUser.SW_SHOWMAXIMIZED);
-				SetForegroundWindow(hwnd);
-				SetActiveWindow(hwnd);
-			}
-		}
+		if (maximize.get())
+			OS.maximizeWindow();
 	}
-
-	private static native HWND SetActiveWindow(HWND hwnd);
-	private static native boolean SetForegroundWindow(HWND hwnd);
-	private static native boolean ShowWindow(HWND hwnd, int nCmdShow);
 
 }

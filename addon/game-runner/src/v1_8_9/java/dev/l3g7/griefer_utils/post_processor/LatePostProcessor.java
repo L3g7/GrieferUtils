@@ -24,7 +24,7 @@ public class LatePostProcessor implements IClassTransformer {
 
 	private static final List<Processor> processors = Arrays.asList(
 		new StringConcatShim(),
-		new SwitchShim(),
+		new SwitchDowngrader(),
 		new AccessElevator(),
 		new MixinLibSwapper(),
 		new SuperclassRemapper()

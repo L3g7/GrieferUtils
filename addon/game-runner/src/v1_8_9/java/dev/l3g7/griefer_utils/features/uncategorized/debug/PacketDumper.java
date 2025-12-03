@@ -80,7 +80,7 @@ class PacketDumper {
 						.description("Die IDs der Pakete, die nicht angezeigt werden sollen, getrennt durch \",\".")
 						.icon(Blocks.hopper)
 						.maxLength(Integer.MAX_VALUE)
-						.callback(s -> blacklistList = Arrays.asList(s.split(",")))
+						.callback(s -> blacklistList = new ArrayList<>(Arrays.asList(s.split(","))))
 						.defaultValue(defaultBlackList)
 				);
 		}

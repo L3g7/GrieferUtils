@@ -13,13 +13,34 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import net.minecraft.util.IChatComponent;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class ActionBar {
 
+	private static final Timer TIMER = new Timer("Actionbar-Timer", true);
+	private static Object TEXT_ID = null;
+
 	private static String currentText;
 	private static IChatComponent originalMessage = null;
 	private static long originalDisplayEnd = -1;
+
+	public static void set(String text, int ms) {
+		if (ms <= 0)
+			return;
+
+		Object id = TEXT_ID = new Object();
+		set(text);
+		TIMER.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (TEXT_ID == id)
+					set(null);
+			}
+		}, ms);
+	}
 
 	public static void set(String text) {
 		if (text == null && currentText != null) {

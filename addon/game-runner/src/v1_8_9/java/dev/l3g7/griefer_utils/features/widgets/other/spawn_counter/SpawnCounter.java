@@ -78,10 +78,6 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 		.name("Nachricht")
 		.description("Wie die Benachrichtung aussehen soll, wenn eine Runde abgeschlossen wurde.")
 		.icon(Items.clock)
-		.callback(t -> {
-			if (t != NotificationType.ACTIONBAR)
-				ActionBar.set(null);
-		})
 		.defaultValue(NotificationType.ACTIONBAR);
 
 	private final DropDownSetting<RoundDisplayType> displayType = DropDownSetting.create(RoundDisplayType.class)
@@ -144,7 +140,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 		NONE("Keine", s -> {}),
 		TOAST("Erfolg", s -> LabyBridge.labyBridge.notify("§aSpawn-Runden Zähler", s)),
-		ACTIONBAR("Aktionsleiste", ActionBar::set),
+		ACTIONBAR("Aktionsleiste", s -> ActionBar.set(s, 5000)),
 		MESSAGE("Chatnachricht", s -> display(Constants.ADDON_PREFIX + s));
 
 		private final String name;

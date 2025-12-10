@@ -45,7 +45,7 @@ public class LightBugESP extends Feature {
 
 	private final SwitchSetting inBlocks = SwitchSetting.create()
 		.name("Lichtbugs in Blöcken anzeigen")
-		.description("Zeigt auch Lichtbugs, an die sich in Blöcken befinden.")
+		.description("Zeigt auch Lichtbugs an, die sich in Blöcken befinden.")
 		.icon("glitch_light_bulb");
 
 	private final NumberSetting range = NumberSetting.create()

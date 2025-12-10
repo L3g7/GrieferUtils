@@ -11,6 +11,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -57,8 +59,15 @@ public class UnsafeJsonSerializer {
 			case Boolean b -> new JsonPrimitive(b);
 			case String s -> new JsonPrimitive(s);
 			case IChatComponent icc -> new JsonPrimitive(IChatComponent.Serializer.componentToJson(icc));
-			case IBlockState ignored -> new JsonPrimitive("<STATE>");
+			case Block block -> new JsonPrimitive(Block.blockRegistry.getNameForObject(block).toString());
 			case ItemStack stack -> new JsonPrimitive(stack.writeToNBT(new NBTTagCompound()).toString());
+			case IBlockState state -> {
+				JsonObject object = new JsonObject();
+				object.add("block", toJson0(state.getBlock()));
+				for (Map.Entry<IProperty, Comparable> entry : state.getProperties().entrySet())
+					object.addProperty(entry.getKey().getName(), entry.getValue().toString());
+				yield object;
+			}
 			default -> {
 				for (int i = 0; i < currentPath.size(); i++) {
 					Object obj = currentPath.get(i);

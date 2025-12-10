@@ -7,11 +7,18 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.thread.ThreadDumper;
+import dev.l3g7.griefer_utils.features.uncategorized.debug.wiki.EnchantmentRenderer;
+import dev.l3g7.griefer_utils.features.uncategorized.debug.wiki.WikiGen;
 import net.minecraft.init.Blocks;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DebugSettings {
 
@@ -42,5 +49,14 @@ public class DebugSettings {
 
 	static {
 		disableEventBus.callback(b -> Event.fireEvents = !enabled.get() || !b);
+
+		if (Boolean.parseBoolean(System.getProperty("addWiki", "false"))) {
+			List<BaseSetting<?>> settings = new ArrayList<>();
+			settings.add(WikiGen.button);
+			if (Bridge.Version.LABY_3.isActive())
+				settings.add(EnchantmentRenderer.enabled);
+
+			enabled.subSettings(settings);
+		}
 	}
 }

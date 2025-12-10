@@ -170,7 +170,7 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 
 	// Settings
 
-	private SwitchSettingImpl getSetting() {
+	public SwitchSettingImpl getSetting() {
 		if (setting != null)
 			return setting;
 
@@ -204,7 +204,7 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 
 	// Registration
 
-	protected String getComparisonName() {
+	public String getComparisonName() {
 		return owner.getClass().getPackage().getName() + getSetting().name();
 	}
 

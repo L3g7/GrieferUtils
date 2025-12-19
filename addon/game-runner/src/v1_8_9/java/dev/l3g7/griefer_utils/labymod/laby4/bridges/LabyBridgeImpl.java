@@ -174,7 +174,7 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback) {
 		register(ChatReceiveEvent.class, v -> {
-			Object newMsg = callback.apply((IChatComponent) v.message(), (IChatComponent) v.message());
+			Object newMsg = callback.apply((IChatComponent) v.chatMessage().originalComponent(), (IChatComponent) v.message());
 			if (newMsg != null)
 				v.setMessage((Component) newMsg);
 		});

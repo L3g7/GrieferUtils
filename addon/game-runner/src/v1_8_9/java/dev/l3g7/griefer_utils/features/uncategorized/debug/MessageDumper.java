@@ -9,23 +9,54 @@ package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
+import dev.l3g7.griefer_utils.core.api.misc.Named;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
+import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import net.minecraft.init.Items;
-
-import static net.minecraft.util.IChatComponent.Serializer.componentToJson;
+import net.minecraft.util.IChatComponent;
 
 class MessageDumper {
+
+	private static final DropDownSetting<CopyFormat> copyFormat = DropDownSetting.create(CopyFormat.class)
+		.name("Format")
+		.description("Wie der gedumpte Text sein soll.")
+		.defaultValue(CopyFormat.JSON)
+		.icon(Items.paper);
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Nachrichten-Dumper")
 		.description("Dumpt eingehende Nachrichten.")
+		.subSettings(copyFormat)
 		.icon(Items.name_tag);
 
 	@EventListener(priority = Priority.LOWEST)
 	private static void onMessageModify(MessageModifyEvent event) {
-		if (enabled.get() && DebugSettings.enabled.get())
-			System.out.println(componentToJson(event.original) + " was modified to " + componentToJson(event.message));
+		if (enabled.get() && DebugSettings.enabled.get()) {
+			Function<IChatComponent, String> toString = copyFormat.get().componentToString;
+			System.out.println(toString.apply(event.original) + " was modified to " + toString.apply(event.message));
+		}
+	}
+
+	private enum CopyFormat implements Named {
+		UNFORMATTED("Unformattiert", icc -> icc.getUnformattedText().replaceAll("§.", "")),
+		FORMATTED("Formattiert", IChatComponent::getFormattedText),
+		JSON("JSON", IChatComponent.Serializer::componentToJson);
+
+		final String name;
+		final Function<IChatComponent, String> componentToString;
+
+		CopyFormat(String name, Function<IChatComponent, String> componentToString) {
+			this.name = name;
+			this.componentToString = componentToString;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

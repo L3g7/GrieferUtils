@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.player;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
@@ -28,7 +29,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+
 @Singleton
+@ExclusiveTo(LABY_3)
 public class LabyModSwitcherFix extends Feature {
 
 	@MainElement
@@ -37,6 +41,7 @@ public class LabyModSwitcherFix extends Feature {
 		.description("Behebt, dass LabyMod Account-Sitzungen als gültig anzeigt, das Betreten eines Servers mit diesem Account jedoch aufgrund einer ungültigen Sitzung fehltschlägt, und dass das Hinzufügen von Accounts aufgrund nicht anerkannter Zertifikate fehlschlägt.")
 		.icon("labymod_3/labymod_logo");
 
+	@ExclusiveTo(LABY_3)
 	@Mixin(LauncherAccount.class)
 	private static class MixinLauncherAccount {
 
@@ -56,6 +61,7 @@ public class LabyModSwitcherFix extends Feature {
 
 	}
 
+	@ExclusiveTo(LABY_3)
 	@Mixin(value = MicrosoftAuthentication.class, remap = false)
 	private static class MixinRestUtil {
 

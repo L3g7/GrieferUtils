@@ -20,11 +20,19 @@ import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 
 public class SettingLoader { // NOTE: cleanup
 
+	public static String getDefaultConfigSubkey(Object owner) {
+		return StringUtil.convertCasing(owner.getClass().getSimpleName());
+	}
+
 	public static MainElementData initMainElement(Object owner, String parentKey) {
+		return initMainElement(owner, parentKey, getDefaultConfigSubkey(owner));
+	}
+
+	public static MainElementData initMainElement(Object owner, String parentKey, String subKey) {
 		Class<?> ownerClass = owner.getClass();
 
 		// Load main element
-		Field[] mainElementFields = Reflection.getAnnotatedFields(ownerClass, MainElement.class, false);
+		Field[] mainElementFields = Reflection.getAnnotatedFields(ownerClass, MainElement.class, true);
 		if (mainElementFields.length != 1)
 			throw new IllegalStateException("Found an invalid amount of main elements for " + ownerClass.getSimpleName());
 
@@ -32,7 +40,7 @@ public class SettingLoader { // NOTE: cleanup
 		BaseSetting<?> mainElement = Reflection.get(owner, mainElementField);
 
 		// Load config key
-		String configKey = StringUtil.convertCasing(ownerClass.getSimpleName());
+		String configKey = subKey;
 		if (parentKey != null)
 			configKey = parentKey + "." + configKey;
 

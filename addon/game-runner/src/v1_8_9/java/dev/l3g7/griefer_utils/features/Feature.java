@@ -67,9 +67,13 @@ public abstract class Feature implements Disableable {
 	 * Initialises the main element and config key.
 	 */
 	public void init() {
-		MainElementData data = SettingLoader.initMainElement(this, category == null ? null : category.configKey);
+		MainElementData data = SettingLoader.initMainElement(this, category == null ? null : category.configKey, getConfigSubkey());
 		mainElement = data.mainElement;
 		configKey = data.configKey;
+	}
+
+	protected String getConfigSubkey() {
+		return SettingLoader.getDefaultConfigSubkey(this);
 	}
 
 	/**

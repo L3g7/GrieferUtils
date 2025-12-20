@@ -48,6 +48,11 @@ public abstract class FilterWebhooks extends Feature {
 		.description("Sendet eine Chatnachricht an einen Discord-Webhook, wenn ein LabyMod-Filter auslöst.")
 		.icon("webhook");
 
+	@Override
+	protected String getConfigSubkey() {
+		return "filter_webhooks";
+	}
+
 	public static Map<String, String> getWebhooks() {
 		return webhooks;
 	}

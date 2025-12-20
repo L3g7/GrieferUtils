@@ -44,28 +44,30 @@ public class FilterWebhooksLaby3 extends FilterWebhooks {
 			event.gui = new CustomGuiChatFilter(Reflection.get(event.gui, "defaultInputFieldText"));
 	}
 
+	public static void hookSetChatLine(IChatComponent component) {
+		// Check if filters match
+		String msg = component.getUnformattedText().toLowerCase().replaceAll("§.", "");
+		for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
+			if (webhooks.containsKey(filter.getFilterName())
+				&& !webhooks.get(filter.getFilterName()).trim().isEmpty()
+				&& Arrays.stream(filter.getWordsContains()).anyMatch(w -> msg.contains(w.toLowerCase()))
+				&& Arrays.stream(filter.getWordsContainsNot()).noneMatch(w -> msg.contains(w.toLowerCase()))) {
+
+				String url = webhooks.get(filter.getFilterName());
+				Integer color = filter.isHighlightMessage() ? ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff) : null;
+				triggerWebhook(url, component, filter.getFilterName(), color);
+			}
+		}
+	}
+
 	@ExclusiveTo(LABY_3)
 	@Mixin(value = GuiChatAdapter.class, remap = false)
 	private static class MixinGuiChatAdapter {
 
 		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
 		public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
-			if (refresh)
-				return;
-
-			// Check if filters match
-			String msg = component.getUnformattedText().toLowerCase().replaceAll("§.", "");
-			for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
-				if (webhooks.containsKey(filter.getFilterName())
-					&& !webhooks.get(filter.getFilterName()).trim().isEmpty()
-					&& Arrays.stream(filter.getWordsContains()).anyMatch(w -> msg.contains(w.toLowerCase()))
-					&& Arrays.stream(filter.getWordsContainsNot()).noneMatch(w -> msg.contains(w.toLowerCase()))) {
-
-					String url = webhooks.get(filter.getFilterName());
-					Integer color = filter.isHighlightMessage() ? ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff) : null;
-					triggerWebhook(url, component, filter.getFilterName(), color);
-				}
-			}
+			if (!refresh)
+				hookSetChatLine(component);
 		}
 
 	}

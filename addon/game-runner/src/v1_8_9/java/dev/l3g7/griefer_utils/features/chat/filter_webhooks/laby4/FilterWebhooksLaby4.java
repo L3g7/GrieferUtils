@@ -43,6 +43,48 @@ public class FilterWebhooksLaby4 extends FilterWebhooks {
 		init("laby4");
 	}
 
+	public static void hookToSettings(ChatFilter filter, @Nullable Setting parent, CallbackInfoReturnable<List<Setting>> cir) {
+		if (!enabled.get())
+			return;
+
+		List<Setting> settings = cir.getReturnValue();
+		String url = webhooks.get(filter.id().toString());
+
+		// Create settings
+		StringSetting urlInput = StringSetting.create()
+			.name("Webhook-URL")
+			.placeholder("https://discord.com/api/webhooks/...")
+			.validator(v -> HOOK_URL_PATTERN.matcher(v).matches())
+			.set(url == null ? "" : url)
+			.enabled(url != null)
+			.extend()
+			.callback(v -> {
+				webhooks.put(filter.id().toString(), v);
+				saveWebhooks();
+			});
+
+		SwitchSetting shouldSend = SwitchSetting.create()
+			.name("An Discord-Webhook senden")
+			.set(url != null)
+			.callback(v -> {
+				urlInput.enabled(v);
+				webhooks.put(filter.id().toString(), v && !urlInput.get().isEmpty() ? urlInput.get() : null);
+				saveWebhooks();
+			});
+
+		// Bind settings
+		shouldSend.create(parent);
+		settings.add((Setting) shouldSend);
+
+		urlInput.create(parent);
+		settings.add((Setting) urlInput);
+	}
+
+	public static void hookApplyChatFilter(ChatFilter filter, IChatComponent component) {
+		Integer color = filter.shouldChangeBackground().get() ? filter.backgroundColor().get() : null;
+		triggerWebhook(webhooks.get(filter.id().toString()), component, filter.name().get(), color);
+	}
+
 	@ExclusiveTo(LABY_4)
 	@Mixin(Config.class)
 	public static class ConfigMixin {
@@ -52,40 +94,7 @@ public class FilterWebhooksLaby4 extends FilterWebhooks {
 			if (!((Config) c(this) instanceof ChatFilter filter))
 				return;
 
-			if (!enabled.get())
-				return;
-
-			List<Setting> settings = cir.getReturnValue();
-			String url = webhooks.get(filter.id().toString());
-
-			// Create settings
-			StringSetting urlInput = StringSetting.create()
-				.name("Webhook-URL")
-				.placeholder("https://discord.com/api/webhooks/...")
-				.validator(v -> HOOK_URL_PATTERN.matcher(v).matches())
-				.set(url == null ? "" : url)
-				.enabled(url != null)
-				.extend()
-				.callback(v -> {
-					webhooks.put(filter.id().toString(), v);
-					saveWebhooks();
-				});
-
-			SwitchSetting shouldSend = SwitchSetting.create()
-				.name("An Discord-Webhook senden")
-				.set(url != null)
-				.callback(v -> {
-					urlInput.enabled(v);
-					webhooks.put(filter.id().toString(), v && !urlInput.get().isEmpty() ? urlInput.get() : null);
-					saveWebhooks();
-				});
-
-			// Bind settings
-			shouldSend.create(parent);
-			settings.add((Setting) shouldSend);
-
-			urlInput.create(parent);
-			settings.add((Setting) urlInput);
+			hookToSettings(filter, parent, cir);
 		}
 
 	}
@@ -103,11 +112,8 @@ public class FilterWebhooksLaby4 extends FilterWebhooks {
 			if (event.isCancelled())
 				return;
 
-			IChatComponent component = (IChatComponent) event.component();
-			for (ChatFilter filter : matchingChatFilters) {
-				Integer color = filter.shouldChangeBackground().get() ? filter.backgroundColor().get() : null;
-				triggerWebhook(webhooks.get(filter.id().toString()), component, filter.name().get(), color);
-			}
+			for (ChatFilter filter : matchingChatFilters)
+				hookApplyChatFilter(filter, (IChatComponent) event.component());
 		}
 
 	}

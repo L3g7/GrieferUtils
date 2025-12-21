@@ -91,9 +91,12 @@ public class MainPage {
 					timer = new Timer();
 					timer.schedule(new TimerTask() {
 						public void run() {
+							if (!(Laby4Util.getActivity() instanceof NavigationActivity))
+								return;
+
 							icon = icon.equals("icon") ? s : "icon";
 							Laby.labyAPI().minecraft().executeOnRenderThread(() -> searchWidget.setText(""));
-							labyBridge.notify("§aEaster Egg", "Easter Egg wurde " + (!icon.equals("icon") ? "de" : "") + "aktiviert.");
+							labyBridge.notify("§aEaster Egg", "Easter Egg wurde " + (icon.equals("icon") ? "de" : "") + "aktiviert.");
 							if (world() != null)
 								mc().displayGuiScreen(null);
 

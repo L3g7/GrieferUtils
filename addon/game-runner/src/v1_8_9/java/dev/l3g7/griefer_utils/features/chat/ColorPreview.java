@@ -46,7 +46,7 @@ public class ColorPreview extends Feature {
 		if (createColors(text).equals(text))
 			return;
 
-		int offset = Reflection.get(field, "lineScrollOffset");
+		int offset = Math.min(Reflection.get(field, "lineScrollOffset"), field.getText().length());
 		// The text that is currently visible
 		String currentText = mc().fontRendererObj.trimStringToWidth(field.getText().substring(offset), field.getWidth());
 		// All the color codes that were before it

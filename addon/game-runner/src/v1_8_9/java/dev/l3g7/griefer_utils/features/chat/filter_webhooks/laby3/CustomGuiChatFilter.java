@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.features.chat.UnlockChatFilters;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates.FilterTemplate;
 import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3.ChatFilterTemplatesLaby3;
 import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3.GuiChatFilterWithTemplates;
 import dev.l3g7.griefer_utils.features.chat.filter_webhooks.FilterWebhooks;
@@ -78,8 +79,8 @@ public class CustomGuiChatFilter extends GuiChatCustom {
 		if (FileProvider.getSingleton(ChatFilterTemplatesLaby3.class).isEnabled())
 			templatesRenderer = new GuiChatFilterWithTemplates("") {
 				@Override
-				public void loadTemplate(ChatFilterTemplatesLaby3.FilterTemplate template) {
-					Reflection.invoke(CustomGuiChatFilter.this, "loadFilter", template.toFilter());
+				public void loadTemplate(FilterTemplate template) {
+					CustomGuiChatFilter.this.loadFilter(ChatFilterTemplatesLaby3.createFilter(template));
 				}
 			};
 		else

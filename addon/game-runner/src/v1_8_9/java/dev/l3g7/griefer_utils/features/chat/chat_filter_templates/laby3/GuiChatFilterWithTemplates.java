@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemp
 import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates.FilterTemplate;
 import net.labymod.core.LabyModCore;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
-import net.labymod.ingamechat.tools.filter.Filters.Filter;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.GuiButton;
 
@@ -31,8 +30,7 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 	}
 
 	public void loadTemplate(FilterTemplate t) {
-		Filter filter = new Filter(t.name, t.contains, t.containsNot, false, "note.harp", t.highlighting, t.red, t.green, t.blue, false, !t.highlighting, false, "Global");
-		Reflection.invoke(this, "loadFilter", filter);
+		Reflection.invoke(this, "loadFilter", ChatFilterTemplatesLaby3.createFilter(t));
 	}
 
 	@Override

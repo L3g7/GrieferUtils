@@ -20,6 +20,8 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+
 @Singleton
 public class RealMoney extends Feature {
 
@@ -37,7 +39,9 @@ public class RealMoney extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Echtgeld- Erkennung") // Spacing to allow word wrap
+		.name(LABY_3.isActive()
+			? "Echtgeld- Erkennung" // Spacing to allow word wrap
+			: "Echtgeld-Erkennung")
 		.description("Fügt einen Tag zu eingehenden Bezahlungen hinzu.")
 		.icon("coin_pile")
 		.subSettings(tag, position);

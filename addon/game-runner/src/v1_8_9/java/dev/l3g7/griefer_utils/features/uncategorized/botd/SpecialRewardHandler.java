@@ -11,12 +11,14 @@ import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import net.minecraft.entity.DataWatcher;
+import net.minecraft.entity.DataWatcher.WatchableObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S0EPacketSpawnObject;
 import net.minecraft.network.play.server.S1CPacketEntityMetadata;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
+
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
@@ -37,7 +39,12 @@ class SpecialRewardHandler {
 			if (packet.getEntityId() != lastItemId)
 				return;
 
-			for (DataWatcher.WatchableObject wo : packet.func_149376_c()) {
+			List<WatchableObject> watchableObjects = packet.func_149376_c();
+			if (watchableObjects == null)
+				// List is null if empty
+				return;
+
+			for (WatchableObject wo : watchableObjects) {
 				if (wo.getDataValueId() != 10 /* Item */ || wo.getObjectType() != 5 /* ItemStack */)
 					continue;
 

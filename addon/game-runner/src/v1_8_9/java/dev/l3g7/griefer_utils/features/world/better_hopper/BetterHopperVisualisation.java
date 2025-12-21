@@ -85,6 +85,9 @@ class BetterHopperVisualisation implements Disableable {
 					continue;
 
 				BlockPos pos = getBlockPos(stack);
+				if (pos == null)
+					continue;
+
 				EntityItem entityItem = new EntityItem(world(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
 				filteredConnections.put(pos, entityItem);
 			}
@@ -113,7 +116,10 @@ class BetterHopperVisualisation implements Disableable {
 		ItemStack hopperStack = slots.getSlot(13).getStack();
 		if (ItemUtil.getLore(hopperStack).isEmpty())
 			return;
+
 		hopper = getBlockPos(hopperStack);
+		if (hopper == null)
+			return;
 
 		if (slot == 16) {
 			displayEnd = -1;
@@ -149,6 +155,9 @@ class BetterHopperVisualisation implements Disableable {
 		String line = ItemUtil.getLoreAtIndex(stack, 0);
 		String blockPos = line.substring(line.indexOf("§e") + 2);
 		String[] coords = blockPos.split(";");
+		if (coords.length < 3)
+			return null;
+
 		return new BlockPos(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
 	}
 

@@ -9,8 +9,10 @@ package dev.l3g7.griefer_utils.features.chat.filter_webhooks;
 
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
+import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
+import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.util.IChatComponent;
@@ -42,11 +44,17 @@ public abstract class FilterWebhooks extends Feature {
 	protected static final Map<String, String> webhooks = new HashMap<>();
 	private static String configKey;
 
+	private static final DropDownSetting<Style> messageStyle = DropDownSetting.create(Style.class)
+		.name("Nachrichten-Stil")
+		.icon("yellow_t")
+		.defaultValue(Style.EMBED);
+
 	@MainElement
 	protected static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Webhooks in Filtern")
 		.description("Sendet eine Chatnachricht an einen Discord-Webhook, wenn ein LabyMod-Filter auslöst.")
-		.icon("webhook");
+		.icon("webhook")
+		.subSettings(messageStyle);
 
 	@Override
 	protected String getConfigSubkey() {
@@ -89,17 +97,21 @@ public abstract class FilterWebhooks extends Feature {
 
 		// Build payload
 		JsonObject root = new JsonObject();
-		root.add("content", JsonNull.INSTANCE); // NOTE: replace with GSON?
+		if (messageStyle.get() == Style.EMBED) {
+			root.add("content", JsonNull.INSTANCE);
 
-		JsonArray embeds = new JsonArray();
-		JsonObject embed = new JsonObject();
-		embed.add("title", sanitize(name));
-		embed.add("description", sanitize(component.getUnformattedText().replaceAll("§.", "")));
-		embed.add("footer", EMBED_FOOTER);
-		if (color != null)
-			embed.addProperty("color", color & 0xFFFFFF);
-		embeds.add(embed);
-		root.add("embeds", embeds);
+			JsonArray embeds = new JsonArray();
+			JsonObject embed = new JsonObject();
+			embed.add("title", sanitize(name));
+			embed.add("description", sanitize(component.getUnformattedText().replaceAll("§.", "")));
+			embed.add("footer", EMBED_FOOTER);
+			if (color != null)
+				embed.addProperty("color", color & 0xFFFFFF);
+
+			embeds.add(embed);
+			root.add("embeds", embeds);
+		} else
+			root.add("content", sanitize(component.getUnformattedText().replaceAll("§.", "")));
 
 		// Send to webhook
 		EXECUTOR_SERVICE.execute((Runnable) () -> {
@@ -129,4 +141,19 @@ public abstract class FilterWebhooks extends Feature {
 		return new JsonPrimitive(value);
 	}
 
+	private enum Style implements Named {
+		EMBED("Embed"),
+		TEXT("Text");
+
+		private final String name;
+
+		Style(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+	}
 }

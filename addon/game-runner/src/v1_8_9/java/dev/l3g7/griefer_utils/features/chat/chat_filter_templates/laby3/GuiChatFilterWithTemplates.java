@@ -8,12 +8,12 @@
 package dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3.ChatFilterTemplates.FilterTemplate;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates.FilterTemplate;
 import net.labymod.core.LabyModCore;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
-import net.labymod.ingamechat.tools.filter.Filters;
+import net.labymod.ingamechat.tools.filter.Filters.Filter;
 import net.labymod.utils.ModColor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
 import java.io.IOException;
@@ -26,22 +26,20 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 		super(defaultText);
 	}
 
-	// TODO: Inject into open gui instead of overwriting
-	// TODO: replace numbers with constants
+	private boolean isFilterSelected() {
+		return Reflection.get(this, "selectedFilter") != null;
+	}
+
+	public void loadTemplate(FilterTemplate t) {
+		Filter filter = new Filter(t.name, t.contains, t.containsNot, false, "note.harp", t.highlighting, t.red, t.green, t.blue, false, !t.highlighting, false, "Global");
+		Reflection.invoke(this, "loadFilter", filter);
+	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		Filters.Filter selectedFilter = Reflection.get(this, "selectedFilter");
-		if (selectedFilter != null)
-			return;
-
-		renderTemplates(mouseX, mouseY);
-	}
-
-	@Override
-	public void setWorldAndResolution(Minecraft lvt_1_1_, int lvt_2_1_, int lvt_3_1_) {
-		super.setWorldAndResolution(lvt_1_1_, lvt_2_1_, lvt_3_1_);
+		if (!isFilterSelected())
+			renderTemplates(mouseX, mouseY);
 	}
 
 	public void renderTemplates(int mouseX, int mouseY) {
@@ -77,28 +75,39 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 		}
 	}
 
-	@Override
-	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		Filters.Filter selectedFilter = Reflection.get(this, "selectedFilter");
-		if (selectedFilter != null || handleTemplateClick(mouseX, mouseY)) {
-			try {
-				super.mouseClicked(mouseX, mouseY, mouseButton);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+	protected void actionPerformed(GuiButton button) {
+		try {
+			super.actionPerformed(button);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
-	public boolean handleTemplateClick(int mouseX, int mouseY) {
+	@Override
+	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		if (interceptMouseClick(mouseX, mouseY))
+			return;
+
+		try {
+			super.mouseClicked(mouseX, mouseY, mouseButton);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public boolean interceptMouseClick(int mouseX, int mouseY) {
+		if (isFilterSelected())
+			return false;
+
 		if (mouseX > this.width - 165 && mouseX < this.width - 152 && mouseY > this.height - 204 && mouseY < this.height - 204 + 13) {
 			templatesOpen = true;
-			return false;
+			return true;
 		}
 
 		boolean hoverCancel = mouseX > this.width - 268 && mouseX < this.width - 154 && mouseY > this.height - 30 && mouseY < this.height - 18;
 		if (templatesOpen && hoverCancel) {
 			templatesOpen = false;
-			return false;
+			return true;
 		}
 
 		boolean hoverTemplate = mouseX > this.width - 270 && mouseX < this.width - 152 && mouseY > this.height - 220 + 12 && mouseY < this.height - 16;
@@ -110,20 +119,7 @@ public class GuiChatFilterWithTemplates extends GuiChatFilter {
 			}
 		}
 
-		return true;
-	}
-
-	protected void actionPerformed(GuiButton button) {
-		// TODO: required for Intellij to stfu, but why?
-		try {
-			super.actionPerformed(button);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public void loadTemplate(FilterTemplate template) {
-		Reflection.invoke(this, "loadFilter", template.toFilter());
+		return false;
 	}
 
 }

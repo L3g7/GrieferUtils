@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.features.chat.UnlockChatFilters;
-import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3.ChatFilterTemplates;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3.ChatFilterTemplatesLaby3;
 import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3.GuiChatFilterWithTemplates;
 import dev.l3g7.griefer_utils.features.chat.filter_webhooks.FilterWebhooks;
 import net.labymod.core.LabyModCore;
@@ -75,10 +75,10 @@ public class CustomGuiChatFilter extends GuiChatCustom {
 	public CustomGuiChatFilter(String defaultText) {
 		super(defaultText);
 
-		if (FileProvider.getSingleton(ChatFilterTemplates.class).isEnabled())
+		if (FileProvider.getSingleton(ChatFilterTemplatesLaby3.class).isEnabled())
 			templatesRenderer = new GuiChatFilterWithTemplates("") {
 				@Override
-				public void loadTemplate(ChatFilterTemplates.FilterTemplate template) {
+				public void loadTemplate(ChatFilterTemplatesLaby3.FilterTemplate template) {
 					Reflection.invoke(CustomGuiChatFilter.this, "loadFilter", template.toFilter());
 				}
 			};
@@ -271,7 +271,7 @@ public class CustomGuiChatFilter extends GuiChatCustom {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		if (templatesRenderer != null)
-			if (selectedFilter == null && !templatesRenderer.handleTemplateClick(mouseX, mouseY))
+			if (selectedFilter == null && templatesRenderer.interceptMouseClick(mouseX, mouseY))
 				return;
 
 		try {

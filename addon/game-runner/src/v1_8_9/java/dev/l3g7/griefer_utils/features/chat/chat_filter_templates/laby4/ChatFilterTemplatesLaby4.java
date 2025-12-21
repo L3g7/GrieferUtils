@@ -12,8 +12,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
 import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
@@ -42,27 +41,7 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 @Singleton
 @ExclusiveTo(LABY_4)
-public class ChatFilterTemplates extends Feature { // NOTE: patch to FilterTemplates
-
-	static final FilterTemplate[] TEMPLATES = new FilterTemplate[]{
-		new FilterTemplate("Eingehende MSG", of("-> mir]"), of("»")),
-		new FilterTemplate("Ausgehende MSG", of("[mir ->"), of("»")),
-		new FilterTemplate("Globalchat", of("@["), of()),
-		new FilterTemplate("Plotchat", of("[Plot-Chat]"), of("»")),
-		new FilterTemplate("Eingehende Zahlung", of(" gegeben."), of("»", "->", "Du hast")),
-		new FilterTemplate("Ausgehende Zahlung", of(" gegeben."), of("»", "->", "[GrieferGames]", "hat dir")),
-		new FilterTemplate("MobRemover", of("[MobRemover]"), of("»", "->")),
-		new FilterTemplate("Clearlag", of("auf dem Boden liegende Items entfernt!", "[GrieferGames] Warnung! Die auf dem Boden liegenden Items werden in"), of("»", "->")),
-		new FilterTemplate("Greeting", of("[Greeting]"), of("»")),
-		new FilterTemplate("Farewell", of("[Farewell]"), of("»")),
-		new FilterTemplate("GrieferUtils", of("[GrieferUtils]"), of("»"))
-	};
-
-	@MainElement
-	private static final SwitchSetting enabled = SwitchSetting.create()
-		.name("Filtervorlagen")
-		.description("Fügt Vorlagen bei LabyMods Chatfiltern hinzu.")
-		.icon("labymod_3/filter");
+public class ChatFilterTemplatesLaby4 extends ChatFilterTemplates {
 
 	/**
 	 * The setting that redirected to the currently open templateList.
@@ -75,6 +54,9 @@ public class ChatFilterTemplates extends Feature { // NOTE: patch to FilterTempl
 	private static CategorySettingImpl templateList;
 
 	public static void modifyAddButton(SettingContentActivity self) {
+		if (!enabled.get())
+			return;
+
 		if (!(self instanceof ChatSettingActivity))
 			return;
 
@@ -165,13 +147,11 @@ public class ChatFilterTemplates extends Feature { // NOTE: patch to FilterTempl
 	public static class SettingContentActivityMixin {
 
 		@Inject(method = "initialize", at = @At("RETURN"), remap = false)
-		public void onToSettings(Parent parent, CallbackInfo ci) {
+		public void onInitialize(Parent parent, CallbackInfo ci) {
 			modifyAddButton(c(this));
 		}
 
 	}
-
-	private record FilterTemplate(String name, String[] contains, String[] containsNot) {}
 
 	private static String[] of(String... args) {
 		return args;

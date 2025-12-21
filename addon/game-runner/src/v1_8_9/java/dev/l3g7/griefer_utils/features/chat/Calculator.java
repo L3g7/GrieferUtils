@@ -15,6 +15,8 @@ import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.misc.AuctionHouseCheck;
+import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.*;
@@ -291,7 +293,7 @@ public class Calculator extends Feature {
 			return;
 
 		event.cancel();
-		send(unescapedMessage);
+		sendResult(unescapedMessage);
 	}
 
 	private boolean evalEquations(Pattern pattern, MessageSendEvent event) {
@@ -329,7 +331,7 @@ public class Calculator extends Feature {
 			// Remove the backslash from escaped placeholder letters
 			msg = msg.replaceAll(escapedPlaceholderPattern, "$1");
 
-			send(msg);
+			sendResult(msg);
 			return true;
 		}
 		return false;
@@ -392,6 +394,22 @@ public class Calculator extends Feature {
 		}
 
 		return builder.toString();
+	}
+
+	public static void sendResult(String message) {
+		if (AuctionHouseCheck.isChatLocked()) {
+			try {
+				// Round number
+				BigDecimal num = new BigDecimal(message.replace(".", "").replace(",", "."));
+				message = Constants.DECIMAL_FORMAT_98.format(num.setScale(0, RoundingMode.HALF_UP));
+
+				// Fix formatting for GrieferGames' parser
+				message = message.replace(",", "").replace(".", "");
+			} catch (NumberFormatException ignored) {
+				// User inputted an invalid price
+			}
+		}
+		ChatQueue.send(message);
 	}
 
 	private enum WithdrawAction implements Named {

@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby3.bridges;
 
 import com.google.gson.JsonObject;
+import com.sun.jna.Platform;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -121,6 +122,8 @@ public class LabyBridgeImpl implements LabyBridge {
 	public void openWebsite(String url) {
 		try {
 			Desktop.getDesktop().browse(new URI(url));
+		} catch (UnsupportedOperationException e) {
+			BugReporter.reportError(Util.addMessage(e, "Unsupported BROWSE for " + Toolkit.getDefaultToolkit() + " / " + Platform.getOSType() + " / " + System.getProperty("os.name")));
 		} catch (IOException | URISyntaxException e) {
 			throw Util.elevate(e);
 		}

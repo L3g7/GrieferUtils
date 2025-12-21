@@ -37,6 +37,11 @@ public class DataHandler {
 	private static void onStaticData(StaticDataReceiveEvent event) {
 		for (Map.Entry<String, GrieferInfoItem> itemEntry : event.data.grieferInfoItems.entrySet()) {
 			ItemStack stack = ItemUtil.fromNBT(itemEntry.getValue().stack);
+			if (stack == null) {
+				BugReporter.reportError(new Throwable("Could not deserialize GI item " + itemEntry.getKey() + ": " + itemEntry.getValue().stack + " returned null"));
+				continue;
+			}
+
 			ItemFilter itemFilter = new ItemFilter(itemEntry.getKey(), stack, itemEntry.getValue().customName);
 			ItemFilter.FILTER.put(itemEntry.getKey(), itemFilter);
 

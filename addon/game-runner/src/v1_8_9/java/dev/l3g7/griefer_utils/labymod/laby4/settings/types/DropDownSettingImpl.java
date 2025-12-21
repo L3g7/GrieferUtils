@@ -11,16 +11,14 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons.ProxiedIcon;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.ComponentWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.dropdown.DropdownWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.dropdown.renderer.EntryRenderer;
-import net.labymod.api.client.render.batch.ResourceRenderContext;
 import net.labymod.api.client.render.font.RenderableComponent;
-import net.labymod.api.client.render.matrix.Stack;
-import net.labymod.api.util.bounds.Rectangle;
 import org.jetbrains.annotations.NotNull;
 
 public class DropDownSettingImpl<E extends Enum<E> & Named> extends AbstractSettingImpl<DropDownSetting<E>, E> implements DropDownSetting<E> {
@@ -34,7 +32,7 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends AbstractSett
 
 	@Override
 	public Icon getIcon() {
-		return new IconProxy();
+		return new ProxiedIcon(() -> getStorage().icon, 0, 0);
 	}
 
 	@Override
@@ -78,24 +76,6 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends AbstractSett
 		callback(v -> widget.setSelected(v, false));
 
 		return new Widget[]{widget};
-	}
-
-	private class IconProxy extends Icon { // NOTE: generalize
-
-		protected IconProxy() {
-			super(null);
-		}
-
-		@Override
-		public void render(ResourceRenderContext context, float x, float y, float width, float height, boolean hover, int color) {
-			getStorage().icon.render(null, x, y, width, height, hover, color, null);
-		}
-
-		@Override
-		public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil) {
-			getStorage().icon.render(stack, x, y, width, height, hover, color, stencil);
-		}
-
 	}
 
 }

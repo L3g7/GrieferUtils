@@ -10,9 +10,8 @@ package dev.l3g7.griefer_utils.features.item.recraft.laby4;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons.SynchronousIcon;
 import net.labymod.api.Laby;
-import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.render.batch.ResourceRenderContext;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.util.bounds.Rectangle;
 import net.labymod.v1_8_9.client.util.MinecraftUtil;
@@ -26,22 +25,16 @@ import net.minecraft.util.ResourceLocation;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording.ROMAN_NUMERALS;
 
-class RecraftRecordingIcon extends Icon { // NOTE: move somewhere else
+class RecraftRecordingIcon extends SynchronousIcon { // NOTE: move somewhere else
 
 	private final RecraftRecording recording;
 
 	RecraftRecordingIcon(RecraftRecording recording) {
-		super(null);
 		this.recording = recording;
 	}
 
 	@Override
-	public void render(ResourceRenderContext context, float x, float y, float width, float height, boolean hover, int color) {
-		render(null, x, y, width, height, hover, color, null);
-	}
-
-	@Override
-	public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil) {
+	public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil, boolean submitted) {
 		if (recording.icon == null)
 			return;
 

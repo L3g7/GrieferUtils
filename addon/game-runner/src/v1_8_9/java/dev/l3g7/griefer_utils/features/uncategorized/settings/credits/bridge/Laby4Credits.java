@@ -12,10 +12,10 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
-import dev.l3g7.griefer_utils.core.misc.SkullIcon;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.event.ClickEvent;
@@ -74,7 +74,7 @@ public class Laby4Credits implements CreditsBridge {
 	public BaseSetting<?> createUserSetting() {
 		return CategorySetting.create()
 			.name("Vielen Dank für das Nutzen von GrieferUtils!")
-			.icon(SkullIcon.OWN);
+			.icon(Icons.OWN_SKULL);
 	}
 
 	private static class CookieSettingImpl extends CategorySettingImpl {

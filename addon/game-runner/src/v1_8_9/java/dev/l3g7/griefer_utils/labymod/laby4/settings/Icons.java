@@ -7,8 +7,11 @@
 
 package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
+import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
+import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.icon.Icon;
+import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.state.ScreenCanvas;
 import net.labymod.api.client.render.batch.ResourceRenderContext;
 import net.labymod.api.client.render.matrix.Stack;
@@ -19,6 +22,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,6 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 public class Icons {
+	public static final Icon OWN_SKULL = new SkullIcon();
 
 	public static Icon of(Object icon) {
 		return switch (icon) {
@@ -55,17 +60,38 @@ public class Icons {
 		if (scale != 1)
 			throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " does not support scaling!");
 
-		return new OffsetIcon(of(icon), offsetX, offsetY);
+		Icon labyIcon = of(icon);
+		return new ProxiedIcon(() -> labyIcon, offsetX, offsetY);
 	}
 
-	private static class ItemStackIcon extends Icon {
+	/**
+	 * An icon that uses the direct rendering API instead of submitting render calls.
+	 */
+	public abstract static class SynchronousIcon extends Icon {
+		protected SynchronousIcon() {
+			super(null);
+		}
+
+		@Override
+		public void render(ResourceRenderContext context, float x, float y, float width, float height, boolean hover, int color) {
+			render(null, x, y, width, height, hover, color, null, false);
+		}
+
+		@Override
+		public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil) {
+			render(stack, x, y, width, height, hover, color, stencil, false);
+		}
+
+		public abstract void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil, boolean submitted);
+	}
+
+	public static class ItemStackIcon extends SynchronousIcon {
 
 		private final ItemStack icon;
 		private final int offsetX, offsetY;
 		private final float scale;
 
 		public ItemStackIcon(ItemStack icon, int offsetX, int offsetY, float scale) {
-			super(null);
 			this.icon = icon;
 			this.offsetX = offsetX;
 			this.offsetY = offsetY;
@@ -73,18 +99,16 @@ public class Icons {
 		}
 
 		@Override
-		public void render(ResourceRenderContext context, float x, float y, float width, float height, boolean hover, int color) {
-			render(null, x, y, width, height, hover, color, null);
-		}
-
-		@Override
-		public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil) {
+		public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil, boolean submitted) {
 			// Fix position for scales < 16
 			x += -1.5f * width + 24;
 			y += -1.25f * height + 20;
 
 			x += offsetX;
 			y += offsetY;
+
+			if (submitted)
+				GlStateManager.enableDepth();
 
 			GlStateManager.scale(width / 16f * scale, height / 16f * scale, 1);
 			Laby.labyAPI().minecraft().itemStackRenderer().renderItemStack(stack, c(icon), (int) (x / scale), (int) (y / scale));
@@ -93,16 +117,27 @@ public class Icons {
 
 	}
 
-	public static class OffsetIcon extends Icon {
+	public static class ProxiedIcon extends Icon {
 
 		public final float offsetX, offsetY;
-		public final Icon icon;
+		private final Supplier<Icon> icon;
 
-		public OffsetIcon(Icon icon, float offsetX, float offsetY) {
+		public ProxiedIcon(Supplier<Icon> icon, float offsetX, float offsetY) {
 			super(null);
 			this.icon = icon;
 			this.offsetX = offsetX;
 			this.offsetY = offsetY;
+		}
+
+		public Icon getIcon() {
+			return icon.get();
+		}
+	}
+
+	private static class SkullIcon extends SynchronousIcon {
+		@Override
+		public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil, boolean submitted) {
+			AsyncSkullRenderer.renderPlayerSkull((int) x, (int) y);
 		}
 	}
 
@@ -112,13 +147,26 @@ public class Icons {
 		@Shadow
 		public abstract void submitIcon(Icon icon, float x, float y, float width, float height, boolean hover, int argb, @Nullable Rectangle clipBounds);
 
+		@Shadow
+		@Final
+		private ScreenContext context;
+
 		@Inject(method = "submitIcon(Lnet/labymod/api/client/gui/icon/Icon;FFFFZILnet/labymod/api/util/bounds/Rectangle;)V", at = @At("HEAD"), cancellable = true, remap = false)
 		public void submitIcon(Icon icon, float x, float y, float width, float height, boolean hover, int argb, Rectangle clipBounds, CallbackInfo ci) {
-			if (icon instanceof OffsetIcon offsetIcon) {
-				submitIcon(offsetIcon.icon, x + offsetIcon.offsetX, y + offsetIcon.offsetY, width, height, hover, argb, clipBounds);
-				ci.cancel();
+			switch (icon) {
+				case ProxiedIcon proxiedIcon -> {
+					submitIcon(proxiedIcon.getIcon(), x + proxiedIcon.offsetX, y + proxiedIcon.offsetY, width, height, hover, argb, clipBounds);
+					ci.cancel();
+				}
+				case SynchronousIcon synchronousIcon -> {
+					synchronousIcon.render(context.stack(), x, y, width, height, hover, argb, clipBounds, true);
+					ci.cancel();
+				}
+				default -> {
+					// Continue original submitIcon
+				}
 			}
 		}
-
 	}
+
 }

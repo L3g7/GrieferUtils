@@ -10,11 +10,11 @@ package dev.l3g7.griefer_utils.features.world;
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.SkullIcon;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -38,7 +38,7 @@ public class HeadTextureFix extends Feature {
 
 	private HeadTextureFix() {
 		if (LABY_4.isActive()) {
-			enabled = SwitchSetting.create().icon(SkullIcon.OWN);
+			enabled = SwitchSetting.create().icon(Icons.OWN_SKULL);
 		} else
 			enabled = new OwnSkullSwitchSetting();
 

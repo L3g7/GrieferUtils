@@ -339,6 +339,9 @@ public class ConfigPatcher {
 				autoUnnick.addProperty("tab", false);
 		}
 
+		if (cmp.compare("2.3-BETA-24", version) < 0)
+			rename("chat.filter_webhooks.filter", "chat.filter_webhooks.filters.laby3");
+
 	}
 
 	private void rename(String oldKey, String newKey) {

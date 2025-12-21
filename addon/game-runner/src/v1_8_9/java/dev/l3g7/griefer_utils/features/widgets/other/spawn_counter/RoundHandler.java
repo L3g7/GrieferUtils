@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import net.minecraft.block.Block;
@@ -64,7 +64,10 @@ class RoundHandler {
 	}
 
 	@EventListener
-	private void onTick(TickEvent.ClientTickEvent event) {
+	private void onTick(ClientTickEvent event) {
+		if (!spawnCounter.isEnabled())
+			return;
+
 		if (player() == null || spawnWorld == null)
 			return;
 

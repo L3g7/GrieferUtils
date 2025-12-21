@@ -27,13 +27,17 @@ public abstract class Widget {
 		throw new UnsupportedOperationException();
 	}
 
-	public <T> T getVersionedWidget() {
+	public <T extends LabyWidget> T getVersionedWidget() {
 		if (versionedWidget == null) {
 			versionedWidget = LABY_3.isActive() ? getLaby3() : getLaby4();
 			versionedWidget.setOwner(this);
 		}
 
 		return c(versionedWidget);
+	}
+
+	public boolean isEnabled() {
+		return getVersionedWidget().isEnabled();
 	}
 
 	public abstract static class SimpleWidget extends ComplexWidget {
@@ -103,6 +107,7 @@ public abstract class Widget {
 
 	public interface LabyWidget {
 		void setOwner(Widget widget);
+		boolean isEnabled();
 	}
 
 }

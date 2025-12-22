@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby3;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
@@ -30,6 +31,7 @@ import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.texture.DynamicModTexture;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -122,11 +124,12 @@ public class Main extends LabyModAddon {
 	@Override
 	public void loadConfig() {
 		JsonArray comment = new JsonArray();
-		comment.add("Das hier ist die falsche Config-Datei!");
-		comment.add("Du findest die richtige in .minecraft/config/GrieferUtils.json");
-		String absPath = Path.of("config", "GrieferUtils.json").toAbsolutePath().normalize().toString();
-		comment.add("(" + absPath + ")");
+		comment.add(new JsonPrimitive("Das hier ist die falsche Config-Datei!"));
+		comment.add(new JsonPrimitive("Du findest die richtige in .minecraft/config/GrieferUtils.json"));
+		String absPath = Paths.get("config", "GrieferUtils.json").toAbsolutePath().normalize().toString().replace('\\', '/');
+		comment.add(new JsonPrimitive("(" + absPath + ")"));
 		getConfig().add("_hinweis", comment);
+		saveConfig();
 	}
 
 	@Override

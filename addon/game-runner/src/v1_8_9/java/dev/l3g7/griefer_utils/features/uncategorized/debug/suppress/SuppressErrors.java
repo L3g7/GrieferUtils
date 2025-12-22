@@ -29,8 +29,7 @@ public class SuppressErrors {
 			"- NumberFormatExceptions in GeometryColor#parse")
 		.config("settings.automatic_bug_reporting.suppress_errors")
 		.icon("bug")
-		.defaultValue(true)
-		.subSettings();
+		.defaultValue(true);
 
 	@Mixin(value = GeometryColor.class, remap = false)
 	public static abstract class GeometryColorFormatSuppressor {
@@ -62,7 +61,7 @@ public class SuppressErrors {
 				return;
 
 			Scoreboard scoreboard = this.clientWorldController.getScoreboard();
-			if (packet.getAction() != 0 /* CREATE_TEAM */)
+			if (packet.getAction() == 1 /* REMOVE_TEAM */)
 				if (scoreboard.getTeam(packet.getName()) == null)
 					ci.cancel();
 		}

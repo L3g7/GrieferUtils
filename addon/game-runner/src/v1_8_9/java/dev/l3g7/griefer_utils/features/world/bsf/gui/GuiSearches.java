@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.features.world.bsf.gui;
 
 import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFSearchRequest;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
@@ -126,7 +127,9 @@ class GuiSearches extends GuiBigChest {
 
 		if (r == BSFSearchRequest.SearchResponse.WORLD_NOT_READY) {
 			labyBridge.notify("§cWelt gelöscht \u26A0", "§cBitte erkunde die Farmwelt erneut.");
-			BSF.READY_CBS.remove(MinecraftUtil.getCurrentCitybuild());
+			Citybuild cb = MinecraftUtil.getCurrentCitybuild();
+			BSF.READY_CBS.remove(cb);
+			BSF.SEARCH_DATA.remove(cb);
 			Waypoint.disable();
 			return;
 		}

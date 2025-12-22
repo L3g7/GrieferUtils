@@ -32,8 +32,9 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 public class BSF extends Feature {
 
 	public static final Map<Citybuild, Map<BSFSearchable, List<SearchData>>> SEARCH_DATA = new HashMap<>();
-	public static final Set<Citybuild> readyCbs = Collections.synchronizedSet(new HashSet<>());
+	public static final Set<Citybuild> READY_CBS = Collections.synchronizedSet(new HashSet<>());
 	private static boolean requestedOnJoin = false;
+	private static Calendar nextReset = getNextFarmweltReset();
 
 	public static Set<Citybuild> notify = new HashSet<>();
 
@@ -53,7 +54,13 @@ public class BSF extends Feature {
 				.center());
 
 	public static boolean hasData() {
-		return readyCbs.contains(MinecraftUtil.getCurrentCitybuild());
+		if (nextReset.before(Calendar.getInstance())) {
+			nextReset = getNextFarmweltReset();
+			READY_CBS.clear();
+			SEARCH_DATA.clear();
+		}
+
+		return READY_CBS.contains(MinecraftUtil.getCurrentCitybuild());
 	}
 
 	public static boolean isInFarmwelt() {
@@ -63,8 +70,8 @@ public class BSF extends Feature {
 	public static void updateCBs(List<String> internalCbs) {
 		List<Citybuild> cbs = internalCbs.stream().map(Citybuild::getCitybuild).collect(Collectors.toList());
 
-		readyCbs.clear();
-		readyCbs.addAll(cbs);
+		READY_CBS.clear();
+		READY_CBS.addAll(cbs);
 
 		List<Citybuild> notifyCbs = cbs.stream().filter(notify::contains).collect(Collectors.toList());
 		if (notifyCbs.isEmpty())
@@ -73,12 +80,12 @@ public class BSF extends Feature {
 		notifyCbs.forEach(notify::remove);
 		StringBuilder msg = new StringBuilder("§a");
 		if (notifyCbs.size() == 1) {
-			msg.append(cb2name(notifyCbs.remove(0)));
+			msg.append(formatCB(notifyCbs.remove(0)));
 			msg.append(" ist nun bereit!");
 		} else {
 			Citybuild last = notifyCbs.remove(notifyCbs.size() - 1);
-			msg.append(notifyCbs.stream().map(BSF::cb2name).collect(Collectors.joining(", ")));
-			msg.append(" & ").append(cb2name(last));
+			msg.append(notifyCbs.stream().map(BSF::formatCB).collect(Collectors.joining(", ")));
+			msg.append(" & ").append(formatCB(last));
 			msg.append(" sind nun bereit!");
 		}
 
@@ -88,7 +95,7 @@ public class BSF extends Feature {
 			new GuiBSF().open();
 	}
 
-	private static String cb2name(Citybuild cb) {
+	private static String formatCB(Citybuild cb) {
 		return cb.getName().replace("Citybuild ", "CB");
 	}
 
@@ -109,6 +116,20 @@ public class BSF extends Feature {
 			TickScheduler.runAfterRenderTicks(() -> new GuiBSF().open(), 1);
 		}
 
+	}
+
+	private static Calendar getNextFarmweltReset() {
+		Calendar reset = Calendar.getInstance();
+
+		reset.set(Calendar.DAY_OF_MONTH, 4);
+		reset.set(Calendar.HOUR_OF_DAY, 4);
+		reset.set(Calendar.MINUTE, 0);
+		reset.set(Calendar.SECOND, 0);
+
+		if (reset.before(Calendar.getInstance()))
+			reset.add(Calendar.MONTH, 1);
+
+		return reset;
 	}
 
 	public record SearchData(int x, int z, int index) {}

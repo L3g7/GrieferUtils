@@ -610,7 +610,8 @@ public class CustomGuiChatFilter extends GuiChatCustom {
 	private String wordsToString(String[] words) {
 		StringBuilder output = new StringBuilder();
 		for (String word : words) {
-			if (!output.isEmpty())
+			//noinspection SizeReplaceableByIsEmpty
+			if (output.length() != 0)
 				output.append(",");
 
 			output.append(word);

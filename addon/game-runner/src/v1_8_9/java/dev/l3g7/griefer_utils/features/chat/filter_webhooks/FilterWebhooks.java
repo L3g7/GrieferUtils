@@ -72,8 +72,8 @@ public abstract class FilterWebhooks extends Feature {
 
 		for (Map.Entry<String, JsonElement> entry : Config.get(configKey).getAsJsonObject().entrySet()) {
 			String value = entry.getValue().isJsonNull() ? null : entry.getValue().getAsString();
-			if (value != null && value.trim().isEmpty())
-				value = null;
+			if (value == null || value.trim().isEmpty())
+				continue;
 
 			webhooks.put(entry.getKey(), value);
 		}

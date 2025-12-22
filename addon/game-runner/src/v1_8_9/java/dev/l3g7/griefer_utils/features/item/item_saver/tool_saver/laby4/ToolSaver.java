@@ -11,9 +11,8 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.MouseClickEvent.LeftClickEvent;
+import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockClickEvent;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent.RightClickEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -23,7 +22,6 @@ import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSav
 import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C02PacketUseEntity;
@@ -69,7 +67,7 @@ public class ToolSaver extends ItemSaver implements TempToolSaverBridge {
 		.subSettings(damage, saveNonRepairable, exclusions);
 
 	@EventListener
-	private void onLeftClick(LeftClickEvent event) {
+	private void onLeftClick(BlockClickEvent event) {
 		if (player() != null && shouldCancel(player().getHeldItem()))
 			event.cancel();
 	}
@@ -107,17 +105,6 @@ public class ToolSaver extends ItemSaver implements TempToolSaverBridge {
 		IBlockState state = world().getBlockState(event.packet.getPosition());
 		if (shouldCancel(event.packet.getStack()) && (state == null || !(state.getBlock() instanceof BlockContainer)))
 			event.cancel();
-	}
-
-	// Required because when you break multiple blocks at once, the MouseEvent
-	// is only triggered once, but the held item can be damaged multiple times
-	@EventListener
-	private void onTick(ClientTickEvent event) {
-		if (player() == null || !shouldCancel(player().getHeldItem()))
-			return;
-
-		KeyBinding.setKeyBindState(mc().gameSettings.keyBindUseItem.getKeyCode(), false);
-		KeyBinding.setKeyBindState(mc().gameSettings.keyBindAttack.getKeyCode(), false);
 	}
 
 	public boolean shouldCancel(ItemStack heldItem) {

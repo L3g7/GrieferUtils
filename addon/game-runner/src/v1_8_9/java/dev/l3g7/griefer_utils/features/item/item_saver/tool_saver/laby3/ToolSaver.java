@@ -15,8 +15,8 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockClickEvent;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -31,7 +31,6 @@ import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
@@ -80,7 +79,7 @@ public class ToolSaver extends ItemSaver implements TempToolSaverBridge {
 	private GuiScreen previousScreen = null;
 
 	@EventListener
-	private void onLeftClick(MouseClickEvent.LeftClickEvent event) {
+	private void onLeftClick(BlockClickEvent event) {
 		if (player() != null && shouldCancel(player().getHeldItem()))
 			event.cancel();
 	}
@@ -174,17 +173,6 @@ public class ToolSaver extends ItemSaver implements TempToolSaverBridge {
 				display(Constants.ADDON_PREFIX + "Bitte klicke das Item an, das du als Ausnahme hinzufügen möchtest.");
 				mc().displayGuiScreen(null);
 			}));
-	}
-
-	// Required because when you break multiple blocks at once, the MouseEvent
-	// is only triggered once, but the held item can be damaged multiple times
-	@EventListener
-	public void onTick(ClientTickEvent event) {
-		if (player() == null || !shouldCancel(player().getHeldItem()))
-			return;
-
-		KeyBinding.setKeyBindState(mc().gameSettings.keyBindUseItem.getKeyCode(), false);
-		KeyBinding.setKeyBindState(mc().gameSettings.keyBindAttack.getKeyCode(), false);
 	}
 
 	public boolean shouldCancel(ItemStack heldItem) {

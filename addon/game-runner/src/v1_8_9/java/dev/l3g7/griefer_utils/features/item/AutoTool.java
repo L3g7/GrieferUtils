@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockClickEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
@@ -133,7 +133,7 @@ public class AutoTool extends Feature {
 	 * Required for compatability with ToolSaver
 	 */
 	@EventListener(priority = Priority.HIGH)
-	public void onMouse(MouseClickEvent.LeftClickEvent event) {
+	public void onMouse(BlockClickEvent event) {
 		if (mc().objectMouseOver == null || mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
 			return;
 

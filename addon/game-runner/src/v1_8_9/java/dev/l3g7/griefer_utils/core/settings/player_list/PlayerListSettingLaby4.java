@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -130,7 +131,7 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 			int idx = i;
 			event.settings().addChild(entry.createUnwrappedWidget(
 				ButtonWidget.icon(
-					Icons.of("pencil_vec"),
+					Icons.of(Laby4Util.isVanillaTheme() ? "pencil_padded" : "pencil_vec"),
 					() -> new PlayerListInputActivity(idx, event.activity).open()
 				).addId("delete-button"), // Actually an edit button, but id is required for styling
 
@@ -144,7 +145,6 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 
 		// Hook add button
 		event.get("setting-header", "add-button").setPressable(() -> new PlayerListInputActivity(-1, event.activity).open());
-
 	}
 
 	@AutoActivity

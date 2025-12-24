@@ -355,6 +355,10 @@
     <td>selfmade</td>
   </tr>
   <tr>
+    <td><img src="pencil_padded.png" height=16em width=16em />&nbsp;&nbsp;<a href="pencil_padded.png">pencil_padded.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><img src="pencil_vec.png" height=16em width=16em />&nbsp;&nbsp;<a href="pencil_vec.png">pencil_vec.png</a></td>
     <td><a href="https://phosphoricons.com/">Phosphor Icons (pencil, Fill)</a></td>
   </tr>

@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -136,7 +137,7 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 			int idx = i;
 			event.settings().addChild(entry.createUnwrappedWidget(
 				ButtonWidget.icon(
-					Icons.of("pencil_vec"),
+					Icons.of(Laby4Util.isVanillaTheme() ? "pencil_padded" : "pencil_vec"),
 					() -> new StringListInputActivity(idx, event.activity).open()
 				).addId("delete-button"), // Actually an edit button, but id is required for styling
 
@@ -150,7 +151,6 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 
 		// Hook add button
 		event.get("setting-header", "add-button").setPressable(() -> new StringListInputActivity(-1, event.activity).open());
-
 	}
 
 	@AutoActivity

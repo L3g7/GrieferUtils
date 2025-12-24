@@ -72,6 +72,10 @@ public class Laby4Util {
 		return false;
 	}
 
+	public static boolean isVanillaTheme() {
+		return !Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
+	}
+
 	public static Activity getActivity() {
 		ScreenWrapper screen = Laby.labyAPI().minecraft().minecraftWindow().currentScreen();
 

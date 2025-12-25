@@ -23,7 +23,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.BETA;
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
-import static dev.l3g7.griefer_utils.features.uncategorized.settings.Changelog.changelog;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.changelog.Changelog.changelog;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits.credits;
 
 @Singleton

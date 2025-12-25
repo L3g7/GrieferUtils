@@ -37,8 +37,12 @@ public class StaticApiRequest extends Request<StaticApiRequest.StaticApiData> {
 		public String[] cooldowns;
 
 		public static class Changelog {
-			public Map<String, String> all;
-			public String beta;
+			public Map<String, ChangelogEntry> merged;
+		}
+
+		public static class ChangelogEntry {
+			public Map<String, String[]> changelog;
+			public boolean beta;
 		}
 
 		public static class GrieferInfoItem {

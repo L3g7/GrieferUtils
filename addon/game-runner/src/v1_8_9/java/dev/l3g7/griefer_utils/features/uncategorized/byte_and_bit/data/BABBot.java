@@ -22,10 +22,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -104,7 +101,9 @@ public class BABBot {
 		lastSync = System.currentTimeMillis();
 		return CompletableFuture.supplyAsync(() -> {
 			try {
+				System.out.println("GET_ITEMS " + this.uuid);
 				JsonObject res = getItems();
+				System.out.println("-> " + res);
 				if (res == null) return false;
 				if (!res.get("success").getAsBoolean()) return false;
 				JsonArray array = res.get("items").getAsJsonArray();
@@ -116,6 +115,7 @@ public class BABBot {
 				this.botZone = AxisAlignedBB.fromBounds(aabb.get("x1").getAsInt(), aabb.get("y1").getAsInt(), aabb.get("z1").getAsInt(), aabb.get("x2").getAsInt(), aabb.get("y2").getAsInt(), aabb.get("z2").getAsInt());
 				return true;
 			} catch (Exception e) {
+				System.out.println("ERR");
 				e.printStackTrace();
 				return false;
 			}
@@ -135,7 +135,12 @@ public class BABBot {
 		conn.setRequestMethod("POST");
 
 		try (OutputStream out = conn.getOutputStream()) {
-			new UrlEncodedFormEntity(Arrays.asList(body), "UTF-8").writeTo(out);
+			ByteArrayOutputStream xout = new ByteArrayOutputStream();
+			new UrlEncodedFormEntity(Arrays.asList(body), "UTF-8").writeTo(xout);
+			byte[] data = xout.toByteArray();
+			System.out.println("Requesting " + url);
+			System.out.println("POST " + new String(data, StandardCharsets.UTF_8));
+			out.write(data);
 			out.flush();
 		}
 

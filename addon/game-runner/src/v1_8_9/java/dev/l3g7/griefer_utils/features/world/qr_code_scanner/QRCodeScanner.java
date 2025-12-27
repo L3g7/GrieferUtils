@@ -139,17 +139,19 @@ public class QRCodeScanner extends Feature {
 	private static abstract class MixinDecoder {
 
 		@Shadow
-		protected abstract void correctErrors(byte[] codewordBytes, int numDataCodewords) throws ChecksumException;
+		protected abstract int correctErrors(byte[] codewordBytes, int numDataCodewords) throws ChecksumException;
 
-		@Redirect(method = "decode(Lcom/google/zxing/qrcode/decoder/BitMatrixParser;Ljava/util/Map;)Lcom/google/zxing/common/DecoderResult;", at = @At(value = "INVOKE", target = "Lcom/google/zxing/qrcode/decoder/Decoder;correctErrors([BI)V"))
-	    private void injectCorrectErrors(Decoder instance, byte[] codewordBytes, int numDataCodewords) throws ChecksumException {
+		@Redirect(method = "decode(Lcom/google/zxing/qrcode/decoder/BitMatrixParser;Ljava/util/Map;)Lcom/google/zxing/common/DecoderResult;", at = @At(value = "INVOKE", target = "Lcom/google/zxing/qrcode/decoder/Decoder;correctErrors([BI)I"))
+	    private int injectCorrectErrors(Decoder instance, byte[] codewordBytes, int numDataCodewords) throws ChecksumException {
 			try {
-				correctErrors(codewordBytes, numDataCodewords);
+				return correctErrors(codewordBytes, numDataCodewords);
 			} catch (ChecksumException e) {
 				if (!suppressCorrectionErrors)
 					throw e;
+
+				return 0;
 			}
-	    }
+		}
 
 	}
 

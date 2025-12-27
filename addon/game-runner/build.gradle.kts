@@ -15,7 +15,7 @@ dependencies {
 	implementation("org.mariuszgromada.math:MathParser.org-mXparser:6.1.0")
 
 	// ZXing (QR Code Reader)
-	implementation("com.google.zxing:core:3.5.1")
+	implementation("com.google.zxing:core:3.5.4")
 }
 
 tasks.build {

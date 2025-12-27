@@ -194,9 +194,7 @@ public class MainPage {
 		Reflection.set(filter, "currentValue", "");
 		ModTextField textField = Reflection.get(filter, "textField");
 		textField.setText("");
-		textField.setFocused(false);
-
-		// TODO filter.unfocus(0, 0, 0);
+		textField.setFocused(true);
 	}
 
 }

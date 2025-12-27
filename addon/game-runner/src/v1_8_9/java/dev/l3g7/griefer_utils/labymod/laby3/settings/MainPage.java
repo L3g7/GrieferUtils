@@ -82,10 +82,13 @@ public class MainPage {
 				}
 			});
 
-		// Add features to categories
+		// Initialize main settings
 		Feature.getFeatures()
 			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
-			.forEach(Feature::addToCategory);
+			.forEach(f -> {
+				f.addToCategory();
+				((Laby3Setting<?, ?>) f.getMainElement()).getStorage().alias = f.getClass().getSimpleName();
+			});
 
 		// Add categories
 		Feature.getCategories().stream()
@@ -173,8 +176,10 @@ public class MainPage {
 			while (listedElementsStored.size() > startIndex)
 				listedElementsStored.remove(startIndex);
 
+			String needle = filter.get().toLowerCase();
 			searchableSettings.stream()
-				.filter(s -> s.getDisplayName().replaceAll("§.", "").toLowerCase().contains(filter.get().toLowerCase()))
+				.filter(s -> s.getDisplayName().replaceAll("§.", "").toLowerCase().contains(needle)
+					|| ((Laby3Setting<?, ?>) s).getStorage().alias.toLowerCase().contains(needle))
 				.forEach(v -> listedElementsStored.add(c(v)));
 		}, 1);
 	}

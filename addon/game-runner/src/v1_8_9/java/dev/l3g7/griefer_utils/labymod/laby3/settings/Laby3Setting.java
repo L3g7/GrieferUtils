@@ -136,6 +136,7 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	class ExtendedStorage<V> extends Storage<V> {
 
 		public String name = "§cNo name set";
+		public String alias = "";
 		public String description = null;
 		public Icon icon;
 		public boolean enabled = true;

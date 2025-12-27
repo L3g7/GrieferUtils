@@ -135,12 +135,15 @@ public class MainPage {
 				main.setSearchTags(new String[]{main.name()});
 			});
 
-		// Add features to categories
+		// Initialize main settings
 		Feature.getFeatures()
 			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
 			.forEach(f -> {
 				f.addToCategory();
-				((SettingElement) f.getMainElement()).setSearchTags(new String[]{f.getMainElement().name()});
+				((SettingElement) f.getMainElement()).setSearchTags(new String[]{
+					f.getMainElement().name(),
+					f.getClass().getSimpleName()
+				});
 			});
 
 		// Add categories

@@ -8,6 +8,8 @@
 package dev.l3g7.griefer_utils.core.api;
 
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
+import dev.l3g7.griefer_utils.core.api.misc.Identifier;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.DebugSettings;
@@ -39,13 +41,24 @@ public class BugReporter {
 		.icon("steve")
 		.defaultValue(true);
 
+	public static final SwitchSetting shouldSendIdentifiers = SwitchSetting.create()
+		.name("Korrelationsidentifier mitsenden")
+		.description("Ob deine Korrelationsidentifier mitgesendet werden sollen.", "(Persistente Zufallszahlen, mit denen das GrieferUtils-Team Bugreports vom gleichen Einsender gruppieren kann.)")
+		.config("settings.automatic_bug_reporting.identifiers")
+		.icon("cpu")
+		.defaultValue(true);
+
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Automatische Fehlermeldung")
 		.description("Meldet automatisch durch GrieferUtils ausgelöste Fehler.")
 		.config("settings.automatic_bug_reporting.enabled")
 		.icon("bug")
 		.defaultValue(true)
-		.subSettings(shouldSendUuid, SuppressErrors.enabled, DebugSettings.enabled);
+		.subSettings(
+			shouldSendUuid, shouldSendIdentifiers, SuppressErrors.enabled,
+			HeaderSetting.create(),
+			DebugSettings.enabled
+		);
 
 	private static final Set<String> reportedBugs = new HashSet<>();
 	private static long timestampOfLastReport = 0;
@@ -119,6 +132,9 @@ public class BugReporter {
 
 				if (shouldSendUuid.get())
 					conn.addRequestProperty("X-MINECRAFT-UUID", String.valueOf(MinecraftUtil.uuid()));
+
+				if (shouldSendIdentifiers.get())
+					conn.addRequestProperty("X-IDENTIFIERS", Identifier.MACHINE_IDENT + "-" + Identifier.CWD_IDENT);
 
 				conn.setRequestMethod("POST");
 				try (OutputStream out = conn.getOutputStream()) {

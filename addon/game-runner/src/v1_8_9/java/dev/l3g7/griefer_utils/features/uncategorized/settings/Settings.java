@@ -48,6 +48,7 @@ public class Settings extends Feature {
 		.description("Ob auf die neuste stabile oder die Beta-Version geupdatet werden soll.")
 		.config("settings.auto_update.release_channel")
 		.icon("file")
+		.dynamicDefaultValue()
 		.defaultValue(labyBridge.isBeta() ? BETA : STABLE);
 
 	static {

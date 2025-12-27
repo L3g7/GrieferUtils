@@ -130,7 +130,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 			V value = get();
 
 			// Check if value matches the fallback value
-			if (value instanceof List<?> list ? list.isEmpty() : Objects.equals(s.fallbackValue, value))
+			if (s.unsetIfDefaultValue && value instanceof List<?> list ? list.isEmpty() : Objects.equals(s.fallbackValue, value))
 				Config.unset(s.configKey);
 			else
 				Config.set(s.configKey, s.encodeFunc.apply(value));
@@ -145,6 +145,14 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	 */
 	default S defaultValue(V value) {
 		getStorage().fallbackValue = value;
+		return (S) this;
+	}
+
+	/**
+	 * Marks the default value as being dynamic.
+	 */
+	default S dynamicDefaultValue() {
+		getStorage().unsetIfDefaultValue = false;
 		return (S) this;
 	}
 
@@ -170,6 +178,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 
 		public T value = null;
 		public T fallbackValue;
+		public boolean unsetIfDefaultValue = true;
 
 		public String configKey = null;
 		private String inferredKey = null;

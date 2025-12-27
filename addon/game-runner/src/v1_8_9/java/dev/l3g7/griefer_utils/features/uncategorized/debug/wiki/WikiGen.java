@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.features.widgets.Widget;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CitybuildSettingImpl;
 import net.labymod.api.client.gui.icon.Icon;
 import net.minecraft.item.ItemStack;
 
@@ -62,7 +63,10 @@ public class WikiGen {
 		JsonObject obj = new JsonObject();
 		obj.addProperty("name", setting.getStorage().name);
 		obj.addProperty("description", setting.getStorage().description);
-		obj.addProperty("icon", serializeIcon(setting.getStorage().icon));
+		if (setting instanceof CitybuildSettingImpl)
+			obj.addProperty("icon", "minecraft/nether_star.gif");
+		else
+			obj.addProperty("icon", serializeIcon(setting.getStorage().icon));
 
 		if (mainSetting.getChildSettings().size() > 0)
 			obj.add("subsettings", serializeSubsettings(mainSetting.getChildSettings()));

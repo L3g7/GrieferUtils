@@ -51,14 +51,6 @@ public class Settings extends Feature {
 		.dynamicDefaultValue()
 		.defaultValue(labyBridge.isBeta() ? BETA : STABLE);
 
-	static {
-		releaseChannel.callback(v -> {
-			if (labyBridge.isBeta() && v == STABLE) {
-				labyBridge.notify("§c§lWarnung ⚠", "§cDowngraden wird wahrscheinlich zu Fehlern führen!");
-			}
-		});
-	}
-
 	public static final SwitchSetting autoUpdateEnabled = SwitchSetting.create()
 		.name("Automatisch updaten")
 		.description("Updatet GrieferUtils automatisch auf die neuste Version.")

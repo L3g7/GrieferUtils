@@ -12,7 +12,7 @@ dependencies {
 	implementation("org.jetbrains:annotations:24.1.0")
 
 	// mXparser
-	implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.1.0")
+	implementation("org.mariuszgromada.math:MathParser.org-mXparser:6.1.0")
 
 	// ZXing (QR Code Reader)
 	implementation("com.google.zxing:core:3.5.1")

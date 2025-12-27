@@ -24,9 +24,11 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import org.mariuszgromada.math.mxparser.Expression;
+import org.mariuszgromada.math.mxparser.mXparser;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,6 +115,7 @@ public class Calculator extends Feature {
 
 	private Calculator() {
 		updatePlaceholderPattern();
+		mXparser.changeLanguageTo(Locale.GERMAN);
 	}
 
 	private void updatePlaceholderPattern() {

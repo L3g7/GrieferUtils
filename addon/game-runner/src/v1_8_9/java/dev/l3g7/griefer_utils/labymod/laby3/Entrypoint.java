@@ -48,8 +48,8 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		LibLoader.loadLibraries(
 			// mXparser: for evaluating expressions (Calculator)
 			"https://repo1.maven.org/maven2",
-			"org/mariuszgromada/math", "MathParser.org-mXparser", "5.1.0",
-			"B5472B5E1BBEFEA2DA6052C68A509C84C7F2CA5F99B76A4C5F58354C08818630",
+			"org/mariuszgromada/math", "MathParser.org-mXparser", "6.1.0",
+			"DCE2842BF63F4DEA154CAE4E75E0440BC884B2E60F4577726A1019B261E5627D",
 
 			// ZXing: for reading qr codes (QRCodeScanner)
 			"https://repo1.maven.org/maven2",

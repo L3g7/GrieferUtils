@@ -86,6 +86,8 @@ public class RecipePlayer {
 		if (currentWindowId != event.packet.func_148911_c())
 			return;
 
+		Queue<RecipeAction> pendingActions = RecipePlayer.pendingActions;
+
 		if (pendingActions == null || pendingActions.isEmpty() || lastReceiveEvent == null)
 			return;
 

@@ -29,7 +29,7 @@ public class GuiChangelog extends GuiScreen {
 	private static GuiScreen previousScreen;
 
 	private final boolean showDisableButton;
-	private final ChangelogEntry changelogXX;
+	private final ChangelogEntry changelog;
 	private final String version;
 
 	private TextList textList;
@@ -45,7 +45,7 @@ public class GuiChangelog extends GuiScreen {
 
 	public GuiChangelog(boolean showDisableButton, ChangelogEntry changelog, String version) {
 		this.showDisableButton = showDisableButton;
-		this.changelogXX = changelog;
+		this.changelog = changelog;
 		this.version = version;
 	}
 
@@ -57,7 +57,7 @@ public class GuiChangelog extends GuiScreen {
 		textList.addEntry("");
 
 		boolean isStart = true;
-		for (Entry<String, String[]> block : changelogXX.changelog.entrySet()) {
+		for (Entry<String, String[]> block : changelog.changelog.entrySet()) {
 			if (!isStart)
 				textList.addEntry("");
 

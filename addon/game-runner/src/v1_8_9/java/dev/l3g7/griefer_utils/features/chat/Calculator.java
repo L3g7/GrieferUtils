@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import org.mariuszgromada.math.mxparser.Expression;
+import org.mariuszgromada.math.mxparser.License;
 import org.mariuszgromada.math.mxparser.mXparser;
 
 import java.math.BigDecimal;
@@ -115,6 +116,7 @@ public class Calculator extends Feature {
 
 	private Calculator() {
 		updatePlaceholderPattern();
+		License.iConfirmNonCommercialUse("grieferutils@l3g7.dev");
 		mXparser.changeLanguageTo(Locale.GERMAN);
 	}
 

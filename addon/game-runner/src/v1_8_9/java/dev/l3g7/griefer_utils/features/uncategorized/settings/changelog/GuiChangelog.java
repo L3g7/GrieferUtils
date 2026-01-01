@@ -47,7 +47,6 @@ public class GuiChangelog extends GuiScreen {
 		this.showDisableButton = showDisableButton;
 		this.changelog = changelog;
 		this.version = version;
-		this.initGui();
 	}
 
 	@Override
@@ -78,6 +77,12 @@ public class GuiChangelog extends GuiScreen {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		if (textList == null) {
+			setWorldAndResolution(mc, 1, 1);
+			this.initGui();
+			return;
+		}
+
 		drawBackground(0);
 		textList.drawScreen(mouseX, mouseY, partialTicks);
 

@@ -47,6 +47,7 @@ public class GuiChangelog extends GuiScreen {
 		this.showDisableButton = showDisableButton;
 		this.changelog = changelog;
 		this.version = version;
+		this.initGui();
 	}
 
 	@Override

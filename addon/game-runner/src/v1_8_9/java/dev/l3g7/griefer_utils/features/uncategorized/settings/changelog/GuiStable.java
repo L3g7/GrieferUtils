@@ -35,6 +35,10 @@ public class GuiStable extends GuiScreen {
 		previousScreen = event.gui;
 	}
 
+	public GuiStable() {
+		this.initGui();
+	}
+
 	@Override
 	public void initGui() {
 		super.initGui();

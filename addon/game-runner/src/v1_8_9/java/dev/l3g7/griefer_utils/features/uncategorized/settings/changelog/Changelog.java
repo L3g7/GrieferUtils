@@ -78,7 +78,7 @@ public class Changelog {
 			return;
 		}
 
-		if (version.equals("2.3")) {
+		if (version.equals("2.3") && LabyBridge.labyBridge.isBeta()) {
 			mc().displayGuiScreen(new GuiStable());
 			// Fall through so GuiChangelog is shown first, followed by GuiStable
 		}

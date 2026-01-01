@@ -344,6 +344,13 @@ public class ConfigPatcher {
 		if (isConfigOlderThan("2.3-BETA-24"))
 			rename("chat.filter_webhooks.filter", "chat.filter_webhooks.filters.laby3");
 
+		if (isConfigOlderThan("2.3")) {
+			JsonObject autoUpdate = getParentOf("settings.auto_update.release_channel");
+			if (!autoUpdate.has("release_channel")) {
+				boolean wasBeta = versionInConfig.toLowerCase().contains("beta") || versionInConfig.toLowerCase().contains("rc");
+				autoUpdate.addProperty("release_channel", wasBeta ? "BETA" : "STABLE");
+			}
+		}
 	}
 
 	protected void rename(String oldKey, String newKey) {

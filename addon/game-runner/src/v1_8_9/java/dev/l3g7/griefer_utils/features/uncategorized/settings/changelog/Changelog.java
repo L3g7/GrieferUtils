@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.api.misc.config.ConfigPatcher;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData.ChangelogEntry;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
@@ -31,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.api.misc.VersionComparator.VERSION_COMPARATOR;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
@@ -75,7 +75,7 @@ public class Changelog {
 		}
 
 		// Unlock changelog setting
-		entries.sort(Comparator.comparing(BaseSetting::name, new VersionComparator()));
+		entries.sort(Comparator.comparing(BaseSetting::name, VERSION_COMPARATOR));
 		mc().addScheduledTask(() -> {
 			changelog.subSettings(entries);
 

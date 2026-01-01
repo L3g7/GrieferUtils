@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
-import dev.l3g7.griefer_utils.core.api.misc.VersionComparator;
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
@@ -29,6 +28,7 @@ import java.util.Map.Entry;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.misc.VersionComparator.VERSION_COMPARATOR;
 
 public class ConfigPatcher {
 
@@ -40,30 +40,32 @@ public class ConfigPatcher {
 		this.config = config;
 	}
 
+	private boolean isConfigOlderThan(String version) {
+		return VERSION_COMPARATOR.compare(version, config.get("version").getAsString()) < 0;
+	}
+
 	public void patch() {
 		if (!config.has("version")) {
 			config.addProperty("version", labyBridge.addonVersion());
 			return;
 		}
 
-		String version = config.get("version").getAsString();
+		String versionInConfig = config.get("version").getAsString();
 		String newVersion = labyBridge.addonVersion();
-		if (!newVersion.equals(version)) {
+		if (!newVersion.equals(versionInConfig)) {
 			config.addProperty("version", newVersion);
 			versionChanged = true;
 		}
 
-		VersionComparator cmp = new VersionComparator();
-
-		if (cmp.compare("2.0-BETA-13.2", version) < 0) {
+		if (isConfigOlderThan("2.0-BETA-13.2")) {
 			rename("item.inventory_tweaks.crafting_shift.craftingShift", "item.inventory_tweaks.better_shift.enabled");
 		}
 
-		if (cmp.compare("2.0-BETA-14", version) < 0) {
+		if (isConfigOlderThan("2.0-BETA-14")) {
 			String oldPath = "chat.command_pie_menu.entries";
-			JsonArray entries = getParent(oldPath).getAsJsonArray("entries");
+			JsonArray entries = getParentOf(oldPath).getAsJsonArray("entries");
 			if (entries != null) {
-				JsonObject parent = getParent("chat.command_pie_menu.pages");
+				JsonObject parent = getParentOf("chat.command_pie_menu.pages");
 				JsonArray pages = new JsonArray();
 				JsonObject page = new JsonObject();
 				page.addProperty("name", "Unbenannte Seite");
@@ -84,7 +86,7 @@ public class ConfigPatcher {
 			rename("world.chest_search", "world.item_search");
 		}
 
-		if (cmp.compare("2.0-RC-8", version) < 0) {
+		if (isConfigOlderThan("2.0-RC-8")) {
 			JsonObject parent = get("item.orb_saver");
 			if (parent != null) {
 				if (getBooleanValue(parent.get("enabled"))) {
@@ -95,7 +97,7 @@ public class ConfigPatcher {
 			}
 		}
 
-		if (cmp.compare("2.0-RC-9", version) < 0) {
+		if (isConfigOlderThan("2.0-RC-9")) {
 			rename("modules.block_preview.show_coordinates", "modules.block_info.show_coords");
 			rename("modules.tps", "modules.server_performance");
 			rename("modules.spawn_counter.roundsRan", "modules.spawn_counter.rounds_ran");
@@ -121,7 +123,7 @@ public class ConfigPatcher {
 			}
 		}
 
-		if (cmp.compare("2.0-RC-12", version) < 0) {
+		if (isConfigOlderThan("2.0-RC-12")) {
 			rename("world.show_spawner_icons", "world.better_spawners.show_spawner_icons");
 			JsonObject betterSpawners = get("world.better_spawners");
 
@@ -137,7 +139,7 @@ public class ConfigPatcher {
 			}
 		}
 
-		if (cmp.compare("2.0", version) < 0) {
+		if (isConfigOlderThan("2.0")) {
 			JsonObject chatReactor = get("chat.chat_reactor");
 			if (chatReactor.has("entries")) {
 				JsonArray entries = chatReactor.getAsJsonArray("entries");
@@ -154,11 +156,11 @@ public class ConfigPatcher {
 			}
 		}
 
-		if (cmp.compare("2.2-BETA-1", version) < 0) {
+		if (isConfigOlderThan("2.2-BETA-1")) {
 			rename("chat.fix_ghost_blocks", "chat.ghost_blocks_fix");
 		}
 
-		if (cmp.compare("2.2-BETA-6", version) < 0) {
+		if (isConfigOlderThan("2.2-BETA-6")) {
 			JsonElement element = get("item.recraft").get("key");
 			if (element != null) {
 				JsonObject object = null;
@@ -173,7 +175,7 @@ public class ConfigPatcher {
 			}
 		}
 
-		if (cmp.compare("2.3-BETA-3", version) < 0) {
+		if (isConfigOlderThan("2.3-BETA-3")) {
 			JsonObject o = get("modules.money.balances");
 			for (Entry<String, JsonElement> entry : o.entrySet()) {
 				JsonObject balances = entry.getValue().getAsJsonObject();
@@ -184,7 +186,7 @@ public class ConfigPatcher {
 			}
 		}
 
-		if (cmp.compare("2.3-BETA-6", version) < 0 && LABY_3.isActive()) {
+		if (isConfigOlderThan("2.3-BETA-6") && LABY_3.isActive()) {
 			// Patch modules
 			Map<String, String> map = new HashMap<>() {{
 				for (String key : new String[]{
@@ -270,7 +272,7 @@ public class ConfigPatcher {
 			LabyMod.getInstance().getChatToolManager().saveTools();
 		}
 
-		if (cmp.compare("2.3-BETA-8", version) < 0 && LABY_3.isActive()) {
+		if (isConfigOlderThan("2.3-BETA-8") && LABY_3.isActive()) {
 
 			// Patch filters
 			for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
@@ -293,7 +295,7 @@ public class ConfigPatcher {
 			LabyMod.getInstance().getChatToolManager().saveTools();
 		}
 
-		if (cmp.compare("2.3-BETA-14", version) < 0) {
+		if (isConfigOlderThan("2.3-BETA-14")) {
 			String[] validKeys = new String[]{"/premium", "/ultra", "/kopf", "/grieferboost", "/freekiste", "/startkick"};
 			for (Entry<String, JsonElement> entry : get("player.cooldown_notifications.end_dates").entrySet()) {
 				JsonObject data = entry.getValue().getAsJsonObject();
@@ -323,7 +325,7 @@ public class ConfigPatcher {
 
 		}
 
-		if (version.equals("2.3-BETA-15")) {
+		if (versionInConfig.equals("2.3-BETA-15")) {
 			for (String key : new String[]{"chat", "item", "render", "player", "world"}) {
 				JsonObject root = get(key).getAsJsonObject();
 				if (get(key + ".active").isJsonObject()) {
@@ -333,31 +335,31 @@ public class ConfigPatcher {
 			}
 		}
 
-		if (cmp.compare("2.3-BETA-18", version) < 0) {
-			JsonObject autoUnnick = getParent("chat.auto_unnick.tab");
+		if (isConfigOlderThan("2.3-BETA-18")) {
+			JsonObject autoUnnick = getParentOf("chat.auto_unnick.tab");
 			if (!autoUnnick.has("tab"))
 				autoUnnick.addProperty("tab", false);
 		}
 
-		if (cmp.compare("2.3-BETA-24", version) < 0)
+		if (isConfigOlderThan("2.3-BETA-24"))
 			rename("chat.filter_webhooks.filter", "chat.filter_webhooks.filters.laby3");
 
 	}
 
-	private void rename(String oldKey, String newKey) {
-		JsonObject oldParent = getParent(oldKey);
-		JsonObject newParent = getParent(newKey);
+	protected void rename(String oldKey, String newKey) {
+		JsonObject oldParent = getParentOf(oldKey);
+		JsonObject newParent = getParentOf(newKey);
 
 		if (oldParent.get(getKey(oldKey)) != null)
 			newParent.add(getKey(newKey), oldParent.get(getKey(oldKey)));
 	}
 
 	private JsonObject get(String path) {
-		return getParent(path + ".,");
+		return getParentOf(path + ".,");
 	}
 
-	private JsonObject getParent(String path) {
-		String[] parts = path.split("\\.");
+	private JsonObject getParentOf(String child) {
+		String[] parts = child.split("\\.");
 		JsonObject obj = config;
 		for (int i = 0; i < parts.length - 1; i++) {
 			if (!obj.has(parts[i]) || !(obj.get(parts[i]).isJsonObject()))
@@ -372,7 +374,7 @@ public class ConfigPatcher {
 	}
 
 	private void set(String path, JsonElement value) {
-		getParent(path).add(getKey(path), value);
+		getParentOf(path).add(getKey(path), value);
 	}
 
 	private boolean getBooleanValue(JsonElement element) {

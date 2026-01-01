@@ -13,7 +13,11 @@ import java.util.regex.Pattern;
 
 public class VersionComparator implements Comparator<String> {
 
+	public static final VersionComparator VERSION_COMPARATOR = new VersionComparator();
+
 	private final Pattern VERSION_PATTERN = Pattern.compile("^v?(?<version>(?:\\d+\\.)*\\d+)(?:-(?<meta>[\\w.+-]+?)(?<metaid>[\\d.]*))?$");
+
+	private VersionComparator() {}
 
 	@Override
 	public int compare(String o1, String o2) {

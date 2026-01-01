@@ -49,7 +49,7 @@ public class Identifier {
 					Files.setAttribute(path, "dos:hidden", true);
 					Files.setAttribute(path, "dos:system", true);
 					Files.setAttribute(path, "dos:readonly", true);
-				} catch (IOException ignored) {
+				} catch (Throwable ignored) {
 					// Don't care
 				}
 			}

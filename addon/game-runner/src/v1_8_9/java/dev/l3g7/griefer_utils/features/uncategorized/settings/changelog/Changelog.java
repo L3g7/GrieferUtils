@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.core.api.misc.config.ConfigPatcher;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData.ChangelogEntry;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
@@ -45,20 +44,6 @@ public class Changelog {
 		.disable()
 		.subSettings();
 
-	@OnStartupComplete
-	public void onEnable() {
-		if (!AutoUpdater.hasUpdated || !ConfigPatcher.versionChanged || changelogs == null)
-			return;
-
-		String version = LabyBridge.labyBridge.addonVersion();
-		if (!changelogs.containsKey(version)) {
-			BugReporter.reportError(new Throwable("Could not find changelog for " + version));
-			return;
-		}
-
-		mc().displayGuiScreen(new GuiChangelog(true, changelogs.get(version), version));
-	}
-
 	@EventListener
 	private void onStaticData(StaticDataReceiveEvent event) {
 		List<BaseSetting<?>> entries = new ArrayList<>();
@@ -83,6 +68,22 @@ public class Changelog {
 				.description("Was sich in den einzelnen Updates von GrieferUtils verändert hat.")
 				.enable();
 		});
+
+		if (!AutoUpdater.hasUpdated || !ConfigPatcher.versionChanged || changelogs == null)
+			return;
+
+		String version = LabyBridge.labyBridge.addonVersion();
+		if (!changelogs.containsKey(version)) {
+			BugReporter.reportError(new Throwable("Could not find changelog for " + version));
+			return;
+		}
+
+		if (version.equals("2.3")) {
+			mc().displayGuiScreen(new GuiStable());
+			// Fall through so GuiChangelog is shown first, followed by GuiStable
+		}
+
+		mc().displayGuiScreen(new GuiChangelog(true, changelogs.get(version), version));
 	}
 
 	private ButtonSetting addIconLaby4(ButtonSetting button) { // TODO refactor

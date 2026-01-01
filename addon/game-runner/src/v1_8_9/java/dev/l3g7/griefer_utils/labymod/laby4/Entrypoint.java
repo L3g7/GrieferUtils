@@ -44,8 +44,8 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 
 			// ZXing: for reading qr codes (QRCodeScanner)
 			"https://repo1.maven.org/maven2",
-			"com/google/zxing", "core", "3.5.1",
-			"1BA7C0FBB6C267E2FB74E1497D855ADAE633CCC98EDC8C75163AA64BC08E3059"
+			"com/google/zxing", "core", "3.5.4",
+			"71DE5D89341B5FCF5DD89DA7F44E84D825D0E084CDF3EC77C9ABE26B0F0CEB13"
 		);
 	}
 

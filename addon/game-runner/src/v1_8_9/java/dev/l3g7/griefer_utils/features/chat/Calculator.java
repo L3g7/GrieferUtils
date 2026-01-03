@@ -245,7 +245,7 @@ public class Calculator extends Feature {
 				String amount = lastPayment.equals(BigDecimal.ZERO) ? "0.001" : lastPayment.stripTrailingZeros().toPlainString();
 
 				// Wait 1 tick (chat screen still open)
-				TickScheduler.runAfterRenderTicks(() -> suggest("/pay %s %s", lastPaymentReceiver, amount), 1);
+				TickScheduler.runNextRenderTick(() -> suggest("/pay %s %s", lastPaymentReceiver, amount));
 				return;
 			}
 		}

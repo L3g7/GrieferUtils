@@ -27,6 +27,13 @@ public class TickScheduler {
 	private static final Map<Runnable, AtomicInteger> renderTickTasks = new HashMap<>();
 
 	/**
+	 * Runs the given runnable after one client tick.
+	 */
+	public static void runNextClientTick(Runnable runnable) {
+		runAfterClientTicks(runnable, 1);
+	}
+
+	/**
 	 * Runs the given runnable after the given delay in client ticks.
 	 */
 	public static void runAfterClientTicks(Runnable runnable, int delay) {
@@ -41,9 +48,21 @@ public class TickScheduler {
 	}
 
 	/**
+	 * Runs the given runnable after one render tick.
+	 */
+	public static void runNextRenderTick(Runnable runnable) {
+		runAfterRenderTicks(runnable, 1);
+	}
+
+	/**
 	 * Runs the given runnable after the given delay in render ticks.
 	 */
 	public static void runAfterRenderTicks(Runnable runnable, int delay) {
+		if (delay == 0) {
+			runnable.run();
+			return;
+		}
+
 		synchronized (renderTickTasks) {
 			renderTickTasks.put(runnable, new AtomicInteger(delay));
 		}

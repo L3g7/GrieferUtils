@@ -74,10 +74,10 @@ public class OrbSellerFix extends Feature {
 
 		new Timer().schedule(new TimerTask() {
 			public void run() {
-				TickScheduler.runAfterRenderTicks(() -> {
+				TickScheduler.runNextRenderTick(() -> {
 					cbToId.clear();
 					saveIds();
-				}, 1);
+				});
 			}
 		}, new Date(Config.get(key + "reset").getAsLong()), 24 * 3600 * 1000);
 	}
@@ -87,10 +87,10 @@ public class OrbSellerFix extends Feature {
 		if (mousePos == null)
 			return;
 
-		TickScheduler.runAfterRenderTicks(() -> {
+		TickScheduler.runNextRenderTick(() -> {
 			Mouse.setCursorPosition(mousePos.getLeft(), mousePos.getRight());
 			mousePos = null;
-		}, 1);
+		});
 	}
 
 	@EventListener

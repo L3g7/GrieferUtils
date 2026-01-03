@@ -116,7 +116,7 @@ public class BetterHopper extends Feature {
 
 		addHopper(event.pos);
 		mc().getNetHandler().addToSendQueue(new C0BPacketEntityAction(player(), START_SNEAKING));
-		TickScheduler.runAfterRenderTicks(() -> mc().getNetHandler().addToSendQueue(new C0BPacketEntityAction(player(), STOP_SNEAKING)), 1);
+		TickScheduler.runNextRenderTick(() -> mc().getNetHandler().addToSendQueue(new C0BPacketEntityAction(player(), STOP_SNEAKING)));
 	}
 
 	private static void addHopper(BlockPos pos) {

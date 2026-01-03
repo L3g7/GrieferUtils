@@ -250,7 +250,7 @@ public class CraftPlayer {
 
 		if (state == WAITING_FOR_GUI) {
 			state = INTO_HOTBAR;
-			TickScheduler.runAfterRenderTicks(CraftPlayer::startAction, 1);
+			TickScheduler.runNextRenderTick(CraftPlayer::startAction);
 			return;
 		}
 
@@ -260,7 +260,7 @@ public class CraftPlayer {
 		resyncReference = null;
 
 		if (state == FINISHED) {
-			TickScheduler.runAfterClientTicks(CraftPlayer::startAction, 1);
+			TickScheduler.runNextClientTick(CraftPlayer::startAction);
 			return;
 		}
 
@@ -302,7 +302,7 @@ public class CraftPlayer {
 
 		if (state == FINISHED) {
 			// Resync one last time
-			TickScheduler.runAfterClientTicks(() -> forceResync(state, null), 1);
+			TickScheduler.runNextClientTick(() -> forceResync(state, null));
 			return;
 		}
 
@@ -313,7 +313,7 @@ public class CraftPlayer {
 		}
 
 		if (state == INTO_CRAFTING)
-			TickScheduler.runAfterClientTicks(CraftPlayer::executeClicks, 1);
+			TickScheduler.runNextClientTick(CraftPlayer::executeClicks);
 	}
 
 	private static void click(int windowId, int slotId, int button, int delay) {

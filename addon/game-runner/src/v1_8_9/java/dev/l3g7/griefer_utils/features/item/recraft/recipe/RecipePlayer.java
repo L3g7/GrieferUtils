@@ -133,12 +133,12 @@ public class RecipePlayer {
 
 			RecraftLogger.log("Closing window");
 			pendingActions = null;
-			TickScheduler.runAfterClientTicks(() -> {
+			TickScheduler.runNextClientTick(() -> {
 				if (onFinish.get()) {
 					mc().getNetHandler().addToSendQueue(new C0DPacketCloseWindow(currentWindowId));
 					mc().addScheduledTask(player()::closeScreenAndDropStack);
 				}
-			}, 1);
+			});
 			return;
 		} else if (lastReceiveEvent == null) {
 			if (!currentExecutor.onNewWindow()) {
@@ -148,10 +148,10 @@ public class RecipePlayer {
 		}
 
 		lastReceiveEvent = null;
-		TickScheduler.runAfterClientTicks(() -> {
+		TickScheduler.runNextClientTick(() -> {
 			if (currentWindowId == event.packet.getWindowId())
 				executeAction(event.packet.getWindowId());
-		}, 1);
+		});
 	}
 
 	private static void executeAction(int windowId) {

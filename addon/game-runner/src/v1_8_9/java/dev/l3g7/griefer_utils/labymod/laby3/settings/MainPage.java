@@ -134,7 +134,7 @@ public class MainPage {
 
 
 	private static void onSearch() {
-		TickScheduler.runAfterRenderTicks(() -> {
+		TickScheduler.runNextRenderTick(() -> {
 			if (!(mc().currentScreen instanceof LabyModAddonsGui))
 				return;
 
@@ -181,7 +181,7 @@ public class MainPage {
 				.filter(s -> s.getDisplayName().replaceAll("§.", "").toLowerCase().contains(needle)
 					|| ((Laby3Setting<?, ?>) s).getStorage().alias.toLowerCase().contains(needle))
 				.forEach(v -> listedElementsStored.add(c(v)));
-		}, 1);
+		});
 	}
 
 	@EventListener

@@ -99,7 +99,7 @@ public class AutoEat extends Feature {
 		TickScheduler.runAfterClientTicks(() -> {
 			KeyBinding.setKeyBindState(settings().keyBindUseItem.getKeyCode(), false);
 			int prevHotbarSlot = previousHotbarSlot;
-			TickScheduler.runAfterClientTicks(() -> inventory().currentItem = prevHotbarSlot, 1);
+			TickScheduler.runNextClientTick(() -> inventory().currentItem = prevHotbarSlot);
 			previousHotbarSlot = -1;
 			finishing = false;
 		}, 3);

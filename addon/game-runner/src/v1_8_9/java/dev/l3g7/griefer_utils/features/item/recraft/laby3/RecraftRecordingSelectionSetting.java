@@ -142,12 +142,12 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 
 	void fromInt(int index) {
 		// All recordings must have been loaded before the selected one can be loaded
-		TickScheduler.runAfterRenderTicks(() -> {
+		TickScheduler.runNextRenderTick(() -> {
 			iterate((i, rec) -> {
 				if (i == index)
 					setSelectedRecording(rec);
 			});
-		}, 1);
+		});
 	}
 
 	boolean execute(RecordingMode previousMode) {
@@ -155,7 +155,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			return true;
 
 		if (previousMode == RECIPE || recording.mode().get() == RECIPE) {
-			TickScheduler.runAfterClientTicks(() -> recording.getCore().play(true), 1);
+			TickScheduler.runNextClientTick(() -> recording.getCore().play(true));
 			return true;
 		}
 

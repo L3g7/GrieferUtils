@@ -66,7 +66,7 @@ public class HeadSaver extends ItemSaver {
 			return;
 
 		String name = event.message.substring("/kopf ".length());
-		TickScheduler.runAfterRenderTicks(() -> displayScreen(name), 1);
+		TickScheduler.runNextRenderTick(() -> displayScreen(name));
 		event.cancel();
 	}
 

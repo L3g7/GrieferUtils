@@ -117,7 +117,7 @@ public class Booster extends Widget {
 
 		if (waitingForBoosterInfo && msg.equals("Folgende Booster sind auf diesem Server aktiv:")) {
 			event.cancel();
-			TickScheduler.runAfterClientTicks(() -> waitingForBoosterInfo = false, 1);
+			TickScheduler.runNextClientTick(() -> waitingForBoosterInfo = false);
 			return;
 		}
 

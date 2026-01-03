@@ -79,11 +79,11 @@ public class PlayerListEntryResolver {
 		try {
 			BufferedImage img = readImage(profile.avatar + "&height=128&width=128");
 
-			TickScheduler.runAfterRenderTicks(() -> {
+			TickScheduler.runNextRenderTick(() -> {
 				entry.skin = new DynamicTexture(img);
 				LOOKUP_MAP.put(entry.name, entry);
 				entry.skin.loadTexture(mc().getResourceManager());
-			}, 1);
+			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -126,11 +126,11 @@ public class PlayerListEntryResolver {
 			BufferedImage img = readImage(url);
 			entry.oldSkin = img.getHeight() == 32;
 
-			TickScheduler.runAfterRenderTicks(() -> {
+			TickScheduler.runNextRenderTick(() -> {
 				entry.skin = new DynamicTexture(img);
 				LOOKUP_MAP.put(entry.name, entry);
 				entry.skin.loadTexture(mc().getResourceManager());
-			}, 1);
+			});
 		}
 	}
 
@@ -146,10 +146,10 @@ public class PlayerListEntryResolver {
 		String skinData = profile.getAsJsonObject("textures").getAsJsonObject("skin").get("data").getAsString();
 		BufferedImage img = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(skinData)));
 
-		TickScheduler.runAfterRenderTicks(() -> {
+		TickScheduler.runNextRenderTick(() -> {
 			entry.skin = new DynamicTexture(img);
 			entry.skin.loadTexture(mc().getResourceManager());
-		}, 1);
+		});
 	}
 
 

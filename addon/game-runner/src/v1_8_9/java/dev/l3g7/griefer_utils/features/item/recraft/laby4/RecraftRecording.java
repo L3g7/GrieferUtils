@@ -147,7 +147,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 			return true;
 
 		if (mode().get() == RECIPE || recording.mode().get() == RECIPE) {
-			TickScheduler.runAfterClientTicks(() -> recording.play(true), 1);
+			TickScheduler.runNextClientTick(() -> recording.play(true));
 			return true;
 		}
 
@@ -262,7 +262,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 						int index = object.get("successor").getAsInt();
 
 						// All recordings must have been loaded before the selected one can be loaded
-						TickScheduler.runAfterRenderTicks(() -> {
+						TickScheduler.runNextRenderTick(() -> {
 							int pageIdx = 0;
 
 							pageLoop:
@@ -278,7 +278,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 
 								pageIdx++;
 							}
-						}, 1);
+						});
 
 					}
 

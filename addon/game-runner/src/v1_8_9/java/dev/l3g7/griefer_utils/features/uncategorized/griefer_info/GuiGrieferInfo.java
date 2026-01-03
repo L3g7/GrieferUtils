@@ -54,7 +54,7 @@ public class GuiGrieferInfo extends GuiBigChest {
 
 		if (message.equals("/gi") || message.equals("/info")) {
 			event.cancel();
-			TickScheduler.runAfterRenderTicks(GUI::open, 1);
+			TickScheduler.runNextRenderTick(GUI::open);
 		}
 	}
 

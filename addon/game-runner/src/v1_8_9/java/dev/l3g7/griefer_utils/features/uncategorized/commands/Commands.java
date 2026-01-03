@@ -84,7 +84,7 @@ public class Commands {
 			return;
 
 		if (player() == null) {
-			TickScheduler.runAfterClientTicks(() -> onCitybuild(event), 1);
+			TickScheduler.runNextClientTick(() -> onCitybuild(event));
 			return;
 		}
 

@@ -50,10 +50,10 @@ public class HighlightSchematicaBlocks {
 				return;
 
 			triggeredFromBlockUpdate = true;
-			TickScheduler.runAfterRenderTicks(() -> {
+			TickScheduler.runNextRenderTick(() -> {
 				updateItemList();
 				triggeredFromBlockUpdate = false;
-			}, 1);
+			});
 		}
 
 		public void notifyLightSet(BlockPos pos) {}

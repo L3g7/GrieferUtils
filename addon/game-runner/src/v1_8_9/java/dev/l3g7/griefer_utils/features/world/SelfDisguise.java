@@ -170,7 +170,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 		if (currentDisguise != null)
 			world().removeEntity(currentDisguise);
 
-		TickScheduler.runAfterClientTicks(() -> {
+		TickScheduler.runNextClientTick(() -> {
 			try {
 				loadDisguise(lastSentDisguiseCommand);
 			} catch (Throwable t) {
@@ -178,7 +178,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 			}
 			unknownArgs = null;
 			lastSentDisguiseCommand = null;
-		}, 1);
+		});
 	}
 
 	@EventListener(priority = LOWEST)

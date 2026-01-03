@@ -146,7 +146,7 @@ public class ShowJoins extends Feature {
 
 		UUID uuid = event.data.getProfile().getId();
 
-		TickScheduler.runAfterClientTicks(() -> {
+		TickScheduler.runNextClientTick(() -> {
 			long time = event.readTime - (addTimestamps.containsKey(uuid) ? addTimestamps.remove(uuid) : 0);
 			if (time < 75_000_000)
 				return;
@@ -154,7 +154,7 @@ public class ShowJoins extends Feature {
 			display(Constants.ADDON_PREFIX + "§8[§c-§8] "
 				+ getPlayerListPrefix(name, event.data.getProfile().getId())
 				+ "§r" + name);
-		}, 1);
+		});
 	}
 
 	@EventListener

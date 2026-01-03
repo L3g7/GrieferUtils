@@ -206,10 +206,10 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		if (itemMoveOrigin == -1)
 			return;
 
-		TickScheduler.runAfterRenderTicks(() -> {
+		TickScheduler.runNextRenderTick(() -> {
 			if (itemMoveOrigin != -1)
 				move(true);
-		}, 1);
+		});
 	}
 
 	// Mark last opened spawner

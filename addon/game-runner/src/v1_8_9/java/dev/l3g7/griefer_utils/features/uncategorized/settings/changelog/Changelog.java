@@ -73,10 +73,8 @@ public class Changelog {
 			return;
 
 		String version = LabyBridge.labyBridge.addonVersion();
-		if (!changelogs.containsKey(version)) {
-			BugReporter.reportError(new Throwable("Could not find changelog for " + version));
+		if (!changelogs.containsKey(version))
 			return;
-		}
 
 		if (version.equals("2.3") && LabyBridge.labyBridge.isBeta()) {
 			mc().displayGuiScreen(new GuiStable());

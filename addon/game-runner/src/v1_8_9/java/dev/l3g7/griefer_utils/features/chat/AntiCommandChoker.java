@@ -129,7 +129,7 @@ public class AntiCommandChoker extends Feature {
 			IChatComponent no = new ChatComponentText("§c[✖]").setChatStyle(new ChatStyle()
 				.setChatClickEvent(getClickEvent(null, id)));
 
-			mc().addScheduledTask(() -> mc().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(question.appendSibling(yes).appendSibling(no), id));
+			TickScheduler.runNextClientTick(() -> mc().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(question.appendSibling(yes).appendSibling(no), id));
 			event.cancel();
 			return;
 		}

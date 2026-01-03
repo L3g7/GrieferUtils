@@ -98,7 +98,7 @@ public class AutoPortal extends Feature {
 			mc().addScheduledTask(() -> mc().displayGuiScreen(new GuiConnecting(new GuiMainMenu(), mc(), new ServerData("GrieferGames", "griefergames.net", false))));
 
 		if (maximize.get())
-			OS.maximizeWindow();
+			mc().addScheduledTask(OS::maximizeWindow);
 	}
 
 }

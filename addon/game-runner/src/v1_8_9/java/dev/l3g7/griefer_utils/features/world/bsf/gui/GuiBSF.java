@@ -54,9 +54,9 @@ public class GuiBSF extends GuiBigChest {
 				return;
 			}
 
-			List<String> lore = new ArrayList<>(Arrays.asList("§fBitte erkunde die Farmwelt."));
+			List<String> lore = new ArrayList<>(Arrays.asList("§fBitte erkunde die " + (BSF.isInGlitchwelt() ? "Glitchwelt." : "Farmwelt.")));
 
-			if (!BSF.notify.contains(getCurrentCitybuild())) {
+			if (!BSF.notify.contains(BSF.getCurrentCBString())) {
 				lore.addAll(Arrays.asList("",
 					"§7Wenn du eine Benachrichtigung bekommen willst,",
 					"§7sobald die Suche bereit ist, klicke auf das Item."));
@@ -65,7 +65,7 @@ public class GuiBSF extends GuiBigChest {
 			TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", lore.toArray(new String[0]));
 
 			addTextureItem(13, item, () -> {
-				if (BSF.notify.add(getCurrentCitybuild())) {
+				if (BSF.notify.add(BSF.getCurrentCBString())) {
 					labyBridge.notify("§aBenachrichtigung", "§aDu bekommst nun " + (LABY_4.isActive() ? "eine Benachrichtigung" : "ein Popup") + ",\nwenn die Suche bereit ist!");
 					new GuiBSF().open(); // Rebuild GUI
 				}

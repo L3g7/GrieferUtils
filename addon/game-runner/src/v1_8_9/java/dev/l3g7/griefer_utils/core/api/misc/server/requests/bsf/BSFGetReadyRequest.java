@@ -16,7 +16,7 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.BSF_URL;
 public class BSFGetReadyRequest extends Request<List<String>> {
 
 	public BSFGetReadyRequest() {
-		super(BSF_URL, "/get_ready");
+		super(BSF_URL, "/get_ready/v2");
 	}
 
 	@Override

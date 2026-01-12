@@ -8,12 +8,10 @@
 package dev.l3g7.griefer_utils.features.world.bsf.gui;
 
 import com.google.common.collect.ImmutableList;
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFSearchRequest;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.world.bsf.BSF;
 import dev.l3g7.griefer_utils.features.world.bsf.Waypoint;
 import dev.l3g7.griefer_utils.features.world.bsf.data.BSFSearchable;
@@ -41,7 +39,7 @@ class GuiSearches extends GuiBigChest {
 	public GuiSearches(BSFSearchable searchable, String title, TextureItem icon, GuiBigChest previousGui) {
 		this(searchable, title, icon, previousGui, !BSF.isInFarmwelt()
 			? ImmutableList.of()
-			: BSF.SEARCH_DATA.computeIfAbsent(MinecraftUtil.getCurrentCitybuild(), k -> new HashMap<>())
+			: BSF.SEARCH_DATA.computeIfAbsent(BSF.getCurrentCBString(), k -> new HashMap<>())
 			.computeIfAbsent(searchable, k -> new ArrayList<>()));
 	}
 
@@ -65,7 +63,7 @@ class GuiSearches extends GuiBigChest {
 				List<Integer> exclude = searchData.stream().map(BSF.SearchData::index).collect(Collectors.toList());
 
 				if (searchable instanceof Structure s) {
-					GUServer.searchStructure(s.ordinal(), exclude).thenAccept(this::onSearchResponse);
+					GUServer.searchStructure(BSF.isInGlitchwelt(), s.ordinal(), exclude).thenAccept(this::onSearchResponse);
 					return;
 				}
 
@@ -76,7 +74,7 @@ class GuiSearches extends GuiBigChest {
 					ids = ((Category) searchable).biomeIds;
 				}
 
-				GUServer.searchBiome(ids, exclude).thenAccept(this::onSearchResponse);
+				GUServer.searchBiome(BSF.isInGlitchwelt(), ids, exclude).thenAccept(this::onSearchResponse);
 			});
 		}
 
@@ -127,7 +125,7 @@ class GuiSearches extends GuiBigChest {
 
 		if (r == BSFSearchRequest.SearchResponse.WORLD_NOT_READY) {
 			labyBridge.notify("§cWelt gelöscht \u26A0", "§cBitte erkunde die Farmwelt erneut.");
-			Citybuild cb = MinecraftUtil.getCurrentCitybuild();
+			String cb = BSF.getCurrentCBString();
 			BSF.READY_CBS.remove(cb);
 			BSF.SEARCH_DATA.remove(cb);
 			Waypoint.disable();

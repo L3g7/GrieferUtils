@@ -34,6 +34,7 @@ public class BSFCollector {
 	private static final Queue<ProcessData> processQueue = new LinkedList<>();
 	public static boolean processing = false;
 
+	static boolean isGlitch;
 	private static Pair<Integer, Integer> worldCenter;
 
 	static boolean isInFarmwelt() {
@@ -52,8 +53,11 @@ public class BSFCollector {
 		if (Reflection.get(packet, "action") != S44PacketWorldBorder.Action.INITIALIZE)
 			return null;
 
-		if ((double) Reflection.get(packet, "targetSize") != 100000d)
+		double targetSize = Reflection.get(packet, "targetSize");
+		if (targetSize != 100_000d && targetSize != 40_000d)
 			return null;
+
+		isGlitch = targetSize == 40_000d;
 
 		double centerX = Reflection.get(packet, "centerX");
 		double centerZ = Reflection.get(packet, "centerZ");
@@ -173,7 +177,7 @@ public class BSFCollector {
 			keys.remove(idx);
 		}
 
-		ProcessData processData = new ProcessData(cb, origin, data);
+		ProcessData processData = new ProcessData(cb, isGlitch, origin, data);
 		if (processing) {
 			synchronized (processQueue) {
 				processQueue.add(processData);
@@ -187,7 +191,8 @@ public class BSFCollector {
 	}
 
 	private static void process(ProcessData data) {
-		GUServer.processBSFData(data.cb.getInternalName(), worldCenter.a, worldCenter.b, data.origin, data.data).thenAccept(cbs -> {
+		String cb = (data.isGlitch ? "g" : "") + data.cb.getInternalName();
+		GUServer.processBSFData(cb, worldCenter.a, worldCenter.b, data.origin, data.data).thenAccept(cbs -> {
 			if (cbs == null)
 				return;
 
@@ -201,7 +206,7 @@ public class BSFCollector {
 
 			// Prefer processing current cb next
 			synchronized (processQueue) {
-				Optional<ProcessData> currentData = processQueue.stream().filter(p -> p.cb.equals(getCurrentCitybuild())).findAny();
+				Optional<ProcessData> currentData = processQueue.stream().filter(p -> p.cb.equals(getCurrentCitybuild()) && p.isGlitch == isGlitch).findAny();
 				ProcessData next = currentData.orElseGet(processQueue::peek);
 				processQueue.remove(next);
 
@@ -231,6 +236,6 @@ public class BSFCollector {
 
 	}
 
-	private record ProcessData(Citybuild cb, BlockPos origin, Set<Data> data) {}
+	private record ProcessData(Citybuild cb, boolean isGlitch, BlockPos origin, Set<Data> data) {}
 
 }

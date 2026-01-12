@@ -181,9 +181,9 @@ public class GUServer {
 		).send());
 	}
 
-	public static CompletableFuture<BSFSearchRequest.SearchResponse> searchStructure(int structure, List<Integer> excluded) {
+	public static CompletableFuture<BSFSearchRequest.SearchResponse> searchStructure(boolean isGlitch, int structure, List<Integer> excluded) {
 		return CompletableFuture.supplyAsync(() -> new BSFSearchRequest.Structure(
-			MinecraftUtil.getCurrentCitybuild().getInternalName(),
+			(isGlitch ? "g" : "") + MinecraftUtil.getCurrentCitybuild().getInternalName(),
 			player().chunkCoordX,
 			player().chunkCoordZ,
 			structure,
@@ -191,9 +191,9 @@ public class GUServer {
 		).send());
 	}
 
-	public static CompletableFuture<BSFSearchRequest.SearchResponse> searchBiome(List<Integer> ids, List<Integer> excluded) {
+	public static CompletableFuture<BSFSearchRequest.SearchResponse> searchBiome(boolean isGlitch, List<Integer> ids, List<Integer> excluded) {
 		return CompletableFuture.supplyAsync(() -> new BSFSearchRequest.Biome(
-			MinecraftUtil.getCurrentCitybuild().getInternalName(),
+			(isGlitch ? "g" : "") + MinecraftUtil.getCurrentCitybuild().getInternalName(),
 			player().chunkCoordX,
 			player().chunkCoordZ,
 			ids,

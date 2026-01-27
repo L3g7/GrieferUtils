@@ -147,6 +147,8 @@ public class LabyBridgeImpl implements LabyBridge {
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
 		} catch (HeadlessException e) {
 			notifyError("Keine Zwischenablage verfügbar!");
+		} catch (IllegalStateException e) {
+			notifyError("Die Zwischenablage wird derzeit verwendet!");
 		}
 	}
 

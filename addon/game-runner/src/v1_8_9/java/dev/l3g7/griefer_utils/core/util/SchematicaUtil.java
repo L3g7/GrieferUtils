@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.core.util;
 import com.github.lunatrius.schematica.Schematica;
 import com.github.lunatrius.schematica.api.ISchematic;
 import com.github.lunatrius.schematica.client.renderer.RenderSchematic;
+import com.github.lunatrius.schematica.client.world.SchematicWorld;
 import com.github.lunatrius.schematica.proxy.ClientProxy;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -23,6 +24,7 @@ import static com.github.lunatrius.schematica.proxy.ClientProxy.schematic;
 public class SchematicaUtil {
 
 	public static final File MATERIAL_FILE = new File(Schematica.proxy.getDirectory("dumps"), "Schematica-materials.txt");
+	private static final boolean doesIsRenderingLayerExist;
 
 	public static WorldClient getWorld() {
 		return schematic;
@@ -45,11 +47,22 @@ public class SchematicaUtil {
 	}
 
 	public static boolean shouldLayerBeRendered(int y) {
-		return !schematic.isRenderingLayer || schematic.renderingLayer + getPosition().getY() == y;
+		return !doesIsRenderingLayerExist || !schematic.isRenderingLayer || schematic.renderingLayer + getPosition().getY() == y;
 	}
 
 	public static void refresh() {
 		RenderSchematic.INSTANCE.refresh();
+	}
+
+	static {
+		boolean tempDoesIsRenderingLayerExist;
+		try {
+			SchematicWorld.class.getDeclaredField("isRenderingLayer");
+			tempDoesIsRenderingLayerExist = true;
+		} catch (NoSuchFieldException e) {
+			tempDoesIsRenderingLayerExist = false;
+		}
+		doesIsRenderingLayerExist = tempDoesIsRenderingLayerExist;
 	}
 
 }

@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData.GrieferInfoItem;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.BotShop;
 import dev.l3g7.griefer_utils.features.uncategorized.griefer_info.botshops.GuiBotShops;
@@ -33,13 +34,27 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class DataHandler {
 
+	private static StaticDataReceiveEvent staticDataReceiveEvent;
+
+	@EventListener
+	private static void onServerJoin(GrieferGamesJoinEvent event) {
+		if (staticDataReceiveEvent != null) {
+			// Retry
+			onStaticData(staticDataReceiveEvent);
+			staticDataReceiveEvent = null;
+		}
+	}
+
 	@EventListener
 	private static void onStaticData(StaticDataReceiveEvent event) {
 		for (Map.Entry<String, GrieferInfoItem> itemEntry : event.data.grieferInfoItems.entrySet()) {
 			ItemStack stack = ItemUtil.fromNBT(itemEntry.getValue().stack);
 			if (stack == null) {
-				BugReporter.reportError(new Throwable("Could not deserialize GI item " + itemEntry.getKey() + ": " + itemEntry.getValue().stack + " returned null"));
-				continue;
+				if (staticDataReceiveEvent != null)
+					BugReporter.reportError(new Throwable("Could not deserialize GI item " + itemEntry.getKey() + ": " + itemEntry.getValue().stack + " returned null"));
+				staticDataReceiveEvent = event;
+				ItemFilter.FILTER.clear();
+				return;
 			}
 
 			ItemFilter itemFilter = new ItemFilter(itemEntry.getKey(), stack, itemEntry.getValue().customName);

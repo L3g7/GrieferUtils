@@ -215,7 +215,8 @@ public class Calculator extends Feature {
 			if (Double.isNaN(exp))
 				return;
 
-			String text = Constants.DECIMAL_FORMAT_98.format(exp);
+			int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
+			String text = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(exp).setScale(decPlaces, RoundingMode.HALF_UP));
 			display(Constants.ADDON_PREFIX + "Ergebnis: " + text);
 			labyBridge.copyText(text.replace(".", ""));
 			return;

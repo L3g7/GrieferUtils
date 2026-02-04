@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.features.widgets.other;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
@@ -42,19 +43,32 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 @Singleton
 public class NearbyPlayers extends Widget {
 
+	private final NumberSetting limit = NumberSetting.create()
+		.name("Limit")
+		.description("Wie viele Spieler maximal angezeigt werden sollen."
+			+ "\n(-1 ist unendlich)")
+		.icon("ruler")
+		.min(-1)
+		.defaultValue(-1);
+
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-			.name("Spieler in der Nähe")
-			.description("Zeigt Spieler in deiner Nähe an.")
-			.icon("radar");
+		.name("Spieler in der Nähe")
+		.description("Zeigt Spieler in deiner Nähe an.")
+		.icon("radar")
+		.subSettings(limit);
 
-	private final List<EntityOtherPlayerMP> players = new ArrayList<>();
+	private final List<EntityOtherPlayerMP> visiblePlayers = new ArrayList<>();
+	private int totalPlayerCount = 0;
 
 	private void updatePlayers() {
-		players.clear();
+		visiblePlayers.clear();
 		if (world() != null) {
-			players.addAll(world().getEntities(EntityOtherPlayerMP.class, p -> !PlayerUtil.isNPC(p) && p.getDistanceToEntity(player()) < 1000));
-			players.sort(Comparator.comparingDouble(e -> e.getDistanceToEntity(player())));
+			visiblePlayers.addAll(world().getEntities(EntityOtherPlayerMP.class, p -> !PlayerUtil.isNPC(p) && p.getDistanceToEntity(player()) < 1000));
+			totalPlayerCount = visiblePlayers.size();
+			visiblePlayers.sort(Comparator.comparingDouble(e -> e.getDistanceToEntity(player())));
+			if (limit.get() != -1 && visiblePlayers.size() > limit.get())
+				visiblePlayers.subList(limit.get(), visiblePlayers.size()).clear();
 		}
 	}
 
@@ -83,17 +97,17 @@ public class NearbyPlayers extends Widget {
 				return getDefaultValues();
 
 			updatePlayers();
-			return new String[]{String.valueOf(players.size())};
+			return new String[]{String.valueOf(totalPlayerCount)};
 		}
 
 		@Override
 		public int getLines() {
-			return players.size() + 1;
+			return visiblePlayers.size() + 1;
 		}
 
 		@Override
 		public String[] getDefaultValues() {
-			players.clear();
+			visiblePlayers.clear();
 			return new String[]{"0"};
 		}
 
@@ -104,7 +118,7 @@ public class NearbyPlayers extends Widget {
 			float fX = (float) (rightX == -1 ? x : rightX);
 			float fY = (float) y;
 
-			for (EntityOtherPlayerMP player : players) {
+			for (EntityOtherPlayerMP player : visiblePlayers) {
 				float lineX = fX;
 				fY += 10;
 				int distance = (int) player.getDistanceToEntity(player());
@@ -157,9 +171,9 @@ public class NearbyPlayers extends Widget {
 
 			lines.clear();
 			maxDistWidth = 0;
-			createLine("Spieler in der Nähe", String.valueOf(players.size()));
+			createLine("Spieler in der Nähe", String.valueOf(totalPlayerCount));
 
-			for (EntityOtherPlayerMP player : players)
+			for (EntityOtherPlayerMP player : visiblePlayers)
 				lines.add(new NearbyPlayerLine(player));
 		}
 

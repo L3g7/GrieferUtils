@@ -194,7 +194,7 @@ public class OrbStats extends SimpleWidget {
 
 	@Override
 	public String getValue() {
-		return lastItem == null ? "?" : lastItem + ": " + DECIMAL_FORMAT_3.format(stats.get(lastItem.hashCode()));
+		return lastItem == null || stats.isEmpty() ? "?" : lastItem + ": " + DECIMAL_FORMAT_3.format(stats.get(lastItem.hashCode()));
 	}
 
 	private void saveStats() {

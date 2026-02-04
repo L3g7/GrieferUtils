@@ -198,6 +198,14 @@ public class InteractableMessages extends Feature {
 	}
 
 	private void modifyPlotInfo(MessageModifyEvent event) {
+		if (event.original.getFormattedText().startsWith("§r§7ID: ")) {
+			for (IChatComponent sibling : event.message.getSiblings()) {
+				if (!sibling.getUnformattedText().endsWith(": "))
+					sibling.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, "/p h " + sibling.getUnformattedText()));
+			}
+			return;
+		}
+
 		if (!PLOT_INFO_PLAYER_PATTERN.matcher(event.original.getFormattedText()).matches())
 			return;
 

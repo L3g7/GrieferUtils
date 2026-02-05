@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
@@ -57,12 +58,8 @@ public abstract class Feature implements Disableable, GUIEntry {
 			if (parent != null)
 				configKey = parent.configKey() + "." + configKey;
 
-			SwitchSetting category = SwitchSetting.create()
-				.name(meta.name())
-				.icon(meta.icon())
-				.config(configKey + ".active")
-				.defaultValue(true)
-				.subSettings(); // creates a header
+			BaseSetting<?> category = FileProvider.getSingleton(meta.setting())
+				.build(meta, configKey);
 
 			CategoryData data = new CategoryData(category, configKey, parent);
 			categories.put(pkg.getName(), data);
@@ -159,6 +156,8 @@ public abstract class Feature implements Disableable, GUIEntry {
 
 		String icon();
 
+		Class<? extends SettingBuilder> setting() default SwitchSettingBuilder.class;
+
 	}
 
 	@Retention(RUNTIME)
@@ -167,11 +166,11 @@ public abstract class Feature implements Disableable, GUIEntry {
 
 	public static final class CategoryData implements GUIEntry {
 
-		private final SwitchSetting setting;
+		private final BaseSetting<?> setting;
 		private final String configKey;
 		private final CategoryData parent;
 
-		private CategoryData(SwitchSetting setting, String configKey, CategoryData parent) {
+		private CategoryData(BaseSetting<?> setting, String configKey, CategoryData parent) {
 			this.setting = setting;
 			this.configKey = configKey;
 			this.parent = parent;
@@ -181,12 +180,19 @@ public abstract class Feature implements Disableable, GUIEntry {
 			return configKey;
 		}
 
-		public SwitchSetting getSetting() {
+		public BaseSetting<?> getSetting() {
 			return setting;
 		}
 
 		public boolean isEnabled() {
-			return setting.get() && (parent == null || parent.isEnabled());
+			if (parent != null && !parent.isEnabled())
+				return false;
+
+			if (setting instanceof SwitchSetting s)
+				return s.get();
+			if (setting instanceof NumberSetting s)
+				return s.get() != 0;
+			return true;
 		}
 
 		@Override
@@ -203,13 +209,15 @@ public abstract class Feature implements Disableable, GUIEntry {
 		}
 
 		public void callback(Runnable callback) {
-			setting.callback(callback);
+			if (setting instanceof AbstractSetting<?,?> as)
+				as.callback(callback);
 			if (parent != null)
 				parent.callback(callback);
 		}
 
 		public void callback(Consumer<Boolean> callback) {
-			setting.callback(callback);
+			if (setting instanceof SwitchSetting s)
+				s.callback(callback);
 			if (parent != null)
 				parent.callback(callback);
 		}

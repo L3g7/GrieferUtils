@@ -19,6 +19,7 @@ public abstract class ChatFilterTemplates extends Feature {
 		new FilterTemplate("Plotchat").contains("[Plot-Chat]").containsNot("»"),
 		new FilterTemplate("Eingehende Zahlung").contains(" gegeben.").containsNot("»", "->", "Du hast"),
 		new FilterTemplate("Ausgehende Zahlung").contains(" gegeben.").containsNot("»", "->", "[GrieferGames]", "hat dir"),
+		new FilterTemplate("Bank").contains("[Bank]").containsNot("»", "->"),
 		new FilterTemplate("MobRemover").contains("[MobRemover]").containsNot("»", "->"),
 		new FilterTemplate("Clearlag").contains("auf dem Boden liegende Items entfernt!", "[GrieferGames] Warnung! Die auf dem Boden liegenden Items werden in").containsNot("»", "->"),
 		new FilterTemplate("Greeting").contains("[Greeting]").containsNot("»").highlight(255, 0, 0),

@@ -13,11 +13,15 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.item.ItemStack;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
@@ -121,6 +125,29 @@ public class Spent extends SimpleWidget {
 		}
 
 		initialized = true;
+	}
+
+	// Job creation
+	@EventListener
+	private void onWindowClick(WindowClickEvent event) {
+		if (event.slotId != 29) // Accept button
+			return;
+
+		if (!event.windowTitle.startsWith("§aAuftrag erstellen"))
+			return;
+
+		if (!(mc().currentScreen instanceof GuiContainer gc))
+			return; // Race condition :(
+
+		ItemStack stack = gc.inventorySlots.inventorySlots.get(13).getStack();
+		String totalPriceLore = ItemUtil.getLoreAtIndex(stack, 2);
+		if (!totalPriceLore.startsWith("§7Gesamt: §e§l"))
+			return;
+
+		String price = totalPriceLore.substring("§7Gesamt: §e§l".length())
+			.replaceAll("§.|\\$|,|\\.", "");
+
+		setBalance(moneySpent.add(new BigDecimal(price)));
 	}
 
 	protected static BigDecimal setBalance(BigDecimal newValue) {

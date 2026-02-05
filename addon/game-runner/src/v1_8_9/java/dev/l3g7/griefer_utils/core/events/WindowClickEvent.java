@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.core.events;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -28,12 +29,14 @@ public class WindowClickEvent extends Event {
 	public final int mouseButtonClicked;
 	public final int mode;
 	public ItemStack itemStack;
+	public String windowTitle;
 
 	public WindowClickEvent(int windowId, int slotId, int mouseButtonClicked, int mode) {
 		this.windowId = windowId;
 		this.slotId = slotId;
 		this.mouseButtonClicked = mouseButtonClicked;
 		this.mode = mode;
+		this.windowTitle = MinecraftUtil.getGuiChestTitle();
 
 		if (slotId == -999)
 			return;

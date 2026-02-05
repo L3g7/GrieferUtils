@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getGuiChestTitle;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.HIDDEN;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
@@ -112,7 +111,7 @@ public class PotionTimer extends Widget {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMouse(WindowClickEvent event) {
-		if (!getGuiChestTitle().startsWith("§6Möchtest du den Trank benutzen?"))
+		if (!event.windowTitle.startsWith("§6Möchtest du den Trank benutzen?"))
 			return;
 
 		if (event.slotId != 12)

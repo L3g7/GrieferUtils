@@ -102,7 +102,7 @@ public class BetterJobExchange extends Feature {
 		ItemUtil.setLore(stack, lore);
 	}
 
-	private static Pair<Integer, Integer> extractOffer(String line) {
+	public static Pair<Integer, Integer> extractOffer(String line) {
 		line = line.substring(7);
 		Integer stacks = Integer.parseInt(line.substring(0, line.indexOf('§')));
 

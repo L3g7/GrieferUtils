@@ -49,7 +49,7 @@ public class NearbyPlayers extends Widget {
 			+ "\n(-1 ist unendlich)")
 		.icon("ruler")
 		.min(-1)
-		.defaultValue(-1);
+		.defaultValue(10);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

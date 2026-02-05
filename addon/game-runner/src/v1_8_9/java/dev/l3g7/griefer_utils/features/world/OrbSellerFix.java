@@ -95,7 +95,7 @@ public class OrbSellerFix extends Feature {
 
 	@EventListener
 	private void onWindowClick(WindowClickEvent event) {
-		if (!restoreMousePos.get() || !getGuiChestTitle().startsWith("§6Orbs - Verkauf "))
+		if (!restoreMousePos.get() || !event.windowTitle.startsWith("§6Orbs - Verkauf "))
 			return;
 
 		if (event.mode > 4)

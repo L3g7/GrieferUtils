@@ -13,14 +13,21 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
+import dev.l3g7.griefer_utils.features.world.BetterJobExchange;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.PAYMENT_RECEIVE_PATTERN;
@@ -31,6 +38,8 @@ import static java.math.BigDecimal.ZERO;
 
 @Singleton
 public class Received extends SimpleWidget {
+
+	private static final Pattern JOB_SELL_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§aDu hast §r§2\\d+§r§a Stack\\(s\\) §r§6[^§]+§r§a für §r§2(?<amount>\\d+)§r§2\\$§r§a geliefert\\.§r$");
 
 	static BigDecimal moneyReceived = ZERO;
 	private static boolean initialized = false; // NOTE cleanup
@@ -95,8 +104,13 @@ public class Received extends SimpleWidget {
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
-		if (matcher.matches())
-			setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
+		if (!matcher.matches()) {
+			matcher = JOB_SELL_PATTERN.matcher(event.message.getFormattedText());
+			if (!matcher.matches())
+				return;
+		}
+
+		setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -121,6 +135,34 @@ public class Received extends SimpleWidget {
 		}
 
 		initialized = true;
+	}
+
+	// Job cancelation
+	@EventListener
+	private void onWindowClick(WindowClickEvent event) {
+		if (event.slotId != 29) // Accept button
+			return;
+
+		if (!event.windowTitle.startsWith("§6Auftrag abbrechen"))
+			return;
+
+		if (!(mc().currentScreen instanceof GuiContainer gc))
+			return; // Race condition :(
+
+		ItemStack stack = gc.inventorySlots.inventorySlots.get(13).getStack();
+		String line = ItemUtil.getLoreAtIndex(stack, 3);
+		if (line.isEmpty())
+			return;
+
+		Pair<Integer, Integer> offer = BetterJobExchange.extractOffer(line);
+		int money = offer.getLeft() * offer.getRight();
+
+		String feeLine = ItemUtil.getLoreAtIndex(stack, 5);
+		feeLine = feeLine.substring("§cAnfallende Gebühr: §4".length(), feeLine.length() - 1 /* remove % */);
+		double feePercentage = Double.parseDouble(feeLine) / 100;
+
+		int fee = (int) Math.floor(feePercentage * (double) money);
+		setBalance(moneyReceived.add(new BigDecimal(money - fee)));
 	}
 
 	protected static BigDecimal setBalance(BigDecimal newValue) {

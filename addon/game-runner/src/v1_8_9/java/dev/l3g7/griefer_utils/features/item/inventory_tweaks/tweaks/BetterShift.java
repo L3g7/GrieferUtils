@@ -13,8 +13,7 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.GuiMerchant;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiCrafting;
@@ -30,7 +29,7 @@ import org.lwjgl.input.Keyboard;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 @Singleton
-public class BetterShift extends InventoryTweaks.InventoryTweak {
+public class BetterShift extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -44,7 +43,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onGuiCraftingClick(WindowClickEvent event) {
-		if (!enabled.get() || !(mc().currentScreen instanceof GuiCrafting))
+		if (!(mc().currentScreen instanceof GuiCrafting))
 			return;
 
 		if (event.mode != 1 || event.slotId <= 9 || event.slotId > 45)
@@ -55,7 +54,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onGuiInvClick(WindowClickEvent event) {
-		if (!enabled.get() || !(mc().currentScreen instanceof GuiInventory))
+		if (!(mc().currentScreen instanceof GuiInventory))
 			return;
 
 		if (event.mode != 1 || event.slotId <= 8 || ! Keyboard.isKeyDown(Keyboard.KEY_LMENU))
@@ -66,7 +65,7 @@ public class BetterShift extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onGuiVillagerClick(WindowClickEvent event) {
-		if (!enabled.get() || !(mc().currentScreen instanceof GuiMerchant screen) || screen.getMerchant().getRecipes(player()) == null)
+		if (!(mc().currentScreen instanceof GuiMerchant screen) || screen.getMerchant().getRecipes(player()) == null)
 			return;
 
 		if (event.mode != 1 || event.slotId <= 2)

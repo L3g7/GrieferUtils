@@ -13,8 +13,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.BlockPickEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
@@ -29,7 +28,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
-public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
+public class InventoryBlockSelection extends Feature {
 
 	private final SwitchSetting compressed = SwitchSetting.create()
 		.name("Komprimierte Items")
@@ -45,9 +44,6 @@ public class InventoryBlockSelection extends InventoryTweaks.InventoryTweak {
 
 	@EventListener
 	public void onBlockPick(BlockPickEvent event) {
-		if (!enabled.get())
-			return;
-
 		InventoryPlayer inv = player().inventory;
 
 		int targetSlot = -1;

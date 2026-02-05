@@ -13,8 +13,7 @@ import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.inventory_tweaks.InventoryTweaks;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -28,18 +27,18 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
-public class BlockRefill extends InventoryTweaks.InventoryTweak {
+public class BlockRefill extends Feature {
 
 	private ItemStack expectedStack = null;
 	private int slot = 0;
 
 	@MainElement
-	private final SwitchSetting refillBlocks = SwitchSetting.create()
+	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Verbrauchte Blöcke nachziehen")
 		.description("Füllt Blöcke, die verbraucht wurden, mit gleichen auf.")
 		.icon(new ItemStack(Blocks.stone, 0));
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onPacketReceive(PacketEvent.PacketReceiveEvent<S2FPacketSetSlot> event) {
 		if (expectedStack == null || player() == null)
 			return;
@@ -87,7 +86,7 @@ public class BlockRefill extends InventoryTweaks.InventoryTweak {
 	public void onItemUse(ItemUseEvent.Post event) {
 		Item item = event.stackBeforeUse.getItem();
 
-		if (!refillBlocks.get() || !(item instanceof ItemBlock
+		if (!(item instanceof ItemBlock
 			|| (item == Items.dye && EnumDyeColor.byDyeDamage(event.stackBeforeUse.getMetadata()) == EnumDyeColor.BROWN)
 			|| item == Items.redstone
 			|| item instanceof ItemReed

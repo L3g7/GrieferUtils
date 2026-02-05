@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.CategoryData;
-import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
@@ -120,8 +119,7 @@ public class MainPage {
 		Feature.getFeatures()
 			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
 			.forEach(feature -> {
-				if (!feature.getClass().isAnnotationPresent(FeatureCategory.class)
-					|| !(feature.getMainElement() instanceof SwitchSettingImpl main))
+				if (!(feature.getMainElement() instanceof SwitchSettingImpl main))
 					return;
 
 				for (BaseSetting<?> element : main.getChildSettings()) {

@@ -106,9 +106,6 @@ public class WikiGen {
 				if (object == null)
 					return;
 
-				if (feature.getClass().isAnnotationPresent(Feature.FeatureCategory.class))
-					object.addProperty("category", true);
-
 				array.add(object);
 			});
 

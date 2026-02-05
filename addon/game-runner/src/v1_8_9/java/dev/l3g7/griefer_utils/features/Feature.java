@@ -28,7 +28,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PACKAGE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
@@ -159,10 +160,6 @@ public abstract class Feature implements Disableable, GUIEntry {
 		Class<? extends SettingBuilder> setting() default SwitchSettingBuilder.class;
 
 	}
-
-	@Retention(RUNTIME)
-	@Target(TYPE)
-	public @interface FeatureCategory {}
 
 	public static final class CategoryData implements GUIEntry {
 

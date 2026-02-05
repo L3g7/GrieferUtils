@@ -16,7 +16,6 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
 import net.minecraft.init.Blocks;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
@@ -27,7 +26,6 @@ import static dev.l3g7.griefer_utils.features.uncategorized.settings.changelog.C
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits.credits;
 
 @Singleton
-@FeatureCategory
 public class Settings extends Feature {
 
 	@MainElement(configureSubSettings = false)

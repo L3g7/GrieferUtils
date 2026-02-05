@@ -59,11 +59,6 @@ public class MainPage {
 		Feature.getFeatures()
 			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
 			.forEach(feature -> {
-				if (!feature.getClass().isAnnotationPresent(Feature.FeatureCategory.class)) {
-					searchableSettings.add(c(feature.getMainElement()));
-					return;
-				}
-
 				((SettingsElement) feature.getMainElement()).getSubSettings().getElements().stream()
 					.filter(e -> e instanceof SwitchSetting || e instanceof NumberSetting || e instanceof CategorySetting)
 					.forEachOrdered(searchableSettings::add);

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.botd;
+package dev.l3g7.griefer_utils.features.world.botd;
 
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
@@ -33,8 +33,10 @@ class Reward {
 	}
 
 	public void send() {
-		if (RewardCounter.shouldSend())
+		if (RewardCounter.shouldSend()) {
 			GUServer.sendBlockOfTheDayReward(type.toString().toLowerCase(), RewardCounter.getCounter(type), amount, eventItem);
+			BlockOfTheDayMessage.onBotd();
+		}
 	}
 
 	public enum RewardType {

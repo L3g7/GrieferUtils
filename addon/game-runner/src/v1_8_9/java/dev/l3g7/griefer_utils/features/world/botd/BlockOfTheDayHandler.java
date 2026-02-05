@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.botd;
+package dev.l3g7.griefer_utils.features.world.botd;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
@@ -24,7 +24,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 /**
  * Gathers the current item displayed by the "Block des Tages"-GUI and reports it to the server.
  */
-public class BlockOfTheDay {
+public class BlockOfTheDayHandler {
 
 	private static long lastReportedBlock = 0;
 	private static Reward reward = null;
@@ -82,7 +82,6 @@ public class BlockOfTheDay {
 		if (msg.equals("§r§8[§r§6Block des Tages§r§8] §r§aDu hast eine Belohnung erhalten.§r")) {
 			if (reward != null && rewardReceived >= System.currentTimeMillis() - 100)
 				reward.send();
-
 			return;
 		}
 

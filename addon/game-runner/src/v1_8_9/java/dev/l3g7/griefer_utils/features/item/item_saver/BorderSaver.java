@@ -12,8 +12,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockInteractEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.world.ItemSearch;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
@@ -34,7 +33,7 @@ import static net.minecraft.util.EnumFacing.UP;
  * Suppresses left clicks and dropping when holing a diamond sword enchanted with looting 21.
  */
 @Singleton
-public class BorderSaver extends ItemSaver {
+public class BorderSaver extends Feature {
 
 	private static final int ACCEPT_SLOT_ID = 11, PREVIEW_SLOT_ID = 13, DECLINE_SLOT_ID = 15;
 

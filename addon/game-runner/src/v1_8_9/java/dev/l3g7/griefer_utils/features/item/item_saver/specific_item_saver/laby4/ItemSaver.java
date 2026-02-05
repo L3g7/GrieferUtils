@@ -21,9 +21,8 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
-import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
@@ -48,7 +47,7 @@ import static net.minecraft.network.play.client.C02PacketUseEntity.Action.ATTACK
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
-public class ItemSaver extends ItemSaverCategory.ItemSaver implements TempItemSaverBridge { // FIXME: test, test dependant features
+public class ItemSaver extends Feature implements TempItemSaverBridge { // FIXME: test, test dependant features
 
 	private static final ItemStack BLOCKED = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");
 

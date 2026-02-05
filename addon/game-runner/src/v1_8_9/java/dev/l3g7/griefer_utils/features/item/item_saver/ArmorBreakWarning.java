@@ -13,8 +13,7 @@ import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldEvent;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
+import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
@@ -28,7 +27,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
  * (0 to disable)
  */
 @Singleton
-public class ArmorBreakWarning extends ItemSaver {
+public class ArmorBreakWarning extends Feature {
 
 	private final FontRenderer font = mc().fontRendererObj;
 

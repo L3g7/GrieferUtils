@@ -17,8 +17,7 @@ import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory.ItemSaver;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -39,7 +38,7 @@ import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
-public class ToolSaver extends ItemSaver implements TempToolSaverBridge {
+public class ToolSaver extends Feature implements TempToolSaverBridge {
 
 	private final NumberSetting damage = NumberSetting.create()
 		.name("Min. Haltbarkeit")

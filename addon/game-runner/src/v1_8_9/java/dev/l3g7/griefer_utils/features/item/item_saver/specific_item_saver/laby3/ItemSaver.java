@@ -32,9 +32,8 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.AutoTool;
-import dev.l3g7.griefer_utils.features.item.item_saver.ItemSaverCategory;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import net.labymod.core.LabyModCore;
 import net.labymod.core.WorldRendererAdapter;
@@ -70,7 +69,7 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.*;
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_3)
-public class ItemSaver extends ItemSaverCategory.ItemSaver implements TempItemSaverBridge {
+public class ItemSaver extends Feature implements TempItemSaverBridge {
 
 	private static final String BONZE_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
 	private static final String BONZE24_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:24s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:24s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";

@@ -47,17 +47,17 @@ public abstract class Feature implements Disableable {
 
 		if (pkg.isAnnotationPresent(Category.class)) {
 			Category meta = pkg.getAnnotation(Category.class);
-			return categories.computeIfAbsent(meta.name(), name -> {
-					SwitchSetting category = SwitchSetting.create()
-						.name(meta.name())
-						.icon(meta.icon())
-						.config(meta.configKey() + ".active")
-						.defaultValue(true)
-						.subSettings(); // creates a header
+			return categories.computeIfAbsent(pkg.getName(), name -> {
+				String configKey = Reflection.getPackageName(pkg);
+				SwitchSetting category = SwitchSetting.create()
+					.name(meta.name())
+					.icon(meta.icon())
+					.config(configKey + ".active")
+					.defaultValue(true)
+					.subSettings(); // creates a header
 
-					return new CategoryData(category, meta.configKey());
-				}
-			);
+				return new CategoryData(category, configKey);
+			});
 		}
 
 		return findCategory(Reflection.getParentPackage(pkg));
@@ -145,8 +145,6 @@ public abstract class Feature implements Disableable {
 		String name();
 
 		String icon();
-
-		String configKey();
 
 	}
 

@@ -36,4 +36,15 @@ class PackageReflection {
 		return null;
 	}
 
+	/**
+	 * @return the package's simple name.
+	 */
+	static String getPackageName(Package pkg) {
+		String name = pkg.getName();
+		if (!name.contains("."))
+			return name;
+
+		return name.substring(name.lastIndexOf(".") + 1);
+	}
+
 }

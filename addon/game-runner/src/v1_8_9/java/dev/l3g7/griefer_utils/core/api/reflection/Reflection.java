@@ -133,6 +133,13 @@ public class Reflection {
 	}
 
 	/**
+	 * @return the package's simple name.
+	 */
+	public static String getPackageName(Package pkg) {
+		return PackageReflection.getPackageName(pkg);
+	}
+
+	/**
 	 * Converts the given object into a generic object.
 	 */
 	@SuppressWarnings("unchecked")

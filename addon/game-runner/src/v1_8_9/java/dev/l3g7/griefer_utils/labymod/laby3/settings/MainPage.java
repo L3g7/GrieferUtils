@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.tags.laby3.GrieferUtilsGroup;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
@@ -82,18 +83,17 @@ public class MainPage {
 				}
 			});
 
-		// Initialize main settings
-		Feature.getFeatures()
-			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
-			.forEach(f -> {
-				f.addToCategory();
-				((Laby3Setting<?, ?>) f.getMainElement()).getStorage().alias = f.getClass().getSimpleName();
-			});
+		// Initialize settings
+		List<GUIEntry> entries = new ArrayList<>(Feature.getCategories());
 
-		// Initialize category settings
-		Feature.getCategories().stream()
-			.sorted(Comparator.comparing(f -> f.getSetting().name()))
-			.forEach(c -> c.addToParent(settings));
+		Feature.getFeatures().forEach(f -> {
+			entries.add(f);
+			((Laby3Setting<?, ?>) f.getMainElement()).getStorage().alias = f.getClass().getSimpleName();
+		});
+
+		entries.stream()
+			.sorted(Comparator.comparing(GUIEntry::name))
+			.forEach(e -> e.addToParent(settings));
 
 		settings.add(HeaderSetting.create());
 

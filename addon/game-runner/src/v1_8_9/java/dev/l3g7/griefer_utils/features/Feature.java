@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
@@ -32,7 +33,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * The base class for features.
  */
-public abstract class Feature implements Disableable {
+public abstract class Feature implements Disableable, GUIEntry {
 
 	// Name to setting
 	private static final Map<String, CategoryData> categories = new HashMap<>();
@@ -84,10 +85,13 @@ public abstract class Feature implements Disableable {
 		return SettingLoader.getDefaultConfigSubkey(this);
 	}
 
-	/**
-	 * Must happen after initialization for sorting using the main element.
-	 */
-	public void addToCategory() {
+	@Override
+	public String name() {
+		return mainElement.name();
+	}
+
+	@Override
+	public void addToParent(List<BaseSetting<?>> root) {
 		if (category != null)
 			category.getSetting().addSetting(mainElement);
 	}
@@ -161,7 +165,7 @@ public abstract class Feature implements Disableable {
 	@Target(TYPE)
 	public @interface FeatureCategory {}
 
-	public static final class CategoryData {
+	public static final class CategoryData implements GUIEntry {
 
 		private final SwitchSetting setting;
 		private final String configKey;
@@ -171,13 +175,6 @@ public abstract class Feature implements Disableable {
 			this.setting = setting;
 			this.configKey = configKey;
 			this.parent = parent;
-		}
-
-		public void addToParent(List<BaseSetting<?>> root) {
-			if (parent != null)
-				parent.getSetting().addSetting(setting);
-			else
-				root.add(setting);
 		}
 
 		public String configKey() {
@@ -190,6 +187,19 @@ public abstract class Feature implements Disableable {
 
 		public boolean isEnabled() {
 			return setting.get() && (parent == null || parent.isEnabled());
+		}
+
+		@Override
+		public String name() {
+			return setting.name();
+		}
+
+		@Override
+		public void addToParent(List<BaseSetting<?>> root) {
+			if (parent != null)
+				parent.getSetting().addSetting(setting);
+			else
+				root.add(setting);
 		}
 
 		public void callback(Runnable callback) {

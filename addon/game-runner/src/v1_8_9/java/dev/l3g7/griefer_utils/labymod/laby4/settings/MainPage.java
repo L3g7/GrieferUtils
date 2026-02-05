@@ -12,10 +12,12 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature.CategoryData;
 import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
@@ -38,7 +40,7 @@ import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.misc.tags.laby4.Laby4TagManager.*;
+import static dev.l3g7.griefer_utils.core.misc.tags.laby4.Laby4TagManager.icon;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
@@ -135,24 +137,24 @@ public class MainPage {
 				main.setSearchTags(new String[]{main.name()});
 			});
 
-		// Initialize main settings
-		Feature.getFeatures()
-			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
-			.forEach(f -> {
-				f.addToCategory();
-				((SettingElement) f.getMainElement()).setSearchTags(new String[]{
-					f.getMainElement().name(),
-					f.getClass().getSimpleName()
-				});
+		// Initialize settings
+		List<GUIEntry> entries = new ArrayList<>(Feature.getCategories());
+
+		Feature.getFeatures().forEach(f -> {
+			entries.add(f);
+			((SettingElement) f.getMainElement()).setSearchTags(new String[]{
+				f.getMainElement().name(),
+				f.getClass().getSimpleName()
 			});
+		});
 
 		// Initialize category settings
-		Feature.getCategories().stream()
-			.sorted(Comparator.comparing(f -> f.getSetting().name()))
-			.forEach(c -> {
-				c.addToParent(settings);
-				((SwitchSettingImpl) c.getSetting()).setSearchTags(new String[]{c.getSetting().name()});
-			});
+		for (CategoryData c : Feature.getCategories())
+			((SwitchSettingImpl) c.getSetting()).setSearchTags(new String[]{c.getSetting().name()});
+
+		entries.stream()
+			.sorted(Comparator.comparing(GUIEntry::name))
+			.forEach(e -> e.addToParent(settings));
 
 		settings.add(HeaderSetting.create());
 

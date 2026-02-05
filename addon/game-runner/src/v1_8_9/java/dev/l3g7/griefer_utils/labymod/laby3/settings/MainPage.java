@@ -90,10 +90,10 @@ public class MainPage {
 				((Laby3Setting<?, ?>) f.getMainElement()).getStorage().alias = f.getClass().getSimpleName();
 			});
 
-		// Add categories
+		// Initialize category settings
 		Feature.getCategories().stream()
-			.sorted(Comparator.comparing(BaseSetting::name))
-			.forEach(settings::add);
+			.sorted(Comparator.comparing(f -> f.getSetting().name()))
+			.forEach(c -> c.addToParent(settings));
 
 		settings.add(HeaderSetting.create());
 

@@ -96,7 +96,7 @@ public class WikiGen {
 				String category = "uncategorized";
 
 				if (feature.getCategory() != null)
-					category = feature.getCategory().setting.name();
+					category = feature.getCategory().getSetting().name();
 
 				if (!result.has(category))
 					result.add(category, new JsonArray());

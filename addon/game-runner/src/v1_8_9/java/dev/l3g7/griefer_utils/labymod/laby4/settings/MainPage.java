@@ -146,13 +146,13 @@ public class MainPage {
 				});
 			});
 
-		// Add categories
+		// Initialize category settings
 		Feature.getCategories().stream()
-			.sorted(Comparator.comparing(BaseSetting::name))
-			.forEach(settings::add);
-
-		for (SwitchSetting v : Feature.getCategories())
-			((SwitchSettingImpl) v).setSearchTags(new String[]{v.name()});
+			.sorted(Comparator.comparing(f -> f.getSetting().name()))
+			.forEach(c -> {
+				c.addToParent(settings);
+				((SwitchSettingImpl) c.getSetting()).setSearchTags(new String[]{c.getSetting().name()});
+			});
 
 		settings.add(HeaderSetting.create());
 

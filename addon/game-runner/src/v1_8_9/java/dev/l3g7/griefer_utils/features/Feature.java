@@ -47,17 +47,25 @@ public abstract class Feature implements Disableable {
 
 		if (pkg.isAnnotationPresent(Category.class)) {
 			Category meta = pkg.getAnnotation(Category.class);
-			return categories.computeIfAbsent(pkg.getName(), name -> {
-				String configKey = Reflection.getPackageName(pkg);
-				SwitchSetting category = SwitchSetting.create()
-					.name(meta.name())
-					.icon(meta.icon())
-					.config(configKey + ".active")
-					.defaultValue(true)
-					.subSettings(); // creates a header
+			if (categories.containsKey(pkg.getName()))
+				return categories.get(pkg.getName());
 
-				return new CategoryData(category, configKey);
-			});
+			CategoryData parent = findCategory(Reflection.getParentPackage(pkg));
+
+			String configKey = Reflection.getPackageName(pkg);
+			if (parent != null)
+				configKey = parent.configKey() + "." + configKey;
+
+			SwitchSetting category = SwitchSetting.create()
+				.name(meta.name())
+				.icon(meta.icon())
+				.config(configKey + ".active")
+				.defaultValue(true)
+				.subSettings(); // creates a header
+
+			CategoryData data = new CategoryData(category, configKey, parent);
+			categories.put(pkg.getName(), data);
+			return data;
 		}
 
 		return findCategory(Reflection.getParentPackage(pkg));
@@ -67,7 +75,7 @@ public abstract class Feature implements Disableable {
 	 * Initialises the main element and config key.
 	 */
 	public void init() {
-		MainElementData data = SettingLoader.initMainElement(this, category == null ? null : category.configKey, getConfigSubkey());
+		MainElementData data = SettingLoader.initMainElement(this, category == null ? null : category.configKey(), getConfigSubkey());
 		mainElement = data.mainElement;
 		configKey = data.configKey;
 	}
@@ -81,7 +89,7 @@ public abstract class Feature implements Disableable {
 	 */
 	public void addToCategory() {
 		if (category != null)
-			category.setting.addSetting(mainElement);
+			category.getSetting().addSetting(mainElement);
 	}
 
 	public BaseSetting<?> getMainElement() {
@@ -100,7 +108,7 @@ public abstract class Feature implements Disableable {
 	 * Checks if the parent category and the feature itself is enabled.
 	 */
 	public boolean isEnabled() {
-		if (category != null && !category.setting.get())
+		if (category != null && !category.isEnabled())
 			return false;
 
 		if (mainElement instanceof SwitchSetting)
@@ -110,11 +118,10 @@ public abstract class Feature implements Disableable {
 		return true;
 	}
 
-	public static List<SwitchSetting> getCategories() {
+	public static List<CategoryData> getCategories() {
 		return categories.entrySet().stream()
 			.filter(e -> e.getKey() != null)
 			.map(Map.Entry::getValue)
-			.map(c -> c.setting)
 			.collect(Collectors.toList());
 	}
 
@@ -144,6 +151,8 @@ public abstract class Feature implements Disableable {
 
 		String name();
 
+		String description() default "";
+
 		String icon();
 
 	}
@@ -154,24 +163,45 @@ public abstract class Feature implements Disableable {
 
 	public static final class CategoryData {
 
-		public final SwitchSetting setting;
-		public final String configKey;
+		private final SwitchSetting setting;
+		private final String configKey;
+		private final CategoryData parent;
 
-		private CategoryData(SwitchSetting setting, String configKey) {
+		private CategoryData(SwitchSetting setting, String configKey, CategoryData parent) {
 			this.setting = setting;
 			this.configKey = configKey;
+			this.parent = parent;
+		}
+
+		public void addToParent(List<BaseSetting<?>> root) {
+			if (parent != null)
+				parent.getSetting().addSetting(setting);
+			else
+				root.add(setting);
 		}
 
 		public String configKey() {
 			return configKey;
 		}
 
+		public SwitchSetting getSetting() {
+			return setting;
+		}
+
+		public boolean isEnabled() {
+			return setting.get() && (parent == null || parent.isEnabled());
+		}
+
 		public void callback(Runnable callback) {
 			setting.callback(callback);
+			if (parent != null)
+				parent.callback(callback);
 		}
 
 		public void callback(Consumer<Boolean> callback) {
 			setting.callback(callback);
+			if (parent != null)
+				parent.callback(callback);
 		}
 
 	}

@@ -7,22 +7,23 @@
 
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
-import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.widgets.other.BlockInfo;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
-import java.util.Collections;
-import java.util.List;
-
 @Singleton
-public class SpawnEggType extends ItemInfo.ItemInfoSupplier {
+public class SpawnEggType extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -30,19 +31,25 @@ public class SpawnEggType extends ItemInfo.ItemInfoSupplier {
 		.description("Zeigt unter Spawn-Eiern an, von welchem Typ sie sind.")
 		.icon(new ItemStack(Items.spawn_egg, 1, 50 /* Creeper */));
 
-	@Override
-	public List<String> getToolTip(ItemStack itemStack) {
-		if (!(itemStack.getItem() instanceof ItemMonsterPlacer))
-			return Collections.emptyList();
+	@EventListener
+	public void onTooltip(ItemTooltipEvent e) {
+		if (FileProvider.getSingleton(BlockInfo.class).gettingTooltip)
+			return;
 
-		String entity = EntityList.getStringFromID(itemStack.getMetadata());
+		if (MinecraftUtil.mc().currentScreen instanceof GuiBigChest)
+			return;
+
+		if (!(e.itemStack.getItem() instanceof ItemMonsterPlacer))
+			return;
+
+		String entity = EntityList.getStringFromID(e.itemStack.getMetadata());
 		if (entity != null) {
 			String translationKey = "entity." + entity + ".name";
 			String translatedEntity = StatCollector.translateToLocal("entity." + entity + ".name");
 			if (!translatedEntity.equals(translationKey))
 				entity = translatedEntity;
 		}
-		return ImmutableList.of("§fTyp: " + entity);
+		e.toolTip.add("§fTyp: " + entity);
 	}
 
 }

@@ -7,15 +7,20 @@
 
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
+import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.widgets.other.BlockInfo;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
@@ -27,7 +32,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +39,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.minecraft.enchantment.EnchantmentHelper.getEnchantments;
 
 @Singleton
-public class ItemCounter extends ItemInfo.ItemInfoSupplier {
+public class ItemCounter extends Feature {
 
 	private final DropDownSetting<FormatMode> formatting = DropDownSetting.create(FormatMode.class)
 		.name("Formattierung")
@@ -67,11 +71,17 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		.icon("spyglass")
 		.subSettings(formatting, HeaderSetting.create(), ignoreDamage, ignoreEnchants, ignoreLore);
 
-	@Override
-	public List<String> getToolTip(ItemStack itemStack) {
+	@EventListener
+	public void onTooltip(ItemTooltipEvent e) {
+		if (FileProvider.getSingleton(BlockInfo.class).gettingTooltip)
+			return;
+
+		if (MinecraftUtil.mc().currentScreen instanceof GuiBigChest)
+			return;
+
 		GuiScreen screen = mc().currentScreen;
 		if (!(screen instanceof GuiContainer))
-			return Collections.emptyList();
+			return;
 
 		// Sort slots
 		List<Slot> playerSlots = new ArrayList<>();
@@ -90,32 +100,28 @@ public class ItemCounter extends ItemInfo.ItemInfoSupplier {
 		if (screen instanceof GuiContainerCreative)
 			containerName = I18n.format(CreativeTabs.creativeTabArray[((GuiContainerCreative) screen).getSelectedTabIndex()].getTranslatedTabLabel());
 
-		long containerAmount = getAmountFromSlots(chestSlots, itemStack);
-		long playerAmount = getAmountFromSlots(playerSlots, itemStack);
+		long containerAmount = getAmountFromSlots(chestSlots, e.itemStack);
+		long playerAmount = getAmountFromSlots(playerSlots, e.itemStack);
 
 		// Don't add if the item is not compressed and the only one in the inv
-		if (playerAmount + containerAmount == itemStack.stackSize)
-			return Collections.emptyList();
+		if (playerAmount + containerAmount == e.itemStack.stackSize)
+			return;
 
 		if (containerName != null && containerName.startsWith("§0Lager: §6") && containerAmount != 0) {
 			containerAmount += Long.parseLong(containerName.substring("§0Lager: §6".length()).replace(".", ""));
 			containerName = "Unendliches Lager";
 		}
 
-		int stackSize = itemStack.getMaxStackSize();
+		int stackSize = e.itemStack.getMaxStackSize();
 		// Add to tooltip
-		List<String> toolTip = new ArrayList<>();
-
-		toolTip.add("§r");
-		toolTip.add("Insgesamt: " + getFormattedAmount(containerAmount + playerAmount, stackSize));
+		e.toolTip.add("§r");
+		e.toolTip.add("Insgesamt: " + getFormattedAmount(containerAmount + playerAmount, stackSize));
 
 		if (containerAmount == 0 || playerAmount == 0)
-			return toolTip;
+			return;
 
-		toolTip.add(String.format("├ %s§r§7: %s", containerName, getFormattedAmount(containerAmount, stackSize)));
-		toolTip.add("└ Inventar: " + getFormattedAmount(playerAmount, stackSize));
-
-		return toolTip;
+		e.toolTip.add(String.format("├ %s§r§7: %s", containerName, getFormattedAmount(containerAmount, stackSize)));
+		e.toolTip.add("└ Inventar: " + getFormattedAmount(playerAmount, stackSize));
 	}
 
 	private String getFormattedAmount(long amount, int stackSize) {

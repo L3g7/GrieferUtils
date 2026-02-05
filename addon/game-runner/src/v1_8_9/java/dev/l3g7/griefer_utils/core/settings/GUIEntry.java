@@ -22,7 +22,7 @@ public interface GUIEntry {
 	@Singleton
 	class SwitchSettingBuilder implements SettingBuilder {
 		@Override
-		public BaseSetting<?> build(Category meta, String configKey) {
+		public SwitchSetting build(Category meta, String configKey) {
 			return SwitchSetting.create()
 				.name(meta.name())
 				.icon(meta.icon())

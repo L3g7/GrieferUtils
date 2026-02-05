@@ -7,26 +7,27 @@
 
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
-import com.google.common.collect.ImmutableList;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.widgets.other.BlockInfo;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Singleton
-public class LuckyBlockType extends ItemInfo.ItemInfoSupplier {
+public class LuckyBlockType extends Feature {
 
 	private static final Map<Integer, String> LURE_TO_NAME = new HashMap<>() {{
-		put(6,  "§4§lUl§c§ltr§4§la-§c§lUn§4§llu§c§lck§4§lyB§c§llo§4§lck");
+		put(6, "§4§lUl§c§ltr§4§la-§c§lUn§4§llu§c§lck§4§lyB§c§llo§4§lck");
 		put(21, "§4§lMe§c§lga§4§l-U§c§lnl§4§luc§c§lky§4§lBl§c§loc§4§lk");
 		put(36, "§4§lSu§c§lpe§4§lr-§c§lUn§4§llu§c§lck§4§lyB§c§llo§4§lck");
 
@@ -48,15 +49,21 @@ public class LuckyBlockType extends ItemInfo.ItemInfoSupplier {
 		.description("Zeigt unter LuckyBlöcken an, von welchem Typ sie sind.")
 		.icon(ItemUtil.createItem(Blocks.gold_block, 0, true));
 
-	@Override
-	public List<String> getToolTip(ItemStack itemStack) {
-		if (!itemStack.hasTagCompound()
-			|| itemStack.getTagCompound().getInteger("HideFlags") != 19
-			|| EnchantmentHelper.getEnchantments(itemStack).get(51) != -1)
-			return Collections.emptyList();
+	@EventListener
+	public void onTooltip(ItemTooltipEvent e) {
+		if (FileProvider.getSingleton(BlockInfo.class).gettingTooltip)
+			return;
 
-		Integer lure = EnchantmentHelper.getEnchantments(itemStack).get(62);
-		return ImmutableList.of("§e§lTyp: " + LURE_TO_NAME.getOrDefault(lure, "§e§lLu§6§lck§e§lyB§6§llo§e§lck"));
+		if (MinecraftUtil.mc().currentScreen instanceof GuiBigChest)
+			return;
+
+		if (!e.itemStack.hasTagCompound()
+			|| e.itemStack.getTagCompound().getInteger("HideFlags") != 19
+			|| EnchantmentHelper.getEnchantments(e.itemStack).get(51) != -1)
+			return;
+
+		Integer lure = EnchantmentHelper.getEnchantments(e.itemStack).get(62);
+		e.toolTip.add("§e§lTyp: " + LURE_TO_NAME.getOrDefault(lure, "§e§lLu§6§lck§e§lyB§6§llo§e§lck"));
 	}
 
 }

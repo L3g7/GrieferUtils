@@ -7,82 +7,20 @@
 
 package dev.l3g7.griefer_utils.features.item.item_info;
 
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
-import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
-import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.SettingLoader;
+import dev.l3g7.griefer_utils.core.settings.GUIEntry.SwitchSettingBuilder;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.Feature.FeatureCategory;
-import dev.l3g7.griefer_utils.features.widgets.other.BlockInfo;
-import net.minecraft.item.ItemStack;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import dev.l3g7.griefer_utils.features.Feature.Category;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.HOLD;
 
 @Singleton
-@FeatureCategory
-public class ItemInfo extends Feature {
-
-	private final List<ItemInfoSupplier> infoSuppliers = FileProvider.getClassesWithSuperClass(ItemInfoSupplier.class).stream()
-		.map(ClassMeta::load)
-		.map(FileProvider::getSingleton)
-		.map(ItemInfoSupplier.class::cast)
-		.collect(Collectors.toList());
-
-	@MainElement
-	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Item-Infos")
-		.description("Zeigt unterschiedliche Informationen unter einem Item an.")
-		.icon("info")
-		.addHotkeySetting("die Item-Infos", HOLD);
+public class ItemInfo extends SwitchSettingBuilder {
 
 	@Override
-	public void init() {
-		super.init();
-		for (ItemInfoSupplier supplier : infoSuppliers)
-			supplier.init(getConfigKey());
-
-		infoSuppliers.sort(Comparator.comparing(f -> f.mainElement.name()));
-		enabled.subSettings(infoSuppliers.stream().map(s -> s.mainElement).collect(Collectors.toList()));
-	}
-
-	@EventListener
-	public void onTooltip(ItemTooltipEvent e) {
-		if (FileProvider.getSingleton(BlockInfo.class).gettingTooltip)
-			return;
-
-		if (MinecraftUtil.mc().currentScreen instanceof GuiBigChest)
-			return;
-
-		for (ItemInfoSupplier infoSupplier : infoSuppliers) {
-			if (infoSupplier.isEnabled())
-				e.toolTip.addAll(infoSupplier.getToolTip(e.itemStack));
-		}
-	}
-
-	public static abstract class ItemInfoSupplier {
-
-		public BaseSetting<?> mainElement;
-
-		protected BaseSetting<?> init(String parentKey) {
-			return mainElement = SettingLoader.initMainElement(this, parentKey).mainElement;
-		}
-
-		public abstract List<String> getToolTip(ItemStack itemStack);
-
-		public boolean isEnabled() {
-			return ((SwitchSetting) mainElement).get();
-		}
-
+	public SwitchSetting build(Category meta, String configKey) {
+		return super.build(meta, configKey)
+				.addHotkeySetting("die Item-Infos", HOLD);
 	}
 
 }

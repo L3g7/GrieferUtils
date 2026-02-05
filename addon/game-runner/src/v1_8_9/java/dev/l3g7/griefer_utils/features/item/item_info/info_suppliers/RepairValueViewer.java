@@ -7,13 +7,18 @@
 
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
+import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.item.item_info.ItemInfo;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.widgets.other.BlockInfo;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -23,7 +28,7 @@ import java.util.IllegalFormatException;
 import java.util.List;
 
 @Singleton
-public class RepairValueViewer extends ItemInfo.ItemInfoSupplier {
+public class RepairValueViewer extends Feature {
 
 	private final StringSetting format = StringSetting.create()
 		.name("Format")
@@ -46,14 +51,20 @@ public class RepairValueViewer extends ItemInfo.ItemInfoSupplier {
 		.icon(Blocks.anvil)
 		.subSettings(format);
 
-	@Override
-	public List<String> getToolTip(ItemStack itemStack) {
-		int cost = itemStack.getRepairCost();
+	@EventListener
+	public void onTooltip(ItemTooltipEvent e) {
+		if (FileProvider.getSingleton(BlockInfo.class).gettingTooltip)
+			return;
 
-		String text = String.format(DrawUtils.createColors(format.get()), "§r§" + getColor(itemStack) + cost + "§r");
+		if (MinecraftUtil.mc().currentScreen instanceof GuiBigChest)
+			return;
+
+		int cost = e.itemStack.getRepairCost();
+
+		String text = String.format(DrawUtils.createColors(format.get()), "§r§" + getColor(e.itemStack) + cost + "§r");
 		List<String> lines = Arrays.asList(text.split("\\\\n"));
 		lines.replaceAll(s -> "§r" + s);
-		return lines;
+		e.toolTip.addAll(lines);
 	}
 
 	/**

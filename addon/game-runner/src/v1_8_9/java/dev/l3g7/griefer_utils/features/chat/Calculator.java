@@ -12,8 +12,10 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.misc.AuctionHouseCheck;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
@@ -21,11 +23,19 @@ import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.network.play.client.C14PacketTabComplete;
+import net.minecraft.network.play.server.S3APacketTabComplete;
 import org.mariuszgromada.math.mxparser.Expression;
 import org.mariuszgromada.math.mxparser.License;
 import org.mariuszgromada.math.mxparser.mXparser;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -71,7 +81,7 @@ public class Calculator extends Feature {
 		.maxLength(1);
 
 	private final StringSetting placeholderEnd = StringSetting.create()
-		.name("TextSetting Ende")
+		.name("Placeholder Ende")
 		.description("Welches Zeichen das Ende des Placeholders markieren soll.")
 		.icon("regex")
 		.defaultValue("}")
@@ -90,6 +100,12 @@ public class Calculator extends Feature {
 		.description("Erkennt automatisch in einer Nachricht eingebettete Gleichungen, auch wenn sie nicht mit {} eingerahmt sind.")
 		.icon("regex");
 
+	public final SwitchSetting inlineCalculation = SwitchSetting.create()
+		.name("Inline-Berechnungen")
+		.description("Berechnet automatisch in den Chat eingegebene Rechnungen beim drücken der Tab-Taste.")
+		.icon("regex")
+		.defaultValue(true);
+
 	private final NumberSetting decimalPlaces = NumberSetting.create()
 		.name("Nachkommastellen")
 		.description("Auf wie viele Nachkommastellen das Ergebnis gerundet werden soll.")
@@ -103,11 +119,15 @@ public class Calculator extends Feature {
 		.description("Ein Rechner in Nachrichten.")
 		.icon("calculator")
 		.subSettings(decimalPlaces, HeaderSetting.create(),
-			autoWithdraw, starPlaceholder, placeholder, autoEquationDetect, prefix);
+			autoWithdraw, starPlaceholder, placeholder, autoEquationDetect, inlineCalculation, prefix);
 
 	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:^|(?: |^)[^/\\n][^ \\r\\n]* )(?<match>(?<equation>[+-]?\\d+(?:[.,]\\d+)?[mk]?(?: *[*+\\-/] *[+-]?\\d+(?:[.,]\\d+)?[mk]?)*))", CASE_INSENSITIVE);
 	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay (?<recipient>%s|\\*) (?<amount>.+)", Constants.UNFORMATTED_PLAYER_NAME_PATTERN), CASE_INSENSITIVE);
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
+
+	public static String[] TAB_RESULT_PLACEHOLDER = new String[] {"Tab result placeholder"};
+	public static String tabResult;
+	public static int tabEquationLength;
 
 	private Pattern placeholderPattern;
 	private String escapedPlaceholderPattern = "\\\\([{}])";
@@ -156,6 +176,46 @@ public class Calculator extends Feature {
 	@EventListener
 	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
 		lastPaymentReceiver = null;
+	}
+
+	@EventListener
+	public void onTabComplete(PacketSendEvent<C14PacketTabComplete> tabCompleteEvent) {
+		if (!inlineCalculation.get())
+			return;
+
+		String tabMessage = tabCompleteEvent.packet.getMessage();
+		for (int i = 0; i < tabMessage.length(); i++) {
+			String equation = tabMessage.substring(i).trim();
+			double result = calculate(equation, false);
+			if (Double.isNaN(result))
+				continue;
+
+			int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
+			tabResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, RoundingMode.HALF_UP)).replace(".", "");
+			tabEquationLength = equation.length();
+			// Spoof packet so that it works with LabyMod as well
+			new S3APacketTabComplete(TAB_RESULT_PLACEHOLDER).processPacket(mc().getNetHandler());
+
+			tabCompleteEvent.cancel();
+			break;
+		}
+	}
+
+	@Mixin(GuiChat.class)
+	private static class MixinGuiChat {
+
+	    @Inject(method = "onAutocompleteResponse", at = @At("HEAD"), cancellable = true)
+	    private void injectOnAutocompleteResponse(String[] response, CallbackInfo ci) {
+	    	if (response != TAB_RESULT_PLACEHOLDER)
+				return;
+
+			// Process tab calculation result
+		    GuiTextField inputField = Reflection.get(this, "inputField");
+		    inputField.deleteFromCursor(-tabEquationLength);
+		    inputField.writeText(tabResult);
+			ci.cancel();
+	    }
+
 	}
 
 	@EventListener

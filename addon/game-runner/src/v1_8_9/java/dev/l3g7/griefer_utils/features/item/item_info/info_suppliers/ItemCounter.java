@@ -186,7 +186,7 @@ public class ItemCounter extends Feature {
 	}
 
 	@SuppressWarnings("unused")
-	enum FormatMode implements Named {
+	public enum FormatMode implements Named {
 
 		FORMATTED("Formattiert"), UNFORMATTED("Unformattiert"), BOTH("Beides");
 

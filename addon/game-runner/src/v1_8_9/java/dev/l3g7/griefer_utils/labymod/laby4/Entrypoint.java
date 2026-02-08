@@ -45,7 +45,12 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 			// ZXing: for reading qr codes (QRCodeScanner)
 			"https://repo1.maven.org/maven2",
 			"com/google/zxing", "core", "3.5.4",
-			"71DE5D89341B5FCF5DD89DA7F44E84D825D0E084CDF3EC77C9ABE26B0F0CEB13"
+			"71DE5D89341B5FCF5DD89DA7F44E84D825D0E084CDF3EC77C9ABE26B0F0CEB13",
+
+			// Brigadier: for parsing commands (CommandSuggestions)
+			"https://libraries.minecraft.net",
+			"com/mojang", "brigadier", "1.0.18",
+			"EDC4926AA4B49010F6E7AC46EFD623FB38F9517344D26F6251D79A26A9738C0B"
 		);
 	}
 

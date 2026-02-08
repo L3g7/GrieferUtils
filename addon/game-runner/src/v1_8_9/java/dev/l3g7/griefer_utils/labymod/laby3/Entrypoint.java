@@ -59,7 +59,12 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 			// Mixin: for modifying other classes (core.injection)
 			"https://repo.spongepowered.org/repository/maven-public",
 			"org/spongepowered", "mixin", "0.7.11-SNAPSHOT", "mixin-0.7.11-20180703.121122-1.jar",
-			"DA3D6E47B9C12B5A312D89B67BC27E2429D823C09CDE8A90299E9FDCC4EEFC20"
+			"DA3D6E47B9C12B5A312D89B67BC27E2429D823C09CDE8A90299E9FDCC4EEFC20",
+
+			// Brigadier: for parsing commands (CommandSuggestions)
+			"https://libraries.minecraft.net",
+			"com/mojang", "brigadier", "1.0.18",
+			"EDC4926AA4B49010F6E7AC46EFD623FB38F9517344D26F6251D79A26A9738C0B"
 		);
 
 		// Sets LabyMod's mapping adapter

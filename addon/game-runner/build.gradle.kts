@@ -16,6 +16,9 @@ dependencies {
 
 	// ZXing (QR Code Reader)
 	implementation("com.google.zxing:core:3.5.4")
+
+	// Brigadier (Command dispatcher)
+	implementation("com.mojang:brigadier:1.0.18")
 }
 
 tasks.build {

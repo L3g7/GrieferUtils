@@ -5,9 +5,9 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.tags.laby4;
+package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 
-import dev.l3g7.griefer_utils.core.misc.tags.Tags;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.render.state.EntityExtraKeys;
@@ -19,11 +19,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-import static dev.l3g7.griefer_utils.core.misc.tags.laby4.Laby4TagManager.icon;
+import static dev.l3g7.griefer_utils.core.misc.badges.laby4.Laby4BadgeManager.icon;
 
 public class GrieferUtilsGroupIconTag extends GroupIconTag {
 
-	private @Nullable Tags.SpecialBadge badge;
+	private @Nullable Badges.SpecialBadge badge;
 
 	@Override
 	public void begin(EntitySnapshot snapshot) {

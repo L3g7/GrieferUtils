@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.core.api.misc.server.requests;
 
 import dev.l3g7.griefer_utils.core.api.misc.server.Request;
-import dev.l3g7.griefer_utils.core.misc.tags.Tags.SpecialBadge;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
 
 import java.util.Map;
 import java.util.UUID;

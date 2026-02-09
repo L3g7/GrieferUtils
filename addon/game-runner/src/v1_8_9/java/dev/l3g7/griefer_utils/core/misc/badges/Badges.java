@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.tags;
+package dev.l3g7.griefer_utils.core.misc.badges;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
@@ -17,7 +17,6 @@ import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListClearEvent
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.Badges;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
@@ -26,11 +25,11 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.*;
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.core.misc.tags.Tags.TagManager.tagManager;
+import static dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager.badgeManager;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
 
-public class Tags {
+public class Badges {
 
 	public record SpecialBadge(String title, int colorWithLabymod, int colorWithoutLabymod) {
 		public static final SpecialBadge DEFAULT_BADGE = new SpecialBadge(null, 0xFFFFFF, 0xFFFFFF);
@@ -81,7 +80,7 @@ public class Tags {
 
 			GUServer.getOnlineUsers(requestedUsers).thenAccept(data -> {
 				synchronized (onlineUsers) {
-					data.forEach(tagManager::setOnline);
+					data.forEach(badgeManager::setOnline);
 					onlineUsers.addAll(data);
 				}
 			});
@@ -96,7 +95,7 @@ public class Tags {
 		private static void onTabListRemove(TabListPlayerRemoveEvent event) {
 			UUID uuid = event.data.getProfile().getId();
 			synchronized (onlineUsers) {
-				tagManager.setOffline(uuid);
+				badgeManager.setOffline(uuid);
 				onlineUsers.remove(uuid);
 			}
 		}
@@ -104,7 +103,7 @@ public class Tags {
 		@EventListener
 		private static void onTabListClearAdd(TabListClearEvent event) {
 			synchronized (onlineUsers) {
-				onlineUsers.forEach(tagManager::setOffline);
+				onlineUsers.forEach(badgeManager::setOffline);
 				onlineUsers.clear();
 			}
 		}
@@ -125,7 +124,7 @@ public class Tags {
 	}
 
 	public static void renderUserPercentage(double rightEnd) {
-		if (!showBadges() || !Badges.showPercentage.get())
+		if (!showBadges() || !dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showPercentage.get())
 			return;
 
 		double y = mc().fontRendererObj.FONT_HEIGHT;
@@ -133,7 +132,7 @@ public class Tags {
 		int totalCount = mc().getNetHandler().getPlayerInfoMap().size();
 		int userCount = 0;
 		for (NetworkPlayerInfo npi : mc().getNetHandler().getPlayerInfoMap())
-			if (Tags.isOnline(npi.getGameProfile().getId()))
+			if (Badges.isOnline(npi.getGameProfile().getId()))
 				userCount++;
 
 		int percent = totalCount == 0 ? 0 : (int) Math.round(userCount / (double) totalCount * 100);
@@ -146,9 +145,9 @@ public class Tags {
 	}
 
 	@Bridged
-	public interface TagManager {
+	public interface BadgeManager {
 
-		TagManager tagManager = FileProvider.getBridge(TagManager.class);
+		BadgeManager badgeManager = FileProvider.getBridge(BadgeManager.class);
 
 		void setOnline(UUID uuid);
 		void setOffline(UUID uuid);

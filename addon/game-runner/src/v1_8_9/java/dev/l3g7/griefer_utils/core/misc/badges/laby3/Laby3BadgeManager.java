@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.tags.laby3;
+package dev.l3g7.griefer_utils.core.misc.badges.laby3;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -14,8 +14,8 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.UserSetGroupEvent;
 import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.Gui;
-import dev.l3g7.griefer_utils.core.misc.tags.Tags;
-import dev.l3g7.griefer_utils.core.misc.tags.Tags.TagManager;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager;
 import net.labymod.core_implementation.mc18.gui.ModPlayerTabOverlay;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModSettings;
@@ -41,7 +41,7 @@ import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.show
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_3)
-public class Laby3TagManager implements TagManager {
+public class Laby3BadgeManager implements BadgeManager {
 
 	private static final Map<UUID, LabyGroup> onlineUsers = new ConcurrentHashMap<>();
 
@@ -124,7 +124,7 @@ public class Laby3TagManager implements TagManager {
 
 		@Inject(method = "newTabOverlay", at = @At("TAIL"), remap = false)
 		public void injectNewTabOverlay(int screenWidth, Scoreboard scoreboardIn, ScoreObjective scoreObjectiveIn, CallbackInfo ci) {
-			Tags.renderUserPercentage(screenWidth - grieferUtils$tablistPadding);
+			Badges.renderUserPercentage(screenWidth - grieferUtils$tablistPadding);
 		}
 
 	}

@@ -39,7 +39,7 @@ import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.misc.tags.laby4.Laby4TagManager.icon;
+import static dev.l3g7.griefer_utils.core.misc.badges.laby4.Laby4BadgeManager.icon;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 

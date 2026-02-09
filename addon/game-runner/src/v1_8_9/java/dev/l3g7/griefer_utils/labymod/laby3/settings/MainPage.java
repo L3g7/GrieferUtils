@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.tags.laby3.GrieferUtilsGroup;
+import dev.l3g7.griefer_utils.core.misc.badges.laby3.GrieferUtilsGroup;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 import dev.l3g7.griefer_utils.core.settings.types.*;

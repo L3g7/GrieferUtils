@@ -5,10 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.tags.laby4;
+package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 
-import dev.l3g7.griefer_utils.core.misc.tags.Tags;
-import dev.l3g7.griefer_utils.core.misc.tags.Tags.SpecialBadge;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
 import net.labymod.api.Laby;
 import net.labymod.api.LabyAPI;
 import net.labymod.api.client.component.Component;
@@ -33,7 +33,7 @@ import net.labymod.core.main.user.serverfeature.UserServerFeature;
 import net.labymod.core.main.user.shop.item.model.AttachmentPoint;
 import org.jetbrains.annotations.Nullable;
 
-import static dev.l3g7.griefer_utils.core.misc.tags.Tags.SpecialBadge.DEFAULT_BADGE;
+import static dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge.DEFAULT_BADGE;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
 
 public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
@@ -51,8 +51,8 @@ public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
 	}
 
 	private static @Nullable SpecialBadge getBadge(GameUser user) {
-		if (showBadges() && Tags.isOnline(user.getUniqueId()))
-			return Tags.getBadge(user.getUniqueId()).orElse(DEFAULT_BADGE);
+		if (showBadges() && Badges.isOnline(user.getUniqueId()))
+			return Badges.getBadge(user.getUniqueId()).orElse(DEFAULT_BADGE);
 
 		return null;
 	}

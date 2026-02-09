@@ -8,13 +8,12 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 
-import dev.l3g7.griefer_utils.core.misc.tags.Tags;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 
-import static dev.l3g7.griefer_utils.core.misc.tags.Tags.TagManager.tagManager;
+import static dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager.badgeManager;
 
 /**
- * @see Tags
+ * @see dev.l3g7.griefer_utils.core.misc.badges.Badges
  */
 public class Badges {
 
@@ -38,7 +37,7 @@ public class Badges {
 		.icon("icon")
 		.defaultValue(true)
 		.subSettings(showPercentage)
-		.callback(tagManager::toggleBadges);
+		.callback(badgeManager::toggleBadges);
 
 	public static boolean showBadges() {
 		return enabled.get();

@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings.credits;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
-import dev.l3g7.griefer_utils.core.misc.tags.Tags;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
@@ -85,9 +85,9 @@ public class Credits {
 		List<String> supporter = new ArrayList<>();
 		List<BaseSetting<?>> elements = new ArrayList<>();
 
-		if (Tags.getBadge(UUID.fromString("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db")).isPresent())
+		if (Badges.getBadge(UUID.fromString("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db")).isPresent())
 			supporter.add("MoosLeitung");
-		if (Tags.getBadge(UUID.fromString("bc1f3d61-0878-4006-ba46-fb479fc37a1e")).isPresent())
+		if (Badges.getBadge(UUID.fromString("bc1f3d61-0878-4006-ba46-fb479fc37a1e")).isPresent())
 			supporter.add("0001EnderGirlLP");
 
 		if (!supporter.isEmpty()) {

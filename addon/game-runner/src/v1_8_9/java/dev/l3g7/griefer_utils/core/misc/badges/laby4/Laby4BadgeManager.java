@@ -5,14 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.misc.tags.laby4;
+package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.misc.tags.Tags;
-import dev.l3g7.griefer_utils.core.misc.tags.Tags.TagManager;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager;
 import net.labymod.api.Laby;
 import net.labymod.api.LabyAPI;
 import net.labymod.api.client.entity.player.badge.BadgeRegistry;
@@ -44,7 +44,7 @@ import static net.labymod.api.client.entity.player.tag.PositionType.LEFT_TO_NAME
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
-public class Laby4TagManager implements TagManager {
+public class Laby4BadgeManager implements BadgeManager {
 
 	public static Group GRIEFERUTILS_GROUP = new Group(99, "grieferutils", "GrieferUtils", "FFFFFF", 'f', "", "", false);
 
@@ -97,7 +97,7 @@ public class Laby4TagManager implements TagManager {
 
 		@Inject(method = "render", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 		private void injectRender(ScreenContext context, LabyAPI labyAPI, Bounds bounds, boolean update, CallbackInfo ci, int screenWidth, float columnsWidth, float backgroundWidth, RenderableComponent headerRenderableComponent, RenderableComponent footerRenderableComponent, int x, int y) {
-			Tags.renderUserPercentage(x + backgroundWidth);
+			Badges.renderUserPercentage(x + backgroundWidth);
 		}
 
 	}

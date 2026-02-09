@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.features.widgets.other.spawn_counter;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
@@ -27,11 +26,9 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static net.minecraft.util.EnumFacing.*;
 
-@ExclusiveTo(LABY_4)
 class RoundHandler {
 
 	private static final EnumFacing[] HORIZONTALS = new EnumFacing[] {SOUTH, WEST, NORTH, EAST};

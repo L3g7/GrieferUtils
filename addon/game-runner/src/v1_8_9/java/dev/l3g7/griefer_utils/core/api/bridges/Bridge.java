@@ -15,6 +15,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.function.BooleanSupplier;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.IMPLEMENTATION;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -78,10 +79,39 @@ public @interface Bridge {
 
 	}
 
+	/**
+	 * Reasons for an @ExclusiveTo annotation.
+	 */
+	enum Reason {
+		/**
+		 * The annotated class is an implementation detail (there are implementations for the other versions as well).
+		 */
+		IMPLEMENTATION,
+
+		/**
+		 * The annotated class is an implementation detail, but not implemented for other versions.
+		 */
+		NOT_IMPLEMENTED,
+
+		/**
+		 * The annotated class is not possible in other versions (due to exclusive dependencies).
+		 */
+		NOT_POSSIBLE,
+
+		/**
+		 * The annotated class is not needed in other versions.
+		 */
+		NOT_NEEDED,
+	}
+
 	@Retention(RUNTIME)
 	@Target(TYPE)
 	@interface ExclusiveTo {
 		Version value();
+
+		Reason reason() default IMPLEMENTATION;
+
+		String customMessage() default "";
 	}
 
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOW;
 
@@ -52,7 +53,7 @@ public class LabyModNeoPayloadEvent<T extends LabyModNeoPacket> extends Event {
 		data.resetReaderIndex();
 	}
 
-	@ExclusiveTo(LABY_3)
+	@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED)
 	private static class Init {
 
 		@EventListener(priority = LOW)

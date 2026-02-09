@@ -18,7 +18,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
@@ -37,10 +37,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
-@Bridge.ExclusiveTo(Bridge.Version.LABY_3)
+@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED)
 public class EnchantmentRenderer {
 
 	@OnEnable

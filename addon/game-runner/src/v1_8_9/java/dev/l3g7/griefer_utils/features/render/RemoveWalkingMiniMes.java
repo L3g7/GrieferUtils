@@ -20,10 +20,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_IMPLEMENTED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 @Singleton
-@ExclusiveTo(LABY_3)
+@ExclusiveTo(value = LABY_3, reason = NOT_IMPLEMENTED, customMessage = "Die Minimes in LabyMod 4 führen nicht zu Lags.")
 public class RemoveWalkingMiniMes extends Feature {
 
 	public static final int WALKING_MINIME_ID = 1476;

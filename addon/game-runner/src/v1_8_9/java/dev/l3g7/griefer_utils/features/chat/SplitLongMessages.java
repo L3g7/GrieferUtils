@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
@@ -238,7 +239,7 @@ public class SplitLongMessages extends Feature {
 		return stringBuilder.length() + 1;
 	}
 
-	@ExclusiveTo(LABY_3)
+	@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED)
 	@Mixin(value = EmoteSuggestionsMenu.class, remap = false)
 	private static class MixinEmoteSuggestionsMenu {
 

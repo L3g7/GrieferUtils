@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 @Singleton
@@ -197,6 +198,7 @@ public class ScoreboardHandler {
 
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(value = ScoreboardHudWidget.class, remap = false)
 	private static class MixinScoreboardModule0 {
 

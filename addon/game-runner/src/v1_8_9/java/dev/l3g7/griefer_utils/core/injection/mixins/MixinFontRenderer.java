@@ -18,9 +18,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.lang.reflect.Field;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
-@ExclusiveTo(LABY_3)
+@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED)
 @Mixin(FontRenderer.class)
 public abstract class MixinFontRenderer {
 

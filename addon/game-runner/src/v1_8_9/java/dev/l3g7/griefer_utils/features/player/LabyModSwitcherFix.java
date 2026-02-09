@@ -29,10 +29,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 @Singleton
-@ExclusiveTo(LABY_3)
+@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED, customMessage = "LabyMod 4 hat diesen Bug gefixt.")
 public class LabyModSwitcherFix extends Feature {
 
 	@MainElement

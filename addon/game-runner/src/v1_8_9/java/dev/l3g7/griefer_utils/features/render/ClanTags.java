@@ -23,13 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 /**
  * Shows a player's clan tag underneath their name tag.
  */
 @Singleton
-@ExclusiveTo(LABY_3)
+@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED)
 public class ClanTags extends Feature {
 
 	private static final Map<UUID, Pair<String, Double>> subtitles = new HashMap<>();

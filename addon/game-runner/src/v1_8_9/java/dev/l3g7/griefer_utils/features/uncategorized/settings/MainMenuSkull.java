@@ -28,11 +28,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.InputStream;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_POSSIBLE;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
 @Singleton
-@ExclusiveTo(LABY_4)
+@ExclusiveTo(value = LABY_4, reason = NOT_POSSIBLE, customMessage = "Die Hintergrundwelt existiert nur in LabyMod 4.")
 public class MainMenuSkull {
 
 	private static Boolean firstEnabled;

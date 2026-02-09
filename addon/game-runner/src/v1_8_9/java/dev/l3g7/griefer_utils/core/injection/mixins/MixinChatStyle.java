@@ -18,13 +18,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
 /**
  * Hopefully this class can soon be removed when LabyMod fixed their code
  */
 @Mixin(ChatStyle.class)
-@ExclusiveTo(LABY_4)
+@ExclusiveTo(value = LABY_4, reason = NOT_NEEDED)
 public class MixinChatStyle {
 
 	@Inject(method = "createShallowCopy", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)

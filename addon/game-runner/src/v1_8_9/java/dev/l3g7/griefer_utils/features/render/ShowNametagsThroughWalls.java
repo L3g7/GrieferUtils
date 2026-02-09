@@ -27,10 +27,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_IMPLEMENTED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 @Singleton
-@ExclusiveTo(LABY_3)
+@ExclusiveTo(value = LABY_3, reason = NOT_IMPLEMENTED, customMessage = "Nametags durch Wände anzeigen ist momentan nur für LabyMod 3 implementiert.")
 public class ShowNametagsThroughWalls extends Feature {
 
 	@MainElement

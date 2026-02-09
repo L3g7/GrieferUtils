@@ -17,11 +17,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static java.lang.Integer.MAX_VALUE;
 
 @Singleton
-@ExclusiveTo(LABY_3)
+@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED, customMessage = "Der Chat-Filter hat in LabyMod 4 für jeden Eintrag eine eigene Länge und muss somit nicht erhöht werden.")
 public class UnlockChatFilters extends Feature {
 
 	@MainElement

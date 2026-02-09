@@ -12,23 +12,29 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+
 public abstract class PacketEvent<P extends Packet<?>> extends Event {
 
 	public final P packet;
+	public final NetworkManager manager;
 
-	private PacketEvent(P packet) {
+	private PacketEvent(P packet, NetworkManager manager) {
 		this.packet = packet;
+		this.manager = manager;
 	}
 
 	public static class PacketReceiveEvent<P extends Packet<?>> extends PacketEvent<P> {
 
-		public PacketReceiveEvent(P packet) {
-			super(packet);
+		public PacketReceiveEvent(P packet, NetworkManager manager) {
+			super(packet, manager);
 		}
 
 		@Mixin(NetworkManager.class)
@@ -36,7 +42,7 @@ public abstract class PacketEvent<P extends Packet<?>> extends Event {
 
 			@Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/Packet;)V", at = @At("HEAD"), cancellable = true)
 			public void injectChannelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
-				if (new PacketReceiveEvent<>(packet).fire().isCanceled())
+				if (new PacketReceiveEvent<>(packet, c(this)).fire().isCanceled())
 					ci.cancel();
 			}
 
@@ -48,9 +54,8 @@ public abstract class PacketEvent<P extends Packet<?>> extends Event {
 	 * Fired after a packet was processed.
 	 */
 	public static class PacketReceivedEvent<P extends Packet<?>> extends PacketEvent<P> {
-
-		public PacketReceivedEvent(P packet) {
-			super(packet);
+		public PacketReceivedEvent(P packet, NetworkManager manager) {
+			super(packet, manager);
 		}
 
 		@Mixin(NetworkManager.class)
@@ -58,7 +63,7 @@ public abstract class PacketEvent<P extends Packet<?>> extends Event {
 
 			@Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/Packet;)V", at = @At("TAIL"))
 			public void injectChannelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
-				new PacketReceivedEvent<>(packet).fire();
+				new PacketReceivedEvent<>(packet, c(this)).fire();
 			}
 
 		}
@@ -66,17 +71,20 @@ public abstract class PacketEvent<P extends Packet<?>> extends Event {
 	}
 
 	public static class PacketSendEvent<P extends Packet<?>> extends PacketEvent<P> {
-
-		public PacketSendEvent(P packet) {
-			super(packet);
+		public PacketSendEvent(P packet, NetworkManager manager) {
+			super(packet, manager);
 		}
 
 		@Mixin(NetHandlerPlayClient.class)
 		private static class MixinNetHandlerPlayClient {
 
+			@Shadow
+			@Final
+			private NetworkManager netManager;
+
 			@Inject(method = "addToSendQueue", at = @At("HEAD"), cancellable = true)
 			private void injectPacketSendEvent(Packet<?> packet, CallbackInfo ci) {
-				if (new PacketSendEvent<>(packet).fire().isCanceled())
+				if (new PacketSendEvent<>(packet, netManager).fire().isCanceled())
 					ci.cancel();
 			}
 

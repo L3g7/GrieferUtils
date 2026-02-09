@@ -154,9 +154,6 @@ public class Tags {
 		void setOffline(UUID uuid);
 		void toggleBadges(boolean enabled);
 
-		void setSubtitle(UUID uuid, String text, double scale);
-		void toggleSubtitles(boolean enabled);
-
 	}
 
 }

@@ -26,12 +26,7 @@ import net.labymod.api.user.GameUser;
 import net.labymod.api.user.group.Group;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.playerlist.PlayerListRenderer;
 import net.labymod.core.client.render.state.entity.GameUserSnapshotFactory;
-import net.labymod.core.main.LabyMod;
 import net.labymod.core.main.user.group.tag.GroupTextTag;
-import net.labymod.core.main.user.serverfeature.ServerFeature;
-import net.labymod.core.main.user.serverfeature.subtitle.SubtitleComponent;
-import net.labymod.serverapi.api.model.component.ServerAPIComponent;
-import net.labymod.serverapi.core.model.display.Subtitle;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,13 +36,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.features.render.ClanTags.showSubtitle;
 import static net.labymod.api.client.entity.player.tag.PositionType.LEFT_TO_NAME;
 
 @Bridge
@@ -58,7 +49,6 @@ public class Laby4TagManager implements TagManager {
 	public static Group GRIEFERUTILS_GROUP = new Group(99, "grieferutils", "GrieferUtils", "FFFFFF", 'f', "", "", false);
 
 	public static String icon = "icon";
-	private final List<Subtitle> subtitles = new ArrayList<>();
 
 	@OnEnable
 	private void overrideBadgeRenderer() {
@@ -79,28 +69,6 @@ public class Laby4TagManager implements TagManager {
 
 	@Override
 	public void toggleBadges(boolean enabled) { /* NO-OP */ }
-
-	@Override
-	public void setSubtitle(UUID uuid, String text, double scale) {
-		Subtitle subtitle = Subtitle.create(uuid, text == null ? null : ServerAPIComponent.text(text), scale);
-		subtitles.add(subtitle);
-		if (!showSubtitle())
-			return;
-
-		mc().addScheduledTask(() -> LabyMod.references().serverFeatureService().get()
-			.getOrCreateUserFeature(uuid).setSubtitle(new SubtitleComponent(subtitle)));
-	}
-
-	@Override
-	public void toggleSubtitles(boolean enabled) {
-		ServerFeature service = LabyMod.references().serverFeatureService().get();
-		for (Subtitle subtitle : subtitles) {
-			if (enabled)
-				service.getOrCreateUserFeature(subtitle.getUniqueId()).setSubtitle(new SubtitleComponent(subtitle));
-			else
-				service.getOrCreateUserFeature(subtitle.getUniqueId()).setSubtitle(null);
-		}
-	}
 
 	/**
 	 * Injects badges into {@link GroupTextTag} by overriding the rendered snapshot.

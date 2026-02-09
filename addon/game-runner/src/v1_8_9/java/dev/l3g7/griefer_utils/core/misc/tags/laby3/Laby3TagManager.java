@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.events.UserSetGroupEvent;
 import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.Gui;
@@ -32,13 +31,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.features.render.ClanTags.showSubtitle;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
 
 @Bridge
@@ -46,7 +43,6 @@ import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.show
 @ExclusiveTo(LABY_3)
 public class Laby3TagManager implements TagManager {
 
-	private static final Map<UUID, Pair<String, Double>> subtitles = new HashMap<>();
 	private static final Map<UUID, LabyGroup> onlineUsers = new ConcurrentHashMap<>();
 
 	@Override
@@ -59,26 +55,6 @@ public class Laby3TagManager implements TagManager {
 	@Override
 	public void setOffline(UUID uuid) {
 		user(uuid).setGroup(onlineUsers.remove(uuid));
-	}
-
-	@Override
-	public void setSubtitle(UUID uuid, String text, double scale) {
-		subtitles.put(uuid, new Pair<>(text, scale));
-		if (!showSubtitle())
-			return;
-
-		User user = LabyMod.getInstance().getUserManager().getUser(uuid);
-		user.setSubTitle(text);
-		user.setSubTitleSize(scale);
-	}
-
-	@Override
-	public void toggleSubtitles(boolean enabled) {
-		if (enabled)
-			subtitles.forEach((uuid, tag) -> setSubtitle(uuid, tag.a, tag.b));
-		else
-			for (User user : LabyMod.getInstance().getUserManager().getUsers().values())
-				user.setSubTitle(null);
 	}
 
 	@Override

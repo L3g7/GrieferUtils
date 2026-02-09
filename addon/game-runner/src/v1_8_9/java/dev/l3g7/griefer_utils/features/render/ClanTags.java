@@ -10,14 +10,20 @@ package dev.l3g7.griefer_utils.features.render;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.events.network.LabyModNeoPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.LabyModNeoPayloadEvent.SubtitlePacket;
 import dev.l3g7.griefer_utils.core.events.network.LabyModNeoPayloadEvent.SubtitlePacket.Subtitle;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import net.labymod.main.LabyMod;
+import net.labymod.user.User;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.misc.tags.Tags.TagManager.tagManager;
 
 /**
  * Shows a player's clan tag underneath their name tag.
@@ -26,21 +32,37 @@ import static dev.l3g7.griefer_utils.core.misc.tags.Tags.TagManager.tagManager;
 @ExclusiveTo(LABY_3)
 public class ClanTags extends Feature {
 
+	private static final Map<UUID, Pair<String, Double>> subtitles = new HashMap<>();
+
 	@MainElement
 	private static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Clantags")
 		.description("Zeigt den Clantag eines Spielers unter seinem Nametag.")
 		.icon("rainbow_name")
-		.callback(tagManager::toggleSubtitles);
+		.callback(ClanTags::toggleSubtitles);
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onSubtitle(LabyModNeoPayloadEvent<SubtitlePacket> event) {
 		for (Subtitle subtitle : event.packet.subtitles)
-			tagManager.setSubtitle(subtitle.uuid(), subtitle.text(), subtitle.scale());
+			setSubtitle(subtitle.uuid(), subtitle.text(), subtitle.scale());
 	}
 
-	public static boolean showSubtitle() {
-		return enabled.get();
+	private static void setSubtitle(UUID uuid, String text, double scale) {
+		subtitles.put(uuid, new Pair<>(text, scale));
+		if (!enabled.get())
+			return;
+
+		User user = LabyMod.getInstance().getUserManager().getUser(uuid);
+		user.setSubTitle(text);
+		user.setSubTitleSize(scale);
+	}
+
+	private static void toggleSubtitles(boolean enabled) {
+		if (enabled)
+			subtitles.forEach((uuid, tag) -> setSubtitle(uuid, tag.a, tag.b));
+		else
+			for (User user : LabyMod.getInstance().getUserManager().getUsers().values())
+				user.setSubTitle(null);
 	}
 
 }

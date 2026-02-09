@@ -82,7 +82,7 @@ public class Laby4TagManager implements TagManager {
 
 	@Override
 	public void setSubtitle(UUID uuid, String text, double scale) {
-		Subtitle subtitle = Subtitle.create(uuid, ServerAPIComponent.text(text), scale);
+		Subtitle subtitle = Subtitle.create(uuid, text == null ? null : ServerAPIComponent.text(text), scale);
 		subtitles.add(subtitle);
 		if (!showSubtitle())
 			return;

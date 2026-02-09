@@ -7,22 +7,23 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
+import dev.l3g7.griefer_utils.core.events.network.LabyModNeoPayloadEvent;
+import dev.l3g7.griefer_utils.core.events.network.LabyModNeoPayloadEvent.SubtitlePacket;
+import dev.l3g7.griefer_utils.core.events.network.LabyModNeoPayloadEvent.SubtitlePacket.Subtitle;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 
-import java.util.UUID;
-
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.misc.tags.Tags.TagManager.tagManager;
 
 /**
  * Shows a player's clan tag underneath their name tag.
  */
 @Singleton
+@ExclusiveTo(LABY_3)
 public class ClanTags extends Feature {
 
 	@MainElement
@@ -33,19 +34,9 @@ public class ClanTags extends Feature {
 		.callback(tagManager::toggleSubtitles);
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onPlayerTick(MysteryModPayloadEvent event) {
-		if (!event.channel.equals("user_subtitle"))
-			return;
-
-		for (JsonElement elem : event.payload.getAsJsonArray()) {
-			JsonObject obj = elem.getAsJsonObject();
-
-			UUID uuid = UUID.fromString(obj.get("targetId").getAsString());
-
-			String text = obj.get("text").getAsString().replaceAll("(?i)&([a-z0-9])", "§$1");
-			double scale = obj.get("scale").getAsDouble();
-			tagManager.setSubtitle(uuid, text, scale);
-		}
+	public void onSubtitle(LabyModNeoPayloadEvent<SubtitlePacket> event) {
+		for (Subtitle subtitle : event.packet.subtitles)
+			tagManager.setSubtitle(subtitle.uuid(), subtitle.text(), subtitle.scale());
 	}
 
 	public static boolean showSubtitle() {

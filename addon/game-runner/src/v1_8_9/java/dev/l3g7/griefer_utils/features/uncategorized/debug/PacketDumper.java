@@ -19,9 +19,19 @@ import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +39,7 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-class PacketDumper {
+public class PacketDumper {
 
 	private static final OneSidedPacketDumper incoming = new OneSidedPacketDumper("[INCOMING] ", "Eingehende", "00,03,19,3E");
 	private static final OneSidedPacketDumper outgoing = new OneSidedPacketDumper("[OUTGOING] ", "Ausgehende", "00,03,04,05,06");
@@ -47,10 +57,24 @@ class PacketDumper {
 			incoming.onPacket(p.packet);
 	}
 
-	@EventListener
-	private static void onPacketSend(PacketSendEvent<?> p) {
+	@Mixin(NetworkManager.class)
+	private static class MixinNetworkManager {
+
+		@Inject(method = "sendPacket(Lnet/minecraft/network/Packet;)V", at = @At("HEAD"))
+		private void injectPacketSendEvent(Packet<?> packet, CallbackInfo ci) {
+			onPacketSend(packet);
+		}
+
+		@Inject(method = "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;[Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"))
+		private void injectPacketSendEvent(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> lvt_2_1_, GenericFutureListener<? extends Future<? super Void>>[] listener, CallbackInfo ci) {
+			onPacketSend(packet);
+		}
+
+	}
+
+	public static void onPacketSend(Packet<?> packet) {
 		if (DebugSettings.enabled.get() && enabled.get())
-			outgoing.onPacket(p.packet);
+			outgoing.onPacket(packet);
 	}
 
 	private static class OneSidedPacketDumper {

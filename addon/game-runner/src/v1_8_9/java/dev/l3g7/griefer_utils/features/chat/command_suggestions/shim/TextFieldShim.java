@@ -3,8 +3,10 @@ package dev.l3g7.griefer_utils.features.chat.command_suggestions.shim;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiTextField;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import java.util.function.BiFunction;
 
@@ -216,14 +218,45 @@ public class TextFieldShim extends GuiTextField {
 
 		if (selectionEnd != cursorPos) {
 			int textWidth = cursorX + this.fontRenderer.getStringWidth(shownText.substring(0, selectionEnd));
-			((Accessor) this).grieferUtils$drawCursorVertical(cursorX3, cursorY - 1, textWidth - 1, cursorY + 1 + this.fontRenderer.FONT_HEIGHT);
+			drawCursorVertical(cursorX3, cursorY - 1, textWidth - 1, cursorY + 1 + this.fontRenderer.FONT_HEIGHT);
 		}
 	}
 
-	@Mixin(GuiTextField.class)
-	public interface Accessor {
-		@Invoker("drawCursorVertical")
-		void grieferUtils$drawCursorVertical(int x1, int y1, int x2, int y2);
+	private void drawCursorVertical(int x1, int y1, int x2, int y2) {
+		if (x1 < x2) {
+			int lvt_5_1_ = x1;
+			x1 = x2;
+			x2 = lvt_5_1_;
+		}
+
+		if (y1 < y2) {
+			int lvt_5_2_ = y1;
+			y1 = y2;
+			y2 = lvt_5_2_;
+		}
+
+		if (x2 > this.xPosition + this.width) {
+			x2 = this.xPosition + this.width;
+		}
+
+		if (x1 > this.xPosition + this.width) {
+			x1 = this.xPosition + this.width;
+		}
+
+		Tessellator lvt_5_3_ = Tessellator.getInstance();
+		WorldRenderer lvt_6_1_ = lvt_5_3_.getWorldRenderer();
+		GlStateManager.color(0.0F, 0.0F, 255.0F, 255.0F);
+		GlStateManager.disableTexture2D();
+		GlStateManager.enableColorLogic();
+		GlStateManager.colorLogicOp(5387);
+		lvt_6_1_.begin(7, DefaultVertexFormats.POSITION);
+		lvt_6_1_.pos(x1, y2, 0.0F).endVertex();
+		lvt_6_1_.pos(x2, y2, 0.0F).endVertex();
+		lvt_6_1_.pos(x2, y1, 0.0F).endVertex();
+		lvt_6_1_.pos(x1, y1, 0.0F).endVertex();
+		lvt_5_3_.draw();
+		GlStateManager.disableColorLogic();
+		GlStateManager.enableTexture2D();
 	}
 
 }

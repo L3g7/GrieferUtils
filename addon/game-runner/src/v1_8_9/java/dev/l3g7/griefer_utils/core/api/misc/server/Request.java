@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.misc.server;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
@@ -136,7 +137,11 @@ public abstract class Request<R> {
 		}
 
 		public <T> T convertTo(Class<T> type) {
-			return IOUtil.gson.fromJson(body, type);
+			return convertTo(type, IOUtil.gson);
+		}
+
+		public <T> T convertTo(Class<T> type, Gson gson) {
+			return gson.fromJson(body, type);
 		}
 	}
 

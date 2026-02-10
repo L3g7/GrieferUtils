@@ -12,10 +12,6 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
-import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.ArgumentNode;
-import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.Node;
-import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.Requirement;
-import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.suggestions.Suggestion;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -34,14 +30,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class IOUtil {
 
-	public static final Gson gson = new GsonBuilder()
-		.registerTypeAdapter(Node.class, Node.DESERIALIZER)
-		.registerTypeAdapter(ArgumentNode.class, ArgumentNode.DESERIALIZER)
-		.registerTypeAdapter(Requirement.class, Requirement.DESERIALIZER)
-		.registerTypeAdapter(Suggestion.class, Suggestion.DESERIALIZER)
-		.setPrettyPrinting()
-		.serializeNulls()
-		.create();
+	public static final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
 
 	public static final JsonParser jsonParser = new JsonParser();
 

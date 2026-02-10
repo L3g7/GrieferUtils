@@ -7,9 +7,14 @@
 
 package dev.l3g7.griefer_utils.core.api.misc.server.requests;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dev.l3g7.griefer_utils.core.api.misc.server.Request;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.ArgumentNode;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.Node;
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.Requirement;
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.suggestions.Suggestion;
 
 import java.util.Map;
 import java.util.UUID;
@@ -18,13 +23,20 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.STATIC_API_URL;
 
 public class StaticApiRequest extends Request<StaticApiRequest.StaticApiData> {
 
+	private static final Gson gson = new GsonBuilder()
+		.registerTypeAdapter(Node.class, Node.DESERIALIZER)
+		.registerTypeAdapter(ArgumentNode.class, ArgumentNode.DESERIALIZER)
+		.registerTypeAdapter(Requirement.class, Requirement.DESERIALIZER)
+		.registerTypeAdapter(Suggestion.class, Suggestion.DESERIALIZER)
+		.create();
+
 	public StaticApiRequest() {
 		super(STATIC_API_URL, "/v6/");
 	}
 
 	@Override
 	protected StaticApiData parseResponse(Response response) {
-		return response.convertTo(StaticApiData.class);
+		return response.convertTo(StaticApiData.class, gson);
 	}
 
 	public static class StaticApiData {

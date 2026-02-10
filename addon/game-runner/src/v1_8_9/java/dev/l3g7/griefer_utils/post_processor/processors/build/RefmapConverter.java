@@ -131,9 +131,6 @@ public class RefmapConverter {
 					else
 						at = (AnnotationNode) ((List<?>) getAnnotationValue(inject, "at")).get(0);
 
-					if (!target.equals(getAnnotationValue(at, "target")))
-						System.err.println("Waving through " + target + " / " + getAnnotationValue(at, "target")); // TODO fix
-
 					// Find @InheritedInvoke
 					for (AnnotationNode annotation : methodNode.invisibleAnnotations)
 						if (annotation.desc.equals(Type.getDescriptor(InheritedInvoke.class)))

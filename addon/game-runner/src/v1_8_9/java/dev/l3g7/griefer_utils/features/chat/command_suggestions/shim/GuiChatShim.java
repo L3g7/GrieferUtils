@@ -35,7 +35,6 @@ import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -76,10 +75,19 @@ public class GuiChatShim {
 		this.defaultInput = defaultInput;
 	}
 
-	@Mixin(GuiScreen.class)
 	public interface DrawHoveringTextAccessor {
-		@Invoker("drawHoveringText")
-		void renderHoveringText(List<String> lvt_1_1_, int lvt_2_1_, int lvt_3_1_);
+		void grieferUtils$renderHoveringText(List<String> lvt_1_1_, int lvt_2_1_, int lvt_3_1_);
+	}
+
+	@Mixin(GuiScreen.class)
+	public static abstract class MixinGuiScreen implements DrawHoveringTextAccessor {
+		@Shadow
+		protected abstract void drawHoveringText(List<String> text, int x, int y);
+
+		@Override
+		public void grieferUtils$renderHoveringText(List<String> text, int x, int y) {
+			this.drawHoveringText(text, x, y);
+		}
 	}
 
 	@Mixin(GuiChat.class)
@@ -479,7 +487,7 @@ public class GuiChatShim {
 			if (lvt_9_3_) {
 				Message lvt_10_2_ = suggestions.getList().get(this.selected).getTooltip();
 				if (lvt_10_2_ != null) {
-					((DrawHoveringTextAccessor) GuiChatShim.this.gui).renderHoveringText(Collections.singletonList(toTextComponent(lvt_10_2_).getFormattedText()), p_198500_1_, p_198500_2_);
+					((DrawHoveringTextAccessor) GuiChatShim.this.gui).grieferUtils$renderHoveringText(Collections.singletonList(toTextComponent(lvt_10_2_).getFormattedText()), p_198500_1_, p_198500_2_);
 				}
 			}
 

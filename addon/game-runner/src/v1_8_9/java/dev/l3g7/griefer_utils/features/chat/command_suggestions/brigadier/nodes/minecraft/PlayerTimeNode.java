@@ -1,9 +1,11 @@
 package dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.minecraft;
 
+import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.ArgumentNode;
@@ -24,8 +26,18 @@ public class PlayerTimeNode extends ArgumentNode<String> {
 
 	public static class PlayerTimeArgumentType extends ValidatingArgumentType {
 
+		private static final SimpleCommandExceptionType INVALID_TIME_LOCALIZED = new SimpleCommandExceptionType(new LiteralMessage("Ungültiges Zeitformat"));
 		private static final IntegerArgumentType INITIAL = IntegerArgumentType.integer(0);
 		private static final IntegerArgumentType MINUTES = IntegerArgumentType.integer(0, 59);
+
+		@Override
+		public String parse(StringReader reader) throws CommandSyntaxException {
+			try {
+				return super.parse(reader);
+			} catch (CommandSyntaxException | IndexOutOfBoundsException e) {
+				throw INVALID_TIME_LOCALIZED.create();
+			}
+		}
 
 		@Override
 		public void check(StringReader reader) throws CommandSyntaxException {
@@ -48,14 +60,14 @@ public class PlayerTimeNode extends ArgumentNode<String> {
 
 			// Maybe 12h format
 			if (reader.peek() == 'a' || reader.peek() == 'p') {
-				reader.read();
+				reader.skip();
 				readChar(reader, 'm', true);
 				return;
 			}
 
 			// Maybe 24h format
 			if (reader.peek() == ':') {
-				reader.read();
+				reader.skip();
 				MINUTES.parse(reader);
 				return;
 			}

@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.api.misc.server.requests;
 
 import dev.l3g7.griefer_utils.core.api.misc.server.Request;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.Node;
 
 import java.util.Map;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class StaticApiRequest extends Request<StaticApiRequest.StaticApiData> {
 		public String addonDescription;
 		public Changelog changelog;
 		public Map<String, GrieferInfoItem> grieferInfoItems;
+		public Node<?>[] commands;
 		public String[] repeatingPrefixes;
 		public String[] coloredFonts;
 		public Map<UUID, SpecialBadge> specialBadges;

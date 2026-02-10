@@ -86,7 +86,7 @@ public class NativeLiteralNode extends Node<NativeLiteralNode.TooltipLiteralArgu
 
 		@Override
 		public CompletableFuture<Suggestions> listSuggestions(CommandContext<Source> context, SuggestionsBuilder builder) {
-			if (literalLowerCase.startsWith(builder.getRemainingLowerCase())) {
+			if (getRequirement().test(context.getSource()) && literalLowerCase.startsWith(builder.getRemainingLowerCase())) {
 				return builder.suggest(getLiteral(), tooltip).buildFuture();
 			} else {
 				return Suggestions.empty();

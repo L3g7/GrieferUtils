@@ -22,7 +22,7 @@ import net.minecraft.item.ItemStack;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
-public class CompressedBlockCounter  extends SimpleWidget {
+public class CompressedBlockCounter extends SimpleWidget {
 
 	private final DropDownSetting<ItemCounter.FormatMode> formatting = DropDownSetting.create(ItemCounter.FormatMode.class)
 		.name("Formattierung")

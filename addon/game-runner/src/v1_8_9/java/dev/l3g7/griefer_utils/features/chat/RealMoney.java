@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
@@ -19,6 +20,11 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
+
+import java.util.ListIterator;
+import java.util.regex.Matcher;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
@@ -37,6 +43,12 @@ public class RealMoney extends Feature {
 		.icon("labymod_3/marker")
 		.defaultValue(TagPosition.AFTER);
 
+	private final SwitchSetting highlightCents = SwitchSetting.create()
+		.name("Cent-Beträge kennzeichnen")
+		.description("Markiert Cent-Beträge rot.")
+		.icon("red_scroll")
+		.defaultValue(true);
+
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name(LABY_3.isActive()
@@ -44,12 +56,16 @@ public class RealMoney extends Feature {
 			: "Echtgeld-Erkennung")
 		.description("Fügt einen Tag zu eingehenden Bezahlungen hinzu.")
 		.icon("coin_pile")
-		.subSettings(tag, position);
+		.subSettings(highlightCents, tag, position);
 
 	@EventListener(priority = Priority.LOW)
 	public void onMessageReceive(MessageModifyEvent event) {
-		if (!Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.original.getFormattedText()).matches())
+		Matcher matcher = Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.original.getFormattedText());
+		if (!matcher.matches())
 			return;
+
+		if (highlightCents.get())
+			markCentsRed(event.message, matcher.group("amount"));
 
 		String text = "§r" + tag.get().replace('&', '§') + "§r";
 
@@ -57,6 +73,40 @@ public class RealMoney extends Feature {
 			event.setMessage(new ChatComponentText(text).appendSibling(event.message));
 		else
 			event.setMessage(event.message.appendText(text));
+	}
+
+	private static void markCentsRed(IChatComponent icc, String amountString) {
+		int dotIndex = amountString.indexOf('.');
+		if (dotIndex == -1)
+			return;
+
+		ListIterator<IChatComponent> it = icc.getSiblings().listIterator(icc.getSiblings().size());
+		while (it.hasPrevious()) {
+			IChatComponent sibling = it.previous();
+			if (!(sibling instanceof ChatComponentText))
+				continue;
+
+			String text = sibling.getUnformattedTextForChat();
+			int index = text.indexOf(amountString);
+			if (index == -1)
+				continue;
+
+			it.next();
+			String preText = text.substring(0, index) + amountString.substring(0, dotIndex);
+			String postText = text.substring(index + amountString.length());
+
+			Reflection.set(sibling, "text", preText);
+
+			IChatComponent cents = sibling.createCopy();
+			cents.getChatStyle().setColor(EnumChatFormatting.RED);
+			Reflection.set(cents, "text", amountString.substring(dotIndex));
+			it.add(cents);
+
+			IChatComponent post = sibling.createCopy();
+			Reflection.set(post, "text", postText);
+			it.add(post);
+			return;
+		}
 	}
 
 	private enum TagPosition implements Named {

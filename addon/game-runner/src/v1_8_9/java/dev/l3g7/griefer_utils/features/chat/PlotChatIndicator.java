@@ -11,10 +11,14 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.DrawScreenEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
@@ -27,6 +31,7 @@ import net.minecraft.client.gui.GuiScreen;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**
@@ -35,17 +40,23 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 @Singleton
 public class PlotChatIndicator extends Feature {
 
-	private final List<String> specialServers = ImmutableList.of("Nature", "Extreme", "CBE", "Event", "CBT");
+	private final List<Citybuild> specialServers = ImmutableList.of(NATURE, EXTREME, CBE, EVENT);
 	private StringBuilder states = new StringBuilder(Strings.repeat("?", 27)); // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
 
 	private Boolean plotchatState = null;
 	private boolean waitingForPlotchatStatus = false;
+
+	private final SwitchSetting replaceGlobalChat = SwitchSetting.create()
+		.name("@ ersetzen")
+		.description("Ersetzt @ mit /globalchat, wenn der Plot-Chat aktiviert ist.")
+		.icon("speech_bubble");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Plot-Chat-Indikator")
 		.description("Zeichnet einen orangen Rahmen um die Chateingabe, wenn der Plotchat aktiviert ist.")
 		.icon("speech_bubble")
+		.subSettings(replaceGlobalChat)
 		.callback(enabled -> {
 			if (enabled && ServerCheck.isOnCitybuild() && plotchatState == null && !waitingForPlotchatStatus) {
 				waitingForPlotchatStatus = true;
@@ -77,13 +88,13 @@ public class PlotChatIndicator extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onCitybuildJoin(CitybuildJoinEvent event) {
-		String server = getServerFromScoreboard(); // NOTE: Rewrite to use Citybuild enum
-		if (server.isEmpty() || server.equals("Lava") || server.equals("Wasser") || server.equals("Portal") || server.equals("Lobby") || server.equalsIgnoreCase("Zauberwald")) {
+		Citybuild citybuild = getCurrentCitybuild();
+		if (citybuild == ANY || citybuild == LAVA || citybuild == WATER || citybuild == MAGIC_FOREST) {
 			plotchatState = false;
 			return;
 		}
 
-		char character = states.charAt(getIndex(server));
+		char character = states.charAt(getIndex(citybuild));
 		plotchatState = character == '?' ? null : character == 'Y';
 
 		if (plotchatState != null || !isEnabled())
@@ -95,14 +106,14 @@ public class PlotChatIndicator extends Feature {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onReceive(MessageReceiveEvent event) {
-		String server = getServerFromScoreboard();
-		if (server.isEmpty() || server.equalsIgnoreCase("Zauberwald"))
+		Citybuild citybuild = getCurrentCitybuild();
+		if (citybuild == ANY || citybuild == MAGIC_FOREST)
 			return;
 
 		// Update plot chat state
 		if (event.message.getFormattedText().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
 			plotchatState = event.message.getFormattedText().contains(" aktiviert");
-			states.setCharAt(getIndex(server), plotchatState ? 'Y' : 'N');
+			states.setCharAt(getIndex(citybuild), plotchatState ? 'Y' : 'N');
 			Config.set("chat.plot_chat_indicator.states." + mc().getSession().getProfile().getId(), new JsonPrimitive(states.toString()));
 			Config.save();
 
@@ -113,11 +124,24 @@ public class PlotChatIndicator extends Feature {
 		}
 	}
 
-	private int getIndex(String server) {
+	private int getIndex(Citybuild server) {
 		if (specialServers.contains(server))
 			return specialServers.indexOf(server) + 22;
 
-		return Integer.parseInt(server.substring(2)) - 1;
+		return server.ordinal();
+	}
+
+	@EventListener(priority = Priority.HIGH)
+	private void replaceGlobalChat(MessageSendEvent event) {
+		if (!replaceGlobalChat.get())
+			return;
+
+		if (plotchatState != null && plotchatState && event.message.startsWith("@")) {
+			event.cancel();
+			String newMessage = "/globalchat " + event.message.substring(1);
+			if (!MessageEvent.MessageSendEvent.post(newMessage))
+				player().sendChatMessage(newMessage);
+		}
 	}
 
 	@EventListener

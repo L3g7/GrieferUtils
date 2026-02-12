@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.network.play.client.C14PacketTabComplete;
@@ -184,8 +185,24 @@ public class Calculator extends Feature {
 			return;
 
 		String tabMessage = tabCompleteEvent.packet.getMessage();
+		equationDetection:
 		for (int i = 0; i < tabMessage.length(); i++) {
 			String equation = tabMessage.substring(i).trim();
+			// Check for player names
+			if (i != 0 && tabMessage.charAt(i - 1) != ' ')
+				continue; // non-whitespace chars directly in front of the equation -> probably part of a player name
+
+			for (int j = 0; j < equation.length() - 1; j++) {
+				if (Character.isAlphabetic(equation.charAt(i)) && Character.isDigit(equation.charAt(i + 1)))
+					continue equationDetection; // letter followed by digit -> probably part of a player name
+			}
+
+			for (NetworkPlayerInfo networkPlayerInfo : mc().getNetHandler().getPlayerInfoMap()) {
+				if (networkPlayerInfo.getGameProfile().getName().toLowerCase().startsWith(equation.toLowerCase()))
+					continue equationDetection;
+			}
+
+			// Calculate
 			double result = calculate(equation, false);
 			if (Double.isNaN(result))
 				continue;

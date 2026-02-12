@@ -93,8 +93,8 @@ public class ChatReactor extends Feature {
 			try {
 				reaction.processMessage(component.getFormattedText());
 			} catch (Exception e) {
-				display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
 				setting.set(false);
+				display(Constants.ADDON_PREFIX + "§cMindestens eine Capturing-Croup in \"" + reaction.command + "\" existiert nicht in \"" + reaction.trigger + "\"");
 			}
 		}
 	}

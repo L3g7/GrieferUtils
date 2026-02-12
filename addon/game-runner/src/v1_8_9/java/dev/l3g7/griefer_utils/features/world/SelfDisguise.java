@@ -119,7 +119,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 	public void onSend(MessageSendEvent event) {
 		if (event.message.equalsIgnoreCase("/ud")) {
 			resetDisguise();
-		} else if (event.message.toLowerCase().startsWith("/d "))
+		} else if (event.message.toLowerCase().startsWith("/d ") || event.message.toLowerCase().startsWith("/disguise "))
 			lastSentDisguiseCommand = event.message;
 	}
 
@@ -251,7 +251,8 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 		}
 
 		if (currentDisguise == null) {
-			LabyBridge.display(Constants.ADDON_PREFIX + "§cUnbekannte Verkleidung: " + arguments[1]);
+			if (isEnabled())
+				LabyBridge.display(Constants.ADDON_PREFIX + "§cUnbekannte Verkleidung: " + arguments[1]);
 			return;
 		}
 
@@ -334,7 +335,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 				((EntityEnderman) currentDisguise).setHeldBlockState(blockState);
 			}
 
-			if (!args.isEmpty())
+			if (!args.isEmpty() && isEnabled())
 				LabyBridge.display(Constants.ADDON_PREFIX + "§cUnbekannte Argumente: " + args.keySet());
 		}
 	}

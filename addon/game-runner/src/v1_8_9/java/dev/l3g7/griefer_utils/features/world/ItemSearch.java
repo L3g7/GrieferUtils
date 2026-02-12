@@ -77,7 +77,7 @@ public class ItemSearch extends Feature {
 			(hopper.get() && event.gui instanceof GuiHopper)))
 			return;
 
-		String title = getGuiChestTitle();
+		String title = getGuiChestTitle(event.gui);
 		if (title.startsWith(marker) || title.startsWith("§6Profil") || title.startsWith("§6Lottoschein "))
 			return;
 

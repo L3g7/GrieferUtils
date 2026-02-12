@@ -49,7 +49,7 @@ public class InteractableProfiles extends Feature {
 		if (getSlotUnderMouse(gui) == null)
 			return;
 
-		if (!getGuiChestTitle().startsWith("§6Profil"))
+		if (!getGuiChestTitle(gui).startsWith("§6Profil"))
 			return;
 
 		Slot slot = gui.inventorySlots.getSlot(13);

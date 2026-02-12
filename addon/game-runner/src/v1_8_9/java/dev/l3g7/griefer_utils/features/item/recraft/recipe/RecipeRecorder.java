@@ -96,7 +96,7 @@ public class RecipeRecorder {
 
 		int slot = packet.getSlotId();
 
-		String title = MinecraftUtil.getGuiChestTitle();
+		String title = MinecraftUtil.getGuiChestTitle(mc().currentScreen);
 		if (action.category == -1) {
 			if (!title.startsWith("§6Custom-Kategorien"))
 				return;

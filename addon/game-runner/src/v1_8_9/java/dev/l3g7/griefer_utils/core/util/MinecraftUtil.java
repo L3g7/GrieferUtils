@@ -145,11 +145,11 @@ public class MinecraftUtil {
 		return reset;
 	}
 
-	public static String getGuiChestTitle() {
-		if (!(mc().currentScreen instanceof GuiChest))
+	public static String getGuiChestTitle(GuiScreen guiScreen) {
+		if (!(guiScreen instanceof GuiChest))
 			return "";
 
-		IInventory lowerChestInventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
+		IInventory lowerChestInventory = Reflection.get(guiScreen, "lowerChestInventory");
 		return lowerChestInventory.getDisplayName().getFormattedText();
 	}
 

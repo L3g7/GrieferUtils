@@ -26,7 +26,7 @@ public class GuiModifyItemsEvent extends Event.TypedEvent<GuiModifyItemsEvent> {
 	private static void onRenderTick(RenderTickEvent event) {
 		GuiScreen currentScreen = mc().currentScreen; // Account for concurrency
 		if (currentScreen instanceof GuiChest && player() != null)
-			new GuiModifyItemsEvent(MinecraftUtil.getGuiChestTitle(), ((GuiChest) currentScreen).inventorySlots).fire();
+			new GuiModifyItemsEvent(MinecraftUtil.getGuiChestTitle(currentScreen), ((GuiChest) currentScreen).inventorySlots).fire();
 	}
 
 	public GuiModifyItemsEvent(String title, Container container) {

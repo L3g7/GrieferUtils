@@ -308,7 +308,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 				else if (args.remove("big", null))
 					size = 4;
 
-				Reflection.invoke(currentDisguise, "setSlimeSize", Math.pow(2, size));
+				Reflection.invoke(currentDisguise, "setSlimeSize", 1 << size);
 			} else if (currentDisguise instanceof EntityVillager) {
 				int index = 0;
 				for (String profession : new String[]{"farmer", "librarian", "priest", "blacksmith", "butcher", "nitwit"}) {

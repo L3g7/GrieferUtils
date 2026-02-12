@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -128,7 +129,8 @@ public class BetterHopper extends Feature {
 
 	@EventListener
 	private void onBlockChange(PacketReceiveEvent<S23PacketBlockChange> event) {
-		if (event.packet.getBlockState().getBlock() != Blocks.hopper)
+		IBlockState state = event.packet.getBlockState();
+		if (state == null || state.getBlock() != Blocks.hopper)
 			lastClickedHoppers.remove(event.packet.getBlockPosition());
 	}
 

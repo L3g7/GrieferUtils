@@ -34,7 +34,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 public class GuiBigChest extends GuiContainer {
 
 	protected static final ItemStack BACK_BUTTON = ItemUtil.fromNBT("{id:\"minecraft:skull\",Count:1b,tag:{display:{Name:\"§f" + "Zurück" + "\"},SkullOwner:{Id:\"00000000-0000-0000-0000-000000000000\",Properties:{textures:[0:{Value:\"" + "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHBzOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2Y3YWFjYWQxOTNlMjIyNjk3MWVkOTUzMDJkYmE0MzM0MzhiZTQ2NDRmYmFiNWViZjgxODA1NDA2MTY2N2ZiZTIifX19" + "\"}]}}},Damage:3s}");
-	protected static final ItemStack FILLER = ItemUtil.createItem(Blocks.stained_glass_pane, 7, null);
+	protected static final ItemStack FILLER = ItemUtil.createItem(Blocks.stained_glass_pane, 7, "§7");
 
 	protected static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 
@@ -70,6 +70,7 @@ public class GuiBigChest extends GuiContainer {
 			rightClickEvents.add(null);
 			midClickEvents.add(null);
 			textureItems.add(null);
+			inventory.setInventorySlotContents(i, FILLER);
 		}
 	}
 
@@ -185,8 +186,6 @@ public class GuiBigChest extends GuiContainer {
 	 */
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-		ItemStack FILLER = ItemUtil.createItem(Blocks.stained_glass_pane, 8, null);
-
 		mc.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;

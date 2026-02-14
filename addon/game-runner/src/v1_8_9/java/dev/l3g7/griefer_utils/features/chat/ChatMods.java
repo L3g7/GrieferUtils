@@ -71,6 +71,11 @@ public class ChatMods extends Feature {
 		.icon("labymod_3/exclamation_mark")
 		.defaultValue(NewsMode.NORMAL);
 
+	private final SwitchSetting removeBroadcast = SwitchSetting.create()
+		.name("Broadcasts entfernen")
+		.description("Entfernt die Broadcast-Hervorhebung.")
+		.icon("red_scroll");
+
 	private final SwitchSetting antiColoredFont = SwitchSetting.create()
 		.name("Farbige Schrift entfernen")
 		.description("Entfernt die Farben von Nachrichten mit farbiger Schrift §8(/schrift)§r.")
@@ -81,7 +86,7 @@ public class ChatMods extends Feature {
 		.name("Chat aufräumen")
 		.icon("speech_bubble")
 		.description("Räumt den Chat auf.")
-		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
+		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, removeBroadcast, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
 
 	private boolean isNews = false;
 
@@ -183,6 +188,10 @@ public class ChatMods extends Feature {
 
 		// remove luckyblock
 		if (removeLuckyBlock.get() && formattedText.startsWith("§r§8[§r§e§lLu§r§6§lck§r§e§lyB§r§6§llo§r§e§lck§r§8]"))
+			return true;
+
+		// remove broadcast
+		if (removeBroadcast.get() && formattedText.equals("§r§f§m------------§r §r§8[§r§c§lBroadcast§r§8] §r§f§m------------§r"))
 			return true;
 
 		// remove case opening

@@ -27,7 +27,7 @@ public class CtrlQDrag extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Strg + Q verbessern")
 		.description("Ermöglicht das schnelle Droppen von Items durch Strg + Q + Hovern (so wie in 1.12+).")
-		.icon("key");
+		.icon("XZRF:hopper");
 
 	private static Slot previousTheSlot;
 

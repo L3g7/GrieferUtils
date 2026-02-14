@@ -44,23 +44,23 @@ public class ItemSearch extends Feature {
 	private final SwitchSetting inventory = SwitchSetting.create()
 		.name("Inventar")
 		.description("Ob das Inventar auch durchsucht werden soll.")
-		.icon("chest");
+		.icon("XZRF:bundle");
 
 	private final SwitchSetting dispenser = SwitchSetting.create()
 		.name("Spender / Werfer")
 		.description("Ob die Item-Suche auch bei Spendern / Werfern hinzugefügt werden soll.")
-		.icon(Blocks.dispenser);
+		.icon("XZRF:dropper");
 
 	private final SwitchSetting hopper = SwitchSetting.create()
 		.name("Trichter")
 		.description("Ob die Item-Suche auch bei Trichtern hinzugefügt werden soll.")
-		.icon(Blocks.hopper);
+		.icon("XZRF:hopper");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Item-Suche")
 		.description("Fügt eine Item-Suche innerhalb von Guis hinzu.")
-		.icon("chest")
+		.icon("XZRF:magnifying_glass")
 		.subSettings(dispenser, hopper, HeaderSetting.create(), inventory);
 
 	public ModTextField searchField = null;

@@ -128,7 +128,7 @@ public class LabyBridgeImpl implements LabyBridge {
 		return Notification.builder().type(Notification.Type.SYSTEM)
 			.title(Component.text(title))
 			.text(Component.text(message))
-			.icon(Icon.sprite(ResourceLocation.create("griefer_utils", "icons/icon.png"), 0, 0, 128, 128, 128, 128));
+			.icon(Icon.sprite(ResourceLocation.create("griefer_utils", "icons/high_res/icon.png"), 0, 0, 128, 128, 128, 128));
 	}
 
 	@Override

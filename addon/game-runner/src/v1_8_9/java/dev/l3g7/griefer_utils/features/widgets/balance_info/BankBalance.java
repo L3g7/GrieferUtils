@@ -22,7 +22,7 @@ public class BankBalance extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Bankguthaben")
 		.description("Zeigt das Bankguthaben an.")
-		.icon("bank");
+		.icon("XZRF:bank");
 
 	@Override
 	public String getValue() {

@@ -36,7 +36,7 @@ public class Laby4Credits implements CreditsBridge {
 	public CategorySetting createIconSetting(String displayName, String icon) {
 		return CategorySetting.create()
 			.name(displayName)
-			.icon("credits/" + icon);
+			.icon("XZRF:high_res/credits/" + icon);
 	}
 
 	public BaseSetting<?> createTextSetting(String... text) {

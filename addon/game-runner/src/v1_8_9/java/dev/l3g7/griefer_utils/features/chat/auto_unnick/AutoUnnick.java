@@ -30,21 +30,21 @@ public class AutoUnnick extends Feature {
 	private final SwitchSetting tab = SwitchSetting.create()
 		.name("In Tabliste")
 		.description("Ob Spieler in der Tabliste entnickt werden sollen.")
-		.icon("tab_list")
+		.icon("XZRF:blackboard")
 		.callback(TabListEvent::updatePlayerInfoList)
 		.defaultValue(true);
 
 	private final SwitchSetting chat = SwitchSetting.create()
 		.name("In Chat")
 		.description("Ob Spieler im Chat entnickt werden sollen.")
-		.icon("speech_bubble")
+		.icon("XZRF:chat")
 		.defaultValue(true);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Automatisch entnicken")
 		.description("Zeigt statt Nicks den echten Namen an.")
-		.icon(Items.name_tag)
+		.icon("XZRF:name_tag")
 		.callback(TabListEvent::updatePlayerInfoList)
 		.subSettings(chat, tab);
 

@@ -19,7 +19,7 @@ public class RecraftLogger {
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Recraft-Logger")
 		.description("Loggt Informationen über Recraft.")
-		.icon(Blocks.crafting_table);
+		.icon("XZRF:crafting_table");
 
 	public static void log(String text) {
 		if (enabled.get() && DebugSettings.enabled.get())

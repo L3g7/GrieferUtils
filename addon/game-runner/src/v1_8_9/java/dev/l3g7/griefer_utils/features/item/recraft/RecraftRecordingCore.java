@@ -46,12 +46,12 @@ public class RecraftRecordingCore {
 	final StringSetting name = StringSetting.create()
 		.name("Name")
 		.description("Wie diese Aufzeichnung heißt.")
-		.icon(Items.name_tag);
+		.icon("XZRF:name_tag");
 
 	final KeySetting key = KeySetting.create()
 		.name("Taste")
 		.description("Mit welcher Taste diese Aufzeichung abgespielt werden soll.")
-		.icon("key")
+		.icon("XZRF:key")
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && FileProvider.getSingleton(Recraft.class).isEnabled())
 				play(false);
@@ -60,18 +60,18 @@ public class RecraftRecordingCore {
 	final SwitchSetting ignoreSubIds = SwitchSetting.create()
 		.name("Sub-IDs ignorieren")
 		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) ignoriert werden sollen.")
-		.icon(new ItemStack(Blocks.log, 1, 2));
+		.icon("XZRF:carpet_red");
 
 	public final DropDownSetting<RecordingMode> mode = DropDownSetting.create(RecordingMode.class)
 		.name("Modus")
 		.description("Ob die Aufzeichnung /craft, /rezepte ausführt oder dekomprimiert.")
-		.icon("knowledge_book")
+		.icon("XZRF:knowledge_book")
 		.defaultValue(RECIPE);
 
 	public final SwitchSetting craftAll = SwitchSetting.create()
 		.name("Alles vercraften")
 		.description("Ob die Aufzeichnung so lange wiederholt werden soll, bis alle Items im Inventar verbraucht wurden.")
-		.icon("arrow_circle");
+		.icon("XZRF:loop");
 
 	public RecraftRecordingCore(RecraftRecording wrapper) {
 		this.wrapper = wrapper;
@@ -89,9 +89,9 @@ public class RecraftRecordingCore {
 
 	public enum RecordingMode implements Named {
 
-		RECIPE("Rezept", "knowledge_book", RecipeRecorder::startRecording, RecipePlayer::play, RecipeAction::fromJson),
-		CRAFT("/craft", ItemUtil.createItem(Blocks.crafting_table, 0, true), CraftRecorder::startRecording, CraftPlayer::play, CraftAction::fromJson),
-		DECOMPRESS("Dekomprimieren", "chest", DecompressRecorder::startRecording, DecompressPlayer::play, DecompressAction::fromJson);
+		RECIPE("Rezept", "XZRF:knowledge_book", RecipeRecorder::startRecording, RecipePlayer::play, RecipeAction::fromJson),
+		CRAFT("/craft", "XZRF:crafting_table", CraftRecorder::startRecording, CraftPlayer::play, CraftAction::fromJson),
+		DECOMPRESS("Dekomprimieren", "XZRF:bundle", DecompressRecorder::startRecording, DecompressPlayer::play, DecompressAction::fromJson);
 
 		private final String displayName;
 		public final Object icon;

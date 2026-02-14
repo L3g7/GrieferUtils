@@ -27,24 +27,24 @@ public class BetterSchematica extends Feature {
 	private final SwitchSetting highlightBlocks = SwitchSetting.create()
 		.name("Ausgewählten Block hervorheben")
 		.description("Markiert alle Blöcke vom selben Typ des in der Hand gehaltenen Items.")
-		.icon("litematica/green_highlight");
+		.icon("XZRF:litematica/green_highlight");
 
 	private final SwitchSetting savePosition = SwitchSetting.create()
 		.name("\"Speichern\" Knopf")
 		.description("Fügt in der Schematic-Kontrolle einen Knopf hinzu, der die derzeit geladene Schematic mit Drehung, Spiegelung und Position speichert."
 			+ "\nWenn die Schematic geladen wird, wird sie automatich an die gespeicherte Position geschoben.")
-		.icon("litematica/axes");
+		.icon("XZRF:litematica/axes");
 
 	private final SwitchSetting openMaterialFile = SwitchSetting.create()
 		.name("Material-Datei öffnen")
 		.description("Öffnet die Material-Datei nach dem Speichern.")
-		.icon("file");
+		.icon("XZRF:lectern");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Schematica verbessern")
 		.description("Erleichtert das Arbeiten mit Schematica.")
-		.icon("litematica/litematica")
+		.icon("XZRF:litematica/litematica")
 		.subSettings(highlightBlocks, savePosition, openMaterialFile);
 
 	@Override

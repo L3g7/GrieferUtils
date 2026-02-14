@@ -36,6 +36,6 @@ public interface RecraftRecording {
 	default SwitchSetting ignoreSubIds() { return getCore().ignoreSubIds; }
 	default DropDownSetting<RecordingMode> mode() { return getCore().mode; }
 	default SwitchSetting craftAll() { return getCore().craftAll; }
-	default void updateStartRecordingIcon() { updateStartRecordingIcon(actions().isEmpty() ? "recording_red" : "recording_white"); }
+	default void updateStartRecordingIcon() { updateStartRecordingIcon(actions().isEmpty() ? "XZRF:recording_red" : "XZRF:recording_white"); }
 
 }

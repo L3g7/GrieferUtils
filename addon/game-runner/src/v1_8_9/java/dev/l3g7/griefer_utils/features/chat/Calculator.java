@@ -56,26 +56,26 @@ public class Calculator extends Feature {
 	private final DropDownSetting<WithdrawAction> autoWithdraw = DropDownSetting.create(WithdrawAction.class)
 		.name("Auto. abheben")
 		.description("Ob automatisch Geld abgehoben werden soll, wenn man nicht genügend für die gewünschte Bezahlung auf dem Konto hat.")
-		.icon("bank")
+		.icon("XZRF:bank")
 		.defaultValue(WithdrawAction.SUGGEST);
 
 	private final SwitchSetting starPlaceholder = SwitchSetting.create()
 		.name("\"*\"-Placeholder")
 		.description("Aktiviert den * Placeholder, mit dem sich das gesamte Guthaben einzahlen, abheben oder überweisen lässt.")
-		.icon("bank")
+		.icon("XZRF:bank")
 		.defaultValue(true);
 
 	private final StringSetting prefix = StringSetting.create()
 		.name("Präfix")
 		.description("Der Präfix für Berechnungen ohne abgeschickter Chatnachricht."
 			+ "\nDas Ergebnis wird automatisch in die Zwischenablage kopiert.")
-		.icon(Items.name_tag)
+		.icon("XZRF:name_tag")
 		.defaultValue("/c ");
 
 	private final StringSetting placeholderStart = StringSetting.create()
 		.name("Placeholder Anfang")
 		.description("Welches Zeichen den Anfang des Placeholders markieren soll.")
-		.icon("regex")
+		.icon("XZRF:book_and_quill")
 		.defaultValue("{")
 		.callback(this::updatePlaceholderPattern)
 		.validator(s -> !s.isEmpty())
@@ -84,7 +84,7 @@ public class Calculator extends Feature {
 	private final StringSetting placeholderEnd = StringSetting.create()
 		.name("Placeholder Ende")
 		.description("Welches Zeichen das Ende des Placeholders markieren soll.")
-		.icon("regex")
+		.icon("XZRF:book_and_quill")
 		.defaultValue("}")
 		.callback(this::updatePlaceholderPattern)
 		.validator(s -> !s.isEmpty())
@@ -92,25 +92,25 @@ public class Calculator extends Feature {
 
 	private final SwitchSetting placeholder = SwitchSetting.create()
 		.name("Placeholder in Nachrichten")
-		.icon("regex")
+		.icon("XZRF:book_and_quill")
 		.defaultValue(true)
 		.subSettings(placeholderStart, placeholderEnd);
 
 	private final SwitchSetting autoEquationDetect = SwitchSetting.create()
 		.name("Automatische Gleichungserkennung")
 		.description("Erkennt automatisch in einer Nachricht eingebettete Gleichungen, auch wenn sie nicht mit {} eingerahmt sind.")
-		.icon("regex");
+		.icon("XZRF:cpu");
 
 	public final SwitchSetting inlineCalculation = SwitchSetting.create()
 		.name("Inline-Berechnungen")
 		.description("Berechnet automatisch in den Chat eingegebene Rechnungen beim drücken der Tab-Taste.")
-		.icon("regex")
+		.icon("XZRF:command_suggestions")
 		.defaultValue(true);
 
 	private final NumberSetting decimalPlaces = NumberSetting.create()
 		.name("Nachkommastellen")
 		.description("Auf wie viele Nachkommastellen das Ergebnis gerundet werden soll.")
-		.icon(Blocks.stone_button)
+		.icon("XZRF:measurement")
 		.defaultValue(2)
 		.min(0).max(98);
 
@@ -118,7 +118,7 @@ public class Calculator extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Rechner")
 		.description("Ein Rechner in Nachrichten.")
-		.icon("calculator")
+		.icon("XZRF:calculator")
 		.subSettings(decimalPlaces, HeaderSetting.create(),
 			autoWithdraw, starPlaceholder, placeholder, autoEquationDetect, inlineCalculation, prefix);
 

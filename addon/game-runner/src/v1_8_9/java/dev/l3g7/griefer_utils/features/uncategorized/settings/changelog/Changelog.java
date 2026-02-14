@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.settings.changelog;
 
-import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -40,7 +39,7 @@ public class Changelog {
 	public static final CategorySetting changelog = CategorySetting.create()
 		.name("§eChangelog")
 		.description("§eVerbindet...")
-		.icon("white_scroll")
+		.icon("XZRF:lectern")
 		.disable()
 		.subSettings();
 
@@ -55,7 +54,7 @@ public class Changelog {
 			Function<ButtonSetting, ButtonSetting> addIconFunc = LABY_4.isActive() ? this::addIconLaby4 : this::addIconLaby3;
 			entries.add(addIconFunc.apply(ButtonSetting.create()
 				.name(entry.getKey())
-				.icon(entry.getValue().beta ? "scroll" : "white_scroll")
+				.icon(entry.getValue().beta ? "XZRF:scroll" : "XZRF:scroll_red")
 				.callback(() -> mc().displayGuiScreen(new GuiChangelog(false, entry.getValue(), entry.getKey())))));
 		}
 

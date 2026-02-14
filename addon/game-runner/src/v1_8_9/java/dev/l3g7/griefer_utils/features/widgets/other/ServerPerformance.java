@@ -40,13 +40,13 @@ public class ServerPerformance extends SimpleWidget {
 
 	private final DropDownSetting<DisplayMode> displayMode = DropDownSetting.create(DisplayMode.class)
 		.name("Anzeigemodus")
-		.icon("wooden_board")
+		.icon("XZRF:wooden_board")
 		.description("Ob die Performance in Prozent angezeigt oder in TPS angezeigt werden soll.")
 		.defaultValue(DisplayMode.PERCENT);
 
 	private final SwitchSetting applyColor = SwitchSetting.create()
 		.name("Anzeige färben")
-		.icon("labymod_3/tabping_colored")
+		.icon("XZRF:color_palette")
 		.description("Ob die Performance eingefärbt werden soll.")
 		.defaultValue(true);
 
@@ -54,7 +54,7 @@ public class ServerPerformance extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Server-\nPerformance")
 		.description("Zeigt eine (relativ genaue) Schätzung der aktuellen Server-Performance an.")
-		.icon("measurement_circle_thingy")
+		.icon("XZRF:measurement_circle_thingy")
 		.subSettings(displayMode, applyColor);
 
 	@Override

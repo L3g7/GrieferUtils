@@ -224,7 +224,7 @@ public class AddChatMenuEntryGui extends Gui {
 		DrawUtils.drawString("GrieferUtils", width / 2d - actionSize + 30, 25);
 		int addonIconSize = 20;
 
-		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
+		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/high_res/icon.png"));
 		DrawUtils.drawTexture(width / 2d + actionSize - addonIconSize, 20, 256, 256, addonIconSize, addonIconSize);
 
 		// Draw footer

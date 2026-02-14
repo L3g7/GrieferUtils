@@ -68,24 +68,24 @@ public class PotionTimer extends Widget {
 	private final DropDownSetting<KeyMode> design = DropDownSetting.create(KeyMode.class)
 			.name("Design")
 			.description("In welchem die Design die aktivierten Tränke angezeigt werden sollen.")
-			.icon("wooden_board")
+			.icon("XZRF:color_palette")
 			.defaultValue(KeyMode.TEXT_AND_ICON);
 
 	private final NumberSetting warnTime = NumberSetting.create()
 			.name("Warn-Zeit für Fly Tränke (s)")
 			.description("Wie viele Sekunden vor dem Ablauf eines Fly-Tranks eine Warnung angezeigt werden soll.")
-			.icon("labymod_3/exclamation_mark");
+			.icon("XZRF:clock");
 
 	private final SwitchSetting hide = SwitchSetting.create()
 			.name("Verstecken, wenn nichts getrunken")
 			.description("Ob das Modul versteckt werden soll, wenn derzeit kein Orbtrank aktiv ist.")
-			.icon("blindness");
+			.icon("XZRF:glass_pane");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 			.name("Orbtrank-\nTimer")
 			.description("Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.")
-			.icon(Items.feather)
+			.icon("XZRF:potion")
 			.subSettings(design, warnTime, hide);
 
 	private void checkFlyWarning() {

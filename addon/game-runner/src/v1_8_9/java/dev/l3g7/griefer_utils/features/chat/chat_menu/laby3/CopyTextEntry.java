@@ -30,13 +30,13 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.description("Wie der kopierte Text sein soll.")
 		.config(configKey + "format")
 		.defaultValue(CopyFormat.UNFORMATTED)
-		.icon(Items.paper);
+		.icon("XZRF:command_suggestions");
 
 	private final SwitchSetting modifiedMessage = SwitchSetting.create()
 		.name("Bearbeitungen kopieren")
 		.description("Ob der Text mit den Bearbeitungen u.a. von GrieferUtils kopiert werden soll.")
 		.config(configKey + "modified_message")
-		.icon(Items.writable_book);
+		.icon("XZRF:book_and_quill");
 
 	private final SwitchSetting settingContainer = SwitchSetting.create()
 		.name(name)
@@ -50,7 +50,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.callback(v -> enabled = v);
 
 	public CopyTextEntry() {
-		super("Text kopieren", null, null, "clipboard");
+		super("Text kopieren", null, null, "XZRF:book_and_quill");
 	}
 
 	@Override

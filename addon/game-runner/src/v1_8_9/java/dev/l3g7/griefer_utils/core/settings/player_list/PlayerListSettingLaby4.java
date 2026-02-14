@@ -12,6 +12,7 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
+import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
@@ -131,7 +132,7 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 			int idx = i;
 			event.settings().addChild(entry.createUnwrappedWidget(
 				ButtonWidget.icon(
-					Icons.of(Laby4Util.isVanillaTheme() ? "pencil_padded" : "pencil_vec"),
+					Icons.of(GUIHierarchyTree.handleXZRF(Laby4Util.isVanillaTheme() ? "XZRF:pencil_padded" : "XZRF:high_res/pencil_vec")),
 					() -> new PlayerListInputActivity(idx, event.activity).open()
 				).addId("delete-button"), // Actually an edit button, but id is required for styling
 

@@ -60,13 +60,13 @@ public class MultiHotkey extends Feature {
 
 	private final HotkeyListSetting entries = new HotkeyListSetting()
 		.name("Hotkeys")
-		.icon("labymod_3/autotext");
+		.icon("XZRF:key");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Multi-Hotkey")
 		.description("Erlaubt das Ausführen von mehreren sequenziellen Befehlen auf Tastendruck.")
-		.icon("labymod_3/autotext")
+		.icon("XZRF:key")
 		.subSettings(entries);
 
 	@EventListener

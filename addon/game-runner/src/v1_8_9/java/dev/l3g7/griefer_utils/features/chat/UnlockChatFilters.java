@@ -29,7 +29,7 @@ public class UnlockChatFilters extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Chat-Filter-Länge entsperren")
 		.description("Erhöht die maximale Länge von Chat Filtern.")
-		.icon("long_speech_bubble");
+		.icon("XZRF:measurement");
 
 	@Mixin(GuiChatFilter.class)
 	private static class MixinGuiChatFilter {

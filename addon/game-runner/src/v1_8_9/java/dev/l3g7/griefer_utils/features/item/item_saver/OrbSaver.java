@@ -31,7 +31,7 @@ public class OrbSaver extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Orb-Saver")
 		.description("Deaktiviert Abgeben von Items beim Orbhändler, wenn der Preis des Items gefallen ist.")
-		.icon(ItemUtil.createItem(Blocks.gold_block, 0, true));
+		.icon("XZRF:orb");
 
 	@EventListener
 	private void onGuiSetItems(GuiModifyItemsEvent event) {

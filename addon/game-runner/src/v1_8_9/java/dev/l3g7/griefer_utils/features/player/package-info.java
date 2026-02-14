@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category(name = "Spieler", icon = "steve")
+@Category(name = "Spieler", icon = "XZRF:steve")
 package dev.l3g7.griefer_utils.features.player;
 
 import dev.l3g7.griefer_utils.features.Feature.Category;

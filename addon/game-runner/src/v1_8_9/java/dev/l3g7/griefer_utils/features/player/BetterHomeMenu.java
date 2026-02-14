@@ -25,7 +25,7 @@ public class BetterHomeMenu extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("/homes verbessern")
 		.description("Ersetzt die Gras-Blöcke im /home-Menü durch die der Citybuilds.")
-		.icon(Blocks.grass);
+		.icon("XZRF:filled_map");
 
 	@EventListener
 	private void onGuiModify(GuiModifyItemsEvent event) {

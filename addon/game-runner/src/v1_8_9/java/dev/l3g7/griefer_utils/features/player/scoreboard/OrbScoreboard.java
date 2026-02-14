@@ -25,7 +25,7 @@ public class OrbScoreboard extends ScoreboardHandler.ScoreboardMod {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Orbguthaben im Scoreboard")
 		.description("Fügt das Orbguthaben im Scoreboard hinzu.")
-		.icon("orb");
+		.icon("XZRF:orb");
 
 	public OrbScoreboard() {
 		super("Orbguthaben", 0);

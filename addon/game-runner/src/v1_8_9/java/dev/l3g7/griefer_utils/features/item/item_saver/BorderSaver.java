@@ -41,7 +41,7 @@ public class BorderSaver extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Rand-Saver")
 		.description("Fragt beim Einlösen eines Randes nach einer Bestätigung.")
-		.icon(createItem(Blocks.obsidian, 0, true));
+		.icon("XZRF:glass_pane");
 
 	private final IInventory inv = new InventoryBasic(ItemSearch.marker + "§0Willst du den Rand einlösen?", false, 27);
 

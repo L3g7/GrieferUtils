@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.renderer.entity.layers.LayerArmorBase;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Items;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,28 +23,28 @@ public class HideArmor extends Feature {
 
 	private final SwitchSetting helmet = SwitchSetting.create()
 		.name("Helme verstecken")
-		.icon(Items.diamond_helmet)
+		.icon("XZRF:diamond_helmet")
 		.defaultValue(true);
 	private final SwitchSetting chestplate = SwitchSetting.create()
 		.name("Brustpanzer verstecken")
-		.icon(Items.diamond_chestplate)
+		.icon("XZRF:diamond_chestplate")
 		.defaultValue(true);
 	private final SwitchSetting leggings = SwitchSetting.create()
 		.name("Hosen verstecken")
-		.icon(Items.diamond_leggings)
+		.icon("XZRF:diamond_leggings")
 		.defaultValue(true);
 	private final SwitchSetting boots = SwitchSetting.create()
 		.name("Schuhe verstecken")
-		.icon(Items.diamond_boots)
+		.icon("XZRF:diamond_boots")
 		.defaultValue(true);
 
-	private final SwitchSetting[] subsettings = new SwitchSetting[] { helmet, chestplate, leggings, boots };
+	private final SwitchSetting[] subsettings = new SwitchSetting[]{helmet, chestplate, leggings, boots};
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Rüstung verstecken")
 		.description("Versteckt angezogene Rüstungen von Spielern.")
-		.icon(Items.diamond_chestplate)
+		.icon("XZRF:diamond_chestplate")
 		.subSettings(subsettings);
 
 	public static boolean shouldRender(int index) {

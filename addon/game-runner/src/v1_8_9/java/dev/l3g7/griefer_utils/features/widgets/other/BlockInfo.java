@@ -60,13 +60,13 @@ public class BlockInfo extends Widget {
 	private final SwitchSetting showCoords = SwitchSetting.create()
 			.name("Koordinaten anzeigen")
 			.description("Ob die Koordinaten des anvisierten Blocks auch angezeigt werden sollen.")
-			.icon(Items.compass);
+			.icon("XZRF:axes");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 			.name("Block-Infos")
 			.description("Zeigt dir Infos des anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
-			.icon("magnifying_glass")
+			.icon("XZRF:magnifying_glass")
 			.subSettings(showCoords);
 
 	private int getWidth() {

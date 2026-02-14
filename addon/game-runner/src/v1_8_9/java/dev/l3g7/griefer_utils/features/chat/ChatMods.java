@@ -18,9 +18,7 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
@@ -41,50 +39,50 @@ public class ChatMods extends Feature {
 	private final SwitchSetting antiClearChat = SwitchSetting.create()
 		.name("Clearchat unterbinden")
 		.description("Verhindert das leeren des Chats durch /clearchat.")
-		.icon(Blocks.barrier)
+		.icon("XZRF:barrier")
 		.defaultValue(true);
 
 	private final SwitchSetting removeSupremeSpaces = SwitchSetting.create()
 		.name("Supreme-Leerzeichen entfernen")
 		.description("Entfernt die Leerzeilen vor und nach Nachrichten von Spielern mit Supreme-Rang.")
-		.icon(Blocks.barrier)
+		.icon("XZRF:barrier")
 		.defaultValue(true);
 
 	private final SwitchSetting removeStreamerNotifications = SwitchSetting.create()
 		.name("Streamer-Benachrichtigungen entfernen")
 		.description("Unterdrückt Benachrichtigungen über Livestreams.")
-		.icon("twitch");
+		.icon("XZRF:twitch");
 
 	private final SwitchSetting removeLuckyBlock = SwitchSetting.create()
 		.name("LuckyBlock-Benachrichtigungen entfernen")
 		.description("Unterdrückt Benachrichtigungen über LuckyBlock-Gewinne.")
-		.icon(ItemUtil.createItem(Blocks.gold_block, 0, true));
+		.icon("XZRF:lucky_block");
 
 	private final SwitchSetting removeCaseOpening = SwitchSetting.create()
 		.name("CaseOpening-Benachrichtigungen entfernen")
 		.description("Unterdrückt Benachrichtigungen über CaseOpening-Gewinne.")
-		.icon("chest");
+		.icon("XZRF:chest_golden");
 
 	private final DropDownSetting<NewsMode> news = DropDownSetting.create(NewsMode.class)
 		.name("News")
 		.description("Ändert die Darstellung von News.")
-		.icon("labymod_3/exclamation_mark")
+		.icon("XZRF:enchanted_book")
 		.defaultValue(NewsMode.NORMAL);
 
 	private final SwitchSetting removeBroadcast = SwitchSetting.create()
 		.name("Broadcasts entfernen")
 		.description("Entfernt die Broadcast-Hervorhebung.")
-		.icon("red_scroll");
+		.icon("XZRF:bell");
 
 	private final SwitchSetting antiColoredFont = SwitchSetting.create()
 		.name("Farbige Schrift entfernen")
 		.description("Entfernt die Farben von Nachrichten mit farbiger Schrift §8(/schrift)§r.")
-		.icon("labymod_3/tabping_colored");
+		.icon("XZRF:tabping_colored");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Chat aufräumen")
-		.icon("speech_bubble")
+		.icon("XZRF:crossed_out_book")
 		.description("Räumt den Chat auf.")
 		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, removeBroadcast, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
 

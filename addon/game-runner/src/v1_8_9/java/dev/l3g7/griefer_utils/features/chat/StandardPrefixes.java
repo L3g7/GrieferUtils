@@ -46,20 +46,20 @@ public class StandardPrefixes extends Feature {
 	private final SwitchSetting tab = SwitchSetting.create()
 		.name("In Tabliste")
 		.description("Ob die Prefixe in der Tabliste geändert werden sollen.")
-		.icon("tab_list")
+		.icon("XZRF:blackboard")
 		.defaultValue(true)
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final SwitchSetting chat = SwitchSetting.create()
 		.name("Im Chat")
 		.description("Ob die Prefixe im Chat geändert werden sollen.")
-		.icon("speech_bubble")
+		.icon("XZRF:chat")
 		.defaultValue(true);
 
 	private final SwitchSetting self = SwitchSetting.create()
 		.name("Eigenen Prefix ändern")
 		.description("Ob der eigene Prefix auch geändert werden soll.")
-		.icon("steve")
+		.icon("XZRF:steve")
 		.defaultValue(true)
 		.callback(TabListEvent::updatePlayerInfoList);
 
@@ -67,7 +67,7 @@ public class StandardPrefixes extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Standard-Prefixe")
 		.description("Setzt die Prefixe jeder Person auf den standard Prefix des jeweiligen Ranges.")
-		.icon(Items.name_tag)
+		.icon("XZRF:name_tag_yellow")
 		.callback(TabListEvent::updatePlayerInfoList)
 		.subSettings(chat, tab, self);
 

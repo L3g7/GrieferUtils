@@ -49,19 +49,19 @@ public class LightLevelOverlay extends Feature {
 		.name("Radius")
 		.description("Der Radius um den Spieler in Blöcken, in dem das Lichtlevel angezeigt wird.")
 		.defaultValue(20)
-		.icon(Items.compass);
+		.icon("XZRF:measurement");
 
 	private final NumberSetting updateDelay = NumberSetting.create()
 		.name("Update-Wartezeit (Ticks)")
 		.description("Wie lange zwischen den Berechnungen der Lichtlevel gewartet werden soll.")
 		.defaultValue(5)
-		.icon(Items.clock);
+		.icon("XZRF:clock");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Lichtlevel anzeigen")
 		.description("Zeigt das Lichtlevel auf Blöcken an.")
-		.icon("light_bulb")
+		.icon("XZRF:light_bulb")
 		.subSettings(range, updateDelay)
 		.addHotkeySetting("das Anzeigen des Lichtlevels", TOGGLE);
 

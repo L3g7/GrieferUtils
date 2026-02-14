@@ -63,26 +63,26 @@ public abstract class PlayerList extends Feature {
 	public final DropDownSetting<MarkAction> tabAction = DropDownSetting.create(MarkAction.class)
 		.name("in Tabliste")
 		.description("Ob Spieler in dieser Liste in der Tabliste markiert werden sollen.")
-		.icon("tab_list")
+		.icon("XZRF:blackboard")
 		.defaultValue(ICON)
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	public final DropDownSetting<MarkAction> chatAction = DropDownSetting.create(MarkAction.class)
 		.name("in Chat")
 		.description("Ob Spieler in dieser Liste im Chat markiert werden sollen.")
-		.icon("speech_bubble")
+		.icon("XZRF:chat")
 		.defaultValue(ICON);
 
 	public final DropDownSetting<MarkAction> displayNameAction = DropDownSetting.create(MarkAction.class)
 		.name("Vor Nametag")
 		.description("Ob Spieler in dieser Liste eine Markierung vor ihrem Namen haben sollen.")
-		.icon("yellow_name")
+		.icon("XZRF:name_tag_yellow")
 		.defaultValue(ICON);
 
 	public final SwitchSetting showInProfile = SwitchSetting.create()
 		.name("In /profil anzeigen")
 		.description("Ob das Profil von Spielern in dieser Liste markiert werden soll.")
-		.icon("info")
+		.icon("XZRF:steve")
 		.defaultValue(true);
 
 	public final AbstractSetting<?, List<PlayerListEntry>> customEntries;

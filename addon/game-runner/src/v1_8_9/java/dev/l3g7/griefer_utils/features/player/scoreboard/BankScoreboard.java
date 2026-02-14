@@ -27,7 +27,7 @@ public class BankScoreboard extends ScoreboardHandler.ScoreboardMod {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Bankguthaben im Scoreboard")
 		.description("Fügt das Bankguthaben im Scoreboard hinzu.")
-		.icon("bank");
+		.icon("XZRF:bank");
 
 	public BankScoreboard() {
 		super("Bankguthaben", 1);

@@ -38,7 +38,7 @@ public class PrefixSaver extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Prefix-Saver")
 		.description("Fragt beim Einlösen eines Prefixes nach einer Bestätigung.")
-		.icon(createItem(Blocks.redstone_ore, 0, true));
+		.icon("XZRF:tabping_colored");
 
 	private final IInventory inv = new InventoryBasic(ItemSearch.marker + "§0Willst du den Prefix einlösen?", false, 27);
 

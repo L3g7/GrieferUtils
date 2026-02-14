@@ -25,7 +25,7 @@ public class MissingAdventurerBlocks extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Fehlende Adv. Blöcke")
 		.description("Zeigt dir an, wie viele Blöcke mit dem in der Hand gehaltenen Adventure-Werkzeug noch abgebaut werden müssen.")
-		.icon(Items.fire_charge);
+		.icon("XZRF:enchanted_fire_charge");
 
 	public MissingAdventurerBlocks() {
 		super("Fehlende Blöcke");

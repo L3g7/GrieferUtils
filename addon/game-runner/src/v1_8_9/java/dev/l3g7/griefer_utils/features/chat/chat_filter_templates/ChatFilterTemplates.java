@@ -31,7 +31,7 @@ public abstract class ChatFilterTemplates extends Feature {
 	protected static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Filtervorlagen")
 		.description("Fügt Vorlagen bei LabyMods Chatfiltern hinzu.")
-		.icon("labymod_3/filter");
+		.icon("XZRF:enchanted_book");
 
 	@Override
 	protected String getConfigSubkey() {

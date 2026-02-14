@@ -118,7 +118,7 @@ public class Badges {
 
 		GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
-		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
+		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/high_res/" + icon + ".png"));
 		DrawUtils.drawTexture(x, y, 255, 255, 8, 8, 1.1f);
 		GlStateManager.color(1, 1, 1, 1);
 	}

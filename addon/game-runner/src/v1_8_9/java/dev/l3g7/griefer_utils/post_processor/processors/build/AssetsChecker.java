@@ -17,8 +17,8 @@ import java.util.List;
 @SuppressWarnings("resource")
 public class AssetsChecker {
 
-	private static final List<String> KNOWN_DIRECTORIES = Arrays.asList("litematica", "mob_icons", "griefer_info", "biomes", "structures");
-	private static final List<String> KNOWN_FILES = Arrays.asList("thonk", "pencil", "lens", "earth");
+	private static final List<String> KNOWN_DIRECTORIES = Arrays.asList("litematica", "mob_icons", "biomes", "structures", "high_res");
+	private static final List<String> KNOWN_FILES = Arrays.asList("thonk", "pencil", "lens", "earth", "gray_sword", "diamond_sword");
 
 	public static void validateAssets(FileSystem fs) throws IOException {
 		List<String> directories = new ArrayList<>();
@@ -100,9 +100,7 @@ public class AssetsChecker {
 						int start = startIndices[index - 1] + 1;
 						short length = (short) (((content[start++] & 0xFF) << 8) | (content[start++] & 0xFF));
 						String data = new String(content, start, length);
-						for (int i = 0; i < files.size(); i++)
-							if (files.remove(data))
-								break;
+						files.remove(data.startsWith("XZRF:") ? data.substring("XZRF:".length()) : data);
 					}
 					else if (b == 5 || b == 6) {
 						// CONSTANT_Long_info / CONSTANT_Double_info take two entries

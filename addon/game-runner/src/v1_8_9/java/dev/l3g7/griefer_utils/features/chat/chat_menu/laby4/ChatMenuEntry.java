@@ -125,9 +125,9 @@ public class ChatMenuEntry {
 
 	enum Action implements SelectButtonGroup.Selectable {
 		CONSUMER(null, null),
-		OPEN_URL("Url öffnen", "earth_grid"),
-		RUN_CMD("Befehl ausführen", "cpu"),
-		SUGGEST_CMD("Befehl vorschlagen", "speech_bubble");
+		OPEN_URL("Url öffnen", "XZRF:earth_grid"),
+		RUN_CMD("Befehl ausführen", "XZRF:cpu"),
+		SUGGEST_CMD("Befehl vorschlagen", "XZRF:chat");
 
 		public final String name;
 		public final String defaultIcon;
@@ -150,8 +150,8 @@ public class ChatMenuEntry {
 	enum IconType implements SelectButtonGroup.Selectable {
 		SYSTEM(null, null),
 		DEFAULT("Standard", null),
-		ITEM("Item", "gold_ingot"),
-		IMAGE_FILE("Bild", "tree_file");
+		ITEM("Item", "XZRF:gold_ingot"),
+		IMAGE_FILE("Bild", "XZRF:tree_file");
 
 		public final String name;
 		public final String defaultIcon;

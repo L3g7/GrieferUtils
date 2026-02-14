@@ -70,7 +70,7 @@ public class Main extends LabyModAddon {
 
 		// Fix icon
 		Map<String, DynamicModTexture> map = LabyMod.getInstance().getDynamicTextureManager().getResourceLocations();
-		map.put("griefer_utils_icon", Laby3Util.createDynamicTexture("griefer_utils/icons/icon.png", "griefer_utils_icon"));
+		map.put("griefer_utils_icon", Laby3Util.createDynamicTexture("griefer_utils/icons/high_res/icon.png", "griefer_utils_icon"));
 
 		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}

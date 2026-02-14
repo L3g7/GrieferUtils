@@ -23,12 +23,17 @@ public interface GUIEntry {
 	class SwitchSettingBuilder implements SettingBuilder {
 		@Override
 		public SwitchSetting build(Category meta, String configKey) {
-			return SwitchSetting.create()
+			SwitchSetting setting = SwitchSetting.create()
 				.name(meta.name())
 				.icon(meta.icon())
 				.config(configKey + ".active")
 				.defaultValue(true)
 				.subSettings(); // creates a header
+
+			if (!meta.description().isEmpty())
+				setting.description(meta.description());
+
+			return setting;
 		}
 	}
 }

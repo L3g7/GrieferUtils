@@ -48,7 +48,7 @@ public class Received extends SimpleWidget {
 	private final SwitchSetting resetSetting = SwitchSetting.create()
 		.name("Automatisch zurücksetzen")
 		.description("Ob automatisch um 04:00 das eingenommene Geld zurückgesetzt werden soll.")
-		.icon("labymod_3/use_default_settings")
+		.icon("XZRF:hourglass")
 		.callback(b -> {
 			if (!initialized)
 				return;
@@ -64,7 +64,7 @@ public class Received extends SimpleWidget {
 	private static final SwitchSetting resetAfterRestart = SwitchSetting.create()
 		.name("Nach Neustart zurücksetzen")
 		.description("Ob nach einem Minecraft-Neustart das eingenommene Geld zurückgesetzt werden soll.")
-		.icon("labymod_3/use_default_settings")
+		.icon("XZRF:hourglass")
 		.callback(shouldReset -> {
 			if (!initialized)
 				return;
@@ -80,18 +80,18 @@ public class Received extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Eingenommen")
 		.description("Zeigt dir, wie viel Geld du seit deinem Minecraft-Start eingenommen hast.")
-		.icon("wallets/ingoing")
+		.icon("XZRF:high_res/wallets/ingoing")
 		.subSettings(resetSetting, resetAfterRestart,
 			ButtonSetting.create()
 				.name("Zurücksetzen")
 				.description("Setzt das eingenommene Geld zurück.")
-				.icon("arrow_circle")
+				.icon("XZRF:loop")
 				.buttonIcon(getResetIcon())
 				.callback(() -> setBalance(ZERO)),
 			ButtonSetting.create()
 				.name("Alles zurücksetzen")
 				.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
-				.icon("arrow_circle")
+				.icon("XZRF:loop")
 				.buttonIcon(getResetIcon())
 				.callback(() -> setBalance(Spent.setBalance(ZERO)))
 		);

@@ -30,8 +30,6 @@ import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.IChatComponent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -57,13 +55,13 @@ public class ChatMenu extends Feature {
 	protected static final CopyTextEntry COPY_TEXT_ENTRY = new CopyTextEntry();
 
 	protected static final List<ChatMenuEntry> DEFAULT_ENTRIES = ImmutableList.of(
-		new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %name%", "wooden_board"),
-		new ChatMenuEntry("Namensverlauf", CONSUMER, (Consumer<String>) ChatMenu::openNameHistory, "yellow_name"),
-		new ChatMenuEntry("Namen kopieren", CONSUMER, (Consumer<String>) ChatMenu::copyToClipboard, "yellow_name"),
-		new ChatMenuEntry("Im Forum suchen", OPEN_URL, "https://forum.griefergames.de/search/?q=%name%", "earth_grid"),
-		new ChatMenuEntry("Inventar öffnen", RUN_CMD, "/invsee %name%", "bundle"),
-		new ChatMenuEntry("Ausrüstung ansehen", RUN_CMD, "/view %name%", new ItemStack(Items.iron_chestplate)),
-		new ChatMenuEntry("EC öffnen", RUN_CMD, "/ec %name%", "chest")
+		new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %name%", "XZRF:wooden_board"),
+		new ChatMenuEntry("Namensverlauf", CONSUMER, (Consumer<String>) ChatMenu::openNameHistory, "XZRF:name_tag_yellow"),
+		new ChatMenuEntry("Namen kopieren", CONSUMER, (Consumer<String>) ChatMenu::copyToClipboard, "XZRF:name_tag_yellow"),
+		new ChatMenuEntry("Im Forum suchen", OPEN_URL, "https://forum.griefergames.de/search/?q=%name%", "XZRF:griefer_games"),
+		new ChatMenuEntry("Inventar öffnen", RUN_CMD, "/invsee %name%", "XZRF:bundle"),
+		new ChatMenuEntry("Ausrüstung ansehen", RUN_CMD, "/view %name%", "XZRF:diamond_chestplate"),
+		new ChatMenuEntry("EC öffnen", RUN_CMD, "/ec %name%", "XZRF:chest_ender")
 	);
 
 	protected static ChatMenuRenderer renderer = null;
@@ -76,7 +74,7 @@ public class ChatMenu extends Feature {
 	private static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Chatmenü")
 		.description("Öffnet ein Chatmenü bei Rechtsklick auf einen Spieler im Chat.")
-		.icon("player_menu");
+		.icon("XZRF:player_menu");
 
 	public ChatMenu() {
 		loadEntries();

@@ -47,7 +47,7 @@ public class PacketDumper {
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Paket-Dumper")
 		.description("Dumpt ein-/ausgehende Pakete.")
-		.icon(Items.feather)
+		.icon("XZRF:portal")
 		.enabled(LabyBridge.labyBridge.activeMapping() != Mapping.OBFUSCATED)
 		.subSettings(incoming.enabled, outgoing.enabled);
 
@@ -90,19 +90,19 @@ public class PacketDumper {
 			this.enabled = SwitchSetting.create()
 				.name(settingPrefix + " Pakete dumpen")
 				.description("Ob " + settingPrefix.toLowerCase() + " Pakete gedumpt werden sollen.")
-				.icon(Items.paper)
+				.icon("XZRF:magnifying_glass")
 				.subSettings(
 					StringSetting.create()
 						.name("Fields dumpen")
 						.description("Die IDs der Pakete, deren Fields gedumpt werden sollen, getrennt durch \",\".")
-						.icon(Blocks.command_block)
+						.icon("XZRF:magnifying_glass")
 						.maxLength(Integer.MAX_VALUE)
 						.callback(s -> dumpFieldsList = Arrays.asList(s.split(","))),
 
 					StringSetting.create()
 						.name("Blacklist")
 						.description("Die IDs der Pakete, die nicht angezeigt werden sollen, getrennt durch \",\".")
-						.icon(Blocks.hopper)
+						.icon("XZRF:hopper")
 						.maxLength(Integer.MAX_VALUE)
 						.callback(s -> blacklistList = new ArrayList<>(Arrays.asList(s.split(","))))
 						.defaultValue(defaultBlackList)

@@ -96,10 +96,10 @@ public class ItemProtection {
 
 	public enum ProtectionType {
 
-		DROP("drop", "Droppen unterbinden", "Ob das Droppen dieses Items unterbunden werden soll.", Blocks.dropper),
-		ITEM_PICKUP("extreme_drop", "Droppen unterbinden (extrem)", "Ob das Aufnehmen dieses Items in den Maus-Cursor unterbunden werden soll.", "shield_with_sword"),
-		LEFT_CLICK("leftclick", "Linksklicks unterbinden", "Ob Linksklicks mit diesem Item unterbunden werden soll.", Items.diamond_sword),
-		RIGHT_CLICK("rightclick", "Rechtsklicks unterbinden", "Ob Rechtsklicks mit diesem Item unterbunden werden soll.", Items.bow);
+		DROP("drop", "Droppen unterbinden", "Ob das Droppen dieses Items unterbunden werden soll.", "XZRF:hopper"),
+		ITEM_PICKUP("extreme_drop", "Droppen unterbinden (extrem)", "Ob das Aufnehmen dieses Items in den Maus-Cursor unterbunden werden soll.", "XZRF:shield_with_sword"),
+		LEFT_CLICK("leftclick", "Linksklicks unterbinden", "Ob Linksklicks mit diesem Item unterbunden werden soll.", "XZRF:weakness"),
+		RIGHT_CLICK("rightclick", "Rechtsklicks unterbinden", "Ob Rechtsklicks mit diesem Item unterbunden werden soll.", "XZRF:creeper_spawn_egg");
 
 		private final Function<ItemProtection, SwitchSetting> settingSupplier;
 		final String configKey;

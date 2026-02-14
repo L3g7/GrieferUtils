@@ -42,54 +42,54 @@ public class BetterHopper extends Feature {
 		.name("Anzeigeboxen füllen")
 		.description("Ob die Boxen der Anzeige gefüllt werden sollen.")
 		.defaultValue(true)
-		.icon(ItemUtil.createItem(Blocks.wool, 14, false));
+		.icon("XZRF:color_palette");
 
 	static final NumberSetting displayTime = NumberSetting.create()
 		.name("Anzeigedauer")
 		.description("Wie lange die optische Anzeige aktiv bleiben soll, in Sekunden.")
-		.icon("hourglass")
+		.icon("XZRF:hourglass")
 		.defaultValue(10);
 
 	static final SwitchSetting betterVisualisation = SwitchSetting.create()
 		.name("Bessere optische Trichter-Anzeige")
 		.description("Ersetzt die Partikel der optischen Trichter Anzeige durch Boxen / Linien.")
-		.icon(Items.ender_eye)
+		.icon("XZRF:lens")
 		.subSettings(displayTime, fillBoxes);
 
 	static final SwitchSetting showRange = SwitchSetting.create()
 		.name("Trichterreichweite anzeigen")
 		.description("Zeigt die Trichterreichweite an.")
-		.icon("ruler");
+		.icon("XZRF:measurement");
 
 	static final SwitchSetting showSourceHopper = SwitchSetting.create()
 		.name("Ausgangstrichter anzeigen")
 		.description("Zeigt beim Verbinden eines Trichters den Trichter an, von dem aus verbunden wird.")
-		.icon(Blocks.hopper);
+		.icon("XZRF:hopper");
 
 	private static final NumberSetting lastHoppersLimit = NumberSetting.create()
 		.name("Maximale Anzahl an Trichter")
 		.description("Wie viele Trichter maximal angezeigt werden.")
-		.icon(Blocks.hopper)
+		.icon("XZRF:hopper")
 		.min(1)
 		.defaultValue(1);
 
 	private static final SwitchSetting showLastHopper = SwitchSetting.create()
 		.name("Letzte Trichter anzeigen")
 		.description("Markiert die Trichter, die als letztes geöffnet wurden.")
-		.icon(Blocks.hopper)
+		.icon("XZRF:hopper")
 		.subSettings(lastHoppersLimit);
 
 	private static final SwitchSetting sneakMode = SwitchSetting.create()
 		.name("Sneak-Modus")
 		.description("Öffnet bei Rechtsklicks immer die Einstellungen eines Trichters, auch wenn du nicht sneakst.")
-		.icon("sneaking")
+		.icon("XZRF:sneaking")
 		.addHotkeySetting("den Sneak-Modus", null);
 
 	@MainElement
 	private static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Trichteranzeige verbessern")
 		.description("Verbessert die Anzeige von Trichtern.")
-		.icon(Blocks.hopper)
+		.icon("XZRF:hopper")
 		.subSettings(betterVisualisation, showRange, showSourceHopper, showLastHopper, sneakMode);
 
 	private static final List<BlockPos> lastClickedHoppers = new ArrayList<>();

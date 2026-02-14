@@ -48,7 +48,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	public ArrayList<SettingsElement> path() { return Reflection.get(mc.currentScreen, "path"); }
 
 	public RecraftRecordingSelectionSetting(RecraftRecording container) {
-		super(Icon.of(Blocks.barrier).toIconData());
+		super(Icon.of("barrier").toIconData());
 		this.container = container;
 		setSettingEnabled(true);
 		subSettings();
@@ -89,7 +89,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	void setSelectedRecording(RecraftRecording selectedRecording) {
 		recording = selectedRecording;
 		setDisplayName(selectedRecording == null ? "§8[Nichts ausgewählt]" : selectedRecording.name().get());
-		icon(selectedRecording == null ? Blocks.barrier : Icon.EMPTY_ICON);
+		icon(selectedRecording == null ? "barrier" : Icon.EMPTY_ICON);
 
 		if (container.mainSetting != null)
 			updateName(selectedRecording);
@@ -185,7 +185,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			super("§cNo name set", null);
 			setSettingEnabled(false);
 			this.recording = recording;
-			icon(recording == null ? Blocks.barrier : Icon.EMPTY_ICON);
+			icon(recording == null ? "barrier" : Icon.EMPTY_ICON);
 			setDisplayName(recording == null ? "§8Nichts auswählen" : recording.name().get());
 		}
 

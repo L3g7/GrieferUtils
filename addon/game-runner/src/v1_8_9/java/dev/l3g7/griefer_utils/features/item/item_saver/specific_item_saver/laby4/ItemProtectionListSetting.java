@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.*;
 import net.labymod.api.client.component.Component;
@@ -162,7 +163,7 @@ public class ItemProtectionListSetting extends ListSetting implements Laby4Setti
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(Icons.of("pencil_vec"));
+						btn.updateIcon(Icons.of(GUIHierarchyTree.handleXZRF("XZRF:high_res/pencil_vec")));
 
 						content.addContent(ButtonWidget.icon(X, () -> {
 							get().remove(entry.index);
@@ -212,7 +213,7 @@ public class ItemProtectionListSetting extends ListSetting implements Laby4Setti
 			StringSetting name = StringSetting.create() // NOTE: update name live
 				.name("Anzeigename")
 				.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretten Items.")
-				.icon(Items.writable_book)
+				.icon("XZRF:name_tag")
 				.defaultValue(protection.name)
 				.callback(s -> protection.name = s);
 

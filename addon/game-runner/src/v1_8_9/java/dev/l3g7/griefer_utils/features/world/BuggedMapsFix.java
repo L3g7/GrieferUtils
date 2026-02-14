@@ -32,7 +32,7 @@ public class BuggedMapsFix extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Verbuggte Karten fixen")
 		.description("Behebt, dass Karten das falsche Bild anzeigen.")
-		.icon(Items.map);
+		.icon("XZRF:filled_map");
 
 	@Mixin(MapItemRenderer.class)
 	private static class MixinMapItemRenderer {

@@ -33,7 +33,7 @@ public class NPCEntityGhostHand extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("NPC-Klick-Helfer")
 		.description("Ermöglicht das Klicken auf NPCs durch Entities.")
-		.icon("left_click");
+		.icon("XZRF:mouse_right");
 
 	@EventListener
 	public void onClick(MouseClickEvent.RightClickEvent event) {

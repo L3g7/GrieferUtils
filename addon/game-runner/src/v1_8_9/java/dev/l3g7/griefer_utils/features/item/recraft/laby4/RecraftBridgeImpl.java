@@ -28,7 +28,7 @@ public class RecraftBridgeImpl implements RecraftBridge {
 
 	public static final RecraftPage.RecraftPageListSetting pages = new RecraftPage.RecraftPageListSetting()
 		.name("Seiten")
-		.icon(Items.map)
+		.icon("XZRF:lectern")
 		.inferConfig("pages");
 
 	@Override

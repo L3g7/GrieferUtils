@@ -47,7 +47,7 @@ public class NearbyPlayers extends Widget {
 		.name("Limit")
 		.description("Wie viele Spieler maximal angezeigt werden sollen."
 			+ "\n(-1 ist unendlich)")
-		.icon("ruler")
+		.icon("XZRF:measurement")
 		.min(-1)
 		.defaultValue(10);
 
@@ -55,7 +55,7 @@ public class NearbyPlayers extends Widget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spieler in der Nähe")
 		.description("Zeigt Spieler in deiner Nähe an.")
-		.icon("radar")
+		.icon("XZRF:players")
 		.subSettings(limit);
 
 	private final List<EntityOtherPlayerMP> visiblePlayers = new ArrayList<>();

@@ -91,25 +91,25 @@ public class AutoTool extends Feature {
 	private final DropDownSetting<EnchantPreference> preference = DropDownSetting.create(EnchantPreference.class)
 		.name("Bevorzugte Verzauberung")
 		.description("Ob Glück oder Behutsamkeit bevorzugt werden soll.")
-		.icon(Items.enchanted_book)
+		.icon("XZRF:enchanted_book")
 		.defaultValue(EnchantPreference.FORTUNE);
 
 	private final SwitchSetting switchBack = SwitchSetting.create()
 		.name("Zurück wechseln")
 		.description("Ob nach dem Abbauen auf den ursprünglichen Slot zurück gewechselt werden soll.")
-		.icon(Items.wooden_pickaxe)
+		.icon("XZRF:loop")
 		.defaultValue(true);
 
 	private final SwitchSetting enforceSilkTouch = SwitchSetting.create()
 		.name("Behutsamkeit erzwingen")
 		.description("Wenn Behutsamkeit einen Effekt auf den abgebaute Block hat, werden §nimmer§r Items mit Behutsamkeit bevorzugt.")
-		.icon(Blocks.grass);
+		.icon("XZRF:carpet_white");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Automatische Werkzeugauswahl")
 		.description("Wechselt beim Abbauen eines Blocks automatisch auf das beste Werkzeug in der Hotbar.")
-		.icon(ItemUtil.createItem(Items.diamond_pickaxe, 0, true))
+		.icon("XZRF:tools")
 		.defaultValue(false)
 		.subSettings(HeaderSetting.create(), preference, switchBack, enforceSilkTouch)
 		.addHotkeySetting("die automatische Werkzeugauswahl", null);

@@ -87,12 +87,12 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 				icon(v.icon);
 			} else {
 				name("§7[Kein Nachfolger]");
-				icon(Blocks.barrier);
+				icon("XZRF:barrier");
 			}
 		});
 
 		name("§7[Kein Nachfolger]");
-		icon(Blocks.barrier);
+		icon("XZRF:barrier");
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 
 		ButtonSettingImpl selectNothing = (ButtonSettingImpl) ButtonSetting.create()
 			.name("Nichts auswählen")
-			.icon(Blocks.barrier)
+			.icon("XZRF:barrier")
 			.buttonLabel("Auswählen")
 			.callback(() -> {
 				RecraftSuccessorSetting.this.set(null);

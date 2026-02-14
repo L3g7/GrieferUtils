@@ -55,7 +55,7 @@ public class SplitLongMessages extends Feature {
 		.name("Lange Nachrichten aufteilen")
 		.description("Teilt Nachrichten, die das Zeichenlimit überschreiten, in mehrere Nachrichten auf.\n" +
 			"Funktioniert im öffentlichen Chat sowie mit /msg und /r.")
-		.icon(Items.shears);
+		.icon("XZRF:shears");
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onGuiKeyboardInput(KeyboardInputEvent.Post event) {

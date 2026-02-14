@@ -46,25 +46,25 @@ public class LightBugESP extends Feature {
 	private final SwitchSetting inBlocks = SwitchSetting.create()
 		.name("Lichtbugs in Blöcken anzeigen")
 		.description("Zeigt auch Lichtbugs an, die sich in Blöcken befinden.")
-		.icon("glitch_light_bulb");
+		.icon("XZRF:light_bulb_glitch");
 
 	private final NumberSetting range = NumberSetting.create()
 		.name("Radius")
 		.description("Der Radius um den Spieler in Blöcken, in dem nach Lichtbugs überprüft wird.")
 		.defaultValue(20)
-		.icon(Items.compass);
+		.icon("XZRF:measurement");
 
 	private final NumberSetting updateDelay = NumberSetting.create()
 		.name("Update-Wartezeit (Ticks)")
 		.description("Wie lange zwischen den Überprüfungen nach Lichtbugs gewartet werden soll.")
 		.defaultValue(5)
-		.icon(Items.clock);
+		.icon("XZRF:clock");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Lichtbugs anzeigen")
 		.description("Zeigt Lichtbugs an, auch durch Wände.")
-		.icon("glitch_light_bulb")
+		.icon("XZRF:light_bulb_glitch")
 		.subSettings(inBlocks, HeaderSetting.create(), range, updateDelay)
 		.addHotkeySetting("das Anzeigen der Lichtbugs", TOGGLE);
 

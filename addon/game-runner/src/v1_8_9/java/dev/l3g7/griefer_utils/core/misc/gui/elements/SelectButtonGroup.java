@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.core.misc.gui.elements;
 
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
@@ -116,7 +117,7 @@ public class SelectButtonGroup<E extends Enum<E> & SelectButtonGroup.Selectable>
 
 		private IconButton(E value) {
 			super(value.getName());
-			this.icon = new ResourceLocation("griefer_utils", "icons/" + value.getIcon() + ".png");
+			this.icon = new ResourceLocation("griefer_utils", "icons/" + GUIHierarchyTree.handleXZRF(value.getIcon()) + ".png");
 			this.value = value;
 
 			height(23);

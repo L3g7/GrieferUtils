@@ -42,7 +42,7 @@ public class GrieferUtilsGroupIconTag extends GroupIconTag {
 	@Override
 	public Icon getIcon(EntitySnapshot snapshot) {
 		if (badge != null)
-			return Icon.texture((net.labymod.api.client.resources.ResourceLocation) new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
+			return Icon.texture((net.labymod.api.client.resources.ResourceLocation) new ResourceLocation("griefer_utils", "icons/high_res/" + icon + ".png"));
 
 		return super.getIcon(snapshot);
 	}

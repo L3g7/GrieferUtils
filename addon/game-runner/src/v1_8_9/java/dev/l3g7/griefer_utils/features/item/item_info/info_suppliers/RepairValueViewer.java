@@ -33,7 +33,7 @@ public class RepairValueViewer extends Feature {
 	private final StringSetting format = StringSetting.create()
 		.name("Format")
 		.description("In welchem Format der Reparaturwert angezeigt werden soll.\n(\\n wird durch einen Zeilenumbruch und %s durch den Reparaturwert ersetzt)")
-		.icon(Items.map)
+		.icon("XZRF:book_and_quill")
 		.defaultValue("\\n&7Reparaturwert: %s")
 		.validator(v -> {
 			try {
@@ -48,7 +48,7 @@ public class RepairValueViewer extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Reparaturwert anzeigen")
 		.description("Zeigt unter einem Item seinen Reparaturwert (wie viele XP-Level eine Reparatur mindestens kostet) an.")
-		.icon(Blocks.anvil)
+		.icon("XZRF:weakness")
 		.subSettings(format);
 
 	@EventListener

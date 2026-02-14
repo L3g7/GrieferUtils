@@ -19,9 +19,13 @@ import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
+import dev.l3g7.griefer_utils.features._dyn_ght.Lazy;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +44,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 	// Name to setting
 	private static final Map<String, CategoryData> categories = new HashMap<>();
 
-	private final CategoryData category = findCategory(getClass().getPackage());
+	private final Lazy<CategoryData> category = new Lazy<>(() -> findCategory(getClass().getPackage()));
 	private BaseSetting<?> mainElement;
 	private String configKey;
 
@@ -48,33 +52,70 @@ public abstract class Feature implements Disableable, GUIEntry {
 		if (pkg == null)
 			return null;
 
-		if (pkg.isAnnotationPresent(Category.class)) {
-			Category meta = pkg.getAnnotation(Category.class);
-			if (categories.containsKey(pkg.getName()))
-				return categories.get(pkg.getName());
+		Field[] mainElementFields = Reflection.getAnnotatedFields(this.getClass(), MainElement.class, true);
+		Field mainElementField = mainElementFields[0];
+		BaseSetting<?> mainElement = Reflection.get(this, mainElementField);
 
-			CategoryData parent = findCategory(Reflection.getParentPackage(pkg));
+		String name = mainElement.name();
+		GUIHierarchyTree.Feat feat = GUIHierarchyTree.get(name);
+		mainElement.name(feat.nameLaby4())
+			.icon(feat.icon());
 
-			String configKey = Reflection.getPackageName(pkg);
-			if (parent != null)
-				configKey = parent.configKey() + "." + configKey;
+		return build(feat.parent());
+	}
 
-			BaseSetting<?> category = FileProvider.getSingleton(meta.setting())
-				.build(meta, configKey);
+	private CategoryData build(GUIHierarchyTree.Feat feat) {
+		if (feat == null)
+			return null;
 
-			CategoryData data = new CategoryData(category, configKey, parent);
-			categories.put(pkg.getName(), data);
-			return data;
-		}
+		CategoryData cur = categories.get(feat.nameLaby4());
+		if (cur != null)
+			return cur;
 
-		return findCategory(Reflection.getParentPackage(pkg));
+		CategoryData parent = build(feat.parent());
+
+		String configKey = feat.nameLaby4();
+		if (parent != null)
+			configKey = "temp_settings." + configKey;
+
+		BaseSetting<?> category = FileProvider.getSingleton(feat.setting())
+			.build(new Category() {
+				@Override
+				public String name() {
+					return feat.nameLaby4();
+				}
+
+				@Override
+				public String description() {
+					return feat.description();
+				}
+
+				@Override
+				public String icon() {
+					return (String) feat.icon();
+				}
+
+				@Override
+				public Class<? extends SettingBuilder> setting() {
+					return feat.setting();
+				}
+
+				@Override
+				public Class<? extends Annotation> annotationType() {
+					return Category.class;
+				}
+			}, configKey);
+
+		CategoryData data = new CategoryData(category, configKey, parent);
+		categories.put(feat.nameLaby4(), data);
+		return data;
 	}
 
 	/**
 	 * Initialises the main element and config key.
 	 */
 	public void init() {
-		MainElementData data = SettingLoader.initMainElement(this, category == null ? null : category.configKey(), getConfigSubkey());
+		MainElementData data = SettingLoader.initMainElement(this, category.get() == null ? null : category.get().configKey(), getConfigSubkey());
 		mainElement = data.mainElement;
 		configKey = data.configKey;
 	}
@@ -90,8 +131,8 @@ public abstract class Feature implements Disableable, GUIEntry {
 
 	@Override
 	public void addToParent(List<BaseSetting<?>> root) {
-		if (category != null)
-			category.getSetting().addSetting(mainElement);
+		if (category.get() != null)
+			category.get().getSetting().addSetting(mainElement);
 	}
 
 	public BaseSetting<?> getMainElement() {
@@ -99,7 +140,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 	}
 
 	public CategoryData getCategory() {
-		return category;
+		return category.get();
 	}
 
 	public String getConfigKey() {
@@ -110,7 +151,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 	 * Checks if the parent category and the feature itself is enabled.
 	 */
 	public boolean isEnabled() {
-		if (category != null && !category.isEnabled())
+		if (category.get() != null && !category.get().isEnabled())
 			return false;
 
 		if (mainElement instanceof SwitchSetting)
@@ -128,7 +169,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 	}
 
 	public static List<BaseSetting<?>> getUncategorized() {
-		return getFeatures().filter(f -> f.category == null)
+		return getFeatures().filter(f -> f.category.get() == null)
 			.map(f -> f.mainElement)
 			.collect(Collectors.toList());
 	}

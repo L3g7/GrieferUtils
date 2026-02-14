@@ -32,11 +32,11 @@ public class Credits {
 
 	public static final CategorySetting credits = CategorySetting.create()
 		.name("Credits")
-		.icon("labymod_3/multiplayer")
+		.icon("XZRF:players")
 		.description("Das Team hinter GrieferUtils, sowie Copyright und Lizenzen.")
 		.subSettings(
 			HeaderSetting.create().entryHeight(5),
-			creditsBridge.createIconSetting("Lizensiert unter Apache License 2.0", "../scroll"),
+			creditsBridge.createIconSetting("Lizensiert unter Apache License 2.0", "../../scroll"),
 			HeaderSetting.create().entryHeight(11),
 
 			HeaderSetting.create("Entwickler"),
@@ -57,7 +57,7 @@ public class Credits {
 			HeaderSetting.create("Bild-Credits"),
 			ButtonSetting.create()
 				.name("Credits öffnen")
-				.icon("white_scroll")
+				.icon("XZRF:scroll")
 				.buttonIcon("open_link")
 				.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/image_credits")),
 			HeaderSetting.create().entryHeight(11),

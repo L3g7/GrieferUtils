@@ -36,7 +36,7 @@ public class ShowHatItems extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Items auf dem Kopf anzeigen")
 		.description("Zeigt Items, die Spieler im Kopf-Slot haben, über ihnen an.")
-		.icon(ItemUtil.createItem(Items.fireworks, 0, true));
+		.icon("XZRF:firework_on_head");
 
 	@Mixin(LayerCustomHead.class)
 	private static class MixinLayerCustomHead {

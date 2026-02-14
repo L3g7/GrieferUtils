@@ -77,7 +77,7 @@ public class SkullEnchantmentFix extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kopf-Verzauberung fixen")
 		.description("Behebt, dass Verzauberungen von Köpfen nicht angezeigt werden.")
-		.icon(ICON);
+		.icon("XZRF:enchanted_steve");
 
 	@Override
 	public void init() {

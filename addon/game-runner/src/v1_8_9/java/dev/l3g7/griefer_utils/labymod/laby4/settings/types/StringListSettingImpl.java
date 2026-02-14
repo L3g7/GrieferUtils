@@ -12,6 +12,7 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
+import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
@@ -116,7 +117,7 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 
 	@Override
 	public StringListSetting entryIcon(Object icon) {
-		this.entryIcon = Icons.of(icon);
+		this.entryIcon = GUIHierarchyTree.handleXZRF(icon);
 		return this;
 	}
 

@@ -103,7 +103,7 @@ class GuiSearches extends GuiBigChest {
 				? "§aa§bk§dt§ci§6v§ei§ae§br§dt"
 				: "§7deaktiviert"
 			);
-			addTextureItem(position, new TextureItem("labymod_3/tabping_colored", name), () -> {
+			addTextureItem(position, new TextureItem("tabping_colored", name), () -> {
 				rainbow = !rainbow;
 				if (!rainbow)
 					searchable.getColor().getRGBColorComponents(Waypoint.colors);

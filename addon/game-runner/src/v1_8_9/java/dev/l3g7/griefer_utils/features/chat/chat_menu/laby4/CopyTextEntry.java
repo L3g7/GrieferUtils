@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
@@ -39,13 +40,13 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.description("Wie der kopierte Text sein soll.")
 		.config(configKey + "format")
 		.defaultValue(CopyFormat.UNFORMATTED)
-		.icon(Items.paper);
+		.icon("XZRF:command_suggestions");
 
 	private final SwitchSetting modifiedMessage = SwitchSetting.create()
 		.name("Bearbeitungen kopieren")
 		.description("Ob der Text mit den Bearbeitungen u.a. von GrieferUtils kopiert werden soll.")
 		.config(configKey + "modified_message")
-		.icon(Items.writable_book);
+		.icon("XZRF:book_and_quill");
 
 	private final SwitchSetting mainSetting = LabyBridge.get(SwitchSetting::create /* NOTE: LM3 DisplaySetting */, LM4DisplaySetting::new)
 		.name(name)
@@ -56,7 +57,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.subSettings(copyFormat, modifiedMessage);
 
 	public CopyTextEntry() {
-		super("Text kopieren", null, null, "clipboard");
+		super("Text kopieren", null, null, "XZRF:book_and_quill");
 	}
 
 	public void trigger(IChatComponent modifiedComponent, IChatComponent originalComponent) {
@@ -108,7 +109,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 					SettingsImpl.hookChildAdd(s, e -> {
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(Icons.of("pencil_vec"));
+							btn.updateIcon(Icons.of(GUIHierarchyTree.handleXZRF("XZRF:high_res/pencil_vec")));
 						}
 					});
 					break;

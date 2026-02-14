@@ -24,7 +24,7 @@ public class HideEffectParticles extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Effekt-Partikel verstecken")
 		.description("Versteckt von Entities mit Effekten ausgelöste Partikel.")
-		.icon("green_particle");
+		.icon("XZRF:particle");
 
 	@Mixin(EntityLivingBase.class)
 	private static class MixinEntityLivingBase {

@@ -21,7 +21,7 @@ public class Badges {
 		.name("Nutzer-Prozentsatz anzeigen")
 		.description("Zeigt über der Tabliste an, wie viel Prozent der Spieler GrieferUtils benutzen.")
 		.config("settings.badges")
-		.icon("icon")
+		.icon("XZRF:high_res/icon")
 		.defaultValue(true);
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
@@ -34,7 +34,7 @@ public class Badges {
 			§bBlau§r: Entwickler
 			§aGrün§r: Supporter""")
 		.config("settings.badges")
-		.icon("icon")
+		.icon("XZRF:high_res/icon")
 		.defaultValue(true)
 		.subSettings(showPercentage)
 		.callback(badgeManager::toggleBadges);

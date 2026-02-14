@@ -32,13 +32,13 @@ public class Recraft extends Feature {
 	private final SwitchSetting ignoreSubIdsSetting = SwitchSetting.create()
 		.name("Sub-IDs ignorieren")
 		.description("Ob beim Auswählen der Zutaten die Sub-IDs (z.B. unterschiedliche Holz-Typen) ignoriert werden sollen.")
-		.icon(new ItemStack(Blocks.log, 1, 2))
+		.icon("XZRF:carpet_red")
 		.callback(tempRecording.getCore().ignoreSubIds::set);
 
 	private final KeySetting repeatLastRecording = KeySetting.create()
 		.name("Letzten Aufruf wiederholen")
 		.description("Wiederholt den letzten \"/rezepte\" oder \"/craft\" Aufruf.")
-		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
+		.icon("XZRF:crafting_table")
 		.subSettings(ignoreSubIdsSetting)
 		.pressCallback(pressed -> {
 			if (pressed && ServerCheck.isOnCitybuild() && isEnabled())
@@ -48,12 +48,12 @@ public class Recraft extends Feature {
 	private final SwitchSetting animation = SwitchSetting.create()
 		.name("Animation")
 		.description("Ob die Öffnen-Animation abgespielt werden soll.")
-		.icon("command_pie_menu")
+		.icon("XZRF:command_menu")
 		.defaultValue(true);
 
 	private final KeySetting openPieMenu = KeySetting.create()
 		.name("Radialmenü öffnen")
-		.icon("key")
+		.icon("XZRF:key")
 		.description("Die Taste, mit der das Radialmenü geöffnet werden soll.")
 		.pressCallback(p -> {
 			if (mc().currentScreen != null || !isEnabled())
@@ -71,7 +71,7 @@ public class Recraft extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Recraft")
 		.description("Wiederholt \"/rezepte\" oder \"/craft\" Aufrufe oder dekomprimiert Items.\n\nVielen Dank an Pleezon/AntiBannSystem für die Hilfe beim AutoCrafter §c❤")
-		.icon(ItemUtil.createItem(Blocks.crafting_table, 0, true))
+		.icon("XZRF:crafting_table")
 		.subSettings(repeatLastRecording, HeaderSetting.create(), openPieMenu, animation, HeaderSetting.create(), recraftBridge.getPagesSetting());
 
 	@Override

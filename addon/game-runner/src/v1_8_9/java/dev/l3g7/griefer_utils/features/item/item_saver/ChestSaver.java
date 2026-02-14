@@ -35,7 +35,7 @@ public class ChestSaver extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kisten-Saver")
 		.description("Fragt beim Einlösen einer Kiste nach einer Bestätigung.")
-		.icon(Blocks.ender_chest);
+		.icon("XZRF:chest");
 
 	private final IInventory inv = new InventoryBasic(ItemSearch.marker + "§0Willst du die Kiste einlösen?", false, 27);
 

@@ -33,13 +33,13 @@ public class InventoryBlockSelection extends Feature {
 	private final SwitchSetting compressed = SwitchSetting.create()
 		.name("Komprimierte Items")
 		.description("Ob komprimierte Items bei der Blockauswahl auch ausgewählt werden sollen.")
-		.icon(Blocks.stone);
+		.icon("XZRF:bundle");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Blockauswahl mit Inventar")
 		.description("Erweitert die Blockauswahl um das Inventar.")
-		.icon("middle_click")
+		.icon("XZRF:mouse_middle")
 		.subSettings(compressed);
 
 	@EventListener

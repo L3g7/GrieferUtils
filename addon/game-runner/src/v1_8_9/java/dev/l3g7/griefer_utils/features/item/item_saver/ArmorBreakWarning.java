@@ -39,7 +39,7 @@ public class ArmorBreakWarning extends Feature {
 	private final NumberSetting threshold = NumberSetting.create()
 		.name("Bei Rüstungsschaden warnen")
 		.description("Zeigt eine Warnung an, sobald eine angezogene Rüstung die eingestellte Haltbarkeit unterschreitet.", "(0 zum Deaktivieren)")
-		.icon(Items.diamond_chestplate);
+		.icon("XZRF:diamond_chestplate");
 
 	@EventListener
 	public void onClientTick(TickEvent.ClientTickEvent event) {

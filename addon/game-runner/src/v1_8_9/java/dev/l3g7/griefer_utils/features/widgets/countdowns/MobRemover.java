@@ -34,19 +34,19 @@ public class MobRemover extends SimpleWidget {
 	private final DropDownSetting<TimeFormat> timeFormat = DropDownSetting.create(TimeFormat.class)
 		.name("Zeitformat")
 		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
-		.icon("hourglass")
+		.icon("XZRF:hourglass")
 		.defaultValue(TimeFormat.LONG);
 
 	private final NumberSetting warnTime = NumberSetting.create()
 		.name("Warn-Zeit (s)")
 		.description("Wie viele Sekunden vor dem nächsten MobRemover eine Warnung angezeigt werden soll.")
-		.icon("labymod_3/exclamation_mark");
+		.icon("XZRF:clock");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("MobRemover")
 		.description("Zeigt dir die Zeit bis zum nächsten MobRemover an.")
-		.icon("skull_crossed_out")
+		.icon("XZRF:crossed_out_zombie")
 		.subSettings(timeFormat, warnTime);
 
 	private final Countdown countdown = Countdown.ticking();

@@ -26,7 +26,7 @@ public class SkullPreview extends Feature {
 	private final NumberSetting size = NumberSetting.create()
 		.name("Vergrößerungs-Faktor")
 		.description("Um wie viel der Kopf in der Vorschau vergrößert werden soll.")
-		.icon("magnifying_glass")
+		.icon("XZRF:magnifying_glass")
 		.defaultValue(4)
 		.min(2)
 		.max(16);
@@ -35,7 +35,7 @@ public class SkullPreview extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kopf-Vorschau")
 		.description("Zeigt in der Beschreibung von Köpfen eine vergrößerte Version an.")
-		.icon("steve")
+		.icon("XZRF:steve")
 		.subSettings(size);
 
 	@EventListener

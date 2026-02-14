@@ -24,7 +24,7 @@ public class ShowBarriers extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Barrieren anzeigen")
 		.description("Fügt Partikel bei Barrieren-Blöcken hinzu.")
-		.icon(Blocks.barrier)
+		.icon("XZRF:barrier")
 		.addHotkeySetting("das Anzeigen von Barrieren", null);
 
 	@EventListener

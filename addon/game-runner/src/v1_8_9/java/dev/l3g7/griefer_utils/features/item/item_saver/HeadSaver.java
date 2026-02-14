@@ -43,7 +43,7 @@ public class HeadSaver extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("§z/kopf Vorschau")
 		.description("Fragt beim Einlösen von /kopf nach einer Bestätigung und zeigt dabei eine Vorschau des Kopfes an.")
-		.icon("steve");
+		.icon("XZRF:steve");
 
 	private final IInventory inv = new InventoryBasic(ItemSearch.marker + "§0Willst du /kopf einlösen?", false, 27);
 

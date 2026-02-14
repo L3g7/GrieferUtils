@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -28,24 +27,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-
 @Singleton
 public class HeadTextureFix extends Feature {
 
 	@MainElement
-	private final SwitchSetting enabled;
-
-	private HeadTextureFix() {
-		if (LABY_4.isActive()) {
-			enabled = SwitchSetting.create().icon(Icons.OWN_SKULL);
-		} else
-			enabled = new OwnSkullSwitchSetting();
-
-		enabled
-			.name("Kopf-Texturen fixen")
-			.description("Lädt Kopf-Texturen automatisch nach.");
-	}
+	private final SwitchSetting enabled = SwitchSetting.create()
+		.name("Kopf-Texturen fixen")
+		.icon("XZRF:skull_steve")
+		.description("Lädt Kopf-Texturen automatisch nach.");
 
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());
 	public static final Set<String> processedProfiles = Collections.synchronizedSet(new HashSet<>());

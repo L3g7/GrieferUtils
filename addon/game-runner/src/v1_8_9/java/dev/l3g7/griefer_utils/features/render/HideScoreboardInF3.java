@@ -28,7 +28,7 @@ public class HideScoreboardInF3 extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Scoreboard bei F3 verstecken")
 		.description("Versteckt das Scoreboard, wenn das F3-Menü geöffnet wurde.")
-		.icon("wooden_board");
+		.icon("XZRF:wooden_board");
 
 	@Mixin(GuiIngame.class)
 	private static class MixinGuiIngame {

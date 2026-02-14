@@ -64,7 +64,7 @@ public class CooldownNotifications extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Cooldown-Benachrichtigungen")
 		.description("Zeigt die momentanen Cooldowns beim ersten Beitritt eines Citybuilds an.")
-		.icon(Items.clock)
+		.icon("XZRF:bell")
 		.callback(v -> {
 			// If no data is found, open and close /cooldowns automatically
 			if (v && endDates.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForCooldownsGui) {

@@ -29,7 +29,7 @@ public class FullBright extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("FullBright")
 		.description("Stellt den Gammawert auf 10.")
-		.icon("light_bulb")
+		.icon("XZRF:light_bulb")
 		.addHotkeySetting("FullBright", null)
 		.callback(active -> {
 			if (active) {

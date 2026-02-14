@@ -22,19 +22,19 @@ public class EventBusProfiler {
 	public static final NumberSetting minTime = NumberSetting.create()
 		.name("Mindestdauer")
 		.description("Wie lange Events mindestens zum Auslösen brauchen, damit sie geloggt werden (in ms).")
-		.icon(Blocks.barrier)
+		.icon("XZRF:clock")
 		.min(0)
 		.defaultValue(5);
 
 	private static final StringSetting filter = StringSetting.create()
 		.name("Filter")
 		.description("Das Event, dessen Listener gemessen werden soll.")
-		.icon(Blocks.hopper);
+		.icon("XZRF:hopper");
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Eventbus-Profiler")
 		.description("Misst, wie lange das Auslösen von Events / ihrer Listener dauert.")
-		.icon(Items.clock)
+		.icon("XZRF:clock")
 		.callback(EventBusProfiler::updateProfiler)
 		.subSettings(minTime, filter);
 

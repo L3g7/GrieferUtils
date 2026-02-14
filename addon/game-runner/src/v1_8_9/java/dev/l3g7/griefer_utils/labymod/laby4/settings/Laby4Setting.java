@@ -11,6 +11,7 @@ import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -25,10 +26,16 @@ import net.labymod.api.configuration.settings.type.AbstractSettingRegistry;
 import net.labymod.api.configuration.settings.type.SettingElement;
 import net.labymod.api.event.labymod.config.SettingCreateEvent;
 import net.labymod.api.util.KeyValue;
+import net.minecraft.init.Items;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -102,9 +109,8 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		return (S) this;
 	}
 
-	@Override
 	default S icon(Object icon) {
-		getStorage().icon = Icons.of(icon);
+		getStorage().icon = GUIHierarchyTree.handleXZRF(icon);
 		return (S) this;
 	}
 

@@ -30,7 +30,7 @@ public class BetterSwitchCommand extends Feature {
 	private final SwitchSetting rejoin = SwitchSetting.create()
 		.name("Rejoin")
 		.description("Ob der Citybuild auch gewechselt werden soll, wenn man sich schon auf dem Zielcitybuild befindet.")
-		.icon(Items.book)
+		.icon("XZRF:portal")
 		.defaultValue(true);
 
 	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", Pattern.CASE_INSENSITIVE);
@@ -42,7 +42,7 @@ public class BetterSwitchCommand extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("/switch verbessern")
 		.description("Verbessert den '/switch <cb>' Befehl durch Aliasse und einem optionalem Join-Text. (z.B. '/cbe Hallo')", "Der Join-Text wird nach dem Beitreten automatisch in den Chat geschrieben.", "", "Für Hilfe gib '/cb' ein.")
-		.icon(Items.compass)
+		.icon("XZRF:portal")
 		.subSettings(rejoin);
 
 	@EventListener

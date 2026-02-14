@@ -38,7 +38,7 @@ public class ShowNametagsThroughWalls extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Nametags durch Wände anzeigen")
 		.description("Zeigt Nametags auch durch Wände an.\n(Funktioniert nicht bei Spielern)")
-		.icon("yellow_name");
+		.icon("XZRF:name_tag_yellow");
 
 	// NOTE Implement https://github.com/L3g7/GrieferUtils/commit/421d52f50619ddf05f942548d70b0c9648614b6c when merging with LabyMod 3
 

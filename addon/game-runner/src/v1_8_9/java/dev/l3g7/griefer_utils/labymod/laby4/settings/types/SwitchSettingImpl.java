@@ -60,7 +60,7 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 	public SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode) {
 		DropDownSettingImpl<TriggerMode> triggerMode = (DropDownSettingImpl<TriggerMode>) DropDownSetting.create(TriggerMode.class)
 			.name("Auslösung")
-			.icon("lightning")
+			.icon("XZRF:lightning")
 			.inferConfig("triggerMode")
 			.defaultValue(defaultTriggerMode)
 			.callback(m -> {
@@ -77,7 +77,7 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 
 		KeySettingImpl key = (KeySettingImpl) KeySetting.create()
 			.name("Taste")
-			.icon("key")
+			.icon("XZRF:key")
 			.inferConfig("key")
 			.pressCallback(p -> {
 				if (p || (defaultTriggerMode != null && triggerMode.get() == HOLD))

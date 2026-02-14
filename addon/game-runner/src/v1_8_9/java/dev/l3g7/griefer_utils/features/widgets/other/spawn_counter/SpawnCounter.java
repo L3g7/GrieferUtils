@@ -77,19 +77,19 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 	final DropDownSetting<NotificationType> notificationType = DropDownSetting.create(NotificationType.class)
 		.name("Nachricht")
 		.description("Wie die Benachrichtung aussehen soll, wenn eine Runde abgeschlossen wurde.")
-		.icon(Items.clock)
+		.icon("XZRF:clock")
 		.defaultValue(NotificationType.ACTIONBAR);
 
 	private final DropDownSetting<RoundDisplayType> displayType = DropDownSetting.create(RoundDisplayType.class)
 		.name("Rundenart")
 		.description("Welche Arten von Runden angezeigt werden sollen.")
-		.icon("speed")
+		.icon("XZRF:speed")
 		.defaultValue(RoundDisplayType.BOTH);
 
 	final DropDownSetting<LeaderboardDisplayType> leaderboard = DropDownSetting.create(LeaderboardDisplayType.class)
 		.name("Leaderboard")
 		.description("Das Aussehen des Leaderboards.\nBei §oAus§r wird auch die Teilnahme am Leaderboard deaktiviert.")
-		.icon("trophy")
+		.icon("XZRF:trophy")
 		.defaultValue(LeaderboardDisplayType.ON)
 		.callback(t -> {
 			if (t != LeaderboardDisplayType.OFF && ServerCheck.isOnGrieferGames() && getLeaderboardHandler().data != null)
@@ -100,7 +100,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spawn-Runden Zähler")
 		.description("Zählt, wie viele Runden um den Spawn gelaufen wurden.")
-		.icon("speed")
+		.icon("XZRF:speed")
 		.subSettings(notificationType, displayType, leaderboard, HeaderSetting.create());
 
 	public SpawnCounter() {

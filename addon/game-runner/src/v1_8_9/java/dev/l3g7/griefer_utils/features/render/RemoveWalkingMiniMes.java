@@ -31,9 +31,9 @@ public class RemoveWalkingMiniMes extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Walking Minimes entfernen")
+		.name("§zWalking Minimes entfernen")
 		.description("Entfernt alle \"Walking Minimes\", da diese in LabyMod 3 Lags und Crashes verursachen können.")
-		.icon("crossed_out_walking_minime");
+		.icon("XZRF:crossed_out_mini_me");
 
 	 @Mixin(value = UserManager.class, remap = false)
 	 private static class MixinUserManager {

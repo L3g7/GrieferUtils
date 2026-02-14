@@ -46,7 +46,7 @@ public class MultiHotkey extends Feature {
 	private final SwitchSettingImpl enabled = (SwitchSettingImpl) SwitchSetting.create()
 		.name("Multi-Hotkey")
 		.description("Erlaubt das Ausführen von mehreren sequenziellen Befehlen auf Tastendruck.")
-		.icon("labymod_3/autotext")
+		.icon("XZRF:key")
 		.subSettings(entryAddSetting);
 
 	@Override

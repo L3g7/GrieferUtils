@@ -27,20 +27,20 @@ public class Enlighten extends TextComponentTweak {
 	private final SwitchSetting enlightenLightGray = SwitchSetting.create()
 		.name("Hellgrau aufhellen")
 		.description("Ob hellgraue Texte zu weißen aufgehellt werden soll.")
-		.icon(new ItemStack(Blocks.wool, 1, 8))
+		.icon("XZRF:dye_light_gray")
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final DropDownSetting<GrayMode> enlightenGray = DropDownSetting.create(GrayMode.class)
 		.name("Grau zu ...")
 		.description("Zu welcher Farbe graue Texte aufgehellt werden soll.")
-		.icon(new ItemStack(Blocks.wool, 1, 7))
+		.icon("XZRF:dye_gray")
 		.defaultValue(GrayMode.GRAY)
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	private final DropDownSetting<BlackMode> enlightenBlack = DropDownSetting.create(BlackMode.class)
 		.name("Schwarz zu ...")
 		.description("Zu welcher Farbe schwarze Texte aufgehellt werden soll.")
-		.icon(new ItemStack(Blocks.wool, 1, 15))
+		.icon("XZRF:dye_black")
 		.defaultValue(BlackMode.BLACK)
 		.callback(TabListEvent::updatePlayerInfoList);
 
@@ -54,9 +54,9 @@ public class Enlighten extends TextComponentTweak {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Aufhellen")
+		.name("Chat aufhellen")
 		.description("Hellt dunkle Texte auf.")
-		.icon("light_bulb")
+		.icon("XZRF:light_bulb")
 		.callback(TabListEvent::updatePlayerInfoList)
 		.subSettings(enlightenLightGray, enlightenGray, enlightenBlack,
 			HeaderSetting.create().scale(.4).entryHeight(10),

@@ -30,11 +30,11 @@ public class ItemFrameLimitIndicator extends SimpleWidget {
 		.name("Limit")
 		.description("Wie viele Rahmen sich maximal gleichzeitig in einem Chunk befinden können.")
 		.defaultValue(35)
-		.icon(Items.item_frame);
+		.icon("XZRF:item_frame");
 
 	private final SwitchSetting applyColor = SwitchSetting.create()
 		.name("Anzeige färben")
-		.icon("labymod_3/tabping_colored")
+		.icon("XZRF:color_palette")
 		.description("Ob die Anzeige eingefärbt werden soll.")
 		.defaultValue(true);
 
@@ -42,7 +42,7 @@ public class ItemFrameLimitIndicator extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Rahmen im Chunk")
 		.description("Zeigt an, wie viele Rahmen sich im derzeitigen Chunk befinden.")
-		.icon(Items.item_frame)
+		.icon("XZRF:item_frame")
 		.subSettings(applyColor, limit);
 
 	private int entities;

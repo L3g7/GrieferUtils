@@ -105,6 +105,21 @@ public class SettingLoader { // NOTE: cleanup
 			loadSubSettings(owner, element, key);
 	}
 
+	public static int compareNames(String a, String b) {
+		int score = Integer.compare(scoreName(a), scoreName(b));
+		if (score != 0)
+			return score;
+
+		return a.compareTo(b);
+	}
+
+	private static int scoreName(String name) {
+		if (name.startsWith("§") && name.charAt(1) > 'f')
+			return name.charAt(1) > 's' ? 1 : -1;
+
+		return 0;
+	}
+
 	public static class MainElementData {
 
 		public final BaseSetting<?> mainElement;

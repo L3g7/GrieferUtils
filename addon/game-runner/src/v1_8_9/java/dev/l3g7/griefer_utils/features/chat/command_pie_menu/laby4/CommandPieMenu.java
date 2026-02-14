@@ -28,12 +28,12 @@ public class CommandPieMenu extends Feature {
 	private final SwitchSetting animation = SwitchSetting.create()
 		.name("Animation")
 		.description("Ob die Öffnen-Animation abgespielt werden soll.")
-		.icon("command_pie_menu")
+		.icon("XZRF:color_palette")
 		.defaultValue(true);
 
 	private final KeySetting key = KeySetting.create()
 		.name("Taste")
-		.icon("key")
+		.icon("XZRF:key")
 		.description("Die Taste, mit der das Befehlsradialmenü geöffnet werden soll.")
 		.pressCallback(p -> {
 			if (mc().currentScreen != null || !isEnabled())
@@ -49,13 +49,13 @@ public class CommandPieMenu extends Feature {
 
 	public static final PageListSetting pages = PageListSetting.create() // NOTE: better way to trigger notifyChange
 		.name("Seiten")
-		.icon(Items.map);
+		.icon("XZRF:command_menu");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Befehlsradialmenü")
 		.description("Ein Radialmenü zum schnellen Ausführen von Citybuild-bezogenen Befehlen.")
-		.icon("command_pie_menu")
+		.icon("XZRF:command_menu")
 		.subSettings(key, animation, pages);
 
 	@EventListener

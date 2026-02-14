@@ -59,7 +59,7 @@ public class BotShop {
 		if (!isCbFiltered)
 			name = String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getName()), name);
 
-		String texture = "wallets/";
+		String texture = "high_res/wallets/";
 		if (buying) texture += "in";
 		if (selling) texture += "out";
 		texture += "going";

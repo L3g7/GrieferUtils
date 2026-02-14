@@ -33,7 +33,7 @@ public class NatureBorderIndicator extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Plot-Grenzen anzeigen")
 		.description("Zeigt die Plot-Grenzen auf Nature und Extreme an.")
-		.icon("chunk")
+		.icon("XZRF:earth")
 		.addHotkeySetting("die Chunk-Grenzen", TOGGLE);
 
 	@EventListener

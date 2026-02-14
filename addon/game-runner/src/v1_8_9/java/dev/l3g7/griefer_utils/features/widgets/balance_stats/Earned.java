@@ -28,11 +28,11 @@ public class Earned extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Verdient")
 		.description("Zeigt dir, wie viel Geld du seit deinem Minecraft-Start verdient hast.")
-		.icon("coin_pile")
+		.icon("XZRF:coin")
 		.subSettings(ButtonSetting.create()
 			.name("Zurücksetzen")
 			.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
-			.icon("arrow_circle")
+			.icon("XZRF:loop")
 			.buttonIcon(getResetIcon())
 			.callback(() -> {
 				Received.setBalance(ZERO);

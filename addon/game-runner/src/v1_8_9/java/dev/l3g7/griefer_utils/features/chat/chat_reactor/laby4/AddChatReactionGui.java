@@ -201,7 +201,7 @@ public class AddChatReactionGui extends Gui {
 		int actionSize = 100;
 		DrawUtils.drawString("GrieferUtils", width / 2d - actionSize + 30, 25);
 		int addonIconSize = 20;
-		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
+		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/high_res/icon.png"));
 		DrawUtils.drawTexture(width / 2d + actionSize - addonIconSize, 20, 256, 256, addonIconSize, addonIconSize);
 
 
@@ -333,7 +333,7 @@ public class AddChatReactionGui extends Gui {
 
 	private enum TextType implements SelectButtonGroup.Selectable {
 
-		NONE("", ""), TEXT("normaler Text", "yellow_t"), REGEX("regulärer Ausdruck", "regex");
+		NONE("", ""), TEXT("normaler Text", "XZRF:book_and_quill"), REGEX("regulärer Ausdruck", "XZRF:cpu");
 
 		private final String name, icon;
 

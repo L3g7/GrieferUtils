@@ -25,12 +25,12 @@ public class DebugSettings {
 	private static final SwitchSetting disableEventBus = SwitchSetting.create()
 		.name("Eventbus deaktivieren")
 		.description("Deaktiviert GrieferUtils' Eventbus.")
-		.icon(Blocks.tnt);
+		.icon("XZRF:brick");
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Debug")
 		.description("Verschiedene Werkzeuge, um GrieferUtils zu debuggen.", "Es wird empfohlen, dies nur auf Anweisung vom GrieferUtils-Team zu aktivieren.")
-		.icon(Blocks.command_block)
+		.icon("XZRF:cpu")
 		.subSettings(
 			MessageDumper.enabled,
 			PacketDumper.enabled,

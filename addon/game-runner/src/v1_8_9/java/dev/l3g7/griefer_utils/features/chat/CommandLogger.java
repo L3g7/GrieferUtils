@@ -25,7 +25,7 @@ public class CommandLogger extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Befehle loggen")
 		.description("Schreibt die gesendeten Befehle in den Log.")
-		.icon(Blocks.command_block);
+		.icon("XZRF:book_and_quill");
 
 	private final Logger logger = LogManager.getLogger("CommandLogger");
 

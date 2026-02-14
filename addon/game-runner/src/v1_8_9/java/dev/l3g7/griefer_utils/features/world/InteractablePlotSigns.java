@@ -31,7 +31,7 @@ public class InteractablePlotSigns extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Interagierbare Plot-Schilder")
 		.description("Führt bei Klick auf ein Plot-Schild /p i aus.")
-		.icon("wooden_board");
+		.icon("XZRF:sign");
 
 	@EventListener
 	public void onPacketSend(PacketEvent.PacketSendEvent<C08PacketPlayerBlockPlacement> event) {

@@ -44,25 +44,25 @@ public class ToolSaver extends Feature implements TempToolSaverBridge {
 		.name("Min. Haltbarkeit")
 		.description("Wenn ein Werkzeug diese Haltbarkeit erreicht hat, werden Klicks damit verhindert."
 			+ "\nEs wird ein Wert von §nmindestens§r 3 empfohlen, damit das Item auch bei starken Lags nicht zerstört wird.")
-		.icon("shield_with_sword")
+		.icon("XZRF:shield_with_sword")
 		.defaultValue(3);
 
 	private final SwitchSetting saveNonRepairable = SwitchSetting.create()
 		.name("Irreparables retten")
 		.description("Ob Items, die nicht mehr repariert werden können, auch gerettet werden sollen.")
-		.icon("broken_pickaxe")
+		.icon("XZRF:weakness")
 		.defaultValue(true);
 
 	private final ToolProtectionListSetting exclusions = new ToolProtectionListSetting()
 		.name("Ausnahmen")
 		.disableSubsettingConfig()
-		.icon(Items.golden_pickaxe);
+		.icon("XZRF:weakness");
 
 	@MainElement
 	final SwitchSetting enabled = SwitchSetting.create()
 		.name("Werkzeug-Saver")
 		.description("Verhindert Klicks, sobald das in der Hand gehaltene Werkzeug die eingestellte Haltbarkeit unterschreitet.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
-		.icon("broken_pickaxe")
+		.icon("XZRF:tools")
 		.subSettings(damage, saveNonRepairable, exclusions);
 
 	@EventListener

@@ -83,7 +83,7 @@ public class ItemSaver extends Feature implements TempItemSaverBridge {
 	private static final SwitchSetting displayIcon = SwitchSetting.create()
 		.name("Icon anzeigen")
 		.description("Ob Items im ItemSaver mit einem Icon markiert werden sollen.")
-		.icon("shield_with_sword")
+		.icon("XZRF:shield_with_sword")
 		.defaultValue(true)
 		.callback(b -> {
 			Config.set(iconKey, new JsonPrimitive(b));
@@ -107,7 +107,7 @@ public class ItemSaver extends Feature implements TempItemSaverBridge {
 	static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spezifischer Item-Saver")
 		.description("Deaktiviert Klicks, Dropping und Abgeben bei einstellbaren Items.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
-		.icon("shield_with_sword")
+		.icon("XZRF:shield_with_sword")
 		.subSettings(displayIcon, HeaderSetting.create(), newEntrySetting);
 
 	public static ItemDisplaySetting getSetting(ItemStack stack) {

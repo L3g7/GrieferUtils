@@ -46,14 +46,14 @@ public abstract class FilterWebhooks extends Feature {
 
 	private static final DropDownSetting<Style> messageStyle = DropDownSetting.create(Style.class)
 		.name("Nachrichten-Stil")
-		.icon("yellow_t")
+		.icon("XZRF:color_palette")
 		.defaultValue(Style.EMBED);
 
 	@MainElement
 	protected static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Webhooks in Filtern")
 		.description("Sendet eine Chatnachricht an einen Discord-Webhook, wenn ein LabyMod-Filter auslöst.")
-		.icon("webhook")
+		.icon("XZRF:discord")
 		.subSettings(messageStyle);
 
 	@Override

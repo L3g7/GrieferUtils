@@ -55,39 +55,39 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	private static final SwitchSetting showZeroPower = SwitchSetting.create()
 		.name("0 anzeigen")
 		.description("Ob die Stärke-Anzeige auch angezeigt werden soll, wenn die Stärke 0 beträgt.")
-		.icon(Items.redstone)
+		.icon("XZRF:redstone_repeater")
 		.callback(RenderObjectObserver.Chunk::onSettingsChange);
 
 	private static final SwitchSetting showPower = SwitchSetting.create()
 		.name("Redstone-Stärke anzeigen")
 		.description("Zeigt auf Redstone-Kabeln ihre derzeitige Stärke an.")
-		.icon(Items.redstone)
+		.icon("XZRF:redstone")
 		.subSettings(showZeroPower)
 		.callback(RenderObjectObserver.Chunk::onSettingsChange);
 
 	private static final SwitchSetting showDirection = SwitchSetting.create()
 		.name("Richtung anzeigen")
 		.description("Zeigt die Richtung von Werfern / Spendern und Trichtern.")
-		.icon(Items.compass)
+		.icon("XZRF:axes")
 		.callback(RenderObjectObserver.Chunk::onSettingsChange);
 
 	private static final SwitchSetting showNoteId = SwitchSetting.create()
 		.name("Ton-ID anzeigen")
 		.description("Ob der Name des Tons oder die ID angezeigt werden soll.")
-		.icon(noteblock)
+		.icon("XZRF:sounds")
 		.defaultValue(true);
 
 	private static final SwitchSetting showNoteBlockPitch = SwitchSetting.create()
 		.name("Notenblock-Höhe anzeigen")
 		.description("Zeigt an, welche Tonhöhe bei Notenblöcken eingestellt ist."
 			+ "\nDafür muss von diesem Block ein Ton abgespielt worden sein.")
-		.icon(noteblock)
+		.icon("XZRF:sounds")
 		.subSettings(showNoteId);
 
 	private static final SwitchSetting showCauldronLevel = SwitchSetting.create()
 		.name("Kessel-Füllstand anzeigen")
 		.description("Zeigt an einem Kessel seinen derzeitigen Füllstand an.")
-		.icon(Items.cauldron);
+		.icon("XZRF:water_breathing");
 
 	private static final NumberSetting range = NumberSetting.create()
 		.name("Radius")
@@ -95,19 +95,19 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 			+ "\n(-1 ist unendlich)")
 		.defaultValue(-1)
 		.min(-1)
-		.icon(Items.compass);
+		.icon("XZRF:measurement");
 
 	public static final SwitchSetting hideRedstoneParticles = SwitchSetting.create()
 		.name("Redstone-Partikel verstecken")
 		.description("Versteckt die Partikel, die durch aktivertes Redstone erzeugt werden.")
-		.icon(Items.redstone)
+		.icon("XZRF:redstone_particles")
 		.defaultValue(true);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Redstone-Helfer")
 		.description("Hilft beim Arbeiten mit Redstone.")
-		.icon(Items.redstone)
+		.icon("XZRF:redstone_comparator")
 		.subSettings(showPower, showDirection, showNoteBlockPitch, showCauldronLevel, range, HeaderSetting.create(), hideRedstoneParticles)
 		.callback(RenderObjectObserver.Chunk::onSettingsChange);
 

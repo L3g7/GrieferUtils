@@ -29,19 +29,19 @@ public class ThreadDumper {
 		.name("Nur Client Thread dumpen")
 		.description("Ob alle Threads, oder nur der Client / Mainthread gedumpt werden sollen.")
 		.defaultValue(true)
-		.icon(Items.nether_star);
+		.icon("XZRF:glass_pane");
 
 	private static final NumberSetting interval = NumberSetting.create()
 		.name("Intervall")
 		.description("Wie viel Zeit zwischen Dumps vergehen soll (in Millisekunden).")
-		.icon(Items.clock)
+		.icon("XZRF:clock")
 		.min(1)
 		.defaultValue(1000);
 
 	private static final NumberSetting maxDumps = NumberSetting.create()
 		.name("Maximale Dumps")
 		.description("Wie viel Dumps gespeichert werden sollen.", "Vorherige Dumps werden gelöscht.")
-		.icon(Blocks.hopper)
+		.icon("XZRF:hopper")
 		.min(1)
 		.defaultValue(60)
 		.callback(dumps::clear);
@@ -49,7 +49,7 @@ public class ThreadDumper {
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Thread-Dumper")
 		.description("Dumpt in regelmäßigen Abständen die Stacktraces laufender Threads.", "Die Dumps werden in GrieferUtils/threaddumps.txt geschrieben.")
-		.icon(Items.string)
+		.icon("XZRF:glass_pane")
 		.subSettings(interval, maxDumps, dumpAll)
 		.callback(enabled -> {
 			if (DebugSettings.enabled.get())

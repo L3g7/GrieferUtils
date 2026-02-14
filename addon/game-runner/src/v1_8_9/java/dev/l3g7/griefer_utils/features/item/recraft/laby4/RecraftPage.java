@@ -57,7 +57,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 	public final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 		.name("Name")
 		.description("Wie diese Seite heißen soll.")
-		.icon(Items.writable_book)
+		.icon("XZRF:name_tag")
 		.callback(s -> {
 			pages.notifyChange();
 			Laby4Util.setPageTitle(s);
@@ -65,7 +65,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 
 	public final RecraftRecording.RecraftRecordingListSetting recordings = new RecraftRecording.RecraftRecordingListSetting()
 		.name("Aufzeichnungen")
-		.icon("camera")
+		.icon("XZRF:camera")
 		.callback(pages::notifyChange);
 
 	public RecraftPage(String name) {

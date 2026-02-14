@@ -36,19 +36,19 @@ public class GrieferInfo extends Feature {
 
 	private final KeySetting setting = KeySetting.create()
 		.name("Gui öffnen")
-		.icon("key")
+		.icon("XZRF:key")
 		.description("Die Taste, mit der das Gui geöffnet werden soll.")
 		.pressCallback(b -> { if (b) GuiGrieferInfo.GUI.open(); });
 
 	private static final SwitchSetting profile = SwitchSetting.create()
 		.name("Griefer.Info-Link im Profil")
 		.description("Fügt einen Knopf zum Öffnen eines Spielers auf Griefer.Info zu seinem Profil hinzu.")
-		.icon("credits/griefer_info");
+		.icon("XZRF:high_res/credits/griefer_info");
 
 	@MainElement
 	private final CategorySetting button = CategorySetting.create()
 		.name("§xGriefer.Info")
-		.icon("griefer_info")
+		.icon("XZRF:high_res/griefer_info")
 		.subSettings(profile, setting, HeaderSetting.create(),
 			HeaderSetting.create("Das Griefer.Info Gui lässt sich auch mit /info oder /gi öffnen.")
 				.center());

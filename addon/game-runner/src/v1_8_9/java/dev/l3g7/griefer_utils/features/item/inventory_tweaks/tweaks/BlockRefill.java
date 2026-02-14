@@ -36,7 +36,7 @@ public class BlockRefill extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Verbrauchte Blöcke nachziehen")
 		.description("Füllt Blöcke, die verbraucht wurden, mit gleichen auf.")
-		.icon(new ItemStack(Blocks.stone, 0));
+		.icon("XZRF:bundle");
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onPacketReceive(PacketEvent.PacketReceiveEvent<S2FPacketSetSlot> event) {

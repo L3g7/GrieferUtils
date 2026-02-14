@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category(name = "Welt", icon = "earth")
+@Category(name = "Welt", icon = "XZRF:earth")
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.features.Feature.Category;

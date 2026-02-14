@@ -30,7 +30,7 @@ public class MapPreview extends Feature {
 	private final NumberSetting size = NumberSetting.create()
 		.name("Vergrößerungs-Faktor")
 		.description("Um wie viel die Karte in der Vorschau vergrößert werden soll.")
-		.icon("magnifying_glass")
+		.icon("XZRF:magnifying_glass")
 		.defaultValue(3)
 		.min(2)
 		.max(16);
@@ -39,7 +39,7 @@ public class MapPreview extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Karten-Vorschau")
 		.description("Zeigt in der Beschreibung von Karten eine Vorschau an.")
-		.icon(Items.map)
+		.icon("XZRF:filled_map")
 		.subSettings(size);
 
 	@EventListener

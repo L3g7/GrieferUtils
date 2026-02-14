@@ -72,7 +72,7 @@ public class Booster extends Widget {
 	private final DropDownSetting<KeyMode> design = DropDownSetting.create(KeyMode.class)
 		.name("Design")
 		.description("In welchem Design die derzeit aktiven Booster angezeigt werden sollen.")
-		.icon("wooden_board")
+		.icon("XZRF:wooden_board")
 		.config("modules.booster.design")
 		.defaultValue(KeyMode.TEXT_AND_ICON);
 
@@ -80,7 +80,7 @@ public class Booster extends Widget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Booster")
 		.description("Zeigt dir die momentan aktiven Booster an.")
-		.icon("rocket")
+		.icon("XZRF:absorption")
 		.subSettings(design);
 
 	private boolean waitingForBoosterGUI = false;

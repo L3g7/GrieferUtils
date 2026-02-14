@@ -36,7 +36,7 @@ public class CleanUpPlayerMenu extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spielermenü aufräumen")
 		.description("Entfernt Spielermenü-Einträge, die eigentlich nicht entfernt werden können.")
-		.icon("labymod_3/playermenu");
+		.icon("XZRF:player_menu");
 
 	@Override
 	public void init() {
@@ -60,7 +60,7 @@ public class CleanUpPlayerMenu extends Feature {
 			settings.add(SwitchSetting.create()
 				.name(name)
 				.description("Ob der Spielermenü-Eintrag \"" + name + "\" angezeigt werden soll.")
-				.icon("labymod_3/playermenu")
+				.icon("XZRF:player_menu")
 				.defaultValue((shownEntries & index) != 0)
 				.callback(b -> {
 					if (b)

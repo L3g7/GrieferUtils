@@ -14,9 +14,11 @@ import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.state.ScreenCanvas;
 import net.labymod.api.client.render.batch.ResourceRenderContext;
+import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.client.resources.ResourceLocation;
 import net.labymod.api.util.bounds.Rectangle;
+import net.labymod.core.client.render.font.component.DefaultComponentRendererBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
@@ -28,6 +30,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.function.Function;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
@@ -166,6 +170,16 @@ public class Icons {
 					// Continue original submitIcon
 				}
 			}
+		}
+	}
+
+	@Mixin(value = DefaultComponentRendererBuilder.class, remap = false)
+	private static abstract class DefaultComponentRendererBuilderMixin {
+
+		@Inject(method = "renderIcon(Lnet/labymod/api/client/gui/screen/ScreenContext;Lnet/labymod/api/client/render/font/RenderableComponent;FFLjava/util/function/Function;Z)V", at = @At(value = "INVOKE", target = "Lnet/labymod/api/client/gui/screen/state/ScreenCanvas;submitIcon(Lnet/labymod/api/client/gui/icon/Icon;FFFFZI)V"), cancellable = true, remap = false)
+		public void submitIcon(ScreenContext context, RenderableComponent text, float x, float y, Function<RenderableComponent, Integer> baseColor, boolean allowColors, CallbackInfo ci) {
+			if (text.getIcon().getIcon() instanceof SynchronousIcon)
+				ci.cancel();
 		}
 	}
 

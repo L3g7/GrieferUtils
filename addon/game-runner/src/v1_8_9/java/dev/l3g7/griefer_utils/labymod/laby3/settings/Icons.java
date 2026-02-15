@@ -28,41 +28,36 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-public abstract class Icon {
+public abstract class Icons {
 
-	public static final Icon EMPTY_ICON = new Icon() {
+	public static final L3Icon EMPTY_ICON = new L3Icon() {
 		public void draw(int x, int y, float scale) {}
 	};
 
-	public static Icon of(Object icon) {
-		if (icon == null) { // FIXME: switches don't transpile correctly
-			return null;
-		} else if (icon instanceof String fileName) {
-			return of(new ResourceLocation("griefer_utils", "icons/" + fileName + ".png"));
-		} else if (icon instanceof ResourceLocation location) {
-			return new TextureIcon(location);
-		} else if (icon instanceof Icon i) {
-			return i;
-		} else if (icon instanceof Citybuild citybuild) {
-			return of(citybuild.toItemStack());
-			// TODO missing in Laby4?
-		} else if (icon instanceof Item item) {
-			return of(new ItemStack(item));
-		} else if (icon instanceof Block block) {
-			return of(new ItemStack(block));
-		} else if (icon instanceof ItemStack stack) {
-			return new ItemStackIcon(stack);
+	public static L3Icon of(Object icon) {
+		return switch (icon) {
+			case null -> null;
+			case String fileName -> of(new ResourceLocation("griefer_utils", "icons/" + fileName + ".png"));
+			case ResourceLocation location -> new TextureIcon(location);
+			case L3Icon i -> i;
+			case Citybuild citybuild -> of(citybuild.toItemStack());
+			case Item item -> of(new ItemStack(item));
+			case Block block -> of(new ItemStack(block));
+			case ItemStack stack -> new ItemStackIcon(stack);
+			default ->
+				throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
+		};
+	}
+
+	public static abstract class L3Icon {
+		public abstract void draw(int x, int y, float scale);
+
+		public IconData toIconData() {
+			return new WrappedIcon(this);
 		}
-		throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
 	}
 
-	public abstract void draw(int x, int y, float scale);
-
-	public IconData toIconData() {
-		return new WrappedIcon(this);
-	}
-
-	private static class TextureIcon extends Icon {
+	public static class TextureIcon extends L3Icon {
 
 		private final ResourceLocation location;
 
@@ -80,7 +75,7 @@ public abstract class Icon {
 
 	}
 
-	private static class ItemStackIcon extends Icon {
+	public static class ItemStackIcon extends L3Icon {
 
 		private final ItemStack stack;
 
@@ -100,9 +95,9 @@ public abstract class Icon {
 
 	private static class WrappedIcon extends IconData {
 
-		private final Icon icon;
+		private final L3Icon icon;
 
-		public WrappedIcon(Icon icon) {
+		public WrappedIcon(L3Icon icon) {
 			super((ResourceLocation) null);
 			this.icon = icon;
 		}

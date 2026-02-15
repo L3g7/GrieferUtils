@@ -9,7 +9,8 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons.L3Icon;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.gui.GuiButton;
@@ -19,7 +20,7 @@ public class ButtonSettingImpl extends ControlElement implements Laby3Setting<Bu
 	private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 	private final GuiButton button = new GuiButton(-2, 0, 0, 23, 20, "");
 
-	private Icon buttonIcon;
+	private L3Icon buttonIcon;
 
 	public ButtonSettingImpl() {
 		super("§cNo name set", null);
@@ -33,7 +34,7 @@ public class ButtonSettingImpl extends ControlElement implements Laby3Setting<Bu
 
 	@Override
 	public ButtonSetting buttonIcon(Object icon) {
-		buttonIcon = Icon.of(icon);
+		buttonIcon = Icons.of(icon);
 		button.displayString = "";
 		return this;
 	}

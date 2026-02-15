@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.Recordi
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording.RecordingDisplaySetting;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Icon;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
@@ -26,7 +26,6 @@ import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 
@@ -48,7 +47,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	public ArrayList<SettingsElement> path() { return Reflection.get(mc.currentScreen, "path"); }
 
 	public RecraftRecordingSelectionSetting(RecraftRecording container) {
-		super(Icon.of("barrier").toIconData());
+		super(Icons.of("barrier").toIconData());
 		this.container = container;
 		setSettingEnabled(true);
 		subSettings();
@@ -89,7 +88,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	void setSelectedRecording(RecraftRecording selectedRecording) {
 		recording = selectedRecording;
 		setDisplayName(selectedRecording == null ? "§8[Nichts ausgewählt]" : selectedRecording.name().get());
-		icon(selectedRecording == null ? "barrier" : Icon.EMPTY_ICON);
+		icon(selectedRecording == null ? "barrier" : Icons.EMPTY_ICON);
 
 		if (container.mainSetting != null)
 			updateName(selectedRecording);
@@ -185,7 +184,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			super("§cNo name set", null);
 			setSettingEnabled(false);
 			this.recording = recording;
-			icon(recording == null ? "barrier" : Icon.EMPTY_ICON);
+			icon(recording == null ? "barrier" : Icons.EMPTY_ICON);
 			setDisplayName(recording == null ? "§8Nichts auswählen" : recording.name().get());
 		}
 

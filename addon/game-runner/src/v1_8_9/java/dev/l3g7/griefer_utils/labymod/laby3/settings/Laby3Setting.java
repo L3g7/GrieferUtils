@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons.L3Icon;
 import net.labymod.settings.elements.SettingsElement;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 	@Override
 	default S icon(Object icon) {
-		getStorage().icon = Icon.of(icon);
+		getStorage().icon = Icons.of(icon);
 		Reflection.set(this, "iconData", getStorage().icon.toIconData());
 		return (S) this;
 	}
@@ -138,7 +139,7 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		public String name = "§cNo name set";
 		public String alias = "";
 		public String description = null;
-		public Icon icon;
+		public L3Icon icon;
 		public boolean enabled = true;
 
 		public ExtendedStorage(Function<V, JsonElement> encodeFunc, Function<JsonElement, V> decodeFunc, V fallbackValue) {

@@ -10,21 +10,15 @@ package dev.l3g7.griefer_utils.features.player;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
-import dev.l3g7.griefer_utils.core.api.misc.UnsafeJsonSerializer;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S2DPacketOpenWindow;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
-
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
 public class BetterPlotMenu extends Feature {
@@ -86,14 +80,6 @@ public class BetterPlotMenu extends Feature {
 		ItemStack targetStack = currentGuiPlots.itemStacks[cb.ordinal() - 1];
 		targetStack.stackSize = Integer.parseInt(plotAmount)*10;
 		targetStack.setTagCompound(stack.getTagCompound());
-	}
-
-	public static void dumpState() {
-		Gui gui = mc().currentScreen;
-		System.out.println("zLevel: " + Reflection.get(gui, "zLevel"));
-		System.out.println(UnsafeJsonSerializer.toJson(Reflection.get(GlStateManager.class, "blendState")));
-		System.out.println(UnsafeJsonSerializer.toJson(Reflection.get(GlStateManager.class, "alphaState")));
-		System.out.println(UnsafeJsonSerializer.toJson(Reflection.get(GlStateManager.class, "depthState")));
 	}
 
 }

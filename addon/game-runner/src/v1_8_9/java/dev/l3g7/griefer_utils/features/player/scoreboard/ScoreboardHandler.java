@@ -10,7 +10,9 @@ package dev.l3g7.griefer_utils.features.player.scoreboard;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
@@ -21,7 +23,6 @@ import net.labymod.ingamegui.modules.ScoreboardModule;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -39,6 +40,14 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 public class ScoreboardHandler {
 
 	private static final List<ScoreboardMod> info = new ArrayList<>();
+	private static final CleanupScoreboard cleanUpscoreboard = FileProvider.getSingleton(CleanupScoreboard.class);
+
+	private final HiddenScore[] allHiddenScores = new HiddenScore[] {
+		// ip
+		new HiddenScore(0, 3, () -> info.stream().anyMatch(Feature::isEnabled) || (cleanUpscoreboard.isEnabled() && cleanUpscoreboard.ip.get())),
+		// play time
+		new HiddenScore(3, 6, () -> cleanUpscoreboard.isEnabled() && cleanUpscoreboard.playTime.get())
+	};
 
 	public static boolean shouldUnlockScoreboard() {
 		return ServerCheck.isOnGrieferGames() && info.stream().anyMatch(Feature::isEnabled);
@@ -46,7 +55,6 @@ public class ScoreboardHandler {
 
 	Scoreboard sb;
 	ScoreObjective so;
-	private final List<Score> hiddenScores = new ArrayList<>();
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent tickEvent) {
@@ -55,15 +63,6 @@ public class ScoreboardHandler {
 
 		sb = world().getScoreboard();
 		so = sb.getObjectiveInDisplaySlot(1);
-
-		// Check if scoreboard is loading
-		Optional<Score> playTimeScore = sb.getSortedScores(so).stream().filter(s -> s.getScorePoints() == 3).findFirst();
-		if (!playTimeScore.isPresent())
-			return;
-
-		Optional<ScorePlayerTeam> playTimeTeam = sb.getTeams().stream().filter(t -> t.getMembershipCollection().contains(playTimeScore.get().getPlayerName())).findFirst();
-		if (!playTimeTeam.isPresent() || (playTimeTeam.get().getColorPrefix().equals("§f§oLaden")))
-			return;
 
 		// Get the highest expected score
 		List<ScoreboardMod> activeInfoProvider = info.stream().filter(Feature::isEnabled).collect(Collectors.toList());
@@ -87,20 +86,14 @@ public class ScoreboardHandler {
 		for (ScoreboardMod mod : activeInfoProvider)
 			sb.getTeam(mod.team).setNameSuffix(mod.getValue());
 
-		if (activeInfoProvider.isEmpty()) {
-			for (Score score : hiddenScores)
-				sb.getValueFromObjective(score.getPlayerName(), so).setScorePoints(score.getScorePoints());
-		} else {
-			sb.getSortedScores(so).stream().filter(x -> x.getScorePoints() < 3).forEach(s -> {
-				hiddenScores.add(s);
-				sb.removeObjectiveFromEntity(s.getPlayerName(), s.getObjective());
-			});
-		}
+		for (HiddenScore hiddenScore : allHiddenScores)
+			hiddenScore.update();
 	}
 
 	@EventListener
 	private void onWorldLeave(WorldUnloadEvent event) {
-		hiddenScores.clear();
+		for (HiddenScore hiddenScore : allHiddenScores)
+			hiddenScore.scores.clear();
 	}
 
 	private void removeCustomScores(int highestScore) {
@@ -163,6 +156,36 @@ public class ScoreboardHandler {
 		sb.getSortedScores(so).stream()
 			.filter(e -> e.getScorePoints() > 7)
 			.forEach(e -> e.setScorePoints(e.getScorePoints() + delta));
+	}
+
+	private class HiddenScore {
+
+		private final int min;
+		private final int max;
+		private final Supplier<Boolean> isHidden;
+
+		private final List<Score> scores = new ArrayList<>();
+
+		private HiddenScore(int min, int max, Supplier<Boolean> isHidden) {
+			this.min = min;
+			this.max = max;
+			this.isHidden = isHidden;
+		}
+
+		public void update() {
+			if (isHidden.get()) {
+				// Hide
+				sb.getSortedScores(so).stream().filter(x -> x.getScorePoints() >= min && x.getScorePoints() < max).forEach(s -> {
+					this.scores.add(s);
+					sb.removeObjectiveFromEntity(s.getPlayerName(), s.getObjective());
+				});
+			} else {
+				// Show
+				for (Score score : this.scores)
+					sb.getValueFromObjective(score.getPlayerName(), so).setScorePoints(score.getScorePoints());
+			}
+		}
+
 	}
 
 	abstract static class ScoreboardMod extends Feature {

@@ -163,6 +163,7 @@ public class GUIHierarchyTree {
 			cat("§iScoreboard", "XZRF:wooden_board",
 				feat("Bankguthaben im Scoreboard", "XZRF:bank"),
 				feat("Orbguthaben im Scoreboard", "XZRF:orb"),
+				feat("Scoreboard aufräumen", "XZRF:wooden_board"),
 				feat("Scoreboard bei F3 verstecken", "XZRF:wooden_board")
 			),
 			feat("Chunks geladen lassen", "XZRF:filled_map"),

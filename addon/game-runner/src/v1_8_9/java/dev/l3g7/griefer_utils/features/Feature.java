@@ -58,7 +58,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 
 		String name = mainElement.name();
 		GUIHierarchyTree.Feat feat = GUIHierarchyTree.get(name);
-		mainElement.name(feat.nameLaby4())
+		mainElement.name(feat.name())
 			.icon(feat.icon());
 
 		return build(feat.parent());
@@ -68,13 +68,13 @@ public abstract class Feature implements Disableable, GUIEntry {
 		if (feat == null)
 			return null;
 
-		CategoryData cur = categories.get(feat.nameLaby4());
+		CategoryData cur = categories.get(feat.name());
 		if (cur != null)
 			return cur;
 
 		CategoryData parent = build(feat.parent());
 
-		String configKey = feat.nameLaby4();
+		String configKey = feat.name();
 		if (parent != null)
 			configKey = "temp_settings." + configKey;
 
@@ -82,7 +82,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 			.build(new Category() {
 				@Override
 				public String name() {
-					return feat.nameLaby4();
+					return feat.name();
 				}
 
 				@Override
@@ -107,7 +107,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 			}, configKey);
 
 		CategoryData data = new CategoryData(category, configKey, parent);
-		categories.put(feat.nameLaby4(), data);
+		categories.put(feat.name(), data);
 		return data;
 	}
 

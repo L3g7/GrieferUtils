@@ -32,7 +32,7 @@ public class Credits {
 
 	public static final CategorySetting credits = CategorySetting.create()
 		.name("Credits")
-		.icon("XZRF:players")
+		.icon("players")
 		.description("Das Team hinter GrieferUtils, sowie Copyright und Lizenzen.")
 		.subSettings(
 			HeaderSetting.create().entryHeight(5),
@@ -57,8 +57,8 @@ public class Credits {
 			HeaderSetting.create("Bild-Credits"),
 			ButtonSetting.create()
 				.name("Credits öffnen")
-				.icon("XZRF:scroll")
-				.buttonIcon("XZRF:open_link")
+				.icon("scroll")
+				.buttonIcon("open_link")
 				.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/image_credits")),
 			HeaderSetting.create().entryHeight(11),
 

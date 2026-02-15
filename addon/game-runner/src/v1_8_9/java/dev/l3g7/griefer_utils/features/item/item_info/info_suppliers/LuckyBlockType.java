@@ -47,7 +47,7 @@ public class LuckyBlockType extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("LuckyBlock-Typ anzeigen")
 		.description("Zeigt unter LuckyBlöcken an, von welchem Typ sie sind.")
-		.icon("XZRF:lucky_block");
+		.icon("lucky_block");
 
 	@EventListener
 	public void onTooltip(ItemTooltipEvent e) {

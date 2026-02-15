@@ -33,7 +33,6 @@ import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.labymod.main.LabyMod;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -68,24 +67,24 @@ public class PotionTimer extends Widget {
 	private final DropDownSetting<KeyMode> design = DropDownSetting.create(KeyMode.class)
 			.name("Design")
 			.description("In welchem die Design die aktivierten Tränke angezeigt werden sollen.")
-			.icon("XZRF:color_palette")
+			.icon("color_palette")
 			.defaultValue(KeyMode.TEXT_AND_ICON);
 
 	private final NumberSetting warnTime = NumberSetting.create()
 			.name("Warn-Zeit für Fly Tränke (s)")
 			.description("Wie viele Sekunden vor dem Ablauf eines Fly-Tranks eine Warnung angezeigt werden soll.")
-			.icon("XZRF:clock");
+			.icon("clock");
 
 	private final SwitchSetting hide = SwitchSetting.create()
 			.name("Verstecken, wenn nichts getrunken")
 			.description("Ob das Modul versteckt werden soll, wenn derzeit kein Orbtrank aktiv ist.")
-			.icon("XZRF:glass_pane");
+			.icon("glass_pane");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 			.name("Orbtrank-\nTimer")
 			.description("Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.")
-			.icon("XZRF:potion")
+			.icon("potion")
 			.subSettings(design, warnTime, hide);
 
 	private void checkFlyWarning() {
@@ -326,10 +325,10 @@ public class PotionTimer extends Widget {
 
 				if (mode != KeyMode.TEXT) {
 					if (mode == KeyMode.ICON)
-						name.append(Component.icon(Icons.of("booster/" + data.displayName.toLowerCase(), -0.5f, -.5f), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
+						name.append(Component.icon(Icons.offset(Icons.of("booster/" + data.displayName.toLowerCase()), -0.5f, -.5f), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
 					else
 						// Text and icon
-						name.append(Component.icon(Icons.of("booster/" + data.displayName.toLowerCase(), .5f, -1), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
+						name.append(Component.icon(Icons.offset(Icons.of("booster/" + data.displayName.toLowerCase()), .5f, -1), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
 				}
 
 				if (mode == KeyMode.TEXT_AND_ICON)

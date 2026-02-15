@@ -31,43 +31,43 @@ public class NoOverlay extends Feature {
 	private final SwitchSetting blindness = SwitchSetting.create()
 		.name("Blindheit entfernen")
 		.description("Deaktiviert den Blindheits-Effekt.")
-		.icon("XZRF:eye_black")
+		.icon("eye_black")
 		.defaultValue(true);
 
 	private final SwitchSetting water = SwitchSetting.create()
 		.name("Wassertrübheit entfernen")
 		.description("Deaktiviert die Wassertrübheit.")
-		.icon("XZRF:eye_light_blue")
+		.icon("eye_light_blue")
 		.defaultValue(true);
 
 	private final SwitchSetting lava = SwitchSetting.create()
 		.name("Lavatrübheit entfernen")
 		.description("Deaktiviert die Lavatrübheit.")
-		.icon("XZRF:eye_orange")
+		.icon("eye_orange")
 		.defaultValue(true);
 
 	private final SwitchSetting nausea = SwitchSetting.create()
 		.name("Übelkeit entfernen")
 		.description("Deaktiviert die Übelkeit.")
-		.icon("XZRF:eye_lime")
+		.icon("eye_lime")
 		.defaultValue(true);
 
 	private final SwitchSetting portal = SwitchSetting.create()
 		.name("Portal-Effekt entfernen")
 		.description("Deaktiviert den Portal-Effekt.")
-		.icon("XZRF:portal")
+		.icon("portal")
 		.defaultValue(true);
 
 	private final SwitchSetting fire = SwitchSetting.create()
 		.name("Feuer-Overlay entfernen")
 		.description("§r§fDeaktiviert den Feuer-Effekt im First-Person-Modus.", "§l§nNur benutzen, wenn man Feuerresistenz besitzt!")
-		.icon("XZRF:fire_resistance");
+		.icon("fire_resistance");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("§hOverlays entfernen")
 		.description("Entfernt einige Overlays.")
-		.icon("XZRF:glass_pane")
+		.icon("glass_pane")
 		.subSettings(blindness, water, lava, nausea, portal, fire);
 
 	@EventListener

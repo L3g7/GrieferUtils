@@ -41,20 +41,20 @@ public class AutoEat extends Feature {
 	private final DropDownSetting<TriggerMode> triggerMode = DropDownSetting.create(TriggerMode.class)
 		.name("Auslösung")
 		.description("Wann AutoEat essen soll.", "Wenn effizient ausgewählt ist, wird gegessen, wenn kein Sättigungspunkt des Essens verschwendet wird.")
-		.icon("XZRF:bone_with_meat")
+		.icon("bone_with_meat")
 		.defaultValue(TriggerMode.EFFICIENTLY);
 
 	private final DropDownSetting<PreferredFood> preferredFood = DropDownSetting.create(PreferredFood.class)
 		.name("Bevorzugte Nahrung")
 		.description("Welche Art von Nahrung bevorzugt gegessen werden soll.")
-		.icon("XZRF:hopper")
+		.icon("hopper")
 		.defaultValue(PreferredFood.HIGH_SATURATION);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Automatisch essen")
 		.description("Isst automatisch, wenn man Hunger hat.")
-		.icon("XZRF:bone_with_meat")
+		.icon("bone_with_meat")
 		.subSettings(triggerMode, preferredFood);
 
 	private int previousHotbarSlot = -1;

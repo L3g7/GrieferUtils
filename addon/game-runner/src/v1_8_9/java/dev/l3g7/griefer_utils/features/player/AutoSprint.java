@@ -26,7 +26,7 @@ public class AutoSprint extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Automatisch sprinten")
 		.description("Sprintet automatisch.")
-		.icon("XZRF:speed");
+		.icon("speed");
 
 	@EventListener
 	public void onClientTick(TickEvent.ClientTickEvent event) {

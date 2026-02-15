@@ -40,7 +40,7 @@ public class JailBarriers extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Jail-Barrieren")
-		.icon("XZRF:iron_bars")
+		.icon("iron_bars")
 		.description("Fügt beim Jail Projektil-durchlässige Barrieren hinzu, um das Reinfallen zu verhindern.")
 		.callback(b -> {
 			targetBlock = b ? Blocks.barrier: Blocks.air;

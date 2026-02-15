@@ -46,7 +46,7 @@ public class ReactionDisplaySetting extends SwitchSettingImpl {
 
 	@Override
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-		icon(reaction.regEx ? "XZRF:cpu" : "XZRF:book_and_quilkl");
+		icon(reaction.regEx ? "cpu" : "book_and_quilkl");
 
 		String displayName = getDisplayName();
 		setDisplayName("§f");

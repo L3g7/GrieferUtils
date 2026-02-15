@@ -41,7 +41,7 @@ public class PlayerHider extends Feature {
 
 	private final SwitchSetting showNPCs = SwitchSetting.create()
 		.name("NPCs zeigen")
-		.icon("XZRF:steve")
+		.icon("steve")
 		.description("Ob Spieler, die von GrieferGames erzeugt wurden (z.B. Orbhändler), auch angezeigt werden sollen.")
 		.defaultValue(true)
 		.callback(() -> {
@@ -56,18 +56,18 @@ public class PlayerHider extends Feature {
 		if (LABY_4.isActive())
 			return new PlayerListSettingLaby4()
 				.name("Ausgenommene Spieler")
-				.icon("XZRF:light_bulb");
+				.icon("light_bulb");
 		else
 			return new PlayerListSettingLaby3()
 				.name("Ausgenommene Spieler")
-				.icon("XZRF:light_bulb");
+				.icon("light_bulb");
 	}
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spieler verstecken")
 		.description("Versteckt andere Spieler.")
-		.icon("XZRF:invisibility")
+		.icon("invisibility")
 		.callback(() -> {
 			if (isOnGrieferGames())
 				for (EntityPlayer player : world().playerEntities)

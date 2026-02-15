@@ -21,7 +21,7 @@ class ItemDumper {
 	public static final KeySetting key = KeySetting.create()
 		.name("Item-Dumper")
 		.description("Dumpt das Item unter dem Mauscursor.")
-		.icon("XZRF:gold_ingot")
+		.icon("gold_ingot")
 		.triggersInContainers()
 		.pressCallback(pressed -> {
 			if (!pressed || !DebugSettings.enabled.get())

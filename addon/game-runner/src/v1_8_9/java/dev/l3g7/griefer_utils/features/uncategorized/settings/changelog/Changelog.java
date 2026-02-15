@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons.TextureIcon;
 import net.labymod.api.Textures;
 import net.labymod.main.ModTextures;
 
@@ -39,7 +40,7 @@ public class Changelog {
 	public static final CategorySetting changelog = CategorySetting.create()
 		.name("§eChangelog")
 		.description("§eVerbindet...")
-		.icon("XZRF:lectern")
+		.icon("lectern")
 		.disable()
 		.subSettings();
 
@@ -54,7 +55,7 @@ public class Changelog {
 			Function<ButtonSetting, ButtonSetting> addIconFunc = LABY_4.isActive() ? this::addIconLaby4 : this::addIconLaby3;
 			entries.add(addIconFunc.apply(ButtonSetting.create()
 				.name(entry.getKey())
-				.icon(entry.getValue().beta ? "XZRF:scroll" : "XZRF:scroll_red")
+				.icon(entry.getValue().beta ? "scroll" : "scroll_red")
 				.callback(() -> mc().displayGuiScreen(new GuiChangelog(false, entry.getValue(), entry.getKey())))));
 		}
 
@@ -84,11 +85,15 @@ public class Changelog {
 	}
 
 	private ButtonSetting addIconLaby4(ButtonSetting button) { // TODO refactor
-		return button.buttonIcon(Textures.SpriteCommon.SETTINGS);
+		return button
+			.<dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl>into()
+			.buttonIcon(Textures.SpriteCommon.SETTINGS);
 	}
 
 	private ButtonSetting addIconLaby3(ButtonSetting button) {
-		return button.buttonIcon(ModTextures.BUTTON_ADVANCED);
+		return button
+			.<dev.l3g7.griefer_utils.labymod.laby3.settings.types.ButtonSettingImpl>into()
+			.buttonIcon(new TextureIcon(ModTextures.BUTTON_ADVANCED));
 	}
 
 }

@@ -51,7 +51,7 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 
 		DropDownSetting<TriggerMode> triggerMode = DropDownSetting.create(TriggerMode.class)
 			.name("Auslösung")
-			.icon("XZRF:lightning")
+			.icon("lightning")
 			.inferConfig("triggerMode")
 			.defaultValue(defaultTriggerMode)
 			.callback(m -> {
@@ -63,7 +63,7 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 
 		KeySetting key = KeySetting.create()
 			.name("Taste")
-			.icon("XZRF:key")
+			.icon("key")
 			.inferConfig("key")
 			.pressCallback(p -> {
 				if (p || (defaultTriggerMode != null && triggerMode.get() == HOLD))

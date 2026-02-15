@@ -27,7 +27,7 @@ public class ColorPreview extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Farb-Vorschau")
 		.description("Zeigt eine gefärbte Vorschau des im Chat eingegebenen Textes an.")
-		.icon("XZRF:color_palette");
+		.icon("color_palette");
 
 	@EventListener
 	public void onRender(GuiScreenEvent.DrawScreenEvent event) {

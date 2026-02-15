@@ -25,7 +25,6 @@ import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
-import net.minecraft.init.Items;
 import net.minecraft.util.IChatComponent;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
@@ -40,24 +39,23 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.description("Wie der kopierte Text sein soll.")
 		.config(configKey + "format")
 		.defaultValue(CopyFormat.UNFORMATTED)
-		.icon("XZRF:command_suggestions");
+		.icon("command_suggestions");
 
 	private final SwitchSetting modifiedMessage = SwitchSetting.create()
 		.name("Bearbeitungen kopieren")
 		.description("Ob der Text mit den Bearbeitungen u.a. von GrieferUtils kopiert werden soll.")
 		.config(configKey + "modified_message")
-		.icon("XZRF:book_and_quill");
+		.icon("book_and_quill");
 
-	private final SwitchSetting mainSetting = LabyBridge.get(SwitchSetting::create /* NOTE: LM3 DisplaySetting */, LM4DisplaySetting::new)
+	private final SwitchSetting mainSetting = setIcon(LabyBridge.get(SwitchSetting::create /* NOTE: LM3 DisplaySetting */, LM4DisplaySetting::new))
 		.name(name)
-		.icon(icon)
 		.defaultValue(true)
 		.config(configKey + "enabled")
 		.callback(v -> enabled = v)
 		.subSettings(copyFormat, modifiedMessage);
 
 	public CopyTextEntry() {
-		super("Text kopieren", null, null, "XZRF:book_and_quill");
+		super("Text kopieren", null, null, "book_and_quill");
 	}
 
 	public void trigger(IChatComponent modifiedComponent, IChatComponent originalComponent) {
@@ -109,7 +107,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 					SettingsImpl.hookChildAdd(s, e -> {
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(Icons.of(GUIHierarchyTree.handleXZRF("XZRF:high_res/pencil_vec")));
+							btn.updateIcon(Icons.of("high_res/pencil_vec"));
 						}
 					});
 					break;

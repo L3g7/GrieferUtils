@@ -25,18 +25,18 @@ public class InventoryValue extends Widget {
 		.name("Wert automatisch bestimmen")
 		.description("Ob der Item-Wert automatisch bestimmt werden soll, oder ob nur Items mit einem manuell eingetragenen Wert gezählt werden sollen.")
 		.defaultValue(true)
-		.icon("XZRF:gold_ingot");
+		.icon("gold_ingot");
 
 	static final ItemValueListSetting entries = new ItemValueListSetting()
 		.name("Werte")
 		.disableSubsettingConfig()
-		.icon("XZRF:coin");
+		.icon("coin");
 
 	@Feature.MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Inventar-Wert")
 		.description("Zeigt dir an, wie viel ein Inventar wert ist.")
-		.icon("XZRF:bundle")
+		.icon("bundle")
 		.subSettings(auto, HeaderSetting.create(), entries);
 
 	@Override

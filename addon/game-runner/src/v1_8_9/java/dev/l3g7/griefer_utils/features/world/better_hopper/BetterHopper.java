@@ -15,12 +15,10 @@ import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.server.S23PacketBlockChange;
@@ -42,61 +40,60 @@ public class BetterHopper extends Feature {
 		.name("Anzeigeboxen füllen")
 		.description("Ob die Boxen der Anzeige gefüllt werden sollen.")
 		.defaultValue(true)
-		.icon("XZRF:color_palette");
+		.icon("color_palette");
 
 	static final NumberSetting displayTime = NumberSetting.create()
 		.name("Anzeigedauer")
 		.description("Wie lange die optische Anzeige aktiv bleiben soll, in Sekunden.")
-		.icon("XZRF:hourglass")
+		.icon("hourglass")
 		.defaultValue(10);
 
 	static final SwitchSetting betterVisualisation = SwitchSetting.create()
 		.name("Bessere optische Trichter-Anzeige")
 		.description("Ersetzt die Partikel der optischen Trichter Anzeige durch Boxen / Linien.")
-		.icon("XZRF:lens")
+		.icon("lens")
 		.subSettings(displayTime, fillBoxes);
 
 	static final SwitchSetting showRange = SwitchSetting.create()
 		.name("Trichterreichweite anzeigen")
 		.description("Zeigt die Trichterreichweite an.")
-		.icon("XZRF:measurement");
+		.icon("measurement");
 
 	static final SwitchSetting showSourceHopper = SwitchSetting.create()
 		.name("Ausgangstrichter anzeigen")
 		.description("Zeigt beim Verbinden eines Trichters den Trichter an, von dem aus verbunden wird.")
-		.icon("XZRF:hopper");
+		.icon("hopper");
 
 	private static final NumberSetting lastHoppersLimit = NumberSetting.create()
 		.name("Maximale Anzahl an Trichter")
 		.description("Wie viele Trichter maximal angezeigt werden.")
-		.icon("XZRF:hopper")
+		.icon("hopper")
 		.min(1)
 		.defaultValue(1);
 
 	private static final SwitchSetting showLastHopper = SwitchSetting.create()
 		.name("Letzte Trichter anzeigen")
 		.description("Markiert die Trichter, die als letztes geöffnet wurden.")
-		.icon("XZRF:hopper")
+		.icon("hopper")
 		.subSettings(lastHoppersLimit);
 
 	private static final SwitchSetting sneakMode = SwitchSetting.create()
 		.name("Sneak-Modus")
 		.description("Öffnet bei Rechtsklicks immer die Einstellungen eines Trichters, auch wenn du nicht sneakst.")
-		.icon("XZRF:sneaking")
+		.icon("sneaking")
 		.addHotkeySetting("den Sneak-Modus", null);
 
 	@MainElement
 	private static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Trichteranzeige verbessern")
 		.description("Verbessert die Anzeige von Trichtern.")
-		.icon("XZRF:hopper")
+		.icon("hopper")
 		.subSettings(betterVisualisation, showRange, showSourceHopper, showLastHopper, sneakMode);
 
 	private static final List<BlockPos> lastClickedHoppers = new ArrayList<>();
 
 	public BetterHopper() {
 		lastHoppersLimit.callback(i -> {
-			lastHoppersLimit.icon(new ItemStack(Blocks.hopper, i));
 			while (i < lastClickedHoppers.size())
 				lastClickedHoppers.remove(0);
 		});

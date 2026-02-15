@@ -24,7 +24,7 @@ public class GhostBlocksFix extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Ghost-Blöcke entfernen")
 		.description("Versucht, verbuggte / unsichtbare Blöcke zu entfernen.")
-		.icon("XZRF:crossed_out_block_outline");
+		.icon("crossed_out_block_outline");
 
 	@EventListener
 	private void onBlockBrokeEvent(BlockBrokeEvent event) {

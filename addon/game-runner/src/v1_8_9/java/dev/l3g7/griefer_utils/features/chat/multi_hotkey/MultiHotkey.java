@@ -40,7 +40,6 @@ import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.configuration.settings.type.list.ListSettingConfig;
 import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
 import net.labymod.api.util.KeyValue;
-import net.minecraft.init.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
@@ -60,13 +59,13 @@ public class MultiHotkey extends Feature {
 
 	private final HotkeyListSetting entries = new HotkeyListSetting()
 		.name("Hotkeys")
-		.icon("XZRF:key");
+		.icon("key");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Multi-Hotkey")
 		.description("Erlaubt das Ausführen von mehreren sequenziellen Befehlen auf Tastendruck.")
-		.icon("XZRF:key")
+		.icon("key")
 		.subSettings(entries);
 
 	@EventListener
@@ -105,7 +104,7 @@ public class MultiHotkey extends Feature {
 		private final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 			.name("Name")
 			.description("Wie dieser Hotkey heißen soll.")
-			.icon(Items.writable_book)
+			.icon("name_tag")
 			.callback(entries::notifyChange);
 
 		private final KeySetting key = KeySetting.create()
@@ -121,8 +120,8 @@ public class MultiHotkey extends Feature {
 
 		private final StringListSetting commands = StringListSetting.create()
 			.name("Befehle")
-			.icon(Items.paper)
-			.entryIcon(Items.paper)
+			.icon("book_and_quill")
+			.entryIcon("book_and_quill")
 			.callback(entries::notifyChange);
 
 		public HotkeyConfig(String name) {

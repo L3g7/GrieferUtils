@@ -68,7 +68,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 		for (RecraftPageSetting page : pages) {
 			CategorySetting category = CategorySetting.create()
 				.name(page.name.get())
-				.icon(Items.map);
+				.icon("command_suggestions");
 
 			List<RecordingDisplaySetting> displays = getSubSettingsOfType(page, RecordingDisplaySetting.class);
 			if (container.mode().get() == DECOMPRESS)
@@ -88,7 +88,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	void setSelectedRecording(RecraftRecording selectedRecording) {
 		recording = selectedRecording;
 		setDisplayName(selectedRecording == null ? "§8[Nichts ausgewählt]" : selectedRecording.name().get());
-		icon(selectedRecording == null ? "barrier" : Icons.EMPTY_ICON);
+		icon(selectedRecording == null ? "barrier" : "transparent");
 
 		if (container.mainSetting != null)
 			updateName(selectedRecording);
@@ -184,7 +184,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 			super("§cNo name set", null);
 			setSettingEnabled(false);
 			this.recording = recording;
-			icon(recording == null ? "barrier" : Icons.EMPTY_ICON);
+			icon(recording == null ? "barrier" : "transparent");
 			setDisplayName(recording == null ? "§8Nichts auswählen" : recording.name().get());
 		}
 

@@ -20,7 +20,7 @@ public class Aligner extends Feature {
 	private final KeySetting key = KeySetting.create()
 		.name("Ausrichten")
 		.description("Setzt die yaw-Rotation des Spielers auf die nähesten 45°.")
-		.icon("XZRF:axes")
+		.icon("axes")
 		.pressCallback(b -> {
 			if (!b)
 				return;

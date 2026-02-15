@@ -124,15 +124,15 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 			PlayerListEntry value = values.get(i);
 
 			ButtonSettingImpl entry = new ButtonSettingImpl();
-			entry.name(value.name)
-				.icon(Icon.head(value.name));
+			entry.name(value.name);
+			entry.icon(Icon.head(value.name));
 
 			entry.setParent((Setting) this);
 
 			int idx = i;
 			event.settings().addChild(entry.createUnwrappedWidget(
 				ButtonWidget.icon(
-					Icons.of(GUIHierarchyTree.handleXZRF(Laby4Util.isVanillaTheme() ? "XZRF:pencil_padded" : "XZRF:high_res/pencil_vec")),
+					Icons.of(Laby4Util.isVanillaTheme() ? "pencil_padded" : "high_res/pencil_vec"),
 					() -> new PlayerListInputActivity(idx, event.activity).open()
 				).addId("delete-button"), // Actually an edit button, but id is required for styling
 

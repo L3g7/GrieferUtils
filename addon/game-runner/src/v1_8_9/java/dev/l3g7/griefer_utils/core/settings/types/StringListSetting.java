@@ -19,6 +19,6 @@ public interface StringListSetting extends AbstractSetting<StringListSetting, Li
 
 	StringListSetting placeholder(String placeholder);
 
-	StringListSetting entryIcon(Object icon);
+	StringListSetting entryIcon(String icon);
 
 }

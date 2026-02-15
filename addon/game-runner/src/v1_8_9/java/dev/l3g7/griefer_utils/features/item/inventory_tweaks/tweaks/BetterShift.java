@@ -39,7 +39,7 @@ public class BetterShift extends Feature {
 			- Werkbank
 			- Spieler-Crafting §o(Shift + Alt + Klick)§r
 			- Dorfbewohner""")
-		.icon("XZRF:arrows_up");
+		.icon("arrows_up");
 
 	@EventListener
 	public void onGuiCraftingClick(WindowClickEvent event) {

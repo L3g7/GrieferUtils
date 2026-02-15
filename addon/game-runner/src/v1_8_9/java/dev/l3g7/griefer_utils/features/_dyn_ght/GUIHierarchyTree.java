@@ -1,181 +1,175 @@
 package dev.l3g7.griefer_utils.features._dyn_ght;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.settings.GUIEntry;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
-import net.labymod.api.client.gui.icon.Icon;
-import net.minecraft.init.Items;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.HashMap;
+
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
 @SuppressWarnings("SameParameterValue")
 public class GUIHierarchyTree {
 
 	static Feat[] CATS = new Feat[]{
-		cat("Chat", "XZRF:chat",
-			cat("§gEingehender Chat", "XZRF:chat",
-				feat("Automatisch entnicken", "XZRF:name_tag"),
-				feat("Chat aufhellen", "XZRF:light_bulb"),
-				feat("Chat aufräumen", "XZRF:crossed_out_book"),
-				feat("Chatmenü", "XZRF:player_menu"),
-				feat("ChatReactor", "XZRF:cpu"),
-				feat("ChatTime", "XZRF:clock"),
-				feat("Echtgeld- Erkennung", "Echtgeld-Erkennung", "XZRF:coin"),
-				feat("Interagierbare /freunde", "XZRF:players"),
-				feat("Interagierbare Nachrichten", "XZRF:mouse_left"),
-				feat("Kopf vor Nachrichten", "XZRF:steve"),
-				feat("Magischen Text entfernen", "XZRF:tabping_colored")
+		cat("Chat", "chat",
+			cat("§gEingehender Chat", "chat",
+				feat("Automatisch entnicken", "name_tag"),
+				feat("Chat aufhellen", "light_bulb"),
+				feat("Chat aufräumen", "crossed_out_book"),
+				feat("Chatmenü", "player_menu"),
+				feat("ChatReactor", "cpu"),
+				feat("ChatTime", "clock"),
+				feat("Echtgeld- Erkennung", "Echtgeld-Erkennung", "coin"),
+				feat("Interagierbare /freunde", "players"),
+				feat("Interagierbare Nachrichten", "mouse_left"),
+				feat("Kopf vor Nachrichten", "steve"),
+				feat("Magischen Text entfernen", "tabping_colored")
 			),
-			cat("§hAusgehender Chat", "XZRF:book_and_quill",
-				feat("AntiCommandChoker", "XZRF:crossed_out_chat"),
-				feat("/switch verbessern", "XZRF:portal"),
-				feat("Befehle loggen", "XZRF:book_and_quill"),
-				feat("Befehlsradialmenü", "XZRF:command_menu"),
-				feat("Befehlsvorschläge", "XZRF:command_suggestions"),
-				feat("Farb-Vorschau", "XZRF:color_palette"),
-				feat("Lange Nachrichten aufteilen", "XZRF:shears"),
-				feat("Multi-Hotkey", "XZRF:key"),
-				feat("Plot-Chat-Indikator", "XZRF:chat_orange"),
-				feat("Rechner", "XZRF:calculator"),
-				feat("SlowChat-Cooldown", "XZRF:hourglass")
+			cat("§hAusgehender Chat", "book_and_quill",
+				feat("AntiCommandChoker", "crossed_out_chat"),
+				feat("/switch verbessern", "portal"),
+				feat("Befehle loggen", "book_and_quill"),
+				feat("Befehlsradialmenü", "command_menu"),
+				feat("Befehlsvorschläge", "command_suggestions"),
+				feat("Farb-Vorschau", "color_palette"),
+				feat("Lange Nachrichten aufteilen", "shears"),
+				feat("Multi-Hotkey", "key"),
+				feat("Plot-Chat-Indikator", "chat_orange"),
+				feat("Rechner", "calculator"),
+				feat("SlowChat-Cooldown", "hourglass")
 			),
-			cat("§iChat-Filter", "XZRF:hopper",
-				feat("Chat-Filter-Länge entsperren", "XZRF:measurement"),
-				feat("Filtervorlagen", "XZRF:enchanted_book"),
-				feat("Webhooks in Filtern", "XZRF:discord")
+			cat("§iChat-Filter", "hopper",
+				feat("Chat-Filter-Länge entsperren", "measurement"),
+				feat("Filtervorlagen", "enchanted_book"),
+				feat("Webhooks in Filtern", "discord")
 			)
 		),
-		cat("GUIs", "XZRF:wooden_board",
-			cat("§gGrieferGames", "XZRF:griefer_games",
-				feat("/homes verbessern", "XZRF:filled_map"),
-				feat("/zuhause verbessern", "XZRF:region_map"),
-				feat("Trichteranzeige verbessern", "XZRF:hopper"),
-				feat("Adventurer verbessern", "XZRF:enchanted_fire_charge"),
-				feat("Jobbörse verbessern", "XZRF:wooden_board"),
-				feat("NPC-Klick-Helfer", "XZRF:mouse_right"),
-				feat("Orb-Händler fixen", "XZRF:orbseller"),
-				feat("Cooldown-Benachrichtigungen", "XZRF:bell")
+		cat("GUIs", "wooden_board",
+			cat("§gGrieferGames", "griefer_games",
+				feat("/homes verbessern", "filled_map"),
+				feat("/zuhause verbessern", "region_map"),
+				feat("Trichteranzeige verbessern", "hopper"),
+				feat("Adventurer verbessern", "enchanted_fire_charge"),
+				feat("Jobbörse verbessern", "wooden_board"),
+				feat("NPC-Klick-Helfer", "mouse_right"),
+				feat("Orb-Händler fixen", "orbseller"),
+				feat("Cooldown-Benachrichtigungen", "bell")
 			),
-			cat("§hIntegrationen", "XZRF:cpu",
-				feat("Botshop-Gui", "XZRF:high_res/byte_and_bit"),
-				feat("Biom- und Strukturen-Suche", "XZRF:region_map"),
-				feat("§xGriefer.Info", "XZRF:high_res/griefer_info")
+			cat("§hIntegrationen", "cpu",
+				feat("Botshop-Gui", "high_res/byte_and_bit"),
+				feat("Biom- und Strukturen-Suche", "region_map"),
+				feat("§xGriefer.Info", "high_res/griefer_info")
 			),
-			cat("§iBücher", "XZRF:enchanted_book",
-				feat("Bücher Öffnen fixen", "XZRF:lectern"),
-				feat("Bücher unterdrücken", "XZRF:crossed_out_book_read")
+			cat("§iBücher", "enchanted_book",
+				feat("Bücher Öffnen fixen", "lectern"),
+				feat("Bücher unterdrücken", "crossed_out_book_read")
 			),
-			feat("Interagierbare Profile", "XZRF:mouse_left"),
-			feat("Item-Suche", "XZRF:magnifying_glass"),
-			feat("LabyMod-Switcher fixen", "XZRF:labymod")
+			feat("Interagierbare Profile", "mouse_left"),
+			feat("Item-Suche", "magnifying_glass"),
+			feat("LabyMod-Switcher fixen", "labymod")
 		),
 
-		cat("Items", "XZRF:gold_ingot",
-			cat("§gInventar verbessern", "XZRF:bundle",
-				feat("Besseres Shiften", "XZRF:arrows_up"),
-				feat("Strg + Q verbessern", "XZRF:hopper")
+		cat("Items", "gold_ingot",
+			cat("§gInventar verbessern", "bundle",
+				feat("Besseres Shiften", "arrows_up"),
+				feat("Strg + Q verbessern", "hopper")
 			),
-			cat("§hItem-Infos", "XZRF:magnifying_glass",
-				feat("Item-Zähler", "XZRF:bundle"),
-				feat("Karten-Vorschau", "XZRF:filled_map"),
-				feat("Reparaturwert anzeigen", "XZRF:weakness"),
-				feat("LuckyBlock-Typ anzeigen", "XZRF:lucky_block"),
-				feat("Kopf-Vorschau", "XZRF:steve"),
-				feat("Spawn-Ei-Typ anzeigen", "XZRF:creeper_spawn_egg")
+			cat("§hItem-Infos", "magnifying_glass",
+				feat("Item-Zähler", "bundle"),
+				feat("Karten-Vorschau", "filled_map"),
+				feat("Reparaturwert anzeigen", "weakness"),
+				feat("LuckyBlock-Typ anzeigen", "lucky_block"),
+				feat("Kopf-Vorschau", "steve"),
+				feat("Spawn-Ei-Typ anzeigen", "creeper_spawn_egg")
 			),
-			cat("§iItem-Schutz", "XZRF:shield_with_sword",
-				feat("Bei Rüstungsschaden warnen", "XZRF:diamond_chestplate"),
-				feat("Drachenei-Saver", "XZRF:dragon_egg"),
-				feat("Kisten-Saver", "XZRF:chest"),
-				feat("Orb-Saver", "XZRF:orb"),
-				feat("Partikel-Saver", "XZRF:particle"),
-				feat("Prefix-Saver", "XZRF:tabping_colored"),
-				feat("Rand-Saver", "XZRF:glass_pane"),
-				feat("Spezifischer Item-Saver", "XZRF:shield_with_sword"),
-				feat("Werkzeug-Saver", "XZRF:tools"),
-				feat("§z/kopf Vorschau", "XZRF:steve")
+			cat("§iItem-Schutz", "shield_with_sword",
+				feat("Bei Rüstungsschaden warnen", "diamond_chestplate"),
+				feat("Drachenei-Saver", "dragon_egg"),
+				feat("Kisten-Saver", "chest"),
+				feat("Orb-Saver", "orb"),
+				feat("Partikel-Saver", "particle"),
+				feat("Prefix-Saver", "tabping_colored"),
+				feat("Rand-Saver", "glass_pane"),
+				feat("Spezifischer Item-Saver", "shield_with_sword"),
+				feat("Werkzeug-Saver", "tools"),
+				feat("§z/kopf Vorschau", "steve")
 			),
-			feat("Recraft", "XZRF:crafting_table")
+			feat("Recraft", "crafting_table")
 		),
 
-		cat("Render", "XZRF:lens",
-			cat("§gLicht", "XZRF:light_bulb",
-				feat("FullBright", "XZRF:light_bulb"),
-				feat("Lichtbugs anzeigen", "XZRF:light_bulb_glitch"),
-				feat("Lichtlevel anzeigen", "XZRF:light_bulb")
+		cat("Render", "lens",
+			cat("§gLicht", "light_bulb",
+				feat("FullBright", "light_bulb"),
+				feat("Lichtbugs anzeigen", "light_bulb_glitch"),
+				feat("Lichtlevel anzeigen", "light_bulb")
 			),
-			cat("§hKöpfe", "XZRF:steve",
-				feat("Kopf-Texturen fixen", "XZRF:skull_steve"),
-				feat("Kopf-Verzauberung fixen", "XZRF:enchanted_steve")
+			cat("§hKöpfe", "steve",
+				feat("Kopf-Texturen fixen", "skull_steve"),
+				feat("Kopf-Verzauberung fixen", "enchanted_steve")
 			),
-			feat("§hOverlays entfernen", "XZRF:glass_pane"),
-			feat("Effekt-Partikel verstecken", "XZRF:particle"),
-			feat("Unsichtbare Entities anzeigen", "XZRF:invisibility"),
-			feat("Verbuggte Karten fixen", "XZRF:filled_map")
+			feat("§hOverlays entfernen", "glass_pane"),
+			feat("Effekt-Partikel verstecken", "particle"),
+			feat("Unsichtbare Entities anzeigen", "invisibility"),
+			feat("Verbuggte Karten fixen", "filled_map")
 		),
 
-		cat("Spieler", "XZRF:steve",
-			cat("§gBewegung", "XZRF:speed",
-				feat("Automatisch sprinten", "XZRF:speed"),
-				feat("Sichereres Sneaken", "XZRF:sneaking")
+		cat("Spieler", "steve",
+			cat("§gBewegung", "speed",
+				feat("Automatisch sprinten", "speed"),
+				feat("Sichereres Sneaken", "sneaking")
 			),
-			cat("§hNametags", "XZRF:name_tag",
-				feat("Clantags", "XZRF:name_tag_rainbow"),
-				feat("Nametag mit Prefix", "XZRF:name_tag_rainbow"),
-				feat("Nametags durch Wände anzeigen", "XZRF:name_tag_yellow"),
-				feat("Standard-Prefixe", "XZRF:name_tag_yellow")
+			cat("§hNametags", "name_tag",
+				feat("Clantags", "name_tag_rainbow"),
+				feat("Nametag mit Prefix", "name_tag_rainbow"),
+				feat("Nametags durch Wände anzeigen", "name_tag_yellow"),
+				feat("Standard-Prefixe", "name_tag_yellow")
 			),
-			feat("Automatisch essen", "XZRF:bone_with_meat"),
-			feat("Automatisch nicken wenn AFK", "XZRF:afk_timer"),
-			feat("Items auf dem Kopf anzeigen", "XZRF:firework_on_head"),
-			feat("Spieler verstecken", "XZRF:invisibility"),
-			feat("Spielermenü aufräumen", "XZRF:player_menu"),
-			feat("Rüstung verstecken", "XZRF:diamond_chestplate"),
-			feat("Trusted MM-Liste", "XZRF:player_green"),
-			feat("§xScammerliste", "XZRF:player_red"),
-			feat("§yVerkleidung in 3rd Person", "XZRF:mob_icons/faithless/creeper"),
-			feat("§zWalking Minimes entfernen", "XZRF:crossed_out_minime")
+			feat("Automatisch essen", "bone_with_meat"),
+			feat("Automatisch nicken wenn AFK", "afk_timer"),
+			feat("Items auf dem Kopf anzeigen", "firework_on_head"),
+			feat("Spieler verstecken", "invisibility"),
+			feat("Spielermenü aufräumen", "player_menu"),
+			feat("Rüstung verstecken", "diamond_chestplate"),
+			feat("Trusted MM-Liste", "player_green"),
+			feat("§xScammerliste", "player_red"),
+			feat("§yVerkleidung in 3rd Person", "mob_icons/faithless/creeper"),
+			feat("§zWalking Minimes entfernen", "crossed_out_minime")
 		),
 
-		cat("Welt", "XZRF:earth",
-			cat("§gBuilding", "XZRF:brick",
-				feat("Ausrichten", "XZRF:axes"),
-				feat("Automatische Werkzeugauswahl", "XZRF:tools"),
-				feat("Barrieren anzeigen", "XZRF:barrier"),
-				feat("Blockauswahl mit Inventar", "XZRF:mouse_middle"),
-				feat("Ghost-Blöcke entfernen", "XZRF:crossed_out_block_outline"),
-				feat("Chunk-Grenzen anzeigen", "XZRF:earth"),
-				feat("Platzieren vereinfachen", "XZRF:easy_place_overlay"),
-				feat("Plot-Grenzen anzeigen", "XZRF:earth"),
-				feat("Redstone-Helfer", "XZRF:redstone_comparator"),
-				feat("Schematica verbessern", "XZRF:litematica/litematica"),
-				feat("Schilder verbessern", "XZRF:sign"),
-				feat("Verbrauchte Blöcke nachziehen", "XZRF:bundle")
+		cat("Welt", "earth",
+			cat("§gBuilding", "brick",
+				feat("Ausrichten", "axes"),
+				feat("Automatische Werkzeugauswahl", "tools"),
+				feat("Barrieren anzeigen", "barrier"),
+				feat("Blockauswahl mit Inventar", "mouse_middle"),
+				feat("Ghost-Blöcke entfernen", "crossed_out_block_outline"),
+				feat("Chunk-Grenzen anzeigen", "earth"),
+				feat("Platzieren vereinfachen", "easy_place_overlay"),
+				feat("Plot-Grenzen anzeigen", "earth"),
+				feat("Redstone-Helfer", "redstone_comparator"),
+				feat("Schematica verbessern", "litematica/litematica"),
+				feat("Schilder verbessern", "sign"),
+				feat("Verbrauchte Blöcke nachziehen", "bundle")
 			),
-			cat("§hJoining", "XZRF:portal",
-				feat("Automatisch /portal", "XZRF:portal"),
-				feat("Portal-Cooldown", "XZRF:hourglass")
+			cat("§hJoining", "portal",
+				feat("Automatisch /portal", "portal"),
+				feat("Portal-Cooldown", "hourglass")
 			),
-			cat("§iScoreboard", "XZRF:wooden_board",
-				feat("Bankguthaben im Scoreboard", "XZRF:bank"),
-				feat("Orbguthaben im Scoreboard", "XZRF:orb"),
-				feat("Scoreboard aufräumen", "XZRF:wooden_board"),
-				feat("Scoreboard bei F3 verstecken", "XZRF:wooden_board")
+			cat("§iScoreboard", "wooden_board",
+				feat("Bankguthaben im Scoreboard", "bank"),
+				feat("Orbguthaben im Scoreboard", "orb"),
+				feat("Scoreboard aufräumen", "wooden_board"),
+				feat("Scoreboard bei F3 verstecken", "wooden_board")
 			),
-			feat("Chunks geladen lassen", "XZRF:filled_map"),
-			feat("Flugbahn anzeigen", "XZRF:crosshair"),
-			feat("Interagierbare Plot-Schilder", "XZRF:sign"),
-			feat("Jail-Barrieren", "XZRF:iron_bars"),
-			feat("Joins anzeigen", "XZRF:players"),
-			feat("QR-Code Scanner", "XZRF:qr_code"),
-			feat("Spawner verbessern", "XZRF:spawner")
+			feat("Chunks geladen lassen", "filled_map"),
+			feat("Flugbahn anzeigen", "crosshair"),
+			feat("Interagierbare Plot-Schilder", "sign"),
+			feat("Jail-Barrieren", "iron_bars"),
+			feat("Joins anzeigen", "players"),
+			feat("QR-Code Scanner", "qr_code"),
+			feat("Spawner verbessern", "spawner")
 		),
 
-		feat("§yEinstellungen", "XZRF:cog")
+		feat("§yEinstellungen", "cog")
 	};
 
 	static HashMap<String, Feat> feats = new HashMap<>();
@@ -225,54 +219,15 @@ public class GUIHierarchyTree {
 		return new Feat(ref, null, new Feat[0]);
 	}
 
-	public static Icon handleXZRF(Object icon) {
-		if (icon == null)
-			return null;
-
-		if (icon instanceof Icon) {
-			return Icons.of(icon);
-		} else if (!(icon instanceof String s)) {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			new Throwable().printStackTrace(new PrintStream(out));
-
-			String stacktrace = out.toString(StandardCharsets.UTF_8);
-			if (!stacktrace.contains("types.CitybuildSettingImpl.<init>") && !stacktrace.contains("laby4.ItemProtectionListSetting.getElements"))
-				new Throwable("Icon NonString '" + icon + "'").printStackTrace();
-
-			return Icons.of(Items.apple);
-		} else if (!s.startsWith("XZRF:")) {
-			new Throwable("Icon NonXZRF '" + icon + "'").printStackTrace();
-			return Icons.of(Items.apple);
-		} else {
-			return Icons.of(handleXZRF(s));
-		}
-	}
-
-	public static String handleXZRF(String icon) {
-		if (icon == null)
-			return null;
-
-		if (!icon.startsWith("XZRF:")) {
-			new Throwable("Icon NonXZRF '" + icon + "'").printStackTrace();
-			return "barrier";
-		} else {
-			String path = Path.of("assets/griefer_utils/icons/" + icon.substring("XZRF:".length()) + ".png").normalize().toString().replace('\\', '/');
-			if (!FileProvider.getFiles().contains(path))
-				new Throwable("Icon missing '" + icon + "'").printStackTrace();
-
-			return icon.substring("XZRF:".length());
-		}
-	}
-
 	public static final class Feat {
-		private String nameLaby3;
-		private String nameLaby4;
-		private String icon;
+		private final String nameLaby3;
+		private final String nameLaby4;
+		private final String icon;
 		private final Feat[] feats;
 		private final String refName;
 		private Feat parent;
-		private String description;
-		private Class<? extends GUIEntry.SettingBuilder> setting;
+		private final String description;
+		private final Class<? extends GUIEntry.SettingBuilder> setting;
 
 		Feat(String nameLaby3, String nameLaby4, String icon, Feat[] feats, String refName, String description, Class<? extends GUIEntry.SettingBuilder> setting) {
 			this.nameLaby3 = nameLaby3;
@@ -280,9 +235,9 @@ public class GUIHierarchyTree {
 			this.icon = icon;
 
 			this.feats = feats;
-			for (Feat feat : feats) {
+			for (Feat feat : feats)
 				feat.parent = this;
-			}
+
 			this.refName = refName;
 			this.description = description;
 			this.setting = setting;
@@ -296,21 +251,17 @@ public class GUIHierarchyTree {
 			this(name, name, icon, feats, name);
 		}
 
-		public String nameLaby3() {return nameLaby3;}
-
-		public String nameLaby4() {return nameLaby4;}
+		public String name() {
+			return LABY_4.isActive() ? nameLaby4 : nameLaby3;
+		}
 
 		public String icon() {return icon;}
-
-		public Feat[] feats() {return feats;}
 
 		public Feat parent() {return parent;}
 
 		public Class<? extends GUIEntry.SettingBuilder> setting() {return setting;}
 
 		public String description() {return description;}
-
-		public String refName() {return refName;}
 
 		@Override
 		public String toString() {

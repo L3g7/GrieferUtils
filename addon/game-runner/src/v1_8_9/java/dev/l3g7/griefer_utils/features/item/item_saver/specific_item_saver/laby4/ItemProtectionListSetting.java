@@ -34,7 +34,6 @@ import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
 import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.util.KeyValue;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.init.Items;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -163,7 +162,7 @@ public class ItemProtectionListSetting extends ListSetting implements Laby4Setti
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(Icons.of(GUIHierarchyTree.handleXZRF("XZRF:high_res/pencil_vec")));
+						btn.updateIcon(Icons.of("high_res/pencil_vec"));
 
 						content.addContent(ButtonWidget.icon(X, () -> {
 							get().remove(entry.index);
@@ -213,7 +212,7 @@ public class ItemProtectionListSetting extends ListSetting implements Laby4Setti
 			StringSetting name = StringSetting.create() // NOTE: update name live
 				.name("Anzeigename")
 				.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretten Items.")
-				.icon("XZRF:name_tag")
+				.icon("name_tag")
 				.defaultValue(protection.name)
 				.callback(s -> protection.name = s);
 

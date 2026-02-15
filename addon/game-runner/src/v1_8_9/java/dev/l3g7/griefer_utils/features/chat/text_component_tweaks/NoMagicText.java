@@ -22,7 +22,7 @@ public class NoMagicText extends TextComponentTweak {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Magischen Text entfernen")
 		.description("Deaktiviert den magischen / verschleierten / verschlüsselten Stil in Chatnachrichten.")
-		.icon("XZRF:tabping_colored")
+		.icon("tabping_colored")
 		.callback(TabListEvent::updatePlayerInfoList)
 		.subSettings(chat, tab, item);
 

@@ -186,7 +186,7 @@ public class AddChatMenuEntryGui extends Gui {
 			}
 
 			List<Button> buttons = Reflection.get(iconInput, "buttons");
-			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils", "icons/" + GUIHierarchyTree.handleXZRF(actionTypeInput.getSelected().getIcon()) + ".png"));
+			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils", "icons/" + actionTypeInput.getSelected().getIcon() + ".png"));
 			double bottom;
 			switch (iconInput.getSelected()) {
 				case ITEM -> bottom = itemIconInput.bottom();

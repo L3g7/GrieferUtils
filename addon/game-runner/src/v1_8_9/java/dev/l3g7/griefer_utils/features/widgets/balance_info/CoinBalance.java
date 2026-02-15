@@ -28,7 +28,7 @@ public class CoinBalance extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kontostand")
 		.description("Zeigt den Kontostand an.")
-		.icon("XZRF:coin");
+		.icon("coin");
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onPacket(PacketReceiveEvent<S3EPacketTeams> event) {

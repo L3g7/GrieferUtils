@@ -25,7 +25,7 @@ public class InteractableFriendsMenu extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Interagierbare /freunde")
 		.description("Ermöglicht das Joinen von CBs durch das Linksklicken eines Spielers im /freunde-Menü")
-		.icon("XZRF:players");
+		.icon("players");
 
 	@EventListener
 	private void onGuiClick(WindowClickEvent event) {

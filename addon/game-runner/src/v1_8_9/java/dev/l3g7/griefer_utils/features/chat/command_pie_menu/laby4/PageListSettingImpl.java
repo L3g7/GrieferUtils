@@ -156,7 +156,7 @@ public class PageListSettingImpl extends ListSetting implements PageListSetting,
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						// Fix icon
-						IconWidget widget = new IconWidget(Icons.of(Items.map));
+						IconWidget widget = new IconWidget(Icons.of("command_suggestions"));
 						widget.addId("setting-icon");
 						content.addChild(0, new FlexibleContentEntry(widget, false));
 						widget.initialize(content);

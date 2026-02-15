@@ -24,7 +24,7 @@ public class DragonEggSaver extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Drachenei-Saver")
 		.description("Verhindert Klicks auf Dracheneier.")
-		.icon("XZRF:dragon_egg");
+		.icon("dragon_egg");
 
 	@EventListener
 	private void onBlockInteract(BlockInteractEvent event) {

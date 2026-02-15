@@ -30,7 +30,6 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.PAYMENT_SEND_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getNextServerRestart;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.features.widgets.balance_stats.Earned.getResetIcon;
 import static java.math.BigDecimal.ZERO;
 
 @Singleton
@@ -43,7 +42,7 @@ public class Spent extends SimpleWidget {
 	private final SwitchSetting resetSetting = SwitchSetting.create()
 		.name("Automatisch zurücksetzen")
 		.description("Ob automatisch um 04:00 das ausgegebene Geld zurückgesetzt werden soll.")
-		.icon("XZRF:hourglass")
+		.icon("hourglass")
 		.callback(b -> {
 			if (!initialized)
 				return;
@@ -59,7 +58,7 @@ public class Spent extends SimpleWidget {
 	private static final SwitchSetting resetAfterRestart = SwitchSetting.create()
 		.name("Nach Neustart zurücksetzen")
 		.description("Ob nach einem Minecraft-Neustart das ausgegebene Geld zurückgesetzt werden soll.")
-		.icon("XZRF:hourglass")
+		.icon("hourglass")
 		.callback(shouldReset -> {
 			if (!initialized)
 				return;
@@ -75,19 +74,19 @@ public class Spent extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Ausgegeben")
 		.description("Zeigt dir, wie viel Geld du seit deinem Minecraft-Start ausgegeben hast.")
-		.icon("XZRF:high_res/wallets/outgoing")
+		.icon("high_res/wallets/outgoing")
 		.subSettings(resetSetting, resetAfterRestart,
 			ButtonSetting.create()
 				.name("Zurücksetzen")
 				.description("Setzt das ausgegebene Geld zurück.")
-				.icon("XZRF:loop")
-				.buttonIcon(getResetIcon())
+				.icon("loop")
+				.buttonIcon("loop")
 				.callback(() -> setBalance(ZERO)),
 			ButtonSetting.create()
 				.name("Alles zurücksetzen")
 				.description("Setzt das eingenommene und das ausgegebene Geld zurück.")
-				.icon("XZRF:loop")
-				.buttonIcon(getResetIcon())
+				.icon("loop")
+				.buttonIcon("loop")
 				.callback(() -> setBalance(Received.setBalance(ZERO)))
 		);
 

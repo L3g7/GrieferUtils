@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category(name = "Item", icon = "XZRF:gold_ingot")
+@Category(name = "Item", icon = "gold_ingot")
 package dev.l3g7.griefer_utils.features.item;
 
 import dev.l3g7.griefer_utils.features.Feature.Category;

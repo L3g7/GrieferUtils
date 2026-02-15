@@ -27,7 +27,7 @@ public class PageConfig extends net.labymod.api.configuration.loader.Config impl
 
 	public final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 		.name("Name")
-		.icon(Items.writable_book)
+		.icon("name_tag")
 		.callback(CommandPieMenu.pages::notifyChange);
 
 	public final EntryListSetting entries = new EntryListSetting()

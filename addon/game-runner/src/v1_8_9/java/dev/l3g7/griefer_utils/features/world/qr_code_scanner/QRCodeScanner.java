@@ -50,7 +50,7 @@ public class QRCodeScanner extends Feature {
 	private final KeySetting enabled = KeySetting.create()
 		.name("QR-Code Scanner")
 		.description("Liest QR-Codes aus Karten in Rahmen oder Inventaren.")
-		.icon("XZRF:qr_code")
+		.icon("qr_code")
 		.triggersInContainers()
 		.pressCallback(pressed -> {
 			if (!pressed)

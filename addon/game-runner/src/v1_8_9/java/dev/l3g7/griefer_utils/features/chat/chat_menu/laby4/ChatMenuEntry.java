@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.SelectButtonGroup;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -106,6 +107,15 @@ public class ChatMenuEntry {
 		return entry;
 	}
 
+	public <S extends BaseSetting<S>> S setIcon(S setting) {
+		return switch (icon) {
+			case String i -> setting.icon(i);
+			case ItemStack i -> setting.icon(i);
+			default ->
+				throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
+		};
+	}
+
 	public void drawIcon(int x, int y, int w, int h) {
 		switch (iconType) {
 			case SYSTEM -> mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
@@ -125,9 +135,9 @@ public class ChatMenuEntry {
 
 	enum Action implements SelectButtonGroup.Selectable {
 		CONSUMER(null, null),
-		OPEN_URL("Url öffnen", "XZRF:earth_grid"),
-		RUN_CMD("Befehl ausführen", "XZRF:cpu"),
-		SUGGEST_CMD("Befehl vorschlagen", "XZRF:chat");
+		OPEN_URL("Url öffnen", "earth_grid"),
+		RUN_CMD("Befehl ausführen", "cpu"),
+		SUGGEST_CMD("Befehl vorschlagen", "chat");
 
 		public final String name;
 		public final String defaultIcon;
@@ -150,8 +160,8 @@ public class ChatMenuEntry {
 	enum IconType implements SelectButtonGroup.Selectable {
 		SYSTEM(null, null),
 		DEFAULT("Standard", null),
-		ITEM("Item", "XZRF:gold_ingot"),
-		IMAGE_FILE("Bild", "XZRF:tree_file");
+		ITEM("Item", "gold_ingot"),
+		IMAGE_FILE("Bild", "tree_file");
 
 		public final String name;
 		public final String defaultIcon;

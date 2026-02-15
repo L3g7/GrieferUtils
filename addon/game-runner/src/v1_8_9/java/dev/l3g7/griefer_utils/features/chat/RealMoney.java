@@ -34,19 +34,19 @@ public class RealMoney extends Feature {
 	private final StringSetting tag = StringSetting.create()
 		.name("Tag")
 		.description("Womit eingehenden Bezahlungen markiert werden sollen.")
-		.icon("XZRF:name_tag")
+		.icon("name_tag")
 		.defaultValue("&a [✔]");
 
 	private final DropDownSetting<TagPosition> position = DropDownSetting.create(TagPosition.class)
 		.name("Position")
 		.description("Ob der Tag an den Anfang oder das Ende der Nachricht angehängt wird.")
-		.icon("XZRF:wooden_board")
+		.icon("wooden_board")
 		.defaultValue(TagPosition.AFTER);
 
 	private final SwitchSetting highlightCents = SwitchSetting.create()
 		.name("Cent-Beträge kennzeichnen")
 		.description("Markiert Cent-Beträge rot.")
-		.icon("XZRF:color_palette")
+		.icon("color_palette")
 		.defaultValue(true);
 
 	@MainElement
@@ -55,7 +55,7 @@ public class RealMoney extends Feature {
 			? "Echtgeld- Erkennung" // Spacing to allow word wrap
 			: "Echtgeld-Erkennung")
 		.description("Fügt einen Tag zu eingehenden Bezahlungen hinzu.")
-		.icon("XZRF:coin")
+		.icon("coin")
 		.subSettings(highlightCents, tag, position);
 
 	@EventListener(priority = Priority.LOW)

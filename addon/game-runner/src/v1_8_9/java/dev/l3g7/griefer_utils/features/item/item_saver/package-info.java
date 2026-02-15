@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category(name = "Item-Schutz", description = "Schützt Items vor unabsichtlicher Zerstörung.", icon = "XZRF:shield_with_sword")
+@Category(name = "Item-Schutz", description = "Schützt Items vor unabsichtlicher Zerstörung.", icon = "shield_with_sword")
 package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import dev.l3g7.griefer_utils.features.Feature.Category;

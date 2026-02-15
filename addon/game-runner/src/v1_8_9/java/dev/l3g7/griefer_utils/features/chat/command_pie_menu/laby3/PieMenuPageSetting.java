@@ -33,7 +33,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 		this.name = StringSetting.create()
 			.name("Name")
 			.description("Wie diese Seite heißen soll.")
-			.icon(Items.writable_book)
+			.icon("name_tag")
 			.callback(title -> {
 				if (title.trim().isEmpty())
 					title = "Unbenannte Seite";
@@ -43,7 +43,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 				titleSetting.name("§e§l" + title);
 			});
 
-		icon(Items.map);
+		icon("command_suggestions");
 
 		entrySettings.forEach(e -> ((PieMenuSetting) e).container = this);
 		entrySettings.add(0, this.name);

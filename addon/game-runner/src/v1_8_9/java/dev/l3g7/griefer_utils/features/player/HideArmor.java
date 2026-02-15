@@ -23,19 +23,19 @@ public class HideArmor extends Feature {
 
 	private final SwitchSetting helmet = SwitchSetting.create()
 		.name("Helme verstecken")
-		.icon("XZRF:diamond_helmet")
+		.icon("diamond_helmet")
 		.defaultValue(true);
 	private final SwitchSetting chestplate = SwitchSetting.create()
 		.name("Brustpanzer verstecken")
-		.icon("XZRF:diamond_chestplate")
+		.icon("diamond_chestplate")
 		.defaultValue(true);
 	private final SwitchSetting leggings = SwitchSetting.create()
 		.name("Hosen verstecken")
-		.icon("XZRF:diamond_leggings")
+		.icon("diamond_leggings")
 		.defaultValue(true);
 	private final SwitchSetting boots = SwitchSetting.create()
 		.name("Schuhe verstecken")
-		.icon("XZRF:diamond_boots")
+		.icon("diamond_boots")
 		.defaultValue(true);
 
 	private final SwitchSetting[] subsettings = new SwitchSetting[]{helmet, chestplate, leggings, boots};
@@ -44,7 +44,7 @@ public class HideArmor extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Rüstung verstecken")
 		.description("Versteckt angezogene Rüstungen von Spielern.")
-		.icon("XZRF:diamond_chestplate")
+		.icon("diamond_chestplate")
 		.subSettings(subsettings);
 
 	public static boolean shouldRender(int index) {

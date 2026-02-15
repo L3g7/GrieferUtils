@@ -15,7 +15,7 @@ public interface ButtonSetting extends AbstractSetting<ButtonSetting, Object> {
 
 	static ButtonSetting create() {return settings.createButtonSetting();}
 
-	ButtonSetting buttonIcon(Object icon);
+	ButtonSetting buttonIcon(String icon);
 
 	ButtonSetting buttonLabel(String label);
 

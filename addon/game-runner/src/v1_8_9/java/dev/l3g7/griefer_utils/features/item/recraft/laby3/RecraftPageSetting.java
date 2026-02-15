@@ -33,7 +33,7 @@ class RecraftPageSetting extends ListEntrySetting {
 
 	RecraftPageSetting(String name, List<SettingsElement> entrySettings) {
 		super(true, true, true);
-		icon(Items.map);
+		icon("command_suggestions");
 		subSettings();
 
 		entrySettings.forEach(e -> ((RecraftRecording.RecordingDisplaySetting) e).container = this);
@@ -41,7 +41,7 @@ class RecraftPageSetting extends ListEntrySetting {
 		entrySettings.add(0, (SettingsElement) (this.name = StringSetting.create()
 			.name("Name")
 			.description("Wie diese Seite heißen soll.")
-			.icon("XZRF:name_tag")
+			.icon("name_tag")
 			.callback(title -> {
 				if (title.trim().isEmpty())
 					title = "Unbenannte Seite";

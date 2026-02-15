@@ -15,7 +15,7 @@ import static net.minecraft.util.EnumChatFormatting.GREEN;
 public class TrustedList extends PlayerList {
 
 	public TrustedList() {
-		super("Trusted MM-Liste", "Markiert Spieler in verbvllert_s Trusted-MM-Liste.", "✰", "XZRF:player_green", "Eigene Trusted", GREEN, 5, "§a§lTrusted", "https://data.community-radar.de/versions/v2/trusted.json");
+		super("Trusted MM-Liste", "Markiert Spieler in verbvllert_s Trusted-MM-Liste.", "✰", "player_green", "Eigene Trusted", GREEN, 5, "§a§lTrusted", "https://data.community-radar.de/versions/v2/trusted.json");
 	}
 
 }

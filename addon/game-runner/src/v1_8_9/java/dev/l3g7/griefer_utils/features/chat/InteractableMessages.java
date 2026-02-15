@@ -52,7 +52,7 @@ public class InteractableMessages extends Feature {
 			- "/p h" in Nachrichten (Teleportiert zum Plot)
 			- Spielernamen bei /clan info (Öffnet das Profil)
 			- Spielernamen bei /p i (Öffnet das Profil)""")
-		.icon("XZRF:mouse_left");
+		.icon("mouse_left");
 
 	@EventListener(priority = Priority.LOW)
 	public void modifyMessage(MessageModifyEvent event) {

@@ -27,14 +27,14 @@ public class CompressedBlockCounter extends SimpleWidget {
 	private final DropDownSetting<ItemCounter.FormatMode> formatting = DropDownSetting.create(ItemCounter.FormatMode.class)
 		.name("Formattierung")
 		.description("In welchem Format die Anzahl angezeigt werden soll.")
-		.icon("XZRF:color_palette")
+		.icon("color_palette")
 		.defaultValue(ItemCounter.FormatMode.UNFORMATTED);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Komprimierter Block")
 		.description("Zeigt dir an, wie viele Blöcke noch in dem komprimierten Block sind, der in der Hand gehalten wird.")
-		.icon("XZRF:bundle")
+		.icon("bundle")
 		.subSettings(formatting);
 
 	@Override

@@ -38,12 +38,12 @@ public class CommandPieMenu extends Feature {
 	private final SwitchSetting animation = SwitchSetting.create()
 		.name("Animation")
 		.description("Ob die Öffnen-Animation abgespielt werden soll.")
-		.icon("XZRF:color_palette")
+		.icon("color_palette")
 		.defaultValue(true);
 
 	private final KeySetting key = KeySetting.create()
 		.name("Taste")
-		.icon("XZRF:key")
+		.icon("key")
 		.description("Die Taste, mit der das Befehlsradialmenü geöffnet werden soll.")
 		.pressCallback(p -> {
 			if (mc().currentScreen != null || !isEnabled())
@@ -71,7 +71,7 @@ public class CommandPieMenu extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Befehlsradialmenü")
 		.description("Ein Radialmenü zum schnellen Ausführen von Citybuild-bezogenen Befehlen.")
-		.icon("XZRF:command_menu")
+		.icon("command_menu")
 		.subSettings(key, animation, newEntrySetting);
 
 	@Override

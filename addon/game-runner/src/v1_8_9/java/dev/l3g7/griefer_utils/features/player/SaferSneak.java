@@ -25,7 +25,7 @@ public class SaferSneak extends Feature {
 			§7Referenz-Höhen:
 			§7Kiste: 87%
 			§7Stufen: 50%""")
-		.icon("XZRF:measurement")
+		.icon("measurement")
 		.defaultValue(87)
 		.max(100)
 		.min(1);
@@ -34,7 +34,7 @@ public class SaferSneak extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Sichereres Sneaken")
 		.description("Verringert die minimale Falldistanz, bei der Sneaken das Fallen verhindert.")
-		.icon("XZRF:sneaking")
+		.icon("sneaking")
 		.subSettings(minFallDistance);
 
 	@EventListener

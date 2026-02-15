@@ -41,7 +41,7 @@ public class MainMenuSkull {
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("GrieferUtils-Kopf hinzufügen")
 		.description("Fügt in der Hintergrundwelt der Startseite einen GrieferUtils-Kopf hinzu.")
-		.icon("XZRF:skull")
+		.icon("skull")
 		.callback(active -> {
 			if (firstEnabled == null) {
 				firstEnabled = active;

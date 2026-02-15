@@ -166,21 +166,21 @@ public class MainPage {
 
 		// Wiki link
 		settings.add(ButtonSetting.create()
-			.name("Wiki").icon("XZRF:open_book")
-			.buttonIcon("XZRF:open_book_outline")
+			.name("Wiki").icon("open_book")
+			.buttonIcon("open_book_outline")
 			.callback(() -> labyBridge.openWebsite("https://grieferutils.wiki")));
 
 		// Ko-fi link
 		settings.add(ButtonSetting.create()
-			.name("Entwickler unterstützen").icon("XZRF:ko_fi")
+			.name("Entwickler unterstützen").icon("ko_fi")
 			.description("Wenn dir das Addon gefällt kannst du hier das Entwickler-Team dahinter unterstützen §c❤")
-			.buttonIcon("XZRF:ko_fi_outline")
+			.buttonIcon("ko_fi_outline")
 			.callback(() -> labyBridge.openWebsite("https://ko-fi.com/l3g7_3")));
 
 		// Discord link
 		settings.add(ButtonSetting.create()
-			.name("Discord").icon("XZRF:discord")
-			.buttonIcon("XZRF:discord_clyde")
+			.name("Discord").icon("discord")
+			.buttonIcon("discord_clyde")
 			.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")));
 	}
 

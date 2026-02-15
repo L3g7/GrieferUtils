@@ -47,7 +47,7 @@ public class NearbyPlayers extends Widget {
 		.name("Limit")
 		.description("Wie viele Spieler maximal angezeigt werden sollen."
 			+ "\n(-1 ist unendlich)")
-		.icon("XZRF:measurement")
+		.icon("measurement")
 		.min(-1)
 		.defaultValue(10);
 
@@ -55,7 +55,7 @@ public class NearbyPlayers extends Widget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spieler in der Nähe")
 		.description("Zeigt Spieler in deiner Nähe an.")
-		.icon("XZRF:players")
+		.icon("players")
 		.subSettings(limit);
 
 	private final List<EntityOtherPlayerMP> visiblePlayers = new ArrayList<>();
@@ -197,7 +197,7 @@ public class NearbyPlayers extends Widget {
 
 				this.distance = createRenderableComponent(Component.text(distance + "m "));
 				this.player = createRenderableComponent(
-						Component.icon(Icons.of(Icon.head(player.getUniqueID()), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
+						Component.icon(Icons.offset(Icon.head(player.getUniqueID()), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
 								.append(Component.text(" ")).append(c(displayName)));
 
 				maxDistWidth = Math.max(maxDistWidth, this.distance.getWidth());

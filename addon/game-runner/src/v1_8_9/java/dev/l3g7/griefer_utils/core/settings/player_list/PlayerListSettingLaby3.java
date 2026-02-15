@@ -102,7 +102,7 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 
 		public PlayerDisplaySetting(PlayerListEntry entry) {
 			super(true, false, false);
-			icon(ModTextures.MISC_HEAD_QUESTION);
+			icon("barrier");
 			container = PlayerListSettingLaby3.this.container;
 			data = entry;
 		}

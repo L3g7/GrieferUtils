@@ -39,50 +39,50 @@ public class ChatMods extends Feature {
 	private final SwitchSetting antiClearChat = SwitchSetting.create()
 		.name("Clearchat unterbinden")
 		.description("Verhindert das leeren des Chats durch /clearchat.")
-		.icon("XZRF:barrier")
+		.icon("barrier")
 		.defaultValue(true);
 
 	private final SwitchSetting removeSupremeSpaces = SwitchSetting.create()
 		.name("Supreme-Leerzeichen entfernen")
 		.description("Entfernt die Leerzeilen vor und nach Nachrichten von Spielern mit Supreme-Rang.")
-		.icon("XZRF:barrier")
+		.icon("barrier")
 		.defaultValue(true);
 
 	private final SwitchSetting removeStreamerNotifications = SwitchSetting.create()
 		.name("Streamer-Benachrichtigungen entfernen")
 		.description("Unterdrückt Benachrichtigungen über Livestreams.")
-		.icon("XZRF:twitch");
+		.icon("twitch");
 
 	private final SwitchSetting removeLuckyBlock = SwitchSetting.create()
 		.name("LuckyBlock-Benachrichtigungen entfernen")
 		.description("Unterdrückt Benachrichtigungen über LuckyBlock-Gewinne.")
-		.icon("XZRF:lucky_block");
+		.icon("lucky_block");
 
 	private final SwitchSetting removeCaseOpening = SwitchSetting.create()
 		.name("CaseOpening-Benachrichtigungen entfernen")
 		.description("Unterdrückt Benachrichtigungen über CaseOpening-Gewinne.")
-		.icon("XZRF:chest_golden");
+		.icon("chest_golden");
 
 	private final DropDownSetting<NewsMode> news = DropDownSetting.create(NewsMode.class)
 		.name("News")
 		.description("Ändert die Darstellung von News.")
-		.icon("XZRF:enchanted_book")
+		.icon("enchanted_book")
 		.defaultValue(NewsMode.NORMAL);
 
 	private final SwitchSetting removeBroadcast = SwitchSetting.create()
 		.name("Broadcasts entfernen")
 		.description("Entfernt die Broadcast-Hervorhebung.")
-		.icon("XZRF:bell");
+		.icon("bell");
 
 	private final SwitchSetting antiColoredFont = SwitchSetting.create()
 		.name("Farbige Schrift entfernen")
 		.description("Entfernt die Farben von Nachrichten mit farbiger Schrift §8(/schrift)§r.")
-		.icon("XZRF:tabping_colored");
+		.icon("tabping_colored");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Chat aufräumen")
-		.icon("XZRF:crossed_out_book")
+		.icon("crossed_out_book")
 		.description("Räumt den Chat auf.")
 		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, removeBroadcast, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
 

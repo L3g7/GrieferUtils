@@ -44,31 +44,31 @@ public class ItemCounter extends Feature {
 	private final DropDownSetting<FormatMode> formatting = DropDownSetting.create(FormatMode.class)
 		.name("Formattierung")
 		.description("In welchem Format die Anzahl angezeigt werden soll.")
-		.icon("XZRF:color_palette")
+		.icon("color_palette")
 		.defaultValue(FormatMode.FORMATTED);
 
 	public static final SwitchSetting ignoreDamage = SwitchSetting.create()
 		.name("Schaden / Sub-IDs ignorieren")
 		.description("Ignoriert den Schaden / die Sub-IDs der Items beim Zählen der Anzahl.")
-		.icon("XZRF:weakness");
+		.icon("weakness");
 
 	public static final SwitchSetting ignoreEnchants = SwitchSetting.create()
 		.name("Verzauberungen ignorieren")
 		.description("Ignoriert die Verzauberungen der Items beim Zählen der Anzahl.")
-		.icon("XZRF:enchanted_book")
+		.icon("enchanted_book")
 		.defaultValue(true);
 
 	public static final SwitchSetting ignoreLore = SwitchSetting.create()
 		.name("Beschreibungen ignorieren")
 		.description("Ignoriert die Beschreibungen der Items beim Zählen der Anzahl.")
-		.icon("XZRF:name_tag")
+		.icon("name_tag")
 		.defaultValue(true);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Item-Zähler")
 		.description("Zeigt unter einem Item an, wie viele von dem Typ in dem derzeitigen Inventar vorhanden sind.")
-		.icon("XZRF:bundle")
+		.icon("bundle")
 		.subSettings(formatting, HeaderSetting.create(), ignoreDamage, ignoreEnchants, ignoreLore);
 
 	@EventListener

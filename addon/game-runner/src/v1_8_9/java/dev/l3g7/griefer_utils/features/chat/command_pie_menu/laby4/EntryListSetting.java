@@ -138,7 +138,7 @@ public class EntryListSetting extends ListSetting implements Laby4Setting<EntryL
 
 		ListSettingEntry entry = new ListSettingEntry(this, config.newEntryTitle(), get().size() - 1) {
 			public Icon getIcon() {
-				return Icons.of(Items.map);
+				return Icons.of("command_suggestions");
 			}
 		};
 

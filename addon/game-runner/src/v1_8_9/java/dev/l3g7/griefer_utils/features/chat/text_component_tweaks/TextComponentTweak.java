@@ -23,18 +23,18 @@ abstract class TextComponentTweak extends Feature {
 
 	final SwitchSetting chat = SwitchSetting.create()
 		.name("In Chat")
-		.icon("XZRF:chat")
+		.icon("chat")
 		.defaultValue(true);
 
 	final SwitchSetting tab = SwitchSetting.create()
 		.name("In Tabliste")
-		.icon("XZRF:tab_list")
+		.icon("tab_list")
 		.defaultValue(true)
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	final SwitchSetting item = SwitchSetting.create()
 		.name("In Item-Beschreibungen")
-		.icon("XZRF:gold_ingot")
+		.icon("gold_ingot")
 		.defaultValue(true);
 
 	@EventListener(priority = LOW)

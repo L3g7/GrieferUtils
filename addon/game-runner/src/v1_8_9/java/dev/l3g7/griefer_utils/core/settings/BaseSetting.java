@@ -7,6 +7,9 @@
 
 package dev.l3g7.griefer_utils.core.settings;
 
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import net.minecraft.item.ItemStack;
+
 import java.util.List;
 
 public interface BaseSetting<S extends BaseSetting<S>> {
@@ -33,11 +36,14 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 	S description(String... description);
 
 	/**
-	 * Sets the icon of the setting.
-	 *
-	 * @param icon of type {@link String} for GrieferUtils icons.
+	 * Sets the icon of the setting to a texture.
 	 */
-	S icon(Object icon);
+	S icon(String icon);
+
+	/**
+	 * Sets the icon of the setting to an item stack.
+	 */
+	S icon(ItemStack icon);
 
 	/**
 	 * Sets the given settings as sub settings, with the display name as header.
@@ -61,5 +67,9 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 	List<BaseSetting<?>> getChildSettings();
 
 	void create(Object parent);
+
+	default <T> T into() {
+		return Reflection.c(this);
+	}
 
 }

@@ -7,16 +7,13 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.settings;
 
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.render.GlEngine;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
-import net.minecraft.block.Block;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,23 +27,12 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public abstract class Icons {
 
-	public static final L3Icon EMPTY_ICON = new L3Icon() {
-		public void draw(int x, int y, float scale) {}
-	};
+	public static L3Icon of(String icon) {
+		return new TextureIcon(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
+	}
 
-	public static L3Icon of(Object icon) {
-		return switch (icon) {
-			case null -> null;
-			case String fileName -> of(new ResourceLocation("griefer_utils", "icons/" + fileName + ".png"));
-			case ResourceLocation location -> new TextureIcon(location);
-			case L3Icon i -> i;
-			case Citybuild citybuild -> of(citybuild.toItemStack());
-			case Item item -> of(new ItemStack(item));
-			case Block block -> of(new ItemStack(block));
-			case ItemStack stack -> new ItemStackIcon(stack);
-			default ->
-				throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
-		};
+	public static L3Icon of(ItemStack icon) {
+		return new ItemStackIcon(icon);
 	}
 
 	public static abstract class L3Icon {

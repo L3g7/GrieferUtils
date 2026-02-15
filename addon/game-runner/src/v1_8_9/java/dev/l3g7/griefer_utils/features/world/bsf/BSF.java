@@ -39,14 +39,14 @@ public class BSF extends Feature {
 
 	private final KeySetting setting = KeySetting.create()
 		.name("Gui öffnen")
-		.icon("XZRF:key")
+		.icon("key")
 		.description("Die Taste, mit der das Gui geöffnet werden soll.")
 		.pressCallback(b -> { if (b) new GuiBSF().open(); });
 
 	@MainElement
 	private final CategorySetting button = CategorySetting.create()
 		.name("Biom- und Strukturen-Suche")
-		.icon("XZRF:region_map")
+		.icon("region_map")
 		.description("Ermöglicht das Suchen von Biomen und Strukturen in der Farmwelt.")
 		.subSettings(setting, HeaderSetting.create(),
 			HeaderSetting.create("Das Gui lässt sich auch mit /bss öffnen.")

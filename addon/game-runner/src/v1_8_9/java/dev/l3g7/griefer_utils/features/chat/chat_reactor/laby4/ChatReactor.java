@@ -42,7 +42,7 @@ public class ChatReactor extends Feature {
 	private static final SwitchSetting enabled = SwitchSetting.create()
 		.name("ChatReactor")
 		.description("Führt bei Chatnachrichten Befehle aus.")
-		.icon("XZRF:cpu")
+		.icon("cpu")
 		.subSettings(HeaderSetting.create("Reaktionen"), newEntrySetting);
 
 	public ChatReactor() {

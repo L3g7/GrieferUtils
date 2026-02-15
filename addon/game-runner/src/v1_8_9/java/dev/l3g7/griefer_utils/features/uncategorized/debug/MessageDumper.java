@@ -23,13 +23,13 @@ class MessageDumper {
 		.name("Format")
 		.description("Wie der gedumpte Text sein soll.")
 		.defaultValue(CopyFormat.JSON)
-		.icon("XZRF:command_suggestions");
+		.icon("command_suggestions");
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Nachrichten-Dumper")
 		.description("Dumpt eingehende Nachrichten.")
 		.subSettings(copyFormat)
-		.icon("XZRF:book_and_quill");
+		.icon("book_and_quill");
 
 	@EventListener(priority = Priority.LOWEST)
 	private static void onMessageModify(MessageModifyEvent event) {

@@ -39,7 +39,7 @@ public class BookFix extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Bücher Öffnen fixen")
 		.description("Unterbindet Linksklicks auf Bücher und öffnet eine Vorschau bei Rechtsklick.")
-		.icon("XZRF:lectern");
+		.icon("lectern");
 
 	/**
 	 * Fixes direct book interactions.

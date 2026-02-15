@@ -72,7 +72,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("§yVerkleidung in 3rd Person")
 		.description("Erlaubt das Sehen der derzeitigen Verkleidung im Third-Person-Modus.")
-		.icon("XZRF:mob_icons/faithless/creeper")
+		.icon("mob_icons/faithless/creeper")
 		.callback(v -> { if (!v) hideDisguise(); });
 
 	public void init() {

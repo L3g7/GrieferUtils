@@ -26,7 +26,7 @@ public class PortalCooldown extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Portal-Cooldown")
 		.description("Zeigt dir den 12s-Cooldown beim Betreten des Portalraums in der XP-Leiste an.")
-		.icon("XZRF:hourglass");
+		.icon("hourglass");
 
 	private long timeoutEnd = -1;
 

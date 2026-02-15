@@ -22,7 +22,7 @@ public class SuppressBooks extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Bücher unterdrücken")
 		.description("Unterdrückt das Öffnen von Büchern durch GrieferGames.")
-		.icon("XZRF:crossed_out_book_read");
+		.icon("crossed_out_book_read");
 
 	@EventListener
 	private void onPacket(PacketReceiveEvent<S3FPacketCustomPayload> p) {

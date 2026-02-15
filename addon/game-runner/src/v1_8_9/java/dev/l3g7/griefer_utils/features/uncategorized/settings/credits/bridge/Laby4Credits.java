@@ -36,7 +36,7 @@ public class Laby4Credits implements CreditsBridge {
 	public CategorySetting createIconSetting(String displayName, String icon) {
 		return CategorySetting.create()
 			.name(displayName)
-			.icon("XZRF:high_res/credits/" + icon);
+			.icon("high_res/credits/" + icon);
 	}
 
 	public BaseSetting<?> createTextSetting(String... text) {
@@ -74,6 +74,7 @@ public class Laby4Credits implements CreditsBridge {
 	public BaseSetting<?> createUserSetting() {
 		return CategorySetting.create()
 			.name("Vielen Dank für das Nutzen von GrieferUtils!")
+			.<CategorySettingImpl>into()
 			.icon(Icons.OWN_SKULL);
 	}
 

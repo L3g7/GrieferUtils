@@ -40,11 +40,11 @@ public class AfkNick extends Feature {
 		.description("Wie du genickt werden willst, wenn du AFK bist." +
 			"\n%name% wird mit deinem Namen ersetzt.")
 		.defaultValue("AFK_%name%")
-		.icon("XZRF:name_tag");
+		.icon("name_tag");
 
 	private final KeySetting triggerAfk = KeySetting.create()
 		.name("Hotkey")
-		.icon("XZRF:key")
+		.icon("key")
 		.description("Markiert dich automatisch als AFK, wenn diese Taste gedrückt wird.")
 		.pressCallback(b -> {
 			if (!b)
@@ -59,24 +59,24 @@ public class AfkNick extends Feature {
 		.name("Minuten")
 		.description("Nach wie vielen Minuten du als AFK eingestuft werden sollst.")
 		.defaultValue(5)
-		.icon("XZRF:clock");
+		.icon("clock");
 
 	private final NumberSetting seconds = NumberSetting.create()
 		.name("Sekunden")
 		.description("Nach wie vielen Sekunden du als AFK eingestuft werden sollst.")
-		.icon("XZRF:clock");
+		.icon("clock");
 
 	private final StringSetting messageReply = StringSetting.create()
 		.name("Nachricht-\nbeantworter")
 		.description("Mit welcher Nachricht geantwortet wird, wenn dir jemand eine /msg schreibt, während du AFK bist."
 			+ "\n(Leerlassen zum deaktivieren)")
-		.icon("XZRF:book_and_quill");
+		.icon("book_and_quill");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Automatisch nicken wenn AFK")
 		.description("Nickt dich, wenn du eine bestimmte, einstellbare Zeit AFK bist.")
-		.icon("XZRF:afk_timer")
+		.icon("afk_timer")
 		.subSettings(nickName, messageReply, triggerAfk, HeaderSetting.create(), minutes, seconds);
 
 	@EventListener(triggerWhenDisabled = true)

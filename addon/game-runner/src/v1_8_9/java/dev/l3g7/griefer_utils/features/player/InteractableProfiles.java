@@ -35,7 +35,7 @@ public class InteractableProfiles extends Feature {
 			Macht Folgendes interagierbar:
 			- Den Kopf des Spielers (Öffnet Claninfos)
 			- Die Citybuild-Anzeige (Switcht zum CB)""")
-		.icon("XZRF:mouse_left");
+		.icon("mouse_left");
 
 	@EventListener
 	public void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {

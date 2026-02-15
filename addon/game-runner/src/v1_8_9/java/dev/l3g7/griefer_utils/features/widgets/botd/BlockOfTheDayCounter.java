@@ -29,13 +29,13 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 	private final SwitchSetting showPopup = SwitchSetting.create()
 		.name("Popup anzeigen")
 		.description("Zeigt ein Popup an, wenn ein Block des Tages gefunden wurde.")
-		.icon("XZRF:bell");
+		.icon("bell");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Block des Tages-Zähler")
 		.description("Zählt, wie oft Block des Tages gefunden wurde.")
-		.icon("XZRF:brick")
+		.icon("brick")
 		.subSettings(showPopup);
 
 	public static void onBotd() {

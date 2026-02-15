@@ -100,7 +100,7 @@ public class AssetsChecker {
 						int start = startIndices[index - 1] + 1;
 						short length = (short) (((content[start++] & 0xFF) << 8) | (content[start++] & 0xFF));
 						String data = new String(content, start, length);
-						files.remove(data.startsWith("XZRF:") ? data.substring("XZRF:".length()) : data);
+						files.remove(data);
 					}
 					else if (b == 5 || b == 6) {
 						// CONSTANT_Long_info / CONSTANT_Double_info take two entries

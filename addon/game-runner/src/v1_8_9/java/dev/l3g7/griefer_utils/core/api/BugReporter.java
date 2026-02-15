@@ -38,21 +38,21 @@ public class BugReporter {
 		.name("UUID mitsenden")
 		.description("Ob deine Minecraft-UUID als Kontaktmöglichkeit mitgesendet werden soll.")
 		.config("settings.automatic_bug_reporting.uuid")
-		.icon("XZRF:steve")
+		.icon("steve")
 		.defaultValue(true);
 
 	public static final SwitchSetting shouldSendIdentifiers = SwitchSetting.create()
 		.name("Korrelationsidentifier mitsenden")
 		.description("Ob deine Korrelationsidentifier mitgesendet werden sollen.", "(Persistente Zufallszahlen, mit denen das GrieferUtils-Team Bugreports vom gleichen Einsender gruppieren kann.)")
 		.config("settings.automatic_bug_reporting.identifiers")
-		.icon("XZRF:cpu")
+		.icon("cpu")
 		.defaultValue(true);
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Automatische Fehlermeldung")
 		.description("Meldet automatisch durch GrieferUtils ausgelöste Fehler.")
 		.config("settings.automatic_bug_reporting.enabled")
-		.icon("XZRF:bug")
+		.icon("bug")
 		.defaultValue(true)
 		.subSettings(
 			shouldSendUuid, shouldSendIdentifiers, SuppressErrors.enabled,

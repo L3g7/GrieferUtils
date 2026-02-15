@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons.L3Icon;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +55,14 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	}
 
 	@Override
-	default S icon(Object icon) {
+	default S icon(String icon) {
+		getStorage().icon = Icons.of(icon);
+		Reflection.set(this, "iconData", getStorage().icon.toIconData());
+		return (S) this;
+	}
+
+	@Override
+	default S icon(ItemStack icon) {
 		getStorage().icon = Icons.of(icon);
 		Reflection.set(this, "iconData", getStorage().icon.toIconData());
 		return (S) this;

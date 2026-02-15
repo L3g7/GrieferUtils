@@ -15,7 +15,7 @@ import static net.minecraft.util.EnumChatFormatting.RED;
 public class ScammerList extends PlayerList {
 
 	public ScammerList() {
-		super("§xScammerliste", "Markiert Spieler in der Scammerliste des CommunityRadars.", "⚠", "XZRF:player_red", "Eigene Scammer", RED, 14, "§c§lScammer", "https://data.community-radar.de/versions/v2/scammer.json");
+		super("§xScammerliste", "Markiert Spieler in der Scammerliste des CommunityRadars.", "⚠", "player_red", "Eigene Scammer", RED, 14, "§c§lScammer", "https://data.community-radar.de/versions/v2/scammer.json");
 	}
 
 }

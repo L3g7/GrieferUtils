@@ -34,7 +34,7 @@ public class SlowChatCooldown extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("SlowChat-Cooldown")
 		.description("Zeigt dir den 10s-Cooldown nach dem Schreiben einer Nachricht bei aktiviertem SlowChat in der Actionbar an.")
-		.icon("XZRF:hourglass");
+		.icon("hourglass");
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessage(MessageReceiveEvent event) {

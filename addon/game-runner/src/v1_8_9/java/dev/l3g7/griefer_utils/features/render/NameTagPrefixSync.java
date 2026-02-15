@@ -27,7 +27,7 @@ public class NameTagPrefixSync extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Nametag mit Prefix")
 		.description("Färbt den Namen über dem Kopf so, dass er zum ausgewählten Prefix passt.")
-		.icon("XZRF:name_tag_rainbow");
+		.icon("name_tag_rainbow");
 
 	@EventListener
 	public void onDisplayNameRender(DisplayNameGetEvent event) {

@@ -39,7 +39,7 @@ public class ClanTags extends Feature {
 	private static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Clantags")
 		.description("Zeigt den Clantag eines Spielers unter seinem Nametag.")
-		.icon("XZRF:name_tag_rainbow")
+		.icon("name_tag_rainbow")
 		.callback(ClanTags::toggleSubtitles);
 
 	@EventListener(triggerWhenDisabled = true)

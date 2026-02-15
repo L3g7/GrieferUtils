@@ -35,7 +35,7 @@ public class HeadOwner extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("HeadOwner")
 		.description("Zeigt dir den Spieler, dessen Kopf du ansiehst.")
-		.icon("XZRF:steve");
+		.icon("steve");
 
 	@Override
 	public String getValue() {

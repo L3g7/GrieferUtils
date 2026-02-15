@@ -16,19 +16,19 @@ public class CleanupScoreboard extends Feature  {
 
 	final SwitchSetting playTime = SwitchSetting.create()
 		.name("Spielzeit entfernen")
-		.icon("XZRF:clock")
+		.icon("clock")
 		.defaultValue(true);
 
 	final SwitchSetting ip = SwitchSetting.create()
 		.name("IP entfernen")
-		.icon("XZRF:griefer_games")
+		.icon("griefer_games")
 		.defaultValue(true);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Scoreboard aufräumen")
 		.description("Löscht bestimmte Einträge im Scoreboard")
-		.icon("XZRF:wooden_board")
+		.icon("wooden_board")
 		.subSettings(playTime, ip);
 
 }

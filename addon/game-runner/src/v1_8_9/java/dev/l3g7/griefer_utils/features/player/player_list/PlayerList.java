@@ -63,26 +63,26 @@ public abstract class PlayerList extends Feature {
 	public final DropDownSetting<MarkAction> tabAction = DropDownSetting.create(MarkAction.class)
 		.name("in Tabliste")
 		.description("Ob Spieler in dieser Liste in der Tabliste markiert werden sollen.")
-		.icon("XZRF:blackboard")
+		.icon("blackboard")
 		.defaultValue(ICON)
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	public final DropDownSetting<MarkAction> chatAction = DropDownSetting.create(MarkAction.class)
 		.name("in Chat")
 		.description("Ob Spieler in dieser Liste im Chat markiert werden sollen.")
-		.icon("XZRF:chat")
+		.icon("chat")
 		.defaultValue(ICON);
 
 	public final DropDownSetting<MarkAction> displayNameAction = DropDownSetting.create(MarkAction.class)
 		.name("Vor Nametag")
 		.description("Ob Spieler in dieser Liste eine Markierung vor ihrem Namen haben sollen.")
-		.icon("XZRF:name_tag_yellow")
+		.icon("name_tag_yellow")
 		.defaultValue(ICON);
 
 	public final SwitchSetting showInProfile = SwitchSetting.create()
 		.name("In /profil anzeigen")
 		.description("Ob das Profil von Spielern in dieser Liste markiert werden soll.")
-		.icon("XZRF:steve")
+		.icon("steve")
 		.defaultValue(true);
 
 	public final AbstractSetting<?, List<PlayerListEntry>> customEntries;
@@ -91,7 +91,7 @@ public abstract class PlayerList extends Feature {
 	public final SwitchSetting enabled = SwitchSetting.create()
 		.callback(TabListEvent::updatePlayerInfoList);
 
-	public PlayerList(String name, String description, String chatIcon, Object settingIcon, String entryDescription, EnumChatFormatting color, int paneType, String message, String url) {
+	public PlayerList(String name, String description, String chatIcon, String settingIcon, String entryDescription, EnumChatFormatting color, int paneType, String message, String url) {
 		if (LABY_4.isActive())
 			customEntries = new PlayerListSettingLaby4()
 				.callback(TabListEvent::updatePlayerInfoList);

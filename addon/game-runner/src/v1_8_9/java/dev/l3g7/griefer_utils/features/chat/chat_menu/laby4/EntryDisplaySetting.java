@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
+import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
@@ -44,9 +45,9 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 		set(entry.enabled);
 
 		switch (entry.iconType) {
-			case SYSTEM -> icon(entry.icon);
+			case SYSTEM -> entry.setIcon(this);
 			case DEFAULT -> icon(entry.action.defaultIcon);
-			case IMAGE_FILE -> icon(new ResourceLocation("griefer_utils/user_content/" + entry.icon.hashCode()));
+			case IMAGE_FILE -> icon(Icon.texture((net.labymod.api.client.resources.ResourceLocation) new ResourceLocation("griefer_utils/user_content/" + entry.icon.hashCode())));
 			case ITEM -> icon(entry.getIconAsItemStack());
 		}
 	}

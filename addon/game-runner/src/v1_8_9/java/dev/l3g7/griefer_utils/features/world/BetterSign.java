@@ -39,7 +39,7 @@ public class BetterSign extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Schilder verbessern")
 		.description("Fügt Unterstützung für Cursorbewegung, Auswahl und Copy & Paste bei Schildern hinzu.")
-		.icon("XZRF:sign");
+		.icon("sign");
 
 	@EventListener
 	public void onGuiOpen(GuiOpenEvent<GuiEditSign> event) {

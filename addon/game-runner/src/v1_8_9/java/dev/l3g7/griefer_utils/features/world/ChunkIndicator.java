@@ -33,32 +33,32 @@ public class ChunkIndicator extends Feature {
 	private final SwitchSetting yellow_lines = SwitchSetting.create()
 		.name("Gelbe Linien", "(Alle 2 Blöcke)")
 		.description("Ob die 2x2-Linien angezeigt werden sollen.")
-		.icon("XZRF:dye_yellow")
+		.icon("dye_yellow")
 		.defaultValue(true);
 
 	private final SwitchSetting cyan_lines = SwitchSetting.create()
 		.name("Türkise Linien", "(Alle 8 Blöcke)")
 		.description("Ob die 8x8-Linien angezeigt werden sollen.")
-		.icon("XZRF:dye_cyan")
+		.icon("dye_cyan")
 		.defaultValue(true);
 
 	private final SwitchSetting blue_lines = SwitchSetting.create()
 		.name("Blaue Linien", "(Alle 16 Blöcke)")
 		.description("Ob die 16x16-Linien angezeigt werden sollen.")
-		.icon("XZRF:dye_blue")
+		.icon("dye_blue")
 		.defaultValue(true);
 
 	private final SwitchSetting red_lines = SwitchSetting.create()
 		.name("Rote Linien", "(Nachbar-Chunks)")
 		.description("Ob die Linien zur Begrenzung der anliegenden Chunks angezeigt werden sollen.")
-		.icon("XZRF:dye_red")
+		.icon("dye_red")
 		.defaultValue(true);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Chunk-Grenzen anzeigen")
 		.description("Zeigt die Chunkgrenzen an. (Ähnlich wie F3 + G seit 1.10)")
-		.icon("XZRF:earth")
+		.icon("earth")
 		.subSettings(yellow_lines, cyan_lines, blue_lines, red_lines)
 		.addHotkeySetting("die Chunk-Grenzen", TOGGLE);
 

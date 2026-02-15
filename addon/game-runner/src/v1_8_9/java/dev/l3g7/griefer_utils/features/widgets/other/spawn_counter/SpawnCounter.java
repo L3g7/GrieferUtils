@@ -45,7 +45,6 @@ import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -77,19 +76,19 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 	final DropDownSetting<NotificationType> notificationType = DropDownSetting.create(NotificationType.class)
 		.name("Nachricht")
 		.description("Wie die Benachrichtung aussehen soll, wenn eine Runde abgeschlossen wurde.")
-		.icon("XZRF:clock")
+		.icon("clock")
 		.defaultValue(NotificationType.ACTIONBAR);
 
 	private final DropDownSetting<RoundDisplayType> displayType = DropDownSetting.create(RoundDisplayType.class)
 		.name("Rundenart")
 		.description("Welche Arten von Runden angezeigt werden sollen.")
-		.icon("XZRF:speed")
+		.icon("speed")
 		.defaultValue(RoundDisplayType.BOTH);
 
 	final DropDownSetting<LeaderboardDisplayType> leaderboard = DropDownSetting.create(LeaderboardDisplayType.class)
 		.name("Leaderboard")
 		.description("Das Aussehen des Leaderboards.\nBei §oAus§r wird auch die Teilnahme am Leaderboard deaktiviert.")
-		.icon("XZRF:trophy")
+		.icon("trophy")
 		.defaultValue(LeaderboardDisplayType.ON)
 		.callback(t -> {
 			if (t != LeaderboardDisplayType.OFF && ServerCheck.isOnGrieferGames() && getLeaderboardHandler().data != null)
@@ -100,7 +99,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spawn-Runden Zähler")
 		.description("Zählt, wie viele Runden um den Spawn gelaufen wurden.")
-		.icon("XZRF:speed")
+		.icon("speed")
 		.subSettings(notificationType, displayType, leaderboard, HeaderSetting.create());
 
 	public SpawnCounter() {
@@ -453,14 +452,14 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 			Component value = Component.empty();
 
 			if (displayType.get() != RoundDisplayType.FLOWN)
-				value.append(Component.icon(Icons.of("speed", -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT))
+				value.append(Component.icon(Icons.offset(Icons.of("speed"), -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT))
 					.append(Component.text(roundHandler.roundsRan));
 
 			if (displayType.get() == RoundDisplayType.BOTH)
 				value.append(Component.text(" "));
 
 			if (displayType.get() != RoundDisplayType.RAN)
-				value.append(Component.icon(Icons.of("booster/fly", -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)) // NOTE: cleanup
+				value.append(Component.icon(Icons.offset(Icons.of("booster/fly"), -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)) // NOTE: cleanup
 					.append(Component.text(roundHandler.roundsFlown));
 
 			if (leaderboard.get() == LeaderboardDisplayType.COMPACT)
@@ -571,7 +570,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 					this.first = createRenderableComponent(
 						Component.text(DECIMAL_FORMAT_98.format(data.position + offset) + ". ", textColor));
 					this.second = createRenderableComponent(
-						Component.icon(Icons.of(Icon.head(uuid), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
+						Component.icon(Icons.offset(Icon.head(uuid), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
 							.append(Component.text(" " + name + ": " + score, textColor)));
 
 					maxPosWidth = Math.max(maxPosWidth, this.first.getWidth());

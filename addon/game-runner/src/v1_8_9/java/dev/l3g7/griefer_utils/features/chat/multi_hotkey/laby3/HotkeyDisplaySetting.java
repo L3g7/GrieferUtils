@@ -47,7 +47,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 		this.name = StringSetting.create()
 			.name("Name")
 			.description("Wie dieser Hotkey heißen soll.")
-			.icon(Items.writable_book)
+			.icon("name_tag")
 			.callback(title -> {
 				if (title.trim().isEmpty())
 					title = "Unbenannter Hotkey";
@@ -130,7 +130,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 	}
 
 	protected void onChange() {
-		icon(citybuild.get());
+		icon(citybuild.get().toItemStack());
 		FileProvider.getSingleton(MultiHotkey.class).onChange();
 	}
 

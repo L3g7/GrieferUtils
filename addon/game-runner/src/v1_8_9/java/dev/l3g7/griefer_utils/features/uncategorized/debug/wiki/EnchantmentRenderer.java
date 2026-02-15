@@ -88,7 +88,7 @@ public class EnchantmentRenderer {
 		if (ench)
 			display("Started");
 		itemRenderer = new ItemRenderer(player().getHeldItem(), scale.get());
-	}).subSettings(scale).icon(ItemUtil.createItem(Items.enchanted_book, 0, true));
+	}).subSettings(scale).icon("enchanted_book");
 
 	@SubscribeEvent(priority= EventPriority.HIGHEST)
 	public void onFrameStart(TickEvent.RenderTickEvent e) {

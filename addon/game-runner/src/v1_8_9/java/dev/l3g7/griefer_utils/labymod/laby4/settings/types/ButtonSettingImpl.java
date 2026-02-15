@@ -39,8 +39,12 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 	}
 
 	@Override
-	public ButtonSetting buttonIcon(Object icon) {
-		buttonIcon = Icons.of(GUIHierarchyTree.handleXZRF(icon));
+	public ButtonSetting buttonIcon(String icon) {
+		return buttonIcon(Icons.of(icon));
+	}
+
+	public ButtonSetting buttonIcon(Icon icon) {
+		buttonIcon = icon;
 		return this;
 	}
 

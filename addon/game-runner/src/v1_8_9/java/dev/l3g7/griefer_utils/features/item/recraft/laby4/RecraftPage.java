@@ -57,7 +57,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 	public final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 		.name("Name")
 		.description("Wie diese Seite heißen soll.")
-		.icon("XZRF:name_tag")
+		.icon("name_tag")
 		.callback(s -> {
 			pages.notifyChange();
 			Laby4Util.setPageTitle(s);
@@ -65,7 +65,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 
 	public final RecraftRecording.RecraftRecordingListSetting recordings = new RecraftRecording.RecraftRecordingListSetting()
 		.name("Aufzeichnungen")
-		.icon("XZRF:camera")
+		.icon("camera")
 		.callback(pages::notifyChange);
 
 	public RecraftPage(String name) {
@@ -160,7 +160,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 
 			ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), get().size()) {
 				public Icon getIcon() {
-					return Icons.of(Items.map); // NOTE: filled map if not empty?
+					return Icons.of("command_suggestions");
 				}
 			};
 
@@ -216,7 +216,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 					SettingsImpl.hookChildAdd(s, e -> {
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
 							// Fix icon
-							IconWidget widget = new IconWidget(Icons.of(Items.map)); // NOTE: duplicate code
+							IconWidget widget = new IconWidget(Icons.of("command_suggestions")); // NOTE: duplicate code
 							widget.addId("setting-icon");
 							content.addChild(0, new FlexibleContentEntry(widget, false));
 							widget.initialize(content);

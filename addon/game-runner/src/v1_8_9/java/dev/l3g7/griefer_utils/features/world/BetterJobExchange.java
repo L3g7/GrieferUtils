@@ -31,19 +31,19 @@ public class BetterJobExchange extends Feature {
 	private static final SwitchSetting calculateInv = SwitchSetting.create()
 		.name("Stacks im Inventar anzeigen")
 		.description("Zeigt an, wie viele Stacks sich im Inventar befinden und für wie viel diese gekauft werden würden.")
-		.icon("XZRF:bundle")
+		.icon("bundle")
 		.defaultValue(true);
 
 	private static final SwitchSetting calculateDKs = SwitchSetting.create()
 		.name("In DKs umrechnen")
 		.description("Zeigt neben Angeboten eine in DKs umgerechnete Version an.")
-		.icon("XZRF:chest");
+		.icon("chest");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Jobbörse verbessern")
 		.description("Verbessert die Jobbörse.")
-		.icon("XZRF:wooden_board")
+		.icon("wooden_board")
 		.subSettings(calculateInv, calculateDKs);
 
 	@EventListener

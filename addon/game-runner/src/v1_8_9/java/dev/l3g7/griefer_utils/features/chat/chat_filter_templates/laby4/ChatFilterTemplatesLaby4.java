@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
 import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
@@ -100,6 +101,7 @@ public class ChatFilterTemplatesLaby4 extends ChatFilterTemplates {
 							templateList.addSetting(
 								ButtonSetting.create()
 									.name(template.name)
+									.<ButtonSettingImpl>into()
 									.buttonIcon(Textures.SpriteCommon.DARK_ADD)
 									.callback(() -> loadTemplate(self, template)));
 						}

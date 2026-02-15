@@ -41,18 +41,18 @@ public class AutoPortal extends Feature {
 	private final SwitchSetting join = SwitchSetting.create()
 		.name("/portal beim Start")
 		.description("Betritt automatisch GrieferGames, sobald Minecraft gestartet wurde.")
-		.icon("XZRF:portal");
+		.icon("portal");
 
 	private final SwitchSetting maximize = SwitchSetting.create()
 		.name("Automatisch maximieren")
 		.description("Ob Minecraft nach dem Starten automatisch maximiert werden soll.")
-		.icon("XZRF:glass_pane");
+		.icon("glass_pane");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Automatisch /portal")
 		.description("Betritt automatisch den Portalraum.")
-		.icon("XZRF:portal")
+		.icon("portal")
 		.subSettings(citybuild, join, maximize);
 
 	public void init() {

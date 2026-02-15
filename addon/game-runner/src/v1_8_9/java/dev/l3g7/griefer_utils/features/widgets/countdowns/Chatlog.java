@@ -28,21 +28,21 @@ public class Chatlog extends SimpleWidget {
 	private final DropDownSetting<TimeFormat> timeFormat = DropDownSetting.create(TimeFormat.class)
 		.name("Zeitformat")
 		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
-		.icon("XZRF:hourglass")
+		.icon("hourglass")
 		.config("modules.chatlog.time_format")
 		.defaultValue(TimeFormat.LONG);
 
 	private final SwitchSetting hide = SwitchSetting.create()
 		.name("Verstecken, wenn fertig")
 		.description("Ob das Modul versteckt werden soll, wenn derzeit kein Cooldown existiert.")
-		.icon("XZRF:glass_pane")
+		.icon("glass_pane")
 		.config("modules.chatlog.hide");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Chatlog")
 		.description("Zeigt dir den verbleibenden Cooldown bis zum nächsten /chatlog an.")
-		.icon("XZRF:clock")
+		.icon("clock")
 		.subSettings(timeFormat, hide);
 
 	private final Countdown countdown = Countdown.ticking();

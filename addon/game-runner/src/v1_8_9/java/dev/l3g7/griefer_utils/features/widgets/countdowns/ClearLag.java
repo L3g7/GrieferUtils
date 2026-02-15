@@ -36,24 +36,24 @@ public class ClearLag extends SimpleWidget {
 	private final DropDownSetting<TimeFormat> timeFormat = DropDownSetting.create(TimeFormat.class)
 		.name("Zeitformat")
 		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
-		.icon("XZRF:hourglass")
+		.icon("hourglass")
 		.defaultValue(TimeFormat.LONG);
 
 	private final NumberSetting warnTime = NumberSetting.create()
 		.name("Warn-Zeit (s)")
 		.description("Wie viele Sekunden vor dem nächsten Clearlag eine Warnung angezeigt werden soll.")
-		.icon("XZRF:clock");
+		.icon("clock");
 
 	private final SwitchSetting preventDrop = SwitchSetting.create()
 		.name("Droppen verhindern")
 		.description("Verhindert das Droppen von Items, wenn die Warnung angezeigt wird.")
-		.icon("XZRF:hopper");
+		.icon("hopper");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Clearlag")
 		.description("Zeigt dir die Zeit bis zum nächsten Clearlag an.")
-		.icon("XZRF:crossed_out_gold_ingot")
+		.icon("crossed_out_gold_ingot")
 		.subSettings(timeFormat, warnTime, preventDrop);
 
 	private final Countdown countdown = Countdown.ticking();

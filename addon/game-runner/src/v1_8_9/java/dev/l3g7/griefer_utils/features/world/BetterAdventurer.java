@@ -41,20 +41,20 @@ public class BetterAdventurer extends Feature {
 	private final SwitchSetting displayMissing = SwitchSetting.create()
 		.name("Fehlende Items anzeigen")
 		.description("Zeigt unter Adventure-Items sowie beim Abgeben an, wie viel noch fehlt.")
-		.icon("XZRF:brick")
+		.icon("brick")
 		.defaultValue(true);
 
 	private final SwitchSetting coinAmount = SwitchSetting.create()
 		.name("Coin-Anzeige fixen")
 		.description("Setzt die Anzahl des Coin-Anzeige-Items auf die Anzahl der Coins.")
-		.icon("XZRF:enchanted_fire_charge")
+		.icon("enchanted_fire_charge")
 		.defaultValue(true);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Adventurer verbessern")
 		.description("Verbessert den Adventurer.")
-		.icon("XZRF:enchanted_fire_charge")
+		.icon("enchanted_fire_charge")
 		.subSettings(displayMissing, coinAmount);
 
 	@EventListener

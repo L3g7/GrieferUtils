@@ -52,7 +52,7 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 
 	private final ExtendedStorage<List<String>> storage;
 	private String placeholder = "";
-	private Icon entryIcon;
+	private String entryIcon;
 
 	public StringListSettingImpl() {
 		super(UUID.randomUUID().toString(), null, null, new String[0], (SettingPermissionHolder) null, null, (byte) -127,
@@ -116,8 +116,8 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 	}
 
 	@Override
-	public StringListSetting entryIcon(Object icon) {
-		this.entryIcon = GUIHierarchyTree.handleXZRF(icon);
+	public StringListSetting entryIcon(String icon) {
+		this.entryIcon = icon;
 		return this;
 	}
 

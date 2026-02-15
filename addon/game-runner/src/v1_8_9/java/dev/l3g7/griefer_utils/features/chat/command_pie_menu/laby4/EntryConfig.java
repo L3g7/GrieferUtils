@@ -30,13 +30,13 @@ public class EntryConfig extends net.labymod.api.configuration.loader.Config imp
 	public final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 		.name("Name")
 		.description("Wie der Eintrag heißen soll.")
-		.icon(Items.writable_book)
+		.icon("name_tag")
 		.callback(CommandPieMenu.pages::notifyChange);
 
 	public final StringSettingImpl command = (StringSettingImpl) StringSetting.create()
 		.name("Befehl")
 		.description("Welcher Befehl ausgeführt werden soll, wenn dieser Eintrag ausgewählt wird.")
-		.icon(Blocks.command_block)
+		.icon("book_and_quill")
 		.callback(CommandPieMenu.pages::notifyChange);
 
 	public final CitybuildSettingImpl citybuild = (CitybuildSettingImpl) CitybuildSetting.create()

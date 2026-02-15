@@ -89,7 +89,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 			}
 
 			private Component toComponent(Citybuild entry) {
-				return Component.icon(Icons.of(entry.toItemStack(), -1, 0, 0.9f))
+				return Component.icon(Icons.offset(entry.toItemStack(), -1, 0, 0.9f))
 					.append(Component.text(entry.getName()));
 			}
 

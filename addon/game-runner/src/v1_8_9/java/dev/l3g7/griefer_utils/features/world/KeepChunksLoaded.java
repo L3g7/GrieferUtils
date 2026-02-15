@@ -43,7 +43,7 @@ public class KeepChunksLoaded extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Chunks geladen lassen")
-		.icon("XZRF:filled_map")
+		.icon("filled_map")
 		.description("Lässt Chunks nicht entladen.")
 		.callback(enabled -> {
 			if (enabled)

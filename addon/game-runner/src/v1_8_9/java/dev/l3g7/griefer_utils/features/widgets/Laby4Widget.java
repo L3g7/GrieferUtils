@@ -192,7 +192,7 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 
 		CategorySettingImpl wrapper = (CategorySettingImpl) CategorySetting.create()
 			.name("Generelle Einstellungen")
-			.icon("XZRF:cog");
+			.icon("cog");
 
 		wrapper.addSettings(labySettings);
 		labySettings.clear();

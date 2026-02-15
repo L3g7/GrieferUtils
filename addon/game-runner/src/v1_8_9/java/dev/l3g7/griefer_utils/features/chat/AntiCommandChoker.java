@@ -47,8 +47,8 @@ public class AntiCommandChoker extends Feature {
 	private final StringListSetting customEntries = StringListSetting.create()
 		.name("Eigene Einträge")
 		.description("Wenn eine Nachricht mit einem dieser Einträge beginnt, wird sie abgefangen.")
-		.icon("XZRF:book_and_quill")
-		.entryIcon("XZRF:book_and_quill")
+		.icon("book_and_quill")
+		.entryIcon("book_and_quill")
 		.placeholder("Abzufangende Nachricht");
 
 	@MainElement
@@ -62,7 +62,7 @@ public class AntiCommandChoker extends Feature {
 			&p h
 			t/p h
 			t(p h""")
-		.icon("XZRF:crossed_out_chat")
+		.icon("crossed_out_chat")
 		.subSettings(LABY_4.isActive() ? null : HeaderSetting.create("§e§lEigene Einträge").scale(0.7), customEntries);
 
 	@EventListener

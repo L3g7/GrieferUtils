@@ -52,7 +52,7 @@ public class TrueSight extends Feature {
 	private final SliderSetting opacity = SliderSetting.create()
 		.name("Durchsichtigkeit (%)")
 		.description("Wie durchsichtig ein eigentlich unsichtbares Entity sein soll.")
-		.icon("XZRF:invisibility")
+		.icon("invisibility")
 		.min(0).max(100)
 		.defaultValue(85);
 
@@ -60,7 +60,7 @@ public class TrueSight extends Feature {
 	private final DropDownSetting<ToggleMode> toggleAll = DropDownSetting.create(ToggleMode.class)
 		.name("Alle umschalten")
 		.description("Schaltet alle Entities auf einmal an oder aus.")
-		.icon("XZRF:loop")
+		.icon("loop")
 		.defaultValue(ALL_OFF)
 		.callback(v -> {
 			if (v == CUSTOM)
@@ -77,7 +77,7 @@ public class TrueSight extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Unsichtbare Entities anzeigen")
 		.description("Macht unsichtbare Entities sichtbar.")
-		.icon("XZRF:invisibility")
+		.icon("invisibility")
 		.subSettings(opacity);
 
 	@Override
@@ -97,7 +97,7 @@ public class TrueSight extends Feature {
 		entities.put(EntityFallingBlock.class, SwitchSetting.create()
 			.name("Block")
 			.config(getConfigKey() + ".entities.falling_block")
-			.icon("XZRF:brick")
+			.icon("brick")
 			.callback(this::updateGlobalToggle));
 		add(EntityGhast.class, "Ghast");
 		add(EntityGiantZombie.class, "Riese");
@@ -112,7 +112,7 @@ public class TrueSight extends Feature {
 		entities.put(EntityPlayer.class, SwitchSetting.create()
 			.name("Spieler")
 			.config(getConfigKey() + ".entities.spieler")
-			.icon("XZRF:steve")
+			.icon("steve")
 			.callback(this::updateGlobalToggle));
 		add(EntityRabbit.class, "Hase");
 		add(EntitySheep.class, "Schaf");
@@ -138,7 +138,7 @@ public class TrueSight extends Feature {
 		entities.put(entity, SwitchSetting.create()
 			.name(name)
 			.config(getConfigKey() + ".entities." + UPPER_CAMEL.to(LOWER_UNDERSCORE, name))
-			.icon("XZRF:mob_icons/faithless/" + CLASS_TO_STRING_MAPPING.get(entity).toLowerCase())
+			.icon("mob_icons/faithless/" + CLASS_TO_STRING_MAPPING.get(entity).toLowerCase())
 			.defaultValue(entity == EntityPlayer.class)
 			.callback(this::updateGlobalToggle));
 	}

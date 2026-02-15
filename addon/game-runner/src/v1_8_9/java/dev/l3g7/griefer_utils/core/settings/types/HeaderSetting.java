@@ -8,6 +8,8 @@
 package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +40,12 @@ public interface HeaderSetting extends BaseSetting<HeaderSetting> {
 	}
 
 	@Override
-	default HeaderSetting icon(Object icon) {
+	default HeaderSetting icon(String icon) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	default HeaderSetting icon(ItemStack icon) {
 		throw new UnsupportedOperationException();
 	}
 

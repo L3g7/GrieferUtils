@@ -41,7 +41,7 @@ public class ReactionDisplaySetting extends SwitchSettingImpl {
 
 	public void initDisplay() {
 		name(reaction.trigger, "§e[" + MinecraftUtil.getCitybuildAbbreviation(reaction.citybuild.getName()) + "] §r§o➡ " + reaction.command);
-		icon(reaction.regEx ? "XZRF:cpu" : "XZRF:book_and_quill");
+		icon(reaction.regEx ? "cpu" : "book_and_quill");
 		set(reaction.enabled);
 	}
 
@@ -64,7 +64,7 @@ public class ReactionDisplaySetting extends SwitchSettingImpl {
 			if (w instanceof SettingWidget s && s.setting() == this) {
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
-						ButtonWidget btn = ButtonWidget.icon(Icons.of(GUIHierarchyTree.handleXZRF("XZRF:high_res/pencil_vec")), () ->
+						ButtonWidget btn = ButtonWidget.icon(Icons.of("high_res/pencil_vec"), () ->
 							mc().displayGuiScreen(new AddChatReactionGui(this, mc().currentScreen)));
 
 						btn.addId("advanced-button"); // required so LSS is applied

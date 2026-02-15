@@ -33,7 +33,7 @@ public class HeadTextureFix extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kopf-Texturen fixen")
-		.icon("XZRF:skull_steve")
+		.icon("skull_steve")
 		.description("Lädt Kopf-Texturen automatisch nach.");
 
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());

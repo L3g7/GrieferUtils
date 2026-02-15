@@ -51,7 +51,7 @@ public class Trajectories extends Feature {
 	private final DropDownSetting<TrajectoryMode> mode = DropDownSetting.create(TrajectoryMode.class)
 		.name("Flugbahn anzeigen")
 		.description("Zeigt dir die Flugbahn des gehaltenen Items an.")
-		.icon("XZRF:crosshair")
+		.icon("crosshair")
 		.defaultValue(TrajectoryMode.DISABLED);
 
 	private final Disk circle = new Disk();

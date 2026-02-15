@@ -72,7 +72,7 @@ public class Booster extends Widget {
 	private final DropDownSetting<KeyMode> design = DropDownSetting.create(KeyMode.class)
 		.name("Design")
 		.description("In welchem Design die derzeit aktiven Booster angezeigt werden sollen.")
-		.icon("XZRF:wooden_board")
+		.icon("wooden_board")
 		.config("modules.booster.design")
 		.defaultValue(KeyMode.TEXT_AND_ICON);
 
@@ -80,7 +80,7 @@ public class Booster extends Widget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Booster")
 		.description("Zeigt dir die momentan aktiven Booster an.")
-		.icon("XZRF:absorption")
+		.icon("absorption")
 		.subSettings(design);
 
 	private boolean waitingForBoosterGUI = false;
@@ -385,10 +385,10 @@ public class Booster extends Widget {
 
 				if (mode != KeyMode.TEXT) {
 					if (mode == KeyMode.ICON)
-						name.append(Component.icon(Icons.of("booster/" + data.displayName.toLowerCase(), -0.5f, -.5f), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
+						name.append(Component.icon(Icons.offset(Icons.of("booster/" + data.displayName.toLowerCase()), -0.5f, -.5f), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
 					else
 						// Text and icon
-						name.append(Component.icon(Icons.of("booster/" + data.displayName.toLowerCase(), .5f, -1), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
+						name.append(Component.icon(Icons.offset(Icons.of("booster/" + data.displayName.toLowerCase()), .5f, -1), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
 				}
 
 				if (mode == KeyMode.TEXT_AND_ICON)

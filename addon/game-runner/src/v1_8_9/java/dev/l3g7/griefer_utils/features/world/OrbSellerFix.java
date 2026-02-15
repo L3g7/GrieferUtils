@@ -51,14 +51,14 @@ public class OrbSellerFix extends Feature {
 	private final SwitchSetting restoreMousePos = SwitchSetting.create()
 		.name("Maus-Position wiederherstellen")
 		.description("Behebt, dass die Maus zur Mitte des Fensters bewegt wird, wenn etwas abgegeben wurde.")
-		.icon("XZRF:mouse");
+		.icon("mouse");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Orb-Händler fixen")
 		.description("Behebt, dass der Orb-Händler nicht sichtbar ist, wenn man sich mit einem Home zu ihm teleportiert."
 			 + "\n§8(Der Orbhändler auf dem Citybuild muss dafür seit dem letzten Server-Neustart gesehen worden sein.)")
-		.icon("XZRF:orbseller")
+		.icon("orbseller")
 		.subSettings(restoreMousePos);
 
 	@Override

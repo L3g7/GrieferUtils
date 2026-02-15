@@ -10,8 +10,6 @@ package dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -96,15 +94,15 @@ public class ItemProtection {
 
 	public enum ProtectionType {
 
-		DROP("drop", "Droppen unterbinden", "Ob das Droppen dieses Items unterbunden werden soll.", "XZRF:hopper"),
-		ITEM_PICKUP("extreme_drop", "Droppen unterbinden (extrem)", "Ob das Aufnehmen dieses Items in den Maus-Cursor unterbunden werden soll.", "XZRF:shield_with_sword"),
-		LEFT_CLICK("leftclick", "Linksklicks unterbinden", "Ob Linksklicks mit diesem Item unterbunden werden soll.", "XZRF:weakness"),
-		RIGHT_CLICK("rightclick", "Rechtsklicks unterbinden", "Ob Rechtsklicks mit diesem Item unterbunden werden soll.", "XZRF:creeper_spawn_egg");
+		DROP("drop", "Droppen unterbinden", "Ob das Droppen dieses Items unterbunden werden soll.", "hopper"),
+		ITEM_PICKUP("extreme_drop", "Droppen unterbinden (extrem)", "Ob das Aufnehmen dieses Items in den Maus-Cursor unterbunden werden soll.", "shield_with_sword"),
+		LEFT_CLICK("leftclick", "Linksklicks unterbinden", "Ob Linksklicks mit diesem Item unterbunden werden soll.", "weakness"),
+		RIGHT_CLICK("rightclick", "Rechtsklicks unterbinden", "Ob Rechtsklicks mit diesem Item unterbunden werden soll.", "creeper_spawn_egg");
 
 		private final Function<ItemProtection, SwitchSetting> settingSupplier;
 		final String configKey;
 
-		ProtectionType(String configKey, String name, String description, Object icon) {
+		ProtectionType(String configKey, String name, String description, String icon) {
 			this.configKey = configKey;
 			settingSupplier = protection -> SwitchSetting.create()
 				.name(name)

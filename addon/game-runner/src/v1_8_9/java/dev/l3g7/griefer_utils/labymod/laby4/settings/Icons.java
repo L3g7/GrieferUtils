@@ -19,9 +19,7 @@ import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.client.resources.ResourceLocation;
 import net.labymod.api.util.bounds.Rectangle;
 import net.labymod.core.client.render.font.component.DefaultComponentRendererBuilder;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -38,34 +36,20 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 public class Icons {
 	public static final Icon OWN_SKULL = new SkullIcon();
 
-	public static Icon of(Object icon) {
-		return switch (icon) {
-			case null -> null;
-			case String fileName -> of(ResourceLocation.create("griefer_utils", "icons/" + fileName + ".png"));
-			case ResourceLocation location -> Icon.texture(location);
-			case Icon i -> i;
-			case Item item -> of(new ItemStack(item));
-			case Block block -> of(new ItemStack(block));
-			case ItemStack stack -> new ItemStackIcon(stack, 0, 0, 1);
-			default ->
-				throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
-		};
-
+	public static Icon of(String icon) {
+		return Icon.texture(ResourceLocation.create("griefer_utils", "icons/" + icon + ".png"));
 	}
 
-	public static Icon of(Object icon, float offsetX, float offsetY) {
-		return of(icon, offsetX, offsetY, 1);
+	public static Icon of(ItemStack icon) {
+		return new ItemStackIcon(icon, 0, 0, 1);
 	}
 
-	public static Icon of(Object icon, float offsetX, float offsetY, float scale) {
-		if (icon instanceof ItemStack stack)
-			return new ItemStackIcon(stack, (int) offsetX, (int) offsetY, scale);
+	public static Icon offset(ItemStack icon, float offsetX, float offsetY, float scale) {
+		return new ItemStackIcon(icon, (int) offsetX, (int) offsetY, scale);
+	}
 
-		if (scale != 1)
-			throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " does not support scaling!");
-
-		Icon labyIcon = of(icon);
-		return new ProxiedIcon(() -> labyIcon, offsetX, offsetY);
+	public static Icon offset(Icon icon, float offsetX, float offsetY) {
+		return new ProxiedIcon(() -> icon, offsetX, offsetY);
 	}
 
 	/**

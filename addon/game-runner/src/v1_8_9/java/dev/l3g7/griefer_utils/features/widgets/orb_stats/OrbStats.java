@@ -105,7 +105,7 @@ public class OrbStats extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Orb-Statistik")
 		.description("Zeigt dir an, wie oft das zuletzt abgegebene Item insgesamt abgegeben wurde.")
-		.icon("XZRF:orb")
+		.icon("orb")
 		.callback(v -> {
 			// If no data is found, open and close /stats automatically
 			if (v && stats.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForStatsGui) {

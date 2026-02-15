@@ -37,7 +37,7 @@ public class ParticleSaver extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Partikel-Saver")
 		.description("Fragt beim Einlösen eines Partikel-Effekts nach einer Bestätigung.")
-		.icon("XZRF:particle");
+		.icon("particle");
 
 	private final IInventory inv = new InventoryBasic(ItemSearch.marker + "§0Willst du den Effekt einlösen?", false, 27);
 

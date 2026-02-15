@@ -78,17 +78,17 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	private final SwitchSetting spawnerWithHeldItemFix = SwitchSetting.create()
 		.name("Spawner mit Item öffnen")
 		.description("Ermöglicht das Öffnen von Spawnern auf öffentlichen Grundstücken, auch wenn man ein Item / einen Block in der Hand hält.")
-		.icon("XZRF:spawner");
+		.icon("spawner");
 
 	public final SwitchSetting hideMobPreview = SwitchSetting.create()
 		.name("Entity verstecken")
 		.description("Ob die kleine, sich drehende Vorschau des zu spawnenden Entities versteckt werden soll.")
-		.icon("XZRF:invisibility");
+		.icon("invisibility");
 
 	public final SwitchSetting hideParticles = SwitchSetting.create()
 		.name("Partikel verstecken")
 		.description("Ob die Partikel vom Spawner versteckt werden sollen.")
-		.icon("XZRF:particle");
+		.icon("particle");
 
 	private final NumberSetting range = NumberSetting.create()
 		.name("Radius")
@@ -96,29 +96,29 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 			+ "\n(-1 ist unendlich)")
 		.defaultValue(-1)
 		.min(-1)
-		.icon("XZRF:measurement");
+		.icon("measurement");
 
 	private final SwitchSetting showSpawnerIcons = SwitchSetting.create()
 		.name("Spawner-Icons anzeigen")
 		.description("Zeigt an Spawnern ein Icon des Mobs an, das gespawnt wird.")
-		.icon("XZRF:mob_icons/outlined_minecraft/silverfish")
+		.icon("mob_icons/outlined_minecraft/silverfish")
 		.subSettings(range);
 
 	private final SwitchSetting markTriggeredSpawners = SwitchSetting.create()
 		.name("Aktivierte Spawner markieren")
 		.description("Markiert Spawner, die von der Position des Spielers aktiviert werden.")
-		.icon("XZRF:light_bulb");
+		.icon("light_bulb");
 
 	private final SwitchSetting markLastOpenedSpawner = SwitchSetting.create()
 		.name("Zuletzt geöffneten Spawner markieren")
 		.description("Markiert den Spawner, der als letztes geöffnet wurde.")
-		.icon("XZRF:spawner");
+		.icon("spawner");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spawner verbessern")
 		.description("Verbessert Spawner.")
-		.icon("XZRF:spawner")
+		.icon("spawner")
 		.subSettings(spawnerWithHeldItemFix, showSpawnerIcons, markTriggeredSpawners, markLastOpenedSpawner, HeaderSetting.create(), hideMobPreview, hideParticles);
 
 	@Override

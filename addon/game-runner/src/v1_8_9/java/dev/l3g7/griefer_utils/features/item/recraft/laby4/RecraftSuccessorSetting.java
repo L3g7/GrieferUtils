@@ -33,7 +33,6 @@ import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
 import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
 import net.labymod.api.util.KeyValue;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 
 import java.lang.reflect.ParameterizedType;
@@ -87,12 +86,12 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 				icon(v.icon);
 			} else {
 				name("§7[Kein Nachfolger]");
-				icon("XZRF:barrier");
+				icon("barrier");
 			}
 		});
 
 		name("§7[Kein Nachfolger]");
-		icon("XZRF:barrier");
+		icon("barrier");
 	}
 
 	@Override
@@ -101,7 +100,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 
 		ButtonSettingImpl selectNothing = (ButtonSettingImpl) ButtonSetting.create()
 			.name("Nichts auswählen")
-			.icon("XZRF:barrier")
+			.icon("barrier")
 			.buttonLabel("Auswählen")
 			.callback(() -> {
 				RecraftSuccessorSetting.this.set(null);
@@ -157,7 +156,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 							return;
 
 						// Fix icon
-						IconWidget widget = new IconWidget(Icons.of(Items.map)); // NOTE: duplicate code
+						IconWidget widget = new IconWidget(Icons.of("command_suggestions")); // NOTE: duplicate code
 						widget.addId("setting-icon");
 						content.addChild(0, new FlexibleContentEntry(widget, false));
 						widget.initialize(content);
@@ -209,7 +208,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 			this.storage = storage;
 			this.page = page;
 			this.name(page.name.get());
-			this.icon(Icons.of(Items.map));
+			this.icon("command_suggestions");
 		}
 
 		@Override
@@ -268,7 +267,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 								return;
 
 							// Fix icon
-							IconWidget widget = new IconWidget(Icons.of(Items.map)); // NOTE: duplicate code; not required?
+							IconWidget widget = new IconWidget(Icons.of("command_suggestions")); // NOTE: duplicate code; not required?
 							widget.addId("setting-icon");
 							content.addChild(0, new FlexibleContentEntry(widget, false));
 							widget.initialize(content);

@@ -21,6 +21,7 @@ import net.labymod.utils.DrawUtils;
 import net.labymod.utils.ModColor;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
 import java.lang.invoke.MethodHandle;
@@ -95,7 +96,13 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElem
 	}
 
 	@Override
-	public DropDownSetting<E> icon(Object icon) {
+	public DropDownSetting<E> icon(String icon) {
+		menu.setTitle("");
+		return Laby3Setting.super.icon(icon);
+	}
+
+	@Override
+	public DropDownSetting<E> icon(ItemStack icon) {
 		menu.setTitle("");
 		return Laby3Setting.super.icon(icon);
 	}

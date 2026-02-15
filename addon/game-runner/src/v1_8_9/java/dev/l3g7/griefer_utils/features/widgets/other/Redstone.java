@@ -26,7 +26,7 @@ public class Redstone extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Redstone")
 		.description("Zeigt dir den Redstonestatus an.")
-		.icon("XZRF:redstone");
+		.icon("redstone");
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onMMCustomPayload(MysteryModPayloadEvent event) {

@@ -59,7 +59,7 @@ public class ItemCounter {
 	public static SwitchSetting enabled = SwitchSetting.create()
 		.name("Item-Zähler")
 		.description("Zeigt anstatt der Haltbarkeit an, wie viele Items von dem Typ in dem derzeitigen Inventar vorhanden sind.")
-		.icon("XZRF:bundle")
+		.icon("bundle")
 		.config("modules.held_item_counter.enabled");
 
 	@ExclusiveTo(LABY_3)
@@ -116,7 +116,7 @@ public class ItemCounter {
 		SwitchSettingImpl switchSetting = (SwitchSettingImpl) SwitchSetting.create()
 			.name("Item-Zähler")
 			.description("Zeigt anstatt der Stack-Größe an, wie viele Items von dem Typ in dem derzeitigen Inventar vorhanden sind.")
-			.icon("XZRF:bundle")
+			.icon("bundle")
 			.config("modules." + configKey + ".enabled");
 
 		// Copy item counter's settings

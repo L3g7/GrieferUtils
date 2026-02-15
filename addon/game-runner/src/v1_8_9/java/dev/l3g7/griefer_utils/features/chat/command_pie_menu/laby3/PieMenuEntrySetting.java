@@ -31,7 +31,7 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 		this.name = StringSetting.create()
 			.name("Name")
 			.description("Wie dieser Eintrag heißen soll.")
-			.icon(Items.writable_book)
+			.icon("name_tag")
 			.callback(title -> {
 				if (title.trim().isEmpty())
 					title = "Unbenannter Eintrag";
@@ -44,7 +44,7 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 			.name("Befehl")
 			.description("Welcher Befehl ausgeführt werden soll, wenn dieser Eintrag ausgewählt wird.")
 			.set(defaultCommand = command)
-			.icon(Blocks.command_block);
+			.icon("book_and_quill");
 
 		this.citybuild = CitybuildSetting.create()
 			.name("Citybuild")

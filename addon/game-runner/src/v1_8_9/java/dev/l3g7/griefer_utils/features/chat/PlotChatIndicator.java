@@ -49,13 +49,13 @@ public class PlotChatIndicator extends Feature {
 	private final SwitchSetting replaceGlobalChat = SwitchSetting.create()
 		.name("@ ersetzen")
 		.description("Ersetzt @ mit /globalchat, wenn der Plot-Chat aktiviert ist.")
-		.icon("XZRF:chat");
+		.icon("chat");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Plot-Chat-Indikator")
 		.description("Zeichnet einen orangen Rahmen um die Chateingabe, wenn der Plotchat aktiviert ist.")
-		.icon("XZRF:chat_orange")
+		.icon("chat_orange")
 		.subSettings(replaceGlobalChat)
 		.callback(enabled -> {
 			if (enabled && ServerCheck.isOnCitybuild() && plotchatState == null && !waitingForPlotchatStatus) {

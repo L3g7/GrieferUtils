@@ -28,7 +28,7 @@ public class SuppressErrors {
 			"- NullPointerExceptions in NetHandlerPlayClient#handleTeams",
 			"- NumberFormatExceptions in GeometryColor#parse")
 		.config("settings.automatic_bug_reporting.suppress_errors")
-		.icon("XZRF:bug")
+		.icon("bug")
 		.defaultValue(true);
 
 	@Mixin(value = GeometryColor.class, remap = false)

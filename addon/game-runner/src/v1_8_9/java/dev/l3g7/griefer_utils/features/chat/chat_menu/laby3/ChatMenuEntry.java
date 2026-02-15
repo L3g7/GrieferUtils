@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.SelectButtonGroup;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -105,6 +106,15 @@ public class ChatMenuEntry {
 		entry.completed = true;
 
 		return entry;
+	}
+
+	public <S extends BaseSetting<S>> S setIcon(S setting) {
+		return switch (icon) {
+			case String i -> setting.icon(i);
+			case ItemStack i -> setting.icon(i);
+			default ->
+				throw new UnsupportedOperationException(icon.getClass().getSimpleName() + " is an unsupported icon type!");
+		};
 	}
 
 	public void drawIcon(int x, int y, int w, int h) {

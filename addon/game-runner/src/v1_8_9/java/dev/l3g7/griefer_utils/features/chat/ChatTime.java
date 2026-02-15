@@ -33,7 +33,7 @@ public class ChatTime extends Feature {
 		.name("Design")
 		.description("Das Design des Prefixes, mit Unterstützung von &-Formatierungscodes.\n" +
 			"%s ist die Zeit an sich.")
-		.icon("XZRF:color_palette")
+		.icon("color_palette")
 		.defaultValue("&7[&6%s&7] ")
 		.validator(v -> {
 			try {
@@ -47,7 +47,7 @@ public class ChatTime extends Feature {
 	private final StringSetting format = StringSetting.create()
 		.name("Zeitformat")
 		.description("Das Format der Zeit, gemäß Javas Date Format.")
-		.icon("XZRF:book_and_quill")
+		.icon("book_and_quill")
 		.defaultValue("HH:mm:ss")
 		.validator(v -> {
 			try {
@@ -62,7 +62,7 @@ public class ChatTime extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("ChatTime")
 		.description("Fügt den Zeitpunkt des Empfangens vor Chatnachrichten hinzu.")
-		.icon("XZRF:clock")
+		.icon("clock")
 		.subSettings(style, format);
 
 	public ChatTime() {

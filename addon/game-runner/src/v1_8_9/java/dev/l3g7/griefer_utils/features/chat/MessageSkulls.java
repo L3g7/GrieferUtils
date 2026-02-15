@@ -34,7 +34,7 @@ public class MessageSkulls extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kopf vor Nachrichten")
 		.description("Zeigt den Kopf des Autors vor Nachrichten an.")
-		.icon("XZRF:steve");
+		.icon("steve");
 
 	@EventListener
 	public void onMsgReceive(MessageModifyEvent event) {

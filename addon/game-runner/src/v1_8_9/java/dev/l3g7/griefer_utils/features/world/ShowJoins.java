@@ -49,36 +49,36 @@ public class ShowJoins extends Feature {
 		if (LABY_4.isActive())
 			return new PlayerListSettingLaby4()
 				.name("Spieler")
-				.icon("XZRF:magnifying_glass");
+				.icon("magnifying_glass");
 		else
 			return new PlayerListSettingLaby3()
 				.name("Spieler")
-				.icon("XZRF:magnifying_glass");
+				.icon("magnifying_glass");
 	}
 
 	private final SwitchSetting filter = SwitchSetting.create()
 		.name("Joins filtern")
 		.description("Ob nur die Joins von bestimmten Spielern angezeigt werden sollen.")
-		.icon("XZRF:players")
+		.icon("players")
 		.callback(players::enabled);
 	{ players.enabled(filter.get()); }
 
 	private final SwitchSetting showOnJoin = SwitchSetting.create()
 		.name("Joins beim Betreten des Servers anzeigen")
 		.description("Ob beim initialen Laden der Spieler beim Betreten eines Servers eine Join-Nachricht angezeigt werden soll.")
-		.icon("XZRF:portal");
+		.icon("portal");
 
 	private final SwitchSetting log = SwitchSetting.create()
 		.name("Joins im Log speichern")
 		.description("Ob die Join-Nachrichten im Log gespeichert werden sollen.")
 		.defaultValue(true)
-		.icon("XZRF:book_and_quill");
+		.icon("book_and_quill");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Joins anzeigen")
 		.description("Zeigt dir an, wenn (bestimmte) Spieler den Server betreten / verlassen.")
-		.icon("XZRF:players")
+		.icon("players")
 		.subSettings(showOnJoin, log, filter, players);
 
 	private boolean onServer = false;

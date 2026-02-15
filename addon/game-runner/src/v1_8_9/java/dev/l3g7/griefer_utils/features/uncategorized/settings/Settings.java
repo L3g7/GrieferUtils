@@ -31,21 +31,21 @@ public class Settings extends Feature {
 	@MainElement(configureSubSettings = false)
 	private final CategorySetting element = CategorySetting.create()
 		.name("§yEinstellungen")
-		.icon("XZRF:cog");
+		.icon("cog");
 
 	// Settings for AutoUpdater are here because the AutoUpdater class isn't affected by updates
 	public static final SwitchSetting showUpdateScreen = SwitchSetting.create()
 		.name("Update-Screen anzeigen")
 		.description("Ob ein Update-Screen angezeigt werden soll, wenn GrieferUtils geupdatet wurde.")
 		.config("settings.auto_update.show_screen")
-		.icon("XZRF:lectern")
+		.icon("lectern")
 		.defaultValue(true);
 
 	public static final DropDownSetting<ReleaseChannel> releaseChannel = DropDownSetting.create(ReleaseChannel.class)
 		.name("Version")
 		.description("Ob auf die neuste stabile oder die Beta-Version geupdatet werden soll.")
 		.config("settings.auto_update.release_channel")
-		.icon("XZRF:cpu")
+		.icon("cpu")
 		.dynamicDefaultValue()
 		.defaultValue(labyBridge.isBeta() ? BETA : STABLE);
 
@@ -53,7 +53,7 @@ public class Settings extends Feature {
 		.name("Automatisch updaten")
 		.description("Updatet GrieferUtils automatisch auf die neuste Version.")
 		.config("settings.auto_update.enabled")
-		.icon("XZRF:loop")
+		.icon("loop")
 		.defaultValue(true)
 		.subSettings(showUpdateScreen, releaseChannel);
 

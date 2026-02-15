@@ -47,7 +47,7 @@ public class OrbBalance extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Orbguthaben")
 		.description("Zeigt dir an, wie viele Orbs du hast.")
-		.icon("XZRF:orb");
+		.icon("orb");
 
 	@Override
 	public String getValue() {

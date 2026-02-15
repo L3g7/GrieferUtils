@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 public class ItemDisplaySetting extends ListEntrySetting {
@@ -23,7 +22,7 @@ public class ItemDisplaySetting extends ListEntrySetting {
 
 	public ItemDisplaySetting(String stackNbt, long value) {
 		super(true, false, false);
-		icon(Blocks.stone);
+		icon("gold_ingot");
 		container = FileProvider.getSingleton(InventoryValueWidget.InventoryValue.class).rawBooleanElement;
 		this.stackNbt = stackNbt;
 		this.value = value;

@@ -93,7 +93,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 		public StringDisplaySetting(String entry) {
 			super(true, true, false);
 			container = StringListSettingImpl.this;
-			icon(Items.paper);
+			icon("book_and_quill");
 			name(data = entry);
 		}
 
@@ -214,7 +214,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 	}
 
 	@Override
-	public StringListSetting entryIcon(Object icon) {
+	public StringListSetting entryIcon(String icon) {
 		// TODO implement
 		return this;
 	}

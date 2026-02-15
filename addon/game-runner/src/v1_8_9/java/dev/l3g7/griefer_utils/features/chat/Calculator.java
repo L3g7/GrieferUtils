@@ -26,8 +26,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.network.play.server.S3APacketTabComplete;
 import org.mariuszgromada.math.mxparser.Expression;
@@ -193,7 +191,7 @@ public class Calculator extends Feature {
 				continue; // non-whitespace chars directly in front of the equation -> probably part of a player name
 
 			for (int j = 0; j < equation.length() - 1; j++) {
-				if (Character.isAlphabetic(equation.charAt(i)) && Character.isDigit(equation.charAt(i + 1)))
+				if (Character.isAlphabetic(equation.charAt(j)) && Character.isDigit(equation.charAt(j + 1)))
 					continue equationDetection; // letter followed by digit -> probably part of a player name
 			}
 

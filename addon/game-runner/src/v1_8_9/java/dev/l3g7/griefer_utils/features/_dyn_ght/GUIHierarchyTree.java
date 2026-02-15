@@ -9,6 +9,7 @@ import net.minecraft.init.Items;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 @SuppressWarnings("SameParameterValue")
@@ -24,6 +25,7 @@ public class GUIHierarchyTree {
 				feat("ChatReactor", "XZRF:cpu"),
 				feat("ChatTime", "XZRF:clock"),
 				feat("Echtgeld- Erkennung", "Echtgeld-Erkennung", "XZRF:coin"),
+				feat("Interagierbare /freunde", "XZRF:players"),
 				feat("Interagierbare Nachrichten", "XZRF:mouse_left"),
 				feat("Kopf vor Nachrichten", "XZRF:steve"),
 				feat("Magischen Text entfernen", "XZRF:tabping_colored")
@@ -50,6 +52,7 @@ public class GUIHierarchyTree {
 		cat("GUIs", "XZRF:wooden_board",
 			cat("§gGrieferGames", "XZRF:griefer_games",
 				feat("/homes verbessern", "XZRF:filled_map"),
+				feat("/zuhause verbessern", "XZRF:region_map"),
 				feat("Trichteranzeige verbessern", "XZRF:hopper"),
 				feat("Adventurer verbessern", "XZRF:enchanted_fire_charge"),
 				feat("Jobbörse verbessern", "XZRF:wooden_board"),
@@ -252,7 +255,8 @@ public class GUIHierarchyTree {
 			new Throwable("Icon NonXZRF '" + icon + "'").printStackTrace();
 			return "barrier";
 		} else {
-			if (!FileProvider.getFiles().contains("assets/griefer_utils/icons/" + icon.substring("XZRF:".length()) + ".png"))
+			String path = Path.of("assets/griefer_utils/icons/" + icon.substring("XZRF:".length()) + ".png").normalize().toString().replace('\\', '/');
+			if (!FileProvider.getFiles().contains(path))
 				new Throwable("Icon missing '" + icon + "'").printStackTrace();
 
 			return icon.substring("XZRF:".length());

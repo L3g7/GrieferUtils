@@ -164,7 +164,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 
 						// Update button icons
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
+						btn.updateIcon(Icons.of("high_res/pencil_vec")); // NOTE: use original icons?
 						content.removeChild("delete-button");
 					}
 				});
@@ -275,7 +275,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 
 							// Update button icons
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
+							btn.updateIcon(Icons.of("high_res/pencil_vec")); // NOTE: use original icons?
 							content.removeChild("delete-button");
 						}
 					});

@@ -11,6 +11,7 @@ import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
+import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
@@ -39,7 +40,7 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 
 	@Override
 	public ButtonSetting buttonIcon(Object icon) {
-		buttonIcon = Icons.of(icon);
+		buttonIcon = Icons.of(GUIHierarchyTree.handleXZRF(icon));
 		return this;
 	}
 

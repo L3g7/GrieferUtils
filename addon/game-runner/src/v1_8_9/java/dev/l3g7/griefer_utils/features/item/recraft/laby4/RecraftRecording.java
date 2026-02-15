@@ -84,7 +84,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 	public final ButtonSetting startRecording = ButtonSetting.create()
 		.name("Aufzeichnung starten")
 		.icon("XZRF:camera")
-		.buttonIcon("recording_red")
+		.buttonIcon("XZRF:recording_red")
 		.callback(this::startRecording);
 
 	public final RecraftSuccessorSetting successor = new RecraftSuccessorSetting();
@@ -391,7 +391,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 						if (e.childWidget() instanceof FlexibleContentWidget content) {
 							// Update button icons
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
+							btn.updateIcon(Icons.of("high_res/pencil_vec")); // NOTE: use original icons?
 							content.removeChild("delete-button");
 
 							content.addContent(ButtonWidget.icon(X, () -> {

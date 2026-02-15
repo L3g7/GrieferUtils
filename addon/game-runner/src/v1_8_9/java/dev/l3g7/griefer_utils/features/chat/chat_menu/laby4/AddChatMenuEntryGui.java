@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.laby4.ChatMenuEntry.Action;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.laby4.ChatMenuEntry.IconType;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
@@ -185,7 +186,7 @@ public class AddChatMenuEntryGui extends Gui {
 			}
 
 			List<Button> buttons = Reflection.get(iconInput, "buttons");
-			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils", "icons/" + actionTypeInput.getSelected().getIcon() + ".png"));
+			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils", "icons/" + GUIHierarchyTree.handleXZRF(actionTypeInput.getSelected().getIcon()) + ".png"));
 			double bottom;
 			switch (iconInput.getSelected()) {
 				case ITEM -> bottom = itemIconInput.bottom();

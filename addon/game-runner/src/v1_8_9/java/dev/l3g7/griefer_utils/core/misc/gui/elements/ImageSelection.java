@@ -24,7 +24,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class ImageSelection extends ModTextField implements Drawable, Clickable {
 
-	public static final ResourceLocation MISC_HEAD_QUESTION = new ResourceLocation("griefer_utils", "icons/labymod_3/question.png");
+	public static final ResourceLocation FALLBACK = new ResourceLocation("griefer_utils", "icons/tree_file.png");
 
 	private static final double LABEL_HEIGHT = 9 * 1.2;
 
@@ -120,7 +120,7 @@ public class ImageSelection extends ModTextField implements Drawable, Clickable 
 		DrawUtils.drawString(label, xPosition, y, 1.2);
 
 		// Draw preview of file
-		DrawUtils.bindTexture(selection == null ? MISC_HEAD_QUESTION : new ResourceLocation("griefer_utils/user_content/" + selection.hashCode()));
+		DrawUtils.bindTexture(selection == null ? FALLBACK : new ResourceLocation("griefer_utils/user_content/" + selection.hashCode()));
 		DrawUtils.drawTexture(x, yPosition, 256.0, 256.0, 20, 20);
 
 		// Draw textbox showing name of file

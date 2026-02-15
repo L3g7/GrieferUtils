@@ -65,7 +65,7 @@ class RecraftRecordingIcon extends SynchronousIcon { // NOTE: move somewhere els
 			DrawUtils.drawItem(ItemUtil.createItem(new ItemStack(Blocks.crafting_table), true, null), sX, sY, null);
 		} else {
 			String icon = recording.mode().get() == RecraftRecordingCore.RecordingMode.RECIPE ? "knowledge_book" : "chest";
-			DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "/icons/" + icon + ".png"));
+			DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
 			DrawUtils.drawTexture(sX, sY, 256, 256, 16, 16);
 		}
 		GlStateManager.popMatrix();

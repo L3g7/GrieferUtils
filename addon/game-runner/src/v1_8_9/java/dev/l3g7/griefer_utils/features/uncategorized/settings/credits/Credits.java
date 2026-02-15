@@ -58,7 +58,7 @@ public class Credits {
 			ButtonSetting.create()
 				.name("Credits öffnen")
 				.icon("XZRF:scroll")
-				.buttonIcon("open_link")
+				.buttonIcon("XZRF:open_link")
 				.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/image_credits")),
 			HeaderSetting.create().entryHeight(11),
 

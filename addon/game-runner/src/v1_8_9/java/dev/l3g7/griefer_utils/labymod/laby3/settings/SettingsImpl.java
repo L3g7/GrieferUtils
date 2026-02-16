@@ -12,6 +12,8 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.settings.Settings;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.PlayerListSettingImpl;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.*;
@@ -56,6 +58,11 @@ public class SettingsImpl implements Settings {
 	@Override
 	public StringListSetting createStringListSetting() {
 		return new StringListSettingImpl();
+	}
+
+	@Override
+	public PlayerListSetting createPlayerListSetting() {
+		return new PlayerListSettingImpl();
 	}
 
 	@Override

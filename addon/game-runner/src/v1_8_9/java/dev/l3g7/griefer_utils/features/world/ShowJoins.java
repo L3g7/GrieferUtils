@@ -18,10 +18,8 @@ import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListEntry;
-import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListSettingLaby3;
-import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListSettingLaby4;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.player.player_list.PlayerList;
@@ -31,7 +29,6 @@ import net.minecraft.network.play.server.S38PacketPlayerListItem;
 
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 
 /**
@@ -43,18 +40,9 @@ public class ShowJoins extends Feature {
 	private static final Map<UUID, Long> addTimestamps = new HashMap<>();
 	private static final Set<UUID> missingGameMode = new HashSet<>();
 
-	private final AbstractSetting<?, List<PlayerListEntry>> players = temp();
-
-	private static AbstractSetting<?, List<PlayerListEntry>> temp() { // TODO refactor
-		if (LABY_4.isActive())
-			return new PlayerListSettingLaby4()
-				.name("Spieler")
-				.icon("magnifying_glass");
-		else
-			return new PlayerListSettingLaby3()
-				.name("Spieler")
-				.icon("magnifying_glass");
-	}
+	private final PlayerListSetting players = PlayerListSetting.create()
+		.name("Spieler")
+		.icon("magnifying_glass");
 
 	private final SwitchSetting filter = SwitchSetting.create()
 		.name("Joins filtern")
@@ -104,7 +92,7 @@ public class ShowJoins extends Feature {
 			return false;
 
 		for (PlayerListEntry entry : players.get())
-			if (name.equalsIgnoreCase(entry.name))
+			if (name.equalsIgnoreCase(entry.name()))
 				return true;
 
 		return false;

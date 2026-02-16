@@ -18,13 +18,11 @@ import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
-import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListEntry;
-import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListSettingLaby3;
-import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListSettingLaby4;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -43,7 +41,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.features.player.player_list.PlayerList.MarkAction.*;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
@@ -85,25 +82,23 @@ public abstract class PlayerList extends Feature {
 		.icon("steve")
 		.defaultValue(true);
 
-	public final AbstractSetting<?, List<PlayerListEntry>> customEntries;
+	public final PlayerListSetting customEntries = PlayerListSetting.create()
+		.callback(TabListEvent::updatePlayerInfoList);
 
 	@MainElement
 	public final SwitchSetting enabled = SwitchSetting.create()
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	public PlayerList(String name, String description, String chatIcon, String settingIcon, String entryDescription, EnumChatFormatting color, int paneType, String message, String url) {
-		if (LABY_4.isActive())
-			customEntries = new PlayerListSettingLaby4()
-				.callback(TabListEvent::updatePlayerInfoList);
-		else
-			customEntries = new PlayerListSettingLaby3()
-				.callback(TabListEvent::updatePlayerInfoList);
-
 		enabled
 			.name(name)
 			.description(description)
 			.icon(settingIcon)
-			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, HeaderSetting.create(), customEntries.name(entryDescription).icon(settingIcon));
+			.subSettings(tabAction, chatAction, displayNameAction, showInProfile, HeaderSetting.create(), customEntries);
+
+		customEntries
+			.name(entryDescription)
+			.icon(settingIcon);
 
 		this.message = message;
 		this.icon = chatIcon;
@@ -238,7 +233,7 @@ public abstract class PlayerList extends Feature {
 			return true;
 
 		for (PlayerListEntry entry : customEntries.get())
-			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.name))
+			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.name()))
 				return true;
 
 		return false;

@@ -5,18 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.settings.player_list;
+package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 
-import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntryResolver;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractListSettingImpl;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -36,99 +32,40 @@ import net.labymod.api.client.gui.screen.widget.widgets.input.TextFieldWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.list.HorizontalListWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.list.VerticalListWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
-import net.labymod.api.configuration.settings.Setting;
-import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
-import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
-import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.util.bounds.ModifyReason;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static net.labymod.api.Textures.SpriteCommon.X;
+public class PlayerListSettingImpl extends AbstractListSettingImpl<PlayerListSetting, PlayerListEntry> implements PlayerListSetting { // NOTE: cleanup
 
-public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetting<PlayerListSettingLaby4, List<PlayerListEntry>>, Laby4Setting<PlayerListSettingLaby4, List<PlayerListEntry>> { // NOTE: cleanup
-
-	private final ExtendedStorage<List<PlayerListEntry>> storage;
-
-	public PlayerListSettingLaby4() {
-		super(UUID.randomUUID().toString(), null, null, new String[0], (SettingPermissionHolder) null, null, (byte) -127,
-			new ConfigPropertySettingAccessor(null, null, null, null) {
-				@Override
-				public <T> T get() {
-					return c(new ArrayList<>());
-				}
-
-				@Override
-				public Type getGenericType() {
-					return new ParameterizedType() {
-						public Type[] getActualTypeArguments() {return new Type[]{Void.class};}
-
-						public Type getRawType() {return null;}
-
-						public Type getOwnerType() {return null;}
-					};
-				}
-			}
-		);
-
-		storage = new ExtendedStorage<>(list -> {
-			JsonArray array = new JsonArray();
-			list.forEach(e -> array.add(new JsonPrimitive(e.getId())));
-			return array;
-		}, elem -> {
-			List<PlayerListEntry> list = new ArrayList<>();
-			elem.getAsJsonArray().forEach(e -> list.add(new PlayerListEntry(null, e.getAsString())));
-			return list;
-		}, new ArrayList<>());
-
-		EventRegisterer.register(this);
-		init();
+	@Override
+	protected JsonElement encode(PlayerListEntry value) {
+		return new JsonPrimitive(value.getId());
 	}
 
 	@Override
-	public ExtendedStorage<List<PlayerListEntry>> getStorage() {
-		return storage;
+	protected PlayerListEntry decode(JsonElement value) {
+		return new PlayerListEntry(null, value.getAsString());
 	}
 
-	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
-		if (event.holder() != this)
-			return;
+	@Override
+	protected void edit(int editIndex, SettingContentActivity parent) {
+		new PlayerListInputActivity(editIndex, parent).open();
+	}
 
-		List<PlayerListEntry> values = get();
+	@Override
+	protected void add(SettingContentActivity parent) {
+		new PlayerListInputActivity(-1, parent).open();
+	}
 
-		// Add entries
-		for (int i = 0; i < values.size(); i++) {
-			PlayerListEntry value = values.get(i);
+	@Override
+	protected String getName(PlayerListEntry entry) {
+		return entry.name();
+	}
 
-			ButtonSettingImpl entry = new ButtonSettingImpl();
-			entry.name(value.name);
-			entry.icon(Icon.head(value.name));
-
-			entry.setParent((Setting) this);
-
-			int idx = i;
-			event.settings().addChild(entry.createUnwrappedWidget(
-				ButtonWidget.icon(
-					Icons.of(Laby4Util.isVanillaTheme() ? "pencil_padded" : "high_res/pencil_vec"),
-					() -> new PlayerListInputActivity(idx, event.activity).open()
-				).addId("delete-button"), // Actually an edit button, but id is required for styling
-
-				ButtonWidget.icon(X, () -> {
-					values.remove(idx);
-					notifyChange();
-					event.activity.reload();
-				}).addId("delete-button")
-			));
-		}
-
-		// Hook add button
-		event.get("setting-header", "add-button").setPressable(() -> new PlayerListInputActivity(-1, event.activity).open());
+	@Override
+	protected Icon getIcon(PlayerListEntry entry) {
+		return Icon.head(entry.name());
 	}
 
 	@AutoActivity
@@ -163,7 +100,7 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 			VerticalListWidget<Widget> rows = new VerticalListWidget<>();
 			root.addChild(rows);
 
-			String defaultName = editIndex == -1 ? "" : get().get(editIndex).name;
+			String defaultName = editIndex == -1 ? "" : get().get(editIndex).name();
 
 			// Player preview
 			previewWidget = new IconWidget(createIcon(defaultName));
@@ -196,9 +133,9 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 			addButton = ButtonWidget.text(editIndex == -1 ? "Hinzufügen" : "Bearbeiten", () -> {
 				String name = textInput.getText().trim();
 				if (editIndex == -1)
-					get().add(PlayerListEntry.getEntry(name));
+					get().add(PlayerListEntryResolver.getEntry(name));
 				else
-					get().set(editIndex, PlayerListEntry.getEntry(name));
+					get().set(editIndex, PlayerListEntryResolver.getEntry(name));
 
 				notifyChange();
 				close();
@@ -214,18 +151,18 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 		}
 
 		private Icon createIcon(String name) {
-			return name.isBlank() ? Icon.head(UUID.fromString("606e2ff0-ed77-4842-9d6c-e1d3321c7838")) : Icon.head(name.trim());
+			return name.isBlank() ? Icon.head(UUID.fromString("606e2ff0-ed77-4842-9d6c-e1d3321c7838")) /* MHF_Question */ : Icon.head(name.trim());
 		}
 
 		private void update() {
 			String name = textInput.getText().trim();
-			PlayerListEntry entry = PlayerListEntry.getEntry(name); // NOTE: use LabyMod's player resolved?
-			if (!entry.exists) {
+			PlayerListEntry entry = PlayerListEntryResolver.getEntry(name);
+			if (!entry.exists()) {
 				textInput.textColor().set(0xFFFF0000);
 				addButton.setEnabled(false);
 			} else {
 				textInput.textColor().set(0xFFFFFFFF);
-				addButton.setEnabled(entry.loaded);
+				addButton.setEnabled(entry.loaded());
 			}
 		}
 

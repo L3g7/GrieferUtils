@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.Settings;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.*;
 import net.labymod.api.client.gui.screen.widget.AbstractWidget;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -75,6 +76,11 @@ public class SettingsImpl implements Settings { // Note: replace with multiple b
 	@Override
 	public StringListSetting createStringListSetting() {
 		return new StringListSettingImpl();
+	}
+
+	@Override
+	public PlayerListSetting createPlayerListSetting() {
+		return new PlayerListSettingImpl();
 	}
 
 	@Override

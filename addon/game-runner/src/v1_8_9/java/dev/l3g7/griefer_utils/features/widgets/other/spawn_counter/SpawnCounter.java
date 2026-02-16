@@ -24,7 +24,7 @@ import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.misc.ActionBar;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.core.settings.player_list.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -59,7 +59,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
-import static dev.l3g7.griefer_utils.core.settings.player_list.PlayerListEntry.INVALID_PLAYER;
+import static dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry.INVALID_PLAYER;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.features.widgets.other.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.DISABLED;
@@ -337,9 +337,9 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 				int i = 2; // Yourself + the normal line
 
-				if (getEntry(data.next).loaded)
+				if (getEntry(data.next).loaded())
 					i++;
-				if (getEntry(data.previous).loaded)
+				if (getEntry(data.previous).loaded())
 					i++;
 
 				return i;
@@ -376,19 +376,19 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 					DrawUtils.drawTexture(x, y, 160, 32, 32, 32, 8, 8); // Second layer
 				}
 
-				String text = toText((entry == null ? mc.getSession().getUsername() : entry.name) + ": " + DECIMAL_FORMAT_98.format(score)).getText();
+				String text = toText((entry == null ? mc.getSession().getUsername() : entry.name()) + ": " + DECIMAL_FORMAT_98.format(score)).getText();
 				DrawUtils.drawStringWithShadow(text, x + 11, y, entry == null ? -1 : 0xAAAAAA);
 				return DrawUtils.getStringWidth(text);
 			}
 
 			private static List<Triple<Integer, PlayerListEntry, Integer>> getRenderData() {
 				List<Triple<Integer, PlayerListEntry, Integer>> renderData = new ArrayList<>();
-				if (getEntry(data.next).loaded)
+				if (getEntry(data.next).loaded())
 					renderData.add(Triple.of(data.position - 1, getEntry(data.next), data.next.score));
 
 				renderData.add(Triple.of(data.position, null, data.score));
 
-				if (getEntry(data.previous).loaded)
+				if (getEntry(data.previous).loaded())
 					renderData.add(Triple.of(data.position + 1, getEntry(data.previous), data.previous.score));
 
 				return renderData;
@@ -406,20 +406,20 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 			}
 
 			private static void renderSkull(PlayerListEntry e, double x, double y) {
-				if (e.skin == null) {
+				if (e.skin() == null) {
 					mc.getTextureManager().bindTexture(ModTextures.MISC_HEAD_QUESTION);
 					DrawUtils.drawTexture(x, y, 0, 0, 256, 256, 8, 8);
 					return;
 				}
 
-				GlStateManager.bindTexture(e.skin.getGlTextureId());
+				GlStateManager.bindTexture(e.skin().getGlTextureId());
 
 				if (!e.isMojang()) {
 					DrawUtils.drawTexture(x, y, 0, 0, 256, 256, 8, 8);
 					return;
 				}
 
-				int yHeight = e.oldSkin ? 64 : 32; // Old textures are 32x64
+				int yHeight = e.skinHeight();
 				DrawUtils.drawTexture(x, y, 32, yHeight, 32, yHeight, 8, 8); // First layer
 				DrawUtils.drawTexture(x, y, 160, yHeight, 32, yHeight, 8, 8); // Second layer
 			}
@@ -533,11 +533,11 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 					return;
 
 				PlayerListEntry entry = ENTRIES.get(other.uuid);
-				if (entry == null || !entry.loaded)
+				if (entry == null || !entry.loaded())
 					return;
 
 				line.setState(VISIBLE);
-				line.updateLeaderboardLine(UUID.fromString(entry.getId()), entry.name, other.score);
+				line.updateLeaderboardLine(UUID.fromString(entry.getId()), entry.name(), other.score);
 			}
 
 			@ExclusiveTo(LABY_4)

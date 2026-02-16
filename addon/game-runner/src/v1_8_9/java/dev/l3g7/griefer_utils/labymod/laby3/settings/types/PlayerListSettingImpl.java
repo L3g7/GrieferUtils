@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.settings.player_list;
+package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
@@ -13,9 +13,10 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntryResolver;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.EntryAddSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.main.ModTextures;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setting<PlayerListSettingLaby3, List<PlayerListEntry>> {
+public class PlayerListSettingImpl extends ControlElement implements Laby3Setting<PlayerListSetting, List<PlayerListEntry>>, PlayerListSetting {
 
 	private final ExtendedStorage<List<PlayerListEntry>> storage = new ExtendedStorage<>(list -> {
 		JsonArray array = new JsonArray();
@@ -46,7 +47,7 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 
 	private SettingsElement container = this;
 
-	public PlayerListSettingLaby3() {
+	public PlayerListSettingImpl() {
 		super("§cEs gab einen Fehler!", null);
 		setSettingEnabled(true);
 	}
@@ -56,7 +57,7 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 	}
 
 	@Override
-	public PlayerListSettingLaby3 config(String configKey) {
+	public PlayerListSettingImpl config(String configKey) {
 		Laby3Setting.super.config(configKey);
 
 		List<SettingsElement> settings = new ArrayList<>();
@@ -90,7 +91,7 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 			return false;
 
 		for (PlayerListEntry entry : get())
-			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.name))
+			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.name()))
 				return true;
 
 		return false;
@@ -103,20 +104,20 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 		public PlayerDisplaySetting(PlayerListEntry entry) {
 			super(true, false, false);
 			icon("barrier");
-			container = PlayerListSettingLaby3.this.container;
+			container = PlayerListSettingImpl.this.container;
 			data = entry;
 		}
 
 		@Override
 		protected void onChange() {
-			PlayerListSettingLaby3.this.get().remove(data);
-			PlayerListSettingLaby3.this.save();
-			PlayerListSettingLaby3.this.getStorage().callbacks.forEach(c -> c.accept(PlayerListSettingLaby3.this.get()));
+			PlayerListSettingImpl.this.get().remove(data);
+			PlayerListSettingImpl.this.save();
+			PlayerListSettingImpl.this.getStorage().callbacks.forEach(c -> c.accept(PlayerListSettingImpl.this.get()));
 		}
 
 		@Override
 		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			setDisplayName(data.name == null ? "§cNutzer konnte nicht geladen werden!" : data.name);
+			setDisplayName(data.name() == null ? "§cNutzer konnte nicht geladen werden!" : data.name());
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
 			DrawUtils.drawRectangle(x - 1, y, x, maxY, 0x78787878);
 
@@ -163,14 +164,14 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 			}
 
 			private void updateValidity() {
-				entry = PlayerListEntry.getEntry(inputField.getText());
+				entry = PlayerListEntryResolver.getEntry(inputField.getText());
 
-				if (!entry.exists) {
+				if (!entry.exists()) {
 					inputField.setTextColor(0xFFFF0000);
 					doneButton.enabled = false;
 				} else {
 					inputField.setTextColor(0xFFFFFFFF);
-					doneButton.enabled = entry.loaded;
+					doneButton.enabled = entry.loaded();
 				}
 			}
 
@@ -195,9 +196,9 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 				switch (button.id) {
 					case 1:
 						getSettings().add(getSettings().indexOf(PlayerAddSetting.this), new PlayerDisplaySetting(entry));
-						PlayerListSettingLaby3.this.get().add(entry);
-						PlayerListSettingLaby3.this.save();
-						PlayerListSettingLaby3.this.getStorage().callbacks.forEach(c -> c.accept(PlayerListSettingLaby3.this.get()));
+						PlayerListSettingImpl.this.get().add(entry);
+						PlayerListSettingImpl.this.save();
+						PlayerListSettingImpl.this.getStorage().callbacks.forEach(c -> c.accept(PlayerListSettingImpl.this.get()));
 						// Fall-through
 					case 0:
 						Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
@@ -222,20 +223,20 @@ public class PlayerListSettingLaby3 extends ControlElement implements Laby3Setti
 	}
 
 	private void renderSkull(PlayerListEntry e, double x, double y, int size) {
-		if (e.skin == null) {
+		if (e.skin() == null) {
 			mc.getTextureManager().bindTexture(ModTextures.MISC_HEAD_QUESTION);
 			DrawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);
 			return;
 		}
 
-		GlStateManager.bindTexture(e.skin.getGlTextureId());
+		GlStateManager.bindTexture(e.skin().getGlTextureId());
 
 		if (!e.isMojang()) {
 			DrawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);
 			return;
 		}
 
-		int yHeight = e.oldSkin ? 64 : 32; // Old textures are 32x64
+		int yHeight = e.skinHeight();
 		DrawUtils.drawTexture(x, y, 32, yHeight, 32, yHeight, size, size); // First layer
 		DrawUtils.drawTexture(x, y, 160, yHeight, 32, yHeight, size, size); // Second layer
 	}

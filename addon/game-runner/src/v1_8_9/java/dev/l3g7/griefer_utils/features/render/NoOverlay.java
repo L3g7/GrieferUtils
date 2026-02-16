@@ -16,11 +16,9 @@ import dev.l3g7.griefer_utils.core.events.render.SetupFogEvent;
 import dev.l3g7.griefer_utils.core.events.render.SetupFogEvent.FogType;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
-import net.minecraft.item.ItemStack;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
-import static net.minecraft.init.Blocks.stained_glass_pane;
 
 /**
  * Deactivates some overlays.
@@ -65,7 +63,7 @@ public class NoOverlay extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("§hOverlays entfernen")
+		.name("§iOverlays entfernen")
 		.description("Entfernt einige Overlays.")
 		.icon("glass_pane")
 		.subSettings(blindness, water, lava, nausea, portal, fire);

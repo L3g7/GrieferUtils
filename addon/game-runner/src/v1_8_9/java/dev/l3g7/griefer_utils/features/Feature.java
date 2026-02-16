@@ -74,9 +74,11 @@ public abstract class Feature implements Disableable, GUIEntry {
 
 		CategoryData parent = build(feat.parent());
 
-		String configKey = feat.name();
+		String configKey = feat.config();
+		/*
 		if (parent != null)
-			configKey = "temp_settings." + configKey;
+			configKey = parent.configKey() + "." + configKey;
+		 */
 
 		BaseSetting<?> category = FileProvider.getSingleton(feat.setting())
 			.build(new Category() {
@@ -115,9 +117,10 @@ public abstract class Feature implements Disableable, GUIEntry {
 	 * Initialises the main element and config key.
 	 */
 	public void init() {
-		MainElementData data = SettingLoader.initMainElement(this, category.get() == null ? null : category.get().configKey(), getConfigSubkey());
+		MainElementData data = SettingLoader.initMainElement(this, null, getConfigSubkey());
 		mainElement = data.mainElement;
 		configKey = data.configKey;
+		category.get();
 	}
 
 	protected String getConfigSubkey() {

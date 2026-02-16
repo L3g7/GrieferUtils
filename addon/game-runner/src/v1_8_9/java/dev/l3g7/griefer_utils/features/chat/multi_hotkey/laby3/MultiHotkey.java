@@ -49,6 +49,10 @@ public class MultiHotkey extends Feature {
 		.icon("key")
 		.subSettings(entryAddSetting);
 
+	public static MultiHotkey get() {
+		return get(MultiHotkey.class);
+	}
+
 	@Override
 	public void init() {
 		super.init();

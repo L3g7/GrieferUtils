@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
@@ -44,7 +43,7 @@ import static dev.l3g7.griefer_utils.features.render.TrueSight.ToggleMode.*;
 @Singleton
 public class TrueSight extends Feature {
 
-	private static final TrueSight INSTANCE = FileProvider.getSingleton(TrueSight.class);
+	private static final TrueSight INSTANCE = get(TrueSight.class);
 	private static final Map<Class<?>, String> CLASS_TO_STRING_MAPPING = Reflection.get(EntityList.class, "classToStringMapping");
 
 	private final Map<Class<? extends Entity>, SwitchSetting> entities = new HashMap<>();
@@ -144,7 +143,7 @@ public class TrueSight extends Feature {
 	}
 
 	private void updateGlobalToggle() {
-		if(togglingAll)
+		if (togglingAll)
 			return;
 
 		boolean enabled = entities.values().iterator().next().get();
@@ -165,7 +164,7 @@ public class TrueSight extends Feature {
 	}
 
 	public static float getRenderModelAlpha() {
-		if(!INSTANCE.isEnabled())
+		if (!INSTANCE.isEnabled())
 			return 0.15f;
 
 		return 0.01f * (100f - INSTANCE.opacity.get());
@@ -180,6 +179,7 @@ public class TrueSight extends Feature {
 		}
 
 	}
+
 	public enum ToggleMode implements Named {
 		CUSTOM(""), ALL_ON("Alle an"), ALL_OFF("Alle aus");
 

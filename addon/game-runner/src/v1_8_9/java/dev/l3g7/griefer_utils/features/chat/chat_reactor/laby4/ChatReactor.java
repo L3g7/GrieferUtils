@@ -49,6 +49,10 @@ public class ChatReactor extends Feature {
 		loadEntries();
 	}
 
+	public static ChatReactor get() {
+		return get(ChatReactor.class);
+	}
+
 	public static void saveEntries() {
 		if (!loaded) // Don't save the config when starting
 			return;

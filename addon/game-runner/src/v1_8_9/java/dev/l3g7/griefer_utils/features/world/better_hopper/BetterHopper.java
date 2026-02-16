@@ -19,7 +19,6 @@ import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.AxisAlignedBB;
@@ -99,6 +98,10 @@ public class BetterHopper extends Feature {
 		});
 	}
 
+	public static BetterHopper get() {
+		return get(BetterHopper.class);
+	}
+
 	@EventListener
 	private static void onBlockInteract(BlockInteractEvent event) {
 		if (world().getBlockState(event.pos).getBlock() != Blocks.hopper || player().getHeldItem() != null)
@@ -137,7 +140,7 @@ public class BetterHopper extends Feature {
 			return;
 
 		double color = 192 / (float) lastClickedHoppers.size();
-		for (int i = 0; i < lastClickedHoppers.size();) {
+		for (int i = 0; i < lastClickedHoppers.size(); ) {
 			BlockPos lastClickedHopper = lastClickedHoppers.get(i);
 			AxisAlignedBB bb = new AxisAlignedBB(lastClickedHopper, lastClickedHopper.add(1, 1, 1)).expand(0.001, 0.001, 0.001);
 			RenderUtil.drawFilledBox(bb, new Color(0, (int) (++i * color) + 63, 0, 0x80), false);

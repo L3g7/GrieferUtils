@@ -11,11 +11,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
+import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftBridge;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
@@ -41,7 +41,7 @@ public class RecraftBridgeImpl implements RecraftBridge {
 
 	@Override
 	public void openPieMenu(boolean animation) {
-		pieMenu.open(animation, (SettingsElement) FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.recraft.Recraft.class).getMainElement());
+		pieMenu.open(animation, (SettingsElement) Recraft.get().getMainElement());
 	}
 
 	@Override
@@ -68,11 +68,11 @@ public class RecraftBridgeImpl implements RecraftBridge {
 	}
 
 	private static BaseSetting<?> getMainSetting() {
-		return FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.recraft.Recraft.class).getMainElement();
+		return Recraft.get().getMainElement();
 	}
 
 	private static String getConfigKey() {
-		return FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.recraft.Recraft.class).getConfigKey();
+		return Recraft.get().getConfigKey();
 	}
 
 	@Override

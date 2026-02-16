@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -57,6 +56,10 @@ public class KeepChunksLoaded extends Feature {
 				world().doPreChunk(chunkCoords.chunkXPos, chunkCoords.chunkZPos, false);
 		});
 
+	public static KeepChunksLoaded get() {
+		return get(KeepChunksLoaded.class);
+	}
+
 	@EventListener
 	public void onPacketReceive(PacketReceiveEvent<Packet<?>> event) {
 		if (event.packet instanceof S21PacketChunkData packet) {
@@ -95,7 +98,7 @@ public class KeepChunksLoaded extends Feature {
 
 		@Inject(method = "unloadChunk", at = @At("HEAD"), cancellable = true)
 		public void injectUnloadChunkHead(int x, int z, CallbackInfo ci) {
-			if (FileProvider.getSingleton(KeepChunksLoaded.class).isEnabled())
+			if (KeepChunksLoaded.get().isEnabled())
 				ci.cancel();
 		}
 
@@ -113,7 +116,7 @@ public class KeepChunksLoaded extends Feature {
 		 */
 		@Inject(method = "loadChunk", at = @At("HEAD"))
 		public void injectLoadChunkHead(int x, int z, CallbackInfoReturnable<Chunk> cir) {
-			if (!FileProvider.getSingleton(KeepChunksLoaded.class).isEnabled())
+			if (!KeepChunksLoaded.get().isEnabled())
 				return;
 
 			Chunk chunk = provideChunk(x, z);

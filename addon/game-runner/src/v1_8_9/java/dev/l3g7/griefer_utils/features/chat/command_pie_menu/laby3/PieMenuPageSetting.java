@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.features.chat.command_pie_menu.laby3;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -18,7 +17,6 @@ import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.init.Items;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +57,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 
 		subSettings(entrySettings.toArray(new BaseSetting[0]));
 		this.name.set(defaultName = name);
-		container = (SettingsElement) FileProvider.getSingleton(CommandPieMenu.class).getMainElement();
+		container = (SettingsElement) CommandPieMenu.get().getMainElement();
 	}
 
 	public void openSettings() {

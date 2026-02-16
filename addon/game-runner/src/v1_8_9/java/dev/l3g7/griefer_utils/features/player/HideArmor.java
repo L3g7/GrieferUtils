@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.player;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -47,15 +46,18 @@ public class HideArmor extends Feature {
 		.icon("diamond_chestplate")
 		.subSettings(subsettings);
 
+	public static HideArmor get() {
+		return get(HideArmor.class);
+	}
+
 	public static boolean shouldRender(int index) {
 		if (index < 1 || index > 4)
 			return true;
 
-		HideArmor hideArmor = FileProvider.getSingleton(HideArmor.class);
-		if (!hideArmor.isEnabled())
+		if (!HideArmor.get().isEnabled())
 			return true;
 
-		return !hideArmor.subsettings[4 - index].get();
+		return !HideArmor.get().subsettings[4 - index].get();
 	}
 
 	@Mixin(LayerArmorBase.class)

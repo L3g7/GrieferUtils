@@ -18,4 +18,8 @@ public class TrustedList extends PlayerList {
 		super("Trusted MM-Liste", "Markiert Spieler in verbvllert_s Trusted-MM-Liste.", "✰", "player_green", "Eigene Trusted", GREEN, 5, "§a§lTrusted", "https://data.community-radar.de/versions/v2/trusted.json");
 	}
 
+	public static TrustedList get() {
+		return get(TrustedList.class);
+	}
+
 }

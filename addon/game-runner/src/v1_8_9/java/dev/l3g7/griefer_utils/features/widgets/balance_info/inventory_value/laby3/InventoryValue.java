@@ -8,12 +8,10 @@
 package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby3;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget;
-import net.minecraft.init.Items;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
@@ -36,7 +34,7 @@ public class InventoryValue extends Widget {
 
 	@Override
 	protected LabyWidget getLaby3() {
-		return FileProvider.getSingleton(InventoryValueWidget.InventoryValue.class);
+		return InventoryValueWidget.InventoryValue.get();
 	}
 
 }

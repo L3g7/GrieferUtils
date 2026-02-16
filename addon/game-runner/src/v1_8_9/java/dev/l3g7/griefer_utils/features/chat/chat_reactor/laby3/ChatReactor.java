@@ -11,7 +11,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
@@ -53,6 +52,10 @@ public class ChatReactor extends Feature {
 		loadEntries();
 	}
 
+	public static ChatReactor get() {
+		return get(ChatReactor.class);
+	}
+
 	private static List<SettingsElement> getPath() {
 		return Reflection.get(mc().currentScreen, "path");
 	}
@@ -85,12 +88,8 @@ public class ChatReactor extends Feature {
 	}
 
 	@EventListener
-	public static void onMsg(MessageModifyEvent event) {
-		ChatReactor self = FileProvider.getSingleton(ChatReactor.class);
-		if (!(self.isEnabled()))
-			return;
-
-		if ((mc().currentScreen instanceof LabyModAddonsGui && getPath().contains((SettingsElement) self.getMainElement()))
+	public void onMsg(MessageModifyEvent event) {
+		if ((mc().currentScreen instanceof LabyModAddonsGui && getPath().contains((SettingsElement) getMainElement()))
 			|| mc().currentScreen instanceof AddChatReactionGui)
 			return;
 

@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.render;
 
 import com.google.common.collect.ImmutableList;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -79,6 +78,10 @@ public class SkullEnchantmentFix extends Feature {
 		.description("Behebt, dass Verzauberungen von Köpfen nicht angezeigt werden.")
 		.icon("enchanted_steve");
 
+	public static SkullEnchantmentFix get() {
+		return get(SkullEnchantmentFix.class);
+	}
+
 	@Override
 	public void init() {
 		super.init();
@@ -100,7 +103,7 @@ public class SkullEnchantmentFix extends Feature {
 			if (stack.getItem() != Items.skull || !stack.hasEffect())
 				return;
 
-			if (!FileProvider.getSingleton(SkullEnchantmentFix.class).isEnabled() && stack != ICON)
+			if (!SkullEnchantmentFix.get().isEnabled() && stack != ICON)
 				return;
 
 			if (stack == ICON) {

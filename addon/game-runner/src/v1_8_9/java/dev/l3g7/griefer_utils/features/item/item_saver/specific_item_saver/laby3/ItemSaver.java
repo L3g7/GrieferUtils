@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
@@ -110,8 +109,12 @@ public class ItemSaver extends Feature implements TempItemSaverBridge {
 		.icon("shield_with_sword")
 		.subSettings(displayIcon, HeaderSetting.create(), newEntrySetting);
 
+	public static ItemSaver get() {
+		return get(ItemSaver.class);
+	}
+
 	public static ItemDisplaySetting getSetting(ItemStack stack) {
-		if (stack == null || !FileProvider.getSingleton(ItemSaver.class).isEnabled())
+		if (stack == null || !get().isEnabled())
 			return null;
 
 		for (SettingsElement element : ((SettingsElement) enabled).getSubSettings().getElements()) {

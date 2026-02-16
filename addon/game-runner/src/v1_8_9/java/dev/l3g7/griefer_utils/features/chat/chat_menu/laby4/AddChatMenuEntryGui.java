@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu.laby4;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.*;
@@ -17,7 +16,6 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.laby4.ChatMenuEntry.Action;
 import dev.l3g7.griefer_utils.features.chat.chat_menu.laby4.ChatMenuEntry.IconType;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
@@ -260,7 +258,7 @@ public class AddChatMenuEntryGui extends Gui {
 
 		for (Clickable clickable : clickables)
 			if (clickable != backButton // Don't handle backButton, as it's already handled
-			&& clickable != itemIconInput) // Don't handle itemIconInput, as it's already handled
+				&& clickable != itemIconInput) // Don't handle itemIconInput, as it's already handled
 				clickable.mousePressed(mouseX, mouseY, mouseButton);
 	}
 
@@ -336,7 +334,7 @@ public class AddChatMenuEntryGui extends Gui {
 		if (editedEntry == null) {
 			// Add entry
 			EntryDisplaySetting setting = new EntryDisplaySetting(entry);
-			SwitchSettingImpl parent = (SwitchSettingImpl) FileProvider.getSingleton(ChatMenu.class).getMainElement();
+			SwitchSettingImpl parent = (SwitchSettingImpl) ChatMenu.get().getMainElement();
 			setting.create(parent);
 			parent.addSetting((BaseSetting<?>) setting);
 		}

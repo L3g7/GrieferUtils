@@ -31,7 +31,6 @@ import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -58,16 +57,20 @@ public class BlockInfo extends Widget {
 	private Pair<BlockPos, ItemStack> data = null;
 
 	private final SwitchSetting showCoords = SwitchSetting.create()
-			.name("Koordinaten anzeigen")
-			.description("Ob die Koordinaten des anvisierten Blocks auch angezeigt werden sollen.")
-			.icon("axes");
+		.name("Koordinaten anzeigen")
+		.description("Ob die Koordinaten des anvisierten Blocks auch angezeigt werden sollen.")
+		.icon("axes");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-			.name("Block-Infos")
-			.description("Zeigt dir Infos des anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
-			.icon("magnifying_glass")
-			.subSettings(showCoords);
+		.name("Block-Infos")
+		.description("Zeigt dir Infos des anvisierten Block an.\n\nFunktioniert auch mit Schematica.")
+		.icon("magnifying_glass")
+		.subSettings(showCoords);
+
+	public static BlockInfo get() {
+		return get(BlockInfo.class);
+	}
 
 	private int getWidth() {
 		int maxLength = 0;

@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.widgets.other;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -84,7 +83,7 @@ public class ItemCounter {
 				subSettings.add((SettingsElement) HeaderSetting.create("§r§l" + Constants.ADDON_NAME).scale(1.3));
 				subSettings.add((SettingsElement) HeaderSetting.create("Item-Zähler"));
 				subSettings.add((SettingsElement) HeaderSetting.create().entryHeight(8));
-				List<SettingsElement> originalSettings = ((SettingsElement) FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.class).getMainElement()).getSubSettings().getElements();
+				List<SettingsElement> originalSettings = ((SettingsElement) dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.get().getMainElement()).getSubSettings().getElements();
 				subSettings.addAll(originalSettings.subList(originalSettings.size() - 3, originalSettings.size()));
 			}
 		}

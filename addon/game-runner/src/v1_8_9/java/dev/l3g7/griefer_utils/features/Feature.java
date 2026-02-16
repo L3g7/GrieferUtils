@@ -179,6 +179,10 @@ public abstract class Feature implements Disableable, GUIEntry {
 			.map(meta -> FileProvider.getSingleton(meta.load()));
 	}
 
+	protected static <T extends Feature> T get(Class<T> type) {
+		return FileProvider.getSingleton(type);
+	}
+
 	@Retention(RUNTIME)
 	@Target(FIELD)
 	public @interface MainElement {
@@ -246,7 +250,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 		}
 
 		public void callback(Runnable callback) {
-			if (setting instanceof AbstractSetting<?,?> as)
+			if (setting instanceof AbstractSetting<?, ?> as)
 				as.callback(callback);
 			if (parent != null)
 				parent.callback(callback);

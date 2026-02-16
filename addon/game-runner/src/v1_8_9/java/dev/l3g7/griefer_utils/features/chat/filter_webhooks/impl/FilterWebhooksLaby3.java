@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.features.chat.filter_webhooks.impl;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
@@ -125,7 +124,7 @@ public class FilterWebhooksLaby3 {
 		public CustomGuiChatFilter(String defaultText) {
 			super(defaultText);
 
-			if (FileProvider.getSingleton(ChatFilterTemplates.class).isEnabled())
+			if (ChatFilterTemplates.get().isEnabled())
 				templatesRenderer = new ChatFilterTemplatesLaby3.GuiChatFilterWithTemplates("") {
 					@Override
 					public void loadTemplate(ChatFilterTemplates.FilterTemplate template) {
@@ -156,7 +155,7 @@ public class FilterWebhooksLaby3 {
 			markWebhookRed = false;
 			selectedFilter = null;
 
-			if (!FileProvider.getSingleton(UnlockChatFilters.class).isEnabled())
+			if (!UnlockChatFilters.get().isEnabled())
 				return;
 
 			textFieldFilterName.setMaxStringLength(Integer.MAX_VALUE);

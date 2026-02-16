@@ -11,7 +11,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -35,24 +34,28 @@ public class RemoveWalkingMiniMes extends Feature {
 		.description("Entfernt alle \"Walking Minimes\", da diese in LabyMod 3 Lags und Crashes verursachen können.")
 		.icon("crossed_out_mini_me");
 
-	 @Mixin(value = UserManager.class, remap = false)
-	 private static class MixinUserManager {
+	public static RemoveWalkingMiniMes get() {
+		return get(RemoveWalkingMiniMes.class);
+	}
 
-	     @ModifyVariable(method = "handleJsonString", at = @At(value = "STORE", ordinal = 0))
-	     private JsonArray modifyCosmeticData(JsonArray instance) {
-			 if (!FileProvider.getSingleton(RemoveWalkingMiniMes.class).isEnabled())
-				 return instance;
+	@Mixin(value = UserManager.class, remap = false)
+	private static class MixinUserManager {
 
-			 JsonArray copy = new JsonArray();
-		     for (JsonElement element : instance) {
-			     JsonObject data = element.getAsJsonObject();
-			     if (!data.has("i") || data.get("i").getAsInt() != WALKING_MINIME_ID)
-				     copy.add(element);
-		     }
+		@ModifyVariable(method = "handleJsonString", at = @At(value = "STORE", ordinal = 0))
+		private JsonArray modifyCosmeticData(JsonArray instance) {
+			if (!RemoveWalkingMiniMes.get().isEnabled())
+				return instance;
 
-		     return copy;
-	     }
+			JsonArray copy = new JsonArray();
+			for (JsonElement element : instance) {
+				JsonObject data = element.getAsJsonObject();
+				if (!data.has("i") || data.get("i").getAsInt() != WALKING_MINIME_ID)
+					copy.add(element);
+			}
 
-	 }
+			return copy;
+		}
+
+	}
 
 }

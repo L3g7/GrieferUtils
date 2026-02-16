@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.ChatMessageLogEvent;
@@ -18,9 +17,9 @@ import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.player.player_list.PlayerList;
 import dev.l3g7.griefer_utils.features.player.player_list.ScammerList;
@@ -85,7 +84,7 @@ public class ShowJoins extends Feature {
 		if (name().equals(name)) // Don't show Joins/Leaves for yourself
 			return false;
 
-		if(!filter.get())
+		if (!filter.get())
 			return true;
 
 		if (name == null)
@@ -169,11 +168,11 @@ public class ShowJoins extends Feature {
 	private String getPlayerListPrefix(String name, UUID uuid) {
 		StringBuilder s = new StringBuilder();
 
-		PlayerList scammerList = FileProvider.getSingleton(ScammerList.class);
+		PlayerList scammerList = ScammerList.get();
 		if (scammerList.isEnabled() && scammerList.shouldMark(name, uuid))
 			s.append(scammerList.toComponent(scammerList.chatAction.get()).getFormattedText());
 
-		PlayerList trustedList = FileProvider.getSingleton(TrustedList.class);
+		PlayerList trustedList = TrustedList.get();
 		if (trustedList.isEnabled() && trustedList.shouldMark(name, uuid))
 			s.append(trustedList.toComponent(trustedList.chatAction.get()).getFormattedText());
 

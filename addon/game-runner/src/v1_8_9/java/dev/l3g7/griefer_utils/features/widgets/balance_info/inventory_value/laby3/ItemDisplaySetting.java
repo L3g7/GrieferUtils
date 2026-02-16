@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby3;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -23,7 +22,7 @@ public class ItemDisplaySetting extends ListEntrySetting {
 	public ItemDisplaySetting(String stackNbt, long value) {
 		super(true, false, false);
 		icon("gold_ingot");
-		container = FileProvider.getSingleton(InventoryValueWidget.InventoryValue.class).rawBooleanElement;
+		container = InventoryValueWidget.InventoryValue.get().rawBooleanElement;
 		this.stackNbt = stackNbt;
 		this.value = value;
 	}

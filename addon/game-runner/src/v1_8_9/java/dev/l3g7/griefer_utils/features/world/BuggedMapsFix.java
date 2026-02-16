@@ -7,14 +7,12 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.MapItemRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.init.Items;
 import net.minecraft.world.storage.MapData;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,6 +32,10 @@ public class BuggedMapsFix extends Feature {
 		.description("Behebt, dass Karten das falsche Bild anzeigen.")
 		.icon("filled_map");
 
+	public static BuggedMapsFix get() {
+		return get(BuggedMapsFix.class);
+	}
+
 	@Mixin(MapItemRenderer.class)
 	private static class MixinMapItemRenderer {
 
@@ -46,17 +48,17 @@ public class BuggedMapsFix extends Feature {
 		private TextureManager textureManager;
 
 		@Inject(method = "updateMapTexture", at = @At("HEAD"))
-	    private void injectUpdateMapTexture(MapData mapdataIn, CallbackInfo ci) {
-			if (!FileProvider.getSingleton(BuggedMapsFix.class).isEnabled())
+		private void injectUpdateMapTexture(MapData mapdataIn, CallbackInfo ci) {
+			if (!BuggedMapsFix.get().isEnabled())
 				return;
 
 			Object loadedMap = loadedMaps.get(mapdataIn.mapName);
-	    	if (loadedMap == null)
+			if (loadedMap == null)
 				return;
 
 			textureManager.deleteTexture(Reflection.get(loadedMap, "location"));
 			loadedMaps.remove(mapdataIn.mapName);
-	    }
+		}
 
 	}
 

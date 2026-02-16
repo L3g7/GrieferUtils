@@ -83,11 +83,11 @@ public class ChatMenu extends Feature {
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES) {
 			settings.add(
 				entry.setIcon(SwitchSetting.create())
-				.name(entry.name)
-				.callback(v -> entry.enabled = v)
-				.defaultValue(true)
-				.set(entry.enabled)
-				.config("chat.chat_menu.entries." + entry.name));
+					.name(entry.name)
+					.callback(v -> entry.enabled = v)
+					.defaultValue(true)
+					.set(entry.enabled)
+					.config("chat.chat_menu.entries." + entry.name));
 		}
 
 		settings.add(COPY_TEXT_ENTRY.getSetting());
@@ -100,6 +100,10 @@ public class ChatMenu extends Feature {
 		if (Config.has(path))
 			for (JsonElement jsonElement : Config.get(path).getAsJsonArray())
 				enabled.addSetting(new EntryDisplaySetting(ChatMenuEntry.fromJson(jsonElement.getAsJsonObject())));
+	}
+
+	public static ChatMenu get() {
+		return get(ChatMenu.class);
 	}
 
 	public static void saveEntries() {

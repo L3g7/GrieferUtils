@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.player.scoreboard;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.widgets.orb_stats.OrbBalance;
@@ -33,7 +32,7 @@ public class OrbScoreboard extends ScoreboardHandler.ScoreboardMod {
 
 	@Override
 	protected String getValue() {
-		long balance = FileProvider.getSingleton(OrbBalance.class).getBalance();
+		long balance = OrbBalance.get().getBalance();
 		return balance == -1 ? "?" : DECIMAL_FORMAT_3.format(balance);
 	}
 

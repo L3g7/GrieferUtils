@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.player.clean_up_player_menu;
 
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -26,6 +25,9 @@ public class CleanUpPlayerMenu extends Feature {
 		.description("Entfernt Spielermenü-Einträge, die eigentlich nicht entfernt werden können.")
 		.icon("player_menu");
 
+	public static CleanUpPlayerMenu get() {
+		return get(CleanUpPlayerMenu.class);
+	}
 
 	public static abstract class CleanUpPlayerMenuBridge<V> {
 
@@ -42,7 +44,7 @@ public class CleanUpPlayerMenu extends Feature {
 			shownEntries = getEntriesReference();
 			allEntries = new ArrayList<>(shownEntries);
 
-			statesKey = FileProvider.getSingleton(CleanUpPlayerMenu.class).getConfigKey() + ".entries";
+			statesKey = CleanUpPlayerMenu.get().getConfigKey() + ".entries";
 			if (Config.has(statesKey)) {
 				mask = Config.get(statesKey).getAsInt();
 				updateEntries();
@@ -71,12 +73,12 @@ public class CleanUpPlayerMenu extends Feature {
 
 			enabled.subSettings(settings.toArray(new SwitchSetting[0]));
 			enabled.callback(this::updateEntries);
-			FileProvider.getSingleton(CleanUpPlayerMenu.class).getCategory().callback(this::updateEntries);
+			CleanUpPlayerMenu.get().getCategory().callback(this::updateEntries);
 		}
 
 		private void updateEntries() {
 			shownEntries.clear();
-			boolean enabled = FileProvider.getSingleton(CleanUpPlayerMenu.class).isEnabled();
+			boolean enabled = CleanUpPlayerMenu.get().isEnabled();
 
 			for (int i = 0; i < allEntries.size(); i++)
 				if ((mask & 1 << i) != 0 || !enabled)

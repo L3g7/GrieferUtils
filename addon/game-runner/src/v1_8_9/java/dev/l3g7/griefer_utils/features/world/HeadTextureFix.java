@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import com.mojang.authlib.GameProfile;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
@@ -39,13 +38,17 @@ public class HeadTextureFix extends Feature {
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());
 	public static final Set<String> processedProfiles = Collections.synchronizedSet(new HashSet<>());
 
+	public static HeadTextureFix get() {
+		return get(HeadTextureFix.class);
+	}
+
 	@Mixin(value = TileEntityItemStackRenderer.class, priority = 1001)
 	private static class MixinTileEntityItemStackRenderer {
 
 		@Redirect(method = "renderByItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTUtil;readGameProfileFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)Lcom/mojang/authlib/GameProfile;"))
 		private GameProfile redirectReadGameProfile(NBTTagCompound nbtTag) {
 			GameProfile gameprofile = NBTUtil.readGameProfileFromNBT(nbtTag);
-			if (gameprofile == null || gameprofile.getName() == null || !FileProvider.getSingleton(HeadTextureFix.class).isEnabled())
+			if (gameprofile == null || gameprofile.getName() == null || !HeadTextureFix.get().isEnabled())
 				return gameprofile;
 
 			String name = gameprofile.getName();

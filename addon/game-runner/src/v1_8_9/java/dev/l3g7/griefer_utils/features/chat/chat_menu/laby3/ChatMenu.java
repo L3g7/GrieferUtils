@@ -13,7 +13,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
@@ -107,6 +106,10 @@ public class ChatMenu extends Feature {
 			}
 		}
 
+	}
+
+	public static ChatMenu get() {
+		return get(ChatMenu.class);
 	}
 
 	public static void saveEntries() {
@@ -230,7 +233,7 @@ public class ChatMenu extends Feature {
 
 		@Inject(method = "getClickEventValue", at = @At("HEAD"), cancellable = true)
 		public void injectGetClickEventValue(int x, int y, CallbackInfoReturnable<String> cir) {
-			if (FileProvider.getSingleton(ChatMenu.class).isEnabled())
+			if (ChatMenu.get().isEnabled())
 				cir.setReturnValue(null);
 		}
 

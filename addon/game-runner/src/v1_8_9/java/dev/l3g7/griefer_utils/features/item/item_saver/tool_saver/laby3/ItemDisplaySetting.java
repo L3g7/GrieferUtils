@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.laby3;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
@@ -21,7 +20,7 @@ class ItemDisplaySetting extends ListEntrySetting {
 		super(true, false, false);
 		name(name);
 		icon(stack);
-		container = (SettingsElement) FileProvider.getSingleton(ToolSaver.class).enabled;
+		container = (SettingsElement) ToolSaver.get().enabled;
 		this.name = name;
 		this.stack = stack;
 	}
@@ -37,7 +36,7 @@ class ItemDisplaySetting extends ListEntrySetting {
 
 	@Override
 	protected void onChange() {
-		FileProvider.getSingleton(ToolSaver.class).onChange();
+		ToolSaver.get().onChange();
 	}
 
 }

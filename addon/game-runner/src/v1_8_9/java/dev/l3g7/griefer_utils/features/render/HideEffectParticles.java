@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -26,14 +25,18 @@ public class HideEffectParticles extends Feature {
 		.description("Versteckt von Entities mit Effekten ausgelöste Partikel.")
 		.icon("particle");
 
+	public static HideEffectParticles get() {
+		return get(HideEffectParticles.class);
+	}
+
 	@Mixin(EntityLivingBase.class)
 	private static class MixinEntityLivingBase {
 
-	    @Inject(method = "updatePotionEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DataWatcher;getWatchableObjectInt(I)I"), cancellable = true)
-	    private void injectUpdatePotionEffects(CallbackInfo ci) {
-	    	if (FileProvider.getSingleton(HideEffectParticles.class).isEnabled())
+		@Inject(method = "updatePotionEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DataWatcher;getWatchableObjectInt(I)I"), cancellable = true)
+		private void injectUpdatePotionEffects(CallbackInfo ci) {
+			if (HideEffectParticles.get().isEnabled())
 				ci.cancel();
-	    }
+		}
 
 	}
 

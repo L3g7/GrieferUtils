@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -30,12 +29,16 @@ public class HideScoreboardInF3 extends Feature {
 		.description("Versteckt das Scoreboard, wenn das F3-Menü geöffnet wurde.")
 		.icon("wooden_board");
 
+	public static HideScoreboardInF3 get() {
+		return get(HideScoreboardInF3.class);
+	}
+
 	@Mixin(GuiIngame.class)
 	private static class MixinGuiIngame {
 
 		@Inject(method = "renderScoreboard", at = @At("HEAD"), cancellable = true)
 		public void injectRenderScoreboard(ScoreObjective objective, ScaledResolution scaledRes, CallbackInfo ci) {
-			if (mc().gameSettings.showDebugInfo && FileProvider.getSingleton(HideScoreboardInF3.class).isEnabled())
+			if (mc().gameSettings.showDebugInfo && HideScoreboardInF3.get().isEnabled())
 				ci.cancel();
 		}
 

@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.chat.chat_menu.laby3;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.*;
@@ -262,7 +261,7 @@ public class AddChatMenuEntryGui extends Gui {
 
 		for (Clickable clickable : clickables)
 			if (clickable != backButton // Don't handle backButton, as it's already handled
-			&& clickable != itemIconInput) // Don't handle itemIconInput, as it's already handled
+				&& clickable != itemIconInput) // Don't handle itemIconInput, as it's already handled
 				clickable.mousePressed(mouseX, mouseY, mouseButton);
 	}
 
@@ -337,7 +336,7 @@ public class AddChatMenuEntryGui extends Gui {
 
 		if (editedEntry == null)
 			// Add entry
-			new EntryDisplaySetting(entry, (SettingsElement) FileProvider.getSingleton(ChatMenu.class).getMainElement());
+			new EntryDisplaySetting(entry, (SettingsElement) ChatMenu.get().getMainElement());
 
 		close();
 	}

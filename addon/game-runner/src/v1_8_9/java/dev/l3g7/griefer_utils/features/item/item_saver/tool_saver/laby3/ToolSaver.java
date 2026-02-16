@@ -77,6 +77,10 @@ public class ToolSaver extends Feature implements TempToolSaverBridge {
 
 	private GuiScreen previousScreen = null;
 
+	public static ToolSaver get() {
+		return get(ToolSaver.class);
+	}
+
 	@EventListener
 	private void onLeftClick(BlockClickEvent event) {
 		if (player() != null && shouldCancel(player().getHeldItem()))
@@ -181,7 +185,7 @@ public class ToolSaver extends Feature implements TempToolSaverBridge {
 		if (isExcluded(heldItem))
 			return false;
 
-		if  (!ItemUtil.canBeRepaired(heldItem) && !saveNonRepairable.get())
+		if (!ItemUtil.canBeRepaired(heldItem) && !saveNonRepairable.get())
 			return false;
 
 		return damage.get() >= heldItem.getMaxDamage() - heldItem.getItemDamage();

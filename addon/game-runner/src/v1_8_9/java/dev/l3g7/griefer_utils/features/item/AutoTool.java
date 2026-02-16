@@ -295,7 +295,7 @@ public class AutoTool extends Feature {
 			return false;
 
 		// Finished
-		if (FileProvider.getSingleton(MissingAdventurerBlocks.class).getMissingBlocks(stack) <= 0)
+		if (MissingAdventurerBlocks.get().getMissingBlocks(stack) <= 0)
 			return false;
 
 		// Not owned by the player

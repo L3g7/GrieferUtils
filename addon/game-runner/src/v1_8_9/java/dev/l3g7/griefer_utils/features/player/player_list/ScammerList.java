@@ -18,4 +18,8 @@ public class ScammerList extends PlayerList {
 		super("§xScammerliste", "Markiert Spieler in der Scammerliste des CommunityRadars.", "⚠", "player_red", "Eigene Scammer", RED, 14, "§c§lScammer", "https://data.community-radar.de/versions/v2/scammer.json");
 	}
 
+	public static ScammerList get() {
+		return get(ScammerList.class);
+	}
+
 }

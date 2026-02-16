@@ -40,7 +40,6 @@ import net.minecraft.client.renderer.tileentity.TileEntityMobSpawnerRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
@@ -120,6 +119,10 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		.description("Verbessert Spawner.")
 		.icon("spawner")
 		.subSettings(spawnerWithHeldItemFix, showSpawnerIcons, markTriggeredSpawners, markLastOpenedSpawner, HeaderSetting.create(), hideMobPreview, hideParticles);
+
+	public static BetterSpawners get() {
+		return get(BetterSpawners.class);
+	}
 
 	@Override
 	public void init() {
@@ -258,7 +261,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	private static class MixinTileEntityMobSpawnerRenderer {
 
 		@Unique
-		private static final BetterSpawners BETTER_SPAWNERS = FileProvider.getSingleton(BetterSpawners.class);
+		private static final BetterSpawners BETTER_SPAWNERS = BetterSpawners.get();
 
 		@Inject(method = "renderTileEntityAt(Lnet/minecraft/tileentity/TileEntityMobSpawner;DDDFI)V", at = @At("HEAD"), cancellable = true)
 		private void injectRenderTileEntityAt(TileEntityMobSpawner te, double x, double y, double z, float partialTicks, int destroyStage, CallbackInfo ci) {
@@ -274,7 +277,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	private static class MixinMobSpawnerBaseLogic {
 
 		@Unique
-		private static final BetterSpawners BETTER_SPAWNERS = FileProvider.getSingleton(BetterSpawners.class);
+		private static final BetterSpawners BETTER_SPAWNERS = BetterSpawners.get();
 
 		@Redirect(method = "updateSpawner", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnParticle(Lnet/minecraft/util/EnumParticleTypes;DDDDDD[I)V"))
 		private void redirectSpawnParticle(World instance, EnumParticleTypes particleType, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset, double zOffset, int[] p_175688_14_) {
@@ -331,7 +334,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 			for (int i = 0; i < 4; i++) {
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(-0.25f, 0, 0.51f);
-				GlStateManager.scale(1/512f, 1/512f, 1/512f);
+				GlStateManager.scale(1 / 512f, 1 / 512f, 1 / 512f);
 				DrawUtils.drawTexturedModalRect(0, 0, 256, 256);
 				GlStateManager.popMatrix();
 				GlStateManager.rotate(90, 0, 1, 0);
@@ -340,14 +343,14 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 			GlStateManager.pushMatrix();
 			GlStateManager.rotate(90, 1, 0, 0);
 			GlStateManager.translate(-0.25f, -0.25f, 0.26f);
-			GlStateManager.scale(1/512f, 1/512f, 1/512f);
+			GlStateManager.scale(1 / 512f, 1 / 512f, 1 / 512f);
 			DrawUtils.drawTexturedModalRect(0, 0, 256, 256);
 			GlStateManager.popMatrix();
 
 			GlStateManager.pushMatrix();
 			GlStateManager.rotate(90, -1, 0, 0);
 			GlStateManager.translate(-0.25f, -0.25f, 0.76f);
-			GlStateManager.scale(1/512f, 1/512f, 1/512f);
+			GlStateManager.scale(1 / 512f, 1 / 512f, 1 / 512f);
 			DrawUtils.drawTexturedModalRect(0, 0, 256, 256);
 			GlStateManager.popMatrix();
 

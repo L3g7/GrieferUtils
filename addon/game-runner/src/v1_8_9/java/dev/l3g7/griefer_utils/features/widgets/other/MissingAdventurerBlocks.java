@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -29,6 +28,10 @@ public class MissingAdventurerBlocks extends SimpleWidget {
 
 	public MissingAdventurerBlocks() {
 		super("Fehlende Blöcke");
+	}
+
+	public static MissingAdventurerBlocks get() {
+		return get(MissingAdventurerBlocks.class);
 	}
 
 	@Override

@@ -22,7 +22,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiDispenser;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -65,6 +64,10 @@ public class ItemSearch extends Feature {
 
 	public ModTextField searchField = null;
 	private String previousSearch = "";
+
+	public static ItemSearch get() {
+		return get(ItemSearch.class);
+	}
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onGuiInit(GuiScreenEvent.GuiInitEvent event) {

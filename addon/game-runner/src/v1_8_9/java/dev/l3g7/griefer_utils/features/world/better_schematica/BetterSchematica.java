@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.world.better_schematica;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
@@ -46,6 +45,10 @@ public class BetterSchematica extends Feature {
 		.description("Erleichtert das Arbeiten mit Schematica.")
 		.icon("litematica/litematica")
 		.subSettings(highlightBlocks, savePosition, openMaterialFile);
+
+	public static BetterSchematica get() {
+		return get(BetterSchematica.class);
+	}
 
 	@Override
 	public void init() {
@@ -95,7 +98,7 @@ public class BetterSchematica extends Feature {
 		if (!SCHEMATICA)
 			return false;
 
-		BetterSchematica betterSchematica = FileProvider.getSingleton(BetterSchematica.class);
+		BetterSchematica betterSchematica = BetterSchematica.get();
 		return betterSchematica.isEnabled() && betterSchematica.highlightBlocks.get();
 	}
 
@@ -103,7 +106,7 @@ public class BetterSchematica extends Feature {
 		if (!SCHEMATICA)
 			return false;
 
-		BetterSchematica betterSchematica = FileProvider.getSingleton(BetterSchematica.class);
+		BetterSchematica betterSchematica = BetterSchematica.get();
 		return betterSchematica.isEnabled() && betterSchematica.savePosition.get();
 	}
 
@@ -111,7 +114,7 @@ public class BetterSchematica extends Feature {
 		if (!SCHEMATICA)
 			return;
 
-		BetterSchematica betterSchematica = FileProvider.getSingleton(BetterSchematica.class);
+		BetterSchematica betterSchematica = BetterSchematica.get();
 		if (!betterSchematica.openMaterialFile.get())
 			return;
 
@@ -123,7 +126,7 @@ public class BetterSchematica extends Feature {
 		if (!SCHEMATICA)
 			return;
 
-		BetterSchematica betterSchematica = FileProvider.getSingleton(BetterSchematica.class);
+		BetterSchematica betterSchematica = BetterSchematica.get();
 		if (betterSchematica.openMaterialFile.get())
 			labyBridge.notifyError("Datei konnte nicht gespeichert werden");
 	}

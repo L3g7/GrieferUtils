@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 
 @Singleton
-public class CleanupScoreboard extends Feature  {
+public class CleanupScoreboard extends Feature {
 
 	final SwitchSetting playTime = SwitchSetting.create()
 		.name("Spielzeit entfernen")
@@ -30,5 +30,9 @@ public class CleanupScoreboard extends Feature  {
 		.description("Löscht bestimmte Einträge im Scoreboard")
 		.icon("wooden_board")
 		.subSettings(playTime, ip);
+
+	public static CleanupScoreboard get() {
+		return get(CleanupScoreboard.class);
+	}
 
 }

@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.features.world.better_hopper;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
@@ -226,7 +225,7 @@ class BetterHopperVisualisation implements Disableable {
 			drawConnection(blockPos, 0xFF4040);
 
 		for (EntityItem entityItem : filteredConnections.values()) {
-			Entity renderEntity =  mc().getRenderViewEntity();
+			Entity renderEntity = mc().getRenderViewEntity();
 			double x = entityItem.posX - renderEntity.lastTickPosX - (renderEntity.posX - renderEntity.lastTickPosX) * partialTicks;
 			double y = entityItem.posY - renderEntity.lastTickPosY - (renderEntity.posY - renderEntity.lastTickPosY) * partialTicks;
 			double z = entityItem.posZ - renderEntity.lastTickPosZ - (renderEntity.posZ - renderEntity.lastTickPosZ) * partialTicks;
@@ -242,7 +241,7 @@ class BetterHopperVisualisation implements Disableable {
 			GlStateManager.rotate(-(float) pitch, 1, 0, 0);
 
 			// Draw outline
-			double delta = 1 /16d;
+			double delta = 1 / 16d;
 			GL11.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
 			GlStateManager.color(1, 0, 0, 1);
 			GlStateManager.colorMask(true, false, false, true);
@@ -275,7 +274,7 @@ class BetterHopperVisualisation implements Disableable {
 
 	@Override
 	public boolean isEnabled() {
-		return FileProvider.getSingleton(BetterHopper.class).isEnabled();
+		return BetterHopper.get().isEnabled();
 	}
 
 }

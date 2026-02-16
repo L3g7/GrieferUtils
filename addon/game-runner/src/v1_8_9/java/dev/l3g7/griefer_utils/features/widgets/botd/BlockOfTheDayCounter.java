@@ -9,15 +9,12 @@ package dev.l3g7.griefer_utils.features.widgets.botd;
 
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
-import net.minecraft.init.Blocks;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
@@ -38,15 +35,18 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 		.icon("brick")
 		.subSettings(showPopup);
 
+	public static BlockOfTheDayCounter get() {
+		return get(BlockOfTheDayCounter.class);
+	}
+
 	public static void onBotd() {
-		BlockOfTheDayCounter counter = FileProvider.getSingleton(BlockOfTheDayCounter.class);
-		if (!counter.isEnabled())
+		if (!BlockOfTheDayCounter.get().isEnabled())
 			return;
 
 		botdFound++;
 		Config.set(getPath(), new JsonPrimitive(botdFound));
 		Config.save();
-		if (!counter.showPopup.get())
+		if (!BlockOfTheDayCounter.get().showPopup.get())
 			return;
 
 		mc().ingameGUI.displayTitle("§aBlock des Tages", null, -1, -1, -1);

@@ -12,12 +12,9 @@ import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipePlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftBridge.recraftBridge;
@@ -73,6 +70,10 @@ public class Recraft extends Feature {
 		.description("Wiederholt \"/rezepte\" oder \"/craft\" Aufrufe oder dekomprimiert Items.\n\nVielen Dank an Pleezon/AntiBannSystem für die Hilfe beim AutoCrafter §c❤")
 		.icon("crafting_table")
 		.subSettings(repeatLastRecording, HeaderSetting.create(), openPieMenu, animation, HeaderSetting.create(), recraftBridge.getPagesSetting());
+
+	public static Recraft get() {
+		return get(Recraft.class);
+	}
 
 	@Override
 	public void init() {

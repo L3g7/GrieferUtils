@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
@@ -19,8 +18,6 @@ import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.widgets.other.BlockInfo;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
@@ -53,7 +50,7 @@ public class RepairValueViewer extends Feature {
 
 	@EventListener
 	public void onTooltip(ItemTooltipEvent e) {
-		if (FileProvider.getSingleton(BlockInfo.class).gettingTooltip)
+		if (BlockInfo.get().gettingTooltip)
 			return;
 
 		if (MinecraftUtil.mc().currentScreen instanceof GuiBigChest)
@@ -68,7 +65,7 @@ public class RepairValueViewer extends Feature {
 	}
 
 	/**
-	 *  0   - Green
+	 * 0   - Green
 	 * 1-39 - Yellow
 	 * ≥ 40 - Red
 	 */

@@ -12,7 +12,6 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
@@ -52,6 +51,10 @@ public class InventoryValueWidget {
 		private static final Pattern VALUE_PATTERN = Pattern.compile("\\b([\\d,.k]+)\\b");
 		public static String entryKey = "modules.inventory_value.entries";
 		private GuiScreen previousScreen = null;
+
+		public static InventoryValue get() {
+			return get(InventoryValue.class);
+		}
 
 		@EventListener
 		private void onAddItem(WindowClickEvent event) {
@@ -148,7 +151,7 @@ public class InventoryValueWidget {
 			ItemStack is = stack.copy();
 			is.stackSize = 1;
 
-			ListIterator<SettingsElement> iterator = FileProvider.getSingleton(InventoryValue.class).rawBooleanElement.getSubSettings().getElements().listIterator();
+			ListIterator<SettingsElement> iterator = InventoryValue.get().rawBooleanElement.getSubSettings().getElements().listIterator();
 			String nbt = ItemUtil.serializeNBT(is);
 
 			while (iterator.hasNext()) {
@@ -171,7 +174,7 @@ public class InventoryValueWidget {
 				mc.currentScreen.initGui();
 
 			JsonObject object = new JsonObject();
-			for (SettingsElement element : FileProvider.getSingleton(InventoryValue.class).rawBooleanElement.getSubSettings().getElements()) {
+			for (SettingsElement element : InventoryValue.get().rawBooleanElement.getSubSettings().getElements()) {
 				if (!(element instanceof ItemDisplaySetting ids))
 					continue;
 
@@ -193,7 +196,7 @@ public class InventoryValueWidget {
 			if (!lore.get(lore.size() - 1).startsWith("§7Signiert von"))
 				return -1;
 
-			for(String string : new String[] {lore.get(lore.size() - 2), stack.getDisplayName()}) {
+			for (String string : new String[] {lore.get(lore.size() - 2), stack.getDisplayName()}) {
 				if (string.startsWith("§7Signiert von"))
 					continue;
 

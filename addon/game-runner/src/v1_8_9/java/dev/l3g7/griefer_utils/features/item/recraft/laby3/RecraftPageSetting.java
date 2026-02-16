@@ -11,16 +11,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
+import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.init.Items;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +76,7 @@ class RecraftPageSetting extends ListEntrySetting {
 
 		getSubSettings().addAll((ArrayList<SettingsElement>) entrySettings);
 		this.name.set(name);
-		container = (SettingsElement) FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.recraft.Recraft.class).getMainElement();
+		container = (SettingsElement) Recraft.get().getMainElement();
 	}
 
 	protected void onChange() {

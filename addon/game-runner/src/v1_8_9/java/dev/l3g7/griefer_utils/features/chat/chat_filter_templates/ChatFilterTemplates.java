@@ -33,6 +33,10 @@ public class ChatFilterTemplates extends Feature {
 		.description("Fügt Vorlagen bei LabyMods Chatfiltern hinzu.")
 		.icon("enchanted_book");
 
+	public static ChatFilterTemplates get() {
+		return get(ChatFilterTemplates.class);
+	}
+
 	public static class FilterTemplate {
 
 		public final String name;

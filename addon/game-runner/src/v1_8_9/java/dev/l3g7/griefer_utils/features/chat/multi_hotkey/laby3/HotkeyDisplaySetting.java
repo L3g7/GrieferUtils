@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.chat.multi_hotkey.laby3;
 
 import com.google.common.collect.ImmutableSet;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.settings.types.*;
@@ -17,7 +16,6 @@ import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.init.Items;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +40,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 
 	public HotkeyDisplaySetting(String name, Set<Integer> keys, List<String> commands, Citybuild citybuild) {
 		super(true, true, false);
-		container = (SettingsElement) FileProvider.getSingleton(MultiHotkey.class).getMainElement();
+		container = (SettingsElement) MultiHotkey.get().getMainElement();
 
 		this.name = StringSetting.create()
 			.name("Name")
@@ -71,7 +69,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 			.set(defaultKeys = keys)
 			.icon("key")
 			.pressCallback(b -> {
-				if (!b || !FileProvider.getSingleton(MultiHotkey.class).isEnabled())
+				if (!b || !MultiHotkey.get().isEnabled())
 					return;
 
 				if (!this.citybuild.get().isOnCb())
@@ -131,7 +129,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 
 	protected void onChange() {
 		icon(citybuild.get().toItemStack());
-		FileProvider.getSingleton(MultiHotkey.class).onChange();
+		MultiHotkey.get().onChange();
 	}
 
 	@Override

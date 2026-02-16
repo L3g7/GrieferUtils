@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.widgets;
 
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget.ComplexLaby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget.ComplexLaby4Widget;
 import net.minecraft.util.ChatComponentText;
@@ -38,6 +39,10 @@ public abstract class Widget {
 
 	public boolean isEnabled() {
 		return getVersionedWidget().isEnabled();
+	}
+
+	protected static <T extends Widget> T get(Class<T> type) {
+		return FileProvider.getSingleton(type);
 	}
 
 	public abstract static class SimpleWidget extends ComplexWidget {

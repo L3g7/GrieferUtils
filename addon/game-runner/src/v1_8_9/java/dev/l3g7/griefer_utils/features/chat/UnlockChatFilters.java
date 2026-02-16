@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.chat;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -31,12 +30,16 @@ public class UnlockChatFilters extends Feature {
 		.description("Erhöht die maximale Länge von Chat Filtern.")
 		.icon("measurement");
 
+	public static UnlockChatFilters get() {
+		return get(UnlockChatFilters.class);
+	}
+
 	@Mixin(GuiChatFilter.class)
 	private static class MixinGuiChatFilter {
 
 		@ModifyArg(method = "drawElementTextField", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiTextField;setMaxStringLength(I)V"))
 		public int injectInitGui(int previousLength) {
-			return FileProvider.getSingleton(UnlockChatFilters.class).isEnabled() ? MAX_VALUE : previousLength;
+			return UnlockChatFilters.get().isEnabled() ? MAX_VALUE : previousLength;
 		}
 
 	}

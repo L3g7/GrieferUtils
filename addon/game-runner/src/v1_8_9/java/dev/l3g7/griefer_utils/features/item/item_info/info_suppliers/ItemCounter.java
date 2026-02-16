@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.item.item_info.info_suppliers;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
@@ -27,7 +26,6 @@ import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -71,9 +69,13 @@ public class ItemCounter extends Feature {
 		.icon("bundle")
 		.subSettings(formatting, HeaderSetting.create(), ignoreDamage, ignoreEnchants, ignoreLore);
 
+	public static ItemCounter get() {
+		return get(ItemCounter.class);
+	}
+
 	@EventListener
 	public void onTooltip(ItemTooltipEvent e) {
-		if (FileProvider.getSingleton(BlockInfo.class).gettingTooltip)
+		if (BlockInfo.get().gettingTooltip)
 			return;
 
 		if (MinecraftUtil.mc().currentScreen instanceof GuiBigChest)

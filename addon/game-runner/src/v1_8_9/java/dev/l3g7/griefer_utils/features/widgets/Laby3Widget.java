@@ -127,6 +127,10 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 		this.owner = widget;
 	}
 
+	protected static <T extends Laby3Widget> T get(Class<T> type) {
+		return FileProvider.getSingleton(type);
+	}
+
 	@OnEnable
 	public static void register() {
 		ModuleCategoryRegistry.loadCategory(CATEGORY);

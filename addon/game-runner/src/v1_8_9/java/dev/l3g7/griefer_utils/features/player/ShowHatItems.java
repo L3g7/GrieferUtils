@@ -7,10 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.player;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -38,12 +36,16 @@ public class ShowHatItems extends Feature {
 		.description("Zeigt Items, die Spieler im Kopf-Slot haben, über ihnen an.")
 		.icon("firework_on_head");
 
+	public static ShowHatItems get() {
+		return get(ShowHatItems.class);
+	}
+
 	@Mixin(LayerCustomHead.class)
 	private static class MixinLayerCustomHead {
 
 		@Inject(method = "doRenderLayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V", shift = At.Shift.AFTER), cancellable = true)
 		public void injectDoRenderLayer(EntityLivingBase entity, float p_177141_2_, float p_177141_3_, float partialTicks, float p_177141_5_, float p_177141_6_, float p_177141_7_, float scale, CallbackInfo ci) {
-			if (!FileProvider.getSingleton(ShowHatItems.class).isEnabled() || entity instanceof EntityArmorStand)
+			if (!ShowHatItems.get().isEnabled() || entity instanceof EntityArmorStand)
 				return;
 
 			ItemStack stack = entity.getCurrentArmor(3);

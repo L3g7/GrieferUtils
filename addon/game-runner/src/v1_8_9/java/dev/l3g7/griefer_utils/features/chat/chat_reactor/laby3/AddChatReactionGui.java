@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.chat.chat_reactor.laby3;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
@@ -321,7 +320,7 @@ public class AddChatReactionGui extends Gui {
 			reaction.enabled = true;
 
 			// Add reaction
-			new ReactionDisplaySetting(reaction, (SettingsElement) FileProvider.getSingleton(ChatReactor.class).getMainElement())
+			new ReactionDisplaySetting(reaction, (SettingsElement) ChatReactor.get().getMainElement())
 				.icon(textTypeInput.getSelected().getIcon());
 		}
 

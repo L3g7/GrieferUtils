@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.item.recraft;
 
 import com.google.gson.JsonElement;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
@@ -17,7 +16,6 @@ import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftAction;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftRecorder;
@@ -27,9 +25,6 @@ import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressRecor
 import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipeAction;
 import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipePlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.recipe.RecipeRecorder;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 
 import java.util.LinkedList;
 
@@ -53,7 +48,7 @@ public class RecraftRecordingCore {
 		.description("Mit welcher Taste diese Aufzeichung abgespielt werden soll.")
 		.icon("key")
 		.pressCallback(pressed -> {
-			if (pressed && ServerCheck.isOnCitybuild() && FileProvider.getSingleton(Recraft.class).isEnabled())
+			if (pressed && ServerCheck.isOnCitybuild() && Recraft.get().isEnabled())
 				play(false);
 		});
 
@@ -83,7 +78,7 @@ public class RecraftRecordingCore {
 		mode.get().player.accept(wrapper);
 	}
 
-	 public void startRecording() {
+	public void startRecording() {
 		mode.get().recorder.accept(wrapper);
 	}
 

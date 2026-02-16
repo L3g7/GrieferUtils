@@ -8,11 +8,11 @@
 package dev.l3g7.griefer_utils.features.item.recraft.laby3;
 
 import com.google.gson.JsonNull;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.util.render.GlEngine;
+import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressPlayer;
@@ -26,7 +26,6 @@ import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -44,7 +43,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 	private RecraftRecording recording;
 	private final RecraftRecording container;
 
-	public ArrayList<SettingsElement> path() { return Reflection.get(mc.currentScreen, "path"); }
+	public ArrayList<SettingsElement> path() {return Reflection.get(mc.currentScreen, "path");}
 
 	public RecraftRecordingSelectionSetting(RecraftRecording container) {
 		super(Icons.of("barrier").toIconData());
@@ -61,7 +60,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 		while (settings.size() > 4)
 			settings.remove(4);
 
-		List<RecraftPageSetting> pages = getSubSettingsOfType((SettingsElement) FileProvider.getSingleton(dev.l3g7.griefer_utils.features.item.recraft.Recraft.class).getMainElement(), RecraftPageSetting.class);
+		List<RecraftPageSetting> pages = getSubSettingsOfType((SettingsElement) Recraft.get().getMainElement(), RecraftPageSetting.class);
 
 		settings.add(new RecordingSelectionSetting(null));
 

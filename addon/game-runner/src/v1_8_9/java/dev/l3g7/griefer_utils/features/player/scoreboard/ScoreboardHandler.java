@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.features.player.scoreboard;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
@@ -40,7 +39,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 public class ScoreboardHandler {
 
 	private static final List<ScoreboardMod> info = new ArrayList<>();
-	private static final CleanupScoreboard cleanUpscoreboard = FileProvider.getSingleton(CleanupScoreboard.class);
+	private static final CleanupScoreboard cleanUpscoreboard = CleanupScoreboard.get();
 
 	private final HiddenScore[] allHiddenScores = new HiddenScore[] {
 		// ip

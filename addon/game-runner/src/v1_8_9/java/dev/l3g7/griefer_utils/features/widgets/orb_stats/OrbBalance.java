@@ -49,6 +49,10 @@ public class OrbBalance extends SimpleWidget {
 		.description("Zeigt dir an, wie viele Orbs du hast.")
 		.icon("orb");
 
+	public static OrbBalance get() {
+		return get(OrbBalance.class);
+	}
+
 	@Override
 	public String getValue() {
 		return balance == -1 ? "Bitte öffne den Orb-Händler / Orb-Verkäufer." : DECIMAL_FORMAT_3.format(balance);

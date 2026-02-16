@@ -11,7 +11,6 @@ import de.emotechat.addon.gui.chat.suggestion.EmoteSuggestionsMenu;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
@@ -25,7 +24,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.init.Items;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -56,6 +54,10 @@ public class SplitLongMessages extends Feature {
 		.description("Teilt Nachrichten, die das Zeichenlimit überschreiten, in mehrere Nachrichten auf.\n" +
 			"Funktioniert im öffentlichen Chat sowie mit /msg und /r.")
 		.icon("shears");
+
+	public static SplitLongMessages get() {
+		return get(SplitLongMessages.class);
+	}
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onGuiKeyboardInput(KeyboardInputEvent.Post event) {
@@ -255,7 +257,7 @@ public class SplitLongMessages extends Feature {
 			textFieldLength = minecraftTextFieldLength;
 			String text = textField.getText();
 
-			if (FileProvider.getSingleton(SplitLongMessages.class).isEnabled() && text.startsWith("/msg ") || text.startsWith("/r ") || !text.startsWith("/"))
+			if (SplitLongMessages.get().isEnabled() && text.startsWith("/msg ") || text.startsWith("/r ") || !text.startsWith("/"))
 				minecraftTextFieldLength = Integer.MAX_VALUE;
 			else
 				minecraftTextFieldLength = textFieldLength;

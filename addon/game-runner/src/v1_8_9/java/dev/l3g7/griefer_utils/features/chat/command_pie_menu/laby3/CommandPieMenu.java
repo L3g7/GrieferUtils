@@ -74,6 +74,10 @@ public class CommandPieMenu extends Feature {
 		.icon("command_menu")
 		.subSettings(key, animation, newEntrySetting);
 
+	public static CommandPieMenu get() {
+		return get(CommandPieMenu.class);
+	}
+
 	@Override
 	public void init() {
 		super.init();

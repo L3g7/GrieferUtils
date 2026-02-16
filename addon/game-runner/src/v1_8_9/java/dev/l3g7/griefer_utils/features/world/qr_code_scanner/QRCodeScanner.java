@@ -12,7 +12,6 @@ import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.decoder.Decoder;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
@@ -63,7 +62,7 @@ public class QRCodeScanner extends Feature {
 			ItemStack stack;
 
 			if (mc().currentScreen != null) {
-				ModTextField mtf = FileProvider.getSingleton(ItemSearch.class).searchField;
+				ModTextField mtf = ItemSearch.get().searchField;
 				if (mtf != null && mtf.isFocused())
 					return;
 
@@ -142,7 +141,7 @@ public class QRCodeScanner extends Feature {
 		protected abstract int correctErrors(byte[] codewordBytes, int numDataCodewords) throws ChecksumException;
 
 		@Redirect(method = "decode(Lcom/google/zxing/qrcode/decoder/BitMatrixParser;Ljava/util/Map;)Lcom/google/zxing/common/DecoderResult;", at = @At(value = "INVOKE", target = "Lcom/google/zxing/qrcode/decoder/Decoder;correctErrors([BI)I"))
-	    private int injectCorrectErrors(Decoder instance, byte[] codewordBytes, int numDataCodewords) throws ChecksumException {
+		private int injectCorrectErrors(Decoder instance, byte[] codewordBytes, int numDataCodewords) throws ChecksumException {
 			try {
 				return correctErrors(codewordBytes, numDataCodewords);
 			} catch (ChecksumException e) {

@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.render;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -42,6 +41,10 @@ public class ShowNametagsThroughWalls extends Feature {
 
 	// NOTE Implement https://github.com/L3g7/GrieferUtils/commit/421d52f50619ddf05f942548d70b0c9648614b6c when merging with LabyMod 3
 
+	public static ShowNametagsThroughWalls get() {
+		return get(ShowNametagsThroughWalls.class);
+	}
+
 	@Mixin(RenderLiving.class)
 	@ExclusiveTo(LABY_3)
 	private static abstract class MixinRenderLiving extends RendererLivingEntity<EntityLiving> {
@@ -51,12 +54,12 @@ public class ShowNametagsThroughWalls extends Feature {
 		}
 
 		@Inject(method = "canRenderName(Lnet/minecraft/entity/EntityLiving;)Z", at = @At("RETURN"), cancellable = true)
-	    private void injectCanRenderName(EntityLiving entity, CallbackInfoReturnable<Boolean> cir) {
-	    	if (FileProvider.getSingleton(ShowNametagsThroughWalls.class).isEnabled() && !cir.getReturnValueZ()) {
-			    cir.setReturnValue(super.canRenderName(entity) && entity.hasCustomName());
-		    }
+		private void injectCanRenderName(EntityLiving entity, CallbackInfoReturnable<Boolean> cir) {
+			if (ShowNametagsThroughWalls.get().isEnabled() && !cir.getReturnValueZ()) {
+				cir.setReturnValue(super.canRenderName(entity) && entity.hasCustomName());
+			}
 
-	    }
+		}
 
 	}
 
@@ -73,7 +76,7 @@ public class ShowNametagsThroughWalls extends Feature {
 
 		@Redirect(method = "renderLivingLabel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;tryBlendFuncSeparate(IIII)V"))
 		private void redirectTryBlendFuncSeparate(int srcFactor, int dstFactor, int srcFactorAlpha, int dstFactorAlpha) {
-			boolean swap = renderingLivingEntity && FileProvider.getSingleton(ShowNametagsThroughWalls.class).isEnabled();
+			boolean swap = renderingLivingEntity && ShowNametagsThroughWalls.get().isEnabled();
 			GlStateManager.tryBlendFuncSeparate(swap ? dstFactor : srcFactor, swap ? srcFactor : dstFactor, srcFactorAlpha, dstFactorAlpha);
 		}
 

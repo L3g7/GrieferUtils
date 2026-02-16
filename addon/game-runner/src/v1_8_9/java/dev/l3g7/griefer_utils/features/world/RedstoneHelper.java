@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.features.world;
 
 import com.google.common.base.Strings;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.NoteBlockPlayEvent;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
@@ -29,7 +28,6 @@ import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Items;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -111,6 +109,10 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		.subSettings(showPower, showDirection, showNoteBlockPitch, showCauldronLevel, range, HeaderSetting.create(), hideRedstoneParticles)
 		.callback(RenderObjectObserver.Chunk::onSettingsChange);
 
+	public static RedstoneHelper get() {
+		return get(RedstoneHelper.class);
+	}
+
 	@Override
 	public void init() {
 		super.init();
@@ -152,7 +154,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 		@Inject(method = "randomDisplayTick", at = @At("HEAD"), cancellable = true)
 		private void injectRandomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand, CallbackInfo ci) {
-			if (FileProvider.getSingleton(RedstoneHelper.class).isEnabled() && hideRedstoneParticles.get())
+			if (RedstoneHelper.get().isEnabled() && hideRedstoneParticles.get())
 				ci.cancel();
 		}
 
@@ -173,7 +175,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 		@Override
 		public boolean shouldRender() {
-			if (!FileProvider.getSingleton(RedstoneHelper.class).isEnabled() || !showPower.get())
+			if (!RedstoneHelper.get().isEnabled() || !showPower.get())
 				return false;
 
 			return power > 0 || showZeroPower.get();
@@ -212,7 +214,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 		@Override
 		public boolean shouldRender() {
-			if (!FileProvider.getSingleton(RedstoneHelper.class).isEnabled())
+			if (!RedstoneHelper.get().isEnabled())
 				return false;
 
 			return showDirection.get();

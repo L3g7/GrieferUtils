@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.chat.chat_filter_templates;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 
-public abstract class ChatFilterTemplates extends Feature {
+public class ChatFilterTemplates extends Feature {
 
 	public static final FilterTemplate[] TEMPLATES = new FilterTemplate[]{
 		new FilterTemplate("Eingehende MSG").contains("-> mir]").containsNot("»"),
@@ -28,7 +28,7 @@ public abstract class ChatFilterTemplates extends Feature {
 	};
 
 	@MainElement
-	protected static final SwitchSetting enabled = SwitchSetting.create()
+	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Filtervorlagen")
 		.description("Fügt Vorlagen bei LabyMods Chatfiltern hinzu.")
 		.icon("enchanted_book");

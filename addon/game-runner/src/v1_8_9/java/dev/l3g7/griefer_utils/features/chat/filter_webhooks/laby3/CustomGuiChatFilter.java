@@ -11,9 +11,10 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.features.chat.UnlockChatFilters;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates;
 import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates.FilterTemplate;
-import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3.ChatFilterTemplatesLaby3;
-import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby3.GuiChatFilterWithTemplates;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.impl.ChatFilterTemplatesLaby3;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.impl.ChatFilterTemplatesLaby3.GuiChatFilterWithTemplates;
 import dev.l3g7.griefer_utils.features.chat.filter_webhooks.FilterWebhooks;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.Scrollbar;
@@ -76,7 +77,7 @@ public class CustomGuiChatFilter extends GuiChatCustom {
 	public CustomGuiChatFilter(String defaultText) {
 		super(defaultText);
 
-		if (FileProvider.getSingleton(ChatFilterTemplatesLaby3.class).isEnabled())
+		if (FileProvider.getSingleton(ChatFilterTemplates.class).isEnabled())
 			templatesRenderer = new GuiChatFilterWithTemplates("") {
 				@Override
 				public void loadTemplate(FilterTemplate template) {

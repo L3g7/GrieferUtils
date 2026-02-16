@@ -5,14 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.chat_filter_templates.laby4;
+package dev.l3g7.griefer_utils.features.chat.chat_filter_templates.impl;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates;
+import dev.l3g7.griefer_utils.features.chat.chat_filter_templates.ChatFilterTemplates.FilterTemplate;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
 import net.labymod.api.Textures;
@@ -40,9 +40,8 @@ import java.util.function.Function;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
-@Singleton
 @ExclusiveTo(LABY_4)
-public class ChatFilterTemplatesLaby4 extends ChatFilterTemplates {
+public class ChatFilterTemplatesLaby4 {
 
 	/**
 	 * The setting that redirected to the currently open templateList.
@@ -55,7 +54,7 @@ public class ChatFilterTemplatesLaby4 extends ChatFilterTemplates {
 	private static CategorySettingImpl templateList;
 
 	public static void modifyAddButton(SettingContentActivity self) {
-		if (!enabled.get())
+		if (!ChatFilterTemplates.enabled.get())
 			return;
 
 		if (!(self instanceof ChatSettingActivity))
@@ -97,7 +96,7 @@ public class ChatFilterTemplatesLaby4 extends ChatFilterTemplates {
 						templateList = (CategorySettingImpl) CategorySetting.create()
 							.name("Vorlagen");
 
-						for (FilterTemplate template : TEMPLATES) {
+						for (FilterTemplate template : ChatFilterTemplates.TEMPLATES) {
 							templateList.addSetting(
 								ButtonSetting.create()
 									.name(template.name)
@@ -153,10 +152,6 @@ public class ChatFilterTemplatesLaby4 extends ChatFilterTemplates {
 			modifyAddButton(c(this));
 		}
 
-	}
-
-	private static String[] of(String... args) {
-		return args;
 	}
 
 }

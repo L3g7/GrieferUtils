@@ -61,7 +61,7 @@ public class Laby3Credits implements CreditsBridge {
 		private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 
 		public IconSetting(String displayName, String icon) {
-			super(displayName, new IconData(icon.startsWith("../") ? "griefer_utils/icons/" + icon.substring(3) + ".png" : "griefer_utils/icons/credits/" + icon + ".png"));
+			super(displayName, new IconData(icon.startsWith("../") ? "griefer_utils/icons/" + icon.substring(6) + ".png" : "griefer_utils/icons/high_res/credits/" + icon + ".png"));
 		}
 
 		@Override

@@ -138,7 +138,7 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 			int idx = i;
 			event.settings().addChild(entry.createUnwrappedWidget(
 				ButtonWidget.icon(
-					Icons.of(Laby4Util.isVanillaTheme() ? "pencil_padded" : "pencil_vec"),
+					Icons.of(Laby4Util.isVanillaTheme() ? "pencil_padded" : "high_res/pencil_vec"),
 					() -> new StringListInputActivity(idx, event.activity).open()
 				).addId("delete-button"), // Actually an edit button, but id is required for styling
 

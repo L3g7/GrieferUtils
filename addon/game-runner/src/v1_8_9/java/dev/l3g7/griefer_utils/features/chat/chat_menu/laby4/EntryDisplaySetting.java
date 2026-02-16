@@ -71,7 +71,7 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 			if (w instanceof SettingWidget s && s.setting() == this) {
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
-						ButtonWidget btn = ButtonWidget.icon(Icons.of("pencil_vec"), () ->
+						ButtonWidget btn = ButtonWidget.icon(Icons.of("high_res/pencil_vec"), () ->
 							mc().displayGuiScreen(new AddChatMenuEntryGui(this, mc().currentScreen)));
 
 						btn.addId("advanced-button"); // required so LSS is applied

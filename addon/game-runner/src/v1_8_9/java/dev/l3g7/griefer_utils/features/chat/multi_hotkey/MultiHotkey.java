@@ -286,7 +286,7 @@ public class MultiHotkey extends Feature {
 
 							// Update button icons
 							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(Icons.of("pencil_vec")); // NOTE: use original icons?
+							btn.updateIcon(Icons.of("high_res/pencil_vec")); // NOTE: use original icons?
 							content.removeChild("delete-button");
 
 							content.addContent(ButtonWidget.icon(X, () -> {

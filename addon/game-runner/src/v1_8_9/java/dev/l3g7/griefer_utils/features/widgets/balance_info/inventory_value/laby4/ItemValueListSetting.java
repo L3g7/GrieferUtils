@@ -163,7 +163,7 @@ public class ItemValueListSetting extends ListSetting implements Laby4Setting<It
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(Icons.of("pencil_vec"));
+						btn.updateIcon(Icons.of("high_res/pencil_vec"));
 
 						content.addContent(ButtonWidget.icon(X, () -> {
 							get().remove(entry.index);

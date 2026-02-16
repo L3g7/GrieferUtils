@@ -164,7 +164,7 @@ public class EntryListSetting extends ListSetting implements Laby4Setting<EntryL
 
 						// Update button icons
 						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(Icons.of("pencil_vec"));
+						btn.updateIcon(Icons.of("high_res/pencil_vec"));
 						content.removeChild("delete-button");
 
 						content.addContent(ButtonWidget.icon(X, () -> {

@@ -109,7 +109,7 @@ public class GuiFarms extends GuiSearchable<Farm> {
 		else
 			chest.addTextureItem(19, new TextureItem(typeFiler.texture, 12, typeStack), FILTER_SELECT_GUI::open);
 
-		TextureItem textureItem = new TextureItem("griefer_info/" + (filteringForActive ? "diamond" : "gray") + "_sword", (filteringForActive ? "§f" : "§7") + "Aktiv", "§8Klicke, um Umzuschalten");
+		TextureItem textureItem = new TextureItem((filteringForActive ? "diamond" : "gray") + "_sword", (filteringForActive ? "§f" : "§7") + "Aktiv", "§8Klicke, um Umzuschalten");
 		chest.addTextureItem(28, textureItem, () -> {
 			filteringForActive = !filteringForActive;
 			if (!hasClicked) {
@@ -123,7 +123,7 @@ public class GuiFarms extends GuiSearchable<Farm> {
 			open();
 		});
 
-		textureItem = new TextureItem("griefer_info/chest" + (filteringForPassive ? "" : "_gray"), (filteringForPassive ? "§f" : "§7") + "Passiv", "§8Klicke, um Umzuschalten");
+		textureItem = new TextureItem("high_res/chest" + (filteringForPassive ? "" : "_gray"), (filteringForPassive ? "§f" : "§7") + "Passiv", "§8Klicke, um Umzuschalten");
 		chest.addTextureItem(37, textureItem, () -> {
 			filteringForPassive = !filteringForPassive;
 			if (!hasClicked) {

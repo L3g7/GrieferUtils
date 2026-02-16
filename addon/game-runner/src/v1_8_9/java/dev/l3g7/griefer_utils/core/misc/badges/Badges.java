@@ -139,7 +139,7 @@ public class Badges {
 		String text = GUServer.isAvailable() ? String.format("§7%d§8/§7%d §a%d%%", userCount, totalCount, percent) : "§c?";
 		DrawUtils.drawRightString(text, rightEnd, 1.5 + y, 0.7);
 
-		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/icon.png"));
+		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/high_res/icon.png"));
 		rightEnd -= mc().fontRendererObj.getStringWidth(text) * 0.7;
 		DrawUtils.drawTexture(rightEnd - 8, 1.25 + y, 256, 256, 7, 7);
 	}

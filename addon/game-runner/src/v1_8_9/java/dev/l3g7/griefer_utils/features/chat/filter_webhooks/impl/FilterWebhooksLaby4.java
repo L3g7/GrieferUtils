@@ -5,11 +5,9 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.filter_webhooks.laby4;
+package dev.l3g7.griefer_utils.features.chat.filter_webhooks.impl;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.chat.filter_webhooks.FilterWebhooks;
@@ -33,18 +31,13 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.features.chat.filter_webhooks.FilterWebhooks.webhooks;
 
-@Singleton
 @ExclusiveTo(LABY_4)
-public class FilterWebhooksLaby4 extends FilterWebhooks {
-
-	@OnEnable
-	private void initialize() {
-		init("laby4");
-	}
+public class FilterWebhooksLaby4 {
 
 	public static void hookToSettings(ChatFilter filter, @Nullable Setting parent, CallbackInfoReturnable<List<Setting>> cir) {
-		if (!enabled.get())
+		if (!FilterWebhooks.enabled.get())
 			return;
 
 		List<Setting> settings = cir.getReturnValue();
@@ -54,13 +47,13 @@ public class FilterWebhooksLaby4 extends FilterWebhooks {
 		StringSetting urlInput = StringSetting.create()
 			.name("Webhook-URL")
 			.placeholder("https://discord.com/api/webhooks/...")
-			.validator(v -> HOOK_URL_PATTERN.matcher(v).matches())
+			.validator(v -> FilterWebhooks.HOOK_URL_PATTERN.matcher(v).matches())
 			.set(url == null ? "" : url)
 			.enabled(url != null)
 			.extend()
 			.callback(v -> {
 				webhooks.put(filter.id().toString(), v);
-				saveWebhooks();
+				FilterWebhooks.saveWebhooks();
 			});
 
 		SwitchSetting shouldSend = SwitchSetting.create()
@@ -69,7 +62,7 @@ public class FilterWebhooksLaby4 extends FilterWebhooks {
 			.callback(v -> {
 				urlInput.enabled(v);
 				webhooks.put(filter.id().toString(), v && !urlInput.get().isEmpty() ? urlInput.get() : null);
-				saveWebhooks();
+				FilterWebhooks.saveWebhooks();
 			});
 
 		// Bind settings
@@ -82,7 +75,7 @@ public class FilterWebhooksLaby4 extends FilterWebhooks {
 
 	public static void hookApplyChatFilter(ChatFilter filter, IChatComponent component) {
 		Integer color = filter.shouldChangeBackground().get() ? filter.backgroundColor().get() : null;
-		triggerWebhook(webhooks.get(filter.id().toString()), component, filter.name().get(), color);
+		FilterWebhooks.triggerWebhook(webhooks.get(filter.id().toString()), component, filter.name().get(), color);
 	}
 
 	@ExclusiveTo(LABY_4)

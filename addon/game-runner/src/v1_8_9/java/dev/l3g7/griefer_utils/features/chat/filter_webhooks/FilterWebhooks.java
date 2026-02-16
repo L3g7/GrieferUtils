@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.features.chat.filter_webhooks;
 
 import com.google.gson.*;
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
@@ -27,12 +28,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.STATIC_API_URL;
 
-public abstract class FilterWebhooks extends Feature {
+@Singleton
+public class FilterWebhooks extends Feature {
 
-	protected static final Pattern HOOK_URL_PATTERN = Pattern.compile("^https://(?:\\w+\\.)?discord(?:app)?\\.com/api/webhooks/(\\d{18}\\d?/[\\w-]{68})$");
+	public static final Pattern HOOK_URL_PATTERN = Pattern.compile("^https://(?:\\w+\\.)?discord(?:app)?\\.com/api/webhooks/(\\d{18}\\d?/[\\w-]{68})$");
 	private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 	private static final JsonObject EMBED_FOOTER = new JsonObject();
 
@@ -41,7 +44,7 @@ public abstract class FilterWebhooks extends Feature {
 		EMBED_FOOTER.addProperty("icon_url", STATIC_API_URL + "/icon/padded/64x64.png");
 	}
 
-	protected static final Map<String, String> webhooks = new HashMap<>();
+	public static final Map<String, String> webhooks = new HashMap<>();
 	private static String configKey;
 
 	private static final DropDownSetting<Style> messageStyle = DropDownSetting.create(Style.class)
@@ -50,7 +53,7 @@ public abstract class FilterWebhooks extends Feature {
 		.defaultValue(Style.EMBED);
 
 	@MainElement
-	protected static final SwitchSetting enabled = SwitchSetting.create()
+	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Webhooks in Filtern")
 		.description("Sendet eine Chatnachricht an einen Discord-Webhook, wenn ein LabyMod-Filter auslöst.")
 		.icon("discord")
@@ -65,8 +68,10 @@ public abstract class FilterWebhooks extends Feature {
 		return webhooks;
 	}
 
-	protected static void init(String version) {
-		configKey = "chat.filter_webhooks.filters." + version;
+	@Override
+	public void init() {
+		super.init();
+		configKey = "chat.filter_webhooks.filters." + (LABY_3.isActive() ? "laby3" : "laby4");
 		if (!Config.has(configKey))
 			return;
 
@@ -88,7 +93,7 @@ public abstract class FilterWebhooks extends Feature {
 		Config.save();
 	}
 
-	protected static void triggerWebhook(String url, IChatComponent component, String name, Integer color) {
+	public static void triggerWebhook(String url, IChatComponent component, String name, Integer color) {
 		if (!enabled.get())
 			return;
 

@@ -63,6 +63,10 @@ public class MainPage {
 					.filter(e -> e instanceof SwitchSetting || e instanceof NumberSetting || e instanceof CategorySetting)
 					.forEachOrdered(searchableSettings::add);
 
+				BaseSetting<?> e = feature.getMainElement();
+				if (e instanceof SwitchSetting || e instanceof NumberSetting || e instanceof CategorySetting)
+					searchableSettings.add((SettingsElement) e);
+
 				if (!(feature.getMainElement() instanceof SwitchSettingImpl main)) {
 					return;
 				}

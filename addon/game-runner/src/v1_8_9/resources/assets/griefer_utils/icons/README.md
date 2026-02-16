@@ -527,7 +527,7 @@
   </tr>
   <tr>
     <td><img src="open_link.png" height=16em width=16em />&nbsp;&nbsp;<a href="open_link.png">open_link.png</a></td>
-    <td><a href="null">selfmade</a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><img src="orb.png" height=16em width=16em />&nbsp;&nbsp;<a href="orb.png">orb.png</a></td>
@@ -543,11 +543,11 @@
   </tr>
   <tr>
     <td><img src="pencil.png" height=16em width=16em />&nbsp;&nbsp;<a href="pencil.png">pencil.png</a></td>
-    <td><a href="null">selfmade</a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><img src="pencil_padded.png" height=16em width=16em />&nbsp;&nbsp;<a href="pencil_padded.png">pencil_padded.png</a></td>
-    <td><a href="null">selfmade</a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><img src="player_green.png" height=16em width=16em />&nbsp;&nbsp;<a href="player_green.png">player_green.png</a></td>
@@ -579,11 +579,11 @@
   </tr>
   <tr>
     <td><img src="recording_red.png" height=16em width=16em />&nbsp;&nbsp;<a href="recording_red.png">recording_red.png</a></td>
-    <td><a href="null">selfmade</a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><img src="recording_white.png" height=16em width=16em />&nbsp;&nbsp;<a href="recording_white.png">recording_white.png</a></td>
-    <td><a href="null">selfmade</a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><img src="redstone.png" height=16em width=16em />&nbsp;&nbsp;<a href="redstone.png">redstone.png</a></td>
@@ -627,7 +627,7 @@
   </tr>
   <tr>
     <td><img src="skull.png" height=16em width=16em />&nbsp;&nbsp;<a href="skull.png">skull.png</a></td>
-    <td><a href="null">selfmade</a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><img src="skull_question.png" height=16em width=16em />&nbsp;&nbsp;<a href="skull_question.png">skull_question.png</a></td>
@@ -668,6 +668,10 @@
   <tr>
     <td><img src="tools.png" height=16em width=16em />&nbsp;&nbsp;<a href="tools.png">tools.png</a></td>
     <td><a href="https://minecraft.wiki/w/File:EnvSprite_item.png?89d23">Minecraft Wiki (Mudscape)</a></td>
+  </tr>
+  <tr>
+    <td><img src="transparent.png" height=16em width=16em />&nbsp;&nbsp;<a href="transparent.png">transparent.png</a></td>
+    <td>selfmade</td>
   </tr>
   <tr>
     <td><img src="tree_file.png" height=16em width=16em />&nbsp;&nbsp;<a href="tree_file.png">tree_file.png</a></td>

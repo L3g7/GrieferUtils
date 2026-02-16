@@ -117,14 +117,10 @@ public abstract class Feature implements Disableable, GUIEntry {
 	 * Initialises the main element and config key.
 	 */
 	public void init() {
-		MainElementData data = SettingLoader.initMainElement(this, null, getConfigSubkey());
+		MainElementData data = SettingLoader.initMainElement(this, null, SettingLoader.getDefaultConfigSubkey(this));
 		mainElement = data.mainElement;
 		configKey = data.configKey;
 		category.get();
-	}
-
-	protected String getConfigSubkey() {
-		return SettingLoader.getDefaultConfigSubkey(this);
 	}
 
 	@Override

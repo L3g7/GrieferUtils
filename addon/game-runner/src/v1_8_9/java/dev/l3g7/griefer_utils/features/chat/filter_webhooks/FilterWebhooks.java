@@ -59,11 +59,6 @@ public class FilterWebhooks extends Feature {
 		.icon("discord")
 		.subSettings(messageStyle);
 
-	@Override
-	protected String getConfigSubkey() {
-		return "filter_webhooks";
-	}
-
 	public static Map<String, String> getWebhooks() {
 		return webhooks;
 	}

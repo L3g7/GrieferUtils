@@ -94,22 +94,6 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 	}
 
 	@Override
-	public Component displayName() {
-		return Component.text(name());
-	}
-
-	@Override
-	public Component getDescription() {
-		String description = storage.description;
-		return description == null ? null : Component.text(description);
-	}
-
-	@Override
-	public Icon getIcon() {
-		return getStorage().icon;
-	}
-
-	@Override
 	public StringListSetting placeholder(String placeholder) {
 		this.placeholder = placeholder;
 		return this;

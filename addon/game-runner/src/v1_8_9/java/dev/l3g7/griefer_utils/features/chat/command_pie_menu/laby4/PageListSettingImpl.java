@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
-import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
@@ -32,7 +31,6 @@ import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
 import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
 import net.labymod.api.util.KeyValue;
-import net.minecraft.init.Items;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -175,16 +173,6 @@ public class PageListSettingImpl extends ListSetting implements PageListSetting,
 				});
 			}
 		}
-	}
-
-	@Override
-	public Component displayName() {
-		return Component.text(name());
-	}
-
-	@Override
-	public Icon getIcon() {
-		return storage.icon;
 	}
 
 	@Override

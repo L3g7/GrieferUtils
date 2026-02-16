@@ -113,22 +113,6 @@ public class ItemProtectionListSetting extends ListSetting implements Laby4Setti
 	}
 
 	@Override
-	public Component displayName() {
-		return Component.text(name());
-	}
-
-	@Override
-	public Component getDescription() {
-		String description = storage.description;
-		return description == null ? null : Component.text(description);
-	}
-
-	@Override
-	public Icon getIcon() {
-		return getStorage().icon;
-	}
-
-	@Override
 	public List<KeyValue<Setting>> getElements() {
 		List<KeyValue<Setting>> list = new ArrayList<>();
 

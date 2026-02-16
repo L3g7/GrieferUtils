@@ -12,7 +12,6 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
@@ -94,22 +93,6 @@ public class PlayerListSettingLaby4 extends ListSetting implements AbstractSetti
 	@Override
 	public ExtendedStorage<List<PlayerListEntry>> getStorage() {
 		return storage;
-	}
-
-	@Override
-	public Component displayName() {
-		return Component.text(name());
-	}
-
-	@Override
-	public Component getDescription() {
-		String description = storage.description;
-		return description == null ? null : Component.text(description);
-	}
-
-	@Override
-	public Icon getIcon() {
-		return getStorage().icon;
 	}
 
 	@EventListener

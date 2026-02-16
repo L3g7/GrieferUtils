@@ -191,16 +191,6 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 		}
 
 		@Override
-		public Component displayName() {
-			return Component.text(name());
-		}
-
-		@Override
-		public Icon getIcon() {
-			return storage.icon;
-		}
-
-		@Override
 		public ExtendedStorage<List<RecraftPage>> getStorage() {
 			return storage;
 		}

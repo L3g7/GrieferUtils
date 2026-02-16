@@ -16,8 +16,6 @@ public interface SwitchSetting extends AbstractSetting<SwitchSetting, Boolean> {
 
 	static SwitchSetting create() {return settings.createSwitchSetting();}
 
-	SwitchSetting asCheckbox(); // NOTE: use
-
 	SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode);
 
 	enum TriggerMode implements Named {

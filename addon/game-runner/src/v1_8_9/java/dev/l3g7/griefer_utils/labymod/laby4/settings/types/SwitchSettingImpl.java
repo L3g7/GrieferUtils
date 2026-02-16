@@ -15,16 +15,12 @@ import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.input.CheckBoxWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SwitchWidget;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.HOLD;
-import static net.labymod.api.client.gui.screen.widget.widgets.input.CheckBoxWidget.State.CHECKED;
-import static net.labymod.api.client.gui.screen.widget.widgets.input.CheckBoxWidget.State.UNCHECKED;
 
 public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolean> implements SwitchSetting {
 
-	private boolean checkbox = false;
 	private TriggerMode previousMode; // NOTE: refactor
 
 	public SwitchSettingImpl() {
@@ -33,27 +29,11 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 
 	@Override
 	protected Widget[] createWidgets() {
-		if (checkbox) {
-			CheckBoxWidget widget = new CheckBoxWidget();
-			widget.setState(get() ? CHECKED : UNCHECKED);
-			callback(v -> widget.setState(v ? CHECKED : UNCHECKED));
+		SwitchWidget widget = SwitchWidget.text("An", "Aus", this::set);
+		widget.setValue(get());
+		callback(widget::setValue);
 
-			widget.setPressable(() -> set(widget.state() == CHECKED));
-
-			return new Widget[]{widget};
-		} else {
-			SwitchWidget widget = SwitchWidget.text("An", "Aus", this::set);
-			widget.setValue(get());
-			callback(widget::setValue);
-
-			return new Widget[]{widget};
-		}
-	}
-
-	@Override
-	public SwitchSetting asCheckbox() {
-		checkbox = true;
-		return this;
+		return new Widget[]{widget};
 	}
 
 	@Override

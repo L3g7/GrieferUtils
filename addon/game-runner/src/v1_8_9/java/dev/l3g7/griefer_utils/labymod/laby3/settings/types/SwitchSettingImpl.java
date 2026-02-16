@@ -33,11 +33,6 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 	}
 
 	@Override
-	public SwitchSetting asCheckbox() {
-		return this; // TODO noop
-	}
-
-	@Override
 	public void init() {
 		super.init();
 		Reflection.set(this, "currentValue", get());

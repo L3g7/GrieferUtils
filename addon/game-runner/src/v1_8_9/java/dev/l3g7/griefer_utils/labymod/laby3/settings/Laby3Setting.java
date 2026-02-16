@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons.L3Icon;
+import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
 
@@ -33,38 +33,34 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 	@Override
 	default String name() {
-		return getStorage().name;
+		return ((SettingsElement) this).getDisplayName();
 	}
 
 	@Override
 	default S name(String name) {
 		((SettingsElement) this).setDisplayName(name.trim());
-		getStorage().name = name.trim(); // TODO why store in storage?
 		return (S) this;
 	}
 
 	@Override
 	default S description(String... description) {
 		if (description.length == 0)
-			getStorage().description = null;
+			((SettingsElement) this).setDescriptionText(null);
 		else
-			getStorage().description = String.join("\n", description).trim();
+			((SettingsElement) this).setDescriptionText(String.join("\n", description).trim());
 
-		((SettingsElement) this).setDescriptionText(getStorage().description);
 		return (S) this;
 	}
 
 	@Override
 	default S icon(String icon) {
-		getStorage().icon = Icons.of(icon);
-		Reflection.set(this, "iconData", getStorage().icon.toIconData());
+		Reflection.set(this, "iconData", Icons.of(icon).toIconData());
 		return (S) this;
 	}
 
 	@Override
 	default S icon(ItemStack icon) {
-		getStorage().icon = Icons.of(icon);
-		Reflection.set(this, "iconData", getStorage().icon.toIconData());
+		Reflection.set(this, "iconData", Icons.of(icon).toIconData());
 		return (S) this;
 	}
 
@@ -74,7 +70,7 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		subSettings(Arrays.asList(
 			HeaderSetting.create("§r"),
 			HeaderSetting.create("§r§e§l" + Constants.ADDON_NAME).scale(1.3),
-			HeaderSetting.create("§e§l" + ((S) this).name().replaceAll("§.", "").replaceAll("[^\\w-äÄöÖüÜß./ ]", "")).scale(.7),
+			HeaderSetting.create("§e§l" + name().replaceAll("§.", "").replaceAll("[^\\w-äÄöÖüÜß./ ]", "")).scale(.7),
 			HeaderSetting.create("§r").scale(.4).entryHeight(10)
 		));
 		return subSettings(Arrays.asList(settings));
@@ -123,7 +119,9 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 	@Override
 	default S enabled(boolean enabled) {
-		getStorage().enabled = enabled;
+		if (this instanceof ControlElement element)
+			element.setSettingEnabled(enabled);
+
 		return (S) this;
 	}
 
@@ -143,17 +141,11 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	}
 
 	class ExtendedStorage<V> extends Storage<V> {
-
-		public String name = "§cNo name set";
 		public String alias = "";
-		public String description = null;
-		public L3Icon icon;
-		public boolean enabled = true;
 
 		public ExtendedStorage(Function<V, JsonElement> encodeFunc, Function<JsonElement, V> decodeFunc, V fallbackValue) {
 			super(encodeFunc, decodeFunc, fallbackValue);
 		}
-
 	}
 
 }

@@ -7,9 +7,11 @@
 
 package dev.l3g7.griefer_utils.features.chat.chat_filter_templates;
 
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 
+@Singleton
 public class ChatFilterTemplates extends Feature {
 
 	public static final FilterTemplate[] TEMPLATES = new FilterTemplate[]{

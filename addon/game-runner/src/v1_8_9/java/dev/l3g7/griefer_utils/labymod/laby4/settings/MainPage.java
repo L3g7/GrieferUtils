@@ -118,7 +118,7 @@ public class MainPage {
 	private static void collectSettings(List<BaseSetting<?>> settings) {
 		// Enable the feature category if one of its features gets enabled
 		Feature.getFeatures()
-			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
+			.sorted(Comparator.comparing(f -> f.getMainElement().name(), SettingLoader::compareNames))
 			.forEach(feature -> {
 				if (!(feature.getMainElement() instanceof SwitchSettingImpl main))
 					return;

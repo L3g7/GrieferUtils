@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.badges.laby3.GrieferUtilsGroup;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.GUIEntry;
+import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
@@ -57,7 +58,7 @@ public class MainPage {
 
 		// Enable the feature category if one of its features gets enabled
 		Feature.getFeatures()
-			.sorted(Comparator.comparing(f -> f.getMainElement().name()))
+			.sorted(Comparator.comparing(f -> f.getMainElement().name(), SettingLoader::compareNames))
 			.forEach(feature -> {
 				((SettingsElement) feature.getMainElement()).getSubSettings().getElements().stream()
 					.filter(e -> e instanceof SwitchSetting || e instanceof NumberSetting || e instanceof CategorySetting)
@@ -91,14 +92,14 @@ public class MainPage {
 		});
 
 		entries.stream()
-			.sorted(Comparator.comparing(GUIEntry::name))
+			.sorted(Comparator.comparing(GUIEntry::name, SettingLoader::compareNames))
 			.forEach(e -> e.addToParent(settings));
 
 		settings.add(HeaderSetting.create());
 
 		// Add uncategorized features
 		Feature.getUncategorized().stream()
-			.sorted(Comparator.comparing(BaseSetting::name))
+			.sorted(Comparator.comparing(BaseSetting::name, SettingLoader::compareNames))
 			.forEach(settings::add);
 
 		settings.add(HeaderSetting.create());
@@ -126,7 +127,7 @@ public class MainPage {
 		for (BaseSetting<?> setting : settings)
 			setting.create(null);
 
-		searchableSettings.sort(Comparator.comparing(SettingsElement::getDisplayName));
+		searchableSettings.sort(Comparator.comparing(SettingsElement::getDisplayName, SettingLoader::compareNames));
 
 		return settings;
 	}

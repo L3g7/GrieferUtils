@@ -68,6 +68,9 @@ public class BetterPlotMenu extends Feature {
 			return;
 
 		ItemStack stack = event.packet.func_149174_e();
+		if (stack == null || stack.getDisplayName() == null)
+			return;
+
 		Citybuild cb = Citybuild.getCitybuild(stack.getDisplayName().replaceAll("§.", ""));
 		if (cb == Citybuild.ANY)
 			return;
@@ -78,7 +81,7 @@ public class BetterPlotMenu extends Feature {
 
 		String plotAmount = lore.substring(2, lore.length() - " Grundstücke".length());
 		ItemStack targetStack = currentGuiPlots.itemStacks[cb.ordinal() - 1];
-		targetStack.stackSize = Integer.parseInt(plotAmount)*10;
+		targetStack.stackSize = Integer.parseInt(plotAmount);
 		targetStack.setTagCompound(stack.getTagCompound());
 	}
 

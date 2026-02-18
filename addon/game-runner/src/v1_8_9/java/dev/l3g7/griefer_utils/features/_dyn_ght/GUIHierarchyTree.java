@@ -4,8 +4,6 @@ import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 
 import java.util.HashMap;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-
 /**
  * Temporary class for dynamically reordering the GUI tree.
  */
@@ -45,7 +43,8 @@ public class GUIHierarchyTree {
 				feat("Chatmenü", "player_menu", chat),
 				feat("ChatReactor", "cpu", chat),
 				feat("ChatTime", "clock", chat),
-				feat("Echtgeld- Erkennung", "Echtgeld-Erkennung", "coin", chat),
+				feat("Echtgeld-Erkennung", "coin", chat),
+				feat("Echtgeld- Erkennung", "coin", chat),
 				feat("Interagierbare /freunde", "players", chat),
 				feat("Interagierbare Nachrichten", "mouse_left", chat),
 				feat("Kopf vor Nachrichten", "steve", chat),
@@ -216,23 +215,19 @@ public class GUIHierarchyTree {
 	}
 
 	static void register(Feat feat) {
-		if (feats.put(feat.refName, feat) != null)
-			throw new IllegalStateException("Duplicate '" + feat.nameLaby4 + "'");
+		if (feats.put(feat.name, feat) != null)
+			throw new IllegalStateException("Duplicate '" + feat.name + "'");
 
 		for (Feat feat1 : feat.feats)
 			register(feat1);
 	}
 
 	static <T extends K & CKI> Feat cat(String name, String icon, T key, Feat... features) {
-		return new Feat(name, name, icon, features, name, "", key, GUIEntry.SwitchSettingBuilder.class);
+		return new Feat(name, icon, features, "", key, GUIEntry.SwitchSettingBuilder.class);
 	}
 
 	static <T extends K & PKI> Feat feat(String name, String icon, T parentKey) {
 		return new Feat(name, icon, new Feat[0], parentKey);
-	}
-
-	static <T extends K & PKI> Feat feat(String name, String nameLaby4, String icon, T parentKey) {
-		return new Feat(name, nameLaby4, icon, new Feat[0], nameLaby4, parentKey);
 	}
 
 	static class K {
@@ -256,41 +251,33 @@ public class GUIHierarchyTree {
 	}
 
 	public static final class Feat {
-		private final String nameLaby3;
-		private final String nameLaby4;
+		private final String name;
 		private final String icon;
 		private final Feat[] feats;
-		private final String refName;
 		private Feat parent;
 		private final String description;
 		private final K key;
 		private final Class<? extends GUIEntry.SettingBuilder> setting;
 
-		Feat(String nameLaby3, String nameLaby4, String icon, Feat[] feats, String refName, String description, K key, Class<? extends GUIEntry.SettingBuilder> setting) {
-			this.nameLaby3 = nameLaby3;
-			this.nameLaby4 = nameLaby4;
+		Feat(String name, String icon, Feat[] feats, String description, K key, Class<? extends GUIEntry.SettingBuilder> setting) {
+			this.name = name;
 			this.icon = icon;
 
 			this.feats = feats;
 			for (Feat feat : feats)
 				feat.parent = this;
 
-			this.refName = refName;
 			this.description = description;
 			this.key = key;
 			this.setting = setting;
 		}
 
-		Feat(String nameLaby3, String nameLaby4, String icon, Feat[] feats, String refName, K key) {
-			this(nameLaby3, nameLaby4, icon, feats, refName, null, key, null);
-		}
-
 		Feat(String name, String icon, Feat[] feats, K key) {
-			this(name, name, icon, feats, name, key);
+			this(name, icon, feats, null, key, null);
 		}
 
 		public String name() {
-			return LABY_4.isActive() ? nameLaby4 : nameLaby3;
+			return name;
 		}
 
 		public String icon() {return icon;}
@@ -318,11 +305,9 @@ public class GUIHierarchyTree {
 		@Override
 		public String toString() {
 			return "Feat[" +
-				"nameLaby3=" + nameLaby3 + ", " +
-				"nameLaby4=" + nameLaby4 + ", " +
+				"name=" + name + ", " +
 				"icon=" + icon + ", " +
-				"parent=" + parent + ", " +
-				"refName=" + refName + ']';
+				"parent=" + parent + ']';
 		}
 
 

@@ -57,7 +57,7 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 	public static final ModuleCategory CATEGORY = new ModuleCategory(Constants.ADDON_NAME, true, null) {
 		@Override
 		public void createCategoryElement() {
-			rawCategoryElement = new CategoryModuleEditorElement(Constants.ADDON_NAME, new IconData("griefer_utils/icons/icon.png")) {
+			rawCategoryElement = new CategoryModuleEditorElement(Constants.ADDON_NAME, new IconData("griefer_utils/icons/high_res/icon.png")) {
 				// Fix module count
 				public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 					this.mouseOver = mouseX > x && mouseX < maxX && mouseY > y && mouseY < maxY;
@@ -66,7 +66,7 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 					DrawUtils draw = LabyMod.getInstance().getDrawUtils();
 					draw.drawRectangle(x, y, maxX, maxY, ModColor.toRGB(200, 200, 200, mouseOver ? 50 : 30));
 					int imageSize = maxY - y;
-					Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/icon.png"));
+					Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/high_res/icon.png"));
 					LabyMod.getInstance().getDrawUtils().drawTexture(x + 2, y + 2, 256, 256, 18, 18);
 
 					draw.drawString(getDisplayName(), x + imageSize + 5, absoluteY);

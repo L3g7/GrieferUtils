@@ -158,7 +158,7 @@ public class GUIHierarchyTree {
 			feat("Trusted MM-Liste", "player_green", player),
 			feat("§xScammerliste", "player_red", player),
 			feat("§yVerkleidung in 3rd Person", "mob_icons/faithless/creeper", world),
-			feat("§zWalking Minimes entfernen", "crossed_out_minime", render)
+			feat("§zWalking Minimes entfernen", "crossed_out_mini_me", render)
 		),
 
 		cat("Welt", "earth", world,

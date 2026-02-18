@@ -330,7 +330,7 @@ public class AddChatReactionGui extends Gui {
 
 	private enum TextType implements SelectButtonGroup.Selectable {
 
-		NONE("", ""), TEXT("normaler Text", "yellow_t"), REGEX("regulärer Ausdruck", "regex");
+		NONE("", ""), TEXT("normaler Text", "book_and_quill"), REGEX("regulärer Ausdruck", "cpu");
 
 		private final String name, icon;
 

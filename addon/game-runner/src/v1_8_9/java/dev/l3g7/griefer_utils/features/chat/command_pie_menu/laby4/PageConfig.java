@@ -32,7 +32,7 @@ public class PageConfig extends net.labymod.api.configuration.loader.Config impl
 
 	public final EntryListSetting entries = new EntryListSetting()
 		.name("Einträge")
-		.icon("command_pie_menu")
+		.icon("command_menu")
 		.callback(CommandPieMenu.pages::notifyChange);
 
 	public PageConfig(String name) {

@@ -141,7 +141,7 @@ public class ChatMenuEntry {
 		CONSUMER(null, null),
 		OPEN_URL("Url öffnen", "earth_grid"),
 		RUN_CMD("Befehl ausführen", "cpu"),
-		SUGGEST_CMD("Befehl vorschlagen", "speech_bubble");
+		SUGGEST_CMD("Befehl vorschlagen", "chat");
 
 		public final String name;
 		public final String defaultIcon;

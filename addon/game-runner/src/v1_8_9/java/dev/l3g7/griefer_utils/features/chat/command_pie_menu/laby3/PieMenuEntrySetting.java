@@ -51,7 +51,7 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 			.description("Auf welchem Citybuild dieser Eintrag angezeigt werden soll.")
 			.set(defaultCitybuild = citybuild);
 
-		icon("command_pie_menu");
+		icon("command_menu");
 		subSettings(this.name, this.command, this.citybuild);
 		this.name.set(defaultName = name);
 	}

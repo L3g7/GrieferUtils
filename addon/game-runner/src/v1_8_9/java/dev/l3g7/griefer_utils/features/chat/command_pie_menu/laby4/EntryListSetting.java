@@ -155,7 +155,7 @@ public class EntryListSetting extends ListSetting implements Laby4Setting<EntryL
 				SettingsImpl.hookChildAdd(s, e -> {
 					if (e.childWidget() instanceof FlexibleContentWidget content) {
 						// Fix icon
-						IconWidget widget = new IconWidget(Icons.of("command_pie_menu"));
+						IconWidget widget = new IconWidget(Icons.of("command_menu"));
 						widget.addId("setting-icon");
 						content.addChild(0, new FlexibleContentEntry(widget, false));
 						widget.initialize(content);

@@ -121,7 +121,7 @@ public class BotshopGUI extends GuiBigChest {
 			return;
 		}
 
-		addTextureItem(28, new TextureItem("coin_pile_crossed_out", "§4§lGesperrt", "§fBitte warte noch " + JoinCooldownTimer.getRemainingSeconds() + " Sekunden!"), null);
+		addTextureItem(28, new TextureItem("hourglass", "§4§lGesperrt", "§fBitte warte noch " + JoinCooldownTimer.getRemainingSeconds() + " Sekunden!"), null);
 	}
 
 	private Iterable<BABItem> getAllEntries() {
@@ -296,11 +296,11 @@ public class BotshopGUI extends GuiBigChest {
 		}
 
 		if (!JoinCooldownTimer.isCooldownExpired()) {
-			addTextureItem(28, new TextureItem("coin_pile_crossed_out", "§4§lGesperrt", "§fBitte warte noch " + JoinCooldownTimer.getRemainingSeconds() + " Sekunden!"), null);
+			addTextureItem(28, new TextureItem("hourglass", "§4§lGesperrt", "§fBitte warte noch " + JoinCooldownTimer.getRemainingSeconds() + " Sekunden!"), null);
 		} else if (price() > bankBal()) {
-			addTextureItem(28, new TextureItem("coin_pile_crossed_out", "§4§lGesperrt", "§fNicht genügend Guthaben"), null);
+			addTextureItem(28, new TextureItem("crossed_out_gold_ingot", "§4§lGesperrt", "§fNicht genügend Guthaben"), null);
 		} else if (!boughtItems.isEmpty()) {
-			addTextureItem(28, new TextureItem("coin_pile", "§a§lKaufen (" + priceStr() + ")", "§fBestätige deinen Einkauf"), () -> {
+			addTextureItem(28, new TextureItem("bundle", "§a§lKaufen (" + priceStr() + ")", "§fBestätige deinen Einkauf"), () -> {
 				if (botname != null) {
 					for (double price : prices) {
 						ChatQueue.send("/pay " + botname + " " + PRICE_FORMAT_EN.format(price));

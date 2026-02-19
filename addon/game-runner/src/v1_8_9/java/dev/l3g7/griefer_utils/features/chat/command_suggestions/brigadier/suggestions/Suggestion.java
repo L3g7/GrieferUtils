@@ -4,6 +4,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.DeserializationException;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.Requirement;
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.suggestions.internal.NativeLiteralSuggestion;
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.suggestions.minecraft.BankSuggestion;
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.suggestions.minecraft.MoneySuggestion;
 
 import static dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.internal.NativeFixedRequirement.ALWAYS;
 
@@ -31,8 +34,8 @@ public abstract class Suggestion {
 
 		String type = json.get("type").getAsString();
 		return switch (type) {
-			case "griefer_games_bank" -> context.deserialize(json, GrieferGamesBankSuggestion.class);
-			case "griefer_games_money" -> context.deserialize(json, GrieferGamesMoneySuggestion.class);
+			case "mc_bank" -> context.deserialize(json, BankSuggestion.class);
+			case "mc_money" -> context.deserialize(json, MoneySuggestion.class);
 
 			default -> UNKNOWN;
 		};

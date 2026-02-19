@@ -10,6 +10,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.ArgumentNode;
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.suggestions.minecraft.PlayerNameSuggestionProvider;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,8 +57,12 @@ public class PlayerNameNode extends ArgumentNode<String> {
 
 		@Override
 		public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-			return CompletableFuture.supplyAsync(() -> {
-				throw new UnsupportedOperationException("TODO: tab complete player names");
+			return PlayerNameSuggestionProvider.request(builder.getRemaining()).thenApply(matches -> {
+				for (String match : matches)
+					if (match.toLowerCase().startsWith(builder.getRemainingLowerCase()))
+						builder.suggest(match);
+
+				return builder.build();
 			});
 		}
 

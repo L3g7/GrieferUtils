@@ -30,12 +30,11 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
+import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 
 @Singleton
 public class InteractableMessages extends Feature {
 
-	private static final String TP_ACCEPT = "Um die Anfrage anzunehmen, schreibe /tpaccept.";
-	private static final String TP_DENY = "Um sie abzulehnen, schreibe /tpdeny.";
 	private static final Pattern P_H_PATTERN = Pattern.compile("^.*(?<command>/p h [^ ]+).*$", Pattern.CASE_INSENSITIVE);
 	private static final Pattern CLAN_INFO_PATTERN = Pattern.compile("^» (?<name>[^ ]+) \\((?:offline|online)\\)$");
 	private static final Pattern PLOT_INFO_PLAYER_PATTERN = Pattern.compile("^§r§7(?:Besitzer|Helfer|Vertraut|Verboten): .+$");
@@ -45,7 +44,7 @@ public class InteractableMessages extends Feature {
 		.name("Interagierbare Nachrichten")
 		.description("""
 			Macht Folgendes interagierbar:
-			- TPAs (§a/tpaccept§r und §c/tpdeny§r)
+			- Von GrieferGames vorgeschlagene Befehle (z.B /tpaccept, /tpadeny, /zauberwald accept/deny)
 			- Den Citybuild bei Globalchat-Nachrichten (Switcht zum CB)
 			- Den Clan-Namen bei Globalchat-Nachrichten (Führt /clan info aus)
 			- Den Status, Msgs, Plotchat- und Globalchat-Nachrichten (Schlägt /msg vor)
@@ -57,11 +56,12 @@ public class InteractableMessages extends Feature {
 	@EventListener(priority = Priority.LOW)
 	public void modifyMessage(MessageModifyEvent event) {
 		modifyGlobalChats(event);
-		modifyTps(event);
 		modifyPHs(event);
 		modifyClanInfo(event);
 		modifyPlotInfo(event);
-		addMsgSuggestions(event);
+
+		if (!addMsgSuggestions(event))
+			modifySuggested(event); // Ensure it doesn't trigger on player messages
 	}
 
 	private void modifyGlobalChats(MessageModifyEvent event) {
@@ -81,9 +81,9 @@ public class InteractableMessages extends Feature {
 
 		for (IChatComponent sibling : message.getSiblings()) {
 			if (sibling.getUnformattedTextForChat().equals(cb)) {
-				sibling.getChatStyle()
-					.setChatClickEvent(new ClickEvent(RUN_COMMAND, "/switch " + Citybuild.getCitybuild(cb).getInternalName()))
-					.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§6Klicke, um auf den CB zu wechseln")));
+				IChatComponent hoverText = new ChatComponentText("Klicke, um auf den CB zu wechseln");
+				hoverText.getChatStyle().setColor(EnumChatFormatting.GOLD);
+				addRunCommand(sibling, "/switch " + Citybuild.getCitybuild(cb).getInternalName(), hoverText);
 
 				foundCb = true;
 				if (clan == null)
@@ -100,26 +100,29 @@ public class InteractableMessages extends Feature {
 				if (sibling.getFormattedText().equals("§6] §r"))
 					break;
 
-				sibling.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, "/clan info " + clan));
+				addRunCommand(sibling, "/clan info " + clan);
 			}
 		}
 
 		event.setMessage(message);
 	}
 
-	private void modifyTps(MessageModifyEvent event) {
-		String msg = event.original.getUnformattedText();
-
-		if (!msg.equals(TP_ACCEPT) && !msg.equals(TP_DENY))
-			return;
-
-		String command = msg.equals(TP_ACCEPT) ? "/tpaccept" : "/tpdeny";
-
+	private void modifySuggested(MessageModifyEvent event) {
 		IChatComponent component = event.message;
 
-		for (IChatComponent part : component.getSiblings())
-			if (part.getUnformattedText().equals(command))
-				part.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, command));
+		for (IChatComponent part : component.getSiblings()) {
+			String originalText = part.getUnformattedTextForChat();
+			String trimmed = originalText.trim();
+			if (!trimmed.startsWith("/") || trimmed.equals("/"))
+				continue;
+
+			IChatComponent commandHover = part;
+			if (!originalText.equals(trimmed) && part instanceof ChatComponentText) {
+				commandHover = new ChatComponentText(trimmed);
+				commandHover.setChatStyle(part.getChatStyle().createShallowCopy());
+			}
+			addRunCommand(part, trimmed, commandHover);
+		}
 
 		event.setMessage(component);
 	}
@@ -155,11 +158,11 @@ public class InteractableMessages extends Feature {
 			String text = c.getUnformattedTextForChat();
 			int len = text.length();
 			if (i >= startIndex && i + len <= endIndex) { // The entire component is part of the command
-				c.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, command));
+				addRunCommand(c, command);
 			} else if (i <= startIndex && len + i > startIndex) { // Command is at the end
 				Reflection.set(c, "text", text.substring(0, startIndex - i));
 				IChatComponent commandComponent = new ChatComponentText(text.substring(startIndex - i));
-				commandComponent.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, command));
+				addRunCommand(commandComponent, command);
 				commandComponent.getChatStyle().setParentStyle(c.getChatStyle());
 				c.getSiblings().add(0, commandComponent);
 				c = commandComponent;
@@ -173,7 +176,7 @@ public class InteractableMessages extends Feature {
 					Reflection.set(c, "text", text.substring(0, index - i));
 					IChatComponent postComponent = new ChatComponentText(text.substring(index - i));
 					postComponent.setChatStyle(style);
-					c.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, command));
+					addRunCommand(c, command);
 					c.getSiblings().add(0, postComponent);
 				}
 				break;
@@ -192,7 +195,7 @@ public class InteractableMessages extends Feature {
 		IChatComponent message = event.message;
 
 		for (IChatComponent part : message.getSiblings())
-			part.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, String.format("/profil %s ", name)));
+			addRunCommand(part, "/profil " + name);
 
 		event.setMessage(message);
 	}
@@ -201,7 +204,7 @@ public class InteractableMessages extends Feature {
 		if (event.original.getFormattedText().startsWith("§r§7ID: ")) {
 			for (IChatComponent sibling : event.message.getSiblings()) {
 				if (!sibling.getUnformattedText().endsWith(": "))
-					sibling.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, "/p h " + sibling.getUnformattedText()));
+					addRunCommand(sibling, "/p h " + sibling.getUnformattedText());
 			}
 			return;
 		}
@@ -220,12 +223,12 @@ public class InteractableMessages extends Feature {
 					continue;
 
 				if (!sibling.getUnformattedText().trim().isEmpty())
-					sibling.getChatStyle().setChatClickEvent(new ClickEvent(RUN_COMMAND, "/profil " + sibling.getUnformattedText()));
+					addRunCommand(sibling, "/profil " + sibling.getUnformattedText());
 			}
 		}
 	}
 
-	public void addMsgSuggestions(MessageModifyEvent event) {
+	public boolean addMsgSuggestions(MessageModifyEvent event) {
 		String text = event.original.getFormattedText();
 
 		for (Pattern p : new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN, GLOBAL_CHAT_PATTERN}) {
@@ -235,8 +238,30 @@ public class InteractableMessages extends Feature {
 
 			String name = matcher.group("name").replaceAll("§.", "");
 			event.message.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", name)));
-			return;
+			return true;
 		}
+
+		return false;
+	}
+
+	private static void addRunCommand(IChatComponent icc, String command) {
+		IChatComponent coloredCommand = new ChatComponentText(command);
+		coloredCommand.getChatStyle().setColor(EnumChatFormatting.WHITE);
+		addRunCommand(icc, command, coloredCommand);
+	}
+
+	private static void addRunCommand(IChatComponent icc, String command, IChatComponent coloredCommand) {
+		if (coloredCommand == icc)
+			coloredCommand = coloredCommand.createCopy();
+
+		IChatComponent prefix = new ChatComponentText("Klicke, um \"");
+		IChatComponent suffix = new ChatComponentText("\" auszuführen");
+		prefix.getChatStyle().setColor(EnumChatFormatting.GRAY);
+		suffix.getChatStyle().setColor(EnumChatFormatting.GRAY);
+
+		icc.getChatStyle()
+			.setChatClickEvent(new ClickEvent(RUN_COMMAND, command))
+			.setChatHoverEvent(new HoverEvent(SHOW_TEXT, prefix.appendSibling(coloredCommand).appendSibling(suffix)));
 	}
 
 }

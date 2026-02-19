@@ -254,6 +254,16 @@ public class MultiHotkey extends Feature {
 		}
 
 		@Override
+		public Component displayName() {
+			return Component.text(name());
+		}
+
+		@Override
+		public Icon getIcon() {
+			return storage.icon;
+		}
+
+		@Override
 		public ExtendedStorage<List<HotkeyConfig>> getStorage() {
 			return storage;
 		}

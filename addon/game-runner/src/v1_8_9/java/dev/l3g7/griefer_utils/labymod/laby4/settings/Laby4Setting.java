@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import net.labymod.api.Laby;
-import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
@@ -171,24 +170,6 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		self.setParent(c(parent));
 
 		Laby.fireEvent(new SettingCreateEvent(self));
-	}
-
-	// Setting implementations
-
-	@Override
-	default Component displayName() {
-		return Component.text(name());
-	}
-
-	@Override
-	default Component getDescription() {
-		String description = getStorage().description;
-		return description == null ? null : Component.text(description);
-	}
-
-	@Override
-	default Icon getIcon() {
-		return getStorage().icon;
 	}
 
 	// AbstractSetting

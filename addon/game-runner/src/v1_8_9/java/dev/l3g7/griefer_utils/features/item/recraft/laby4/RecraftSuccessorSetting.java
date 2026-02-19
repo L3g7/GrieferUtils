@@ -120,6 +120,16 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 	}
 
 	@Override
+	public Component displayName() {
+		return Component.text(name());
+	}
+
+	@Override
+	public Icon getIcon() {
+		return storage.icon;
+	}
+
+	@Override
 	public ExtendedStorage<RecraftRecording> getStorage() {
 		return storage;
 	}
@@ -221,6 +231,16 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 			}
 
 			return list;
+		}
+
+		@Override
+		public Component displayName() {
+			return Component.text(name());
+		}
+
+		@Override
+		public Icon getIcon() {
+			return storage.icon;
 		}
 
 		@Override

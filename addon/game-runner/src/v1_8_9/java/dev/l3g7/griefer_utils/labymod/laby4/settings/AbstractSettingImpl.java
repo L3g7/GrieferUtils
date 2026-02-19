@@ -37,6 +37,22 @@ public abstract class AbstractSettingImpl<S extends AbstractSetting<S, V>, V> ex
 		return storage;
 	}
 
+	@Override
+	public Component displayName() {
+		return Component.text(name());
+	}
+
+	@Override
+	public Component getDescription() {
+		String description = getStorage().description;
+		return description == null ? null : Component.text(description);
+	}
+
+	@Override
+	public Icon getIcon() {
+		return getStorage().icon;
+	}
+
 	protected abstract Widget[] createWidgets();
 
 	@Override

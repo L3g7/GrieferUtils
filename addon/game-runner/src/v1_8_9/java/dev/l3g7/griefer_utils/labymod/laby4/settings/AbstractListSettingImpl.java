@@ -7,6 +7,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
@@ -78,6 +79,22 @@ public abstract class AbstractListSettingImpl<S extends AbstractSetting<S, List<
 	protected abstract String getName(V entry);
 
 	protected abstract Icon getIcon(V entry);
+
+	@Override
+	public Component displayName() {
+		return Component.text(name());
+	}
+
+	@Override
+	public Component getDescription() {
+		String description = storage.description;
+		return description == null ? null : Component.text(description);
+	}
+
+	@Override
+	public Icon getIcon() {
+		return getStorage().icon;
+	}
 
 	@Override
 	public ExtendedStorage<List<V>> getStorage() {

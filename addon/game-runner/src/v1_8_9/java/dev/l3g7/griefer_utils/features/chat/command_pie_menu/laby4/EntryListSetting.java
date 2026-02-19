@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
+import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
@@ -174,6 +175,16 @@ public class EntryListSetting extends ListSetting implements Laby4Setting<EntryL
 				});
 			}
 		}
+	}
+
+	@Override
+	public Component displayName() {
+		return Component.text(name());
+	}
+
+	@Override
+	public Icon getIcon() {
+		return storage.icon;
 	}
 
 	@Override

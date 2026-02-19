@@ -17,10 +17,10 @@ import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.settings.types.*;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.settings.LabyModAddonsGui;
-import net.minecraft.init.Items;
 
 import java.util.regex.Matcher;
 
@@ -52,7 +52,7 @@ public class AfkNick extends Feature {
 
 			isAFK = manuallyAFK = true;
 			lastEvent = 0;
-			send("/nick " + nickName.get().replace("%name%", name()));
+			send("/nick " + nickName.get().replace("%name%", MinecraftUtil.name()));
 		});
 
 	private final NumberSetting minutes = NumberSetting.create()
@@ -109,7 +109,7 @@ public class AfkNick extends Feature {
 		String nick = matcher.group("name");
 		String realName = NameCache.ensureRealName(nick);
 
-		if (realName != null && realName.replaceAll("§.", "").equals(name()))
+		if (realName != null && realName.replaceAll("§.", "").equals(MinecraftUtil.name()))
 			return;
 
 		send("/msg " + (realName == null ? nick : realName).replaceAll("§.", "") + " " + messageReply.get());
@@ -145,7 +145,7 @@ public class AfkNick extends Feature {
 				return;
 
 			isAFK = true;
-			send("/nick " + nickName.get().replace("%name%", name()));
+			send("/nick " + nickName.get().replace("%name%", MinecraftUtil.name()));
 			return;
 		}
 

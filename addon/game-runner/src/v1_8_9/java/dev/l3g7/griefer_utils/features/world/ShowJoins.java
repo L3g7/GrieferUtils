@@ -20,6 +20,7 @@ import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.player.player_list.PlayerList;
 import dev.l3g7.griefer_utils.features.player.player_list.ScammerList;
@@ -81,7 +82,7 @@ public class ShowJoins extends Feature {
 	}
 
 	private boolean shouldShowJoin(String name) {
-		if (name().equals(name)) // Don't show Joins/Leaves for yourself
+		if (MinecraftUtil.name().equals(name)) // Don't show Joins/Leaves for yourself
 			return false;
 
 		if (!filter.get())

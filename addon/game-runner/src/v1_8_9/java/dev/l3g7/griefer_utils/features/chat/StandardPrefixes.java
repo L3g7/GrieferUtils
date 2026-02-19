@@ -16,16 +16,15 @@ import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.IChatComponentUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.event.ClickEvent;
-import net.minecraft.init.Items;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.util.IChatComponentUtil.getComponents;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.name;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
@@ -91,7 +90,7 @@ public class StandardPrefixes extends Feature {
 			return;
 		}
 
-		if (!self.get() && player() != null && name().equals(NameCache.ensureRealName(parts[1])))
+		if (!self.get() && player() != null && MinecraftUtil.name().equals(NameCache.ensureRealName(parts[1])))
 			return;
 
 		String prefix = DEFAULT_PREFIXES.get(parts[0]);
@@ -122,7 +121,7 @@ public class StandardPrefixes extends Feature {
 
 		name = name.substring(0, Math.min(spaceIndex, bracketIndex));
 
-		if (!self.get() && name().equals(NameCache.ensureRealName(name)))
+		if (!self.get() && MinecraftUtil.name().equals(NameCache.ensureRealName(name)))
 			return;
 
 		String rank = text.substring(0, text.indexOf('\u2503') - 1);

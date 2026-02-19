@@ -31,13 +31,13 @@ public class SlimeDisguise<E extends EntitySlime> extends Disguise<E> {
 				size = 1;
 				iterator.remove();
 			} else if (entry.startsWith("size=")) {
-				size = Integer.parseInt(entry.substring("size=".length()));
+				size = Math.min(Integer.parseInt(entry.substring("size=".length())), 100);
 				iterator.remove();
 			}
 		}
 
-		EntitySlime entity = super.create(arguments);
+		E entity = super.create(arguments);
 		Reflection.invoke(entity, "setSlimeSize", size);
-		return null;
+		return entity;
 	}
 }

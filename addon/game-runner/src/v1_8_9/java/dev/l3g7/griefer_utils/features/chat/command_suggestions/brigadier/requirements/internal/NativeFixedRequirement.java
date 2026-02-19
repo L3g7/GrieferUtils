@@ -1,4 +1,6 @@
-package dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements;
+package dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.internal;
+
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.Requirement;
 
 /**
  * A requirement that is always true / false.

@@ -1,7 +1,8 @@
-package dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements;
+package dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.internal;
 
 import com.google.gson.annotations.SerializedName;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.Requirement;
 
 /**
  * A requirement for a true boolean value in GrieferUtils' config.

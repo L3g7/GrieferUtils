@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.DeserializationException;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.Requirement;
 
-import static dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.NativeFixedRequirement.ALWAYS;
+import static dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.internal.NativeFixedRequirement.ALWAYS;
 
 /**
  * A custom suggestion.

@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.labymod.laby3.bridges;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.FileResourcePack;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -43,7 +44,7 @@ public class Laby3ResourceFix {
 
 		defaultResourcePacks.add(new GrieferUtilsResourcePack(new File(jarPath)));
 
-		if (mc().getResourceManager() instanceof IReloadableResourceManager rm)
+		if (LabyModCoreMod.isForge() && mc().getResourceManager() instanceof IReloadableResourceManager rm)
 			rm.reloadResources(defaultResourcePacks);
 	}
 

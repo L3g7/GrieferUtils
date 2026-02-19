@@ -35,13 +35,14 @@ public class ConfigPatcher {
 	public static boolean versionChanged = false;
 
 	JsonObject config;
+	String configVersion;
 
 	public ConfigPatcher(JsonObject config) {
 		this.config = config;
 	}
 
 	private boolean isConfigOlderThan(String version) {
-		return VERSION_COMPARATOR.compare(version, config.get("version").getAsString()) < 0;
+		return VERSION_COMPARATOR.compare(version, configVersion) < 0;
 	}
 
 	public void patch() {
@@ -50,9 +51,9 @@ public class ConfigPatcher {
 			return;
 		}
 
-		String versionInConfig = config.get("version").getAsString();
+		configVersion = config.get("version").getAsString();
 		String newVersion = labyBridge.addonVersion();
-		if (!newVersion.equals(versionInConfig)) {
+		if (!newVersion.equals(configVersion)) {
 			config.addProperty("version", newVersion);
 			versionChanged = true;
 		}
@@ -325,7 +326,7 @@ public class ConfigPatcher {
 
 		}
 
-		if (versionInConfig.equals("2.3-BETA-15")) {
+		if (configVersion.equals("2.3-BETA-15")) {
 			for (String key : new String[]{"chat", "item", "render", "player", "world"}) {
 				JsonObject root = get(key).getAsJsonObject();
 				if (get(key + ".active").isJsonObject()) {
@@ -347,9 +348,13 @@ public class ConfigPatcher {
 		if (isConfigOlderThan("2.3")) {
 			JsonObject autoUpdate = getParentOf("settings.auto_update.release_channel");
 			if (!autoUpdate.has("release_channel")) {
-				boolean wasBeta = versionInConfig.toLowerCase().contains("beta") || versionInConfig.toLowerCase().contains("rc");
+				boolean wasBeta = configVersion.toLowerCase().contains("beta") || configVersion.toLowerCase().contains("rc");
 				autoUpdate.addProperty("release_channel", wasBeta ? "BETA" : "STABLE");
 			}
+		}
+
+		if (isConfigOlderThan("2.4-BETA-1")) {
+			rename("item.inventory_tweaks.block_refill.refillBlocks", "item.inventory_tweaks.block_refill.enabled");
 		}
 	}
 

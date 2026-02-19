@@ -18,7 +18,7 @@ import java.util.List;
 public class AssetsChecker {
 
 	private static final List<String> KNOWN_DIRECTORIES = Arrays.asList("litematica", "mob_icons", "biomes", "structures", "high_res");
-	private static final List<String> KNOWN_FILES = Arrays.asList("thonk", "pencil", "lens", "earth", "gray_sword", "diamond_sword");
+	private static final List<String> KNOWN_FILES = Arrays.asList("thonk", "pencil",  "gray_sword", "diamond_sword", "menu_point");
 
 	public static void validateAssets(FileSystem fs) throws IOException {
 		List<String> directories = new ArrayList<>();

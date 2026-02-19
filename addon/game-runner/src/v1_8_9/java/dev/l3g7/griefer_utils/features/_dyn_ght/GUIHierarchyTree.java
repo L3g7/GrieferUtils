@@ -21,7 +21,6 @@ public class GUIHierarchyTree {
 	static final XK item = new XK("item");
 	static final XK item_inventoryTweaks = new XK("item.inventory_tweaks");
 	static final XK item_itemInfo = new XK("item.item_info");
-	static final XK item_itemSaver = new XK("item.item_saver");
 	static final XK render = new XK("render");
 	static final CK render_light = new CK("render.light");
 	static final CK render_skulls = new CK("render.skulls");
@@ -107,17 +106,17 @@ public class GUIHierarchyTree {
 				feat("Kopf-Vorschau", "steve", world),
 				feat("Spawn-Ei-Typ anzeigen", "creeper_spawn_egg", item_itemInfo)
 			),
-			cat("§iItem-Schutz", "shield_with_sword", item_itemSaver,
-				feat("Bei Rüstungsschaden warnen", "diamond_chestplate", item_itemSaver),
+			cat("§iItem-Schutz", "shield_with_sword", item,
+				feat("Bei Rüstungsschaden warnen", "diamond_chestplate", item),
 				feat("Drachenei-Saver", "dragon_egg", world),
-				feat("Kisten-Saver", "chest", item_itemSaver),
-				feat("Orb-Saver", "orb", item_itemSaver),
-				feat("Partikel-Saver", "particle", item_itemSaver),
-				feat("Prefix-Saver", "tabping_colored", item_itemSaver),
-				feat("Rand-Saver", "glass_pane", item_itemSaver),
-				feat("Spezifischer Item-Saver", "shield_with_sword", item_itemSaver),
-				feat("Werkzeug-Saver", "tools", item_itemSaver),
-				feat("§z/kopf Vorschau", "steve", item_itemSaver)
+				feat("Kisten-Saver", "chest", item),
+				feat("Orb-Saver", "orb", item),
+				feat("Partikel-Saver", "particle", item),
+				feat("Prefix-Saver", "tabping_colored", item),
+				feat("Rand-Saver", "glass_pane", item),
+				feat("Spezifischer Item-Saver", "shield_with_sword", item),
+				feat("Werkzeug-Saver", "tools", item),
+				feat("§z/kopf Vorschau", "steve", item)
 			),
 			feat("Recraft", "crafting_table", item)
 		),

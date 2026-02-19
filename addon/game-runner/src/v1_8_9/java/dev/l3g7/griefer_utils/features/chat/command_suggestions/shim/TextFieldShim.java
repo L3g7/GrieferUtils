@@ -92,8 +92,11 @@ public class TextFieldShim extends GuiTextField {
 	@Override
 	public void setCursorPosition(int pos) {
 		super.setCursorPosition(pos);
-		runResponder();
-		this.sCursorPosition = MathHelper.clamp_int(pos, 0, getText().length());
+		int newPos = MathHelper.clamp_int(pos, 0, getText().length());
+		if (this.sCursorPosition != newPos)
+			runResponder();
+
+		this.sCursorPosition = newPos;
 	}
 
 	/**

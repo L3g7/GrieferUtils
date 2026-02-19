@@ -70,7 +70,7 @@ public class KeyValueNode<T> extends ArgumentNode<T> {
 			String fullKey = key + "=";
 			// If key is done, suggest value
 			if (builder.getRemainingLowerCase().startsWith(fullKey))
-				return value.listSuggestions(context, builder.createOffset(fullKey.length()));
+				return value.listSuggestions(context, builder.createOffset(builder.getStart() + fullKey.length()));
 
 			// If key is partial, suggest key
 			if (fullKey.startsWith(builder.getRemainingLowerCase()))

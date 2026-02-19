@@ -36,8 +36,7 @@ import static java.lang.Integer.MIN_VALUE;
 
 public abstract class PieMenu extends Gui implements Disableable {
 
-public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("griefer_utils", "icons/labymod_3/menu_point.png");
-	public static final ResourceLocation VOID = new ResourceLocation("griefer_utils", "icons/labymod_3/void.png");
+	public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("griefer_utils", "icons/menu_point.png");
 
 	private List<Pair<String, List<Pair<String, Runnable>>>> allPages = new ArrayList<>();
 	private Pair<String, List<Pair<String, Runnable>>> currentPage;
@@ -206,7 +205,6 @@ public static final ResourceLocation MISC_MENU_POINT = new ResourceLocation("gri
 			hoveredRunnable = entry.getValue();
 
 		GL11.glLineWidth(2);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(VOID);
 		GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
 	}

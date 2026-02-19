@@ -490,6 +490,10 @@
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
   <tr>
+    <td><img src="menu_point.png" height=16em width=16em />&nbsp;&nbsp;<a href="menu_point.png">menu_point.png</a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
     <td><img src="mouse.png" height=16em width=16em />&nbsp;&nbsp;<a href="mouse.png">mouse.png</a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>

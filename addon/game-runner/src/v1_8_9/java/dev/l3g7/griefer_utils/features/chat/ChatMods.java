@@ -35,6 +35,7 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 public class ChatMods extends Feature {
 
 	private List<String> COLORED_FONTS = ImmutableList.of();
+	private static final Pattern SINGLE_COLORED_FONT_PATTERN = Pattern.compile("^(.)§l[^§]+$");
 
 	private final SwitchSetting antiClearChat = SwitchSetting.create()
 		.name("Clearchat unterbinden")
@@ -110,7 +111,7 @@ public class ChatMods extends Feature {
 				continue;
 
 			String message = matcher.group("message");
-			String msg = message.replace("§l", "").replace("§r", "").replaceAll("(§.)? ", "");
+			String msg = message.replace("§r", "").replaceAll("(§.)? ", "");
 			if (!usesFont(msg))
 				return;
 
@@ -140,6 +141,11 @@ public class ChatMods extends Feature {
 	}
 
 	private boolean usesFont(String msg) {
+		Matcher singleColoredFontMatcher = SINGLE_COLORED_FONT_PATTERN.matcher(msg);
+		if (singleColoredFontMatcher.matches())
+			return COLORED_FONTS.contains(singleColoredFontMatcher.group(1));
+
+		msg = msg.replace("§l", "");
 		if (msg.length() % 3 != 0)
 			return false;
 

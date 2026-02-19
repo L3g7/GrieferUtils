@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.world;
+package dev.l3g7.griefer_utils.features.world.self_disguise;
 
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
@@ -24,24 +23,20 @@ import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import dev.l3g7.griefer_utils.features.world.self_disguise.disguises.*;
+import joptsimple.internal.Strings;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.item.EntityMinecartEmpty;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.EnumDyeColor;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
@@ -52,15 +47,42 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 public class SelfDisguise extends Feature { // NOTE cleanup
 
 	private static final Pattern LUCKY_SWORD_DISGUISE_PATTERN = Pattern.compile("^§r§8\\[§r§e§lLuckySword§r§8] " + Constants.FORMATTED_PLAYER_PATTERN.pattern() + " §r§7ist nun als §r§e(?<disguise>\\w+) §r§7verkleidet!§r$");
-	private static final Map<String, String> RENAMED_ENTITIES = new HashMap<>() {{
-		put("minecart", "MinecartRideable");
-		put("horse", "EntityHorse");
-		put("iron_golem", "VillagerGolem");
-		put("magma_cube", "LavaSlime");
-		put("cat", "Ozelot");
-		put("ocelot", "Ozelot");
-		put("snowman", "SnowMan");
-		put("falling_block", "FallingSand");
+
+	private static final Map<String, Disguise<?>> DISGUISES = new HashMap<>() {{
+		put("bat", new BatDisguise());
+		put("blaze", new Disguise<>(EntityBlaze.class));
+		put("cave_spider", new Disguise<>(EntityCaveSpider.class));
+		put("chicken", new Disguise<>(EntityChicken.class));
+		put("cow", new Disguise<>(EntityCow.class));
+		put("creeper", new CreeperDisguise());
+		put("elder_guardian", new ElderGuardianDisguise());
+		put("enderman", new Disguise<>(EntityEnderman.class));
+		put("endermite", new Disguise<>(EntityEndermite.class));
+		put("guardian", new Disguise<>(EntityGuardian.class));
+		put("horse", new HorseDisguise());
+		put("iron_golem", new Disguise<>(EntityIronGolem.class));
+		put("magma_cube", new SlimeDisguise<>(EntityMagmaCube.class));
+		put("ocelot", new Disguise<>(EntityOcelot.class));
+		put("cat", new Disguise<>(EntityOcelot.class));
+		put("pig", new PigDisguise());
+		put("rabbit", new Disguise<>(EntityRabbit.class));
+		put("sheep", new SheepDisguise());
+		put("silverfish", new Disguise<>(EntitySilverfish.class));
+		put("skeletal_horse", new AbstractHorseDisguise(4));
+		put("skeleton", new Disguise<>(EntitySkeleton.class));
+		put("slime", new SlimeDisguise<>(EntitySlime.class));
+		put("snowman", new Disguise<>(EntitySnowman.class));
+		put("squid", new Disguise<>(EntitySquid.class));
+		put("undead_horse",  new AbstractHorseDisguise(3));
+		put("villager", new VillagerDisguise());
+		put("witch", new Disguise<>(EntityWitch.class));
+		put("wolf", new WolfDisguise());
+		put("armor_stand", new ArmorStandDisguise());
+		put("boat", new Disguise<>(EntityBoat.class));
+		put("ender_crystal", new Disguise<>(EntityEnderCrystal.class));
+		put("minecart", new Disguise<>(EntityMinecartEmpty.class));
+		put("falling_block", new FallingBlockDisguise());
+		put("block", new FallingBlockDisguise());
 	}};
 
 	public Entity currentDisguise = null;
@@ -117,7 +139,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onSend(MessageSendEvent event) {
-		if (event.message.equalsIgnoreCase("/ud")) {
+		if (event.message.equalsIgnoreCase("/ud") || event.message.equalsIgnoreCase("/undisguise")) {
 			resetDisguise();
 		} else if (event.message.toLowerCase().startsWith("/d ") || event.message.toLowerCase().startsWith("/disguise "))
 			lastSentDisguiseCommand = event.message;
@@ -216,128 +238,29 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 		String[] arguments = commandArgs.toArray(new String[0]);
 
 		// Special entities
-		currentDisguise = null;
-		blockCoordinates = false;
-		switch (arguments[1]) {
-			case "elder_guardian" -> {
-				currentDisguise = new EntityGuardian(world());
-				((EntityGuardian) currentDisguise).setElder();
-			}
-			case "armor_stand" -> {
-				currentDisguise = new EntityArmorStand(world());
-				for (int i = 0; i < 4; i++)
-					currentDisguise.setCurrentItemOrArmor(i + 1, player().inventory.armorInventory[i]);
-			}
-			case "block", "falling_block" ->
-				currentDisguise = new EntityFallingBlock(world(), player().posX, player().posY, player().posZ, Blocks.stone.getDefaultState());
-			case "skeletal_horse", "undead_horse" -> {
-				currentDisguise = new EntityHorse(world());
-				((EntityHorse) currentDisguise).setHorseType(arguments[1].equals("undead_horse") ? 3 : 4);
-			}
-			case "bat" -> {
-				currentDisguise = new EntityBat(world());
-				((EntityBat) currentDisguise).setIsBatHanging(false);
-			}
-		}
-
-		if (currentDisguise == null) {
-			// Renamed entities
-			if (RENAMED_ENTITIES.containsKey(arguments[1]))
-				currentDisguise = EntityList.createEntityByName(RENAMED_ENTITIES.get(arguments[1]), world());
-
-			// All other entities
-			else
-				currentDisguise = EntityList.createEntityByName(LOWER_UNDERSCORE.to(UPPER_CAMEL, arguments[1]), world());
-		}
-
-		if (currentDisguise == null) {
+		Disguise<?> disguise = DISGUISES.get(arguments[1].toLowerCase());
+		if (disguise == null) {
 			if (isEnabled())
 				LabyBridge.display(Constants.ADDON_PREFIX + "§cUnbekannte Verkleidung: " + arguments[1]);
+
 			return;
+		}
+
+		String[] subArgs = new String[arguments.length - 2];
+		System.arraycopy(arguments, 2, subArgs, 0, subArgs.length);
+		Disguise.Arguments args = new Disguise.Arguments(subArgs);
+		currentDisguise = disguise.create(args);
+		blockCoordinates = disguise.clampCoordinates(args);
+
+		if (!args.isEmpty() && isEnabled()) {
+			LabyBridge.display(Constants.ADDON_PREFIX + "§cUnbekannte Argumente: " + Strings.join(args, ", "));
+			System.out.println(Arrays.toString(arguments));
+			System.out.println(Arrays.toString(subArgs));
 		}
 
 		world().addEntityToWorld(currentDisguise.getEntityId(), currentDisguise);
 		if (!isEnabled())
 			hideDisguise();
-
-		if (arguments.length > 2) {
-			Map<String, String> args = new HashMap<>();
-			for (int i = 2; i < arguments.length; i++) {
-				String[] parts = arguments[i].split("=");
-				args.put(parts[0], parts.length == 1 ? null : parts[1]);
-			}
-
-			if (currentDisguise instanceof EntityArmorStand) {
-				if (args.remove("show-arms", null))
-					currentDisguise.getDataWatcher().updateObject(10, (byte) (currentDisguise.getDataWatcher().getWatchableObjectByte(10) | 4));
-			} else if (currentDisguise instanceof EntityCreeper) {
-				if (args.remove("powered", null))
-					currentDisguise.getDataWatcher().updateObject(17, (byte) 1);
-			} else if (currentDisguise instanceof EntityFallingBlock) {
-				if (args.remove("block_coordinates", null))
-					blockCoordinates = true;
-
-				String material = args.remove("material");
-				if (material == null)
-					return;
-
-				Block block = Block.getBlockFromName(material);
-				if (block == null)
-					return;
-
-				IBlockState blockState = Block.getBlockFromName(material).getDefaultState();
-				Reflection.set(currentDisguise, "fallTile", blockState);
-			} else if (currentDisguise instanceof EntityHorse) {
-				if (args.remove("saddled", null))
-					((EntityHorse) currentDisguise).setHorseSaddled(true);
-			} else if (currentDisguise instanceof EntityPig) {
-				if (args.remove("saddled", null))
-					((EntityPig) currentDisguise).setSaddled(true);
-			} else if (currentDisguise instanceof EntitySheep) {
-				if (args.remove("light-gray", null))
-					((EntitySheep) currentDisguise).setFleeceColor(EnumDyeColor.SILVER);
-
-				for (EnumDyeColor value : EnumDyeColor.values())
-					if (args.remove(value.getName(), null))
-						((EntitySheep) currentDisguise).setFleeceColor(value);
-			} else if (currentDisguise instanceof EntitySlime) {
-				int size = 0;
-				if (args.remove("tiny", null))
-					size = 1;
-				else if (args.remove("normal", null))
-					size = 2;
-				else if (args.remove("big", null))
-					size = 4;
-
-				Reflection.invoke(currentDisguise, "setSlimeSize", 1 << size);
-			} else if (currentDisguise instanceof EntityVillager) {
-				int index = 0;
-				for (String profession : new String[]{"farmer", "librarian", "priest", "blacksmith", "butcher", "nitwit"}) {
-					if (args.remove(profession, null))
-						((EntityVillager) currentDisguise).setProfession(index);
-					index++;
-				}
-			} else if (currentDisguise instanceof EntityWolf) {
-				if (args.remove("tamed", null))
-					((EntityWolf) currentDisguise).setTamed(true);
-				else if (args.remove("angry", null))
-					((EntityWolf) currentDisguise).setAngry(true);
-			} else if (currentDisguise instanceof EntityEnderman) {
-				String blockType = args.remove("block");
-				if (blockType == null)
-					return;
-
-				Block block = Block.getBlockFromName(blockType);
-				if (block == null)
-					return;
-
-				IBlockState blockState = Block.getBlockFromName(blockType).getDefaultState();
-				((EntityEnderman) currentDisguise).setHeldBlockState(blockState);
-			}
-
-			if (!args.isEmpty() && isEnabled())
-				LabyBridge.display(Constants.ADDON_PREFIX + "§cUnbekannte Argumente: " + args.keySet());
-		}
 	}
 
 }

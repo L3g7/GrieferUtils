@@ -15,10 +15,13 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.CommandSuggestions;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.CommandDispatcher;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.CommandDispatcher.Source;
+import net.labymod.ingamechat.GuiChatCustom;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
@@ -31,13 +34,11 @@ import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector2f;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
@@ -45,6 +46,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.CommandDispatcher.SOURCE;
 
@@ -90,8 +92,12 @@ public class GuiChatShim {
 		}
 	}
 
+	public interface ShimAccessor {
+		GuiChatShim grieferUtils$getShim();
+	}
+
 	@Mixin(GuiChat.class)
-	public static class MixinGuiChat {
+	public static class MixinGuiChat implements ShimAccessor {
 
 		@Unique
 		private GuiChatShim grieferUtils$shim;
@@ -102,32 +108,29 @@ public class GuiChatShim {
 		@Shadow
 		private String defaultInputFieldText;
 
-		@Redirect(method = "initGui", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/GuiChat;inputField:Lnet/minecraft/client/gui/GuiTextField;", opcode = Opcodes.PUTFIELD))
-		public void onInit(GuiChat instance, GuiTextField value) {
+		@Inject(method = "initGui", at = @At("TAIL"))
+		public void onInitGui(CallbackInfo ci) {
+			GuiChat instance = (GuiChat) (Object) this;
 			if (grieferUtils$shim == null) {
 				CommandDispatcher dispatcher = CommandSuggestions.getDispatcher();
 				if (dispatcher != null)
 					grieferUtils$shim = new GuiChatShim(dispatcher, instance, defaultInputFieldText);
-			}
-
-			if (grieferUtils$shim == null) {
-				this.inputField = value;
-				return;
+				else
+					return;
 			}
 
 			TextFieldShim inputField = new TextFieldShim(0, mc().fontRendererObj, 4, instance.height - 12, instance.width - 4, 12);
 			this.inputField = inputField;
+			this.inputField.setMaxStringLength(100);
+			this.inputField.setEnableBackgroundDrawing(false);
+			this.inputField.setFocused(true);
+			this.inputField.setText(this.defaultInputFieldText);
+			this.inputField.setCanLoseFocus(false);
 			grieferUtils$shim.inputField = inputField;
 
 			inputField.setTextFormatter(grieferUtils$shim::formatMessage);
 			inputField.setTextAcceptHandler(grieferUtils$shim::acceptMessage);
 			grieferUtils$shim.updateSuggestion();
-		}
-
-		@Inject(method = "initGui", at = @At("TAIL"))
-		public void onInitGui(CallbackInfo ci) {
-			if (grieferUtils$shim != null)
-				grieferUtils$shim.updateSuggestion();
 		}
 
 		@Inject(method = "keyTyped", at = @At("HEAD"), cancellable = true)
@@ -146,6 +149,24 @@ public class GuiChatShim {
 		public void draw(CallbackInfo ci) {
 			if (grieferUtils$shim != null)
 				grieferUtils$shim.render();
+		}
+
+		@Override
+		public GuiChatShim grieferUtils$getShim() {
+			return grieferUtils$shim;
+		}
+	}
+
+	@ExclusiveTo(LABY_3)
+	@Mixin(GuiChatCustom.class)
+	public static class MixinGuiChatCustom {
+
+		@InheritedInvoke(GuiChat.class)
+		@Inject(method = "drawScreen", at = @At("HEAD"))
+		public void draw(CallbackInfo ci) {
+			GuiChatShim shim = ((ShimAccessor) this).grieferUtils$getShim();
+			if (shim != null)
+				shim.render();
 		}
 	}
 
@@ -166,7 +187,7 @@ public class GuiChatShim {
 		// Scroll
 		int delta = Mouse.getEventDWheel();
 		if (delta != 0) {
-			delta = Math.clamp(delta, -1, 1);
+			delta = MathHelper.clamp_int(delta, -1, 1);
 			if (suggestions != null && suggestions.mouseScrolled(delta))
 				return true;
 		}
@@ -254,7 +275,7 @@ public class GuiChatShim {
 				for (Suggestion suggestion : newSuggestions.getList())
 					textWidth = Math.max(textWidth, mc().fontRendererObj.getStringWidth(suggestion.getText()));
 
-				int start = Math.clamp(getUsagePosition(newSuggestions.getRange().getStart()), 0, gui.width - textWidth);
+				int start = MathHelper.clamp_int(getUsagePosition(newSuggestions.getRange().getStart()), 0, gui.width - textWidth);
 				suggestions = new SuggestionsList(start, gui.height - 12, textWidth, newSuggestions);
 			}
 		}

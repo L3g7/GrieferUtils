@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.MathHelper;
 
 import java.util.function.BiFunction;
 
@@ -16,15 +17,15 @@ import java.util.function.BiFunction;
 @SuppressWarnings("JavadocReference")
 public class TextFieldShim extends GuiTextField {
 
-	private final FontRenderer fontRenderer;
-	private final int width;
-	private final int height;
-	private int cursorCounter;
-	private boolean isEnabled = true;
-	private int lineScrollOffset;
-	private int cursorPosition;
-	private int enabledColor = 0xE0E0E0;
-	private int disabledColor = 0x707070;
+	private final FontRenderer sFontRenderer;
+	private final int sWidth;
+	private final int sHeight;
+	private int sCursorCounter;
+	private boolean sIsEnabled = true;
+	private int sLineScrollOffset;
+	private int sCursorPosition;
+	private int sEnabledColor = 0xE0E0E0;
+	private int sDisabledColor = 0x707070;
 
 	private Runnable guiResponder;
 	private BiFunction<String, Integer, String> textFormatter;
@@ -32,9 +33,9 @@ public class TextFieldShim extends GuiTextField {
 
 	public TextFieldShim(int id, FontRenderer fontRenderer, int x, int y, int width, int height) {
 		super(id, fontRenderer, x, y, width, height);
-		this.fontRenderer = fontRenderer;
-		this.width = width;
-		this.height = height;
+		this.sFontRenderer = fontRenderer;
+		this.sWidth = width;
+		this.sHeight = height;
 		this.textFormatter = (p_195610_0_, p_195610_1_) -> p_195610_0_;
 	}
 
@@ -44,7 +45,7 @@ public class TextFieldShim extends GuiTextField {
 	@Override
 	public void updateCursorCounter() {
 		super.updateCursorCounter();
-		cursorCounter++;
+		sCursorCounter++;
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class TextFieldShim extends GuiTextField {
 	@Override
 	public void setFocused(boolean focus) {
 		if (focus && !this.isFocused())
-			this.cursorCounter = 0;
+			this.sCursorCounter = 0;
 
 		super.setFocused(focus);
 	}
@@ -64,7 +65,7 @@ public class TextFieldShim extends GuiTextField {
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		this.isEnabled = enabled;
+		this.sIsEnabled = enabled;
 	}
 
 	/**
@@ -73,7 +74,7 @@ public class TextFieldShim extends GuiTextField {
 	@Override
 	public void setTextColor(int color) {
 		super.setTextColor(color);
-		this.enabledColor = color;
+		this.sEnabledColor = color;
 	}
 
 	/**
@@ -82,7 +83,7 @@ public class TextFieldShim extends GuiTextField {
 	@Override
 	public void setDisabledTextColour(int color) {
 		super.setDisabledTextColour(color);
-		this.disabledColor = color;
+		this.sDisabledColor = color;
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class TextFieldShim extends GuiTextField {
 	public void setCursorPosition(int pos) {
 		super.setCursorPosition(pos);
 		runResponder();
-		this.cursorPosition = Math.clamp(pos, 0, getText().length());
+		this.sCursorPosition = MathHelper.clamp_int(pos, 0, getText().length());
 	}
 
 	/**
@@ -102,25 +103,25 @@ public class TextFieldShim extends GuiTextField {
 	public void setSelectionPos(int pos) {
 		super.setSelectionPos(pos);
 		int length = getText().length();
-		pos = Math.clamp(pos, 0, length);
+		pos = MathHelper.clamp_int(pos, 0, length);
 
-		if (fontRenderer == null)
+		if (sFontRenderer == null)
 			return;
 
-		if (lineScrollOffset > length)
-			lineScrollOffset = length;
+		if (sLineScrollOffset > length)
+			sLineScrollOffset = length;
 
-		String text = fontRenderer.trimStringToWidth(getText().substring(lineScrollOffset), getWidth());
-		int absOffset = text.length() + lineScrollOffset;
-		if (pos == lineScrollOffset)
-			lineScrollOffset -= fontRenderer.trimStringToWidth(getText(), getWidth(), true).length();
+		String text = sFontRenderer.trimStringToWidth(getText().substring(sLineScrollOffset), getWidth());
+		int absOffset = text.length() + sLineScrollOffset;
+		if (pos == sLineScrollOffset)
+			sLineScrollOffset -= sFontRenderer.trimStringToWidth(getText(), getWidth(), true).length();
 
 		if (pos > absOffset)
-			lineScrollOffset += pos - absOffset;
-		else if (pos <= lineScrollOffset)
-			lineScrollOffset -= lineScrollOffset - pos;
+			sLineScrollOffset += pos - absOffset;
+		else if (pos <= sLineScrollOffset)
+			sLineScrollOffset -= sLineScrollOffset - pos;
 
-		lineScrollOffset = Math.clamp(lineScrollOffset, 0, length);
+		sLineScrollOffset = MathHelper.clamp_int(sLineScrollOffset, 0, length);
 	}
 
 	@Override
@@ -173,52 +174,52 @@ public class TextFieldShim extends GuiTextField {
 			return;
 
 		if (this.getEnableBackgroundDrawing()) {
-			drawRect(this.xPosition - 1, this.yPosition - 1, this.xPosition + width + 1, this.yPosition + this.height + 1, -6250336);
-			drawRect(this.xPosition, this.yPosition, this.xPosition + width, this.yPosition + this.height, -16777216);
+			drawRect(this.xPosition - 1, this.yPosition - 1, this.xPosition + sWidth + 1, this.yPosition + this.sHeight + 1, -6250336);
+			drawRect(this.xPosition, this.yPosition, this.xPosition + sWidth, this.yPosition + this.sHeight, -16777216);
 		}
 
-		int color = this.isEnabled ? this.enabledColor : this.disabledColor;
-		int cursorPos = this.cursorPosition - this.lineScrollOffset;
-		int selectionEnd = this.getSelectionEnd() - this.lineScrollOffset;
-		String shownText = this.fontRenderer.trimStringToWidth(this.getText().substring(this.lineScrollOffset), this.getWidth());
+		int color = this.sIsEnabled ? this.sEnabledColor : this.sDisabledColor;
+		int cursorPos = this.sCursorPosition - this.sLineScrollOffset;
+		int selectionEnd = this.getSelectionEnd() - this.sLineScrollOffset;
+		String shownText = this.sFontRenderer.trimStringToWidth(this.getText().substring(this.sLineScrollOffset), this.getWidth());
 		boolean inShownText = cursorPos >= 0 && cursorPos <= shownText.length();
-		boolean showCursor = this.isFocused() && this.cursorCounter / 6 % 2 == 0 && inShownText;
+		boolean showCursor = this.isFocused() && this.sCursorCounter / 6 % 2 == 0 && inShownText;
 		int cursorX = this.getEnableBackgroundDrawing() ? this.xPosition + 4 : this.xPosition;
-		int cursorY = this.getEnableBackgroundDrawing() ? this.yPosition + (this.height - 8) / 2 : this.yPosition;
+		int cursorY = this.getEnableBackgroundDrawing() ? this.yPosition + (this.sHeight - 8) / 2 : this.yPosition;
 		int cursorX2 = cursorX;
 		if (selectionEnd > shownText.length())
 			selectionEnd = shownText.length();
 
 		if (!shownText.isEmpty()) {
 			String text = inShownText ? shownText.substring(0, cursorPos) : shownText;
-			cursorX2 = this.fontRenderer.drawStringWithShadow(this.textFormatter.apply(text, this.lineScrollOffset), (float) cursorX, (float) cursorY, color);
+			cursorX2 = this.sFontRenderer.drawStringWithShadow(this.textFormatter.apply(text, this.sLineScrollOffset), (float) cursorX, (float) cursorY, color);
 		}
 
-		boolean inText = this.cursorPosition < this.getText().length() || this.getText().length() >= this.getMaxStringLength();
+		boolean inText = this.sCursorPosition < this.getText().length() || this.getText().length() >= this.getMaxStringLength();
 		int cursorX3 = cursorX2;
 		if (!inShownText) {
-			cursorX3 = cursorPos > 0 ? cursorX + width : cursorX;
+			cursorX3 = cursorPos > 0 ? cursorX + sWidth : cursorX;
 		} else if (inText) {
 			cursorX3 = cursorX2 - 1;
 			--cursorX2;
 		}
 
 		if (!shownText.isEmpty() && inShownText && cursorPos < shownText.length())
-			this.fontRenderer.drawStringWithShadow(this.textFormatter.apply(shownText.substring(cursorPos), this.cursorPosition), (float) cursorX2, (float) cursorY, color);
+			this.sFontRenderer.drawStringWithShadow(this.textFormatter.apply(shownText.substring(cursorPos), this.sCursorPosition), (float) cursorX2, (float) cursorY, color);
 
 		if (!inText && this.suggestion != null)
-			this.fontRenderer.drawStringWithShadow(this.suggestion, (float) (cursorX3 - 1), (float) cursorY, -8355712);
+			this.sFontRenderer.drawStringWithShadow(this.suggestion, (float) (cursorX3 - 1), (float) cursorY, -8355712);
 
 		if (showCursor) {
 			if (inText)
-				Gui.drawRect(cursorX3, cursorY - 1, cursorX3 + 1, cursorY + 1 + this.fontRenderer.FONT_HEIGHT, -3092272);
+				Gui.drawRect(cursorX3, cursorY - 1, cursorX3 + 1, cursorY + 1 + this.sFontRenderer.FONT_HEIGHT, -3092272);
 			else
-				this.fontRenderer.drawStringWithShadow("_", (float) cursorX3, (float) cursorY, color);
+				this.sFontRenderer.drawStringWithShadow("_", (float) cursorX3, (float) cursorY, color);
 		}
 
 		if (selectionEnd != cursorPos) {
-			int textWidth = cursorX + this.fontRenderer.getStringWidth(shownText.substring(0, selectionEnd));
-			drawCursorVertical(cursorX3, cursorY - 1, textWidth - 1, cursorY + 1 + this.fontRenderer.FONT_HEIGHT);
+			int textWidth = cursorX + this.sFontRenderer.getStringWidth(shownText.substring(0, selectionEnd));
+			drawCursorVertical(cursorX3, cursorY - 1, textWidth - 1, cursorY + 1 + this.sFontRenderer.FONT_HEIGHT);
 		}
 	}
 
@@ -235,12 +236,12 @@ public class TextFieldShim extends GuiTextField {
 			y2 = lvt_5_2_;
 		}
 
-		if (x2 > this.xPosition + this.width) {
-			x2 = this.xPosition + this.width;
+		if (x2 > this.xPosition + this.sWidth) {
+			x2 = this.xPosition + this.sWidth;
 		}
 
-		if (x1 > this.xPosition + this.width) {
-			x1 = this.xPosition + this.width;
+		if (x1 > this.xPosition + this.sWidth) {
+			x1 = this.xPosition + this.sWidth;
 		}
 
 		Tessellator lvt_5_3_ = Tessellator.getInstance();

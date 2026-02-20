@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -92,22 +93,13 @@ public class WikiGen {
 		.callback(() -> {
 			JsonObject result = new JsonObject();
 
-			Feature.getFeatures().sorted(Comparator.comparing(f -> f.getMainElement().name())).forEachOrdered(feature -> {
-				String category = "uncategorized";
+			for (Feature.CategoryData category : Feature.getCategories()) {
+				Object parent = Reflection.get(category, "parent");
+				if (parent != null)
+					continue;
 
-				if (feature.getCategory() != null)
-					category = feature.getCategory().getSetting().name();
-
-				if (!result.has(category))
-					result.add(category, new JsonArray());
-
-				JsonArray array = result.getAsJsonArray(category);
-				JsonObject object = serialize(feature.getMainElement());
-				if (object == null)
-					return;
-
-				array.add(object);
-			});
+				result.add(category.name(), serialize(category.getSetting()));
+			}
 
 			List<BaseSetting<?>> widgets = FileProvider.getClassesWithSuperClass(Widget.class).stream()
 				.filter(meta -> !meta.isAbstract())
@@ -123,7 +115,7 @@ public class WikiGen {
 			file.createNewFile();
 
 			try (FileOutputStream fos = new FileOutputStream(file)) {
-				fos.write(result.toString().getBytes(StandardCharsets.UTF_8));
+				fos.write(IOUtil.gson.toJson(result).getBytes(StandardCharsets.UTF_8));
 			}
 
 			LabyBridge.labyBridge.notify("ok", "ok");

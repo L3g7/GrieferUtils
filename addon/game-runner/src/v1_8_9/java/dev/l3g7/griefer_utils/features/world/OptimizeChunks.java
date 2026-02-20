@@ -28,9 +28,9 @@ public class OptimizeChunks extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Chunks optimieren")
-		.description("Unterdrückt Änderungen an gängigen dynamischen Blöcken.",
+		.description("Unterdrückt Änderungen an gängigen dynamischen Blöcken, wodurch Lags bei Farmen gefixt werden.",
 			"§l§nDadurch können gewollte Änderungen versteckt werden.",
-			"§l§nNur wenn wirklich nötig benutzen!")
+			"§l§nNur benutzen, wenn es wirklich benötigt ist!")
 		.icon("measurement_circle_thingy");
 
 	@EventListener

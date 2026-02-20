@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
@@ -94,6 +95,9 @@ public class Booster extends Widget {
 
 	@EventListener
 	private void onCbEarlyJoin(CitybuildJoinEvent.Early event) {
+		if (event.citybuild == Citybuild.ANY || event.citybuild == Citybuild.MAGIC_FOREST)
+			return;
+
 		Commands.runOnCb("/booster");
 		waitingForBoosterGUI = waitingForBoosterInfo = true;
 	}

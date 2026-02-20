@@ -56,6 +56,7 @@ public class GUIHierarchyTree {
 				feat("Befehlsradialmenü", "command_menu", chat),
 				feat("Befehlsvorschläge", "command_suggestions", chat),
 				feat("Farb-Vorschau", "color_palette", chat),
+				feat("Kicks verhindern", "crossed_out_chat", chat),
 				feat("Lange Nachrichten aufteilen", "shears", chat),
 				feat("Multi-Hotkey", "key", chat),
 				feat("Plot-Chat-Indikator", "chat_orange", chat),

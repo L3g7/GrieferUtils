@@ -187,6 +187,7 @@ public class GUIHierarchyTree {
 				feat("Scoreboard bei F3 verstecken", "wooden_board", render)
 			),
 			feat("Chunks geladen lassen", "filled_map", world),
+			feat("Chunks optimieren", "measurement_circle_thingy", world),
 			feat("Flugbahn anzeigen", "crosshair", render),
 			feat("Interagierbare Plot-Schilder", "sign", world),
 			feat("Jail-Barrieren", "iron_bars", world),

@@ -18,7 +18,7 @@ public class HorseDisguise extends AbstractHorseDisguise {
 
 	@Override
 	public EntityHorse create(Arguments arguments) {
-		String armor = arguments.getEnum("diamond", "gold", "iron");
+		String armor = arguments.getEnum(null, "diamond", "gold", "iron");
 		String color = arguments.getEnum("brown", colors);
 		String colorVariant = arguments.getEnum(null, variants);
 

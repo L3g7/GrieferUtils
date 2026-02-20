@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
+import static net.minecraft.event.ClickEvent.Action.SUGGEST_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 
 @Singleton
@@ -121,7 +122,13 @@ public class InteractableMessages extends Feature {
 				commandHover = new ChatComponentText(trimmed);
 				commandHover.setChatStyle(part.getChatStyle().createShallowCopy());
 			}
-			addRunCommand(part, trimmed, commandHover);
+
+			if (trimmed.contains("[") || trimmed.contains("<")) {
+				int start = Math.max(trimmed.indexOf('['), trimmed.indexOf('<'));
+				addClickEvent(SUGGEST_COMMAND, part, trimmed.substring(0, start), commandHover);
+			} else {
+				addRunCommand(part, trimmed, commandHover);
+			}
 		}
 
 		event.setMessage(component);
@@ -251,16 +258,20 @@ public class InteractableMessages extends Feature {
 	}
 
 	private static void addRunCommand(IChatComponent icc, String command, IChatComponent coloredCommand) {
+		addClickEvent(RUN_COMMAND, icc, command, coloredCommand);
+	}
+
+	private static void addClickEvent(ClickEvent.Action action, IChatComponent icc, String command, IChatComponent coloredCommand) {
 		if (coloredCommand == icc)
 			coloredCommand = coloredCommand.createCopy();
 
 		IChatComponent prefix = new ChatComponentText("Klicke, um \"");
-		IChatComponent suffix = new ChatComponentText("\" auszuführen");
+		IChatComponent suffix = new ChatComponentText(action == RUN_COMMAND ? "\" auszuführen" : "\" vorzuschlagen");
 		prefix.getChatStyle().setColor(EnumChatFormatting.GRAY);
 		suffix.getChatStyle().setColor(EnumChatFormatting.GRAY);
 
 		icc.getChatStyle()
-			.setChatClickEvent(new ClickEvent(RUN_COMMAND, command))
+			.setChatClickEvent(new ClickEvent(action, command))
 			.setChatHoverEvent(new HoverEvent(SHOW_TEXT, prefix.appendSibling(coloredCommand).appendSibling(suffix)));
 	}
 

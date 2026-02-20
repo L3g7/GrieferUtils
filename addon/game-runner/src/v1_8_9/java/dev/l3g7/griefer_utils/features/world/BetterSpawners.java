@@ -246,7 +246,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		return new SpawnerRenderObject(tileEntity);
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onTileEntityDataSet(TileEntityDataSetEvent event) {
 		if (!(event.tileEntity instanceof TileEntityMobSpawner))
 			return;

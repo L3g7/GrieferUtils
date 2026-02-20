@@ -51,7 +51,9 @@ public class InteractableMessages extends Feature {
 			- Den Status, Msgs, Plotchat- und Globalchat-Nachrichten (Schlägt /msg vor)
 			- "/p h" in Nachrichten (Teleportiert zum Plot)
 			- Spielernamen bei /clan info (Öffnet das Profil)
-			- Spielernamen bei /p i (Öffnet das Profil)""")
+			- Spielernamen bei /p i (Öffnet das Profil)
+			- Plot-IDs bei /p i (Teleportiert zum Plot)
+			""")
 		.icon("mouse_left");
 
 	@EventListener(priority = Priority.LOW)

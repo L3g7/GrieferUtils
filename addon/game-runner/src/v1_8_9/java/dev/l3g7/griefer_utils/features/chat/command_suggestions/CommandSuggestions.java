@@ -10,11 +10,11 @@ package dev.l3g7.griefer_utils.features.chat.command_suggestions;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
+import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.CommandDispatcher;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.Node;
-import net.minecraft.init.Blocks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +31,7 @@ public class CommandSuggestions extends Feature {
 	private static final Logger logger = LogManager.getLogger("CommandSuggestions");
 
 	public static CommandDispatcher getDispatcher() {
-		if (!enabled.get())
+		if (!get(CommandSuggestions.class).isEnabled() || !ServerCheck.isOnGrieferGames())
 			return null;
 
 		return dispatcher;

@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SwitchWidget;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.HOLD;
 
 public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolean> implements SwitchSetting {
@@ -40,6 +41,8 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 	public SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode) {
 		DropDownSettingImpl<TriggerMode> triggerMode = (DropDownSettingImpl<TriggerMode>) DropDownSetting.create(TriggerMode.class)
 			.name("Auslösung")
+			.description("Halten: Aktiviert " + whatActivates + ", während die Taste gedrückt wird.",
+				"Umschalten: Schaltet " + whatActivates + " um, wenn die Taste gedrückt wird.")
 			.icon("lightning")
 			.inferConfig("triggerMode")
 			.defaultValue(defaultTriggerMode)
@@ -50,24 +53,33 @@ public class SwitchSettingImpl extends AbstractSettingImpl<SwitchSetting, Boolea
 				previousMode = m;
 			});
 
+		SwitchSetting notify = SwitchSetting.create()
+			.name("Benachrichtigen")
+			.description("Ob ein Popup angezeigt werden soll, wenn " + whatActivates + " de-/aktiviert wird.")
+			.icon("bell")
+			.inferConfig("notify");
+
+		KeySetting key = KeySetting.create()
+			.name("Taste")
+			.description("Welche Taste " + whatActivates + " aktiviert.")
+			.icon("key")
+			.inferConfig("key")
+			.pressCallback(p -> {
+				if (p || (defaultTriggerMode != null && triggerMode.get() == HOLD)) {
+					this.set(!this.get());
+					if (notify.get())
+						labyBridge.notify(this.name(), this.name() + " wurde " + (this.get() ? "§aaktiviert" : "§cdeakiviert" + "§r!"));
+				}
+			});
+
+		addSetting(0, notify);
+
 		if (defaultTriggerMode != null) {
 			addSetting(0, HeaderSetting.create());
 			addSetting(0, triggerMode);
 		}
 
-		KeySettingImpl key = (KeySettingImpl) KeySetting.create()
-			.name("Taste")
-			.icon("key")
-			.inferConfig("key")
-			.pressCallback(p -> {
-				if (p || (defaultTriggerMode != null && triggerMode.get() == HOLD))
-					this.set(!this.get());
-			});
 		addSetting(0, key);
-
-		key.description("Welche Taste " + whatActivates + " aktiviert.");
-		triggerMode.description("Halten: Aktiviert " + whatActivates + ", während die Taste gedrückt wird.",
-			"Umschalten: Schaltet " + whatActivates + " um, wenn die Taste gedrückt wird.");
 		return this;
 	}
 

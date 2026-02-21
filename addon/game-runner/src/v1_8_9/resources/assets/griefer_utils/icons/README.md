@@ -342,6 +342,10 @@
     <td><a href="https://assets.mcasset.cloud/1.21.11/assets/minecraft/textures/item/yellow_dye.png">Minecraft asset</a></td>
   </tr>
   <tr>
+    <td><img src="dye_white.png" height=16em width=16em />&nbsp;&nbsp;<a href="dye_white.png">dye_white.png</a></td>
+    <td><a href="https://assets.mcasset.cloud/1.21.11/assets/minecraft/textures/item/white_dye.png">Minecraft asset</a></td>
+  </tr>
+  <tr>
     <td><img src="earth.png" height=16em width=16em />&nbsp;&nbsp;<a href="earth.png">earth.png</a></td>
     <td><a href="https://www.dreamstime.com/129325507">Dreamstime (Tsipilevin)</a></td>
   </tr>

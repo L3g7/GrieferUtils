@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
@@ -26,6 +27,8 @@ import net.minecraft.util.IChatComponent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,6 +78,11 @@ public class ChatMods extends Feature {
 		.description("Entfernt die Broadcast-Hervorhebung.")
 		.icon("bell");
 
+	private final SwitchSetting removeHeroHighlights = SwitchSetting.create()
+		.name("Hero Hervorhebung entfernen")
+		.description("Entfernt die Hervorhebung von @Namen von Spielern mit Hero Rang.")
+		.icon("dye_white");
+
 	private final SwitchSetting antiColoredFont = SwitchSetting.create()
 		.name("Farbige Schrift entfernen")
 		.description("Entfernt die Farben von Nachrichten mit farbiger Schrift §8(/schrift)§r.")
@@ -85,7 +93,7 @@ public class ChatMods extends Feature {
 		.name("Chat aufräumen")
 		.icon("crossed_out_book")
 		.description("Räumt den Chat auf.")
-		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, removeBroadcast, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
+		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, removeBroadcast, removeHeroHighlights, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
 
 	private boolean isNews = false;
 
@@ -101,8 +109,8 @@ public class ChatMods extends Feature {
 	}
 
 	@EventListener(priority = Priority.HIGH)
-	public void onMessageModify(MessageModifyEvent event) {
-		if (!antiColoredFont.get())
+	public void removeColoredFont(MessageModifyEvent event) {
+		if (!antiColoredFont.get() && !removeHeroHighlights.get())
 			return;
 
 		for (Pattern pattern : new Pattern[]{GLOBAL_CHAT_PATTERN, GLOBAL_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, PLOTCHAT_RECEIVE_PATTERN}) {
@@ -111,6 +119,9 @@ public class ChatMods extends Feature {
 				continue;
 
 			String message = matcher.group("message");
+			if (removeHeroHighlights.get() && checkForHeroHighlights(event.message, new AtomicInteger(getFormattedLength(event.message)), matcher.start("message"), matcher.end("message")))
+				return;
+
 			String msg = message.replace("§r", "").replaceAll("(§.)? ", "");
 			if (!usesFont(msg))
 				return;
@@ -165,6 +176,68 @@ public class ChatMods extends Feature {
 		}
 
 		return !fonts.isEmpty();
+	}
+
+	private static boolean checkForHeroHighlights(IChatComponent icc, AtomicInteger cursor, int start, int end) {
+		ListIterator<IChatComponent> iterator = icc.getSiblings().listIterator();
+
+		while (iterator.hasNext()) {
+			IChatComponent sibling = iterator.next();
+			boolean isBeforeStart = cursor.get() < start;
+			if (isBeforeStart)
+				cursor.addAndGet(getFormattedLength(sibling));
+
+			if (checkForHeroHighlights(sibling, cursor, start, end))
+				return true;
+
+			if (isBeforeStart)
+				continue;
+
+			boolean isStart = cursor.get() == start;
+			cursor.addAndGet(getFormattedLength(sibling));
+
+			if (sibling.getChatStyle().getColor() != EnumChatFormatting.WHITE || !sibling.getChatStyle().getBold())
+				continue;
+
+			String text = sibling.getUnformattedTextForChat();
+			if (!text.startsWith("@") || !FORMATTED_PLAYER_NAME_PATTERN.matcher(text.substring(1)).matches())
+				continue;
+
+			// Hero highlight detected
+			iterator.remove();
+
+			if (!isStart && iterator.hasPrevious()) {
+				if (iterator.previous() instanceof ChatComponentText cct) {
+					// Merge with previous
+					Reflection.set(cct, "text", cct.getUnformattedTextForChat() + text);
+					return true;
+				}
+			}
+
+			if (cursor.get() != end /* end of the message */ && iterator.hasNext()) {
+				if (iterator.next() instanceof ChatComponentText cct) {
+					// Merge with next
+					Reflection.set(cct, "text", text + cct.getUnformattedTextForChat());
+					return true;
+				}
+			}
+
+			// Fallback
+			iterator.add(sibling);
+			sibling.getChatStyle().setBold(true);
+			sibling.getChatStyle().setColor(EnumChatFormatting.AQUA);
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return The IChatComponent's formatted length, without its siblings
+	 */
+	private static int getFormattedLength(IChatComponent icc) {
+		return icc.getChatStyle().getFormattingCode().length() +
+				icc.getUnformattedTextForChat().length() +
+				2 /* §r */;
 	}
 
 	private boolean shouldCancel(String formattedText) {

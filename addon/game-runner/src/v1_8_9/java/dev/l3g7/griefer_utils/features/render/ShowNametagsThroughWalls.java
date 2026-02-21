@@ -7,10 +7,10 @@
 
 package dev.l3g7.griefer_utils.features.render;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
@@ -20,17 +20,17 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_IMPLEMENTED;
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
-@ExclusiveTo(value = LABY_3, reason = NOT_IMPLEMENTED, customMessage = "Nametags durch Wände anzeigen ist momentan nur für LabyMod 3 implementiert.")
 public class ShowNametagsThroughWalls extends Feature {
 
 	@MainElement
@@ -45,8 +45,18 @@ public class ShowNametagsThroughWalls extends Feature {
 		return get(ShowNametagsThroughWalls.class);
 	}
 
+	/**
+	 * The canRenderName method of {@link RendererLivingEntity}, assuming the entity isn't a player
+	 */
+	public static boolean baseCanRenderName(Entity entity) {
+		return Minecraft.isGuiEnabled()
+			&& entity != mc().getRenderManager().livingPlayer
+			&& !entity.isInvisibleToPlayer(player())
+			&& entity.riddenByEntity == null
+			&& entity.hasCustomName();
+	}
+
 	@Mixin(RenderLiving.class)
-	@ExclusiveTo(LABY_3)
 	private static abstract class MixinRenderLiving extends RendererLivingEntity<EntityLiving> {
 
 		public MixinRenderLiving(RenderManager renderManagerIn, ModelBase modelBaseIn, float shadowSizeIn) {
@@ -56,7 +66,7 @@ public class ShowNametagsThroughWalls extends Feature {
 		@Inject(method = "canRenderName(Lnet/minecraft/entity/EntityLiving;)Z", at = @At("RETURN"), cancellable = true)
 		private void injectCanRenderName(EntityLiving entity, CallbackInfoReturnable<Boolean> cir) {
 			if (ShowNametagsThroughWalls.get().isEnabled() && !cir.getReturnValueZ()) {
-				cir.setReturnValue(super.canRenderName(entity) && entity.hasCustomName());
+				cir.setReturnValue(baseCanRenderName(entity) && entity.hasCustomName());
 			}
 
 		}
@@ -64,9 +74,9 @@ public class ShowNametagsThroughWalls extends Feature {
 	}
 
 	@Mixin(value = Render.class, priority = 1001)
-	@ExclusiveTo(LABY_3)
 	private static class MixinRender {
 
+		@Unique
 		private static boolean renderingLivingEntity;
 
 		@Inject(method = "renderLivingLabel", at = @At("HEAD"))

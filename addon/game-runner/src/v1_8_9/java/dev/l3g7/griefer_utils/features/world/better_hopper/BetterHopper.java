@@ -9,23 +9,34 @@ package dev.l3g7.griefer_utils.features.world.better_hopper;
 
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockInteractEvent;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
+import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
+import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
+import net.minecraft.network.play.client.C0DPacketCloseWindow;
+import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -34,6 +45,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static net.minecraft.network.play.client.C0BPacketEntityAction.Action.START_SNEAKING;
 import static net.minecraft.network.play.client.C0BPacketEntityAction.Action.STOP_SNEAKING;
@@ -82,11 +94,17 @@ public class BetterHopper extends Feature {
 		.icon("hopper")
 		.subSettings(lastHoppersLimit);
 
+	private static final SwitchSetting hopperWithHeldItemFix = SwitchSetting.create()
+		.name("Trichter mit Item öffnen")
+		.description("Ermöglicht das Öffnen von Trichtern, auch wenn man ein Item / einen Block in der Hand hält.")
+		.icon("hopper");
+
 	private static final SwitchSetting sneakMode = SwitchSetting.create()
 		.name("Sneak-Modus")
 		.description("Öffnet bei Rechtsklicks immer die Einstellungen eines Trichters, auch wenn du nicht sneakst.")
 		.icon("sneaking")
-		.addHotkeySetting("den Sneak-Modus", null);
+		.addHotkeySetting("den Sneak-Modus", null)
+		.subSettings(hopperWithHeldItemFix);
 
 	private static final SwitchSetting showFastTick = SwitchSetting.create()
 		.name("Fast Tick Modus anzeigen")
@@ -101,6 +119,7 @@ public class BetterHopper extends Feature {
 		.subSettings(betterVisualisation, showRange, showSourceHopper, showLastHopper, sneakMode, showFastTick);
 
 	private static final List<BlockPos> lastClickedHoppers = new ArrayList<>();
+	private int itemMoveOrigin = -1;
 
 	public BetterHopper() {
 		lastHoppersLimit.callback(i -> {
@@ -115,7 +134,12 @@ public class BetterHopper extends Feature {
 
 	@EventListener
 	private static void onBlockInteract(BlockInteractEvent event) {
-		if (world().getBlockState(event.pos).getBlock() != Blocks.hopper || player().getHeldItem() != null)
+		if (world().getBlockState(event.pos).getBlock() != Blocks.hopper)
+			return;
+
+		boolean isSneakModeEnabled = sneakMode.get() && enabled.get();
+
+		if (player().getHeldItem() != null && (!isSneakModeEnabled || !hopperWithHeldItemFix.get()))
 			return;
 
 		if (player().isSneaking()) {
@@ -123,7 +147,7 @@ public class BetterHopper extends Feature {
 			return;
 		}
 
-		if (!sneakMode.get() || !enabled.get())
+		if (!isSneakModeEnabled)
 			return;
 
 		addHopper(event.pos);
@@ -158,13 +182,15 @@ public class BetterHopper extends Feature {
 		}
 	}
 
+	// Fast Tick
+
 	@EventListener
 	private void onGuiModify(GuiModifyItemsEvent event) {
 		if (!showFastTick.get() || !event.getTitle().startsWith("§6Trichter-Einstellungen"))
 			return;
 
 		ItemStack fastTickItem = event.getItem(11);
-		if (fastTickItem.getItem() != Items.diamond_boots)
+		if (fastTickItem == null || fastTickItem.getItem() != Items.diamond_boots)
 			return;
 
 		boolean isEnabled = !EnchantmentHelper.getEnchantments(fastTickItem).isEmpty();
@@ -173,6 +199,88 @@ public class BetterHopper extends Feature {
 
 		// Remove enchants
 		EnchantmentHelper.setEnchantments(ImmutableMap.of(), fastTickItem);
+	}
+
+	// Hopper with held item fix
+
+	@EventListener
+	private void onItemUsePre(ItemUseEvent.Pre event) {
+		if (!ServerCheck.isOnGrieferGames() || player().isSneaking())
+			return;
+
+		if (event.stack != player().getHeldItem())
+			// Packet probably was sent by a mod / addon
+			return;
+
+		Block clickedBlock = world().getBlockState(event.pos).getBlock();
+		if (clickedBlock != Blocks.hopper || MinecraftUtil.isInFarmwelt())
+			return;
+
+		if (!sneakMode.get() || !hopperWithHeldItemFix.get() || event.stack == null)
+			return;
+
+		if (FileProvider.getBridge(TempItemSaverBridge.class).isProtectedAgainstItemPickup(event.stack)) {
+			labyBridge.notify("§cItemSaver", "§cDas Item in deiner Hand ist im ItemSaver!");
+			return;
+		}
+
+		event.cancel();
+		for (int i = 0; i < player().inventory.mainInventory.length; i++) {
+			if (player().inventory.getStackInSlot(i) == null) {
+				itemMoveOrigin = i;
+				break;
+			}
+		}
+
+		if (itemMoveOrigin == -1) {
+			labyBridge.notify("§eTrichteranzeige verbessern", "§eDein Inventar ist voll!");
+			return;
+		}
+
+		move(false);
+		mc().getNetHandler().addToSendQueue(new C08PacketPlayerBlockPlacement(event.pos, event.side.getIndex(), null, event.hitX, event.hitY, event.hitZ));
+	}
+
+	private void move(boolean toHotbar) {
+		if (itemMoveOrigin < 9)
+			itemMoveOrigin += 36;
+
+		int hotbarSlot = player().inventory.currentItem;
+		short transactionID = player().openContainer.getNextTransactionID(player().inventory);
+		mc().getNetHandler().addToSendQueue(new C0EPacketClickWindow(0, itemMoveOrigin, hotbarSlot, 2, null, transactionID));
+
+		if (itemMoveOrigin >= 36)
+			itemMoveOrigin -= 36;
+
+		if (!toHotbar) {
+			ItemStack stack = player().inventory.getStackInSlot(hotbarSlot);
+			player().inventory.setInventorySlotContents(itemMoveOrigin, stack);
+			player().inventory.setInventorySlotContents(hotbarSlot, null);
+			return;
+		}
+
+		ItemStack originStack = player().inventory.getStackInSlot(itemMoveOrigin);
+		ItemStack slotStack = player().inventory.getStackInSlot(hotbarSlot);
+		player().inventory.setInventorySlotContents(hotbarSlot, originStack);
+		player().inventory.setInventorySlotContents(itemMoveOrigin, slotStack);
+		itemMoveOrigin = -1;
+	}
+
+	@EventListener
+	private void onMessageReceive(MessageEvent.MessageReceiveEvent event) {
+		if (itemMoveOrigin != -1 && event.message.getFormattedText().startsWith("§r§8[§r§6GrieferGames§r§8] §r§cDer Spawner ist aktuell von §r§e"))
+			move(true);
+	}
+
+	@EventListener
+	private void onGuiClose(PacketEvent.PacketSendEvent<C0DPacketCloseWindow> e) {
+		if (itemMoveOrigin == -1)
+			return;
+
+		TickScheduler.runNextRenderTick(() -> {
+			if (itemMoveOrigin != -1)
+				move(true);
+		});
 	}
 
 }

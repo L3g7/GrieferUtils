@@ -7,9 +7,11 @@
 
 package dev.l3g7.griefer_utils.features.world.better_hopper;
 
+import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockInteractEvent;
+import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
@@ -18,7 +20,11 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.AxisAlignedBB;
@@ -82,12 +88,17 @@ public class BetterHopper extends Feature {
 		.icon("sneaking")
 		.addHotkeySetting("den Sneak-Modus", null);
 
+	private static final SwitchSetting showFastTick = SwitchSetting.create()
+		.name("Fast Tick Modus anzeigen")
+		.description("Ersetzt die Diamant-Schuhe vom Fast Tick Modus mit gefärbter Wolle, damit es leichter zu erkennen ist.")
+		.icon("lightning");
+
 	@MainElement
 	private static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Trichteranzeige verbessern")
 		.description("Verbessert die Anzeige von Trichtern.")
 		.icon("hopper")
-		.subSettings(betterVisualisation, showRange, showSourceHopper, showLastHopper, sneakMode);
+		.subSettings(betterVisualisation, showRange, showSourceHopper, showLastHopper, sneakMode, showFastTick);
 
 	private static final List<BlockPos> lastClickedHoppers = new ArrayList<>();
 
@@ -145,6 +156,23 @@ public class BetterHopper extends Feature {
 			AxisAlignedBB bb = new AxisAlignedBB(lastClickedHopper, lastClickedHopper.add(1, 1, 1)).expand(0.001, 0.001, 0.001);
 			RenderUtil.drawFilledBox(bb, new Color(0, (int) (++i * color) + 63, 0, 0x80), false);
 		}
+	}
+
+	@EventListener
+	private void onGuiModify(GuiModifyItemsEvent event) {
+		if (!showFastTick.get() || !event.getTitle().startsWith("§6Trichter-Einstellungen"))
+			return;
+
+		ItemStack fastTickItem = event.getItem(11);
+		if (fastTickItem.getItem() != Items.diamond_boots)
+			return;
+
+		boolean isEnabled = !EnchantmentHelper.getEnchantments(fastTickItem).isEmpty();
+		fastTickItem.setItem(Item.getItemFromBlock(Blocks.wool));
+		fastTickItem.setItemDamage(isEnabled ? 5 : 14);
+
+		// Remove enchants
+		EnchantmentHelper.setEnchantments(ImmutableMap.of(), fastTickItem);
 	}
 
 }

@@ -11,11 +11,9 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -57,18 +55,13 @@ public class ShowNametagsThroughWalls extends Feature {
 	}
 
 	@Mixin(RenderLiving.class)
-	private static abstract class MixinRenderLiving extends RendererLivingEntity<EntityLiving> {
-
-		public MixinRenderLiving(RenderManager renderManagerIn, ModelBase modelBaseIn, float shadowSizeIn) {
-			super(renderManagerIn, modelBaseIn, shadowSizeIn);
-		}
+	private static class MixinRenderLiving {
 
 		@Inject(method = "canRenderName(Lnet/minecraft/entity/EntityLiving;)Z", at = @At("RETURN"), cancellable = true)
 		private void injectCanRenderName(EntityLiving entity, CallbackInfoReturnable<Boolean> cir) {
 			if (ShowNametagsThroughWalls.get().isEnabled() && !cir.getReturnValueZ()) {
 				cir.setReturnValue(baseCanRenderName(entity) && entity.hasCustomName());
 			}
-
 		}
 
 	}

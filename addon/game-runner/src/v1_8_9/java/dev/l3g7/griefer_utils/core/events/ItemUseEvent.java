@@ -87,7 +87,7 @@ public abstract class ItemUseEvent extends Event {
 				stackBeforeUse = ((ItemStack) (Object) this).copy();
 			}
 
-			@Inject(method = "onItemUse", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+			@Inject(method = "onItemUse", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 			public void injectOnItemUseTail(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, CallbackInfoReturnable<Boolean> cir, boolean flag) {
 				if (flag)
 					new Post(stackBeforeUse, ((ItemStack) (Object) this).copy()).fire();
@@ -109,11 +109,17 @@ public abstract class ItemUseEvent extends Event {
 
 	public static class Finish extends ItemUseEvent {
 
+		public final ItemStack itemStack;
+
+		public Finish(ItemStack itemStack) {
+			this.itemStack = itemStack;
+		}
+
 		@Mixin(EntityPlayer.class)
 		private static class MixinEntityPlayer {
 			@Redirect(method = "onItemUseFinish", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;onItemUseFinish(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/item/ItemStack;"))
 			public ItemStack redirectOnItemUseFinish(ItemStack instance, World worldIn, EntityPlayer playerIn) {
-				new Finish().fire();
+				new Finish(instance).fire();
 				return instance.onItemUseFinish(worldIn, playerIn);
 			}
 		}

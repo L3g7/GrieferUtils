@@ -206,9 +206,6 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 
 	@EventListener
 	private void onGuiClose(PacketSendEvent<C0DPacketCloseWindow> e) {
-		if (itemMoveOrigin == -1)
-			return;
-
 		TickScheduler.runNextRenderTick(() -> {
 			if (itemMoveOrigin != -1)
 				move(true);

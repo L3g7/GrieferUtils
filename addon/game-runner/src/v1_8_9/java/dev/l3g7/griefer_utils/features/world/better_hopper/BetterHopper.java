@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockInteractEvent;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
@@ -267,16 +266,7 @@ public class BetterHopper extends Feature {
 	}
 
 	@EventListener
-	private void onMessageReceive(MessageEvent.MessageReceiveEvent event) {
-		if (itemMoveOrigin != -1 && event.message.getFormattedText().startsWith("§r§8[§r§6GrieferGames§r§8] §r§cDer Spawner ist aktuell von §r§e"))
-			move(true);
-	}
-
-	@EventListener
 	private void onGuiClose(PacketEvent.PacketSendEvent<C0DPacketCloseWindow> e) {
-		if (itemMoveOrigin == -1)
-			return;
-
 		TickScheduler.runNextRenderTick(() -> {
 			if (itemMoveOrigin != -1)
 				move(true);

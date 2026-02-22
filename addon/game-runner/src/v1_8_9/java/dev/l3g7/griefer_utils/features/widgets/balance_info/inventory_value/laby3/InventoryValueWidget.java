@@ -49,6 +49,10 @@ public class InventoryValueWidget {
 	public static class InventoryValue extends Laby3Widget {
 
 		private static final Pattern VALUE_PATTERN = Pattern.compile("\\b([\\d,.k]+)\\b");
+		/**
+		 * A pattern matching all obfuscated parts of a formatted text to prevent their detection.
+		 */
+		private static final Pattern OBFUSCATED_TEXT_PATTERN = Pattern.compile("§k.+?(?:§[^lonmk]|$)");
 		public static String entryKey = "modules.inventory_value.entries";
 		private GuiScreen previousScreen = null;
 
@@ -61,7 +65,7 @@ public class InventoryValueWidget {
 			if (previousScreen == null || event.itemStack == null)
 				return;
 
-			mc.displayGuiScreen(new EnterItemValueGui(value -> addItem(event.itemStack, value), previousScreen, getValue(event.itemStack)));
+			mc.displayGuiScreen(new EnterItemValueGui(value -> addItem(event.itemStack, value), previousScreen, autoDetect(event.itemStack)));
 			previousScreen = null;
 			event.cancel();
 		}
@@ -185,45 +189,42 @@ public class InventoryValueWidget {
 			Config.save();
 		}
 
-		private static long getValue(ItemStack stack) {
-			if (stack == null)
-				return -1;
-
+		public static long autoDetect(ItemStack stack) {
 			List<String> lore = ItemUtil.getLore(stack);
 			if (lore.size() < 3)
-				return -1;
+				return 0;
 
 			if (!lore.get(lore.size() - 1).startsWith("§7Signiert von"))
-				return -1;
+				return 0;
 
-			for (String string : new String[] {lore.get(lore.size() - 2), stack.getDisplayName()}) {
-				if (string.startsWith("§7Signiert von"))
-					continue;
+			long detectedValue = 0;
+			for (String string : new String[]{lore.get(lore.size() - 2), lore.get(lore.size() - 3), stack.getDisplayName()}) {
+				for (String part : OBFUSCATED_TEXT_PATTERN.split(string)) {
+					part = part.replaceAll("§.", "").trim();
+					if (part.isEmpty())
+						continue;
 
-				string = string.toLowerCase()
-					.replaceAll("§.", "")
-					.replaceAll("(?<=\\d)\\.(\\d{3})", "$1")
-					.replaceAll(" ?mio", "m")
-					.replace("m", "kk");
+					part = part.toLowerCase()
+						.replaceAll("(?<=\\d)\\.(\\d{3})", "$1")
+						.replaceAll(" ?mio", "m")
+						.replace("m", "kk");
 
-				Matcher matcher = VALUE_PATTERN.matcher(string.replaceAll("§.", ""));
-				if (matcher.find()) {
-					String result = matcher.group(1);
-					if (!matcher.find()) { // Cancel if multiple numbers are found
+					Matcher matcher = VALUE_PATTERN.matcher(part);
+					while (matcher.find()) {
+						String result = matcher.group(1);
+
 						try {
 							double value = Calculator.calculate(result, false);
-							if (Double.isNaN(value))
-								return -1;
+							if (Double.isNaN(value) || value > 1_000_000_000 || value < 0)
+								continue;
 
-							return (long) value;
+							detectedValue = Math.max((long) value, detectedValue);
 						} catch (NumberFormatException ignored) {}
 					}
 				}
-
 			}
 
-			// No value was found
-			return -1;
+			return detectedValue;
 		}
 
 		private static String getValue(List<ItemStack> itemStacks) {
@@ -235,9 +236,8 @@ public class InventoryValueWidget {
 				if (ids != null) {
 					value += ids.value * itemStack.stackSize;
 				} else if (auto.get()) {
-					long itemValue = getValue(itemStack);
-					if (itemValue != -1)
-						value += itemValue * itemStack.stackSize;
+					long itemValue = autoDetect(itemStack);
+					value += itemValue * itemStack.stackSize;
 				}
 			}
 

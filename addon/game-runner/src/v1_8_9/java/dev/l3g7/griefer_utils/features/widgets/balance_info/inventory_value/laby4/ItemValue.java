@@ -53,10 +53,7 @@ public class ItemValue {
 			return 0;
 
 		long detectedValue = 0;
-		for (String string : new String[]{lore.get(lore.size() - 2), stack.getDisplayName()}) {
-			if (string.startsWith("§7Signiert von"))
-				continue;
-
+		for (String string : new String[]{lore.get(lore.size() - 2), lore.get(lore.size() - 3), stack.getDisplayName()}) {
 			for (String part : OBFUSCATED_TEXT_PATTERN.split(string)) {
 				part = part.replaceAll("§.", "").trim();
 				if (part.isEmpty())
@@ -68,23 +65,15 @@ public class ItemValue {
 					.replace("m", "kk");
 
 				Matcher matcher = VALUE_PATTERN.matcher(part);
-				if (matcher.find()) {
+				while (matcher.find()) {
 					String result = matcher.group(1);
-
-					if (matcher.find())
-						// Cancel if multiple numbers are found
-						return 0;
 
 					try {
 						double value = Calculator.calculate(result, false);
 						if (Double.isNaN(value) || value > 1_000_000_000 || value < 0)
-							return 0;
+							continue;
 
-						if (detectedValue != 0)
-							// Cancel if multiple numbers are found
-							return 0;
-
-						detectedValue = (long) value;
+						detectedValue = Math.max((long) value, detectedValue);
 					} catch (NumberFormatException ignored) {}
 				}
 			}

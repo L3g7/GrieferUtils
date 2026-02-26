@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.renderer.entity.layers.LayerArmorBase;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -65,7 +66,7 @@ public class HideArmor extends Feature {
 
 		@Inject(method = "renderLayer", at = @At("HEAD"), cancellable = true)
 		private void injectRenderLayer(EntityLivingBase lvt_1_1_, float lvt_2_1_, float lvt_3_1_, float lvt_4_1_, float lvt_5_1_, float lvt_6_1_, float lvt_7_1_, float lvt_8_1_, int lvt_9_1_, CallbackInfo ci) {
-			if (!shouldRender(lvt_9_1_))
+			if (lvt_1_1_ instanceof EntityPlayer && !shouldRender(lvt_9_1_))
 				ci.cancel();
 		}
 

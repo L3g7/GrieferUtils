@@ -9,12 +9,14 @@ package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.features.widgets.Widget;
@@ -54,31 +56,58 @@ public class WikiGen {
 		return "minecraft/" + stack.getDisplayName().toLowerCase().replace(' ', '_') + (stack.hasEffect() ? ".gif" : ".png");
 	}
 
-	private static JsonObject serialize(BaseSetting<?> mainSetting) {
+	private static JsonObject serialize(String parentType, BaseSetting<?> mainSetting) {
 		if (!(mainSetting instanceof Laby4Setting<?, ?> setting))
 			return null;
 
 		if (mainSetting == button || mainSetting == EnchantmentRenderer.enabled)
 			return null;
 
+		var feature = Feature.getFeatures()
+			.filter(f -> f.getMainElement() == mainSetting)
+			.findFirst();
+
+		var widget = FileProvider.getClassesWithSuperClass(Widget.class).stream()
+			.filter(meta -> !meta.isAbstract())
+			.map(meta -> (Widget) FileProvider.getSingleton(meta.load()))
+			.filter(s -> s.<Laby4Widget>getVersionedWidget().getSetting() == mainSetting)
+			.findFirst();
+
+		String type;
+		if (feature.isPresent())
+			type = "feature";
+		else if (widget.isPresent())
+			type = "widget";
+		else if (parentType.equals("category"))
+			type = "category";
+		else
+			type = "setting";
+
 		JsonObject obj = new JsonObject();
 		obj.addProperty("name", setting.getStorage().name);
 		obj.addProperty("description", setting.getStorage().description);
+		obj.addProperty("type", type);
+
+		if (feature.isPresent()) {
+			var ann = feature.get().getClass().getDeclaredAnnotation(Bridge.ExclusiveTo.class);
+			obj.addProperty("featureClass", ann == null ? null : ann.value() + " " + ann.reason() + " " + ann.customMessage());
+		}
+
 		if (setting instanceof CitybuildSettingImpl)
 			obj.addProperty("icon", "minecraft/nether_star.gif");
 		else
 			obj.addProperty("icon", serializeIcon(setting.getStorage().icon));
 
 		if (mainSetting.getChildSettings().size() > 0)
-			obj.add("subsettings", serializeSubsettings(mainSetting.getChildSettings()));
+			obj.add("subsettings", serializeSubsettings(type, mainSetting.getChildSettings()));
 
 		return obj;
 	}
 
-	private static JsonArray serializeSubsettings(List<BaseSetting<?>> settings) {
+	private static JsonArray serializeSubsettings(String parentType, List<BaseSetting<?>> settings) {
 		JsonArray features = new JsonArray();
 		for (BaseSetting<?> childSetting : settings) {
-			JsonObject serialized = serialize(childSetting);
+			JsonObject serialized = serialize(parentType, childSetting);
 			if (serialized != null)
 				features.add(serialized);
 		}
@@ -98,7 +127,7 @@ public class WikiGen {
 				if (parent != null)
 					continue;
 
-				result.add(category.name(), serialize(category.getSetting()));
+				result.add(category.name(), serialize("category", category.getSetting()));
 			}
 
 			List<BaseSetting<?>> widgets = FileProvider.getClassesWithSuperClass(Widget.class).stream()
@@ -108,7 +137,11 @@ public class WikiGen {
 				.sorted(Comparator.comparing(Laby4Widget::getComparisonName))
 				.map(Laby4Widget::getSetting)
 				.collect(Collectors.toList());
-			result.add("Module", serializeSubsettings(widgets));
+
+			result.add("Module", serialize("category", SwitchSetting.create()
+				.name("Module")
+				.icon("tab_list")
+				.subSettings(widgets)));
 
 			File file = new File("GrieferUtils/wiki_dump.json");
 			file.getParentFile().mkdirs();

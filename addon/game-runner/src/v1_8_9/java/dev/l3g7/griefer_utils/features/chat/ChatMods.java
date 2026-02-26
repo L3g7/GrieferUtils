@@ -122,7 +122,7 @@ public class ChatMods extends Feature {
 			if (removeHeroHighlights.get() && checkForHeroHighlights(event.message, new AtomicInteger(getFormattedLength(event.message)), matcher.start("message"), matcher.end("message")))
 				return;
 
-			String msg = message.replace("§r", "").replaceAll("(§.)? ", "");
+			String msg = message.replace("§r", "").replaceAll("(§.)* ", "");
 			if (!usesFont(msg))
 				return;
 

@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 public class WindowClickEvent extends Event {
 
@@ -42,7 +44,8 @@ public class WindowClickEvent extends Event {
 		if (slotId == -999)
 			return;
 
-		List<Slot> slots = ((GuiContainer) mc().currentScreen).inventorySlots.inventorySlots;
+		Container container = mc().currentScreen instanceof GuiContainer gc ? gc.inventorySlots : player().inventoryContainer;
+		List<Slot> slots = container.inventorySlots;
 		if (slotId < 0 || slotId >= slots.size())
 			return;
 

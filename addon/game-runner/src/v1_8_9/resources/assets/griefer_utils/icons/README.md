@@ -190,6 +190,10 @@
     <td><a href="https://github.com/Aizistral-Studios/No-Chat-Reports/blob/99eb97f4559843a6bd839644af5669cfb5f1244e/src/main/resources/assets/nochatreports/textures/misc/ncr_logo.png">No Chat Reports (Aizistral)</a></td>
   </tr>
   <tr>
+    <td><img src="chat_checkmark.png" height=16em width=16em />&nbsp;&nbsp;<a href="chat_checkmark.png">chat_checkmark.png</a></td>
+    <td><a href="https://github.com/Aizistral-Studios/No-Chat-Reports/blob/99eb97f4559843a6bd839644af5669cfb5f1244e/src/main/resources/assets/nochatreports/textures/gui/sprites/verified_server.png">No Chat Reports (Aizistral)</a></td>
+  </tr>
+  <tr>
     <td><img src="chat_orange.png" height=16em width=16em />&nbsp;&nbsp;<a href="chat_orange.png">chat_orange.png</a></td>
     <td><a href="https://github.com/Aizistral-Studios/No-Chat-Reports/blob/99eb97f4559843a6bd839644af5669cfb5f1244e/src/main/resources/assets/nochatreports/textures/misc/ncr_logo.png">No Chat Reports (Aizistral)</a></td>
   </tr>
@@ -256,6 +260,10 @@
   <tr>
     <td><img src="crossed_out_chat.png" height=16em width=16em />&nbsp;&nbsp;<a href="crossed_out_chat.png">crossed_out_chat.png</a></td>
     <td><a href="https://github.com/Aizistral-Studios/No-Chat-Reports/blob/99eb97f4559843a6bd839644af5669cfb5f1244e/src/main/resources/assets/nochatreports/textures/misc/ncr_logo.png">No Chat Reports (Aizistral)</a></td>
+  </tr>
+  <tr>
+    <td><img src="crossed_out_fancy_book.png" height=16em width=16em />&nbsp;&nbsp;<a href="crossed_out_fancy_book.png">crossed_out_fancy_book.png</a></td>
+    <td><a href="https://stock.adobe.com/es/images/different-books-pixel-art-set-fantasy-tome-folio-collection-open-closed-textbooks-8-bit-sprite-game-development-mobile-app-isolated-vector-illustration/502502076">Adobe Stock (SickleMoon)</a></td>
   </tr>
   <tr>
     <td><img src="crossed_out_gold_ingot.png" height=16em width=16em />&nbsp;&nbsp;<a href="crossed_out_gold_ingot.png">crossed_out_gold_ingot.png</a></td>
@@ -353,6 +361,13 @@
     <td><img src="earth_grid.png" height=16em width=16em />&nbsp;&nbsp;<a href="earth_grid.png">earth_grid.png</a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>
+
+  <tr>
+    <td><img src="earth_hourglass.png" height=16em width=16em />&nbsp;&nbsp;<a href="earth_hourglass.png">earth_hourglass.png</a></td>
+    <td><a href="https://labymod.net">LabyMod asset</a>, <a href="https://stock.adobe.com/nl/images/hourglass-pixel-art-icon-design-for-logo-web-mobile-app-sticker-badges-and-patches-video-game-sprite-8-bit-isolated-vector-illustration/497532506">Adobe Stock (thepolovinkin)</a></td>
+  </tr>
+
+
   <tr>
     <td><img src="easy_place_overlay.png" height=16em width=16em />&nbsp;&nbsp;<a href="easy_place_overlay.png">easy_place_overlay.png</a></td>
     <td><a href="https://www.freepik.com/premium-vector/pixel-art-video-game-direction-arrow-button-direction-key-vector-icon-8bit-game_33215958.htm">Freepik (kaleb-silva)</a></td>
@@ -384,6 +399,10 @@
   <tr>
     <td><img src="eye_orange.png" height=16em width=16em />&nbsp;&nbsp;<a href="eye_orange.png">eye_orange.png</a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
+  </tr>
+  <tr>
+    <td><img src="fancy_book.png" height=16em width=16em />&nbsp;&nbsp;<a href="fancy_book.png">fancy_book.png</a></td>
+    <td><a href="https://stock.adobe.com/es/images/different-books-pixel-art-set-fantasy-tome-folio-collection-open-closed-textbooks-8-bit-sprite-game-development-mobile-app-isolated-vector-illustration/502502076">Adobe Stock (SickleMoon)</a></td>
   </tr>
   <tr>
     <td><img src="filled_map.png" height=16em width=16em />&nbsp;&nbsp;<a href="filled_map.png">filled_map.png</a></td>

@@ -23,7 +23,7 @@ public class HideGrieferPass extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("GrieferPass verstecken")
 		.description("Versteckt Nachrichten und Sounds vom GrieferPass.")
-		.icon("chest_golden");
+		.icon("crossed_out_fancy_book");
 
 	@EventListener
 	private void onMessageReceive(MessageReceiveEvent event) {
@@ -40,10 +40,13 @@ public class HideGrieferPass extends Feature {
 
 	@EventListener
 	private void onSoundPlay(PlaySoundEvent event) {
-		if (waitingForQuestSound && event.name.equals("note.pling"))
+		if (waitingForQuestSound && event.name.equals("note.pling")) {
+			waitingForQuestSound = false;
 			event.cancel();
-		else if (waitingForLevelSound && event.name.equals("random.levelup"))
+		} else if (waitingForLevelSound && event.name.equals("random.levelup")) {
+			waitingForLevelSound = false;
 			event.cancel();
+		}
 	}
 
 }

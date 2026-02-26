@@ -60,7 +60,7 @@ public class GrieferPass extends ComplexWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("GrieferPass")
 		.description("Zeigt dir angepinnte GrieferPass-Aufgaben.")
-		.icon("chest_golden")
+		.icon("fancy_book")
 		.subSettings(sorting, removeFinished, ignoreCaseOpening);
 
 	@EventListener(triggerWhenDisabled = true)

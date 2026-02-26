@@ -56,7 +56,7 @@ public class GUIHierarchyTree {
 				feat("Befehlsradialmenü", "command_menu", chat),
 				feat("Befehlsvorschläge", "command_suggestions", chat),
 				feat("Farb-Vorschau", "color_palette", chat),
-				feat("Kicks verhindern", "crossed_out_chat", chat),
+				feat("Kicks verhindern", "chat_checkmark", chat),
 				feat("Lange Nachrichten aufteilen", "shears", chat),
 				feat("Multi-Hotkey", "key", chat),
 				feat("Plot-Chat-Indikator", "chat_orange", chat),
@@ -194,7 +194,8 @@ public class GUIHierarchyTree {
 			feat("Jail-Barrieren", "iron_bars", world),
 			feat("Joins anzeigen", "players", world),
 			feat("QR-Code Scanner", "qr_code", world),
-			feat("Spawner verbessern", "spawner", world)
+			feat("Spawner verbessern", "spawner", world),
+			feat("GrieferPass verstecken", "crossed_out_fancy_book", world)
 		),
 
 		feat("§yEinstellungen", "cog", uncategorized)

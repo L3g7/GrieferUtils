@@ -17,8 +17,8 @@ public class FixKicks extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kicks verhindern")
-		.description("Verhindert Kicks aufgrund ungültiger Zeichen in gesendet Nachrichten.")
 		.icon("crossed_out_chat");
+		.description("Verhindert Kicks aufgrund ungültiger Zeichen in gesendeten Nachrichten.")
 
 	@EventListener(priority = LOW)
 	private void onMessageSend(MessageEvent.MessageSendEvent event) {

@@ -30,7 +30,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
  * Shows a player's clan tag underneath their name tag.
  */
 @Singleton
-@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED)
+@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED, customMessage = "GrieferGames hat native Unterstützung für LabyMod 4 Clan Tags.")
 public class ClanTags extends Feature {
 
 	private static final Map<UUID, Pair<String, Double>> subtitles = new HashMap<>();

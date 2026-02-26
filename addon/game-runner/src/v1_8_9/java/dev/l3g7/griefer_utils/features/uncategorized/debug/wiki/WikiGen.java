@@ -10,24 +10,31 @@ package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.features.widgets.Widget;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CitybuildSettingImpl;
 import net.labymod.api.client.gui.icon.Icon;
 import net.minecraft.item.ItemStack;
+import org.objectweb.asm.Type;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,7 +81,9 @@ public class WikiGen {
 			.findFirst();
 
 		String type;
-		if (feature.isPresent())
+		if (feature.isPresent() && feature.get() instanceof Settings)
+			type = "settings";
+		else if (feature.isPresent() || parentType.equals("settings"))
 			type = "feature";
 		else if (widget.isPresent())
 			type = "widget";
@@ -87,11 +96,6 @@ public class WikiGen {
 		obj.addProperty("name", setting.getStorage().name);
 		obj.addProperty("description", setting.getStorage().description);
 		obj.addProperty("type", type);
-
-		if (feature.isPresent()) {
-			var ann = feature.get().getClass().getDeclaredAnnotation(Bridge.ExclusiveTo.class);
-			obj.addProperty("featureClass", ann == null ? null : ann.value() + " " + ann.reason() + " " + ann.customMessage());
-		}
 
 		if (setting instanceof CitybuildSettingImpl)
 			obj.addProperty("icon", "minecraft/nether_star.gif");
@@ -122,6 +126,7 @@ public class WikiGen {
 		.callback(() -> {
 			JsonObject result = new JsonObject();
 
+			// Features
 			for (Feature.CategoryData category : Feature.getCategories()) {
 				Object parent = Reflection.get(category, "parent");
 				if (parent != null)
@@ -130,6 +135,7 @@ public class WikiGen {
 				result.add(category.name(), serialize("category", category.getSetting()));
 			}
 
+			// Widgets
 			List<BaseSetting<?>> widgets = FileProvider.getClassesWithSuperClass(Widget.class).stream()
 				.filter(meta -> !meta.isAbstract())
 				.map(meta -> (Widget) FileProvider.getSingleton(meta.load()))
@@ -138,18 +144,39 @@ public class WikiGen {
 				.map(Laby4Widget::getSetting)
 				.collect(Collectors.toList());
 
-			result.add("Module", serialize("category", SwitchSetting.create()
+			result.add("§xModule", serialize("category", SwitchSetting.create()
 				.name("Module")
 				.icon("tab_list")
 				.subSettings(widgets)));
 
-			File file = new File("GrieferUtils/wiki_dump.json");
-			file.getParentFile().mkdirs();
-			file.createNewFile();
+			// Settings
+			var setting = FileProvider.getSingleton(Settings.class).getMainElement();
+			result.add("§yEinstellungen", serialize("settings", setting));
 
-			try (FileOutputStream fos = new FileOutputStream(file)) {
-				fos.write(IOUtil.gson.toJson(result).getBytes(StandardCharsets.UTF_8));
-			}
+			File file = new File("GrieferUtils/auto_dump.json");
+			file.getParentFile().mkdirs();
+			Files.write(file.toPath(), IOUtil.gson.toJson(result).getBytes(StandardCharsets.UTF_8));
+
+			// Exclusives
+			JsonObject exclusives = new JsonObject();
+			UncheckedFileProvider.getFeatures().forEach(m -> {
+				if (m.hasAnnotation(Bridge.ExclusiveTo.class)) {
+					var ann = m.getAnnotation(Bridge.ExclusiveTo.class);
+					Version version = ann.getValue("value", true);
+					Reason reason = ann.getValue("reason", true);
+					String customMessage = ann.getValue("customMessage", false);
+
+					if (reason != Reason.IMPLEMENTATION) {
+						JsonObject data = new JsonObject();
+						data.addProperty("version", version.name());
+						data.addProperty("message", customMessage);
+						exclusives.add(ArrayUtil.last(m.name.split("/")), data);
+					}
+				}
+			});
+
+			//noinspection ReadWriteStringCanBeUsed
+			Files.write(Paths.get("GrieferUtils/auto_exclusives.json"), IOUtil.gson.toJson(exclusives).getBytes(StandardCharsets.UTF_8));
 
 			LabyBridge.labyBridge.notify("ok", "ok");
 		});

@@ -14,21 +14,15 @@ import dev.l3g7.griefer_utils.core.api.misc.UnsafeJsonSerializer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -131,18 +125,18 @@ public class PacketDumper {
 			}
 		}
 
-		private long getLastReadTime() {
-			if (mc().getNetHandler() == null)
-				return 0;
+	}
 
-			Channel channel = Reflection.get(mc().getNetHandler().getNetworkManager(), "channel"); // Getter is only available in Forge
-			ChannelHandler timeoutHandler = channel.pipeline().get("timeout");
-			if (timeoutHandler == null)
-				return 0;
+	public static long getLastReadTime() {
+		if (mc().getNetHandler() == null)
+			return 0;
 
-			return Reflection.get(timeoutHandler, "lastReadTime");
-		}
+		Channel channel = Reflection.get(mc().getNetHandler().getNetworkManager(), "channel"); // Getter is only available in Forge
+		ChannelHandler timeoutHandler = channel.pipeline().get("timeout");
+		if (timeoutHandler == null)
+			return 0;
 
+		return Reflection.get(timeoutHandler, "lastReadTime");
 	}
 
 }

@@ -1,21 +1,45 @@
 package dev.l3g7.griefer_utils.features.widgets.griefer_pass;
 
-import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
+import dev.l3g7.griefer_utils.core.events.ApproximateEntityKillEvent;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockBrokeEvent;
 import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
+import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.uncategorized.debug.PacketDumper;
+import dev.l3g7.griefer_utils.features.world.bsf.BSF;
 import net.minecraft.block.Block;
+import net.minecraft.entity.DataWatcher;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityMinecartEmpty;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.network.play.server.S08PacketPlayerPosLook;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.network.play.server.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 abstract class MiscQuests {
 
@@ -23,10 +47,6 @@ abstract class MiscQuests {
 
 		private double amount = 0;
 		private static Vec3 previousPosition = null;
-
-		protected WalkQuest(Matcher matcher, int maxAmount) {
-			super(matcher, maxAmount);
-		}
 
 		@EventListener
 		private void onTick(ClientTickEvent event) {
@@ -51,7 +71,7 @@ abstract class MiscQuests {
 		}
 
 		@EventListener
-		private void onTp(PacketEvent.PacketReceiveEvent<S08PacketPlayerPosLook> event) {
+		private void onTp(PacketReceiveEvent<S08PacketPlayerPosLook> event) {
 			previousPosition = new Vec3(event.packet.getX(), event.packet.getY(), event.packet.getZ());
 		}
 
@@ -59,16 +79,17 @@ abstract class MiscQuests {
 
 	static class EatQuest extends AbstractQuest {
 
-		private final Item item;
+		private ItemStack target;
 
-		protected EatQuest(Matcher matcher, int maxAmount) {
-			super(matcher, maxAmount);
-			this.item = Translator.getItem(matcher.group(2));
+		@Override
+		public void init(int index, Matcher matcher, String displayText, boolean approximate, int maxAmount, int maxCompletions) {
+			super.init(index, matcher, displayText, approximate, maxAmount, maxCompletions);
+			this.target = Translator.getItem(matcher.group(2));
 		}
 
 		@EventListener
 		private void onUseItemFinish(ItemUseEvent.Finish event) {
-			if (event.itemStack.getItem() == item)
+			if (target.isItemEqual(event.itemStack))
 				increaseAmount();
 		}
 
@@ -76,27 +97,193 @@ abstract class MiscQuests {
 
 	static class BreakQuest extends AbstractQuest {
 
-		private final Pair<Block, Integer> blockPair;
+		private Pair<Block, Integer> target;
 
-		protected BreakQuest(Matcher matcher, int maxAmount) {
-			super(matcher, maxAmount);
-			this.blockPair = Translator.getBlock(matcher.group(2));
+		@Override
+		public void init(int index, Matcher matcher, String displayText, boolean approximate, int maxAmount, int maxCompletions) {
+			super.init(index, matcher, displayText, approximate, maxAmount, maxCompletions);
+			this.target = Translator.getBlock(matcher.group(2));
 		}
 
 		@EventListener
 		private void onBlockBreak(BlockBrokeEvent event) {
 			Block block = event.state.getBlock();
-			if (block == blockPair.a && block.getMetaFromState(event.state) == blockPair.b)
+			if (block == target.a && block.getMetaFromState(event.state) == target.b)
 				increaseAmount();
 		}
 
 	}
 
-	static class PortalQuest extends AbstractQuest {
-		protected PortalQuest(Matcher matcher, int maxAmount) {
-			super(matcher, maxAmount);
-			if (maxAmount != 1)
-				BugReporter.reportError(new Throwable("PortalQuest with maxAmount " + maxAmount));
+	static class RideBoatOrMinecartQuest extends AbstractQuest {
+		@EventListener
+		private void onAttach(PacketReceiveEvent<S1BPacketEntityAttach> event) {
+			if (event.packet.getVehicleEntityId() == -1 || world().getEntityByID(event.packet.getEntityId()) != player())
+				return;
+
+			Entity vehicle = world().getEntityByID(event.packet.getVehicleEntityId());
+			if (vehicle instanceof EntityBoat || vehicle instanceof EntityMinecartEmpty)
+				increaseAmount();
+		}
+
+	}
+
+	static class JoinCitybuildQuest extends AbstractQuest {
+		@EventListener
+		private void onCitybuildJoin(CitybuildJoinEvent.Early event) {
+			if (event.citybuild != Citybuild.ANY && event.citybuild != Citybuild.MAGIC_FOREST)
+				increaseAmount();
+		}
+	}
+
+	static class KillQuest extends AbstractQuest {
+
+		private Class<? extends Entity> target;
+
+		@Override
+		public void init(int index, Matcher matcher, String displayText, boolean approximate, int maxAmount, int maxCompletions) {
+			super.init(index, matcher, displayText, approximate, maxAmount, maxCompletions);
+			this.target = Translator.getEntity(matcher.group(2));
+		}
+
+		@EventListener
+		private void onEntityKill(ApproximateEntityKillEvent event) {
+			if (target.isInstance(event.entity))
+				increaseAmount();
+		}
+	}
+
+	static class TameQuest extends AbstractQuest {
+
+		private final Set<Entity> interactedAnimals = new HashSet<>();
+
+		@EventListener
+		private void onPacketSend(PacketEvent.PacketSendEvent<C02PacketUseEntity> event) {
+			if (event.packet.getAction() != C02PacketUseEntity.Action.INTERACT)
+				return;
+
+			Entity entity = event.packet.getEntityFromWorld(world());
+			if (!(entity instanceof EntityTameable et) || et.isTamed())
+				return;
+
+			interactedAnimals.retainAll(world().getLoadedEntityList());
+			interactedAnimals.add(entity);
+		}
+
+		@EventListener
+		private void onWorldUnload(WorldUnloadEvent event) {
+			interactedAnimals.clear();
+		}
+
+		@EventListener
+		private void onStatus(PacketReceivedEvent<S19PacketEntityStatus> event) {
+			if (event.packet.getOpCode() == 6 && event.packet.getEntity(world()) instanceof EntityTameable et)
+				interactedAnimals.remove(et);
+		}
+
+		@EventListener
+		private void onMetaupdate(PacketReceivedEvent<S1CPacketEntityMetadata> event) {
+			Entity entity = world().getEntityByID(event.packet.getEntityId());
+			if (!(entity instanceof EntityTameable et))
+				return;
+
+			if (!et.isTamed() || et.getOwner() != player())
+				return;
+
+			if (!interactedAnimals.contains(entity))
+				return;
+
+			increaseAmount();
+			interactedAnimals.remove(et);
+		}
+	}
+
+	static class ReceiveEffectsQuest extends AbstractQuest {
+		@EventListener
+		private void onEffect(PacketReceivedEvent<S1DPacketEntityEffect> event) {
+			if (event.packet.getEntityId() == player().getEntityId())
+				increaseAmount();
+		}
+	}
+
+	static class PlaceQuest extends AbstractQuest {
+
+		private BlockPos waitingForUpdate;
+		private boolean isFlintAndSteel;
+
+		@EventListener
+		private void onPlace(PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
+			Citybuild cb = MinecraftUtil.getCurrentCitybuild();
+			if (BSF.isInFarmwelt() || cb == Citybuild.ANY || cb == Citybuild.MAGIC_FOREST || cb == Citybuild.LAVA || cb == Citybuild.WATER)
+				return;
+
+			if (event.packet.getPlacedBlockDirection() == 255 || event.packet.getStack() == null)
+				return;
+
+			waitingForUpdate = event.packet.getPosition().offset(EnumFacing.getFront(event.packet.getPlacedBlockDirection()));
+			isFlintAndSteel = event.packet.getStack().getItem() == Items.flint_and_steel;
+		}
+
+		@EventListener
+		private void onBlockChange(PacketReceiveEvent<S23PacketBlockChange> event) {
+			if (event.packet.getBlockPosition().equals(waitingForUpdate)) {
+				waitingForUpdate = null;
+				Block block = event.packet.getBlockState().getBlock();
+				if (block != Blocks.air) {
+					increaseAmount();
+					if (isFlintAndSteel)
+						increaseAmount(); // Flint and Steel increases the amount by 2 (for some reason)
+				}
+
+				isFlintAndSteel = false;
+			}
+		}
+	}
+
+	static class FishQuest extends AbstractQuest {
+
+		private ItemStack target;
+
+		@Override
+		public void init(int index, Matcher matcher, String displayText, boolean approximate, int maxAmount, int maxCompletions) {
+			super.init(index, matcher, displayText, approximate, maxAmount, maxCompletions);
+			this.target = Translator.getItem(matcher.group(2));
+		}
+
+		private boolean waitingForUpdate = false;
+		private long readTime = -1;
+
+		@EventListener
+		private void onPlace(PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
+			if (event.packet.getPlacedBlockDirection() != 255 || player().fishEntity == null)
+				return;
+
+			readTime = -1;
+			waitingForUpdate = true;
+		}
+
+		@EventListener
+		private void onSetSlot(PacketReceiveEvent<S2FPacketSetSlot> event) {
+			if (!waitingForUpdate)
+				return;
+
+			ItemStack targetStack = player().openContainer.getSlot(event.packet.func_149173_d()).getStack();
+			if (targetStack == null || targetStack != player().getHeldItem())
+				return;
+
+			readTime = PacketDumper.getLastReadTime();
+			waitingForUpdate = false;
+		}
+
+		@EventListener
+		private void onEntityMetaData(PacketReceiveEvent<S1CPacketEntityMetadata> event) {
+			if (readTime == -1 || !(world().getEntityByID(event.packet.getEntityId()) instanceof EntityItem))
+				return;
+
+			for (DataWatcher.WatchableObject wo : event.packet.func_149376_c())
+				if (wo.getDataValueId() == 10 && wo.getObject() instanceof ItemStack is && target.isItemEqual(is))
+					increaseAmount();
+
+			readTime = -1;
 		}
 	}
 

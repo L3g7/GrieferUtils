@@ -27,18 +27,14 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
-import static dev.l3g7.griefer_utils.core.api.misc.Constants.PAYMENT_RECEIVE_PATTERN;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getNextServerRestart;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static java.math.BigDecimal.ZERO;
 
 @Singleton
 public class Received extends SimpleWidget {
-
-	private static final Pattern JOB_SELL_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§aDu hast §r§2\\d+§r§a Stack\\(s\\) §r§6[^§]+§r§a für §r§2(?<amount>\\d+)§r§2\\$§r§a geliefert\\.§r$");
 
 	static BigDecimal moneyReceived = ZERO;
 	private static boolean initialized = false; // NOTE cleanup
@@ -109,7 +105,7 @@ public class Received extends SimpleWidget {
 				return;
 		}
 
-		setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
+		setBalance(moneyReceived.add(new BigDecimal(matcher.group("price").replace(",", ""))));
 	}
 
 	@EventListener(triggerWhenDisabled = true)

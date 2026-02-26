@@ -38,7 +38,7 @@ public class ItemDisplaySetting extends ListEntrySetting {
 
 		name = StringSetting.create()
 			.name("Anzeigename")
-			.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretten Items.")
+			.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretteten Items.")
 			.defaultValue(stack.getDisplayName())
 			.callback(this::setDisplayName)
 			.icon("name_tag");

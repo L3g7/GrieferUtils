@@ -211,7 +211,7 @@ public class ItemProtectionListSetting extends ListSetting implements Laby4Setti
 
 			StringSetting name = StringSetting.create() // NOTE: update name live
 				.name("Anzeigename")
-				.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretten Items.")
+				.description("Der Anzeigename des Eintrags. Hat keinen Einfluss auf die geretteten Items.")
 				.icon("name_tag")
 				.defaultValue(protection.name)
 				.callback(s -> protection.name = s);

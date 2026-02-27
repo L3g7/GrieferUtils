@@ -108,6 +108,17 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 		UpdateInfo bubble() {
 			return new UpdateInfo(version, message, true);
 		}
+
+		@Override
+		public String toString() {
+			if (message != null)
+				return message;
+
+			if (bubbled)
+				return "Neue Settings seit " + version;
+
+			return "Seit " + version;
+		}
 	}
 
 }

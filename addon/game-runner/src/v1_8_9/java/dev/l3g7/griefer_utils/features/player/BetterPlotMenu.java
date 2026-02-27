@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S2DPacketOpenWindow;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
@@ -29,7 +28,8 @@ public class BetterPlotMenu extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("/zuhause verbessern")
-		.description("Ersetzt die Äxte im /zuhause-Menü durch die Blöcke der Citybuilds und behebt die Anzahl.")
+		.description("Ersetzt die Äxte im /zuhause-Menü durch die Blöcke der Citybuilds und behebt die Anzahl." +
+			"\nBeim Klicken auf den Block wirst du zu dem Citybuild teleportiert.")
 		.icon("region_map")
 		.since("2.4-BETA-1");
 
@@ -55,7 +55,7 @@ public class BetterPlotMenu extends Feature {
 			for (int i = 0; i < itemStacks.length; i++) {
 				Citybuild citybuild = Citybuild.values()[i + 1 /* Skip ANY */];
 				itemStacks[i] = citybuild.toItemStack();
-				addItem(i * 2 - i / 5, itemStacks[i], null);
+				addItem(i * 2 - i / 5, itemStacks[i], citybuild::join);
 				if (citybuild == Citybuild.CBE)
 					break;
 			}

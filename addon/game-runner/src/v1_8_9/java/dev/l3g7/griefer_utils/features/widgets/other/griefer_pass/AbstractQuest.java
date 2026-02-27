@@ -1,22 +1,24 @@
 package dev.l3g7.griefer_utils.features.widgets.other.griefer_pass;
 
+import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-abstract class AbstractQuest implements Disableable {
+abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 
+	public boolean isShadowed = false;
 	public int index;
 
 	private String displayText;
@@ -46,6 +48,9 @@ abstract class AbstractQuest implements Disableable {
 
 	@Override
 	public boolean isEnabled() {
+		if (isShadowed)
+			return false;
+
 		if (!LabyBridge.labyBridge.obfuscated() && mc().isIntegratedServerRunning())
 			return true;
 
@@ -89,11 +94,11 @@ abstract class AbstractQuest implements Disableable {
 	protected void increaseAmount() { increaseAmount(1); }
 	protected void increaseAmount(int amount) { setAmount(this.amount + amount); }
 	protected void setAmount(int amount) {
-		this.amount = amount;
+		this.amount = Math.min(amount, maxAmount);
 	}
 
 	public void increaseCompletions(int amount) {
-		this.completions += amount;
+		this.completions += Math.min(amount, maxCompletions);
 		this.amount = isFinished() ? maxAmount : 0;
 	}
 
@@ -103,16 +108,63 @@ abstract class AbstractQuest implements Disableable {
 		return progress;
 	}
 
-	public void pin(Map<String, List<AbstractQuest>> pinnedQuests) {
-		pinnedQuests.computeIfAbsent(getMatcher().group(), k -> new ArrayList<>()).add(this);
+	public void pin(Map<String, TreeSet<AbstractQuest>> questLookup, Map<String, TreeSet<AbstractQuest>> questTypeLookup) {
+		questLookup.computeIfAbsent(questText, k -> new TreeSet<>()).add(this);
+		questTypeLookup.computeIfAbsent(questTypeText, k -> new TreeSet<>()).add(this);
 	}
 
-	public void unpin(Map<String, List<AbstractQuest>> pinnedQuests) {
-		List<AbstractQuest> quests = pinnedQuests.get(getMatcher().group());
+	public void unpin(Map<String, TreeSet<AbstractQuest>> questLookup, Map<String, TreeSet<AbstractQuest>> questTypeLookup) {
+		EventRegisterer.unregister(this);
+
+		TreeSet<AbstractQuest> set = questLookup.get(questText);
+		if (set == null || !set.remove(this))
+			return;
+
+		TreeSet<AbstractQuest> quests = questTypeLookup.get(questTypeText);
 		if (quests != null)
 			quests.remove(this);
+	}
 
-		EventRegisterer.unregister(this);
+	public void updateShadowing(Map<String, TreeSet<AbstractQuest>> questTypeLookup) {
+		if (isFinished()) {
+			isShadowed = true;
+			return;
+		}
+
+		for (AbstractQuest quest : questTypeLookup.get(questTypeText)) {
+			if (quest.isFinished())
+				continue;
+
+			isShadowed = quest.index != index; // isShadowed = !first quest is this
+			return;
+		}
+	}
+
+	public JsonObject serialize() {
+		JsonObject obj = new JsonObject();
+		obj.addProperty("index", index);
+		obj.addProperty("text", questText);
+		obj.addProperty("amount", amount);
+		obj.addProperty("max_amount", maxAmount);
+		obj.addProperty("completions", completions);
+		obj.addProperty("max_completions", maxCompletions);
+		return obj;
+	}
+
+	public static AbstractQuest deserialize(JsonObject obj) {
+		return Quests.parseQuest(
+			obj.get("index").getAsInt(),
+			obj.get("text").getAsString(),
+			obj.get("amount").getAsInt(),
+			obj.get("max_amount").getAsInt(),
+			obj.get("completions").getAsInt(),
+			obj.get("max_completions").getAsInt()
+		);
+	}
+
+	@Override
+	public int compareTo(@NotNull AbstractQuest o) {
+		return Integer.compare(index, o.index);
 	}
 
 	@Override
@@ -120,12 +172,12 @@ abstract class AbstractQuest implements Disableable {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		AbstractQuest quest = (AbstractQuest) o;
-		return questTypeText.equals(quest.questTypeText);
+		return questTypeText.equals(quest.questTypeText) && (isFinished() == quest.isFinished());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(questTypeText);
+		return Objects.hash(questTypeText, isFinished());
 	}
 
 }

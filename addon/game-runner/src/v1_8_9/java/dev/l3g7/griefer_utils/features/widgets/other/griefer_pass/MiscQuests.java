@@ -1,11 +1,13 @@
 package dev.l3g7.griefer_utils.features.widgets.other.griefer_pass;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.events.ApproximateEntityKillEvent;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockBrokeEvent;
 import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageAboutToBeSentEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
@@ -285,6 +287,24 @@ abstract class MiscQuests {
 
 			readTime = -1;
 		}
+	}
+
+	static class CommandSendQuest extends AbstractQuest {
+
+		private String target;
+
+		@Override
+		public void init(int index, Matcher matcher, String displayText, boolean approximate, int maxAmount, int maxCompletions) {
+			super.init(index, matcher, displayText, approximate, maxAmount, maxCompletions);
+			this.target = "/" + matcher.group(2).toLowerCase();
+		}
+
+		@EventListener(priority = Priority.LOWEST)
+		private void onMessageSend(MessageAboutToBeSentEvent event) {
+			if (event.message.startsWith(target))
+				increaseAmount();
+		}
+
 	}
 
 }

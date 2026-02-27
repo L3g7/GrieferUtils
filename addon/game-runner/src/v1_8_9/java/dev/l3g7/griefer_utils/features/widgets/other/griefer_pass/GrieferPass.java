@@ -1,13 +1,17 @@
 package dev.l3g7.griefer_utils.features.widgets.other.griefer_pass;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
+import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -24,8 +28,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
@@ -36,7 +42,8 @@ public class GrieferPass extends ComplexWidget {
 	private static final ItemStack REMOVE_ALL = ItemUtil.createItem(new ItemStack(Items.gold_ingot), true, "§6Alle Aufgaben entpinnen");
 
 	private int lastIndex = -1;
-	private final Map<String, List<AbstractQuest>> pinnedQuests = new HashMap<>();
+	private final Map<String, TreeSet<AbstractQuest>> questLookup = new HashMap<>();
+	private final Map<String, TreeSet<AbstractQuest>> questTypeLookup = new HashMap<>();
 
 	private final DropDownSetting<Sorting> sorting = DropDownSetting.create(Sorting.class)
 		.name("Sortierung")
@@ -63,6 +70,29 @@ public class GrieferPass extends ComplexWidget {
 		.icon("fancy_book")
 		.subSettings(sorting, removeFinished, ignoreCaseOpening);
 
+	private void onQuestUpdate() {
+		JsonArray array = new JsonArray();
+		streamQuests().forEach(q -> {
+			q.updateShadowing(questTypeLookup);
+			System.out.println(q.format().a + ": " + q.isShadowed);
+			array.add(q.serialize());
+		});
+		Config.set("modules.griefer_pass.quests." + mc().getSession().getProfile().getId(), array);
+		Config.save();
+	}
+
+	@EventListener
+	private void loadQuests(GrieferGamesJoinEvent event) {
+		String key = "modules.griefer_pass.quests." + mc().getSession().getProfile().getId();
+		if (!Config.has(key))
+			return;
+
+		for (JsonElement quest : Config.get(key).getAsJsonArray())
+			AbstractQuest.deserialize(quest.getAsJsonObject()).pin(questLookup, questTypeLookup);
+
+		streamQuests().forEach(q -> q.updateShadowing(questTypeLookup));
+	}
+
 	@EventListener(triggerWhenDisabled = true)
 	private void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = COMPLETE_PATTERN.matcher(event.message.getUnformattedText());
@@ -70,7 +100,7 @@ public class GrieferPass extends ComplexWidget {
 			return;
 
 		String completedQuestName = matcher.group(1);
-		List<AbstractQuest> quests = pinnedQuests.get(completedQuestName);
+		TreeSet<AbstractQuest> quests = questLookup.get(completedQuestName);
 		if (quests == null)
 			return;
 
@@ -89,15 +119,12 @@ public class GrieferPass extends ComplexWidget {
 		if (!isDaily && !title.startsWith("§6Wöchentliche Aufgaben §7- §0Woche "))
 			return;
 
-		int index = isDaily ? 0 : Integer.parseInt(title.substring("§6Wöchentliche Aufgaben §7- §0Woche ".length()).replaceAll("§.", ""));
-		boolean isAnyPinned = streamQuests().anyMatch(q -> q.index / 100 == index);
+		lastIndex = isDaily ? 0 : Integer.parseInt(title.substring("§6Wöchentliche Aufgaben §7- §0Woche ".length()).replaceAll("§.", ""));
+		boolean isAnyPinned = streamQuests().anyMatch(q -> q.index / 100 == lastIndex);
 
-		if (lastIndex != index) {
-			lastIndex = index;
-			String quests = index == 0 ? "täglichen Aufgaben" : "Aufgaben der Woche " + index;
-			ItemUtil.setLore(ADD_ALL, "§7Pinnt alle " + quests + " in GrieferUtils an.");
-			ItemUtil.setLore(REMOVE_ALL, "§7Entpinnt alle " + quests + " in GrieferUtils.");
-		}
+		String quests = lastIndex == 0 ? "täglichen Aufgaben" : "Aufgaben der Woche " + lastIndex;
+		ItemUtil.setLore(ADD_ALL, "§7Pinnt alle " + quests + " in GrieferUtils an.");
+		ItemUtil.setLore(REMOVE_ALL, "§7Entpinnt alle " + quests + " in GrieferUtils.");
 
 		if (isAnyPinned)
 			event.setItem(46, REMOVE_ALL);
@@ -105,7 +132,7 @@ public class GrieferPass extends ComplexWidget {
 			event.setItem(46, ADD_ALL);
 
 		for (Pair<Integer, ItemStack> questStack : getQuestStacks(event::getItem)) {
-			int questIndex = index * 100 + questStack.a;
+			int questIndex = lastIndex * 100 + questStack.a;
 			Optional<AbstractQuest> pinnedQuest = streamQuests().filter(q -> q.index == questIndex).findAny();
 
 			List<String> lore = ItemUtil.getLore(questStack.b);
@@ -137,9 +164,10 @@ public class GrieferPass extends ComplexWidget {
 			boolean isPinned = streamQuests().anyMatch(q -> q.index == questIndex);
 			AbstractQuest quest = parseQuest(questIndex, event.itemStack);
 			if (isPinned)
-				quest.unpin(pinnedQuests);
+				quest.unpin(questLookup, questTypeLookup);
 			else
-				quest.pin(pinnedQuests);
+				quest.pin(questLookup, questTypeLookup);
+			onQuestUpdate();
 			return;
 		}
 
@@ -154,13 +182,13 @@ public class GrieferPass extends ComplexWidget {
 			AbstractQuest quest = parseQuest(lastIndex * 100 + questStack.a, questStack.b);
 			if (isAdd) {
 				if (!ignoreCaseOpening.get() || !Quests.DISPLAY_PATTERNS.get(quest.getMatcher().pattern()).equals("Öffne {TARGET} Kisten"))
-					quest.pin(pinnedQuests);
+					quest.pin(questLookup, questTypeLookup);
 			} else {
-				quest.unpin(pinnedQuests);
+				quest.unpin(questLookup, questTypeLookup);
 			}
 		}
 
-		lastIndex = -1; // Force update
+		onQuestUpdate();
 	}
 
 	private Iterable<Pair<Integer, ItemStack>> getQuestStacks(Function<Integer, ItemStack> stackFn) {
@@ -209,7 +237,7 @@ public class GrieferPass extends ComplexWidget {
 	}
 
 	private Stream<AbstractQuest> streamQuests() {
-		return pinnedQuests.values().stream().flatMap(Collection::stream);
+		return questTypeLookup.values().stream().flatMap(Collection::stream);
 	}
 
 	@Override
@@ -220,16 +248,17 @@ public class GrieferPass extends ComplexWidget {
 		AtomicInteger maxTotalCompletions = new AtomicInteger();
 
 		if (removeFinished.get()) {
-			pinnedQuests.values().removeIf(l -> {
-				l.removeIf(AbstractQuest::isFinished);
-				return l.isEmpty();
-			});
+			for (AbstractQuest quest : streamQuests().collect(Collectors.toList()))
+				if (quest.isFinished())
+					quest.unpin(questLookup, questTypeLookup);
 		}
 
 		Map<AbstractQuest, AtomicInteger> totalQuests = new HashMap<>();
-		streamQuests()
-			.sorted(Sorting.TIME.comparator)
-			.forEachOrdered(quest -> totalQuests.computeIfAbsent(quest, q -> new AtomicInteger()).incrementAndGet());
+		for (TreeSet<AbstractQuest> quests : questTypeLookup.values()) {
+			for (AbstractQuest quest : quests) {
+				totalQuests.computeIfAbsent(quest, k -> new AtomicInteger()).incrementAndGet();
+			}
+		}
 
 		totalQuests.entrySet().stream()
 			.sorted(Map.Entry.comparingByKey(sorting.get().comparator.thenComparing(Sorting.TIME.comparator)))

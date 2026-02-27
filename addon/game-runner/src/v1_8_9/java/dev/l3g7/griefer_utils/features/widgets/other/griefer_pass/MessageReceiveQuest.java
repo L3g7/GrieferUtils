@@ -150,4 +150,12 @@ abstract class MessageReceiveQuest extends AbstractQuest {
 		}
 	}
 
+	static class BreakIntoJailQuest extends MessageReceiveQuest {
+		@Override
+		protected int processMessage(IChatComponent message) {
+			return message.getUnformattedText().matches("\\[GrieferGames] Du wurdest wegen Beihilfe zum Ausbruch zum Abbau von \\d+ Obsidianblöcken eingesperrt\\.") ? 1 : 0;
+		}
+
+	}
+
 }

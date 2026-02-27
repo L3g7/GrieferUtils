@@ -31,6 +31,8 @@ class Quests {
 		registerQuest(false, "Erhalte {AMOUNT} Effekte", MiscQuests.ReceiveEffectsQuest.class);
 
 		registerQuest(false, "Führe {AMOUNT}x den Befehl p h aus", MessageReceiveQuest.PHQuest.class);
+		registerQuest(false, "Führe {AMOUNT}x den Befehl {TARGET} aus", MiscQuests.CommandSendQuest.class);
+
 		registerQuest(false, "Erhalte {AMOUNT}x Orbs", MessageReceiveQuest.OrbQuest.class);
 		registerQuest(false, "Erledige {AMOUNT} Adventurer-Aufgaben", MessageReceiveQuest.AdventurerQuest.class);
 		registerQuest(false, "Zahle insgesamt {AMOUNT}\\$ an andere Spieler \\(nicht pay \\*\\)", "Zahle an andere Spieler", MessageReceiveQuest.PayQuest.class);
@@ -40,6 +42,7 @@ class Quests {
 		registerQuest(false, "Erstelle {AMOUNT} Jobs beim Jobs-NPC", MessageReceiveQuest.JobCreateQuest.class);
 		registerQuest(false, "Liefere {AMOUNT}x Stacks zum Jobs-NPC", MessageReceiveQuest.JobFulfillQuest.class);
 		registerQuest(false, "Betritt {AMOUNT}x den Zauberwald", MessageReceiveQuest.JoinMagicForestQuest.class);
+		registerQuest(false, "Brich {AMOUNT}x in das Gefängnis ein", MessageReceiveQuest.BreakIntoJailQuest.class);
 
 		registerQuest(false, "Stelle {AMOUNT} Gegenstände her \\(Jedes Crafting zählt einmal\\)", "Stelle Gegenstände her", WindowClickQuest.CraftQuest.class);
 		registerQuest(true, "Verzaubere {AMOUNT} Gegenstände", WindowClickQuest.EnchantQuest.class);

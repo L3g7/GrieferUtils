@@ -69,9 +69,9 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 	 */
 	S since(UpdateInfo updateInfo);
 
-	default void bubbleSince(BaseSetting<?> parent) {
-		if (parent != null && since() != null)
-			parent.since(since().bubble());
+	default void bubbleSince(Object parent) {
+		if (parent instanceof BaseSetting<?> setting && since() != null)
+			setting.since(since().bubble());
 	}
 
 	/**
@@ -95,7 +95,7 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 
 	List<BaseSetting<?>> getChildSettings();
 
-	void create(BaseSetting<?> parent);
+	void create(Object parent);
 
 	default <T> T into() {
 		return Reflection.c(this);

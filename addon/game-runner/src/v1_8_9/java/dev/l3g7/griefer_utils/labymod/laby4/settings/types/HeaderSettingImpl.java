@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
@@ -69,7 +68,7 @@ public class HeaderSettingImpl extends SettingHeader implements HeaderSetting {
 	}
 
 	@Override
-	public void create(BaseSetting<?> parent) {
+	public void create(Object parent) {
 		setParent((Setting) parent);
 		Laby.fireEvent(new SettingCreateEvent(this));
 	}

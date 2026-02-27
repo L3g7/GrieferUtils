@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.core.LabyModCore;
@@ -54,7 +53,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 	}
 
 	@Override
-	public void create(BaseSetting<?> parent) {
+	public void create(Object parent) {
 		Laby3Setting.super.create(parent);
 		this.container = (SettingsElement) parent;
 		initList();

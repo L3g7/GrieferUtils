@@ -107,7 +107,7 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	}
 
 	@Override
-	default void create(BaseSetting<?> parent) {
+	default void create(Object parent) {
 		bubbleSince(parent);
 		for (BaseSetting<?> setting : getChildSettings())
 			setting.create(this);

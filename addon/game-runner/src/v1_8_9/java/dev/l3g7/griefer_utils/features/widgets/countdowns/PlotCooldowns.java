@@ -18,7 +18,7 @@ import java.util.*;
 public class PlotCooldowns extends ComplexWidget {
 
 	private final Map<String, Countdown> countdowns = new HashMap<>();
-	private static final Set<String> COMMANDS = Set.of("rand", "wand", "boden");
+	private static final List<String> COMMANDS = Arrays.asList("rand", "wand", "boden");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

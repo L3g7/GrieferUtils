@@ -103,7 +103,8 @@ public class Calculator extends Feature {
 		.name("Inline-Berechnungen")
 		.description("Berechnet automatisch in den Chat eingegebene Rechnungen beim drücken der Tab-Taste.")
 		.icon("command_suggestions")
-		.defaultValue(true);
+		.defaultValue(true)
+		.since("2.4-BETA-1");
 
 	private final NumberSetting decimalPlaces = NumberSetting.create()
 		.name("Nachkommastellen")

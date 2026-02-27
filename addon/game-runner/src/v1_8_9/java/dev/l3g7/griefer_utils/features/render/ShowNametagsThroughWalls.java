@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
@@ -36,6 +37,11 @@ public class ShowNametagsThroughWalls extends Feature {
 		.name("Nametags durch Wände anzeigen")
 		.description("Zeigt Nametags auch durch Wände an.\n(Funktioniert nicht bei Spielern)")
 		.icon("name_tag_yellow");
+
+	public ShowNametagsThroughWalls() {
+		if (LABY_4.isActive())
+			enabled.since("2.4-BETA-1", "Laby 4-Unterstützung seit 2.4-BETA-1");
+	}
 
 	// NOTE Implement https://github.com/L3g7/GrieferUtils/commit/421d52f50619ddf05f942548d70b0c9648614b6c when merging with LabyMod 3
 

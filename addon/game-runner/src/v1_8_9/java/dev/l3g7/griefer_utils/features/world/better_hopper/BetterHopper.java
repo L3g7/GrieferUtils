@@ -96,7 +96,8 @@ public class BetterHopper extends Feature {
 	private static final SwitchSetting hopperWithHeldItemFix = SwitchSetting.create()
 		.name("Trichter mit Item öffnen")
 		.description("Ermöglicht das Öffnen von Trichtern, auch wenn man ein Item / einen Block in der Hand hält.")
-		.icon("hopper");
+		.icon("hopper")
+		.since("2.4-BETA-1");
 
 	private static final SwitchSetting sneakMode = SwitchSetting.create()
 		.name("Sneak-Modus")
@@ -108,7 +109,8 @@ public class BetterHopper extends Feature {
 	private static final SwitchSetting showFastTick = SwitchSetting.create()
 		.name("Fast Tick Modus anzeigen")
 		.description("Ersetzt die Diamant-Schuhe vom Fast Tick Modus mit gefärbter Wolle, damit es leichter zu erkennen ist.")
-		.icon("lightning");
+		.icon("lightning")
+		.since("2.4-BETA-1");
 
 	@MainElement
 	private static final SwitchSetting enabled = SwitchSetting.create()

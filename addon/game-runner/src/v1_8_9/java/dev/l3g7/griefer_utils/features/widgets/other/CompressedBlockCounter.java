@@ -35,7 +35,8 @@ public class CompressedBlockCounter extends SimpleWidget {
 		.name("Komprimierter Block")
 		.description("Zeigt dir an, wie viele Blöcke noch in dem komprimierten Block sind, der in der Hand gehalten wird.")
 		.icon("bundle")
-		.subSettings(formatting);
+		.subSettings(formatting)
+		.since("2.4-BETA-1");
 
 	@Override
 	public boolean isVisibleInGame() {

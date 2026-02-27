@@ -30,7 +30,8 @@ public class BetterPlotMenu extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("/zuhause verbessern")
 		.description("Ersetzt die Äxte im /zuhause-Menü durch die Blöcke der Citybuilds und behebt die Anzahl.")
-		.icon("region_map");
+		.icon("region_map")
+		.since("2.4-BETA-1");
 
 	@EventListener
 	private void onGuiOpen(PacketReceiveEvent<S2DPacketOpenWindow> event) {

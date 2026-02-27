@@ -31,7 +31,8 @@ public class OptimizeChunks extends Feature {
 		.description("Unterdrückt Änderungen an gängigen dynamischen Blöcken, wodurch Lags bei Farmen gefixt werden.",
 			"§l§nDadurch können gewollte Änderungen versteckt werden.",
 			"§l§nNur benutzen, wenn es wirklich benötigt ist!")
-		.icon("measurement_circle_thingy");
+		.icon("measurement_circle_thingy")
+		.since("2.4-BETA-1");
 
 	@EventListener
 	public void onMultiBlockChange(PacketReceiveEvent<S23PacketBlockChange> event) {

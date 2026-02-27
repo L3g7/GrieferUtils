@@ -18,7 +18,8 @@ public class FixKicks extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Kicks verhindern")
 		.description("Verhindert Kicks aufgrund ungültiger Zeichen in gesendeten Nachrichten.")
-		.icon("chat_checkmark");
+		.icon("chat_checkmark")
+		.since("2.4-BETA-1");
 
 	@EventListener(priority = HIGH)
 	private void onMessageSend(MessageAboutToBeSentEvent event) {

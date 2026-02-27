@@ -33,7 +33,8 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 		.name("Block des Tages-Zähler")
 		.description("Zählt, wie oft Block des Tages gefunden wurde.")
 		.icon("brick")
-		.subSettings(showPopup);
+		.subSettings(showPopup)
+		.since("2.4-BETA-1");
 
 	public static BlockOfTheDayCounter get() {
 		return get(BlockOfTheDayCounter.class);

@@ -29,7 +29,8 @@ public class CleanupScoreboard extends Feature {
 		.name("Scoreboard aufräumen")
 		.description("Löscht bestimmte Einträge im Scoreboard")
 		.icon("wooden_board")
-		.subSettings(playTime, ip);
+		.subSettings(playTime, ip)
+		.since("2.4-BETA-1");
 
 	public static CleanupScoreboard get() {
 		return get(CleanupScoreboard.class);

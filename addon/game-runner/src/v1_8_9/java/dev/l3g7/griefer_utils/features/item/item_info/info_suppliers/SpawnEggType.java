@@ -26,7 +26,8 @@ public class SpawnEggType extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spawn-Ei-Typ anzeigen")
 		.description("Zeigt unter Spawn-Eiern an, von welchem Typ sie sind.")
-		.icon("creeper_spawn_egg");
+		.icon("creeper_spawn_egg")
+		.since("2.4-BETA-1");
 
 	@EventListener
 	public void onTooltip(ItemTooltipEvent e) {

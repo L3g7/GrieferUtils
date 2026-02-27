@@ -49,7 +49,8 @@ public class PlotChatIndicator extends Feature {
 	private final SwitchSetting replaceGlobalChat = SwitchSetting.create()
 		.name("@ ersetzen")
 		.description("Ersetzt @ mit /globalchat, wenn der Plot-Chat aktiviert ist.")
-		.icon("chat");
+		.icon("chat")
+		.since("2.4-BETA-1");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

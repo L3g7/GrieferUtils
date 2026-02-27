@@ -76,12 +76,14 @@ public class ChatMods extends Feature {
 	private final SwitchSetting removeBroadcast = SwitchSetting.create()
 		.name("Broadcasts entfernen")
 		.description("Entfernt die Broadcast-Hervorhebung.")
-		.icon("bell");
+		.icon("bell")
+		.since("2.4-BETA-1");
 
 	private final SwitchSetting removeHeroHighlights = SwitchSetting.create()
 		.name("Hero Hervorhebung entfernen")
 		.description("Entfernt die Hervorhebung von @Namen von Spielern mit Hero Rang.")
-		.icon("dye_white");
+		.icon("dye_white")
+		.since("2.4-BETA-1");
 
 	private final SwitchSetting antiColoredFont = SwitchSetting.create()
 		.name("Farbige Schrift entfernen")

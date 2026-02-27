@@ -25,7 +25,8 @@ public class CommandSuggestions extends Feature {
 	private static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Befehlsvorschläge")
 		.description("Zeigt Vorschläge beim Schreiben von Befehlen an.")
-		.icon("command_suggestions");
+		.icon("command_suggestions")
+		.since("2.4-BETA-1");
 
 	private static CommandDispatcher dispatcher = null;
 	private static final Logger logger = LogManager.getLogger("CommandSuggestions");

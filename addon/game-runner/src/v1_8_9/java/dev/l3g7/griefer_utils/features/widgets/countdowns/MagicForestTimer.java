@@ -33,7 +33,8 @@ public class MagicForestTimer extends SimpleWidget {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Zauberwald-\nTimer")
 		.description("Zeigt dir an, wie viel Zeit du noch im Zauberwald hast.")
-		.icon("earth_hourglass");
+		.icon("earth_hourglass")
+		.since("2.4-BETA-1");
 
 	@Override
 	public boolean isVisibleInGame() {

@@ -45,7 +45,8 @@ public class HideArmor extends Feature {
 		.name("Rüstung verstecken")
 		.description("Versteckt angezogene Rüstungen von Spielern.")
 		.icon("diamond_chestplate")
-		.subSettings(subsettings);
+		.subSettings(subsettings)
+		.since("2.4-BETA-1");
 
 	public static HideArmor get() {
 		return get(HideArmor.class);

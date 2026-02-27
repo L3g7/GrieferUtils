@@ -47,7 +47,8 @@ public class RealMoney extends Feature {
 		.name("Cent-Beträge kennzeichnen")
 		.description("Markiert Cent-Beträge rot.")
 		.icon("color_palette")
-		.defaultValue(true);
+		.defaultValue(true)
+		.since("2.4-BETA-1");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

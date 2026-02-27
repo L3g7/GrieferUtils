@@ -23,7 +23,8 @@ public class HideGrieferPass extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("GrieferPass verstecken")
 		.description("Versteckt Nachrichten und Sounds vom GrieferPass.")
-		.icon("crossed_out_fancy_book");
+		.icon("crossed_out_fancy_book")
+		.since("2.4-BETA-1");
 
 	@EventListener
 	private void onMessageReceive(MessageReceiveEvent event) {

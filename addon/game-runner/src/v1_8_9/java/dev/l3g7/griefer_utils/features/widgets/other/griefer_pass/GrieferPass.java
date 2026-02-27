@@ -68,7 +68,8 @@ public class GrieferPass extends ComplexWidget {
 		.name("GrieferPass")
 		.description("Zeigt dir angepinnte GrieferPass-Aufgaben.")
 		.icon("fancy_book")
-		.subSettings(sorting, removeFinished, ignoreCaseOpening);
+		.subSettings(sorting, removeFinished, ignoreCaseOpening)
+		.since("2.4-BETA-1");
 
 	private void onQuestUpdate() {
 		JsonArray array = new JsonArray();

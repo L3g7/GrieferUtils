@@ -31,7 +31,7 @@ public class BetterSchematica extends Feature {
 	private final SwitchSetting savePosition = SwitchSetting.create()
 		.name("\"Speichern\" Knopf")
 		.description("Fügt in der Schematic-Kontrolle einen Knopf hinzu, der die derzeit geladene Schematic mit Drehung, Spiegelung und Position speichert."
-			+ "\nWenn die Schematic geladen wird, wird sie automatich an die gespeicherte Position geschoben.")
+			+ "\nWenn die Schematic geladen wird, wird sie automatisch an die gespeicherte Position geschoben.")
 		.icon("litematica/axes");
 
 	private final SwitchSetting openMaterialFile = SwitchSetting.create()

@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.widgets.griefer_pass;
+package dev.l3g7.griefer_utils.features.widgets.other.griefer_pass;
 
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;

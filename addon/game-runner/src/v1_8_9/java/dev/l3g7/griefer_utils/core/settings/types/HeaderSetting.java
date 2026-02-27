@@ -50,6 +50,16 @@ public interface HeaderSetting extends BaseSetting<HeaderSetting> {
 	}
 
 	@Override
+	default UpdateInfo since() {
+		return null;
+	}
+
+	@Override
+	default HeaderSetting since(UpdateInfo updateInfo) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	default HeaderSetting subSettings(BaseSetting<?>... settings) {
 		throw new UnsupportedOperationException();
 	}

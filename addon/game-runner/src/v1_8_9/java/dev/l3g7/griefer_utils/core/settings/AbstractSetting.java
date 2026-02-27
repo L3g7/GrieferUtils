@@ -110,6 +110,17 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	}
 
 	@Override
+	default UpdateInfo since() {
+		return getStorage().updateInfo;
+	}
+
+	@Override
+	default S since(UpdateInfo updateInfo) {
+		getStorage().updateInfo = updateInfo;
+		return (S) this;
+	}
+
+	@Override
 	default void setParent(BaseSetting<?> parent) {
 		String inferredKey = getStorage().inferredKey;
 		if (inferredKey == null)
@@ -184,6 +195,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		private String inferredKey = null;
 
 		public boolean subsettingConfig = true;
+		public UpdateInfo updateInfo = null;
 		public final List<Consumer<T>> callbacks = new ArrayList<>();
 
 		public final Function<T, JsonElement> encodeFunc;

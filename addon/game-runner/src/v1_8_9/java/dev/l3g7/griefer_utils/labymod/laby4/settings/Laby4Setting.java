@@ -12,10 +12,13 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import net.labymod.api.Laby;
+import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.NamedTextColor;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.loader.property.ConfigProperty;
 import net.labymod.api.configuration.settings.Setting;
@@ -24,8 +27,14 @@ import net.labymod.api.configuration.settings.accessor.SettingAccessor;
 import net.labymod.api.configuration.settings.type.AbstractSettingRegistry;
 import net.labymod.api.configuration.settings.type.SettingElement;
 import net.labymod.api.event.labymod.config.SettingCreateEvent;
+import net.labymod.api.revision.Revision;
+import net.labymod.api.revision.SimpleRevision;
 import net.labymod.api.util.KeyValue;
+import net.labymod.api.util.version.SemanticVersion;
 import net.minecraft.item.ItemStack;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -166,9 +175,12 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 	@Override
 	default void create(Object parent) {
-		bubbleSince(parent);
 		AbstractSettingRegistry self = c(this);
 		self.setParent(c(parent));
+
+		bubbleSince(parent);
+		if (since() != null)
+			((SettingElement) this).setRevision(new GrieferUtilsRevision(since()));
 
 		Laby.fireEvent(new SettingCreateEvent(self));
 	}
@@ -248,6 +260,40 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 			return c(impl);
 		}
 
+	}
+
+	class GrieferUtilsRevision extends SimpleRevision {
+
+		private final UpdateInfo info;
+
+		public GrieferUtilsRevision(UpdateInfo info) {
+			super("griefer_utils", new SemanticVersion(0, 0, 0), "0001-01-01");
+			this.info = info;
+		}
+
+		@Override
+		public String getDisplayName() {
+			return info.toString();
+		}
+
+		@Override
+		public boolean isRelevant() {
+			return true;
+		}
+	}
+
+	@Mixin(value = SettingWidget.class, remap = false)
+	class MixinSettingWidget {
+		@Redirect(method = "initializeInteractionWidget", at = @At(value = "INVOKE", target = "Lnet/labymod/api/client/gui/screen/widget/widgets/renderer/IconWidget;setHoverComponent(Lnet/labymod/api/client/component/Component;)V"))
+		public void redirectSetBadge(IconWidget newBadge, Component component) {
+			Revision revision = ((SettingWidget) (Object) this).setting().asElement().getRevision();
+
+			if (revision instanceof GrieferUtilsRevision) {
+				newBadge.setHoverComponent(
+					Component.text(revision.getDisplayName())
+						.color(NamedTextColor.BLUE));
+			}
+		}
 	}
 
 }

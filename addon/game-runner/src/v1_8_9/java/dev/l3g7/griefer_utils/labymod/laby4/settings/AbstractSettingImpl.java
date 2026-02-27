@@ -57,15 +57,16 @@ public abstract class AbstractSettingImpl<S extends AbstractSetting<S, V>, V> ex
 
 	@Override
 	public void create(Object parent) {
-		if (getWidgets() == null)
-			setWidgets(createWidgets());
-
-		Laby4Setting.super.create(parent);
 		for (KeyValue<Setting> element : getElements()) {
 			Setting child = element.getValue();
 			if (child instanceof AbstractSettingImpl<?,?> s)
 				s.create(this);
 		}
+
+		if (getWidgets() == null)
+			setWidgets(createWidgets());
+
+		Laby4Setting.super.create(parent);
 	}
 
 }

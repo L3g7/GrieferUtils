@@ -66,7 +66,7 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 
 	List<BaseSetting<?>> getChildSettings();
 
-	void create(Object parent);
+	void create(BaseSetting<?> parent);
 
 	default <T> T into() {
 		return Reflection.c(this);

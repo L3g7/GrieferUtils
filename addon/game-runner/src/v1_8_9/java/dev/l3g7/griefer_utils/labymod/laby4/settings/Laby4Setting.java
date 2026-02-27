@@ -165,7 +165,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	}
 
 	@Override
-	default void create(Object parent) {
+	default void create(BaseSetting<?> parent) {
 		AbstractSettingRegistry self = c(this);
 		self.setParent(c(parent));
 

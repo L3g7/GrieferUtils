@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
@@ -83,7 +82,6 @@ public class NatureBorderIndicator extends Feature {
 			lines.add(new RenderLine(new BlockPos(0, i, 0), new BlockPos(0, i, zSize)));
 		}
 
-		RenderUtil.drawBoxOutlines(new AxisAlignedBB(plotRoot.add(0, playerPos.getY(), 0), plotRoot.add(1, 1+playerPos.getY(), 1)), Color.RED, 2);
 		// Render collected lines
 		Vec3 center = new Vec3(xSize / 2d, 0, zSize / 2d);
 		for (RenderLine line : lines) {

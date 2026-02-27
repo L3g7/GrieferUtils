@@ -10,9 +10,12 @@ package dev.l3g7.griefer_utils.features.widgets.countdowns;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.api.misc.Named;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.Countdown;
+import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
@@ -29,12 +32,19 @@ public class MagicForestTimer extends SimpleWidget {
 
 	private static final Countdown COUNTDOWN = Countdown.realtime();
 
+	private final DropDownSetting<TimeFormat> timeFormat = DropDownSetting.create(TimeFormat.class)
+		.name("Zeitformat")
+		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
+		.icon("hourglass")
+		.defaultValue(TimeFormat.SHORT);
+
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Zauberwald-\nTimer")
 		.description("Zeigt dir an, wie viel Zeit du noch im Zauberwald hast.")
 		.icon("earth_hourglass")
-		.since("2.4-BETA-1");
+		.since("2.4-BETA-1")
+		.subSettings(timeFormat);
 
 	@Override
 	public boolean isVisibleInGame() {
@@ -44,11 +54,7 @@ public class MagicForestTimer extends SimpleWidget {
 	@Override
 	public String getValue() {
 		int secondsRemaining = Math.max(COUNTDOWN.secondsRemaining(), 0);
-
-		int seconds = secondsRemaining % 60;
-		int minutes = (secondsRemaining / 60) % 60;
-		int hours = secondsRemaining / 3600;
-		return String.format("%2s:%2s:%2s", hours, minutes, seconds).replace(' ', '0');
+		return Util.formatTimeSeconds(secondsRemaining, timeFormat.get() == TimeFormat.SHORT);
 	}
 
 	@EventListener
@@ -75,6 +81,23 @@ public class MagicForestTimer extends SimpleWidget {
 		int seconds = Integer.parseInt(matcher.group("seconds"));
 		COUNTDOWN.set((hours * 60 + minutes) * 60 + seconds);
 		event.cancel();
+	}
+
+	private enum TimeFormat implements Named {
+		SHORT("Kurz"),
+		LONG("Lang");
+
+		private final String name;
+
+		TimeFormat(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
 	}
 
 }

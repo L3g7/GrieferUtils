@@ -22,7 +22,7 @@ public class PlotCooldowns extends ComplexWidget {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Plot-Cooldowns")
+		.name("Plot-\nCooldowns")
 		.description("Zeigt dir die Cooldowns für /rand, /wand und /boden an.")
 		.icon("hourglass");
 

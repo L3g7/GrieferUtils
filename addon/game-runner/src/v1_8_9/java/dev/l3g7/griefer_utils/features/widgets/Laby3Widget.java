@@ -111,8 +111,8 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 			elems.add(offset++, (SettingsElement) HeaderSetting.create("Geld-Informationen"));
 			elems.add(3 + offset++, (SettingsElement) HeaderSetting.create("Geld-Statistiken"));
 			elems.add(6 + offset++, (SettingsElement) HeaderSetting.create("Countdowns"));
-			elems.add(10 + offset++, (SettingsElement) HeaderSetting.create("Orb-Statistiken"));
-			elems.add(12 + offset, (SettingsElement) HeaderSetting.create("Misc"));
+			elems.add(13 + offset++, (SettingsElement) HeaderSetting.create("Orb-Statistiken"));
+			elems.add(15 + offset, (SettingsElement) HeaderSetting.create("Misc"));
 
 			for (SettingsElement elem : elems)
 				if (((ControlElement) elem).getModule() == null)

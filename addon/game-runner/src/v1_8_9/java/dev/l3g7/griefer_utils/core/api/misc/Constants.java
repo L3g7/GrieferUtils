@@ -58,7 +58,7 @@ public class Constants {
 	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s ?§r§a ?\\$(?<amount>[\\d.,]+) gegeben\\.§r$", Constants.FORMATTED_PLAYER_PATTERN));
 
 	public static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>[\\S ]+) für (?<orbs>[\\d.,]+) Orbs verkauft\\.$");
-	public static final Pattern JOB_SELL_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§aDu hast §r§2(?<amount>\\d+)§r§a Stack\\(s\\) §r§6[^§]+§r§a für §r§2(?<price>\\d+)§r§2\\$§r§a geliefert\\.§r$");
+	public static final Pattern JOB_SELL_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§aDu hast §r§2(?<count>\\d+)§r§a Stack\\(s\\) §r§6[^§]+§r§a für §r§2(?<amount>\\d+)§r§2\\$§r§a geliefert\\.§r$");
 
 	public static final DecimalFormat DECIMAL_FORMAT_98;
 

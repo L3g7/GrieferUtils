@@ -135,7 +135,7 @@ abstract class MessageReceiveQuest extends AbstractQuest {
 			if (!matcher.matches())
 				return 0;
 
-			return Integer.parseInt(matcher.group("amount"));
+			return Integer.parseInt(matcher.group("count"));
 		}
 	}
 

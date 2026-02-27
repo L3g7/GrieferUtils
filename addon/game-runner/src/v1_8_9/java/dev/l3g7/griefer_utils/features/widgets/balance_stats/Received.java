@@ -105,7 +105,7 @@ public class Received extends SimpleWidget {
 				return;
 		}
 
-		setBalance(moneyReceived.add(new BigDecimal(matcher.group("price").replace(",", ""))));
+		setBalance(moneyReceived.add(new BigDecimal(matcher.group("amount").replace(",", ""))));
 	}
 
 	@EventListener(triggerWhenDisabled = true)

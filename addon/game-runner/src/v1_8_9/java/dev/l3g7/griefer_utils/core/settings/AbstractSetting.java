@@ -110,17 +110,6 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	}
 
 	@Override
-	default UpdateInfo since() {
-		return getStorage().updateInfo;
-	}
-
-	@Override
-	default S since(UpdateInfo updateInfo) {
-		getStorage().updateInfo = updateInfo;
-		return (S) this;
-	}
-
-	@Override
 	default void setParent(BaseSetting<?> parent) {
 		String inferredKey = getStorage().inferredKey;
 		if (inferredKey == null)
@@ -183,6 +172,40 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	}
 
 	/**
+	 * Returns the version when this setting was added.
+	 */
+	default UpdateInfo since() {
+		return getStorage().updateInfo;
+	}
+
+	/**
+	 * Sets the version when this setting was added.
+	 */
+	default S since(String version) {
+		return since(version, null);
+	}
+
+	/**
+	 * Sets the version when this setting was added, with a custom badge message.
+	 */
+	default S since(String version, String message) {
+		return since(new UpdateInfo(version, message, false));
+	}
+
+	/**
+	 * Sets the version when this setting was added.
+	 */
+	default S since(UpdateInfo updateInfo) {
+		getStorage().updateInfo = updateInfo;
+		return (S) this;
+	}
+
+	default void bubbleSince(Object parent) {
+		if (parent instanceof AbstractSetting<?, ?> setting && since() != null)
+			setting.since(since().bubble());
+	}
+
+	/**
 	 * A storage for a value.
 	 */
 	class Storage<T> {
@@ -207,6 +230,30 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 			this.fallbackValue = fallbackValue;
 		}
 
+	}
+
+	/**
+	 * A wrapper for data from {@link AbstractSetting#since(String, String)};
+	 */
+	record UpdateInfo(String version, String message, boolean bubbled) {
+		UpdateInfo bubble() {
+			return new UpdateInfo(version, message, true);
+		}
+
+		public void hide() {
+			// TODO
+		}
+
+		@Override
+		public String toString() {
+			if (message != null)
+				return message;
+
+			if (bubbled)
+				return "Neue Settings seit " + version;
+
+			return "Seit " + version;
+		}
 	}
 
 }

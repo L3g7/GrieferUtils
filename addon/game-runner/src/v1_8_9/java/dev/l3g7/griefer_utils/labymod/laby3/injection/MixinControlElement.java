@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.injection;
 
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.manager.TooltipHelper;
@@ -32,7 +32,7 @@ public abstract class MixinControlElement {
 
 	@Inject(method = "draw", at = @At(value = "INVOKE", target = "Lnet/labymod/settings/elements/ControlElement;renderAdvancedButton(IIIIZII)V", shift = AFTER))
 	private void injectDraw(int x, int y, int maxX, int maxY, int mouseX, int mouseY, CallbackInfo ci) {
-		if (!(this instanceof BaseSetting<?> setting) || setting.since() == null)
+		if (!(this instanceof AbstractSetting<?, ?> setting) || setting.since() == null)
 			return;
 
 		x -= NEW_BADGE_WIDTH + 6;

@@ -46,39 +46,6 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 	S icon(ItemStack icon);
 
 	/**
-	 * Returns the version when this setting was added.
-	 */
-	UpdateInfo since();
-
-	/**
-	 * Sets the version when this setting was added.
-	 */
-	default S since(String version) {
-		return since(version, null);
-	}
-
-	/**
-	 * Sets the version when this setting was added, with a custom badge message.
-	 */
-	default S since(String version, String message) {
-		return since(new UpdateInfo(version, message, false));
-	}
-
-	/**
-	 * Sets the version when this setting was added.
-	 */
-	S since(UpdateInfo updateInfo);
-
-	default void bubbleSince(Object parent) {
-		if (parent instanceof BaseSetting<?> setting && since() != null)
-			setting.since(since().bubble());
-	}
-
-	default void onSettingsOpen() {
-		since((UpdateInfo) null);
-	}
-
-	/**
 	 * Sets the given settings as sub settings, with the display name as header.
 	 */
 	S subSettings(BaseSetting<?>... settings);
@@ -103,26 +70,6 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 
 	default <T> T into() {
 		return Reflection.c(this);
-	}
-
-	/**
-	 * A wrapper for data from {@link BaseSetting#since(String, String)};
-	 */
-	record UpdateInfo(String version, String message, boolean bubbled) {
-		UpdateInfo bubble() {
-			return new UpdateInfo(version, message, true);
-		}
-
-		@Override
-		public String toString() {
-			if (message != null)
-				return message;
-
-			if (bubbled)
-				return "Neue Settings seit " + version;
-
-			return "Seit " + version;
-		}
 	}
 
 }

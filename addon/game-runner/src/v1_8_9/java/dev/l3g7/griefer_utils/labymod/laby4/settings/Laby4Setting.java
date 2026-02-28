@@ -264,7 +264,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 	class GrieferUtilsRevision extends SimpleRevision {
 
-		private final UpdateInfo info;
+		public final UpdateInfo info;
 
 		public GrieferUtilsRevision(UpdateInfo info) {
 			super("griefer_utils", new SemanticVersion(0, 0, 0), "0001-01-01");
@@ -278,7 +278,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 		@Override
 		public boolean isRelevant() {
-			return true;
+			return info.isVisible();
 		}
 	}
 
@@ -286,15 +286,24 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	class MixinSettingWidget {
 		@Redirect(method = "initializeInteractionWidget", at = @At(value = "INVOKE", target = "Lnet/labymod/api/client/gui/screen/widget/widgets/renderer/IconWidget;setHoverComponent(Lnet/labymod/api/client/component/Component;)V"))
 		public void redirectSetBadge(IconWidget newBadge, Component component) {
-			Revision revision = ((SettingWidget) (Object) this).setting().asElement().getRevision();
+			SettingElement element = ((SettingWidget) (Object) this).setting().asElement();
+			Revision revision = element.getRevision();
 
-			if (revision instanceof GrieferUtilsRevision) {
-				newBadge.setHoverComponent(
-					Component.text(revision.getDisplayName())
-						.color(NamedTextColor.BLUE));
-			} else {
+			if (!(revision instanceof GrieferUtilsRevision rev)) {
 				newBadge.setHoverComponent(component);
+				return;
 			}
+
+			AbstractSetting<?, ?> setting = (AbstractSetting<?, ?>) element;
+			setting.callback(() -> {
+				if (!rev.info.bubbled()) {
+					rev.info.hide();
+					newBadge.setVisible(false);
+				}
+			});
+			newBadge.setHoverComponent(
+				Component.text(revision.getDisplayName())
+					.color(NamedTextColor.BLUE));
 		}
 	}
 

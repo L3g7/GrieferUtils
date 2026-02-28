@@ -7,7 +7,9 @@
 
 package dev.l3g7.griefer_utils.core.settings;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
@@ -189,7 +191,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	 * Sets the version when this setting was added, with a custom badge message.
 	 */
 	default S since(String version, String message) {
-		return since(new UpdateInfo(version, message, false));
+		return since(new UpdateInfo(this, version, message, false));
 	}
 
 	/**
@@ -202,7 +204,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 
 	default void bubbleSince(Object parent) {
 		if (parent instanceof AbstractSetting<?, ?> setting && since() != null)
-			setting.since(since().bubble());
+			setting.since(since().bubble(setting));
 	}
 
 	/**
@@ -235,13 +237,37 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 	/**
 	 * A wrapper for data from {@link AbstractSetting#since(String, String)};
 	 */
-	record UpdateInfo(String version, String message, boolean bubbled) {
-		UpdateInfo bubble() {
-			return new UpdateInfo(version, message, true);
+	record UpdateInfo(AbstractSetting<?, ?> owner, String version, String message, boolean bubbled) {
+		UpdateInfo bubble(AbstractSetting<?, ?> target) {
+			return new UpdateInfo(target, version, message, true);
+		}
+
+		public boolean isVisible() {
+			if (bubbled) {
+				for (BaseSetting<?> childSetting : owner.getChildSettings()) {
+					if (childSetting instanceof AbstractSetting<?,?> setting)
+						if (setting.since() != null && setting.since().isVisible())
+							return true;
+				}
+
+				return false;
+			}
+
+			return !getAcknowledgedChanges().contains(new JsonPrimitive(owner.configKey()));
 		}
 
 		public void hide() {
-			// TODO
+			if (!isVisible())
+				return;
+
+			getAcknowledgedChanges().add(owner.configKey());
+		}
+
+		private static JsonArray getAcknowledgedChanges() {
+			if (!Config.has("settings.acknowledged_changes"))
+				Config.set("settings.acknowledged_changes", new JsonArray());
+
+			return Config.get("settings.acknowledged_changes").getAsJsonArray();
 		}
 
 		@Override

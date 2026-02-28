@@ -302,8 +302,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 				}
 			});
 			newBadge.setHoverComponent(
-				Component.text(revision.getDisplayName())
-					.color(NamedTextColor.BLUE));
+				Component.text(revision.getDisplayName()));
 		}
 	}
 

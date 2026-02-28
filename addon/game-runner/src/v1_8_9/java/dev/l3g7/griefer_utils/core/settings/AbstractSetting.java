@@ -276,9 +276,9 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 				return message;
 
 			if (bubbled)
-				return "Neue Settings seit " + version;
+				return "§9Neue Settings seit §f" + version;
 
-			return "Seit " + version;
+			return "§9Seit " + version;
 		}
 	}
 

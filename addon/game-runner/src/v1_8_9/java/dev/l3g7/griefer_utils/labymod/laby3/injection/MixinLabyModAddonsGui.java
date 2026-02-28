@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.labymod.laby3.injection;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.MainPage;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.AddonElement;
@@ -38,6 +39,9 @@ public class MixinLabyModAddonsGui {
 	@Shadow
 	private AddonElement openedAddonSettings;
 
+	@Shadow
+	private SettingsElement mouseOverElement;
+
 	@InheritedInvoke(GuiScreen.class)
 	@Inject(method = "actionPerformed", at = @At("HEAD"), remap = true)
 	private void injectActionPerformed(GuiButton button, CallbackInfo ci) {
@@ -49,6 +53,13 @@ public class MixinLabyModAddonsGui {
 			return;
 
 		MainPage.filter.set(path.isEmpty() ? "" : MainPage.filter.get());
+	}
+
+	@InheritedInvoke(GuiScreen.class)
+	@Inject(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiButton;playPressSound(Lnet/minecraft/client/audio/SoundHandler;)V"))
+	private void injectMouseClicked(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
+		if (mouseOverElement instanceof BaseSetting<?> baseSetting)
+			baseSetting.onSettingsOpen();
 	}
 
 }

@@ -74,6 +74,10 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 			setting.since(since().bubble());
 	}
 
+	default void onSettingsOpen() {
+		since((UpdateInfo) null);
+	}
+
 	/**
 	 * Sets the given settings as sub settings, with the display name as header.
 	 */

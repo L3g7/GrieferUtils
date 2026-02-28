@@ -14,7 +14,6 @@ import net.labymod.utils.manager.TooltipHelper;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,14 +24,12 @@ import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 @Mixin(value = ControlElement.class, remap = false)
 public abstract class MixinControlElement {
 
-	@Shadow
-	private boolean settingEnabled;
 	private static final int NEW_BADGE_WIDTH = 20;
 	private static final int NEW_BADGE_HEIGHT = 9;
 
 	@Inject(method = "draw", at = @At(value = "INVOKE", target = "Lnet/labymod/settings/elements/ControlElement;renderAdvancedButton(IIIIZII)V", shift = AFTER))
 	private void injectDraw(int x, int y, int maxX, int maxY, int mouseX, int mouseY, CallbackInfo ci) {
-		if (!(this instanceof AbstractSetting<?, ?> setting) || setting.since() == null)
+		if (!(this instanceof AbstractSetting<?, ?> setting) || setting.since() == null || !setting.since().isVisible())
 			return;
 
 		x -= NEW_BADGE_WIDTH + 6;

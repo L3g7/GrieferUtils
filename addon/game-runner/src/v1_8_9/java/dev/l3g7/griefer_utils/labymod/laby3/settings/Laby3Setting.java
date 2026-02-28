@@ -112,6 +112,8 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 			setting.create(this);
 
 		bubbleSince(parent);
+		if (since() != null && !since().bubbled())
+			callback(() -> since().hide());
 	}
 
 	// AbstractSetting

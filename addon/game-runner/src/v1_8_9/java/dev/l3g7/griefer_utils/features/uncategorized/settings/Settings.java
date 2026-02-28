@@ -14,9 +14,7 @@ import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import net.minecraft.init.Blocks;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
@@ -59,9 +57,9 @@ public class Settings extends Feature {
 
 	public Settings() {
 		if (LABY_4.isActive())
-			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, MainMenuSkull.enabled, autoUpdateEnabled, BugReporter.enabled);
+			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, MainMenuSkull.enabled, autoUpdateEnabled, UpdateInfoSettings.enabled, BugReporter.enabled);
 		else
-			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, autoUpdateEnabled, BugReporter.enabled);
+			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, autoUpdateEnabled, UpdateInfoSettings.enabled, BugReporter.enabled);
 	}
 
 }

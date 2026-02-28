@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.UpdateInfoSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -243,6 +244,9 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		}
 
 		public boolean isVisible() {
+			if (!UpdateInfoSettings.enabled.get())
+				return false;
+
 			if (bubbled) {
 				for (BaseSetting<?> childSetting : owner.getChildSettings()) {
 					if (childSetting instanceof AbstractSetting<?,?> setting)
@@ -253,14 +257,19 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 				return false;
 			}
 
-			return !getAcknowledgedChanges().contains(new JsonPrimitive(owner.configKey()));
+			String configKey = owner().configKey();
+			for (JsonElement acknowledgedChange : getAcknowledgedChanges())
+				if (acknowledgedChange.getAsString().equals(configKey))
+					return false;
+
+			return true;
 		}
 
 		public void hide() {
 			if (!isVisible())
 				return;
 
-			getAcknowledgedChanges().add(owner.configKey());
+			getAcknowledgedChanges().add(new JsonPrimitive(owner.configKey()));
 		}
 
 		private static JsonArray getAcknowledgedChanges() {
@@ -278,7 +287,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 			if (bubbled)
 				return "§9Neue Settings seit §f" + version;
 
-			return "§9Seit " + version;
+			return "§9Seit §f" + version;
 		}
 	}
 

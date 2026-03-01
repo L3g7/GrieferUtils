@@ -180,16 +180,13 @@ public class Calculator extends Feature {
 		if (!Keyboard.getEventKeyState() || Keyboard.getEventKey() != Keyboard.KEY_TAB)
 			return;
 
+		double result = Double.NaN;
 		GuiTextField field = Reflection.get(gui, "inputField");
 		if (!field.getSelectedText().isEmpty()) {
 			// Auto-complete selected equation
-			double result = calculate(field.getSelectedText(), false);
+			result = calculate(field.getSelectedText(), false);
 			if (Double.isNaN(result))
 				return;
-
-			int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
-			String strResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, RoundingMode.HALF_UP)).replace(".", "");
-			field.writeText(strResult);
 		} else {
 			// Backtrack until equation is valid
 			String fullText = field.getText().substring(0, field.getCursorPosition());
@@ -213,17 +210,20 @@ public class Calculator extends Feature {
 				}
 
 				// Calculate
-				double result = calculate(text, false);
+				result = calculate(text, false);
 				if (Double.isNaN(result))
 					continue;
 
-				int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
-				String strResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, RoundingMode.HALF_UP)).replace(".", "");
 				field.setSelectionPos(start);
-				field.writeText(strResult);
-				return;
+				break;
 			}
 		}
+
+		int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
+		String strResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, RoundingMode.HALF_UP)).replace(".", "");
+		field.writeText(strResult);
+
+		event.cancel();
 	}
 
 	@EventListener

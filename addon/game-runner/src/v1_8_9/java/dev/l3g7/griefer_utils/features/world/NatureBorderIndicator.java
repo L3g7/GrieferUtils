@@ -33,7 +33,7 @@ public class NatureBorderIndicator extends Feature {
 		.name("Plot-Grenzen anzeigen")
 		.description("Zeigt die Plot-Grenzen auf Nature und Extreme an.")
 		.icon("earth")
-		.addHotkeySetting("die Chunk-Grenzen", TOGGLE)
+		.addHotkeySetting("die Plot-Grenzen", TOGGLE)
 		.since("2.4-BETA-1");
 
 	@EventListener

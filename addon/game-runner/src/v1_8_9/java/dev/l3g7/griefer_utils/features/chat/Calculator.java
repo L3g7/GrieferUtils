@@ -101,7 +101,7 @@ public class Calculator extends Feature {
 
 	public final SwitchSetting inlineCalculation = SwitchSetting.create()
 		.name("Inline-Berechnungen")
-		.description("Berechnet automatisch in den Chat eingegebene Rechnungen beim drücken der Tab-Taste.")
+		.description("Berechnet automatisch in den Chat eingegebene Rechnungen beim Drücken der Tab-Taste.")
 		.icon("command_suggestions")
 		.defaultValue(true)
 		.since("2.4-BETA-1");

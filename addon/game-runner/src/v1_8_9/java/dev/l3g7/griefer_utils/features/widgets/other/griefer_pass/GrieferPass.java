@@ -75,7 +75,6 @@ public class GrieferPass extends ComplexWidget {
 		JsonArray array = new JsonArray();
 		streamQuests().forEach(q -> {
 			q.updateShadowing(questTypeLookup);
-			System.out.println(q.format().a + ": " + q.isShadowed);
 			array.add(q.serialize());
 		});
 		Config.set("modules.griefer_pass.quests." + mc().getSession().getProfile().getId(), array);

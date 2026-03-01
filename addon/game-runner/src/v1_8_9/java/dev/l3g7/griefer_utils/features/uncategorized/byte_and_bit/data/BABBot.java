@@ -36,9 +36,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.ByteAndBit.BAB_URL;
 
 public class BABBot {
+
+	private final String url;
 
 	public List<BABItem> items;
 	public AxisAlignedBB botZone;
@@ -46,7 +47,8 @@ public class BABBot {
 	private long lastSync = 0;
 	final static int guiSyncDebounce = 20000;
 
-	public BABBot(String name) {
+	public BABBot(String url, String name) {
+		this.url = url;
 		this.uuid = name;
 	}
 
@@ -86,7 +88,7 @@ public class BABBot {
 		String keySignature = kp.getPublicKeySignature();
 		long expirationTime = kp.getExpirationTime();
 
-		InputStream is = postRequest(BAB_URL + "item/getItems/" + uuid, new NameValuePair[]{
+		InputStream is = postRequest(url + "item/getItems/" + uuid, new NameValuePair[]{
 			new BasicNameValuePair("publickey", publicKey),
 			new BasicNameValuePair("signature", signature),
 			new BasicNameValuePair("keySignature", keySignature),

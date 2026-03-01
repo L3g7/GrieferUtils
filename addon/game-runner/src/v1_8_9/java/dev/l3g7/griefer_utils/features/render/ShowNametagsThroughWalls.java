@@ -43,8 +43,6 @@ public class ShowNametagsThroughWalls extends Feature {
 			enabled.since("2.4-BETA-1", "Laby 4-Unterstützung seit 2.4-BETA-1");
 	}
 
-	// NOTE Implement https://github.com/L3g7/GrieferUtils/commit/421d52f50619ddf05f942548d70b0c9648614b6c when merging with LabyMod 3
-
 	public static ShowNametagsThroughWalls get() {
 		return get(ShowNametagsThroughWalls.class);
 	}

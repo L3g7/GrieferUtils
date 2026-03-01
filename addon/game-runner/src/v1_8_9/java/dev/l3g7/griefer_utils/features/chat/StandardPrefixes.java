@@ -181,7 +181,7 @@ public class StandardPrefixes extends Feature {
 			String text = (reachedSeparator ? iterator.previous() : iterator.next()).getUnformattedTextForChat();
 
 			if (!reachedSeparator) {
-				if (text.equals("\u2503 ")) {
+				if (text.contains("\u2503")) {
 					reachedSeparator = true;
 
 					// The json is pretty wierd

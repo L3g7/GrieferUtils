@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
+import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Widget.ComplexWidget;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -276,6 +277,24 @@ public class GrieferPass extends ComplexWidget {
 		return lines.stream()
 			.map(e -> new KVPair( new ChatComponentText(e.a), new ChatComponentText(e.b) ))
 			.toArray(KVPair[]::new);
+	}
+
+	@Override
+	protected LabyWidget getLaby3() {
+		return new GrieferPassL3();
+	}
+
+	private class GrieferPassL3 extends Laby3Widget.ComplexLaby3Widget {
+		public GrieferPassL3() {
+			super(GrieferPass.this);
+		}
+
+		@Override
+		public String getComparisonName() {
+			String pkg = getClass().getPackage().getName();
+			pkg = pkg.substring(0, pkg.lastIndexOf("."));
+			return pkg + "." + getControlName();
+		}
 	}
 
 	enum Sorting implements Named {

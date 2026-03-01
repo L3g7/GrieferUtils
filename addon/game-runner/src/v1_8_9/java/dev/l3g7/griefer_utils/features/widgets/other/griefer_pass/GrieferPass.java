@@ -55,8 +55,7 @@ public class GrieferPass extends ComplexWidget {
 	private final SwitchSetting removeFinished = SwitchSetting.create()
 		.name("Fertige Aufgaben entfernen")
 		.description("Ob abgeschlossene GrieferPass-Aufgaben automatisch entpinnt werden sollen.")
-		.icon("trophy")
-		.defaultValue(true);
+		.icon("trophy");
 
 	private final SwitchSetting ignoreCaseOpening = SwitchSetting.create()
 		.name("CaseOpening-Aufgaben ignorieren")

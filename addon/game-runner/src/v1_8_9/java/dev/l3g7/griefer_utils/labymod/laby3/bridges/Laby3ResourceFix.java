@@ -44,7 +44,7 @@ public class Laby3ResourceFix {
 
 		defaultResourcePacks.add(new GrieferUtilsResourcePack(new File(jarPath)));
 
-		if (LabyModCoreMod.isForge() && mc().getResourceManager() instanceof IReloadableResourceManager rm)
+		if (!LabyModCoreMod.isForge() && mc().getResourceManager() instanceof IReloadableResourceManager rm)
 			rm.reloadResources(defaultResourcePacks);
 	}
 

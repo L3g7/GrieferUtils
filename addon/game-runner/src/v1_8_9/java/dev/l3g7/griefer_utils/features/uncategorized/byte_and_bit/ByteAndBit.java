@@ -45,7 +45,10 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 @Singleton
 public class ByteAndBit extends Feature {
 
-	public static final String BAB_URL = "https://api.velociraptor-bot.de/api/";
+	public static final String[] URLS = new String[] {
+		"https://api.velociraptor-bot.de/api/",
+		"https://blitzbot-botshopgui.onrender.com/api/"
+	};
 
 	protected static final Map<String, BABBot> allBots = new ConcurrentHashMap<>();
 	Map<String, BABBot> renderedBots = new ConcurrentHashMap<>();
@@ -65,15 +68,17 @@ public class ByteAndBit extends Feature {
 	}
 
 	private void syncBots() {
-		IOUtil.read(BAB_URL + "scope/getBots").asJsonObject((res) -> {
-			if (!res.get("success").getAsBoolean())
-				return;
+		for (String url : URLS) {
+			IOUtil.read(url + "scope/getBots").asJsonObject((res) -> {
+				if (!res.get("success").getAsBoolean())
+					return;
 
-			for (JsonElement entry : res.get("bots").getAsJsonArray()) {
-				String uuid = entry.getAsString().replaceAll("-", "");
-				allBots.put(uuid, new BABBot(uuid));
-			}
-		});
+				for (JsonElement entry : res.get("bots").getAsJsonArray()) {
+					String uuid = entry.getAsString().replaceAll("-", "");
+					allBots.put(uuid, new BABBot(url, uuid));
+				}
+			});
+		}
 	}
 
 	@EventListener(triggerWhenDisabled = true)

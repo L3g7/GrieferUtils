@@ -136,10 +136,15 @@ public class TextFieldShim extends GuiTextField {
 			runResponder();
 	}
 
+	/**
+	 * Disables the responder while setting the text.
+	 */
 	@Override
 	public void setText(String lvt_1_1_) {
+		Runnable responder = this.guiResponder;
+		this.guiResponder = null;
 		super.setText(lvt_1_1_);
-		runResponder();
+		this.guiResponder = responder;
 	}
 
 	@Override

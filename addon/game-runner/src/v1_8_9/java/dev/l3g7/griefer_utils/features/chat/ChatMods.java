@@ -38,7 +38,7 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 public class ChatMods extends Feature {
 
 	private List<String> COLORED_FONTS = ImmutableList.of();
-	private static final Pattern SINGLE_COLORED_FONT_PATTERN = Pattern.compile("^(.)§l[^§]+$");
+	private static final Pattern SINGLE_COLORED_FONT_PATTERN = Pattern.compile("^§(.)§l[^§]+$");
 
 	private final SwitchSetting antiClearChat = SwitchSetting.create()
 		.name("Clearchat unterbinden")
@@ -116,7 +116,7 @@ public class ChatMods extends Feature {
 			return;
 
 		for (Pattern pattern : new Pattern[]{GLOBAL_CHAT_PATTERN, GLOBAL_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, PLOTCHAT_RECEIVE_PATTERN}) {
-			Matcher matcher = pattern.matcher(event.original.getFormattedText());
+			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 			if (!matcher.matches())
 				continue;
 
@@ -131,7 +131,7 @@ public class ChatMods extends Feature {
 			int messageStart = matcher.start("message");
 			int length = 0;
 
-			IChatComponent startICC = event.original.createCopy();
+			IChatComponent startICC = event.message.createCopy();
 
 			Iterator<IChatComponent> iterator = startICC.getSiblings().iterator();
 			while (iterator.hasNext()) {
@@ -148,7 +148,7 @@ public class ChatMods extends Feature {
 
 			IChatComponent messageICC = new ChatComponentText(message.replaceAll("§.", ""));
 			messageICC.getChatStyle().setBold(true).setColor(EnumChatFormatting.AQUA);
-			event.setMessage(new ChatComponentText(event.original.getFormattedText().substring(0, matcher.start("message"))).appendSibling(messageICC));
+			event.setMessage(new ChatComponentText(event.message.getFormattedText().substring(0, matcher.start("message"))).appendSibling(messageICC));
 			return;
 		}
 	}

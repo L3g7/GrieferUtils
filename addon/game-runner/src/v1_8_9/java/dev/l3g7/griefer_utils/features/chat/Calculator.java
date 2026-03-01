@@ -13,9 +13,9 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.misc.AuctionHouseCheck;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
@@ -26,15 +26,10 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.network.play.client.C14PacketTabComplete;
-import net.minecraft.network.play.server.S3APacketTabComplete;
+import org.lwjgl.input.Keyboard;
 import org.mariuszgromada.math.mxparser.Expression;
 import org.mariuszgromada.math.mxparser.License;
 import org.mariuszgromada.math.mxparser.mXparser;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -125,10 +120,6 @@ public class Calculator extends Feature {
 	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay (?<recipient>%s|\\*) (?<amount>.+)", Constants.UNFORMATTED_PLAYER_NAME_PATTERN), CASE_INSENSITIVE);
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 
-	public static String[] TAB_RESULT_PLACEHOLDER = new String[] {"Tab result placeholder"};
-	public static String tabResult;
-	public static int tabEquationLength;
-
 	private Pattern placeholderPattern;
 	private String escapedPlaceholderPattern = "\\\\([{}])";
 	private BigDecimal lastPayment = BigDecimal.ZERO;
@@ -179,59 +170,60 @@ public class Calculator extends Feature {
 	}
 
 	@EventListener
-	public void onTabComplete(PacketSendEvent<C14PacketTabComplete> tabCompleteEvent) {
+	public void onTabComplete(GuiScreenEvent.KeyboardInputEvent.Pre event) {
 		if (!inlineCalculation.get())
 			return;
 
-		String tabMessage = tabCompleteEvent.packet.getMessage();
-		equationDetection:
-		for (int i = 0; i < tabMessage.length(); i++) {
-			String equation = tabMessage.substring(i).trim();
-			// Check for player names
-			if (i != 0 && tabMessage.charAt(i - 1) != ' ')
-				continue; // non-whitespace chars directly in front of the equation -> probably part of a player name
+		if (!(event.gui instanceof GuiChat gui))
+			return;
 
-			for (int j = 0; j < equation.length() - 1; j++) {
-				if (Character.isAlphabetic(equation.charAt(j)) && Character.isDigit(equation.charAt(j + 1)))
-					continue equationDetection; // letter followed by digit -> probably part of a player name
-			}
+		if (!Keyboard.getEventKeyState() || Keyboard.getEventKey() != Keyboard.KEY_TAB)
+			return;
 
-			for (NetworkPlayerInfo networkPlayerInfo : mc().getNetHandler().getPlayerInfoMap()) {
-				if (networkPlayerInfo.getGameProfile().getName().toLowerCase().startsWith(equation.toLowerCase()))
-					continue equationDetection;
-			}
-
-			// Calculate
-			double result = calculate(equation, false);
+		GuiTextField field = Reflection.get(gui, "inputField");
+		if (!field.getSelectedText().isEmpty()) {
+			// Auto-complete selected equation
+			double result = calculate(field.getSelectedText(), false);
 			if (Double.isNaN(result))
-				continue;
-
-			int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
-			tabResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, RoundingMode.HALF_UP)).replace(".", "");
-			tabEquationLength = equation.length();
-			// Spoof packet so that it works with LabyMod as well
-			new S3APacketTabComplete(TAB_RESULT_PLACEHOLDER).processPacket(mc().getNetHandler());
-
-			tabCompleteEvent.cancel();
-			break;
-		}
-	}
-
-	@Mixin(GuiChat.class)
-	private static class MixinGuiChat {
-
-	    @Inject(method = "onAutocompleteResponse", at = @At("HEAD"), cancellable = true)
-	    private void injectOnAutocompleteResponse(String[] response, CallbackInfo ci) {
-	    	if (response != TAB_RESULT_PLACEHOLDER)
 				return;
 
-			// Process tab calculation result
-		    GuiTextField inputField = Reflection.get(this, "inputField");
-		    inputField.deleteFromCursor(-tabEquationLength);
-		    inputField.writeText(tabResult);
-			ci.cancel();
-	    }
+			int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
+			String strResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, RoundingMode.HALF_UP)).replace(".", "");
+			field.writeText(strResult);
+		} else {
+			// Backtrack until equation is valid
+			String fullText = field.getText().substring(0, field.getCursorPosition());
 
+			equationDetection:
+			for (int start = 0; start < fullText.length(); start++) {
+				String text = fullText.substring(start);
+
+				// Check for player names
+				if (start != 0 && fullText.charAt(start - 1) != ' ')
+					continue; // non-whitespace chars directly in front of the equation -> probably part of a player name
+
+				for (int j = 0; j < text.length() - 1; j++) {
+					if (Character.isAlphabetic(text.charAt(j)) && Character.isDigit(text.charAt(j + 1)))
+						continue equationDetection; // letter followed by digit -> probably part of a player name
+				}
+
+				for (NetworkPlayerInfo networkPlayerInfo : mc().getNetHandler().getPlayerInfoMap()) {
+					if (networkPlayerInfo.getGameProfile().getName().toLowerCase().startsWith(text.toLowerCase()))
+						continue equationDetection;
+				}
+
+				// Calculate
+				double result = calculate(text, false);
+				if (Double.isNaN(result))
+					continue;
+
+				int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
+				String strResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, RoundingMode.HALF_UP)).replace(".", "");
+				field.setSelectionPos(start);
+				field.writeText(strResult);
+				return;
+			}
+		}
 	}
 
 	@EventListener

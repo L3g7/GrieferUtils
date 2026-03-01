@@ -33,6 +33,7 @@ class Quests {
 		registerQuest(false, "Führe {AMOUNT}x den Befehl p h aus", MessageReceiveQuest.PHQuest.class);
 		registerQuest(false, "Führe {AMOUNT}x den Befehl {TARGET} aus", MiscQuests.CommandSendQuest.class);
 
+		registerQuest(false, "Verkleide dich {AMOUNT}x mit /disguise", MessageReceiveQuest.DisguiseQuest.class);
 		registerQuest(false, "Erhalte {AMOUNT}x Orbs", MessageReceiveQuest.OrbQuest.class);
 		registerQuest(false, "Erledige {AMOUNT} Adventurer-Aufgaben", MessageReceiveQuest.AdventurerQuest.class);
 		registerQuest(false, "Zahle insgesamt {AMOUNT}\\$ an andere Spieler \\(nicht pay \\*\\)", "Zahle an andere Spieler", MessageReceiveQuest.PayQuest.class);

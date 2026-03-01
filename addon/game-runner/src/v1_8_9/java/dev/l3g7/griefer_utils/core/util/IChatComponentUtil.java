@@ -59,10 +59,13 @@ public class IChatComponentUtil {
 				continue;
 			}
 
-			if (text.contains(" ") || text.contains("]"))
+			if (text.contains(" ") || text.contains("]")) {
+				if (isTabList)
+					iterator.remove();
 				break;
-			else
+			} else {
 				iterator.remove();
+			}
 		}
 
 		if (playerIndex == -1) {

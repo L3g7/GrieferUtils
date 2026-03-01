@@ -31,7 +31,24 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 public class StandardPrefixes extends Feature {
 
 	private static final Map<String, String> DEFAULT_PREFIXES = new HashMap<>() {{
+		put("Owner", "4");
+		put("Administrator", "4");
+		put("Organisator", "c");
+		put("ShopManager", "c");
+		put("Developer", "b");
+		put("Content", "e");
+		put("Moderator", "2");
+		put("Supporter", "2");
+		put("Designer", "9");
+		put("Builder", "3");
+		put("Freund", "c");
+
+		put("Streamer+", "5");
+		put("Streamer", "5");
+		put("Youtuber+", "5");
+		put("Youtuber", "5");
 		put("Helfer", "2");
+
 		put("Hero", "el");
 		put("Supreme", "dl");
 		put("Griefer", "4l");
@@ -76,6 +93,15 @@ public class StandardPrefixes extends Feature {
 		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 
+	private void setPrefix(IChatComponent component, String name, String rank, boolean isTabList) {
+		String prefix = DEFAULT_PREFIXES.get(rank.startsWith("Sr") ? rank.substring(2) : rank);
+		if (prefix == null)
+			return;
+
+		IChatComponentUtil.setNameWithPrefix(component, name, name, prefix, isTabList);
+		setRankWithPrefix(component, rank, prefix, isTabList);
+	}
+
 	@EventListener(priority = Priority.HIGHEST)
 	public void onTabListNameUpdate(TabListEvent.TabListNameUpdateEvent event) {
 		if (!tab.get() || !event.component.getUnformattedText().contains("\u2503"))
@@ -93,12 +119,10 @@ public class StandardPrefixes extends Feature {
 		if (!self.get() && player() != null && MinecraftUtil.name().equals(NameCache.ensureRealName(parts[1])))
 			return;
 
-		String prefix = DEFAULT_PREFIXES.get(parts[0]);
-		if (prefix == null)
-			return;
+		// remove extra data (e.g. [LIVE] ) from name
+		parts[1] = parts[1].split(" ")[0];
 
-		IChatComponentUtil.setNameWithPrefix(event.component, parts[1], parts[1], prefix, true);
-		setRankWithPrefix(event.component, parts[0], prefix, true);
+		setPrefix(event.component, parts[1], parts[0], true);
 	}
 
 	@EventListener(priority = Priority.HIGHEST)
@@ -124,19 +148,16 @@ public class StandardPrefixes extends Feature {
 		if (!self.get() && MinecraftUtil.name().equals(NameCache.ensureRealName(name)))
 			return;
 
-		String rank = text.substring(0, text.indexOf('\u2503') - 1);
+		int end = text.indexOf('\u2503') - 1;
+		int start = text.lastIndexOf(' ', end - 1) + 1;
+		String rank = text.substring(start, end);
 		int startBracketIndex = rank.lastIndexOf('[');
 		int startSpaceIndex = rank.lastIndexOf(' ');
 
 		if (startBracketIndex != -1 || startSpaceIndex != -1)
 			rank = rank.substring(Math.max(startSpaceIndex, startBracketIndex) + 1);
 
-		String prefix = DEFAULT_PREFIXES.get(rank);
-		if (prefix == null)
-			return;
-
-		IChatComponentUtil.setNameWithPrefix(event.message, name, name, prefix, false);
-		setRankWithPrefix(event.message, rank, prefix, false);
+		setPrefix(event.message, name, rank, false);
 	}
 
 	private void setRankWithPrefix(IChatComponent iChatComponent, String rank, String prefix, boolean isTabList) {

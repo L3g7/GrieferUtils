@@ -55,11 +55,18 @@ public class Settings extends Feature {
 		.defaultValue(true)
 		.subSettings(showUpdateScreen, releaseChannel);
 
+	public static final SwitchSetting showUpdateInfos = SwitchSetting.create()
+		.name("Update-Infos anzeigen")
+		.description("Ob die NEW-Plakette anzeigt werden soll, wenn seit der letzten installierten Version etwas hinzugefügt wurde.")
+		.config("settings.update_infos")
+		.icon("bell")
+		.defaultValue(true);
+
 	public Settings() {
 		if (LABY_4.isActive())
-			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, MainMenuSkull.enabled, autoUpdateEnabled, UpdateInfoSettings.enabled, BugReporter.enabled);
+			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, MainMenuSkull.enabled, autoUpdateEnabled, showUpdateInfos, BugReporter.enabled);
 		else
-			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, autoUpdateEnabled, UpdateInfoSettings.enabled, BugReporter.enabled);
+			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, autoUpdateEnabled, showUpdateInfos, BugReporter.enabled);
 	}
 
 }

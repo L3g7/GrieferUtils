@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.UpdateInfoSettings;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,7 +244,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		}
 
 		public boolean isVisible() {
-			if (!UpdateInfoSettings.enabled.get())
+			if (!Settings.showUpdateInfos.get())
 				return false;
 
 			if (bubbled) {

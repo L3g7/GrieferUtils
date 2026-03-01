@@ -45,8 +45,8 @@ public class StandardPrefixes extends Feature {
 
 		put("Streamer+", "5");
 		put("Streamer", "5");
-		put("Youtuber+", "5");
-		put("Youtuber", "5");
+		put("YouTuber+", "5");
+		put("YouTuber", "5");
 		put("Helfer", "2");
 
 		put("Hero", "el");

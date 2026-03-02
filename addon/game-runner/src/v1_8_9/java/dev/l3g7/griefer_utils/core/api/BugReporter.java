@@ -134,7 +134,9 @@ public class BugReporter {
 					conn.addRequestProperty("X-MINECRAFT-UUID", String.valueOf(MinecraftUtil.uuid()));
 
 				if (shouldSendIdentifiers.get())
-					conn.addRequestProperty("X-IDENTIFIERS", Identifier.MACHINE_IDENT + "-" + Identifier.CWD_IDENT);
+					conn.addRequestProperty("X-IDENTIFIERS", Identifier.MACHINE_IDENT
+						+ "-" + Identifier.CWD_IDENT
+						+ "-" + Identifier.SESSION_IDENT);
 
 				conn.setRequestMethod("POST");
 				try (OutputStream out = conn.getOutputStream()) {

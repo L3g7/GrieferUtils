@@ -25,12 +25,24 @@ public class Identifier {
 
 	public static final Identifier MACHINE_IDENT = new Identifier(Paths.get(System.getProperty("user.home"), ".griefer_utils.id"));
 	public static final Identifier CWD_IDENT = new Identifier(Paths.get(".griefer_utils.id"));
+	public static final Identifier SESSION_IDENT = new Identifier();
 
 	private final String identifier;
 
 	@OnEnable
 	private static void init() {
-		// Load identifiers
+		// Load identifiers via <clinit>
+	}
+
+	private Identifier() {
+		try {
+			// Generate ident
+			byte[] data = new byte[16];
+			SecureRandom.getInstanceStrong().nextBytes(data);
+			identifier = bytesToHex(data);
+		} catch (NoSuchAlgorithmException e) {
+			throw Util.elevate(e);
+		}
 	}
 
 	private Identifier(Path path) {

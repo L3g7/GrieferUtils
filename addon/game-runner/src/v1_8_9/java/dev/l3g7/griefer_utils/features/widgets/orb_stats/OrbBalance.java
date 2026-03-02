@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.core.events.griefergames.OrbBalanceUpdateEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -83,6 +84,7 @@ public class OrbBalance extends SimpleWidget {
 		Matcher matcher = SKULL_PATTERN.matcher(ItemUtil.getLastLore(skull));
 		if (matcher.matches()) {
 			balance = Long.parseLong(matcher.group("orbs").replace(".", ""));
+			new OrbBalanceUpdateEvent().fire();
 			saveBalance();
 		}
 	}
@@ -97,6 +99,7 @@ public class OrbBalance extends SimpleWidget {
 		Matcher sellMatcher = ORB_SELL_PATTERN.matcher(msg);
 		if (sellMatcher.matches()) {
 			balance += Long.parseLong(sellMatcher.group("orbs").replace(".", ""));
+			new OrbBalanceUpdateEvent().fire();
 			saveBalance();
 			return;
 		}
@@ -104,6 +107,7 @@ public class OrbBalance extends SimpleWidget {
 		Matcher buyMatcher = BUY_PATTERN.matcher(msg);
 		if (buyMatcher.matches()) {
 			balance -= Long.parseLong(buyMatcher.group("orbs").replace(".", ""));
+			new OrbBalanceUpdateEvent().fire();
 			saveBalance();
 		}
 	}

@@ -219,6 +219,9 @@ public class Calculator extends Feature {
 			}
 		}
 
+		if (Double.isNaN(result) || Double.isInfinite(result))
+			return;
+
 		int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
 		String strResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, RoundingMode.HALF_UP)).replace(".", "");
 		field.writeText(strResult);

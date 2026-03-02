@@ -155,7 +155,13 @@ abstract class MessageReceiveQuest extends AbstractQuest {
 		protected int processMessage(IChatComponent message) {
 			return message.getUnformattedText().matches("\\[GrieferGames] Du wurdest wegen Beihilfe zum Ausbruch zum Abbau von \\d+ Obsidianblöcken eingesperrt\\.") ? 1 : 0;
 		}
+	}
 
+	static class ConnectFourQuest extends MessageReceiveQuest {
+		@Override
+		protected int processMessage(IChatComponent message) {
+			return message.getFormattedText().matches("§r§8\\[§r§64-Gewinnt§r§8]§r §r§aDu hast das Spiel gegen §r§2[^ ]+ §r§agewonnen!§r") ? 1 : 0;
+		}
 	}
 
 }

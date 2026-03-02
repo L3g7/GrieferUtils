@@ -30,6 +30,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.BlockPos;
@@ -303,6 +304,52 @@ abstract class MiscQuests {
 		private void onMessageSend(MessageAboutToBeSentEvent event) {
 			if (event.message.startsWith(target))
 				increaseAmount();
+		}
+
+	}
+
+	static class ShootBowQuest extends AbstractQuest {
+
+		private long startPulling = 0;
+		private int pendingShoots = 0;
+
+		@EventListener
+		private void onBowPullStart(ItemUseEvent.Post event) {
+			if (event.stackBeforeUse != null && event.stackBeforeUse.getItem() == Items.bow)
+				startPulling = System.currentTimeMillis();
+		}
+
+		@EventListener
+		private void onBowRelease(PacketSendEvent<C07PacketPlayerDigging> event) {
+			if (event.packet.getStatus() != C07PacketPlayerDigging.Action.RELEASE_USE_ITEM)
+				return;
+
+			if (player().getHeldItem() == null || player().getHeldItem().getItem() != Items.bow)
+				return;
+
+			if (System.currentTimeMillis() - startPulling <= 100)
+				return; // Didn't charge long enough
+
+			pendingShoots++;
+		}
+
+		@EventListener
+		private void onWorldUnload(WorldUnloadEvent event) {
+			pendingShoots = 0;
+			startPulling = 0;
+		}
+
+		@EventListener
+		private void onSound(PacketReceiveEvent<S29PacketSoundEffect> event) {
+			if (pendingShoots <= 0)
+				return;
+
+			S29PacketSoundEffect p = event.packet;
+			if (player().getDistance(p.getX(), p.getY(), p.getZ()) >= 0.25)
+				return;
+
+			pendingShoots--;
+			increaseAmount();
 		}
 
 	}

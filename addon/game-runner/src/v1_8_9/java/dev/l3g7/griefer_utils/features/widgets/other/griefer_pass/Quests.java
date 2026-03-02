@@ -25,6 +25,7 @@ class Quests {
 		registerQuest(true, "Platziere {AMOUNT} Blöcke auf deinem Grundstück", MiscQuests.PlaceQuest.class);
 		registerQuest(true, "Angle {AMOUNT}x {TARGET}", MiscQuests.FishQuest.class);
 
+		registerQuest(false, "Schieße {AMOUNT}x mit Bogen", MiscQuests.ShootBowQuest.class);
 		registerQuest(false, "Nutze {AMOUNT}x ein Boot oder Minecart", MiscQuests.RideBoatOrMinecartQuest.class);
 		registerQuest(false, "Betritt {AMOUNT}x einen Citybuild", MiscQuests.JoinCitybuildQuest.class);
 		registerQuest(false, "Zähme {AMOUNT} Tiere", MiscQuests.TameQuest.class);

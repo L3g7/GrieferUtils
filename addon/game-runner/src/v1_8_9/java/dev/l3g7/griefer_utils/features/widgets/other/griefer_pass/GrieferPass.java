@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
@@ -45,6 +46,8 @@ public class GrieferPass extends ComplexWidget {
 	private int lastIndex = -1;
 	private final Map<String, TreeSet<AbstractQuest>> questLookup = new HashMap<>();
 	private final Map<String, TreeSet<AbstractQuest>> questTypeLookup = new HashMap<>();
+
+	private final Set<Integer> failedQuests = new HashSet<>();
 
 	private final DropDownSetting<Sorting> sorting = DropDownSetting.create(Sorting.class)
 		.name("Sortierung")
@@ -141,7 +144,8 @@ public class GrieferPass extends ComplexWidget {
 				pinnedQuest.ifPresent(quest -> {
 					// Update amount
 					AbstractQuest parsed = parseQuest(questIndex, questStack.b);
-					quest.setAmount(parsed.getAmount());
+					if (parsed != null)
+						quest.setAmount(parsed.getAmount());
 				});
 			}
 
@@ -163,6 +167,9 @@ public class GrieferPass extends ComplexWidget {
 			int questIndex = event.itemStack.getTagCompound().getInteger("griefer_utils_quest_index");
 			boolean isPinned = streamQuests().anyMatch(q -> q.index == questIndex);
 			AbstractQuest quest = parseQuest(questIndex, event.itemStack);
+			if (quest == null)
+				return;
+
 			if (isPinned)
 				quest.unpin(questLookup, questTypeLookup);
 			else
@@ -180,6 +187,9 @@ public class GrieferPass extends ComplexWidget {
 
 		for (Pair<Integer, ItemStack> questStack : getQuestStacks(slot -> container.getSlot(slot).getStack())) {
 			AbstractQuest quest = parseQuest(lastIndex * 100 + questStack.a, questStack.b);
+			if (quest == null)
+				continue;
+
 			if (isAdd) {
 				if (!ignoreCaseOpening.get() || !Quests.DISPLAY_PATTERNS.get(quest.getMatcher().pattern()).equals("Öffne {TARGET} Kisten"))
 					quest.pin(questLookup, questTypeLookup);
@@ -226,14 +236,24 @@ public class GrieferPass extends ComplexWidget {
 			maxCompletions = Integer.parseInt(completionParts[1]);
 		}
 
-		return Quests.parseQuest(
+		String questText = stack.getDisplayName().replaceAll("§.", "");
+		AbstractQuest quest = Quests.parseQuest(
 			questIndex,
-			stack.getDisplayName().replaceAll("§.", ""),
+			questText,
 			amount,
 			maxAmount,
 			completions,
 			maxCompletions
 		);
+
+		if (quest != null)
+			return quest;
+
+		if (!failedQuests.add(questIndex))
+			return null;
+
+		labyBridge.notify("§eUnbekannte Quest", "§eDie Quest \"" + questText + "\" wurde noch nicht implementiert.");
+		return null;
 	}
 
 	private Stream<AbstractQuest> streamQuests() {

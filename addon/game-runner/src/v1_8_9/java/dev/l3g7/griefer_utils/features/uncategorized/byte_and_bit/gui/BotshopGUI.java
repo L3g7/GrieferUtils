@@ -96,7 +96,7 @@ public class BotshopGUI extends GuiBigChest {
 	@Override
 	public void onGuiClosed() {
 		boughtItems.forEach((i) -> {
-			i.warehouseCount.getAndAdd(-i.getStack().stackSize);
+			i.warehouseCount.getAndAdd(i.getStack().stackSize);
 		});
 		EventRegisterer.unregister(this);
 	}

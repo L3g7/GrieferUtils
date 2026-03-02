@@ -95,7 +95,7 @@ public class Spent extends SimpleWidget {
 		return DECIMAL_FORMAT_98.format(moneySpent) + "$";
 	}
 
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
 		if (matcher.matches())

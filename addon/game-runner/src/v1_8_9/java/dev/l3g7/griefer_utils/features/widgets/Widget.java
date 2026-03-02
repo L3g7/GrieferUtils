@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.widgets;
 
+import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget.ComplexLaby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget.ComplexLaby4Widget;
@@ -16,7 +17,7 @@ import net.minecraft.util.IChatComponent;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
-public abstract class Widget {
+public abstract class Widget implements Disableable {
 
 	protected LabyWidget versionedWidget = null;
 

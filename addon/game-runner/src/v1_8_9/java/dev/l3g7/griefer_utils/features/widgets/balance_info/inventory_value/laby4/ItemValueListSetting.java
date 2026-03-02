@@ -152,7 +152,7 @@ public class ItemValueListSetting extends ListSetting implements Laby4Setting<It
 		return list;
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onInit(SettingActivityInitEvent event) {
 		if (event.holder() != this)
 			return;
@@ -189,7 +189,7 @@ public class ItemValueListSetting extends ListSetting implements Laby4Setting<It
 
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onAddItem(WindowClickEvent event) {
 		if (previousScreen == null || event.itemStack == null)
 			return;

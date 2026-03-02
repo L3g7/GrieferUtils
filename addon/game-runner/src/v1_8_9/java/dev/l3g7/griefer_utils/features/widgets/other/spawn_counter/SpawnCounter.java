@@ -24,10 +24,10 @@ import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.misc.ActionBar;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
@@ -116,7 +116,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 		return leaderboardHandler;
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	public void onGrieferGamesJoin(ServerEvent.GrieferGamesJoinEvent event) {
 		getLeaderboardHandler().update(GUServer::getLeaderboardData);
 	}

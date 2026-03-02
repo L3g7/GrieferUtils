@@ -46,7 +46,7 @@ public class PlotCooldowns extends ComplexWidget {
 			.toArray(KVPair[]::new);
 	}
 
-	@EventListener
+	@EventListener(triggerWhenDisabled = true)
 	private void onMessageSend(MessageSendEvent event) {
 		if (!event.message.startsWith("/"))
 			return;

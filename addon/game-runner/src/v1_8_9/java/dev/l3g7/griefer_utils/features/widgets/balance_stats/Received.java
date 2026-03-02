@@ -96,7 +96,7 @@ public class Received extends SimpleWidget {
 		return DECIMAL_FORMAT_98.format(moneyReceived) + "$";
 	}
 
-	@EventListener(triggerWhenDisabled = true)
+	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
 		Matcher matcher = PAYMENT_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
 		if (!matcher.matches()) {

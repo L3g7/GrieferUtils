@@ -122,7 +122,7 @@ public class ScoreboardHandler {
 				score += 3;
 			}
 
-			return 999;
+			return -99;
 		}
 
 		int score = getKeyScore(key);
@@ -134,7 +134,7 @@ public class ScoreboardHandler {
 
 	private static int getKeyScore(String key) {
 		if (shouldHide(key))
-			return 999;
+			return -99;
 
 		int score = 0;
 		for (int i = keys.length - 1; i >= 0; i--) {
@@ -171,7 +171,7 @@ public class ScoreboardHandler {
 
 		int size = 0;
 		for (Score score : world().getScoreboard().getScores())
-			if (score.getScorePoints() < 900)
+			if (score.getScorePoints() >= 0)
 				size++;
 
 		return size;
@@ -189,7 +189,7 @@ public class ScoreboardHandler {
 				team = scoreboard.createTeam(key);
 				var name = UUID.randomUUID().toString().replaceAll("-", "").replaceAll("(.)", "§$1").substring(0, 16);
 				var score = scoreboard.getValueFromObjective(name, getGGObjective());
-				score.setScorePoints(999);
+				score.setScorePoints(-99);
 				scoreboard.addPlayerToTeam(name, key);
 			}
 

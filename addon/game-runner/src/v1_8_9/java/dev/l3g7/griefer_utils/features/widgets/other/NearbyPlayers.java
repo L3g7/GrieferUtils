@@ -48,8 +48,8 @@ public class NearbyPlayers extends Widget {
 		.description("Wie viele Spieler maximal angezeigt werden sollen."
 			+ "\n(-1 ist unendlich)")
 		.icon("measurement")
-		.min(-1)
 		.defaultValue(10)
+		.min(-1)
 		.since("2.4-BETA-1");
 
 	@MainElement

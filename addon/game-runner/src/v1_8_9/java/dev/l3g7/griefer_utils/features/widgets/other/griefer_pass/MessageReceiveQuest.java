@@ -164,4 +164,13 @@ abstract class MessageReceiveQuest extends AbstractQuest {
 		}
 	}
 
+	static class BuyLotteryQuest extends MessageReceiveQuest {
+
+		@Override
+		protected int processMessage(IChatComponent message) {
+			return message.getUnformattedText().equals("[GrieferGames] Du hast erfolgreich ein Los erworben.") ? 1 : 0;
+		}
+
+	}
+
 }

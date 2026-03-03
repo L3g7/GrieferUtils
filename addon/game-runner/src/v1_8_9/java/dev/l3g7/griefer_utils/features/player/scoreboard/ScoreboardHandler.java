@@ -75,6 +75,8 @@ public class ScoreboardHandler {
 			// Build scoreboard
 			for (LineProvider provider : providers)
 				provider.createLine();
+
+			update();
 		}
 
 		/**
@@ -85,14 +87,7 @@ public class ScoreboardHandler {
 			if (packet.getScoreAction() != S3CPacketUpdateScore.Action.CHANGE)
 				return;
 
-			// Check if objective matches
-			Scoreboard scoreboard = world().getScoreboard();
-			ScoreObjective objective = scoreboard.getObjective(packet.getObjectiveName());
-			if (objective == null || !"§6§lGrieferGames".equals(objective.getDisplayName()))
-				return;
-
-			ScorePlayerTeam team = scoreboard.getPlayersTeam(packet.getPlayerName());
-			Reflection.set(packet, "value", getScore(team));
+			update();
 		}
 	}
 
@@ -157,6 +152,9 @@ public class ScoreboardHandler {
 	}
 
 	private static ScoreObjective getGGObjective() {
+		if (world() == null)
+			return null;
+
 		Scoreboard scoreboard = world().getScoreboard();
 		for (ScoreObjective scoreObjective : scoreboard.getScoreObjectives())
 			if (scoreObjective.getDisplayName().equals("§6§lGrieferGames"))
@@ -183,6 +181,9 @@ public class ScoreboardHandler {
 		boolean shouldHide(String key);
 
 		default void updateTeam(String key, String prefix, String suffix) {
+			if (getGGObjective() == null)
+				return;
+
 			Scoreboard scoreboard = world().getScoreboard();
 			ScorePlayerTeam team = scoreboard.getTeam(key);
 			if (team == null) {

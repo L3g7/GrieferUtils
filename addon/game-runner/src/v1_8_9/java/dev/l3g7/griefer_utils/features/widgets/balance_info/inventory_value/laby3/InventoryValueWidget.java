@@ -231,6 +231,9 @@ public class InventoryValueWidget {
 			long value = 0;
 
 			for (ItemStack itemStack : itemStacks) {
+				if (itemStack == null)
+					continue;
+
 				ItemDisplaySetting ids = getSetting(itemStack);
 
 				if (ids != null) {

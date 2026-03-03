@@ -56,6 +56,7 @@ public class LabyModNeoPayloadEvent<T extends LabyModNeoPacket> extends Event {
 	@ExclusiveTo(value = LABY_3, reason = NOT_NEEDED)
 	private static class Init {
 
+		@SuppressWarnings("unchecked")
 		@EventListener(priority = LOW)
 		private static void register(PacketReceiveEvent<S3FPacketCustomPayload> event) {
 			if (!event.packet.getChannelName().equals("MC|Brand"))
@@ -63,14 +64,15 @@ public class LabyModNeoPayloadEvent<T extends LabyModNeoPacket> extends Event {
 
 			// Register labymod:neo connection
 			PacketBuffer register = new PacketBuffer(Unpooled.wrappedBuffer("labymod:neo".getBytes(StandardCharsets.UTF_8)));
-			event.manager.sendPacket(new C17PacketCustomPayload("REGISTER", register));
+			// Use sendPacket with listener to circumvent LiquidBounce's custom payload block
+			event.manager.sendPacket(new C17PacketCustomPayload("REGISTER", register), f -> {});
 
 			// Init labymod:neo connection
 			PacketBuffer data = new PacketBuffer(Unpooled.buffer());
 			data.writeVarIntToBuffer(0);
 			data.writeString("4.3.54");
 
-			event.manager.sendPacket(new C17PacketCustomPayload("labymod:neo", data));
+			event.manager.sendPacket(new C17PacketCustomPayload("labymod:neo", data), f -> {});
 		}
 	}
 

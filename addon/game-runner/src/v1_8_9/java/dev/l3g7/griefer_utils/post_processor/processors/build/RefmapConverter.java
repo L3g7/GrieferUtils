@@ -59,6 +59,13 @@ public class RefmapConverter {
 			for (Map.Entry<String, JsonElement> entry : mappings.entrySet()) {
 				String mapping = entry.getValue().getAsString();
 
+				// Handle class mappings
+				if (entry.getKey().contains(".")) {
+					String newMapping = ReferenceMapper.mapClass(mapping).replace('/', '.');
+					entry.setValue(new JsonPrimitive(newMapping));
+					continue;
+				}
+
 				// Parse mapping
 				int ownerEndIdx = 0;
 				int nameEndIdx = 0;

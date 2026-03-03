@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.core.events.network;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.INetHandler;
@@ -87,6 +88,7 @@ public abstract class PacketEvent<P extends Packet<?>> extends Event {
 		@Mixin(targets = "net.minecraft.network.PacketThreadUtil$1")
 		private static class MixinPacketThreadUtil$1 {
 
+			@InheritedInvoke(Runnable.class)
 			@Inject(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Packet;processPacket(Lnet/minecraft/network/INetHandler;)V", shift = At.Shift.AFTER))
 			private void injectCheckThreadAndEnqueue(CallbackInfo ci) {
 				new PacketReceivedEvent<>(LAST_QUEUED_PACKET, null).fire();

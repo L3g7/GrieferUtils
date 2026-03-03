@@ -36,6 +36,9 @@ public class ReferenceMapper {
 			if (owner.startsWith("net/labymod/") && allowUnknown)
 				return name;
 
+			if (owner.startsWith("java/"))
+				return name;
+
 			throw new NoSuchElementException("Could not find mapping for class " + owner);
 		}
 

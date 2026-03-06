@@ -21,7 +21,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
@@ -97,7 +99,12 @@ public class SkullEnchantmentFix extends Feature {
 
 		@Inject(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/resources/model/IBakedModel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer;renderByItem(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
 		public void injectRenderItem(ItemStack stack, IBakedModel model, CallbackInfo ci) {
-			if (stack.getItem() != Items.skull || !stack.hasEffect())
+			if ((stack.getItem() != Items.skull
+				&& stack.getItem() != Items.banner
+				&& stack.getItem() != Item.getItemFromBlock(Blocks.chest)
+				&& stack.getItem() != Item.getItemFromBlock(Blocks.ender_chest)
+				&& stack.getItem() != Item.getItemFromBlock(Blocks.trapped_chest)
+			) || !stack.hasEffect())
 				return;
 
 			if (!SkullEnchantmentFix.get().isEnabled())

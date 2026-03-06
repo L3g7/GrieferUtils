@@ -73,8 +73,8 @@ public class SkullEnchantmentFix extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Kopf-Verzauberung fixen")
-		.description("Behebt, dass Verzauberungen von Köpfen nicht angezeigt werden.")
+		.name("Tile Entity-Verzauberung fixen")
+		.description("Behebt, dass Verzauberungen von Tile Entities (Bannern, Kisten, Köpfen) nicht angezeigt werden.")
 		.icon("enchanted_steve");
 
 	public static SkullEnchantmentFix get() {

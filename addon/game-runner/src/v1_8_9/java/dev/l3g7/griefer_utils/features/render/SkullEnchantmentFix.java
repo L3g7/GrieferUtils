@@ -125,7 +125,11 @@ public class SkullEnchantmentFix extends Feature {
 			GlStateManager.enableBlend();
 
 			GlStateManager.translate(-0.035, -0.035, -0.035);
-			GlStateManager.scale(1.07, 1.07, 1.07);
+			if (stack.getItem() == Items.banner)
+				GlStateManager.scale(1.07, 1.85, 1.07);
+			else
+				GlStateManager.scale(1.07, 1.07, 1.07);
+
 			Reflection.invoke(mc().getRenderItem(), "renderEffect", cubeModel);
 
 			// Disable stencil

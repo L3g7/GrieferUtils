@@ -8,11 +8,9 @@
 package dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit;
 
 
-import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
@@ -20,6 +18,7 @@ import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BABBot;
+import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BotSource;
 import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.gui.BotshopGUI;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.KeySettingImpl;
 import net.labymod.api.client.gui.screen.key.Key;
@@ -45,11 +44,6 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 @Singleton
 public class ByteAndBit extends Feature {
 
-	public static final String[] URLS = new String[] {
-		"https://api.velociraptor-bot.de/api/",
-		"https://blitzbot-botshopgui.onrender.com/api/"
-	};
-
 	protected static final Map<String, BABBot> allBots = new ConcurrentHashMap<>();
 	Map<String, BABBot> renderedBots = new ConcurrentHashMap<>();
 
@@ -61,22 +55,17 @@ public class ByteAndBit extends Feature {
 		.defaultValue(Keyboard.KEY_RETURN)
 		.pressCallback(this::onKeyPress);
 
-	@OnEnable
-	private void onEnable() {
-		this.syncBots();
-		TickScheduler.runAfterClientTicks(this::syncBots, 60 * 20 * 5);
+	@EventListener
+	private void onStaticData(StaticDataReceiveEvent event) {
+		this.syncBots(event.data.botSources);
+		TickScheduler.runAfterClientTicks(() -> syncBots(event.data.botSources), 60 * 20 * 5);
 	}
 
-	private void syncBots() {
-		for (String url : URLS) {
-			IOUtil.read(url + "scope/getBots").asJsonObject((res) -> {
-				if (!res.get("success").getAsBoolean())
-					return;
-
-				for (JsonElement entry : res.get("bots").getAsJsonArray()) {
-					String uuid = entry.getAsString().replaceAll("-", "");
-					allBots.put(uuid, new BABBot(url, uuid));
-				}
+	private void syncBots(BotSource[] botSources) {
+		for (BotSource botSource : botSources) {
+			botSource.get().thenAccept(bots -> {
+				for (String bot : bots)
+					allBots.put(bot, new BABBot(botSource.getUrl(), bot));
 			});
 		}
 	}

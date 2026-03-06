@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.Node;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.Requirement;
 import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.suggestions.Suggestion;
+import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BotSource;
 
 import java.util.Map;
 import java.util.UUID;
@@ -45,6 +46,7 @@ public class StaticApiRequest extends Request<StaticApiRequest.StaticApiData> {
 		public Changelog changelog;
 		public Map<String, GrieferInfoItem> grieferInfoItems;
 		public Node<?>[] commands;
+		public BotSource[] botSources;
 		public String[] repeatingPrefixes;
 		public String[] coloredFonts;
 		public Map<UUID, SpecialBadge> specialBadges;

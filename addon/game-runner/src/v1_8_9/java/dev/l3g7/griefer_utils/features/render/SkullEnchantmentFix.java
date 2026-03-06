@@ -45,6 +45,10 @@ import static org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT;
 import static org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT;
 import static org.lwjgl.opengl.GL11.*;
 
+/**
+ * Adds enchantment glint to tile entities by rendering the enchantment of a dirt block onto the tile entity
+ * via stencil buffer.
+ */
 @Singleton
 public class SkullEnchantmentFix extends Feature {
 
@@ -144,6 +148,9 @@ public class SkullEnchantmentFix extends Feature {
 
 	}
 
+	/**
+	 * Adds a stencil buffer to Minecraft's Framebuffer if needed.
+	 */
 	@Mixin(Framebuffer.class)
 	@Implements(@Interface(iface = FramebufferWithStencil.class, prefix = "griefer_utils$"))
 	private static abstract class MixinFramebuffer implements FramebufferWithStencil {

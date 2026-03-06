@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -46,8 +45,6 @@ import static org.lwjgl.opengl.GL11.*;
 
 @Singleton
 public class SkullEnchantmentFix extends Feature {
-
-	public static final ItemStack ICON = ItemUtil.createItem(Items.skull, 0, true);
 
 	@SuppressWarnings("unchecked")
 	public static final IBakedModel cubeModel = new IBakedModel() {
@@ -103,15 +100,8 @@ public class SkullEnchantmentFix extends Feature {
 			if (stack.getItem() != Items.skull || !stack.hasEffect())
 				return;
 
-			if (!SkullEnchantmentFix.get().isEnabled() && stack != ICON)
+			if (!SkullEnchantmentFix.get().isEnabled())
 				return;
-
-			if (stack == ICON) {
-				// Adjust scale to fit the other icons
-				GlStateManager.scale(1.2, 1.2, 1.2);
-				GlStateManager.translate(0, -0.1, -0.1);
-				TileEntityItemStackRenderer.instance.renderByItem(stack);
-			}
 
 			// Enable stencil
 			glClear(GL_STENCIL_BUFFER_BIT);

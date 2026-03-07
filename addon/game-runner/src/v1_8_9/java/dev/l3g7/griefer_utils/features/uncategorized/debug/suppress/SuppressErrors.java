@@ -8,9 +8,12 @@
 package dev.l3g7.griefer_utils.features.uncategorized.debug.suppress;
 
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.timeout.TimeoutException;
 import net.labymod.user.cosmetic.geometry.effect.effects.GeometryColor;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S3EPacketTeams;
 import net.minecraft.scoreboard.Scoreboard;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,7 +59,7 @@ public class SuppressErrors {
 		private WorldClient clientWorldController;
 
 		@Inject(method = "handleTeams", at = @At("HEAD"), cancellable = true)
-		public void on(S3EPacketTeams packet, CallbackInfo ci) {
+		public void onHandleTeams(S3EPacketTeams packet, CallbackInfo ci) {
 			if (!enabled.get() || this.clientWorldController == null)
 				return;
 
@@ -64,6 +67,17 @@ public class SuppressErrors {
 			if (packet.getAction() == 1 /* REMOVE_TEAM */)
 				if (scoreboard.getTeam(packet.getName()) == null)
 					ci.cancel();
+		}
+
+	}
+
+	@Mixin(NetworkManager.class)
+	private static class MixinNetworkManager {
+
+		@Inject(method = "exceptionCaught", at = @At("HEAD"))
+		public void onExceptionCaught(ChannelHandlerContext ctx, Throwable t, CallbackInfo ci) {
+			if (!(t instanceof TimeoutException) && t != null)
+				t.printStackTrace();
 		}
 
 	}

@@ -57,7 +57,7 @@ public class SuppressErrors {
 
 		@Inject(method = "handleTeams", at = @At("HEAD"), cancellable = true)
 		public void on(S3EPacketTeams packet, CallbackInfo ci) {
-			if (!enabled.get())
+			if (!enabled.get() || this.clientWorldController == null)
 				return;
 
 			Scoreboard scoreboard = this.clientWorldController.getScoreboard();

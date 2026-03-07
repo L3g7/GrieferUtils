@@ -21,7 +21,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -95,12 +94,12 @@ public class AutoEat extends Feature {
 			return;
 
 		finishing = true;
+		int prevHotbarSlot = previousHotbarSlot;
+		previousHotbarSlot = -1;
 		// Wait some ticks to finish eating, maybe because of NCP?
 		TickScheduler.runAfterClientTicks(() -> {
 			KeyBinding.setKeyBindState(settings().keyBindUseItem.getKeyCode(), false);
-			int prevHotbarSlot = previousHotbarSlot;
 			TickScheduler.runNextClientTick(() -> inventory().currentItem = prevHotbarSlot);
-			previousHotbarSlot = -1;
 			finishing = false;
 		}, 3);
 	}
@@ -121,9 +120,10 @@ public class AutoEat extends Feature {
 				continue;
 
 			// Skip items with lore
-			if (ItemUtil.getLore(item).size() != 0)
+			if (!ItemUtil.getLore(item).isEmpty())
 				continue;
 
+			240104
 			// Check if the food causes bad potion effects
 			int potionId = Reflection.get(food, "potionId");
 			if (potionId > 0 && Potion.potionTypes[potionId].isBadEffect())

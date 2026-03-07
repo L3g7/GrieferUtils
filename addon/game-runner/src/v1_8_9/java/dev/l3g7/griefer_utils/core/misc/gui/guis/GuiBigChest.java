@@ -70,7 +70,6 @@ public class GuiBigChest extends GuiContainer {
 			rightClickEvents.add(null);
 			midClickEvents.add(null);
 			textureItems.add(null);
-			inventory.setInventorySlotContents(i, FILLER);
 		}
 	}
 

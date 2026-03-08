@@ -173,4 +173,13 @@ abstract class MessageReceiveQuest extends AbstractQuest {
 
 	}
 
+	static class MergeQuest extends MessageReceiveQuest {
+
+		@Override
+		protected int processMessage(IChatComponent message) {
+			return message.getUnformattedText().equals("[GrieferGames] Die Grundstücke wurden zusammengeführt.") ? 1 : 0;
+		}
+
+	}
+
 }

@@ -4,26 +4,29 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.events.ApproximateEntityKillEvent;
+import dev.l3g7.griefer_utils.core.events.*;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockBrokeEvent;
-import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
+import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockInteractEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageAboutToBeSentEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
-import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.LuckyBlockType;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.PacketDumper;
 import dev.l3g7.griefer_utils.features.world.bsf.BSF;
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartEmpty;
+import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -37,12 +40,13 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 abstract class MiscQuests {
 
@@ -141,17 +145,30 @@ abstract class MiscQuests {
 	static class KillQuest extends AbstractQuest {
 
 		private Class<? extends Entity> target;
+		private String entityString;
+		private boolean requireNether = false;
 
 		@Override
 		public void init(int index, Matcher matcher, String displayText, boolean approximate, int maxAmount, int maxCompletions) {
 			super.init(index, matcher, displayText, approximate, maxAmount, maxCompletions);
-			this.target = Translator.getEntity(matcher.group(2));
+			String target = matcher.group(2);
+			if (target.endsWith(" im Nether")) {
+				target = target.substring(0, target.length() - " im Nether".length());
+				requireNether = true;
+			}
+
+			if ((entityString = target).equals("Witherskelett"))
+				this.target = EntitySkeleton.class;
+			else
+				this.target = Translator.getEntity(target);
 		}
 
 		@EventListener
 		private void onEntityKill(ApproximateEntityKillEvent event) {
-			if (target.isInstance(event.entity))
-				increaseAmount();
+			if (target.isInstance(event.entity) && (!requireNether || player().dimension == -1)) {
+				if (!entityString.equals("witherskelett") || ((EntitySkeleton) event.entity).getSkeletonType() == 1)
+					increaseAmount();
+			}
 		}
 	}
 
@@ -350,6 +367,58 @@ abstract class MiscQuests {
 
 			pendingShoots--;
 			increaseAmount();
+		}
+
+	}
+
+	static class PickupItemsQuest extends AbstractQuest {
+
+		@EventListener
+		private void onItemPickUp(PacketReceiveEvent<S0DPacketCollectItem> event) {
+			if (event.packet.getEntityID() != player().getEntityId())
+				return;
+
+			if (!(world().getEntityByID(event.packet.getCollectedItemEntityID()) instanceof EntityItem item) || item.getEntityItem() == null)
+				return;
+
+			increaseAmount(item.getEntityItem().stackSize);
+		}
+
+	}
+
+	static class OpenLuckyBlockQuest extends AbstractQuest {
+
+		private final List<Long> luckyBlockPlaceTimes = new ArrayList<>();
+
+		@EventListener
+		private void onPlace(BlockInteractEvent event) {
+			ItemStack heldItem = heldItem();
+			if (heldItem == null
+				|| !heldItem.hasTagCompound()
+				|| heldItem.getTagCompound().getInteger("HideFlags") != 19
+				|| EnchantmentHelper.getEnchantments(heldItem).get(51) != -1)
+				return;
+
+			luckyBlockPlaceTimes.add(System.currentTimeMillis());
+		}
+
+		@EventListener(priority = Priority.HIGH)
+		private void onLuckyBlockMessage(MessageReceiveEvent event) {
+			if (!event.message.getUnformattedText().startsWith("[LuckyBlock]"))
+				return;
+
+			luckyBlockPlaceTimes.removeIf(luckyBlockPlaceTime -> {
+				long passedTime = System.currentTimeMillis() - luckyBlockPlaceTime;
+				return passedTime > 15_000;
+			});
+
+			if (luckyBlockPlaceTimes.isEmpty())
+				return;
+
+			if ((System.currentTimeMillis() - luckyBlockPlaceTimes.get(0)) >= 10_000) {
+				luckyBlockPlaceTimes.remove(0);
+				increaseAmount();
+			}
 		}
 
 	}

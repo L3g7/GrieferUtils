@@ -24,12 +24,14 @@ class Quests {
 		registerQuest(true, "Laufe {AMOUNT} Blöcke", MiscQuests.WalkQuest.class);
 		registerQuest(true, "Platziere {AMOUNT} Blöcke auf deinem Grundstück", MiscQuests.PlaceQuest.class);
 		registerQuest(true, "Angle {AMOUNT}x {TARGET}", MiscQuests.FishQuest.class);
+		registerQuest(true, "Öffne {AMOUNT}x LuckyBlöcke", MiscQuests.OpenLuckyBlockQuest.class);
 
 		registerQuest(false, "Schieße {AMOUNT}x mit Bogen", MiscQuests.ShootBowQuest.class);
 		registerQuest(false, "Nutze {AMOUNT}x ein Boot oder Minecart", MiscQuests.RideBoatOrMinecartQuest.class);
 		registerQuest(false, "Betritt {AMOUNT}x einen Citybuild", MiscQuests.JoinCitybuildQuest.class);
 		registerQuest(false, "Zähme {AMOUNT} Tiere", MiscQuests.TameQuest.class);
 		registerQuest(false, "Erhalte {AMOUNT} Effekte", MiscQuests.ReceiveEffectsQuest.class);
+		registerQuest(false, "Sammle {AMOUNT}x Items auf", MiscQuests.PickupItemsQuest.class);
 
 		registerQuest(false, "Führe {AMOUNT}x den Befehl p h aus", MessageReceiveQuest.PHQuest.class);
 		registerQuest(false, "Führe {AMOUNT}x den Befehl {TARGET} aus", MiscQuests.CommandSendQuest.class);
@@ -45,6 +47,7 @@ class Quests {
 		registerQuest(false, "Liefere {AMOUNT}x Stacks zum Jobs-NPC", MessageReceiveQuest.JobFulfillQuest.class);
 		registerQuest(false, "Betritt {AMOUNT}x den Zauberwald", MessageReceiveQuest.JoinMagicForestQuest.class);
 		registerQuest(false, "Brich {AMOUNT}x in das Gefängnis ein", MessageReceiveQuest.BreakIntoJailQuest.class);
+		registerQuest(false, "Merge {AMOUNT}x ein Grundstück", MessageReceiveQuest.MergeQuest.class);
 
 		registerQuest(false, "Stelle {AMOUNT} Gegenstände her \\(Jedes Crafting zählt einmal\\)", "Stelle Gegenstände her", WindowClickQuest.CraftQuest.class);
 		registerQuest(true, "Verzaubere {AMOUNT} Gegenstände", WindowClickQuest.EnchantQuest.class);

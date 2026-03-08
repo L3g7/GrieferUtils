@@ -123,7 +123,6 @@ public class AutoEat extends Feature {
 			if (!ItemUtil.getLore(item).isEmpty())
 				continue;
 
-			240104
 			// Check if the food causes bad potion effects
 			int potionId = Reflection.get(food, "potionId");
 			if (potionId > 0 && Potion.potionTypes[potionId].isBadEffect())

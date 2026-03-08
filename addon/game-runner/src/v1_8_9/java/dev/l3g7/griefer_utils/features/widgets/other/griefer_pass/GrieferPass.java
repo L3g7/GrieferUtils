@@ -74,10 +74,11 @@ public class GrieferPass extends ComplexWidget {
 		.subSettings(sorting, removeFinished, ignoreCaseOpening)
 		.since("2.4-BETA-1");
 
-	private void onQuestUpdate() {
+	void onQuestUpdate(boolean updateShadowing) {
 		JsonArray array = new JsonArray();
 		streamQuests().forEach(q -> {
-			q.updateShadowing(questTypeLookup);
+			if (updateShadowing)
+				q.updateShadowing(questTypeLookup);
 			array.add(q.serialize());
 		});
 		Config.set("modules.griefer_pass.quests." + mc().getSession().getProfile().getId(), array);
@@ -174,7 +175,7 @@ public class GrieferPass extends ComplexWidget {
 				quest.unpin(questLookup, questTypeLookup);
 			else
 				quest.pin(questLookup, questTypeLookup);
-			onQuestUpdate();
+			onQuestUpdate(true);
 			return;
 		}
 
@@ -198,7 +199,7 @@ public class GrieferPass extends ComplexWidget {
 			}
 		}
 
-		onQuestUpdate();
+		onQuestUpdate(true);
 	}
 
 	private Iterable<Pair<Integer, ItemStack>> getQuestStacks(Function<Integer, ItemStack> stackFn) {

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
@@ -94,7 +95,11 @@ abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 	protected void increaseAmount() { increaseAmount(1); }
 	protected void increaseAmount(int amount) { setAmount(this.amount + amount); }
 	protected void setAmount(int amount) {
+		int previousAmount = this.amount;
 		this.amount = Math.min(amount, maxAmount);
+
+		if (previousAmount != this.amount)
+			FileProvider.getSingleton(GrieferPass.class).onQuestUpdate(false);
 	}
 
 	public void increaseCompletions(int amount) {

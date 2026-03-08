@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.world.ItemSearch;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -52,11 +53,12 @@ public class ChestSaver extends Feature {
 
 	@EventListener
 	public void onMouseClick(MouseClickEvent.RightClickEvent event) {
-		if (!"§fAktiviert §6die Kisten §fper Rechtsklick!".equals(ItemUtil.getLoreAtIndex(mc().thePlayer.getHeldItem(), 1)))
+		EntityPlayerSP player = player();
+		if (player == null || !"§fAktiviert §6die Kisten §fper Rechtsklick!".equals(ItemUtil.getLoreAtIndex(player.getHeldItem(), 1)))
 			return;
 
 		event.cancel();
-		mc().displayGuiScreen(new GuiChest(player().inventory, inv) {
+		mc().displayGuiScreen(new GuiChest(player.inventory, inv) {
 
 			{
 				inventorySlots.windowId = -1337;

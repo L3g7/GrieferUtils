@@ -40,8 +40,11 @@ public class InteractableFriendsMenu extends Feature {
 		if (event.itemStack == null || event.itemStack.getItem() != Items.skull)
 			return;
 
-		String citybuild = ItemUtil.getLoreAtIndex(event.itemStack, 1).substring("§7Server: §e".length());
-		Citybuild parsedCB = Citybuild.getCitybuild(citybuild);
+		String serverLine = ItemUtil.getLoreAtIndex(event.itemStack, 1);
+		if (!serverLine.startsWith("§7Server: §e"))
+			return;
+
+		Citybuild parsedCB = Citybuild.getCitybuild(serverLine.substring("§7Server: §e".length()));
 		if (parsedCB == Citybuild.ANY)
 			return;
 

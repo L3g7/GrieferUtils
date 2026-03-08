@@ -39,8 +39,10 @@ public class ApproximateEntityKillEvent extends Event {
 		if (event.packet.getAction() != C02PacketUseEntity.Action.ATTACK)
 			return;
 
-		attackedEntities.retainAll(world().getLoadedEntityList());
-		attackedEntities.add(event.packet.getEntityFromWorld(world()));
+		synchronized (attackedEntities) {
+			attackedEntities.retainAll(world().getLoadedEntityList());
+			attackedEntities.add(event.packet.getEntityFromWorld(world()));
+		}
 	}
 
 	@EventListener
@@ -52,8 +54,12 @@ public class ApproximateEntityKillEvent extends Event {
 	private static abstract class MixinEntityLivingBase {
 		@Inject(method = "onDeath", at = @At("HEAD"))
 		private void injectOnDeath(DamageSource source, CallbackInfo ci) {
-			if (attackedEntities.remove(this))
-				new ApproximateEntityKillEvent((Entity) (Object) this).fire();
+			synchronized (attackedEntities) {
+				if (!attackedEntities.remove(this))
+					return;
+			}
+
+			new ApproximateEntityKillEvent((Entity) (Object) this).fire();
 		}
 	}
 

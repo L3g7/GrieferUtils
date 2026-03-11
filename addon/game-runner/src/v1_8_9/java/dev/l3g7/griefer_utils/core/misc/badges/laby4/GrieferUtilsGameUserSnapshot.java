@@ -29,6 +29,7 @@ import net.labymod.core.main.LabyMod;
 import net.labymod.core.main.user.DefaultGameUser;
 import net.labymod.core.main.user.GameUserData;
 import net.labymod.core.main.user.GameUserItem;
+import net.labymod.core.main.user.serverfeature.DefaultServerFeatureService;
 import net.labymod.core.main.user.serverfeature.UserServerFeature;
 import net.labymod.core.main.user.shop.item.model.AttachmentPoint;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +43,7 @@ public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
 	public final @Nullable SpecialBadge badge;
 
 	public GrieferUtilsGameUserSnapshot(GameUser user, Extras extras, LabyAPI api) {
-		this(user, LabyMod.references().serverFeatureService().get().getUserFeature(user.getUniqueId()), extras, api.config(), getBadge(user));
+		this(user, ((DefaultServerFeatureService) LabyMod.references().serverFeatureService()).get().getUserFeature(user.getUniqueId()), extras, api.config(), getBadge(user));
 	}
 
 	private GrieferUtilsGameUserSnapshot(GameUser user, @Nullable UserServerFeature userServerFeature, Extras extras, LabyConfig config, @Nullable SpecialBadge badge) {

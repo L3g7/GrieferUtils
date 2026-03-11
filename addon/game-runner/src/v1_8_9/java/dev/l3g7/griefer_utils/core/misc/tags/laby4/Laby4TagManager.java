@@ -28,7 +28,8 @@ import net.labymod.core.client.gui.screen.activity.activities.ingame.playerlist.
 import net.labymod.core.client.render.state.entity.GameUserSnapshotFactory;
 import net.labymod.core.main.LabyMod;
 import net.labymod.core.main.user.group.tag.GroupTextTag;
-import net.labymod.core.main.user.serverfeature.ServerFeature;
+import net.labymod.core.main.user.serverfeature.DefaultServerFeature;
+import net.labymod.core.main.user.serverfeature.DefaultServerFeatureService;
 import net.labymod.core.main.user.serverfeature.subtitle.SubtitleComponent;
 import net.labymod.serverapi.api.model.component.ServerAPIComponent;
 import net.labymod.serverapi.core.model.display.Subtitle;
@@ -87,13 +88,13 @@ public class Laby4TagManager implements TagManager {
 		if (!showSubtitle())
 			return;
 
-		mc().addScheduledTask(() -> LabyMod.references().serverFeatureService().get()
+		mc().addScheduledTask(() -> ((DefaultServerFeatureService) LabyMod.references().serverFeatureService()).get()
 			.getOrCreateUserFeature(uuid).setSubtitle(new SubtitleComponent(subtitle)));
 	}
 
 	@Override
 	public void toggleSubtitles(boolean enabled) {
-		ServerFeature service = LabyMod.references().serverFeatureService().get();
+		DefaultServerFeature service = ((DefaultServerFeatureService) LabyMod.references().serverFeatureService()).get();
 		for (Subtitle subtitle : subtitles) {
 			if (enabled)
 				service.getOrCreateUserFeature(subtitle.getUniqueId()).setSubtitle(new SubtitleComponent(subtitle));

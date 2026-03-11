@@ -130,7 +130,7 @@ public class GUIHierarchyTree {
 			),
 			cat("§hKöpfe", "steve", render_skulls,
 				feat("Kopf-Texturen fixen", "skull_steve", world),
-				feat("Kopf-Verzauberung fixen", "enchanted_steve", render)
+				feat("Tile Entity-Verzauberung fixen", "enchanted_steve", render)
 			),
 			feat("§iOverlays entfernen", "glass_pane", render),
 			feat("Effekt-Partikel verstecken", "particle", render),

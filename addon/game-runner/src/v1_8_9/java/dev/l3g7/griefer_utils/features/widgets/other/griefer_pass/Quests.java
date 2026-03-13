@@ -25,6 +25,7 @@ class Quests {
 		registerQuest(true, "Platziere {AMOUNT} Blöcke auf deinem Grundstück", MiscQuests.PlaceQuest.class);
 		registerQuest(true, "Angle {AMOUNT}x {TARGET}", MiscQuests.FishQuest.class);
 		registerQuest(true, "Öffne {AMOUNT}x LuckyBlöcke", MiscQuests.OpenLuckyBlockQuest.class);
+		registerQuest(true, "Erleide {AMOUNT}x Schaden durch Mobs oder Spieler", MiscQuests.GetDamagedQuest.class);
 
 		registerQuest(false, "Schieße {AMOUNT}x mit Bogen", MiscQuests.ShootBowQuest.class);
 		registerQuest(false, "Nutze {AMOUNT}x ein Boot oder Minecart", MiscQuests.RideBoatOrMinecartQuest.class);
@@ -35,7 +36,6 @@ class Quests {
 
 		registerQuest(false, "Führe {AMOUNT}x den Befehl p h aus", MessageReceiveQuest.PHQuest.class);
 		registerQuest(false, "Führe {AMOUNT}x den Befehl {TARGET} aus", MiscQuests.CommandSendQuest.class);
-
 		registerQuest(false, "Verkleide dich {AMOUNT}x mit /disguise", MessageReceiveQuest.DisguiseQuest.class);
 		registerQuest(false, "Erhalte {AMOUNT}x Orbs", MessageReceiveQuest.OrbQuest.class);
 		registerQuest(false, "Erledige {AMOUNT} Adventurer-Aufgaben", MessageReceiveQuest.AdventurerQuest.class);
@@ -48,6 +48,7 @@ class Quests {
 		registerQuest(false, "Betritt {AMOUNT}x den Zauberwald", MessageReceiveQuest.JoinMagicForestQuest.class);
 		registerQuest(false, "Brich {AMOUNT}x in das Gefängnis ein", MessageReceiveQuest.BreakIntoJailQuest.class);
 		registerQuest(false, "Merge {AMOUNT}x ein Grundstück", MessageReceiveQuest.MergeQuest.class);
+		registerQuest(false, "Setze {AMOUNT} Plotflags", MessageReceiveQuest.SetPlotFlagsQuest.class);
 
 		registerQuest(false, "Stelle {AMOUNT} Gegenstände her \\(Jedes Crafting zählt einmal\\)", "Stelle Gegenstände her", WindowClickQuest.CraftQuest.class);
 		registerQuest(true, "Verzaubere {AMOUNT} Gegenstände", WindowClickQuest.EnchantQuest.class);

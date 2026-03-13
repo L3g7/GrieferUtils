@@ -4,19 +4,20 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.events.*;
+import dev.l3g7.griefer_utils.core.events.ApproximateEntityKillEvent;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockBrokeEvent;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockInteractEvent;
+import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageAboutToBeSentEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.LuckyBlockType;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.PacketDumper;
 import dev.l3g7.griefer_utils.features.world.bsf.BSF;
 import net.minecraft.block.Block;
@@ -419,6 +420,43 @@ abstract class MiscQuests {
 				luckyBlockPlaceTimes.remove(0);
 				increaseAmount();
 			}
+		}
+
+	}
+
+	static class GetDamagedQuest extends AbstractQuest {
+
+		private boolean isInCombat;
+		private long metadataReceive = -1;
+
+		@EventListener
+		private void onMetadataReceive(PacketReceiveEvent<S1CPacketEntityMetadata> event) {
+			if (!isInCombat || event.packet.getEntityId() != player().getEntityId())
+				return;
+
+			for (DataWatcher.WatchableObject wo : event.packet.func_149376_c())
+				if (wo.getDataValueId() == 6)
+					metadataReceive = PacketDumper.getLastReadTime();
+		}
+
+		@EventListener
+		private void onEntity(PacketReceiveEvent<S12PacketEntityVelocity> event) {
+			if (isInCombat && event.packet.getEntityID() == player().getEntityId() && metadataReceive == PacketDumper.getLastReadTime())
+				increaseAmount();
+		}
+
+		@EventListener
+		private void onCombatEvent(PacketReceiveEvent<S42PacketCombatEvent> event) {
+			if (event.packet.eventType == S42PacketCombatEvent.Event.ENTER_COMBAT)
+				isInCombat = true;
+			else if (event.packet.eventType == S42PacketCombatEvent.Event.END_COMBAT)
+				isInCombat = false;
+		}
+
+		@EventListener
+		private void onWorldUnload(WorldUnloadEvent event) {
+			isInCombat = false;
+			metadataReceive = -1;
 		}
 
 	}

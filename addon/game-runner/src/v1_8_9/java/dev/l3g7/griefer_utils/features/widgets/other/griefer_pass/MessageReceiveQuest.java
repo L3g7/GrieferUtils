@@ -165,21 +165,24 @@ abstract class MessageReceiveQuest extends AbstractQuest {
 	}
 
 	static class BuyLotteryQuest extends MessageReceiveQuest {
-
 		@Override
 		protected int processMessage(IChatComponent message) {
 			return message.getUnformattedText().equals("[GrieferGames] Du hast erfolgreich ein Los erworben.") ? 1 : 0;
 		}
-
 	}
 
 	static class MergeQuest extends MessageReceiveQuest {
-
 		@Override
 		protected int processMessage(IChatComponent message) {
 			return message.getUnformattedText().equals("[GrieferGames] Die Grundstücke wurden zusammengeführt.") ? 1 : 0;
 		}
+	}
 
+	static class SetPlotFlagsQuest extends MessageReceiveQuest {
+		@Override
+		protected int processMessage(IChatComponent message) {
+			return message.getUnformattedText().equals("[GrieferGames] Die Flag wurde erfolgreich hinzugefügt") ? 1 : 0;
+		}
 	}
 
 }

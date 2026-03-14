@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
+import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
@@ -22,13 +23,18 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.client.C17PacketCustomPayload;
+import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
@@ -38,17 +44,26 @@ public class PacketDumper {
 	private static final OneSidedPacketDumper incoming = new OneSidedPacketDumper("[INCOMING] ", "Eingehende", "00,03,19,3E");
 	private static final OneSidedPacketDumper outgoing = new OneSidedPacketDumper("[OUTGOING] ", "Ausgehende", "00,03,04,05,06");
 
+	private static final SwitchSetting dumpCustomPayloads = SwitchSetting.create()
+		.name("CustomPayloads dumpen")
+		.description("Dumpt ein-/ausgehende CustomPayload-Pakete.")
+		.icon("scroll");
+
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Paket-Dumper")
 		.description("Dumpt ein-/ausgehende Pakete.")
 		.icon("portal")
 		.enabled(LabyBridge.labyBridge.activeMapping() != Mapping.OBFUSCATED)
-		.subSettings(incoming.enabled, outgoing.enabled);
+		.subSettings(incoming.enabled, outgoing.enabled, dumpCustomPayloads);
 
 	@EventListener
 	private static void onPacketReceive(PacketReceiveEvent<?> p) {
-		if (DebugSettings.enabled.get() && enabled.get())
+		if (DebugSettings.enabled.get() && enabled.get()) {
 			incoming.onPacket(p.packet);
+
+			if (dumpCustomPayloads.get() && p.packet instanceof S3FPacketCustomPayload customPayload)
+				dumpCustomPayload(incoming, customPayload);
+		}
 	}
 
 	@Mixin(NetworkManager.class)
@@ -67,8 +82,26 @@ public class PacketDumper {
 	}
 
 	public static void onPacketSend(Packet<?> packet) {
-		if (DebugSettings.enabled.get() && enabled.get())
+		if (DebugSettings.enabled.get() && enabled.get()) {
 			outgoing.onPacket(packet);
+
+			if (dumpCustomPayloads.get() && packet instanceof C17PacketCustomPayload customPayload)
+				dumpCustomPayload(outgoing, packet);
+		}
+	}
+
+	private static void dumpCustomPayload(OneSidedPacketDumper dumper, Packet<?> packet) {
+		String channelName = Reflection.invoke(packet, "getChannelName");
+		PacketBuffer buffer = Reflection.invoke(packet, "getBufferData");
+		byte[] bytes = buffer.array();
+
+		System.out.println(dumper.prefix + "[" + getLastReadTime() + "] " + packet.getClass().getSimpleName());
+		JsonObject obj = new JsonObject();
+		obj.addProperty("channel", channelName);
+		obj.addProperty("bufferB64", Base64.getEncoder().encodeToString(bytes));
+		obj.addProperty("bufferUTF8", new String(bytes, StandardCharsets.UTF_8));
+
+		System.out.println(IOUtil.gson.toJson(obj));
 	}
 
 	private static class OneSidedPacketDumper {

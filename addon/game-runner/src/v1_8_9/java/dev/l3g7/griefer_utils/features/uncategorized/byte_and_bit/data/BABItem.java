@@ -17,6 +17,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -108,26 +109,27 @@ public class BABItem implements Comparable<BABItem> {
 
 			List<BABItem> items = new ArrayList<>();
 			ItemEnchantment[] itemEnchantments = enchantments.stream().map((e) -> new ItemEnchantment(e.id, e.level)).toArray(ItemEnchantment[]::new);
-			for (var price : this.prices) {
-				if (price.price == null) continue;
-				if (price.price < 0) continue; // ankauf - TODO
+			for (var veloPrice : this.prices) {
+				if (veloPrice.price == null) continue;
+				BigDecimal price = new BigDecimal(veloPrice.price);
+				if (price.compareTo(BigDecimal.ZERO) < 0) continue; // ankauf - TODO
 
-				ItemStack stack = new ItemStack(Blocks.stone, price.amount, 10000);
+				ItemStack stack = new ItemStack(Blocks.stone, veloPrice.amount, 10000);
 				if (material.name != null) {
 					Item item = Item.getByNameOrId(material.name);
 					if (item != null)
-						stack = new ItemStack(item, price.amount, this.material.subID);
+						stack = new ItemStack(item, veloPrice.amount, this.material.subID);
 				}
 
 				stack.setRepairCost(repairCost);
-				stack.setStackDisplayName("§r" + displayName + " §r§a(" + BotshopGUI.PRICE_FORMAT_DE.format(price.price) + "$)");
+				stack.setStackDisplayName("§r" + displayName + " §r§a(" + BotshopGUI.PRICE_FORMAT_DE.format(price) + "$)");
 
 				if (!lore.isEmpty())
 					ItemUtil.setLore(stack, lore.stream().map(l -> l.lineContent).toArray(String[]::new));
 
 				if (!enchantments.isEmpty()) ItemUtil.setEnchantments(stack, itemEnchantments);
 
-				items.add(new BABItem(Math.round(price.price * 100d), stack, i));
+				items.add(new BABItem(price.multiply(new BigDecimal(100)).longValue(), stack, i));
 			}
 			return items;
 		}
@@ -149,7 +151,7 @@ public class BABItem implements Comparable<BABItem> {
 	}
 
 	private static class VeloPrice {
-		Float price;
+		String price;
 		int amount = 1;
 	}
 

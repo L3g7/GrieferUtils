@@ -14,8 +14,8 @@ import org.objectweb.asm.tree.MethodNode;
 @Target("com.github.lunatrius.schematica.client.gui.control.GuiSchematicMaterials")
 public class GuiSchematicMaterialsTransformer extends Transformer {
 
-	private static final MethodInsnNode OPEN_MATERIAL_FILE = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/BetterSchematica", "openMaterialFile", "()V", false);
-	private static final MethodInsnNode WRITE_ERROR_MESSAGE = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/BetterSchematica", "writeErrorMessage", "()V", false);
+	private static final MethodInsnNode OPEN_MATERIAL_FILE = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/BetterSchematica", "openMaterialFile", "()V", false);
+	private static final MethodInsnNode WRITE_ERROR_MESSAGE = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/BetterSchematica", "writeErrorMessage", "()V", false);
 
 	@Override
 	protected void process() {

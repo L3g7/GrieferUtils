@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons.L3Icon;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;

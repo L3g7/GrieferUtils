@@ -32,7 +32,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.item.AutoTool;
+import dev.l3g7.griefer_utils.features.world.building.AutoTool;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import net.labymod.core.LabyModCore;
 import net.labymod.core.WorldRendererAdapter;

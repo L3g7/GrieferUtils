@@ -83,7 +83,7 @@ public class ItemCounter {
 				subSettings.add((SettingsElement) HeaderSetting.create("§r§l" + Constants.ADDON_NAME).scale(1.3));
 				subSettings.add((SettingsElement) HeaderSetting.create("Item-Zähler"));
 				subSettings.add((SettingsElement) HeaderSetting.create().entryHeight(8));
-				List<SettingsElement> originalSettings = ((SettingsElement) dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.get().getMainElement()).getSubSettings().getElements();
+				List<SettingsElement> originalSettings = ((SettingsElement) dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.get().getMainElement()).getSubSettings().getElements();
 				subSettings.addAll(originalSettings.subList(originalSettings.size() - 3, originalSettings.size()));
 			}
 		}
@@ -96,7 +96,7 @@ public class ItemCounter {
 			}
 
 			List<ItemStack> itemStacks = Arrays.asList(MinecraftUtil.player().inventory.mainInventory);
-			long totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, stack);
+			long totalAmount = dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.getAmount(itemStacks, stack);
 			instance.drawItem(stack, xPosition, yPosition, Constants.DECIMAL_FORMAT_98.format(totalAmount));
 		}
 
@@ -119,9 +119,9 @@ public class ItemCounter {
 			.config("modules." + configKey + ".enabled");
 
 		// Copy item counter's settings
-		switchSetting.addSetting(dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.ignoreDamage);
-		switchSetting.addSetting(dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.ignoreEnchants);
-		switchSetting.addSetting(dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.ignoreLore);
+		switchSetting.addSetting(dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.ignoreDamage);
+		switchSetting.addSetting(dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.ignoreEnchants);
+		switchSetting.addSetting(dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.ignoreLore);
 
 		switchSetting.create(switchSetting);
 
@@ -171,7 +171,7 @@ public class ItemCounter {
 				return;
 
 			List<ItemStack> itemStacks = Arrays.asList(player().inventory.mainInventory);
-			long totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, stack);
+			long totalAmount = dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.getAmount(itemStacks, stack);
 			if (totalAmount == count)
 				return;
 
@@ -202,7 +202,7 @@ public class ItemCounter {
 
 			ItemStack mcStack = (ItemStack) (Object) itemStack;
 			List<ItemStack> itemStacks = Arrays.asList(player().inventory.mainInventory);
-			long totalAmount = dev.l3g7.griefer_utils.features.item.item_info.info_suppliers.ItemCounter.getAmount(itemStacks, mcStack);
+			long totalAmount = dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.getAmount(itemStacks, mcStack);
 			if (totalAmount == itemStack.getSize())
 				return;
 

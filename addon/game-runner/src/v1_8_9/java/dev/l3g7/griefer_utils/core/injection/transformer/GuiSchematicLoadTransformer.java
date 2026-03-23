@@ -14,7 +14,7 @@ import org.objectweb.asm.tree.MethodNode;
 @Target("com.github.lunatrius.schematica.client.gui.load.GuiSchematicLoad")
 public class GuiSchematicLoadTransformer extends Transformer {
 
-	private static final MethodInsnNode SET_POSITION_AFTER_LOADING = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/SaveSchematicaPosition", "setPositionAfterLoading", "(Lcom/github/lunatrius/schematica/client/world/SchematicWorld;)V", false);
+	private static final MethodInsnNode SET_POSITION_AFTER_LOADING = new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/SaveSchematicaPosition", "setPositionAfterLoading", "(Lcom/github/lunatrius/schematica/client/world/SchematicWorld;)V", false);
 
 	@Override
 	protected void process() {

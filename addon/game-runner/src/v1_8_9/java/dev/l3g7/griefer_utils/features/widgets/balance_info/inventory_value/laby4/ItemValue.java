@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby4;
 
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.chat.Calculator;
+import dev.l3g7.griefer_utils.features.chat.outgoing.Calculator;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;

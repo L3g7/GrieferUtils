@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEven
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.PacketDumper;
-import dev.l3g7.griefer_utils.features.world.bsf.BSF;
+import dev.l3g7.griefer_utils.features.gui.integrations.bsf.BSF;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.DataWatcher;

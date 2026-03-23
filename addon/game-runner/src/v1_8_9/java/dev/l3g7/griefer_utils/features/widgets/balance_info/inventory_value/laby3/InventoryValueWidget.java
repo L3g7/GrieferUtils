@@ -19,7 +19,7 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.chat.Calculator;
+import dev.l3g7.griefer_utils.features.chat.outgoing.Calculator;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.elements.SettingsElement;

@@ -24,7 +24,7 @@ public class RenderOverlayTransformer extends Transformer {
 		iterator.previous();
 		MethodInsnNode min = (MethodInsnNode) iterator.next();
 
-		iterator.set(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/HighlightSchematicaBlocks", "drawCuboid", min.desc, false));
+		iterator.set(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/HighlightSchematicaBlocks", "drawCuboid", min.desc, false));
 	}
 
 }

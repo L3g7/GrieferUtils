@@ -24,7 +24,7 @@ public class SchematicFormatTransformer extends Transformer {
 		ListIterator<AbstractInsnNode> iterator = getIterator(methodNode, ASTORE, n -> true);
 		iterator.next();
 		iterator.add(new VarInsnNode(ALOAD, 1));
-		iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/SaveSchematicaPosition", "readFromNBT", "(Lnet/minecraft/nbt/NBTTagCompound;)V", false));
+		iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/SaveSchematicaPosition", "readFromNBT", "(Lnet/minecraft/nbt/NBTTagCompound;)V", false));
 	}
 
 }

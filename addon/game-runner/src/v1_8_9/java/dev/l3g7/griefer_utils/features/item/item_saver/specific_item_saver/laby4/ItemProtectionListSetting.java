@@ -19,7 +19,6 @@ import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.*;
 import net.labymod.api.client.component.Component;

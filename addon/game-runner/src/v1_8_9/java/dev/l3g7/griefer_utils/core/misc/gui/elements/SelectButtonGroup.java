@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.core.misc.gui.elements;
 
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 

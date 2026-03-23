@@ -11,8 +11,6 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree;
-import dev.l3g7.griefer_utils.features._dyn_ght.GUIHierarchyTree.Feat;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -45,11 +43,6 @@ public class SettingLoader { // NOTE: cleanup
 		String configKey = subKey;
 		if (parentKey != null)
 			configKey = parentKey + "." + configKey;
-		else {
-			Feat feat = GUIHierarchyTree.get(mainElement.name());
-			if (feat.parentCfg() != null)
-				configKey = feat.parentCfg() + "." + configKey;
-		}
 
 		// Load settings
 		if (mainElement instanceof AbstractSetting<?, ?>)

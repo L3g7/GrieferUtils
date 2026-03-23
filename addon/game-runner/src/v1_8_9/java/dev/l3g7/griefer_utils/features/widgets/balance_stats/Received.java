@@ -20,7 +20,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
-import dev.l3g7.griefer_utils.features.world.BetterJobExchange;
+import dev.l3g7.griefer_utils.features.gui.griefer_games.BetterJobExchange;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;

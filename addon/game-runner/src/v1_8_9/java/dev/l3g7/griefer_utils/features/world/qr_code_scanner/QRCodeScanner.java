@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.world.ItemSearch;
+import dev.l3g7.griefer_utils.features.gui.ItemSearch;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiInventory;

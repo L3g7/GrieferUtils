@@ -32,7 +32,7 @@ public class ClientProxyTransformer extends Transformer {
 
 			iterator.add(new VarInsnNode(ALOAD, 2));
 			iterator.add(new VarInsnNode(ALOAD, 3));
-			iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/SaveSchematicaPosition", "onSchematicLoaded", "(Ljava/io/File;Ljava/lang/String;)V", false));
+			iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/SaveSchematicaPosition", "onSchematicLoaded", "(Ljava/io/File;Ljava/lang/String;)V", false));
 		}
 	}
 

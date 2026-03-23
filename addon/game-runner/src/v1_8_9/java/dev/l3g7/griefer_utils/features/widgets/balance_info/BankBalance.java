@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.widgets.balance_info;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.player.scoreboard.BankScoreboard;
+import dev.l3g7.griefer_utils.features.world.scoreboard.BankScoreboard;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;

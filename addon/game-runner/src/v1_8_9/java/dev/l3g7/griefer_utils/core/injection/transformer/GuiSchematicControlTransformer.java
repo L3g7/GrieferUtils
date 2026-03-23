@@ -26,12 +26,12 @@ public class GuiSchematicControlTransformer extends Transformer {
 		iterator.add(new VarInsnNode(ALOAD, 0));
 		iterator.add(new FieldInsnNode(GETFIELD, "com/github/lunatrius/schematica/client/gui/control/GuiSchematicControl", "field_146292_n", "Ljava/util/List;"));
 		iterator.add(new VarInsnNode(ALOAD, 0));
-		iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/SaveSchematicaPosition", "addGuiButton", "(Ljava/util/List;Lnet/minecraft/client/gui/GuiScreen;)V", false));
+		iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/SaveSchematicaPosition", "addGuiButton", "(Ljava/util/List;Lnet/minecraft/client/gui/GuiScreen;)V", false));
 
 		iterator = getMethod("func_146284_a", "(Lnet/minecraft/client/gui/GuiButton;)V").instructions.iterator();
 		iterator.add(new VarInsnNode(ALOAD, 1));
 		iterator.add(new VarInsnNode(ALOAD, 0));
-		iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/better_schematica/SaveSchematicaPosition", "onActionPerformed", "(Lnet/minecraft/client/gui/GuiButton;Lnet/minecraft/client/gui/GuiScreen;)V", false));
+		iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/SaveSchematicaPosition", "onActionPerformed", "(Lnet/minecraft/client/gui/GuiButton;Lnet/minecraft/client/gui/GuiScreen;)V", false));
 	}
 
 }

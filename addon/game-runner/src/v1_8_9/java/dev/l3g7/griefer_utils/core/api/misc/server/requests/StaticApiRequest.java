@@ -11,11 +11,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.l3g7.griefer_utils.core.api.misc.server.Request;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
-import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.ArgumentNode;
-import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.nodes.Node;
-import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.requirements.Requirement;
-import dev.l3g7.griefer_utils.features.chat.command_suggestions.brigadier.suggestions.Suggestion;
-import dev.l3g7.griefer_utils.features.uncategorized.byte_and_bit.data.BotSource;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.ArgumentNode;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.Node;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.Requirement;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.suggestions.Suggestion;
+import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BotSource;
 
 import java.util.Map;
 import java.util.UUID;

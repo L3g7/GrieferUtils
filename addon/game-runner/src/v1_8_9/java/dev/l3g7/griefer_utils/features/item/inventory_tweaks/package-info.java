@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category(name = "Inventar verbessern", description = "Verbessert Interaktionen mit dem Inventar.", icon = "bundle")
+@Category(name = "§gInventar verbessern", description = "Verbessert Interaktionen mit dem Inventar.", icon = "bundle")
 package dev.l3g7.griefer_utils.features.item.inventory_tweaks;
 
 import dev.l3g7.griefer_utils.features.Feature.Category;

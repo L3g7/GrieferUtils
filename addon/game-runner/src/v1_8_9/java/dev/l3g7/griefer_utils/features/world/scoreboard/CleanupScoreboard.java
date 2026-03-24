@@ -30,7 +30,7 @@ public class CleanupScoreboard extends Feature implements LineProvider {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Scoreboard aufräumen")
-		.description("Löscht bestimmte Einträge im Scoreboard")
+		.description("Löscht bestimmte Einträge im Scoreboard.")
 		.icon("wooden_board")
 		.subSettings(playTime, ip)
 		.since("2.4-BETA-1")

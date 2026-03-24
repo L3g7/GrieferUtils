@@ -24,7 +24,7 @@ public class InteractableFriendsMenu extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Interagierbare /freunde")
-		.description("Ermöglicht das Joinen von CBs durch das Linksklicken eines Spielers im /freunde-Menü")
+		.description("Ermöglicht das Joinen von CBs durch das Linksklicken eines Spielers im /freunde-Menü.")
 		.icon("players")
 		.since("2.4-BETA-1");
 

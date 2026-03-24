@@ -100,10 +100,10 @@ public class ConfigPatcher {
 
 		if (isConfigOlderThan("2.0-RC-9")) {
 			rename("modules.block_preview.show_coordinates", "modules.block_info.show_coords");
-			rename("modules.tps", "modules.server_performance");
-			rename("modules.spawn_counter.roundsRan", "modules.spawn_counter.rounds_ran");
-			rename("modules.spawn_counter.roundsFlown", "modules.spawn_counter.rounds_flown");
-			rename("modules.orb_potion_timer", "modules.potion_timer");
+			rename("modules", "tps", "modules");
+			rename("modules.spawn_counter", "roundsRan", "rounds_ran");
+			rename("modules.spawn_counter", "rounds_flown", "rounds_flown");
+			rename("modules", "orb_potion_timer", "potion_timer");
 
 			Optional<JsonObject> optional = IOUtil.read(new File("LabyMod/modules.json")).asJsonObject();
 			if (optional.isPresent()) {
@@ -158,7 +158,7 @@ public class ConfigPatcher {
 		}
 
 		if (isConfigOlderThan("2.2-BETA-1")) {
-			rename("chat.fix_ghost_blocks", "chat.ghost_blocks_fix");
+			rename("chat", "fix_ghost_blocks", "ghost_blocks_fix");
 		}
 
 		if (isConfigOlderThan("2.2-BETA-6")) {
@@ -354,7 +354,7 @@ public class ConfigPatcher {
 		}
 
 		if (isConfigOlderThan("2.4-BETA-1")) {
-			rename("item.inventory_tweaks.block_refill.refillBlocks", "item.inventory_tweaks.block_refill.enabled");
+			rename("item.inventory_tweaks.block_refill", "refillBlocks", "enabled");
 		}
 
 		if (isConfigOlderThan("2.4-BETA-5")) {

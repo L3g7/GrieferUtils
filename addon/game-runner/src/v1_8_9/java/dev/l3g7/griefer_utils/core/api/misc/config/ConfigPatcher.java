@@ -472,7 +472,7 @@ public class ConfigPatcher {
 		JsonObject newParent = getParentOf(newKey);
 
 		if (oldParent.get(getKey(oldKey)) != null)
-			newParent.add(getKey(newKey), oldParent.get(getKey(oldKey)));
+			newParent.add(getKey(newKey), oldParent.remove(getKey(oldKey)));
 	}
 
 	private JsonObject get(String path) {

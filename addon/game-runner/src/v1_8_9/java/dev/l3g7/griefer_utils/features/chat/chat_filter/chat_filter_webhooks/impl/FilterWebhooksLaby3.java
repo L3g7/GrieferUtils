@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.UnlockChatFilters;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.impl.ChatFilterTemplatesLaby3;
-import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.FilterWebhooks;
+import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks;
 import net.labymod.core.LabyModCore;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.gui.elements.Scrollbar;
@@ -47,14 +47,14 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.FilterWebhooks.webhooks;
+import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks.webhooks;
 
 @ExclusiveTo(LABY_3)
 public class FilterWebhooksLaby3 {
 
 	@EventListener
 	public static void onGuiOpen(GuiOpenEvent<GuiScreen> event) {
-		if (!FilterWebhooks.enabled.get())
+		if (!ChatFilterWebhooks.enabled.get())
 			return;
 
 		if (event.gui instanceof GuiChatFilter)
@@ -72,7 +72,7 @@ public class FilterWebhooksLaby3 {
 
 				String url = webhooks.get(filter.getFilterName());
 				Integer color = filter.isHighlightMessage() ? ((filter.getHighlightColorR() & 0xff) << 16) | ((filter.getHighlightColorG() & 0xff) << 8) | (filter.getHighlightColorB() & 0xff) : null;
-				FilterWebhooks.triggerWebhook(url, component, filter.getFilterName(), color);
+				ChatFilterWebhooks.triggerWebhook(url, component, filter.getFilterName(), color);
 			}
 		}
 	}
@@ -423,8 +423,8 @@ public class FilterWebhooksLaby3 {
 						if (!LabyMod.getInstance().getChatToolManager().getFilters().contains(selectedFilter))
 							LabyMod.getInstance().getChatToolManager().getFilters().add(selectedFilter);
 
-						FilterWebhooks.getWebhooks().put(selectedFilter.getFilterName(), textFieldFilterWebhook.getText().replaceAll(HOOK_URL_PATTERN.pattern(), "https://discord.com/api/webhooks/$1"));
-						FilterWebhooks.saveWebhooks();
+						ChatFilterWebhooks.getWebhooks().put(selectedFilter.getFilterName(), textFieldFilterWebhook.getText().replaceAll(HOOK_URL_PATTERN.pattern(), "https://discord.com/api/webhooks/$1"));
+						ChatFilterWebhooks.saveWebhooks();
 						LabyMod.getInstance().getChatToolManager().saveTools();
 						FilterChatManager.getFilterResults().clear();
 						Minecraft.getMinecraft().ingameGUI.getChatGUI().refreshChat();
@@ -648,7 +648,7 @@ public class FilterWebhooksLaby3 {
 			textFieldFilterContainsNot.setText(wordsToString(filter.getWordsContainsNot()));
 			textFieldFilterRoom.setText(filter.getRoom() == null || filter.getRoom().isEmpty() ? "Global" : filter.getRoom());
 			textFieldFilterSoundfile.setText(filter.getSoundPath());
-			textFieldFilterWebhook.setText(FilterWebhooks.getWebhooks().getOrDefault(filter.getFilterName(), ""));
+			textFieldFilterWebhook.setText(ChatFilterWebhooks.getWebhooks().getOrDefault(filter.getFilterName(), ""));
 		}
 
 		private String[] splitWords(String text) {

@@ -68,7 +68,7 @@ import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.*;
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_3)
-public class ItemSaver extends Feature implements TempItemSaverBridge {
+public class SpecificItemSaver extends Feature implements TempItemSaverBridge {
 
 	private static final String BONZE_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:21s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:21s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
 	private static final String BONZE24_NBT = "{id:\"minecraft:diamond_sword\",Count:1b,tag:{ench:[0:{lvl:24s,id:16s},1:{lvl:3s,id:34s},2:{lvl:2s,id:20s},3:{lvl:5s,id:61s},4:{lvl:24s,id:21s}],display:{Name:\"§6Klinge von GrafBonze\"}},Damage:0s}";
@@ -109,8 +109,8 @@ public class ItemSaver extends Feature implements TempItemSaverBridge {
 		.icon("shield_with_sword")
 		.subSettings(displayIcon, HeaderSetting.create(), newEntrySetting);
 
-	public static ItemSaver get() {
-		return get(ItemSaver.class);
+	public static SpecificItemSaver get() {
+		return get(SpecificItemSaver.class);
 	}
 
 	public static ItemDisplaySetting getSetting(ItemStack stack) {
@@ -341,7 +341,7 @@ public class ItemSaver extends Feature implements TempItemSaverBridge {
 			return;
 
 		mc().displayGuiScreen(previousScreen);
-		ItemSaver.addItem(event.itemStack);
+		SpecificItemSaver.addItem(event.itemStack);
 		previousScreen = null;
 		event.cancel();
 	}

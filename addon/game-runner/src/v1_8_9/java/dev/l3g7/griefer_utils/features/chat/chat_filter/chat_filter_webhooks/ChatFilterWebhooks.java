@@ -33,7 +33,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.STATIC_API_URL;
 
 @Singleton
-public class FilterWebhooks extends Feature {
+public class ChatFilterWebhooks extends Feature {
 
 	public static final Pattern HOOK_URL_PATTERN = Pattern.compile("^https://(?:\\w+\\.)?discord(?:app)?\\.com/api/webhooks/(\\d{18}\\d?/[\\w-]{68})$");
 	private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();

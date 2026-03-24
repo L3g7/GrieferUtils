@@ -34,7 +34,7 @@ public class ItemDisplaySetting extends ListEntrySetting {
 		icon(stack);
 		this.stack = stack;
 		setDisplayName(stack.getDisplayName());
-		container = (SettingsElement) ItemSaver.enabled;
+		container = (SettingsElement) SpecificItemSaver.enabled;
 
 		name = StringSetting.create()
 			.name("Anzeigename")
@@ -91,12 +91,12 @@ public class ItemDisplaySetting extends ListEntrySetting {
 
 	@Override
 	protected void openSettings() {
-		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(ItemSaver::onChange, this));
+		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(SpecificItemSaver::onChange, this));
 	}
 
 	@Override
 	protected void onChange() {
-		ItemSaver.onChange();
+		SpecificItemSaver.onChange();
 	}
 
 }

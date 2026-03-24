@@ -47,7 +47,7 @@ import static net.minecraft.network.play.client.C02PacketUseEntity.Action.ATTACK
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
-public class ItemSaver extends Feature implements TempItemSaverBridge { // FIXME: test, test dependant features
+public class SpecificItemSaver extends Feature implements TempItemSaverBridge { // FIXME: test, test dependant features
 
 	private static final ItemStack BLOCKED = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");
 

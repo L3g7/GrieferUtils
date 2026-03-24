@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.im
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.FilterWebhooks;
+import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks;
 import net.labymod.api.client.chat.filter.ChatFilter;
 import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.loader.annotation.SpriteTexture;
@@ -31,13 +31,13 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.FilterWebhooks.webhooks;
+import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks.webhooks;
 
 @ExclusiveTo(LABY_4)
 public class FilterWebhooksLaby4 {
 
 	public static void hookToSettings(ChatFilter filter, @Nullable Setting parent, CallbackInfoReturnable<List<Setting>> cir) {
-		if (!FilterWebhooks.enabled.get())
+		if (!ChatFilterWebhooks.enabled.get())
 			return;
 
 		List<Setting> settings = cir.getReturnValue();
@@ -47,13 +47,13 @@ public class FilterWebhooksLaby4 {
 		StringSetting urlInput = StringSetting.create()
 			.name("Webhook-URL")
 			.placeholder("https://discord.com/api/webhooks/...")
-			.validator(v -> FilterWebhooks.HOOK_URL_PATTERN.matcher(v).matches())
+			.validator(v -> ChatFilterWebhooks.HOOK_URL_PATTERN.matcher(v).matches())
 			.set(url == null ? "" : url)
 			.enabled(url != null)
 			.extend()
 			.callback(v -> {
 				webhooks.put(filter.id().toString(), v);
-				FilterWebhooks.saveWebhooks();
+				ChatFilterWebhooks.saveWebhooks();
 			});
 
 		SwitchSetting shouldSend = SwitchSetting.create()
@@ -62,7 +62,7 @@ public class FilterWebhooksLaby4 {
 			.callback(v -> {
 				urlInput.enabled(v);
 				webhooks.put(filter.id().toString(), v && !urlInput.get().isEmpty() ? urlInput.get() : null);
-				FilterWebhooks.saveWebhooks();
+				ChatFilterWebhooks.saveWebhooks();
 			});
 
 		// Bind settings
@@ -75,7 +75,7 @@ public class FilterWebhooksLaby4 {
 
 	public static void hookApplyChatFilter(ChatFilter filter, IChatComponent component) {
 		Integer color = filter.shouldChangeBackground().get() ? filter.backgroundColor().get() : null;
-		FilterWebhooks.triggerWebhook(webhooks.get(filter.id().toString()), component, filter.name().get(), color);
+		ChatFilterWebhooks.triggerWebhook(webhooks.get(filter.id().toString()), component, filter.name().get(), color);
 	}
 
 	@ExclusiveTo(LABY_4)

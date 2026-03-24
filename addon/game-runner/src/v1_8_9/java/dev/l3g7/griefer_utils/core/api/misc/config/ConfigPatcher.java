@@ -376,9 +376,10 @@ public class ConfigPatcher {
 			move("world", "item_search", "gui");
 
 			moveBulk("world", "item.item_info", "map_preview", "skull_preview");
-			if (!get("item.item_saver").has("specific_item_saver"))
-				rename("item.item_saver", "item.item_saver.specific_item_saver");
 			moveBulk("item", "item.item_saver", "armor_break_warning", "chest_saver", "orb_saver", "particle_saver", "prefix_saver", "border_saver", "tool_saver", "head_saver");
+			move("item.item_saver", "entries", "item.item_saver.specific_item_saver");
+			move("item.item_saver", "enabled", "item.item_saver.specific_item_saver");
+			move("item.item_saver", "display_icon", "item.item_saver.specific_item_saver");
 			move("world", "dragon_egg_saver", "item.item_saver");
 
 			moveBulk("render", "render.light", "full_bright", "light_bug_e_s_p", "light_level_overlay");

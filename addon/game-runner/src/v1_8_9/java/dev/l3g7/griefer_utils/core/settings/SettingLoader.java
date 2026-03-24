@@ -20,15 +20,7 @@ import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 
 public class SettingLoader { // NOTE: cleanup
 
-	public static String getDefaultConfigSubkey(Object owner) {
-		return StringUtil.convertCasing(owner.getClass().getSimpleName());
-	}
-
 	public static MainElementData initMainElement(Object owner, String parentKey) {
-		return initMainElement(owner, parentKey, getDefaultConfigSubkey(owner));
-	}
-
-	public static MainElementData initMainElement(Object owner, String parentKey, String subKey) {
 		Class<?> ownerClass = owner.getClass();
 
 		// Load main element
@@ -40,7 +32,7 @@ public class SettingLoader { // NOTE: cleanup
 		BaseSetting<?> mainElement = Reflection.get(owner, mainElementField);
 
 		// Load config key
-		String configKey = subKey;
+		String configKey = StringUtil.convertCasing(owner.getClass().getSimpleName());
 		if (parentKey != null)
 			configKey = parentKey + "." + configKey;
 

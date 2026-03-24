@@ -26,7 +26,7 @@ public interface GUIEntry {
 			SwitchSetting setting = SwitchSetting.create()
 				.name(meta.name())
 				.icon(meta.icon())
-				.config(configKey + ".active")
+				.config(configKey + ".enabled")
 				.defaultValue(true)
 				.subSettings(); // creates a header
 

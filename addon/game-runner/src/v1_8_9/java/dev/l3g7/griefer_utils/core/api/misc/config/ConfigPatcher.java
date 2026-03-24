@@ -427,6 +427,30 @@ public class ConfigPatcher {
 			rename("world.building", "inventory_block_selection", "select_inventory_blocks");
 			rename("world.building", "chunk_indicator", "show_chunk_borders");
 			rename("world.building", "nature_border_indicator", "show_nature_borders");
+
+			// Category changes
+			rename("chat", "active", "enabled");
+			rename("chat.ingoing", "active", "enabled");
+			rename("chat.outgoing", "active", "enabled");
+			rename("chat.chat_filter", "active", "enabled");
+			rename("gui", "active", "enabled");
+			rename("gui.books", "active", "enabled");
+			rename("gui.griefer_games", "active", "enabled");
+			rename("gui.integrations", "active", "enabled");
+			rename("item", "active", "enabled");
+			rename("item.inventory_tweaks", "active", "enabled");
+			rename("item.item_info", "active", "enabled");
+			rename("item.item_saver", "active", "enabled");
+			rename("render", "active", "enabled");
+			rename("render.light", "active", "enabled");
+			rename("render.skulls", "active", "enabled");
+			rename("player", "active", "enabled");
+			rename("player.movement", "active", "enabled");
+			rename("player.name_tags", "active", "enabled");
+			rename("world", "active", "enabled");
+			rename("world.building", "active", "enabled");
+			rename("world.joining", "active", "enabled");
+			rename("world.scoreboard", "active", "enabled");
 		}
 	}
 

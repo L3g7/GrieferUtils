@@ -32,7 +32,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 @Singleton
-public class PlayerHider extends Feature {
+public class HidePlayers extends Feature {
 
 	private static final List<String> BLOCKED_SOUNDS = Arrays.asList("random.eat", "random.burp", "random.drink");
 

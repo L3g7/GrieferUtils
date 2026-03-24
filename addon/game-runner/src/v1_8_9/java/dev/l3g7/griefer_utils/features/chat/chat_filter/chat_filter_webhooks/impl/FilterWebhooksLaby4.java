@@ -5,12 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.chat_filter.filter_webhooks.impl;
+package dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.impl;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.chat.chat_filter.filter_webhooks.FilterWebhooks;
+import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.FilterWebhooks;
 import net.labymod.api.client.chat.filter.ChatFilter;
 import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.loader.annotation.SpriteTexture;
@@ -31,7 +31,7 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static dev.l3g7.griefer_utils.features.chat.chat_filter.filter_webhooks.FilterWebhooks.webhooks;
+import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.FilterWebhooks.webhooks;
 
 @ExclusiveTo(LABY_4)
 public class FilterWebhooksLaby4 {

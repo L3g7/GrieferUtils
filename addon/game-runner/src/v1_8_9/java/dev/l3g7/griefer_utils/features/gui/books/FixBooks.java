@@ -33,7 +33,7 @@ import static org.lwjgl.input.Keyboard.KEY_ESCAPE;
  * Suppresses left-clicks on books and opens a preview when right-clicking.
  */
 @Singleton
-public class BookFix extends Feature {
+public class FixBooks extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

@@ -50,7 +50,7 @@ import static org.lwjgl.opengl.GL11.*;
  * via stencil buffer.
  */
 @Singleton
-public class SkullEnchantmentFix extends Feature {
+public class FixTileEntityEnchantments extends Feature {
 
 	@SuppressWarnings("unchecked")
 	public static final IBakedModel cubeModel = new IBakedModel() {
@@ -81,8 +81,8 @@ public class SkullEnchantmentFix extends Feature {
 		.description("Behebt, dass Verzauberungen von Tile Entities (Bannern, Kisten, Köpfen) nicht angezeigt werden.")
 		.icon("enchanted_steve");
 
-	public static SkullEnchantmentFix get() {
-		return get(SkullEnchantmentFix.class);
+	public static FixTileEntityEnchantments get() {
+		return get(FixTileEntityEnchantments.class);
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class SkullEnchantmentFix extends Feature {
 			) || !stack.hasEffect())
 				return;
 
-			if (!SkullEnchantmentFix.get().isEnabled())
+			if (!FixTileEntityEnchantments.get().isEnabled())
 				return;
 
 			// Enable stencil

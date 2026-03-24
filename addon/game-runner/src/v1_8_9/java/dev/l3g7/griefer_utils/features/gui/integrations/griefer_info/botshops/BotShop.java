@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest.TextureItem;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.chat.outgoing.BetterSwitchCommand;
+import dev.l3g7.griefer_utils.features.chat.outgoing.BetterSwitch;
 import dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.BigChestUtil;
 import net.minecraft.init.Blocks;
 
@@ -65,7 +65,7 @@ public class BotShop {
 		texture += "going";
 
 		chest.addTextureItem(id, new TextureItem(texture, 14, ItemUtil.createItem(Blocks.command_block, 0, name)), () -> {
-			BetterSwitchCommand.sendOnCitybuild("/p h " + this.name, cb);
+			BetterSwitch.sendOnCitybuild("/p h " + this.name, cb);
 			mc().displayGuiScreen(null);
 		});
 	}

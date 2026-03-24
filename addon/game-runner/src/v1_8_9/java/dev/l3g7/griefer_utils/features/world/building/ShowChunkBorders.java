@@ -26,7 +26,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
  * Shows chunk boundaries.
  */
 @Singleton
-public class ChunkIndicator extends Feature {
+public class ShowChunkBorders extends Feature {
 
 	private final SwitchSetting yellow_lines = SwitchSetting.create()
 		.name("Gelbe Linien", "(Alle 2 Blöcke)")

@@ -27,7 +27,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
  * Displays a message when players join or leave.
  */
 @Singleton
-public class NPCEntityGhostHand extends Feature {
+public class NPCGhostHand extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

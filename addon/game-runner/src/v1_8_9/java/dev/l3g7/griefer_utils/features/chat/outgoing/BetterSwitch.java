@@ -24,7 +24,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 @Singleton
-public class BetterSwitchCommand extends Feature {
+public class BetterSwitch extends Feature {
 
 	private final SwitchSetting rejoin = SwitchSetting.create()
 		.name("Rejoin")
@@ -116,7 +116,7 @@ public class BetterSwitchCommand extends Feature {
 
 		cb.join();
 		targetCitybuild = cb;
-		BetterSwitchCommand.command = command;
+		BetterSwitch.command = command;
 	}
 
 }

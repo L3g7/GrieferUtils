@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 
 @Singleton
-public class ChatMods extends Feature {
+public class ChatCleanup extends Feature {
 
 	private List<String> COLORED_FONTS = ImmutableList.of();
 	private static final Pattern SINGLE_COLORED_FONT_PATTERN = Pattern.compile("^§(.)§l[^§]+$");

@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Singleton
-public class BuggedMapsFix extends Feature {
+public class FixUnsyncedMaps extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -32,8 +32,8 @@ public class BuggedMapsFix extends Feature {
 		.description("Behebt, dass Karten das falsche Bild anzeigen.")
 		.icon("filled_map");
 
-	public static BuggedMapsFix get() {
-		return get(BuggedMapsFix.class);
+	public static FixUnsyncedMaps get() {
+		return get(FixUnsyncedMaps.class);
 	}
 
 	@Mixin(MapItemRenderer.class)
@@ -49,7 +49,7 @@ public class BuggedMapsFix extends Feature {
 
 		@Inject(method = "updateMapTexture", at = @At("HEAD"))
 		private void injectUpdateMapTexture(MapData mapdataIn, CallbackInfo ci) {
-			if (!BuggedMapsFix.get().isEnabled())
+			if (!FixUnsyncedMaps.get().isEnabled())
 				return;
 
 			Object loadedMap = loadedMaps.get(mapdataIn.mapName);

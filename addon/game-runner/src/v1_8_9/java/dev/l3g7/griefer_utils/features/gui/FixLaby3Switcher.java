@@ -33,7 +33,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 @Singleton
 @ExclusiveTo(value = LABY_3, reason = NOT_NEEDED, customMessage = "LabyMod 4 hat diesen Bug gefixt.")
-public class LabyModSwitcherFix extends Feature {
+public class FixLaby3Switcher extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -41,8 +41,8 @@ public class LabyModSwitcherFix extends Feature {
 		.description("Behebt, dass LabyMod Account-Sitzungen als gültig anzeigt, das Betreten eines Servers mit diesem Account jedoch aufgrund einer ungültigen Sitzung fehltschlägt, und dass das Hinzufügen von Accounts aufgrund nicht anerkannter Zertifikate fehlschlägt.")
 		.icon("labymod");
 
-	public static LabyModSwitcherFix get() {
-		return get(LabyModSwitcherFix.class);
+	public static FixLaby3Switcher get() {
+		return get(FixLaby3Switcher.class);
 	}
 
 	@ExclusiveTo(LABY_3)
@@ -52,7 +52,7 @@ public class LabyModSwitcherFix extends Feature {
 		@Inject(method = "getAccessToken", at = @At("RETURN"), cancellable = true, remap = false)
 		public void injectGetAccessToken(CallbackInfoReturnable<String> cir) {
 			String accessToken = cir.getReturnValue();
-			if (accessToken == null || accessToken.startsWith("ey") || !LabyModSwitcherFix.get().isEnabled())
+			if (accessToken == null || accessToken.startsWith("ey") || !FixLaby3Switcher.get().isEnabled())
 				return;
 
 			if (accessToken.startsWith("8E184B2C-7E2D-4517-A905-623B1BE84B5700000001ffffffffffffffffey")) {
@@ -71,7 +71,7 @@ public class LabyModSwitcherFix extends Feature {
 
 		@Redirect(method = "getXBoxProfile", at = @At(value = "INVOKE", target = "Lnet/labymod/accountmanager/utils/RestUtil;performGetContract(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;"))
 		private <T> T injectGetXBoxProfile(String url, String hash, String token, Class<T> response) throws Exception {
-			if (!LabyModSwitcherFix.get().isEnabled())
+			if (!FixLaby3Switcher.get().isEnabled())
 				return RestUtil.performGetContract(url, hash, token, response);
 
 			HttpsURLConnection connection = (HttpsURLConnection) (new URL(url)).openConnection();

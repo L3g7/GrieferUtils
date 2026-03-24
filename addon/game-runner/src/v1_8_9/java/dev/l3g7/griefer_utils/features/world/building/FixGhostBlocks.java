@@ -18,7 +18,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.ABORT_DESTROY_BLOCK;
 
 @Singleton
-public class GhostBlocksFix extends Feature {
+public class FixGhostBlocks extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

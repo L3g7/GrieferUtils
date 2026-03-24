@@ -26,7 +26,7 @@ import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMo
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
-public class NatureBorderIndicator extends Feature {
+public class ShowNatureBorders extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

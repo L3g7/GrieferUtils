@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.chat_filter.filter_webhooks.impl;
+package dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.impl;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.UnlockChatFilters;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.impl.ChatFilterTemplatesLaby3;
-import dev.l3g7.griefer_utils.features.chat.chat_filter.filter_webhooks.FilterWebhooks;
+import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.FilterWebhooks;
 import net.labymod.core.LabyModCore;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.gui.elements.Scrollbar;
@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.features.chat.chat_filter.filter_webhooks.FilterWebhooks.webhooks;
+import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.FilterWebhooks.webhooks;
 
 @ExclusiveTo(LABY_3)
 public class FilterWebhooksLaby3 {

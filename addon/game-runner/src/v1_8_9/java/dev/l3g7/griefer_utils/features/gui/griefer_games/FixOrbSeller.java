@@ -41,7 +41,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.ADD_PLAYER;
 
 @Singleton
-public class OrbSellerFix extends Feature {
+public class FixOrbSeller extends Feature {
 
 	private final HashMap<String, Integer> cbToId = new HashMap<>();
 	private Pair<Integer, Integer> mousePos = null;

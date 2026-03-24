@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Singleton
-public class HeadTextureFix extends Feature {
+public class FixHeadTextures extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -38,8 +38,8 @@ public class HeadTextureFix extends Feature {
 	public static final Set<String> lockedProfiles = Collections.synchronizedSet(new HashSet<>());
 	public static final Set<String> processedProfiles = Collections.synchronizedSet(new HashSet<>());
 
-	public static HeadTextureFix get() {
-		return get(HeadTextureFix.class);
+	public static FixHeadTextures get() {
+		return get(FixHeadTextures.class);
 	}
 
 	@Mixin(value = TileEntityItemStackRenderer.class, priority = 1001)
@@ -48,7 +48,7 @@ public class HeadTextureFix extends Feature {
 		@Redirect(method = "renderByItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTUtil;readGameProfileFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)Lcom/mojang/authlib/GameProfile;"))
 		private GameProfile redirectReadGameProfile(NBTTagCompound nbtTag) {
 			GameProfile gameprofile = NBTUtil.readGameProfileFromNBT(nbtTag);
-			if (gameprofile == null || gameprofile.getName() == null || !HeadTextureFix.get().isEnabled())
+			if (gameprofile == null || gameprofile.getName() == null || !FixHeadTextures.get().isEnabled())
 				return gameprofile;
 
 			String name = gameprofile.getName();

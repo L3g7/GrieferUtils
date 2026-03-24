@@ -29,7 +29,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton.path;
 
 @Singleton
-public class AfkNick extends Feature {
+public class AutoNick extends Feature {
 
 	private long lastEvent = 0;
 	private boolean manuallyAFK = false;

@@ -28,7 +28,7 @@ import static dev.l3g7.griefer_utils.core.util.IChatComponentUtil.getComponents;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
-public class StandardPrefixes extends Feature {
+public class DefaultPrefixes extends Feature {
 
 	private static final Map<String, String> DEFAULT_PREFIXES = new HashMap<>() {{
 		put("Owner", "4");

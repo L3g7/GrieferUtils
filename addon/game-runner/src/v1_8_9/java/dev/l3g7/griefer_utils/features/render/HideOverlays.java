@@ -24,7 +24,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
  * Deactivates some overlays.
  */
 @Singleton
-public class NoOverlay extends Feature {
+public class HideOverlays extends Feature {
 
 	private final SwitchSetting blindness = SwitchSetting.create()
 		.name("Blindheit entfernen")

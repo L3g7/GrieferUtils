@@ -35,15 +35,15 @@ import java.util.*;
 
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static dev.l3g7.griefer_utils.features.render.TrueSight.ToggleMode.*;
+import static dev.l3g7.griefer_utils.features.render.ShowInvisibleEntities.ToggleMode.*;
 
 /**
  * Shows invisible entities.
  */
 @Singleton
-public class TrueSight extends Feature {
+public class ShowInvisibleEntities extends Feature {
 
-	private static final TrueSight INSTANCE = get(TrueSight.class);
+	private static final ShowInvisibleEntities INSTANCE = get(ShowInvisibleEntities.class);
 	private static final Map<Class<?>, String> CLASS_TO_STRING_MAPPING = Reflection.get(EntityList.class, "classToStringMapping");
 
 	private final Map<Class<? extends Entity>, SwitchSetting> entities = new HashMap<>();

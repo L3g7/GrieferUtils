@@ -27,7 +27,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
-public class InventoryBlockSelection extends Feature {
+public class SelectInventoryBlocks extends Feature {
 
 	private final SwitchSetting compressed = SwitchSetting.create()
 		.name("Komprimierte Items")

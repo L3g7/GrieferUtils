@@ -26,7 +26,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
-public class BlockRefill extends Feature {
+public class AutoBlockRefill extends Feature {
 
 	private ItemStack expectedStack = null;
 	private int slot = 0;

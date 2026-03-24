@@ -21,7 +21,7 @@ import net.minecraft.init.Items;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
-public class SkullPreview extends Feature {
+public class HeadPreview extends Feature {
 
 	private final NumberSetting size = NumberSetting.create()
 		.name("Vergrößerungs-Faktor")

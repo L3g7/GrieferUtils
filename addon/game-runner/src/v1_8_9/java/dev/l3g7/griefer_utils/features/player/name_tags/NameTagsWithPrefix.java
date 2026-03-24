@@ -21,7 +21,7 @@ import java.util.ListIterator;
  * Colors the player display name to match the selected prefix.
  */
 @Singleton
-public class NameTagPrefixSync extends Feature {
+public class NameTagsWithPrefix extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

@@ -15,7 +15,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 @Singleton
-public class NoMagicText extends TextComponentTweak {
+public class RemoveMagicText extends TextComponentTweak {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiList;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.chat.outgoing.BetterSwitchCommand;
+import dev.l3g7.griefer_utils.features.chat.outgoing.BetterSwitch;
 import dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.BigChestUtil;
 import dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.farms.Farm;
 import net.labymod.api.Laby;
@@ -104,7 +104,7 @@ public class FreeStuff {
 		ItemUtil.setLore(stack, lines);
 
 		chest.addItem(id, stack, () -> {
-			BetterSwitchCommand.sendOnCitybuild("/p h " + name, cb);
+			BetterSwitch.sendOnCitybuild("/p h " + name, cb);
 			mc().displayGuiScreen(null);
 		}, () -> openGui(chest), () -> {
 			if (farm == null)
@@ -128,7 +128,7 @@ public class FreeStuff {
 			if (!entry.getValue().isEmpty())
 				ItemUtil.setLore(freeStuffStack, "§7" + entry.getValue());
 			gui.addEntry(freeStuffStack, () -> {
-				BetterSwitchCommand.sendOnCitybuild("/p h " + name, cb);
+				BetterSwitch.sendOnCitybuild("/p h " + name, cb);
 				mc().displayGuiScreen(null);
 			});
 		}

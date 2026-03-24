@@ -30,7 +30,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
-public class ShowNametagsThroughWalls extends Feature {
+public class ShowNameTagsThroughWalls extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -38,13 +38,13 @@ public class ShowNametagsThroughWalls extends Feature {
 		.description("Zeigt Nametags auch durch Wände an.\n(Funktioniert nicht bei Spielern)")
 		.icon("name_tag_yellow");
 
-	public ShowNametagsThroughWalls() {
+	public ShowNameTagsThroughWalls() {
 		if (LABY_4.isActive())
 			enabled.since("2.4-BETA-1", "Laby 4-Unterstützung seit 2.4-BETA-1");
 	}
 
-	public static ShowNametagsThroughWalls get() {
-		return get(ShowNametagsThroughWalls.class);
+	public static ShowNameTagsThroughWalls get() {
+		return get(ShowNameTagsThroughWalls.class);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class ShowNametagsThroughWalls extends Feature {
 
 		@Inject(method = "canRenderName(Lnet/minecraft/entity/EntityLiving;)Z", at = @At("RETURN"), cancellable = true)
 		private void injectCanRenderName(EntityLiving entity, CallbackInfoReturnable<Boolean> cir) {
-			if (ShowNametagsThroughWalls.get().isEnabled() && !cir.getReturnValueZ()) {
+			if (ShowNameTagsThroughWalls.get().isEnabled() && !cir.getReturnValueZ()) {
 				cir.setReturnValue(baseCanRenderName(entity) && entity.hasCustomName());
 			}
 		}
@@ -83,7 +83,7 @@ public class ShowNametagsThroughWalls extends Feature {
 
 		@Redirect(method = "renderLivingLabel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;tryBlendFuncSeparate(IIII)V"))
 		private void redirectTryBlendFuncSeparate(int srcFactor, int dstFactor, int srcFactorAlpha, int dstFactorAlpha) {
-			boolean swap = renderingLivingEntity && ShowNametagsThroughWalls.get().isEnabled();
+			boolean swap = renderingLivingEntity && ShowNameTagsThroughWalls.get().isEnabled();
 			GlStateManager.tryBlendFuncSeparate(swap ? dstFactor : srcFactor, swap ? srcFactor : dstFactor, srcFactorAlpha, dstFactorAlpha);
 		}
 

@@ -32,7 +32,7 @@ import static org.lwjgl.input.Keyboard.*;
  * Implements cursor movement, selection and copy and paste in the sign edit gui.
  */
 @Singleton
-public class BetterSign extends Feature {
+public class BetterSignEdit extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

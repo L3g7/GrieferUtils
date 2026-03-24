@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest.TextureItem;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiList;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.chat.outgoing.BetterSwitchCommand;
+import dev.l3g7.griefer_utils.features.chat.outgoing.BetterSwitch;
 import dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.freestuff.FreeStuff;
 import net.labymod.api.Laby;
 import net.minecraft.init.Blocks;
@@ -91,7 +91,7 @@ public class Farm {
 
 	public void addItemStack(GuiBigChest chest, int id, SpawnerType type, boolean isCbFiltered, boolean secondRow) {
 		chest.addItem(id, toStack(type, isCbFiltered, secondRow), () -> {
-			BetterSwitchCommand.sendOnCitybuild("/p h " + name, cb);
+			BetterSwitch.sendOnCitybuild("/p h " + name, cb);
 			mc().displayGuiScreen(null);
 		}, () -> openGui(chest), () -> {
 			if (freeStuff == null)
@@ -112,7 +112,7 @@ public class Farm {
 		GuiList gui = new GuiList("§8§lFarmen - " + name, 7, previousGui);
 		for (Spawner s : spawner) {
 			Runnable onClick = () -> {
-				BetterSwitchCommand.sendOnCitybuild("/p h " + (s.plot == null ? name : s.plot), cb);
+				BetterSwitch.sendOnCitybuild("/p h " + (s.plot == null ? name : s.plot), cb);
 				mc().displayGuiScreen(null);
 			};
 

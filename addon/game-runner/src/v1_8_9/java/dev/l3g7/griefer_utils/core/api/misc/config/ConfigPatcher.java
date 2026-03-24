@@ -356,6 +356,53 @@ public class ConfigPatcher {
 		if (isConfigOlderThan("2.4-BETA-1")) {
 			rename("item.inventory_tweaks.block_refill.refillBlocks", "item.inventory_tweaks.block_refill.enabled");
 		}
+
+		if (isConfigOlderThan("2.4-BETA-5")) {
+			renameGroup("chat", "chat.ingoing", "auto_unnick", "enlighten", "chat_mods", "chat_menu", "chat_reactor", "chat_time", "real_money", "interactable_friends_menu", "interactable_messages", "message_skulls", "no_magic_text");
+			renameGroup("chat", "chat.outgoing", "anti_command_choker", "better_switch_command", "command_logger", "command_pie_menu", "command_suggestions", "color_preview", "fix_kicks", "split_long_messages", "multi_hotkey", "plot_chat_indicator", "calculator", "slow_chat_cooldown");
+			renameGroup("chat", "chat.chat_filter", "unlock_chat_filters", "chat_filter_templates", "filter_webhooks");
+
+			renameGroup("player", "gui.griefer_games", "better_home_menu", "better_plot_menu", "cooldown_notifications");
+			renameGroup("world", "gui.griefer_games", "better_hopper", "better_adventurer", "better_job_exchange", "n_p_c_entity_ghost_hand", "orb_seller_fix");
+			rename("byte_and_bit", "gui.integrations.byte_and_bit");
+			rename("world.b_s_f", "gui.integrations.b_s_f");
+			rename("griefer_info", "gui.integrations.griefer_info");
+			rename("item.book_fix", "gui.books.book_fix");
+			rename("player.suppress_books", "gui.books.suppress_books");
+			renameGroup("player", "gui", "interactable_profiles", "laby_mod_switcher_fix");
+			rename("world.item_search", "gui.item_search");
+
+			renameGroup("world", "item.item_info", "map_preview", "skull_preview");
+			if (!get("item.item_saver").has("item_saver"))
+				rename("item.item_saver", "item.item_saver.item_saver");
+			renameGroup("item", "item.item_saver", "armor_break_warning", "chest_saver", "orb_saver", "particle_saver", "prefix_saver", "border_saver", "tool_saver", "head_saver");
+			rename("world.dragon_egg_saver", "item.item_saver.dragon_egg_saver");
+
+			renameGroup("render", "render.light", "full_bright", "light_bug_e_s_p", "light_level_overlay");
+			renameGroup("world", "render.skulls", "head_texture_fix", "skull_enchantment_fix");
+			rename("world.bugged_maps_fix", "render.bugged_maps_fix");
+
+			renameGroup("player", "player.movement", "auto_sprint", "safer_sneak");
+			renameGroup("render", "player.name_tags", "clan_tags", "name_tag_prefix_sync", "show_nametags_through_walls");
+			rename("chat.standard_prefixes", "player.name_tags.standard_prefixes");
+			renameGroup("render", "player", "player_hider", "remove_walking_mini_mes");
+			rename("world.self_disguise", "player.self_disguise");
+
+			renameGroup("item.inventory_tweaks", "world.building", "inventory_block_selection", "block_refill");
+			rename("player.aligner", "world.building.aligner");
+			rename("item.auto_tool", "world.building.auto_tool");
+			rename("render.show_barriers", "world.building.show_barriers");
+			renameGroup("world", "world.building", "ghost_blocks_fix", "chunk_indicator", "easy_place", "nature_border_indicator", "redstone_helper", "better_schematica", "better_sign");
+			renameGroup("world", "world.joining", "auto_portal", "portal_cooldown");
+			renameGroup("player", "world.scoreboard", "bank_scoreboard", "orb_scoreboard", "cleanup_scoreboard");
+			rename("render.hide_scoreboard_in_f3", "world.scoreboard.hide_scoreboard_in_f3");
+			rename("render.trajectories", "world.trajectories");
+		}
+	}
+
+	protected void renameGroup(String oldGroup, String newGroup, String... keys) {
+		for (String key : keys)
+			rename(oldGroup + "." + key, newGroup + "." + key);
 	}
 
 	protected void rename(String oldKey, String newKey) {

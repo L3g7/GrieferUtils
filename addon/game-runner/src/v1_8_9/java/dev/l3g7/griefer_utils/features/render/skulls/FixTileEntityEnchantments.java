@@ -26,14 +26,19 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,6 +159,25 @@ public class FixTileEntityEnchantments extends Feature {
 			OpenGlHelper.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER, this.depthBuffer);
 		}
 
+	}
+
+	/**
+	 * Adds a stencil buffer to OptiFine's Framebuffer.
+	 */
+	@Pseudo
+	@SuppressWarnings("UnresolvedMixinReference")
+	@Mixin(targets = "net.optifine.shaders.Shaders", remap = false)
+	private static abstract class MixinShaders {
+
+		@Redirect(method = "setupFrameBuffer", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTexImage2D(IIIIIIIILjava/nio/FloatBuffer;)V"))
+		private static void injectTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, FloatBuffer pixels) {
+			GL11.glTexImage2D(target, level, GL30.GL_DEPTH32F_STENCIL8, width, height, border, GL30.GL_DEPTH_STENCIL, GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV, pixels);
+		}
+
+		@Redirect(method = "setupFrameBuffer", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/EXTFramebufferObject;glFramebufferTexture2DEXT(IIIII)V", ordinal = 0))
+		private static void injectBindFramebuffer(int target, int attachment, int texTarget, int texture, int level) {
+			EXTFramebufferObject.glFramebufferTexture2DEXT(target, GL30.GL_DEPTH_STENCIL_ATTACHMENT, texTarget, texture, level);
+		}
 	}
 
 }

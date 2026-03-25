@@ -27,11 +27,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
@@ -40,10 +40,10 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.minecraft.client.renderer.OpenGlHelper.GL_FRAMEBUFFER;
 import static net.minecraft.client.renderer.OpenGlHelper.GL_RENDERBUFFER;
-import static org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT;
 import static org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT;
 import static org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT;
 import static org.lwjgl.opengl.GL11.*;
+import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 /**
  * Adds enchantment glint to tile entities by rendering the enchantment of a dirt block onto the tile entity
@@ -85,23 +85,10 @@ public class FixTileEntityEnchantments extends Feature {
 		return get(FixTileEntityEnchantments.class);
 	}
 
-	@Override
-	public void init() {
-		super.init();
-		if (mc().getFramebuffer() instanceof FramebufferWithStencil fb)
-			if (!fb.isStencilEnabled())
-				fb.enableStencil();
-	}
-
-	public interface FramebufferWithStencil {
-		boolean isStencilEnabled();
-		void enableStencil();
-	}
-
 	@Mixin(RenderItem.class)
 	private static class MixinRenderItem {
 
-		@Inject(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/resources/model/IBakedModel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer;renderByItem(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+		@Inject(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/resources/model/IBakedModel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer;renderByItem(Lnet/minecraft/item/ItemStack;)V", shift = AFTER))
 		public void injectRenderItem(ItemStack stack, IBakedModel model, CallbackInfo ci) {
 			if ((stack.getItem() != Items.skull
 				&& stack.getItem() != Items.banner
@@ -149,45 +136,22 @@ public class FixTileEntityEnchantments extends Feature {
 	}
 
 	/**
-	 * Adds a stencil buffer to Minecraft's Framebuffer if needed.
+	 * Adds a stencil buffer to Minecraft's Framebuffer.
 	 */
 	@Mixin(Framebuffer.class)
-	@Implements(@Interface(iface = FramebufferWithStencil.class, prefix = "griefer_utils$"))
-	private static abstract class MixinFramebuffer implements FramebufferWithStencil {
+	private static class MixinFramebuffer {
 
 		@Shadow
-		public abstract void createBindFramebuffer(int width, int height);
-
-		@Shadow public int framebufferWidth;
-		@Shadow public int framebufferHeight;
-		@Shadow public int depthBuffer;
-
-		@Unique
-		private boolean grieferUtils$stencilEnabled = false;
+		public int depthBuffer;
 
 		@ModifyArg(method = "createFramebuffer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/OpenGlHelper;glRenderbufferStorage(IIII)V"), index = 1)
 		public int modifyInternalFormat(int internalFormat) {
-			return grieferUtils$stencilEnabled ? GL_DEPTH24_STENCIL8_EXT : internalFormat;
+			return GL_DEPTH24_STENCIL8_EXT;
 		}
 
-		@Redirect(method = "createFramebuffer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/OpenGlHelper;glFramebufferRenderbuffer(IIII)V"))
-		private void redirectGlRenderbufferStorage(int target, int attachment, int renderBufferTarget, int renderBuffer) {
-			if (!grieferUtils$stencilEnabled) {
-				OpenGlHelper.glFramebufferRenderbuffer(target, attachment, renderBufferTarget, renderBuffer);
-				return;
-			}
-
-			OpenGlHelper.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER, this.depthBuffer);
+		@Inject(method = "createFramebuffer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/OpenGlHelper;glFramebufferRenderbuffer(IIII)V", shift = AFTER))
+		private void injectCreateFramebuffer(int displayWidth, int displayHeight, CallbackInfo ci) {
 			OpenGlHelper.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER, this.depthBuffer);
-		}
-
-		public boolean griefer_utils$isStencilEnabled() { // Shim for vanilla
-			return grieferUtils$stencilEnabled;
-		}
-
-		public void griefer_utils$enableStencil() {
-			grieferUtils$stencilEnabled = true;
-			this.createBindFramebuffer(framebufferWidth, framebufferHeight);
 		}
 
 	}

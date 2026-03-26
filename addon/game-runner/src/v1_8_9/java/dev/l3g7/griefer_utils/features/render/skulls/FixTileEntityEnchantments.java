@@ -42,6 +42,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.minecraft.client.renderer.OpenGlHelper.GL_FRAMEBUFFER;
 import static net.minecraft.client.renderer.OpenGlHelper.GL_RENDERBUFFER;
@@ -82,7 +83,9 @@ public class FixTileEntityEnchantments extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Tile Entity-Verzauberung fixen")
+		.name(LABY_3.isActive()
+			? "Tile Entity- Verzauberung fixen" // Spacing to allow word wrap
+			: "Tile Entity-Verzauberung fixen")
 		.description("Behebt, dass Verzauberungen von Tile Entities (Bannern, Kisten, Köpfen) nicht angezeigt werden.")
 		.icon("enchanted_steve");
 

@@ -22,6 +22,8 @@ import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.network.play.server.S24PacketBlockAction;
 import net.minecraft.network.play.server.S28PacketEffect;
 
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+
 @Singleton
 public class OptimizeChunks extends Feature {
 
@@ -36,7 +38,10 @@ public class OptimizeChunks extends Feature {
 
 	@EventListener
 	public void onMultiBlockChange(PacketReceiveEvent<S23PacketBlockChange> event) {
-		Block prev = MinecraftUtil.world().getBlockState(event.packet.getBlockPosition()).getBlock();
+		if (world() == null)
+			return;
+
+		Block prev = world().getBlockState(event.packet.getBlockPosition()).getBlock();
 		Block block = event.packet.getBlockState().getBlock();
 		if (dropChange(prev) || dropChange(block))
 			event.cancel();
@@ -44,7 +49,10 @@ public class OptimizeChunks extends Feature {
 
 	@EventListener
 	public void onBlockAction(PacketReceiveEvent<S24PacketBlockAction> event) {
-		Block prev = MinecraftUtil.world().getBlockState(event.packet.getBlockPosition()).getBlock();
+		if (world() == null)
+			return;
+
+		Block prev = world().getBlockState(event.packet.getBlockPosition()).getBlock();
 		if (prev != event.packet.getBlockType())
 			event.cancel();
 	}
@@ -57,11 +65,14 @@ public class OptimizeChunks extends Feature {
 
 	@EventListener
 	public void onBlockChange(PacketReceiveEvent<S22PacketMultiBlockChange> event) {
+		if (world() == null)
+			return;
+
 		var changes = event.packet.getChangedBlocks();
 		boolean[] valid = new boolean[changes.length];
 		for (int i = 0; i < changes.length; i++) {
 			BlockUpdateData changedBlock = changes[i];
-			Block prev = MinecraftUtil.world().getBlockState(changedBlock.getPos()).getBlock();
+			Block prev = world().getBlockState(changedBlock.getPos()).getBlock();
 			Block block = changedBlock.getBlockState().getBlock();
 			valid[i] = !(dropChange(prev) || dropChange(block));
 		}

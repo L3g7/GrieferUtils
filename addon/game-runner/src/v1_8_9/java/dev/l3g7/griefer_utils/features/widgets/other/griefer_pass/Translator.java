@@ -22,8 +22,11 @@ class Translator {
 
 	private static final Map<String, String> ITEM_TRANSLATION_KEYS = new HashMap<>();
 	private static final Map<String, String> BLOCK_TRANSLATION_KEYS = new HashMap<>();
-	private static final Map<String, String> ENTITIY_TRANSLATION_KEYS = new HashMap<>();
-	private static final Map<String, String> ENGLISH_ENTITY_TRANSLATION_KEYS = new HashMap<>(); // Some entities are in english
+	private static final Map<String, String> ENTITY_TRANSLATION_KEYS = new HashMap<>();
+
+	private static final Map<String, String> ENGLISH_ITEM_TRANSLATION_KEYS = new HashMap<>();
+	private static final Map<String, String> ENGLISH_BLOCK_TRANSLATION_KEYS = new HashMap<>();
+	private static final Map<String, String> ENGLISH_ENTITY_TRANSLATION_KEYS = new HashMap<>();
 
 	private static final Map<String, ItemStack> ITEMS = new HashMap<>();
 	private static final Map<String, Pair<Block, Integer>> BLOCKS = new HashMap<>();
@@ -39,22 +42,11 @@ class Translator {
 			BugReporter.reportError(new Throwable("Lookup failed! (de_DE not found)"));
 		}
 
-		for (Map.Entry<String, String> entry : properties.entrySet()) {
-			String key = entry.getKey();
-			String value = entry.getValue().toLowerCase();
-			if (key.startsWith("item."))
-				ITEM_TRANSLATION_KEYS.put(value, key);
-			else if (key.startsWith("tile."))
-				BLOCK_TRANSLATION_KEYS.put(value, key);
-			else if (key.startsWith("entity."))
-				ENTITIY_TRANSLATION_KEYS.put(value, key);
-		}
+		parseTranslationKeys(properties, ITEM_TRANSLATION_KEYS, BLOCK_TRANSLATION_KEYS, ENTITY_TRANSLATION_KEYS);
 
 		StringTranslate fallbackTranslate = Reflection.get(StatCollector.class, "fallbackTranslator");
 		Map<String, String> fallbackMap = Reflection.get(fallbackTranslate, "languageList");
-		for (Map.Entry<String, String> entry : fallbackMap.entrySet())
-			if (entry.getKey().startsWith("entity."))
-				ENGLISH_ENTITY_TRANSLATION_KEYS.put(entry.getValue().toLowerCase(), entry.getKey());
+		parseTranslationKeys(properties, ENGLISH_ITEM_TRANSLATION_KEYS, ENGLISH_BLOCK_TRANSLATION_KEYS, ENGLISH_ENTITY_TRANSLATION_KEYS);
 
 		for (Block block : Block.blockRegistry) {
 			Item item = Item.getItemFromBlock(block);
@@ -77,46 +69,47 @@ class Translator {
 		ENTITIES = Reflection.get(EntityList.class, "stringToClassMapping");
 
 		// Hardcoded renamed elements
-		addAlias(ENTITIY_TRANSLATION_KEYS, "magmawürfel", "magmaschleim");
+		addAlias(ENTITY_TRANSLATION_KEYS, "magmawürfel", "magmaschleim");
 		addAlias(ITEM_TRANSLATION_KEYS, "kabeljau", "roher kabeljau");
 		addAlias(ITEM_TRANSLATION_KEYS, "lachs", "roher lachs");
 	}
 
+	private static void parseTranslationKeys(Map<String, String> properties, Map<String, String> items,	Map<String, String> blocks,	Map<String, String> entities) {
+		for (Map.Entry<String, String> entry : properties.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue().toLowerCase();
+			if (key.startsWith("item."))
+				items.put(value, key);
+			else if (key.startsWith("tile."))
+				blocks.put(value, key);
+			else if (key.startsWith("entity."))
+				entities.put(value, key);
+		}
+	}
+
 	private static void addAlias(Map<String, String> map, String key, String replacement) {
-		ENTITIY_TRANSLATION_KEYS.put(key, ENTITIY_TRANSLATION_KEYS.get(replacement));
+		ENTITY_TRANSLATION_KEYS.put(key, ENTITY_TRANSLATION_KEYS.get(replacement));
 	}
 
 	public static ItemStack getItem(String germanName) {
-		return resolveSimple("Item", germanName.toLowerCase(), ITEM_TRANSLATION_KEYS, ITEMS);
+		return resolve("Item", germanName.toLowerCase(), ITEM_TRANSLATION_KEYS, ENGLISH_ITEM_TRANSLATION_KEYS, ITEMS);
 	}
 
 	public static Pair<Block, Integer> getBlock(String germanName) {
-		return resolveSimple("Block", germanName.toLowerCase(), BLOCK_TRANSLATION_KEYS, BLOCKS);
+		return resolve("Block", germanName.toLowerCase(), BLOCK_TRANSLATION_KEYS, ENGLISH_BLOCK_TRANSLATION_KEYS, BLOCKS);
 	}
 
 	public static Class<? extends Entity> getEntity(String germanName) {
-		germanName = germanName.toLowerCase();
-
-		String translationKey = ENTITIY_TRANSLATION_KEYS.get(germanName);
-		if (translationKey == null) {
-			translationKey = ENGLISH_ENTITY_TRANSLATION_KEYS.get(germanName);
-			if (translationKey == null)
-				return reportError("Entity GName -> TKey", germanName);
-		}
-
-		translationKey = translationKey.substring("entity.".length(), translationKey.length() - ".name".length());
-
-		Class<? extends Entity> t = ENTITIES.get(translationKey);
-		if (t == null)
-			return reportError("TKey -> Entity", translationKey);
-
-		return t;
+		return resolve("Entity", germanName.toLowerCase(), ENTITY_TRANSLATION_KEYS, ENGLISH_ENTITY_TRANSLATION_KEYS, ENTITIES);
 	}
 
-	private static <T> T resolveSimple(String type, String germanName, Map<String, String> translationKeys, Map<String, T> lookup) {
+	private static <T> T resolve(String type, String germanName, Map<String, String> translationKeys, Map<String, String> englishTranslationKeys, Map<String, T> lookup) {
 		String translationKey = translationKeys.get(germanName);
-		if (translationKey == null)
-			return reportError(type + " GName -> TKey", germanName);
+		if (translationKey == null) {
+			translationKey = englishTranslationKeys.get(germanName);
+			if (translationKey == null)
+				return reportError(type + " GName -> TKey", germanName);
+		}
 
 		translationKey = translationKey.substring(0, translationKey.length() - ".name".length());
 

@@ -452,6 +452,33 @@ public class ConfigPatcher {
 			rename("world.building", "active", "enabled");
 			rename("world.joining", "active", "enabled");
 			rename("world.scoreboard", "active", "enabled");
+
+			// Acknowledged changes
+			if (get("settings").has("acknowledged_changes")) {
+				JsonArray patchedChanges = new JsonArray();
+				for (JsonElement element : get("settings").get("acknowledged_changes").getAsJsonArray()) {
+					String key = element.getAsString();
+					patchedChanges.add(new JsonPrimitive(switch (key) {
+						case "chat.calculator.inline_calculation" -> "chat.outgoing.calculator.inline_calculation";
+						case "chat.chat_mods.remove_broadcast" -> "chat.ingoing.chat_cleanup.remove_broadcast";
+						case "chat.chat_mods.remove_hero_highlights" -> "chat.ingoing.chat_cleanup.remove_hero_highlights";
+						case "chat.command_suggestions.enabled" -> "chat.outgoing.command_suggestions.enabled";
+						case "chat.fix_kicks.enabled" -> "chat.outgoing.fix_kicks.enabled";
+						case "chat.interactable_friends_menu.enabled" -> "gui.griefer_games.interactable_friends_menu.enabled";
+						case "chat.plot_chat_indicator.replace_global_chat" -> "chat.outgoing.plot_chat_indicator.replace_global_chat";
+						case "chat.real_money.highlight_cents" -> "chat.ingoing.real_money.highlight_cents";
+						case "player.better_plot_menu.enabled" -> "gui.griefer_games.better_plot_menu.enabled";
+						case "player.cleanup_scoreboard.enabled" -> "world.scoreboard.cleanup_scoreboard.enabled";
+						case "render.show_nametags_through_walls.enabled" -> "player.name_tags.show_name_tags_through_walls.enabled";
+						case "world.better_hopper.show_fast_tick" -> "gui.griefer_games.better_hopper.show_fast_tick";
+						case "world.better_hopper.sneak_mode.hopper_with_held_item_fix" -> "gui.griefer_games.better_hopper.sneak_mode.hopper_with_held_item_fix";
+						case "world.nature_border_indicator.enabled" -> "world.building.show_nature_borders.enabled";
+						case "world.optimize_chunks.enabled" -> "world.optimize_chunks.enabled";
+						default -> key;
+					}));
+				}
+				get("settings").add("acknowledged_changes", patchedChanges);
+			}
 		}
 	}
 

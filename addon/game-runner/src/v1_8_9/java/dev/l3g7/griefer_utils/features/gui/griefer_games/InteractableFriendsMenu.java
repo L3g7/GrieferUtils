@@ -13,10 +13,9 @@ import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.init.Items;
-
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
 public class InteractableFriendsMenu extends Feature {
@@ -49,7 +48,7 @@ public class InteractableFriendsMenu extends Feature {
 			return;
 
 		event.cancel();
-		mc().displayGuiScreen(null);
+		MinecraftUtil.closeServersideGUI();
 		parsedCB.join();
 	}
 

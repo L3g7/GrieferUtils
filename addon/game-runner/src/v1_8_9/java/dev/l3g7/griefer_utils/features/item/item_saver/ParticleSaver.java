@@ -95,7 +95,7 @@ public class ParticleSaver extends Feature {
 					return;
 
 				mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld, mc.thePlayer.getHeldItem());
-				mc.displayGuiScreen(null);
+				MinecraftUtil.closeClientsideGUI();
 			}
 
 		});

@@ -31,9 +31,10 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.world.building.AutoTool;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.features.world.building.AutoTool;
 import net.labymod.core.LabyModCore;
 import net.labymod.core.WorldRendererAdapter;
 import net.labymod.settings.elements.SettingsElement;
@@ -99,7 +100,7 @@ public class SpecificItemSaver extends Feature implements TempItemSaverBridge {
 
 			previousScreen = mc().currentScreen;
 			display(Constants.ADDON_PREFIX + "Bitte klicke das Item an, das du hinzufügen möchtest.");
-			mc().displayGuiScreen(null);
+			MinecraftUtil.closeClientsideGUI();
 		});
 
 	@MainElement(configureSubSettings = false)

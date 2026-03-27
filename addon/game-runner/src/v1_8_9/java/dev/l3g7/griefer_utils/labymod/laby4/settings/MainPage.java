@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.CategoryData;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
@@ -41,7 +42,6 @@ import java.util.function.Consumer;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.misc.badges.laby4.Laby4BadgeManager.icon;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 @ExclusiveTo(LABY_4)
@@ -100,7 +100,7 @@ public class MainPage {
 							Laby.labyAPI().minecraft().executeOnRenderThread(() -> searchWidget.setText(""));
 							labyBridge.notify("§aEaster Egg", "Easter Egg wurde " + (icon.equals("icon") ? "de" : "") + "aktiviert.");
 							if (world() != null)
-								mc().displayGuiScreen(null);
+								MinecraftUtil.closeClientsideGUI();
 
 							timer = null;
 						}

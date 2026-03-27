@@ -27,7 +27,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class FreeStuff {
 
@@ -105,7 +104,7 @@ public class FreeStuff {
 
 		chest.addItem(id, stack, () -> {
 			BetterSwitch.sendOnCitybuild("/p h " + name, cb);
-			mc().displayGuiScreen(null);
+			MinecraftUtil.closeClientsideGUI();
 		}, () -> openGui(chest), () -> {
 			if (farm == null)
 				return;
@@ -129,7 +128,7 @@ public class FreeStuff {
 				ItemUtil.setLore(freeStuffStack, "§7" + entry.getValue());
 			gui.addEntry(freeStuffStack, () -> {
 				BetterSwitch.sendOnCitybuild("/p h " + name, cb);
-				mc().displayGuiScreen(null);
+				MinecraftUtil.closeClientsideGUI();
 			});
 		}
 		gui.open();

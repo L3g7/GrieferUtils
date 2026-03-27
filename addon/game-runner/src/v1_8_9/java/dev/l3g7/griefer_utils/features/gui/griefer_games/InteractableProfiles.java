@@ -62,7 +62,7 @@ public class InteractableProfiles extends Feature {
 				return;
 
 			player().sendChatMessage("/clan info " + clan);
-			mc().displayGuiScreen(null);
+			MinecraftUtil.closeServersideGUI();
 		}
 
 		slot = gui.inventorySlots.getSlot(32);

@@ -24,6 +24,7 @@ import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
 import net.labymod.settings.elements.SettingsElement;
@@ -174,7 +175,7 @@ public class ToolSaver extends Feature implements TempToolSaverBridge {
 
 				previousScreen = mc().currentScreen;
 				display(Constants.ADDON_PREFIX + "Bitte klicke das Item an, das du als Ausnahme hinzufügen möchtest.");
-				mc().displayGuiScreen(null);
+				MinecraftUtil.closeClientsideGUI();
 			}));
 	}
 

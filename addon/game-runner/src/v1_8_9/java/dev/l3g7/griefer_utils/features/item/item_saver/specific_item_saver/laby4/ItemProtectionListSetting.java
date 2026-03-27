@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.*;
 import net.labymod.api.client.component.Component;
@@ -182,7 +183,7 @@ public class ItemProtectionListSetting extends ListSetting implements Laby4Setti
 
 			previousScreen = mc().currentScreen;
 			display(Constants.ADDON_PREFIX + "Bitte klicke das Item an, das du hinzufügen möchtest.");
-			mc().displayGuiScreen(null);
+			MinecraftUtil.closeClientsideGUI();
 		});
 
 	}

@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFSearchRequest;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.BSF;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.Waypoint;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.data.BSFSearchable;
@@ -27,7 +28,6 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.distanceToPlayer;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.gui.integrations.bsf.Waypoint.rainbow;
 
 class GuiSearches extends GuiBigChest {
@@ -59,7 +59,7 @@ class GuiSearches extends GuiBigChest {
 			addItem(10, ItemUtil.setLore(ItemUtil.createItem(Blocks.barrier, 0, "§7" + searchNewName), "", "§cBitte betrete eine Farmwelt!"), null);
 		} else {
 			addTextureItem(10, new TextureItem("lens", "§f" + searchNewName), () -> {
-				mc().displayGuiScreen(null);
+				MinecraftUtil.closeClientsideGUI();
 				List<Integer> exclude = searchData.stream().map(BSF.SearchData::index).collect(Collectors.toList());
 
 				if (searchable instanceof Structure s) {
@@ -88,7 +88,7 @@ class GuiSearches extends GuiBigChest {
 			addTextureItem(counter++, searchItem, () -> {
 				Waypoint.setWaypoint(coordinates.x(), coordinates.z(), searchable);
 				labyBridge.notify("§aWegpunkt gesetzt", "§aWegpunkt wurde auf " + coordinates.x() + ", " + coordinates.z() + " gesetzt.");
-				mc().displayGuiScreen(null);
+				MinecraftUtil.closeClientsideGUI();
 			});
 
 			if (counter % 9 == 8)

@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import net.minecraft.client.Minecraft;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -112,7 +112,7 @@ public class Credits {
 		nbt = String.format(nbt, new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
 		boolean success = player().inventory.addItemStackToInventory(ItemUtil.fromNBT(nbt));
 		labyBridge.notify("§6Keks", success ? "Guten Appetit!" : "§eDu musst Platz im Inventar haben!");
-		Minecraft.getMinecraft().displayGuiScreen(null);
+		MinecraftUtil.closeClientsideGUI();
 	}
 
 }

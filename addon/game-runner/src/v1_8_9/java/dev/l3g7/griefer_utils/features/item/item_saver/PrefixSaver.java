@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.gui.ItemSearch;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -76,7 +77,7 @@ public class PrefixSaver extends Feature {
 					return;
 
 				mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld, mc.thePlayer.getHeldItem());
-				mc.displayGuiScreen(null);
+				MinecraftUtil.closeClientsideGUI();
 			}
 
 		});

@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class Farm {
 
@@ -92,7 +91,7 @@ public class Farm {
 	public void addItemStack(GuiBigChest chest, int id, SpawnerType type, boolean isCbFiltered, boolean secondRow) {
 		chest.addItem(id, toStack(type, isCbFiltered, secondRow), () -> {
 			BetterSwitch.sendOnCitybuild("/p h " + name, cb);
-			mc().displayGuiScreen(null);
+			MinecraftUtil.closeClientsideGUI();
 		}, () -> openGui(chest), () -> {
 			if (freeStuff == null)
 				return;
@@ -113,7 +112,7 @@ public class Farm {
 		for (Spawner s : spawner) {
 			Runnable onClick = () -> {
 				BetterSwitch.sendOnCitybuild("/p h " + (s.plot == null ? name : s.plot), cb);
-				mc().displayGuiScreen(null);
+				MinecraftUtil.closeClientsideGUI();
 			};
 
 			if (s.type.isCobblestone()) {

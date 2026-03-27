@@ -20,6 +20,7 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.*;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.client.component.Component;
@@ -184,7 +185,7 @@ public class ItemValueListSetting extends ListSetting implements Laby4Setting<It
 
 			previousScreen = mc().currentScreen;
 			display(Constants.ADDON_PREFIX + "Bitte klicke das Item an, das du hinzufügen möchtest.");
-			mc().displayGuiScreen(null);
+			MinecraftUtil.closeClientsideGUI();
 		});
 
 	}

@@ -110,7 +110,7 @@ public class RecipeRecorder {
 				action.category = 1;
 			else if (recording != Recraft.tempRecording) {
 				labyBridge.notify("§cFehler \u26A0", "§cDiese Kategorie ist nicht implementiert!");
-				mc().displayGuiScreen(null);
+				MinecraftUtil.closeClientsideGUI();
 			}
 
 			RecraftLogger.log("Recorded category: " + (action.category == -1 ? -slot : action.category));

@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.types.*;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import net.labymod.gui.elements.ModTextField;
@@ -154,7 +155,7 @@ public class MainPage {
 						filter.set("");
 						labyBridge.notify("§aEaster Egg", "Easter Egg wurde " + (!activate ? "de" : "") + "aktiviert.");
 						if (world() != null)
-							mc().displayGuiScreen(null);
+							MinecraftUtil.closeClientsideGUI();
 
 						timer = null;
 					}

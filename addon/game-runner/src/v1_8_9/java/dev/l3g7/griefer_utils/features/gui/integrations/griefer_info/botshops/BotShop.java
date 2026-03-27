@@ -20,8 +20,6 @@ import net.minecraft.init.Blocks;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-
 public class BotShop {
 
 	public static final List<BotShop> BOT_SHOPS = new ArrayList<>();
@@ -66,7 +64,7 @@ public class BotShop {
 
 		chest.addTextureItem(id, new TextureItem(texture, 14, ItemUtil.createItem(Blocks.command_block, 0, name)), () -> {
 			BetterSwitch.sendOnCitybuild("/p h " + this.name, cb);
-			mc().displayGuiScreen(null);
+			MinecraftUtil.closeClientsideGUI();
 		});
 	}
 

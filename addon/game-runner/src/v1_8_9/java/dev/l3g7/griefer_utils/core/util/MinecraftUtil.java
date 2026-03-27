@@ -106,6 +106,15 @@ public class MinecraftUtil {
 		suggest(String.format(format, args));
 	}
 
+	public static void closeClientsideGUI() {
+		mc().displayGuiScreen(null);
+	}
+
+	public static void closeServersideGUI() {
+		if (player() != null)
+			player().closeScreen();
+	}
+
 	public static String getServerFromScoreboard() {
 		if (world() == null)
 			return "";

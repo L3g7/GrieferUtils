@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
@@ -93,7 +94,7 @@ class BetterHopperVisualisation implements Disableable {
 
 			if (slot == 52) {
 				displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
-				mc().displayGuiScreen(null);
+				MinecraftUtil.closeServersideGUI();
 				event.cancel();
 			}
 		}
@@ -145,7 +146,7 @@ class BetterHopperVisualisation implements Disableable {
 
 		if (slot == 34) {
 			displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
-			mc().displayGuiScreen(null);
+			MinecraftUtil.closeServersideGUI();
 			event.cancel();
 		}
 	}

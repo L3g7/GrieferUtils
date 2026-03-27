@@ -66,7 +66,7 @@ public class ChatFilterWebhooks extends Feature {
 	@Override
 	public void init() {
 		super.init();
-		configKey = "chat.filter_webhooks.filters." + (LABY_3.isActive() ? "laby3" : "laby4");
+		configKey = "chat.chat_filter.chat_filter_webhooks.filters." + (LABY_3.isActive() ? "laby3" : "laby4");
 		if (!Config.has(configKey))
 			return;
 

@@ -23,7 +23,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 @Singleton
 public class FullBright extends Feature {
 
-	private static final String GAMMA_PATH = "render.full_bright.old_gamma_value";
+	private static final String GAMMA_PATH = "render.light.full_bright.old_gamma_value";
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

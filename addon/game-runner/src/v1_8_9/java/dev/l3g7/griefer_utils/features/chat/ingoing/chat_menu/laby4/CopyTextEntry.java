@@ -31,7 +31,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 @ExclusiveTo(LABY_4)
 public class CopyTextEntry extends ChatMenuEntry {
 
-	protected final String configKey = "chat.chat_menu.entries." + name + ".";
+	protected final String configKey = "chat.ingoing.chat_menu.entries." + name + ".";
 
 	private final DropDownSetting<CopyFormat> copyFormat = DropDownSetting.create(CopyFormat.class)
 		.name("Format")

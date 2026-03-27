@@ -70,13 +70,13 @@ public class ChatReactor extends Feature {
 				array.add(((ReactionDisplaySetting) element).reaction.toJson());
 		}
 
-		Config.set("chat.chat_reactor.entries", array);
+		Config.set("chat.ingoing.chat_reactor.entries", array);
 		Config.save();
 	}
 
 	private void loadEntries() {
 
-		String path = "chat.chat_reactor.entries";
+		String path = "chat.ingoing.chat_reactor.entries";
 		if (Config.has(path)) {
 			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
 				ChatReaction reaction = ChatReaction.fromJson(jsonElement.getAsJsonObject());

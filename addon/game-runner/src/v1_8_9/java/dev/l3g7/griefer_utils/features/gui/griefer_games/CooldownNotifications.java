@@ -240,13 +240,13 @@ public class CooldownNotifications extends Feature {
 		}
 
 		// Save end dates along with player uuid so no problems occur when using multiple accounts
-		Config.set("player.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId(), o);
+		Config.set("gui.griefer_games.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId(), o);
 		Config.save();
 	}
 
 	@EventListener
 	public void loadCooldowns(GrieferGamesJoinEvent event) {
-		String path = "player.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId();
+		String path = "gui.griefer_games.cooldown_notifications.end_dates." + mc().getSession().getProfile().getId();
 
 		if (!Config.has(path))
 			return;

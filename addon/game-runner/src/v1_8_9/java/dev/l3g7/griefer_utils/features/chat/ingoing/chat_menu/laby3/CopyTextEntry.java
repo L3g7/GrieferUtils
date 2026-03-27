@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class CopyTextEntry extends ChatMenuEntry {
 
-	protected final String configKey = "chat.chat_menu.entries." + name + ".";
+	protected final String configKey = "chat.ingoing.chat_menu.entries." + name + ".";
 
 	private final DropDownSetting<CopyFormat> copyFormat = DropDownSetting.create(CopyFormat.class)
 		.name("Format")

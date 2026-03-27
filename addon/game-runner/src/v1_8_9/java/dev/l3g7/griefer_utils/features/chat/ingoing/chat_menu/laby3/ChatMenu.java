@@ -91,7 +91,7 @@ public class ChatMenu extends Feature {
 				.callback(v -> entry.enabled = v)
 				.defaultValue(true)
 				.set(entry.enabled)
-				.config("chat.chat_menu.entries." + entry.name));
+				.config("chat.ingoing.chat_menu.entries." + entry.name));
 		}
 
 		settings.add(COPY_TEXT_ENTRY.getSetting());
@@ -99,7 +99,7 @@ public class ChatMenu extends Feature {
 
 		enabled.subSettings(settings.toArray(new BaseSetting[0]));
 
-		String path = "chat.chat_menu.entries.custom";
+		String path = "chat.ingoing.chat_menu.entries.custom";
 		if (Config.has(path)) {
 			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
 				new EntryDisplaySetting(ChatMenuEntry.fromJson(jsonElement.getAsJsonObject()), (SettingsElement) enabled);
@@ -114,21 +114,21 @@ public class ChatMenu extends Feature {
 
 	public static void saveEntries() {
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES)
-			Config.set("chat.chat_menu.entries." + entry.name, new JsonPrimitive(entry.enabled));
+			Config.set("chat.ingoing.chat_menu.entries." + entry.name, new JsonPrimitive(entry.enabled));
 
 		JsonArray array = new JsonArray();
 		for (ChatMenuEntry customEntry : getCustom())
 			if (customEntry.completed)
 				array.add(customEntry.toJson());
 
-		Config.set("chat.chat_menu.entries.custom", array);
+		Config.set("chat.ingoing.chat_menu.entries.custom", array);
 		Config.save();
 	}
 
 	private void loadEntries() {
 
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES) {
-			String path = "chat.chat_menu.entries." + entry.name;
+			String path = "chat.ingoing.chat_menu.entries." + entry.name;
 
 			if (Config.has(path))
 				entry.enabled = Config.get(path).getAsBoolean();

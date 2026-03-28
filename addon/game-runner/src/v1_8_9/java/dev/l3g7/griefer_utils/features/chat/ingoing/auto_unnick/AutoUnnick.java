@@ -76,7 +76,7 @@ public class AutoUnnick extends Feature {
 			IChatComponentUtil.setNameWithPrefix(event.component, nickName, name, new PrefixFinder(parts[0], parts[1]).getPrefix(), true);
 	}
 
-	@EventListener(priority = Priority.HIGH)
+	@EventListener
 	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
 		if (!chat.get())
 			return;

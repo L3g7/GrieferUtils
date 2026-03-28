@@ -56,7 +56,7 @@ public class InteractableMessages extends Feature {
 			""")
 		.icon("mouse_left");
 
-	@EventListener(priority = Priority.LOW)
+	@EventListener(priority = Priority.HIGH)
 	public void modifyMessage(MessageModifyEvent event) {
 		modifyGlobalChats(event);
 		modifyPHs(event);

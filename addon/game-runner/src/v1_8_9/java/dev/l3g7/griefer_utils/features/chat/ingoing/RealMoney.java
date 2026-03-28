@@ -58,7 +58,7 @@ public class RealMoney extends Feature {
 		.icon("coin")
 		.subSettings(highlightCents, tag, position);
 
-	@EventListener(priority = Priority.LOW)
+	@EventListener(priority = Priority.HIGH)
 	public void onMessageReceive(MessageModifyEvent event) {
 		Matcher matcher = Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.original.getFormattedText());
 		if (!matcher.matches())

@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.features.chat.ingoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.misc.IconComponent;
@@ -36,7 +37,7 @@ public class MessageSkulls extends Feature {
 		.description("Zeigt den Kopf des Autors vor Nachrichten an.")
 		.icon("steve");
 
-	@EventListener
+	@EventListener(priority = Priority.LOW)
 	public void onMsgReceive(MessageModifyEvent event) {
 		for (Pattern pattern : PATTERNS) {
 			Matcher matcher = pattern.matcher(event.original.getFormattedText());

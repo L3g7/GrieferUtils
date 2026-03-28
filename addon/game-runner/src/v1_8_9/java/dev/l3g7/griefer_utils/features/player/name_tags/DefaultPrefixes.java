@@ -125,7 +125,7 @@ public class DefaultPrefixes extends Feature {
 		setPrefix(event.component, parts[1], parts[0], true);
 	}
 
-	@EventListener(priority = Priority.HIGHEST)
+	@EventListener(priority = Priority.HIGH)
 	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
 		if (!chat.get())
 			return;

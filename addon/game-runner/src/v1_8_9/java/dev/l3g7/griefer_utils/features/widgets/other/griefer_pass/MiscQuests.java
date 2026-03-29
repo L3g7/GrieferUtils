@@ -97,7 +97,7 @@ abstract class MiscQuests {
 
 		@EventListener
 		private void onUseItemFinish(ItemUseEvent.Finish event) {
-			if (target.isItemEqual(event.itemStack))
+			if (event.itemStack.isItemEqual(target))
 				increaseAmount();
 		}
 
@@ -115,6 +115,9 @@ abstract class MiscQuests {
 
 		@EventListener
 		private void onBlockBreak(BlockBrokeEvent event) {
+			if (target == null)
+				return;
+
 			Block block = event.state.getBlock();
 			if (block == target.a && block.getMetaFromState(event.state) == target.b)
 				increaseAmount();
@@ -166,7 +169,7 @@ abstract class MiscQuests {
 
 		@EventListener
 		private void onEntityKill(ApproximateEntityKillEvent event) {
-			if (target.isInstance(event.entity) && (!requireNether || player().dimension == -1)) {
+			if (target != null && target.isInstance(event.entity) && (!requireNether || player().dimension == -1)) {
 				if (!entityString.equals("witherskelett") || ((EntitySkeleton) event.entity).getSkeletonType() == 1)
 					increaseAmount();
 			}
@@ -301,7 +304,7 @@ abstract class MiscQuests {
 				return;
 
 			for (DataWatcher.WatchableObject wo : event.packet.func_149376_c())
-				if (wo.getDataValueId() == 10 && wo.getObject() instanceof ItemStack is && target.isItemEqual(is))
+				if (wo.getDataValueId() == 10 && wo.getObject() instanceof ItemStack is && is.isItemEqual(target))
 					increaseAmount();
 
 			readTime = -1;

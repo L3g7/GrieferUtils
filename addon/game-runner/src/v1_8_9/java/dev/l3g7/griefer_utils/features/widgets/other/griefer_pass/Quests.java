@@ -26,6 +26,7 @@ class Quests {
 		registerQuest(true, "Angle {AMOUNT}x {TARGET}", MiscQuests.FishQuest.class);
 		registerQuest(true, "Öffne {AMOUNT}x LuckyBlöcke", MiscQuests.OpenLuckyBlockQuest.class);
 		registerQuest(true, "Erleide {AMOUNT}x Schaden durch Mobs oder Spieler", MiscQuests.GetDamagedQuest.class);
+		registerQuest(true, "Besuche {AMOUNT} verschiedene Biome", VisitBiomesQuest.class);
 
 		registerQuest(false, "Schieße {AMOUNT}x mit Bogen", MiscQuests.ShootBowQuest.class);
 		registerQuest(false, "Nutze {AMOUNT}x ein Boot oder Minecart", MiscQuests.RideBoatOrMinecartQuest.class);
@@ -97,7 +98,7 @@ class Quests {
 
 				quest.init(index, matcher, displayText, APPROXIMATE_QUESTS.contains(entry.getKey()), maxAmount, maxCompletions);
 				quest.increaseCompletions(completions);
-				quest.setAmount(amount);
+				quest.setAmount(amount, false);
 				return quest;
 			} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
 				throw new RuntimeException(e);

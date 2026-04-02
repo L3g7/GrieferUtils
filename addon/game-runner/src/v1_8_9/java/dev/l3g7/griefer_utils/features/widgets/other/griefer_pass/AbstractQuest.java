@@ -43,8 +43,6 @@ abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 		this.matcher = matcher;
 		this.maxAmount = maxAmount;
 		this.maxCompletions = maxCompletions;
-
-		EventRegisterer.register(this);
 	}
 
 	@Override
@@ -93,12 +91,12 @@ abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 	}
 
 	protected void increaseAmount() { increaseAmount(1); }
-	protected void increaseAmount(int amount) { setAmount(this.amount + amount); }
-	protected void setAmount(int amount) {
+	protected void increaseAmount(int amount) { setAmount(this.amount + amount, true); }
+	protected void setAmount(int amount, boolean updateConfig) {
 		int previousAmount = this.amount;
 		this.amount = Math.min(amount, maxAmount);
 
-		if (previousAmount != this.amount)
+		if (updateConfig && previousAmount != this.amount)
 			FileProvider.getSingleton(GrieferPass.class).onQuestUpdate(false);
 	}
 
@@ -116,6 +114,8 @@ abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 	public void pin(Map<String, TreeSet<AbstractQuest>> questLookup, Map<String, TreeSet<AbstractQuest>> questTypeLookup) {
 		questLookup.computeIfAbsent(questText, k -> new TreeSet<>()).add(this);
 		questTypeLookup.computeIfAbsent(questTypeText, k -> new TreeSet<>()).add(this);
+
+		EventRegisterer.register(this);
 	}
 
 	public void unpin(Map<String, TreeSet<AbstractQuest>> questLookup, Map<String, TreeSet<AbstractQuest>> questTypeLookup) {
@@ -157,7 +157,7 @@ abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 	}
 
 	public static AbstractQuest deserialize(JsonObject obj) {
-		return Quests.parseQuest(
+		AbstractQuest quest = Quests.parseQuest(
 			obj.get("index").getAsInt(),
 			obj.get("text").getAsString(),
 			obj.get("amount").getAsInt(),
@@ -165,6 +165,11 @@ abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 			obj.get("completions").getAsInt(),
 			obj.get("max_completions").getAsInt()
 		);
+
+		if (quest instanceof VisitBiomesQuest vbq)
+			vbq.deserializeBiomes(obj);
+
+		return quest;
 	}
 
 	@Override

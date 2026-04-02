@@ -46,7 +46,7 @@ class Translator {
 
 		StringTranslate fallbackTranslate = Reflection.get(StatCollector.class, "fallbackTranslator");
 		Map<String, String> fallbackMap = Reflection.get(fallbackTranslate, "languageList");
-		parseTranslationKeys(properties, ENGLISH_ITEM_TRANSLATION_KEYS, ENGLISH_BLOCK_TRANSLATION_KEYS, ENGLISH_ENTITY_TRANSLATION_KEYS);
+		parseTranslationKeys(fallbackMap, ENGLISH_ITEM_TRANSLATION_KEYS, ENGLISH_BLOCK_TRANSLATION_KEYS, ENGLISH_ENTITY_TRANSLATION_KEYS);
 
 		for (Block block : Block.blockRegistry) {
 			Item item = Item.getItemFromBlock(block);
@@ -112,10 +112,18 @@ class Translator {
 		}
 
 		translationKey = translationKey.substring(0, translationKey.length() - ".name".length());
+		if (translationKeys == ENTITY_TRANSLATION_KEYS) {
+			translationKey = translationKey.substring("entity.".length());
+		}
 
 		T t = lookup.get(translationKey);
-		if (t == null)
-			return reportError("TKey -> " + type, translationKey);
+		if (t == null) {
+			t = lookup.get(translationKey + ".default");
+			if (t == null)
+				t = lookup.get(translationKey + ".normal");
+			if (t == null)
+				return reportError("TKey -> " + type, translationKey);
+		}
 
 		return t;
 	}

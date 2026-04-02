@@ -2,6 +2,7 @@ package dev.l3g7.griefer_utils.features.widgets.other.griefer_pass;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
@@ -12,6 +13,7 @@ import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -33,8 +35,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 @Singleton
 public class GrieferPass extends ComplexWidget {
@@ -81,13 +82,14 @@ public class GrieferPass extends ComplexWidget {
 				q.updateShadowing(questTypeLookup);
 			array.add(q.serialize());
 		});
-		Config.set("modules.griefer_pass.quests." + mc().getSession().getProfile().getId(), array);
+		Config.set("modules.griefer_pass.quests." + uuid(), array);
+		Config.set("modules.griefer_pass.next_reset." + uuid(), new JsonPrimitive(getNextServerRestart()));
 		Config.save();
 	}
 
 	@EventListener
 	private void loadQuests(GrieferGamesJoinEvent event) {
-		String key = "modules.griefer_pass.quests." + mc().getSession().getProfile().getId();
+		String key = "modules.griefer_pass.quests." + uuid();
 		if (!Config.has(key))
 			return;
 
@@ -95,6 +97,18 @@ public class GrieferPass extends ComplexWidget {
 			AbstractQuest.deserialize(quest.getAsJsonObject()).pin(questLookup, questTypeLookup);
 
 		streamQuests().forEach(q -> q.updateShadowing(questTypeLookup));
+
+		JsonElement nextReset = Config.get("modules.griefer_pass.reset." + uuid());
+		if (nextReset == null)
+			return;
+
+		new Timer().schedule(new TimerTask() {
+			public void run() {
+				TickScheduler.runNextRenderTick(() -> {
+					streamQuests().filter(q -> q.index / 100 == 0).forEach(q -> q.unpin(questLookup, questTypeLookup));
+				});
+			}
+		}, new Date(nextReset.getAsLong()), 24 * 3600 * 1000);
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -146,7 +160,7 @@ public class GrieferPass extends ComplexWidget {
 					// Update amount
 					AbstractQuest parsed = parseQuest(questIndex, questStack.b);
 					if (parsed != null)
-						quest.setAmount(parsed.getAmount());
+						quest.setAmount(parsed.getAmount(), true);
 				});
 			}
 

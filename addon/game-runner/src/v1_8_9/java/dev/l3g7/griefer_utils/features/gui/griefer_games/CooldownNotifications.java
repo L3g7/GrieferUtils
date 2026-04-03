@@ -94,8 +94,10 @@ public class CooldownNotifications extends Feature {
 			endDates.put("/freekiste", System.currentTimeMillis() + DAYS.toMillis(14) + 1000);
 		else if (event.message.getUnformattedText().matches("^\\[Kopf] Du hast einen .+[ -]Kopf erhalten[!.]$"))
 			endDates.put("/kopf", System.currentTimeMillis() + DAYS.toMillis(PlayerUtil.getRank(PlayerUtil.getName()).equals("Titan") ? 14 : 7));
-		else if (event.message.getUnformattedText().matches("^Du hast .+ den Premium Rang aktiviert\\.$"))
+		else if (event.message.getUnformattedText().matches("^\\[GrieferGames] Du hast .+ den Premium[- ]Rang aktiviert\\.$"))
 			endDates.put("/premium", System.currentTimeMillis() + DAYS.toMillis(7));
+		else if (event.message.getUnformattedText().matches("^\\[GrieferGames] Du hast .+ den Ultra[- ]Rang aktiviert\\.$"))
+			endDates.put("/ultra", System.currentTimeMillis() + DAYS.toMillis(30));
 		else if (event.message.getUnformattedText().equals("[StartKick] Ersteller: " + PlayerUtil.getName()))
 			endDates.put("/startkick", System.currentTimeMillis() + HOURS.toMillis(12));
 		else

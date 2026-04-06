@@ -12,14 +12,15 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageAboutToBeSentEvent
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
+import dev.l3g7.griefer_utils.core.events.griefergames.BlockOfTheDayRewardEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.uncategorized.debug.PacketDumper;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.BSF;
+import dev.l3g7.griefer_utils.features.uncategorized.debug.PacketDumper;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.DataWatcher;
@@ -462,6 +463,13 @@ abstract class MiscQuests {
 			metadataReceive = -1;
 		}
 
+	}
+
+	static class ReceiveBotdQuest extends AbstractQuest {
+		@EventListener
+		private void onBotd(BlockOfTheDayRewardEvent event) {
+			increaseAmount();
+		}
 	}
 
 }

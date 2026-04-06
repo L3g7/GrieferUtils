@@ -11,6 +11,7 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.events.griefergames.BlockOfTheDayRewardEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
@@ -40,7 +41,8 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 		return get(BlockOfTheDayCounter.class);
 	}
 
-	public static void onBotd() {
+	@EventListener(triggerWhenDisabled = true)
+	private void onBotdReward(BlockOfTheDayRewardEvent event) {
 		if (!BlockOfTheDayCounter.get().isEnabled())
 			return;
 
@@ -56,7 +58,7 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void loadBalance(ServerEvent.GrieferGamesJoinEvent ignored) {
+	private void loadBalance(ServerEvent.GrieferGamesJoinEvent ignored) {
 		if (Config.has(getPath()))
 			botdFound = Config.get(getPath()).getAsInt();
 	}

@@ -35,6 +35,7 @@ class Quests {
 		registerQuest(false, "Erhalte {AMOUNT} Effekte", MiscQuests.ReceiveEffectsQuest.class);
 		registerQuest(false, "Sammle {AMOUNT}x Items auf", MiscQuests.PickupItemsQuest.class);
 		registerQuest(false, "Führe {AMOUNT}x den Befehl {TARGET} aus", MiscQuests.CommandSendQuest.class);
+		registerQuest(false, "Erhalte {AMOUNT}x Belohnungen von Block-des-Tages", MiscQuests.ReceiveBotdQuest.class);
 
 		registerQuest(false, "Führe {AMOUNT}x den Befehl p h aus", MessageReceiveQuest.PHQuest.class);
 		registerQuest(false, "Verkleide dich {AMOUNT}x mit /disguise", MessageReceiveQuest.DisguiseQuest.class);

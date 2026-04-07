@@ -8,6 +8,8 @@
 package dev.l3g7.griefer_utils.core.api.misc;
 
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -16,32 +18,37 @@ import java.net.InetAddress;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.MIN_PRIORITY;
 
 public class NTP {
 
+	private static final ScheduledExecutorService SCHEDULED_EXECUTOR = Executors.newSingleThreadScheduledExecutor(new ThreadFactory("GrieferUtils NTP", MIN_PRIORITY));
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils NTP");
+
 	private static long currentOffset = 0;
 
 	@OnEnable
 	private static void onEnable() {
-		ThreadFactory.run("GrieferUtils NTP Sync", MIN_PRIORITY, () -> {
+		SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
 			while (true) {
-				if (initOffset())
+				try {
+					currentOffset = NTPClient.requestOffset();
+					LOGGER.info("Sync complete, offset: {}", currentOffset);
 					return;
+				} catch (IOException ignored) {}
 
 				// Retry init until it's successful
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
 			}
-		});
-	}
-
-	private static boolean initOffset() {
-		try {
-			currentOffset = NTPClient.requestOffset();
-			return true;
-		} catch (IOException ignored) {
-			return false;
-		}
+		}, 0, 1, TimeUnit.DAYS);
 	}
 
 	public static long getAccurateTime() {

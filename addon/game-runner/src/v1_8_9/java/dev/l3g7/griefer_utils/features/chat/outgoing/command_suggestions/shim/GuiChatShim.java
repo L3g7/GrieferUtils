@@ -21,12 +21,12 @@ import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.CommandSuggestions;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.CommandDispatcher;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.CommandDispatcher.Source;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.suggestions.minecraft.PlayerNameSuggestionProvider;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
@@ -41,7 +41,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -279,7 +282,6 @@ public class GuiChatShim {
 				suggestions = new SuggestionsList(start, gui.height - 12, textWidth, newSuggestions);
 			}
 		}
-
 	}
 
 	private static int getLastWordIndex(String p_208603_0_) {
@@ -324,29 +326,21 @@ public class GuiChatShim {
 			}
 		} else {
 			int lvt_4_2_ = getLastWordIndex(lvt_1_1_);
-			this.pendingSuggestions = suggestNames(getPlayerNames(), new SuggestionsBuilder(lvt_1_1_, lvt_4_2_));
+			this.pendingSuggestions = suggestNames(new SuggestionsBuilder(lvt_1_1_, lvt_4_2_));
 		}
 
 	}
 
-	private static CompletableFuture<Suggestions> suggestNames(Iterable<String> names, SuggestionsBuilder builder) {
+	private static CompletableFuture<Suggestions> suggestNames(SuggestionsBuilder builder) {
 		String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
 
-		for (String name : names)
-			if (name.toLowerCase(Locale.ROOT).startsWith(remaining))
-				builder.suggest(name);
+		return PlayerNameSuggestionProvider.request(remaining).thenApply(matches -> {
+			for (String name : matches)
+				if (name.toLowerCase(Locale.ROOT).startsWith(remaining))
+					builder.suggest(name);
 
-		return builder.buildFuture();
-	}
-
-	private Collection<String> getPlayerNames() {
-		List<String> lvt_1_1_ = Lists.newArrayList();
-
-		for (NetworkPlayerInfo lvt_3_1_ : mc().getNetHandler().getPlayerInfoMap()) {
-			lvt_1_1_.add(lvt_3_1_.getGameProfile().getName());
-		}
-
-		return lvt_1_1_;
+			return builder.build();
+		});
 	}
 
 	private void updateUsageInfo() {

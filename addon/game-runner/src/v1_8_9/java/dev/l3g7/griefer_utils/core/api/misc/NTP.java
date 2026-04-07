@@ -72,36 +72,37 @@ public class NTP {
 	 * under the terms of the GNU General Public License as published by the Free
 	 * Software Foundation; either version 2 of the License, or (at your option)
 	 * any later version.  A HTML version of the GNU General Public License can be
-	 * seen at http://www.gnu.org/licenses/gpl.html
+	 * seen at https://www.gnu.org/licenses/gpl.html
 	 *
 	 * This program is distributed in the hope that it will be useful, but WITHOUT
 	 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	 * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
 	 * more details.
 	 *
-	 * CHANGES: rewritten to a helper class that returns the current offset, server changed to de.pool.ntp.org:123
+	 * CHANGES:
+	 * - Rewritten to a helper class that returns the current offset (L3g73)
+	 * - Server changed to de.pool.ntp.org:123 (L3g73)
 	 *
 	 * @author Adam Buckley
-	 * @author L3g73
 	 */
 	private static class NTPClient
 	{
 		public static long requestOffset() throws IOException {
-
 			String serverName = "de.pool.ntp.org";
+
 			// Send request
 			DatagramSocket socket = new DatagramSocket();
 			InetAddress address = InetAddress.getByName(serverName);
 			byte[] buf = new NtpMessage().toByteArray();
 			DatagramPacket packet =
 				new DatagramPacket(buf, buf.length, address, 123);
+
 			// Set the transmit timestamp *just* before sending the packet
 			// ToDo: Does this actually improve performance or not?
 			NtpMessage.encodeTimestamp(packet.getData(), 40,
-				(NTP.getAccurateTime()/1000.0) + 2208988800.0);
+				(System.currentTimeMillis()/1000.0) + 2208988800.0);
 
 			socket.send(packet);
-
 
 			// Get response
 			packet = new DatagramPacket(buf, buf.length);
@@ -109,7 +110,7 @@ public class NTP {
 
 			// Immediately record the incoming timestamp
 			double destinationTimestamp =
-				(NTP.getAccurateTime()/1000.0) + 2208988800.0;
+				(System.currentTimeMillis()/1000.0) + 2208988800.0;
 
 
 			// Process response
@@ -165,7 +166,7 @@ public class NTP {
 	 * under the terms of the GNU General Public License as published by the Free
 	 * Software Foundation; either version 2 of the License, or (at your option)
 	 * any later version.  A HTML version of the GNU General Public License can be
-	 * seen at http://www.gnu.org/licenses/gpl.html
+	 * seen at https://www.gnu.org/licenses/gpl.html
 	 *
 	 * This program is distributed in the hope that it will be useful, but WITHOUT
 	 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -177,7 +178,7 @@ public class NTP {
 	 * University of Delaware.
 	 *
 	 * Number format conversion code in NtpMessage(byte[] array) and toByteArray()
-	 * inspired by http://www.pps.jussieu.fr/~jch/enseignement/reseaux/
+	 * inspired by https://www.pps.jussieu.fr/~jch/enseignement/reseaux/
 	 * NTPMessage.java which is copyright (c) 2003 by Juliusz Chroboczek
 	 *
 	 * @author Adam Buckley
@@ -391,7 +392,7 @@ public class NTP {
 			// Note that all the other member variables are already set with
 			// appropriate default values.
 			this.mode = 3;
-			this.transmitTimestamp = (NTP.getAccurateTime()/1000.0) + 2208988800.0;
+			this.transmitTimestamp = (System.currentTimeMillis()/1000.0) + 2208988800.0;
 		}
 
 
@@ -517,7 +518,7 @@ public class NTP {
 			// low order bits of the timestamp with a random, unbiased
 			// bitstring, both to avoid systematic roundoff errors and as
 			// a means of loop detection and replay detection.
-			array[7] = (byte) (Math.random()*255.0);
+			array[7+pointer] = (byte) (Math.random()*255.0);
 		}
 
 

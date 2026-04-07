@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.gui.integrations.bsf;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFProcessRequest.Data;
@@ -160,7 +161,7 @@ public class BSFCollector {
 		}
 
 		// estimate world start
-		long index = System.currentTimeMillis()/1000 - world().getTotalWorldTime()/20;
+		long index = NTP.getAccurateTime()/1000 - world().getTotalWorldTime()/20;
 		Map<Integer, byte[]> entries = new HashMap<>(dataTails);
 		List<Integer> keys = new ArrayList<>(dataTails.keySet());
 

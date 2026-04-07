@@ -12,6 +12,7 @@ import com.google.gson.annotations.SerializedName;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
+import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
@@ -28,7 +29,6 @@ import java.security.GeneralSecurityException;
 import java.security.Signature;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -166,7 +166,7 @@ public abstract class Request<R> {
 
 		AuthData(UUID user, PlayerKeyPair keyPair) throws GeneralSecurityException {
 			this.user = user;
-			this.requestTime = System.currentTimeMillis();
+			this.requestTime = NTP.getAccurateTime();
 
 			// Create payload
 			ByteBuffer signedPayload = ByteBuffer.allocate(24);

@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.widgets.other;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
@@ -111,7 +112,7 @@ public class ServerPerformance extends SimpleWidget {
 			// the doDayLightCycle game rule is disabled
 			return;
 
-		long currentMillis = System.currentTimeMillis();
+		long currentMillis = NTP.getAccurateTime();
 
 		if (lastWorldTime == null) {
 			lastWorldTime = currentWorldTime;

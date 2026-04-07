@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
+import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
@@ -89,17 +90,17 @@ public class CooldownNotifications extends Feature {
 	@EventListener(triggerWhenDisabled = true)
 	public void onMessageReceive(MessageReceiveEvent event) {
 		if (event.message.getUnformattedText().matches("^Du hast .+-Booster erhalten\\. Danke für deine Unterstützung von GrieferGames!$"))
-			endDates.put("/grieferboost", System.currentTimeMillis() + HOURS.toMillis(24 * 14) + 1000);
+			endDates.put("/grieferboost", NTP.getAccurateTime() + HOURS.toMillis(24 * 14) + 1000);
 		else if (event.message.getUnformattedText().equals("[CaseOpening] Du hast 2 Kisten erhalten."))
-			endDates.put("/freekiste", System.currentTimeMillis() + DAYS.toMillis(14) + 1000);
+			endDates.put("/freekiste", NTP.getAccurateTime() + DAYS.toMillis(14) + 1000);
 		else if (event.message.getUnformattedText().matches("^\\[Kopf] Du hast einen .+[ -]Kopf erhalten[!.]$"))
-			endDates.put("/kopf", System.currentTimeMillis() + DAYS.toMillis(PlayerUtil.getRank(PlayerUtil.getName()).equals("Titan") ? 14 : 7));
+			endDates.put("/kopf", NTP.getAccurateTime() + DAYS.toMillis(PlayerUtil.getRank(PlayerUtil.getName()).equals("Titan") ? 14 : 7));
 		else if (event.message.getUnformattedText().matches("^\\[GrieferGames] Du hast .+ den Premium[- ]Rang aktiviert\\.$"))
-			endDates.put("/premium", System.currentTimeMillis() + DAYS.toMillis(7));
+			endDates.put("/premium", NTP.getAccurateTime() + DAYS.toMillis(7));
 		else if (event.message.getUnformattedText().matches("^\\[GrieferGames] Du hast .+ den Ultra[- ]Rang aktiviert\\.$"))
-			endDates.put("/ultra", System.currentTimeMillis() + DAYS.toMillis(30));
+			endDates.put("/ultra", NTP.getAccurateTime() + DAYS.toMillis(30));
 		else if (event.message.getUnformattedText().equals("[StartKick] Ersteller: " + PlayerUtil.getName()))
-			endDates.put("/startkick", System.currentTimeMillis() + HOURS.toMillis(12));
+			endDates.put("/startkick", NTP.getAccurateTime() + HOURS.toMillis(12));
 		else
 			return;
 
@@ -227,7 +228,7 @@ public class CooldownNotifications extends Feature {
 
 	private boolean checkEndTime(String name) {
 		Long endTime = endDates.get(name);
-		if (endTime > 0 && endTime < System.currentTimeMillis()) {
+		if (endTime > 0 && endTime < NTP.getAccurateTime()) {
 			endDates.put(name, 0L);
 			return true;
 		}

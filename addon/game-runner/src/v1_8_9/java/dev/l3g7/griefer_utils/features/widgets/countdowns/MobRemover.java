@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.widgets.countdowns;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.util.Util;
@@ -77,7 +78,7 @@ public class MobRemover extends SimpleWidget {
 			return;
 
 		if (GUServer.isAvailable()) {
-			long passedSeconds = System.currentTimeMillis() / 1000;
+			long passedSeconds = NTP.getAccurateTime() / 1000;
 			GUServer.sendMobRemoverData(MinecraftUtil.getCurrentCitybuild(), countdown.secondsRemaining() + passedSeconds);
 		}
 	}

@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
+import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
@@ -77,7 +78,7 @@ public class BABBot {
 	private JsonObject getItems() throws IOException, GeneralSecurityException, ExecutionException, InterruptedException {
 		PlayerKeyPair kp = PlayerKeyPair.getPlayerKeyPair(mc().getSession().getToken()).get();
 		UUID user = MinecraftUtil.uuid();
-		long timestamp = System.currentTimeMillis();
+		long timestamp = NTP.getAccurateTime();
 		// Create signature
 		Signature sign = Signature.getInstance("SHA256withRSA");
 		sign.initSign(kp.getPrivateKey());

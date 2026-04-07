@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.misc;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
@@ -47,7 +48,7 @@ public abstract class Countdown {
 	public abstract Countdown set(int seconds);
 
 	public Countdown setEnd(long end) {
-		long ms = end - System.currentTimeMillis();
+		long ms = end - NTP.getAccurateTime();
 		return set((int) (ms / 1000));
 	}
 

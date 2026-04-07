@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind;
 
+import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.server.Request;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +17,7 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.HIVEMIND_URL;
 public abstract class BlockOfTheDayRequest extends Request<Void> {
 
 	private final int version = 1;
-	private final long timestamp = System.currentTimeMillis() / 1000;
+	private final long timestamp = NTP.getAccurateTime() / 1000;
 
 	protected BlockOfTheDayRequest(String subpath) {
 		super(HIVEMIND_URL, "/v2/block_of_the_day/" + subpath);

@@ -166,7 +166,7 @@ public abstract class Request<R> {
 
 		AuthData(UUID user, PlayerKeyPair keyPair) throws GeneralSecurityException {
 			this.user = user;
-			this.requestTime = new Date().getTime();
+			this.requestTime = System.currentTimeMillis();
 
 			// Create payload
 			ByteBuffer signedPayload = ByteBuffer.allocate(24);

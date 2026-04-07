@@ -77,7 +77,7 @@ public class BABBot {
 	private JsonObject getItems() throws IOException, GeneralSecurityException, ExecutionException, InterruptedException {
 		PlayerKeyPair kp = PlayerKeyPair.getPlayerKeyPair(mc().getSession().getToken()).get();
 		UUID user = MinecraftUtil.uuid();
-		long timestamp = new Date().getTime();
+		long timestamp = System.currentTimeMillis();
 		// Create signature
 		Signature sign = Signature.getInstance("SHA256withRSA");
 		sign.initSign(kp.getPrivateKey());

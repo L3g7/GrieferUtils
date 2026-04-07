@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.settings.types.player_list;
 
+import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfileResolver;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.texture.ITextureObject;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import java.io.IOException;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static java.lang.Thread.MAX_PRIORITY;
 
 public class PlayerListEntry {
 
@@ -73,7 +75,7 @@ public class PlayerListEntry {
 
 	private void load() {
 		if (!isMojang()) {
-			new Thread(() -> {
+			ThreadFactory.run("Grieferutils PlayerListEntry Resolver", MAX_PRIORITY, () -> {
 				if (!exists || !XboxProfileResolver.isAvailable())
 					PlayerListEntryResolver.loadFromPlayerDB(this);
 				if (exists) {
@@ -83,7 +85,7 @@ public class PlayerListEntry {
 						PlayerListEntryResolver.loadFromPlayerDB(this);
 					}
 				}
-			}).start();
+			});
 			return;
 		}
 
@@ -94,7 +96,7 @@ public class PlayerListEntry {
 					id = info.getGameProfile().getId().toString();
 		}
 
-		new Thread(() -> {
+		ThreadFactory.run("Grieferutils PlayerListEntry Resolver", MAX_PRIORITY, () -> {
 			try {
 				PlayerListEntryResolver.loadFromMojang(this);
 			} catch (IOException e1) {
@@ -105,7 +107,7 @@ public class PlayerListEntry {
 					e2.printStackTrace();
 				}
 			}
-		}).start();
+		});
 	}
 
 

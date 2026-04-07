@@ -7,11 +7,10 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.debug.thread;
 
+import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.DebugSettings;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +18,11 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.MIN_PRIORITY;
+
 public class ThreadDumper {
 
-	private static Thread thread = null;
+	private static boolean running = false;
 	private static final List<String> dumps = new ArrayList<>();
 	private static final File FILE = new File("GrieferUtils/threaddumps.txt");
 
@@ -57,12 +58,12 @@ public class ThreadDumper {
 		});
 
 	public static void tryStartThread() throws IOException {
-		if (enabled.get() && thread != null)
+		if (enabled.get() && running)
 			return;
 
 		FILE.getParentFile().mkdirs();
 		FILE.createNewFile();
-		thread = new Thread(() -> {
+		ThreadFactory.run("GrieferUtils Thread Dumper", MIN_PRIORITY, () -> {
 			while (enabled.get()) {
 				dumps.add(ThreadDumpGenerator.generateThreadDumps(dumpAll.get()));
 				if (dumps.size() > maxDumps.get())
@@ -85,9 +86,8 @@ public class ThreadDumper {
 					throw new RuntimeException(e);
 				}
 			}
-			thread = null;
-		}, "GrieferUtils Thread Dumper");
-		thread.start();
+			running = false;
+		});
 	}
 
 }

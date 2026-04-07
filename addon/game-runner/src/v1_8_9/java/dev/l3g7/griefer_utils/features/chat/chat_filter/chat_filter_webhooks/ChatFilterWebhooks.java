@@ -11,6 +11,7 @@ import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
+import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
@@ -31,12 +32,13 @@ import java.util.regex.Pattern;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.STATIC_API_URL;
+import static java.lang.Thread.MIN_PRIORITY;
 
 @Singleton
 public class ChatFilterWebhooks extends Feature {
 
 	public static final Pattern HOOK_URL_PATTERN = Pattern.compile("^https://(?:\\w+\\.)?discord(?:app)?\\.com/api/webhooks/(\\d{18}\\d?/[\\w-]{68})$");
-	private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+	private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor(new ThreadFactory("GrieferUtils ChatFilter Webhook", MIN_PRIORITY));
 	private static final JsonObject EMBED_FOOTER = new JsonObject();
 
 	static {

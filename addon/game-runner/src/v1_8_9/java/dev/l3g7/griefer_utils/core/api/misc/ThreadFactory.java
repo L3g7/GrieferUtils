@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.core.api.misc;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ThreadFactory implements java.util.concurrent.ThreadFactory {
@@ -25,12 +24,25 @@ public class ThreadFactory implements java.util.concurrent.ThreadFactory {
 
 	@Override
 	public Thread newThread(@NotNull Runnable r) {
-		Thread thread = Executors.defaultThreadFactory().newThread(r);
+		String name = nameFormat.contains("%d")
+			? String.format(nameFormat, count.getAndIncrement())
+			: nameFormat;
 
-		thread.setName(String.format(nameFormat, count.getAndIncrement()));
-		thread.setPriority(priority);
+		return create(name, priority, r);
+	}
 
-		return thread;
+	public static void run(String name, int priority, Runnable r) {
+		create(name, priority, r).start();
+	}
+
+	public static void addShutdownHook(String name, int priority, Runnable r) {
+		Runtime.getRuntime().addShutdownHook(create(name, priority, r));
+	}
+
+	private static Thread create(String name, int priority, Runnable r) {
+		Thread t = new Thread(r, name);
+		t.setPriority(priority);
+		return t;
 	}
 
 }

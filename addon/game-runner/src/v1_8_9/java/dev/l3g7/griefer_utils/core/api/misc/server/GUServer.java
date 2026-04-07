@@ -11,6 +11,7 @@ import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
+import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest;
@@ -40,19 +41,22 @@ import java.util.concurrent.ScheduledExecutorService;
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static java.lang.Thread.MAX_PRIORITY;
+import static java.lang.Thread.MIN_PRIORITY;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @SuppressWarnings("UnusedReturnValue") // Callers may ignore Future<Void>s
 public class GUServer {
 
-	private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(1);
+	private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(
+		1, new ThreadFactory("GrieferUtils Server - Keepalive #%d", MIN_PRIORITY));
 
 	private static PlayerKeyPair currentKeyPair;
 	private static StaticApiData staticApiData;
 
 	// Authorization
 	static {
-		new Thread(() -> {
+		ThreadFactory.run("GrieferUtils Server - Auth", MAX_PRIORITY, () -> {
 			renewToken();
 			if (currentKeyPair != null) {
 				SCHEDULER.scheduleAtFixedRate(() -> {
@@ -60,15 +64,15 @@ public class GUServer {
 						new KeepAliveRequest().send();
 				}, 0, 30, MINUTES);
 			}
-		}).start();
+		});
 
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+		ThreadFactory.addShutdownHook("GrieferUtils Server - Logout", MAX_PRIORITY, () -> {
 			try {
 				if (isAvailable())
 					new LogoutRequest().send();
 			} catch (Throwable ignored) {
 			}
-		}));
+		});
 	}
 
 	@EventListener(priority = HIGH)

@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.render.skulls;
 
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -25,6 +26,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import static java.lang.Thread.MAX_PRIORITY;
 
 @Singleton
 public class FixHeadTextures extends Feature {
@@ -59,12 +62,12 @@ public class FixHeadTextures extends Feature {
 			if (!processedProfiles.contains(name)) {
 				GameProfile profile = gameprofile;
 				lockedProfiles.add(name);
-				new Thread(() -> {
+				ThreadFactory.run("GrieferUtils FixHeadTextures Update", MAX_PRIORITY, () -> {
 					GameProfile gp = TileEntitySkull.updateGameprofile(profile);
 					processedProfiles.add(name);
 					if (!gp.getProperties().get("textures").isEmpty())
 						lockedProfiles.remove(name); // Keep profile locked if texture is invalid
-				}).start();
+				});
 			} else {
 				for (String username : MinecraftServer.getServer().getPlayerProfileCache().getUsernames()) {
 					if (name.equalsIgnoreCase(username)) {

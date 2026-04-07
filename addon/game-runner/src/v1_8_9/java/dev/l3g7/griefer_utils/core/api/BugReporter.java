@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.api;
 
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Identifier;
+import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
@@ -94,7 +95,7 @@ public class BugReporter {
 		labyBridge.notifyError("Ein unbekannter Fehler ist aufgetreten!");
 
 		timestampOfLastReport = System.currentTimeMillis();
-		Thread t = new Thread(() -> {
+		ThreadFactory.run("GrieferUtils Bug Reporter", Thread.MIN_PRIORITY, () -> {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				// Get stacktrace
 				error.printStackTrace(new PrintStream(out));
@@ -149,9 +150,7 @@ public class BugReporter {
 			} catch (IOException ex) {
 				throw new RuntimeException(ex);
 			}
-		}, "GrieferUtils automatic bug reporter");
-		t.setPriority(Thread.MIN_PRIORITY);
-		t.start();
+		});
 	}
 
 }

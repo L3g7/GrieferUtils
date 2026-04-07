@@ -17,20 +17,22 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static java.lang.Thread.MIN_PRIORITY;
+
 public class NTP {
 
 	private static long currentOffset = 0;
 
 	@OnEnable
 	private static void onEnable() {
-		new Thread(() -> {
+		ThreadFactory.run("GrieferUtils NTP Sync", MIN_PRIORITY, () -> {
 			while (true) {
 				if (initOffset())
 					return;
 
 				// Retry init until it's successful
 			}
-		}).start();
+		});
 	}
 
 	private static boolean initOffset() {

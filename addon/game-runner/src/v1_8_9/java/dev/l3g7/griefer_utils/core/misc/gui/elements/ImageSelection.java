@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.core.misc.gui.elements;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -21,6 +22,7 @@ import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.misc.os.OS.OS;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static java.lang.Thread.MIN_PRIORITY;
 
 public class ImageSelection extends ModTextField implements Drawable, Clickable {
 
@@ -138,7 +140,8 @@ public class ImageSelection extends ModTextField implements Drawable, Clickable 
 	}
 
 	private static void chooseFile(Consumer<File> fileConsumer, String filterName, String... allowedFileTypes) {
-		new Thread(() -> OS.chooseFile(fileConsumer, filterName, allowedFileTypes)).start();
+		ThreadFactory.run("GrieferUtils File Chooser", MIN_PRIORITY,
+			() -> OS.chooseFile(fileConsumer, filterName, allowedFileTypes));
 	}
 
 }

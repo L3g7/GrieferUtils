@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.core.api.util;
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
+import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
 
@@ -22,6 +23,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
+import static java.lang.Thread.MIN_PRIORITY;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -97,7 +99,7 @@ public class IOUtil {
 	 */
 	public static void writeJson(String url, JsonElement json) {
 		Throwable trigger = new Throwable("Invoker stack trace:");
-		Thread t = new Thread(() -> {
+		ThreadFactory.run("GrieferUtils IO - Network Write", MIN_PRIORITY, () -> {
 			try {
 				HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
@@ -121,8 +123,6 @@ public class IOUtil {
 				trigger.printStackTrace();
 			}
 		});
-		t.setPriority(Thread.MIN_PRIORITY);
-		t.start();
 	}
 
 	/**
@@ -242,7 +242,7 @@ public class IOUtil {
 		public AsyncFailable asFile(File file, Consumer<File> callback) {
 			AsyncFailable op = new AsyncFailable();
 			Throwable trigger = new Throwable("Invoker stack trace:");
-			Thread t = new Thread(() -> {
+			ThreadFactory.run("GrieferUtils IO - Disk Write", MIN_PRIORITY, () -> {
 				try {
 					try (InputStream in = getIn(); FileOutputStream out = new FileOutputStream(file)) {
 						byte[] buffer = new byte[4096];
@@ -260,8 +260,6 @@ public class IOUtil {
 						op.fallback.accept(e);
 				}
 			});
-			t.setPriority(Thread.MIN_PRIORITY);
-			t.start();
 			return op;
 		}
 
@@ -301,7 +299,7 @@ public class IOUtil {
 		private <V> AsyncFailable readAsync(Function<InputStreamReader, V> parser, Consumer<V> callback) {
 			AsyncFailable op = new AsyncFailable();
 			Throwable trigger = new Throwable("Invoker stack trace:");
-			Thread t = new Thread(() -> {
+			ThreadFactory.run("GrieferUtils IO - Disk Read", MIN_PRIORITY, () -> {
 				try {
 					try (InputStreamReader in = new InputStreamReader(getIn(), UTF_8)) {
 						callback.accept(parser.apply(in));
@@ -313,8 +311,6 @@ public class IOUtil {
 						op.fallback.accept(e);
 				}
 			});
-			t.setPriority(Thread.MIN_PRIORITY);
-			t.start();
 			return op;
 		}
 

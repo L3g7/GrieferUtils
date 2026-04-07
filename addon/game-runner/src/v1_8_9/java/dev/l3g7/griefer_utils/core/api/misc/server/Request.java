@@ -42,7 +42,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public abstract class Request<R> {
 
 	protected static final ScheduledExecutorService SCHEDULED_EXECUTOR = Executors.newScheduledThreadPool(
-		4, new ThreadFactory("grieferutils-server-conn-%d", MIN_PRIORITY));
+		4, new ThreadFactory("GrieferUtils Server - Connection #%d", MIN_PRIORITY));
 
 	public transient final String server, path;
 

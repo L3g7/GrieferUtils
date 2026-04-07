@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.core.util.render;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.name;
+import static java.lang.Thread.MIN_PRIORITY;
 
 public class AsyncSkullRenderer {
 
@@ -59,8 +61,10 @@ public class AsyncSkullRenderer {
 	}
 
 	private static synchronized void requestSkull(String name) {
-		if (namesRequested.add(name))
-			new Thread(() -> requestedHeads.put(name, ItemUtil.fromNBT("{id:\"minecraft:skull\",Count:1b,tag:{SkullOwner:\"" + name + "\"},Damage:3s}"))).start();
+		if (namesRequested.add(name)) {
+			ThreadFactory.run("GrieferUtils AsyncSkullRenderer", MIN_PRIORITY,
+				() -> requestedHeads.put(name, ItemUtil.fromNBT("{id:\"minecraft:skull\",Count:1b,tag:{SkullOwner:\"" + name + "\"},Damage:3s}")));
+		}
 	}
 
 	@OnEnable

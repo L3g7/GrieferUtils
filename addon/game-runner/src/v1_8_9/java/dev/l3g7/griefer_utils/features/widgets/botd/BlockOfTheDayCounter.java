@@ -7,24 +7,36 @@
 
 package dev.l3g7.griefer_utils.features.widgets.botd;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.griefergames.BlockOfTheDayRewardEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 @Singleton
 public class BlockOfTheDayCounter extends SimpleWidget {
 
-	private static int botdFound = 0;
+	private static final String PATH = "modules.block_of_the_day_counter";
+	private static final Map<UUID, Integer> values = new HashMap<>();
+	private static long nextReset = getNextServerRestart();
 
-	private final SwitchSetting showPopup = SwitchSetting.create()
+	private static final SwitchSetting showPopup = SwitchSetting.create()
 		.name("Popup anzeigen")
 		.description("Zeigt ein Popup an, wenn ein Block des Tages gefunden wurde.")
 		.icon("bell");
@@ -37,19 +49,18 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 		.subSettings(showPopup)
 		.since("2.4-BETA-1");
 
-	public static BlockOfTheDayCounter get() {
-		return get(BlockOfTheDayCounter.class);
+	@EventListener
+	private void temp(CitybuildJoinEvent event) {
+		onReward(null);
 	}
 
-	@EventListener(triggerWhenDisabled = true)
-	private void onBotdReward(BlockOfTheDayRewardEvent event) {
-		if (!BlockOfTheDayCounter.get().isEnabled())
-			return;
-
-		botdFound++;
-		Config.set(getPath(), new JsonPrimitive(botdFound));
-		Config.save();
-		if (!BlockOfTheDayCounter.get().showPopup.get())
+	@EventListener
+	private void onReward(BlockOfTheDayRewardEvent event) {
+		checkReset();
+		UUID uuid = uuid();
+		values.put(uuid, values.getOrDefault(uuid, 0) + 1);
+		save();
+		if (!showPopup.get())
 			return;
 
 		mc().ingameGUI.displayTitle("§aBlock des Tages", null, -1, -1, -1);
@@ -57,19 +68,39 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 		mc().ingameGUI.displayTitle(null, null, 0, 50, 10);
 	}
 
-	@EventListener(triggerWhenDisabled = true)
-	private void loadBalance(ServerEvent.GrieferGamesJoinEvent ignored) {
-		if (Config.has(getPath()))
-			botdFound = Config.get(getPath()).getAsInt();
+	private static void checkReset() {
+		if (nextReset < NTP.getAccurateTime()) {
+			nextReset = MinecraftUtil.getNextServerRestart();
+			values.clear();
+		}
 	}
 
-	private static String getPath() {
-		return "modules.block_of_the_day_counter." + mc().getSession().getProfile().getId() + ".";
+	@OnEnable
+	private static void load() {
+		if (Config.has(PATH + ".values")) {
+			for (Entry<String, JsonElement> entry : Config.get(PATH + ".values").getAsJsonObject().entrySet())
+				values.put(UUID.fromString(entry.getKey()), entry.getValue().getAsInt());
+		}
+
+		if (Config.has(PATH + ".next_reset")) {
+			nextReset = Config.get(PATH + ".next_reset").getAsLong();
+			checkReset();
+		}
+	}
+
+	private static void save() {
+		JsonObject valuesObj = new JsonObject();
+		for (Entry<UUID, Integer> entry : values.entrySet())
+			valuesObj.add(entry.getKey().toString(), new JsonPrimitive(entry.getValue()));
+
+		Config.set(PATH + ".values", valuesObj);
+		Config.set(PATH + ".next_reset", new JsonPrimitive(nextReset));
+		Config.save();
 	}
 
 	@Override
 	public String getValue() {
-		return String.valueOf(botdFound);
+		return String.valueOf(values.get(uuid()));
 	}
 
 }

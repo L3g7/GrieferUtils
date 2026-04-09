@@ -37,7 +37,8 @@ public class Constants {
 	public static final Pattern FORMATTED_JAVA_PLAYER_NAME_PATTERN = Pattern.compile("[~§\\w]{3,}");
 	public static final Pattern FORMATTED_BEDROCK_PLAYER_NAME_PATTERN = Pattern.compile("[~!§\\w+]{3,}");
 	public static final Pattern FORMATTED_PLAYER_NAME_PATTERN = Pattern.compile(String.format("(?<name>%s|%s)", FORMATTED_JAVA_PLAYER_NAME_PATTERN, FORMATTED_BEDROCK_PLAYER_NAME_PATTERN));
-	public static final Pattern FORMATTED_PLAYER_PATTERN = Pattern.compile(String.format("(?<player>%s ?%s %s)", FORMATTED_RANK_PATTERN, FORMATTED_DELIMITER_PATTERN, FORMATTED_PLAYER_NAME_PATTERN));
+	public static final Pattern FORMATTED_SUFFIX_PATTERN = Pattern.compile("(?<suffix> [^ ]+)?");
+	public static final Pattern FORMATTED_PLAYER_PATTERN = Pattern.compile(String.format("(?<player>%s ?%s %s%s)", FORMATTED_RANK_PATTERN, FORMATTED_DELIMITER_PATTERN, FORMATTED_PLAYER_NAME_PATTERN, FORMATTED_SUFFIX_PATTERN));
 
 	// Miscellaneous patterns
 	public static final Pattern FORMATTED_CLAN_TAG_PATTERN = Pattern.compile("(?:§r§6\\[(?<clantag>[ÄÖÜäöü#$§+\\-\\w]{2,})§r§6] )?");

@@ -51,7 +51,7 @@ class Quests {
 		registerQuest(false, "Brich {AMOUNT}x in das Gefängnis ein", MessageReceiveQuest.BreakIntoJailQuest.class);
 		registerQuest(false, "Spiele {AMOUNT}x 4-Gewinnt-Spiele", MessageReceiveQuest.PlayConnectFourQuest.class);
 		registerQuest(false, "!!!!!!!!TODO", MessageReceiveQuest.WinConnectFourQuest.class);
-		registerQuest(false, "!!!!!!!!TODO", MessageReceiveQuest.BuyLotteryQuest.class);
+		registerQuest(false, "Kaufe {AMOUNT}x Lotterie-Tickets", MessageReceiveQuest.BuyLotteryQuest.class);
 		registerQuest(false, "Merge {AMOUNT}x ein Grundstück", MessageReceiveQuest.MergeQuest.class);
 		registerQuest(false, "Setze {AMOUNT} Plotflags", MessageReceiveQuest.SetPlotFlagsQuest.class);
 

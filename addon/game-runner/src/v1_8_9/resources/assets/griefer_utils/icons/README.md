@@ -3,7 +3,7 @@
 <table>
   <tr>
     <td><img src="biomes/forest.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/">biomes/*</a></td>
-    <td><a href="https://www.curseforge.com/minecraft/texture-packs/faithless">StitchSprites[^1]</a></td>
+    <td><a href="https://www.curseforge.com/minecraft/texture-packs/faithless">StitchSprites</a></td>
   </tr>
   <tr>
     <td><img src="biomes/badlands.png" height=16em width=16em />&nbsp;&nbsp;<a href="biomes/badlands.png">biomes/badlands.png</a></td>
@@ -311,7 +311,7 @@
   </tr>
   <tr>
     <td><img src="discord_clyde.png" height=16em width=16em />&nbsp;&nbsp;<a href="discord_clyde.png">discord_clyde.png</a></td>
-    <td><a href="Diamond_JMS">XREF</a></td>
+    <td><a href="https://www.reddit.com/r/discordapp/comments/p6uzdt/discord_pixel_art_i_made/">Diamond_JMS</a></td>
   </tr>
   <tr>
     <td><img src="dragon_egg.png" height=16em width=16em />&nbsp;&nbsp;<a href="dragon_egg.png">dragon_egg.png</a></td>

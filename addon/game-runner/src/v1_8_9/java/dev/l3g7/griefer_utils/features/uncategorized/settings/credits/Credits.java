@@ -64,6 +64,7 @@ public class Credits {
 
 			HeaderSetting.create("Code-Credits"),
 			creditsBridge.createTextSetting("core.misc.BufferedImageLuminanceSource", "Umwandlung von Bildern in Licht-Bitmaps", "Aus com.google.zxing", "© 2009 ZXing authors", "Apache License 2.0"),
+			creditsBridge.createTextSetting("core.api.misc.NTP$NTPClient", "Zeit-Synchronisierung", "https://support.ntp.org/Support/JavaSntpClient", "© 2004 Adam Buckley (rev. 12)", "GPLv3"),
 			HeaderSetting.create().entryHeight(11),
 
 			HeaderSetting.create("Bibliotheken"),

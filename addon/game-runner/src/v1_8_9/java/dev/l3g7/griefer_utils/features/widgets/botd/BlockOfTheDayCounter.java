@@ -50,11 +50,6 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 		.since("2.4-BETA-1");
 
 	@EventListener
-	private void temp(CitybuildJoinEvent event) {
-		onReward(null);
-	}
-
-	@EventListener
 	private void onReward(BlockOfTheDayRewardEvent event) {
 		checkReset();
 		UUID uuid = uuid();

@@ -45,6 +45,8 @@ public class MessageSkulls extends Feature {
 				continue;
 
 			String name = NameCache.ensureRealName(matcher.group("name").replaceAll("§.", ""));
+			if (name == null)
+				return;
 
 			event.setMessage(new ChatComponentText("")
 				.appendSibling(IconComponent.head(name))

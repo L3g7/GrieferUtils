@@ -239,6 +239,9 @@ public class GrieferPass extends ComplexWidget {
 		String amountLine = lore.get(0).replaceAll("§.", "");
 		String progressLine = lore.get(1).replaceAll("§.", "");
 
+		if (!amountLine.startsWith("Fortschritt: "))
+			return null; // Cursed shit™ by GG
+
 		String[] amounts = amountLine.substring("Fortschritt: ".length()).split("/");
 		int amount = Integer.parseInt(amounts[0]);
 		int maxAmount = Integer.parseInt(amounts[1]);

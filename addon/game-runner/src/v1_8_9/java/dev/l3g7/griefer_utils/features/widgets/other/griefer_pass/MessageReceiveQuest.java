@@ -12,8 +12,7 @@ import net.minecraft.util.IChatComponent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.core.api.misc.Constants.JOB_SELL_PATTERN;
-import static dev.l3g7.griefer_utils.core.api.misc.Constants.ORB_SELL_PATTERN;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 
 abstract class MessageReceiveQuest extends AbstractQuest {
 
@@ -41,15 +40,31 @@ abstract class MessageReceiveQuest extends AbstractQuest {
 
 	}
 
-	static class OrbQuest extends MessageReceiveQuest {
+	private abstract static class OrbsQuests extends MessageReceiveQuest {
 		@Override
 		protected int processMessage(IChatComponent message) {
-			Matcher matcher = ORB_SELL_PATTERN.matcher(message.getUnformattedText());
+			Matcher matcher = getPattern().matcher(message.getUnformattedText());
 			if (!matcher.matches())
 				return 0;
 
 			double orbsGained = Double.parseDouble(matcher.group("orbs").replace(".", "").replace(',', '.'));
 			return (int) orbsGained;
+		}
+
+		protected abstract Pattern getPattern();
+	}
+
+	static class ReceiveOrbsQuest extends OrbsQuests {
+		@Override
+		protected Pattern getPattern() {
+			return ORB_SELL_PATTERN;
+		}
+	}
+
+	static class SpendOrbsQuest extends OrbsQuests {
+		@Override
+		protected Pattern getPattern() {
+			return ORB_BUY_PATTERN;
 		}
 	}
 

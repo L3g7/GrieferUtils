@@ -32,14 +32,14 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.ORB_BUY_PATTERN;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.ORB_SELL_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
 public class OrbBalance extends SimpleWidget {
 
 	private static final Pattern SKULL_PATTERN = Pattern.compile("^§7Du besitzt aktuell §e(?<orbs>[\\d.]+) Orbs§7\\.$");
-	private static final Pattern BUY_PATTERN = Pattern.compile("^\\[GrieferGames] Du hast erfolgreich das Produkt .+ für (?<orbs>[\\d.]+) Orbs gekauft\\.$");
-	private static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>[\\S ]+) für (?<orbs>[\\d.]+) Orbs verkauft\\.$");
 	private static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
 
 	private static long balance = -1;
@@ -104,7 +104,7 @@ public class OrbBalance extends SimpleWidget {
 			return;
 		}
 
-		Matcher buyMatcher = BUY_PATTERN.matcher(msg);
+		Matcher buyMatcher = ORB_BUY_PATTERN.matcher(msg);
 		if (buyMatcher.matches()) {
 			balance -= Long.parseLong(buyMatcher.group("orbs").replace(".", ""));
 			new OrbBalanceUpdateEvent().fire();

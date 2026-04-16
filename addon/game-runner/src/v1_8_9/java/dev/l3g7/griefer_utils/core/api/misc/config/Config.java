@@ -11,6 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.DebounceTimer;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import org.jetbrains.annotations.Contract;
 
 import java.io.File;
 import java.nio.file.AtomicMoveNotSupportedException;
@@ -69,6 +70,7 @@ public class Config {
 	/**
 	 * @return the parent object of the given path.
 	 */
+	@Contract("_, false -> _; _, true -> !null")
 	private static JsonObject getPath(String[] parts, boolean initialize) {
 		JsonObject o = get();
 		for (int i = 0; i < parts.length - 1; i++) {

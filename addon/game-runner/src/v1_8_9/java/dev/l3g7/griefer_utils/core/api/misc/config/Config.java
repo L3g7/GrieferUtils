@@ -13,10 +13,12 @@ import dev.l3g7.griefer_utils.core.api.misc.DebounceTimer;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.last;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * A class handling access and storage of the configuration.
@@ -90,7 +92,7 @@ public class Config {
 	private static JsonObject config = null;
 
 	/**
-	 * Writes the configuration to the config file.
+	 * Writes the configuration to the config file using an atomic move.
 	 */
 	public static void save() {
 		debounceTimer.schedule(() -> {
@@ -104,22 +106,17 @@ public class Config {
 					return;
 
 				hash = json.hashCode();
-				save(json, newConfigFile);
-				save(json, configFile);
-			}
-			try {
-				Files.deleteIfExists(newConfigFile.toPath());
-			} catch (IOException ignored) {}
-		});
-	}
+				do {
+					IOUtil.write(newConfigFile, json);
+				} while (IOUtil.gson.toJson(read(newConfigFile)).hashCode() != hash);
 
-	/**
-	 * Writes the configuration to the given file.
-	 */
-	public static void save(String json, File file) {
-		do {
-			IOUtil.write(file, json);
-		} while (IOUtil.gson.toJson(read(file)).hashCode() != hash);
+				try {
+					Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING, ATOMIC_MOVE);
+				} catch (AtomicMoveNotSupportedException e) {
+					Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING);
+				}
+			}
+		});
 	}
 
 	/**

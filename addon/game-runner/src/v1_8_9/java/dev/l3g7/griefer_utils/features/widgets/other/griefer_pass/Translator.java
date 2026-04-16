@@ -18,7 +18,8 @@ import java.util.*;
 
 class Translator {
 
-	public static final boolean lookupFailed;
+	private static final boolean lookupFailed;
+	private static final Set<String> translationErrors = new HashSet<>();
 
 	private static final Map<String, String> ITEM_TRANSLATION_KEYS = new HashMap<>();
 	private static final Map<String, String> BLOCK_TRANSLATION_KEYS = new HashMap<>();
@@ -129,8 +130,11 @@ class Translator {
 	}
 
 	private static <T> T reportError(String op, String key) {
-		if (!lookupFailed)
-			BugReporter.reportError(new Throwable(op + " failed for " + key));
+		if (!lookupFailed) {
+			String message = op + " failed for " + key;
+			if (translationErrors.add(message))
+				BugReporter.reportError(new Throwable(message));
+		}
 		return null;
 	}
 

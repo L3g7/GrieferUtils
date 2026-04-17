@@ -98,7 +98,7 @@ public class OrbBalance extends SimpleWidget {
 
 		Matcher sellMatcher = ORB_SELL_PATTERN.matcher(msg);
 		if (sellMatcher.matches()) {
-			balance += Long.parseLong(sellMatcher.group("orbs").replace(".", ""));
+			balance += Double.parseDouble(sellMatcher.group("orbs").replace(".", "").replace(",", "."));
 			new OrbBalanceUpdateEvent().fire();
 			saveBalance();
 			return;
@@ -106,7 +106,7 @@ public class OrbBalance extends SimpleWidget {
 
 		Matcher buyMatcher = ORB_BUY_PATTERN.matcher(msg);
 		if (buyMatcher.matches()) {
-			balance -= Long.parseLong(buyMatcher.group("orbs").replace(".", ""));
+			balance -= Double.parseDouble(buyMatcher.group("orbs").replace(".", "").replace(",", "."));
 			new OrbBalanceUpdateEvent().fire();
 			saveBalance();
 		}

@@ -98,7 +98,7 @@ public class GrieferPass extends ComplexWidget {
 
 		streamQuests().forEach(q -> q.updateShadowing(questTypeLookup));
 
-		JsonElement nextReset = Config.get("modules.griefer_pass.reset." + uuid());
+		JsonElement nextReset = Config.get("modules.griefer_pass.next_reset." + uuid());
 		if (nextReset == null)
 			return;
 

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Contract;
 import java.io.File;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
+import java.util.Optional;
 
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.last;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
@@ -88,7 +89,7 @@ public class Config {
 	private static final Object SAVE_LOCK = new Object();
 	private static final DebounceTimer debounceTimer = new DebounceTimer("Config", 1000);
 	// .minecraft/config/GrieferUtils.json
-	private static final File configFile = new File(new File("config"), "GrieferUtils.json");
+	protected static final File configFile = new File(new File("config"), "GrieferUtils.json");
 	private static final File newConfigFile = new File(new File("config"), "GrieferUtils-new.json");
 	private static int hash = 0;
 	private static JsonObject config = null;
@@ -104,14 +105,17 @@ public class Config {
 			String json = IOUtil.gson.toJson(config);
 
 			synchronized (SAVE_LOCK) {
-				if (json.hashCode() == hash) // Check if content has changed
+				// Check if content has changed
+				if (json.hashCode() == hash)
 					return;
 
+				// Write to newConfigFile
 				hash = json.hashCode();
 				do {
 					IOUtil.write(newConfigFile, json);
 				} while (IOUtil.gson.toJson(read(newConfigFile)).hashCode() != hash);
 
+				// Move newConfigFile to configFile
 				try {
 					Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING, ATOMIC_MOVE);
 				} catch (AtomicMoveNotSupportedException e) {
@@ -132,8 +136,13 @@ public class Config {
 				return config;
 			}
 
-			if (!newConfigFile.exists() || !loadFile(newConfigFile))
-				loadFile(configFile);
+			if (!newConfigFile.exists() || !loadFile(newConfigFile)) {
+				if (!loadFile(configFile)) {
+					// Config failed to load
+					ConfigBackuper.backup("error");
+					config = new JsonObject();
+				}
+			}
 
 			new ConfigPatcher(config).patch();
 		}
@@ -146,8 +155,12 @@ public class Config {
 	 */
 	private static boolean loadFile(File file) {
 		try {
-			config = IOUtil.read(file).asJsonObject().orElseThrow(Throwable::new);
-			return config.entrySet().size() != 0;
+			Optional<JsonObject> configData = IOUtil.read(file).asJsonObject();
+			if (configData.isPresent()) {
+				config = configData.get();
+				return config.entrySet().size() != 0;
+			} else
+				return false;
 		} catch (Throwable t) {
 			return false;
 		}

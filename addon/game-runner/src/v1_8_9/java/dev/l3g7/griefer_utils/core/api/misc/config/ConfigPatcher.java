@@ -54,6 +54,7 @@ public class ConfigPatcher {
 		configVersion = config.get("version").getAsString();
 		String newVersion = labyBridge.addonVersion();
 		if (!newVersion.equals(configVersion)) {
+			ConfigBackuper.backup(configVersion);
 			config.addProperty("version", newVersion);
 			versionChanged = true;
 		}

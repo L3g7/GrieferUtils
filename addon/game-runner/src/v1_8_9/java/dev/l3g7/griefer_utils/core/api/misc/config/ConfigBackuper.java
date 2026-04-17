@@ -10,10 +10,7 @@ package dev.l3g7.griefer_utils.core.api.misc.config;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 
 import java.io.IOException;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
@@ -39,7 +36,7 @@ public class ConfigBackuper {
 		Path backupPath;
 		while (true) {
 			id++; // Start at ID 1
-			backupPath = Path.of("GrieferUtils", "backups", fileName + "-" + id + ".json");
+			backupPath = Paths.get("GrieferUtils", "backups", fileName + "-#" + id + ".json");
 
 			if (!Files.exists(backupPath) && tryMove(tempPath, backupPath))
 				return;
@@ -53,6 +50,7 @@ public class ConfigBackuper {
 	 */
 	public static boolean tryMove(Path source, Path destination) throws IOException {
 		try {
+			Files.createDirectories(destination.getParent());
 			try {
 				Files.move(source, destination, ATOMIC_MOVE);
 			} catch (AtomicMoveNotSupportedException e) {

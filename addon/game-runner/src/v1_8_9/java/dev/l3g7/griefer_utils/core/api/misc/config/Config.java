@@ -13,14 +13,13 @@ import dev.l3g7.griefer_utils.core.api.misc.DebounceTimer;
 import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import org.jetbrains.annotations.Contract;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.nio.file.AtomicMoveNotSupportedException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Optional;
 
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.last;
-import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * A class handling access and storage of the configuration.
@@ -90,7 +89,6 @@ public class Config {
 	private static final DebounceTimer debounceTimer = new DebounceTimer("Config", 1000);
 	// .minecraft/config/GrieferUtils.json
 	protected static final File configFile = new File(new File("config"), "GrieferUtils.json");
-	private static final File newConfigFile = new File(new File("config"), "GrieferUtils-new.json");
 	private static int hash = 0;
 	private static JsonObject config = null;
 
@@ -109,18 +107,9 @@ public class Config {
 				if (json.hashCode() == hash)
 					return;
 
-				// Write to newConfigFile
+				// Write to configFile
 				hash = json.hashCode();
-				do {
-					IOUtil.write(newConfigFile, json);
-				} while (IOUtil.gson.toJson(read(newConfigFile)).hashCode() != hash);
-
-				// Move newConfigFile to configFile
-				try {
-					Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING, ATOMIC_MOVE);
-				} catch (AtomicMoveNotSupportedException e) {
-					Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING);
-				}
+				SafeIO.write(configFile.toPath(), json.getBytes(StandardCharsets.UTF_8));
 			}
 		});
 	}
@@ -130,21 +119,21 @@ public class Config {
 	 */
 	public static JsonObject get() {
 		if (config == null) {
-			if (!configFile.exists()) {
-				config = new JsonObject();
-				new ConfigPatcher(config).patch();
-				return config;
-			}
+			synchronized (SAVE_LOCK) {
+				if (!configFile.exists()) { // TODO: Fix TOC/TOU
+					config = new JsonObject();
+					new ConfigPatcher(config).patch();
+					return config;
+				}
 
-			if (!newConfigFile.exists() || !loadFile(newConfigFile)) {
 				if (!loadFile(configFile)) {
 					// Config failed to load
 					ConfigBackuper.backup("error");
 					config = new JsonObject();
 				}
-			}
 
-			new ConfigPatcher(config).patch();
+				new ConfigPatcher(config).patch();
+			}
 		}
 
 		return config;
@@ -155,24 +144,12 @@ public class Config {
 	 */
 	private static boolean loadFile(File file) {
 		try {
-			Optional<JsonObject> configData = IOUtil.read(file).asJsonObject();
-			if (configData.isPresent()) {
-				config = configData.get();
-				return config.entrySet().size() != 0;
-			} else
-				return false;
+			byte[] data = Files.readAllBytes(file.toPath());
+			config = IOUtil.jsonParser.parse(new InputStreamReader(new ByteArrayInputStream(data))).getAsJsonObject();
+			return config.entrySet().size() != 0;
 		} catch (Throwable t) {
 			return false;
 		}
-	}
-
-	/**
-	 * Reads the config from its file, returning an empty one if it fails.
-	 */
-	private static JsonObject read(File file) {
-		return IOUtil.read(file)
-			.asJsonObject()
-			.orElse(new JsonObject());
 	}
 
 }

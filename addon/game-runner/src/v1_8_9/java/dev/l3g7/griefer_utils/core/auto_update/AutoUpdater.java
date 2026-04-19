@@ -238,7 +238,8 @@ public class AutoUpdater {
 		if (!Files.exists(configPath))
 			return null;
 
-		JsonObject config = Streams.parse(new JsonReader(new InputStreamReader(Files.newInputStream(configPath, StandardOpenOption.READ)))).getAsJsonObject();
+		byte[] data = Files.readAllBytes(configPath);
+		JsonObject config = Streams.parse(new JsonReader(new InputStreamReader(new ByteArrayInputStream(data)))).getAsJsonObject();
 		if (config.get("settings") == null)
 			return null;
 

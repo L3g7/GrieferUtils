@@ -14,13 +14,18 @@ import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import org.jetbrains.annotations.Contract;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.last;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.nio.file.StandardOpenOption.*;
 
 /**
  * A class handling access and storage of the configuration.
@@ -117,9 +122,18 @@ public class Config {
 
 				// Move newConfigFile to configFile
 				try {
-					Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING, ATOMIC_MOVE);
-				} catch (AtomicMoveNotSupportedException e) {
-					Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING);
+					try {
+						Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING, ATOMIC_MOVE);
+					} catch (AtomicMoveNotSupportedException e) {
+						Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING);
+					}
+				} catch (AccessDeniedException e) {
+					// TODO: cleanup
+					//noinspection ReadWriteStringCanBeUsed
+					Files.write(configFile.toPath(), json.getBytes(StandardCharsets.UTF_8), WRITE, TRUNCATE_EXISTING, CREATE);
+					try {
+						Files.deleteIfExists(newConfigFile.toPath());
+					} catch (IOException ignored) {}
 				}
 			}
 		});

@@ -291,7 +291,11 @@ abstract class MiscQuests {
 			if (!waitingForUpdate)
 				return;
 
-			ItemStack targetStack = player().openContainer.getSlot(event.packet.func_149173_d()).getStack();
+			int slotId = event.packet.func_149173_d();
+			if (slotId == -1)
+				return;
+
+			ItemStack targetStack = player().openContainer.getSlot(slotId).getStack();
 			if (targetStack == null || targetStack != player().getHeldItem())
 				return;
 

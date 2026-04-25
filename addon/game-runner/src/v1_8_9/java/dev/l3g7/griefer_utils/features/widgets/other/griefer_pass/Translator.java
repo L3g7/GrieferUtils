@@ -89,7 +89,7 @@ class Translator {
 	}
 
 	private static void addAlias(Map<String, String> map, String key, String replacement) {
-		ENTITY_TRANSLATION_KEYS.put(key, ENTITY_TRANSLATION_KEYS.get(replacement));
+		map.put(key, map.get(replacement));
 	}
 
 	public static ItemStack getItem(String germanName) {

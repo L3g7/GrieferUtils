@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.gui.ItemSearch;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
@@ -56,7 +57,8 @@ public class PrefixSaver extends Feature {
 
 	@EventListener
 	public void onMouseClick(MouseClickEvent.RightClickEvent event) {
-		if (!"§fVergibt §aein Farbrecht§f! (Rechtsklick)".equals(ItemUtil.getLastLore(mc().thePlayer.getHeldItem())))
+		EntityPlayer player = player();
+		if (player == null || !"§fVergibt §aein Farbrecht§f! (Rechtsklick)".equals(ItemUtil.getLastLore(player.getHeldItem())))
 			return;
 
 		event.cancel();

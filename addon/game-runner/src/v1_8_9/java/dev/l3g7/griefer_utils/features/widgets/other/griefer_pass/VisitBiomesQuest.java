@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.features.widgets.other.griefer_pass;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import net.minecraft.util.BlockPos;
@@ -41,7 +42,7 @@ public class VisitBiomesQuest extends AbstractQuest {
 		JsonObject obj = super.serialize();
 		JsonArray array = new JsonArray();
 		for (Byte visitedBiome : visitedBiomes)
-			array.add(visitedBiome);
+			array.add(new JsonPrimitive(visitedBiome));
 		obj.add("biomes", array);
 		return obj;
 	}

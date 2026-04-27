@@ -48,7 +48,7 @@ public class MinecraftUtil {
 
 	public static final int FONT_HEIGHT = 9;
 	private static final int HOUR = 60 * 60 * 1000; // An hour, in milliseconds.
-	public static ScaledResolution currentResolution;
+	public static ScaledResolution currentResolution = new ScaledResolution(mc());
 
 	public static Minecraft       mc()              { return Minecraft.getMinecraft(); }
 	public static EntityPlayerSP  player()          { return mc().thePlayer; }

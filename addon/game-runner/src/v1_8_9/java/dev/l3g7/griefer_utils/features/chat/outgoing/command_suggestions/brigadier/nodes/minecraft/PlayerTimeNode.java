@@ -52,7 +52,14 @@ public class PlayerTimeNode extends ArgumentNode<String> {
 			}
 
 			if (initial > 12) {
-				// Must be 24h format
+				// Must be ticks or 24h format
+				if (reader.peek() == 't') {
+					// ticks
+					readString(reader, "ticks", true);
+					return;
+				}
+
+				// 24h format
 				readChar(reader, ':', true);
 				MINUTES.parse(reader);
 				return;

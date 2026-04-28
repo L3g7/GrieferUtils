@@ -121,7 +121,10 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void openWebsite(String url) {
 		try {
-			Desktop.getDesktop().browse(new URI(url));
+			if (Platform.isLinux())
+				Runtime.getRuntime().exec(new String[]{"xdg-open", url});
+			else
+				Desktop.getDesktop().browse(new URI(url));
 		} catch (UnsupportedOperationException e) {
 			BugReporter.reportError(Util.addMessage(e, "Unsupported BROWSE for " + Toolkit.getDefaultToolkit() + " / " + Platform.getOSType() + " / " + System.getProperty("os.name")));
 		} catch (IOException | URISyntaxException e) {

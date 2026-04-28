@@ -16,7 +16,6 @@ import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.griefergames.BlockOfTheDayRewardEvent;
-import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
@@ -95,7 +94,7 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 
 	@Override
 	public String getValue() {
-		return String.valueOf(values.get(uuid()));
+		return String.valueOf(values.computeIfAbsent(uuid(), k -> 0));
 	}
 
 }

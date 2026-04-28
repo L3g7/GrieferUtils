@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadi
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.KeyValueNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativePrimitiveNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativeStringNode;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.minecraft.ChestTimeNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.minecraft.PlayerNameNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.minecraft.PlayerTimeNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.minecraft.PlotIdNode;
@@ -61,6 +62,7 @@ public abstract class ArgumentNode<T> extends Node<RequiredArgumentBuilder<Sourc
 
 			case "mc_player_time" -> context.deserialize(json, PlayerTimeNode.class);
 			case "mc_player_name" -> context.deserialize(json, PlayerNameNode.class);
+			case "mc_chest_time" -> context.deserialize(json, ChestTimeNode.class);
 			case "mc_plot_id" -> context.deserialize(json, PlotIdNode.class);
 
 			default -> UNKNOWN;

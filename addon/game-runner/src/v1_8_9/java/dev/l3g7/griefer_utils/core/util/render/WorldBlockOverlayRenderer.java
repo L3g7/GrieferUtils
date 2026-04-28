@@ -57,29 +57,31 @@ public class WorldBlockOverlayRenderer {
 
 	@EventListener
 	private static void onChunkFilled(ChunkFilledEvent event) {
-		Map<BlockPos, RenderObject> newRenderObjects = new ConcurrentHashMap<>();
-		ChunkCoordIntPair coords = new ChunkCoordIntPair(event.getChunk().xPosition, event.getChunk().zPosition);
+		mc().addScheduledTask(() -> {
+			Map<BlockPos, RenderObject> newRenderObjects = new ConcurrentHashMap<>();
+			ChunkCoordIntPair coords = new ChunkCoordIntPair(event.getChunk().xPosition, event.getChunk().zPosition);
 
-		for (ExtendedBlockStorage ebs : event.getChunk().getBlockStorageArray()) {
-			if (ebs == null)
-				continue;
+			for (ExtendedBlockStorage ebs : event.getChunk().getBlockStorageArray()) {
+				if (ebs == null)
+					continue;
 
-			for (int x = 0; x < 16; x++) {
-				for (int y = 0; y < 16; y++) {
-					for (int z = 0; z < 16; z++) {
-						BlockPos targetPos = coords.getBlock(x, y + ebs.getYLocation(), z);
-						RenderObject redstoneRenderObject = RenderObject.fromState(ebs.get(x, y, z), targetPos, world());
-						if (redstoneRenderObject == null)
-							continue;
+				for (int x = 0; x < 16; x++) {
+					for (int y = 0; y < 16; y++) {
+						for (int z = 0; z < 16; z++) {
+							BlockPos targetPos = coords.getBlock(x, y + ebs.getYLocation(), z);
+							RenderObject redstoneRenderObject = RenderObject.fromState(ebs.get(x, y, z), targetPos, world());
+							if (redstoneRenderObject == null)
+								continue;
 
-						newRenderObjects.put(targetPos, redstoneRenderObject);
+							newRenderObjects.put(targetPos, redstoneRenderObject);
+						}
 					}
 				}
 			}
-		}
 
-		if (!newRenderObjects.isEmpty())
-			renderObjects.put(coords, newRenderObjects);
+			if (!newRenderObjects.isEmpty())
+				renderObjects.put(coords, newRenderObjects);
+		});
 	}
 
 	@EventListener
@@ -96,15 +98,17 @@ public class WorldBlockOverlayRenderer {
 	@EventListener
 	private static void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
 		if (event.packet instanceof S23PacketBlockChange packet) {
-			onBlockUpdate(packet.getBlockPosition(), packet.getBlockState());
+			mc().addScheduledTask(() -> onBlockUpdate(packet.getBlockPosition(), packet.getBlockState()));
 			return;
 		}
 
 		if (!(event.packet instanceof S22PacketMultiBlockChange packet))
 			return;
 
-		for (S22PacketMultiBlockChange.BlockUpdateData data : packet.getChangedBlocks())
-			onBlockUpdate(data.getPos(), data.getBlockState());
+		mc().addScheduledTask(() -> {
+			for (S22PacketMultiBlockChange.BlockUpdateData data : packet.getChangedBlocks())
+				onBlockUpdate(data.getPos(), data.getBlockState());
+		});
 	}
 
 	private static void onBlockUpdate(BlockPos pos, IBlockState state) {

@@ -3,6 +3,7 @@ package dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigad
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.GrieferUtilsConfigRequirement;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.GrieferUtilsVersionRequirement;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeBoolOpRequirement;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeFixedRequirement;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.minecraft.RankRequirement;
@@ -32,6 +33,7 @@ public abstract class Requirement {
 			case "or" -> context.deserialize(json, NativeBoolOpRequirement.NativeOrRequirement.class);
 
 			case "griefer_utils_config" -> context.deserialize(json, GrieferUtilsConfigRequirement.class);
+			case "griefer_utils_version" -> context.deserialize(json, GrieferUtilsVersionRequirement.class);
 			case "mc_rank" -> context.deserialize(json, RankRequirement.class);
 			case "mc_subserver" -> context.deserialize(json, SubserverRequirement.class);
 

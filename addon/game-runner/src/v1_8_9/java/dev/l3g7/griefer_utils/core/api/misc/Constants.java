@@ -49,11 +49,12 @@ public class Constants {
 	public static final Pattern MESSAGE_RECEIVE_PATTERN = Pattern.compile(String.format("^§r§6\\[§r%s§r§6 \\-> §r§cmir§r§6\\] §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 	public static final Pattern MESSAGE_SEND_PATTERN = Pattern.compile(String.format("^§r§6\\[§r§cmir§r§6 -> %s\\] §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 	public static final Pattern PLOTCHAT_RECEIVE_PATTERN = Pattern.compile(String.format("^§r§8\\[§r§6Plot\\-Chat§r§8\\]\\[§r§6(?<id>-?\\d+;-?\\d+)§r§8\\] %s§r§8 : §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
+	public static final Pattern CLANCHAT_RECEIVE_PATTERN = Pattern.compile(String.format("^§r§8\\[§r§6Clan\\-Chat§r§8\\] %s§r §r§8» §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 	public static final Pattern GLOBAL_RECEIVE_PATTERN = Pattern.compile(String.format("^§r%s%s§r§f §r§8» §r%s$", FORMATTED_CLAN_TAG_PATTERN, FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 	public static final Pattern GLOBAL_CHAT_PATTERN = Pattern.compile(String.format("^§r§a§l@§r§8\\[§r§6(?<cb>\\w+)§r§8] %s%s §r§8» §r%s$", FORMATTED_CLAN_TAG_PATTERN, FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 	public static final Pattern STATUS_PATTERN = Pattern.compile(String.format("^%s§f (?<message>[^\u00bb]*)§*r*$", FORMATTED_PLAYER_PATTERN));
 
-	public static final List<Pattern> MESSAGE_PATTERNS = Arrays.asList(GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, GLOBAL_CHAT_PATTERN);
+	public static final List<Pattern> MESSAGE_PATTERNS = Arrays.asList(GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, CLANCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, GLOBAL_CHAT_PATTERN);
 
 	public static final Pattern PAYMENT_RECEIVE_PATTERN = Pattern.compile(String.format("^%s(?<!§f) §r§ahat dir \\$(?<amount>[\\d.,]+) (?:§r§a)?gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
 	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s ?§r§a ?\\$(?<amount>[\\d.,]+) gegeben\\.§r$", Constants.FORMATTED_PLAYER_PATTERN));

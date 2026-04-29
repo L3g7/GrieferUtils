@@ -20,7 +20,7 @@ public class _ItemInfo extends SwitchSettingBuilder {
 	@Override
 	public SwitchSetting build(Category meta, String configKey) {
 		return super.build(meta, configKey)
-				.addHotkeySetting("die Item-Infos", HOLD);
+				.addHotkeySetting("Item-Infos", HOLD);
 	}
 
 }

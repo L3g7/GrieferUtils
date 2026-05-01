@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
 import net.labymod.api.Laby;
@@ -24,6 +25,8 @@ import net.labymod.core.main.user.serverfeature.UserServerFeature;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
+
+import java.lang.reflect.Method;
 
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge.DEFAULT_BADGE;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
@@ -62,21 +65,31 @@ public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
 		return DefaultGameUserSnapshotAccessor.grieferUtils$createGroupComponent(user.visibleGroup());
 	}
 
+	public static final Method isFriend = Reflection.getMethod(DefaultGameUserSnapshot.class, "isFriend", GameUser.class);
+	public static final Method calculateNameTagOffset = Reflection.getMethod(DefaultGameUserSnapshot.class, "calculateNameTagOffset", GameUser.class);
+	public static final Method createGroupComponent = Reflection.getMethod(DefaultGameUserSnapshot.class, "createGroupComponent", Group.class);
+
+	static {
+		isFriend.setAccessible(true);
+		calculateNameTagOffset.setAccessible(true);
+		createGroupComponent.setAccessible(true);
+	}
+
 	@Mixin(value = DefaultGameUserSnapshot.class, remap = false)
 	public interface DefaultGameUserSnapshotAccessor {
 		@Invoker("isFriend")
 		static boolean grieferUtils$isFriend(GameUser user) {
-			throw new AssertionError();
+			return Reflection.invoke(DefaultGameUserSnapshot.class, isFriend, user);
 		}
 
 		@Invoker("calculateNameTagOffset")
 		static float grieferUtils$calculateNameTagOffset(GameUser user) {
-			throw new AssertionError();
+			return Reflection.invoke(DefaultGameUserSnapshot.class, calculateNameTagOffset, user);
 		}
 
 		@Invoker("createGroupComponent")
 		static Component grieferUtils$createGroupComponent(Group group) {
-			throw new AssertionError();
+			return Reflection.invoke(DefaultGameUserSnapshot.class, createGroupComponent, group);
 		}
 	}
 

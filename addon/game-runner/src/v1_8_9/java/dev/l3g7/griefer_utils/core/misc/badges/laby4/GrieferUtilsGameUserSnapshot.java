@@ -12,42 +12,36 @@ import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
 import net.labymod.api.Laby;
 import net.labymod.api.LabyAPI;
 import net.labymod.api.client.component.Component;
-import net.labymod.api.client.component.format.NamedTextColor;
-import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
-import net.labymod.api.client.component.format.TextDecoration;
 import net.labymod.api.configuration.labymod.main.LabyConfig;
 import net.labymod.api.laby3d.renderer.snapshot.Extras;
-import net.labymod.api.labyconnect.LabyConnect;
-import net.labymod.api.labyconnect.LabyConnectSession;
 import net.labymod.api.user.GameUser;
 import net.labymod.api.user.badge.ServerBadge;
 import net.labymod.api.user.group.Group;
-import net.labymod.api.user.group.GroupDisplayType;
 import net.labymod.core.client.render.state.entity.DefaultGameUserSnapshot;
-import net.labymod.core.main.LabyMod;
-import net.labymod.core.main.user.DefaultGameUser;
-import net.labymod.core.main.user.GameUserData;
-import net.labymod.core.main.user.GameUserItem;
 import net.labymod.core.main.user.serverfeature.DefaultServerFeatureService;
 import net.labymod.core.main.user.serverfeature.UserServerFeature;
-import net.labymod.core.main.user.shop.item.model.AttachmentPoint;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge.DEFAULT_BADGE;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
 
 public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
 
-	private static final Component PREFIX = Component.text("LABY", Style.builder().color(NamedTextColor.WHITE).decorate(TextDecoration.BOLD).build());
 	public final @Nullable SpecialBadge badge;
 
 	public GrieferUtilsGameUserSnapshot(GameUser user, Extras extras, LabyAPI api) {
-		this(user, ((DefaultServerFeatureService) LabyMod.references().serverFeatureService()).get().getUserFeature(user.getUniqueId()), extras, api.config(), getBadge(user));
+		this(user, ((DefaultServerFeatureService) Laby.references().serverFeatureService()).get().getUserFeature(user.getUniqueId()), extras, api.config(), getBadge(user));
 	}
 
 	private GrieferUtilsGameUserSnapshot(GameUser user, @Nullable UserServerFeature userServerFeature, Extras extras, LabyConfig config, @Nullable SpecialBadge badge) {
-		super(user.isUsingLabyMod(), user.isLegacy(), user.visibleGroup(), user.displayColor(), userServerFeature == null ? null : userServerFeature.getCountryCode(), userServerFeature == null ? null : userServerFeature.getBadges().toArray(new ServerBadge[0]), calculateNameTagOffset(user), userServerFeature == null ? null : userServerFeature.getSubtitle(), createGroupComponent(user, badge), isFriend(user), config.ingame().showUserIndicatorBesideName().get(), config.ingame().showCountryFlag().get(), config.ingame().cosmetics().renderCosmetics().get(), extras);
+		super(user.isUsingLabyMod(), user.isLegacy(), user.visibleGroup(), user.displayColor(), userServerFeature == null ? null : userServerFeature.getCountryCode(),
+			userServerFeature == null ? null : userServerFeature.getBadges().toArray(new ServerBadge[0]),
+			DefaultGameUserSnapshotAccessor.grieferUtils$calculateNameTagOffset(user),
+			userServerFeature == null ? null : userServerFeature.getSubtitle(), createGroupComponent(user, badge),
+			DefaultGameUserSnapshotAccessor.grieferUtils$isFriend(user), config.ingame().showUserIndicatorBesideName().get(), config.ingame().showCountryFlag().get(), config.ingame().cosmetics().renderCosmetics().get(), extras);
 		this.badge = badge;
 	}
 
@@ -65,42 +59,25 @@ public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
 				.append(Component.text(badge.title()));
 		}
 
-		return createGroupComponent(user.visibleGroup());
+		return DefaultGameUserSnapshotAccessor.grieferUtils$createGroupComponent(user.visibleGroup());
 	}
 
-	/**
-	 * Copied from {@link DefaultGameUserSnapshot} because it's private.
-	 */
-	private static Component createGroupComponent(Group group) {
-		return group.getDisplayType() != GroupDisplayType.ABOVE_HEAD ? null : Component.text().append(PREFIX).append(Component.space()).append(Component.text(group.getTagName(), group.getTextColor())).build();
-	}
-
-	/**
-	 * Copied from {@link DefaultGameUserSnapshot} because it's private.
-	 */
-	private static float calculateNameTagOffset(GameUser user) {
-		if (user instanceof DefaultGameUser defaultGameUser && defaultGameUser.getUserData() instanceof GameUserData data) {
-			float offset = 0.0F;
-			for (GameUserItem entry : data.getItems())
-				if (entry.item().itemDetails().getAttachmentPoint() == AttachmentPoint.HEAD && entry.item().canBeRendered())
-					offset = Math.max(offset, entry.item().getNameTagOffset());
-
-			if (offset > 0.0F)
-				return (offset + 0.2F) / Laby.references().renderConstants().nameTagScale() - 1.0F;
+	@Mixin(value = DefaultGameUserSnapshot.class, remap = false)
+	public interface DefaultGameUserSnapshotAccessor {
+		@Invoker("isFriend")
+		static boolean grieferUtils$isFriend(GameUser user) {
+			throw new AssertionError();
 		}
-		return 0.0F;
-	}
 
-	/**
-	 * Copied from {@link DefaultGameUserSnapshot} because it's private.
-	 */
-	private static boolean isFriend(GameUser user) {
-		LabyConnect labyConnect = Laby.references().labyConnect();
-		if (labyConnect.isAuthenticated())
-			if (labyConnect.getSession() instanceof LabyConnectSession session)
-				return session.getFriend(user.getUniqueId()) != null;
+		@Invoker("calculateNameTagOffset")
+		static float grieferUtils$calculateNameTagOffset(GameUser user) {
+			throw new AssertionError();
+		}
 
-		return false;
+		@Invoker("createGroupComponent")
+		static Component grieferUtils$createGroupComponent(Group group) {
+			throw new AssertionError();
+		}
 	}
 
 }

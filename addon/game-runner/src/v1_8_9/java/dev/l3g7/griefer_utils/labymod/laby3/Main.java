@@ -30,8 +30,8 @@ import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.texture.DynamicModTexture;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -111,14 +111,17 @@ public class Main extends LabyModAddon {
 			if (addonInfo.getUuid().equals(uuid))
 				return;
 
+		Map<UUID, String> addons = new HashMap<>();
+
 		for (AddonInfo offlineAddon : AddonLoader.getOfflineAddons()) {
 			if (offlineAddon.getUuid().equals(uuid)) {
 				AddonInfoManager.getInstance().getAddonInfoList().add(offlineAddon);
 				return;
 			}
+			addons.put(offlineAddon.getUuid(), offlineAddon.getName());
 		}
 
-		throw new RuntimeException("GrieferUtils couldn't be loaded");
+		throw new RuntimeException("GrieferUtils couldn't be loaded: " + uuid + " not found in " + addons);
 	}
 
 	@Override

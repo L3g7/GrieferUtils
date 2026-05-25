@@ -3,6 +3,7 @@
  * Copyright (c) L3g7.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * This file has been modified by itzW0lf.
  */
 
 package dev.l3g7.griefer_utils.features;
@@ -23,6 +24,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -86,8 +88,13 @@ public abstract class Feature implements Disableable, GUIEntry {
 
 	@Override
 	public void addToParent(List<BaseSetting<?>> root) {
-		if (category != null)
-			category.getSetting().addSetting(mainElement);
+		if (category == null)
+			return;
+		CategoryData canonical = categories.values().stream()
+			.filter(cd -> cd.configKey().equals(category.configKey()))
+			.findFirst()
+			.orElse(category);
+		canonical.getSetting().addSetting(mainElement);
 	}
 
 	public BaseSetting<?> getMainElement() {
@@ -117,10 +124,10 @@ public abstract class Feature implements Disableable, GUIEntry {
 	}
 
 	public static List<CategoryData> getCategories() {
-		return categories.entrySet().stream()
-			.filter(e -> e.getKey() != null)
-			.map(Map.Entry::getValue)
-			.collect(Collectors.toList());
+		Map<String, CategoryData> deduped = new LinkedHashMap<>();
+		for (CategoryData cd : categories.values())
+			deduped.putIfAbsent(cd.configKey(), cd);
+		return new java.util.ArrayList<>(deduped.values());
 	}
 
 	public static List<BaseSetting<?>> getUncategorized() {
@@ -199,9 +206,13 @@ public abstract class Feature implements Disableable, GUIEntry {
 
 		@Override
 		public void addToParent(List<BaseSetting<?>> root) {
-			if (parent != null)
-				parent.getSetting().addSetting(setting);
-			else
+			if (parent != null) {
+				CategoryData canonicalParent = categories.values().stream()
+					.filter(cd -> cd.configKey().equals(parent.configKey()))
+					.findFirst()
+					.orElse(parent);
+				canonicalParent.getSetting().addSetting(setting);
+			} else
 				root.add(setting);
 		}
 

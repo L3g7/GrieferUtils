@@ -5,10 +5,13 @@
  * you may not use this file except in compliance with the License.
  */
 
+// This file has been modified by itzW0lf.
+
 package dev.l3g7.griefer_utils.features.world.building;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
@@ -16,14 +19,14 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 
 import java.util.Objects;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 @Singleton
 public class AutoBlockRefill extends Feature {
@@ -31,15 +34,29 @@ public class AutoBlockRefill extends Feature {
 	private ItemStack expectedStack = null;
 	private int slot = 0;
 
+	private enum ChestSource { NONE, ENDERCHEST, SHOWCASE }
+	private ChestSource pendingSource = ChestSource.NONE;
+
+	private final SwitchSetting useEnderchest = SwitchSetting.create()
+		.name("Aus Enderchest nachziehen")
+		.description("Öffnet /ec, wenn das Item nicht im Inventar ist.")
+		.icon("chest_ender");
+
+	private final SwitchSetting useShowcase = SwitchSetting.create()
+		.name("Aus Showcase nachziehen")
+		.description("Öffnet /sc, wenn das Item nicht im Inventar ist.")
+		.icon("chest");
+
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Verbrauchte Blöcke nachziehen")
 		.description("Füllt Blöcke, die verbraucht wurden, mit gleichen auf.")
-		.icon("bundle");
+		.icon("bundle")
+		.subSettings(useEnderchest, useShowcase);
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onPacketReceive(PacketEvent.PacketReceiveEvent<S2FPacketSetSlot> event) {
-		if (expectedStack == null || player() == null)
+		if (expectedStack == null || player() == null || pendingSource != ChestSource.NONE)
 			return;
 
 		if (event.packet.func_149173_d() != slot)
@@ -47,38 +64,115 @@ public class AutoBlockRefill extends Feature {
 
 		event.cancel();
 
-		for (int slot = 0; slot < 36; slot++) {
-			InventoryPlayer inventory = player().inventory;
-			if (slot == inventory.currentItem)
+		boolean found = tryRefillFromInventory();
+
+		if (!found) {
+			if (useEnderchest.get()) {
+				pendingSource = ChestSource.ENDERCHEST;
+				send("/ec");
+			} else if (useShowcase.get()) {
+				pendingSource = ChestSource.SHOWCASE;
+				send("/sc");
+			} else {
+				expectedStack = null;
+			}
+		} else {
+			expectedStack = null;
+		}
+	}
+
+	@EventListener(triggerWhenDisabled = true)
+	public void onChestItems(GuiModifyItemsEvent event) {
+		if (pendingSource == ChestSource.NONE || expectedStack == null)
+			return;
+
+		String title = event.getTitle();
+		boolean isEc = title.contains("Enderchest") || title.contains("Ender Chest");
+		boolean isSc = title.contains("Showcase");
+
+		if (pendingSource == ChestSource.ENDERCHEST && !isEc)
+			return;
+		if (pendingSource == ChestSource.SHOWCASE && !isSc)
+			return;
+
+		Container container = event.getContainer();
+		int windowId = player().openContainer.windowId;
+		int containerSize = container.inventorySlots.size() - 36; // exclude player inventory slots
+
+		for (int i = 0; i < containerSize; i++) {
+			ItemStack itemStack = container.getSlot(i).getStack();
+			if (itemStack == null || itemStack.stackSize <= 0)
 				continue;
 
-			ItemStack itemStack = inventory.getStackInSlot(slot);
-
-			if (!expectedStack.isItemEqual(itemStack) || itemStack.stackSize <= 0)
+			if (!expectedStack.isItemEqual(itemStack))
 				continue;
 
-			// Compare damage
 			if (!expectedStack.isItemStackDamageable() && expectedStack.getItemDamage() != itemStack.getItemDamage())
 				continue;
 
 			if (itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("stackSize"))
 				continue;
 
-			// Compare NBT
 			if (!Objects.equals(expectedStack.getTagCompound(), itemStack.getTagCompound()))
 				continue;
 
-			int finalSlot = slot;
+			final int chestSlot = i;
+			resetState(); // reset before async to prevent re-entry
+			TickScheduler.runAfterClientTicks(() -> {
+				mc().playerController.windowClick(windowId, chestSlot, 0, 1, player());
+				TickScheduler.runAfterClientTicks(() -> player().closeScreen(), 1);
+			}, 1);
+			return;
+		}
+
+		// Item not found — try next source
+		if (pendingSource == ChestSource.ENDERCHEST && useShowcase.get()) {
+			pendingSource = ChestSource.SHOWCASE;
+			TickScheduler.runAfterClientTicks(() -> {
+				player().closeScreen();
+				TickScheduler.runAfterClientTicks(() -> send("/sc"), 2);
+			}, 1);
+		} else {
+			resetState();
+			TickScheduler.runAfterClientTicks(() -> player().closeScreen(), 1);
+		}
+	}
+
+	private boolean tryRefillFromInventory() {
+		InventoryPlayer inventory = player().inventory;
+		for (int s = 0; s < 36; s++) {
+			if (s == inventory.currentItem)
+				continue;
+
+			ItemStack itemStack = inventory.getStackInSlot(s);
+			if (!expectedStack.isItemEqual(itemStack) || itemStack.stackSize <= 0)
+				continue;
+
+			if (!expectedStack.isItemStackDamageable() && expectedStack.getItemDamage() != itemStack.getItemDamage())
+				continue;
+
+			if (itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("stackSize"))
+				continue;
+
+			if (!Objects.equals(expectedStack.getTagCompound(), itemStack.getTagCompound()))
+				continue;
+
+			int finalSlot = s;
 			TickScheduler.runAfterClientTicks(() -> {
 				ItemStack heldItem = player().getHeldItem();
 				mc().playerController.windowClick(0, finalSlot < 9 ? finalSlot + 36 : finalSlot, inventory.currentItem, 2, player());
 				inventory.setInventorySlotContents(finalSlot, (heldItem == null || heldItem.stackSize == 0) ? null : heldItem);
 				inventory.setInventorySlotContents(inventory.currentItem, itemStack);
 			}, expectedStack.getItem() instanceof ItemBlock ? 0 : 1);
-			break;
-		}
 
+			return true;
+		}
+		return false;
+	}
+
+	private void resetState() {
 		expectedStack = null;
+		pendingSource = ChestSource.NONE;
 	}
 
 	@EventListener

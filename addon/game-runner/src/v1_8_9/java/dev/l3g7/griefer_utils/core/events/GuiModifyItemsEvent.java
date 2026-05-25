@@ -38,6 +38,10 @@ public class GuiModifyItemsEvent extends Event.TypedEvent<GuiModifyItemsEvent> {
 	private final Container container;
 
 
+	public Container getContainer() {
+		return container;
+	}
+
 	public ItemStack getItem(int slot) {
 		return container.getSlot(slot).getStack();
 	}

@@ -202,7 +202,7 @@ public class InvisibilityWarning extends Widget {
 
 			public InvisiblePlayerLine(EntityOtherPlayerMP player) {
 				super(InvisibilityWarningL4.this);
-				int distance = (int) player.getDistanceToEntity(player());
+				int distance = (int) player.getDistanceToEntity(mc().thePlayer);
 
 				NetworkPlayerInfo playerInfo = mc().getNetHandler().getPlayerInfo(player.getUniqueID());
 				if (playerInfo == null)

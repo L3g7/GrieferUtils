@@ -3,6 +3,7 @@
  * Copyright (c) L3g7.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * This file has been modified by itzW0lf.
  */
 
 package dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data;
@@ -61,18 +62,20 @@ public class BABBot {
 		this.botZone = null;
 	}
 
-	public boolean isVecInsideOrTouching(Vec3 vec) {
-		AxisAlignedBB zone = botZone; // Copy botZone to prevent errors because of concurrent modifications
-		if (zone == null)
-			return false;
-
-		if (vec.xCoord < zone.minX || vec.xCoord > zone.maxX)
-			return false;
-
-		if (vec.yCoord < zone.minY || vec.yCoord > zone.maxY)
-			return false;
-
+	private boolean isVecInZone(Vec3 vec, AxisAlignedBB zone) {
+		if (vec.xCoord < zone.minX || vec.xCoord > zone.maxX) return false;
+		if (vec.yCoord < zone.minY || vec.yCoord > zone.maxY) return false;
 		return !(vec.zCoord < zone.minZ) && !(vec.zCoord > zone.maxZ);
+	}
+
+	public boolean isVecInsideOrTouching(Vec3 vec) {
+		AxisAlignedBB zone = botZone;
+		return zone != null && isVecInZone(vec, zone);
+	}
+
+	public boolean isVecNearby(Vec3 vec, int radius) {
+		AxisAlignedBB zone = botZone;
+		return zone != null && isVecInZone(vec, zone.expand(radius, radius, radius));
 	}
 
 	private JsonObject getItems() throws IOException, GeneralSecurityException, ExecutionException, InterruptedException {

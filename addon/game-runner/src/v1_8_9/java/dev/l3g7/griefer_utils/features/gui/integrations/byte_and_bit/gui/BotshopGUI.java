@@ -3,6 +3,7 @@
  * Copyright (c) L3g7.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * This file has been modified by itzW0lf.
  */
 
 package dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.gui;
@@ -59,6 +60,7 @@ public class BotshopGUI extends GuiBigChest {
 	private int backspaceSpeed = 0;
 	private int backspaceTimer = 0;
 	private final String botname;
+	private final boolean readOnly;
 	private final boolean[] availabilities = new boolean[7 * 7];
 	private boolean wasWaitingForJoinCooldown = !JoinCooldownTimer.isCooldownExpired();
 
@@ -76,8 +78,9 @@ public class BotshopGUI extends GuiBigChest {
 		return PRICE_FORMAT_DE.format(price()) + "$";
 	}
 
-	public BotshopGUI(BABBot bot) {
+	public BotshopGUI(BABBot bot, boolean readOnly) {
 		super("", 7);
+		this.readOnly = readOnly;
 		this.botname = bot.getName();
 		searchField = new ModTextField(0, mc().fontRendererObj, guiLeft + 170 - searchFieldWidth, guiTop + 6, searchFieldWidth - 7, mc().fontRendererObj.FONT_HEIGHT);
 		searchField.setPlaceHolder("§oSuchen");
@@ -157,7 +160,7 @@ public class BotshopGUI extends GuiBigChest {
 			return;
 		}
 
-		super.addItem(slot + diff, entry.getStack(), () -> {
+		super.addItem(slot + diff, entry.getStack(), readOnly ? () -> {} : () -> {
 			List<BABItem> addedItems = new ArrayList<>(16);
 			for (BABItem i : items)
 				if (i.getPrice() == entry.getPrice()) {
@@ -295,7 +298,9 @@ public class BotshopGUI extends GuiBigChest {
 			addItem(9 * i + 1, ItemUtil.createItem(Blocks.stained_glass_pane, 15, "§f§l⬅ Einkaufsliste"), () -> {});
 		}
 
-		if (!JoinCooldownTimer.isCooldownExpired()) {
+		if (readOnly) {
+			addTextureItem(28, new TextureItem("crossed_out_gold_ingot", "§4§lNur Ansicht", "§fDu befindest dich nicht in der Botkammer"), null);
+		} else if (!JoinCooldownTimer.isCooldownExpired()) {
 			addTextureItem(28, new TextureItem("hourglass", "§4§lGesperrt", "§fBitte warte noch " + JoinCooldownTimer.getRemainingSeconds() + " Sekunden!"), null);
 		} else if (price() > bankBal()) {
 			addTextureItem(28, new TextureItem("crossed_out_gold_ingot", "§4§lGesperrt", "§fNicht genügend Guthaben"), null);

@@ -3,6 +3,7 @@
  * Copyright (c) L3g7.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * This file has been modified by itzW0lf.
  */
 
 package dev.l3g7.griefer_utils.features.chat.ingoing.chat_reactor.laby4;
@@ -33,6 +34,7 @@ public class AddChatReactionGui extends Gui {
 	private static final int RENDER_GROUP_SELECTED = 2; // Rendered if a type is selected
 	private static final int RENDER_GROUP_TEXT = 3; // Rendered if the text type is selected
 	private static final int RENDER_GROUP_CITYBUILD_MENU = 4;
+	private static final int RENDER_GROUP_AFK_MENU = 5;
 
 	private static final int PADDING = 35; // 35px between inputs
 	private static final int HEADER_HEIGHT = 50;
@@ -46,6 +48,8 @@ public class AddChatReactionGui extends Gui {
 	private TextField commandInput;
 	private DropDown<TextCompareMode> compareModeInput;
 	private DropDown<Citybuild> citybuildInput;
+	private TextField cooldownInput;
+	private DropDown<AfkMode> afkModeInput;
 
 	private Scrollbar scrollbar;
 	private Button backButton;
@@ -127,6 +131,17 @@ public class AddChatReactionGui extends Gui {
 			.renderGroup(RENDER_GROUP_SELECTED)
 			.menuRenderGroup(RENDER_GROUP_CITYBUILD_MENU);
 
+		cooldownInput = createTextField("Cooldown (Sekunden, 0 = kein Cooldown)")
+			.pos(x, citybuildInput.bottom() + PADDING)
+			.width(width)
+			.renderGroup(RENDER_GROUP_SELECTED);
+
+		afkModeInput = createDropDown(AfkMode.ALWAYS, "AFK-Verhalten")
+			.y(cooldownInput.bottom() + PADDING)
+			.width(width)
+			.renderGroup(RENDER_GROUP_SELECTED)
+			.menuRenderGroup(RENDER_GROUP_AFK_MENU);
+
 		if (editedReaction == null)
 			return;
 
@@ -137,6 +152,8 @@ public class AddChatReactionGui extends Gui {
 		commandInput.setText(reaction.command);
 		compareModeInput.setSelected(reaction.matchAll ? TextCompareMode.EQUALS : TextCompareMode.CONTAINS);
 		citybuildInput.setSelected(reaction.citybuild);
+		cooldownInput.setText(reaction.cooldown == 0 ? "" : String.valueOf(reaction.cooldown).replace(".", ","));
+		afkModeInput.setSelected(reaction.disableWhenAfk ? AfkMode.DISABLE_WHEN_AFK : AfkMode.ALWAYS);
 	}
 
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -164,7 +181,9 @@ public class AddChatReactionGui extends Gui {
 			}
 
 			citybuildInput.y(bottom + PADDING);
-			cancelButton.yPosition = saveButton.yPosition = (int) citybuildInput.bottom() + PADDING;
+			cooldownInput.y((int) citybuildInput.bottom() + PADDING);
+			afkModeInput.y((int) cooldownInput.bottom() + PADDING);
+			cancelButton.yPosition = saveButton.yPosition = (int) afkModeInput.bottom() + PADDING;
 			scrollbar.update(getButtonHeight(saveButton) + saveButton.yPosition - HEADER_HEIGHT);
 		}
 		switch (textTypeInput.getSelected()) {
@@ -209,10 +228,11 @@ public class AddChatReactionGui extends Gui {
 		DrawUtils.drawOverlayBackground(height - footerSize, height); // footer background
 		DrawUtils.drawGradientShadowBottom(height - footerSize, 0, width); // footer gradient
 
-		// Draw citybuild menu over footer
+		// Draw citybuild and afk menus over footer
 		GL11.glTranslated(0, scrollbar.getScrollY(), 0);
 		citybuildInput.setScreenHeight(MinecraftUtil.screenHeight() - scrollbar.getScrollY());
 		draw(mouseX, mouseY, RENDER_GROUP_CITYBUILD_MENU);
+		draw(mouseX, mouseY, RENDER_GROUP_AFK_MENU);
 		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
 
 		// Draw post
@@ -264,7 +284,7 @@ public class AddChatReactionGui extends Gui {
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) {
-		if (!triggerInput.isFocused() && !commandInput.isFocused())
+		if (!triggerInput.isFocused() && !commandInput.isFocused() && !cooldownInput.isFocused())
 			if (keyCode == 1 || typedChar == '\b') // ESC / Back
 				close();
 
@@ -290,9 +310,21 @@ public class AddChatReactionGui extends Gui {
 				citybuildInput.onClick(citybuildInput.getX(), citybuildInput.getY(), 0); // Use onClick so scrollbar is initialized
 			}
 
-			// Citybuild -> Trigger
+			// Citybuild -> Cooldown
 			else if (citybuildInput.isOpen()) {
 				citybuildInput.setOpen(false);
+				cooldownInput.setFocused(true);
+			}
+
+			// Cooldown -> AfkMode
+			else if (cooldownInput.isFocused()) {
+				cooldownInput.setFocused(false);
+				afkModeInput.setOpen(true);
+			}
+
+			// AfkMode -> Trigger
+			else if (afkModeInput.isOpen()) {
+				afkModeInput.setOpen(false);
 				triggerInput.setFocused(true);
 			}
 		}
@@ -312,6 +344,9 @@ public class AddChatReactionGui extends Gui {
 		reaction.trigger = triggerInput.getText();
 		reaction.command = commandInput.getText();
 		reaction.citybuild = citybuildInput.getSelected();
+		String cooldownText = cooldownInput.getText().trim().replace(",", ".");
+		reaction.cooldown = cooldownText.isEmpty() ? 0 : Double.parseDouble(cooldownText);
+		reaction.disableWhenAfk = afkModeInput.getSelected() == AfkMode.DISABLE_WHEN_AFK;
 		reaction.completed = true;
 
 		if (editedReaction == null) {
@@ -359,6 +394,23 @@ public class AddChatReactionGui extends Gui {
 		private final String name;
 
 		TextCompareMode(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+	}
+
+	private enum AfkMode implements Named {
+
+		ALWAYS("Immer auslösen"), DISABLE_WHEN_AFK("Nicht auslösen wenn AFK");
+
+		private final String name;
+
+		AfkMode(String name) {
 			this.name = name;
 		}
 

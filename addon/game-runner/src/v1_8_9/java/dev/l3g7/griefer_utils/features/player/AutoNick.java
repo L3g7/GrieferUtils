@@ -3,6 +3,7 @@
  * Copyright (c) L3g7.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * This file has been modified by itzW0lf.
  */
 
 package dev.l3g7.griefer_utils.features.player;
@@ -34,17 +35,42 @@ public class AutoNick extends Feature {
 	private long lastEvent = 0;
 	private boolean manuallyAFK = false;
 	private boolean isAFK = false;
+	private boolean wasNicked = false;
+
+	public static boolean isAfk() {
+		return get(AutoNick.class).isAFK;
+	}
 
 	private final StringSetting nickName = StringSetting.create()
 		.name("Nick")
-		.description("Wie du genickt werden willst, wenn du AFK bist." +
-			"\n%name% wird mit deinem Namen ersetzt.")
+		.description("Wie du genickt werden willst, wenn du AFK bist.\n%name% wird mit deinem Namen ersetzt.")
 		.defaultValue("AFK_%name%")
 		.icon("name_tag");
+
+	private final SwitchSetting autoNick = SwitchSetting.create()
+		.name("Automatisch nicken")
+		.description("Nickt dich automatisch mit dem eingestellten Nick, wenn du AFK bist.")
+		.icon("name_tag")
+		.since("2.5.0")
+		.defaultValue(true)
+		.subSettings(nickName);
+
+	private final StringSetting messageReply = StringSetting.create()
+		.name("Nachricht")
+		.description("Mit welcher Nachricht geantwortet wird, wenn dir jemand eine /msg schreibt, während du AFK bist.")
+		.icon("book_and_quill");
+
+	private final SwitchSetting autoMessage = SwitchSetting.create()
+		.name("Automatische Antwort")
+		.description("Antwortet automatisch auf /msg-Nachrichten, wenn du AFK bist.")
+		.icon("book_and_quill")
+		.since("2.5.0")
+		.subSettings(messageReply);
 
 	private final KeySetting triggerAfk = KeySetting.create()
 		.name("Hotkey")
 		.icon("key")
+		.since("2.5.0")
 		.description("Markiert dich automatisch als AFK, wenn diese Taste gedrückt wird.")
 		.pressCallback(b -> {
 			if (!b)
@@ -52,7 +78,10 @@ public class AutoNick extends Feature {
 
 			isAFK = manuallyAFK = true;
 			lastEvent = 0;
-			send("/nick " + nickName.get().replace("%name%", MinecraftUtil.name()));
+			if (autoNick.get()) {
+				send("/nick " + nickName.get().replace("%name%", MinecraftUtil.name()));
+				wasNicked = true;
+			}
 		});
 
 	private final NumberSetting minutes = NumberSetting.create()
@@ -66,18 +95,12 @@ public class AutoNick extends Feature {
 		.description("Nach wie vielen Sekunden du als AFK eingestuft werden sollst.")
 		.icon("clock");
 
-	private final StringSetting messageReply = StringSetting.create()
-		.name("Nachricht-\nbeantworter")
-		.description("Mit welcher Nachricht geantwortet wird, wenn dir jemand eine /msg schreibt, während du AFK bist."
-			+ "\n(Leerlassen zum deaktivieren)")
-		.icon("book_and_quill");
-
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name("Automatisch nicken wenn AFK")
-		.description("Nickt dich, wenn du eine bestimmte, einstellbare Zeit AFK bist.")
+		.name("Automatisch AFK erkennen")
+		.description("Erkennt, wenn du eine bestimmte Zeit AFK bist, und führt die aktivierten Aktionen aus.")
 		.icon("afk_timer")
-		.subSettings(nickName, messageReply, triggerAfk, HeaderSetting.create(), minutes, seconds);
+		.subSettings(autoNick, autoMessage, triggerAfk, HeaderSetting.create(), minutes, seconds);
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onKeyboardInput(KeyInputEvent event) {
@@ -99,7 +122,7 @@ public class AutoNick extends Feature {
 
 	@EventListener
 	private void onMsg(MessageReceiveEvent event) {
-		if (!isAFK || messageReply.get().isEmpty())
+		if (!isAFK || !autoMessage.get() || messageReply.get().isEmpty())
 			return;
 
 		Matcher matcher = Constants.MESSAGE_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
@@ -145,7 +168,10 @@ public class AutoNick extends Feature {
 				return;
 
 			isAFK = true;
-			send("/nick " + nickName.get().replace("%name%", MinecraftUtil.name()));
+			if (autoNick.get()) {
+				send("/nick " + nickName.get().replace("%name%", MinecraftUtil.name()));
+				wasNicked = true;
+			}
 			return;
 		}
 
@@ -153,7 +179,10 @@ public class AutoNick extends Feature {
 			return;
 
 		isAFK = manuallyAFK = false;
-		send("/unnick");
+		if (wasNicked) {
+			send("/unnick");
+			wasNicked = false;
+		}
 	}
 
 }

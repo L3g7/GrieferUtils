@@ -238,9 +238,12 @@ public class ByteAndBit extends Feature {
 			bot.sync().whenComplete((dataPresent, ex) -> {
 				if (ex != null || !Boolean.TRUE.equals(dataPresent))
 					return;
-				Vec3 currentPos = player().getPositionVector();
-				boolean readOnly = !bot.isVecInsideOrTouching(currentPos);
-				mc().addScheduledTask(() -> mc().displayGuiScreen(new BotshopGUI(bot, readOnly)));
+				mc().addScheduledTask(() -> {
+					if (world() == null || player() == null)
+						return;
+					boolean readOnly = !bot.isVecInsideOrTouching(player().getPositionVector());
+					mc().displayGuiScreen(new BotshopGUI(bot, readOnly));
+				});
 			});
 		}
 	}

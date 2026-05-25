@@ -33,7 +33,7 @@ public class ChatReaction {
 	boolean completed;
 	double cooldown = 0;
 	boolean disableWhenAfk = false;
-	private long lastFired = Long.MIN_VALUE;
+	private long lastFired = 0;
 
 	public ChatReaction() {}
 
@@ -74,9 +74,8 @@ public class ChatReaction {
 			return;
 
 		long now = System.currentTimeMillis();
-		if (now - lastFired < (long) (cooldown * 1000))
+		if (lastFired != 0 && now - lastFired < (long) (cooldown * 1000))
 			return;
-		lastFired = now;
 
 		String trigger = this.trigger;
 
@@ -88,8 +87,10 @@ public class ChatReaction {
 
 		String command = this.command.trim();
 		if (!regEx) {
-			if (matchAll ? trigger.equalsIgnoreCase(text) : text.toLowerCase().contains(trigger.toLowerCase()) && !MessageSendEvent.post(command))
+			if (matchAll ? trigger.equalsIgnoreCase(text) : text.toLowerCase().contains(trigger.toLowerCase()) && !MessageSendEvent.post(command)) {
+				lastFired = now;
 				player().sendChatMessage(command);
+			}
 			return;
 		}
 
@@ -106,8 +107,10 @@ public class ChatReaction {
 		}
 
 		command = command.trim();
-		if (!MessageSendEvent.post(command))
+		if (!MessageSendEvent.post(command)) {
+			lastFired = now;
 			player().sendChatMessage(command);
+		}
 	}
 
 }

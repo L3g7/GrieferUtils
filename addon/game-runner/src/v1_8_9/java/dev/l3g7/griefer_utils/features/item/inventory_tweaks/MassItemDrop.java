@@ -37,6 +37,7 @@ public class MassItemDrop extends Feature {
 		.description("Drücke diese Taste, während du über einem Item im Inventar schwebst, um alle gleichartigen Items zu droppen.")
 		.icon("dropper")
 		.since("2.5.0")
+		.subSettings(ignoreNbt)
 		.triggersInContainers()
 		.pressCallback(pressed -> {
 			if (!pressed || !(mc().currentScreen instanceof GuiContainer gc))

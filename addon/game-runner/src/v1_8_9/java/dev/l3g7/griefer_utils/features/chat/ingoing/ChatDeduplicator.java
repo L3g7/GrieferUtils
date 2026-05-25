@@ -60,8 +60,10 @@ public class ChatDeduplicator extends Feature {
 		boolean expired = state == null || (intervalMs > 0 && now - state.lastSeen >= intervalMs);
 
 		if (expired) {
+			if (state != null)
+				states.remove(key);
 			if (stackMessages.get()) {
-				int id = Math.abs(key.hashCode());
+				int id = key.hashCode() & 0x7fffffff;
 				if (id == 0) id = 1;
 				states.put(key, new MessageState(id, event.message, now));
 				event.cancel();
@@ -75,9 +77,8 @@ public class ChatDeduplicator extends Feature {
 			event.cancel();
 
 			if (stackMessages.get()) {
-				IChatComponent stacked = new ChatComponentText(
-					state.originalComponent.getFormattedText() + " §7(" + state.count + ")"
-				);
+				IChatComponent stacked = state.originalComponent.createCopy();
+				stacked.appendSibling(new ChatComponentText(" §7(" + state.count + ")"));
 				mc().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(stacked, state.chatLineId);
 			}
 		}

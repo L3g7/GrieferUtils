@@ -134,10 +134,10 @@ public class InvisibilityWarning extends Widget {
 			float fX = (float) (rightX == -1 ? x : rightX);
 			float fY = (float) y;
 
-			for (EntityOtherPlayerMP player : invisiblePlayers) {
+			for (EntityOtherPlayerMP invisPlayer : invisiblePlayers) {
 				float lineX = fX;
 				fY += 10;
-				int distance = (int) player.getDistanceToEntity(player());
+				int distance = (int) invisPlayer.getDistanceToEntity(player());
 
 				if (rightX == -1) {
 					if (distance < 10)
@@ -147,24 +147,27 @@ public class InvisibilityWarning extends Widget {
 					mc.fontRendererObj.drawStringWithShadow(text.getText(), lineX, fY, text.getColor());
 					lineX += mc.fontRendererObj.getStringWidth(text.getText()) + 2;
 
-					DrawUtils.bindTexture(player.getLocationSkin());
+					DrawUtils.bindTexture(invisPlayer.getLocationSkin());
 					DrawUtils.drawTexture(lineX, fY, 32, 32, 32, 32, 8, 8);
 					DrawUtils.drawTexture(lineX, fY, 160, 32, 32, 32, 8, 8);
 
-					IChatComponent displayName = mc.getNetHandler().getPlayerInfo(player.getUniqueID()).getDisplayName();
-					if (displayName != null)
-						mc.fontRendererObj.drawStringWithShadow(displayName.getFormattedText(), lineX + 10, fY, Integer.MAX_VALUE);
+					NetworkPlayerInfo playerInfo = mc.getNetHandler().getPlayerInfo(invisPlayer.getUniqueID());
+					if (playerInfo != null) {
+						IChatComponent displayName = playerInfo.getDisplayName();
+						if (displayName != null)
+							mc.fontRendererObj.drawStringWithShadow(displayName.getFormattedText(), lineX + 10, fY, Integer.MAX_VALUE);
+					}
 				} else {
 					lineX -= mc.fontRendererObj.getStringWidth(distance + "m");
 					mc.fontRendererObj.drawStringWithShadow(distance + "m", lineX, fY, Integer.MAX_VALUE);
 					if (distance < 10)
 						lineX -= mc.fontRendererObj.getCharWidth('0');
 
-					lineX -= mc.fontRendererObj.getStringWidth(player.getDisplayName().getFormattedText() + " ");
-					mc.fontRendererObj.drawStringWithShadow(player.getDisplayName().getFormattedText(), lineX, fY, Integer.MAX_VALUE);
+					lineX -= mc.fontRendererObj.getStringWidth(invisPlayer.getDisplayName().getFormattedText() + " ");
+					mc.fontRendererObj.drawStringWithShadow(invisPlayer.getDisplayName().getFormattedText(), lineX, fY, Integer.MAX_VALUE);
 					lineX -= 10;
 
-					DrawUtils.bindTexture(player.getLocationSkin());
+					DrawUtils.bindTexture(invisPlayer.getLocationSkin());
 					DrawUtils.drawTexture(lineX, fY, 32, 32, 32, 32, 8, 8);
 					DrawUtils.drawTexture(lineX, fY, 160, 32, 32, 32, 8, 8);
 				}

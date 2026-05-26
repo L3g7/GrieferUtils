@@ -97,7 +97,7 @@ public class AutoBlockRefill extends Feature {
 
 		Container container = event.getContainer();
 		int windowId = player().openContainer.windowId;
-		int containerSize = container.inventorySlots.size() - 36; // exclude player inventory slots
+		int containerSize = container.inventorySlots.size() - 36;
 
 		for (int i = 0; i < containerSize; i++) {
 			ItemStack itemStack = container.getSlot(i).getStack();
@@ -117,21 +117,21 @@ public class AutoBlockRefill extends Feature {
 				continue;
 
 			final int chestSlot = i;
-			resetState(); // reset before async to prevent re-entry
+			final int targetSlot = containerSize + 27 + (slot - 36);
+			resetState();
 			TickScheduler.runAfterClientTicks(() -> {
-				mc().playerController.windowClick(windowId, chestSlot, 0, 1, player());
-				TickScheduler.runAfterClientTicks(() -> player().closeScreen(), 1);
+				mc().playerController.windowClick(windowId, chestSlot, 0, 0, player());
+				TickScheduler.runAfterClientTicks(() -> {
+					mc().playerController.windowClick(windowId, targetSlot, 0, 0, player());
+					TickScheduler.runAfterClientTicks(() -> player().closeScreen(), 1);
+				}, 1);
 			}, 1);
 			return;
 		}
 
-		// Item not found — try next source
 		if (pendingSource == ChestSource.ENDERCHEST && useShowcase.get()) {
 			pendingSource = ChestSource.SHOWCASE;
-			TickScheduler.runAfterClientTicks(() -> {
-				player().closeScreen();
-				TickScheduler.runAfterClientTicks(() -> send("/sc"), 2);
-			}, 1);
+			send("/sc");
 		} else {
 			resetState();
 			TickScheduler.runAfterClientTicks(() -> player().closeScreen(), 1);

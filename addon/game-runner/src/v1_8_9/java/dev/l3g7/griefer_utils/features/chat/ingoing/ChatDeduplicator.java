@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.features.chat.ingoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SliderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -50,9 +51,12 @@ public class ChatDeduplicator extends Feature {
 
 	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
-		String key = event.message.getFormattedText()
-			.replaceAll("§.", "")
-			.replaceAll("^\\[\\d{2}:\\d{2}:\\d{2}\\] ", "");
+		String formatted = event.message.getFormattedText();
+		if (Constants.MESSAGE_PATTERNS.stream().noneMatch(p -> p.matcher(formatted).matches()))
+			return;
+
+		String key = formatted
+			.replaceAll("§.", "");
 
 		MessageState state = states.get(key);
 		long now = System.currentTimeMillis();

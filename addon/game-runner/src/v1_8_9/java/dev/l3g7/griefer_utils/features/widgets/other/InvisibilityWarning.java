@@ -31,6 +31,8 @@ import net.labymod.api.client.gui.screen.state.ScreenCanvas;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.network.play.server.S45PacketTitle;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
@@ -55,13 +57,19 @@ public class InvisibilityWarning extends Widget {
 		.min(1).max(100)
 		.defaultValue(20);
 
+	private final SwitchSetting showTitle = SwitchSetting.create()
+		.name("Title anzeigen")
+		.description("Zeigt einen Title im Spielbildschirm an, wenn ein neuer unsichtbarer Spieler in der Nähe entdeckt wird.")
+		.icon("exclamation_mark")
+		.defaultValue(true);
+
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Unsichtbare Spieler")
 		.description("Zeigt unsichtbare Spieler in deiner Nähe an und warnt per Benachrichtigung.")
 		.icon("invisibility")
 		.since("2.5.0")
-		.subSettings(range);
+		.subSettings(range, showTitle);
 
 	private final List<EntityOtherPlayerMP> invisiblePlayers = new ArrayList<>();
 	private final Set<UUID> warnedPlayers = new HashSet<>();
@@ -83,6 +91,10 @@ public class InvisibilityWarning extends Widget {
 			if (!warnedPlayers.contains(p.getUniqueID())) {
 				warnedPlayers.add(p.getUniqueID());
 				LabyBridge.labyBridge.notify("§4§lUnsichtbarer Spieler!", "§c" + p.getName() + " §fist in deiner Nähe unsichtbar!");
+				if (showTitle.get()) {
+					mc().getNetHandler().handleTitle(new S45PacketTitle(S45PacketTitle.Type.TITLE, new ChatComponentText("§4§lUnsichtbarer Spieler!")));
+					mc().getNetHandler().handleTitle(new S45PacketTitle(S45PacketTitle.Type.SUBTITLE, new ChatComponentText("§c" + p.getName() + " §fist in deiner Nähe!")));
+				}
 			}
 		}
 		warnedPlayers.retainAll(currentUUIDs);

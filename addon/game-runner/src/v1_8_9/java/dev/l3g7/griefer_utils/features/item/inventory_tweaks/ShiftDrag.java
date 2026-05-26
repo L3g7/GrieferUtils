@@ -12,17 +12,23 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.DrawScreenEvent;
+import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
 public class ShiftDrag extends Feature {
@@ -30,6 +36,7 @@ public class ShiftDrag extends Feature {
 	private final Set<Integer> processedSlots = new HashSet<>();
 	private long lastClick = 0;
 	private static final long CLICK_DELAY_MS = 75;
+	private boolean processing = false;
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -41,6 +48,11 @@ public class ShiftDrag extends Feature {
 	@EventListener
 	private void onDrawScreen(DrawScreenEvent event) {
 		if (!(event.gui instanceof GuiContainer gc)) {
+			processedSlots.clear();
+			return;
+		}
+
+		if (mc().thePlayer.inventory.getItemStack() != null) {
 			processedSlots.clear();
 			return;
 		}
@@ -61,6 +73,49 @@ public class ShiftDrag extends Feature {
 		processedSlots.add(hovered.slotNumber);
 		lastClick = now;
 		mc().playerController.windowClick(gc.inventorySlots.windowId, hovered.slotNumber, 0, 1, mc().thePlayer);
+	}
+
+	@EventListener
+	private void onWindowClick(WindowClickEvent event) {
+		if (processing || !(mc().currentScreen instanceof GuiContainer gc))
+			return;
+
+		ItemStack cursorStack = mc().thePlayer.inventory.getItemStack();
+		if (cursorStack == null || event.mode != 0 || event.mouseButtonClicked != 0)
+			return;
+
+		if (event.slotId < 0)
+			return;
+
+		List<Slot> slots = gc.inventorySlots.inventorySlots;
+		if (event.slotId >= slots.size())
+			return;
+
+		Slot clickedSlot = slots.get(event.slotId);
+		if (!clickedSlot.getHasStack())
+			return;
+
+		Item cursorItem = cursorStack.getItem();
+		if (clickedSlot.getStack().getItem() != cursorItem)
+			return;
+
+		event.cancel();
+		processing = true;
+
+		TickScheduler.runAfterClientTicks(() ->
+			mc().playerController.windowClick(event.windowId, event.slotId, 0, 0, player()), 1);
+
+		int delay = 3;
+		for (Slot slot : slots) {
+			if (slot.getHasStack() && slot.getStack().getItem() == cursorItem) {
+				final int d = delay++;
+				final int slotId = slot.slotNumber;
+				TickScheduler.runAfterClientTicks(() ->
+					mc().playerController.windowClick(event.windowId, slotId, 0, 1, player()), d);
+			}
+		}
+
+		TickScheduler.runAfterClientTicks(() -> processing = false, delay);
 	}
 
 }

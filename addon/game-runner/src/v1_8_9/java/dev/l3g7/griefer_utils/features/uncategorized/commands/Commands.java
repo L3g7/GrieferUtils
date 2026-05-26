@@ -7,14 +7,19 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.commands;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
+import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.CommandDispatcher;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
@@ -32,6 +37,23 @@ public class Commands {
 
 	public static void registerCommand(Command command) {
 		commands.put(command.base.toLowerCase(), command);
+		registerInBrigadier(command.base);
+	}
+
+	private static void registerInBrigadier(String name) {
+		try {
+			Field f = Class.forName("dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.CommandSuggestions").getDeclaredField("dispatcher");
+			f.setAccessible(true);
+			CommandDispatcher dispatcher = (CommandDispatcher) f.get(null);
+			if (dispatcher != null)
+				dispatcher.register(LiteralArgumentBuilder.<CommandDispatcher.Source>literal("gu:" + name).executes(ctx -> 0));
+		} catch (Exception ignored) {}
+	}
+
+	@EventListener(priority = Priority.LOW)
+	private static void onStaticData(StaticDataReceiveEvent event) {
+		for (String name : commands.keySet())
+			registerInBrigadier(name);
 	}
 
 	@EventListener

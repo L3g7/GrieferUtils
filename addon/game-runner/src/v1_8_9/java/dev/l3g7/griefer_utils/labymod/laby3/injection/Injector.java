@@ -7,26 +7,24 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.injection;
 
+import dev.l3g7.griefer_utils.core.api.reflection.Access;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.service.IMixinService;
-import sun.misc.Unsafe;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Injector extends InjectorBase implements IClassTransformer {
 
 	public Injector() throws ReflectiveOperationException {
-		// Add MixinPlugin processor
-		List<IClassTransformer> transformers = Reflection.get(Launch.classLoader, "transformers");
-
 		// Load MixinBootstrap using the system classloader
 		Class<?> mixinBootstrap = Launch.classLoader.getClass().getClassLoader().loadClass("org.spongepowered.asm.launch.MixinBootstrap");
 		mixinBootstrap.getDeclaredMethod("init").invoke(null);
@@ -51,28 +49,24 @@ public class Injector extends InjectorBase implements IClassTransformer {
 		}
 
 		// Wipe cached classes
-		try {
-			Class<?> mxInfoClass = Class.forName("org.spongepowered.asm.mixin.transformer.MixinInfo");
-			IMixinService classLoaderUtil0 = Reflection.get(mxInfoClass, "classLoaderUtil");
-			Object classLoaderUtil = Reflection.get(classLoaderUtil0, "classLoaderUtil");
-			Reflection.set(classLoaderUtil, "cachedClasses", new ConcurrentHashMap<>());
+		Class<?> mxInfoClass = Reflection.load("org.spongepowered.asm.mixin.transformer.MixinInfo");
+		IMixinService classLoaderUtil0 = Reflection.get(mxInfoClass, "classLoaderUtil");
+		Object classLoaderUtil = Reflection.get(classLoaderUtil0, "classLoaderUtil");
+		Reflection.set(classLoaderUtil, "cachedClasses", new ConcurrentHashMap<>());
 
-			Class<?> mixinEnv = Class.forName("org.spongepowered.asm.mixin.MixinEnvironment");
-			Set<String> excludeTransformers = Reflection.get(mixinEnv, "excludeTransformers");
+		Class<?> mixinEnv = Reflection.load("org.spongepowered.asm.mixin.MixinEnvironment");
+		Field excludeTransformersField = Reflection.getField(mixinEnv, "excludeTransformers");
+		Set<String> excludeTransformers = Reflection.get(mixinEnv, excludeTransformersField);
 
-			Field excludeTransformersField = mixinEnv.getDeclaredField("excludeTransformers");
-			Unsafe unsafe = Reflection.get(Unsafe.class, "theUnsafe");
-			unsafe.putObject(mixinEnv, unsafe.staticFieldOffset(excludeTransformersField), new HashSet<>(excludeTransformers) {
-				@Override
-				public boolean add(String s) {
-					if (s.contains("griefer_utils"))
-						return false;
-					return super.add(s);
-				}
-			});
-		} catch (Throwable t) {
-			t.printStackTrace(); // TODO better error handling
-		}
+		MethodHandle setter = Access.getElevatedLookup().unreflectSetter(excludeTransformersField);
+		Util.tryFatal(() -> setter.invoke(mixinEnv, new HashSet<>(excludeTransformers) {
+			@Override
+			public boolean add(String s) {
+				if (s.contains("griefer_utils"))
+					return false;
+				return super.add(s);
+			}
+		}));
 	}
 
 	@Override

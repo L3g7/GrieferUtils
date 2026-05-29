@@ -8,14 +8,13 @@
 package dev.l3g7.griefer_utils.core.api.file_provider.impl;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-
-import static dev.l3g7.griefer_utils.core.api.util.Util.addMessage;
 
 /**
  * An implementation for providing files loaded using an URLClassLoader.
@@ -37,7 +36,7 @@ public class URLFileProvider extends FileProvider {
 				File root = new File(url.toURI());
 				load(root, root);
 			} catch (Exception e) {
-				return addMessage(e, "Tried to load urls from " + ClassLoader.getSystemClassLoader());
+				return Util.elevate(e, "Tried to load urls from %s", ClassLoader.getSystemClassLoader());
 			}
 		}
 		return null;

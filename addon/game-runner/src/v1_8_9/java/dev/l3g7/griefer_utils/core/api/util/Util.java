@@ -7,12 +7,9 @@
 
 package dev.l3g7.griefer_utils.core.api.util;
 
-import sun.misc.Unsafe;
+import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Field;
 import java.text.DecimalFormat;
-import java.util.function.BiConsumer;
 
 /**
  * Everything that doesn't fit into the other utility classes.
@@ -20,58 +17,6 @@ import java.util.function.BiConsumer;
 public class Util {
 
 	private static final DecimalFormat DOUBLE_NUMBER = new DecimalFormat("00");
-
-	private static final BiConsumer<Throwable, String> setDetailMessageFunc;
-
-	static {
-		try {
-			if (System.getProperty("java.version").startsWith("1.")) {
-				// Java 8 (or lower)
-				Field detailMessage = Throwable.class.getDeclaredField("detailMessage");
-				detailMessage.setAccessible(true);
-				setDetailMessageFunc = (throwable, formattedMessage) -> {
-					try {
-						detailMessage.set(throwable, formattedMessage);
-					} catch (IllegalAccessException e) {
-						throw new RuntimeException(e);
-					}
-				};
-			} else {
-				// Java 9 or higher
-				// Create elevated lookup
-				MethodHandles.Lookup lookup = MethodHandles.lookup();
-				Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-				theUnsafe.setAccessible(true);
-				Unsafe unsafe = (Unsafe) theUnsafe.get(null);
-				unsafe.putInt(lookup, 12 /* allowedModes */, -1 /* TRUSTED */);
-
-				var setter = lookup.findSetter(Throwable.class, "detailMessage", String.class);
-
-				setDetailMessageFunc = (throwable, formattedMessage) -> {
-					try {
-						setter.invoke(throwable, formattedMessage);
-					} catch (Throwable e) {
-						throw new RuntimeException(e);
-					}
-				};
-			}
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * Adds a message in front of the existing message.
-	 */
-	public static <T extends Throwable> T addMessage(T throwable, String message, Object... args) {
-		String formattedMessage = args.length == 0 ? message : String.format(message, args);
-
-		if (throwable.getMessage() != null)
-			formattedMessage += " (" + throwable.getMessage() + ")";
-
-		setDetailMessageFunc.accept(throwable, formattedMessage);
-		return throwable;
-	}
 
 	/**
 	 * Elevates a Throwable to a RuntimeException without modifying the stack trace.
@@ -88,6 +33,15 @@ public class Util {
 	public static RuntimeException elevate(Throwable throwable, String message, Object... args) {
 		String formattedMessage = args.length == 0 ? message : String.format(message, args);
 		return new RuntimeException(formattedMessage, throwable, true, false) {};
+	}
+
+	/**
+	 * Runs an operation and elevates any thrown errors to RuntimeExceptions.
+	 *
+	 * @see Util#elevate(Throwable)
+	 */
+	public static <T> T tryFatal(Supplier<T> supplier) {
+		return supplier.get();
 	}
 
 	public static String formatTime(long endTime) {

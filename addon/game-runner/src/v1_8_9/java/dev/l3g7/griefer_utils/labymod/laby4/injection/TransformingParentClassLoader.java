@@ -7,25 +7,23 @@
 
 package dev.l3g7.griefer_utils.labymod.laby4.injection;
 
+import dev.l3g7.griefer_utils.core.api.reflection.Access;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.classobject.ClassObject;
 import net.minecraft.launchwrapper.classobject.MutableClassObject;
 import net.minecraft.launchwrapper.loader.BaseClassLoader;
 import net.minecraft.launchwrapper.loader.ChildClassLoader;
 import org.jetbrains.annotations.Nullable;
-import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
 import java.net.URL;
 
 import static java.lang.invoke.MethodType.methodType;
 
 public class TransformingParentClassLoader extends ClassLoader {
 
-	private final MethodHandles.Lookup LOOKUP;
 
 	private final MethodHandle transformName;
 	private final MethodHandle untransformName;
@@ -40,14 +38,8 @@ public class TransformingParentClassLoader extends ClassLoader {
 	public TransformingParentClassLoader() throws ReflectiveOperationException {
 		super(Launch.classLoader.getClass().getClassLoader());
 
-		// Create elevated lookup
-		LOOKUP = MethodHandles.lookup();
-		Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-		theUnsafe.setAccessible(true);
-		Unsafe unsafe = (Unsafe) theUnsafe.get(null);
-		unsafe.putInt(LOOKUP, 12 /* allowedModes */, -1 /* TRUSTED */);
-
-		Class<?> classObjectHolder = LOOKUP.findClass("net.minecraft.launchwrapper.LaunchClassLoader$ClassObjectHolder");
+		Lookup lookup = Access.getElevatedLookup();
+		Class<?> classObjectHolder = lookup.findClass("net.minecraft.launchwrapper.LaunchClassLoader$ClassObjectHolder");
 
 		// Resolve methods
 		transformName = findVirtual("transformName", methodType(String.class, String.class));
@@ -56,13 +48,13 @@ public class TransformingParentClassLoader extends ClassLoader {
 		runTransformers = findVirtual("runTransformers", methodType(byte[].class, String.class, String.class, byte[].class));
 		addInvalidClass = findVirtual("addInvalidClass", methodType(void.class, String.class));
 
-		classObjectHolderConstructor = LOOKUP.findConstructor(classObjectHolder, methodType(void.class, BaseClassLoader.class, ClassObject.class));
-		getClassLoader = LOOKUP.findVirtual(classObjectHolder, "getClassLoader", methodType(BaseClassLoader.class));
-		getClassObject = LOOKUP.findVirtual(classObjectHolder, "getClassObject", methodType(ClassObject.class));
+		classObjectHolderConstructor = lookup.findConstructor(classObjectHolder, methodType(void.class, BaseClassLoader.class, ClassObject.class));
+		getClassLoader = lookup.findVirtual(classObjectHolder, "getClassLoader", methodType(BaseClassLoader.class));
+		getClassObject = lookup.findVirtual(classObjectHolder, "getClassObject", methodType(ClassObject.class));
 	}
 
 	private MethodHandle findVirtual(String name, MethodType type) throws NoSuchMethodException, IllegalAccessException {
-		MethodHandle handle = LOOKUP.findVirtual(Launch.classLoader.getClass(), name, type);
+		MethodHandle handle = Access.getElevatedLookup().findVirtual(Launch.classLoader.getClass(), name, type);
 		return handle.bindTo(Launch.classLoader);
 	}
 

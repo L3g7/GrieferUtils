@@ -126,7 +126,7 @@ public class LabyBridgeImpl implements LabyBridge {
 			else
 				Desktop.getDesktop().browse(new URI(url));
 		} catch (UnsupportedOperationException e) {
-			BugReporter.reportError(Util.addMessage(e, "Unsupported BROWSE for " + Toolkit.getDefaultToolkit() + " / " + Platform.getOSType() + " / " + System.getProperty("os.name")));
+			BugReporter.reportError(Util.elevate(e, "Unsupported BROWSE for %s / %s / %s", Toolkit.getDefaultToolkit(), Platform.getOSType(), System.getProperty("os.name")));
 		} catch (IOException | URISyntaxException e) {
 			throw Util.elevate(e);
 		}

@@ -14,7 +14,6 @@ import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel;
-import sun.misc.Unsafe;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -29,7 +28,6 @@ import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.security.*;
 import java.security.cert.CertificateFactory;
 import java.security.cert.PKIXParameters;
@@ -51,8 +49,9 @@ import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel
  * As loading any class would prevent it from being updated, this class contains code also found in
  * {@link dev.l3g7.griefer_utils.core.api.misc.config.Config},
  * {@link dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider},
- * {@link dev.l3g7.griefer_utils.core.api.util.IOUtil} and
- * {@link dev.l3g7.griefer_utils.core.api.reflection.Reflection}.
+ * {@link dev.l3g7.griefer_utils.core.api.util.IOUtil},
+ * {@link dev.l3g7.griefer_utils.core.api.reflection.Reflection} and
+ * {@link dev.l3g7.griefer_utils.core.api.reflection.Access}.
  */
 @SuppressWarnings("CharsetObjectCanBeUsed") // Must be compatible with Java 8
 public class AutoUpdater {
@@ -69,6 +68,8 @@ public class AutoUpdater {
 
 	/**
 	 * Lazily creates an unrestricted lookup and returns it.
+	 *
+	 * @see dev.l3g7.griefer_utils.core.api.reflection.Access
 	 */
 	private static MethodHandles.Lookup getLookup() {
 		if (lookup != null)
@@ -76,10 +77,13 @@ public class AutoUpdater {
 
 		try {
 			lookup = MethodHandles.lookup();
-			Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+
+			Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
+			Field theUnsafe = unsafeClass.getDeclaredField("theUnsafe");
 			theUnsafe.setAccessible(true);
-			Unsafe unsafe = (Unsafe) theUnsafe.get(null);
-			unsafe.putInt(lookup, 12, -1);
+
+			unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class)
+				.invoke(theUnsafe.get(null), lookup, 12 /* allowedModes */, -1 /* TRUSTED */);
 			return lookup;
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);

@@ -7,18 +7,19 @@
 
 package dev.l3g7.griefer_utils.core.api.misc;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
+import dev.l3g7.griefer_utils.core.api.reflection.Access;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
-import sun.misc.Unsafe;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -26,24 +27,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 
 public class UnsafeJsonSerializer {
-
-	public static final Unsafe UNSAFE;
-
-	private static final Map<Class<?>, PrimitiveSerializer> PRIMITIVE_SERIALIZERS = ImmutableMap.<Class<?>, PrimitiveSerializer>builder()
-		.put(byte.class,    new PrimitiveSerializer(Unsafe::getByte,    Array::getByte))
-		.put(short.class,   new PrimitiveSerializer(Unsafe::getShort,   Array::getShort))
-		.put(int.class,     new PrimitiveSerializer(Unsafe::getInt,     Array::getInt))
-		.put(long.class,    new PrimitiveSerializer(Unsafe::getLong,    Array::getLong))
-		.put(float.class,   new PrimitiveSerializer(Unsafe::getFloat,   Array::getFloat))
-		.put(double.class,  new PrimitiveSerializer(Unsafe::getDouble,  Array::getDouble))
-		.put(char.class,    new PrimitiveSerializer(Unsafe::getChar,    Array::getChar))
-		.put(boolean.class, new PrimitiveSerializer(Unsafe::getBoolean, Array::getBoolean))
-		.build();
 
 	private final List<Object> currentPath = new ArrayList<>();
 
@@ -117,7 +104,10 @@ public class UnsafeJsonSerializer {
 				if (Mapper.isObfuscated())
 					name = Mapper.mapField(clazz, name, Reflection.getMappingTarget(), UNOBFUSCATED);
 
-				Object value = get(o, UNSAFE.objectFieldOffset(declaredField), declaredField.getType());
+
+				Object value = Util.tryFatal(() ->
+					Access.getElevatedLookup().unreflectGetter(declaredField).invoke(o));
+
 				result.add(name, toJson0(value));
 			}
 			clazz = clazz.getSuperclass();
@@ -127,44 +117,18 @@ public class UnsafeJsonSerializer {
 		return result;
 	}
 
-	private static Object get(Object o, long offset, Class<?> type) {
-		if (!type.isPrimitive())
-			return UNSAFE.getObject(o, offset);
-
-		return PRIMITIVE_SERIALIZERS.get(type).unsafeGetter.get(UNSAFE, o, offset);
-	}
-
 	private static List<Object> arrayToList(Object o) {
 		Class<?> component = o.getClass().getComponentType();
 		if (!component.isPrimitive())
 			return Arrays.asList((Object[]) o);
 
-		BiFunction<Object, Integer, Object> arrayGetter = PRIMITIVE_SERIALIZERS.get(component).arrayGetter;
 		int length = Array.getLength(o);
 		List<Object> list = new ArrayList<>(Array.getLength(o));
 
 		for (int i = 0; i < length; i++)
-			list.add(arrayGetter.apply(o, i));
+			list.add(Array.get(o, i));
 
 		return list;
-	}
-
-	static {
-		try {
-			Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
-			unsafeField.setAccessible(true);
-			UNSAFE = (Unsafe) unsafeField.get(null);
-		} catch (ReflectiveOperationException e) {
-			throw new RuntimeException(e);
-		}
-
-	}
-
-	private record PrimitiveSerializer(UnsafeGetter unsafeGetter, BiFunction<Object, Integer, Object> arrayGetter) {}
-
-	@FunctionalInterface
-	private interface UnsafeGetter {
-		Object get(Unsafe unsafe, Object object, Long offset);
 	}
 
 }

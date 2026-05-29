@@ -7,14 +7,12 @@
 
 package dev.l3g7.griefer_utils.post_processor;
 
+import dev.l3g7.griefer_utils.core.api.misc.Lazy;
 import dev.l3g7.griefer_utils.post_processor.processors.*;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A collection of transformers allowing the use of GrieferUtils created using the LabyMod 4 SDK in
@@ -22,13 +20,13 @@ import java.util.List;
  */
 public class LatePostProcessor implements IClassTransformer {
 
-	private static final List<Processor> processors = Arrays.asList(
+	private static final Lazy<Processor[]> processors = new Lazy<>(() -> new Processor[]{
 		new StringConcatShim(),
 		new SwitchDowngrader(),
 		new AccessElevator(),
 		new MixinLibSwapper(),
 		new SuperclassRemapper()
-	);
+	});
 
 	private String transformedClass;
 
@@ -43,7 +41,7 @@ public class LatePostProcessor implements IClassTransformer {
 		reader.accept(classNode, 0);
 
 		boolean modified = false;
-		for (Processor processor : processors) {
+		for (Processor processor : processors.get()) {
 			processor.process(classNode);
 			modified |= processor.modified;
 			processor.reset();

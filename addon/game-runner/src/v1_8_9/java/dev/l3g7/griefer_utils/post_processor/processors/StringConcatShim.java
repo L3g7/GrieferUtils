@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.post_processor.processors;
 
+import dev.l3g7.griefer_utils.core.api.reflection.Access;
 import dev.l3g7.griefer_utils.post_processor.LatePostProcessor.Processor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
@@ -14,7 +15,6 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import sun.misc.Unsafe;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
@@ -58,11 +58,15 @@ public class StringConcatShim extends Processor implements Opcodes {
 	static {
 		try {
 			// Create elevated lookup
-			MethodHandles.Lookup lookup = MethodHandles.lookup();
-			Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-			theUnsafe.setAccessible(true);
-			Unsafe unsafe = (Unsafe) theUnsafe.get(null);
-			unsafe.putInt(lookup, 12 /* allowedModes */, -1 /* TRUSTED */);
+			MethodHandles.Lookup lookup;
+			if ("true".equals(System.getProperty("griefer_utils.preprocessing", "false"))) {
+				lookup = Access.getElevatedLookup();
+			} else {
+				lookup = MethodHandles.lookup();
+				Field allowedModes = MethodHandles.Lookup.class.getDeclaredField("allowedModes");
+				allowedModes.setAccessible(true);
+				allowedModes.set(lookup, -1 /* TRUSTED */); // Can use reflection because shim is only needed in Java 8
+			}
 
 			// Find private classes
 			Class<?> boundMethodHandle = Class.forName("java.lang.invoke.BoundMethodHandle");

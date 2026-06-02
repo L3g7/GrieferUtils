@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.post_processor;
 
-import dev.l3g7.griefer_utils.core.api.misc.Lazy;
 import dev.l3g7.griefer_utils.post_processor.processors.*;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
@@ -20,13 +19,13 @@ import org.objectweb.asm.tree.ClassNode;
  */
 public class LatePostProcessor implements IClassTransformer {
 
-	private static final Lazy<Processor[]> processors = new Lazy<>(() -> new Processor[]{
+	private static final Processor[] processors = new Processor[]{
 		new StringConcatShim(),
 		new SwitchDowngrader(),
 		new AccessElevator(),
 		new MixinLibSwapper(),
 		new SuperclassRemapper()
-	});
+	};
 
 	private String transformedClass;
 
@@ -41,7 +40,7 @@ public class LatePostProcessor implements IClassTransformer {
 		reader.accept(classNode, 0);
 
 		boolean modified = false;
-		for (Processor processor : processors.get()) {
+		for (Processor processor : processors) {
 			processor.process(classNode);
 			modified |= processor.modified;
 			processor.reset();

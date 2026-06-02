@@ -59,14 +59,18 @@ public class Injector extends InjectorBase implements IClassTransformer {
 		Set<String> excludeTransformers = Reflection.get(mixinEnv, excludeTransformersField);
 
 		MethodHandle setter = Access.getElevatedLookup().unreflectSetter(excludeTransformersField);
-		Util.tryFatal(() -> setter.invoke(mixinEnv, new HashSet<>(excludeTransformers) {
-			@Override
-			public boolean add(String s) {
-				if (s.contains("griefer_utils"))
-					return false;
-				return super.add(s);
-			}
-		}));
+		try {
+			setter.invoke(new HashSet<>(excludeTransformers) {
+				@Override
+				public boolean add(String s) {
+					if (s.contains("griefer_utils"))
+						return false;
+					return super.add(s);
+				}
+			});
+		} catch (Throwable t) {
+			throw Util.elevate(t);
+		}
 	}
 
 	@Override

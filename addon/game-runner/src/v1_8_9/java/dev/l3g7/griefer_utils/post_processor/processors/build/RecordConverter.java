@@ -35,10 +35,10 @@ public class RecordConverter implements Opcodes {
 		new Converter("Double", 'D')
 	};
 
-	public static void process(ClassNode classNode) {
+	public static boolean process(ClassNode classNode) {
 		// Only process records
 		if ((classNode.access & Opcodes.ACC_RECORD) == 0)
-			return;
+			return false;
 
 		classNode.access &= ~Opcodes.ACC_RECORD;
 		if (classNode.superName.equals("java/lang/Record"))
@@ -71,6 +71,8 @@ public class RecordConverter implements Opcodes {
 			if (getter != null && getter.instructions.size() == 0)
 				getter.instructions = generateGetter(classNode.name, r.name, r.descriptor);
 		}
+
+		return true;
 	}
 
 	private static InsnList generateGetter(String owner, String name, String desc) {

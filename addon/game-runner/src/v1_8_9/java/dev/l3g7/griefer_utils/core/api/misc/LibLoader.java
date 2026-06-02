@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.misc;
 
+import dev.l3g7.griefer_utils.core.api.reflection.Access;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
@@ -15,6 +16,9 @@ import net.minecraft.launchwrapper.Launch;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -26,7 +30,15 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class LibLoader {
 
-	private static final ClassLoader launchClassLoaderParent = Reflection.get(Launch.classLoader, "parent");
+	private static final ClassLoader launchClassLoaderParent;
+
+	static {
+		Field field = Reflection.getField(Launch.classLoader.getClass(), "parent");
+		if (field == null)
+			launchClassLoaderParent = Reflection.get(Launch.classLoader, "appClassLoader");
+		else
+			launchClassLoaderParent = Reflection.get(Launch.classLoader, "parent");
+	}
 
 	public static void loadLibraries(String... libraries) {
 		for (int i = 0; i < libraries.length; i += 5) {
@@ -66,11 +78,14 @@ public class LibLoader {
 			}
 		}
 
+		MethodHandle access = Access.getElevatedLookup()
+			.findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
+
 		// Add jar file to LaunchClassLoader
 		if (launchClassLoaderParent instanceof URLClassLoader)
-			Reflection.invoke(launchClassLoaderParent, "addURL", libFile.toURI().toURL());
+			access.invoke(launchClassLoaderParent, libFile.toURI().toURL());
 
-		Reflection.invoke(Launch.classLoader, "addURL", libFile.toURI().toURL());
+		access.invoke(Launch.classLoader, libFile.toURI().toURL());
 	}
 
 	private static boolean verifyHash(File libFile, String targetHash) throws IOException {

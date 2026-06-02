@@ -35,6 +35,7 @@ import java.util.zip.ZipOutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 
 /**
@@ -114,10 +115,10 @@ public class BuildPostProcessor {
 			reader.accept(node, 0);
 
 			// Process
-			RecordConverter.process(node);
+			boolean computeFrames = RecordConverter.process(node);
 
 			// Write
-			ClassWriter writer = new ClassWriter(COMPUTE_MAXS);
+			ClassWriter writer = new ClassWriter(computeFrames ? COMPUTE_MAXS | COMPUTE_FRAMES : COMPUTE_MAXS);
 			node.accept(writer);
 
 			Files.write(path, writer.toByteArray());

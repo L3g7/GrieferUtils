@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import net.labymod.api.BuildData;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -42,6 +43,7 @@ import net.labymod.api.event.method.SubscribeMethod;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.models.addon.info.InstalledAddonInfo;
 import net.labymod.api.notification.Notification;
+import net.labymod.api.util.version.SemanticVersion;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.tab.NameHistoryActivity;
 import net.labymod.core.main.LabyMod;
@@ -72,7 +74,8 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public boolean obfuscated() {
-		return !labyAPI().labyModLoader().isAddonDevelopmentEnvironment();
+		return !labyAPI().labyModLoader().isAddonDevelopmentEnvironment()
+			&& BuildData.version().isLowerThan(new SemanticVersion(4, 5));
 	}
 
 	@Override

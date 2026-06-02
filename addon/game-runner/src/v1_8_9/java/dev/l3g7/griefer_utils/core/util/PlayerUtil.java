@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.core.util;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 
 import java.util.UUID;
 
@@ -50,14 +50,11 @@ public class PlayerUtil {
 		if (info == null)
 			return "";
 
-		IChatComponent component = info.getDisplayName();
-		if (component != null) {
-			String[] parts = component.getUnformattedText().split("\u2503");
-			if (parts.length > 1) {
-				return parts[0].trim();
-			}
-		}
-		return "";
+		ScorePlayerTeam team = info.getPlayerTeam();
+		if (team == null)
+			return "";
+
+		return team.getColorPrefix().replaceAll("§.", "").split("┃")[0];
 	}
 
 	public static String getName() {

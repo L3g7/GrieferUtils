@@ -22,12 +22,12 @@ public class SubserverRequirement extends Requirement {
 			// Fall back to true
 			return true;
 
-		String rank = MinecraftUtil.getServerFromScoreboard().trim();
-		if (rank.isEmpty())
+		String server = MinecraftUtil.getServerFromScoreboard().trim();
+		if (server.isEmpty())
 			// Fall back to true
 			return true;
 
-		return this.server.equalsIgnoreCase(rank);
+		return this.server.equalsIgnoreCase(server);
 	}
 
 }

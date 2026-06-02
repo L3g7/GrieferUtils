@@ -106,7 +106,7 @@ public class ChatCleanup extends Feature {
 
 	@EventListener
 	public void onMessageReceive(MessageReceiveEvent event) {
-		if (shouldCancel(event.message.getFormattedText()))
+		if (shouldCancel(event.message.getFormattedText(), event.message.getUnformattedText()))
 			event.cancel();
 	}
 
@@ -238,11 +238,11 @@ public class ChatCleanup extends Feature {
 	 */
 	private static int getFormattedLength(IChatComponent icc) {
 		return icc.getChatStyle().getFormattingCode().length() +
-				icc.getUnformattedTextForChat().length() +
-				2 /* §r */;
+			icc.getUnformattedTextForChat().length() +
+			2 /* §r */;
 	}
 
-	private boolean shouldCancel(String formattedText) {
+	private boolean shouldCancel(String formattedText, String unformattedText) {
 		boolean isNewsLine = formattedText.equals("§f§m------------§r§8 [ §r§6News§r§8 ] §r§f§m------------§r");
 		if (isNewsLine)
 			isNews = !isNews;
@@ -254,7 +254,7 @@ public class ChatCleanup extends Feature {
 			return true;
 
 		// Anti clear chat
-		if (antiClearChat.get() && formattedText.replaceAll("§.", "").trim().isEmpty())
+		if (antiClearChat.get() && unformattedText.trim().isEmpty())
 			return true;
 
 		// remove supreme spaces
@@ -274,7 +274,8 @@ public class ChatCleanup extends Feature {
 			return true;
 
 		// remove case opening
-		return removeCaseOpening.get() && (formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] §r§f§lDer Spieler §r") || formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] §r§f§lFolgender Preis wurde gezogen: §r"));
+		return removeCaseOpening.get() && (formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] §r§f§lDer Spieler §r") || formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] §r§f§lFolgender Preis wurde gezogen: §r")
+			|| (formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] ") && unformattedText.contains("hat eine Kiste geöffnet und")));
 	}
 
 	private enum NewsMode implements Named {

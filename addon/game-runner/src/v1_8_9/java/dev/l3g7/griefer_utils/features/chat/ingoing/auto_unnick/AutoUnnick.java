@@ -73,7 +73,7 @@ public class AutoUnnick extends Feature {
 
 		String name = NameCache.getName(nickName);
 		if (name != null)
-			IChatComponentUtil.setNameWithPrefix(event.component, nickName, name, new PrefixFinder(parts[0], parts[1]).getPrefix(), true);
+			IChatComponentUtil.setNameWithPrefix(event.component, nickName, name, PrefixFinder.getPrefix(parts[0], parts[1]), true);
 	}
 
 	@EventListener
@@ -106,7 +106,7 @@ public class AutoUnnick extends Feature {
 			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 
 			if (matcher.matches()) {
-				IChatComponentUtil.setNameWithPrefix(event.message, name, realName, new PrefixFinder(matcher.group("rank"), matcher.group("name")).getPrefix(), false);
+				IChatComponentUtil.setNameWithPrefix(event.message, name, realName, PrefixFinder.getPrefix(matcher.group("rank"), matcher.group("name")), false);
 				return;
 			}
 		}

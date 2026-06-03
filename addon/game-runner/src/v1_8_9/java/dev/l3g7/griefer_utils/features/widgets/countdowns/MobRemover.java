@@ -90,7 +90,7 @@ public class MobRemover extends SimpleWidget {
 
 		GUServer.getMobRemoverData(event.citybuild).thenAccept(end -> {
 			if (end != null)
-				countdown.setEnd(end);
+				countdown.setEnd(end * 1000);
 		});
 	}
 

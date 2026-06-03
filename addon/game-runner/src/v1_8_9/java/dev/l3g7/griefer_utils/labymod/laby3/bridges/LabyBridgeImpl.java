@@ -30,6 +30,7 @@ import net.labymod.api.events.MessageSendEvent;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.main.LabyMod;
 import net.labymod.utils.JsonParse;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -204,7 +205,7 @@ public class LabyBridgeImpl implements LabyBridge {
 	}
 
 	@Override
-	public void syncTabList() {
+	public void syncTabList(NetworkPlayerInfo info) {
 		// No-op
 	}
 

@@ -8,7 +8,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 public class Lazy<T> {
 
 	private final Supplier<T> generator;
-	private final Option<T> value = Option.empty();
+	private final Option<T> value = Option.emptyMut();
 
 	public Lazy(Supplier<T> generator) {
 		this.generator = generator;

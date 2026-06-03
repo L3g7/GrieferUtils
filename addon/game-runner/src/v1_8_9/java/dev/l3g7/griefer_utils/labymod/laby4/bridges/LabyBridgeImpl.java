@@ -209,9 +209,8 @@ public class LabyBridgeImpl implements LabyBridge {
 	}
 
 	@Override
-	public void syncTabList() {
-		for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap())
-			Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME));
+	public void syncTabList(NetworkPlayerInfo info) {
+		Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME));
 	}
 
 	public static <T> void register(Class<T> event, Consumer<T> callback) {

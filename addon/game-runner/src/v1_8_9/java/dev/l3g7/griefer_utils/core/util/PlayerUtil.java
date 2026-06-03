@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.util;
 
+import dev.l3g7.griefer_utils.core.api.misc.Option;
+import dev.l3g7.griefer_utils.core.misc.NameCache;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.Entity;
@@ -45,19 +47,23 @@ public class PlayerUtil {
 		return name != null && (name.matches("^\\w{3,}$") || name.startsWith("!"));
 	}
 
-	public static String getRank(String name) {
+	public static Option<String> getRank(String name) {
 		if (mc().getNetHandler() == null)
-			return "";
+			return Option.empty();
 
-		NetworkPlayerInfo info = mc().getNetHandler().getPlayerInfo(name);
+		String realName = NameCache.ensureRealName(name);
+		if (realName == null)
+			realName = name;
+
+		NetworkPlayerInfo info = mc().getNetHandler().getPlayerInfo(realName);
 		if (info == null)
-			return "";
+			return Option.empty();
 
 		ScorePlayerTeam team = info.getPlayerTeam();
 		if (team == null)
-			return "";
+			return Option.empty();
 
-		return team.getColorPrefix().replaceAll("§.", "").split("┃")[0];
+		return Option.of(team.getColorPrefix().replaceAll("§.", "").split("┃")[0].trim());
 	}
 
 	public static String getName() {

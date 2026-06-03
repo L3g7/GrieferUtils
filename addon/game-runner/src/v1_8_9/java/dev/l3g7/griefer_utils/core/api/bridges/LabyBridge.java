@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
 
 import java.io.File;
@@ -107,6 +108,6 @@ public interface LabyBridge {
 
 	void openNameHistory(String name);
 
-	void syncTabList();
+	void syncTabList(NetworkPlayerInfo info);
 
 }

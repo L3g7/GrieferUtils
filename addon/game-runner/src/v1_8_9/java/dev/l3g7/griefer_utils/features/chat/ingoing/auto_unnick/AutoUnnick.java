@@ -7,24 +7,36 @@
 
 package dev.l3g7.griefer_utils.features.chat.ingoing.auto_unnick;
 
-import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
+import dev.l3g7.griefer_utils.core.misc.color_patterns.ColorPattern;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.IChatComponentUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.player.name_tags.DefaultPrefixes;
+import net.minecraft.event.HoverEvent;
+import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
+
 @Singleton
 public class AutoUnnick extends Feature {
+
+	private static final ArrayList<Pattern> PATTERNS = new ArrayList<>(MESSAGE_PATTERNS) {{
+		// TODO move to Constants
+		remove(GLOBAL_CHAT_PATTERN);
+		add(STATUS_PATTERN);
+	}};
 
 	private final SwitchSetting tab = SwitchSetting.create()
 		.name("In Tabliste")
@@ -59,21 +71,10 @@ public class AutoUnnick extends Feature {
 			return;
 
 		String text = event.component.getUnformattedText();
-
 		if (!text.contains("~"))
 			return;
 
-		String nickName = text.substring(text.indexOf('~'));
-		String[] parts = event.component.getFormattedText().split(" ?(?:§r)?§8§?l? ?\u2503 (?:§r)?");
-
-		if (parts.length != 2) {
-			BugReporter.reportError(new Throwable(IChatComponent.Serializer.componentToJson(event.component) + " | " + event.profile));
-			return;
-		}
-
-		String name = NameCache.getName(nickName);
-		if (name != null)
-			IChatComponentUtil.setNameWithPrefix(event.component, nickName, name, PrefixFinder.getPrefix(parts[0], parts[1]), true);
+		IChatComponentUtil.replace(event.component, FORMATTED_PLAYER_PATTERN, "name", m -> buildUnnickedTag(m, false, false));
 	}
 
 	@EventListener
@@ -82,34 +83,29 @@ public class AutoUnnick extends Feature {
 			return;
 
 		String text = event.message.getUnformattedText();
-
-		if (!text.contains("\u2503") || !text.contains("~") || text.startsWith("@"))
+		if (!text.contains("┃ ~") || text.startsWith("@"))
 			return;
 
-		String name = text.substring(text.indexOf('\u2503') + 2);
-		int bracketIndex = name.indexOf(']') == -1 ? Integer.MAX_VALUE : name.indexOf(']');
-		int spaceIndex = name.indexOf(' ');
+		for (Pattern pattern : PATTERNS)
+			IChatComponentUtil.replace(event.message, pattern, "name", m -> buildUnnickedTag(m, true, true));
+	}
 
-		if (spaceIndex == -1 && bracketIndex == Integer.MAX_VALUE)
-			return;
+	private static List<IChatComponent> buildUnnickedTag(Matcher m, boolean isChat, boolean addHover) {
+		String nickName = m.group("name").replaceAll("§.", "");
+		if (!nickName.contains("~"))
+			return null;
 
-		name = name.substring(0, Math.min(spaceIndex, bracketIndex));
-
-		if (!name.contains("~"))
-			return;
-
-		String realName = NameCache.getName(name);
+		ColorPattern pattern = ColorPattern.from(m);
+		String realName = NameCache.getName(nickName);
 		if (realName == null)
-			return;
+			return null;
 
-		for (Pattern pattern : Constants.MESSAGE_PATTERNS) {
-			Matcher matcher = pattern.matcher(event.message.getFormattedText());
-
-			if (matcher.matches()) {
-				IChatComponentUtil.setNameWithPrefix(event.message, name, realName, PrefixFinder.getPrefix(matcher.group("rank"), matcher.group("name")), false);
-				return;
-			}
-		}
+		boolean allowBold = isChat || DefaultPrefixes.isBoldInTabList(m);
+		return pattern.paintName(realName, allowBold, new ChatStyle()
+			.setChatHoverEvent(addHover
+				? new HoverEvent(HoverEvent.Action.SHOW_TEXT, pattern.paintName(nickName, true))
+				: null)
+			.setItalic(true));
 	}
 
 }

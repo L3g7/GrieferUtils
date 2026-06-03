@@ -77,6 +77,6 @@ public class NameCache {
 
 		String name = data.getDisplayName().getUnformattedText();
 		if (name.contains("~"))
-			nickToUuidCache.put(name.substring(name.indexOf('~')), data.getProfile().getId());
+			nickToUuidCache.put(name.substring(name.indexOf('~')).split(" ")[0], data.getProfile().getId());
 	}
 }

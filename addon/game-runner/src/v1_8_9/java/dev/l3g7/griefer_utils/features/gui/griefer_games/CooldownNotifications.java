@@ -94,7 +94,7 @@ public class CooldownNotifications extends Feature {
 		else if (event.message.getUnformattedText().equals("[CaseOpening] Du hast 2 Kisten erhalten."))
 			endDates.put("/freekiste", NTP.getAccurateTime() + DAYS.toMillis(14) + 1000);
 		else if (event.message.getUnformattedText().matches("^\\[Kopf] Du hast einen .+[ -]Kopf erhalten[!.]$"))
-			endDates.put("/kopf", NTP.getAccurateTime() + DAYS.toMillis(PlayerUtil.getRank(PlayerUtil.getName()).equals("Titan") ? 14 : 7));
+			endDates.put("/kopf", NTP.getAccurateTime() + DAYS.toMillis(PlayerUtil.getRank(PlayerUtil.getName()).getOr("").equals("Titan") ? 14 : 7));
 		else if (event.message.getUnformattedText().matches("^\\[GrieferGames] Du hast .+ den Premium[- ]Rang aktiviert\\.$"))
 			endDates.put("/premium", NTP.getAccurateTime() + DAYS.toMillis(7));
 		else if (event.message.getUnformattedText().matches("^\\[GrieferGames] Du hast .+ den Ultra[- ]Rang aktiviert\\.$"))

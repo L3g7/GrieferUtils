@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.api.util;
 
+import java.util.Arrays;
+
 /**
  * A utility class for String stuff.
  */
@@ -57,6 +59,12 @@ public class StringUtil {
 				count++;
 
 		return count;
+	}
+
+	public static String repeat(char c, int count) {
+		char[] data = new char[count];
+		Arrays.fill(data, c);
+		return new String(data);
 	}
 
 }

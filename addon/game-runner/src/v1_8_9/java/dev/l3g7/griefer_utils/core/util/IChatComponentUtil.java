@@ -139,6 +139,23 @@ public class IChatComponentUtil {
 		return EnumChatFormatting.func_175744_a(Integer.parseInt(String.valueOf(code), 16));
 	}
 
+	public static int formattedIndexToUnformatted(IChatComponent root, int index) {
+		String formatted = root.getFormattedText();
+		int rawIndex = 0;
+
+		char[] chars = formatted.toCharArray();
+		for (int i = 0; i < index; i++) {
+			char c = chars[i];
+			if (c == '§')
+				// Skip next
+				i++;
+			else
+				rawIndex++;
+		}
+
+		return rawIndex;
+	}
+
 	/**
 	 * Returns a substring of the formatted text, indexed using the unformatted text.
 	 */
@@ -180,25 +197,33 @@ public class IChatComponentUtil {
 	/**
 	 * Replaces every "target" capture group matched by the pattern with the replacement.
 	 */
-	public static void replace(IChatComponent root, Pattern pattern, Function<Matcher, List<IChatComponent>> replacement) {
+	public static void replace(IChatComponent root, Pattern pattern, String target, Function<Matcher, List<IChatComponent>> replacement) {
 		Matcher matcher = pattern.matcher(root.getFormattedText());
-		while (matcher.find())
-			replace(root, matcher.start("target"), matcher.end("target"), replacement.apply(matcher));
+		while (matcher.find()) {
+			if (matcher.group(target) == null)
+				continue;
+
+			int s = formattedIndexToUnformatted(root, matcher.start(target));
+			int e = formattedIndexToUnformatted(root, matcher.end(target));
+			List<IChatComponent> newComponents = replacement.apply(matcher);
+			if (newComponents != null)
+				replace(root, s, e, newComponents);
+		}
 	}
 
 	/**
 	 * Removes all text from start to end, removing or in-place truncating all affected components, and
 	 * inserts the replacement.
 	 *
-	 * @param start inclusive
-	 * @param end   exclusive
+	 * @param start inclusive, unformatted
+	 * @param end   exclusive, unformatted
 	 */
 	public static void replace(IChatComponent root, int start, int end, List<IChatComponent> replacement) {
 		int index = 0;
 		for (MutableComponent component : getNestedSiblings(root)) {
 			int len = component.getText().length();
 
-			if (index >= start) {
+			if (index > start) {
 				// Replacement already started
 				if (index + len < end) {
 					// Range end after component, completely removed
@@ -207,7 +232,7 @@ public class IChatComponentUtil {
 					// Range end in component, text start removed
 					component.setText(component.getText().substring(end - index));
 				}
-			} else if (index + len >= start) {
+			} else if (index + len > start) {
 				// Range start in component
 				if (index + len < end) {
 					// Range end after component, text end removed
@@ -270,10 +295,7 @@ public class IChatComponentUtil {
 		}
 
 		public void setText(String newText) {
-			if (newText.isEmpty()) {
-				remove();
-				return;
-			}
+			// Keep even if text is empty, as component might be used to index append()
 
 			IChatComponent newComponent = new ChatComponentText(newText);
 			newComponent.setChatStyle(component.getChatStyle());
@@ -285,13 +307,13 @@ public class IChatComponentUtil {
 
 		public void set(IChatComponent newComponent) {
 			List<IChatComponent> siblings = parent.getSiblings();
-			siblings.set(siblings.indexOf(component), newComponent);
+			siblings.set(indexOf(component), newComponent);
 			newComponent.getChatStyle().setParentStyle(parent.getChatStyle());
 			component = newComponent;
 		}
 
 		public void remove() {
-			parent.getSiblings().remove(component);
+			parent.getSiblings().remove(indexOf(component));
 		}
 
 		/**
@@ -302,7 +324,7 @@ public class IChatComponentUtil {
 				return;
 
 			List<IChatComponent> siblings = parent.getSiblings();
-			siblings.addAll(siblings.indexOf(component) + 1, components);
+			siblings.addAll(indexOf(component) + 1, components);
 			for (IChatComponent component : components)
 				component.getChatStyle().setParentStyle(parent.getChatStyle());
 		}
@@ -317,8 +339,20 @@ public class IChatComponentUtil {
 			copy.component.getSiblings().clear();
 
 			List<IChatComponent> siblings = parent.getSiblings();
-			siblings.add(siblings.indexOf(component), copy.component);
+			siblings.add(indexOf(component), copy.component);
 			return copy;
+		}
+
+		/**
+		 * Siblings indexOf using identity equals instead of Object#equals.
+		 */
+		private int indexOf(IChatComponent component) {
+			List<IChatComponent> siblings = parent.getSiblings();
+			for (int i = 0; i < siblings.size(); i++)
+				if (siblings.get(i) == component)
+					return i;
+
+			return -1;
 		}
 
 		@Override

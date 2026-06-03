@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.minecraft;
 
+import dev.l3g7.griefer_utils.core.api.misc.Option;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.Requirement;
 
@@ -22,12 +23,12 @@ public class RankRequirement extends Requirement {
 			// Fall back to true
 			return true;
 
-		String rank = PlayerUtil.getRank(PlayerUtil.getName());
-		if (rank.isEmpty())
+		Option<String> rank = PlayerUtil.getRank(PlayerUtil.getName());
+		if (rank.isUnset())
 			// Fall back to true
 			return true;
 
-		return this.rank.equalsIgnoreCase(rank);
+		return this.rank.equalsIgnoreCase(rank.get());
 	}
 
 }

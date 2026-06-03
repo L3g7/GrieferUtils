@@ -13,12 +13,14 @@ import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.network.play.server.S38PacketPlayerListItem.AddPlayerData;
+import net.minecraft.network.play.server.S3EPacketTeams;
 import net.minecraft.util.IChatComponent;
 
 import java.util.HashMap;
@@ -43,19 +45,20 @@ public class TabListEvent extends Event {
 		if (mc().getNetHandler() == null)
 			return;
 
-		for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
-			IChatComponent originalComponent = cachedNames.get(info.getGameProfile().getId());
+		for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap())
+			updatePlayerInfo(info);
+	}
 
-			if (originalComponent == null)
-				continue;
+	public static void updatePlayerInfo(NetworkPlayerInfo info) {
+		IChatComponent originalComponent = cachedNames.get(info.getGameProfile().getId());
+		if (originalComponent == null)
+			return;
 
-			// create full deep-copy of component
-			TabListNameUpdateEvent event = new TabListNameUpdateEvent(info.getGameProfile(), originalComponent);
-			event.fire();
-			info.setDisplayName(event.component);
-		}
-
-		labyBridge.syncTabList();
+		// create full deep-copy of component
+		TabListNameUpdateEvent event = new TabListNameUpdateEvent(info.getGameProfile(), originalComponent);
+		event.fire();
+		info.setDisplayName(event.component);
+		labyBridge.syncTabList(info);
 	}
 
 	public static IChatComponent getCachedName(UUID uuid) {
@@ -104,6 +107,15 @@ public class TabListEvent extends Event {
 				// Update values
 				cachedNames.put(data.getProfile().getId(), data.getDisplayName());
 				Reflection.set(data, "displayName", tabListEvent.component);
+			}
+		}
+
+		@EventListener
+		private static void onTeamUpdate(PacketReceivedEvent<S3EPacketTeams> event) {
+			for (String player : event.packet.getPlayers()) {
+				NetworkPlayerInfo info = mc().getNetHandler().getPlayerInfo(player);
+				if (info != null)
+					TabListEvent.updatePlayerInfo(info);
 			}
 		}
 

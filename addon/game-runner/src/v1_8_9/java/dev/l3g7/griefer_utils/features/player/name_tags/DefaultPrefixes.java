@@ -184,12 +184,8 @@ public class DefaultPrefixes extends Feature {
 			IChatComponentUtil.replace(message, pattern, "rank", m -> buildDefaultColorsTag(m, false, isChat));
 		}
 
-		if (removeSuffixes.get()) {
-			IChatComponentUtil.replace(message, pattern, "suffix", m -> {
-				System.out.println("Removing " + m);
-				return Collections.emptyList();
-			});
-		}
+		if (removeSuffixes.get())
+			IChatComponentUtil.replace(message, pattern, "suffix", m -> Collections.emptyList());
 	}
 
 	private List<IChatComponent> buildDefaultColorsTag(Matcher m, boolean isName, boolean isChat) {

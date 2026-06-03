@@ -46,6 +46,9 @@ public class PlayerUtil {
 	}
 
 	public static String getRank(String name) {
+		if (mc().getNetHandler() == null)
+			return "";
+
 		NetworkPlayerInfo info = mc().getNetHandler().getPlayerInfo(name);
 		if (info == null)
 			return "";

@@ -47,4 +47,16 @@ public class StringUtil {
 		return out;
 	}
 
+	/**
+	 * @return The number of occurrences of a char.
+	 */
+	public static int count(String haystack, char needle) {
+		int count = 0;
+		for (char c : haystack.toCharArray())
+			if (c == needle)
+				count++;
+
+		return count;
+	}
+
 }

@@ -7,30 +7,37 @@
 
 package dev.l3g7.griefer_utils.features.player.name_tags;
 
-import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.Constants;
+import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.IChatComponentUtil;
+import dev.l3g7.griefer_utils.core.util.IChatComponentUtil.MutableComponent;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.chat.ingoing.auto_unnick.PrefixFinder;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.core.util.IChatComponentUtil.getComponents;
+import static dev.l3g7.griefer_utils.core.util.IChatComponentUtil.paint;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
 public class DefaultPrefixes extends Feature {
 
-	private static final Map<String, String> DEFAULT_PREFIXES = new HashMap<>() {{
+	private static final Map<String, String> DEFAULT_COLORS = new HashMap<>() {{
 		put("Owner", "4");
 		put("Administrator", "4");
 		put("Organisator", "c");
@@ -79,13 +86,34 @@ public class DefaultPrefixes extends Feature {
 		.defaultValue(true)
 		.callback(TabListEvent::updatePlayerInfoList);
 
+	private final SwitchSetting removeColors = SwitchSetting.create()
+		.name("Benutzerdefinierte Farben entfernen")
+		.description("Ob die Prefix-Farben auf die Standardfarben zurückgesetzt werden sollen.")
+		.icon("tabping_colored")
+		.defaultValue(true)
+		.callback(TabListEvent::updatePlayerInfoList);
+
+	private final SwitchSetting removePrefixNames = SwitchSetting.create()
+		.name("Benutzerdefinierte Namen entfernen")
+		.description("Ob die Rang-Namen auf die Standardnamen zurückgesetzt werden sollen.")
+		.icon("name_tag")
+		.defaultValue(true)
+		.callback(TabListEvent::updatePlayerInfoList);
+
+	private final SwitchSetting removeSuffixes = SwitchSetting.create()
+		.name("Suffixe entfernen")
+		.description("Ob die Suffixe entfernt werden sollen.")
+		.icon("name_tag")
+		.defaultValue(true)
+		.callback(TabListEvent::updatePlayerInfoList);
+
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Standard-Prefixe")
 		.description("Setzt die Prefixe jeder Person auf den standard Prefix des jeweiligen Ranges.")
 		.icon("name_tag_yellow")
 		.callback(TabListEvent::updatePlayerInfoList)
-		.subSettings(chat, tab, self);
+		.subSettings(chat, tab, self, HeaderSetting.create(), removeColors, removePrefixNames, removeSuffixes);
 
 	@Override
 	public void init() {
@@ -93,71 +121,108 @@ public class DefaultPrefixes extends Feature {
 		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 
-	private void setPrefix(IChatComponent component, String name, String rank, boolean isTabList) {
-		String prefix = DEFAULT_PREFIXES.get(rank.startsWith("Sr") ? rank.substring(2) : rank);
-		if (prefix == null)
-			return;
-
-		IChatComponentUtil.setNameWithPrefix(component, name, name, prefix, isTabList);
-		setRankWithPrefix(component, rank, prefix, isTabList);
-	}
-
 	@EventListener(priority = Priority.HIGHEST)
 	public void onTabListNameUpdate(TabListEvent.TabListNameUpdateEvent event) {
-		if (!tab.get() || !event.component.getUnformattedText().contains("\u2503"))
+		if (!(removeColors.get() || removePrefixNames.get() || removeSuffixes.get()))
 			return;
 
-		String unformatted = event.component.getUnformattedText().replaceAll("§.", "");
-
-		String[] parts = unformatted.split(" \u2503 ");
-
-		if (parts.length != 2) {
-			BugReporter.reportError(new Throwable(event.profile + " + / " + IChatComponent.Serializer.componentToJson(event.component)));
+		if (!tab.get() || !event.component.getUnformattedText().contains("┃"))
 			return;
-		}
 
-		if (!self.get() && player() != null && MinecraftUtil.name().equals(NameCache.ensureRealName(parts[1])))
+		String unformatted = event.component.getUnformattedText();
+		String[] parts = unformatted.split(" ┃ ");
+		if (parts.length != 2)
+			return;
+
+		String fmtName = parts[1].trim();
+		String fmtRank = parts[0].trim();
+		if (shouldSkipSelf(fmtName))
 			return;
 
 		// remove extra data (e.g. [LIVE] ) from name
-		parts[1] = parts[1].split(" ")[0];
+		fmtName = fmtName.split(" ")[0];
 
-		setPrefix(event.component, parts[1], parts[0], true);
+		setPrefix(event.component, fmtName, fmtRank, true);
+		removeSuffix(event.component);
 	}
 
 	@EventListener(priority = Priority.HIGH)
 	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
-		if (!chat.get())
+		if (!(removeColors.get() || removePrefixNames.get() || removeSuffixes.get()))
 			return;
 
-		String text = event.message.getUnformattedText();
-
-		if (!text.contains("\u2503"))
+		if (!chat.get() || !event.message.getUnformattedText().contains("┃"))
 			return;
 
-		// FIXME: Space is part of the rank and thus bold (it shouldn't be)
-		String name = text.substring(text.indexOf('\u2503') + 2);
-		int bracketIndex = name.indexOf(']') == -1 ? Integer.MAX_VALUE : name.indexOf(']');
-		int spaceIndex = name.indexOf(' ');
+		for (Pattern pattern : Constants.MESSAGE_PATTERNS) {
+			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 
-		if (spaceIndex == -1 && bracketIndex == Integer.MAX_VALUE)
+			if (matcher.matches()) {
+				String fmtName = matcher.group("name").trim();
+				String fmtRank = matcher.group("rank").trim();
+				if (shouldSkipSelf(fmtName))
+					return;
+
+				setPrefix(event.message, fmtName, fmtRank, false);
+				removeSuffix(event.message);
+				return;
+			}
+		}
+	}
+
+	private boolean shouldSkipSelf(String fmtName) {
+		String name = fmtName.replaceAll("§.", "");
+		return !self.get() && player() != null && MinecraftUtil.name().equals(NameCache.ensureRealName(name));
+	}
+
+	private void setPrefix(IChatComponent component, String fmtName, String fmtRank, boolean isTabList) {
+		String name = fmtName.replaceAll("§.", "");
+		String rank = fmtRank.replaceAll("§.", "");
+
+		String color = null;
+		if (removeColors.get())
+			color = DEFAULT_COLORS.get(rank.startsWith("Sr") ? rank.substring(2) : rank);
+		if (color == null)
+			color = PrefixFinder.getPrefix(fmtRank, fmtName);
+
+		if (removePrefixNames.get()) {
+			String realRank = PlayerUtil.getRank(name);
+			if (!realRank.isEmpty())
+				rank = realRank;
+		}
+
+		IChatComponentUtil.setNameWithPrefix(component, name, name, color, isTabList);
+		setRankWithPrefix(component, rank, color, isTabList);
+	}
+
+	private void removeSuffix(IChatComponent root) {
+		if (!removeSuffixes.get() || StringUtil.count(root.getUnformattedText().trim(), ' ') < 3)
 			return;
 
-		name = name.substring(0, Math.min(spaceIndex, bracketIndex));
+		List<MutableComponent> components = IChatComponentUtil.getNestedSiblings(root);
 
-		if (!self.get() && MinecraftUtil.name().equals(NameCache.ensureRealName(name)))
-			return;
+		// Find delimiter
+		int spaces = 0;
+		for (ListIterator<MutableComponent> iterator = components.listIterator(); iterator.hasNext(); ) {
+			MutableComponent component = iterator.next();
+			int cSpaces = StringUtil.count(component.getText(), ' ');
+			spaces += cSpaces;
 
-		int end = text.indexOf('\u2503') - 1;
-		int start = text.lastIndexOf(' ', end - 1) + 1;
-		String rank = text.substring(start, end);
-		int startBracketIndex = rank.lastIndexOf('[');
-		int startSpaceIndex = rank.lastIndexOf(' ');
+			if (spaces >= 2) {
+				// Reached start of suffix
+				String text = component.getText();
 
-		if (startBracketIndex != -1 || startSpaceIndex != -1)
-			rank = rank.substring(Math.max(startSpaceIndex, startBracketIndex) + 1);
+				// Remove whitespace, potential suffix
+				component.setText(text.substring(0, text.lastIndexOf(' ')));
 
-		setPrefix(event.message, name, rank, false);
+				if (text.endsWith(" ")) {
+					// Suffix is in next component
+					iterator.next().remove();
+				}
+
+				return;
+			}
+		}
 	}
 
 	private void setRankWithPrefix(IChatComponent iChatComponent, String rank, String prefix, boolean isTabList) {
@@ -202,7 +267,7 @@ public class DefaultPrefixes extends Feature {
 			}
 		}
 
-		Collection<IChatComponent> nameComponents = new ArrayList<>(getComponents(rank, prefix, isTabList));
+		Collection<IChatComponent> nameComponents = new ArrayList<>(paint(rank, prefix, isTabList));
 
 		// Add the HoverEvent and make it italic
 		ClickEvent clickEvent = parent.getChatStyle().getChatClickEvent();

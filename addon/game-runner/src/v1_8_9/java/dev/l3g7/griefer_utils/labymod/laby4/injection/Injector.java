@@ -34,7 +34,7 @@ public class Injector extends InjectorBase implements Entrypoint, IClassTransfor
 
 		// Load injector
 		LoadedAddon addon = Laby.labyAPI().addonService().getAddon(getClass()).orElseThrow();
-		InjectorBase.initialize(addon.info().getNamespace(), "LabyMod-4");
+		InjectorBase.initialize(addon.info().getNamespace(), null);
 	}
 
 	@Override

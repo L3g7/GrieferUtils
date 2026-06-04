@@ -40,6 +40,8 @@ public interface LabyBridge {
 
 	boolean obfuscated();
 
+	boolean inDevEnv();
+
 	Mapping activeMapping();
 
 	boolean forge();

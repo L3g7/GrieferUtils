@@ -74,8 +74,12 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public boolean obfuscated() {
-		return !labyAPI().labyModLoader().isAddonDevelopmentEnvironment()
-			&& BuildData.version().isLowerThan(new SemanticVersion(4, 5));
+		return false;
+	}
+
+	@Override
+	public boolean inDevEnv() {
+		return labyAPI().labyModLoader().isAddonDevelopmentEnvironment();
 	}
 
 	@Override

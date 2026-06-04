@@ -26,11 +26,11 @@ public class ServerCheck {
 	private static boolean onCitybuild;
 
 	public static boolean isOnGrieferGames() {
-		return onGrieferGames || (!LabyBridge.labyBridge.obfuscated() && mc().isIntegratedServerRunning());
+		return onGrieferGames || (!LabyBridge.labyBridge.inDevEnv() && mc().isIntegratedServerRunning());
 	}
 
 	public static boolean isOnCitybuild() {
-		return onCitybuild || (!LabyBridge.labyBridge.obfuscated() && mc().isIntegratedServerRunning());
+		return onCitybuild || (!LabyBridge.labyBridge.inDevEnv() && mc().isIntegratedServerRunning());
 	}
 
 	@EventListener(priority = HIGHEST)

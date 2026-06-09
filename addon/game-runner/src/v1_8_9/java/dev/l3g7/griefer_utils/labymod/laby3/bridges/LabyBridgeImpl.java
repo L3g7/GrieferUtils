@@ -63,6 +63,11 @@ public class LabyBridgeImpl implements LabyBridge {
 	}
 
 	@Override
+	public boolean inDevEnv() {
+		return !obfuscated();
+	}
+
+	@Override
 	public Mapping activeMapping() {
 		return obfuscated() ? forge() ? SEARGE : OBFUSCATED : UNOBFUSCATED;
 	}

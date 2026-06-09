@@ -65,7 +65,7 @@ public class BugReporter {
 	private static long timestampOfLastReport = 0;
 
 	private static boolean shouldReportError(Throwable error) {
-		if (!labyBridge.obfuscated())
+		if (!labyBridge.inDevEnv())
 			return false;
 
 		if (System.currentTimeMillis() - timestampOfLastReport < 10_000)

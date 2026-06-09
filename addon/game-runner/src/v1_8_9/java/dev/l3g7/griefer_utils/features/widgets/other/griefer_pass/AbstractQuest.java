@@ -50,7 +50,7 @@ abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 		if (isShadowed)
 			return false;
 
-		if (!LabyBridge.labyBridge.obfuscated() && mc().isIntegratedServerRunning())
+		if (!LabyBridge.labyBridge.inDevEnv() && mc().isIntegratedServerRunning())
 			return true;
 
 		Citybuild cb = MinecraftUtil.getCurrentCitybuild();

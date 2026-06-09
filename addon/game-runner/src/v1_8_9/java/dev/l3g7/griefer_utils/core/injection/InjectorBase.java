@@ -38,7 +38,8 @@ public class InjectorBase {
 		mixinConfig = Config.create("griefer_utils.mixins.json", MixinEnvironment.getDefaultEnvironment());
 
 		// Load refmap
-		Reflection.set(mixinConfig.getConfig(), "refMapperConfig", "refmaps/" + refmap + ".json");
+		if (refmap != null)
+			Reflection.set(mixinConfig.getConfig(), "refMapperConfig", "refmaps/" + refmap + ".json");
 
 		// Register mixins
 		Reflection.invoke(Mixins.class, "registerConfiguration", mixinConfig);

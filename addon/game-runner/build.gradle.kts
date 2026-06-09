@@ -1,5 +1,3 @@
-import java.util.*
-
 version = "0.0.0"
 
 plugins {
@@ -39,29 +37,4 @@ tasks.register("downloadLibs") {
 		onlyIfModified(true)
 		quiet(true)
 	}
-}
-
-var props = Properties()
-file("../gradle.properties").inputStream().use { props.load(it) }
-
-tasks.build.get().finalizedBy("runBuildPostProcessor")
-
-tasks.register("runBuildPostProcessor", JavaExec::class) {
-	dependsOn("compileV1_8_9Java", "v1_8_9Jar", "jar")
-
-	doFirst {
-		classpath(
-			project.layout.buildDirectory.get().toString() + "/classes/java/v1_8_9",
-			configurations["v1_8_9RuntimeClasspath"].resolve()
-		)
-	}
-
-	group = "GrieferUtils"
-	jvmArgs(
-		"-Dgriefer_utils.version=" + props.getProperty("version"),
-		"-Dgriefer_utils.debug=" + props.getProperty("debug"),
-		"-Dgriefer_utils.beta=" + props.getProperty("beta"),
-		"-Dgriefer_utils.preprocessing=true"
-	)
-	mainClass.set("dev.l3g7.griefer_utils.post_processor.BuildPostProcessor")
 }

@@ -60,18 +60,20 @@ public class BuildPostProcessor {
 		String version = System.getProperty("griefer_utils.version");
 
 		// Rename jar
-		File jar = new File("build/libs/game-runner-" + version + "-1.8.9-obfuscated.jar");
-		File newJar = new File("../build/libs/griefer-utils-v" + version + ".jar");
+		File jar = new File("build/libs/GrieferUtils-release.jar");
+		File newJar = new File("build/libs/griefer-utils-v" + version + ".jar");
 		Files.copy(jar.toPath(), newJar.toPath(), REPLACE_EXISTING);
 
 		// Trigger patches
 		try (FileSystem fs = FileSystems.newFileSystem(newJar.toPath())) {
 			BuildPostProcessor.fs = fs;
 			mergeAddonJson();
+			/*
 			processBootstrapClasses();
 			RefmapConverter.convertRefmap(fs);
 			AssetsChecker.validateAssets(fs);
 			convertRecords();
+			 */
 			cleanup();
 		}
 	}
@@ -150,14 +152,14 @@ public class BuildPostProcessor {
 
 	private static void cleanup() {
 		// delete LabyMod 4 autogen
-		delete(fs.getPath("fernflower_abstract_parameter_names.txt"));
+		// delete(fs.getPath("fernflower_abstract_parameter_names.txt"));
 
 		// delete build post processors
 		delete(pathOf(RefmapConverter.class).getParent());
 		delete(pathOf(BuildPostProcessor.class));
 
 		// mark other build artifacts to emphasize processed jar file
-		empty(Path.of("build/libs/game-runner-" + System.getProperty("griefer_utils.version") + "-1.8.9-obfuscated.jar"));
+		empty(Path.of("build/libs/GrieferUtils-release.jar"));
 	}
 
 	private static void delete(Path path) {

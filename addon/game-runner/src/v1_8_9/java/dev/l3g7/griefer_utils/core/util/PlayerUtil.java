@@ -14,6 +14,7 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 
+import java.util.ConcurrentModificationException;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
@@ -55,7 +56,14 @@ public class PlayerUtil {
 		if (realName == null)
 			realName = name;
 
-		NetworkPlayerInfo info = mc().getNetHandler().getPlayerInfo(realName);
+		NetworkPlayerInfo info;
+		while (true) {
+			try {
+				info = mc().getNetHandler().getPlayerInfo(realName);
+				break;
+			} catch (ConcurrentModificationException ignored) {}
+		}
+
 		if (info == null)
 			return Option.empty();
 

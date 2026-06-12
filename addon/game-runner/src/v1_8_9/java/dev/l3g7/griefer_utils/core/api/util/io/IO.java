@@ -5,8 +5,10 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.util.io.ReadOperation.DiskReadOperation;
 import dev.l3g7.griefer_utils.core.api.util.io.ReadOperation.InputStreamReadOperation;
 import dev.l3g7.griefer_utils.core.api.util.io.WriteOperation.DiskWriteOperation;
+import dev.l3g7.griefer_utils.core.api.util.io.WriteOperation.OutputStreamWriteOperation;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
 
 /**
@@ -35,6 +37,13 @@ public class IO {
 	 */
 	public static HttpGetOperation read(String url) {
 		return new HttpGetOperation(url);
+	}
+
+	/**
+	 * @return A wrapper class for writing to the given output stream.
+	 */
+	public static WriteOperation write(OutputStream in) {
+		return new OutputStreamWriteOperation(in);
 	}
 
 	/**

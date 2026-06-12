@@ -41,7 +41,24 @@ public abstract class WriteOperation {
 	}
 
 	/**
-	 * A wrapper class for writing the contents of a file on disk.
+	 * A wrapper class for writing to an output stream.
+	 */
+	protected static class OutputStreamWriteOperation extends WriteOperation {
+
+		private final OutputStream out;
+
+		OutputStreamWriteOperation(OutputStream out) {
+			this.out = out;
+		}
+
+		@Override
+		protected OutputStream getOut() throws Exception {
+			return out;
+		}
+	}
+
+	/**
+	 * A wrapper class for writing to a file on disk.
 	 */
 	protected static class DiskWriteOperation extends WriteOperation {
 

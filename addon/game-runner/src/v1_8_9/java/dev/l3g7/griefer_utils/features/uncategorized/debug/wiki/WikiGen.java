@@ -32,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
@@ -151,9 +152,9 @@ public class WikiGen {
 			var setting = FileProvider.getSingleton(Settings.class).getMainElement();
 			result.add("§yEinstellungen", serialize("settings", setting));
 
-			File file = new File("GrieferUtils/auto_dump.json");
-			file.getParentFile().mkdirs();
-			Files.write(file.toPath(), IO.GSON.toJson(result).getBytes(StandardCharsets.UTF_8));
+			Path path = Path.of("GrieferUtils", "auto_dump.json");
+			Files.createDirectories(path.getParent());
+			IO.write(path).json(result);
 
 			// Exclusives
 			JsonObject exclusives = new JsonObject();
@@ -173,9 +174,7 @@ public class WikiGen {
 				}
 			});
 
-			//noinspection ReadWriteStringCanBeUsed
-			Files.write(Paths.get("GrieferUtils/auto_exclusives.json"), IO.GSON.toJson(exclusives).getBytes(StandardCharsets.UTF_8));
-
+			IO.write(Paths.get("GrieferUtils", "auto_exclusives.json")).json(exclusives);
 			LabyBridge.labyBridge.notify("ok", "ok");
 		});
 

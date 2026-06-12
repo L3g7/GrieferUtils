@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.MIN_PRIORITY;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class Request<R> {
 
@@ -48,10 +47,6 @@ public abstract class Request<R> {
 	public Request(String server, String path) {
 		this.server = server;
 		this.path = path;
-	}
-
-	protected String serialize() {
-		return IO.GSON.toJson(this);
 	}
 
 	protected abstract R parseResponse(Response response) throws Throwable;
@@ -99,7 +94,7 @@ public abstract class Request<R> {
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
-			conn.getOutputStream().write(serialize().getBytes(UTF_8));
+			IO.write(conn.getOutputStream()).json(this);
 		}
 
 		// Renew token if authorization fails

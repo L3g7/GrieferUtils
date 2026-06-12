@@ -44,6 +44,13 @@ public class Util {
 		return supplier.get();
 	}
 
+	/**
+	 * Helper for initializing static final vars.
+	 */
+	public static <T> T staticInit(Supplier<T> generator) {
+		return generator.get();
+	}
+
 	public static String formatTime(long endTime) {
 		long seconds = (endTime - System.currentTimeMillis()) / 1000L;
 		return formatTimeSeconds(seconds);

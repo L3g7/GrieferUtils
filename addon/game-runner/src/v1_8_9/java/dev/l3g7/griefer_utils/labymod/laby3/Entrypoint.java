@@ -45,26 +45,33 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		Mapper.loadMappings("1.8.9", "22");
 
 		// Load and inject libraries
-		LibLoader.loadLibraries(
-			// mXparser: for evaluating expressions (Calculator)
+
+		// mXparser: for evaluating expressions (Calculator)
+		LibLoader.loadLibrary(
 			"https://repo1.maven.org/maven2",
 			"org/mariuszgromada/math", "MathParser.org-mXparser", "6.1.0",
-			"DCE2842BF63F4DEA154CAE4E75E0440BC884B2E60F4577726A1019B261E5627D",
+			"3OKEK/Y/TeoVTK5OdeBEC8iEsuYPRXdyahAZsmHlYn0="
+		);
 
-			// ZXing: for reading qr codes (QRCodeScanner)
+		// ZXing: for reading qr codes (QRCodeScanner)
+		LibLoader.loadLibrary(
 			"https://repo1.maven.org/maven2",
 			"com/google/zxing", "core", "3.5.4",
-			"71DE5D89341B5FCF5DD89DA7F44E84D825D0E084CDF3EC77C9ABE26B0F0CEB13",
+			"cd5diTQbX89d2J2n9E6E2CXQ4ITN8+x3yaviaw8M6xM="
+		);
 
-			// Mixin: for modifying other classes (core.injection)
+		// Mixin: for modifying other classes (core.injection)
+		LibLoader.loadLibrary(
 			"https://repo.spongepowered.org/repository/maven-public",
-			"org/spongepowered", "mixin", "0.7.11-SNAPSHOT", "mixin-0.7.11-20180703.121122-1.jar",
-			"DA3D6E47B9C12B5A312D89B67BC27E2429D823C09CDE8A90299E9FDCC4EEFC20",
+			"org/spongepowered", "mixin", "0.7.11-SNAPSHOT", "20180703.121122-1",
+			"2j1uR7nBK1oxLYm2e8J+JCnYI8Cc3oqQKZ6f3MTu/CA="
+		);
 
-			// Brigadier: for parsing commands (CommandSuggestions)
+		// Brigadier: for parsing commands (CommandSuggestions)
+		LibLoader.loadLibrary(
 			"https://libraries.minecraft.net",
 			"com/mojang", "brigadier", "1.0.18",
-			"EDC4926AA4B49010F6E7AC46EFD623FB38F9517344D26F6251D79A26A9738C0B"
+			"7cSSaqS0kBD256xG79Yj+zj5UXNE0m9iUdeaJqlzjAs="
 		);
 
 		// Sets LabyMod's mapping adapter

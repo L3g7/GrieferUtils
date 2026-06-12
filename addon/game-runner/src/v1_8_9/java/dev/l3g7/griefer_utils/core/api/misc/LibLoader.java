@@ -9,92 +9,104 @@ package dev.l3g7.griefer_utils.core.api.misc;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Access;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import net.minecraft.launchwrapper.Launch;
+import org.jetbrains.annotations.Nullable;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Base64;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+/**
+ * Helper class for downloading files from Maven repositories and injecting them into the class loader.
+ */
 public class LibLoader {
 
-	private static final ClassLoader launchClassLoaderParent;
-
-	static {
+	private static final ClassLoader launchClassLoaderParent = Util.staticInit(() -> {
 		Field field = Reflection.getField(Launch.classLoader.getClass(), "parent");
 		if (field == null)
-			launchClassLoaderParent = Reflection.get(Launch.classLoader, "appClassLoader");
+			return Reflection.get(Launch.classLoader, "appClassLoader");
 		else
-			launchClassLoaderParent = Reflection.get(Launch.classLoader, "parent");
+			return Reflection.get(Launch.classLoader, "parent");
+	});
+
+	/**
+	 * @param hash base64-encoded SHA256
+	 */
+	public static void loadLibrary(String repository, String group, String name, String version, String hash) {
+		loadLibrary(repository, group, name, version, null, hash);
 	}
 
-	public static void loadLibraries(String... libraries) {
-		for (int i = 0; i < libraries.length; i += 5) {
-			boolean hasMvnName = !libraries[i + 4].matches("^[A-F\\d]{64}$");
+	/**
+	 * @param hash base64-encoded SHA256
+	 */
+	public static void loadLibrary(String repository, String group, String name, String version, String classifier, String hash) {
+		try {
+			Path file = fetchFromMaven(repository, group, name, version, classifier, "jar", hash);
+			URL url = file.toUri().toURL();
 
-			String repo = libraries[i];
-			String group = libraries[i + 1];
-			String name = libraries[i + 2];
-			String version = libraries[i + 3];
-			String fileName = hasMvnName ? libraries[i + 4] : name + "-" + version + ".jar";
-			String hash = libraries[hasMvnName ? ++i + 4 : i + 4];
+			MethodHandle access = Access.getElevatedLookup()
+				.findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
 
-			String cleanVersion = version.replaceAll("^(\\d+\\.\\d+\\.\\d+).+$", "$1");
-			String path = group + "/" + name + "/" + cleanVersion + "/" + name + "-" + cleanVersion + ".jar";
-			String url = repo + "/" + group + "/" + name + "/" + version + "/" + fileName;
+			// Add jar file to LaunchClassLoader
+			if (launchClassLoaderParent instanceof URLClassLoader)
+				access.invoke(launchClassLoaderParent, url);
 
-			try {
-				loadLibrary(path, url, hash);
-			} catch (Throwable e) {
-				throw Util.elevate(e, "Could not load library %s/%s!", group, name);
-			}
+			access.invoke(Launch.classLoader, url);
+		} catch (Throwable e) {
+			throw Util.elevate(e, "Could not load library %s/%s!", group, name);
 		}
 	}
 
-	private static void loadLibrary(String path, String downloadUrl, String hash) throws Throwable {
-		File libFile = new File(Launch.assetsDir, "../libraries/" + path);
-		if (!libFile.exists() || !verifyHash(libFile, hash)) {
+	/**
+	 * @param hash base64-encoded SHA256
+	 */
+	public static Path fetchFromMaven(String repository, String group, String name, String version, @Nullable String classifier, String extension, String hash) throws IOException {
+		String semverVersion = version.replaceAll("^(\\d+\\.\\d+\\.\\d+).+$", "$1");
+		String filePath = group + "/" + name + "/" + semverVersion + "/" + name + "-" + semverVersion + ".jar";
+
+		String classifierApx = classifier == null ? "" : "-" + classifier;
+		String url = repository + "/" + group + "/" + name + "/" + version + "/" + name + "-" + semverVersion + classifierApx + "." + extension;
+
+		Path libPath = Launch.assetsDir.toPath().resolve("../libraries/" + filePath);
+		if (!Files.exists(libPath) || checkHashFail(libPath, hash)) {
 			// Download library
-			libFile.getParentFile().mkdirs();
-			HttpsURLConnection c = (HttpsURLConnection) new URL(downloadUrl).openConnection();
+			Files.createDirectories(libPath.getParent());
+			URLConnection c = URI.create(url).toURL().openConnection(); // TODO: Use IOUtil
 			c.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");
-			Files.copy(c.getInputStream(), libFile.toPath(), REPLACE_EXISTING);
+			Files.copy(c.getInputStream(), libPath, REPLACE_EXISTING);
 
-			if (!verifyHash(libFile, hash)) {
+			if (checkHashFail(libPath, hash))
 				// Downloading failed
-				throw new IOException("File " + path + " has an invalid hash!");
-			}
+				throw new IOException("File " + filePath + " has an invalid hash!");
 		}
 
-		MethodHandle access = Access.getElevatedLookup()
-			.findVirtual(URLClassLoader.class, "addURL", MethodType.methodType(void.class, URL.class));
-
-		// Add jar file to LaunchClassLoader
-		if (launchClassLoaderParent instanceof URLClassLoader)
-			access.invoke(launchClassLoaderParent, libFile.toURI().toURL());
-
-		access.invoke(Launch.classLoader, libFile.toURI().toURL());
+		return libPath;
 	}
 
-	private static boolean verifyHash(File libFile, String targetHash) throws IOException {
+	/**
+	 * @param targetHash base64-encoded SHA256
+	 */
+	private static boolean checkHashFail(Path libPath, String targetHash) throws IOException {
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			byte[] fileHash = md.digest(Files.readAllBytes(libFile.toPath()));
-			return Arrays.equals(fileHash, StringUtil.decodeHex(targetHash));
+			byte[] fileHash = md.digest(Files.readAllBytes(libPath));
+			return !Arrays.equals(fileHash, Base64.getDecoder().decode(targetHash));
 		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
+			throw Util.elevate(e);
 		}
 	}
 

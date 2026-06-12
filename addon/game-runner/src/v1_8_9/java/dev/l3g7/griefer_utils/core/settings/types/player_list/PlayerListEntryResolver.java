@@ -14,7 +14,7 @@ import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
-import dev.l3g7.griefer_utils.core.api.misc.Result;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Result;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfile;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfileResolver;
 import dev.l3g7.griefer_utils.core.api.util.io.HttpGetOperation;

@@ -1,8 +1,8 @@
-package dev.l3g7.griefer_utils.core.api.misc;
+package dev.l3g7.griefer_utils.core.api.misc.primitives.containers;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import org.jetbrains.annotations.NotNull;

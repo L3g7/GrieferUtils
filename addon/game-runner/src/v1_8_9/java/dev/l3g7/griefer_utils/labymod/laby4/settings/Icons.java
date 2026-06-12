@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.icon.Icon;

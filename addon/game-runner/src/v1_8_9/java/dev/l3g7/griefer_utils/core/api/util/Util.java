@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.util;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 
 import java.text.DecimalFormat;
 

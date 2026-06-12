@@ -11,9 +11,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
 
 import java.util.ArrayList;

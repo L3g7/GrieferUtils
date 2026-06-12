@@ -1,6 +1,6 @@
 package dev.l3g7.griefer_utils.core.api.reflection;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.BiConsumer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.BiConsumer;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 
 import java.lang.invoke.MethodHandle;

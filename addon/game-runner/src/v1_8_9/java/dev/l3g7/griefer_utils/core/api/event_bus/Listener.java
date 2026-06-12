@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.event_bus;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 
 import java.util.Iterator;
 

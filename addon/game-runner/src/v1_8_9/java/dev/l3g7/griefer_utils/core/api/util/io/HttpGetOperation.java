@@ -1,8 +1,7 @@
 package dev.l3g7.griefer_utils.core.api.util.io;
 
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
-import dev.l3g7.griefer_utils.core.api.misc.Result;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Result;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;

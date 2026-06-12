@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import javax.net.ssl.HttpsURLConnection;

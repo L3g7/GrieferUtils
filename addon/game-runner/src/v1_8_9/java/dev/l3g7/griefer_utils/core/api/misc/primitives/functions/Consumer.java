@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.misc.functions;
+package dev.l3g7.griefer_utils.core.api.misc.primitives.functions;
 
 import dev.l3g7.griefer_utils.core.api.util.Util;
 
@@ -13,13 +13,13 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
  * Like {@link java.util.function.Consumer}, but able to throw exceptions.
  */
 @FunctionalInterface
-public interface Supplier<T> extends java.util.function.Supplier<T> {
+public interface Consumer<T> extends java.util.function.Consumer<T> {
 
-    T getWithThrowable() throws Throwable;
+    void acceptWithThrowable(T t) throws Throwable;
 
-	default T get() {
+	default void accept(T t) {
 		try {
-			return getWithThrowable();
+			acceptWithThrowable(t);
 		} catch (Throwable e) {
 			throw Util.elevate(e);
 		}

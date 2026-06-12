@@ -5,21 +5,21 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.misc.functions;
+package dev.l3g7.griefer_utils.core.api.misc.primitives.functions;
 
 import dev.l3g7.griefer_utils.core.api.util.Util;
 
 /**
- * Like {@link java.lang.Runnable}, but able to throw exceptions.
+ * Like {@link java.util.function.Consumer}, but able to throw exceptions.
  */
 @FunctionalInterface
-public interface Runnable extends java.lang.Runnable {
+public interface Supplier<T> extends java.util.function.Supplier<T> {
 
-    void runWithThrowable() throws Throwable;
+    T getWithThrowable() throws Throwable;
 
-	default void run() {
+	default T get() {
 		try {
-			runWithThrowable();
+			return getWithThrowable();
 		} catch (Throwable e) {
 			throw Util.elevate(e);
 		}

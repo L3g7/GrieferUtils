@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.misc;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 
 import java.util.Timer;
 import java.util.TimerTask;

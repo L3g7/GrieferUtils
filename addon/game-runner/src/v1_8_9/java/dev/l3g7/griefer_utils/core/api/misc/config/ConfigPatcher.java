@@ -13,7 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
-import dev.l3g7.griefer_utils.core.api.misc.Result;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Result;
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;

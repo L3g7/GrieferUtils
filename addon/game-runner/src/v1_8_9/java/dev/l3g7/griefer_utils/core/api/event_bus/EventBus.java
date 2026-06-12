@@ -8,8 +8,8 @@
 package dev.l3g7.griefer_utils.core.api.event_bus;
 
 import dev.l3g7.griefer_utils.core.api.BugReporter;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.util.LambdaUtil;
 
 import java.lang.reflect.*;

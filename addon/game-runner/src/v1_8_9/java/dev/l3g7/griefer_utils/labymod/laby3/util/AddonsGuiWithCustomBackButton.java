@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.util;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import net.labymod.gui.elements.Tabs;
 import net.labymod.settings.LabyModAddonsGui;

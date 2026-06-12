@@ -5,21 +5,21 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.misc.functions;
+package dev.l3g7.griefer_utils.core.api.misc.primitives.functions;
 
 import dev.l3g7.griefer_utils.core.api.util.Util;
 
 /**
- * Like {@link java.util.function.Function}, but taking three arguments and able to throw exceptions.
+ * Like {@link java.util.function.BiFunction}, but able to throw exceptions.
  */
 @FunctionalInterface
-public interface TriFunction<T, U, V, R> {
+public interface BiFunction<T, U, R> extends java.util.function.BiFunction<T, U, R> {
 
-	R applyWithThrowable(T t, U u, V v) throws Throwable;
+    R applyWithThrowable(T t, U u) throws Throwable;
 
-	default R apply(T t, U u, V v) {
+	default R apply(T t, U u) {
 		try {
-			return applyWithThrowable(t, u, v);
+			return applyWithThrowable(t, u);
 		} catch (Throwable e) {
 			throw Util.elevate(e);
 		}

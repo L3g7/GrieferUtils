@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar.EnumMouseAction;
 import net.minecraft.client.gui.Gui;
 

@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.world.building.redstone_helper;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;

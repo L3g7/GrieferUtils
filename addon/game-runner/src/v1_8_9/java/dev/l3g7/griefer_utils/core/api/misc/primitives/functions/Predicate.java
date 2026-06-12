@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.misc.functions;
+package dev.l3g7.griefer_utils.core.api.misc.primitives.functions;
 
 import dev.l3g7.griefer_utils.core.api.util.Util;
 

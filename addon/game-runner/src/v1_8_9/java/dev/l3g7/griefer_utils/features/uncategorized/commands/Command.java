@@ -7,8 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.commands;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 
 import java.util.ArrayList;
 import java.util.List;

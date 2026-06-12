@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.core.api.bridges;
 
 import com.sun.jna.Platform;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

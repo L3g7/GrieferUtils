@@ -1,6 +1,5 @@
 package dev.l3g7.griefer_utils.features.player.self_disguise;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import net.minecraft.entity.Entity;
 

@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.settings.types;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 
 import static dev.l3g7.griefer_utils.core.settings.Settings.settings;

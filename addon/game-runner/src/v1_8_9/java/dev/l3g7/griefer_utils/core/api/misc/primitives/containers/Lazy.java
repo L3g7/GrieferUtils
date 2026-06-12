@@ -1,6 +1,6 @@
-package dev.l3g7.griefer_utils.core.api.misc;
+package dev.l3g7.griefer_utils.core.api.misc.primitives.containers;
 
-import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 
 /**
  * A lazy getter.

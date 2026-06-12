@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.core.util;
 
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;

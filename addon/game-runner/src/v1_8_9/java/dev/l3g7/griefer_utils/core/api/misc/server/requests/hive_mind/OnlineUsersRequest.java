@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind;
 
 import com.google.gson.annotations.SerializedName;
-import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.server.Request;
 
 import java.io.IOException;

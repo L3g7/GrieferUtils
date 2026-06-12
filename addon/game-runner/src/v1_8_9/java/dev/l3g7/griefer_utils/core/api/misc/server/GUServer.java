@@ -20,7 +20,7 @@ import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFGetReadyReque
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFProcessRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFSearchRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.*;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
@@ -94,7 +94,7 @@ public class GUServer {
 		UUID uuid = UUIDTypeAdapter.fromString(mc().getSession().getPlayerID());
 
 		try {
-			return "v2 " + IOUtil.gson.toJson(new Request.AuthData(uuid, currentKeyPair)).replaceAll("[\r\n]", "");
+			return "v2 " + IO.GSON.toJson(new Request.AuthData(uuid, currentKeyPair)).replaceAll("[\r\n]", "");
 		} catch (GeneralSecurityException t) {
 			return null; // generateAuthHeader is not called on invalid sessions, this exception will never happen
 		}

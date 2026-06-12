@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.util.AxisAlignedBB;
@@ -25,14 +25,15 @@ import org.apache.http.message.BasicNameValuePair;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Signature;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -97,7 +98,7 @@ public class BABBot {
 			new BasicNameValuePair("expirationTime", Long.toString(expirationTime)),
 			new BasicNameValuePair("uuid", user.toString().replaceAll("-", "")),
 		});
-		return IOUtil.jsonParser.parse(new InputStreamReader(is, StandardCharsets.UTF_8)).getAsJsonObject();
+		return IO.read(is).tryAsJsonObject().unwrapOrNull();
 	}
 
 	public CompletableFuture<Boolean> sync() {
@@ -112,7 +113,7 @@ public class BABBot {
 				if (!res.get("success").getAsBoolean()) return false;
 				JsonArray array = res.get("items").getAsJsonArray();
 				JsonObject aabb = res.get("zone").getAsJsonObject();
-				if (aabb.entrySet().size() == 0)
+				if (aabb.entrySet().isEmpty())
 					return false; // Multizone
 
 				this.items = BABItem.parse(array);

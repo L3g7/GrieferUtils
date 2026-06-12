@@ -10,17 +10,15 @@ package dev.l3g7.griefer_utils.core.api.misc.config;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.DebounceTimer;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import org.jetbrains.annotations.Contract;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.Optional;
+import java.nio.file.Path;
 
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.last;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
@@ -94,8 +92,8 @@ public class Config {
 	private static final Object SAVE_LOCK = new Object();
 	private static final DebounceTimer debounceTimer = new DebounceTimer("Config", 1000);
 	// .minecraft/config/GrieferUtils.json
-	protected static final File configFile = new File(new File("config"), "GrieferUtils.json");
-	private static final File newConfigFile = new File(new File("config"), "GrieferUtils-new.json");
+	protected static final Path configFile = Path.of("config", "GrieferUtils.json");
+	private static final Path newConfigFile = Path.of("config", "GrieferUtils-new.json");
 	private static int hash = 0;
 	private static JsonObject config = null;
 
@@ -107,7 +105,7 @@ public class Config {
 			if (config == null)
 				config = new JsonObject();
 
-			String json = IOUtil.gson.toJson(config);
+			String json = IO.GSON.toJson(config);
 
 			synchronized (SAVE_LOCK) {
 				// Check if content has changed
@@ -117,22 +115,22 @@ public class Config {
 				// Write to newConfigFile
 				hash = json.hashCode();
 				do {
-					IOUtil.write(newConfigFile, json);
-				} while (IOUtil.gson.toJson(read(newConfigFile)).hashCode() != hash);
+					IO.write(newConfigFile).value(json);
+				} while (IO.read(newConfigFile).asString().hashCode() != hash);
 
 				// Move newConfigFile to configFile
 				try {
 					try {
-						Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING, ATOMIC_MOVE);
+						Files.move(newConfigFile, configFile, REPLACE_EXISTING, ATOMIC_MOVE);
 					} catch (AtomicMoveNotSupportedException e) {
-						Files.move(newConfigFile.toPath(), configFile.toPath(), REPLACE_EXISTING);
+						Files.move(newConfigFile, configFile, REPLACE_EXISTING);
 					}
 				} catch (AccessDeniedException e) {
 					// TODO: cleanup
 					//noinspection ReadWriteStringCanBeUsed
-					Files.write(configFile.toPath(), json.getBytes(StandardCharsets.UTF_8), WRITE, TRUNCATE_EXISTING, CREATE);
+					Files.write(configFile, json.getBytes(StandardCharsets.UTF_8), WRITE, TRUNCATE_EXISTING, CREATE);
 					try {
-						Files.deleteIfExists(newConfigFile.toPath());
+						Files.deleteIfExists(newConfigFile);
 					} catch (IOException ignored) {}
 				}
 			}
@@ -144,14 +142,14 @@ public class Config {
 	 */
 	public static JsonObject get() {
 		if (config == null) {
-			if (!configFile.exists()) {
+			if (Files.notExists(configFile)) {
 				config = new JsonObject();
 				new ConfigPatcher(config).patch();
 				return config;
 			}
 
-			if (!newConfigFile.exists() || !loadFile(newConfigFile)) {
-				if (!loadFile(configFile)) {
+			if (Files.notExists(newConfigFile) || !loadPath(newConfigFile)) {
+				if (!loadPath(configFile)) {
 					// Config failed to load
 					ConfigBackuper.backup("error");
 					config = new JsonObject();
@@ -165,28 +163,13 @@ public class Config {
 	}
 
 	/**
-	 * Tries to load the config from the given file, returning whether it was successful.
+	 * Tries to load the config from the given path, returning whether it was successful.
 	 */
-	private static boolean loadFile(File file) {
-		try {
-			Optional<JsonObject> configData = IOUtil.read(file).asJsonObject();
-			if (configData.isPresent()) {
-				config = configData.get();
-				return config.entrySet().size() != 0;
-			} else
-				return false;
-		} catch (Throwable t) {
-			return false;
-		}
-	}
-
-	/**
-	 * Reads the config from its file, returning an empty one if it fails.
-	 */
-	private static JsonObject read(File file) {
-		return IOUtil.read(file)
-			.asJsonObject()
-			.orElse(new JsonObject());
+	private static boolean loadPath(Path file) {
+		return IO.read(file).tryAsJsonObject().map(data -> {
+			config = data;
+			return !config.entrySet().isEmpty();
+		}).unwrapOr(false);
 	}
 
 }

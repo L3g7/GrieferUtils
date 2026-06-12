@@ -10,13 +10,12 @@ package dev.l3g7.griefer_utils.features.gui;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.accountmanager.authentication.microsoft.MicrosoftAuthentication;
 import net.labymod.accountmanager.storage.loader.microsoft.model.LauncherAccount;
 import net.labymod.accountmanager.utils.RestUtil;
-import org.apache.commons.io.IOUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
@@ -82,8 +80,8 @@ public class FixLaby3Switcher extends Feature {
 			connection.addRequestProperty("Accept", "application/json");
 
 			InputStream inputStream = connection.getInputStream();
-			String json = IOUtils.toString(new InputStreamReader(inputStream));
-			return IOUtil.gson.fromJson(json, response);
+			String json = IO.read(inputStream).asString();
+			return IO.GSON.fromJson(json, response);
 		}
 
 	}

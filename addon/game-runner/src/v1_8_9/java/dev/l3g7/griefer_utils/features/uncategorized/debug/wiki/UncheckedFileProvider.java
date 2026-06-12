@@ -3,8 +3,8 @@ package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.features.Feature;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
@@ -79,7 +79,7 @@ public class UncheckedFileProvider {
 		// Load ClassMeta using ASM
 		try (InputStream in = FileProvider.getData(file)) {
 			ClassNode node = new ClassNode();
-			byte[] bytes = IOUtil.toByteArray(in);
+			byte[] bytes = IO.read(in).asBytes();
 			bytes[7 /* major_version */] = (byte) Math.min(bytes[7], 52 /* Java 1.8 */);
 			new ClassReader(bytes).accept(node, SKIP_CODE);
 

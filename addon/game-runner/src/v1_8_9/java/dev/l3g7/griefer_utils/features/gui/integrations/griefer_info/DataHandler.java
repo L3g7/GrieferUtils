@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData.GrieferInfoItem;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -66,7 +66,7 @@ public class DataHandler {
 					ItemFilter.CATEGORIES.get(i).itemFilters.add(itemFilter);
 		}
 
-		IOUtil.read("https://griefer.info/grieferutils/farm-meta").asJsonObject(response -> {
+		IO.read("https://griefer.info/grieferutils/farm-meta").asJsonObject(response -> {
 			for (JsonElement entry : response.getAsJsonArray("entity")) {
 				JsonObject entity = entry.getAsJsonObject();
 				String id = entity.get("id").getAsString();
@@ -77,9 +77,9 @@ public class DataHandler {
 			}
 
 			requestFarms();
-		});
+		}).failLog();
 
-		IOUtil.read("https://griefer.info/grieferutils/freestuff-meta").asJsonArray(metaResponse -> {
+		IO.read("https://griefer.info/grieferutils/freestuff-meta").asJsonArray(metaResponse -> {
 			List<String> missingItems = new ArrayList<>();
 
 			for (JsonElement jsonElement : metaResponse) {
@@ -97,42 +97,42 @@ public class DataHandler {
 				BugReporter.reportError(new Throwable("Missing FSM-Filter: " + String.join(";", missingItems)));
 
 			requestFreestuff();
-		});
+		}).failLog();
 
 		requestBotshops();
 	}
 
 	public static void requestFarms() {
 		Farm.FARMS.clear();
-		IOUtil.read("https://griefer.info/grieferutils/farm?cb=0&passive=0&aktive=0&entity=0&order=0").asJsonArray(response -> {
+		IO.read("https://griefer.info/grieferutils/farm?cb=0&passive=0&aktive=0&entity=0&order=0").asJsonArray(response -> {
 			for (JsonElement entry : response)
 				Farm.FARMS.add(Farm.fromJson(entry.getAsJsonObject()));
 
 			if (mc().currentScreen instanceof GuiFarms)
 				((GuiFarms) mc().currentScreen).onEntryData();
-		});
+		}).failLog();
 	}
 
 	public static void requestFreestuff() {
 		FreeStuff.FREE_STUFF.clear();
-		IOUtil.read("https://griefer.info/grieferutils/freestuff?cb=0&item=0").asJsonArray(response -> {
+		IO.read("https://griefer.info/grieferutils/freestuff?cb=0&item=0").asJsonArray(response -> {
 			for (JsonElement entry : response)
 				FreeStuff.FREE_STUFF.add(FreeStuff.fromJson(entry.getAsJsonObject()));
 
 			if (mc().currentScreen instanceof GuiFreestuff)
 				((GuiFreestuff) mc().currentScreen).onEntryData();
-		});
+		}).failLog();
 	}
 
 	public static void requestBotshops() {
 		BotShop.BOT_SHOPS.clear();
-		IOUtil.read("https://griefer.info/grieferutils/botshops?cb=0&ankauf=0&verkauf=0").asJsonArray(response -> {
+		IO.read("https://griefer.info/grieferutils/botshops?cb=0&ankauf=0&verkauf=0").asJsonArray(response -> {
 			for (JsonElement entry : response)
 				BotShop.BOT_SHOPS.add(BotShop.fromJson(entry.getAsJsonObject()));
 
 			if (mc().currentScreen instanceof GuiBotShops)
 				((GuiBotShops) mc().currentScreen).onEntryData();
-		});
+		}).failLog();
 	}
 
 }

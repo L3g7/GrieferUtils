@@ -10,13 +10,12 @@ package dev.l3g7.griefer_utils.core.api.mapping;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedMember;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -54,7 +53,7 @@ public class MappingCreator {
 		try (ZipInputStream in = getZipInputStream(String.format("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/%s/mcp-%s-srg.zip", minecraftVersion, minecraftVersion))) {
 			while ((entry = in.getNextEntry()) != null) {
 				if (entry.getName().equals("joined.srg")) {
-					for (String line : new String(IOUtil.toByteArray(in), StandardCharsets.UTF_8).split("\r\n")) {
+					for (String line : IO.read(in).asString().split("\r\n")) {
 						if (line.startsWith("CL: ")) {
 							// Load class obf -> srg mappings
 							String[] parts = line.substring(4).split(" ");
@@ -147,7 +146,7 @@ public class MappingCreator {
 	 * @param callback a callback storing the unobfuscated name in the member.
 	 */
 	private <M> void loadUnobfMapping(InputStream in, String prefix, Map<String, List<M>> srgCache, BiConsumer<M, String> callback) throws IOException {
-		for (String line : new String(IOUtil.toByteArray(in), StandardCharsets.UTF_8).split("\r\n")) {
+		for (String line : IO.read(in).asString().split("\r\n")) {
 			if (!line.startsWith(prefix))
 				continue;
 

@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data;
 
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.ItemUtil.ItemEnchantment;
 import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.ByteAndBit;
@@ -157,7 +157,7 @@ public class BABItem implements Comparable<BABItem> {
 	}
 
 	public static List<BABItem> parse(JsonArray in) {
-		ArrayList<VeloItem> items = IOUtil.gson.fromJson(in, new TypeToken<ArrayList<VeloItem>>() {}.getType());
+		ArrayList<VeloItem> items = IO.GSON.fromJson(in, new TypeToken<ArrayList<VeloItem>>() {}.getType());
 		return items.stream().parallel().map(VeloItem::convert).flatMap(List::stream).collect(Collectors.toList());
 	}
 

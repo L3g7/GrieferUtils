@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -124,14 +124,14 @@ public class HeadSaver extends Feature {
 
 	private static void requestTexture(String name, Consumer<String> textureConsumer) {
 		String url = "https://api.mojang.com/users/profiles/minecraft/" + name;
-		IOUtil.read(url).asJsonObject(playerData -> {
+		IO.read(url).asJsonObject(playerData -> {
 			if (!playerData.has("id")) {
 				textureConsumer.accept(null);
 				return;
 			}
 
 			String uuid = playerData.get("id").getAsString();
-			IOUtil.read("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid).asJsonObject(textureData -> {
+			IO.read("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid).asJsonObject(textureData -> {
 				if (!textureData.has("properties")) {
 					textureConsumer.accept(null);
 					return;
@@ -145,7 +145,7 @@ public class HeadSaver extends Feature {
 						return;
 					}
 				}
-			});
+			}).orElse(() -> textureConsumer.accept(null));
 		}).orElse(() -> textureConsumer.accept(null));
 	}
 

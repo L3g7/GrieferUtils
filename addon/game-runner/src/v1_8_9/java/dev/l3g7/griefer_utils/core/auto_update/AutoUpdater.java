@@ -49,7 +49,7 @@ import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel
  * As loading any class would prevent it from being updated, this class contains code also found in
  * {@link dev.l3g7.griefer_utils.core.api.misc.config.Config},
  * {@link dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider},
- * {@link dev.l3g7.griefer_utils.core.api.util.IOUtil},
+ * {@link dev.l3g7.griefer_utils.core.api.util.io.HttpGetOperation},
  * {@link dev.l3g7.griefer_utils.core.api.reflection.Reflection} and
  * {@link dev.l3g7.griefer_utils.core.api.reflection.Access}.
  */
@@ -341,7 +341,7 @@ public class AutoUpdater {
 	}
 
 	/**
-	 * @see dev.l3g7.griefer_utils.core.api.util.IOUtil
+	 * @see dev.l3g7.griefer_utils.core.api.util.io.HttpGetOperation
 	 */
 	private static InputStream read(String url) {
 		try {

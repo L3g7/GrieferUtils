@@ -1,12 +1,13 @@
 package dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data;
 
 import com.google.gson.JsonElement;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BotSource.TrustLevel.HIGH;
 import static dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BotSource.TrustLevel.LOW;
 
 public class BotSource {
@@ -28,7 +29,7 @@ public class BotSource {
 	public CompletableFuture<List<String>> get() {
 		CompletableFuture<List<String>> result = new CompletableFuture<>();
 
-		IOUtil.read(url + "scope/getBots").asJsonObject((res) -> {
+		IO.read(url + "scope/getBots").asJsonObject(res -> {
 			if (!res.get("success").getAsBoolean()) {
 				result.complete(new ArrayList<>());
 				return;
@@ -42,7 +43,7 @@ public class BotSource {
 			}
 
 			result.complete(bots);
-		});
+		}).failSilentlyIf(trustLevel != HIGH);
 
 		return result;
 	}

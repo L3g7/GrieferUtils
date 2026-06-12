@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.im
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.UnlockChatFilters;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates;
@@ -405,7 +405,7 @@ public class FilterWebhooksLaby3 {
 
 					markContainsRed = selectedFilter.getWordsContains().length == 0;
 					markSoundNameRed = selectedFilter.isPlaySound() && !soundNames.contains(textFieldFilterSoundfile.getText().toLowerCase());
-					markWebhookRed = !(textFieldFilterWebhook.getText().isEmpty() || (HOOK_URL_PATTERN.matcher(textFieldFilterWebhook.getText()).matches() && IOUtil.read(textFieldFilterWebhook.getText()).getResponseCode() == 200));
+					markWebhookRed = !(textFieldFilterWebhook.getText().isEmpty() || (HOOK_URL_PATTERN.matcher(textFieldFilterWebhook.getText()).matches() && IO.read(textFieldFilterWebhook.getText()).getResponseCode() == 200));
 
 					if (!(markFilterNameRed || markSoundNameRed || markContainsRed || markWebhookRed)) {
 						List<Filters.Filter> filters = LabyMod.getInstance().getChatToolManager().getFilters();

@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.UnsafeJsonSerializer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -101,7 +101,7 @@ public class PacketDumper {
 		obj.addProperty("bufferB64", Base64.getEncoder().encodeToString(bytes));
 		obj.addProperty("bufferUTF8", new String(bytes, StandardCharsets.UTF_8));
 
-		System.out.println(IOUtil.gson.toJson(obj));
+		System.out.println(IO.GSON.toJson(obj));
 	}
 
 	private static class OneSidedPacketDumper {
@@ -150,7 +150,7 @@ public class PacketDumper {
 				return;
 
 			try {
-				System.out.println(IOUtil.gson.toJson(UnsafeJsonSerializer.toJson(packet)));
+				System.out.println(IO.GSON.toJson(UnsafeJsonSerializer.toJson(packet)));
 			} catch (Throwable t) {
 				System.out.println("Packet's fields could not be dumped");
 				t.printStackTrace();

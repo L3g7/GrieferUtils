@@ -19,8 +19,8 @@ import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Runnable;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
@@ -29,7 +29,6 @@ import net.labymod.accountmanager.storage.account.Account;
 import net.labymod.api.events.MessageSendEvent;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.main.LabyMod;
-import net.labymod.utils.JsonParse;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -48,7 +47,6 @@ import java.util.function.BiFunction;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Bridge
 @Singleton
@@ -80,13 +78,9 @@ public class LabyBridgeImpl implements LabyBridge {
 	private JsonObject getAddonJson() {
 		if (addonJson != null)
 			return addonJson;
-		try {
-			String addonJsonData = new String(IOUtil.toByteArray(FileProvider.getData("addon.json")), UTF_8);
-			addonJson = JsonParse.parse(addonJsonData).getAsJsonObject();
-			return addonJson;
-		} catch (IOException e) {
-			throw Util.elevate(e);
-		}
+
+		addonJson = IO.read(FileProvider.getData("addon.json")).asJsonObject();
+		return addonJson;
 	}
 
 	@Override

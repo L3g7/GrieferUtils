@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Consumer;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Signature;
 import java.util.Arrays;
@@ -52,7 +51,7 @@ public abstract class Request<R> {
 	}
 
 	protected String serialize() {
-		return IOUtil.gson.toJson(this);
+		return IO.GSON.toJson(this);
 	}
 
 	protected abstract R parseResponse(Response response) throws Throwable;
@@ -113,7 +112,7 @@ public abstract class Request<R> {
 		}
 
 		InputStream in = conn.getResponseCode() >= 400 ? conn.getErrorStream() : conn.getInputStream();
-		Response r = new Response(conn.getResponseCode(), new String(IOUtil.toByteArray(in), StandardCharsets.UTF_8));
+		Response r = new Response(conn.getResponseCode(), IO.read(in).asString());
 
 		try {
 			return parseResponse(r);
@@ -137,7 +136,7 @@ public abstract class Request<R> {
 		}
 
 		public <T> T convertTo(Class<T> type) {
-			return convertTo(type, IOUtil.gson);
+			return convertTo(type, IO.GSON);
 		}
 
 		public <T> T convertTo(Class<T> type, Gson gson) {

@@ -1,5 +1,8 @@
 package dev.l3g7.griefer_utils.core.api.misc;
 
+import dev.l3g7.griefer_utils.core.api.misc.functions.Function;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 /**
@@ -56,6 +59,18 @@ public class Option<T> {
 
 	public boolean isUnset() {
 		return !isSet;
+	}
+
+	/**
+	 * Maps the value, if set. If the mapping function throws an error, an empty Option will be returned.
+	 */
+	public <V> Option<V> map(Function<T, V> mapper) {
+		if (isSet())
+			return Reflection.c(this);
+
+		return Result.tryGet(() -> mapper.applyWithThrowable(value))
+			.map(Option::of)
+			.unwrapOr(Option::empty);
 	}
 
 	@Override

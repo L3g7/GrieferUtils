@@ -10,14 +10,15 @@ package dev.l3g7.griefer_utils.features.chat.ingoing;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.util.ChatComponentText;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.IllegalFormatException;
@@ -66,9 +67,9 @@ public class ChatTime extends Feature {
 
 	public ChatTime() {
 		if(enabled.getStorage().value == null) { // If no value loaded, try loading from TebosBrime's addon
-			File configFile = new File(mc().mcDataDir, "LabyMod/addons-1.8/config/ChatTime.json");
-			if(configFile.exists()) {
-				IOUtil.read(configFile).asJsonObject().ifPresent(obj -> {
+			Path configFile = mc().mcDataDir.toPath().resolve("LabyMod/addons-1.8/config/ChatTime.json");
+			if(Files.exists(configFile)) {
+				IO.read(configFile).tryAsJsonObject().ifOk(obj -> {
 					JsonObject cfg = obj.get("config").getAsJsonObject();
 					if (cfg.has("chatData"))
 						format.set(cfg.get("chatData").getAsString());

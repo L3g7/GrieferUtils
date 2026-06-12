@@ -16,8 +16,8 @@ import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.core.api.misc.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
@@ -165,7 +165,7 @@ public abstract class FileProvider {
 		// Load ClassMeta using ASM
 		try (InputStream in = getData(file)) {
 			ClassNode node = new ClassNode();
-			byte[] bytes = IOUtil.toByteArray(in);
+			byte[] bytes = IO.read(in).asBytes();
 			bytes[7 /* major_version */] = (byte) Math.min(bytes[7], 52 /* Java 1.8 */);
 			new ClassReader(bytes).accept(node, SKIP_CODE);
 

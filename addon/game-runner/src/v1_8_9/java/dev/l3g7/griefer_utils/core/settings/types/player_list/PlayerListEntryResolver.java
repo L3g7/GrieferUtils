@@ -9,15 +9,16 @@ package dev.l3g7.griefer_utils.core.settings.types.player_list;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
+import dev.l3g7.griefer_utils.core.api.misc.Result;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfile;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfileResolver;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.HttpGetOperation;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
@@ -50,7 +51,7 @@ public class PlayerListEntryResolver {
 	 * PlayerDB doesn't provide the skin, but since xbox has a low rate-limit, it is used to verify the existence.
 	 */
 	public static void loadFromPlayerDB(PlayerListEntry entry) {
-		IOUtil.URLReadOperation op = IOUtil.read("https://playerdb.co/api/player/xbox/" + (entry.getId() == null ? entry.name().substring(1) : entry.getId()));
+		HttpGetOperation op = IO.read("https://playerdb.co/api/player/xbox/" + (entry.getId() == null ? entry.name().substring(1) : entry.getId()));
 
 		if (op.getResponseCode() != 200) {
 			entry.exists = false;
@@ -58,7 +59,7 @@ public class PlayerListEntryResolver {
 			return;
 		}
 
-		JsonObject data = op.asJsonObject().orElseThrow(() -> new JsonParseException("Invalid response for " + entry.name()));
+		JsonObject data = op.asJsonObject();
 		if (!data.get("code").getAsString().equals("player.found"))
 			throw new RuntimeException("Invalid response for " + entry.name());
 
@@ -99,7 +100,7 @@ public class PlayerListEntryResolver {
 
 	public static void loadFromMojang(PlayerListEntry entry) throws IOException {
 		if (entry.getId() == null) {
-			IOUtil.URLReadOperation op = IOUtil.read("https://api.mojang.com/users/profiles/minecraft/" + entry.name());
+			HttpGetOperation op = IO.read("https://api.mojang.com/users/profiles/minecraft/" + entry.name());
 			// API returns 404 or 204 when an unknown user is requested.
 			if (op.getResponseCode() == 404 || op.getResponseCode() == 204) {
 				entry.exists = false;
@@ -112,19 +113,19 @@ public class PlayerListEntryResolver {
 				throw new IllegalStateException("Response code " + op.getResponseCode());
 			}
 
-			JsonObject data = op.asJsonObject().orElseThrow(() -> new JsonParseException("Invalid response for " + entry.name()));
+			JsonObject data = op.asJsonObject();
 			entry.id = data.get("id").getAsString().replaceAll("(.{8})(.{4})(.{4})(.{4})(.{12})", "$1-$2-$3-$4-$5");
 		}
-		JsonObject profile = IOUtil.read("https://sessionserver.mojang.com/session/minecraft/profile/" + entry.getId()).asJsonObject().orElse(null);
-		if (profile == null) {
+		Result<JsonObject> profile = IO.read("https://sessionserver.mojang.com/session/minecraft/profile/" + entry.getId()).tryAsJsonObject();
+		if (profile.isErr()) {
 			loadFromAshcon(entry);
 			return;
 		}
 
 		entry.loaded = true;
-		entry.name = profile.get("name").getAsString();
+		entry.name = profile.unwrap().get("name").getAsString();
 
-		for (JsonElement element : profile.getAsJsonArray("properties")) {
+		for (JsonElement element : profile.unwrap().getAsJsonArray("properties")) {
 			JsonObject property = element.getAsJsonObject();
 
 			if (!property.get("name").getAsString().equals("textures"))
@@ -146,7 +147,7 @@ public class PlayerListEntryResolver {
 	 * Ashcon's API doesn't have rate-limiting but is much slower, so Mojang's API is usually preferred.
 	 */
 	public static void loadFromAshcon(PlayerListEntry entry) throws IOException {
-		JsonObject profile = IOUtil.read("https://api.ashcon.app/mojang/v2/user/" + (entry.name() == null ? entry.getId() : entry.name())).asJsonObject().orElseThrow(() -> new JsonParseException("Invalid response for " + entry.name()));
+		JsonObject profile = IO.read("https://api.ashcon.app/mojang/v2/user/" + (entry.name() == null ? entry.getId() : entry.name())).asJsonObject();
 		entry.name = profile.get("username").getAsString();
 		entry.id = profile.get("uuid").getAsString();
 		entry.loaded = true;

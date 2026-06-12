@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -28,10 +28,8 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CitybuildSettingImpl;
 import net.labymod.api.client.gui.icon.Icon;
 import net.minecraft.item.ItemStack;
-import org.objectweb.asm.Type;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -155,7 +153,7 @@ public class WikiGen {
 
 			File file = new File("GrieferUtils/auto_dump.json");
 			file.getParentFile().mkdirs();
-			Files.write(file.toPath(), IOUtil.gson.toJson(result).getBytes(StandardCharsets.UTF_8));
+			Files.write(file.toPath(), IO.GSON.toJson(result).getBytes(StandardCharsets.UTF_8));
 
 			// Exclusives
 			JsonObject exclusives = new JsonObject();
@@ -176,7 +174,7 @@ public class WikiGen {
 			});
 
 			//noinspection ReadWriteStringCanBeUsed
-			Files.write(Paths.get("GrieferUtils/auto_exclusives.json"), IOUtil.gson.toJson(exclusives).getBytes(StandardCharsets.UTF_8));
+			Files.write(Paths.get("GrieferUtils/auto_exclusives.json"), IO.GSON.toJson(exclusives).getBytes(StandardCharsets.UTF_8));
 
 			LabyBridge.labyBridge.notify("ok", "ok");
 		});

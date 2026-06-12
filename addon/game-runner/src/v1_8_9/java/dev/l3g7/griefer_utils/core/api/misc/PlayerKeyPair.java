@@ -8,10 +8,9 @@
 package dev.l3g7.griefer_utils.core.api.misc;
 
 import com.google.gson.annotations.SerializedName;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.KeyFactory;
@@ -51,7 +50,7 @@ public class PlayerKeyPair {
 				if (c.getResponseCode() >= 400)
 					return null;
 
-				return IOUtil.gson.fromJson(new InputStreamReader(c.getInputStream()), PlayerKeyPair.class);
+				return IO.read(c.getInputStream()).<PlayerKeyPair>tryAsJson().unwrapOrNull();
 			} catch (IOException e) {
 				return null;
 			}

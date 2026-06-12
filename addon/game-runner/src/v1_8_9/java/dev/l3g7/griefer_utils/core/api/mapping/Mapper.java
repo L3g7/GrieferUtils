@@ -7,22 +7,20 @@
 
 package dev.l3g7.griefer_utils.core.api.mapping;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedClass;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedField;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedList;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedMethod;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.Type;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
@@ -33,25 +31,25 @@ public class Mapper {
 	public static final MappedList<MappedClass> classes = new MappedList<>();
 
 	public static void loadMappings(String minecraftVersion, String mappingVersion) {
-		loadMappings(minecraftVersion, mappingVersion, new File(Launch.assetsDir, String.format("griefer_utils/mappings/%s_stable_%s.json", minecraftVersion, mappingVersion)));
+		loadMappings(minecraftVersion, mappingVersion, Launch.assetsDir.toPath().resolve(String.format("griefer_utils/mappings/%s_stable_%s.json", minecraftVersion, mappingVersion)));
 	}
 
-	public static void loadMappings(String minecraftVersion, String mappingVersion, File mappings) {
+	public static void loadMappings(String minecraftVersion, String mappingVersion, Path mappings) {
 		try {
 			Collection<MappedClass> mappedClasses;
 
-			if (mappings.exists()) {
+			if (Files.exists(mappings)) {
 				// Load mappings from file
-				mappedClasses = IOUtil.gson.fromJson(new FileReader(mappings), new TypeToken<Collection<MappedClass>>() {}.getType());
+				mappedClasses = IO.read(mappings).asJson();
 				if (mappedClasses.isEmpty()) {
 					// Probably invalid download, overwrite
 					mappedClasses = new MappingCreator().createMappings(minecraftVersion, mappingVersion);
-					IOUtil.write(mappings, new Gson().toJson(mappedClasses));
+					IO.write(mappings).json(mappedClasses);
 				}
 			} else {
 				// Create and store mappings
 				mappedClasses = new MappingCreator().createMappings(minecraftVersion, mappingVersion);
-				IOUtil.write(mappings, new Gson().toJson(mappedClasses));
+				IO.write(mappings).json(mappedClasses);
 			}
 
 			classes.addAll(mappedClasses);

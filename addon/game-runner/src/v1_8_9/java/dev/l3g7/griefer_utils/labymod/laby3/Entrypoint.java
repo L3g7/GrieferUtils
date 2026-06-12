@@ -13,8 +13,8 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.misc.LibLoader;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.injection.Injector;
 import net.labymod.addon.AddonLoader;
@@ -26,7 +26,6 @@ import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
@@ -85,14 +84,10 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		// classes with a modified major version have to be loaded and cached manually to prevent crashes
 		Map<String, byte[]> resourceCache = Reflection.get(Launch.classLoader, "resourceCache");
 
-		try {
-			for (String file : FileProvider.getFiles(f -> f.endsWith(".class"))) {
-				byte[] bytes = IOUtil.toByteArray(FileProvider.getData(file));
-				bytes[7 /* major_version */] = 52 /* Java 1.8 */;
-				resourceCache.put(file.substring(0, file.length() - 6), bytes);
-			}
-		} catch (IOException e) {
-			throw Util.elevate(e);
+		for (String file : FileProvider.getFiles(f -> f.endsWith(".class"))) {
+			byte[] bytes = IO.read(FileProvider.getData(file)).asBytes();
+			bytes[7 /* major_version */] = 52 /* Java 1.8 */;
+			resourceCache.put(file.substring(0, file.length() - 6), bytes);
 		}
 
 		// Add Injector as transformer

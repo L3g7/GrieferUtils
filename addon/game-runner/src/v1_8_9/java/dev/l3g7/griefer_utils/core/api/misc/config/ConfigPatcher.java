@@ -13,16 +13,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
+import dev.l3g7.griefer_utils.core.api.misc.Result;
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
-import dev.l3g7.griefer_utils.core.api.util.IOUtil;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.ingamegui.ModuleConfig;
 import net.labymod.ingamegui.ModuleConfigElement;
 import net.labymod.main.LabyMod;
 
-import java.io.File;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -106,9 +107,9 @@ public class ConfigPatcher {
 			rename("modules.spawn_counter", "rounds_flown", "rounds_flown");
 			rename("modules", "orb_potion_timer", "potion_timer");
 
-			Optional<JsonObject> optional = IOUtil.read(new File("LabyMod/modules.json")).asJsonObject();
-			if (optional.isPresent()) {
-				JsonObject modules = optional.get().getAsJsonObject("modules");
+			Result<JsonObject> optional = IO.read(Path.of("LabyMod/modules.json")).tryAsJsonObject();
+			if (optional.isOk()) {
+				JsonObject modules = optional.unwrap().getAsJsonObject("modules");
 
 				for (String file : FileProvider.getFiles(f -> f.startsWith("dev/l3g7/griefer_utils/features/modules/") && f.endsWith(".class"))) {
 					ClassMeta meta = FileProvider.getClassMeta(file, true);

@@ -20,7 +20,7 @@ public class ConfigBackuper {
 
 	public static void backup(String prevVersion) {
 		try {
-			backup(Config.configFile.toPath(), prevVersion);
+			backup(Config.configFile, prevVersion);
 		} catch (IOException e) {
 			throw Util.elevate(e, "Could not create backup of config file!");
 		}

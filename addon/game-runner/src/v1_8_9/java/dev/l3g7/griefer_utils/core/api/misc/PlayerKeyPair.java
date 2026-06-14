@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.core.api.misc;
 
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class PlayerKeyPair {
 				if (c.getResponseCode() >= 400)
 					return null;
 
-				return IO.read(c.getInputStream()).<PlayerKeyPair>tryAsJson().unwrapOrNull();
+				return IO.read(c.getInputStream()).tryAsJson(new TypeToken<PlayerKeyPair>() {}).unwrapOrNull();
 			} catch (IOException e) {
 				return null;
 			}

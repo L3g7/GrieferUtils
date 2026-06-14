@@ -54,7 +54,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		LibLoader.loadLibrary(
 			"https://libraries.minecraft.net",
 			"com/mojang", "brigadier", "1.0.18",
-			"EDC4926AA4B49010F6E7AC46EFD623FB38F9517344D26F6251D79A26A9738C0B"
+			"7cSSaqS0kBD256xG79Yj+zj5UXNE0m9iUdeaJqlzjAs="
 		);
 
 		// Load injector

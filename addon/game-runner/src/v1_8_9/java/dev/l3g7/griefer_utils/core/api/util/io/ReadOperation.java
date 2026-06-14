@@ -116,16 +116,16 @@ public abstract class ReadOperation {
 	/**
 	 * Tries to read the content as JSON.
 	 */
-	public <T> Result<@NotNull T> tryAsJson() {
+	public <T> Result<@NotNull T> tryAsJson(TypeToken<T> type) {
 		return Result.tryGet(this::parseJsonSync)
-			.map(v -> IO.GSON.fromJson(v, new TypeToken<T>() {}.getType()));
+			.map(v -> IO.GSON.fromJson(v, type));
 	}
 
 	/**
 	 * Reads the content as JSON, elevating errors to RuntimeExceptions.
 	 */
-	public <T> @NotNull T asJson() {
-		return this.<T>tryAsJson().unwrap();
+	public <T> @NotNull T asJson(TypeToken<T> type) {
+		return tryAsJson(type).unwrap();
 	}
 
 	/**

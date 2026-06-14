@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.mapping;
 
+import com.google.gson.reflect.TypeToken;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedClass;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedField;
@@ -40,7 +41,7 @@ public class Mapper {
 
 			if (Files.exists(mappings)) {
 				// Load mappings from file
-				mappedClasses = IO.read(mappings).asJson();
+				mappedClasses = IO.read(mappings).asJson(new TypeToken<>() {});
 				if (mappedClasses.isEmpty()) {
 					// Probably invalid download, overwrite
 					mappedClasses = new MappingCreator().createMappings(minecraftVersion, mappingVersion);

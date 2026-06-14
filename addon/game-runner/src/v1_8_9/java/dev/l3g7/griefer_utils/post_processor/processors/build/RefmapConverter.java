@@ -36,7 +36,7 @@ public class RefmapConverter {
 
 	public static void convertRefmap(FileSystem fs) throws IOException {
 		System.setProperty("griefer_utils.custom_ssl", "false");
-		Mapper.loadMappings("1.8.9", "22", new File("build/1.8.9_stable_22.json"));
+		Mapper.loadMappings("1.8.9", "22", Path.of("build/1.8.9_stable_22.json"));
 
 		// Move refmaps
 		Files.createDirectory(fs.getPath("/refmaps/"));

@@ -75,7 +75,7 @@ public class LibLoader {
 	 * @param hash base64-encoded SHA256
 	 */
 	public static Path fetchFromMaven(String repository, String group, String name, String version, @Nullable String classifier, String extension, String hash) throws IOException {
-		String semverVersion = version.replaceAll("^(\\d+\\.\\d+\\.\\d+).+$", "$1");
+		String semverVersion = version.replaceAll("^(\\d+\\.\\d+\\.\\d+)\\D.*$", "$1");
 		String filePath = group + "/" + name + "/" + semverVersion + "/" + name + "-" + semverVersion + ".jar";
 
 		String classifierApx = classifier == null ? "" : "-" + classifier;

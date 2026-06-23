@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.injection;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.reflection.Access;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
@@ -21,6 +23,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+
+@Bridge
+@ExclusiveTo(LABY_3)
 public class Injector extends InjectorBase {
 
 	public Injector() throws ReflectiveOperationException {
@@ -33,7 +39,7 @@ public class Injector extends InjectorBase {
 		InjectorBase.class.getClassLoader().loadClass("dev.l3g7.griefer_utils.core.injection.MixinPlugin$1");
 
 		// Initialize injector
-		InjectorBase.initialize(null, "LabyMod-3");
+		initMixin(null, "LabyMod-3");
 
 		// Finalize mixin initialization
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);

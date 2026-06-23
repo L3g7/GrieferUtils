@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
-import dev.l3g7.griefer_utils.labymod.laby3.injection.Injector;
+import dev.l3g7.griefer_utils.core.injection.InjectorBase;
 import net.labymod.addon.AddonLoader;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.core.asm.LabyModTransformer;
@@ -90,8 +90,8 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 			resourceCache.put(file.substring(0, file.length() - 6), bytes);
 		}
 
-		// Add Injector as transformer
-		Launch.classLoader.registerTransformer(Injector.class.getName());
+		// Load injector
+		InjectorBase.inject();
 
 		if (labyBridge.forge()) {
 			// Add own file to ignored mods so Forge doesn't try to read this jar

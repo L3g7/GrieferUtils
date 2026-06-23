@@ -16,9 +16,8 @@ import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.misc.LibLoader;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
-import dev.l3g7.griefer_utils.labymod.laby4.injection.Injector;
+import dev.l3g7.griefer_utils.core.injection.InjectorBase;
 import net.labymod.api.Laby;
-import net.minecraft.launchwrapper.Launch;
 
 import java.io.InputStreamReader;
 
@@ -58,7 +57,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		);
 
 		// Load injector
-		Launch.classLoader.registerTransformer(Injector.class.getName());
+		InjectorBase.inject();
 	}
 
 }

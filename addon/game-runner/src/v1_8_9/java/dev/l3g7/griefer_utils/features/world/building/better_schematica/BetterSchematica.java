@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.world.building.better_schematica;
 
+import com.github.lunatrius.schematica.client.gui.control.GuiSchematicMaterials;
+import com.github.lunatrius.schematica.client.util.BlockList;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
@@ -15,6 +17,12 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.SCHEMATICA;
@@ -108,6 +116,21 @@ public class BetterSchematica extends Feature {
 
 		BetterSchematica betterSchematica = BetterSchematica.get();
 		return betterSchematica.isEnabled() && betterSchematica.savePosition.get();
+	}
+
+	@Mixin(GuiSchematicMaterials.class)
+	public static class GuiSchematicMaterialsMixin {
+
+		@Inject(method = "dumpMaterialList", at = @At(value = "INVOKE", target = "Lorg/apache/commons/io/IOUtils;write(Ljava/lang/String;Ljava/io/OutputStream;)V", shift = At.Shift.AFTER))
+		void injectDumpMaterialList(List<BlockList.WrappedItemStack> blockList, CallbackInfo ci) {
+			BetterSchematica.openMaterialFile();
+		}
+
+		@Inject(method = "dumpMaterialList", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;error(Ljava/lang/String;Ljava/lang/Throwable;)V", shift = At.Shift.AFTER))
+		void injectDumpMaterialListError(List<BlockList.WrappedItemStack> blockList, CallbackInfo ci) {
+			BetterSchematica.writeErrorMessage();
+		}
+
 	}
 
 	public static void openMaterialFile() {

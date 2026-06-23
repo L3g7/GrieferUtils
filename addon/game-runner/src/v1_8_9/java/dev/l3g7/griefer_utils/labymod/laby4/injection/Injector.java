@@ -29,12 +29,4 @@ public class Injector extends InjectorBase implements IClassTransformer {
 		InjectorBase.initialize(addon.info().getNamespace(), null);
 	}
 
-	@Override
-	public byte[] transform(String name, String transformedName, byte[] basicClass) {
-		if (!shouldTransform(name, transformedName))
-			return basicClass;
-
-		return super.transform(name, transformedName, basicClass);
-	}
-
 }

@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.reflection.Access;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
-import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.service.IMixinService;
@@ -22,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Injector extends InjectorBase implements IClassTransformer {
+public class Injector extends InjectorBase {
 
 	public Injector() throws ReflectiveOperationException {
 		// Load MixinBootstrap using the system classloader
@@ -71,14 +70,6 @@ public class Injector extends InjectorBase implements IClassTransformer {
 		} catch (Throwable t) {
 			throw Util.elevate(t);
 		}
-	}
-
-	@Override
-	public byte[] transform(String name, String transformedName, byte[] basicClass) {
-		if (!shouldTransform(name, transformedName))
-			return basicClass;
-
-		return super.transform(name, transformedName, basicClass);
 	}
 
 }

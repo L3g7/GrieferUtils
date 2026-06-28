@@ -291,6 +291,10 @@ abstract class MiscQuests {
 			if (!waitingForUpdate)
 				return;
 
+			int windowId = event.packet.func_149175_c();
+			if (player().openContainer.windowId != windowId)
+				return;
+
 			int slotId = event.packet.func_149173_d();
 			if (slotId == -1)
 				return;

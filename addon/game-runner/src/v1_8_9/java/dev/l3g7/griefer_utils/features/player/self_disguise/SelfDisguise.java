@@ -20,12 +20,14 @@ import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.core.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.player.self_disguise.disguises.*;
 import joptsimple.internal.Strings;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityEnderCrystal;
@@ -105,12 +107,17 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 	@EventListener
 	public void onTick(TickEvent.RenderTickEvent event) {
 		Entity currentDisguise = this.currentDisguise;
-		if (currentDisguise == null)
+		WorldClient world = world();
+		if (currentDisguise == null || world == null)
+			return;
+
+		List<Entity> loadedEntities = world.loadedEntityList;
+		if (loadedEntities == null)
 			return;
 
 		// When you teleport somewhere far away, the entity is unloaded
-		if (!world().loadedEntityList.contains(currentDisguise))
-			world().loadEntities(ImmutableList.of(currentDisguise));
+		if (!loadedEntities.contains(currentDisguise))
+			world.loadEntities(ImmutableList.of(currentDisguise));
 
 		if (mc().gameSettings.thirdPersonView == 0) {
 			hideDisguise();
@@ -118,12 +125,17 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 		}
 
 		EntityPlayerSP p = player();
-		player().setInvisible(true);
+		if (p == null)
+			return;
+
+		Vec3d renderPos = renderPos();
+
+		p.setInvisible(true);
 		currentDisguise.setInvisible(false);
 		if (blockCoordinates)
-			currentDisguise.setLocationAndAngles(((int) renderPos().x) + 0.5 * Math.signum(renderPos().x), (int) (renderPos().y + 0.5), ((int) renderPos().z) + 0.5 * Math.signum(renderPos().z), p.rotationYaw, p.rotationPitch);
+			currentDisguise.setLocationAndAngles(((int) renderPos.x) + 0.5 * Math.signum(renderPos.x), (int) (renderPos.y + 0.5), ((int) renderPos.z) + 0.5 * Math.signum(renderPos.z), p.rotationYaw, p.rotationPitch);
 		else
-			currentDisguise.setLocationAndAngles(renderPos().x, renderPos().y, renderPos().z, p.rotationYaw, p.rotationPitch);
+			currentDisguise.setLocationAndAngles(renderPos.x, renderPos.y, renderPos.z, p.rotationYaw, p.rotationPitch);
 		currentDisguise.setRotationYawHead(p.getRotationYawHead());
 	}
 

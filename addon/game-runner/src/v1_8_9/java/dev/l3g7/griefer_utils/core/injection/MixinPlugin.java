@@ -35,10 +35,10 @@ public class MixinPlugin implements IMixinConfigPlugin {
 	 */
 	public List<String> getMixins() {
 		// Remove mixin package (it can't be completely empty, otherwise it won't work with higher versions of mixin)
-		Reflection.set(InjectorBase.mixinConfig.getConfig(), "mixinPackage", "dev/l3g7/");
+		Reflection.set(InjectorBase.mixinConfig.get().getConfig(), "mixinPackage", "dev/l3g7/");
 
 		// Add mixin package again after every class is prepared
-		Reflection.invoke(InjectorBase.mixinConfig.getConfig(), "addListener", createListener());
+		Reflection.invoke(InjectorBase.mixinConfig.get().getConfig(), "addListener", createListener());
 
 		List<String> classes = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 					return null;
 
 				// Ensure the given mixin package doesn't exist
-				Reflection.set(InjectorBase.mixinConfig.getConfig(), "mixinPackage", UUID.randomUUID().toString());
+				Reflection.set(InjectorBase.mixinConfig.get().getConfig(), "mixinPackage", UUID.randomUUID().toString());
 				return null;
 			}
 		});

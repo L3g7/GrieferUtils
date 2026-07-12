@@ -19,23 +19,26 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.transformer.Config;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 @Bridged
-public class InjectorBase implements IClassTransformer {
+public interface InjectorBase extends IClassTransformer {
 
-	static Config mixinConfig;
+	AtomicReference<Config> mixinConfig = new AtomicReference<>(null);
 
-	public static void inject() {
+	static void inject() {
 		Class<? extends InjectorBase> impl = FileProvider.getBridgeClass(InjectorBase.class);
 		Launch.classLoader.registerTransformer(impl.getName());
 	}
 
-	protected void initMixin(String labymodNamespace, String refmap) {
+	default void initMixin(String labymodNamespace, String refmap) {
 		// Initialize Mixin
 		MixinBootstrap.init();
 
 		// Usage of deprecated API required for mixin 7.11 compatibility // TODO: we can upgrade mixin
 		//noinspection deprecation
-		mixinConfig = Config.create("griefer_utils.mixins.json", MixinEnvironment.getDefaultEnvironment());
+		Config mixinConfig = Config.create("griefer_utils.mixins.json", MixinEnvironment.getDefaultEnvironment());
+		InjectorBase.mixinConfig.set(mixinConfig);
 
 		// Load refmap
 		if (refmap != null)
@@ -50,7 +53,7 @@ public class InjectorBase implements IClassTransformer {
 	}
 
 	@Override
-	public byte[] transform(String name, String transformedName, byte[] basicClass) {
+	default byte[] transform(String name, String transformedName, byte[] basicClass) {
 		if (name.startsWith("com.github.lunatrius.schematica"))
 			Constants.SCHEMATICA = true;
 		else if (name.startsWith("de.emotechat.addon"))

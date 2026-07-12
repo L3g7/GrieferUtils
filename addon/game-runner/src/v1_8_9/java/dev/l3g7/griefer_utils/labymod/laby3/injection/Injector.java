@@ -27,7 +27,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 @Bridge
 @ExclusiveTo(LABY_3)
-public class Injector extends InjectorBase {
+public class Injector implements InjectorBase {
 
 	public Injector() throws ReflectiveOperationException {
 		// Load MixinBootstrap using the system classloader

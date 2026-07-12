@@ -21,7 +21,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
 @Bridge
 @ExclusiveTo(LABY_4)
-public class Injector extends InjectorBase {
+public class Injector implements InjectorBase {
 
 	public Injector() {
 		// Enable mixing into LabyMod's classes

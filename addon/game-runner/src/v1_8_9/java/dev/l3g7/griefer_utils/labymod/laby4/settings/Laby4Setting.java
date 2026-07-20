@@ -9,12 +9,18 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import net.labymod.api.Laby;
+import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.NamedTextColor;
+import net.labymod.api.client.component.format.TextDecoration;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.screen.widget.action.Switchable;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
@@ -30,8 +36,12 @@ import net.labymod.api.revision.Revision;
 import net.labymod.api.revision.SimpleRevision;
 import net.labymod.api.util.KeyValue;
 import net.labymod.api.util.version.SemanticVersion;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsSettingWidget;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsTileWidget;
 import net.minecraft.item.ItemStack;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -184,6 +194,11 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		Laby.fireEvent(new SettingCreateEvent(self));
 	}
 
+	@Override
+	default void bubbleSince(Object parent) {
+		// NO-OP
+	}
+
 	// AbstractSetting
 
 	@Override
@@ -279,29 +294,68 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		public boolean isRelevant() {
 			return info.isVisible();
 		}
-	}
 
-	@Mixin(value = SettingWidget.class, remap = false)
-	class MixinSettingWidget {
-		@Redirect(method = "initializeInteractionWidget", at = @At(value = "INVOKE", target = "Lnet/labymod/api/client/gui/screen/widget/widgets/renderer/IconWidget;setHoverComponent(Lnet/labymod/api/client/component/Component;)V"))
-		public void redirectSetBadge(IconWidget newBadge, Component component) {
-			SettingElement element = ((SettingWidget) (Object) this).setting().asElement();
-			Revision revision = element.getRevision();
+		public IconWidget createBadge(AbstractSetting<?, ?> source) {
+			IconWidget newBadge = new IconWidget(Textures.SpriteCommon.NEW);
+			newBadge.addId("new-badge");
+			newBadge.setHoverComponent(Component.text(getDisplayName()));
 
-			if (!(revision instanceof GrieferUtilsRevision rev)) {
-				newBadge.setHoverComponent(component);
-				return;
-			}
-
-			AbstractSetting<?, ?> setting = (AbstractSetting<?, ?>) element;
-			setting.callback(() -> {
-				if (!rev.info.bubbled()) {
-					rev.info.hide();
+			source.callback(() -> {
+				if (!info.bubbled()) {
+					info.hide();
 					newBadge.setVisible(false);
 				}
 			});
-			newBadge.setHoverComponent(
-				Component.text(revision.getDisplayName()));
+			return newBadge;
+		}
+	}
+
+	/**
+	 * Copy of ModsOptionsBuilder#newBadge, but accessible
+	 */
+	static IconWidget newBadge(Revision revision) {
+		IconWidget newBadge = new IconWidget(Textures.SpriteCommon.NEW);
+		newBadge.addId("new-badge");
+		newBadge.setHoverComponent(Component
+			.translatable("labymod.misc.introduced")
+			.color(NamedTextColor.BLUE)
+			.argument(Component
+				.text(revision.getDisplayName())
+				.color(NamedTextColor.WHITE)
+				.decorate(TextDecoration.BOLD)));
+
+		return newBadge;
+	}
+
+	@Mixin(value = ModsSettingWidget.class, remap = false)
+	class MixinSettingWidget {
+		@Shadow
+		@Final
+		private SettingElement element;
+
+		@Redirect(method = "initialize", at = @At(value = "INVOKE", target = "Lnet/labymod/core/client/gui/screen/activity/activities/labymod/child/mods/ModsOptionsBuilder;newBadge(Lnet/labymod/api/revision/Revision;)Lnet/labymod/api/client/gui/screen/widget/widgets/renderer/IconWidget;"))
+		public IconWidget redirectNewBadge(Revision revision) {
+			if (!(revision instanceof GrieferUtilsRevision rev))
+				return newBadge(revision);
+
+			return rev.createBadge((AbstractSetting<?, ?>) element);
+		}
+	}
+
+	@Mixin(value = ModsTileWidget.class, remap = false)
+	class MixinModsTileWidget {
+
+		@Shadow
+		private Widget actionWidget;
+
+		@Redirect(method = "initialize", at = @At(value = "INVOKE", target = "Lnet/labymod/core/client/gui/screen/activity/activities/labymod/child/mods/ModsOptionsBuilder;newBadge(Lnet/labymod/api/revision/Revision;)Lnet/labymod/api/client/gui/screen/widget/widgets/renderer/IconWidget;"))
+		public IconWidget redirectNewBadge(Revision revision) {
+			if (!(revision instanceof GrieferUtilsRevision rev))
+				return newBadge(revision);
+
+			Switchable switchable = Reflection.get(actionWidget, "switchable");
+			Laby4Widget widget = Reflection.get(switchable, "arg$2");
+			return rev.createBadge(widget.getSetting());
 		}
 	}
 

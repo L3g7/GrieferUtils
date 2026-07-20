@@ -13,18 +13,16 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.navigation.elements.ScreenBaseNavigationElement;
-import net.labymod.api.client.gui.screen.ScreenInstance;
 import net.labymod.api.client.gui.screen.ScreenWrapper;
 import net.labymod.api.client.gui.screen.activity.Activity;
-import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
 import net.labymod.api.client.gui.screen.widget.widgets.ComponentWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.ScreenRendererWidget;
 import net.labymod.api.configuration.settings.Setting;
+import net.labymod.api.configuration.settings.type.SettingElement;
 import net.labymod.core.addon.AddonClassLoader;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModActivity;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.child.SettingsActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsEditorActivity;
 
 public class Laby4Util {
 
@@ -44,24 +42,16 @@ public class Laby4Util {
 		if (!(element instanceof LabyModNavigationElement))
 			return false;
 
-		LabyModActivity activity = (LabyModActivity) element.getScreen();
-		if (activity == null)
+		if (!(element.getScreen() instanceof ModsEditorActivity activity))
 			return false;
 
-		if (activity.getById("settings") != activity.getActiveTab())
+		ScreenRendererWidget panelRenderer = (ScreenRendererWidget) activity.document().getChild("mods-panel-renderer");
+		if (!panelRenderer.isVisible())
 			return false;
 
-		// Extract current setting
-		ScreenInstance instance = Reflection.get(activity.getActiveTab(), "instance");
-		SettingsActivity settingsActivity = (SettingsActivity) instance;
+		Iterable<SettingElement> openSettings = Reflection.get(panelRenderer.getScreen(), "openSettings");
 
-		ScreenRendererWidget screenRendererWidget = Reflection.get(settingsActivity, "screenRendererWidget");
-		ScreenInstance screen = screenRendererWidget.getScreen();
-		if (!(screen instanceof SettingContentActivity settingContentActivity))
-			return false;
-
-		// Check if setting or parent matches
-		Setting current = settingContentActivity.getCurrentHolder();
+		Setting current = openSettings.iterator().next();
 		while (current != null) {
 			if (current == setting)
 				return true;

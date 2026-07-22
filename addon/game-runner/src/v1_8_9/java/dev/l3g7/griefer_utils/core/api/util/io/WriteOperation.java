@@ -70,6 +70,10 @@ public abstract class WriteOperation {
 
 		@Override
 		protected OutputStream getOut() throws Exception {
+			Path parent = path.getParent();
+			if (parent != null)
+				Files.createDirectories(parent);
+
 			return Files.newOutputStream(path, WRITE, CREATE, TRUNCATE_EXISTING);
 		}
 	}

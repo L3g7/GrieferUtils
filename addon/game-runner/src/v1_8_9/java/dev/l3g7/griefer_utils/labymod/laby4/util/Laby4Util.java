@@ -24,6 +24,8 @@ import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsEditorActivity;
 
+import java.util.Deque;
+
 public class Laby4Util {
 
 	private static SettingActivityInitEvent lastSettingActivityInitEvent;
@@ -46,12 +48,12 @@ public class Laby4Util {
 			return false;
 
 		ScreenRendererWidget panelRenderer = (ScreenRendererWidget) activity.document().getChild("mods-panel-renderer");
-		if (!panelRenderer.isVisible())
+		if (panelRenderer == null || !panelRenderer.isVisible())
 			return false;
 
-		Iterable<SettingElement> openSettings = Reflection.get(panelRenderer.getScreen(), "openSettings");
+		Deque<SettingElement> openSettings = Reflection.get(panelRenderer.getScreen(), "openSettings");
 
-		Setting current = openSettings.iterator().next();
+		Setting current = openSettings.peekFirst();
 		while (current != null) {
 			if (current == setting)
 				return true;

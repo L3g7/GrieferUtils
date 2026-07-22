@@ -79,7 +79,12 @@ public class MessageEvent extends Event {
 
 		@OnEnable
 		private static void register() {
-			LabyBridge.labyBridge.onMessageSend(message -> new MessageSendEvent(message).fire().isCanceled());
+			LabyBridge.labyBridge.onMessageSend(message -> {
+				if (message == null)
+					return false;
+
+				return new MessageSendEvent(message).fire().isCanceled();
+			});
 		}
 
 	}

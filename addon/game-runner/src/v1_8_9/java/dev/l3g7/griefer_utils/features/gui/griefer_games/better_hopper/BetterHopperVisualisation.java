@@ -152,13 +152,17 @@ class BetterHopperVisualisation implements Disableable {
 	}
 
 	private BlockPos getBlockPos(ItemStack stack) {
-		String line = ItemUtil.getLoreAtIndex(stack, 0);
-		String blockPos = line.substring(line.indexOf("§e") + 2);
-		String[] coords = blockPos.split(";");
-		if (coords.length < 3)
-			return null;
+		for (String line : ItemUtil.getLore(stack)) {
+			if (!line.startsWith("§7Position: §e"))
+				continue;
 
-		return new BlockPos(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
+			String blockPos = line.substring("§7Position: §e".length());
+			String[] coords = blockPos.split(";");
+			if (coords.length == 3)
+				return new BlockPos(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
+		}
+
+		return null;
 	}
 
 	@EventListener

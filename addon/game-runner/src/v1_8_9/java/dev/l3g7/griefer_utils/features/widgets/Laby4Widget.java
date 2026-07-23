@@ -37,14 +37,12 @@ import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
 import net.labymod.api.client.gui.screen.ScreenContext;
-import net.labymod.api.client.gui.screen.ScreenInstance;
 import net.labymod.api.client.gui.screen.widget.widgets.hud.HudWidgetWidget;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModActivity;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.child.WidgetsEditorActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsEditorActivity;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -148,17 +146,10 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 		if (!(element instanceof LabyModNavigationElement))
 			return;
 
-		LabyModActivity activity = (LabyModActivity) element.getScreen();
-		if (activity == null)
-			return;
-
-		if (activity.getById("widgets") != activity.getActiveTab())
+		if (!(element.getScreen() instanceof ModsEditorActivity editor))
 			return;
 
 		// Reinitialize (if not dragging)
-		ScreenInstance instance = Reflection.get(activity.getActiveTab(), "instance");
-		WidgetsEditorActivity editor = (WidgetsEditorActivity) instance;
-
 		for (HudWidgetWidget widget : editor.renderer().getChildren()) {
 			if (widget.hudWidget() == this) {
 				if (!widget.isDragging())

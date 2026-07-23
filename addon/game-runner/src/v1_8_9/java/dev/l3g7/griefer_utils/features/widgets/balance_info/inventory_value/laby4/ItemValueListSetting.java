@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.*;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.gui.navigation.elements.ScreenNavigationElement;
+import net.labymod.api.client.gui.navigation.elements.ScreenBaseNavigationElement;
 import net.labymod.api.client.gui.screen.ScreenInstance;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -40,9 +40,7 @@ import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.util.KeyValue;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModActivity;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.child.WidgetsEditorActivity;
-import net.labymod.core.client.gui.screen.widget.widgets.hud.window.HudWidgetWindowWidget;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsEditorActivity;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.lang.reflect.ParameterizedType;
@@ -205,24 +203,19 @@ public class ItemValueListSetting extends ListSetting implements Laby4Setting<It
 		if (!(Laby4Util.getActivity() instanceof NavigationActivity navActivity))
 			return;
 
-		ScreenNavigationElement element = Reflection.get(navActivity, "element");
+		ScreenBaseNavigationElement<?> element = Reflection.get(navActivity, "element");
 		if (!(element instanceof LabyModNavigationElement))
 			return;
 
-		LabyModActivity activity = (LabyModActivity) element.getScreen();
-		if (activity == null)
+		if (!(element.getScreen() instanceof ModsEditorActivity activity))
 			return;
 
-		if (activity.getById("widgets") != activity.getActiveTab())
+		ScreenRendererWidget panelRenderer = (ScreenRendererWidget) activity.document().getChild("mods-subpage");
+		if (panelRenderer == null || !panelRenderer.isVisible())
 			return;
 
 		// Check if in this setting
-		ScreenInstance instance = Reflection.get(activity.getActiveTab(), "instance");
-		WidgetsEditorActivity settingsActivity = (WidgetsEditorActivity) instance;
-
-		HudWidgetWindowWidget w = settingsActivity.window();
-		ScreenRendererWidget screenRendererWidget = Reflection.get(w, "contentRendererWidget");
-		ScreenInstance screen = screenRendererWidget.getScreen();
+		ScreenInstance screen = panelRenderer.getScreen();
 		if (!(screen instanceof SettingContentActivity settingContentActivity))
 			return;
 

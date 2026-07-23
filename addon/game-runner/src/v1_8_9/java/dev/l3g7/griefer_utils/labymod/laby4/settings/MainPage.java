@@ -25,13 +25,16 @@ import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
+import net.labymod.api.client.gui.navigation.elements.ScreenBaseNavigationElement;
 import net.labymod.api.client.gui.screen.widget.widgets.input.TextFieldWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.renderer.ScreenRendererWidget;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.RootSettingRegistry;
 import net.labymod.api.configuration.settings.type.SettingElement;
+import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.AbstractSidebarActivity;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.LabyModActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsEditorActivity;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -70,14 +73,21 @@ public class MainPage {
 
 	@EventListener
 	private static void onWidget(SettingActivityInitEvent event) {
-		if (!(Laby4Util.getActivity() instanceof NavigationActivity n))
+		if (!(Laby4Util.getActivity() instanceof NavigationActivity navActivity))
 			return;
 
-		if (!(n.mostInnerScreenInstance() instanceof LabyModActivity lm))
+		ScreenBaseNavigationElement<?> element = Reflection.get(navActivity, "element");
+		if (!(element instanceof LabyModNavigationElement))
 			return;
 
-		AbstractSidebarActivity settingsActivity = (AbstractSidebarActivity) lm.getById("settings").provideScreen();
-		TextFieldWidget searchWidget = Reflection.get(settingsActivity, "searchWidget");
+		if (!(element.getScreen() instanceof ModsEditorActivity activity))
+			return;
+
+		ScreenRendererWidget panelRenderer = (ScreenRendererWidget) activity.document().getChild("mods-panel-renderer");
+		if (panelRenderer == null || !panelRenderer.isVisible())
+			return;
+
+		TextFieldWidget searchWidget = (TextFieldWidget) ((ModsActivity) panelRenderer.getScreen()).document().getChild("mods-search");
 
 		if (!injectedWidgets.add(searchWidget))
 			return;

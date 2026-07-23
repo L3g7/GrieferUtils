@@ -158,7 +158,10 @@ public class Calculator extends Feature {
 	 */
 	private BigDecimal getCurrentBalance() {
 		try {
-			return new BigDecimal(world().getScoreboard().getTeam("money_value").getColorPrefix().replaceAll("[$.]", "").replace(",", "."));
+			return new BigDecimal(world().getScoreboard().getTeam("money_value").getColorPrefix()
+				.replaceAll("§.", "")
+				.replaceAll("[$.]", "")
+				.replace(",", "."));
 		} catch (NumberFormatException e) {
 			return BigDecimal.ZERO;
 		}

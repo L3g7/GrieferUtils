@@ -11,6 +11,9 @@ public class MoneySuggestion extends Suggestion {
 
 	@Override
 	public String get() {
-		return world().getScoreboard().getTeam("money_value").getColorPrefix().replaceAll("[$.]", "").split(",")[0].trim();
+		return world().getScoreboard().getTeam("money_value").getColorPrefix()
+			.replaceAll("§.", "")
+			.replaceAll("[$.]", "")
+			.split(",")[0].trim();
 	}
 }

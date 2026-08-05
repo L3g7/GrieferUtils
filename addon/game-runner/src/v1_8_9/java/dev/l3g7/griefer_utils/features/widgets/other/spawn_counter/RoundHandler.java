@@ -169,7 +169,7 @@ class RoundHandler {
 	}
 
 	private boolean isSpawnMiddle(BlockPos pos) {
-		Block targetBlock = getRawServer().equals("Event") ? Blocks.quartz_block : Blocks.stonebrick;
+		Block targetBlock = Citybuild.current() == Citybuild.EVENT ? Blocks.quartz_block : Blocks.piston;
 		return world().getBlockState(pos).getBlock() == targetBlock;
 	}
 

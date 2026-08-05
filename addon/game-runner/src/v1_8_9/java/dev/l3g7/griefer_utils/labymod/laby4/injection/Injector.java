@@ -28,6 +28,7 @@ public class Injector implements InjectorBase {
 		Set<String> transformerExceptions = Reflection.get(Launch.classLoader, "transformerExceptions");
 		transformerExceptions.remove("net.labymod.api.");
 		transformerExceptions.remove("net.labymod.core.");
+		transformerExceptions.add("net.labymod.api.util.collection.map.Multimap");
 
 		// Load injector
 		LoadedAddon addon = Laby.labyAPI().addonService().getAddon(getClass()).orElseThrow();

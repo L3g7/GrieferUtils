@@ -80,7 +80,7 @@ public class Option<T> {
 	 * Maps the value, if set. If the mapping function throws an error, an empty Option will be returned.
 	 */
 	public <V> Option<V> map(Function<T, V> mapper) {
-		if (isSet())
+		if (isUnset())
 			return Reflection.c(this);
 
 		return Result.tryGet(() -> mapper.applyWithThrowable(value))

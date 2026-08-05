@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
@@ -22,7 +21,7 @@ import dev.l3g7.griefer_utils.core.misc.AuctionHouseCheck;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.ScoreboardSource;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Balances;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.GuiChat;
@@ -154,18 +153,8 @@ public class Calculator extends Feature {
 
 	}
 
-	/**
-	 * Get the current balance based on the scoreboard value
-	 */
-	private BigDecimal getCurrentBalance() {
-		try {
-			return new BigDecimal(world().getScoreboard().getTeam("money_value").getColorPrefix()
-				.replaceAll("§.", "")
-				.replaceAll("[$.]", "")
-				.replace(",", "."));
-		} catch (NumberFormatException e) {
-			return BigDecimal.ZERO;
-		}
+	private BigDecimal getBalance() {
+		return Balances.getBalance().getOr(BigDecimal.ZERO);
 	}
 
 	@EventListener
@@ -249,23 +238,20 @@ public class Calculator extends Feature {
 		 * Auto-Withdraw *
 		 * ************* */
 		if (event.message.getFormattedText().equals("§r§cFehler:§r§4 §r§4Du hast nicht genug Guthaben.§r")) {
-			Option<Long> balance = ScoreboardSource.getBankBalance();
-			if (balance.isSet()) {
-				event.cancel();
-				BigDecimal moneyRequired = lastPayment.subtract(getCurrentBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
-				BigDecimal difference = moneyRequired.subtract(new BigDecimal(balance.get()));
+			event.cancel();
+			BigDecimal moneyRequired = lastPayment.subtract(getBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
+			BigDecimal difference = moneyRequired.subtract(new BigDecimal(Balances.getBankBalance()));
 
-				// Bank balance is smaller than money required, unable to withdraw
-				if (difference.compareTo(BigDecimal.ZERO) > 0) {
-					display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", difference.toPlainString());
-				} else {
-					// Withdraw difference
-					switch (autoWithdraw.get()) {
-						case SUGGEST -> suggest("/bank abheben %d", moneyRequired.toBigInteger());
-						case SEND -> {
-							send("/bank abheben %d", moneyRequired.toBigInteger());
-							suggest("/pay %s %s", lastPaymentReceiver, lastPayment.toPlainString());
-						}
+			// Bank balance is smaller than money required, unable to withdraw
+			if (difference.compareTo(BigDecimal.ZERO) > 0) {
+				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", difference.toPlainString());
+			} else {
+				// Withdraw difference
+				switch (autoWithdraw.get()) {
+					case SUGGEST -> suggest("/bank abheben %d", moneyRequired.toBigInteger());
+					case SEND -> {
+						send("/bank abheben %d", moneyRequired.toBigInteger());
+						suggest("/pay %s %s", lastPaymentReceiver, lastPayment.toPlainString());
 					}
 				}
 			}
@@ -300,7 +286,7 @@ public class Calculator extends Feature {
 			return;
 		}
 
-		if (!ServerCheck.isOnGrieferGames() || world() == null || world().getScoreboard().getTeam("money_value") == null)
+		if (!ServerCheck.isOnGrieferGames() || world() == null || Balances.getBalance().isUnset())
 			return;
 
 		// Save payment (for auto-withdraw)
@@ -319,7 +305,7 @@ public class Calculator extends Feature {
 
 		// If /bank abheben with the exact difference was sent and withdraw is SUGGEST
 		if (lastPaymentReceiver != null && msg.startsWith("/bank abheben")) {
-			BigDecimal moneyRequired = lastPayment.subtract(getCurrentBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
+			BigDecimal moneyRequired = lastPayment.subtract(getBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
 			if (msg.equals(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == WithdrawAction.SUGGEST) {
 				String amount = lastPayment.equals(BigDecimal.ZERO) ? "0.001" : lastPayment.stripTrailingZeros().toPlainString();
 
@@ -334,33 +320,28 @@ public class Calculator extends Feature {
 		 * ****************** */
 		if (msg.equals("/bank einzahlen *") && starPlaceholder.get()) {
 			event.cancel();
-			if (getCurrentBalance().compareTo(THOUSAND) < 0) {
-				long balance = ScoreboardSource.getBankBalance().getOr(10_000L); // Fail open
-				if (balance < 1000) {
-					display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getCurrentBalance()).toPlainString());
+			if (getBalance().compareTo(THOUSAND) < 0) {
+				if (Balances.getBankBalance() < 1000) {
+					display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getBalance()).toPlainString());
 				}  else {
 					send("/bank abheben 1000");
-					send("/bank einzahlen %d", getCurrentBalance().add(THOUSAND).setScale(0, RoundingMode.FLOOR).toBigInteger());
+					send("/bank einzahlen %d", getBalance().add(THOUSAND).setScale(0, RoundingMode.FLOOR).toBigInteger());
 				}
 			} else
-				send("/bank einzahlen %d", getCurrentBalance().setScale(0, RoundingMode.FLOOR).toBigInteger());
+				send("/bank einzahlen %d", getBalance().setScale(0, RoundingMode.FLOOR).toBigInteger());
 			return;
 		} else if (msg.equals("/bank abheben *") && starPlaceholder.get()) {
-			Option<Long> balance = ScoreboardSource.getBankBalance();
-			if (balance.isUnset()) {
-				display(Constants.ADDON_PREFIX + "§r§4⚠ §cUnbekanntes Bankguthaben. §4⚠§r");
-			} else {
-				if (balance.get() < 1000)
-					display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", (1000 - balance.get()));
-				else
-					send("/bank abheben %d", balance.get());
-			}
+			long balance = Balances.getBankBalance();
+			if (balance < 1000)
+				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", (1000 - balance));
+			else
+				send("/bank abheben %d", balance);
 			event.cancel();
 			return;
 		} else if (starPlaceholder.get()) {
 			Matcher matcher = Pattern.compile(String.format("/pay %s \\*", Constants.UNFORMATTED_PLAYER_NAME_PATTERN)).matcher(msg);
 			if (matcher.matches()) {
-				send("/pay %s %s", matcher.group("player"), getCurrentBalance().stripTrailingZeros().toPlainString());
+				send("/pay %s %s", matcher.group("player"), getBalance().stripTrailingZeros().toPlainString());
 				event.cancel();
 				return;
 			}

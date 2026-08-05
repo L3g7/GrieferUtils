@@ -9,13 +9,12 @@ package dev.l3g7.griefer_utils.core.events.griefergames;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
-import net.minecraft.network.play.server.S3EPacketTeams;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
+import net.minecraft.network.play.server.S47PacketPlayerListHeaderFooter;
 
 /**
  * An event being posted after successfully joining a citybuild. (When the player's data has been loaded.)
@@ -77,15 +76,13 @@ public class CitybuildJoinEvent extends Event {
 		}
 
 		@EventListener
-		private static void onTeamsPacket(PacketEvent.PacketReceiveEvent<S3EPacketTeams> event) {
-			if (!switchedServer || !event.packet.getName().equals("server_value") || event.packet.getPrefix().isEmpty())
+		private static void onHeaderPacket(PacketEvent.PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
+			if (!switchedServer)
 				return;
 
-			switchedServer = false;
-			Option<Citybuild> cb = Citybuild.parse(event.packet.getPrefix().replaceAll("§.", ""));
-
-			if (cb.isSet())
-				new Early(cb.get()).fire();
+			Citybuild cb = Citybuild.current();
+			if (cb != Citybuild.ANY)
+				new Early(cb).fire();
 		}
 
 	}

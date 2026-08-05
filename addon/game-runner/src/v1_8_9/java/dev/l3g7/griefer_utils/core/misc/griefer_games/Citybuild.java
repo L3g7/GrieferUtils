@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.misc.griefer_games;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
@@ -181,8 +182,8 @@ public enum Citybuild implements Named {
 
 		private static final Option<Citybuild> currentCitybuild = Option.emptyMut();
 
-		@EventListener
-		private static void onScaledResolutionInit(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
+		@EventListener(priority = Priority.HIGH)
+		private static void onCitybuildInit(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
 			String[] lines = event.packet.getHeader().getFormattedText().split("\n");
 			if (lines.length != 3) {
 				currentCitybuild.unset();

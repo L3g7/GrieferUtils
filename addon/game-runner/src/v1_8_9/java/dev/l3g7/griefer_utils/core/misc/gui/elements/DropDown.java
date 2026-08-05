@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.misc.gui.elements;
 
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;

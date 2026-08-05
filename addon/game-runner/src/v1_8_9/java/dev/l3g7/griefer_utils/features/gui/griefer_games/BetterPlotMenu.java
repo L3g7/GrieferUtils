@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.gui.griefer_games;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;

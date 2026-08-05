@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.features.chat.outgoing.multi_hotkey.laby3;
 
 import com.google.common.collect.ImmutableSet;
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.KeySettingImpl;

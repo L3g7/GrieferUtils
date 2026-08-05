@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.features.chat.ingoing.chat_reactor.laby4;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.*;

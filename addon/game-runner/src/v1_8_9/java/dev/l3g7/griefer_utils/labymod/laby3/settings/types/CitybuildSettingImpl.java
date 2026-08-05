@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.ANY;
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.ANY;
 import static dev.l3g7.griefer_utils.core.util.ItemUtil.createItem;
 import static net.minecraft.init.Blocks.*;
 

@@ -239,14 +239,11 @@ public class MinecraftUtil {
 	}
 
 	private static String extractCitybuild(S47PacketPlayerListHeaderFooter packet) {
-		if (!ServerCheck.isOnGrieferGames())
-			return "";
-
 		String[] lines = packet.getHeader().getFormattedText().split("\n");
 		if (lines.length != 3)
 			return "";
 
-		String cbLine = lines[2].replaceAll(".§", "");
+		String cbLine = lines[2].replaceAll("§.", "");
 		if (!cbLine.startsWith("Aktueller Server: "))
 			return "";
 

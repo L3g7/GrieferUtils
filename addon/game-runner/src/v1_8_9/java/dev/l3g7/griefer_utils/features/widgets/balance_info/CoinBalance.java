@@ -32,7 +32,7 @@ public class CoinBalance extends SimpleWidget {
 		if (balance.isUnset())
 			return "?";
 
-		return Constants.DECIMAL_FORMAT_98.format(balance) + "$";
+		return Constants.DECIMAL_FORMAT_98.format(balance.get()) + "$";
 	}
 
 }

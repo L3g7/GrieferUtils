@@ -47,7 +47,6 @@ public class MinecraftUtil {
 	public static final int FONT_HEIGHT = 9;
 	private static final int HOUR = 60 * 60 * 1000; // An hour, in milliseconds.
 	public static ScaledResolution currentResolution = new ScaledResolution(mc());
-	public static String currentServer = "";
 
 	public static Minecraft       mc()              { return Minecraft.getMinecraft(); }
 	public static EntityPlayerSP  player()          { return mc().thePlayer; }
@@ -112,13 +111,6 @@ public class MinecraftUtil {
 	public static void closeServersideGUI() {
 		if (player() != null)
 			player().closeScreen();
-	}
-
-	public static String getRawServer() {
-		if (world() == null)
-			return "";
-
-		return currentServer;
 	}
 
 	public static long getNextServerRestart() {

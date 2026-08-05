@@ -9,12 +9,12 @@ package dev.l3g7.griefer_utils.features.chat.outgoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 
@@ -22,7 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
 
 @Singleton
 public class BetterSwitch extends Feature {
@@ -95,7 +96,7 @@ public class BetterSwitch extends Feature {
 		if (command == null)
 			return;
 
-		if (!targetCitybuild.matches(getRawServer())) {
+		if (targetCitybuild != Citybuild.current()) {
 			command = null;
 			targetCitybuild = null;
 			return;

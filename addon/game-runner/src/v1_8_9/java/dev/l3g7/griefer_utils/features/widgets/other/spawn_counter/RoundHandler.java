@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
@@ -32,7 +33,7 @@ import static net.minecraft.util.EnumFacing.*;
 class RoundHandler {
 
 	private static final EnumFacing[] HORIZONTALS = new EnumFacing[] {SOUTH, WEST, NORTH, EAST};
-	private static final List<String> excludedCitybuilds = ImmutableList.of("Nature", "Extreme", "Lava", "Wasser", "CBE");
+	private static final List<Citybuild> excludedCitybuilds = ImmutableList.of(Citybuild.NATURE, Citybuild.EXTREME, Citybuild.LAVA, Citybuild.WATER, Citybuild.CBE);
 	private static final byte[] quadrantData = new byte[] {
 		-1, -1,
 		-1, +1,
@@ -149,7 +150,7 @@ class RoundHandler {
 	}
 
 	private void determineSpawn(BlockPos pos) {
-		if (excludedCitybuilds.contains(getRawServer()))
+		if (excludedCitybuilds.contains(Citybuild.current()))
 			return;
 
 		for (EnumFacing f : HORIZONTALS) {

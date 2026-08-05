@@ -20,6 +20,7 @@ import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -126,7 +127,7 @@ public class FixOrbSeller extends Feature {
 			if (p.getYaw() != 62 || p.getPitch() != 26)
 				return;
 
-			Integer orbSellerId = cbToId.get(getRawServer());
+			Integer orbSellerId = cbToId.get(Citybuild.currentRaw());
 			if (orbSellerId != null && world().getEntityByID(orbSellerId) == null)
 				mc().addScheduledTask(() -> spawnOrbSeller(orbSellerId));
 
@@ -140,8 +141,8 @@ public class FixOrbSeller extends Feature {
 			for (S38PacketPlayerListItem.AddPlayerData entry : packet.getEntries()) {
 				if ("§6Händler".equals(entry.getProfile().getName())) {
 					orbSellerUUID = entry.getProfile().getId();
-					if (cbToId.containsKey(getRawServer()))
-						world().removeEntityFromWorld(cbToId.get(getRawServer()));
+					if (cbToId.containsKey(Citybuild.currentRaw()))
+						world().removeEntityFromWorld(cbToId.get(Citybuild.currentRaw()));
 					return;
 				}
 			}
@@ -150,7 +151,7 @@ public class FixOrbSeller extends Feature {
 		// Get the entity id of the original orb seller
 		if (event.packet instanceof S0CPacketSpawnPlayer packet && packet.getPlayer().equals(orbSellerUUID)) {
 			orbSellerUUID = null;
-			cbToId.put(getRawServer(), packet.getEntityID());
+			cbToId.put(Citybuild.currentRaw(), packet.getEntityID());
 			saveIds();
 		}
 	}

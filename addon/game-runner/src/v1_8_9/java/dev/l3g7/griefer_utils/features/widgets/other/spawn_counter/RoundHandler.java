@@ -149,7 +149,7 @@ class RoundHandler {
 	}
 
 	private void determineSpawn(BlockPos pos) {
-		if (excludedCitybuilds.contains(getServerFromScoreboard()))
+		if (excludedCitybuilds.contains(getRawServer()))
 			return;
 
 		for (EnumFacing f : HORIZONTALS) {
@@ -168,7 +168,7 @@ class RoundHandler {
 	}
 
 	private boolean isSpawnMiddle(BlockPos pos) {
-		Block targetBlock = getServerFromScoreboard().equals("Event") ? Blocks.quartz_block : Blocks.stonebrick;
+		Block targetBlock = getRawServer().equals("Event") ? Blocks.quartz_block : Blocks.stonebrick;
 		return world().getBlockState(pos).getBlock() == targetBlock;
 	}
 

@@ -22,7 +22,7 @@ public class SubserverRequirement extends Requirement {
 			// Fall back to true
 			return true;
 
-		String server = MinecraftUtil.getServerFromScoreboard().trim();
+		String server = MinecraftUtil.getRawServer().trim();
 		if (server.isEmpty())
 			// Fall back to true
 			return true;

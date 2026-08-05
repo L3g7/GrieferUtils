@@ -94,7 +94,7 @@ public class BetterSwitch extends Feature {
 		if (command == null)
 			return;
 
-		if (!targetCitybuild.matches(getServerFromScoreboard())) {
+		if (!targetCitybuild.matches(getRawServer())) {
 			command = null;
 			targetCitybuild = null;
 			return;

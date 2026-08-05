@@ -35,7 +35,7 @@ public class CoinBalance extends SimpleWidget {
 		if (world() == null)
 			return;
 
-		if (!event.packet.getName().equals("money_value") || event.packet.getAction() != 2 || MinecraftUtil.getServerFromScoreboard().equals("Portal"))
+		if (!event.packet.getName().equals("money_value") || event.packet.getAction() != 2 || MinecraftUtil.getRawServer().equals("Portal"))
 			return;
 
 		String money = event.packet.getPrefix();

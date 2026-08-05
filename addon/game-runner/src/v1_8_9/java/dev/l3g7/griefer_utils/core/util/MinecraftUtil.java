@@ -11,8 +11,10 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.render.ScaledResolutionInitEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
+import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -33,7 +35,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.network.play.server.S47PacketPlayerListHeaderFooter;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -49,6 +51,7 @@ public class MinecraftUtil {
 	public static final int FONT_HEIGHT = 9;
 	private static final int HOUR = 60 * 60 * 1000; // An hour, in milliseconds.
 	public static ScaledResolution currentResolution = new ScaledResolution(mc());
+	public static String currentServer = "";
 
 	public static Minecraft       mc()              { return Minecraft.getMinecraft(); }
 	public static EntityPlayerSP  player()          { return mc().thePlayer; }
@@ -115,16 +118,15 @@ public class MinecraftUtil {
 			player().closeScreen();
 	}
 
-	public static String getServerFromScoreboard() {
+	public static String getRawServer() {
 		if (world() == null)
 			return "";
 
-		ScorePlayerTeam team = world().getScoreboard().getTeam("server_value");
-		return team == null ? "" : team.getColorPrefix().replaceAll("§.", "");
+		return currentServer;
 	}
 
 	public static Citybuild getCurrentCitybuild() {
-		return Citybuild.getCitybuild(getServerFromScoreboard());
+		return Citybuild.getCitybuild(getRawServer());
 	}
 
 	public static String getCitybuildAbbreviation(String citybuild) {
@@ -220,15 +222,35 @@ public class MinecraftUtil {
 		return (bedrocksFound / (float) checkedBlocks) > 0.33f;
 	}
 
+	public static int distanceToPlayer(int x, int z) {
+		double xDiff = player().posX - x;
+		double zDiff = player().posZ - z;
+		return (int) Math.ceil(Math.sqrt(xDiff*xDiff + zDiff*zDiff));
+	}
+
 	@EventListener
 	private static void onScaledResolutionInit(ScaledResolutionInitEvent event) {
 		currentResolution = event.scaledResolution;
 	}
 
-	public static int distanceToPlayer(int x, int z) {
-		double xDiff = player().posX - x;
-		double zDiff = player().posZ - z;
-		return (int) Math.ceil(Math.sqrt(xDiff*xDiff + zDiff*zDiff));
+	@EventListener
+	private static void onScaledResolutionInit(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
+		currentServer = extractCitybuild(event.packet);
+	}
+
+	private static String extractCitybuild(S47PacketPlayerListHeaderFooter packet) {
+		if (!ServerCheck.isOnGrieferGames())
+			return "";
+
+		String[] lines = packet.getHeader().getFormattedText().split("\n");
+		if (lines.length != 3)
+			return "";
+
+		String cbLine = lines[2].replaceAll(".§", "");
+		if (!cbLine.startsWith("Aktueller Server: "))
+			return "";
+
+		return cbLine.substring("Aktueller Server: ".length());
 	}
 
 }

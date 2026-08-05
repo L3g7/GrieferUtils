@@ -87,7 +87,7 @@ public enum Citybuild implements Named {
 		if (this == ANY)
 			return true;
 
-		return matches(MinecraftUtil.getServerFromScoreboard());
+		return matches(MinecraftUtil.getRawServer());
 	}
 
 	public void join() {
@@ -99,7 +99,7 @@ public enum Citybuild implements Named {
 			return;
 		}
 
-		String cb = MinecraftUtil.getServerFromScoreboard();
+		String cb = MinecraftUtil.getRawServer();
 		if (cb.equals("Portal"))
 			ChatQueue.send("/hub");
 

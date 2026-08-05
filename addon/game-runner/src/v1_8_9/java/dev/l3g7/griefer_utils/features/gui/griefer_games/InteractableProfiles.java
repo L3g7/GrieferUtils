@@ -84,7 +84,7 @@ public class InteractableProfiles extends Feature {
 		// Account for hub servers
 		for (String hubName : new String[]{"portal", "lobby"}) {
 			if (citybuild.equalsIgnoreCase(hubName)) {
-				if (!MinecraftUtil.getServerFromScoreboard().equalsIgnoreCase(hubName))
+				if (!MinecraftUtil.getRawServer().equalsIgnoreCase(hubName))
 					MinecraftUtil.send("/" + hubName);
 				return;
 			}

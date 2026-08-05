@@ -7,7 +7,6 @@ import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.misc.Countdown;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.ComplexWidget;
 import net.minecraft.util.ChatComponentText;
@@ -51,7 +50,7 @@ public class PlotCooldowns extends ComplexWidget {
 		if (!event.message.startsWith("/"))
 			return;
 
-		Citybuild cb = MinecraftUtil.getCurrentCitybuild();
+		Citybuild cb = Citybuild.current();
 		if (cb == Citybuild.ANY || cb == Citybuild.MAGIC_FOREST || cb == Citybuild.LAVA || cb == Citybuild.WATER)
 			return;
 

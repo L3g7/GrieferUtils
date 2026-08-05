@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.features.gui.integrations.bsf.gui;
 
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.BSF;
@@ -48,7 +49,7 @@ public class GuiBSF extends GuiBigChest {
 
 		super.open();
 		if (!BSF.hasData()) {
-			if (getCurrentCitybuild() == ANY || getCurrentCitybuild() == MAGIC_FOREST) {
+			if (Citybuild.current() == ANY || Citybuild.current() == MAGIC_FOREST) {
 				TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", "§fBitte betrete einen Citybuild.");
 				addTextureItem(13, item, null);
 				return;

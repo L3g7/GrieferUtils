@@ -90,7 +90,7 @@ public class InteractableProfiles extends Feature {
 			}
 		}
 
-		Citybuild cb = Citybuild.getCitybuild(citybuild);
+		Citybuild cb = Citybuild.parseSafe(citybuild);
 
 		if (!cb.isOnCb() && System.currentTimeMillis() - lastInteraction > 2500) {
 			lastInteraction = System.currentTimeMillis();

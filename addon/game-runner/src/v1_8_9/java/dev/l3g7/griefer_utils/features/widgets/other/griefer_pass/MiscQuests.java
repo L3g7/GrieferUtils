@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.BSF;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.PacketDumper;
 import net.minecraft.block.Block;
@@ -237,7 +236,7 @@ abstract class MiscQuests {
 
 		@EventListener
 		private void onPlace(PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
-			Citybuild cb = MinecraftUtil.getCurrentCitybuild();
+			Citybuild cb = Citybuild.current();
 			if (BSF.isInFarmwelt() || cb == Citybuild.ANY || cb == Citybuild.MAGIC_FOREST || cb == Citybuild.LAVA || cb == Citybuild.WATER)
 				return;
 

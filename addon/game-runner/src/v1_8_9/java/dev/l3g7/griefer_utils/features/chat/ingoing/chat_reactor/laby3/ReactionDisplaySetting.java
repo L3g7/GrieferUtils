@@ -7,8 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.chat.ingoing.chat_reactor.laby3;
 
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
@@ -53,7 +53,7 @@ public class ReactionDisplaySetting extends SwitchSettingImpl {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 		setDisplayName(displayName);
 
-		String cb = "§e[" + MinecraftUtil.getCitybuildAbbreviation(reaction.citybuild.getName()) + "] ";
+		String cb = "§e[" + reaction.citybuild.getAbbreviation() + "] ";
 		int cbWidth = DrawUtils.getStringWidth(cb);
 
 		String trimmedTrigger = DrawUtils.trimStringToWidth(reaction.trigger, maxX - x - 25 - 79);

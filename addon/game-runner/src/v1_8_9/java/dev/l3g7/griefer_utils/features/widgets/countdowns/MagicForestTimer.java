@@ -48,7 +48,7 @@ public class MagicForestTimer extends SimpleWidget {
 
 	@Override
 	public boolean isVisibleInGame() {
-		return MinecraftUtil.getCurrentCitybuild() == Citybuild.MAGIC_FOREST;
+		return Citybuild.current() == Citybuild.MAGIC_FOREST;
 	}
 
 	@Override

@@ -52,7 +52,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 			}
 
 			return new JsonPrimitive(name);
-		}, e -> Citybuild.getCitybuild(e.getAsString()), Citybuild.ANY);
+		}, e -> Citybuild.parseSafe(e.getAsString()), Citybuild.ANY);
 		icon(Citybuild.ANY.toItemStack());
 		callback(v -> {
 			icon(v.toItemStack());

@@ -8,13 +8,13 @@
 package dev.l3g7.griefer_utils.features.gui.integrations.bsf;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFProcessRequest.Data;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import net.minecraft.network.play.server.S44PacketWorldBorder;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.chunk.Chunk;
@@ -26,7 +26,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 public class BSFCollector {
 
@@ -135,7 +136,7 @@ public class BSFCollector {
 		int cz = origin.getZ() >> 4;
 
 		HashSet<Chunk> diagonalEnds = new HashSet<>();
-		Citybuild cb = getCurrentCitybuild();
+		Citybuild cb = Citybuild.current();
 		if (cb == Citybuild.ANY)
 			return true;
 
@@ -209,7 +210,7 @@ public class BSFCollector {
 
 			// Prefer processing current cb next
 			synchronized (processQueue) {
-				Optional<ProcessData> currentData = processQueue.stream().filter(p -> p.cb.equals(getCurrentCitybuild()) && p.isGlitch == isGlitch).findAny();
+				Optional<ProcessData> currentData = processQueue.stream().filter(p -> p.cb.equals(Citybuild.current()) && p.isGlitch == isGlitch).findAny();
 				ProcessData next = currentData.orElseGet(processQueue::peek);
 				processQueue.remove(next);
 

@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.events.griefergames;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
@@ -81,10 +82,10 @@ public class CitybuildJoinEvent extends Event {
 				return;
 
 			switchedServer = false;
-			Citybuild cb = Citybuild.getCitybuild(event.packet.getPrefix().replaceAll("§.", ""));
+			Option<Citybuild> cb = Citybuild.parse(event.packet.getPrefix().replaceAll("§.", ""));
 
-			if (cb != Citybuild.ANY)
-				new Early(cb).fire();
+			if (cb.isSet())
+				new Early(cb.get()).fire();
 		}
 
 	}

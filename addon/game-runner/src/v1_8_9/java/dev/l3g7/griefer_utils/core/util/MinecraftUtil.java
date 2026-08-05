@@ -9,9 +9,7 @@ package dev.l3g7.griefer_utils.core.util;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.render.ScaledResolutionInitEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
@@ -34,7 +32,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S47PacketPlayerListHeaderFooter;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -124,27 +121,6 @@ public class MinecraftUtil {
 		return currentServer;
 	}
 
-	public static Citybuild getCurrentCitybuild() {
-		return Citybuild.getCitybuild(getRawServer());
-	}
-
-	public static String getCitybuildAbbreviation(String citybuild) {
-		if (citybuild.startsWith("CB"))
-			return citybuild.substring(2);
-		if (citybuild.startsWith("Citybuild "))
-			return citybuild.substring(10);
-
-		return switch (citybuild) {
-			case "Nature" -> "N";
-			case "Extreme" -> "X";
-			case "Evil" -> "E";
-			case "Wasser" -> "W";
-			case "Lava" -> "L";
-			case "Event" -> "V";
-			default -> "*";
-		};
-	}
-
 	public static long getNextServerRestart() {
 		long time = System.currentTimeMillis();
 		long reset = time - time % (24 * HOUR) + (2 * HOUR); // Get timestamp for 02:00 UTC on the current day
@@ -230,23 +206,6 @@ public class MinecraftUtil {
 	@EventListener
 	private static void onScaledResolutionInit(ScaledResolutionInitEvent event) {
 		currentResolution = event.scaledResolution;
-	}
-
-	@EventListener
-	private static void onScaledResolutionInit(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
-		currentServer = extractCitybuild(event.packet);
-	}
-
-	private static String extractCitybuild(S47PacketPlayerListHeaderFooter packet) {
-		String[] lines = packet.getHeader().getFormattedText().split("\n");
-		if (lines.length != 3)
-			return "";
-
-		String cbLine = lines[2].replaceAll("§.", "");
-		if (!cbLine.startsWith("Aktueller Server: "))
-			return "";
-
-		return cbLine.substring("Aktueller Server: ".length());
 	}
 
 }

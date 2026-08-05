@@ -25,7 +25,6 @@ import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerJoinEvent;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 
@@ -187,7 +186,7 @@ public class GUServer {
 
 	public static CompletableFuture<BSFSearchRequest.SearchResponse> searchStructure(boolean isGlitch, int structure, List<Integer> excluded) {
 		return CompletableFuture.supplyAsync(() -> new BSFSearchRequest.Structure(
-			(isGlitch ? "g" : "") + MinecraftUtil.getCurrentCitybuild().getInternalName(),
+			(isGlitch ? "g" : "") + Citybuild.current().getInternalName(),
 			player().chunkCoordX,
 			player().chunkCoordZ,
 			structure,
@@ -197,7 +196,7 @@ public class GUServer {
 
 	public static CompletableFuture<BSFSearchRequest.SearchResponse> searchBiome(boolean isGlitch, List<Integer> ids, List<Integer> excluded) {
 		return CompletableFuture.supplyAsync(() -> new BSFSearchRequest.Biome(
-			(isGlitch ? "g" : "") + MinecraftUtil.getCurrentCitybuild().getInternalName(),
+			(isGlitch ? "g" : "") + Citybuild.current().getInternalName(),
 			player().chunkCoordX,
 			player().chunkCoordZ,
 			ids,

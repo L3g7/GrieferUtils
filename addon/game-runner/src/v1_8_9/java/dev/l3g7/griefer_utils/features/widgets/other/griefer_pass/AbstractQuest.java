@@ -7,7 +7,6 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -53,7 +52,7 @@ abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 		if (!LabyBridge.labyBridge.inDevEnv() && mc().isIntegratedServerRunning())
 			return true;
 
-		Citybuild cb = MinecraftUtil.getCurrentCitybuild();
+		Citybuild cb = Citybuild.current();
 		return cb != Citybuild.ANY && cb != Citybuild.LAVA && cb != Citybuild.WATER;
 	}
 

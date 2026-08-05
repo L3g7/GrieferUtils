@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.chat.outgoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
@@ -56,15 +57,15 @@ public class BetterSwitch extends Feature {
 		if (matcher.matches()) {
 			event.cancel();
 
-			Citybuild cb = Citybuild.getCitybuild(matcher.group(1));
-			if (cb != Citybuild.ANY) {
-				if (!rejoin.get() && cb.isOnCb()) {
+			Option<Citybuild> cb = Citybuild.parse(matcher.group(1));
+			if (cb.isSet()) {
+				if (!rejoin.get() && cb.get().isOnCb()) {
 					command = matcher.group(2);
 					if (command != null)
 						send(command);
 				} else {
-					cb.join();
-					targetCitybuild = cb;
+					cb.get().join();
+					targetCitybuild = cb.get();
 					command = matcher.group(2);
 				}
 

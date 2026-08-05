@@ -53,6 +53,21 @@ public class Option<T> {
 		isSet = true;
 	}
 
+	public void set(Option<T> value) {
+		if (value.isSet)
+			set(value.value);
+		else
+			value.unset();
+	}
+
+	public void unset() {
+		if (!mutable)
+			return;
+
+		this.isSet = false;
+		this.value = null;
+	}
+
 	public boolean isSet() {
 		return isSet;
 	}
@@ -80,4 +95,5 @@ public class Option<T> {
 
 		return "Some(" + value + ")";
 	}
+
 }

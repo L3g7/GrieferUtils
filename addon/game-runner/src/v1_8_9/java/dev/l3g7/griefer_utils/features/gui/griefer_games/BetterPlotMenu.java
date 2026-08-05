@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.gui.griefer_games;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
@@ -73,8 +74,8 @@ public class BetterPlotMenu extends Feature {
 		if (stack == null || stack.getDisplayName() == null)
 			return;
 
-		Citybuild cb = Citybuild.getCitybuild(stack.getDisplayName().replaceAll("§.", ""));
-		if (cb == Citybuild.ANY)
+		Option<Citybuild> cb = Citybuild.parse(stack.getDisplayName().replaceAll("§.", ""));
+		if (cb.isUnset())
 			return;
 
 		String lore = ItemUtil.getLoreAtIndex(stack, 0);
@@ -82,7 +83,7 @@ public class BetterPlotMenu extends Feature {
 			return;
 
 		String plotAmount = lore.substring(2, lore.length() - " Grundstücke".length());
-		ItemStack targetStack = currentGuiPlots.itemStacks[cb.ordinal() - 1];
+		ItemStack targetStack = currentGuiPlots.itemStacks[cb.get().ordinal() - 1];
 		targetStack.stackSize = Integer.parseInt(plotAmount);
 		targetStack.setTagCompound(stack.getTagCompound());
 	}

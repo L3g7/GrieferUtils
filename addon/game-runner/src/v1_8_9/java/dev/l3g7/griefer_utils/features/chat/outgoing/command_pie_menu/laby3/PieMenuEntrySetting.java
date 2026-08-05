@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 
 public class PieMenuEntrySetting extends PieMenuSetting {
@@ -85,7 +84,7 @@ public class PieMenuEntrySetting extends PieMenuSetting {
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 
-		String cb = "§e[" + MinecraftUtil.getCitybuildAbbreviation(citybuild.get().getName()) + "] ";
+		String cb = "§e[" + citybuild.get().getAbbreviation() + "] ";
 		int cbWidth = DrawUtils.getStringWidth(cb);
 
 		String trimmedName = DrawUtils.trimStringToWidth(name.get(), maxX - x - 25 - 48);

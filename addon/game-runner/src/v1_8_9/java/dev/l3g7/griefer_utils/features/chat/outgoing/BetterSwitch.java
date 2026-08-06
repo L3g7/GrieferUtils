@@ -97,7 +97,7 @@ public class BetterSwitch extends Feature {
 		if (command == null)
 			return;
 
-		if (!targetCitybuild.matches(MinecraftUtil.getRawServer())) {
+		if (targetCitybuild != Citybuild.current()) {
 			command = null;
 			targetCitybuild = null;
 			return;

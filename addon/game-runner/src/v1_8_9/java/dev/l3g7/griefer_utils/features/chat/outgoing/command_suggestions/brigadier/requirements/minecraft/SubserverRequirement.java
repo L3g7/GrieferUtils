@@ -22,7 +22,7 @@ public class SubserverRequirement extends Requirement {
 			// Fall back to true
 			return true;
 
-		String server = Citybuild.getRawServer().trim();
+		String server = Citybuild.currentRaw().trim();
 		if (server.isEmpty())
 			// Fall back to true
 			return true;

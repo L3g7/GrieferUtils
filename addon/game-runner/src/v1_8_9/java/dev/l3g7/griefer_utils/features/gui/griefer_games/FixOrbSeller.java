@@ -127,7 +127,7 @@ public class FixOrbSeller extends Feature {
 			if (p.getYaw() != 62 || p.getPitch() != 26)
 				return;
 
-			Integer orbSellerId = cbToId.get(Citybuild.getRawServer());
+			Integer orbSellerId = cbToId.get(Citybuild.currentRaw());
 			if (orbSellerId != null && world().getEntityByID(orbSellerId) == null)
 				mc().addScheduledTask(() -> spawnOrbSeller(orbSellerId));
 
@@ -141,8 +141,8 @@ public class FixOrbSeller extends Feature {
 			for (S38PacketPlayerListItem.AddPlayerData entry : packet.getEntries()) {
 				if ("§6Händler".equals(entry.getProfile().getName())) {
 					orbSellerUUID = entry.getProfile().getId();
-					if (cbToId.containsKey(Citybuild.getRawServer()))
-						world().removeEntityFromWorld(cbToId.get(Citybuild.getRawServer()));
+					if (cbToId.containsKey(Citybuild.currentRaw()))
+						world().removeEntityFromWorld(cbToId.get(Citybuild.currentRaw()));
 					return;
 				}
 			}
@@ -151,7 +151,7 @@ public class FixOrbSeller extends Feature {
 		// Get the entity id of the original orb seller
 		if (event.packet instanceof S0CPacketSpawnPlayer packet && packet.getPlayer().equals(orbSellerUUID)) {
 			orbSellerUUID = null;
-			cbToId.put(Citybuild.getRawServer(), packet.getEntityID());
+			cbToId.put(Citybuild.currentRaw(), packet.getEntityID());
 			saveIds();
 		}
 	}

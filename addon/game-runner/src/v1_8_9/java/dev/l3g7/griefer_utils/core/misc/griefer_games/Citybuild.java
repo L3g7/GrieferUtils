@@ -112,7 +112,7 @@ public enum Citybuild implements Named {
 		if (this == ANY)
 			return true;
 
-		return matches(MinecraftUtil.getRawServer());
+		return current() == this;
 	}
 
 	public void join() {
@@ -124,7 +124,7 @@ public enum Citybuild implements Named {
 			return;
 		}
 
-		String cb = MinecraftUtil.getRawServer();
+		String cb = currentRaw();
 		if (cb.equals("Portal"))
 			ChatQueue.send("/hub");
 
@@ -175,28 +175,36 @@ public enum Citybuild implements Named {
 	}
 
 	public static Citybuild current() {
-		return Tracker.currentCitybuild.getOr(Citybuild.ANY);
+		return parse(Tracker.currentCitybuild)
+			.getOr(Citybuild.ANY);
+	}
+
+	/**
+	 * Raw citybuild data, to compare against Portal / Lobby.
+	 */
+	public static String currentRaw() {
+		return Tracker.currentCitybuild;
 	}
 
 	private static class Tracker {
 
-		private static final Option<Citybuild> currentCitybuild = Option.emptyMut();
+		private static String currentCitybuild = "";
 
 		@EventListener(priority = Priority.HIGH)
 		private static void onCitybuildInit(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
 			String[] lines = event.packet.getHeader().getFormattedText().split("\n");
 			if (lines.length != 3) {
-				currentCitybuild.unset();
+				currentCitybuild = "";
 				return;
 			}
 
 			String cbLine = lines[2].replaceAll("§.", "");
 			if (!cbLine.startsWith("Aktueller Server: ")) {
-				currentCitybuild.unset();
+				currentCitybuild = "";
 				return;
 			}
 
-			currentCitybuild.set(Citybuild.parse(cbLine.substring("Aktueller Server: ".length())));
+			currentCitybuild = cbLine.substring("Aktueller Server: ".length());
 		}
 	}
 }

@@ -33,7 +33,7 @@ import static net.minecraft.util.EnumFacing.*;
 class RoundHandler {
 
 	private static final EnumFacing[] HORIZONTALS = new EnumFacing[] {SOUTH, WEST, NORTH, EAST};
-	private static final List<String> excludedCitybuilds = ImmutableList.of("Nature", "Extreme", "Lava", "Wasser", "CBE");
+	private static final List<Citybuild> excludedCitybuilds = ImmutableList.of(Citybuild.NATURE, Citybuild.EXTREME, Citybuild.LAVA, Citybuild.WATER, Citybuild.CBE);
 	private static final byte[] quadrantData = new byte[] {
 		-1, -1,
 		-1, +1,
@@ -150,7 +150,7 @@ class RoundHandler {
 	}
 
 	private void determineSpawn(BlockPos pos) {
-		if (excludedCitybuilds.contains(Citybuild.getRawServer()))
+		if (excludedCitybuilds.contains(Citybuild.current()))
 			return;
 
 		for (EnumFacing f : HORIZONTALS) {
@@ -169,7 +169,7 @@ class RoundHandler {
 	}
 
 	private boolean isSpawnMiddle(BlockPos pos) {
-		Block targetBlock = Citybuild.getRawServer().equals("Event") ? Blocks.quartz_block : Blocks.stonebrick;
+		Block targetBlock = Citybuild.current() == Citybuild.EVENT ? Blocks.quartz_block : Blocks.stonebrick;
 		return world().getBlockState(pos).getBlock() == targetBlock;
 	}
 

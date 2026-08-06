@@ -267,7 +267,10 @@ public class BotshopGUI extends GuiBigChest {
 	private double bankBal() {
 		double balance = 0;
 		try {
-			balance = Double.parseDouble(world().getScoreboard().getTeam("money_value").getColorPrefix().replaceAll("[$.]", "").replace(",", "."));
+			balance = Double.parseDouble(world().getScoreboard().getTeam("money_value").getColorPrefix()
+				.replaceAll("§.", "")
+				.replaceAll("[$.]", "")
+				.replace(",", "."));
 		} catch (NumberFormatException ignored) {}
 		return balance;
 	}

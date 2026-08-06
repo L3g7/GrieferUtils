@@ -21,6 +21,10 @@ import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.show
 
 public class GrieferUtilsRankBadgeRenderer extends RankBadgeRenderer {
 
+	public GrieferUtilsRankBadgeRenderer() {
+		super(false);
+	}
+
 	@Override
 	public void render(ScreenContext context, float x, float y, NetworkPlayerInfo player) {
 		UUID uuid = player.profile().getUniqueId();

@@ -1,10 +1,10 @@
 rootProject.name = "GrieferUtils"
 
 pluginManagement {
-	val labyGradlePluginVersion = "0.8.1"
+	val labyGradlePluginVersion = "0.6.2"
 	buildscript {
         repositories {
-            maven("https://maven.laby.net/api/v1/maven/release/")
+            maven("https://dist.labymod.net/api/v1/maven/release/")
 			maven("https://jitpack.io/")
 			maven("https://maven.neoforged.net/releases/")
 			maven("https://maven.fabricmc.net/")

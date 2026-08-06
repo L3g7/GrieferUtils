@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.render.ScaledResolutionInitEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
-import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -238,14 +237,11 @@ public class MinecraftUtil {
 	}
 
 	private static String extractCitybuild(S47PacketPlayerListHeaderFooter packet) {
-		if (!ServerCheck.isOnGrieferGames())
-			return "";
-
 		String[] lines = packet.getHeader().getFormattedText().split("\n");
 		if (lines.length != 3)
 			return "";
 
-		String cbLine = lines[2].replaceAll(".§", "");
+		String cbLine = lines[2].replaceAll("§.", "");
 		if (!cbLine.startsWith("Aktueller Server: "))
 			return "";
 

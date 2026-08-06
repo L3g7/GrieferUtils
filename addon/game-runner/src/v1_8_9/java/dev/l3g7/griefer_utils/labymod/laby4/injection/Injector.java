@@ -11,14 +11,22 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
 import net.labymod.api.Laby;
 import net.labymod.api.addon.LoadedAddon;
+import net.labymod.api.addon.entrypoint.Entrypoint;
+import net.labymod.api.loader.platform.PlatformClassTransformer;
+import net.labymod.api.models.addon.annotation.AddonEntryPoint;
+import net.labymod.api.models.addon.annotation.EarlyAddonTransformer;
+import net.labymod.api.models.version.Version;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 
 import java.util.Set;
 
-public class Injector extends InjectorBase implements IClassTransformer {
+@AddonEntryPoint
+@EarlyAddonTransformer
+public class Injector extends InjectorBase implements Entrypoint, IClassTransformer, PlatformClassTransformer {
 
-	public Injector() {
+	@Override
+	public void initialize(Version version) {
 		// Enable mixing into LabyMod's classes
 		Set<String> transformerExceptions = Reflection.get(Launch.classLoader, "transformerExceptions");
 		transformerExceptions.remove("net.labymod.core.");

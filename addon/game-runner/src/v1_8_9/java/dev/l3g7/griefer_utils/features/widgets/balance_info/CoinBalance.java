@@ -42,7 +42,10 @@ public class CoinBalance extends SimpleWidget {
 		if (!money.endsWith("$")) // Still loading
 			return;
 
-		money = money.substring(0, money.length() - 1).replace(".", "").replace(",", ".");
+		money = money.substring(0, money.length() - 1)
+			.replaceAll("§.", "")
+			.replace(".", "")
+			.replace(",", ".");
 		coins = Double.parseDouble(money);
 	}
 

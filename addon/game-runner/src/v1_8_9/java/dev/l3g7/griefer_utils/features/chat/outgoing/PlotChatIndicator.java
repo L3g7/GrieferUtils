@@ -13,7 +13,7 @@ import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.DrawScreenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
@@ -31,7 +31,7 @@ import net.minecraft.client.gui.GuiScreen;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.*;
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**

@@ -2,7 +2,7 @@ package dev.l3g7.griefer_utils.features.widgets.other.griefer_pass;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.events.ApproximateEntityKillEvent;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockBrokeEvent;

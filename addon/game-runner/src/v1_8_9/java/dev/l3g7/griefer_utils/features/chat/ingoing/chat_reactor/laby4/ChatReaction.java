@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.features.chat.ingoing.chat_reactor.laby4;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 
 import java.util.regex.Matcher;

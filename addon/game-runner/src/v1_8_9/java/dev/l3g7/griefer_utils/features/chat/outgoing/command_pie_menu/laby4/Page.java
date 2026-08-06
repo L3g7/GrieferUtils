@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.outgoing.command_pie_menu.laby4;
 
-import dev.l3g7.griefer_utils.core.api.misc.Citybuild;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 
 import java.util.List;
 

@@ -23,8 +23,8 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.ANY;
-import static dev.l3g7.griefer_utils.core.api.misc.Citybuild.MAGIC_FOREST;
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.ANY;
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.MAGIC_FOREST;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 public class GuiBSF extends GuiBigChest {

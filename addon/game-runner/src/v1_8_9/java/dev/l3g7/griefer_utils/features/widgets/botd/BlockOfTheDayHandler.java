@@ -9,17 +9,15 @@ package dev.l3g7.griefer_utils.features.widgets.botd;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.S04PacketEntityEquipment;
 import net.minecraft.util.ResourceLocation;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import java.util.List;
 
 /**
  * Gathers the current item displayed by the "Block des Tages"-GUI and reports it to the server.
@@ -32,16 +30,26 @@ public class BlockOfTheDayHandler {
 	static boolean isEvent = true;
 
 	@EventListener
-	public static void onTick(ClientTickEvent e) {
-		if (!(mc().currentScreen instanceof GuiChest))
+	private static void onEquipment(PacketReceiveEvent<S04PacketEntityEquipment> event) {
+		if (event.packet.getEquipmentSlot() != 4)
 			return;
 
-		IInventory inventory = Reflection.get(mc().currentScreen, "lowerChestInventory");
-		if (!inventory.getDisplayName().getFormattedText().equals("§6Block des Tages§r"))
+		ItemStack stack = event.packet.getItemStack();
+		if (stack == null)
 			return;
 
-		if (inventory.getSizeInventory() != 27 || inventory.getStackInSlot(13) == null)
+		List<String> lore = ItemUtil.getLore(stack);
+		if (lore.size() < 3)
 			return;
+
+		String lastLore = lore.get(lore.size() - 1).replaceAll("§.", "").toLowerCase();
+		String secondLastLore = lore.get(lore.size() - 2).replaceAll("§.", "").toLowerCase();
+
+		if (!(secondLastLore.equals("baue diesen block ab, um mit etwas") && lastLore.equals("glück einen gewinn zu bekommen."))
+			&& !lastLore.startsWith("event:"))
+			return;
+
+		// It's a block of the day item :D
 
 		long now = System.currentTimeMillis() / 1000;
 		long currentDay = now / 86400 * 86400 + 7200; // Updates happen at 02:00 GMT+0 every night
@@ -51,12 +59,11 @@ public class BlockOfTheDayHandler {
 		if (lastReportedBlock == currentDay)
 			return;
 
-		lastReportedBlock = currentDay;
-		ItemStack stack = inventory.getStackInSlot(13);
 		if (stack.getDisplayName().replaceAll("§.", "").toLowerCase().startsWith("fehler"))
 			return;
 
-		String lastLore = ItemUtil.getLastLore(stack).replaceAll("§.", "");
+		lastReportedBlock = currentDay;
+
 		String bdtEvent = null;
 
 		if (lastLore.toLowerCase().startsWith("event:"))

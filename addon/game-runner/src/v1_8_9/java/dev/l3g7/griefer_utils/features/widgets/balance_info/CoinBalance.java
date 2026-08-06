@@ -7,22 +7,18 @@
 
 package dev.l3g7.griefer_utils.features.widgets.balance_info;
 
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
+import dev.l3g7.griefer_utils.core.api.misc.Option;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Balances;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
-import net.minecraft.network.play.server.S3EPacketTeams;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import java.math.BigDecimal;
 
 @Singleton
 public class CoinBalance extends SimpleWidget {
-
-	private static double coins = -1;
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -30,31 +26,13 @@ public class CoinBalance extends SimpleWidget {
 		.description("Zeigt den Kontostand an.")
 		.icon("coin");
 
-	@EventListener(triggerWhenDisabled = true)
-	public void onPacket(PacketReceiveEvent<S3EPacketTeams> event) {
-		if (world() == null)
-			return;
-
-		if (!event.packet.getName().equals("money_value") || event.packet.getAction() != 2 || Citybuild.getRawServer().equals("Portal"))
-			return;
-
-		String money = event.packet.getPrefix();
-		if (!money.endsWith("$")) // Still loading
-			return;
-
-		money = money.substring(0, money.length() - 1)
-			.replaceAll("§.", "")
-			.replace(".", "")
-			.replace(",", ".");
-		coins = Double.parseDouble(money);
-	}
-
 	@Override
 	public String getValue() {
-		if (coins == -1)
+		Option<BigDecimal> balance = Balances.getBalance();
+		if (balance.isUnset())
 			return "?";
 
-		return Constants.DECIMAL_FORMAT_98.format(coins) + "$";
+		return Constants.DECIMAL_FORMAT_98.format(balance) + "$";
 	}
 
 }

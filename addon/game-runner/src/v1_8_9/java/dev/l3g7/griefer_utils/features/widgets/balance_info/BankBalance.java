@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.widgets.balance_info;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Option;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.ScoreboardSource;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Balances;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
@@ -27,11 +27,7 @@ public class BankBalance extends SimpleWidget {
 
 	@Override
 	public String getValue() {
-		Option<Long> balance = ScoreboardSource.getBankBalance();
-		if (balance.isUnset())
-			return "?";
-
-		return DECIMAL_FORMAT_98.format(balance.get()) + "$";
+		return DECIMAL_FORMAT_98.format(Balances.getBankBalance()) + "$";
 	}
 
 }

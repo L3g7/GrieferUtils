@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.JoinCooldownTimer;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Balances;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
@@ -29,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -68,8 +70,8 @@ public class BotshopGUI extends GuiBigChest {
 	List<Double> prices = new ArrayList<>();
 
 
-	private float price() {
-		return (float) prices.stream().flatMapToDouble(DoubleStream::of).sum();
+	private double price() {
+		return prices.stream().flatMapToDouble(DoubleStream::of).sum();
 	}
 
 	private String priceStr() {
@@ -264,15 +266,9 @@ public class BotshopGUI extends GuiBigChest {
 			addItem(i, null, null);
 	}
 
-	private double bankBal() {
-		double balance = 0;
-		try {
-			balance = Double.parseDouble(world().getScoreboard().getTeam("money_value").getColorPrefix()
-				.replaceAll("§.", "")
-				.replaceAll("[$.]", "")
-				.replace(",", "."));
-		} catch (NumberFormatException ignored) {}
-		return balance;
+	private BigDecimal balance() {
+		return Balances.getBalance()
+			.getOr(BigDecimal.valueOf(Long.MAX_VALUE)); // Fail open
 	}
 
 	protected void updatePage() {
@@ -287,7 +283,9 @@ public class BotshopGUI extends GuiBigChest {
 			BABItem item = boughtIterator.next();
 			setBoughtItem(item, i);
 		}
-		if (price() > bankBal()) {
+
+		boolean notEnoughMoney = new BigDecimal(price()).compareTo(balance()) > 0;
+		if (notEnoughMoney) {
 			this.setGuiTitle("§4§l" + priceStr());
 		} else {
 			this.setGuiTitle("§0" + priceStr());
@@ -300,7 +298,7 @@ public class BotshopGUI extends GuiBigChest {
 
 		if (!JoinCooldownTimer.isCooldownExpired()) {
 			addTextureItem(28, new TextureItem("hourglass", "§4§lGesperrt", "§fBitte warte noch " + JoinCooldownTimer.getRemainingSeconds() + " Sekunden!"), null);
-		} else if (price() > bankBal()) {
+		} else if (notEnoughMoney) {
 			addTextureItem(28, new TextureItem("crossed_out_gold_ingot", "§4§lGesperrt", "§fNicht genügend Guthaben"), null);
 		} else if (!boughtItems.isEmpty()) {
 			addTextureItem(28, new TextureItem("bundle", "§a§lKaufen (" + priceStr() + ")", "§fBestätige deinen Einkauf"), () -> {

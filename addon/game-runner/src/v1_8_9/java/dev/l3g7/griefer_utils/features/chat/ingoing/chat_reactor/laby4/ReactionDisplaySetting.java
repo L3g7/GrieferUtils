@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.chat.ingoing.chat_reactor.laby4;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
@@ -39,7 +39,7 @@ public class ReactionDisplaySetting extends SwitchSettingImpl {
 	}
 
 	public void initDisplay() {
-		name(reaction.trigger, "§e[" + MinecraftUtil.getCitybuildAbbreviation(reaction.citybuild.getName()) + "] §r§o➡ " + reaction.command);
+		name(reaction.trigger, "§e[" + reaction.citybuild.getAbbreviation() + "] §r§o➡ " + reaction.command);
 		icon(reaction.regEx ? "cpu" : "book_and_quill");
 		set(reaction.enabled);
 	}

@@ -11,8 +11,8 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import net.minecraft.network.play.server.S3EPacketTeams;
@@ -35,7 +35,7 @@ public class CoinBalance extends SimpleWidget {
 		if (world() == null)
 			return;
 
-		if (!event.packet.getName().equals("money_value") || event.packet.getAction() != 2 || MinecraftUtil.getRawServer().equals("Portal"))
+		if (!event.packet.getName().equals("money_value") || event.packet.getAction() != 2 || Citybuild.getRawServer().equals("Portal"))
 			return;
 
 		String money = event.packet.getPrefix();

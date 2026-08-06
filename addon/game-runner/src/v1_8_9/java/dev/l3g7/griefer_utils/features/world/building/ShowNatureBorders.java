@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.util.BlockPos;
@@ -38,7 +37,7 @@ public class ShowNatureBorders extends Feature {
 
 	@EventListener
 	public void onRender(RenderWorldLastEvent ignored) {
-		Citybuild currentCB = MinecraftUtil.getCurrentCitybuild();
+		Citybuild currentCB = Citybuild.current();
 		if (currentCB != Citybuild.EXTREME && currentCB != Citybuild.NATURE)
 			return;
 

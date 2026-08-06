@@ -26,7 +26,7 @@ public class BotShop {
 
 	public static BotShop fromJson(JsonObject object) {
 		String name = object.get("name").getAsString();
-		Citybuild cb = Citybuild.getCitybuild(object.get("cb").getAsString());
+		Citybuild cb = Citybuild.parseSafe(object.get("cb").getAsString());
 		boolean buying = object.get("ankauf").getAsInt() == 1;
 		boolean selling = object.get("verkauf").getAsInt() == 1;
 
@@ -55,7 +55,7 @@ public class BotShop {
 	public void addItemStack(GuiBigChest chest, int id, boolean isCbFiltered) {
 		String name = "§6§n" + this.name;
 		if (!isCbFiltered)
-			name = String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getName()), name);
+			name = String.format("§e[%s] %s", cb.getAbbreviation(), name);
 
 		String texture = "high_res/wallets/";
 		if (buying) texture += "in";

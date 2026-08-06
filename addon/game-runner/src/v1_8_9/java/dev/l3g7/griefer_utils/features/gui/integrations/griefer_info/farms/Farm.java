@@ -35,7 +35,7 @@ public class Farm {
 
 	public static Farm fromJson(JsonObject object) {
 		String name = object.get("name").getAsString();
-		Citybuild cb = Citybuild.getCitybuild(object.get("cb").getAsString());
+		Citybuild cb = Citybuild.parseSafe(object.get("cb").getAsString());
 		String freeStuff = object.get("freestuff").getAsString();
 		freeStuff = freeStuff.isEmpty() ? null : freeStuff.substring("/freestuff/view?id=".length());
 
@@ -130,7 +130,7 @@ public class Farm {
 
 		stack.setStackDisplayName("§6§n" + name);
 		if (!isCbFiltered)
-			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getName()), stack.getDisplayName()));
+			stack.setStackDisplayName(String.format("§e[%s] %s", cb.getAbbreviation(), stack.getDisplayName()));
 
 		TreeMap<SpawnerType, AtomicInteger> spawner = new TreeMap<>(Comparator.comparing(s -> s.germanName));
 		NBTTagList textureList = new NBTTagList();

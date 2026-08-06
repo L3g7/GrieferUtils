@@ -14,10 +14,10 @@ import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.data.BSFSearchable;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.gui.GuiBSF;
@@ -53,7 +53,7 @@ public class BSF extends Feature {
 				.center());
 
 	public static String getCurrentCBString() {
-		return (isInGlitchwelt() ? "g" : "") + MinecraftUtil.getCurrentCitybuild().getInternalName();
+		return (isInGlitchwelt() ? "g" : "") + Citybuild.current().getInternalName();
 	}
 
 	public static boolean hasData() {

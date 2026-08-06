@@ -52,7 +52,7 @@ public class ChatReaction {
 		reaction.matchAll = object.get("match_all").getAsBoolean();
 		reaction.trigger = object.get("trigger").getAsString();
 		reaction.command = object.get("command").getAsString();
-		reaction.citybuild = Citybuild.getCitybuild(object.get("city_build").getAsString());
+		reaction.citybuild = Citybuild.parseSafe(object.get("city_build").getAsString());
 		reaction.completed = true;
 		return reaction;
 	}

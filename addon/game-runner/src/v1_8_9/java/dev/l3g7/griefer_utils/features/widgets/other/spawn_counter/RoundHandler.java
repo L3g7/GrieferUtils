@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
@@ -149,7 +150,7 @@ class RoundHandler {
 	}
 
 	private void determineSpawn(BlockPos pos) {
-		if (excludedCitybuilds.contains(getRawServer()))
+		if (excludedCitybuilds.contains(Citybuild.getRawServer()))
 			return;
 
 		for (EnumFacing f : HORIZONTALS) {
@@ -168,7 +169,7 @@ class RoundHandler {
 	}
 
 	private boolean isSpawnMiddle(BlockPos pos) {
-		Block targetBlock = getRawServer().equals("Event") ? Blocks.quartz_block : Blocks.stonebrick;
+		Block targetBlock = Citybuild.getRawServer().equals("Event") ? Blocks.quartz_block : Blocks.stonebrick;
 		return world().getBlockState(pos).getBlock() == targetBlock;
 	}
 

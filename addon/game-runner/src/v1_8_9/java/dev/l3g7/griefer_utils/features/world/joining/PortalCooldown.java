@@ -13,8 +13,8 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
@@ -38,7 +38,7 @@ public class PortalCooldown extends Feature {
 			timeoutEnd = System.currentTimeMillis() + 12_000;
 		}
 
-		if (!MinecraftUtil.getRawServer().equals("Portal"))
+		if (!Citybuild.getRawServer().equals("Portal"))
 			return;
 
 		if ((msg.startsWith("§r§cKicked whilst connecting") && !msg.contains("Du hast dich zu schnell wieder eingeloggt."))

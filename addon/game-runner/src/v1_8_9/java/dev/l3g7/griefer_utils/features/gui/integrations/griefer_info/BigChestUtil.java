@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.features.gui.integrations.griefer_info;
 
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.item.ItemStack;
 
 import java.util.HashMap;
@@ -40,7 +39,7 @@ public class BigChestUtil {
 	}
 
 	public static char toAbbreviation(Citybuild citybuild) {
-		String abbreviationString = MinecraftUtil.getCitybuildAbbreviation(citybuild.getName());
+		String abbreviationString = citybuild.getAbbreviation();
 
 		try { // Ensure natural order is kept
 			return (char) Integer.parseInt(abbreviationString);

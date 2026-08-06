@@ -66,7 +66,7 @@ public class EntryListSetting extends ListSetting implements Laby4Setting<EntryL
 				EntryConfig entry = new EntryConfig();
 				entry.name.set(obj.get("name").getAsString());
 				entry.command.set(obj.get("command").getAsString());
-				entry.citybuild.set(Citybuild.getCitybuild(obj.get("cb").getAsString()));
+				entry.citybuild.set(Citybuild.parseSafe(obj.get("cb").getAsString()));
 				v.add(entry);
 			}
 			return v;

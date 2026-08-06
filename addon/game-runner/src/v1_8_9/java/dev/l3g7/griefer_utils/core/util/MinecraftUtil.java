@@ -124,27 +124,6 @@ public class MinecraftUtil {
 		return currentServer;
 	}
 
-	public static Citybuild getCurrentCitybuild() {
-		return Citybuild.getCitybuild(getRawServer());
-	}
-
-	public static String getCitybuildAbbreviation(String citybuild) {
-		if (citybuild.startsWith("CB"))
-			return citybuild.substring(2);
-		if (citybuild.startsWith("Citybuild "))
-			return citybuild.substring(10);
-
-		return switch (citybuild) {
-			case "Nature" -> "N";
-			case "Extreme" -> "X";
-			case "Evil" -> "E";
-			case "Wasser" -> "W";
-			case "Lava" -> "L";
-			case "Event" -> "V";
-			default -> "*";
-		};
-	}
-
 	public static long getNextServerRestart() {
 		long time = System.currentTimeMillis();
 		long reset = time - time % (24 * HOUR) + (2 * HOUR); // Get timestamp for 02:00 UTC on the current day
@@ -230,22 +209,6 @@ public class MinecraftUtil {
 	@EventListener
 	private static void onScaledResolutionInit(ScaledResolutionInitEvent event) {
 		currentResolution = event.scaledResolution;
-	}
-	@EventListener
-	private static void onScaledResolutionInit(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
-		currentServer = extractCitybuild(event.packet);
-	}
-
-	private static String extractCitybuild(S47PacketPlayerListHeaderFooter packet) {
-		String[] lines = packet.getHeader().getFormattedText().split("\n");
-		if (lines.length != 3)
-			return "";
-
-		String cbLine = lines[2].replaceAll("§.", "");
-		if (!cbLine.startsWith("Aktueller Server: "))
-			return "";
-
-		return cbLine.substring("Aktueller Server: ".length());
 	}
 
 }

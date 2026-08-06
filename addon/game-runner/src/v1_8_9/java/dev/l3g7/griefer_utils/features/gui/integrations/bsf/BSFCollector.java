@@ -135,7 +135,7 @@ public class BSFCollector {
 		int cz = origin.getZ() >> 4;
 
 		HashSet<Chunk> diagonalEnds = new HashSet<>();
-		Citybuild cb = getCurrentCitybuild();
+		Citybuild cb = Citybuild.current();
 		if (cb == Citybuild.ANY)
 			return true;
 
@@ -209,7 +209,7 @@ public class BSFCollector {
 
 			// Prefer processing current cb next
 			synchronized (processQueue) {
-				Optional<ProcessData> currentData = processQueue.stream().filter(p -> p.cb.equals(getCurrentCitybuild()) && p.isGlitch == isGlitch).findAny();
+				Optional<ProcessData> currentData = processQueue.stream().filter(p -> p.cb.equals(Citybuild.current()) && p.isGlitch == isGlitch).findAny();
 				ProcessData next = currentData.orElseGet(processQueue::peek);
 				processQueue.remove(next);
 

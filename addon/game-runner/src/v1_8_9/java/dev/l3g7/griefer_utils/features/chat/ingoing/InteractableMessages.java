@@ -86,7 +86,7 @@ public class InteractableMessages extends Feature {
 			if (sibling.getUnformattedTextForChat().equals(cb)) {
 				IChatComponent hoverText = new ChatComponentText("Klicke, um auf den CB zu wechseln");
 				hoverText.getChatStyle().setColor(EnumChatFormatting.GOLD);
-				addRunCommand(sibling, "/switch " + Citybuild.getCitybuild(cb).getInternalName(), hoverText);
+				addRunCommand(sibling, "/switch " + Citybuild.parseSafe(cb).getInternalName(), hoverText);
 
 				foundCb = true;
 				if (clan == null)

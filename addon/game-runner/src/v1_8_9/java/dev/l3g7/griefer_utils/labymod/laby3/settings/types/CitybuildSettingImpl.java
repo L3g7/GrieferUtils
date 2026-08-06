@@ -51,7 +51,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 		}
 
 		return new JsonPrimitive(name);
-	}, e -> Citybuild.getCitybuild(e.getAsString()), ANY);
+	}, e -> Citybuild.parseSafe(e.getAsString()), ANY);
 
 	@Override
 	public ExtendedStorage<Citybuild> getStorage() {

@@ -34,7 +34,7 @@ public class FreeStuff {
 
 	public static FreeStuff fromJson(JsonObject object) {
 		String name = object.get("name").getAsString();
-		Citybuild cb = Citybuild.getCitybuild(object.get("cb").getAsString());
+		Citybuild cb = Citybuild.parseSafe(object.get("cb").getAsString());
 		String id = object.get("id").getAsString();
 		String farm = object.get("farm").getAsString();
 		farm = farm.isEmpty() ? null : farm.substring("/farm/".length());
@@ -79,7 +79,7 @@ public class FreeStuff {
 
 		stack.setStackDisplayName("§6§n" + name);
 		if (!isCbFiltered)
-			stack.setStackDisplayName(String.format("§e[%s] %s", MinecraftUtil.getCitybuildAbbreviation(cb.getName()), stack.getDisplayName()));
+			stack.setStackDisplayName(String.format("§e[%s] %s", cb.getAbbreviation(), stack.getDisplayName()));
 
 		boolean fancy = LABY_4.isActive() && Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
 		List<String> lines = items.keySet().stream().map(it -> (fancy ? "  " : "") +  "  §f" + it.germanName).collect(Collectors.toList());

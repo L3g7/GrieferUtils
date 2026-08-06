@@ -109,7 +109,7 @@ public class PieMenuPageSetting extends PieMenuSetting {
 			entrySettings.add(new PieMenuEntrySetting(
 				data.get("name").getAsString(),
 				data.get("command").getAsString(),
-				Citybuild.getCitybuild(data.get("cb").getAsString())
+				Citybuild.parseSafe(data.get("cb").getAsString())
 			));
 		}
 

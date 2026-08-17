@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Balances.getBalance;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
@@ -151,10 +152,6 @@ public class Calculator extends Feature {
 		placeholderPattern = Pattern.compile(String.format("(?<!\\\\)(?<match>%s(?<equation>[^%s", start, patternEnd));
 		escapedPlaceholderPattern = String.format("\\\\(%s|%s)", start, end);
 
-	}
-
-	private BigDecimal getBalance() {
-		return Balances.getBalance().getOr(BigDecimal.ZERO);
 	}
 
 	@EventListener
@@ -286,7 +283,7 @@ public class Calculator extends Feature {
 			return;
 		}
 
-		if (!ServerCheck.isOnGrieferGames() || world() == null || Balances.getBalance().isUnset())
+		if (!ServerCheck.isOnGrieferGames() || world() == null)
 			return;
 
 		// Save payment (for auto-withdraw)

@@ -265,11 +265,6 @@ public class BotshopGUI extends GuiBigChest {
 			addItem(i, null, null);
 	}
 
-	private BigDecimal balance() {
-		return Balances.getBalance()
-			.getOr(BigDecimal.valueOf(Long.MAX_VALUE)); // Fail open
-	}
-
 	protected void updatePage() {
 		clearItems();
 
@@ -283,7 +278,7 @@ public class BotshopGUI extends GuiBigChest {
 			setBoughtItem(item, i);
 		}
 
-		boolean notEnoughMoney = new BigDecimal(price()).compareTo(balance()) > 0;
+		boolean notEnoughMoney = new BigDecimal(price()).compareTo(Balances.getBalance()) > 0;
 		if (notEnoughMoney) {
 			this.setGuiTitle("§4§l" + priceStr());
 		} else {

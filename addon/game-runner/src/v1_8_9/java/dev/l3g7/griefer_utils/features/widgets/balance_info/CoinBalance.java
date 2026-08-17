@@ -9,13 +9,10 @@ package dev.l3g7.griefer_utils.features.widgets.balance_info;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Balances;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
-
-import java.math.BigDecimal;
 
 @Singleton
 public class CoinBalance extends SimpleWidget {
@@ -28,11 +25,7 @@ public class CoinBalance extends SimpleWidget {
 
 	@Override
 	public String getValue() {
-		Option<BigDecimal> balance = Balances.getBalance();
-		if (balance.isUnset())
-			return "?";
-
-		return Constants.DECIMAL_FORMAT_98.format(balance.get()) + "$";
+		return Constants.DECIMAL_FORMAT_98.format(Balances.getBalance()) + "$";
 	}
 
 }

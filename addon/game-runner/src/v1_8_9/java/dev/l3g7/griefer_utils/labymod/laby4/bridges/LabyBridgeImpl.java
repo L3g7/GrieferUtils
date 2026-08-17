@@ -20,8 +20,6 @@ import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
-import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
@@ -34,7 +32,6 @@ import net.labymod.api.event.client.chat.ChatReceiveEvent;
 import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
 import net.labymod.api.event.client.network.server.ServerDisconnectEvent;
 import net.labymod.api.event.client.network.server.ServerJoinEvent;
-import net.labymod.api.event.client.session.SessionUpdateEvent;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.notification.Notification;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
@@ -204,11 +201,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void syncTabList(NetworkPlayerInfo info) {
 		Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME));
-	}
-
-	@OnEnable
-	public static void registerEvents() {
-		Laby4Util.register(SessionUpdateEvent.class, v -> new AccountSwitchEvent().fire());
 	}
 
 }

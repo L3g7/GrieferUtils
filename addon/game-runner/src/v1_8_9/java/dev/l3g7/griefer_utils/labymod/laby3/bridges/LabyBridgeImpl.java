@@ -208,15 +208,4 @@ public class LabyBridgeImpl implements LabyBridge {
 		// No-op
 	}
 
-	@ExclusiveTo(LABY_3)
-	@Mixin(LabyMod.class)
-	private static class MixinLabyMod {
-
-		@Inject(method = "setSession", at = @At("TAIL"), remap = false)
-		public void injectSetSession(Account account, CallbackInfo ci) {
-			new AccountSwitchEvent().fire();
-		}
-
-	}
-
 }

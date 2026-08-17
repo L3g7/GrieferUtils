@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-import static dev.l3g7.griefer_utils.core.misc.badges.laby4.Laby4BadgeManager.icon;
+import static dev.l3g7.griefer_utils.core.misc.badges.Badges.icon;
 
 public class GrieferUtilsGroupIconTag extends GroupIconTag {
 

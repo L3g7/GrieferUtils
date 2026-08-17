@@ -18,18 +18,20 @@ import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddE
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import io.netty.util.internal.ConcurrentSet;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager.badgeManager;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showPercentage;
 
 public class Badges {
+
+	public static String icon = "icon";
 
 	public record SpecialBadge(String title, int colorWithLabymod, int colorWithoutLabymod) {
 		public static final SpecialBadge DEFAULT_BADGE = new SpecialBadge(null, 0xFFFFFF, 0xFFFFFF);
@@ -110,28 +112,18 @@ public class Badges {
 
 	}
 
-	public static void renderBadge(SpecialBadge badge, String icon, boolean revealFamiliarUsers, double x, double y) {
-		Color color = new Color(revealFamiliarUsers ? badge.colorWithLabymod() : badge.colorWithoutLabymod());
-
-		if (icon.equals("icon"))
-			GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1);
-
-		GlStateManager.enableAlpha();
-		GlStateManager.enableBlend();
-		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/high_res/" + icon + ".png"));
-		DrawUtils.drawTexture(x, y, 255, 255, 8, 8, 1.1f);
-		GlStateManager.color(1, 1, 1, 1);
-	}
-
 	public static void renderUserPercentage(double rightEnd) {
-		if (!showBadges() || !dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showPercentage.get())
+		if (!showBadges() || !showPercentage.get())
 			return;
 
 		double y = mc().fontRendererObj.FONT_HEIGHT;
+		NetHandlerPlayClient netHandler = mc().getNetHandler();
+		if (netHandler == null)
+			return;
 
-		int totalCount = mc().getNetHandler().getPlayerInfoMap().size();
+		int totalCount = netHandler.getPlayerInfoMap().size();
 		int userCount = 0;
-		for (NetworkPlayerInfo npi : mc().getNetHandler().getPlayerInfoMap())
+		for (NetworkPlayerInfo npi : netHandler.getPlayerInfoMap())
 			if (Badges.isOnline(npi.getGameProfile().getId()))
 				userCount++;
 
@@ -139,7 +131,7 @@ public class Badges {
 		String text = GUServer.isAvailable() ? String.format("§7%d§8/§7%d §a%d%%", userCount, totalCount, percent) : "§c?";
 		DrawUtils.drawRightString(text, rightEnd, 1.5 + y, 0.7);
 
-		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/high_res/icon.png"));
+		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/high_res/" + icon + ".png"));
 		rightEnd -= mc().fontRendererObj.getStringWidth(text) * 0.7;
 		DrawUtils.drawTexture(rightEnd - 8, 1.25 + y, 256, 256, 7, 7);
 	}

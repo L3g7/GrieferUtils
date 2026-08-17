@@ -48,8 +48,6 @@ public class Laby4BadgeManager implements BadgeManager {
 
 	public static Group GRIEFERUTILS_GROUP = new Group(99, "grieferutils", "GrieferUtils", "FFFFFF", 'f', "", "", false);
 
-	public static String icon = "icon";
-
 	@OnEnable
 	private void overrideBadgeRenderer() {
 		BadgeRegistry badges = Laby.references().badgeRegistry();

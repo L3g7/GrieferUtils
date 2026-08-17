@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.badges.laby3.GrieferUtilsGroup;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
@@ -32,6 +31,7 @@ import java.util.*;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.misc.badges.Badges.icon;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
@@ -150,10 +150,9 @@ public class MainPage {
 						if (!(mc().currentScreen instanceof LabyModAddonsGui))
 							return;
 
-						boolean activate = GrieferUtilsGroup.getIcon().equals("icon");
-						GrieferUtilsGroup.setIcon(activate ? filter.get() : "icon");
+						icon = icon.equals("icon") ? filter.get() : "icon";
 						filter.set("");
-						labyBridge.notify("§aEaster Egg", "Easter Egg wurde " + (!activate ? "de" : "") + "aktiviert.");
+						labyBridge.notify("§aEaster Egg", "Easter Egg wurde " + (icon.equals("icon") ? "de" : "") + "aktiviert.");
 						if (world() != null)
 							MinecraftUtil.closeClientsideGUI();
 

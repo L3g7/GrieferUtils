@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public class LabyMod3TokenProvider implements TokenProvider { // TODO: Support for Laby 4 accounts
+public class LabyMod3TokenProvider implements TokenProvider {
 
 	@Override
 	public boolean load() {

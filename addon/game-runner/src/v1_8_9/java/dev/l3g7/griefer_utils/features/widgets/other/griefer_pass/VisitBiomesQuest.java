@@ -13,6 +13,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 
@@ -28,8 +30,13 @@ public class VisitBiomesQuest extends AbstractQuest {
 
 	@EventListener
 	private void onTick(TickEvent.ClientTickEvent event) {
-		BlockPos playerPos = new BlockPos(player().posX, player().posY, player().posZ);
-		Chunk chunk = world().getChunkFromBlockCoords(playerPos);
+		EntityPlayerSP player = player();
+		WorldClient world = world();
+		if (player == null || world == null)
+			return;
+
+		BlockPos playerPos = new BlockPos(player.posX, player.posY, player.posZ);
+		Chunk chunk = world.getChunkFromBlockCoords(playerPos);
 		int x = playerPos.getX() & 15;
 		int z = playerPos.getZ() & 15;
 		byte biome = chunk.getBiomeArray()[z << 4 | x];

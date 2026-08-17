@@ -17,7 +17,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
@@ -155,11 +154,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void onQuit(Runnable callback) {
 		LabyMod.getInstance().getEventManager().registerOnQuit(v -> callback.run());
-	}
-
-	@Override
-	public void onMessageSend(Predicate<String> callback) {
-		LabyMod.getInstance().getEventManager().register(callback::test);
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -87,8 +86,6 @@ public interface LabyBridge {
 	void onJoin(Runnable callback);
 
 	void onQuit(Runnable callback);
-
-	void onMessageSend(Predicate<String> callback);
 
 	void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback);
 

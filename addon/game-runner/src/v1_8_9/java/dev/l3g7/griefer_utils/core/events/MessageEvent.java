@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.events;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
@@ -14,6 +16,9 @@ import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import net.labymod.api.event.client.chat.ChatMessageSendEvent;
+import net.labymod.main.LabyMod;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.IChatComponent;
@@ -23,6 +28,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 /**
@@ -77,16 +84,33 @@ public class MessageEvent extends Event {
 			this.message = message;
 		}
 
-		@OnEnable
-		private static void register() {
-			LabyBridge.labyBridge.onMessageSend(message -> {
-				if (message == null)
-					return false;
+		@ExclusiveTo(LABY_3)
+		private static class Laby3Registrar {
+			@OnEnable
+			private static void register() {
+				LabyMod.getInstance().getEventManager().register((net.labymod.api.events.MessageSendEvent) message -> {
+					if (message == null)
+						return false;
 
-				return new MessageSendEvent(message).fire().isCanceled();
-			});
+					return new MessageSendEvent(message).fire().isCanceled();
+				});
+			}
 		}
 
+		@ExclusiveTo(LABY_4)
+		private static class Laby4Registrar {
+			@OnEnable
+			private static void register() {
+				Laby4Util.register(ChatMessageSendEvent.class, v -> {
+					if (v.isCancelled())
+						return;
+
+					String message = v.getMessage();
+					if (message != null)
+						v.setCancelled(new MessageSendEvent(message).fire().isCanceled());
+				});
+			}
+		}
 	}
 
 	public static class MessageAboutToBeSentEvent extends MessageEvent {

@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
@@ -156,11 +155,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void onQuit(Runnable callback) {
 		Laby4Util.register(ServerDisconnectEvent.class, v -> callback.run());
-	}
-
-	@Override
-	public void onMessageSend(Predicate<String> callback) {
-		Laby4Util.register(ChatMessageSendEvent.class, v -> v.setCancelled(v.isCancelled() || callback.test(v.getMessage())));
 	}
 
 	@Override

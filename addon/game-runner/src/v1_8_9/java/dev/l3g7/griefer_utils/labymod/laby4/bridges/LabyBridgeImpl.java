@@ -17,14 +17,12 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
-import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.resources.ResourceLocation;
-import net.labymod.api.event.client.chat.ChatMessageSendEvent;
 import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.notification.Notification;
@@ -37,10 +35,8 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 import static net.labymod.api.Laby.labyAPI;
 import static net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent.UpdateType.DISPLAY_NAME;
@@ -62,7 +58,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public Mapping activeMapping() {
-		return obfuscated() ? OBFUSCATED : UNOBFUSCATED;
+		return UNOBFUSCATED;
 	}
 
 	@Override
@@ -139,19 +135,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void copyText(String text) {
 		labyAPI().minecraft().setClipboard(text);
-	}
-
-	@Override
-	public boolean trySendMessage(String message) {
-		ChatMessageSendEvent event = new ChatMessageSendEvent(message, false);
-		labyAPI().eventBus().fire(event);
-		return event.isCancelled();
-	}
-
-	@Override
-	public Pair<String, String> getCachedTexture(UUID uuid) {
-		ResourceLocation location = Icon.head(uuid).getResourceLocation();
-		return location == null ? null : new Pair<>(location.getNamespace(), location.getPath());
 	}
 
 	@Override

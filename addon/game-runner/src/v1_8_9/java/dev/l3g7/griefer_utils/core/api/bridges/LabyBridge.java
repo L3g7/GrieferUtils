@@ -10,13 +10,11 @@ package dev.l3g7.griefer_utils.core.api.bridges;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
-import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import net.minecraft.client.network.NetworkPlayerInfo;
 
 import java.io.File;
-import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
@@ -80,13 +78,6 @@ public interface LabyBridge {
 	void copyText(String text);
 
 	// Specific methods
-
-	/**
-	 * Invokes a LabyMod message send event and returns whether it was canceled.
-	 */
-	boolean trySendMessage(String message);
-
-	Pair<String, String> getCachedTexture(UUID uuid);
 
 	void openNameHistory(String name);
 

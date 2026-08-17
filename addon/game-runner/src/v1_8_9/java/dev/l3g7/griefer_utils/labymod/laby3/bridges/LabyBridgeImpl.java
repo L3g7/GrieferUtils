@@ -144,15 +144,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	}
 
 	@Override
-	public boolean trySendMessage(String message) {
-		for (MessageSendEvent lmEvent : LabyMod.getInstance().getEventManager().getMessageSend())
-			if (lmEvent.onSend(message))
-				return true;
-
-		return false;
-	}
-
-	@Override
 	public Pair<String, String> getCachedTexture(UUID uuid) {
 		return Laby3Util.getCachedTexture(uuid);
 	}

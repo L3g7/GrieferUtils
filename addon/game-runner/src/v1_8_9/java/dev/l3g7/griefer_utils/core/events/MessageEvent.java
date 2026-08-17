@@ -32,6 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static net.labymod.api.Laby.labyAPI;
 
 /**
  * A forge event for message processing.
@@ -82,7 +83,18 @@ public class MessageEvent extends Event {
 					return true;
 			}
 
-			return LabyBridge.labyBridge.trySendMessage(message);
+			// Fire LabyMod's events
+			return LabyBridge.get(() -> {
+				for (net.labymod.api.events.MessageSendEvent lmEvent : LabyMod.getInstance().getEventManager().getMessageSend())
+					if (lmEvent.onSend(message))
+						return true;
+
+				return false;
+			}, () -> {
+				ChatMessageSendEvent event = new ChatMessageSendEvent(message, false);
+				labyAPI().eventBus().fire(event);
+				return event.isCancelled();
+			});
 		}
 
 		public final String message;

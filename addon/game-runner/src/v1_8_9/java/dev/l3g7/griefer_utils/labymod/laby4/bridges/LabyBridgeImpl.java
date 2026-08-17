@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
@@ -30,17 +29,13 @@ import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.resources.ResourceLocation;
-import net.labymod.api.event.Event;
-import net.labymod.api.event.LabyEvent;
 import net.labymod.api.event.client.chat.ChatMessageSendEvent;
 import net.labymod.api.event.client.chat.ChatReceiveEvent;
 import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
 import net.labymod.api.event.client.network.server.ServerDisconnectEvent;
 import net.labymod.api.event.client.network.server.ServerJoinEvent;
 import net.labymod.api.event.client.session.SessionUpdateEvent;
-import net.labymod.api.event.method.SubscribeMethod;
 import net.labymod.api.models.OperatingSystem;
-import net.labymod.api.models.addon.info.InstalledAddonInfo;
 import net.labymod.api.notification.Notification;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.tab.NameHistoryActivity;
@@ -48,11 +43,9 @@ import net.labymod.core.main.LabyMod;
 import net.labymod.v1_8_9.client.player.VersionedNetworkPlayerInfo;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.UUID;
 import java.util.function.BiFunction;
@@ -60,7 +53,6 @@ import java.util.function.BiFunction;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
-import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static net.labymod.api.Laby.labyAPI;
 import static net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent.UpdateType.DISPLAY_NAME;
 
@@ -162,22 +154,22 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public void onJoin(Runnable callback) {
-		register(ServerJoinEvent.class, v -> callback.run());
+		Laby4Util.register(ServerJoinEvent.class, v -> callback.run());
 	}
 
 	@Override
 	public void onQuit(Runnable callback) {
-		register(ServerDisconnectEvent.class, v -> callback.run());
+		Laby4Util.register(ServerDisconnectEvent.class, v -> callback.run());
 	}
 
 	@Override
 	public void onMessageSend(Predicate<String> callback) {
-		register(ChatMessageSendEvent.class, v -> v.setCancelled(v.isCancelled() || callback.test(v.getMessage())));
+		Laby4Util.register(ChatMessageSendEvent.class, v -> v.setCancelled(v.isCancelled() || callback.test(v.getMessage())));
 	}
 
 	@Override
 	public void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback) {
-		register(ChatReceiveEvent.class, v -> {
+		Laby4Util.register(ChatReceiveEvent.class, v -> {
 			Object newMsg = callback.apply((IChatComponent) v.chatMessage().originalComponent(), (IChatComponent) v.message());
 			if (newMsg != null)
 				v.setMessage((Component) newMsg);
@@ -214,39 +206,9 @@ public class LabyBridgeImpl implements LabyBridge {
 		Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME));
 	}
 
-	public static <T> void register(Class<T> event, Consumer<T> callback) {
-		labyAPI().eventBus().registry().register(new SubscribeMethod() {
-			@Override
-			public void invoke(Event event) {
-				callback.accept(c(event));
-			}
-
-			@Override
-			public LabyEvent getLabyEvent() {
-				return event.getAnnotation(LabyEvent.class);
-			}
-
-			public ClassLoader getClassLoader() {return null;}
-
-			public InstalledAddonInfo getAddon() {return null;}
-
-			public Object getListener() {return labyBridge;}
-
-			public byte getPriority() {return 127;}
-
-			public Method getMethod() {return null;}
-
-			public @NotNull Class<?> getEventType() {return event;}
-
-			public boolean isInClassLoader(ClassLoader other) {return true;}
-
-			public SubscribeMethod copy(Object newListener) {return null;}
-		});
-	}
-
 	@OnEnable
 	public static void registerEvents() {
-		register(SessionUpdateEvent.class, v -> new AccountSwitchEvent().fire());
+		Laby4Util.register(SessionUpdateEvent.class, v -> new AccountSwitchEvent().fire());
 	}
 
 }

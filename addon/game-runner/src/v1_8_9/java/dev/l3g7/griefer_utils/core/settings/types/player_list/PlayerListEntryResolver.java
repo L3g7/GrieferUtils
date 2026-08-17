@@ -9,8 +9,6 @@ package dev.l3g7.griefer_utils.core.settings.types.player_list;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.internal.Streams;
-import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
@@ -27,7 +25,6 @@ import javax.net.ssl.HttpsURLConnection;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
@@ -131,7 +128,7 @@ public class PlayerListEntryResolver {
 			if (!property.get("name").getAsString().equals("textures"))
 				continue;
 
-			String url = Streams.parse(new JsonReader(new StringReader(new String(Base64.getDecoder().decode(property.get("value").getAsString()))))).getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+			String url = IO.read(Base64.getDecoder().decode(property.get("value").getAsString())).asJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
 			BufferedImage img = readImage(url);
 			entry.slim = img.getHeight() == 32;
 

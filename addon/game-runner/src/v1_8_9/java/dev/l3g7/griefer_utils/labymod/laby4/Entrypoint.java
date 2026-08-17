@@ -8,18 +8,15 @@
 package dev.l3g7.griefer_utils.labymod.laby4;
 
 import com.google.gson.JsonObject;
-import com.google.gson.internal.Streams;
-import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.misc.LibLoader;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
 import net.labymod.api.Laby;
-
-import java.io.InputStreamReader;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
@@ -29,7 +26,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		Bridge.Initializer.init(LABY_4);
 
 		// Ensure addon version is up-to-date
-		JsonObject addonJson = Streams.parse(new JsonReader(new InputStreamReader(FileProvider.getData("addon.json")))).getAsJsonObject();
+		JsonObject addonJson = IO.read(FileProvider.getData("addon.json")).asJsonObject();
 		Reflection.set(Laby.labyAPI().addonService().getAddon(Main.class).orElseThrow().info(), "version", addonJson.get("version").getAsString());
 
 		// Load mcp mappings for automatic name resolution in Reflection

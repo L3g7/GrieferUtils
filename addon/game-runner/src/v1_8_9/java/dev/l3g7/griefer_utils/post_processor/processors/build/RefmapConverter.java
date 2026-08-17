@@ -8,9 +8,8 @@
 package dev.l3g7.griefer_utils.post_processor.processors.build;
 
 import com.google.gson.*;
-import com.google.gson.internal.Streams;
-import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
@@ -18,7 +17,8 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.objectweb.asm.ClassReader.*;
 
 /**
@@ -46,10 +45,7 @@ public class RefmapConverter {
 		Path refmapIn = fs.getPath("/refmaps/LabyMod-4.json");
 		Path refmapOut = fs.getPath("/refmaps/LabyMod-3.json");
 
-		JsonObject refmap;
-		try (Reader in = new InputStreamReader(Files.newInputStream(refmapIn), UTF_8)) {
-			refmap = Streams.parse(new JsonReader(in)).getAsJsonObject();
-		}
+		JsonObject refmap = IO.read(refmapIn).asJsonObject();
 
 		JsonObject data = refmap.get("data").getAsJsonObject();
 		JsonObject seargeMappings = data.get("searge").getAsJsonObject();

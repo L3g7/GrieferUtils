@@ -13,7 +13,6 @@ import com.sun.jna.platform.win32.Crypt32Util;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.Authorization;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
-import java.io.ByteArrayInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,13 +27,13 @@ public class MinecraftTokenProvider implements TokenProvider {
 			return false;
 
 		byte[] raw = Crypt32Util.cryptUnprotectData(IO.read(path).asBytes());
-		JsonObject o = IO.read(new ByteArrayInputStream(raw)).asJsonObject();
+		JsonObject o = IO.read(raw).asJsonObject();
 		for (Map.Entry<String, JsonElement> entry : o.get("credentials").getAsJsonObject().entrySet()) {
 			if (entry.getKey().equals("common"))
 				continue;
 
 			JsonObject credentials = entry.getValue().getAsJsonObject();
-			JsonObject oauthToken = IO.read(new ByteArrayInputStream(credentials.get("Xal.Production.Msa.Foci.1").getAsString().getBytes())).asJsonObject();
+			JsonObject oauthToken = IO.read(credentials.get("Xal.Production.Msa.Foci.1").getAsString().getBytes()).asJsonObject();
 			Authorization.set(new Authorization(oauthToken.get("refresh_token").getAsString()));
 
 			if (Authorization.get().validate())

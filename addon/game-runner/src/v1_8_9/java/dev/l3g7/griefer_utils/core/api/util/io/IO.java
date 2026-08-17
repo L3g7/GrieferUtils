@@ -7,6 +7,7 @@ import dev.l3g7.griefer_utils.core.api.util.io.ReadOperation.InputStreamReadOper
 import dev.l3g7.griefer_utils.core.api.util.io.WriteOperation.DiskWriteOperation;
 import dev.l3g7.griefer_utils.core.api.util.io.WriteOperation.OutputStreamWriteOperation;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -23,6 +24,13 @@ public class IO {
 	 */
 	public static ReadOperation read(InputStream in) {
 		return new InputStreamReadOperation(in);
+	}
+
+	/**
+	 * @return A wrapper class for reading the contents of the given byte array.
+	 */
+	public static ReadOperation read(byte[] in) {
+		return new InputStreamReadOperation(new ByteArrayInputStream(in));
 	}
 
 	/**

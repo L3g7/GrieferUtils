@@ -8,8 +8,8 @@ import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Result;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Result;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.util.Util;
@@ -82,11 +82,25 @@ public abstract class ReadOperation {
 	}
 
 	/**
-	 * Asynchronously reads the content as a JSON array.
+	 * Asynchronously reads the content as a JSON object.
 	 */
 	@CheckReturnValue
 	public AsyncReadTask asJsonObject(Consumer<@NotNull JsonObject> callback) {
 		return new AsyncReadTask(this::tryAsJsonObject, callback);
+	}
+
+	/**
+	 * Tries to read the content as a JSON element.
+	 */
+	public Result<@NotNull JsonElement> tryAsJsonElement() {
+		return Result.tryGet(this::parseJsonSync);
+	}
+
+	/**
+	 * Reads the content as a JSON object, elevating errors to RuntimeExceptions.
+	 */
+	public @NotNull JsonElement asJsonElement() {
+		return tryAsJsonElement().unwrap();
 	}
 
 	/**
@@ -132,7 +146,7 @@ public abstract class ReadOperation {
 	 * GSON 2.2.4-compatible JSON parse.
 	 */
 	private JsonElement parseJsonSync() throws Exception {
-		var reader = new JsonReader(new InputStreamReader(getIn()));
+		var reader = new JsonReader(new InputStreamReader(getIn(), StandardCharsets.UTF_8));
 		var element = Streams.parse(reader);
 		if (reader.peek() != JsonToken.END_DOCUMENT)
 			throw new JsonSyntaxException("Trailing data");

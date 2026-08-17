@@ -9,12 +9,11 @@ package dev.l3g7.griefer_utils.features.widgets.orb_stats;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.internal.Streams;
-import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
@@ -38,7 +37,6 @@ import net.minecraft.network.play.server.S2DPacketOpenWindow;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.network.play.server.S30PacketWindowItems;
 
-import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -281,7 +279,7 @@ public class OrbStats extends SimpleWidget {
 
 		JsonObject object;
 		try {
-			object = Streams.parse(new JsonReader(new StringReader(new String(Base64.getDecoder().decode(b64))))).getAsJsonObject();
+			object = IO.read(Base64.getDecoder().decode(b64)).asJsonObject();
 		} catch (Throwable t) {
 			return null; // Invalid Base64
 		}

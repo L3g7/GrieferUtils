@@ -10,9 +10,8 @@ package dev.l3g7.griefer_utils.post_processor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.internal.Streams;
-import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.Init;
 import dev.l3g7.griefer_utils.post_processor.processors.build.RecordConverter;
@@ -21,7 +20,10 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -86,10 +88,7 @@ public class BuildPostProcessor {
 	 */
 	private static void mergeAddonJson() throws IOException {
 		// Read
-		JsonObject addon;
-		try (Reader in = Files.newBufferedReader(fs.getPath("addon.json"), UTF_8)) {
-			addon = Streams.parse(new JsonReader(in)).getAsJsonObject();
-		}
+		JsonObject addon = IO.read(fs.getPath("addon.json")).asJsonObject();
 
 		// Merge
 		LABY_3_ADDON_JSON.forEach(addon::addProperty);

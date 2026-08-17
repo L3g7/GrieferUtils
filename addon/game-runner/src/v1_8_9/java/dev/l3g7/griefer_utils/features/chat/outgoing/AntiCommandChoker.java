@@ -71,7 +71,7 @@ public class AntiCommandChoker extends Feature {
 			int id = Integer.parseInt(message.split(" ")[0]);
 
 			// Remove the message
-			LabyBridge.run(() -> {
+			LabyBridge.dispatchRun(() -> {
 				IngameChatManager ICM = IngameChatManager.INSTANCE;
 
 				List<ChatRenderer> chatRenderers = new ArrayList<>(Arrays.asList(ICM.getChatRenderers()));

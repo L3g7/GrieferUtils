@@ -440,7 +440,7 @@ public class DrawUtils {
 	private static final ModelSkeletonHead humanoidHead = new ModelHumanoidHead();
 	public static void renderSkull(GameProfile gameProfile) {
 		UUID uuid = gameProfile.getId();
-		Pair<String, String> skin = LabyBridge.get(() -> {
+		Pair<String, String> skin = LabyBridge.dispatchGet(() -> {
 			ResourceLocation resourceSkin = LabyMod.getInstance().getDrawUtils().getPlayerSkinTextureCache().getSkinTexture(new GameProfile(uuid, ""));
 			if (resourceSkin == null)
 				return null;

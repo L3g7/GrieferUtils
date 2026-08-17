@@ -22,11 +22,11 @@ public interface LabyBridge {
 
 	LabyBridge labyBridge = FileProvider.getBridge(LabyBridge.class);
 
-	static void run(Runnable laby3, Runnable laby4) {
+	static void dispatchRun(Runnable laby3, Runnable laby4) {
 		(LABY_4.isActive() ? laby4 : laby3).run();
 	}
 
-	static <T> T get(Supplier<T> laby3, Supplier<T> laby4) {
+	static <T> T dispatchGet(Supplier<T> laby3, Supplier<T> laby4) {
 		return (LABY_4.isActive() ? laby4 : laby3).get();
 	}
 

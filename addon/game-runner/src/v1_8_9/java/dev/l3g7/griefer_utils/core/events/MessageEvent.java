@@ -84,7 +84,7 @@ public class MessageEvent extends Event {
 			}
 
 			// Fire LabyMod's events
-			return LabyBridge.get(() -> {
+			return LabyBridge.dispatchGet(() -> {
 				for (net.labymod.api.events.MessageSendEvent lmEvent : LabyMod.getInstance().getEventManager().getMessageSend())
 					if (lmEvent.onSend(message))
 						return true;

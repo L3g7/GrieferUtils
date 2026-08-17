@@ -62,7 +62,7 @@ public class TabListEvent extends Event {
 		TabListNameUpdateEvent event = new TabListNameUpdateEvent(info.getGameProfile(), originalComponent);
 		event.fire();
 		info.setDisplayName(event.component);
-		LabyBridge.run(
+		LabyBridge.dispatchRun(
 			() -> { /* // No-op */},
 			() -> Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME)));
 	}

@@ -25,7 +25,6 @@ import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.resources.ResourceLocation;
 import net.labymod.api.event.client.chat.ChatMessageSendEvent;
-import net.labymod.api.event.client.chat.ChatReceiveEvent;
 import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.notification.Notification;
@@ -34,13 +33,11 @@ import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.
 import net.labymod.core.main.LabyMod;
 import net.labymod.v1_8_9.client.player.VersionedNetworkPlayerInfo;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.util.IChatComponent;
 
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.UUID;
-import java.util.function.BiFunction;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
@@ -142,15 +139,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void copyText(String text) {
 		labyAPI().minecraft().setClipboard(text);
-	}
-
-	@Override
-	public void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback) {
-		Laby4Util.register(ChatReceiveEvent.class, v -> {
-			Object newMsg = callback.apply((IChatComponent) v.chatMessage().originalComponent(), (IChatComponent) v.message());
-			if (newMsg != null)
-				v.setMessage((Component) newMsg);
-		});
 	}
 
 	@Override

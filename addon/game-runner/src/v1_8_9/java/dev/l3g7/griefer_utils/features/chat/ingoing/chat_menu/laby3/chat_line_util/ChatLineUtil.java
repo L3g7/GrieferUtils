@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MessageModifyHandler.ComponentHash;
+import dev.l3g7.griefer_utils.labymod.laby3.bridges.Laby3MessageModifyEventRegistrar.ComponentHash;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
 import net.labymod.ingamechat.IngameChatManager;
 import net.labymod.ingamechat.renderer.ChatLine;

@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby3.bridges;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import net.labymod.utils.manager.TagManager;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.server.S02PacketChat;
@@ -20,11 +21,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
@@ -32,15 +30,10 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
  * Handles firing of MessageModifyEvents.
  */
 @ExclusiveTo(LABY_3)
-public class Laby3MessageModifyHandler {
+public class Laby3MessageModifyEventRegistrar {
 
-	static final List<BiFunction<IChatComponent, IChatComponent, IChatComponent>> callbacks = new ArrayList<>();
-
-	private static IChatComponent runCallbacks(IChatComponent original, IChatComponent modified) {
-		for (BiFunction<IChatComponent, IChatComponent, IChatComponent> callback : callbacks)
-			modified = callback.apply(original, modified);
-
-		return modified;
+	public static IChatComponent fireEvent(IChatComponent original, IChatComponent modified) {
+		return ((MessageModifyEvent) new MessageModifyEvent(original, modified).fire()).message;
 	}
 
 	private static final LinkedHashMap<ComponentHash, IChatComponent> unmodifiedChatComponents = new LinkedHashMap<>() {
@@ -64,7 +57,7 @@ public class Laby3MessageModifyHandler {
 		@Inject(method = "tagComponent", at = @At("RETURN"), cancellable = true)
 		private static void injectTagComponent(Object chatComponent, CallbackInfoReturnable<Object> cir) {
 			IChatComponent original = unmodifiedChatComponents.remove(new ComponentHash(grieferUtils$currentComponent));
-			cir.setReturnValue(runCallbacks(original == null ? (IChatComponent) chatComponent : original, (IChatComponent) cir.getReturnValue()));
+			cir.setReturnValue(fireEvent(original == null ? (IChatComponent) chatComponent : original, (IChatComponent) cir.getReturnValue()));
 		}
 
 	}

@@ -14,11 +14,9 @@ import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.util.IChatComponent;
 
 import java.io.File;
 import java.util.UUID;
-import java.util.function.BiFunction;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
@@ -80,10 +78,6 @@ public interface LabyBridge {
 	boolean openFile(File file);
 
 	void copyText(String text);
-
-	// Events
-
-	void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback);
 
 	// Specific methods
 

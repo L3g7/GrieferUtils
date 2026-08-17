@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.core.events;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
@@ -17,7 +16,9 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import net.labymod.api.client.component.Component;
 import net.labymod.api.event.client.chat.ChatMessageSendEvent;
+import net.labymod.api.event.client.chat.ChatReceiveEvent;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.network.play.server.S02PacketChat;
@@ -47,17 +48,23 @@ public class MessageEvent extends Event {
 			this.message = message.createCopy();
 		}
 
-		@OnEnable
-		private static void register() {
-			LabyBridge.labyBridge.onMessageModify((prevMsg, newMsg) -> {
-				MessageModifyEvent msg = new MessageModifyEvent(prevMsg, newMsg);
-				msg.fire();
-				return msg.message;
-			});
-		}
-
 		public void setMessage(IChatComponent message) {
 			this.message = message;
+		}
+
+		// See Laby3MessageModifyEventRegistrar
+
+		@ExclusiveTo(LABY_4)
+		private static class Laby4Registrar {
+			@OnEnable
+			private static void register() {
+				Laby4Util.register(ChatReceiveEvent.class, v -> {
+					MessageModifyEvent event = new MessageModifyEvent((IChatComponent) v.chatMessage().originalComponent(), (IChatComponent) v.message());
+					event.fire();
+					if (event.message != null)
+						v.setMessage((Component) event.message);
+				});
+			}
 		}
 
 	}

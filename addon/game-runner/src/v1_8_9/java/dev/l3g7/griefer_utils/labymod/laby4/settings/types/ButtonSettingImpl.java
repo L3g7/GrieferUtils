@@ -12,20 +12,18 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.ActivityInitializeEvent.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 
 public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object> implements ButtonSetting {
 
 	private Icon buttonIcon;
-	private String buttonLabel = "§cNo icon";
+	private String buttonLabel;
+	private ButtonWidget widget;
 
 	public ButtonSettingImpl() {
 		super(e -> JsonNull.INSTANCE, e -> NULL, NULL);
@@ -34,7 +32,9 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 
 	@Override
 	protected Widget[] createWidgets() {
-		return null;
+		widget = ButtonWidget.component(Component.text(""), () -> set(null)).addId("grieferutils-fix-width");
+		reinitWidget();
+		return new Widget[]{widget};
 	}
 
 	@Override
@@ -53,34 +53,22 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 		return this;
 	}
 
-	@Override
-	public boolean hasAdvancedButton() {
-		return true;
-	}
-
 	@EventListener
 	private void onInit(SettingActivityInitEvent event) {
-		if (event.holder() != parent)
+		if (event.parent() != parent)
 			return;
 
-		for (Widget w : event.settings().getChildren()) {
-			if (w instanceof SettingWidget s && s.setting() == this) {
-				SettingsImpl.hookChildAdd(s, e -> {
-					if (e.childWidget() instanceof FlexibleContentWidget content) {
-						ButtonWidget btn = buttonIcon == null ?
-							ButtonWidget.component(Component.text(buttonLabel), null, () -> set(null)) :
-							ButtonWidget.icon(buttonIcon, () -> set(null));
-
-						if (buttonIcon != null)
-							btn.addId("advanced-button"); // required so LSS is applied
-						content.removeChild("advanced-button");
-						content.addContent(btn);
-					}
-				});
-				break;
-			}
-		}
-
+		event.getActivity().addStyle("griefer_utils", "button-injection.lss");
+		reinitWidget();
 	}
 
+	private void reinitWidget() {
+		if (widget == null)
+			return;
+
+		if (buttonIcon != null)
+			widget.updateIcon(buttonIcon);
+		if (buttonLabel != null)
+			widget.updateComponent(Component.text(buttonLabel));
+	}
 }

@@ -49,10 +49,13 @@ public class MainPage {
 	private static Timer timer = new Timer();
 	private static final Set<TextFieldWidget> injectedWidgets = new HashSet<>();
 
+	public static Setting rootSetting;
+
 	@OnEnable
 	public static void registerSettings() {
 		// Create root setting
 		RootSetting registry = new RootSetting();
+		rootSetting = registry;
 		Laby.labyAPI().coreSettingRegistry().addSetting(registry);
 
 		// Collect settings
@@ -68,10 +71,7 @@ public class MainPage {
 	}
 
 	@EventListener
-	public static void onSettingsOpen(ActivityInitializeEvent event) {
-		if (!(event.getActivity() instanceof ModsActivity))
-			return;
-
+	public static void onSettingsOpen(ActivityInitializeEvent<ModsActivity> event) {
 		TextFieldWidget searchWidget = event.get("container", "mods-search-row", "mods-search");
 		if (searchWidget == null)
 			return;

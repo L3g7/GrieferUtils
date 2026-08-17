@@ -12,15 +12,15 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.ActivityInitializeEvent.SettingActivityInitEvent;
 import net.labymod.api.Textures;
+import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 
 public class EntryAddSettingImpl extends AbstractSettingImpl<EntryAddSetting, Object> implements EntryAddSetting {
+
+	private ButtonWidget widget;
 
 	public EntryAddSettingImpl() {
 		super(e -> JsonNull.INSTANCE, e -> NULL, NULL);
@@ -29,34 +29,25 @@ public class EntryAddSettingImpl extends AbstractSettingImpl<EntryAddSetting, Ob
 
 	@Override
 	protected Widget[] createWidgets() {
-		return null;
-	}
-
-	@Override
-	public boolean hasAdvancedButton() {
-		return true;
+		widget = ButtonWidget.component(Component.text(""), () -> set(null)).addId("grieferutils-fix-width");
+		reinitWidget();
+		return new Widget[]{widget};
 	}
 
 	@EventListener
 	private void onInit(SettingActivityInitEvent event) {
-		if (event.holder() != parent)
+		if (event.parent() != parent)
 			return;
 
-		for (Widget w : event.settings().getChildren()) {
-			if (w instanceof SettingWidget s && s.setting() == this) {
-				SettingsImpl.hookChildAdd(s, e -> {
-					if (e.childWidget() instanceof FlexibleContentWidget content) {
-						ButtonWidget btn = ButtonWidget.icon(Textures.SpriteCommon.SMALL_ADD_WITH_SHADOW, () -> set(null));
+		event.getActivity().addStyle("griefer_utils", "button-injection.lss");
+		reinitWidget();
+	}
 
-						btn.addId("advanced-button"); // required so LSS is applied
-						content.removeChild("advanced-button");
-						content.addContent(btn);
-					}
-				});
-				break;
-			}
-		}
+	private void reinitWidget() {
+		if (widget == null)
+			return;
 
+		widget.updateIcon(Textures.SpriteCommon.SMALL_ADD_WITH_SHADOW);
 	}
 
 }

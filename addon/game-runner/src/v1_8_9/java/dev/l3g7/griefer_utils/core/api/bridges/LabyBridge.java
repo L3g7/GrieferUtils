@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
 
@@ -99,12 +98,6 @@ public interface LabyBridge {
 	 * Invokes a LabyMod message send event and returns whether it was canceled.
 	 */
 	boolean trySendMessage(String message);
-
-	/**
-	 * Creates a HeaderSetting acting as a padding for dropdowns.
-	 * Only required in LabyMod 3, returns null otherwise.
-	 */
-	HeaderSetting createLaby3DropDownPadding();
 
 	Pair<String, String> getCachedTexture(UUID uuid);
 

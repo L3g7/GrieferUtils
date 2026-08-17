@@ -20,7 +20,6 @@ import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
@@ -178,11 +177,6 @@ public class LabyBridgeImpl implements LabyBridge {
 		ChatMessageSendEvent event = new ChatMessageSendEvent(message, false);
 		labyAPI().eventBus().fire(event);
 		return event.isCancelled();
-	}
-
-	@Override
-	public HeaderSetting createLaby3DropDownPadding() {
-		return null;
 	}
 
 	@Override

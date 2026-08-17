@@ -21,20 +21,12 @@ import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Predicate;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
-import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.util.Laby3Util;
-import net.labymod.accountmanager.storage.account.Account;
 import net.labymod.api.events.MessageSendEvent;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
@@ -182,15 +174,6 @@ public class LabyBridgeImpl implements LabyBridge {
 				return true;
 
 		return false;
-	}
-
-	@Override
-	public HeaderSetting createLaby3DropDownPadding() {
-		return new HeaderSettingImpl() {
-			public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-				entryHeight(5);
-			}
-		};
 	}
 
 	@Override

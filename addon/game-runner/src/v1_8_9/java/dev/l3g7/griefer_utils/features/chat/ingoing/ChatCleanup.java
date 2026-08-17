@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.chat.ingoing;
 
 import com.google.common.collect.ImmutableList;
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -95,7 +94,7 @@ public class ChatCleanup extends Feature {
 		.name("Chat aufräumen")
 		.icon("crossed_out_book")
 		.description("Räumt den Chat auf.")
-		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, removeBroadcast, removeHeroHighlights, antiColoredFont, LabyBridge.labyBridge.createLaby3DropDownPadding());
+		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, removeBroadcast, removeHeroHighlights, antiColoredFont);
 
 	private boolean isNews = false;
 

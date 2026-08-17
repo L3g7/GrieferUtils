@@ -26,14 +26,6 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
  */
 public class ServerEvent extends Event {
 
-	private static boolean hotfix_brandPacketReceived = true, // TODO
-		hotfix_watching = true; // only listen to first MC|Brand packet after quit to avoid multiple detections when replaying the packet
-
-	public ServerEvent() {
-		hotfix_brandPacketReceived = false;
-		hotfix_watching = true;
-	}
-
 	public static class ServerSwitchEvent extends ServerEvent {
 
 		@EventListener
@@ -66,17 +58,40 @@ public class ServerEvent extends Event {
 
 	public static class GrieferGamesJoinEvent extends ServerEvent {
 
+		private static JoinState state = JoinState.START;
+
+		@EventListener(priority = Priority.HIGHEST)
+		private static void onServerJoin(ServerJoinEvent event) {
+			state = JoinState.START;
+		}
+
 		@EventListener(priority = Priority.HIGHEST)
 		private static void onPacketReceive(PacketReceiveEvent<S3FPacketCustomPayload> event) {
-			if (hotfix_watching && event.packet.getChannelName().equals("MC|Brand")) {
-				hotfix_brandPacketReceived = true;
-				hotfix_watching = false;
-			} else if (hotfix_brandPacketReceived && event.packet.getChannelName().equals("mysterymod:mm")) {
-				hotfix_brandPacketReceived = false;
+			if (state == JoinState.START && event.packet.getChannelName().equals("MC|Brand")) {
+				state = JoinState.BRAND;
+			} else if (state == JoinState.BRAND
+				&& (event.packet.getChannelName().equals("mysterymod:mm") || event.packet.getChannelName().equals("griefergames:main"))) {
+				state = JoinState.JOINED;
 				new GrieferGamesJoinEvent().fire();
 			}
 		}
 
+		private enum JoinState {
+			/**
+			 * State after the connection was established.
+			 */
+			START,
+
+			/**
+			 * State after the server sent an MC|Brand packet.
+			 */
+			BRAND,
+
+			/**
+			 * State after the server join has been acknowledged.
+			 */
+			JOINED
+		}
 	}
 
 	public static class ServerQuitEvent extends ServerEvent {

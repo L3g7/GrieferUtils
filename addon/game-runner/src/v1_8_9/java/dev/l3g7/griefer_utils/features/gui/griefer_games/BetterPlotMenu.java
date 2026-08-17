@@ -74,7 +74,7 @@ public class BetterPlotMenu extends Feature {
 		if (stack == null || stack.getDisplayName() == null)
 			return;
 
-		Option<Citybuild> cb = Citybuild.parse(stack.getDisplayName().replaceAll("§.", ""));
+		Option<Citybuild> cb = Citybuild.tryParse(stack.getDisplayName().replaceAll("§.", ""));
 		if (cb.isUnset())
 			return;
 

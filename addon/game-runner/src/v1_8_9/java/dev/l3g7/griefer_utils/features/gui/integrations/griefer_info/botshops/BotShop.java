@@ -26,7 +26,7 @@ public class BotShop {
 
 	public static BotShop fromJson(JsonObject object) {
 		String name = object.get("name").getAsString();
-		Citybuild cb = Citybuild.parseSafe(object.get("cb").getAsString());
+		Citybuild cb = Citybuild.parse(object.get("cb").getAsString());
 		boolean buying = object.get("ankauf").getAsInt() == 1;
 		boolean selling = object.get("verkauf").getAsInt() == 1;
 

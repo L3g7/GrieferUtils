@@ -35,7 +35,7 @@ public class Farm {
 
 	public static Farm fromJson(JsonObject object) {
 		String name = object.get("name").getAsString();
-		Citybuild cb = Citybuild.parseSafe(object.get("cb").getAsString());
+		Citybuild cb = Citybuild.parse(object.get("cb").getAsString());
 		String freeStuff = object.get("freestuff").getAsString();
 		freeStuff = freeStuff.isEmpty() ? null : freeStuff.substring("/freestuff/view?id=".length());
 

@@ -141,7 +141,7 @@ abstract class MiscQuests {
 	static class JoinCitybuildQuest extends AbstractQuest {
 		@EventListener
 		private void onCitybuildJoin(CitybuildJoinEvent.Early event) {
-			if (event.citybuild != Citybuild.ANY && event.citybuild != Citybuild.MAGIC_FOREST)
+			if (event.citybuild.isValid() && event.citybuild != Citybuild.MAGIC_FOREST)
 				increaseAmount();
 		}
 	}
@@ -236,8 +236,7 @@ abstract class MiscQuests {
 
 		@EventListener
 		private void onPlace(PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
-			Citybuild cb = Citybuild.current();
-			if (BSF.isInFarmwelt() || cb == Citybuild.ANY || cb == Citybuild.MAGIC_FOREST || cb == Citybuild.LAVA || cb == Citybuild.WATER)
+			if (BSF.isInFarmwelt() || !Citybuild.current().hasPlots())
 				return;
 
 			if (event.packet.getPlacedBlockDirection() == 255 || event.packet.getStack() == null)

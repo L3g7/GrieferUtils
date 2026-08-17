@@ -58,7 +58,12 @@ public enum Citybuild implements Named {
 	WATER(new ItemStack(water_bucket), "farm1", "Wasser", "w"),
 	LAVA(new ItemStack(lava_bucket), "nether1", "Lava", "l"),
 	EVENT(new ItemStack(beacon), "eventserver", "Event", "v"),
-	MAGIC_FOREST(new ItemStack(Blocks.mycelium), "zauberwald", "Zauberwald", "z", "zw");
+	MAGIC_FOREST(new ItemStack(Blocks.mycelium), "zauberwald", "Zauberwald", "z", "zw"),
+
+	PORTAL(null, "portal", "Portal"),
+	LOBBY(null, "lobby", "Lobby"),
+	TEST(null, "cbt", "Test", "t"),
+	UNKNOWN(null, "unknown", "Unbekannt");
 
 	private final String internalName;
 	private final String displayName;
@@ -103,7 +108,9 @@ public enum Citybuild implements Named {
 			case "Wasser" -> "W";
 			case "Lava" -> "L";
 			case "Event" -> "V";
-			default -> "*";
+			case "Test" -> "T";
+			case "Egal" -> "*";
+			default -> "?";
 		};
 	}
 
@@ -114,8 +121,16 @@ public enum Citybuild implements Named {
 		return current() == this;
 	}
 
+	public boolean isValid() {
+		return stack != null;
+	}
+
+	public boolean hasPlots() {
+		return stack != null && this != LAVA && this != WATER && this != MAGIC_FOREST;
+	}
+
 	public void join() {
-		if (internalName == null)
+		if (this == UNKNOWN)
 			throw new IllegalStateException("This citybuild does not exist");
 
 		if (!ServerCheck.isOnGrieferGames()) {
@@ -123,11 +138,17 @@ public enum Citybuild implements Named {
 			return;
 		}
 
-		String cb = currentRaw();
-		if (cb.equals("Portal"))
+		if (this == Citybuild.PORTAL)
+			ChatQueue.send("/portal");
+		if (this == Citybuild.LOBBY)
 			ChatQueue.send("/hub");
+		else {
+			// Normal citybuilds
+			if (current() == Citybuild.PORTAL)
+				ChatQueue.send("/hub");
 
-		ChatQueue.send("/switch " + internalName);
+			ChatQueue.send("/switch " + internalName);
+		}
 	}
 
 	public boolean matches(String cb) {
@@ -145,11 +166,11 @@ public enum Citybuild implements Named {
 		return stack;
 	}
 
-	public static Citybuild parseSafe(String cb) {
-		return parse(cb).getOr(Citybuild.ANY);
+	public static Citybuild parse(String cb) {
+		return tryParse(cb).getOr(Citybuild.UNKNOWN);
 	}
 
-	public static Option<Citybuild> parse(String cb) {
+	public static Option<Citybuild> tryParse(String cb) {
 		cb = cb.toLowerCase();
 		if (cb.startsWith("cb"))
 			cb = cb.substring(2).trim();
@@ -174,36 +195,28 @@ public enum Citybuild implements Named {
 	}
 
 	public static Citybuild current() {
-		return parse(Tracker.currentCitybuild)
-			.getOr(Citybuild.ANY);
-	}
-
-	/**
-	 * Raw citybuild data, to compare against Portal / Lobby.
-	 */
-	public static String currentRaw() {
 		return Tracker.currentCitybuild;
 	}
 
 	private static class Tracker {
 
-		private static String currentCitybuild = "";
+		private static Citybuild currentCitybuild = UNKNOWN;
 
 		@EventListener(priority = Priority.HIGH)
 		private static void onCitybuildInit(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
 			String[] lines = event.packet.getHeader().getFormattedText().split("\n");
 			if (lines.length != 3) {
-				currentCitybuild = "";
+				currentCitybuild = UNKNOWN;
 				return;
 			}
 
 			String cbLine = lines[2].replaceAll("§.", "");
 			if (!cbLine.startsWith("Aktueller Server: ")) {
-				currentCitybuild = "";
+				currentCitybuild = UNKNOWN;
 				return;
 			}
 
-			currentCitybuild = cbLine.substring("Aktueller Server: ".length());
+			currentCitybuild = parse(cbLine.substring("Aktueller Server: ".length()));
 		}
 	}
 

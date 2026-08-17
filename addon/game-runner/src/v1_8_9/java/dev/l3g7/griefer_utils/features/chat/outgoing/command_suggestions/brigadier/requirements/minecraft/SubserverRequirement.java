@@ -22,12 +22,7 @@ public class SubserverRequirement extends Requirement {
 			// Fall back to true
 			return true;
 
-		String server = Citybuild.currentRaw().trim();
-		if (server.isEmpty())
-			// Fall back to true
-			return true;
-
-		return this.server.equalsIgnoreCase(server);
+		return Citybuild.parse(server).isOnCb();
 	}
 
 }

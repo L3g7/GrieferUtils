@@ -58,7 +58,7 @@ public class BetterSwitch extends Feature {
 		if (matcher.matches()) {
 			event.cancel();
 
-			Option<Citybuild> cb = Citybuild.parse(matcher.group(1));
+			Option<Citybuild> cb = Citybuild.tryParse(matcher.group(1));
 			if (cb.isSet()) {
 				if (!rejoin.get() && cb.get().isOnCb()) {
 					command = matcher.group(2);
@@ -108,7 +108,7 @@ public class BetterSwitch extends Feature {
 	}
 
 	public static void sendOnCitybuild(String command, Citybuild cb) {
-		if (cb == Citybuild.ANY)
+		if (!cb.isValid())
 			return;
 
 		if (cb.isOnCb()) {

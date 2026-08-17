@@ -81,17 +81,7 @@ public class InteractableProfiles extends Feature {
 		citybuild = citybuild.substring(citybuild.lastIndexOf(' ') + 1).replaceAll("§.", "");
 		citybuild = citybuild.substring(0, citybuild.length() - 1);
 
-		// Account for hub servers
-		for (String hubName : new String[]{"portal", "lobby"}) {
-			if (citybuild.equalsIgnoreCase(hubName)) {
-				if (!Citybuild.currentRaw().equalsIgnoreCase(hubName))
-					MinecraftUtil.send("/" + hubName);
-				return;
-			}
-		}
-
-		Citybuild cb = Citybuild.parseSafe(citybuild);
-
+		Citybuild cb = Citybuild.parse(citybuild);
 		if (!cb.isOnCb() && System.currentTimeMillis() - lastInteraction > 2500) {
 			lastInteraction = System.currentTimeMillis();
 			cb.join();

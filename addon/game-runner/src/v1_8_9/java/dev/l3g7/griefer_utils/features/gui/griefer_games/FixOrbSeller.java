@@ -44,7 +44,7 @@ import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.A
 @Singleton
 public class FixOrbSeller extends Feature {
 
-	private final HashMap<String, Integer> cbToId = new HashMap<>();
+	private final HashMap<Citybuild, Integer> cbToId = new HashMap<>();
 	private Pair<Integer, Integer> mousePos = null;
 	private UUID orbSellerUUID = null;
 	private boolean adding = false;
@@ -71,7 +71,7 @@ public class FixOrbSeller extends Feature {
 
 		JsonObject ids = Config.get(key + "ids").getAsJsonObject();
 		for (Map.Entry<String, JsonElement> entry : ids.entrySet())
-			cbToId.put(entry.getKey(), entry.getValue().getAsInt());
+			cbToId.put(Citybuild.parse(entry.getKey()), entry.getValue().getAsInt());
 
 		new Timer().schedule(new TimerTask() {
 			public void run() {
@@ -127,7 +127,7 @@ public class FixOrbSeller extends Feature {
 			if (p.getYaw() != 62 || p.getPitch() != 26)
 				return;
 
-			Integer orbSellerId = cbToId.get(Citybuild.currentRaw());
+			Integer orbSellerId = cbToId.get(Citybuild.current());
 			if (orbSellerId != null && world().getEntityByID(orbSellerId) == null)
 				mc().addScheduledTask(() -> spawnOrbSeller(orbSellerId));
 
@@ -141,8 +141,8 @@ public class FixOrbSeller extends Feature {
 			for (S38PacketPlayerListItem.AddPlayerData entry : packet.getEntries()) {
 				if ("§6Händler".equals(entry.getProfile().getName())) {
 					orbSellerUUID = entry.getProfile().getId();
-					if (cbToId.containsKey(Citybuild.currentRaw()))
-						world().removeEntityFromWorld(cbToId.get(Citybuild.currentRaw()));
+					if (cbToId.containsKey(Citybuild.current()))
+						world().removeEntityFromWorld(cbToId.get(Citybuild.current()));
 					return;
 				}
 			}
@@ -151,7 +151,7 @@ public class FixOrbSeller extends Feature {
 		// Get the entity id of the original orb seller
 		if (event.packet instanceof S0CPacketSpawnPlayer packet && packet.getPlayer().equals(orbSellerUUID)) {
 			orbSellerUUID = null;
-			cbToId.put(Citybuild.currentRaw(), packet.getEntityID());
+			cbToId.put(Citybuild.current(), packet.getEntityID());
 			saveIds();
 		}
 	}
@@ -188,8 +188,8 @@ public class FixOrbSeller extends Feature {
 		Config.set(key + "reset", new JsonPrimitive(getNextServerRestart()));
 
 		JsonObject ids = new JsonObject();
-		for (Map.Entry<String, Integer> entry : cbToId.entrySet())
-			ids.addProperty(entry.getKey(), entry.getValue());
+		for (Map.Entry<Citybuild, Integer> entry : cbToId.entrySet())
+			ids.addProperty(entry.getKey().name(), entry.getValue());
 
 		Config.set(key + "ids", ids);
 		Config.save();

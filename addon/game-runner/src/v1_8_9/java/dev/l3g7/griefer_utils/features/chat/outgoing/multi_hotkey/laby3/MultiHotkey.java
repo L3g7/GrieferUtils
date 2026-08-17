@@ -72,7 +72,7 @@ public class MultiHotkey extends Feature {
 			List<String> commands = new ArrayList<>();
 			data.get("commands").getAsJsonArray().forEach(e -> commands.add(e.getAsString()));
 
-			Citybuild cb = Citybuild.parseSafe(data.get("cb").getAsString());
+			Citybuild cb = Citybuild.tryParse(data.get("cb").getAsString()).getOr(Citybuild.ANY);
 
 			HotkeyDisplaySetting hotKey = (HotkeyDisplaySetting) new HotkeyDisplaySetting(
 				data.get("name").getAsString(),

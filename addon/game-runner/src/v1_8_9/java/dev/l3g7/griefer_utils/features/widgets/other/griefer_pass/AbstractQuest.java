@@ -52,8 +52,7 @@ abstract class AbstractQuest implements Disableable, Comparable<AbstractQuest> {
 		if (!LabyBridge.labyBridge.inDevEnv() && mc().isIntegratedServerRunning())
 			return true;
 
-		Citybuild cb = Citybuild.current();
-		return cb != Citybuild.ANY && cb != Citybuild.LAVA && cb != Citybuild.WATER;
+		return Citybuild.current().hasPlots();
 	}
 
 	Matcher getMatcher() {

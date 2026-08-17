@@ -8,9 +8,8 @@
 package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
-import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.core.LabyModCore;
@@ -21,21 +20,18 @@ import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.DropDownElement;
 import net.labymod.utils.DrawUtils;
 import net.labymod.utils.ModColor;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.ANY;
-import static dev.l3g7.griefer_utils.core.util.ItemUtil.createItem;
-import static net.minecraft.init.Blocks.*;
 
 public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.DummyEnum> implements Laby3Setting<CitybuildSetting, Citybuild>, CitybuildSetting {
 
@@ -51,31 +47,11 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 		}
 
 		return new JsonPrimitive(name);
-	}, e -> Citybuild.parseSafe(e.getAsString()), ANY);
+	}, e -> Citybuild.parse(e.getAsString()), ANY);
 
 	@Override
 	public ExtendedStorage<Citybuild> getStorage() {
 		return storage;
-	}
-
-	public static final List<Pair<ItemStack, Citybuild>> CB_ITEMS = new ArrayList<>();
-
-	static {
-		CB_ITEMS.add(new Pair<>(createItem(Items.nether_star, 0, "Egal"), ANY));
-
-		Block[] blocks = new Block[]{diamond_block, emerald_block, gold_block, redstone_block, lapis_block, coal_block, emerald_ore, redstone_ore, diamond_ore, gold_ore, iron_ore, coal_ore, lapis_ore, bedrock, gravel, obsidian, barrier, iron_block, barrier, prismarine, mossy_cobblestone, brick_block};
-		for (int i = 0; i < blocks.length; i++)
-			CB_ITEMS.add(new Pair<>(createItem(blocks[i], 0, "CB" + (i + 1)), Citybuild.valueOf("CB" + (i + 1))));
-
-		CB_ITEMS.set(17, new Pair<>(createItem(stone, 6, "CB17"), Citybuild.CB17));
-		CB_ITEMS.set(19, new Pair<>(createItem(prismarine, 2, "CB19"), Citybuild.CB19));
-		CB_ITEMS.add(new Pair<>(createItem(sapling, 5, "Nature"), Citybuild.NATURE));
-		CB_ITEMS.add(new Pair<>(createItem(sapling, 3, "Extreme"), Citybuild.EXTREME));
-		CB_ITEMS.add(new Pair<>(createItem(netherrack, 0, "CBE"), Citybuild.CBE));
-		CB_ITEMS.add(new Pair<>(createItem(Items.water_bucket, 0, "Wasser"), Citybuild.WATER));
-		CB_ITEMS.add(new Pair<>(createItem(Items.lava_bucket, 0, "Lava"), Citybuild.LAVA));
-		CB_ITEMS.add(new Pair<>(createItem(beacon, 0, "Event"), Citybuild.EVENT));
-		CB_ITEMS.add(new Pair<>(createItem(mycelium, 0, "Zauberwald"), Citybuild.MAGIC_FOREST));
 	}
 
 	public static ItemStack MISSING_TEXTURE = new ItemStack(Blocks.stone, 1, 10000);
@@ -95,7 +71,11 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 		});
 		setChangeListener(v -> set(menu.getSelected()));
 
-		List<ItemStack> items = CB_ITEMS.stream().map(p -> p.a).collect(Collectors.toList());
+		List<ItemStack> items = Arrays.stream(Citybuild.values())
+			.filter(Citybuild::isValid)
+			.map(Citybuild::toItemStack)
+			.collect(Collectors.toList());
+
 		iconData = new IconData();
 		itemIcon = MISSING_TEXTURE;
 		textField.setEnableBackgroundDrawing(false);
@@ -145,33 +125,19 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	}
 
 	public Citybuild get() {
-		for (Pair<ItemStack, Citybuild> pair : CB_ITEMS) {
-			if (pair.a == menu.getSelected())
-				return pair.b;
-		}
-
-		return ANY;
+		return itemToCitybuild(menu.getSelected());
 	}
 
 	@Override
 	public CitybuildSetting set(Citybuild value) {
-		for (Pair<ItemStack, Citybuild> pair : CB_ITEMS) {
-			if (pair.b == value)
-				return set(pair.a);
-		}
+		if (!value.isValid())
+			return set(ANY.toItemStack());
 
-		return set(ANY);
+		return set(value.toItemStack());
 	}
 
 	public CitybuildSetting set(ItemStack stack) {
-		Citybuild cb = ANY;
-		for (Pair<ItemStack, Citybuild> pair : CB_ITEMS) {
-			if (pair.a == menu.getSelected()) {
-				cb = pair.b;
-				break;
-			}
-		}
-
+		Citybuild cb = itemToCitybuild(stack);
 		Laby3Setting.super.set(cb);
 		currentItem = stack;
 		menu.setSelected(stack);
@@ -180,6 +146,14 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 		callbacks.forEach(c -> c.accept(stack));
 		itemIcon = stack;
 		return this;
+	}
+
+	private Citybuild itemToCitybuild(ItemStack item) {
+		for (Citybuild value : Citybuild.values())
+			if (value.toItemStack() == item)
+				return value;
+
+		return ANY;
 	}
 
 	public boolean isOpen() {

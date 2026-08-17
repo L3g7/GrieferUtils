@@ -38,7 +38,7 @@ public class PortalCooldown extends Feature {
 			timeoutEnd = System.currentTimeMillis() + 12_000;
 		}
 
-		if (!Citybuild.currentRaw().equals("Portal"))
+		if (Citybuild.current() != Citybuild.PORTAL)
 			return;
 
 		if ((msg.startsWith("§r§cKicked whilst connecting") && !msg.contains("Du hast dich zu schnell wieder eingeloggt."))

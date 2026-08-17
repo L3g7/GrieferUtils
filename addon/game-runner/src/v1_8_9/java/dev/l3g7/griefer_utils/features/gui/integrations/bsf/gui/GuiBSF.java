@@ -24,9 +24,8 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.ANY;
-import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.MAGIC_FOREST;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.distanceToPlayer;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class GuiBSF extends GuiBigChest {
 
@@ -49,7 +48,7 @@ public class GuiBSF extends GuiBigChest {
 
 		super.open();
 		if (!BSF.hasData()) {
-			if (Citybuild.current() == ANY || Citybuild.current() == MAGIC_FOREST) {
+			if (Citybuild.current().hasPlots()) {
 				TextureItem item = new TextureItem("hourglass", "§fStatus: §cNicht bereit", "§fBitte betrete einen Citybuild.");
 				addTextureItem(13, item, null);
 				return;

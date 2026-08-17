@@ -40,7 +40,7 @@ public class ChatReaction {
 		object.addProperty("match_all", matchAll);
 		object.addProperty("trigger", trigger);
 		object.addProperty("command", command);
-		object.addProperty("city_build", citybuild.getInternalName());
+		object.addProperty("city_build", citybuild.name());
 
 		return object;
 	}
@@ -52,7 +52,7 @@ public class ChatReaction {
 		reaction.matchAll = object.get("match_all").getAsBoolean();
 		reaction.trigger = object.get("trigger").getAsString();
 		reaction.command = object.get("command").getAsString();
-		reaction.citybuild = Citybuild.parseSafe(object.get("city_build").getAsString());
+		reaction.citybuild = Citybuild.tryParse(object.get("city_build").getAsString()).getOr(Citybuild.ANY);
 		reaction.completed = true;
 		return reaction;
 	}

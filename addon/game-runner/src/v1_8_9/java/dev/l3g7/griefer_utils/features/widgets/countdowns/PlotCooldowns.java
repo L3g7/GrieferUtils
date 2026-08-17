@@ -2,10 +2,10 @@ package dev.l3g7.griefer_utils.features.widgets.countdowns;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.misc.Countdown;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.ComplexWidget;
@@ -50,8 +50,7 @@ public class PlotCooldowns extends ComplexWidget {
 		if (!event.message.startsWith("/"))
 			return;
 
-		Citybuild cb = Citybuild.current();
-		if (cb == Citybuild.ANY || cb == Citybuild.MAGIC_FOREST || cb == Citybuild.LAVA || cb == Citybuild.WATER)
+		if (!Citybuild.current().hasPlots())
 			return;
 
 		String command = event.message.substring(1).split(" ")[0];

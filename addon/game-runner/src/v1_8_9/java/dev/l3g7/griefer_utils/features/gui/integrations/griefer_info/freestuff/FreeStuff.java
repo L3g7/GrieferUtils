@@ -34,7 +34,7 @@ public class FreeStuff {
 
 	public static FreeStuff fromJson(JsonObject object) {
 		String name = object.get("name").getAsString();
-		Citybuild cb = Citybuild.parseSafe(object.get("cb").getAsString());
+		Citybuild cb = Citybuild.parse(object.get("cb").getAsString());
 		String id = object.get("id").getAsString();
 		String farm = object.get("farm").getAsString();
 		farm = farm.isEmpty() ? null : farm.substring("/farm/".length());

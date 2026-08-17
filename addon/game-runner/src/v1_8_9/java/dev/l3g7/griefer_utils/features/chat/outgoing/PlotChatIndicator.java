@@ -90,7 +90,7 @@ public class PlotChatIndicator extends Feature {
 	@EventListener(triggerWhenDisabled = true)
 	public void onCitybuildJoin(CitybuildJoinEvent event) {
 		Citybuild citybuild = current();
-		if (citybuild == ANY || citybuild == LAVA || citybuild == WATER || citybuild == MAGIC_FOREST) {
+		if (!citybuild.hasPlots()) {
 			plotchatState = false;
 			return;
 		}
@@ -108,7 +108,7 @@ public class PlotChatIndicator extends Feature {
 	@EventListener(triggerWhenDisabled = true)
 	public void onReceive(MessageReceiveEvent event) {
 		Citybuild citybuild = current();
-		if (citybuild == ANY || citybuild == MAGIC_FOREST)
+		if (!citybuild.hasPlots())
 			return;
 
 		// Update plot chat state

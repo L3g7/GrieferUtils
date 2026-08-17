@@ -44,7 +44,7 @@ public class InteractableFriendsMenu extends Feature {
 		if (!serverLine.startsWith("§7Server: §e"))
 			return;
 
-		Option<Citybuild> parsedCB = Citybuild.parse(serverLine.substring("§7Server: §e".length()));
+		Option<Citybuild> parsedCB = Citybuild.tryParse(serverLine.substring("§7Server: §e".length()));
 		if (parsedCB.isUnset())
 			return;
 

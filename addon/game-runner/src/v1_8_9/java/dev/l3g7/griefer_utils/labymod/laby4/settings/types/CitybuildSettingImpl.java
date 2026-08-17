@@ -52,7 +52,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 			}
 
 			return new JsonPrimitive(name);
-		}, e -> Citybuild.parseSafe(e.getAsString()), Citybuild.ANY);
+		}, e -> Citybuild.parse(e.getAsString()), Citybuild.ANY);
 		icon(Citybuild.ANY.toItemStack());
 		callback(v -> {
 			icon(v.toItemStack());
@@ -102,7 +102,9 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 
 		});
 
-		widget.addAll(Citybuild.values());
+		for (Citybuild cb : Citybuild.values())
+			if (cb.isValid())
+				widget.add(cb);
 
 		callback(v -> widget.setSelected(v, false));
 

@@ -137,7 +137,7 @@ public class BSFCollector {
 
 		HashSet<Chunk> diagonalEnds = new HashSet<>();
 		Citybuild cb = Citybuild.current();
-		if (cb == Citybuild.ANY)
+		if (!cb.isValid())
 			return true;
 
 		// Check diagonal ends

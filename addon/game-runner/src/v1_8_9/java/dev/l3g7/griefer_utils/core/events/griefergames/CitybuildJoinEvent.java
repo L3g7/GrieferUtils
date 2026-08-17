@@ -81,7 +81,7 @@ public class CitybuildJoinEvent extends Event {
 				return;
 
 			Citybuild cb = Citybuild.current();
-			if (cb != Citybuild.ANY)
+			if (cb.isValid())
 				new Early(cb).fire();
 		}
 

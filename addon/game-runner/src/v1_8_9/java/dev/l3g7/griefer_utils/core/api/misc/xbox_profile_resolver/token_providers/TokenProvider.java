@@ -7,18 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.token_providers;
 
-import java.io.IOException;
-
 public interface TokenProvider {
 
-	boolean loadWithException() throws IOException;
-
-	default boolean load() {
-		try {
-			return loadWithException();
-		} catch (Exception e) {
-			return false;
-		}
-	}
+	boolean load();
 
 }

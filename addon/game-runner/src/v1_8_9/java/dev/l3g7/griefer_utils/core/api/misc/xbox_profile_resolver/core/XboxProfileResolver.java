@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core;
 
 import com.google.gson.*;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.token_providers.LabyModTokenProvider;
+import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.token_providers.LabyMod3TokenProvider;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.token_providers.MinecraftTokenProvider;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.token_providers.MultiMCTokenProvider;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.token_providers.TokenProvider;
@@ -71,7 +71,7 @@ public class XboxProfileResolver {
 	}
 
 	static {
-		for (TokenProvider tokenProvider : new TokenProvider[]{new MinecraftTokenProvider(), new MultiMCTokenProvider(), new LabyModTokenProvider()}) {
+		for (TokenProvider tokenProvider : new TokenProvider[]{new MinecraftTokenProvider(), new MultiMCTokenProvider(), new LabyMod3TokenProvider()}) {
 			if (tokenProvider.load()) {
 				available = true;
 				break;

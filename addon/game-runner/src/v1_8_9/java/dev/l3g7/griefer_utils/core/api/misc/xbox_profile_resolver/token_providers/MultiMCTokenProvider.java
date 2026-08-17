@@ -13,8 +13,8 @@ import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfi
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.tokens.OAuth2Token;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.tokens.XToken;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.util.DateTime;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,16 +22,17 @@ import java.util.List;
 
 public class MultiMCTokenProvider implements TokenProvider {
 
-	public boolean loadWithException() throws IOException {
+	@Override
+	public boolean load() {
 		return load(Paths.get("..", "..", "..", "accounts.json"))
 			|| load(Paths.get(System.getenv("AppData"), "PrismLauncher", "accounts.json"));
 	}
 
-	private static boolean load(Path path) throws IOException {
+	private static boolean load(Path path) {
 		if (!Files.exists(path))
 			return false;
 
-		List<Account> accounts = XboxProfileResolver.GSON.fromJson(Files.newBufferedReader(path), Accounts.class).accounts;
+		List<Account> accounts = XboxProfileResolver.GSON.fromJson(IO.read(path).asString(), Accounts.class).accounts;
 		for (Account account : accounts) {
 
 			Authorization.set(new Authorization(

@@ -7,13 +7,20 @@
 
 package dev.l3g7.griefer_utils.core.events.network;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
+import net.labymod.api.event.client.network.server.ServerDisconnectEvent;
+import net.labymod.main.LabyMod;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
+
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
 /**
  * An event related to the server connection.
@@ -22,6 +29,11 @@ public class ServerEvent extends Event {
 
 	private static boolean hotfix_brandPacketReceived = true, // TODO
 		hotfix_watching = true; // only listen to first MC|Brand packet after quit to avoid multiple detections when replaying the packet
+
+	public ServerEvent() {
+		hotfix_brandPacketReceived = false;
+		hotfix_watching = true;
+	}
 
 	public static class ServerSwitchEvent extends ServerEvent {
 
@@ -49,9 +61,7 @@ public class ServerEvent extends Event {
 			if (hotfix_watching && event.packet.getChannelName().equals("MC|Brand")) {
 				hotfix_brandPacketReceived = true;
 				hotfix_watching = false;
-			}
-
-			else if (hotfix_brandPacketReceived && event.packet.getChannelName().equals("mysterymod:mm")) {
+			} else if (hotfix_brandPacketReceived && event.packet.getChannelName().equals("mysterymod:mm")) {
 				hotfix_brandPacketReceived = false;
 				new GrieferGamesJoinEvent().fire();
 			}
@@ -61,13 +71,20 @@ public class ServerEvent extends Event {
 
 	public static class ServerQuitEvent extends ServerEvent {
 
-		@OnEnable
-		private static void register() {
-			LabyBridge.labyBridge.onQuit(() -> {
-				hotfix_brandPacketReceived = false;
-				hotfix_watching = true;
-				new ServerQuitEvent().fire();
-			});
+		@ExclusiveTo(LABY_3)
+		private static class Laby3Registrar {
+			@OnEnable
+			private static void register() {
+				LabyMod.getInstance().getEventManager().registerOnQuit(v -> new ServerQuitEvent().fire());
+			}
+		}
+
+		@ExclusiveTo(LABY_4)
+		private static class Laby4Registrar {
+			@OnEnable
+			private static void register() {
+				Laby4Util.register(ServerDisconnectEvent.class, v -> new ServerQuitEvent().fire());
+			}
 		}
 
 	}

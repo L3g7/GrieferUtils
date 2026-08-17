@@ -28,7 +28,6 @@ import net.labymod.api.client.resources.ResourceLocation;
 import net.labymod.api.event.client.chat.ChatMessageSendEvent;
 import net.labymod.api.event.client.chat.ChatReceiveEvent;
 import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
-import net.labymod.api.event.client.network.server.ServerDisconnectEvent;
 import net.labymod.api.event.client.network.server.ServerJoinEvent;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.notification.Notification;
@@ -150,11 +149,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void onJoin(Runnable callback) {
 		Laby4Util.register(ServerJoinEvent.class, v -> callback.run());
-	}
-
-	@Override
-	public void onQuit(Runnable callback) {
-		Laby4Util.register(ServerDisconnectEvent.class, v -> callback.run());
 	}
 
 	@Override

@@ -85,8 +85,6 @@ public interface LabyBridge {
 
 	void onJoin(Runnable callback);
 
-	void onQuit(Runnable callback);
-
 	void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback);
 
 	// Specific methods

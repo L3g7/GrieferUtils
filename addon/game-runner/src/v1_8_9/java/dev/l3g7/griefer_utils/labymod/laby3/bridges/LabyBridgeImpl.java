@@ -152,11 +152,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	}
 
 	@Override
-	public void onQuit(Runnable callback) {
-		LabyMod.getInstance().getEventManager().registerOnQuit(v -> callback.run());
-	}
-
-	@Override
 	public void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback) {
 		Laby3MessageModifyHandler.callbacks.add(callback);
 	}

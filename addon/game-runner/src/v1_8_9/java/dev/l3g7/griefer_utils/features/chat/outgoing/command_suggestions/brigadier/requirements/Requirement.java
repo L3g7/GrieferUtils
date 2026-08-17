@@ -9,6 +9,8 @@ import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadi
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.minecraft.RankRequirement;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.minecraft.SubserverRequirement;
 
+import java.util.Arrays;
+
 /**
  * A condition that hides suggestions / nodes if it fails.
  */
@@ -42,5 +44,13 @@ public abstract class Requirement {
 	};
 
 	public abstract boolean test();
+
+	public Requirement and(Requirement other) {
+		return new NativeBoolOpRequirement.NativeAndRequirement(Arrays.asList(this, other));
+	}
+
+	public Requirement not() {
+		return new NativeBoolOpRequirement.NativeNotRequirement(this);
+	}
 
 }

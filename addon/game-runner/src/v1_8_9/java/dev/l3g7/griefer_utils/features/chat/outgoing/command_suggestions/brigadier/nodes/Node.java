@@ -11,6 +11,8 @@ import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadi
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.LiteralListNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativeLiteralNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.Requirement;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeFixedRequirement;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.minecraft.SubserverRequirement;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -38,6 +40,7 @@ public abstract class Node<T extends ArgumentBuilder<Source, ? super T>> {
 
 	protected boolean command = false;
 	protected String redirect = null;
+	protected HubAvailability hubAvailability = HubAvailability.UNAVAILABLE;
 	protected Requirement requirements;
 	protected List<Node<?>> children;
 
@@ -76,14 +79,56 @@ public abstract class Node<T extends ArgumentBuilder<Source, ? super T>> {
 		if (redirect != null)
 			builder.redirect(dispatcher.getLabel(redirect).build(dispatcher));
 
-		if (requirements != null)
-			builder.requires(src -> requirements.test());
+		Requirement requirement = HubAvailability.mergeRequirement(requirements, hubAvailability);
+		builder.requires(src -> requirement.test());
 
 		if (children != null)
 			for (Node<?> child : children)
 				child.register(dispatcher, builder::then);
 
 		return builder.build();
+	}
+
+	public enum HubAvailability {
+		/**
+		 * Available in Lobby, Portal and all citybuilds.
+		 */
+		ALL,
+
+		/**
+		 * Available in Lobby and all citybuilds.
+		 */
+		LOBBY,
+
+		/**
+		 * Available in Portal and all citybuilds.
+		 */
+		PORTAL,
+
+		/**
+		 * Available in citybuilds only.
+		 */
+		UNAVAILABLE;
+
+		private static Requirement mergeRequirement(Requirement requirement, HubAvailability availability) {
+			if (availability == null)
+				availability = UNAVAILABLE;
+
+			if (requirement == null)
+				return availability.toRequirement();
+
+			return requirement.and(availability.toRequirement());
+		}
+
+		private Requirement toRequirement() {
+			return switch (this) {
+				case ALL -> NativeFixedRequirement.ALWAYS;
+				case LOBBY -> new SubserverRequirement("PORTAL").not();
+				case PORTAL -> new SubserverRequirement("LOBBY").not();
+				case UNAVAILABLE -> LOBBY.toRequirement().and(PORTAL.toRequirement());
+			};
+		}
+
 	}
 
 }

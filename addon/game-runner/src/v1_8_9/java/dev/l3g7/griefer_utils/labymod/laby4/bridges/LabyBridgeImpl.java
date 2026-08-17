@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
@@ -28,7 +27,6 @@ import net.labymod.api.client.resources.ResourceLocation;
 import net.labymod.api.event.client.chat.ChatMessageSendEvent;
 import net.labymod.api.event.client.chat.ChatReceiveEvent;
 import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
-import net.labymod.api.event.client.network.server.ServerJoinEvent;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.notification.Notification;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
@@ -144,11 +142,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void copyText(String text) {
 		labyAPI().minecraft().setClipboard(text);
-	}
-
-	@Override
-	public void onJoin(Runnable callback) {
-		Laby4Util.register(ServerJoinEvent.class, v -> callback.run());
 	}
 
 	@Override

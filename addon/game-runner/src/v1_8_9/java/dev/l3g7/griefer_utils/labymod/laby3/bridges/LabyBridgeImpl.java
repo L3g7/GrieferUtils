@@ -146,10 +146,6 @@ public class LabyBridgeImpl implements LabyBridge {
 		}
 	}
 
-	@Override
-	public void onJoin(Runnable callback) {
-		LabyMod.getInstance().getEventManager().registerOnJoin(v -> callback.run());
-	}
 
 	@Override
 	public void onMessageModify(BiFunction<IChatComponent, IChatComponent, IChatComponent> callback) {

@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.core.events.network;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
@@ -47,9 +46,20 @@ public class ServerEvent extends Event {
 
 	public static class ServerJoinEvent extends ServerEvent {
 
-		@OnEnable
-		private static void register() {
-			LabyBridge.labyBridge.onJoin(() -> new ServerJoinEvent().fire());
+		@ExclusiveTo(LABY_3)
+		private static class Laby3Registrar {
+			@OnEnable
+			private static void register() {
+				LabyMod.getInstance().getEventManager().registerOnJoin(v -> new ServerJoinEvent().fire());
+			}
+		}
+
+		@ExclusiveTo(LABY_4)
+		private static class Laby4Registrar {
+			@OnEnable
+			private static void register() {
+				Laby4Util.register(net.labymod.api.event.client.network.server.ServerJoinEvent.class, v -> new ServerJoinEvent().fire());
+			}
 		}
 
 	}

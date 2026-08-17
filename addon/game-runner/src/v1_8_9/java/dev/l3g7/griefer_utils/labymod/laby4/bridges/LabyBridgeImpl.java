@@ -27,8 +27,6 @@ import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.notification.Notification;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
-import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.tab.NameHistoryActivity;
-import net.labymod.core.main.LabyMod;
 import net.labymod.v1_8_9.client.player.VersionedNetworkPlayerInfo;
 import net.minecraft.client.network.NetworkPlayerInfo;
 
@@ -135,13 +133,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void copyText(String text) {
 		labyAPI().minecraft().setClipboard(text);
-	}
-
-	@Override
-	public void openNameHistory(String name) {
-		NameHistoryActivity activity = LabyMod.references().nameHistoryActivity();
-		activity.scheduleQuery(name);
-		labyAPI().minecraft().minecraftWindow().displayScreen(activity);
 	}
 
 	@Override

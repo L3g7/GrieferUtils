@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
-import dev.l3g7.griefer_utils.labymod.laby3.util.Laby3Util;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -138,11 +137,6 @@ public class LabyBridgeImpl implements LabyBridge {
 		} catch (IllegalStateException e) {
 			notifyError("Die Zwischenablage wird derzeit verwendet!");
 		}
-	}
-
-	@Override
-	public void openNameHistory(String name) {
-		Laby3Util.openNameHistory(name);
 	}
 
 	@Override

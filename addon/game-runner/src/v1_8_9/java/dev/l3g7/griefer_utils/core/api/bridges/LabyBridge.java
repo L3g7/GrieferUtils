@@ -79,8 +79,6 @@ public interface LabyBridge {
 
 	// Specific methods
 
-	void openNameHistory(String name);
-
 	void syncTabList(NetworkPlayerInfo info);
 
 }

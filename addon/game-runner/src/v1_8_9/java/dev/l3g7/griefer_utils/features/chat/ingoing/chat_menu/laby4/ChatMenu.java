@@ -29,6 +29,8 @@ import net.labymod.api.Laby;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.tab.NameHistoryActivity;
+import net.labymod.core.main.LabyMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IChatComponent;
 import org.lwjgl.input.Keyboard;
@@ -47,6 +49,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby4.ChatMenuEntry.Action.*;
+import static net.labymod.api.Laby.labyAPI;
 
 @Singleton
 @ExclusiveTo(LABY_4)
@@ -202,7 +205,9 @@ public class ChatMenu extends Feature {
 			return;
 		}
 
-		labyBridge.openNameHistory(name);
+		NameHistoryActivity activity = LabyMod.references().nameHistoryActivity();
+		activity.scheduleQuery(name);
+		labyAPI().minecraft().minecraftWindow().displayScreen(activity);
 	}
 
 	static void copyToClipboard(String text) {

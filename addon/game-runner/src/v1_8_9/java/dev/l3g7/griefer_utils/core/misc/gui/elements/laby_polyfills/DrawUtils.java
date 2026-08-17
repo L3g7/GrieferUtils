@@ -11,6 +11,8 @@ import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import net.labymod.api.client.gui.icon.Icon;
+import net.labymod.main.LabyMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.model.ModelHumanoidHead;
@@ -28,6 +30,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+
+import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
@@ -158,7 +162,7 @@ public class DrawUtils {
 
 	}
 
-	 public static void drawItem(ItemStack item, double xPosition, double yPosition, String value) {
+	public static void drawItem(ItemStack item, double xPosition, double yPosition, String value) {
 		RenderHelper.enableGUIStandardItemLighting();
 		GlStateManager.enableCull();
 		if (item.hasEffect()) {
@@ -435,7 +439,17 @@ public class DrawUtils {
 
 	private static final ModelSkeletonHead humanoidHead = new ModelHumanoidHead();
 	public static void renderSkull(GameProfile gameProfile) {
-		Pair<String, String> skin = LabyBridge.labyBridge.getCachedTexture(gameProfile.getId());
+		UUID uuid = gameProfile.getId();
+		Pair<String, String> skin = LabyBridge.get(() -> {
+			ResourceLocation resourceSkin = LabyMod.getInstance().getDrawUtils().getPlayerSkinTextureCache().getSkinTexture(new GameProfile(uuid, ""));
+			if (resourceSkin == null)
+				return null;
+
+			return new Pair<>(resourceSkin.getResourceDomain(), resourceSkin.getResourcePath());
+		}, () -> {
+			net.labymod.api.client.resources.ResourceLocation location = Icon.head(uuid).getResourceLocation();
+			return location == null ? null : new Pair<>(location.getNamespace(), location.getPath());
+		});
 		if (skin != null) {
 			Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(skin.a, skin.b));
 			GlStateManager.pushMatrix();

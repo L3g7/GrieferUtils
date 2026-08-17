@@ -16,11 +16,9 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
-import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.labymod.laby3.util.Laby3Util;
-import net.labymod.api.events.MessageSendEvent;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -31,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.*;
@@ -141,11 +138,6 @@ public class LabyBridgeImpl implements LabyBridge {
 		} catch (IllegalStateException e) {
 			notifyError("Die Zwischenablage wird derzeit verwendet!");
 		}
-	}
-
-	@Override
-	public Pair<String, String> getCachedTexture(UUID uuid) {
-		return Laby3Util.getCachedTexture(uuid);
 	}
 
 	@Override

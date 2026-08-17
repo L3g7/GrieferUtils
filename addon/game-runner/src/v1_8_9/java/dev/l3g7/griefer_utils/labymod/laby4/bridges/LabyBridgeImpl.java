@@ -19,16 +19,12 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
-import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.resources.ResourceLocation;
-import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.notification.Notification;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
-import net.labymod.v1_8_9.client.player.VersionedNetworkPlayerInfo;
-import net.minecraft.client.network.NetworkPlayerInfo;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -37,7 +33,6 @@ import java.net.MalformedURLException;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 import static net.labymod.api.Laby.labyAPI;
-import static net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent.UpdateType.DISPLAY_NAME;
 
 @Bridge
 @Singleton
@@ -133,11 +128,6 @@ public class LabyBridgeImpl implements LabyBridge {
 	@Override
 	public void copyText(String text) {
 		labyAPI().minecraft().setClipboard(text);
-	}
-
-	@Override
-	public void syncTabList(NetworkPlayerInfo info) {
-		Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME));
 	}
 
 }

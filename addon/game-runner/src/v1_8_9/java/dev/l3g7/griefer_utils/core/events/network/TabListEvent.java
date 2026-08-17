@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.events.network;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
+import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
@@ -17,6 +18,9 @@ import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEven
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
+import net.labymod.api.Laby;
+import net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent;
+import net.labymod.v1_8_9.client.player.VersionedNetworkPlayerInfo;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.network.play.server.S38PacketPlayerListItem.AddPlayerData;
@@ -28,8 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent.UpdateType.DISPLAY_NAME;
 import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.*;
 
 /**
@@ -58,7 +62,9 @@ public class TabListEvent extends Event {
 		TabListNameUpdateEvent event = new TabListNameUpdateEvent(info.getGameProfile(), originalComponent);
 		event.fire();
 		info.setDisplayName(event.component);
-		labyBridge.syncTabList(info);
+		LabyBridge.run(
+			() -> { /* // No-op */},
+			() -> Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME)));
 	}
 
 	public static IChatComponent getCachedName(UUID uuid) {

@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
-import net.minecraft.client.network.NetworkPlayerInfo;
 
 import java.io.File;
 
@@ -76,9 +75,5 @@ public interface LabyBridge {
 	boolean openFile(File file);
 
 	void copyText(String text);
-
-	// Specific methods
-
-	void syncTabList(NetworkPlayerInfo info);
 
 }

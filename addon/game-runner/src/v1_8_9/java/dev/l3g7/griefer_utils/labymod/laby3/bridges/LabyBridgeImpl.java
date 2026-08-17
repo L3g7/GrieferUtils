@@ -20,7 +20,6 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.main.LabyMod;
-import net.minecraft.client.network.NetworkPlayerInfo;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
@@ -137,11 +136,6 @@ public class LabyBridgeImpl implements LabyBridge {
 		} catch (IllegalStateException e) {
 			notifyError("Die Zwischenablage wird derzeit verwendet!");
 		}
-	}
-
-	@Override
-	public void syncTabList(NetworkPlayerInfo info) {
-		// No-op
 	}
 
 }

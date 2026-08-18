@@ -9,19 +9,30 @@ package dev.l3g7.griefer_utils.features.uncategorized.commands;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import net.labymod.api.Laby;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.tab.NameHistoryActivity;
+import net.labymod.core.main.LabyMod;
+import net.labymod.ingamechat.tabs.GuiChatNameHistory;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.util.*;
+import java.util.List;
+import java.util.Queue;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ADDON_PREFIX;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.features.uncategorized.commands.Command.CommandBuilder.command;
+import static net.labymod.api.Laby.labyAPI;
 
 public class Commands {
 
@@ -159,6 +170,47 @@ public class Commands {
 
 				LabyBridge.labyBridge.notify(parts[0], parts[1]);
 			}));
+
+		registerCommand(command("name_history")
+			.stringArg("Spieler")
+			.build(args -> {
+				String name = args.get("Spieler");
+
+				if (name.startsWith("!")) {
+					labyBridge.notifyMildError("Von Bedrock-Spielern kann kein Namensverlauf abgefragt werden.");
+					return;
+				}
+
+				if (!Constants.UNFORMATTED_JAVA_PLAYER_NAME_PATTERN.matcher(name).matches()) {
+					labyBridge.notifyMildError("Ungültiger Spielername.");
+					return;
+				}
+
+				LabyBridge.dispatchRun(
+					() -> mc().displayGuiScreen(new GuiChatNameHistory("", name)),
+					() -> {
+						NameHistoryActivity activity = LabyMod.references().nameHistoryActivity();
+						activity.scheduleQuery(name);
+						labyAPI().minecraft().minecraftWindow().displayScreen(activity);
+					}
+				);
+			}));
+
+		registerCommand(command("copy")
+			.greedyString("Text")
+			.build(args -> {
+				String text = args.get("Text");
+
+				LabyBridge.dispatchRun(
+					() -> {
+						StringSelection selection = new StringSelection(text);
+						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+					},
+					() -> Laby.labyAPI().minecraft().chatExecutor().copyToClipboard(text)
+				);
+				labyBridge.notify("\"" + text + "\"", "wurde in die Zwischenablage kopiert.");
+			}));
+
 	}
 
 }

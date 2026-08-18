@@ -59,8 +59,8 @@ public class ChatMenu extends Feature {
 
 	protected static final List<ChatMenuEntry> DEFAULT_ENTRIES = ImmutableList.of(
 		new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %name%", "wooden_board"),
-		new ChatMenuEntry("Namensverlauf", CONSUMER, (Consumer<String>) ChatMenu::openNameHistory, "name_tag_yellow"),
-		new ChatMenuEntry("Namen kopieren", CONSUMER, (Consumer<String>) ChatMenu::copyToClipboard, "name_tag_yellow"),
+		new ChatMenuEntry("Namensverlauf", CONSUMER, "/gu:name_history %name%", "name_tag_yellow"),
+		new ChatMenuEntry("Namen kopieren", CONSUMER, "/gu:copy %name%", "name_tag_yellow"),
 		new ChatMenuEntry("Im Forum suchen", OPEN_URL, "https://forum.griefergames.de/search/?q=%name%", "griefer_games"),
 		new ChatMenuEntry("Inventar öffnen", RUN_CMD, "/invsee %name%", "bundle"),
 		new ChatMenuEntry("Ausrüstung ansehen", RUN_CMD, "/view %name%", "diamond_chestplate"),

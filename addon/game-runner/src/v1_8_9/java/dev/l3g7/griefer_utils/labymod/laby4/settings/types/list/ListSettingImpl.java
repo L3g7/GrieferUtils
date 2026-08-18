@@ -134,7 +134,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		if (!config.isInvalid())
 			notifyChange();
 
-		return new ListSettingEntryWithIcon(this, config, rawList.size());
+		return new StyledListSettingEntry(this, config, rawList.size());
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 			}
 
 			// Create setting entry
-			ListSettingEntry entry = new ListSettingEntryWithIcon(this, config, i);
+			ListSettingEntry entry = new StyledListSettingEntry(this, config, i);
 			list.add(new KeyValue<>(entry.getId(), entry));
 		}
 
@@ -171,7 +171,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		// Hook add button
 		if (setting.customEdit != null) {
 			event.get("container", "mods-breadcrumb", "accent-button").setPressable(() -> {
-				ListEntry<?> e = ((ListSettingEntryWithIcon) setting.createNew(true)).entry;
+				ListEntry<?> e = ((StyledListSettingEntry) setting.createNew(true)).entry;
 				setting.customEdit.accept(c(e));
 			});
 		}
@@ -246,14 +246,14 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	}
 
 	/**
-	 * List entries that support icons.
+	 * List entries that support icons and descriptions.
 	 */
-	private static class ListSettingEntryWithIcon extends ListSettingEntry {
+	private static class StyledListSettingEntry extends ListSettingEntry {
 
 		private final ListEntry<?> entry;
 		private final boolean hasHookedEdit;
 
-		public ListSettingEntryWithIcon(ListSettingImpl<?> parent, EntryConfig<?> config, int index) {
+		public StyledListSettingEntry(ListSettingImpl<?> parent, EntryConfig<?> config, int index) {
 			super(parent, config.entryDisplayName(), null, index);
 			entry = config.value;
 
@@ -271,6 +271,12 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 				});
 			} else
 				addSettings(config);
+		}
+
+		@Override
+		public Component getDescription() {
+			String subtext = entry.subtextLaby4();
+			return subtext == null ? null : Component.text(subtext);
 		}
 
 		@Override

@@ -19,9 +19,24 @@ public interface ListEntry<E extends ListEntry<E>> extends Named {
 	E createNew();
 
 	default String resourceIcon() {return null;}
+
 	default ItemStack itemIcon() {return null;}
 
-	List<BaseSetting<?>> toSettings();
+	default String subtext() {return null;}
+
+	default String subtextLaby4() {return subtext();}
+
+	default String subtextLaby3() {
+		String subtext = subtext();
+		if (subtext != null)
+			return "§o➡ " + subtext;
+		else
+			return null;
+	}
+
+	default List<BaseSetting<?>> toSettings() {
+		throw new UnsupportedOperationException("ListSetting must have custom edit or toSettings impl!");
+	}
 
 	void load(JsonElement data);
 

@@ -134,7 +134,12 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 			if (itemIcon != null)
 				icon(itemIcon);
 
-			name(data.getName());
+			String subtext = data.subtextLaby3();
+			if (subtext != null)
+				name(data.getName(), subtext);
+			else
+				name(data.getName());
+
 			List<SettingsElement> settings = getSubSettings().getElements();
 			settings.clear();
 			settings.addAll(c(data.toSettings()));

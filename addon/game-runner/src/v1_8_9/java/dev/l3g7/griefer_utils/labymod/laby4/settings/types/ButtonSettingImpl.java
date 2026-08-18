@@ -8,11 +8,8 @@
 package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 
 import com.google.gson.JsonNull;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.ActivityInitializeEvent.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -23,18 +20,24 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 
 	private Icon buttonIcon;
 	private String buttonLabel;
-	private ButtonWidget widget;
 
 	public ButtonSettingImpl() {
 		super(e -> JsonNull.INSTANCE, e -> NULL, NULL);
-		EventRegisterer.register(this);
 	}
 
 	@Override
 	protected Widget[] createWidgets() {
-		widget = ButtonWidget.component(Component.text(""), () -> set(null)).addId("grieferutils-fix-width");
-		reinitWidget();
-		return new Widget[]{widget};
+		Component component = buttonLabel == null ? null : Component.text(buttonLabel);
+		ButtonWidget widget = ButtonWidget.component(component, buttonIcon, () -> set(null))
+			.addId("mods-setting-advanced-button"); // Fix for button size
+
+		// ModsSettingWidget resets the widget and its icon, which causes it to disappear.
+		// The component is not synced to the text property (bug?), so that stays.
+		widget.icon().updateDefaultValue(widget.icon().get());
+
+		return new Widget[]{
+			widget
+		};
 	}
 
 	@Override
@@ -53,22 +56,4 @@ public class ButtonSettingImpl extends AbstractSettingImpl<ButtonSetting, Object
 		return this;
 	}
 
-	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
-		if (event.parent() != parent)
-			return;
-
-		event.getActivity().addStyle("griefer_utils", "button-injection.lss");
-		reinitWidget();
-	}
-
-	private void reinitWidget() {
-		if (widget == null)
-			return;
-
-		if (buttonIcon != null)
-			widget.updateIcon(buttonIcon);
-		if (buttonLabel != null)
-			widget.updateComponent(Component.text(buttonLabel));
-	}
 }

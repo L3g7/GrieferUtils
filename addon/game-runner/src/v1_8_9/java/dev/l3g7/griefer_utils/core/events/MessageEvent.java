@@ -7,10 +7,14 @@
 
 package dev.l3g7.griefer_utils.core.events;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
@@ -84,17 +88,7 @@ public class MessageEvent extends Event {
 			}
 
 			// Fire LabyMod's events
-			return LabyBridge.dispatchGet(() -> {
-				for (net.labymod.api.events.MessageSendEvent lmEvent : LabyMod.getInstance().getEventManager().getMessageSend())
-					if (lmEvent.onSend(message))
-						return true;
-
-				return false;
-			}, () -> {
-				ChatMessageSendEvent event = new ChatMessageSendEvent(message, false);
-				labyAPI().eventBus().fire(event);
-				return event.isCancelled();
-			});
+			return MessageSendEventBridge.impl.trySendMessage(message);
 		}
 
 		public final String message;
@@ -103,10 +97,26 @@ public class MessageEvent extends Event {
 			this.message = message;
 		}
 
+		@OnEnable
+		private static void register() {
+			MessageSendEventBridge.impl.register();
+		}
+
+		@Bridged
+		private interface MessageSendEventBridge {
+			MessageSendEventBridge impl = FileProvider.getBridge(MessageSendEventBridge.class);
+
+			void register();
+
+			boolean trySendMessage(String message);
+		}
+
+		@Bridge
+		@Singleton
 		@ExclusiveTo(LABY_3)
-		private static class Laby3Registrar {
-			@OnEnable
-			private static void register() {
+		private static class MessageSendEventBridgeLaby3 implements MessageSendEventBridge {
+			@Override
+			public void register() {
 				LabyMod.getInstance().getEventManager().register((net.labymod.api.events.MessageSendEvent) message -> {
 					if (message == null)
 						return false;
@@ -114,12 +124,23 @@ public class MessageEvent extends Event {
 					return new MessageSendEvent(message).fire().isCanceled();
 				});
 			}
+
+			@Override
+			public boolean trySendMessage(String message) {
+				for (net.labymod.api.events.MessageSendEvent lmEvent : LabyMod.getInstance().getEventManager().getMessageSend())
+					if (lmEvent.onSend(message))
+						return true;
+
+				return false;
+			}
 		}
 
+		@Bridge
+		@Singleton
 		@ExclusiveTo(LABY_4)
-		private static class Laby4Registrar {
-			@OnEnable
-			private static void register() {
+		private static class MessageSendEventBridgeLaby4 implements MessageSendEventBridge {
+			@Override
+			public void register() {
 				Laby4Util.register(ChatMessageSendEvent.class, v -> {
 					if (v.isCancelled())
 						return;
@@ -129,7 +150,15 @@ public class MessageEvent extends Event {
 						v.setCancelled(new MessageSendEvent(message).fire().isCanceled());
 				});
 			}
+
+			@Override
+			public boolean trySendMessage(String message) {
+				ChatMessageSendEvent event = new ChatMessageSendEvent(message, false);
+				labyAPI().eventBus().fire(event);
+				return event.isCancelled();
+			}
 		}
+
 	}
 
 	public static class MessageAboutToBeSentEvent extends MessageEvent {

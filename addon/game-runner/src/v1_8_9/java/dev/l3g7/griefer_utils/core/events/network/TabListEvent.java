@@ -9,9 +9,13 @@ package dev.l3g7.griefer_utils.core.events.network;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
@@ -32,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.labymod.api.event.client.network.playerinfo.PlayerInfoUpdateEvent.UpdateType.DISPLAY_NAME;
 import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.*;
@@ -62,9 +68,29 @@ public class TabListEvent extends Event {
 		TabListNameUpdateEvent event = new TabListNameUpdateEvent(info.getGameProfile(), originalComponent);
 		event.fire();
 		info.setDisplayName(event.component);
-		LabyBridge.dispatchRun(
-			() -> { /* // No-op */},
-			() -> Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME)));
+		TabListEventBridge.impl.updatePlayerInfo(info);
+	}
+
+	@Bridged
+	private interface TabListEventBridge {
+		TabListEventBridge impl = FileProvider.getBridge(TabListEventBridge.class);
+
+		default void updatePlayerInfo(NetworkPlayerInfo info) {}
+	}
+
+	@Bridge
+	@Singleton
+	@ExclusiveTo(LABY_3)
+	private static class TabListEventBridgeLaby3 implements TabListEventBridge {}
+
+	@Bridge
+	@Singleton
+	@ExclusiveTo(LABY_4)
+	private static class TabListEventBridgeLaby4 implements TabListEventBridge {
+		@Override
+		public void updatePlayerInfo(NetworkPlayerInfo info) {
+			Laby.fireEvent(new PlayerInfoUpdateEvent(new VersionedNetworkPlayerInfo(info), DISPLAY_NAME));
+		}
 	}
 
 	public static IChatComponent getCachedName(UUID uuid) {

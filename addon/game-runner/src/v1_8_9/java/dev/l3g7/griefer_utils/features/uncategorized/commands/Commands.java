@@ -7,8 +7,13 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.commands;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
@@ -26,6 +31,8 @@ import java.util.*;
 import java.util.List;
 import java.util.Queue;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ADDON_PREFIX;
@@ -186,14 +193,7 @@ public class Commands {
 					return;
 				}
 
-				LabyBridge.dispatchRun(
-					() -> mc().displayGuiScreen(new GuiChatNameHistory("", name)),
-					() -> {
-						NameHistoryActivity activity = LabyMod.references().nameHistoryActivity();
-						activity.scheduleQuery(name);
-						labyAPI().minecraft().minecraftWindow().displayScreen(activity);
-					}
-				);
+				CommandBridge.impl.openNameHistory(name);
 			}));
 
 		registerCommand(command("copy")
@@ -201,16 +201,52 @@ public class Commands {
 			.build(args -> {
 				String text = args.get("Text");
 
-				LabyBridge.dispatchRun(
-					() -> {
-						StringSelection selection = new StringSelection(text);
-						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
-					},
-					() -> Laby.labyAPI().minecraft().chatExecutor().copyToClipboard(text)
-				);
+				CommandBridge.impl.copy(text);
 				labyBridge.notify("\"" + text + "\"", "wurde in die Zwischenablage kopiert.");
 			}));
 
+	}
+
+	@Bridged
+	private interface CommandBridge {
+		CommandBridge impl = FileProvider.getBridge(CommandBridge.class);
+
+		void openNameHistory(String name);
+
+		void copy(String text);
+	}
+
+	@Bridge
+	@Singleton
+	@ExclusiveTo(LABY_3)
+	private static class CommandBridgeLaby3 implements CommandBridge {
+		@Override
+		public void openNameHistory(String name) {
+			mc().displayGuiScreen(new GuiChatNameHistory("", name));
+		}
+
+		@Override
+		public void copy(String text) {
+			StringSelection selection = new StringSelection(text);
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+		}
+	}
+
+	@Bridge
+	@Singleton
+	@ExclusiveTo(LABY_4)
+	private static class CommandBridgeLaby4 implements CommandBridge {
+		@Override
+		public void openNameHistory(String name) {
+			NameHistoryActivity activity = LabyMod.references().nameHistoryActivity();
+			activity.scheduleQuery(name);
+			labyAPI().minecraft().minecraftWindow().displayScreen(activity);
+		}
+
+		@Override
+		public void copy(String text) {
+			Laby.labyAPI().minecraft().chatExecutor().copyToClipboard(text);
+		}
 	}
 
 }

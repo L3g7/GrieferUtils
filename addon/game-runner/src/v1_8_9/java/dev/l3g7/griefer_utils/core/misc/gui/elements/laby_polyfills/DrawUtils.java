@@ -8,7 +8,11 @@
 package dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills;
 
 import com.mojang.authlib.GameProfile;
-import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.labymod.api.client.gui.icon.Icon;
@@ -33,6 +37,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.UUID;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**
@@ -440,16 +446,7 @@ public class DrawUtils {
 	private static final ModelSkeletonHead humanoidHead = new ModelHumanoidHead();
 	public static void renderSkull(GameProfile gameProfile) {
 		UUID uuid = gameProfile.getId();
-		Pair<String, String> skin = LabyBridge.dispatchGet(() -> {
-			ResourceLocation resourceSkin = LabyMod.getInstance().getDrawUtils().getPlayerSkinTextureCache().getSkinTexture(new GameProfile(uuid, ""));
-			if (resourceSkin == null)
-				return null;
-
-			return new Pair<>(resourceSkin.getResourceDomain(), resourceSkin.getResourcePath());
-		}, () -> {
-			net.labymod.api.client.resources.ResourceLocation location = Icon.head(uuid).getResourceLocation();
-			return location == null ? null : new Pair<>(location.getNamespace(), location.getPath());
-		});
+		Pair<String, String> skin = DrawUtilsBridge.impl.getCachedTexture(uuid);
 		if (skin != null) {
 			Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(skin.a, skin.b));
 			GlStateManager.pushMatrix();
@@ -482,4 +479,37 @@ public class DrawUtils {
 	public static int getHeight() {
 		return MinecraftUtil.screenHeight();
 	}
+
+	@Bridged
+	private interface DrawUtilsBridge {
+		DrawUtilsBridge impl = FileProvider.getBridge(DrawUtilsBridge.class);
+
+		Pair<String, String> getCachedTexture(UUID uuid);
+	}
+
+	@Bridge
+	@Singleton
+	@ExclusiveTo(LABY_3)
+	private static class DrawUtilsBridgeLaby3 implements DrawUtilsBridge {
+		@Override
+		public Pair<String, String> getCachedTexture(UUID uuid) {
+			ResourceLocation resourceSkin = LabyMod.getInstance().getDrawUtils().getPlayerSkinTextureCache().getSkinTexture(new GameProfile(uuid, ""));
+			if (resourceSkin == null)
+				return null;
+
+			return new Pair<>(resourceSkin.getResourceDomain(), resourceSkin.getResourcePath());
+		}
+	}
+
+	@Bridge
+	@Singleton
+	@ExclusiveTo(LABY_4)
+	private static class DrawUtilsBridgeLaby4 implements DrawUtilsBridge {
+		@Override
+		public Pair<String, String> getCachedTexture(UUID uuid) {
+			net.labymod.api.client.resources.ResourceLocation location = Icon.head(uuid).getResourceLocation();
+			return location == null ? null : new Pair<>(location.getNamespace(), location.getPath());
+		}
+	}
+
 }

@@ -75,32 +75,32 @@ public class Windows implements OS {
 		callback.accept(null);
 	}
 
-	private static class User32 {
+	public static class User32 {
 
 		static {
 			Native.register("user32");
 		}
 
-		static native HWND SetActiveWindow(HWND hwnd);
+		public static native HWND SetActiveWindow(HWND hwnd);
 
-		static native boolean SetForegroundWindow(HWND hwnd);
+		public static native boolean SetForegroundWindow(HWND hwnd);
 
-		static native boolean ShowWindow(HWND hwnd, int nCmdShow);
+		public static native boolean ShowWindow(HWND hwnd, int nCmdShow);
 
 	}
 
-	private static class Comdlg32 {
+	public static class Comdlg32 {
 
 		static {
 			Native.register("comdlg32");
 		}
 
-		static native boolean GetOpenFileNameW(OpenFileName params);
+		public static native boolean GetOpenFileNameW(OpenFileName params);
 
-		static native int CommDlgExtendedError();
+		public static native int CommDlgExtendedError();
 
 		@SuppressWarnings("unused")
-		static class OpenFileName extends Structure {
+		public static class OpenFileName extends Structure {
 
 			public OpenFileName() {
 				super();
@@ -129,7 +129,7 @@ public class Windows implements OS {
 			public Pointer lpTemplateName;
 
 			@Override
-			protected List<String> getFieldOrder() {
+			public List<String> getFieldOrder() {
 				return Arrays.asList("lStructSize",
 					"hwndOwner", "hInstance", "lpstrFilter", "lpstrCustomFilter"
 					, "nMaxCustFilter", "nFilterIndex", "lpstrFile", "nMaxFile"

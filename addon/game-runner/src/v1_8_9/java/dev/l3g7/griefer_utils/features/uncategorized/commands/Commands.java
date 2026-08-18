@@ -39,6 +39,7 @@ import static dev.l3g7.griefer_utils.core.api.misc.Constants.ADDON_PREFIX;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.features.uncategorized.commands.Command.CommandBuilder.command;
+import static dev.l3g7.griefer_utils.features.uncategorized.commands.Commands.CommandBridge.commandBridge;
 import static net.labymod.api.Laby.labyAPI;
 
 public class Commands {
@@ -193,7 +194,7 @@ public class Commands {
 					return;
 				}
 
-				CommandBridge.impl.openNameHistory(name);
+				commandBridge.openNameHistory(name);
 			}));
 
 		registerCommand(command("copy")
@@ -201,15 +202,15 @@ public class Commands {
 			.build(args -> {
 				String text = args.get("Text");
 
-				CommandBridge.impl.copy(text);
+				commandBridge.copy(text);
 				labyBridge.notify("\"" + text + "\"", "wurde in die Zwischenablage kopiert.");
 			}));
 
 	}
 
 	@Bridged
-	private interface CommandBridge {
-		CommandBridge impl = FileProvider.getBridge(CommandBridge.class);
+	public interface CommandBridge {
+		CommandBridge commandBridge = FileProvider.getBridge(CommandBridge.class);
 
 		void openNameHistory(String name);
 

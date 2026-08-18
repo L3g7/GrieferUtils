@@ -5,14 +5,17 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby3;
+package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
@@ -23,36 +26,29 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby3.chat_line_util.ChatLineUtil;
-import net.labymod.core_implementation.mc18.MinecraftImplementation;
-import net.labymod.ingamechat.tabs.GuiChatNameHistory;
-import net.labymod.settings.elements.SettingsElement;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.CopyTextEntry;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.EntryDisplaySetting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.util.IChatComponent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby3.ChatMenuEntry.Action.*;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.ChatMenu.ChatMenuBridge.chatMenuVersioned;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.Action.*;
 
+@Bridge
 @Singleton
-@ExclusiveTo(LABY_3)
+@ExclusiveTo(LABY_4)
 public class ChatMenu extends Feature {
 
 	protected static final CopyTextEntry COPY_TEXT_ENTRY = new CopyTextEntry();
@@ -69,8 +65,7 @@ public class ChatMenu extends Feature {
 
 	protected static ChatMenuRenderer renderer = null;
 
-	protected static final EntryAddSetting newEntrySetting = EntryAddSetting
-		.create()
+	protected static final EntryAddSetting newEntrySetting = EntryAddSetting.create()
 		.name("Neuen Menüpunkt erstellen")
 		.callback(() -> Minecraft.getMinecraft().displayGuiScreen(new AddChatMenuEntryGui(null, Minecraft.getMinecraft().currentScreen)));
 
@@ -85,12 +80,13 @@ public class ChatMenu extends Feature {
 		List<BaseSetting<?>> settings = new ArrayList<>();
 
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES) {
-			settings.add(entry.setIcon(SwitchSetting.create())
-				.name(entry.name)
-				.callback(v -> entry.enabled = v)
-				.defaultValue(true)
-				.set(entry.enabled)
-				.config("chat.ingoing.chat_menu.entries." + entry.name));
+			settings.add(
+				entry.setIcon(SwitchSetting.create())
+					.name(entry.name)
+					.callback(v -> entry.enabled = v)
+					.defaultValue(true)
+					.set(entry.enabled)
+					.config("chat.ingoing.chat_menu.entries." + entry.name));
 		}
 
 		settings.add(COPY_TEXT_ENTRY.getSetting());
@@ -101,17 +97,24 @@ public class ChatMenu extends Feature {
 		String path = "chat.ingoing.chat_menu.entries.custom";
 		if (Config.has(path)) {
 			for (JsonElement jsonElement : Config.get(path).getAsJsonArray()) {
-				new EntryDisplaySetting(ChatMenuEntry.fromJson(jsonElement.getAsJsonObject()), (SettingsElement) enabled);
+				SwitchSetting setting = chatMenuVersioned.createEntry(ChatMenuEntry.fromJson(jsonElement.getAsJsonObject()));
+				enabled.addSetting(setting);
+				setting.create(enabled);
 			}
-		}
 
+			saveEntries();
+		}
 	}
 
 	public static ChatMenu get() {
 		return get(ChatMenu.class);
 	}
 
-	public static void saveEntries() {
+	public BaseSetting<?> getAddSetting() {
+		return newEntrySetting;
+	}
+
+	public void saveEntries() {
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES)
 			Config.set("chat.ingoing.chat_menu.entries." + entry.name, new JsonPrimitive(entry.enabled));
 
@@ -125,7 +128,6 @@ public class ChatMenu extends Feature {
 	}
 
 	private void loadEntries() {
-
 		for (ChatMenuEntry entry : DEFAULT_ENTRIES) {
 			String path = "chat.ingoing.chat_menu.entries." + entry.name;
 
@@ -154,12 +156,12 @@ public class ChatMenu extends Feature {
 		if (renderer != null && renderer.outOfBox())
 			renderer = null;
 
-		if (Mouse.getEventButton() != 1 || !(mc().currentScreen instanceof GuiChat))
+		if (Mouse.getEventButton() != 1 || !chatMenuVersioned.isChatOpen())
 			return;
 
-		Pair<IChatComponent, IChatComponent> component = ChatLineUtil.getHoveredComponent();
-		if (component == null) // Didn't click on a line
-			return;
+		Pair<IChatComponent, IChatComponent> component = chatMenuVersioned.getHoveredComponent();
+		if (component == null)
+			return; // Didn't click on a line
 
 		String name = null;
 
@@ -185,7 +187,7 @@ public class ChatMenu extends Feature {
 		if (realName == null)
 			realName = name;
 
-		renderer = new ChatMenuRenderer(entries, realName, component);
+		renderer = new ChatMenuRenderer(entries, realName, component.a, component.b);
 		event.cancel();
 	}
 
@@ -202,40 +204,26 @@ public class ChatMenu extends Feature {
 		mc().dispatchKeypresses();
 	}
 
-	private static void openNameHistory(String name) {
-		if (name.startsWith("!")) {
-			labyBridge.notifyMildError("Von Bedrock-Spielern kann kein Namensverlauf abgefragt werden.");
-			return;
-		}
-
-		mc().displayGuiScreen(new GuiChatNameHistory("", name));
-	}
-
-
-	static void copyToClipboard(String text) {
-		StringSelection selection = new StringSelection(text);
-		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
-		labyBridge.notify("\"" + text + "\"", "wurde in die Zwischenablage kopiert.");
-	}
-
 	public static List<ChatMenuEntry> getCustom() {
-		return ((SettingsElement) enabled).getSubSettings().getElements()
+		return enabled.getChildSettings()
 			.stream()
 			.filter(e -> e instanceof EntryDisplaySetting)
-			.map(e -> ((EntryDisplaySetting) e).entry)
+			.map(e -> ((EntryDisplaySetting) e).getEntry())
 			.collect(Collectors.toList());
 	}
 
-	@ExclusiveTo(LABY_3)
-	@Mixin(value = MinecraftImplementation.class, remap = false)
-	private static class MixinMinecraftImplementation {
+	@Bridged
+	public interface ChatMenuBridge {
 
-		@Inject(method = "getClickEventValue", at = @At("HEAD"), cancellable = true)
-		public void injectGetClickEventValue(int x, int y, CallbackInfoReturnable<String> cir) {
-			if (ChatMenu.get().isEnabled())
-				cir.setReturnValue(null);
-		}
+		ChatMenuBridge chatMenuVersioned = FileProvider.getBridge(ChatMenuBridge.class);
+
+		EntryDisplaySetting createEntry(ChatMenuEntry entry);
+
+		SwitchSetting createCopyEntry(CopyTextEntry target);
+
+		boolean isChatOpen();
+
+		Pair<IChatComponent, IChatComponent> getHoveredComponent();
 
 	}
-
 }

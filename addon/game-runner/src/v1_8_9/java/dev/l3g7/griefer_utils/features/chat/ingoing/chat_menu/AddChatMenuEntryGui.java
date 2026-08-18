@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby4;
+package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
@@ -13,12 +13,13 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.*;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar;
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby4.ChatMenuEntry.Action;
-import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby4.ChatMenuEntry.IconType;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.Action;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.IconType;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.EntryDisplaySetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.init.Blocks;
@@ -30,6 +31,7 @@ import java.io.File;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getButtonHeight;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.ChatMenu.ChatMenuBridge.chatMenuVersioned;
 
 public class AddChatMenuEntryGui extends Gui {
 
@@ -144,7 +146,7 @@ public class AddChatMenuEntryGui extends Gui {
 			return;
 
 		// Initialize inputs with default values
-		ChatMenuEntry entry = editedEntry.entry;
+		ChatMenuEntry entry = editedEntry.getEntry();
 		nameInput.setText(entry.name);
 		actionTypeInput.select(entry.action);
 		actionInput.setText((String) entry.command);
@@ -184,7 +186,7 @@ public class AddChatMenuEntryGui extends Gui {
 			}
 
 			List<Button> buttons = Reflection.get(iconInput, "buttons");
-			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils", "icons/" + actionTypeInput.getSelected().getIcon() + ".png"));
+			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils/icons/" + actionTypeInput.getSelected().getIcon() + ".png"));
 			double bottom;
 			switch (iconInput.getSelected()) {
 				case ITEM -> bottom = itemIconInput.bottom();
@@ -323,7 +325,7 @@ public class AddChatMenuEntryGui extends Gui {
 	}
 
 	private void save() {
-		ChatMenuEntry entry = editedEntry != null ? editedEntry.entry : new ChatMenuEntry();
+		ChatMenuEntry entry = editedEntry != null ? editedEntry.getEntry() : new ChatMenuEntry();
 		entry.name = nameInput.getText();
 		entry.action = actionTypeInput.getSelected();
 		entry.command = actionInput.getText();
@@ -333,15 +335,15 @@ public class AddChatMenuEntryGui extends Gui {
 
 		if (editedEntry == null) {
 			// Add entry
-			EntryDisplaySetting setting = new EntryDisplaySetting(entry);
-			SwitchSettingImpl parent = (SwitchSettingImpl) ChatMenu.get().getMainElement();
+			EntryDisplaySetting setting = chatMenuVersioned.createEntry(entry);
+			SwitchSetting parent = (SwitchSetting) ChatMenu.get().getMainElement();
 			setting.create(parent);
-			parent.addSetting((BaseSetting<?>) setting);
+			parent.addSetting(setting);
 		}
 		else
 			editedEntry.initDisplay();
 
-		ChatMenu.saveEntries();
+		ChatMenu.get().saveEntries();
 		close();
 	}
 

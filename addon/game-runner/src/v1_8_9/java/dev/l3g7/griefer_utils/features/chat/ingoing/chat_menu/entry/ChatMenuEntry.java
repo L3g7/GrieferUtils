@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby3;
+package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
@@ -36,13 +36,13 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class ChatMenuEntry {
 
-	String name = "";
-	Action action;
-	Object command = "";
-	IconType iconType = null;
-	Object icon = null;
-	boolean completed = false;
-	boolean enabled = true;
+	public String name = "";
+	public Action action;
+	public Object command = "";
+	public IconType iconType = null;
+	public Object icon = null;
+	public boolean completed = false;
+	public boolean enabled = true;
 
 	public ChatMenuEntry() {}
 
@@ -120,9 +120,9 @@ public class ChatMenuEntry {
 	public void drawIcon(int x, int y, int w, int h) {
 		switch (iconType) {
 			case SYSTEM ->
-				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + icon + ".png"));
+				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
 			case DEFAULT ->
-				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/" + action.defaultIcon + ".png"));
+				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + action.defaultIcon + ".png"));
 			case IMAGE_FILE ->
 				DrawUtils.bindTexture(new ResourceLocation("griefer_utils/user_content/" + icon.hashCode()));
 			case ITEM -> {
@@ -133,11 +133,11 @@ public class ChatMenuEntry {
 		DrawUtils.drawTexture(x, y, 256.0, 256.0, w, h);
 	}
 
-	private ItemStack getIconAsItemStack() {
+	public ItemStack getIconAsItemStack() {
 		return icon != null ? (ItemStack) icon : ItemUtil.MISSING_TEXTURE;
 	}
 
-	enum Action implements SelectButtonGroup.Selectable {
+	public enum Action implements SelectButtonGroup.Selectable {
 		CONSUMER(null, null),
 		OPEN_URL("Url öffnen", "earth_grid"),
 		RUN_CMD("Befehl ausführen", "cpu"),
@@ -145,6 +145,7 @@ public class ChatMenuEntry {
 
 		public final String name;
 		public final String defaultIcon;
+
 		Action(String name, String defaultIcon) {
 			this.name = name;
 			this.defaultIcon = defaultIcon;
@@ -161,7 +162,7 @@ public class ChatMenuEntry {
 		}
 	}
 
-	enum IconType implements SelectButtonGroup.Selectable {
+	public enum IconType implements SelectButtonGroup.Selectable {
 		SYSTEM(null, null),
 		DEFAULT("Standard", null),
 		ITEM("Item", "gold_ingot"),
@@ -169,6 +170,7 @@ public class ChatMenuEntry {
 
 		public final String name;
 		public final String defaultIcon;
+
 		IconType(String name, String defaultIcon) {
 			this.name = name;
 			this.defaultIcon = defaultIcon;

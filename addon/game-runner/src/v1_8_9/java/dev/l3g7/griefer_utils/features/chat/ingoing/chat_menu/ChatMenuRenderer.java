@@ -5,9 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby4;
+package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu;
 
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IChatComponent;
@@ -15,7 +16,6 @@ import org.lwjgl.input.Mouse;
 
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils.getHeight;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class ChatMenuRenderer {
@@ -54,8 +54,8 @@ public class ChatMenuRenderer {
 		if (DrawUtils.getWidth() - x < boxWidth)
 			x = DrawUtils.getWidth() - boxWidth;
 
-		if (getHeight() - y < boxHeight)
-			y = getHeight() - boxHeight;
+		if (DrawUtils.getHeight() - y < boxHeight)
+			y = DrawUtils.getHeight() - boxHeight;
 	}
 
 	private void drawString(String text, float x, float y) {
@@ -134,11 +134,7 @@ public class ChatMenuRenderer {
 			return false;
 
 		// Trigger the consumer and close the gui
-		ChatMenuEntry entry = entries.get(hoveredEntry);
-		if (entry instanceof CopyTextEntry copyTextEntry)
-			copyTextEntry.trigger(modifiedComponent, originalComponent);
-		else
-			entry.trigger(playerName);
+		entries.get(hoveredEntry).trigger(playerName, modifiedComponent, originalComponent);
 		return true;
 	}
 
@@ -153,6 +149,6 @@ public class ChatMenuRenderer {
 	}
 
 	public static int getMouseY() {
-		return getHeight() - Mouse.getY() * getHeight() / mc().displayHeight - 1;
+		return DrawUtils.getHeight() - Mouse.getY() * DrawUtils.getHeight() / mc().displayHeight - 1;
 	}
 }

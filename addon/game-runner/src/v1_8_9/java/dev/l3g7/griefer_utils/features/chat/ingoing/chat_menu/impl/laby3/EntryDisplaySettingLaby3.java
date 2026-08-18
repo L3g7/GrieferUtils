@@ -5,32 +5,34 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby3;
+package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.impl.laby3;
 
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.AddChatMenuEntryGui;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.ChatMenu;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.EntryDisplaySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.List;
+public class EntryDisplaySettingLaby3 extends SwitchSettingImpl implements EntryDisplaySetting {
 
-public class EntryDisplaySetting extends SwitchSettingImpl {
-
-	private final SettingsElement parent;
 	private boolean editHovered = false;
 	public final ChatMenuEntry entry;
 
-	public EntryDisplaySetting(ChatMenuEntry r, SettingsElement parent) {
+	public EntryDisplaySettingLaby3(ChatMenuEntry r) {
 		name("§f");
-		this.parent = parent;
 		this.entry = r;
 
-		List<SettingsElement> entries = parent.getSubSettings().getElements();
-		entries.add(entries.size() - 1, this);
 		set(entry.enabled);
 		callback(enabled -> entry.enabled = enabled);
-		ChatMenu.saveEntries();
+	}
+
+	@Override
+	public ChatMenuEntry getEntry() {
+		return entry;
 	}
 
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
@@ -40,8 +42,8 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 	}
 
 	public void delete() {
-		parent.getSubSettings().getElements().remove(this);
-		ChatMenu.saveEntries();
+		((SettingsElement) ChatMenu.get().getMainElement()).getSubSettings().getElements().remove(this);
+		ChatMenu.get().saveEntries();
 	}
 
 	@Override

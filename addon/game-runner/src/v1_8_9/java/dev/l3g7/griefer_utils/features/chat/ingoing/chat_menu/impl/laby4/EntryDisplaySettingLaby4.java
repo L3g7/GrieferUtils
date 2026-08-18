@@ -5,11 +5,15 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby4;
+package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.impl.laby4;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.AddChatMenuEntryGui;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.ChatMenu;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.EntryDisplaySetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
@@ -26,18 +30,23 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @ExclusiveTo(LABY_4) // NOTE LM3 EntryDisplaySetting
-public class EntryDisplaySetting extends SwitchSettingImpl {
+public class EntryDisplaySettingLaby4 extends SwitchSettingImpl implements EntryDisplaySetting {
 
 	public final ChatMenuEntry entry;
 
-	public EntryDisplaySetting(ChatMenuEntry entry) {
+	public EntryDisplaySettingLaby4(ChatMenuEntry entry) {
 		this.entry = entry;
 		EventRegisterer.register(this);
 		initDisplay();
 		callback(enabled -> {
 			entry.enabled = enabled;
-			ChatMenu.saveEntries();
+			ChatMenu.get().saveEntries();
 		});
+	}
+
+	@Override
+	public ChatMenuEntry getEntry() {
+		return entry;
 	}
 
 	public void initDisplay() {
@@ -54,7 +63,7 @@ public class EntryDisplaySetting extends SwitchSettingImpl {
 
 	public void delete() {
 		parent.unregister(kv -> kv.getValue() == this);
-		ChatMenu.saveEntries();
+		ChatMenu.get().saveEntries();
 	}
 
 	@Override

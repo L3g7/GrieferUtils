@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.laby3.chat_line_util;
+package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.impl.laby3.chat_line_util;
 
 import net.minecraft.util.IChatComponent;
 

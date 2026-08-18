@@ -347,7 +347,7 @@ public class Calculator extends Feature {
 		/* ************* *
 		 *    Equation   *
 		 * ************* */
-		if ((((autoEquationDetect.get() && ServerCheck.isOnGrieferGames()) || msg.startsWith("/pay ") || msg.startsWith("/bank ")) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
+		if ((shouldEvalEquations(msg) && evalEquations(SIMPLE_EQUATION_PATTERN, event))
 			|| (placeholder.get() && evalEquations(placeholderPattern, event))) {
 			event.cancel();
 			return;
@@ -362,6 +362,19 @@ public class Calculator extends Feature {
 
 		event.cancel();
 		sendResult(unescapedMessage);
+	}
+
+	private boolean shouldEvalEquations(String msg) {
+		if (!ServerCheck.isOnGrieferGames())
+			return false;
+
+		if (msg.startsWith("/pay ") || msg.startsWith("/bank "))
+			return true;
+
+		if (!autoEquationDetect.get())
+			return false;
+
+		return !msg.startsWith("/") || msg.startsWith("/msg ") || msg.startsWith("/r ") || msg.startsWith("/cc ") || msg.startsWith("/globalchat ");
 	}
 
 	private boolean evalEquations(Pattern pattern, MessageSendEvent event) {

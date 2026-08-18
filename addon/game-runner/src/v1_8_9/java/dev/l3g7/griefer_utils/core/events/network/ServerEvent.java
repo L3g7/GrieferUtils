@@ -58,40 +58,22 @@ public class ServerEvent extends Event {
 
 	public static class GrieferGamesJoinEvent extends ServerEvent {
 
-		private static JoinState state = JoinState.START;
+		private static boolean pendingGGPayload = false;
 
 		@EventListener(priority = Priority.HIGHEST)
 		private static void onServerJoin(ServerJoinEvent event) {
-			state = JoinState.START;
+			pendingGGPayload = true;
 		}
 
 		@EventListener(priority = Priority.HIGHEST)
 		private static void onPacketReceive(PacketReceiveEvent<S3FPacketCustomPayload> event) {
-			if (state == JoinState.START && event.packet.getChannelName().equals("MC|Brand")) {
-				state = JoinState.BRAND;
-			} else if (state == JoinState.BRAND
-				&& (event.packet.getChannelName().equals("mysterymod:mm") || event.packet.getChannelName().equals("griefergames:main"))) {
-				state = JoinState.JOINED;
+			String channel = event.packet.getChannelName();
+			if (pendingGGPayload && (channel.equals("mysterymod:mm") || channel.equals("griefergames:main"))) {
+				pendingGGPayload = false;
 				new GrieferGamesJoinEvent().fire();
 			}
 		}
 
-		private enum JoinState {
-			/**
-			 * State after the connection was established.
-			 */
-			START,
-
-			/**
-			 * State after the server sent an MC|Brand packet.
-			 */
-			BRAND,
-
-			/**
-			 * State after the server join has been acknowledged.
-			 */
-			JOINED
-		}
 	}
 
 	public static class ServerQuitEvent extends ServerEvent {

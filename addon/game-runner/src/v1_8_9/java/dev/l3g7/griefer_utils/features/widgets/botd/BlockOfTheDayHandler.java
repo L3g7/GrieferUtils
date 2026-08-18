@@ -12,12 +12,16 @@ import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S04PacketEntityEquipment;
+import net.minecraft.network.play.server.S1CPacketEntityMetadata;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
+
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 /**
  * Gathers the current item displayed by the "Block des Tages"-GUI and reports it to the server.
@@ -30,11 +34,12 @@ public class BlockOfTheDayHandler {
 	static boolean isEvent = true;
 
 	@EventListener
-	private static void onEquipment(PacketReceiveEvent<S04PacketEntityEquipment> event) {
-		if (event.packet.getEquipmentSlot() != 4)
+	private static void onEquipment(PacketReceiveEvent<S1CPacketEntityMetadata> event) {
+		Entity entity = world().getEntityByID(event.packet.getEntityId());
+		if (!(entity instanceof EntityArmorStand eas) || entity.getRotationYawHead() == 0)
 			return;
 
-		ItemStack stack = event.packet.getItemStack();
+		ItemStack stack = eas.getInventory()[4];
 		if (stack == null)
 			return;
 

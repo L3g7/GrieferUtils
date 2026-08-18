@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.gui.books;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
@@ -21,6 +22,7 @@ import net.minecraft.client.gui.GuiScreenBook;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -58,10 +60,16 @@ public class FixBooks extends Feature {
 	 */
 	@EventListener
 	public void onMouseGui(GuiScreenEvent.MouseInputEvent.Pre event) {
-		if (!Mouse.getEventButtonState() || !(mc().currentScreen instanceof GuiContainer))
+		if (Mouse.getEventButton() == -1 || !(mc().currentScreen instanceof GuiContainer gc))
 			return;
 
-		if (processClick(getStackUnderMouse(mc().currentScreen), Mouse.getEventButton() == 1))
+		boolean shouldOpen = Mouse.getEventButton() == 1;
+		if (shouldOpen) {
+			Slot theSlot = Reflection.get(gc, "theSlot");
+			shouldOpen = theSlot == null || !theSlot.getHasStack();
+		}
+
+		if (processClick(getStackUnderMouse(mc().currentScreen), shouldOpen))
 			event.cancel();
 	}
 

@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.labymod.laby4.bridges.LabyBridgeImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
 import net.labymod.api.client.gui.screen.widget.AbstractWidget;
@@ -66,6 +65,9 @@ public class SettingActivityInitEvent extends Event { // NOTE: use SettingWidget
 	@OnEnable
 	public static void register() {
 		Laby4Util.register(SettingWidgetInitializeEvent.class, event -> {
+			if (event.parentScreen().currentScreen() == null)
+				return;
+
 			SettingContentActivity activity = (SettingContentActivity) event.parentScreen().currentScreen().unwrap();
 
 			// Intercept children#add call at end of initialization

@@ -16,8 +16,11 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.Settings;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
 import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.*;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.list.ListSettingImpl;
 import net.labymod.api.client.gui.screen.widget.AbstractWidget;
 import net.labymod.api.client.gui.screen.widget.Widget;
 
@@ -106,6 +109,11 @@ public class SettingsImpl implements Settings { // Note: replace with multiple b
 	@Override
 	public <E extends Enum<E> & Named> DropDownSetting<E> createDropDownSetting(Class<E> enumClass) {
 		return new DropDownSettingImpl<>(enumClass);
+	}
+
+	@Override
+	public <E extends ListEntry<E>> ListSetting<E> createListSetting(Class<E> type) {
+		return new ListSettingImpl<>(type);
 	}
 
 	@Override

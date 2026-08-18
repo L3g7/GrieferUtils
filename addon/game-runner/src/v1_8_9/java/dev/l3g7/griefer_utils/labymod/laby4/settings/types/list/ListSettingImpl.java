@@ -203,10 +203,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 				setting.create(parent);
 
 				if (setting instanceof AbstractSetting<?, ?> as) {
-					as.callback(() -> {
-						if (!value.isInvalid())
-							this.parent.notifyChange();
-					});
+					as.callback(this.parent::notifyChange);
 				}
 			}
 
@@ -216,11 +213,6 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		@Override
 		public @NotNull Component entryDisplayName() {
 			return Component.text(value.getName());
-		}
-
-		@Override
-		public boolean isInvalid() {
-			return value.isInvalid();
 		}
 
 	}

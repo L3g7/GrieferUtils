@@ -21,10 +21,6 @@ public interface ListEntry<E extends ListEntry<E>> extends Named {
 	default String resourceIcon() {return null;}
 	default ItemStack itemIcon() {return null;}
 
-	default boolean isInvalid() {
-		return false;
-	}
-
 	List<BaseSetting<?>> toSettings();
 
 	void load(JsonElement data);

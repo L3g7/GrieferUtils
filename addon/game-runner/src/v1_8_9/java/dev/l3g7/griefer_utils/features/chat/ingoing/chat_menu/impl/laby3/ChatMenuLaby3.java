@@ -11,12 +11,8 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.ChatMenu;
 import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.ChatMenu.ChatMenuBridge;
-import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry;
-import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.CopyTextEntry;
-import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.EntryDisplaySetting;
 import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.impl.laby3.chat_line_util.ChatLineUtil;
 import net.labymod.core_implementation.mc18.MinecraftImplementation;
 import net.minecraft.client.gui.GuiChat;
@@ -33,20 +29,6 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 @Singleton
 @ExclusiveTo(LABY_3)
 public class ChatMenuLaby3 implements ChatMenuBridge {
-
-	@Override
-	public EntryDisplaySetting createEntry(ChatMenuEntry entry) {
-		return new EntryDisplaySettingLaby3(entry);
-	}
-
-	@Override
-	public SwitchSetting createCopyEntry(CopyTextEntry target) {
-		SwitchSetting settingContainer = SwitchSetting.create()
-			.name(target.name)
-			.subSettings(target.copyFormat, target.modifiedMessage);
-
-		return target.setIcon(new CopyDisplaySettingLaby3(settingContainer));
-	}
 
 	@Override
 	public boolean isChatOpen() {

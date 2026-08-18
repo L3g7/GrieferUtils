@@ -59,7 +59,7 @@ public class ImageSelection extends ModTextField implements Drawable, Clickable 
 
 			// Add image to Minecraft's texture manager
 			mc().addScheduledTask(() -> {
-				ResourceLocation location = new ResourceLocation("griefer_utils/user_content/" + file.hashCode());
+				ResourceLocation location = new ResourceLocation("griefer_utils", "icons/user_content/" + file.hashCode() + ".png");
 				mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
 			});
 		} catch (IOException | NullPointerException e) {
@@ -122,7 +122,7 @@ public class ImageSelection extends ModTextField implements Drawable, Clickable 
 		DrawUtils.drawString(label, xPosition, y, 1.2);
 
 		// Draw preview of file
-		DrawUtils.bindTexture(selection == null ? FALLBACK : new ResourceLocation("griefer_utils/user_content/" + selection.hashCode()));
+		DrawUtils.bindTexture(selection == null ? FALLBACK : new ResourceLocation("griefer_utils", "icons/user_content/" + selection.hashCode() + ".png"));
 		DrawUtils.drawTexture(x, yPosition, 256.0, 256.0, 20, 20);
 
 		// Draw textbox showing name of file

@@ -13,13 +13,11 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.*;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry;
 import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.Action;
 import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.IconType;
-import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.EntryDisplaySetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.init.Blocks;
@@ -31,8 +29,9 @@ import java.io.File;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getButtonHeight;
-import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.ChatMenu.ChatMenuBridge.chatMenuVersioned;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
+@SuppressWarnings("lossy-conversions")
 public class AddChatMenuEntryGui extends Gui {
 
 	private static final int RENDER_GROUP_POST = 1; // Drawable objects rendered after everything else
@@ -45,7 +44,7 @@ public class AddChatMenuEntryGui extends Gui {
 	private static final int HEADER_HEIGHT = 50;
 
 	private final GuiScreen backgroundScreen;
-	private final EntryDisplaySetting editedEntry;
+	private final ChatMenuEntry editedEntry;
 
 	// Input fields
 	private SelectButtonGroup<Action> actionTypeInput;
@@ -60,9 +59,9 @@ public class AddChatMenuEntryGui extends Gui {
 	private Button cancelButton;
 	private Button saveButton;
 
-	public AddChatMenuEntryGui(EntryDisplaySetting entry, GuiScreen backgroundScreen) {
-		this.backgroundScreen = backgroundScreen;
-		editedEntry = entry;
+	public AddChatMenuEntryGui(ChatMenuEntry entry) {
+		this.backgroundScreen = mc().currentScreen;
+		this.editedEntry = entry;
 		EventRegisterer.register(this);
 	}
 
@@ -85,14 +84,10 @@ public class AddChatMenuEntryGui extends Gui {
 
 		// cancel and save button
 		int buttonWidth = 100;
-		cancelButton = createButton(editedEntry == null ? "Abbrechen" : "Löschen")
+		cancelButton = createButton("Abbrechen")
 			.x(center - buttonWidth - 5) // 2 * 5px padding between buttons
 			.size(buttonWidth, 20)
-			.callback(() -> {
-				if (editedEntry != null)
-					editedEntry.delete();
-				close();
-			});
+			.callback(this::close);
 
 		saveButton = createButton(editedEntry == null ? "Hinzufügen" : "Bearbeiten")
 			.x(center + 5) // 2 * 5px padding between buttons
@@ -146,14 +141,13 @@ public class AddChatMenuEntryGui extends Gui {
 			return;
 
 		// Initialize inputs with default values
-		ChatMenuEntry entry = editedEntry.getEntry();
-		nameInput.setText(entry.name);
-		actionTypeInput.select(entry.action);
-		actionInput.setText((String) entry.command);
-		iconInput.select(entry.iconType);
-		switch (entry.iconType) {
-			case ITEM -> itemIconInput.setSelected((ItemStack) entry.icon);
-			case IMAGE_FILE -> fileIconInput.select((File) entry.icon);
+		nameInput.setText(editedEntry.name);
+		actionTypeInput.select(editedEntry.action);
+		actionInput.setText((String) editedEntry.command);
+		iconInput.select(editedEntry.iconType);
+		switch (editedEntry.iconType) {
+			case ITEM -> itemIconInput.setSelected((ItemStack) editedEntry.icon);
+			case IMAGE_FILE -> fileIconInput.select((File) editedEntry.icon);
 		}
 	}
 
@@ -186,7 +180,7 @@ public class AddChatMenuEntryGui extends Gui {
 			}
 
 			List<Button> buttons = Reflection.get(iconInput, "buttons");
-			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils/icons/" + actionTypeInput.getSelected().getIcon() + ".png"));
+			Reflection.set(buttons.get(0), "icon", new ResourceLocation("griefer_utils", "icons/" + actionTypeInput.getSelected().getIcon() + ".png"));
 			double bottom;
 			switch (iconInput.getSelected()) {
 				case ITEM -> bottom = itemIconInput.bottom();
@@ -325,25 +319,13 @@ public class AddChatMenuEntryGui extends Gui {
 	}
 
 	private void save() {
-		ChatMenuEntry entry = editedEntry != null ? editedEntry.getEntry() : new ChatMenuEntry();
-		entry.name = nameInput.getText();
-		entry.action = actionTypeInput.getSelected();
-		entry.command = actionInput.getText();
-		entry.iconType = iconInput.getSelected();
-		entry.icon = iconInput.getSelected() == IconType.ITEM ? itemIconInput.getSelected() : fileIconInput.getSelection();
-		entry.completed = true;
+		editedEntry.name = nameInput.getText();
+		editedEntry.action = actionTypeInput.getSelected();
+		editedEntry.command = actionInput.getText();
+		editedEntry.iconType = iconInput.getSelected();
+		editedEntry.icon = iconInput.getSelected() == IconType.ITEM ? itemIconInput.getSelected() : fileIconInput.getSelection();
 
-		if (editedEntry == null) {
-			// Add entry
-			EntryDisplaySetting setting = chatMenuVersioned.createEntry(entry);
-			SwitchSetting parent = (SwitchSetting) ChatMenu.get().getMainElement();
-			setting.create(parent);
-			parent.addSetting(setting);
-		}
-		else
-			editedEntry.initDisplay();
-
-		ChatMenu.get().saveEntries();
+		ChatMenu.get().notifyChange();
 		close();
 	}
 

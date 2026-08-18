@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.ChatMenu;
 import net.minecraft.util.IChatComponent;
 
 import static dev.l3g7.griefer_utils.features.uncategorized.commands.Commands.CommandBridge.commandBridge;
@@ -34,14 +33,15 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.config(configKey + "modified_message")
 		.icon("book_and_quill");
 
-	private final SwitchSetting mainSetting = ChatMenu.ChatMenuBridge.chatMenuVersioned.createCopyEntry(this)
+	private final SwitchSetting mainSetting = SwitchSetting.create()
 		.name(name)
 		.defaultValue(true)
 		.config(configKey + "enabled")
-		.callback(v -> enabled = v);
+		.callback(v -> enabled = v)
+		.subSettings(copyFormat, modifiedMessage);
 
 	public CopyTextEntry() {
-		super("Text kopieren", null, null, "book_and_quill");
+		super("Text kopieren", null, null, IconType.SYSTEM, "book_and_quill");
 	}
 
 	@Override

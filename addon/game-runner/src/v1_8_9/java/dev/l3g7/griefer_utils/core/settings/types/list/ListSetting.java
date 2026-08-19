@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.settings.types.list;
 
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 import org.jetbrains.annotations.Nullable;
 
 import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
@@ -16,6 +17,8 @@ import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 public interface ListSetting<E extends ListEntry<E>> extends AbstractSetting<ListSetting<E>, Iterable<E>> {
 
 	static <E extends ListEntry<E>> ListSetting<E> create(Class<E> type) {return settings.createListSetting(type);}
+
+	static ListSetting<PlayerListEntry> createPlayerList() {return settings.createPlayerListSetting();}
 
 	/**
 	 * Adds a value to the list without calling {@link #notifyChange()}.

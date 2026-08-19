@@ -27,7 +27,7 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
@@ -59,7 +59,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
-import static dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry.INVALID_PLAYER;
+import static dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry.INVALID_PLAYER;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.features.widgets.other.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.DISABLED;
@@ -376,7 +376,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 					DrawUtils.drawTexture(x, y, 160, 32, 32, 32, 8, 8); // Second layer
 				}
 
-				String text = toText((entry == null ? mc.getSession().getUsername() : entry.name()) + ": " + DECIMAL_FORMAT_98.format(score)).getText();
+				String text = toText((entry == null ? mc.getSession().getUsername() : entry.getName()) + ": " + DECIMAL_FORMAT_98.format(score)).getText();
 				DrawUtils.drawStringWithShadow(text, x + 11, y, entry == null ? -1 : 0xAAAAAA);
 				return DrawUtils.getStringWidth(text);
 			}
@@ -537,7 +537,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 					return;
 
 				line.setState(VISIBLE);
-				line.updateLeaderboardLine(UUID.fromString(entry.getId()), entry.name(), other.score);
+				line.updateLeaderboardLine(UUID.fromString(entry.getId()), entry.getName(), other.score);
 			}
 
 			@ExclusiveTo(LABY_4)

@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 
 @Bridged
 public interface Settings {
@@ -35,8 +35,6 @@ public interface Settings {
 
 	StringListSetting createStringListSetting();
 
-	PlayerListSetting createPlayerListSetting();
-
 	NumberSetting createNumberSetting();
 
 	KeySetting createKeySetting();
@@ -48,6 +46,8 @@ public interface Settings {
 	<E extends Enum<E> & Named> DropDownSetting<E> createDropDownSetting(Class<E> enumClass);
 
 	<E extends ListEntry<E>> ListSetting<E> createListSetting(Class<E> type);
+
+	ListSetting<PlayerListEntry> createPlayerListSetting();
 
 	EntryAddSetting createEntryAddSetting();
 

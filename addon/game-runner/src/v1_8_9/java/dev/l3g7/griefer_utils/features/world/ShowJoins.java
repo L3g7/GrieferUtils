@@ -18,8 +18,8 @@ import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddE
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.player.player_list.PlayerList;
@@ -40,7 +40,7 @@ public class ShowJoins extends Feature {
 	private static final Map<UUID, Long> addTimestamps = new HashMap<>();
 	private static final Set<UUID> missingGameMode = new HashSet<>();
 
-	private final PlayerListSetting players = PlayerListSetting.create()
+	private final ListSetting<PlayerListEntry> players = ListSetting.createPlayerList()
 		.name("Spieler")
 		.icon("magnifying_glass");
 
@@ -92,7 +92,7 @@ public class ShowJoins extends Feature {
 			return false;
 
 		for (PlayerListEntry entry : players.get())
-			if (name.equalsIgnoreCase(entry.name()))
+			if (name.equalsIgnoreCase(entry.getName()))
 				return true;
 
 		return false;

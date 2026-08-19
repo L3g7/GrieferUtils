@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.settings.types.player_list;
+package dev.l3g7.griefer_utils.core.settings.types.list.player;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -48,17 +48,17 @@ public class PlayerListEntryResolver {
 	 * PlayerDB doesn't provide the skin, but since xbox has a low rate-limit, it is used to verify the existence.
 	 */
 	public static void loadFromPlayerDB(PlayerListEntry entry) {
-		HttpGetOperation op = IO.read("https://playerdb.co/api/player/xbox/" + (entry.getId() == null ? entry.name().substring(1) : entry.getId()));
+		HttpGetOperation op = IO.read("https://playerdb.co/api/player/xbox/" + (entry.getId() == null ? entry.getName().substring(1) : entry.getId()));
 
 		if (op.getResponseCode() != 200) {
 			entry.exists = false;
-			LOOKUP_MAP.put(entry.name(), entry);
+			LOOKUP_MAP.put(entry.getName(), entry);
 			return;
 		}
 
 		JsonObject data = op.asJsonObject();
 		if (!data.get("code").getAsString().equals("player.found"))
-			throw new RuntimeException("Invalid response for " + entry.name());
+			throw new RuntimeException("Invalid response for " + entry.getName());
 
 		JsonObject playerData = data.getAsJsonObject("data").getAsJsonObject("player");
 
@@ -71,10 +71,10 @@ public class PlayerListEntryResolver {
 		if (!XboxProfileResolver.isAvailable())
 			return;
 
-		XboxProfile profile = entry.name() == null ? XboxProfileResolver.getProfileByXUID(entry.getId()) : XboxProfileResolver.getProfileByGamerTag(entry.name().substring(1));
+		XboxProfile profile = entry.getName() == null ? XboxProfileResolver.getProfileByXUID(entry.getId()) : XboxProfileResolver.getProfileByGamerTag(entry.getName().substring(1));
 		if (profile == null) {
 			entry.exists = false;
-			LOOKUP_MAP.put(entry.name(), entry);
+			LOOKUP_MAP.put(entry.getName(), entry);
 			return;
 		}
 
@@ -87,7 +87,7 @@ public class PlayerListEntryResolver {
 
 			TickScheduler.runNextRenderTick(() -> {
 				entry.skin = new DynamicTexture(img);
-				LOOKUP_MAP.put(entry.name(), entry);
+				LOOKUP_MAP.put(entry.getName(), entry);
 				entry.skin().loadTexture(mc().getResourceManager());
 			});
 		} catch (IOException e) {
@@ -97,11 +97,11 @@ public class PlayerListEntryResolver {
 
 	public static void loadFromMojang(PlayerListEntry entry) throws IOException {
 		if (entry.getId() == null) {
-			HttpGetOperation op = IO.read("https://api.mojang.com/users/profiles/minecraft/" + entry.name());
+			HttpGetOperation op = IO.read("https://api.mojang.com/users/profiles/minecraft/" + entry.getName());
 			// API returns 404 or 204 when an unknown user is requested.
 			if (op.getResponseCode() == 404 || op.getResponseCode() == 204) {
 				entry.exists = false;
-				LOOKUP_MAP.put(entry.name(), entry);
+				LOOKUP_MAP.put(entry.getName(), entry);
 				return;
 			}
 
@@ -134,7 +134,7 @@ public class PlayerListEntryResolver {
 
 			TickScheduler.runNextRenderTick(() -> {
 				entry.skin = new DynamicTexture(img);
-				LOOKUP_MAP.put(entry.name(), entry);
+				LOOKUP_MAP.put(entry.getName(), entry);
 				entry.skin().loadTexture(mc().getResourceManager());
 			});
 		}
@@ -144,7 +144,7 @@ public class PlayerListEntryResolver {
 	 * Ashcon's API doesn't have rate-limiting but is much slower, so Mojang's API is usually preferred.
 	 */
 	public static void loadFromAshcon(PlayerListEntry entry) throws IOException {
-		JsonObject profile = IO.read("https://api.ashcon.app/mojang/v2/user/" + (entry.name() == null ? entry.getId() : entry.name())).asJsonObject();
+		JsonObject profile = IO.read("https://api.ashcon.app/mojang/v2/user/" + (entry.getName() == null ? entry.getId() : entry.getName())).asJsonObject();
 		entry.name = profile.get("username").getAsString();
 		entry.id = profile.get("uuid").getAsString();
 		entry.loaded = true;

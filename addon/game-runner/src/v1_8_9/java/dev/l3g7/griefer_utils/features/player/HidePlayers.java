@@ -14,9 +14,9 @@ import dev.l3g7.griefer_utils.core.events.PlaySoundAtEntityEvent;
 import dev.l3g7.griefer_utils.core.events.PlaySoundEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderPlayerEvent;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.entity.Entity;
@@ -47,7 +47,7 @@ public class HidePlayers extends Feature {
 					updatePlayer(player);
 		});
 
-	private final PlayerListSetting excludedPlayers = PlayerListSetting.create()
+	private final ListSetting<PlayerListEntry> excludedPlayers = ListSetting.createPlayerList()
 		.name("Ausgenommene Spieler")
 		.icon("light_bulb");
 
@@ -136,7 +136,7 @@ public class HidePlayers extends Feature {
 			return false;
 
 		for (PlayerListEntry entry : excludedPlayers.get())
-			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.name()))
+			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.getName()))
 				return true;
 
 		return false;

@@ -5,10 +5,13 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.settings.types.player_list;
+package dev.l3g7.griefer_utils.core.settings.types.list.player;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfileResolver;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.texture.ITextureObject;
 
@@ -17,7 +20,7 @@ import java.io.IOException;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static java.lang.Thread.MAX_PRIORITY;
 
-public class PlayerListEntry {
+public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 
 	public static final PlayerListEntry INVALID_PLAYER = new PlayerListEntry();
 
@@ -33,15 +36,16 @@ public class PlayerListEntry {
 	 * True if the entry's name and id are set.
 	 */
 	protected boolean loaded = false;
-	protected boolean exists = true;
+	protected boolean exists;
 
 	private PlayerListEntry() {
 		exists = false;
 	}
 
 	public PlayerListEntry(String name, String id) {
-		this.id = id;
 		this.name = name;
+		this.id = id;
+		this.exists = true;
 		load();
 	}
 
@@ -49,7 +53,7 @@ public class PlayerListEntry {
 		return id;
 	}
 
-	public String name() {
+	public String getName() {
 		return name;
 	}
 
@@ -110,5 +114,30 @@ public class PlayerListEntry {
 		});
 	}
 
+	@Override
+	public PlayerListEntry createNew() {
+		return new PlayerListEntry();
+	}
+
+	public void copyFrom(PlayerListEntry entry) {
+		this.id = entry.id;
+		this.name = entry.name;
+		this.slim = entry.slim;
+		this.skin = entry.skin;
+		this.loaded = entry.loaded;
+		this.exists = entry.exists;
+	}
+
+	@Override
+	public void load(JsonElement data) {
+		this.name = null;
+		this.id = data.getAsString();
+		load();
+	}
+
+	@Override
+	public JsonElement encode() {
+		return new JsonPrimitive(this.getId());
+	}
 
 }

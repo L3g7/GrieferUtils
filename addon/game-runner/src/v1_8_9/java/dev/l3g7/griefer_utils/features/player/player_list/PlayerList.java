@@ -22,8 +22,8 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.event.ClickEvent;
@@ -82,7 +82,7 @@ public abstract class PlayerList extends Feature {
 		.icon("steve")
 		.defaultValue(true);
 
-	public final PlayerListSetting customEntries = PlayerListSetting.create()
+	public final ListSetting<PlayerListEntry> customEntries = ListSetting.createPlayerList()
 		.callback(TabListEvent::updatePlayerInfoList);
 
 	@MainElement
@@ -233,7 +233,7 @@ public abstract class PlayerList extends Feature {
 			return true;
 
 		for (PlayerListEntry entry : customEntries.get())
-			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.name()))
+			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.getName()))
 				return true;
 
 		return false;

@@ -5,18 +5,21 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
+package dev.l3g7.griefer_utils.labymod.laby3.settings.types.list;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntryResolver;
-import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntryResolver;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.EntryAddSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.main.ModTextures;
@@ -33,9 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerListSettingImpl extends ControlElement implements Laby3Setting<PlayerListSetting, List<PlayerListEntry>>, PlayerListSetting {
+public class PlayerListSettingImpl extends ControlElement implements Laby3Setting<ListSetting<PlayerListEntry>, Iterable<PlayerListEntry>>, ListSetting<PlayerListEntry> {
 
-	private final ExtendedStorage<List<PlayerListEntry>> storage = new ExtendedStorage<>(list -> {
+	private final ExtendedStorage<Iterable<PlayerListEntry>> storage = new ExtendedStorage<>(list -> {
 		JsonArray array = new JsonArray();
 		list.forEach(e -> array.add(new JsonPrimitive(e.getId())));
 		return array;
@@ -45,6 +48,7 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 		return list;
 	}, new ArrayList<>());
 
+	private boolean unpacked = false;
 	private SettingsElement container = this;
 
 	public PlayerListSettingImpl() {
@@ -82,8 +86,12 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 	}
 
 	@Override
-	public ExtendedStorage<List<PlayerListEntry>> getStorage() {
+	public ExtendedStorage<Iterable<PlayerListEntry>> getStorage() {
 		return storage;
+	}
+
+	private List<PlayerListEntry> getAsList() {
+		return ((List<PlayerListEntry>) get());
 	}
 
 	public boolean contains(String name, UUID uuid) {
@@ -91,10 +99,35 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 			return false;
 
 		for (PlayerListEntry entry : get())
-			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.name()))
+			if (name == null ? uuid.toString().equalsIgnoreCase(entry.getId()) : name.equalsIgnoreCase(entry.getName()))
 				return true;
 
 		return false;
+	}
+
+	@Override
+	public void create(Object parent) {
+		if (!unpacked)
+			throw new UnsupportedOperationException("Packed lists are not implemented.");
+
+		Laby3Setting.super.create(parent);
+	}
+
+	@Override
+	public void add(PlayerListEntry value) {
+		getAsList().add(value);
+	}
+
+	@Override
+	public ListSetting<PlayerListEntry> customEdit(Consumer<PlayerListEntry> callback) {
+		// No-op
+		return this;
+	}
+
+	@Override
+	public ListSetting<PlayerListEntry> unpacked() {
+		this.unpacked = true;
+		return this;
 	}
 
 	private class PlayerDisplaySetting extends ListEntrySetting {
@@ -110,14 +143,13 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 
 		@Override
 		protected void onChange() {
-			PlayerListSettingImpl.this.get().remove(data);
-			PlayerListSettingImpl.this.save();
-			PlayerListSettingImpl.this.getStorage().callbacks.forEach(c -> c.accept(PlayerListSettingImpl.this.get()));
+			PlayerListSettingImpl.this.getAsList().remove(data);
+			PlayerListSettingImpl.this.notifyChange();
 		}
 
 		@Override
 		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			setDisplayName(data.name() == null ? "§cNutzer konnte nicht geladen werden!" : data.name());
+			setDisplayName(data.getName() == null ? "§cNutzer konnte nicht geladen werden!" : data.getName());
 			super.draw(x, y, maxX, maxY, mouseX, mouseY);
 			DrawUtils.drawRectangle(x - 1, y, x, maxY, 0x78787878);
 
@@ -196,9 +228,8 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 				switch (button.id) {
 					case 1:
 						getSettings().add(getSettings().indexOf(PlayerAddSetting.this), new PlayerDisplaySetting(entry));
-						PlayerListSettingImpl.this.get().add(entry);
-						PlayerListSettingImpl.this.save();
-						PlayerListSettingImpl.this.getStorage().callbacks.forEach(c -> c.accept(PlayerListSettingImpl.this.get()));
+						PlayerListSettingImpl.this.getAsList().add(entry);
+						PlayerListSettingImpl.this.notifyChange();
 						// Fall-through
 					case 0:
 						Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);

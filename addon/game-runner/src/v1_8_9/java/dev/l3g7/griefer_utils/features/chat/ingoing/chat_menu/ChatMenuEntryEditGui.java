@@ -32,7 +32,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getButtonHeight;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @SuppressWarnings("lossy-conversions")
-public class AddChatMenuEntryGui extends Gui {
+public class ChatMenuEntryEditGui extends Gui {
 
 	private static final int RENDER_GROUP_POST = 1; // Drawable objects rendered after everything else
 	private static final int RENDER_GROUP_SELECTED = 2; // Rendered if a type is selected
@@ -59,7 +59,7 @@ public class AddChatMenuEntryGui extends Gui {
 	private Button cancelButton;
 	private Button saveButton;
 
-	public AddChatMenuEntryGui(ChatMenuEntry entry) {
+	public ChatMenuEntryEditGui(ChatMenuEntry entry) {
 		this.backgroundScreen = mc().currentScreen;
 		this.editedEntry = entry;
 		EventRegisterer.register(this);

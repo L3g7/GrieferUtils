@@ -45,7 +45,7 @@ public class ChatMenu extends Feature {
 		.name("Einträge")
 		.icon("player_menu")
 		.unpacked()
-		.customEdit(e -> mc().displayGuiScreen(new AddChatMenuEntryGui(e)));
+		.customEdit(e -> mc().displayGuiScreen(new ChatMenuEntryEditGui(e)));
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()

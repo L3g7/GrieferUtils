@@ -18,7 +18,7 @@ import static dev.l3g7.griefer_utils.features.uncategorized.commands.Commands.Co
 
 public class CopyTextEntry extends ChatMenuEntry {
 
-	protected final String configKey = "chat.ingoing.chat_menu.entries." + name + ".";
+	protected final String configKey = "chat.ingoing.chat_menu.copy_text.";
 
 	public final DropDownSetting<CopyFormat> copyFormat = DropDownSetting.create(CopyFormat.class)
 		.name("Format")
@@ -35,6 +35,8 @@ public class CopyTextEntry extends ChatMenuEntry {
 
 	private final SwitchSetting mainSetting = SwitchSetting.create()
 		.name(name)
+		.icon("book_and_quill")
+		.description("Kopiert die gesamte ausgewählte Zeile.")
 		.defaultValue(true)
 		.config(configKey + "enabled")
 		.callback(v -> enabled = v)

@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Result;
 import dev.l3g7.griefer_utils.core.api.util.ArrayUtil;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
+import dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry;
 import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.ingamegui.ModuleConfig;
 import net.labymod.ingamegui.ModuleConfigElement;
@@ -482,6 +483,27 @@ public class ConfigPatcher {
 				get("settings").add("acknowledged_changes", patchedChanges);
 			}
 		}
+
+		chatMenuPatch:
+		if (isConfigOlderThan("2.5-BETA-1")) {
+			JsonObject chatMenu = get("chat.ingoing.chat_menu");
+			if (!chatMenu.has("entries") || !chatMenu.get("entries").isJsonObject())
+				break chatMenuPatch;
+
+			rename("chat.ingoing.chat_menu.entries.Text kopieren", "chat.ingoing.chat_menu.copy_text");
+
+			JsonArray newEntries = new JsonArray();
+			JsonObject entries = get("chat.ingoing.chat_menu.entries");
+			for (ChatMenuEntry entry : ChatMenuEntry.DEFAULT_ENTRIES) {
+				if (entries.has(entry.name) && entries.get(entry.name).getAsBoolean()) {
+					entry.enabled = true;
+					newEntries.add(entry.encode());
+				}
+			}
+
+			get("chat.ingoing.chat_menu").add("entries", newEntries);
+		}
+
 	}
 
 	protected void moveBulk(String oldParent, String newParent, String... keys) {

@@ -7,11 +7,14 @@
 
 package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu;
 
+import com.google.gson.JsonArray;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
+import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.MouseInputEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
@@ -59,6 +62,20 @@ public class ChatMenu extends Feature {
 
 	public static ChatMenu get() {
 		return get(ChatMenu.class);
+	}
+
+	@Override
+	public void init() {
+		super.init();
+		if (Config.get(entries.getStorage().configKey) == null) {
+			// No value is loaded, load default entries
+			JsonArray data = new JsonArray();
+			for (ChatMenuEntry defaultEntry : ChatMenuEntry.DEFAULT_ENTRIES)
+				data.add(defaultEntry.encode());
+
+			entries.getStorage().decodeFunc.apply(data);
+			entries.notifyChange();
+		}
 	}
 
 	public void notifyChange() {

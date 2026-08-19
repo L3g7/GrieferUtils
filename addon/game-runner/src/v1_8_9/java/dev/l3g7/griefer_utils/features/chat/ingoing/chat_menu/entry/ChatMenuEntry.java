@@ -49,6 +49,16 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 	public Object icon;
 	public boolean enabled = true;
 
+	public static final List<ChatMenuEntry> DEFAULT_ENTRIES = ImmutableList.of(
+		new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %name%", IconType.IMAGE_FILE, loadIcon("wooden_board")),
+		new ChatMenuEntry("Namensverlauf", CONSUMER, "/gu:name_history %name%", IconType.IMAGE_FILE, loadIcon("name_tag_yellow")),
+		new ChatMenuEntry("Namen kopieren", CONSUMER, "/gu:copy %name%", IconType.IMAGE_FILE, loadIcon("name_tag_yellow")),
+		new ChatMenuEntry("Im Forum suchen", OPEN_URL, "https://forum.griefergames.de/search/?q=%name%", IconType.IMAGE_FILE, loadIcon("griefer_games")),
+		new ChatMenuEntry("Inventar öffnen", RUN_CMD, "/invsee %name%", IconType.IMAGE_FILE, loadIcon("bundle")),
+		new ChatMenuEntry("Ausrüstung ansehen", RUN_CMD, "/view %name%", IconType.IMAGE_FILE, loadIcon("diamond_chestplate")),
+		new ChatMenuEntry("EC öffnen", RUN_CMD, "/ec %name%", IconType.IMAGE_FILE, loadIcon("chest_ender"))
+	);
+
 	public ChatMenuEntry() {
 		this("Neuer Eintrag", CONSUMER, "", IconType.DEFAULT, null);
 	}

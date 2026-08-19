@@ -36,10 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
@@ -47,11 +44,12 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.configuration.settings.type.list.ListSetting implements Laby4Setting<ListSetting<E>, Iterable<E>>, ListSetting<E> {
 
 	private final ExtendedStorage<Iterable<E>> storage;
-	private final List<EntryConfig<E>> rawList;
-	private final Iterable<E> view = Itr::new;
-	private final E ctor;
+	protected final List<EntryConfig<E>> rawList;
+	protected final Iterable<E> view = Itr::new;
+	protected final E ctor;
 
-	private Consumer<E> customEdit;
+	protected boolean unpacked = false;
+	protected Consumer<E> customEdit;
 
 	public ListSettingImpl(Class<E> type) {
 		this(type, new SettingAccessor<>());
@@ -82,6 +80,16 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		storage.unsetIfDefaultValue = false;
 
 		init();
+		setAccessor(accessor);
+	}
+
+	protected ListSettingImpl(ListSettingImpl<E> original) {
+		super(UUID.randomUUID().toString(), null, null, new String[0], (SettingPermissionHolder) null, null, (byte) -127, original.getAccessor());
+		this.storage = original.storage;
+		this.rawList = original.rawList;
+		this.ctor = original.ctor;
+		this.unpacked = false;
+		this.customEdit = original.customEdit;
 	}
 
 	@Override
@@ -106,6 +114,12 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	}
 
 	@Override
+	public ListSetting<E> unpacked() {
+		this.unpacked = true;
+		return this;
+	}
+
+	@Override
 	public ListSetting<E> customEdit(dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer<E> callback) {
 		this.customEdit = callback;
 		return this;
@@ -117,6 +131,30 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 			throw new UnsupportedOperationException();
 
 		return this;
+	}
+
+	@Override
+	public void create(Object parent) {
+		Laby4Setting.super.create(parent);
+
+		if (unpacked) {
+			Setting sParent = (Setting) parent;
+			Setting parentHolder = sParent.parent();
+
+			// Remove self from parent
+			sParent.getElements().remove(sParent.getElementById(getId()));
+
+			// Replace parent of this setting with WrappingListSetting
+			List<KeyValue<Setting>> subsettings = parentHolder.getElements();
+			KeyValue<Setting> kv = parentHolder.getElementById(sParent.getId());
+			Objects.requireNonNull(kv);
+
+			WrappingListSetting<E> wrappedParent = new WrappingListSetting<>(this, sParent);
+			wrappedParent.create(parentHolder);
+
+			subsettings.set(subsettings.indexOf(kv),
+				new KeyValue<>(kv.getKey(), wrappedParent));
+		}
 	}
 
 	@Override
@@ -139,8 +177,12 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 
 	@Override
 	public List<KeyValue<Setting>> getElements() {
-		List<KeyValue<Setting>> list = new ArrayList<>();
+		List<KeyValue<Setting>> list = new ArrayList<>(this.rawList.size());
+		insertElements(list);
+		return list;
+	}
 
+	protected void insertElements(List<KeyValue<Setting>> list) {
 		for (int i = 0; i < this.rawList.size(); i++) {
 			EntryConfig<E> config = this.rawList.get(i);
 			if (config.isInvalid()) {
@@ -153,8 +195,6 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 			ListSettingEntry entry = new StyledListSettingEntry(this, config, i);
 			list.add(new KeyValue<>(entry.getId(), entry));
 		}
-
-		return list;
 	}
 
 	@Override
@@ -180,7 +220,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	/**
 	 * ListEntry -> Config adapter.
 	 */
-	private static class EntryConfig<E extends ListEntry<E>> extends Config implements ListSettingConfig {
+	protected static class EntryConfig<E extends ListEntry<E>> extends Config implements ListSettingConfig {
 
 		private final ListSettingImpl<E> parent;
 		public final E value;

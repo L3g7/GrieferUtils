@@ -44,6 +44,7 @@ public class ChatMenu extends Feature {
 	private final ListSetting<ChatMenuEntry> entries = ListSetting.create(ChatMenuEntry.class)
 		.name("Einträge")
 		.icon("player_menu")
+		.unpacked()
 		.customEdit(e -> mc().displayGuiScreen(new AddChatMenuEntryGui(e)));
 
 	@MainElement

@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -17,6 +18,7 @@ import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.SettingElement;
 import net.labymod.api.util.KeyValue;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -57,9 +59,12 @@ public abstract class AbstractSettingImpl<S extends AbstractSetting<S, V>, V> ex
 
 	@Override
 	public void create(Object parent) {
-		for (KeyValue<Setting> element : getElements()) {
+		List<KeyValue<Setting>> elements = getElements();
+		//noinspection ForLoopReplaceableByForEach // We might modify the elements (in place)
+		for (int i = 0; i < elements.size(); i++) {
+			KeyValue<Setting> element = elements.get(i);
 			Setting child = element.getValue();
-			if (child instanceof AbstractSettingImpl<?,?> s)
+			if (child instanceof BaseSetting<?> s)
 				s.create(this);
 		}
 

@@ -32,6 +32,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 	private final ExtendedStorage<Iterable<E>> storage;
 	private final E ctor;
 
+	private boolean unpacked = false;
 	private Consumer<E> customEdit;
 
 	private SettingsElement container = this;
@@ -76,6 +77,9 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 
 	@Override
 	public void create(Object parent) {
+		if (!unpacked)
+			throw new UnsupportedOperationException("Packed lists are not implemented.");
+
 		Laby3Setting.super.create(parent);
 		this.container = (SettingsElement) parent;
 		int index = getSettings().indexOf(this);
@@ -94,6 +98,12 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 				if (setting instanceof DisplaySetting<?> ds)
 					ds.build();
 		});
+	}
+
+	@Override
+	public ListSetting<E> unpacked() {
+		this.unpacked = true;
+		return this;
 	}
 
 	@Override

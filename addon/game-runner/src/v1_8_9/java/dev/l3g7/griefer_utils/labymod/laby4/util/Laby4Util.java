@@ -18,6 +18,9 @@ import net.labymod.api.Laby;
 import net.labymod.api.client.gui.navigation.elements.ScreenBaseNavigationElement;
 import net.labymod.api.client.gui.screen.ScreenWrapper;
 import net.labymod.api.client.gui.screen.activity.Activity;
+import net.labymod.api.client.gui.screen.widget.AbstractWidget;
+import net.labymod.api.client.gui.screen.widget.Widget;
+import net.labymod.api.client.gui.screen.widget.WrappedWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.ComponentWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.ScreenRendererWidget;
 import net.labymod.api.configuration.settings.Setting;
@@ -88,6 +91,20 @@ public class Laby4Util {
 			return null;
 
 		return screen.asActivity();
+	}
+
+	public static <T extends Widget> T get(Widget start, String... idPath) {
+		Widget widget = start;
+		for (String id : idPath) {
+			widget = ((AbstractWidget<?>) widget).getChild(id);
+			if (widget == null)
+				return null;
+
+			//noinspection deprecation
+			if (widget instanceof WrappedWidget ww)
+				widget = ww.childWidget();
+		}
+		return c(widget);
 	}
 
 	public static String getNamespace() {

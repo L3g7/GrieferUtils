@@ -21,4 +21,9 @@ public interface ListSetting<E extends ListEntry<E>> extends AbstractSetting<Lis
 	 */
 	ListSetting<E> customEdit(Consumer<E> callback);
 
+	/**
+	 * Unpacks the container holding the entries.
+	 */
+	ListSetting<E> unpacked();
+
 }

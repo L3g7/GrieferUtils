@@ -7,12 +7,14 @@
 
 package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListEntryResolver;
 import dev.l3g7.griefer_utils.core.settings.types.player_list.PlayerListSetting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractListSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -32,41 +34,145 @@ import net.labymod.api.client.gui.screen.widget.widgets.input.TextFieldWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.list.HorizontalListWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.list.VerticalListWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
+import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
+import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
+import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.util.bounds.ModifyReason;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-public class PlayerListSettingImpl extends AbstractListSettingImpl<PlayerListSetting, PlayerListEntry> implements PlayerListSetting { // NOTE: cleanup
+import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
-	@Override
+public class PlayerListSettingImpl extends ListSetting implements Laby4Setting<PlayerListSetting, List<PlayerListEntry>>, PlayerListSetting { // NOTE: cleanup
+
+	private final ExtendedStorage<List<PlayerListEntry>> storage;
+
+	public PlayerListSettingImpl() {
+		super(UUID.randomUUID().toString(), null, null, new String[0], (SettingPermissionHolder) null, null, (byte) -127,
+			new ConfigPropertySettingAccessor(null, null, null, null) {
+				@Override
+				public <T> T get() {
+					return c(new ArrayList<>());
+				}
+
+				@Override
+				public Type getGenericType() {
+					return new ParameterizedType() {
+						public Type[] getActualTypeArguments() {return new Type[]{Void.class};}
+
+						public Type getRawType() {return null;}
+
+						public Type getOwnerType() {return null;}
+					};
+				}
+			}
+		);
+
+		storage = new ExtendedStorage<>(entries -> {
+			JsonArray array = new JsonArray();
+			for (PlayerListEntry entry : entries)
+				array.add(encode(entry));
+
+			return array;
+		}, elem -> {
+			List<PlayerListEntry> entries = new ArrayList<>();
+			for (JsonElement entry : elem.getAsJsonArray())
+				entries.add(decode(entry));
+
+			return entries;
+		}, new ArrayList<>());
+
+		EventRegisterer.register(this);
+		init();
+	}
+
 	protected JsonElement encode(PlayerListEntry value) {
 		return new JsonPrimitive(value.getId());
 	}
 
-	@Override
 	protected PlayerListEntry decode(JsonElement value) {
 		return new PlayerListEntry(null, value.getAsString());
 	}
 
-	@Override
 	protected void edit(int editIndex, SettingContentActivity parent) {
 		new PlayerListInputActivity(editIndex, parent).open();
 	}
 
-	@Override
 	protected void add(SettingContentActivity parent) {
 		new PlayerListInputActivity(-1, parent).open();
 	}
 
-	@Override
 	protected String getName(PlayerListEntry entry) {
 		return entry.name();
 	}
 
-	@Override
 	protected Icon getIcon(PlayerListEntry entry) {
 		return Icon.head(entry.name());
 	}
+
+	@Override
+	public Component displayName() {
+		return Component.text(name());
+	}
+
+	@Override
+	public Component getDescription() {
+		String description = storage.description;
+		return description == null ? null : Component.text(description);
+	}
+
+	@Override
+	public Icon getIcon() {
+		return getStorage().icon;
+	}
+
+	@Override
+	public ExtendedStorage<List<PlayerListEntry>> getStorage() {
+		return storage;
+	}
+
+	/*
+	TODO:
+	@EventListener
+	private void onInit(SettingActivityInitEvent event) {
+		if (event.holder() != this)
+			return;
+
+		List<V> values = get();
+
+		// Add entries
+		for (int i = 0; i < values.size(); i++) {
+			V value = values.get(i);
+
+			ButtonSettingImpl entry = new ButtonSettingImpl();
+			entry.name(getName(value));
+			entry.icon(getIcon(value));
+
+			entry.setParent((Setting) this);
+
+			int idx = i;
+			event.settings().addChild(entry.createUnwrappedWidget(
+				ButtonWidget.icon(
+					Icons.of(Laby4Util.isVanillaTheme() ? "pencil_padded" : "high_res/pencil_vec"),
+					() -> edit(idx, event.activity)
+				).addId("delete-button"), // Actually an edit button, but id is required for styling
+
+				ButtonWidget.icon(X, () -> {
+					values.remove(idx);
+					notifyChange();
+					event.activity.reload();
+				}).addId("delete-button")
+			));
+		}
+
+		// Hook add button
+		event.get("setting-header", "add-button").setPressable(() -> add(event.activity));
+	}
+	*/
 
 	@AutoActivity
 	@Link("player-list-input.lss")

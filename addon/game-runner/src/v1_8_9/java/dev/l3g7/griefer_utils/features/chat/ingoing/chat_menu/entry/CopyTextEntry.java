@@ -41,7 +41,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.subSettings(copyFormat, modifiedMessage);
 
 	public CopyTextEntry() {
-		super("Text kopieren", null, null, IconType.SYSTEM, "book_and_quill");
+		super("Text kopieren", null, null, IconType.IMAGE_FILE, loadIcon("book_and_quill"));
 	}
 
 	@Override

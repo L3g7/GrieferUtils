@@ -7,9 +7,11 @@
 
 package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.SelectButtonGroup;
@@ -30,11 +32,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.Action.*;
 
 public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 
@@ -46,7 +50,7 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 	public boolean enabled = true;
 
 	public ChatMenuEntry() {
-		this("Neuer Eintrag", Action.CONSUMER, "", IconType.DEFAULT, null);
+		this("Neuer Eintrag", CONSUMER, "", IconType.DEFAULT, null);
 	}
 
 	public ChatMenuEntry(String name, Action action, Object command, IconType iconType, Object icon) {
@@ -75,7 +79,6 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 	@Override
 	public String resourceIcon() {
 		return switch (iconType) {
-			case SYSTEM -> String.valueOf(icon);
 			case DEFAULT -> action.defaultIcon;
 			case IMAGE_FILE -> "user_content/" + icon.hashCode();
 			case ITEM -> null;
@@ -96,8 +99,6 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 
 	public void drawIcon(int x, int y, int w, int h) {
 		switch (iconType) {
-			case SYSTEM ->
-				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
 			case DEFAULT ->
 				mc().getTextureManager().bindTexture(new ResourceLocation("griefer_utils", "icons/" + action.defaultIcon + ".png"));
 			case IMAGE_FILE ->
@@ -179,6 +180,19 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 		this.action.trigger.accept(command, name);
 	}
 
+	protected static File loadIcon(String iconName) {
+		var icon = new File(iconName + ".png");
+		ResourceLocation location = new ResourceLocation("griefer_utils", "icons/user_content/" + icon.hashCode() + ".png");
+		try {
+			BufferedImage img = ImageIO.read(FileProvider.getData("assets/griefer_utils/icons/" + iconName + ".png"));
+			mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
+		} catch (IOException | NullPointerException e) {
+			throw new RuntimeException(e);
+		}
+
+		return icon;
+	}
+
 	public enum Action implements SelectButtonGroup.Selectable {
 		CONSUMER(null, null, (command, name) ->
 			Reflection.<Consumer<String>>c(command).accept(name)),
@@ -223,7 +237,6 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 	}
 
 	public enum IconType implements SelectButtonGroup.Selectable {
-		SYSTEM(null, null),
 		DEFAULT("Standard", null),
 		ITEM("Item", "gold_ingot"),
 		IMAGE_FILE("Bild", "tree_file");

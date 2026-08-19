@@ -82,7 +82,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 				if (!this.citybuild.get().isOnCb())
 					return;
 
-				List<StringListEntry> values = this.commands.toList();
+				List<StringListEntry> values = this.commands.get();
 				if (values.isEmpty()) {
 					labyBridge.notify("§cFehler", "§cBitte füge den Eintrag neu hinzu.");
 					return;
@@ -104,10 +104,10 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 	public void openSettings() {
 		defaultName = name.get();
 		defaultKeys = keys.get();
-		defaultCommands = commands.toList();
+		defaultCommands = new ArrayList<>(commands.get());
 		defaultCitybuild = citybuild.get();
 		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
-			if (!name.get().isEmpty() && !keys.get().isEmpty() && !this.commands.isEmpty() && citybuild.get() != null) {
+			if (!name.get().isEmpty() && !keys.get().isEmpty() && !this.commands.get().isEmpty() && citybuild.get() != null) {
 				onChange();
 				return;
 			}
@@ -121,7 +121,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 				name.set(defaultName);
 			if (keys.get().isEmpty())
 				keys.set(defaultKeys);
-			if (this.commands.isEmpty())
+			if (this.commands.get().isEmpty())
 				this.commands.set(defaultCommands);
 			if (citybuild.get() == null)
 				citybuild.set(defaultCitybuild);
@@ -144,7 +144,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 
-		String subtitle = String.format("§e[%s] §f§o➡ %s", KeySettingImpl.formatKeys(keys.get()), commands.size() + (commands.size() == 1 ? " Befehl" : " Befehle"));
+		String subtitle = String.format("§e[%s] §f§o➡ %s", KeySettingImpl.formatKeys(keys.get()), commands.get().size() + (commands.get().size() == 1 ? " Befehl" : " Befehle"));
 
 		String trimmedName = LabyMod.getInstance().getDrawUtils().trimStringToWidth(name.get(), maxX - x - 25 - 48);
 		String trimmedSubtitle = LabyMod.getInstance().getDrawUtils().trimStringToWidth(subtitle, maxX - x - 25 - 48);

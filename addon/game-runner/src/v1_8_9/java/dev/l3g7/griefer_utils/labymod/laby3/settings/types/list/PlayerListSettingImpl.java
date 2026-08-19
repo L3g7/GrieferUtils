@@ -36,9 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerListSettingImpl extends ControlElement implements Laby3Setting<ListSetting<PlayerListEntry>, Iterable<PlayerListEntry>>, ListSetting<PlayerListEntry> {
+public class PlayerListSettingImpl extends ControlElement implements Laby3Setting<ListSetting<PlayerListEntry>, List<PlayerListEntry>>, ListSetting<PlayerListEntry> {
 
-	private final ExtendedStorage<Iterable<PlayerListEntry>> storage = new ExtendedStorage<>(list -> {
+	private final ExtendedStorage<List<PlayerListEntry>> storage = new ExtendedStorage<>(list -> {
 		JsonArray array = new JsonArray();
 		list.forEach(e -> array.add(new JsonPrimitive(e.getId())));
 		return array;
@@ -86,7 +86,7 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 	}
 
 	@Override
-	public ExtendedStorage<Iterable<PlayerListEntry>> getStorage() {
+	public ExtendedStorage<List<PlayerListEntry>> getStorage() {
 		return storage;
 	}
 
@@ -116,11 +116,6 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 	@Override
 	public void add(PlayerListEntry value) {
 		getAsList().add(value);
-	}
-
-	@Override
-	public int size() {
-		return getAsList().size();
 	}
 
 	@Override

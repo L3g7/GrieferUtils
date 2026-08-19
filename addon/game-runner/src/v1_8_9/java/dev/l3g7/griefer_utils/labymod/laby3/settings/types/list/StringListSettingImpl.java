@@ -30,9 +30,9 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-public class StringListSettingImpl extends ControlElement implements Laby3Setting<ListSetting<StringListEntry>, Iterable<StringListEntry>>, ListSetting<StringListEntry> {
+public class StringListSettingImpl extends ControlElement implements Laby3Setting<ListSetting<StringListEntry>, List<StringListEntry>>, ListSetting<StringListEntry> {
 
-	private final ExtendedStorage<Iterable<StringListEntry>> storage = new ExtendedStorage<>(list -> {
+	private final ExtendedStorage<List<StringListEntry>> storage = new ExtendedStorage<>(list -> {
 		JsonArray array = new JsonArray();
 		list.forEach(s -> array.add(new JsonPrimitive(s.toString())));
 		return array;
@@ -52,7 +52,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 	private StringAddSetting stringAddSetting = null;
 
 	@Override
-	public ExtendedStorage<Iterable<StringListEntry>> getStorage() {
+	public ExtendedStorage<List<StringListEntry>> getStorage() {
 		return storage;
 	}
 
@@ -84,11 +84,6 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 	@Override
 	public void add(StringListEntry value) {
 		getSettings().add(new StringDisplaySetting(value));
-	}
-
-	@Override
-	public int size() {
-		return getAsList().size();
 	}
 
 	@Override

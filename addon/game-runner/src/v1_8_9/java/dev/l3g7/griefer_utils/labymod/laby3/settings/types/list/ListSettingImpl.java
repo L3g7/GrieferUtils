@@ -27,9 +27,9 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
-public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement implements Laby3Setting<ListSetting<E>, Iterable<E>>, ListSetting<E> {
+public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement implements Laby3Setting<ListSetting<E>, List<E>>, ListSetting<E> {
 
-	private final ExtendedStorage<Iterable<E>> storage;
+	private final ExtendedStorage<List<E>> storage;
 	private final E ctor;
 
 	private boolean unpacked = false;
@@ -75,7 +75,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 	}
 
 	@Override
-	public ExtendedStorage<Iterable<E>> getStorage() {
+	public ExtendedStorage<List<E>> getStorage() {
 		return storage;
 	}
 
@@ -102,11 +102,6 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 				if (setting instanceof DisplaySetting<?> ds)
 					ds.build();
 		});
-	}
-
-	@Override
-	public int size() {
-		return ((ArrayList<E>) get()).size();
 	}
 
 	@Override

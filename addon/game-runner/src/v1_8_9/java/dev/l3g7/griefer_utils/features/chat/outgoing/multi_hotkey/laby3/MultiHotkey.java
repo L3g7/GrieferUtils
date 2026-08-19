@@ -102,7 +102,7 @@ public class MultiHotkey extends Feature {
 			entry.add("keys", keys);
 
 			JsonArray commands = new JsonArray();
-			hotkey.commands.get().forEach(key -> commands.add(new JsonPrimitive(key)));
+			hotkey.commands.get().forEach(key -> commands.add(new JsonPrimitive(key.get())));
 			entry.add("commands", commands);
 
 			entry.addProperty("cb", hotkey.citybuild.get().getName());

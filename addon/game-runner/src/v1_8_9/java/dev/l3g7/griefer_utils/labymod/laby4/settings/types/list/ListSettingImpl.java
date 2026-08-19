@@ -41,11 +41,11 @@ import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
-public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.configuration.settings.type.list.ListSetting implements Laby4Setting<ListSetting<E>, Iterable<E>>, ListSetting<E> {
+public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.configuration.settings.type.list.ListSetting implements Laby4Setting<ListSetting<E>, List<E>>, ListSetting<E> {
 
-	private final ExtendedStorage<Iterable<E>> storage;
+	private final ExtendedStorage<List<E>> storage;
 	protected final List<EntryConfig<E>> rawList;
-	protected final Iterable<E> view = Itr::new;
+	protected final List<E> view = new View();
 	protected final E ctor;
 
 	protected boolean unpacked = false;
@@ -93,7 +93,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	}
 
 	@Override
-	public ExtendedStorage<Iterable<E>> getStorage() {
+	public ExtendedStorage<List<E>> getStorage() {
 		return storage;
 	}
 
@@ -114,11 +114,6 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	}
 
 	@Override
-	public int size() {
-		return rawList.size();
-	}
-
-	@Override
 	public void add(E value) {
 		add(value, false);
 	}
@@ -136,7 +131,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	}
 
 	@Override
-	public ListSetting<E> set(Iterable<E> value) {
+	public ListSetting<E> set(List<E> value) {
 		if (value != view) {
 			rawList.clear();
 			for (E e : value)
@@ -268,31 +263,18 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	}
 
 	/**
-	 * Proxied iterator that unwraps EntryConfig.
+	 * Proxied list that unwraps EntryConfig.
 	 */
-	private class Itr implements Iterator<E> {
-		private final Iterator<EntryConfig<E>> source = ListSettingImpl.this.rawList.iterator();
-
+	private class View extends AbstractList<E> {
 		@Override
-		public boolean hasNext() {
-			return source.hasNext();
+		public E get(int index) {
+			return rawList.get(index).value;
 		}
 
 		@Override
-		public E next() {
-			return source.next().value;
+		public int size() {
+			return rawList.size();
 		}
-
-		@Override
-		public void remove() {
-			source.remove();
-		}
-
-		@Override
-		public void forEachRemaining(java.util.function.Consumer<? super E> action) {
-			source.forEachRemaining(e -> action.accept(e.value));
-		}
-
 	}
 
 	/**

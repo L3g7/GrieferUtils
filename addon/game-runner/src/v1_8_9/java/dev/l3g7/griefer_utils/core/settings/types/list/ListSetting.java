@@ -12,6 +12,9 @@ import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
 public interface ListSetting<E extends ListEntry<E>> extends AbstractSetting<ListSetting<E>, Iterable<E>> {
@@ -20,10 +23,19 @@ public interface ListSetting<E extends ListEntry<E>> extends AbstractSetting<Lis
 
 	static ListSetting<PlayerListEntry> createPlayerList() {return settings.createPlayerListSetting();}
 
+	static ListSetting<StringListEntry> createStringList() {return settings.createStringListSetting();}
+
 	/**
 	 * Adds a value to the list without calling {@link #notifyChange()}.
 	 */
 	void add(E value);
+
+	/**
+	 * Returns the number of elements in this list.
+	 */
+	int size();
+
+	default boolean isEmpty() {return size() == 0;}
 
 	/**
 	 * Registers a callback for entry edits and adds.
@@ -35,4 +47,11 @@ public interface ListSetting<E extends ListEntry<E>> extends AbstractSetting<Lis
 	 */
 	ListSetting<E> unpacked();
 
+	default List<E> toList() {
+		List<E> list = new ArrayList<>();
+		for (E e : get())
+			list.add(e);
+
+		return list;
+	}
 }

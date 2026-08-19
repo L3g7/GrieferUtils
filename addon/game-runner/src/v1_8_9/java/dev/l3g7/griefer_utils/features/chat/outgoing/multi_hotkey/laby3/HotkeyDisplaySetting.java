@@ -11,6 +11,8 @@ import com.google.common.collect.ImmutableSet;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.settings.types.*;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.StringListEntry;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.KeySettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
@@ -28,12 +30,12 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 
 	public final StringSetting name;
 	public final KeySetting keys;
-	public final StringListSetting commands;
+	public final ListSetting<StringListEntry> commands;
 	public final CitybuildSetting citybuild;
 
 	private String defaultName;
 	private Set<Integer> defaultKeys;
-	private List<String> defaultCommands;
+	private List<StringListEntry> defaultCommands = new ArrayList<>();
 	private Citybuild defaultCitybuild;
 
 	private int amountsTriggered = 0;
@@ -54,9 +56,14 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 				titleSetting.name("§e§l" + title);
 			});
 
-		this.commands = StringListSetting.create()
-			.name("Befehl hinzufügen")
-			.set(defaultCommands = commands);
+		this.commands = ListSetting.createStringList()
+			.name("Befehl hinzufügen");
+
+		for (String command : commands) {
+			StringListEntry entry = new StringListEntry(command);
+			this.commands.add(entry);
+			this.defaultCommands.add(entry);
+		}
 
 		this.citybuild = CitybuildSetting.create()
 			.name("Citybuild")
@@ -75,12 +82,13 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 				if (!this.citybuild.get().isOnCb())
 					return;
 
-				if (this.commands.get().isEmpty()) {
+				List<StringListEntry> values = this.commands.toList();
+				if (values.isEmpty()) {
 					labyBridge.notify("§cFehler", "§cBitte füge den Eintrag neu hinzu.");
 					return;
 				}
 
-				String command = this.commands.get().get(amountsTriggered %= this.commands.get().size());
+				String command = values.get(amountsTriggered %= values.size()).get();
 				if (!MessageEvent.MessageSendEvent.post(command))
 					player().sendChatMessage(command);
 
@@ -96,10 +104,10 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 	public void openSettings() {
 		defaultName = name.get();
 		defaultKeys = keys.get();
-		defaultCommands = new ArrayList<>(commands.get());
+		defaultCommands = commands.toList();
 		defaultCitybuild = citybuild.get();
 		mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(() -> {
-			if (!name.get().isEmpty() && !keys.get().isEmpty() && !commands.get().isEmpty() && citybuild.get() != null) {
+			if (!name.get().isEmpty() && !keys.get().isEmpty() && !this.commands.isEmpty() && citybuild.get() != null) {
 				onChange();
 				return;
 			}
@@ -113,8 +121,8 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 				name.set(defaultName);
 			if (keys.get().isEmpty())
 				keys.set(defaultKeys);
-			if (commands.get().isEmpty())
-				commands.set(defaultCommands);
+			if (this.commands.isEmpty())
+				this.commands.set(defaultCommands);
 			if (citybuild.get() == null)
 				citybuild.set(defaultCitybuild);
 
@@ -136,7 +144,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 
-		String subtitle = String.format("§e[%s] §f§o➡ %s", KeySettingImpl.formatKeys(keys.get()), commands.get().size() + (commands.get().size() == 1 ? " Befehl" : " Befehle"));
+		String subtitle = String.format("§e[%s] §f§o➡ %s", KeySettingImpl.formatKeys(keys.get()), commands.size() + (commands.size() == 1 ? " Befehl" : " Befehle"));
 
 		String trimmedName = LabyMod.getInstance().getDrawUtils().trimStringToWidth(name.get(), maxX - x - 25 - 48);
 		String trimmedSubtitle = LabyMod.getInstance().getDrawUtils().trimStringToWidth(subtitle, maxX - x - 25 - 48);

@@ -14,8 +14,9 @@ import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.StringListEntry;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.labymod.ingamechat.IngameChatManager;
 import net.labymod.ingamechat.renderer.ChatLine;
@@ -41,12 +42,10 @@ public class AntiCommandChoker extends Feature {
 	private static final String COMMAND = "/grieferutils_anti_command_choker ";
 	private static final Pattern FAIL_PATTERN = Pattern.compile("^[(7](?=[a-zA-Z])|^[\\w(][/(]|^&(?=[^a-f0-9])");
 
-	private final StringListSetting customEntries = StringListSetting.create()
+	private final ListSetting<StringListEntry> customEntries = ListSetting.createStringList()
 		.name("Eigene Einträge")
 		.description("Wenn eine Nachricht mit einem dieser Einträge beginnt, wird sie abgefangen.")
-		.icon("book_and_quill")
-		.entryIcon("book_and_quill")
-		.placeholder("Abzufangende Nachricht");
+		.icon("book_and_quill");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -112,13 +111,13 @@ public class AntiCommandChoker extends Feature {
 			return;
 		}
 
-		for (String s : customEntries.get()) {
-			if (!msg.startsWith(s))
+		for (StringListEntry entry : customEntries.get()) {
+			if (!msg.startsWith(entry.get()))
 				continue;
 
 			int id = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
 
-			IChatComponent question = new ChatComponentText(Constants.ADDON_PREFIX + String.format("Deine Nachricht beginnt mit %s. Soll sie trotzdem abgeschickt werden? ", s));
+			IChatComponent question = new ChatComponentText(Constants.ADDON_PREFIX + String.format("Deine Nachricht beginnt mit %s. Soll sie trotzdem abgeschickt werden? ", entry));
 
 			IChatComponent yes = new ChatComponentText("§a[§l✔§r§a] ").setChatStyle(new ChatStyle()
 				.setChatClickEvent(getClickEvent(msg, id)));

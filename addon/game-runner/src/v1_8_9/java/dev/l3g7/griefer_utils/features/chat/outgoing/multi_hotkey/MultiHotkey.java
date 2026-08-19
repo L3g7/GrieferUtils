@@ -15,7 +15,12 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.InputEvent.KeyInputEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
-import dev.l3g7.griefer_utils.core.settings.types.*;
+import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
+import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
+import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.StringListEntry;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
@@ -27,7 +32,6 @@ import net.labymod.api.configuration.loader.annotation.SpriteTexture;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
 import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
-import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.configuration.settings.type.list.ListSettingConfig;
 import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
 import net.labymod.api.util.KeyValue;
@@ -74,10 +78,10 @@ public class MultiHotkey extends Feature {
 			if (!hotkey.citybuild.get().isOnCb())
 				continue;
 
-			if (hotkey.commands.get().isEmpty())
+			if (hotkey.commands.isEmpty())
 				continue;
 
-			String command = hotkey.commands.get().get(hotkey.amountsTriggered %= hotkey.commands.get().size());
+			String command = hotkey.commands.toList().get(hotkey.amountsTriggered %= hotkey.commands.size()).get();
 			if (!MessageEvent.MessageSendEvent.post(command))
 				player().sendChatMessage(command);
 
@@ -108,10 +112,9 @@ public class MultiHotkey extends Feature {
 			.description("Auf welchem Citybuild dieser Hotkey funktionieren soll.")
 			.callback(entries::notifyChange);
 
-		private final StringListSetting commands = StringListSetting.create()
+		private final ListSetting<StringListEntry> commands = ListSetting.createStringList()
 			.name("Befehle")
 			.icon("book_and_quill")
-			.entryIcon("book_and_quill")
 			.callback(entries::notifyChange);
 
 		public HotkeyConfig(String name) {
@@ -143,7 +146,8 @@ public class MultiHotkey extends Feature {
 
 	// NOTE: cleanup? merge?
 	@ExclusiveTo(LABY_4)
-	private class HotkeyListSetting extends ListSetting implements Laby4Setting<HotkeyListSetting, List<HotkeyConfig>> {
+	private class HotkeyListSetting extends net.labymod.api.configuration.settings.type.list.ListSetting
+		implements Laby4Setting<HotkeyListSetting, List<HotkeyConfig>> {
 
 		private final ExtendedStorage<List<HotkeyConfig>> storage;
 

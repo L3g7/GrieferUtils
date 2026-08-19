@@ -16,10 +16,12 @@ import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.StringListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.*;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.list.ListSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.list.PlayerListSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.list.StringListSettingImpl;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
@@ -59,11 +61,6 @@ public class SettingsImpl implements Settings {
 	}
 
 	@Override
-	public StringListSetting createStringListSetting() {
-		return new StringListSettingImpl();
-	}
-
-	@Override
 	public NumberSetting createNumberSetting() {
 		return new NumberSettingImpl();
 	}
@@ -96,6 +93,11 @@ public class SettingsImpl implements Settings {
 	@Override
 	public ListSetting<PlayerListEntry> createPlayerListSetting() {
 		return new PlayerListSettingImpl();
+	}
+
+	@Override
+	public ListSetting<StringListEntry> createStringListSetting() {
+		return new StringListSettingImpl();
 	}
 
 	@Override

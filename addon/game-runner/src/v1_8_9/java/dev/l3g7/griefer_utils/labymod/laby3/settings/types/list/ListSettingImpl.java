@@ -105,6 +105,11 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 	}
 
 	@Override
+	public int size() {
+		return ((ArrayList<E>) get()).size();
+	}
+
+	@Override
 	public void add(E value) {
 		int index = getSettings().indexOf(addSetting);
 		DisplaySetting<E> setting = new DisplaySetting<>(ListSettingImpl.this, value);

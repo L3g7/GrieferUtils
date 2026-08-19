@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.StringListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 
 @Bridged
@@ -33,8 +34,6 @@ public interface Settings {
 
 	StringSetting createStringSetting();
 
-	StringListSetting createStringListSetting();
-
 	NumberSetting createNumberSetting();
 
 	KeySetting createKeySetting();
@@ -48,6 +47,8 @@ public interface Settings {
 	<E extends ListEntry<E>> ListSetting<E> createListSetting(Class<E> type);
 
 	ListSetting<PlayerListEntry> createPlayerListSetting();
+
+	ListSetting<StringListEntry> createStringListSetting();
 
 	EntryAddSetting createEntryAddSetting();
 

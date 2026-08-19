@@ -114,6 +114,11 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	}
 
 	@Override
+	public int size() {
+		return rawList.size();
+	}
+
+	@Override
 	public void add(E value) {
 		add(value, false);
 	}
@@ -132,8 +137,11 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 
 	@Override
 	public ListSetting<E> set(Iterable<E> value) {
-		if (value != view)
-			throw new UnsupportedOperationException();
+		if (value != view) {
+			rawList.clear();
+			for (E e : value)
+				add(e);
+		}
 
 		return this;
 	}

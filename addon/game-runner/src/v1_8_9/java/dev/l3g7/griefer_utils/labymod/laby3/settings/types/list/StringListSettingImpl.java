@@ -5,13 +5,17 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
+package dev.l3g7.griefer_utils.labymod.laby3.settings.types.list;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.StringListEntry;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.EntryAddSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.settings.LabyModModuleEditorGui;
@@ -20,22 +24,21 @@ import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.init.Items;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-public class StringListSettingImpl extends ControlElement implements Laby3Setting<StringListSetting, List<String>>, StringListSetting {
+public class StringListSettingImpl extends ControlElement implements Laby3Setting<ListSetting<StringListEntry>, Iterable<StringListEntry>>, ListSetting<StringListEntry> {
 
-	private final ExtendedStorage<List<String>> storage = new ExtendedStorage<>(list -> {
+	private final ExtendedStorage<Iterable<StringListEntry>> storage = new ExtendedStorage<>(list -> {
 		JsonArray array = new JsonArray();
-		list.forEach(s -> array.add(new JsonPrimitive(s)));
+		list.forEach(s -> array.add(new JsonPrimitive(s.toString())));
 		return array;
 	}, elem -> {
-		List<String> list = new ArrayList<>();
-		elem.getAsJsonArray().forEach(e -> list.add(e.getAsString()));
+		List<StringListEntry> list = new ArrayList<>();
+		elem.getAsJsonArray().forEach(e -> list.add(new StringListEntry(e.getAsString())));
 		return list;
 	}, new ArrayList<>());
 
@@ -44,16 +47,20 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 		setSettingEnabled(true);
 	}
 
+	private boolean unpacked = false;
 	private SettingsElement container = this;
 	private StringAddSetting stringAddSetting = null;
 
 	@Override
-	public ExtendedStorage<List<String>> getStorage() {
+	public ExtendedStorage<Iterable<StringListEntry>> getStorage() {
 		return storage;
 	}
 
 	@Override
 	public void create(Object parent) {
+		if (!unpacked)
+			throw new UnsupportedOperationException("Packed lists are not implemented.");
+
 		Laby3Setting.super.create(parent);
 		this.container = (SettingsElement) parent;
 		initList();
@@ -61,7 +68,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 
 	public void initList() {
 		ArrayList<SettingsElement> settings = new ArrayList<>();
-		for (String entry : get())
+		for (StringListEntry entry : get())
 			settings.add(new StringDisplaySetting(entry));
 
 		settings.add(stringAddSetting = new StringAddSetting());
@@ -70,15 +77,29 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 		container.getSubSettings().addAll(settings);
 	}
 
+	private List<StringListEntry> getAsList() {
+		return ((List<StringListEntry>) get());
+	}
+
 	@Override
-	public StringListSetting set(List<String> value) {
-		Laby3Setting.super.set(value);
-		getSettings().removeIf(se -> se instanceof StringDisplaySetting);
+	public void add(StringListEntry value) {
+		getSettings().add(new StringDisplaySetting(value));
+	}
 
-		if (getSettings().contains(stringAddSetting))
-			for (String s : value)
-				getSettings().add(getSettings().indexOf(stringAddSetting), new StringDisplaySetting(s));
+	@Override
+	public int size() {
+		return getAsList().size();
+	}
 
+	@Override
+	public ListSetting<StringListEntry> customEdit(Consumer<StringListEntry> callback) {
+		// No-op
+		return this;
+	}
+
+	@Override
+	public ListSetting<StringListEntry> unpacked() {
+		this.unpacked = true;
 		return this;
 	}
 
@@ -88,21 +109,21 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 
 	private class StringDisplaySetting extends ListEntrySetting {
 
-		private String data;
+		private final StringListEntry data;
 
-		public StringDisplaySetting(String entry) {
+		public StringDisplaySetting(StringListEntry entry) {
 			super(true, true, false);
 			container = StringListSettingImpl.this;
 			icon("book_and_quill");
-			name(data = entry);
+			name(entry.toString());
+			data = entry;
 		}
 
 		@Override
 		protected void onChange() {
-			StringListSettingImpl.this.get().remove(data);
+			StringListSettingImpl.this.getAsList().remove(data);
 			getSettings().remove(this);
-			StringListSettingImpl.this.getStorage().callbacks.forEach(c -> c.accept(StringListSettingImpl.this.get()));
-			StringListSettingImpl.this.save();
+			StringListSettingImpl.this.notifyChange();
 		}
 
 		@Override
@@ -141,7 +162,7 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 				inputField.setFocused(true);
 				inputField.setMaxStringLength(100);
 				if (setting != null) {
-					inputField.setText(setting.data);
+					inputField.setText(setting.data.toString());
 					inputField.setCursorPositionEnd();
 				}
 
@@ -174,17 +195,15 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 					case 1:
 						int lastIndex = getSettings().indexOf(StringAddSetting.this);
 						if (setting == null) {
-							getSettings().add(lastIndex, new StringDisplaySetting(inputField.getText()));
-							StringListSettingImpl.this.get().add(inputField.getText());
+							var entry = new StringListEntry(inputField.getText());
+							getSettings().add(lastIndex, new StringDisplaySetting(entry));
+							StringListSettingImpl.this.add(entry);
 						} else {
-							setting.name(setting.data = inputField.getText());
-							int settingIndex = getSettings().indexOf(setting);
-							int listIndex = StringListSettingImpl.this.get().size() - (lastIndex - settingIndex);
-							StringListSettingImpl.this.get().set(listIndex, inputField.getText());
+							setting.data.set(inputField.getText());
+							setting.name(inputField.getText());
 						}
 
-						StringListSettingImpl.this.save();
-						StringListSettingImpl.this.getStorage().callbacks.forEach(c -> c.accept(StringListSettingImpl.this.get()));
+						StringListSettingImpl.this.notifyChange();
 						// Fall-through
 					case 0:
 						mc().displayGuiScreen(backgroundScreen);
@@ -205,18 +224,6 @@ public class StringListSettingImpl extends ControlElement implements Laby3Settin
 			}
 		}
 
-	}
-
-	@Override
-	public StringListSetting placeholder(String placeholder) {
-		// TODO implement
-		return this;
-	}
-
-	@Override
-	public StringListSetting entryIcon(String icon) {
-		// TODO implement
-		return this;
 	}
 
 }

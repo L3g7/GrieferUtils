@@ -119,6 +119,11 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 	}
 
 	@Override
+	public int size() {
+		return getAsList().size();
+	}
+
+	@Override
 	public ListSetting<PlayerListEntry> customEdit(Consumer<PlayerListEntry> callback) {
 		// No-op
 		return this;

@@ -101,6 +101,8 @@ public abstract class AbstractListSettingImpl<S extends AbstractSetting<S, List<
 		return storage;
 	}
 
+	/*
+	TODO:
 	@EventListener
 	private void onInit(SettingActivityInitEvent event) {
 		if (event.holder() != this)
@@ -136,5 +138,6 @@ public abstract class AbstractListSettingImpl<S extends AbstractSetting<S, List<
 		// Hook add button
 		event.get("setting-header", "add-button").setPressable(() -> add(event.activity));
 	}
+	*/
 
 }

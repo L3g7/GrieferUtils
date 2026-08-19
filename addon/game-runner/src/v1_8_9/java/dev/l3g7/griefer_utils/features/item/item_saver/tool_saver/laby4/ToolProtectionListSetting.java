@@ -17,20 +17,18 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtectionListSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.ActivityInitializeEvent.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
 import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
 import net.labymod.api.configuration.settings.type.list.ListSetting;
+import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
 import net.labymod.api.util.KeyValue;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -46,7 +44,6 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class ToolProtectionListSetting extends ListSetting implements Laby4Setting<ToolProtectionListSetting, List<ToolProtectionListSetting.ToolProtection>> {
 
@@ -140,30 +137,19 @@ public class ToolProtectionListSetting extends ListSetting implements Laby4Setti
 		return list;
 	}
 
+	@Override
+	public void remove(ListSettingEntry entry) {
+		get().remove(entry.listIndex());
+		notifyChange();
+	}
+
 	@EventListener
 	private void onInit(SettingActivityInitEvent event) {
-		if (event.holder() != this)
+		if (!(event.parent() instanceof ItemProtectionListSetting))
 			return;
 
-		// Update ToolProtectionEntry widgets
-		for (Widget w : event.settings().getChildren()) {
-			if (w instanceof SettingWidget s && s.setting() instanceof ToolProtectionEntry entry) {
-				SettingsImpl.hookChildAdd(s, e -> {
-					if (e.childWidget() instanceof FlexibleContentWidget content) {
-						content.removeChild("advanced-button");
-
-						content.addContent(ButtonWidget.icon(X, () -> {
-							get().remove(entry.index);
-							notifyChange();
-							event.activity.reload();
-						}).addId("delete-button"));
-					}
-				});
-			}
-		}
-
 		// Hook add button
-		event.get("setting-header", "add-button").setPressable(() -> {
+		event.get("container", "mods-breadcrumb", "accent-button").setPressable(() -> {
 			if (mc().thePlayer == null) {
 				labyBridge.notify("§e§lFehler ⚠", "§eHinzufügen von Items ist nur Ingame möglich!");
 				return;
@@ -173,7 +159,6 @@ public class ToolProtectionListSetting extends ListSetting implements Laby4Setti
 			display(Constants.ADDON_PREFIX + "Bitte klicke das Item an, das du hinzufügen möchtest.");
 			MinecraftUtil.closeClientsideGUI();
 		});
-
 	}
 
 	@EventListener

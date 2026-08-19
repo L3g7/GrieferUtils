@@ -11,23 +11,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.entry.FlexibleContentEntry;
-import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.loader.annotation.SpriteTexture;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
@@ -36,7 +25,6 @@ import net.labymod.api.configuration.settings.type.list.ListSetting;
 import net.labymod.api.configuration.settings.type.list.ListSettingConfig;
 import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
 import net.labymod.api.util.KeyValue;
-import net.minecraft.init.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +38,6 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftBridgeImpl.pages;
-import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class RecraftPage extends net.labymod.api.configuration.loader.Config implements ListSettingConfig {
 
@@ -58,10 +45,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 		.name("Name")
 		.description("Wie diese Seite heißen soll.")
 		.icon("name_tag")
-		.callback(s -> {
-			pages.notifyChange();
-			Laby4Util.setPageTitle(s);
-		});
+		.callback(s -> pages.notifyChange());
 
 	public final RecraftRecording.RecraftRecordingListSetting recordings = new RecraftRecording.RecraftRecordingListSetting()
 		.name("Aufzeichnungen")
@@ -118,7 +102,6 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 				}
 				return v;
 			}, new ArrayList<>()));
-			EventRegisterer.register(this);
 		}
 
 		public RecraftPageListSetting(ExtendedStorage<List<RecraftPage>> storage) {
@@ -181,13 +164,24 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 					entries.remove(i--);
 				} else {
 					config.create(this);
-					ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i);
+					ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i) {
+						@Override
+						public Icon getIcon() {
+							return Icons.of("command_suggestions");
+						}
+					};
 					entry.addSettings(config);
 					list.add(new KeyValue<>(entry.getId(), entry));
 				}
 			}
 
 			return list;
+		}
+
+		@Override
+		public void remove(ListSettingEntry entry) {
+			get().remove(entry.listIndex());
+			notifyChange();
 		}
 
 		@Override
@@ -203,38 +197,6 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 		@Override
 		public ExtendedStorage<List<RecraftPage>> getStorage() {
 			return storage;
-		}
-
-		@EventListener
-		private void onInit(SettingActivityInitEvent event) {
-			if (event.holder() != this)
-				return;
-
-			// Update entry widgets
-			for (Widget w : event.settings().getChildren()) {
-				if (w instanceof SettingWidget s && s.setting() instanceof ListSettingEntry entry) {
-					SettingsImpl.hookChildAdd(s, e -> {
-						if (e.childWidget() instanceof FlexibleContentWidget content) {
-							// Fix icon
-							IconWidget widget = new IconWidget(Icons.of("command_suggestions")); // NOTE: duplicate code
-							widget.addId("setting-icon");
-							content.addChild(0, new FlexibleContentEntry(widget, false));
-							widget.initialize(content);
-
-							// Update button icons
-							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(Icons.of("high_res/pencil_vec")); // NOTE: use original icons?
-							content.removeChild("delete-button");
-
-							content.addContent(ButtonWidget.icon(X, () -> {
-								get().remove(entry.listIndex());
-								notifyChange();
-								event.activity.reload();
-							}).addId("delete-button"));
-						}
-					});
-				}
-			}
 		}
 
 	}

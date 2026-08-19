@@ -11,8 +11,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
@@ -20,19 +18,11 @@ import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
 import dev.l3g7.griefer_utils.features.item.recraft.decompressor.DecompressPlayer;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 import net.labymod.api.configuration.loader.annotation.SpriteTexture;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
@@ -59,7 +49,6 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.ignoreSubIds;
 import static dev.l3g7.griefer_utils.features.item.recraft.Recraft.playingSuccessor;
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.*;
-import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class RecraftRecording extends net.labymod.api.configuration.loader.Config implements ListSettingConfig, dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording {
 
@@ -91,10 +80,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 
 	public RecraftRecording(String name) {
 		name().set(name);
-		name().callback(s -> {
-			RecraftBridgeImpl.pages.notifyChange();
-			Laby4Util.setPageTitle(s);
-		});
+		name().callback(s -> RecraftBridgeImpl.pages.notifyChange());
 
 		key().callback(RecraftBridgeImpl.pages::notifyChange);
 		ignoreSubIds().callback(RecraftBridgeImpl.pages::notifyChange);
@@ -286,7 +272,6 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 				}
 				return v;
 			}, new ArrayList<>()));
-			EventRegisterer.register(this);
 		}
 
 		public RecraftRecordingListSetting(ExtendedStorage<List<RecraftRecording>> storage) {
@@ -379,30 +364,10 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 			return storage;
 		}
 
-		@EventListener
-		private void onInit(SettingActivityInitEvent event) {
-			if (event.holder() != this)
-				return;
-
-			// Update entry widgets
-			for (Widget w : event.settings().getChildren()) {
-				if (w instanceof SettingWidget s && s.setting() instanceof ListSettingEntry entry) {
-					SettingsImpl.hookChildAdd(s, e -> {
-						if (e.childWidget() instanceof FlexibleContentWidget content) {
-							// Update button icons
-							ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-							btn.updateIcon(Icons.of("high_res/pencil_vec")); // NOTE: use original icons?
-							content.removeChild("delete-button");
-
-							content.addContent(ButtonWidget.icon(X, () -> {
-								get().remove(entry.listIndex());
-								notifyChange();
-								event.activity.reload();
-							}).addId("delete-button"));
-						}
-					});
-				}
-			}
+		@Override
+		public void remove(ListSettingEntry entry) {
+			get().remove(entry.listIndex());
+			notifyChange();
 		}
 
 	}

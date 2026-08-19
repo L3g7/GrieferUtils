@@ -9,13 +9,9 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.StringListSetting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
@@ -45,7 +41,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static net.labymod.api.Textures.SpriteCommon.X;
 
 public class StringListSettingImpl extends ListSetting implements StringListSetting, Laby4Setting<StringListSetting, List<String>> {
 
@@ -120,6 +115,8 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 		return this;
 	}
 
+	/*
+	TODO:
 	@EventListener
 	private void onInit(SettingActivityInitEvent event) {
 		if (event.holder() != this)
@@ -152,6 +149,7 @@ public class StringListSettingImpl extends ListSetting implements StringListSett
 		// Hook add button
 		event.get("setting-header", "add-button").setPressable(() -> new StringListInputActivity(-1, event.activity).open());
 	}
+	*/
 
 	@AutoActivity
 	@Link("string-list-input.lss")

@@ -7,13 +7,11 @@
 
 package dev.l3g7.griefer_utils.labymod.laby4.util;
 
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.bridges.LabyBridgeImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.navigation.elements.ScreenBaseNavigationElement;
 import net.labymod.api.client.gui.screen.ScreenWrapper;
@@ -21,7 +19,6 @@ import net.labymod.api.client.gui.screen.activity.Activity;
 import net.labymod.api.client.gui.screen.widget.AbstractWidget;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.WrappedWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.ComponentWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.ScreenRendererWidget;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.type.SettingElement;
@@ -43,13 +40,6 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static net.labymod.api.Laby.labyAPI;
 
 public class Laby4Util {
-
-	private static SettingActivityInitEvent lastSettingActivityInitEvent;
-
-	@EventListener
-	private static void onSettingActivityInitEvent(SettingActivityInitEvent event) {
-		lastSettingActivityInitEvent = event;
-	}
 
 	public static boolean isSettingOpened(BaseSetting<?> setting) {
 		// Check if in setting activity
@@ -109,15 +99,6 @@ public class Laby4Util {
 
 	public static String getNamespace() {
 		return ((AddonClassLoader) Laby4Util.class.getClassLoader()).getAddonInfo().getNamespace();
-	}
-
-	public static void setPageTitle(String title) { // NOTE: Check parent
-		if (lastSettingActivityInitEvent == null)
-			return;
-
-		ComponentWidget widget = lastSettingActivityInitEvent.get("setting-header", "title");
-		if (widget != null && widget.renderable() != null)
-			Reflection.set(widget.renderable(), "text", title);
 	}
 
 	public static <T extends Event> void register(Class<T> event, Consumer<T> callback) {

@@ -11,21 +11,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.entry.FlexibleContentEntry;
-import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
 import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
@@ -41,7 +31,6 @@ import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
-import static net.labymod.api.Textures.SpriteCommon.X;
 
 @ExclusiveTo(LABY_4)
 public class EntryListSetting extends ListSetting implements Laby4Setting<EntryListSetting, List<EntryConfig>> {
@@ -71,7 +60,6 @@ public class EntryListSetting extends ListSetting implements Laby4Setting<EntryL
 			}
 			return v;
 		}, new ArrayList<>()));
-		EventRegisterer.register(this);
 	}
 
 	private EntryListSetting(ExtendedStorage<List<EntryConfig>> storage) {
@@ -118,7 +106,11 @@ public class EntryListSetting extends ListSetting implements Laby4Setting<EntryL
 				configs.remove(i--);
 				notifyChange();
 			} else {
-				ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i);
+				ListSettingEntry entry = new ListSettingEntry(this, config.entryDisplayName(), i) {
+					public Icon getIcon() {
+						return Icons.of("command_suggestions");
+					}
+				};
 				entry.addSettings(config);
 				config.create(this);
 				list.add(new KeyValue<>(entry.getId(), entry));
@@ -145,36 +137,10 @@ public class EntryListSetting extends ListSetting implements Laby4Setting<EntryL
 		return entry;
 	}
 
-	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
-		if (event.holder() != this)
-			return;
-
-		// Update entry widgets
-		for (Widget w : event.settings().getChildren()) {
-			if (w instanceof SettingWidget s && s.setting() instanceof ListSettingEntry entry) {
-				SettingsImpl.hookChildAdd(s, e -> {
-					if (e.childWidget() instanceof FlexibleContentWidget content) {
-						// Fix icon
-						IconWidget widget = new IconWidget(Icons.of("command_menu"));
-						widget.addId("setting-icon");
-						content.addChild(0, new FlexibleContentEntry(widget, false));
-						widget.initialize(content);
-
-						// Update button icons
-						ButtonWidget btn = (ButtonWidget) content.getChild("advanced-button").childWidget();
-						btn.updateIcon(Icons.of("high_res/pencil_vec"));
-						content.removeChild("delete-button");
-
-						content.addContent(ButtonWidget.icon(X, () -> {
-							get().remove(entry.listIndex());
-							notifyChange();
-							event.activity.reload();
-						}).addId("delete-button"));
-					}
-				});
-			}
-		}
+	@Override
+	public void remove(ListSettingEntry entry) {
+		get().remove(entry.listIndex());
+		notifyChange();
 	}
 
 	@Override

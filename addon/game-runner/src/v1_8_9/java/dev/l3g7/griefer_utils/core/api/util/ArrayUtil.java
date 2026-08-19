@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -101,17 +102,19 @@ public class ArrayUtil {
 	/**
 	 * Merges multiple byte arrays into one.
 	 */
-	public static byte[] merge(byte[]... arrays) {
+	@SafeVarargs
+	public static <T> T[] merge(IntFunction<T[]> generator, T[]... arrays) {
 		int length = 0;
-		for (byte[] array : arrays)
+		for (T[] array : arrays)
 			length += array.length;
 
-		byte[] result = new byte[length];
+		T[] result = generator.apply(length);
 		int idx = 0;
-		for (byte[] array : arrays) {
+		for (T[] array : arrays) {
 			System.arraycopy(array, 0, result, idx, array.length);
 			idx += array.length;
 		}
+
 		return result;
 	}
 

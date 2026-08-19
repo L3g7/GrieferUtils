@@ -9,31 +9,17 @@ package dev.l3g7.griefer_utils.features.item.recraft.laby4;
 
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.ComponentWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.entry.FlexibleContentEntry;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.list.HorizontalListWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.settings.Setting;
 import net.labymod.api.configuration.settings.accessor.impl.ConfigPropertySettingAccessor;
 import net.labymod.api.configuration.settings.type.SettingPermissionHolder;
 import net.labymod.api.configuration.settings.type.list.ListSetting;
-import net.labymod.api.configuration.settings.type.list.ListSettingEntry;
 import net.labymod.api.util.KeyValue;
-import net.minecraft.init.Items;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -134,6 +120,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 		return storage;
 	}
 
+	/*
 	@EventListener
 	private void onInit(SettingActivityInitEvent event) {
 		if (event.holder() != this)
@@ -170,7 +157,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 			}
 		}
 	}
-
+	*/
 
 	@ExclusiveTo(LABY_4)
 	private class RecraftSuccessorPage extends ListSetting implements Laby4Setting<RecraftSuccessorPage, Object> {
@@ -248,6 +235,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 			return storage;
 		}
 
+		/*
 		@EventListener
 		private void onInit(SettingActivityInitEvent event) {
 			if (event.holder() != this)
@@ -281,6 +269,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 				}
 			}
 		}
+		*/
 
 	}
 }

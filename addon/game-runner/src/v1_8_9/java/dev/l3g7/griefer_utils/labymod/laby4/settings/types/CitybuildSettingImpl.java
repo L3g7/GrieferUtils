@@ -8,37 +8,22 @@
 package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingActivityInitEvent;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.SettingsImpl;
 import net.labymod.api.client.component.Component;
-import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
+import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.ComponentWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.dropdown.DropdownWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.dropdown.renderer.EntryRenderer;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.client.render.font.RenderableComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, Citybuild> implements CitybuildSetting {
 
-	/**
-	 * The icon widget for the SettingWidget wrapping this setting.
-	 */
-	private IconWidget iconWidget;
-
-	/**
-	 * The activity holding the icon widget.
-	 */
-	private SettingContentActivity activity;
+	private Icon currentIcon;
 
 	public CitybuildSettingImpl() {
 		super(e -> {
@@ -53,16 +38,10 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 
 			return new JsonPrimitive(name);
 		}, e -> Citybuild.parse(e.getAsString()), Citybuild.ANY);
-		icon(Citybuild.ANY.toItemStack());
-		callback(v -> {
-			icon(v.toItemStack());
 
-			if (activity != null) {
-				iconWidget.icon().set(getIcon());
-				activity.reload();
-			}
-		});
-		EventRegisterer.register(this);
+		currentIcon = Icons.of(Citybuild.ANY.toItemStack());
+		icon(new Icons.ProxiedIcon(() -> currentIcon, 0, 0));
+		callback(v -> currentIcon = Icons.of(v.toItemStack()));
 	}
 
 	@Override
@@ -109,27 +88,6 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 		callback(v -> widget.setSelected(v, false));
 
 		return new Widget[]{widget};
-	}
-
-	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
-		activity = null;
-		if (event.holder() != parent)
-			return;
-
-		for (Widget w : event.settings().getChildren()) {
-			if (w instanceof SettingWidget s && s.setting() == this) {
-				SettingsImpl.hookChildAdd(s, e -> {
-					if (e.childWidget() instanceof FlexibleContentWidget content) {
-						iconWidget = (IconWidget) content.getChild("setting-icon").childWidget();
-					}
-
-					this.activity = event.activity;
-				});
-				break;
-			}
-		}
-
 	}
 
 }

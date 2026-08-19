@@ -79,7 +79,7 @@ public class MultiHotkey extends Feature {
 				keys,
 				commands,
 				cb
-			).icon(cb.toItemStack());
+			).icon(cb.getIcon());
 
 			List<SettingsElement> settings = enabled.getSubSettings().getElements();
 			settings.add(settings.size() - 1, hotKey);

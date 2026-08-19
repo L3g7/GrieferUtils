@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
@@ -37,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
@@ -114,13 +114,18 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	}
 
 	@Override
+	public void add(E value) {
+		add(value, false);
+	}
+
+	@Override
 	public ListSetting<E> unpacked() {
 		this.unpacked = true;
 		return this;
 	}
 
 	@Override
-	public ListSetting<E> customEdit(dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer<E> callback) {
+	public ListSetting<E> customEdit(Consumer<E> callback) {
 		this.customEdit = callback;
 		return this;
 	}
@@ -159,15 +164,14 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 
 	@Override
 	public ListSettingEntry createNew() {
-		return createNew(false);
+		return add(ctor.createNew(), true);
 	}
 
-	private ListSettingEntry createNew(boolean isIntercepted) {
-		if (customEdit != null && !isIntercepted)
+	private ListSettingEntry add(E value, boolean isCreateNew) {
+		if (customEdit != null && isCreateNew)
 			throw new IllegalStateException("Failed to intercept add!");
 
-		E e = ctor.createNew();
-		EntryConfig<E> config = new EntryConfig<>(this, e);
+		EntryConfig<E> config = new EntryConfig<>(this, value);
 		rawList.add(c(config));
 		if (!config.isInvalid())
 			notifyChange();
@@ -210,10 +214,8 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 
 		// Hook add button
 		if (setting.customEdit != null) {
-			event.get("container", "mods-breadcrumb", "accent-button").setPressable(() -> {
-				ListEntry<?> e = ((StyledListSettingEntry) setting.createNew(true)).entry;
-				setting.customEdit.accept(c(e));
-			});
+			event.get("container", "mods-breadcrumb", "accent-button").setPressable(() ->
+				setting.customEdit.accept(null));
 		}
 	}
 
@@ -279,7 +281,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		}
 
 		@Override
-		public void forEachRemaining(Consumer<? super E> action) {
+		public void forEachRemaining(java.util.function.Consumer<? super E> action) {
 			source.forEachRemaining(e -> action.accept(e.value));
 		}
 

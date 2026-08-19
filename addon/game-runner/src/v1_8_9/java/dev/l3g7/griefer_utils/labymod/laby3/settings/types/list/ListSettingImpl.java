@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types.list;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
@@ -23,7 +24,6 @@ import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
@@ -63,10 +63,14 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 
 		addSetting.name("Eintrag hinzufügen");
 		addSetting.callback(() -> {
-			int index = getSettings().indexOf(addSetting);
-			DisplaySetting<E> setting = new DisplaySetting<>(ListSettingImpl.this, ctor.createNew());
-			getSettings().add(index, setting);
-			open(setting);
+			if (customEdit != null) {
+				customEdit.accept(null);
+			} else {
+				int index = getSettings().indexOf(addSetting);
+				DisplaySetting<E> setting = new DisplaySetting<>(ListSettingImpl.this, ctor.createNew());
+				getSettings().add(index, setting);
+				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(this::notifyChange, setting));
+			}
 		});
 	}
 
@@ -101,26 +105,26 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 	}
 
 	@Override
+	public void add(E value) {
+		int index = getSettings().indexOf(addSetting);
+		DisplaySetting<E> setting = new DisplaySetting<>(ListSettingImpl.this, value);
+		getSettings().add(index, setting);
+	}
+
+	@Override
 	public ListSetting<E> unpacked() {
 		this.unpacked = true;
 		return this;
 	}
 
 	@Override
-	public ListSetting<E> customEdit(dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer<E> callback) {
+	public ListSetting<E> customEdit(Consumer<E> callback) {
 		customEdit = callback;
 		return this;
 	}
 
 	private List<SettingsElement> getSettings() {
 		return container.getSubSettings().getElements();
-	}
-
-	private void open(DisplaySetting<E> setting) {
-		if (customEdit != null)
-			customEdit.accept(setting.data);
-		else
-			mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(this::notifyChange, setting));
 	}
 
 	private static class DisplaySetting<E extends ListEntry<E>> extends ListEntrySetting {
@@ -164,7 +168,10 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 
 		@Override
 		protected void openSettings() {
-			parent.open(this);
+			if (parent.customEdit != null)
+				parent.customEdit.accept(data);
+			else
+				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(this::notifyChange, this));
 		}
 
 	}

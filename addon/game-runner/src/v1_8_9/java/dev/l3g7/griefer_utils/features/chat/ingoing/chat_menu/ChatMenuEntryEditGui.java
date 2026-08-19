@@ -319,13 +319,17 @@ public class ChatMenuEntryEditGui extends Gui {
 	}
 
 	private void save() {
+		ChatMenuEntry editedEntry = this.editedEntry != null ? this.editedEntry : new ChatMenuEntry();
 		editedEntry.name = nameInput.getText();
 		editedEntry.action = actionTypeInput.getSelected();
 		editedEntry.command = actionInput.getText();
 		editedEntry.iconType = iconInput.getSelected();
 		editedEntry.icon = iconInput.getSelected() == IconType.ITEM ? itemIconInput.getSelected() : fileIconInput.getSelection();
 
-		ChatMenu.get().notifyChange();
+		if (this.editedEntry == null)
+			ChatMenu.get().entries.add(editedEntry);
+
+		ChatMenu.get().entries.notifyChange();
 		close();
 	}
 

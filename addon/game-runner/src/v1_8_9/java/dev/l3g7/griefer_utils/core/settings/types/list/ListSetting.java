@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.settings.types.list;
 
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
+import org.jetbrains.annotations.Nullable;
 
 import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
@@ -17,9 +18,14 @@ public interface ListSetting<E extends ListEntry<E>> extends AbstractSetting<Lis
 	static <E extends ListEntry<E>> ListSetting<E> create(Class<E> type) {return settings.createListSetting(type);}
 
 	/**
-	 * Registers a callback for entry edits.
+	 * Adds a value to the list without calling {@link #notifyChange()}.
 	 */
-	ListSetting<E> customEdit(Consumer<E> callback);
+	void add(E value);
+
+	/**
+	 * Registers a callback for entry edits and adds.
+	 */
+	ListSetting<E> customEdit(Consumer<@Nullable E> callback);
 
 	/**
 	 * Unpacks the container holding the entries.

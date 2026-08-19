@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.MouseInputEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
@@ -44,7 +43,7 @@ public class ChatMenu extends Feature {
 
 	private ChatMenuRenderer activeRenderer = null;
 
-	private final ListSetting<ChatMenuEntry> entries = ListSetting.create(ChatMenuEntry.class)
+	protected final ListSetting<ChatMenuEntry> entries = ListSetting.create(ChatMenuEntry.class)
 		.name("Einträge")
 		.icon("player_menu")
 		.unpacked()
@@ -76,10 +75,6 @@ public class ChatMenu extends Feature {
 			entries.getStorage().decodeFunc.apply(data);
 			entries.notifyChange();
 		}
-	}
-
-	public void notifyChange() {
-		entries.notifyChange();
 	}
 
 	@EventListener

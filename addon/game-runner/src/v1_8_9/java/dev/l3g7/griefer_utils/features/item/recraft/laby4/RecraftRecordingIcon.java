@@ -12,8 +12,7 @@ import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons.SynchronousIcon;
 import net.labymod.api.Laby;
-import net.labymod.api.client.render.matrix.Stack;
-import net.labymod.api.util.bounds.Rectangle;
+import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.v1_8_9.client.util.MinecraftUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -34,16 +33,12 @@ class RecraftRecordingIcon extends SynchronousIcon { // NOTE: move somewhere els
 	}
 
 	@Override
-	public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil, boolean submitted) {
+	public void renderSynchronous(ScreenContext context, float x, float y, float width, float height) {
 		if (recording.icon == null)
 			return;
 
 		if (recording.icon.getItem() == Item.getItemFromBlock(Blocks.barrier))
 			recording.icon.stackSize = 0;
-
-		float alpha = Laby.labyAPI().renderPipeline().getAlpha();
-		if (alpha == 0)
-			return;
 
 		// Fix position for scales < 16
 		x += -1.5f * width + 24;
@@ -51,7 +46,7 @@ class RecraftRecordingIcon extends SynchronousIcon { // NOTE: move somewhere els
 
 		GlStateManager.scale(width / 16f, height / 16f, 1);
 
-		Laby.labyAPI().minecraft().itemStackRenderer().renderItemStack(stack, MinecraftUtil.fromMinecraft(recording.icon), (int) x, (int) y, false, alpha);
+		Laby.references().itemStackVisualizer().submitItem(context, MinecraftUtil.fromMinecraft(recording.icon), (int) x, (int) y, false);
 		mc().getRenderItem().renderItemOverlayIntoGUI(mc().fontRendererObj, recording.icon, (int) x, (int) y, ROMAN_NUMERALS[recording.icon.stackSize]);
 		RenderHelper.disableStandardItemLighting();
 

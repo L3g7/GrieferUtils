@@ -258,7 +258,7 @@ public class ItemValueListSetting extends ListSetting implements Laby4Setting<It
 		@Override
 		public Icon getIcon() {
 			if ("initialize".equals(new Throwable().getStackTrace()[1].getMethodName()))
-				return Icons.offset(value.stack, 2, -3, 1);
+				return Icons.offset(Icons.of(value.stack), 2, -3);
 
 			return super.getIcon();
 		}

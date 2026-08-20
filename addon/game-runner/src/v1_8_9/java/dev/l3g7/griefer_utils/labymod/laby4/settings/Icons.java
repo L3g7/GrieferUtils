@@ -8,20 +8,28 @@
 package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.state.ScreenCanvas;
-import net.labymod.api.client.render.batch.ResourceRenderContext;
+import net.labymod.api.client.gui.screen.state.states.AbstractGuiRenderState;
+import net.labymod.api.client.gui.screen.util.scissor.ScissorArea;
 import net.labymod.api.client.render.font.RenderableComponent;
-import net.labymod.api.client.render.matrix.Stack;
 import net.labymod.api.client.resources.ResourceLocation;
+import net.labymod.api.laby3d.pipeline.RenderStates;
+import net.labymod.api.laby3d.pipeline.material.GuiMaterial;
 import net.labymod.api.util.bounds.Rectangle;
 import net.labymod.core.client.render.font.component.DefaultComponentRendererBuilder;
+import net.labymod.laby3d.api.vertex.VertexConsumer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4d;
+import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,6 +40,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.function.Function;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static org.lwjgl.opengl.GL11.*;
 
 public class Icons {
 	public static final Icon OWN_SKULL = new SkullIcon();
@@ -41,68 +50,15 @@ public class Icons {
 	}
 
 	public static Icon of(ItemStack icon) {
-		return new ItemStackIcon(icon, 0, 0, 1);
+		return of(icon, 1);
 	}
 
-	public static Icon offset(ItemStack icon, float offsetX, float offsetY, float scale) {
-		return new ItemStackIcon(icon, (int) offsetX, (int) offsetY, scale);
+	public static Icon of(ItemStack icon, float scale) {
+		return new ItemStackIcon(icon, scale);
 	}
 
 	public static Icon offset(Icon icon, float offsetX, float offsetY) {
 		return new ProxiedIcon(() -> icon, offsetX, offsetY);
-	}
-
-	/**
-	 * An icon that uses the direct rendering API instead of submitting render calls.
-	 */
-	public abstract static class SynchronousIcon extends Icon {
-		protected SynchronousIcon() {
-			super(null);
-		}
-
-		@Override
-		public void render(ResourceRenderContext context, float x, float y, float width, float height, boolean hover, int color) {
-			render(null, x, y, width, height, hover, color, null, false);
-		}
-
-		@Override
-		public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil) {
-			render(stack, x, y, width, height, hover, color, stencil, false);
-		}
-
-		public abstract void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil, boolean submitted);
-	}
-
-	public static class ItemStackIcon extends SynchronousIcon {
-
-		private final ItemStack icon;
-		private final int offsetX, offsetY;
-		private final float scale;
-
-		public ItemStackIcon(ItemStack icon, int offsetX, int offsetY, float scale) {
-			this.icon = icon;
-			this.offsetX = offsetX;
-			this.offsetY = offsetY;
-			this.scale = scale;
-		}
-
-		@Override
-		public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil, boolean submitted) {
-			// Fix position for scales < 16
-			x += -1.5f * width + 24;
-			y += -1.25f * height + 20;
-
-			x += offsetX;
-			y += offsetY;
-
-			if (submitted)
-				GlStateManager.enableDepth();
-
-			GlStateManager.scale(width / 16f * scale, height / 16f * scale, 1);
-			Laby.labyAPI().minecraft().itemStackRenderer().renderItemStack(stack, c(icon), (int) (x / scale), (int) (y / scale));
-			GlStateManager.scale(16f / width / scale, 16f / height / scale, 1);
-		}
-
 	}
 
 	public static class ProxiedIcon extends Icon {
@@ -122,9 +78,86 @@ public class Icons {
 		}
 	}
 
+	/**
+	 * An icon that uses the direct rendering API instead of submitting render calls.
+	 */
+	public abstract static class SynchronousIcon extends Icon {
+
+		protected SynchronousIcon() {
+			super(null);
+		}
+
+		public abstract void renderSynchronous(ScreenContext context, float x, float y, float width, float height);
+
+		public void buildVertices(ScreenContext context, Matrix4f pose, float x, float y, float width, float height, @Nullable ScissorArea scissorArea) {
+			// Enable scissor
+			if (scissorArea != null) {
+				if (scissorArea.getPose() != null)
+					throw new UnsupportedOperationException("Scissor with pose");
+
+				int guiScale = MinecraftUtil.screenScaling();
+				int screenHeight = MinecraftUtil.mc().displayHeight;
+
+				Rectangle bounds = scissorArea.bounds();
+
+				// GUI space -> framebuffer pixels (origin bottom-left)
+				int left = (int) (bounds.getLeft() * guiScale);
+				int bottom = (int) (bounds.getBottom() * guiScale);
+				int w = (int) (bounds.getWidth() * guiScale);
+				int h = (int) (bounds.getHeight() * guiScale);
+
+				glEnable(GL_SCISSOR_TEST);
+				glScissor(left, screenHeight - bottom, w, h);
+			}
+
+			GlStateManager.pushMatrix();
+
+			// Merge current and pose matrix
+			double[] original = new double[16];
+			GL11.glGetDoublev(GL11.GL_MODELVIEW_MATRIX, original);
+			Matrix4f merged = new Matrix4f(new Matrix4d().set(original));
+			pose.mul(merged, merged);
+
+			// Load merged matrix into OpenGL
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				long addr = stack.nmalloc(4, 16 * 4);
+				merged.getToAddress(addr);
+				GL11.nglLoadMatrixf(addr);
+			}
+
+			// Actual render
+			this.renderSynchronous(context, x, y, width, height);
+
+			GlStateManager.popMatrix();
+
+			// Disable scissor
+			if (scissorArea != null) {
+				glDisable(GL_SCISSOR_TEST);
+			}
+		}
+
+	}
+
+	public static class ItemStackIcon extends SynchronousIcon {
+		private final ItemStack icon;
+		private final float scale;
+
+		public ItemStackIcon(ItemStack icon, float scale) {
+			this.icon = icon;
+			this.scale = scale;
+		}
+
+		@Override
+		public void renderSynchronous(ScreenContext context, float x, float y, float width, float height) {
+			GlStateManager.scale(width / 16f * scale, height / 16f * scale, 1);
+			Laby.references().itemStackVisualizer().submitItem(context, c(icon), (int) (x / scale), (int) (y / scale));
+			GlStateManager.scale(16f / width / scale, 16f / height / scale, 1);
+		}
+	}
+
 	private static class SkullIcon extends SynchronousIcon {
 		@Override
-		public void render(Stack stack, float x, float y, float width, float height, boolean hover, int color, Rectangle stencil, boolean submitted) {
+		public void renderSynchronous(ScreenContext context, float x, float y, float width, float height) {
 			AsyncSkullRenderer.renderPlayerSkull((int) x, (int) y);
 		}
 	}
@@ -134,6 +167,9 @@ public class Icons {
 
 		@Shadow
 		public abstract void submitIcon(Icon icon, float x, float y, float width, float height, boolean hover, int argb, @Nullable Rectangle clipBounds);
+
+		@Shadow
+		public abstract Matrix4f currentPose();
 
 		@Shadow
 		@Final
@@ -147,7 +183,8 @@ public class Icons {
 					ci.cancel();
 				}
 				case SynchronousIcon synchronousIcon -> {
-					synchronousIcon.render(context.stack(), x, y, width, height, hover, argb, clipBounds, true);
+					ScreenCanvas self = c(this);
+					self.submitState(new SynchronousRenderState(context, synchronousIcon, currentPose(), x, y, width, height, self.getScissorArea()));
 					ci.cancel();
 				}
 				default -> {
@@ -167,4 +204,19 @@ public class Icons {
 		}
 	}
 
+	public static class SynchronousRenderState extends AbstractGuiRenderState {
+		private final ScreenContext context;
+		private final SynchronousIcon icon;
+
+		public SynchronousRenderState(ScreenContext context, SynchronousIcon icon, Matrix4f pose, float x, float y, float width, float height, @Nullable ScissorArea scissorArea) {
+			super(GuiMaterial.untextured(RenderStates.GUI_TEXTURED), pose, x, y, width, height, scissorArea);
+			this.context = context;
+			this.icon = icon;
+		}
+
+		@Override
+		public void buildVertices(VertexConsumer consumer) {
+			icon.buildVertices(context, pose(), left, top, right - left, bottom - top, getScissorArea());
+		}
+	}
 }

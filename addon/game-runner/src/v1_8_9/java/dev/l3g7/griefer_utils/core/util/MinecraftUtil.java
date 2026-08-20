@@ -58,6 +58,7 @@ public class MinecraftUtil {
 	public static InventoryPlayer inventory()       { return player().inventory; }
 	public static ItemStack       heldItem()        { return player() == null ? null : player().getHeldItem(); }
 
+	public static int             screenScaling()   { return currentResolution.getScaleFactor(); }
 	public static int             screenWidth()     { return currentResolution.getScaledWidth(); }
 	public static int             screenHeight()    { return currentResolution.getScaledHeight(); }
 

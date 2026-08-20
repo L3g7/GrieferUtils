@@ -24,6 +24,8 @@ public interface CreditsBridge {
 
 	BaseSetting<?> createTextSetting(String... text);
 
+	BaseSetting<?> createPadding(int height);
+
 	BaseSetting<?> createCookieLib();
 
 	BaseSetting<?> createUserSetting();

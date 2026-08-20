@@ -22,7 +22,7 @@ public class CategorySettingImpl extends AbstractSettingImpl<CategorySetting, Ob
 
 	@Override
 	protected Widget[] createWidgets() {
-		return null;
+		return new Widget[0];
 	}
 
 }

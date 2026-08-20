@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
@@ -44,6 +45,11 @@ public class Laby3Credits implements CreditsBridge {
 	@Override
 	public void addTeam(List<BaseSetting<?>> elements) {
 		((CategorySettingImpl) Credits.credits).getSubSettings().getElements().addAll(10, c(elements));
+	}
+
+	@Override
+	public BaseSetting<?> createPadding(int height) {
+		return HeaderSetting.create().entryHeight(height);
 	}
 
 	@Override

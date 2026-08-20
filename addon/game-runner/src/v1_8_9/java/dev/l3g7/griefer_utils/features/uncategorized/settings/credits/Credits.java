@@ -18,10 +18,7 @@ import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
@@ -34,15 +31,15 @@ public class Credits {
 		.name("Credits")
 		.icon("players")
 		.description("Das Team hinter GrieferUtils, sowie Copyright und Lizenzen.")
-		.subSettings(
-			HeaderSetting.create().entryHeight(5),
+		.subSettings(filterNulls(
+			creditsBridge.createPadding(5),
 			creditsBridge.createIconSetting("Lizensiert unter Apache License 2.0", "../../scroll"),
-			HeaderSetting.create().entryHeight(11),
+			creditsBridge.createPadding(11),
 
 			HeaderSetting.create("Entwickler"),
 			creditsBridge.createIconSetting("L3g7", "l3g7"),
 			creditsBridge.createIconSetting("L3g73", "l3g7"),
-			HeaderSetting.create().entryHeight(11),
+			creditsBridge.createPadding(11),
 
 			HeaderSetting.create("Special Thanks"),
 			creditsBridge.createIconSetting("TuxFRI", "tuxfri"),
@@ -52,7 +49,7 @@ public class Credits {
 			creditsBridge.createIconSetting("verbvllert_", "verbvllert_"),
 			creditsBridge.createIconSetting("Griefer.Info", "griefer_info"),
 			creditsBridge.createIconSetting("CommunityRadar", "community_radar"),
-			HeaderSetting.create().entryHeight(11),
+			creditsBridge.createPadding(11),
 
 			HeaderSetting.create("Bild-Credits"),
 			ButtonSetting.create()
@@ -60,12 +57,12 @@ public class Credits {
 				.icon("scroll")
 				.buttonIcon("open_link")
 				.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/image_credits")),
-			HeaderSetting.create().entryHeight(11),
+			creditsBridge.createPadding(11),
 
 			HeaderSetting.create("Code-Credits"),
 			creditsBridge.createTextSetting("core.misc.BufferedImageLuminanceSource", "Umwandlung von Bildern in Licht-Bitmaps", "Aus com.google.zxing", "© 2009 ZXing authors", "Apache License 2.0"),
 			creditsBridge.createTextSetting("core.api.misc.NTP$NTPClient", "Zeit-Synchronisierung", "https://support.ntp.org/Support/JavaSntpClient", "© 2004 Adam Buckley (rev. 12)", "GPLv3"),
-			HeaderSetting.create().entryHeight(11),
+			creditsBridge.createPadding(11),
 
 			HeaderSetting.create("Bibliotheken"),
 			creditsBridge.createTextSetting("com.github.gatooooooo:ForgeGradle", "Fork von ForgeGradle für Gradle 6", "LPGL-2.1"),
@@ -74,12 +71,12 @@ public class Credits {
 			creditsBridge.createCookieLib(),
 			creditsBridge.createTextSetting("org.mariuszgromada.math:MathParser.org-mXparser", "Gleichungsberechnung für Rechner", "eigener Open-Source-Lizenz (Dual)"),
 			creditsBridge.createTextSetting("com.google.zxing:core", "QR-Code-Leser für QR-Code Scanner", "Apache License 2.0"),
-			HeaderSetting.create().entryHeight(11),
+			creditsBridge.createPadding(11),
 
 			HeaderSetting.create("Und Du <3"),
 			creditsBridge.createUserSetting(),
-			HeaderSetting.create().entryHeight(22)
-		);
+			creditsBridge.createPadding(22)
+		));
 
 	@EventListener(priority = LOWEST)
 	private static void initTeam(StaticDataReceiveEvent event) {
@@ -97,10 +94,18 @@ public class Credits {
 			for (String sup : supporter)
 				elements.add(creditsBridge.createIconSetting(sup, sup.toLowerCase()));
 
-			elements.add(HeaderSetting.create().entryHeight(11));
+			BaseSetting<?> padding = creditsBridge.createPadding(11);
+			if (padding != null)
+				elements.add(padding);
 		}
 
 		creditsBridge.addTeam(elements);
+	}
+
+	private static BaseSetting<?>[] filterNulls(BaseSetting<?>... settings) {
+		return Arrays.stream(settings)
+			.filter(Objects::nonNull)
+			.toArray(BaseSetting[]::new);
 	}
 
 	public static void giveCookie() {

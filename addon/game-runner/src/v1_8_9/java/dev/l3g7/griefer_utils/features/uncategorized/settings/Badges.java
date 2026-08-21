@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager.badgeManager;
 
 /**
@@ -25,7 +26,9 @@ public class Badges {
 		.defaultValue(true);
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
-		.name("GrieferUtils-\nNutzer-Anzeige")
+		.name(LABY_3.isActive()
+			? "GrieferUtils-\nNutzer-Anzeige"
+			: "GrieferUtils-Nutzer-Anzeige")
 		.description("""
 			Zeigt vor den Namen von Spielern ein GrieferUtils-Icon an, wenn sie das Addon benutzen.
 

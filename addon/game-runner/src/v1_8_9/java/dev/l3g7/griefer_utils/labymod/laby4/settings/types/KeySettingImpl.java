@@ -57,7 +57,7 @@ public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>
 					.collect(Collectors.toList())),
 			new TreeSet<>()
 		);
-		EventRegisterer.register(this);
+		EventRegisterer.registerWeak(this);
 	}
 
 	@Override

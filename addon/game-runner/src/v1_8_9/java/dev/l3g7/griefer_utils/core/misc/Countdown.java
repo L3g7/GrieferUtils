@@ -100,7 +100,6 @@ public abstract class Countdown {
 
 		private RealtimeCountdown(long seconds) {
 			this.endTime = System.currentTimeMillis() + seconds * 1000L;
-			EventRegisterer.register(this);
 		}
 
 		public int secondsRemaining() {

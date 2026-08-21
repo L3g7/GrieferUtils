@@ -167,7 +167,7 @@ public class RecraftSuccessorSetting extends ListSetting implements Laby4Setting
 
 		public RecraftSuccessorPage(RecraftPage page) {
 			this(new ExtendedStorage<>(v -> JsonNull.INSTANCE, entries -> NULL, NULL), page);
-			EventRegisterer.register(this);
+			EventRegisterer.registerWeak(this);
 		}
 
 		public RecraftSuccessorPage(ExtendedStorage<Object> storage, RecraftPage page) {

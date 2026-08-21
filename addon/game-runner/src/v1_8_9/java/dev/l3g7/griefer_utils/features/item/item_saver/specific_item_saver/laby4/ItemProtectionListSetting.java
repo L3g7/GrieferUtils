@@ -190,7 +190,7 @@ public class ItemProtectionListSetting extends ListSetting implements Laby4Setti
 
 		private final int index;
 
-		public ItemProtectionEntry(ItemProtection protection, int index) { // NOTE: probably creating a lot of mem leaks currently due to not unregistering event listeners
+		public ItemProtectionEntry(ItemProtection protection, int index) {
 			super(e -> JsonNull.INSTANCE, e -> NULL, NULL);
 			this.index = index;
 			subSettings(StringSetting.create(), SwitchSetting.create());

@@ -105,7 +105,7 @@ public class Config {
 			if (config == null)
 				config = new JsonObject();
 
-			String json = IO.GSON.toJson(config);
+			String json = IO.GSON_PRETTY.toJson(config);
 
 			synchronized (SAVE_LOCK) {
 				// Check if content has changed

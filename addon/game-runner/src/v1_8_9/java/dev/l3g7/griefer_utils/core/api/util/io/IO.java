@@ -1,6 +1,7 @@
 package dev.l3g7.griefer_utils.core.api.util.io;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.util.io.ReadOperation.DiskReadOperation;
 import dev.l3g7.griefer_utils.core.api.util.io.ReadOperation.InputStreamReadOperation;
@@ -18,6 +19,7 @@ import java.nio.file.Path;
 public class IO {
 
 	public static final Gson GSON = new Gson();
+	public static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
 
 	/**
 	 * @return A wrapper class for reading the contents of the given input stream.

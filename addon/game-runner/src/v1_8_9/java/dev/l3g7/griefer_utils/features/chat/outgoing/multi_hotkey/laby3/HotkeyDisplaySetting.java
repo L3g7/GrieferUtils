@@ -136,7 +136,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 	}
 
 	protected void onChange() {
-		icon(citybuild.get().getIcon());
+		icon(citybuild.get().toItemStack());
 		MultiHotkey.get().onChange();
 	}
 

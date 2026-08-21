@@ -166,10 +166,6 @@ public enum Citybuild implements Named {
 		return stack;
 	}
 
-	public String getIcon() {
-		return "citybuilds/" + getInternalName();
-	}
-
 	public static Citybuild parse(String cb) {
 		return tryParse(cb).getOr(Citybuild.UNKNOWN);
 	}

@@ -39,9 +39,9 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 			return new JsonPrimitive(name);
 		}, e -> Citybuild.parse(e.getAsString()), Citybuild.ANY);
 
-		currentIcon = Icons.of(Citybuild.ANY.getIcon());
+		currentIcon = Icons.of(Citybuild.ANY.toItemStack());
 		icon(new Icons.ProxiedIcon(() -> currentIcon, 0, 0));
-		callback(v -> currentIcon = Icons.of(v.getIcon()));
+		callback(v -> currentIcon = Icons.of(v.toItemStack()));
 	}
 
 	@Override
@@ -68,8 +68,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 			}
 
 			private Component toComponent(Citybuild entry) {
-				return Component.icon(Icons.offset(Icons.of(entry.getIcon()), 0, 0))
-					.append(Component.text(" "))
+				return Component.icon(Icons.offset(Icons.of(entry.toItemStack(), 0.9f), -1, 0))
 					.append(Component.text(entry.getName()));
 			}
 

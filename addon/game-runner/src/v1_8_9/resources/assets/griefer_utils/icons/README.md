@@ -34,12 +34,24 @@
     <td>selfmade</td>
   </tr>
   <tr>
-    <td><img src="booster/drop.png" height=16em width=16em />&nbsp;&nbsp;<a href="booster/">booster/*</a></td>
-    <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
+    <td><img src="structures/desert_pyramid.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/desert_pyramid.png">structures/desert_pyramid.png</a></td>
+    <td><a href="https://minecraft.wiki/images/EnvSprite_desert-pyramid.png?aed9b">Minecraft Wiki</a></td>
   </tr>
   <tr>
-    <td><img src="citybuilds/Egal.png" height=16em width=16em />&nbsp;&nbsp;<a href="booster/">citybuilds/*</a></td>
-    <td><a href="https://mcasset.cloud/1.21.11/assets/minecraft/textures/block">Minecraft asset</a></td>
+    <td><img src="structures/jungle_temple.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/jungle_temple.png">structures/jungle_temple.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><img src="structures/stronghold.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/stronghold.png">structures/stronghold.png</a></td>
+    <td><a href="https://www.curseforge.com/minecraft/texture-packs/faithless">StitchSprites</a></td>
+  </tr>
+  <tr>
+    <td><img src="structures/village.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/village.png">structures/village.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
+    <td><img src="booster/drop.png" height=16em width=16em />&nbsp;&nbsp;<a href="booster/">booster/*</a></td>
+    <td><a href="https://www.planetminecraft.com/texture-pack/88classic-8x8/">88Classic (1Allexx1)</a></td>
   </tr>
   <tr>
     <td><img src="high_res/credits/l3g7.png" height=16em width=16em />&nbsp;&nbsp;<a href="high_res/credits/">high_res/credits/*</a></td>
@@ -104,22 +116,6 @@
   <tr>
     <td><img src="mob_icons/outlined_minecraft/creeper.png" height=16em width=16em />&nbsp;&nbsp;<a href="mob_icons/outlined_minecraft/">mob_icons/outlined_minecraft/*</a></td>
     <td><a href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/EntityCSS.png/revision/latest">Minecraft Fandom</a></td>
-  </tr>
-  <tr>
-    <td><img src="structures/desert_pyramid.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/desert_pyramid.png">structures/desert_pyramid.png</a></td>
-    <td><a href="https://minecraft.wiki/images/EnvSprite_desert-pyramid.png?aed9b">Minecraft Wiki</a></td>
-  </tr>
-  <tr>
-    <td><img src="structures/jungle_temple.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/jungle_temple.png">structures/jungle_temple.png</a></td>
-    <td>selfmade</td>
-  </tr>
-  <tr>
-    <td><img src="structures/stronghold.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/stronghold.png">structures/stronghold.png</a></td>
-    <td><a href="https://www.curseforge.com/minecraft/texture-packs/faithless">StitchSprites</a></td>
-  </tr>
-  <tr>
-    <td><img src="structures/village.png" height=16em width=16em />&nbsp;&nbsp;<a href="structures/village.png">structures/village.png</a></td>
-    <td>selfmade</td>
   </tr>
   <tr>
     <td><img src="absorption.png" height=16em width=16em />&nbsp;&nbsp;<a href="absorption.png">absorption.png</a></td>

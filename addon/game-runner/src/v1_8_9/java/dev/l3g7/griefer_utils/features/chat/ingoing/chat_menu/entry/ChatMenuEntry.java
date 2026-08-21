@@ -27,10 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Base64;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -193,8 +190,8 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 	protected static File loadIcon(String iconName) {
 		var icon = new File(iconName + ".png");
 		ResourceLocation location = new ResourceLocation("griefer_utils", "icons/user_content/" + icon.hashCode() + ".png");
-		try {
-			BufferedImage img = ImageIO.read(FileProvider.getData("assets/griefer_utils/icons/" + iconName + ".png"));
+		try (InputStream in = FileProvider.getData("assets/griefer_utils/icons/" + iconName + ".png")) {
+			BufferedImage img = ImageIO.read(in);
 			mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
 		} catch (IOException | NullPointerException e) {
 			throw new RuntimeException(e);

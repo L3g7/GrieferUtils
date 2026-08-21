@@ -94,7 +94,7 @@ public abstract class FileProvider {
 	 */
 	public static void exclude(String prefix) {
 		exclusions.add(prefix);
-		fileCache.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
+		getFileCache().entrySet().removeIf(e -> e.getKey().startsWith(prefix));
 	}
 
 	/**

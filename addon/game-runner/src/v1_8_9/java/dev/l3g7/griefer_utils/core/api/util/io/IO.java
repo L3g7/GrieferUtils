@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.util.io.ReadOperation.DiskReadOperation;
 import dev.l3g7.griefer_utils.core.api.util.io.ReadOperation.InputStreamReadOperation;
+import dev.l3g7.griefer_utils.core.api.util.io.ReadOperation.PartialInputStreamReadOperation;
 import dev.l3g7.griefer_utils.core.api.util.io.WriteOperation.DiskWriteOperation;
 import dev.l3g7.griefer_utils.core.api.util.io.WriteOperation.OutputStreamWriteOperation;
 
@@ -22,10 +23,17 @@ public class IO {
 	public static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
 
 	/**
-	 * @return A wrapper class for reading the contents of the given input stream.
+	 * @return A wrapper class for reading the contents of the given input stream and closing it.
 	 */
 	public static ReadOperation read(InputStream in) {
 		return new InputStreamReadOperation(in);
+	}
+
+	/**
+	 * @return A wrapper class for reading the contents of the given input stream without closing it.
+	 */
+	public static ReadOperation readPartial(InputStream in) {
+		return new PartialInputStreamReadOperation(in);
 	}
 
 	/**
@@ -50,7 +58,7 @@ public class IO {
 	}
 
 	/**
-	 * @return A wrapper class for writing to the given output stream.
+	 * @return A wrapper class for writing to the given output stream and closing it.
 	 */
 	public static WriteOperation write(OutputStream in) {
 		return new OutputStreamWriteOperation(in);

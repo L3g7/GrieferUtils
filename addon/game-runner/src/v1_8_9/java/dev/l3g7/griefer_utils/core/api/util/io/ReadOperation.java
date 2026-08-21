@@ -43,7 +43,6 @@ public abstract class ReadOperation {
 	 */
 	public byte @NotNull [] asBytes() {
 		return Util.tryFatal(() -> {
-			InputStream in = getIn();
 			long size = predictSize();
 			if ((int) size != size)
 				throw new UnsupportedOperationException("Cannot read files over 4 GB into a byte array.");
@@ -52,8 +51,10 @@ public abstract class ReadOperation {
 
 			byte[] buffer = new byte[4096];
 			int read;
-			while ((read = in.read(buffer, 0, 4096)) >= 0)
-				out.write(buffer, 0, read);
+			try (InputStream in = getIn()) {
+				while ((read = in.read(buffer, 0, 4096)) >= 0)
+					out.write(buffer, 0, read);
+			}
 
 			return out.toByteArray();
 		});
@@ -146,12 +147,13 @@ public abstract class ReadOperation {
 	 * GSON 2.2.4-compatible JSON parse.
 	 */
 	private JsonElement parseJsonSync() throws Exception {
-		var reader = new JsonReader(new InputStreamReader(getIn(), StandardCharsets.UTF_8));
-		var element = Streams.parse(reader);
-		if (reader.peek() != JsonToken.END_DOCUMENT)
-			throw new JsonSyntaxException("Trailing data");
+		try (JsonReader reader = new JsonReader(new InputStreamReader(getIn(), StandardCharsets.UTF_8))) {
+			JsonElement element = Streams.parse(reader);
+			if (reader.peek() != JsonToken.END_DOCUMENT)
+				throw new JsonSyntaxException("Trailing data");
 
-		return element;
+			return element;
+		}
 	}
 
 	/**
@@ -168,6 +170,64 @@ public abstract class ReadOperation {
 		@Override
 		protected String getType() {
 			return "InputStream Read";
+		}
+
+		@Override
+		protected long predictSize() {
+			return FALLBACK_SIZE;
+		}
+
+		@Override
+		protected InputStream getIn() {
+			return in;
+		}
+
+	}
+
+	/**
+	 * A wrapper class for reading the contents of an input stream without closing it.
+	 */
+	protected static class PartialInputStreamReadOperation extends ReadOperation {
+
+		private final InputStream in;
+
+		PartialInputStreamReadOperation(InputStream in) {
+			this.in = new InputStream() {
+				@Override
+				public int read() throws IOException {
+					return in.read();
+				}
+
+				@Override
+				public int read(byte @NotNull [] b) throws IOException {
+					return in.read(b);
+				}
+
+				@Override
+				public int read(byte @NotNull [] b, int off, int len) throws IOException {
+					return in.read(b, off, len);
+				}
+
+				@Override
+				public long skip(long n) throws IOException {
+					return in.skip(n);
+				}
+
+				@Override
+				public int available() throws IOException {
+					return in.available();
+				}
+
+				@Override
+				public void close() {
+					// No-Op
+				}
+			};
+		}
+
+		@Override
+		protected String getType() {
+			return "InputStream Partial Read";
 		}
 
 		@Override

@@ -53,7 +53,7 @@ public class MappingCreator {
 		try (ZipInputStream in = getZipInputStream(String.format("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/%s/mcp-%s-srg.zip", minecraftVersion, minecraftVersion))) {
 			while ((entry = in.getNextEntry()) != null) {
 				if (entry.getName().equals("joined.srg")) {
-					for (String line : IO.read(in).asString().split("\r\n")) {
+					for (String line : IO.readPartial(in).asString().split("\r\n")) {
 						if (line.startsWith("CL: ")) {
 							// Load class obf -> srg mappings
 							String[] parts = line.substring(4).split(" ");
@@ -146,7 +146,7 @@ public class MappingCreator {
 	 * @param callback a callback storing the unobfuscated name in the member.
 	 */
 	private <M> void loadUnobfMapping(InputStream in, String prefix, Map<String, List<M>> srgCache, BiConsumer<M, String> callback) throws IOException {
-		for (String line : IO.read(in).asString().split("\r\n")) {
+		for (String line : IO.readPartial(in).asString().split("\r\n")) {
 			if (!line.startsWith(prefix))
 				continue;
 

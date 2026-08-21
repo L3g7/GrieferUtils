@@ -14,6 +14,7 @@ import net.minecraft.launchwrapper.Launch;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
@@ -87,7 +88,9 @@ public class LibLoader {
 			Files.createDirectories(libPath.getParent());
 			URLConnection c = URI.create(url).toURL().openConnection(); // TODO: Use IOUtil
 			c.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");
-			Files.copy(c.getInputStream(), libPath, REPLACE_EXISTING);
+			try (InputStream in = c.getInputStream()) {
+				Files.copy(in, libPath, REPLACE_EXISTING);
+			}
 
 			if (checkHashFail(libPath, hash))
 				// Downloading failed

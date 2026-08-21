@@ -14,6 +14,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
@@ -44,7 +45,7 @@ public class CustomSSLSocketFactoryProvider {
 			TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 			trustManagerFactory.init(keyStore);
 			sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
-			customFactory =  sslContext.getSocketFactory();
+			customFactory = sslContext.getSocketFactory();
 		} catch (GeneralSecurityException | IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -57,8 +58,11 @@ public class CustomSSLSocketFactoryProvider {
 
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
-		for (String file : FileProvider.getFiles(f -> f.endsWith(".der") && f.startsWith("assets/griefer_utils/certificates/")))
-			addCertificate(keyStore, cf.generateCertificate(FileProvider.getData(file)));
+		for (String file : FileProvider.getFiles(f -> f.endsWith(".der") && f.startsWith("assets/griefer_utils/certificates/"))) {
+			try (InputStream in = FileProvider.getData(file)) {
+				addCertificate(keyStore, cf.generateCertificate(in));
+			}
+		}
 
 		return keyStore;
 	}
@@ -66,7 +70,9 @@ public class CustomSSLSocketFactoryProvider {
 	private static void loadDefaultKeyStore(KeyStore keyStore) throws GeneralSecurityException, IOException {
 		String filename = System.getProperty("java.home") + "/lib/security/cacerts".replace('/', File.separatorChar);
 		KeyStore defaultKeyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		defaultKeyStore.load(Files.newInputStream(Paths.get(filename)), "changeit".toCharArray());
+		try (InputStream in = Files.newInputStream(Paths.get(filename))) {
+			defaultKeyStore.load(in, "changeit".toCharArray());
+		}
 
 		for (TrustAnchor ta : new PKIXParameters(defaultKeyStore).getTrustAnchors())
 			addCertificate(keyStore, ta.getTrustedCert());

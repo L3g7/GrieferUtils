@@ -25,6 +25,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
@@ -167,7 +168,9 @@ public class PlayerListEntryResolver {
 
 		conn.addRequestProperty("User-Agent", "GrieferUtils v" + LabyBridge.labyBridge.addonVersion() + " | github.com/L3g7/GrieferUtils");
 		conn.setConnectTimeout(10000);
-		return ImageIO.read(conn.getInputStream());
+		try (InputStream in = conn.getInputStream()) {
+			return ImageIO.read(in);
+		}
 	}
 
 }

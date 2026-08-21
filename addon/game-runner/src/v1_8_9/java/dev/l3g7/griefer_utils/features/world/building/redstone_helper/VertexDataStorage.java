@@ -127,6 +127,7 @@ public class VertexDataStorage { // TODO: Split between texture data and vertex 
 			try {
 				InputStream stream = mc().getResourceManager().getResource(new ResourceLocation(path + ".png")).getInputStream();
 				return new CharClamper(TextureUtil.readBufferedImage(stream));
+				// TextureUtil.readBufferedImage closes the stream
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

@@ -11,10 +11,13 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.api.util.LambdaUtil;
 import org.objectweb.asm.Type;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -63,22 +66,51 @@ public class EventRegisterer {
 	}
 
 	/**
-	 * Lazy-registers all non-static event listeners in the given object.
+	 * Registers all non-static event listeners in the given object.
 	 */
 	public static void register(Object object) {
 		if (object instanceof Class<?>)
-			return;
+			throw new IllegalArgumentException("Cannot register classes");
 
 		Class<?> clazz = object.getClass();
 
 		for (Method method : Reflection.getAllMethods(clazz)) {
-			if (Modifier.isStatic(method.getModifiers()))
-				continue;
+			if (!Modifier.isStatic(method.getModifiers()) && method.isAnnotationPresent(EventListener.class)) {
+				checkMethodParameters(new MethodMeta(new ClassMeta(clazz), method));
+				EventBus.registerMethod(object, method);
+			}
+		}
+	}
 
-			if (!method.isAnnotationPresent(EventListener.class))
-				continue;
+	/**
+	 * Registers all non-static event listeners in the given object using a weak reference.
+	 * The object cannot be unregistered manually.
+	 */
+	public static void registerWeak(Object object) {
+		if (object instanceof Class<?>)
+			throw new IllegalArgumentException("Cannot register classes");
+		if (object instanceof Disableable)
+			throw new IllegalArgumentException("Cannot register disableable objects using a weak reference");
 
-			registerLazyRegistration(new MethodMeta(new ClassMeta(clazz), method), () -> object);
+		Class<?> clazz = object.getClass();
+
+		for (Method method : Reflection.getAllMethods(clazz)) {
+			if (!Modifier.isStatic(method.getModifiers()) && method.isAnnotationPresent(EventListener.class)) {
+				checkMethodParameters(new MethodMeta(new ClassMeta(clazz), method));
+
+				Consumer<Event> callback = LambdaUtil.createFunctionalInterface(Consumer.class, method, object);
+				WeakReference<Consumer<Event>> ref = new WeakReference<>(callback);
+
+				EventBus.registerMethod(ref, method, event -> {
+					Consumer<Event> owner = ref.get();
+					if (owner == null) {
+						// GCed, unregister
+						EventBus.events.get(event.getClass()).removeEventsOf(ref);
+					} else {
+						owner.accept(event);
+					}
+				});
+			}
 		}
 	}
 
@@ -115,16 +147,17 @@ public class EventRegisterer {
 	 * Registers a lazy registration consisting of the given input.
 	 */
 	private static void registerLazyRegistration(MethodMeta method, Supplier<Object> ownerSupplier) {
+		String eventClass = checkMethodParameters(method);
+		Collection<LazyRegistration> registrations = lazyRegistrations.computeIfAbsent(eventClass, s -> new ConcurrentLinkedDeque<>());
+		registrations.add(new LazyRegistration(method, ownerSupplier));
+	}
 
-		// Check count
+	private static String checkMethodParameters(MethodMeta method) {
 		Type[] params = Type.getArgumentTypes(method.desc());
 		if (params.length != 1)
 			throw new IllegalArgumentException("Method " + method + " has @EventListener annotation, but requires " + params.length + " arguments");
 
-		String eventClass = params[0].getClassName();
-		Collection<LazyRegistration> registrations = lazyRegistrations.computeIfAbsent(eventClass, s -> new ConcurrentLinkedDeque<>());
-
-		registrations.add(new LazyRegistration(method, ownerSupplier));
+		return params[0].getClassName();
 	}
 
 	private record LazyRegistration(MethodMeta meta, Supplier<Object> owner /* Supplier is to lazy-load singletons */) {}

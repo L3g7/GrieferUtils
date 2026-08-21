@@ -86,6 +86,14 @@ class EventBus {
 	 * Registers the given method.
 	 */
 	static void registerMethod(Object owner, Method method) {
+		Consumer<Event> callback = LambdaUtil.createFunctionalInterface(Consumer.class, method, owner);
+		registerMethod(owner, method, callback);
+	}
+
+	/**
+	 * Registers the given method.
+	 */
+	static void registerMethod(Object owner, Method method, Consumer<Event> consumer) {
 
 		// Check parameter type
 		Class<?> eventClass = method.getParameterTypes()[0];
@@ -136,7 +144,6 @@ class EventBus {
 			typeCheck = Predicate.all(c(typeChecks));
 		}
 
-		Consumer<Event> consumer = LambdaUtil.createFunctionalInterface(Consumer.class, method, owner);
 		listeners.add(new Listener(owner, priority, event -> {
 			// Check whether event is canceled
 			if (event.isCanceled() && !receiveCanceled)

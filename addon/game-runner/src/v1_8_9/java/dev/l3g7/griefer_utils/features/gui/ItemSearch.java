@@ -58,7 +58,7 @@ public class ItemSearch extends Feature {
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Item-Suche")
-		.description("Fügt eine Item-Suche innerhalb von Guis hinzu.")
+		.description("Fügt eine Item-Suche innerhalb von GUIs hinzu.")
 		.icon("magnifying_glass")
 		.subSettings(dispenser, hopper, HeaderSetting.create(), inventory);
 

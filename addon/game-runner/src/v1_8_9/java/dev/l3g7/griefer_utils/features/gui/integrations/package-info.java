@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category(name = "§hIntegrationen", icon = "cpu")
+@Category(name = "§hIntegrationen", description = "Anbindungen an externe Dienste.", icon = "cpu")
 package dev.l3g7.griefer_utils.features.gui.integrations;
 
 import dev.l3g7.griefer_utils.features.Feature.Category;

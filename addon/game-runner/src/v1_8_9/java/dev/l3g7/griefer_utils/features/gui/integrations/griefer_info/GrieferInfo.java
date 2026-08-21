@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
 @Singleton
@@ -35,10 +36,10 @@ public class GrieferInfo extends Feature {
 	private static final Map<String, CompletableFuture<Option<String>>> profileLinks = new ConcurrentHashMap<>();
 
 	private final KeySetting setting = KeySetting.create()
-		.name("Gui öffnen")
+		.name("GUI öffnen")
 		.icon("key")
-		.description("Die Taste, mit der das Gui geöffnet werden soll.")
-		.pressCallback(b -> { if (b) GuiGrieferInfo.GUI.open(); });
+		.description("Die Taste, mit der das GUI geöffnet werden soll.")
+		.pressCallback(b -> {if (b) GuiGrieferInfo.GUI.open();});
 
 	private static final SwitchSetting profile = SwitchSetting.create()
 		.name("Griefer.Info-Link im Profil")
@@ -49,9 +50,12 @@ public class GrieferInfo extends Feature {
 	private final CategorySetting button = CategorySetting.create()
 		.name("§xGriefer.Info")
 		.icon("high_res/griefer_info")
+		.description("Ermöglicht das Durchsuchen der Griefer.Info-Listen.")
 		.subSettings(profile, setting, HeaderSetting.create(),
-			HeaderSetting.create("Das Griefer.Info Gui lässt sich auch mit /info oder /gi öffnen.")
-				.center());
+			LABY_3.isActive()
+				? HeaderSetting.create("Das Griefer.Info GUI lässt sich auch mit /info oder /gi öffnen.").center()
+				: CategorySetting.create().name("Das Griefer.Info GUI lässt sich auch mit /info oder /gi öffnen.").icon("lectern")
+		);
 
 	@EventListener
 	private static void onGuiModify(GuiModifyItemsEvent event) {

@@ -55,6 +55,7 @@ public class ToolSaver extends Feature implements TempToolSaverBridge {
 
 	private final ToolProtectionListSetting exclusions = new ToolProtectionListSetting()
 		.name("Ausnahmen")
+		.description("Werkzeug, das nicht vor Zerstörung geschützt werden soll.")
 		.disableSubsettingConfig()
 		.icon("weakness");
 

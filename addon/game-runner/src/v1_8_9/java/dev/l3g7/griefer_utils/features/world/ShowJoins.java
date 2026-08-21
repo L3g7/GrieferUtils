@@ -42,6 +42,7 @@ public class ShowJoins extends Feature {
 
 	private final ListSetting<PlayerListEntry> players = ListSetting.createPlayerList()
 		.name("Spieler")
+		.description("Welche Spieler angezeigt werden sollen.")
 		.icon("magnifying_glass");
 
 	private final SwitchSetting filter = SwitchSetting.create()

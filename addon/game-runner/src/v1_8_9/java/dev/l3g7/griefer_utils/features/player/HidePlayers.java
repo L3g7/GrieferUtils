@@ -49,6 +49,7 @@ public class HidePlayers extends Feature {
 
 	private final ListSetting<PlayerListEntry> excludedPlayers = ListSetting.createPlayerList()
 		.name("Ausgenommene Spieler")
+		.description("Welche Spieler weiterhin angezeigt werden sollen.")
 		.icon("light_bulb");
 
 	@MainElement

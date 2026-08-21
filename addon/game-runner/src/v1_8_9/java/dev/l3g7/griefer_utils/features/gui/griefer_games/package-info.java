@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category(name = "§gGrieferGames", icon = "griefer_games")
+@Category(name = "§gGrieferGames", description = "Verbessungen von vorhandenen GUIs.", icon = "griefer_games")
 package dev.l3g7.griefer_utils.features.gui.griefer_games;
 
 import dev.l3g7.griefer_utils.features.Feature.Category;

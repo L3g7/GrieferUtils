@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category(name = "§iBücher", icon = "enchanted_book")
+@Category(name = "§iBücher", description = "Verbesserungen des Buch-GUIs.", icon = "enchanted_book")
 package dev.l3g7.griefer_utils.features.gui.books;
 
 import dev.l3g7.griefer_utils.features.Feature.Category;

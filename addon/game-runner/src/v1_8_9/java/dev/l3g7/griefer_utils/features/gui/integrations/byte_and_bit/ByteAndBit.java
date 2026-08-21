@@ -49,8 +49,8 @@ public class ByteAndBit extends Feature {
 
 	@MainElement
 	private final KeySetting keybind = KeySetting.create()
-		.name("Botshop-Gui")
-		.description("Öffnet das Botshop-Gui von unterstützten BotShops.")
+		.name("Botshop-GUI")
+		.description("Öffnet das Botshop-GUI von unterstützten BotShops.")
 		.icon("high_res/byte_and_bit")
 		.defaultValue(Keyboard.KEY_RETURN)
 		.pressCallback(this::onKeyPress);

@@ -29,6 +29,7 @@ public class Settings extends Feature {
 	@MainElement(configureSubSettings = false)
 	private final CategorySetting element = CategorySetting.create()
 		.name("§yEinstellungen")
+		.description("Allgemeine Addon-Einstellungen und Informationen.")
 		.icon("cog");
 
 	// Settings for AutoUpdater are here because the AutoUpdater class isn't affected by updates

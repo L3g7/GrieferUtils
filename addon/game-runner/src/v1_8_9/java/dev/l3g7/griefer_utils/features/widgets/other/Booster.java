@@ -157,7 +157,7 @@ public class Booster extends Widget {
 		String name = m.group("name");
 		String durations = m.group("durations");
 		Queue<Countdown> expirationDates = boosters.get(name).expirationDates;
-		expirationDates.forEach(Countdown::destroy);
+		expirationDates.forEach(Countdown::invalidate);
 		expirationDates.clear();
 
 		if (durations == null)
@@ -197,7 +197,7 @@ public class Booster extends Widget {
 		private boolean isExpired() {
 			expirationDates.removeIf(t -> {
 				if (t.isExpired()) {
-					t.destroy();
+					t.invalidate();
 					return true;
 				}
 

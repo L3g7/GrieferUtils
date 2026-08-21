@@ -22,7 +22,6 @@ import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
-import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 
 import java.util.concurrent.TimeUnit;
@@ -70,7 +69,7 @@ public class ClearLag extends SimpleWidget {
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onServerSwitch(ServerSwitchEvent event) {
-		countdown.destroy();
+		countdown.invalidate();
 	}
 
 	@EventListener(triggerWhenDisabled = true)

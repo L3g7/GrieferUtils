@@ -18,7 +18,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public abstract class Countdown {
 
-	protected boolean destroyed = false;
+	protected boolean invalid = false;
 
 	public static Countdown realtime() {
 		return new RealtimeCountdown(0);
@@ -40,7 +40,7 @@ public abstract class Countdown {
 	}
 
 	public boolean isExpired() {
-		return destroyed || secondsRemaining() <= 0;
+		return invalid || secondsRemaining() <= 0;
 	}
 
 	public abstract int secondsRemaining();
@@ -54,7 +54,7 @@ public abstract class Countdown {
 
 	public abstract void addMinutes(int minutes);
 
-	public abstract void destroy();
+	public abstract void invalidate();
 
 	private static class TickCountdown extends Countdown {
 
@@ -71,10 +71,10 @@ public abstract class Countdown {
 
 		public Countdown set(int seconds) {
 			this.secondsRemaining = seconds;
-			if (destroyed)
+			if (invalid)
 				EventRegisterer.register(this);
 
-			this.destroyed = false;
+			this.invalid = false;
 			return this;
 		}
 
@@ -82,8 +82,8 @@ public abstract class Countdown {
 			secondsRemaining += 60 * minutes;
 		}
 
-		public void destroy() {
-			destroyed = true;
+		public void invalidate() {
+			invalid = true;
 			EventRegisterer.unregister(this);
 		}
 
@@ -109,7 +109,7 @@ public abstract class Countdown {
 
 		public Countdown set(int seconds) {
 			this.endTime = System.currentTimeMillis() + seconds * 1000L;
-			this.destroyed = false;
+			this.invalid = false;
 			return this;
 		}
 
@@ -117,8 +117,8 @@ public abstract class Countdown {
 			endTime += 60000L * minutes;
 		}
 
-		public void destroy() {
-			destroyed = true;
+		public void invalidate() {
+			invalid = true;
 		}
 
 	}

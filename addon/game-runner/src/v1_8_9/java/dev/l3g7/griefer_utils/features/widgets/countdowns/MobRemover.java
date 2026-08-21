@@ -64,7 +64,7 @@ public class MobRemover extends SimpleWidget {
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerSwitchEvent p) {
-		countdown.destroy();
+		countdown.invalidate();
 	}
 
 	@EventListener(triggerWhenDisabled = true)

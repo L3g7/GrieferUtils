@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.labymod.laby4.settings.types.list;
 
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntryResolver;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
@@ -30,6 +31,7 @@ import net.labymod.api.client.gui.screen.widget.widgets.layout.list.HorizontalLi
 import net.labymod.api.client.gui.screen.widget.widgets.layout.list.VerticalListWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.util.bounds.ModifyReason;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsActivity;
 
 import java.util.UUID;
 
@@ -158,9 +160,10 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 		protected void postStyleSheetLoad() {
 			super.postStyleSheetLoad();
 
+			// Center root widget
 			Widget root = document.getChild("root");
-			root.bounds().setX(bounds().getCenterX() + 62 - root.bounds().getWidth() / 2, MODIFY_REASON_INITIAL_RESIZE);
-			root.bounds().setY(bounds().getCenterY() + 8 - root.bounds().getHeight() / 2, MODIFY_REASON_INITIAL_RESIZE);
+			root.bounds().setX(bounds().getCenterX() - root.bounds().getWidth() / 2, MODIFY_REASON_INITIAL_RESIZE);
+			root.bounds().setY(bounds().getCenterY() - root.bounds().getHeight() / 2, MODIFY_REASON_INITIAL_RESIZE);
 		}
 
 		public void open() {
@@ -171,7 +174,9 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 		public void close() {
 			setActive(false);
 			Laby.labyAPI().screenOverlayHandler().unregisterOverlay(this);
-			if (Laby4Util.getActivity() instanceof Activity activity)
+			if (Laby4Util.getModsActivity() instanceof ModsActivity modsActivity)
+				Reflection.invoke(modsActivity, "reloadWithoutTransitions");
+			else if (Laby4Util.getActivity() instanceof Activity activity)
 				activity.reload();
 		}
 

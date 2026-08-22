@@ -26,7 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.VersionComparator.VERSION_COMPARATOR;
@@ -50,18 +50,23 @@ public class Changelog {
 
 		changelogs = event.data.changelog.merged;
 
+		Consumer<ButtonSetting> buttonIconSetter = LABY_4.isActive() ? this::addIconLaby4 : this::addIconLaby3;
+
 		// Populate settings
 		for (Entry<String, ChangelogEntry> entry : changelogs.entrySet()) {
-			Function<ButtonSetting, ButtonSetting> addIconFunc = LABY_4.isActive() ? this::addIconLaby4 : this::addIconLaby3;
-			entries.add(addIconFunc.apply(ButtonSetting.create()
+			ButtonSetting button = ButtonSetting.create()
 				.name(entry.getKey())
 				.icon(entry.getValue().beta ? "scroll" : "scroll_red")
-				.callback(() -> mc().displayGuiScreen(new GuiChangelog(false, entry.getValue(), entry.getKey())))));
+				.callback(() -> mc().displayGuiScreen(new GuiChangelog(false, entry.getValue(), entry.getKey())));
+
+			buttonIconSetter.accept(button);
+			entries.add(button);
 		}
 
 		// Unlock changelog setting
 		entries.sort(Comparator.comparing(BaseSetting::name, VERSION_COMPARATOR));
 		mc().addScheduledTask(() -> {
+			entries.forEach(e -> e.create(changelog));
 			changelog.subSettings(entries);
 
 			changelog.name("Changelog")
@@ -84,14 +89,14 @@ public class Changelog {
 		mc().displayGuiScreen(new GuiChangelog(true, changelogs.get(version), version));
 	}
 
-	private ButtonSetting addIconLaby4(ButtonSetting button) { // TODO refactor
-		return button
+	private void addIconLaby4(ButtonSetting button) {
+		button
 			.<dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl>into()
 			.buttonIcon(Textures.SpriteCommon.SETTINGS);
 	}
 
-	private ButtonSetting addIconLaby3(ButtonSetting button) {
-		return button
+	private void addIconLaby3(ButtonSetting button) {
+		button
 			.<dev.l3g7.griefer_utils.labymod.laby3.settings.types.ButtonSettingImpl>into()
 			.buttonIcon(new TextureIcon(ModTextures.BUTTON_ADVANCED));
 	}

@@ -56,7 +56,7 @@ public class CleanUpPlayerMenu extends Feature {
 				String name = getName(allEntries.get(i));
 				int index = 1 << i;
 
-				settings.add(SwitchSetting.create()
+				SwitchSetting setting = SwitchSetting.create()
 					.name(name)
 					.description("Ob der Spielermenü-Eintrag \"" + name + "\" angezeigt werden soll.")
 					.icon("player_menu")
@@ -68,7 +68,10 @@ public class CleanUpPlayerMenu extends Feature {
 							mask &= ~index;
 
 						updateEntries();
-					}));
+					});
+
+				setting.create(enabled);
+				settings.add(setting);
 			}
 
 			enabled.subSettings(settings.toArray(new SwitchSetting[0]));

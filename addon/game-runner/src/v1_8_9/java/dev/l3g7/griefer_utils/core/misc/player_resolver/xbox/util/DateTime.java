@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.util;
+package dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.util;
 
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;

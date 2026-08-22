@@ -5,14 +5,14 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.token_providers;
+package dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.token_providers;
 
 import com.google.gson.annotations.SerializedName;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.Authorization;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfileResolver;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.tokens.OAuth2Token;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.tokens.XToken;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.util.DateTime;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.Authorization;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.XboxProfileResolver;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.tokens.OAuth2Token;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.tokens.XToken;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.util.DateTime;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import java.nio.file.Files;

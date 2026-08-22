@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.settings.types.list.player;
+package dev.l3g7.griefer_utils.core.misc.player_resolver;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -15,8 +15,8 @@ import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import java.util.Base64;
 
-import static dev.l3g7.griefer_utils.core.settings.types.list.player.Resolver.Result.FOUND;
-import static dev.l3g7.griefer_utils.core.settings.types.list.player.Resolver.Result.tryLoad;
+import static dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerResolver.Result.FOUND;
+import static dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerResolver.Result.tryLoad;
 
 /**
  * Resolution strategy:
@@ -26,7 +26,7 @@ import static dev.l3g7.griefer_utils.core.settings.types.list.player.Resolver.Re
  * 4. If this fails, resolve using laby.net
  * 5. If this fails, resolve using api.ashcon.app
  */
-class JavaPlayerListEntryResolver extends Resolver {
+class JavaPlayerResolver extends PlayerResolver {
 
 	protected static Result load(PlayerListEntry entry) {
 		return Result.get(() -> {

@@ -5,21 +5,21 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core;
+package dev.l3g7.griefer_utils.core.misc.player_resolver.xbox;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.tokens.OAuth2Token;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.tokens.XToken;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.util.DateTime;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.util.Requests;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.tokens.OAuth2Token;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.tokens.XToken;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.util.DateTime;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.util.Requests;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfileResolver.GSON;
-import static dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.util.Util.strMap;
+import static dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.XboxProfileResolver.GSON;
+import static dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.util.Util.strMap;
 
 public class Authorization {
 

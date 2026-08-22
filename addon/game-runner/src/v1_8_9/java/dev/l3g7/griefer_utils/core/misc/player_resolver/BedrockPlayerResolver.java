@@ -5,23 +5,17 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.settings.types.list.player;
+package dev.l3g7.griefer_utils.core.misc.player_resolver;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfile;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfileResolver;
 import dev.l3g7.griefer_utils.core.api.util.io.HttpGetOperation;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import net.minecraft.client.renderer.texture.DynamicTexture;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.XboxProfile;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.XboxProfileResolver;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import static dev.l3g7.griefer_utils.core.settings.types.list.player.Resolver.Result.FOUND;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerResolver.Result.FOUND;
 
 /**
  * Resolution strategy:
@@ -30,7 +24,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
  * 3. If the entry exists, resolve using official XBOX API
  * 4. If this fails, use partial results from playerdb.co
  */
-class BedrockPlayerListEntryResolver extends Resolver {
+class BedrockPlayerResolver extends PlayerResolver {
 
 	protected static Result load(PlayerListEntry entry) {
 		return Result.get(() -> {

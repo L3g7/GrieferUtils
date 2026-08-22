@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.settings.types.list.player;
+package dev.l3g7.griefer_utils.core.misc.player_resolver;
 
 import com.mojang.authlib.GameProfile;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
@@ -26,13 +26,13 @@ import java.io.IOException;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static java.lang.Thread.MAX_PRIORITY;
 
-public class Resolver {
+public class PlayerResolver {
 
 	protected static final RuntimeException OK_FOUND = new RuntimeException();
 	protected static final RuntimeException ERR_NOT_FOUND = new RuntimeException();
 	protected static final RuntimeException ERR_INVALID = new RuntimeException();
 
-	public static void resolve(PlayerListEntry entry) {
+	protected static void resolve(PlayerListEntry entry) {
 		// Try to load from tablist
 		Predicate<GameProfile> check = entry.id == null
 			? n -> n.getName().equals(entry.name)
@@ -52,8 +52,8 @@ public class Resolver {
 
 		ThreadFactory.run("Grieferutils PlayerListEntry Resolver", MAX_PRIORITY, () -> {
 			Result res = entry.isJava()
-				? JavaPlayerListEntryResolver.load(entry)
-				: BedrockPlayerListEntryResolver.load(entry);
+				? JavaPlayerResolver.load(entry)
+				: BedrockPlayerResolver.load(entry);
 
 			if (res == Result.ERROR)
 				return;

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.settings.types.list.player;
+package dev.l3g7.griefer_utils.core.misc.player_resolver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
@@ -49,7 +49,7 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 		this.name = name;
 		this.id = id;
 		this.isLoaded = false;
-		Resolver.resolve(this);
+		PlayerResolver.resolve(this);
 	}
 
 	public static PlayerListEntry fromName(String name) {
@@ -118,7 +118,7 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 		this.name = null;
 		this.id = data.getAsString();
 		this.isLoaded = false;
-		Resolver.resolve(this);
+		PlayerResolver.resolve(this);
 	}
 
 	@Override

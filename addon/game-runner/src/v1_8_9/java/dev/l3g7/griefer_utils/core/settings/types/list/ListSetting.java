@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.core.settings.types.list;
 
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
-import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

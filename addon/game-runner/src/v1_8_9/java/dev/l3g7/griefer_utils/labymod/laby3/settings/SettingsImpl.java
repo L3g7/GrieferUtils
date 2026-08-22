@@ -17,7 +17,7 @@ import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.StringListEntry;
-import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.*;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.list.ListSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.list.PlayerListSettingImpl;

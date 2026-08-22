@@ -5,10 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.tokens;
+package dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.tokens;
 
 import com.google.gson.annotations.SerializedName;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.util.DateTime;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.util.DateTime;
 
 public class XToken {
 

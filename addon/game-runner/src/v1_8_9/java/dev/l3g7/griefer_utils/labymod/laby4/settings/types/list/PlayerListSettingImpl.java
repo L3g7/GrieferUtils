@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby4.settings.types.list;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;

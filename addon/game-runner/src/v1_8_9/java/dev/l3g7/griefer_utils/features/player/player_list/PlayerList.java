@@ -23,7 +23,7 @@ import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
-import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.event.ClickEvent;

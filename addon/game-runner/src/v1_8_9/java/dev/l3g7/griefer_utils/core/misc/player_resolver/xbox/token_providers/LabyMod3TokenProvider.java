@@ -5,11 +5,11 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.token_providers;
+package dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.token_providers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.Authorization;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.Authorization;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import java.nio.file.Files;

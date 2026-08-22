@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
@@ -50,6 +51,7 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ORB_SELL_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.renderPos;
 
 @Singleton
 public class OrbStats extends SimpleWidget {
@@ -287,7 +289,7 @@ public class OrbStats extends SimpleWidget {
 			return null;
 
 		String uuidString = object.get("profileId").getAsString();
-		return uuidString.replaceFirst("^(.{8})(.{4})(.{4})(.{4})(.{12})$", "$1-$2-$3-$4-$5");
+		return StringUtil.normalizeUUID(uuidString);
 	}
 
 	private static class HashMapSerializer {

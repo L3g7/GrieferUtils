@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
+import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
@@ -55,7 +56,7 @@ public class BABBot {
 	}
 
 	public String getName() {
-		return NameCache.getName(UUID.fromString(this.uuid.replaceAll("^(.{8})(.{4})(.{4})(.{4})(.{12})$", "$1-$2-$3-$4-$5")));
+		return NameCache.getName(UUID.fromString(StringUtil.normalizeUUID(this.uuid)));
 	}
 
 	public void invalidateCache() {

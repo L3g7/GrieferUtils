@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.core.misc.player_resolver;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
+import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import net.minecraft.util.ResourceLocation;
 
@@ -20,7 +21,6 @@ import java.util.regex.Pattern;
 public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 
 	private final static Pattern UUID_PATTERN = Pattern.compile("^[\\da-f]{8}-(?:[\\da-f]{4}-){3}[\\da-f]{12}$");
-	private final static Pattern UUID_COMPACT_PATTERN = Pattern.compile("^[\\da-f]{32}$");
 
 	protected static final Map<String, PlayerListEntry> NAME_LOOKUP_MAP = new ConcurrentHashMap<>();
 	protected static final Map<String, PlayerListEntry> UUID_LOOKUP_MAP = new ConcurrentHashMap<>();
@@ -60,10 +60,8 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 	}
 
 	public static PlayerListEntry fromUUID(String uuid) {
-		uuid = uuid.toLowerCase().trim();
-		if (UUID_COMPACT_PATTERN.matcher(uuid).matches())
-			uuid = uuid.replaceAll("(.{8})(.{4})(.{4})(.{4})(.{12})", "$1-$2-$3-$4-$5");
-		else if (!UUID_PATTERN.matcher(uuid).matches())
+		uuid = StringUtil.normalizeUUID(uuid);
+		if (!UUID_PATTERN.matcher(uuid).matches())
 			return PlayerListEntry.INVALID_PLAYER;
 
 		String id = uuid;

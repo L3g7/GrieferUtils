@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.core.misc.player_resolver;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.api.util.io.HttpGetOperation;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
@@ -46,7 +47,7 @@ class JavaPlayerResolver extends PlayerResolver {
 				checkHttpCode(op);
 
 				JsonObject data = op.asJsonObject();
-				entry.id = data.get("id").getAsString().replaceAll("(.{8})(.{4})(.{4})(.{4})(.{12})", "$1-$2-$3-$4-$5");
+				entry.id = StringUtil.normalizeUUID(data.get("id").getAsString());
 			}
 
 			// Resolve name, texture

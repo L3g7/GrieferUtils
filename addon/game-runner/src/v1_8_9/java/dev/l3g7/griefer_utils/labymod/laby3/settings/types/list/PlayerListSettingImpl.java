@@ -253,13 +253,13 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 	}
 
 	private void renderSkull(PlayerListEntry e, double x, double y, int size) {
-		if (e.skin() == null) {
+		if (e.getSkin() == null) {
 			mc.getTextureManager().bindTexture(ModTextures.MISC_HEAD_QUESTION);
 			DrawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);
 			return;
 		}
 
-		GlStateManager.bindTexture(e.skin().getGlTextureId());
+		DrawUtils.bindTexture(e.getSkin());
 
 		if (!e.isJava()) {
 			DrawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);

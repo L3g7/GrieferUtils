@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
-import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,8 +31,9 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 	 */
 	protected String id;
 	protected String name;
+
 	protected boolean slim;
-	protected ITextureObject skin = null;
+	protected ResourceLocation skin = null;
 
 	/**
 	 * True if the entry's name and id are set.
@@ -82,12 +83,12 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 		return id == null ? !name.startsWith("!") : id.contains("-");
 	}
 
-	public int skinHeight() {
-		return slim ? 64 : 32;
+	public ResourceLocation getSkin() {
+		return skin;
 	}
 
-	public ITextureObject skin() {
-		return skin;
+	public int skinHeight() {
+		return slim ? 64 : 32;
 	}
 
 	public boolean isValid() {

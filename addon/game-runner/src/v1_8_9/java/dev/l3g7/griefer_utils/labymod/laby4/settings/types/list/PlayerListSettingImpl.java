@@ -29,6 +29,7 @@ import net.labymod.api.client.gui.screen.widget.widgets.input.TextFieldWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.list.HorizontalListWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.list.VerticalListWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
+import net.labymod.api.client.resources.ResourceLocation;
 import net.labymod.api.util.bounds.ModifyReason;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsActivity;
 
@@ -43,10 +44,14 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 	@Override
 	protected Icon buildIcon(PlayerListEntry entry) {
+		if (entry.getSkin() == null)
+			return super.buildIcon(entry);
+
 		if (entry.isJava()) {
 			if (entry.isValid() || entry.getId() == null)
-				return Icon.head(entry.getName().trim());
-		}
+				return Icon.head((ResourceLocation) entry.getSkin());
+		} else
+			return Icon.texture((ResourceLocation) entry.getSkin());
 
 		return super.buildIcon(entry);
 	}

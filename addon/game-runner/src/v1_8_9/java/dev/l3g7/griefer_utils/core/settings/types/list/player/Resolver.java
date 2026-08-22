@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.api.util.io.HttpGetOperation;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.util.ResourceLocation;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -43,10 +43,7 @@ public class Resolver {
 				if (check.test(info.getGameProfile())) {
 					entry.id = info.getGameProfile().getId().toString();
 					entry.name = info.getGameProfile().getName();
-					TickScheduler.runNextRenderTick(() -> {
-						entry.skin = new SimpleTexture(info.getLocationSkin());
-						entry.skin.loadTexture(mc().getResourceManager());
-					});
+					entry.skin = info.getLocationSkin();
 					updateCache(entry, true);
 					return;
 				}
@@ -89,8 +86,9 @@ public class Resolver {
 		entry.slim = img.getHeight() == 32;
 
 		TickScheduler.runNextRenderTick(() -> {
-			entry.skin = new DynamicTexture(img);
-			entry.skin.loadTexture(mc().getResourceManager());
+			ResourceLocation location = new ResourceLocation("griefer_utils", "player_skins/" + entry.id + ".png");
+			mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
+			entry.skin = location;
 		});
 	}
 

@@ -197,12 +197,12 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 			private void updateValidity() {
 				entry = PlayerListEntry.fromName(inputField.getText());
 
-				if (!entry.exists()) {
+				if (!entry.isValid()) {
 					inputField.setTextColor(0xFFFF0000);
 					doneButton.enabled = false;
 				} else {
 					inputField.setTextColor(0xFFFFFFFF);
-					doneButton.enabled = entry.loaded();
+					doneButton.enabled = entry.isLoaded();
 				}
 			}
 
@@ -261,7 +261,7 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 
 		GlStateManager.bindTexture(e.skin().getGlTextureId());
 
-		if (!e.isMojang()) {
+		if (!e.isJava()) {
 			DrawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);
 			return;
 		}

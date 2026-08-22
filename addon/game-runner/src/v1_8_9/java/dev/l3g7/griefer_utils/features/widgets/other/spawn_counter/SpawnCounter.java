@@ -337,9 +337,9 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 				int i = 2; // Yourself + the normal line
 
-				if (getEntry(data.next).loaded())
+				if (getEntry(data.next).isValid())
 					i++;
-				if (getEntry(data.previous).loaded())
+				if (getEntry(data.previous).isValid())
 					i++;
 
 				return i;
@@ -383,12 +383,12 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 			private static List<Triple<Integer, PlayerListEntry, Integer>> getRenderData() {
 				List<Triple<Integer, PlayerListEntry, Integer>> renderData = new ArrayList<>();
-				if (getEntry(data.next).loaded())
+				if (getEntry(data.next).isValid())
 					renderData.add(Triple.of(data.position - 1, getEntry(data.next), data.next.score));
 
 				renderData.add(Triple.of(data.position, null, data.score));
 
-				if (getEntry(data.previous).loaded())
+				if (getEntry(data.previous).isValid())
 					renderData.add(Triple.of(data.position + 1, getEntry(data.previous), data.previous.score));
 
 				return renderData;
@@ -414,7 +414,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 				GlStateManager.bindTexture(e.skin().getGlTextureId());
 
-				if (!e.isMojang()) {
+				if (!e.isJava()) {
 					DrawUtils.drawTexture(x, y, 0, 0, 256, 256, 8, 8);
 					return;
 				}
@@ -533,7 +533,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 					return;
 
 				PlayerListEntry entry = ENTRIES.get(other.uuid);
-				if (entry == null || !entry.loaded())
+				if (entry == null || !entry.isValid())
 					return;
 
 				line.setState(VISIBLE);

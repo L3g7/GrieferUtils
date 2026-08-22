@@ -37,18 +37,18 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 	/**
 	 * True if the entry's name and id are set.
 	 */
-	protected boolean loaded = false;
-	protected boolean exists;
+	protected boolean isValid = false;
+	protected boolean isLoaded;
 
 	private PlayerListEntry() {
-		exists = false;
+		isLoaded = true;
 	}
 
 	protected PlayerListEntry(String name, String id) {
 		this.name = name;
 		this.id = id;
-		this.exists = true;
-		load();
+		this.isLoaded = false;
+		Resolver.resolve(this);
 	}
 
 	public static PlayerListEntry fromName(String name) {
@@ -78,11 +78,7 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 		return name == null ? "§cNutzer konnte nicht geladen werden!" : name;
 	}
 
-	public String getRawName() {
-		return name;
-	}
-
-	public boolean isMojang() {
+	public boolean isJava() {
 		return id == null ? !name.startsWith("!") : id.contains("-");
 	}
 
@@ -94,16 +90,12 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 		return skin;
 	}
 
-	public boolean loaded() {
-		return loaded;
+	public boolean isValid() {
+		return isValid;
 	}
 
-	public boolean exists() {
-		return exists;
-	}
-
-	private void load() {
-		Resolver.resolve(this);
+	public boolean isLoaded() {
+		return isLoaded;
 	}
 
 	@Override
@@ -116,16 +108,16 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 		this.name = entry.name;
 		this.slim = entry.slim;
 		this.skin = entry.skin;
-		this.loaded = entry.loaded;
-		this.exists = entry.exists;
+		this.isValid = entry.isValid;
+		this.isLoaded = entry.isLoaded;
 	}
 
 	@Override
 	public void load(JsonElement data) {
 		this.name = null;
 		this.id = data.getAsString();
-		this.exists = true;
-		load();
+		this.isLoaded = false;
+		Resolver.resolve(this);
 	}
 
 	@Override

@@ -43,9 +43,10 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 	@Override
 	protected Icon buildIcon(PlayerListEntry entry) {
-		String playerName = entry.getRawName();
-		if (playerName != null)
-			return Icon.head(playerName.trim());
+		if (entry.isJava()) {
+			if (entry.isValid() || entry.getId() == null)
+				return Icon.head(entry.getName().trim());
+		}
 
 		return super.buildIcon(entry);
 	}
@@ -135,12 +136,12 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 		private void update() {
 			String name = textInput.getText().trim();
 			PlayerListEntry entry = PlayerListEntry.fromName(name);
-			if (!entry.exists()) {
+			if (!entry.isValid()) {
 				textInput.textColor().set(0xFFFF0000);
 				addButton.setEnabled(false);
 			} else {
 				textInput.textColor().set(0xFFFFFFFF);
-				addButton.setEnabled(entry.loaded());
+				addButton.setEnabled(entry.isLoaded());
 			}
 		}
 

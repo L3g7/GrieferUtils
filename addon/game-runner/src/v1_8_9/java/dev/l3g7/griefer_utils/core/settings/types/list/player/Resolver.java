@@ -54,7 +54,7 @@ public class Resolver {
 		}
 
 		ThreadFactory.run("Grieferutils PlayerListEntry Resolver", MAX_PRIORITY, () -> {
-			Result res = entry.isMojang()
+			Result res = entry.isJava()
 				? JavaPlayerListEntryResolver.load(entry)
 				: BedrockPlayerListEntryResolver.load(entry);
 
@@ -66,7 +66,8 @@ public class Resolver {
 	}
 
 	private static void updateCache(PlayerListEntry entry, boolean found) {
-		entry.exists = entry.loaded = found;
+		entry.isLoaded = true;
+		entry.isValid = found;
 		PlayerListEntry.NAME_LOOKUP_MAP.put(entry.name, entry);
 		PlayerListEntry.UUID_LOOKUP_MAP.put(entry.id, entry);
 	}
@@ -97,7 +98,7 @@ public class Resolver {
 		if (entry.id != null)
 			return entry.id;
 
-		if (entry.isMojang())
+		if (entry.isJava())
 			return entry.name;
 		else
 			return entry.name.substring(1);

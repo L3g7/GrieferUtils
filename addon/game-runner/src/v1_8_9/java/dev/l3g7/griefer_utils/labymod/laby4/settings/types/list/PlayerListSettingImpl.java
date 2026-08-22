@@ -40,6 +40,15 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 		customEdit(e -> new PlayerListInputActivity(e).open());
 	}
 
+	@Override
+	protected Icon buildIcon(PlayerListEntry entry) {
+		String playerName = entry.getRawName();
+		if (playerName != null)
+			return Icon.head(playerName.trim());
+
+		return super.buildIcon(entry);
+	}
+
 	@AutoActivity
 	@Link("player-list-input.lss")
 	public class PlayerListInputActivity extends ScreenOverlay {

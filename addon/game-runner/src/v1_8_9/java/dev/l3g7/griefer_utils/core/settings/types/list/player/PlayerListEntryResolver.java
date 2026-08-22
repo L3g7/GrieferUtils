@@ -72,7 +72,7 @@ public class PlayerListEntryResolver {
 		if (!XboxProfileResolver.isAvailable())
 			return;
 
-		XboxProfile profile = entry.getName() == null ? XboxProfileResolver.getProfileByXUID(entry.getId()) : XboxProfileResolver.getProfileByGamerTag(entry.getName().substring(1));
+		XboxProfile profile = entry.getRawName() == null ? XboxProfileResolver.getProfileByXUID(entry.getId()) : XboxProfileResolver.getProfileByGamerTag(entry.getName().substring(1));
 		if (profile == null) {
 			entry.exists = false;
 			LOOKUP_MAP.put(entry.getName(), entry);
@@ -145,7 +145,7 @@ public class PlayerListEntryResolver {
 	 * Ashcon's API doesn't have rate-limiting but is much slower, so Mojang's API is usually preferred.
 	 */
 	public static void loadFromAshcon(PlayerListEntry entry) throws IOException {
-		JsonObject profile = IO.read("https://api.ashcon.app/mojang/v2/user/" + (entry.getName() == null ? entry.getId() : entry.getName())).asJsonObject();
+		JsonObject profile = IO.read("https://api.ashcon.app/mojang/v2/user/" + (entry.getRawName() == null ? entry.getId() : entry.getName())).asJsonObject();
 		entry.name = profile.get("username").getAsString();
 		entry.id = profile.get("uuid").getAsString();
 		entry.loaded = true;

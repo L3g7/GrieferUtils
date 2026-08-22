@@ -53,7 +53,12 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 		return id;
 	}
 
+	@Override
 	public String getName() {
+		return name == null ? "§cNutzer konnte nicht geladen werden!" : name;
+	}
+
+	public String getRawName() {
 		return name;
 	}
 

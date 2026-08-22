@@ -141,6 +141,18 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		return this;
 	}
 
+	protected Icon buildIcon(E entry) {
+		String resourceIcon = entry.resourceIcon();
+		if (resourceIcon != null)
+			return Icons.of(resourceIcon);
+
+		ItemStack itemIcon = entry.itemIcon();
+		if (itemIcon != null)
+			return Icons.of(itemIcon);
+
+		return null;
+	}
+
 	@Override
 	public void create(Object parent) {
 		Laby4Setting.super.create(parent);
@@ -163,6 +175,8 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 			subsettings.set(subsettings.indexOf(kv),
 				new KeyValue<>(kv.getKey(), wrappedParent));
 		}
+
+		setAccessor(null); // Has no real accessor impl, only used to propagate the type
 	}
 
 	@Override
@@ -280,12 +294,12 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	/**
 	 * List entries that support icons and descriptions.
 	 */
-	private static class StyledListSettingEntry extends ListSettingEntry {
+	private class StyledListSettingEntry extends ListSettingEntry {
 
-		private final ListEntry<?> entry;
+		private final E entry;
 		private final boolean hasHookedEdit;
 
-		public StyledListSettingEntry(ListSettingImpl<?> parent, EntryConfig<?> config, int index) {
+		public StyledListSettingEntry(ListSettingImpl<?> parent, EntryConfig<E> config, int index) {
 			super(parent, config.entryDisplayName(), null, index);
 			entry = config.value;
 
@@ -318,13 +332,9 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 
 		@Override
 		public Icon getIcon() {
-			String resourceIcon = entry.resourceIcon();
-			if (resourceIcon != null)
-				return Icons.of(resourceIcon);
-
-			ItemStack itemIcon = entry.itemIcon();
-			if (itemIcon != null)
-				return Icons.of(itemIcon);
+			Icon icon = buildIcon(entry);
+			if (icon != null)
+				return icon;
 
 			return super.getIcon();
 		}

@@ -29,6 +29,7 @@ import net.labymod.api.models.addon.info.InstalledAddonInfo;
 import net.labymod.core.addon.AddonClassLoader;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsActivity;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsEditorActivity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,22 +43,11 @@ import static net.labymod.api.Laby.labyAPI;
 public class Laby4Util {
 
 	public static boolean isSettingOpened(BaseSetting<?> setting) {
-		// Check if in setting activity
-		if (!(getActivity() instanceof NavigationActivity navActivity))
+		ModsActivity modsActivity = getModsActivity();
+		if (modsActivity == null)
 			return false;
 
-		ScreenBaseNavigationElement<?> element = Reflection.get(navActivity, "element");
-		if (!(element instanceof LabyModNavigationElement))
-			return false;
-
-		if (!(element.getScreen() instanceof ModsEditorActivity activity))
-			return false;
-
-		ScreenRendererWidget panelRenderer = (ScreenRendererWidget) activity.document().getChild("mods-panel-renderer");
-		if (panelRenderer == null || !panelRenderer.isVisible())
-			return false;
-
-		Deque<SettingElement> openSettings = Reflection.get(panelRenderer.getScreen(), "openSettings");
+		Deque<SettingElement> openSettings = Reflection.get(modsActivity, "openSettings");
 
 		Setting current = openSettings.peekFirst();
 		while (current != null) {
@@ -81,6 +71,27 @@ public class Laby4Util {
 			return null;
 
 		return screen.asActivity();
+	}
+
+	public static ModsActivity getModsActivity() {
+		if (!(getActivity() instanceof NavigationActivity navActivity))
+			return null;
+
+		ScreenBaseNavigationElement<?> element = Reflection.get(navActivity, "element");
+		if (!(element instanceof LabyModNavigationElement))
+			return null;
+
+		if (!(element.getScreen() instanceof ModsEditorActivity activity))
+			return null;
+
+		ScreenRendererWidget panelRenderer = (ScreenRendererWidget) activity.document().getChild("mods-panel-renderer");
+		if (panelRenderer == null || !panelRenderer.isVisible())
+			return null;
+
+		if (panelRenderer.getScreen() instanceof ModsActivity modsActivity)
+			return modsActivity;
+		else
+			return null;
 	}
 
 	public static <T extends Widget> T get(Widget start, String... idPath) {

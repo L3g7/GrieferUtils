@@ -16,7 +16,6 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
-import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntryResolver;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.EntryAddSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
@@ -44,7 +43,7 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 		return array;
 	}, array -> {
 		List<PlayerListEntry> list = new ArrayList<>();
-		array.getAsJsonArray().forEach(e -> list.add(new PlayerListEntry(null, e.getAsString())));
+		array.getAsJsonArray().forEach(e -> list.add(PlayerListEntry.fromUUID(e.getAsString())));
 		return list;
 	}, new ArrayList<>());
 
@@ -196,7 +195,7 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 			}
 
 			private void updateValidity() {
-				entry = PlayerListEntryResolver.getEntry(inputField.getText());
+				entry = PlayerListEntry.fromName(inputField.getText());
 
 				if (!entry.exists()) {
 					inputField.setTextColor(0xFFFF0000);

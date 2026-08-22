@@ -113,6 +113,13 @@ public abstract class ReadOperation {
 	}
 
 	/**
+	 * Reads the content as a JSON array, elevating errors to RuntimeExceptions.
+	 */
+	public @NotNull JsonArray asJsonArray() {
+		return tryAsJsonArray().unwrap();
+	}
+
+	/**
 	 * Asynchronously reads the content as a JSON array.
 	 */
 	@CheckReturnValue

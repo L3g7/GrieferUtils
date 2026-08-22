@@ -320,10 +320,10 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 						return;
 
 					if (data.next != null && !ENTRIES.containsKey(data.next.uuid))
-						ENTRIES.put(data.next.uuid, new PlayerListEntry(null, data.next.uuid));
+						ENTRIES.put(data.next.uuid, PlayerListEntry.fromUUID(data.next.uuid));
 
 					if (data.previous != null && !ENTRIES.containsKey(data.previous.uuid))
-						ENTRIES.put(data.previous.uuid, new PlayerListEntry(null, data.previous.uuid));
+						ENTRIES.put(data.previous.uuid, PlayerListEntry.fromUUID(data.previous.uuid));
 				});
 			}
 
@@ -495,10 +495,10 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 						return;
 
 					if (data.next != null && !ENTRIES.containsKey(data.next.uuid))
-						ENTRIES.put(data.next.uuid, new PlayerListEntry(null, data.next.uuid));
+						ENTRIES.put(data.next.uuid, PlayerListEntry.fromUUID(data.next.uuid));
 
 					if (data.previous != null && !ENTRIES.containsKey(data.previous.uuid))
-						ENTRIES.put(data.previous.uuid, new PlayerListEntry(null, data.previous.uuid));
+						ENTRIES.put(data.previous.uuid, PlayerListEntry.fromUUID(data.previous.uuid));
 				});
 			}
 

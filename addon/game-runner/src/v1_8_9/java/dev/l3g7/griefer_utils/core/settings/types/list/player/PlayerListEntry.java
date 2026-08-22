@@ -9,19 +9,21 @@ package dev.l3g7.griefer_utils.core.settings.types.list.player;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
-import dev.l3g7.griefer_utils.core.api.misc.xbox_profile_resolver.core.XboxProfileResolver;
+import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.texture.ITextureObject;
 
-import java.io.IOException;
-
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static java.lang.Thread.MAX_PRIORITY;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 
+	private final static Pattern UUID_PATTERN = Pattern.compile("^[\\da-f]{8}-(?:[\\da-f]{4}-){3}[\\da-f]{12}$");
+	private final static Pattern UUID_COMPACT_PATTERN = Pattern.compile("^[\\da-f]{32}$");
+
+	protected static final Map<String, PlayerListEntry> NAME_LOOKUP_MAP = new ConcurrentHashMap<>();
+	protected static final Map<String, PlayerListEntry> UUID_LOOKUP_MAP = new ConcurrentHashMap<>();
 	public static final PlayerListEntry INVALID_PLAYER = new PlayerListEntry();
 
 	/**
@@ -42,11 +44,29 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 		exists = false;
 	}
 
-	public PlayerListEntry(String name, String id) {
+	protected PlayerListEntry(String name, String id) {
 		this.name = name;
 		this.id = id;
 		this.exists = true;
 		load();
+	}
+
+	public static PlayerListEntry fromName(String name) {
+		if (!Constants.UNFORMATTED_PLAYER_NAME_PATTERN.matcher(name).matches())
+			return PlayerListEntry.INVALID_PLAYER;
+
+		return NAME_LOOKUP_MAP.computeIfAbsent(name, k -> new PlayerListEntry(name, null));
+	}
+
+	public static PlayerListEntry fromUUID(String uuid) {
+		uuid = uuid.toLowerCase().trim();
+		if (UUID_COMPACT_PATTERN.matcher(uuid).matches())
+			uuid = uuid.replaceAll("(.{8})(.{4})(.{4})(.{4})(.{12})", "$1-$2-$3-$4-$5");
+		else if (!UUID_PATTERN.matcher(uuid).matches())
+			return PlayerListEntry.INVALID_PLAYER;
+
+		String id = uuid;
+		return UUID_LOOKUP_MAP.computeIfAbsent(uuid, k -> new PlayerListEntry(null, id));
 	}
 
 	public String getId() {
@@ -83,40 +103,7 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 	}
 
 	private void load() {
-		if (!isMojang()) {
-			ThreadFactory.run("Grieferutils PlayerListEntry Resolver", MAX_PRIORITY, () -> {
-				if (!exists || !XboxProfileResolver.isAvailable())
-					PlayerListEntryResolver.loadFromPlayerDB(this);
-				if (exists) {
-					try {
-						PlayerListEntryResolver.loadFromXbox(this);
-					} catch (IOException e) {
-						PlayerListEntryResolver.loadFromPlayerDB(this);
-					}
-				}
-			});
-			return;
-		}
-
-		// Try to load the uuid it from tab list
-		if (mc().getNetHandler() != null) {
-			for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap())
-				if (info.getGameProfile().getName().equals(name))
-					id = info.getGameProfile().getId().toString();
-		}
-
-		ThreadFactory.run("Grieferutils PlayerListEntry Resolver", MAX_PRIORITY, () -> {
-			try {
-				PlayerListEntryResolver.loadFromMojang(this);
-			} catch (IOException e1) {
-				try {
-					PlayerListEntryResolver.loadFromAshcon(this);
-				} catch (IOException e2) {
-					e1.printStackTrace();
-					e2.printStackTrace();
-				}
-			}
-		});
+		Resolver.resolve(this);
 	}
 
 	@Override
@@ -137,12 +124,13 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 	public void load(JsonElement data) {
 		this.name = null;
 		this.id = data.getAsString();
+		this.exists = true;
 		load();
 	}
 
 	@Override
 	public JsonElement encode() {
-		return new JsonPrimitive(this.getId());
+		return new JsonPrimitive(this.id);
 	}
 
 }

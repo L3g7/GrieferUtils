@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings.types.list;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntry;
-import dev.l3g7.griefer_utils.core.settings.types.list.player.PlayerListEntryResolver;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
@@ -112,9 +111,9 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 			addButton = ButtonWidget.text(entry == null ? "Hinzufügen" : "Bearbeiten", () -> {
 				String name = textInput.getText().trim();
 				if (entry == null)
-					PlayerListSettingImpl.this.add(PlayerListEntryResolver.getEntry(name));
+					PlayerListSettingImpl.this.add(PlayerListEntry.fromName(name));
 				else
-					entry.copyFrom(PlayerListEntryResolver.getEntry(name));
+					entry.copyFrom(PlayerListEntry.fromName(name));
 
 				notifyChange();
 				close();
@@ -135,7 +134,7 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 		private void update() {
 			String name = textInput.getText().trim();
-			PlayerListEntry entry = PlayerListEntryResolver.getEntry(name);
+			PlayerListEntry entry = PlayerListEntry.fromName(name);
 			if (!entry.exists()) {
 				textInput.textColor().set(0xFFFF0000);
 				addButton.setEnabled(false);

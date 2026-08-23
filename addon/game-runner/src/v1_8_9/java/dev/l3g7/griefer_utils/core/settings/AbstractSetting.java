@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -208,6 +209,8 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 			setting.since(since().bubble(setting));
 	}
 
+	boolean isOpen();
+
 	/**
 	 * A storage for a value.
 	 */
@@ -280,7 +283,7 @@ public interface AbstractSetting<S extends AbstractSetting<S, V>, V> extends Bas
 		}
 
 		@Override
-		public String toString() {
+		public @NotNull String toString() {
 			if (message != null)
 				return message;
 

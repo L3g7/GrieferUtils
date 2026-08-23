@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.labymod.laby4.util;
 
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.Main;
 import dev.l3g7.griefer_utils.labymod.laby4.bridges.LabyBridgeImpl;
 import net.labymod.api.Laby;
@@ -20,8 +19,6 @@ import net.labymod.api.client.gui.screen.widget.AbstractWidget;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.WrappedWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.ScreenRendererWidget;
-import net.labymod.api.configuration.settings.Setting;
-import net.labymod.api.configuration.settings.type.SettingElement;
 import net.labymod.api.event.Event;
 import net.labymod.api.event.LabyEvent;
 import net.labymod.api.event.method.SubscribeMethod;
@@ -35,34 +32,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
-import java.util.Deque;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static net.labymod.api.Laby.labyAPI;
 
 public class Laby4Util {
-
-	public static boolean isSettingOpened(BaseSetting<?> setting) {
-		ModsActivity modsActivity = getModsActivity();
-		if (modsActivity == null)
-			return false;
-
-		Deque<SettingElement> openSettings = Reflection.get(modsActivity, "openSettings");
-
-		Setting current = openSettings.peekFirst();
-		while (current != null) {
-			if (current == setting)
-				return true;
-
-			current = current.parent();
-		}
-
-		return false;
-	}
-
-	public static boolean isVanillaTheme() {
-		return !Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
-	}
 
 	public static Activity getActivity() {
 		ScreenWrapper screen = Laby.labyAPI().minecraft().minecraftWindow().currentScreen();

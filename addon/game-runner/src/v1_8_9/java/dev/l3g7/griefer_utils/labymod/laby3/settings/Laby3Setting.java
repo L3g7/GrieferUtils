@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @SuppressWarnings("unchecked")
 public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends AbstractSetting<S, V> {
@@ -132,6 +134,15 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	@Override
 	default S extend() {
 		return (S) this;
+	}
+
+	@Override
+	default boolean isOpen() {
+		if (!(mc().currentScreen instanceof LabyModAddonsGui))
+			return false;
+
+		ArrayList<SettingsElement> path = Reflection.get(mc().currentScreen, "path");
+		return path.contains((SettingsElement) this);
 	}
 
 	@Override

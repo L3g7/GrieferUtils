@@ -13,6 +13,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
+import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
@@ -21,8 +22,6 @@ import net.labymod.api.client.component.format.TextDecoration;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.action.Switchable;
-import net.labymod.api.client.gui.screen.widget.widgets.activity.settings.SettingWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.loader.property.ConfigProperty;
@@ -36,6 +35,7 @@ import net.labymod.api.revision.Revision;
 import net.labymod.api.revision.SimpleRevision;
 import net.labymod.api.util.KeyValue;
 import net.labymod.api.util.version.SemanticVersion;
+import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsActivity;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsSettingWidget;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsTileWidget;
 import net.minecraft.item.ItemStack;
@@ -47,10 +47,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
@@ -70,32 +67,6 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 			public boolean isEnabled(Setting setting) {return getStorage().enabled;}
 		});
-	}
-
-	/**
-	 * @return A SettingWidget where the widgets aren't in the input-wrapper div but its parent.
-	 */
-	default SettingWidget createUnwrappedWidget(Widget... widgets) {
-		SettingWidget w = new SettingWidget(this, false);
-
-		if (widgets == null || widgets.length == 0)
-			return w;
-
-		// Remove widgets from div
-		if (this instanceof SettingElement s)
-			s.setWidgets(null);
-
-
-		// Add widgets to parent
-		SettingsImpl.hookChildAdd(w, e -> {
-			if (e.childWidget() instanceof FlexibleContentWidget parent) {
-				parent.removeChild("advanced-button");
-				for (Widget widget : widgets)
-					parent.addContent(widget);
-			}
-		});
-
-		return w;
 	}
 
 	// BaseSetting
@@ -217,6 +188,24 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		return (S) this;
 	}
 
+	@Override
+	default boolean isOpen() {
+		ModsActivity modsActivity = Laby4Util.getModsActivity();
+		if (modsActivity == null)
+			return false;
+
+		Deque<SettingElement> openSettings = Reflection.get(modsActivity, "openSettings");
+
+		Setting current = openSettings.peekFirst();
+		while (current != null) {
+			if (current == this)
+				return true;
+
+			current = current.parent();
+		}
+
+		return false;
+	}
 
 	class ExtendedStorage<V> extends Storage<V> {
 

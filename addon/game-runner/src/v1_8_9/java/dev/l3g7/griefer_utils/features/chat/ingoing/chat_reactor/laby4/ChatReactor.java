@@ -20,7 +20,6 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IChatComponent;
 
@@ -78,8 +77,7 @@ public class ChatReactor extends Feature {
 
 	@EventListener
 	public static void triggerReactions(MessageModifyEvent event) {
-		if (Laby4Util.isSettingOpened(enabled)
-			|| mc().currentScreen instanceof AddChatReactionGui)
+		if (enabled.isOpen() || mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
 		IChatComponent component = event.original;

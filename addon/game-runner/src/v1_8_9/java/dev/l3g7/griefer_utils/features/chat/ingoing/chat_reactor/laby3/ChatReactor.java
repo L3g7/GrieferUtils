@@ -14,18 +14,14 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.Feature;
-import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IChatComponent;
-
-import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
@@ -54,10 +50,6 @@ public class ChatReactor extends Feature {
 
 	public static ChatReactor get() {
 		return get(ChatReactor.class);
-	}
-
-	private static List<SettingsElement> getPath() {
-		return Reflection.get(mc().currentScreen, "path");
 	}
 
 	public static void saveEntries() {
@@ -89,8 +81,7 @@ public class ChatReactor extends Feature {
 
 	@EventListener
 	public void onMsg(MessageModifyEvent event) {
-		if ((mc().currentScreen instanceof LabyModAddonsGui && getPath().contains((SettingsElement) getMainElement()))
-			|| mc().currentScreen instanceof AddChatReactionGui)
+		if (enabled.isOpen() || mc().currentScreen instanceof AddChatReactionGui)
 			return;
 
 		IChatComponent component = event.original;

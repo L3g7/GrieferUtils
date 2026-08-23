@@ -23,11 +23,12 @@ import java.util.function.Predicate;
  */
 public class NativeLiteralNode extends Node<NativeLiteralNode.TooltipLiteralArgumentBuilder> {
 
-	private final String literal;
+	public final String literal;
 	private final String label;
 	private final String description;
 
-	public NativeLiteralNode(String literal, String label, String description) {
+	public NativeLiteralNode(Node<?> source, String literal, String label, String description) {
+		super(source);
 		this.literal = literal;
 		this.label = label;
 		this.description = description;

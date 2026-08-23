@@ -23,7 +23,7 @@ public class LiteralListNode extends Node<LiteralArgumentBuilder<Source>> {
 	@Override
 	public void register(CommandDispatcher dispatcher, Consumer<CommandNode<Source>> callback) {
 		for (String value : values) {
-			NativeLiteralNode node = new NativeLiteralNode(value, null, null);
+			NativeLiteralNode node = new NativeLiteralNode(this, value, null, null);
 			node.copyFrom(this);
 			node.register(dispatcher, callback);
 		}

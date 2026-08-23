@@ -40,11 +40,21 @@ public abstract class Node<T extends ArgumentBuilder<Source, ? super T>> {
 
 	protected boolean command = false;
 	protected String redirect = null;
-	protected HubAvailability hubAvailability = HubAvailability.UNAVAILABLE;
+	protected HubAvailability hubAvailability = null;
 	protected Requirement requirements;
 	protected List<Node<?>> children;
 
 	private transient CommandNode<Source> builtNode;
+
+	protected Node() {}
+
+	protected Node(Node<?> source) {
+		this.command = source.command;
+		this.redirect = source.redirect;
+		this.hubAvailability = source.hubAvailability;
+		this.requirements = source.requirements;
+		this.children = source.children;
+	}
 
 	public void register(CommandDispatcher dispatcher, Consumer<CommandNode<Source>> callback) {
 		dispatcher.registerNode(this, callback);
@@ -82,9 +92,14 @@ public abstract class Node<T extends ArgumentBuilder<Source, ? super T>> {
 		Requirement requirement = HubAvailability.mergeRequirement(requirements, hubAvailability);
 		builder.requires(src -> requirement.test());
 
-		if (children != null)
-			for (Node<?> child : children)
+		if (children != null) {
+			for (Node<?> child : children) {
+				if (child.hubAvailability == null)
+					child.hubAvailability = this.hubAvailability;
+
 				child.register(dispatcher, builder::then);
+			}
+		}
 
 		return builder.build();
 	}

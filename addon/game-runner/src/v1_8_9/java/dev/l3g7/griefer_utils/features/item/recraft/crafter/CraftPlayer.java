@@ -250,7 +250,7 @@ public class CraftPlayer {
 
 		if (state == WAITING_FOR_GUI) {
 			state = INTO_HOTBAR;
-			TickScheduler.runNextRenderTick(CraftPlayer::startAction);
+			TickScheduler.sync(CraftPlayer::startAction);
 			return;
 		}
 

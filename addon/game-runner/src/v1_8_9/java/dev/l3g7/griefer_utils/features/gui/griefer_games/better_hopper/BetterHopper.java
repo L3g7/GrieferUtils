@@ -269,7 +269,7 @@ public class BetterHopper extends Feature {
 
 	@EventListener
 	private void onGuiClose(PacketEvent.PacketSendEvent<C0DPacketCloseWindow> e) {
-		TickScheduler.runNextRenderTick(() -> {
+		TickScheduler.sync(() -> {
 			if (itemMoveOrigin != -1)
 				move(true);
 		});

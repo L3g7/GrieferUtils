@@ -104,7 +104,7 @@ public class GrieferPass extends ComplexWidget {
 
 		new Timer().schedule(new TimerTask() {
 			public void run() {
-				TickScheduler.runNextRenderTick(() -> {
+				TickScheduler.sync(() -> {
 					streamQuests().filter(q -> q.index / 100 == 0).forEach(q -> q.unpin(questLookup, questTypeLookup));
 				});
 			}

@@ -110,7 +110,7 @@ public class JailBarriers extends Feature {
 		if (!isNearJail() || placedBlock == targetBlock)
 			return;
 
-		TickScheduler.runNextRenderTick(() -> {
+		TickScheduler.sync(() -> {
 			if (world() == null)
 				return;
 

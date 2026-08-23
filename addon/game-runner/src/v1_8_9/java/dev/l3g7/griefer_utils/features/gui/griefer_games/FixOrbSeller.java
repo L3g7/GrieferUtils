@@ -75,7 +75,7 @@ public class FixOrbSeller extends Feature {
 
 		new Timer().schedule(new TimerTask() {
 			public void run() {
-				TickScheduler.runNextRenderTick(() -> {
+				TickScheduler.sync(() -> {
 					cbToId.clear();
 					saveIds();
 				});

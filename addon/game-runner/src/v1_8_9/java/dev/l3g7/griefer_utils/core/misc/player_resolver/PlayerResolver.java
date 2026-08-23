@@ -85,7 +85,7 @@ public class PlayerResolver {
 		BufferedImage img = ImageIO.read(new ByteArrayInputStream(texture));
 		entry.slim = img.getHeight() == 32;
 
-		TickScheduler.runNextRenderTick(() -> {
+		TickScheduler.sync(() -> {
 			ResourceLocation location = new ResourceLocation("griefer_utils", "player_skins/" + entry.id + ".png");
 			mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
 			entry.skin = location;

@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.shim;
+package dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.gui;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -449,7 +449,7 @@ public class GuiChatShim {
 			this.field_198509_f = new Vector2f();
 			this.bounds = new Rectangle2d(p_i47700_2_ - 1, p_i47700_3_ - 3 - Math.min(p_i47700_5_.getList().size(), 10) * 12, p_i47700_4_ + 1, Math.min(p_i47700_5_.getList().size(), 10) * 12);
 			suggestions = p_i47700_5_;
-			this.text = GuiChatShim.this.inputField.getText();
+			this.text = inputField.getText();
 			this.select(0);
 		}
 
@@ -502,7 +502,7 @@ public class GuiChatShim {
 			if (lvt_9_3_) {
 				Message lvt_10_2_ = suggestions.getList().get(this.selected).getTooltip();
 				if (lvt_10_2_ != null) {
-					((DrawHoveringTextAccessor) GuiChatShim.this.gui).grieferUtils$renderHoveringText(Collections.singletonList(toTextComponent(lvt_10_2_).getFormattedText()), p_198500_1_, p_198500_2_);
+					((DrawHoveringTextAccessor) gui).grieferUtils$renderHoveringText(Collections.singletonList(toTextComponent(lvt_10_2_).getFormattedText()), p_198500_1_, p_198500_2_);
 				}
 			}
 
@@ -584,19 +584,21 @@ public class GuiChatShim {
 			}
 
 			Suggestion lvt_2_1_ = suggestions.getList().get(this.selected);
-			GuiChatShim.this.inputField.setSuggestion(calculateSuggestionSuffix(GuiChatShim.this.inputField.getText(), lvt_2_1_.apply(this.text)));
+			inputField.setSuggestion(calculateSuggestionSuffix(inputField.getText(), lvt_2_1_.apply(this.text)));
 		}
 
 		public void useSuggestion() {
 			Suggestion lvt_1_1_ = suggestions.getList().get(this.selected);
-			GuiChatShim.this.isInsert = true;
-			GuiChatShim.this.setChatLine(lvt_1_1_.apply(this.text));
+			isInsert = true;
+			setChatLine(lvt_1_1_.apply(this.text));
 			int lvt_2_1_ = lvt_1_1_.getRange().getStart() + lvt_1_1_.getText().length();
-			GuiChatShim.this.inputField.setCursorPosition(lvt_2_1_);
-			GuiChatShim.this.inputField.setSelectionPos(lvt_2_1_);
+			inputField.setCursorPosition(lvt_2_1_);
+			inputField.setSelectionPos(lvt_2_1_);
 			this.select(this.selected);
-			GuiChatShim.this.isInsert = false;
+			isInsert = false;
 			this.cycling = true;
+
+			updateSuggestion();
 		}
 
 		public void hide() {

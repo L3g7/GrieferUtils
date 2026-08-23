@@ -1,4 +1,4 @@
-package dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.shim;
+package dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.gui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

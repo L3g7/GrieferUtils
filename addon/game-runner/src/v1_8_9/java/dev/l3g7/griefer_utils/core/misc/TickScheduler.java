@@ -10,11 +10,14 @@ package dev.l3g7.griefer_utils.core.misc;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Runnable;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
@@ -25,6 +28,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 public class TickScheduler {
 
 	private static final Map<Runnable, AtomicInteger> clientTickTasks = new HashMap<>();
+	private static final Queue<Runnable> renderTickTasks = new ConcurrentLinkedQueue<>();
 
 	/**
 	 * Runs the given runnable after one client tick.
@@ -49,15 +53,13 @@ public class TickScheduler {
 
 	/**
 	 * Runs the given runnable after one render tick.
-	 * Same as {@link #sync}, but expressing different intent (Delaying until Minecraft has processed the current tick).
 	 */
 	public static void runNextRenderTick(Runnable runnable) {
-		mc().addScheduledTask(runnable);
+		renderTickTasks.add(runnable);
 	}
 
 	/**
-	 * Runs the given runnable after one render tick.
-	 * Same as {@link #runNextRenderTick}, but expressing different intent (Moving to the Main thread).
+	 * Runs the given runnable in the Main thread.
 	 */
 	public static void sync(Runnable runnable) {
 		mc().addScheduledTask(runnable);
@@ -76,6 +78,13 @@ public class TickScheduler {
 				}
 			}
 		}
+	}
+
+	@EventListener
+	private static void onRenderTick(RenderTickEvent event) {
+		Runnable r;
+		while ((r = renderTickTasks.poll()) != null)
+			r.run();
 	}
 
 }

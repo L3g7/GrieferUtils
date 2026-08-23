@@ -485,7 +485,7 @@ public class ConfigPatcher {
 		}
 
 		chatMenuPatch:
-		if (isConfigOlderThan("2.5-BETA-1")) {
+		if (isConfigOlderThan("2.4.8")) {
 			JsonObject chatMenu = get("chat.ingoing.chat_menu");
 			if (!chatMenu.has("entries") || !chatMenu.get("entries").isJsonObject())
 				break chatMenuPatch;

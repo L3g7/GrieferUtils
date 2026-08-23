@@ -53,7 +53,7 @@ public class GrieferInfo extends Feature {
 		.description("Ermöglicht das Durchsuchen der Griefer.Info-Listen.")
 		.subSettings(profile, setting, HeaderSetting.create(),
 			LABY_3.isActive()
-				? HeaderSetting.create("Das Griefer.Info GUI lässt sich auch mit /info oder /gi öffnen.").center()
+				? HeaderSetting.create("Das Griefer.Info GUI lässt sich auch mit /info oder /gi öffnen.")
 				: CategorySetting.create().name("Das Griefer.Info GUI lässt sich auch mit /info oder /gi öffnen.").icon("lectern")
 		);
 

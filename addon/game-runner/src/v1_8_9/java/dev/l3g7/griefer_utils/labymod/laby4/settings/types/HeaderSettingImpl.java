@@ -24,7 +24,6 @@ public class HeaderSettingImpl extends SettingHeader implements HeaderSetting {
 	private String name;
 	private String description = null;
 	private List<Component> rows;
-	private boolean center = false;
 
 	public HeaderSettingImpl(String name) {
 		super("", false, "", "");
@@ -76,18 +75,6 @@ public class HeaderSettingImpl extends SettingHeader implements HeaderSetting {
 	@Override
 	public Component getDescription() {
 		return description == null ? null : Component.text(description);
-	}
-
-
-	@Override
-	public boolean isCenter() {
-		return center;
-	}
-
-	@Override
-	public HeaderSetting center() {
-		this.center = true;
-		return this;
 	}
 
 }

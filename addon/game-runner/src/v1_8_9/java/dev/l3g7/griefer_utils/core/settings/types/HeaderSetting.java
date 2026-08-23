@@ -33,11 +33,6 @@ public interface HeaderSetting extends BaseSetting<HeaderSetting> {
 		return this;
 	}
 
-	default HeaderSetting center() {
-		// Unsupported in LabyMod 3 (always centered)
-		return this;
-	}
-
 	@Override
 	default HeaderSetting icon(String icon) {
 		throw new UnsupportedOperationException();

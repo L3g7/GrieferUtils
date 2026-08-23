@@ -28,7 +28,6 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4d;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -112,17 +111,17 @@ public class Icons {
 
 			GlStateManager.pushMatrix();
 
-			// Merge current and pose matrix
-			double[] original = new double[16];
-			GL11.glGetDoublev(GL11.GL_MODELVIEW_MATRIX, original);
-			Matrix4f merged = new Matrix4f(new Matrix4d().set(original));
-			pose.mul(merged, merged);
-
-			// Load merged matrix into OpenGL
 			try (MemoryStack stack = MemoryStack.stackPush()) {
-				long addr = stack.nmalloc(4, 16 * 4);
-				merged.getToAddress(addr);
-				GL11.nglLoadMatrixf(addr);
+				long buffer = stack.nmalloc(8, 16 * 8);
+
+				// Merge current and pose matrix
+				nglGetDoublev(GL_MODELVIEW_MATRIX, buffer);
+				Matrix4f merged = new Matrix4f(new Matrix4d().setFromAddress(buffer));
+				pose.mul(merged, merged);
+
+				// Load merged matrix into OpenGL
+				merged.getToAddress(buffer);
+				nglLoadMatrixf(buffer);
 			}
 
 			// Actual render

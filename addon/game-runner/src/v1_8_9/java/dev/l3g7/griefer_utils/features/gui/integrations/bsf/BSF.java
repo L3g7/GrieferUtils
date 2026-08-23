@@ -25,6 +25,7 @@ import dev.l3g7.griefer_utils.features.gui.integrations.bsf.gui.GuiBSF;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
@@ -49,8 +50,10 @@ public class BSF extends Feature {
 		.icon("region_map")
 		.description("Ermöglicht das Suchen von Biomen und Strukturen in der Farmwelt.")
 		.subSettings(setting, HeaderSetting.create(),
-			HeaderSetting.create("Das Gui lässt sich auch mit /bss öffnen.")
-				.center());
+			LABY_3.isActive()
+				? HeaderSetting.create("Das GUI lässt sich auch mit /bss öffnen.")
+				: CategorySetting.create().name("Das GUI lässt sich auch mit /bss öffnen.").icon("lectern")
+		);
 
 	public static String getCurrentCBString() {
 		return (isInGlitchwelt() ? "g" : "") + Citybuild.current().getInternalName();

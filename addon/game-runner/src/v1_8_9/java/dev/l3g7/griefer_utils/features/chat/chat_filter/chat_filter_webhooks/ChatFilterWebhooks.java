@@ -38,7 +38,7 @@ import static java.lang.Thread.MIN_PRIORITY;
 public class ChatFilterWebhooks extends Feature {
 
 	public static final Pattern HOOK_URL_PATTERN = Pattern.compile("^https://(?:\\w+\\.)?discord(?:app)?\\.com/api/webhooks/(\\d{18}\\d?/[\\w-]{68})$");
-	private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor(new ThreadFactory("GrieferUtils ChatFilter Webhook", MIN_PRIORITY));
+	private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor(new ThreadFactory("GrieferUtils ChatFilter Webhook", MIN_PRIORITY, false));
 	private static final JsonObject EMBED_FOOTER = new JsonObject();
 
 	static {

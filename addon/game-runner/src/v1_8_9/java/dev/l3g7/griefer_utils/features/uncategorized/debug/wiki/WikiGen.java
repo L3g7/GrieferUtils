@@ -26,11 +26,10 @@ import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.features.widgets.Widget;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CitybuildSettingImpl;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.types.list.WrappingListSetting;
 import net.labymod.api.client.gui.icon.Icon;
 import net.minecraft.item.ItemStack;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -90,6 +89,10 @@ public class WikiGen {
 			type = "category";
 		else
 			type = "setting";
+
+		if (setting instanceof WrappingListSetting<?>) {
+			setting = Reflection.get(setting, "inner");
+		}
 
 		JsonObject obj = new JsonObject();
 		obj.addProperty("name", setting.getStorage().name);

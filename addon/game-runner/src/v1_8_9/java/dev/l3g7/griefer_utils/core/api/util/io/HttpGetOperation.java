@@ -6,7 +6,9 @@ import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Result;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * A wrapper class for reading the contents of a URL using HTTP GET.

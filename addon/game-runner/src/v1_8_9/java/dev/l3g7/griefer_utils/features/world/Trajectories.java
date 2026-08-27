@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static dev.l3g7.griefer_utils.core.util.render.GlEngine.pos;
 import static dev.l3g7.griefer_utils.core.util.render.GlEngine.*;
+import static dev.l3g7.griefer_utils.core.util.render.GlEngine.pos;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static net.minecraft.block.material.Material.water;

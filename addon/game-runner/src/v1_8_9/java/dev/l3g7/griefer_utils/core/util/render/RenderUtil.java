@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.pos;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.pos;
 import static dev.l3g7.griefer_utils.core.util.render.GlEngine.*;
 import static net.minecraft.util.EnumFacing.*;
 import static org.lwjgl.opengl.GL11.*;

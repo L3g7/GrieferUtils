@@ -9,10 +9,8 @@ package dev.l3g7.griefer_utils.core.api.file_provider.meta;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodNode;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 

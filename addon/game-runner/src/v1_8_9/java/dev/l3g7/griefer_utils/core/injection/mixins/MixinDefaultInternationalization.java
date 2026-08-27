@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.core.injection.mixins;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import net.labymod.core.localization.DefaultInternationalization;
 import org.spongepowered.asm.mixin.Mixin;

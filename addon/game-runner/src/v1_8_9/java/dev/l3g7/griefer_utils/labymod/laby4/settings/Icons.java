@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;

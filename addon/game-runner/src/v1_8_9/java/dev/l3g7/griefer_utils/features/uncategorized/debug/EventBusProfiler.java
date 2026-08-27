@@ -12,8 +12,6 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventProfiler;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

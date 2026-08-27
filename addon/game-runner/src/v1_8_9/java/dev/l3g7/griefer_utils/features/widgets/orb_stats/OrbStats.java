@@ -51,7 +51,6 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ORB_SELL_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.renderPos;
 
 @Singleton
 public class OrbStats extends SimpleWidget {

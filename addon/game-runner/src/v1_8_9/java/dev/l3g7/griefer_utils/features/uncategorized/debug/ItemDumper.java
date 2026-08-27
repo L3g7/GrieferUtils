@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.features.uncategorized.debug;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 

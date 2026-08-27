@@ -9,8 +9,8 @@ package dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.token_providers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.Authorization;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.Authorization;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

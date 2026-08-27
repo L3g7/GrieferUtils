@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.features.world.building.better_schematica;
 import com.github.lunatrius.core.client.renderer.GeometryTessellator;
 import com.github.lunatrius.schematica.api.ISchematic;
 import com.github.lunatrius.schematica.client.renderer.RenderSchematic;
-import com.github.lunatrius.schematica.client.renderer.chunk.overlay.RenderOverlay;
 import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
@@ -27,9 +26,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IWorldAccess;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.ArrayList;
 import java.util.HashMap;

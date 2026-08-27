@@ -16,7 +16,6 @@ import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityPainting;
-import net.minecraft.init.Items;
 import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.world.chunk.Chunk;
 

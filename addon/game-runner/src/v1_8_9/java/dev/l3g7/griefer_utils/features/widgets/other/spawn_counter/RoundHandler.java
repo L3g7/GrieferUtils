@@ -27,7 +27,8 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 import static net.minecraft.util.EnumFacing.*;
 
 class RoundHandler {

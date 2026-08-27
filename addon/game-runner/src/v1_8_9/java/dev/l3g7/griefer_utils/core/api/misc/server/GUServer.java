@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.core.api.misc.server;
 
 import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest;
@@ -25,6 +24,7 @@ import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerJoinEvent;
+import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 

@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.thread.ThreadDumper;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.wiki.EnchantmentRenderer;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.wiki.WikiGen;
-import net.minecraft.init.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;

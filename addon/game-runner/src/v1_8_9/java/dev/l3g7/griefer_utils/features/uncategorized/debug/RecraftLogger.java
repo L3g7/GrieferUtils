@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import net.minecraft.init.Blocks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

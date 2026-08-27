@@ -24,7 +24,6 @@ import net.labymod.ingamegui.ModuleConfigElement;
 import net.labymod.main.LabyMod;
 
 import java.nio.ByteBuffer;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;

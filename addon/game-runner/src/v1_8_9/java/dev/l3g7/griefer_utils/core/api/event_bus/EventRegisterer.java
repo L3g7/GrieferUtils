@@ -11,12 +11,13 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
+import dev.l3g7.griefer_utils.core.api.reflection.Access;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.util.LambdaUtil;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 import org.objectweb.asm.Type;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -98,16 +99,17 @@ public class EventRegisterer {
 			if (!Modifier.isStatic(method.getModifiers()) && method.isAnnotationPresent(EventListener.class)) {
 				checkMethodParameters(new MethodMeta(new ClassMeta(clazz), method));
 
-				Consumer<Event> callback = LambdaUtil.createFunctionalInterface(Consumer.class, method, object);
-				WeakReference<Consumer<Event>> ref = new WeakReference<>(callback);
+				WeakReference<Object> ref = new WeakReference<>(object);
+
+				MethodHandle handle = Util.tryFatal(() -> Access.getElevatedLookup().unreflect(method));
 
 				EventBus.registerMethod(ref, method, event -> {
-					Consumer<Event> owner = ref.get();
+					Object owner = ref.get();
 					if (owner == null) {
 						// GCed, unregister
 						EventBus.events.get(event.getClass()).removeEventsOf(ref);
 					} else {
-						owner.accept(event);
+						handle.invoke(owner, event);
 					}
 				});
 			}

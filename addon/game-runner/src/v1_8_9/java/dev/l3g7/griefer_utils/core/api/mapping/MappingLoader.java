@@ -24,7 +24,7 @@ public class MappingLoader {
 	private static final String ZIP_MAPPINGS_HASH = "iJtxxul6dUe9f4mYzZdRyKcyEcn8v8vDISnlG+lWfqg=";
 	private static final String MAPPINGS_HASH = "JMqZhVdaZJrghxBHoriSMSwmGRU6z3U+QufZlid+8FM=";
 
-	static void loadMappings(Path assetsDir) {
+	static void loadMappings(Path assetsDir, boolean registerPostProcessor) {
 		Path zipMappings = assetsDir.resolve("griefer_utils/mappings/pymdk-1.8.9.json.xz");
 		Path mappings = assetsDir.resolve("griefer_utils/mappings/pymdk-1.8.9.json");
 
@@ -44,7 +44,7 @@ public class MappingLoader {
 			throw Util.elevate(e);
 		}
 
-		if (!"true".equals(System.getProperty("griefer_utils.preprocessing", "false"))) {
+		if (registerPostProcessor) {
 			LatePostProcessor.mappingTransformer = (name, transformedName, classBytes) -> FastMapper.mapClass(classBytes).getData();
 			LatePostProcessor.processors.add(0, new MixinShadowRemapper());
 		}

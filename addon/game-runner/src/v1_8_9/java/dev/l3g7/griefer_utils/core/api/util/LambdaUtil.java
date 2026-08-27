@@ -17,12 +17,11 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static java.lang.invoke.MethodType.methodType;
 
 public class LambdaUtil {
-
-	private static final Lookup globalLookup = MethodHandles.lookup();
 
 	/**
 	 * Creates a functional interface targeting the given method.
@@ -37,12 +36,20 @@ public class LambdaUtil {
 
 			implementation.setAccessible(true);
 
+			// Create lookup searching in target
+			Lookup lookup;
+			if (LABY_4.isActive()) {
+				lookup = MethodHandles.privateLookupIn(implementation.getDeclaringClass(), Access.getElevatedLookup());
+			} else {
+				lookup = Access.getElevatedLookup().in(implementation.getDeclaringClass());
+			}
+
 			// Create generator
 			MethodType generatorType = isStatic
 				? methodType(functionalInterface)
 				: methodType(functionalInterface, implementation.getDeclaringClass());
 
-			MethodHandle handle = createGenerator(implementation, Access.getElevatedLookup(), generatorType, functionalInterface);
+			MethodHandle handle = createGenerator(implementation, lookup, generatorType, functionalInterface);
 
 			// Create interface
 			return c(isStatic ? handle.invoke() : handle.invoke(instance));

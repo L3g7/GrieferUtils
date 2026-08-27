@@ -70,7 +70,7 @@ public class BuildPostProcessor {
 
 			processBootstrapClasses();
 
-			Mapper.loadMappings(Paths.get("./build"));
+			Mapper.loadMappings(Paths.get("./build"), false);
 			RefmapGenerator.generateRefmap(fs);
 
 //			AssetsChecker.validateAssets(fs);

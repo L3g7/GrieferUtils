@@ -24,9 +24,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 public class Entrypoint implements AutoUpdater.Entrypoint {
 
 	public void start() {
-		// Ensure addon version is up-to-date
-		JsonObject addonJson = IO.read(FileProvider.getData("addon.json")).asJsonObject();
-		Reflection.set(Laby.labyAPI().addonService().getAddon(Main.class).orElseThrow().info(), "version", addonJson.get("version").getAsString());
+		Bridge.Initializer.init(LABY_4);
 
 		// Load and inject libraries
 
@@ -56,9 +54,11 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		);
 
 		// Load mappings for automatic name resolution in Reflection
-		Mapper.loadMappings(Launch.assetsDir.toPath());
+		Mapper.loadMappings(Launch.assetsDir.toPath(), false);
 
-		Bridge.Initializer.init(LABY_4);
+		// Ensure addon version is up-to-date
+		JsonObject addonJson = IO.read(FileProvider.getData("addon.json")).asJsonObject();
+		Reflection.set(Laby.labyAPI().addonService().getAddon(Main.class).orElseThrow().info(), "version", addonJson.get("version").getAsString());
 
 		// Load injector
 		InjectorBase.inject();

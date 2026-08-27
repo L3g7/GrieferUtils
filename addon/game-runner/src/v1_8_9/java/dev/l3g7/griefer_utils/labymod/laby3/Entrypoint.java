@@ -76,7 +76,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		);
 
 		// Load mappings for automatic name resolution in Reflection
-		Mapper.loadMappings(Launch.assetsDir.toPath());
+		Mapper.loadMappings(Launch.assetsDir.toPath(), true);
 
 		Bridge.Initializer.init(LABY_3);
 

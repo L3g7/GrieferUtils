@@ -15,10 +15,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.AccessDeniedException;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.last;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
@@ -92,8 +89,8 @@ public class Config {
 	private static final Object SAVE_LOCK = new Object();
 	private static final DebounceTimer debounceTimer = new DebounceTimer("Config", 1000);
 	// .minecraft/config/GrieferUtils.json
-	protected static final Path configFile = Path.of("config", "GrieferUtils.json");
-	private static final Path newConfigFile = Path.of("config", "GrieferUtils-new.json");
+	protected static final Path configFile = Paths.get("config", "GrieferUtils.json");
+	private static final Path newConfigFile = Paths.get("config", "GrieferUtils-new.json");
 	private static int hash = 0;
 	private static JsonObject config = null;
 

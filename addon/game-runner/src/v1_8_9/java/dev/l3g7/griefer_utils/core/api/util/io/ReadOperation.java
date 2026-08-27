@@ -140,7 +140,7 @@ public abstract class ReadOperation {
 	 */
 	public <T> Result<@NotNull T> tryAsJson(TypeToken<T> type) {
 		return Result.tryGet(this::parseJsonSync)
-			.map(v -> IO.GSON.fromJson(v, type));
+			.map(v -> IO.GSON.fromJson(v, type.getType()));
 	}
 
 	/**

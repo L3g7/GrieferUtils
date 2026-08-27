@@ -25,6 +25,7 @@ import net.labymod.main.LabyMod;
 
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -108,7 +109,7 @@ public class ConfigPatcher {
 			rename("modules.spawn_counter", "rounds_flown", "rounds_flown");
 			rename("modules", "orb_potion_timer", "potion_timer");
 
-			Result<JsonObject> optional = IO.read(Path.of("LabyMod/modules.json")).tryAsJsonObject();
+			Result<JsonObject> optional = IO.read(Paths.get("LabyMod/modules.json")).tryAsJsonObject();
 			if (optional.isOk()) {
 				JsonObject modules = optional.unwrap().getAsJsonObject("modules");
 

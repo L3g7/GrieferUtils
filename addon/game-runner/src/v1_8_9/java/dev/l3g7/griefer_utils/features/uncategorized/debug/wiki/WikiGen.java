@@ -155,7 +155,7 @@ public class WikiGen {
 			var setting = FileProvider.getSingleton(Settings.class).getMainElement();
 			result.add("§yEinstellungen", serialize("settings", setting));
 
-			Path path = Path.of("GrieferUtils", "auto_dump.json");
+			Path path = Paths.get("GrieferUtils", "auto_dump.json");
 			Files.createDirectories(path.getParent());
 			IO.write(path).json(result);
 

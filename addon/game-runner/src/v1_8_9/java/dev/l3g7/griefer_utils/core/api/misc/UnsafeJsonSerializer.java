@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
+import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
 
 public class UnsafeJsonSerializer {
 

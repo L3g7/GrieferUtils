@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.util;
 
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.api.reflection.Access;
 
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
@@ -17,7 +17,6 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static java.lang.invoke.MethodType.methodType;
 
@@ -38,21 +37,12 @@ public class LambdaUtil {
 
 			implementation.setAccessible(true);
 
-			// Create lookup searching in target
-			Lookup lookup;
-			if (LABY_4.isActive()) {
-				lookup = MethodHandles.privateLookupIn(implementation.getDeclaringClass(), globalLookup);
-			} else {
-				Reflection.set(globalLookup, "allowedModes", -1);
-				lookup = globalLookup.in(implementation.getDeclaringClass());
-			}
-
 			// Create generator
 			MethodType generatorType = isStatic
 				? methodType(functionalInterface)
 				: methodType(functionalInterface, implementation.getDeclaringClass());
 
-			MethodHandle handle = createGenerator(implementation, lookup, generatorType, functionalInterface);
+			MethodHandle handle = createGenerator(implementation, Access.getElevatedLookup(), generatorType, functionalInterface);
 
 			// Create interface
 			return c(isStatic ? handle.invoke() : handle.invoke(instance));

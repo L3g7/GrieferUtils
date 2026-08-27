@@ -32,6 +32,7 @@ public class Laby3ResourceFix {
 
 	@OnEnable
 	public static void fix() throws UnsupportedEncodingException {
+		System.out.println("Fixing :D");
 		List<IResourcePack> defaultResourcePacks = Reflection.get(Minecraft.getMinecraft(), "defaultResourcePacks");
 
 		String jarPath = Laby3ResourceFix.class.getProtectionDomain().getCodeSource().getLocation().getFile();

@@ -13,19 +13,24 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * A collection of transformers allowing the use of GrieferUtils created using the LabyMod 4 SDK in
  * LabyMod 3 by post-processing classes if loaded in LabyMod 3.
  */
 public class LatePostProcessor implements IClassTransformer {
 
-	private static final Processor[] processors = new Processor[]{
+	public static IClassTransformer mappingTransformer = null;
+	public static final List<Processor> processors = new ArrayList<>(Arrays.asList(
 		new StringConcatShim(),
 		new SwitchDowngrader(),
 		new AccessElevator(),
 		new MixinLibSwapper(),
 		new SuperclassRemapper()
-	};
+	));
 
 	private String transformedClass;
 
@@ -46,11 +51,17 @@ public class LatePostProcessor implements IClassTransformer {
 			processor.reset();
 		}
 
-		if (!modified)
+		if (!modified) {
+			if (mappingTransformer != null)
+				classBytes = mappingTransformer.transform(name, transformedName, classBytes);
 			return classBytes;
+		}
 
 		ClassWriter writer = new BoundClassWriter();
 		classNode.accept(writer);
+
+		if (mappingTransformer != null)
+			return mappingTransformer.transform(name, transformedName, writer.toByteArray());
 		return writer.toByteArray();
 	}
 

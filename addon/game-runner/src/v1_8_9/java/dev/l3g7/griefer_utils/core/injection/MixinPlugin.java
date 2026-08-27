@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -20,11 +21,10 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 
@@ -54,6 +54,20 @@ public class MixinPlugin implements IMixinConfigPlugin {
 				if (!version.isActive())
 					continue;
 			}
+
+//			if (Version.LABY_3.isActive()) {
+//				Object value = meta.getAnnotation(Mixin.class).getValue("value", false);
+//				Stream<String> mixinTargets = value instanceof ArrayList<?> list
+//					? list.stream().map(o -> ((Type) o).getClassName())
+//					: Arrays.stream(((Class<?>[]) value)).map(Class::getName);
+//
+//				for (String mixinTarget : mixinTargets.collect(Collectors.toSet())) {
+//					// Only add mixin if the target exists, as some mixins target classes that might be missing (e.g. EmoteChat)
+//					if (!Reflection.exists(mixinTarget)) {
+//						continue classFinder;
+//					}
+//				}
+//			}
 
 			classes.add(meta.toString().substring("dev/l3g7/".length()));
 

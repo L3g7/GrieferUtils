@@ -49,7 +49,7 @@ public class ChatMessageLogEvent extends Event {
 	@Mixin(value = GuiChatAdapter.class, remap = false)
 	private static class MixinGuiChatAdapter {
 
-		@Redirect(method = "setChatLine", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V"))
+		@Redirect(method = "setChatLine(Lnet/minecraft/util/IChatComponent;IIZZLjava/lang/String;Ljava/lang/Integer;)V", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V"))
 		public void log(Logger logger, String message) {
 			tryLogging(logger, message);
 		}

@@ -38,12 +38,14 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 public class Entrypoint implements AutoUpdater.Entrypoint {
 
 	public void start() {
-		Bridge.Initializer.init(LABY_3);
-
-		// Load mcp mappings for automatic name resolution in Reflection
-		Mapper.loadMappings("1.8.9", "22");
-
 		// Load and inject libraries
+
+		// PyMDK Mapper: For mapping reflection calls to Minecraft
+		LibLoader.loadLibrary(
+			"https://maven.pymdk.dev",
+			"dev/pymdk", "mapper", "2.0.0",
+			"aGbN+dpnJT22kInOQfMei369v4La9yp9ZEe/TQGxpXc="
+		);
 
 		// mXparser: for evaluating expressions (Calculator)
 		LibLoader.loadLibrary(
@@ -72,6 +74,11 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 			"com/mojang", "brigadier", "1.0.18",
 			"7cSSaqS0kBD256xG79Yj+zj5UXNE0m9iUdeaJqlzjAs="
 		);
+
+		// Load mappings for automatic name resolution in Reflection
+		Mapper.loadMappings(Launch.assetsDir.toPath());
+
+		Bridge.Initializer.init(LABY_3);
 
 		// Sets LabyMod's mapping adapter
 		// It's usually set in the MinecraftVisitor, but since Mixin changes the transformer order (i think),

@@ -24,7 +24,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.*;
+import static dev.pymdk.mapper.Mapping.*;
 import static org.objectweb.asm.Type.*;
 
 /**
@@ -70,32 +70,25 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 			for (AbstractInsnNode node : method.instructions) {
 				// Map method invocations
 				if (node instanceof MethodInsnNode methodInsn) {
-					for (String minecraftClass : minecraftClasses) {
-						String mappedName;
-						if (obfuscatedClasses)
-							mappedName = Mapper.mapMethodName(minecraftClass, methodInsn.name, deobfuscateDesc(methodInsn.desc), UNOBFUSCATED, OBFUSCATED);
-						else
-							mappedName = Mapper.mapMethodName(minecraftClass, methodInsn.name, methodInsn.desc, UNOBFUSCATED, SEARGE);
-						if (methodInsn.name.equals(mappedName))
-							continue;
+					String owner = methodInsn.owner.equals(classNode.name) ? classNode.superName : methodInsn.owner;
+					String mappedDesc = obfuscatedClasses ? deobfuscateDesc(methodInsn.desc) : methodInsn.desc;
+					String mappedName = Mapper.mapMethodName(owner, methodInsn.name, mappedDesc, UNOBFUSCATED, INTERMEDIARY);
+					if (methodInsn.name.equals(mappedName))
+						continue;
 
-						methodInsn.name = mappedName;
-						setModified();
-						break;
-					}
+					methodInsn.name = mappedName;
+					setModified();
 				}
 
 				// Map field accesses
 				else if (node instanceof FieldInsnNode field) {
-					for (String minecraftClass : minecraftClasses) {
-						String mappedName = Mapper.mapField(minecraftClass, field.name, UNOBFUSCATED, obfuscatedClasses ? OBFUSCATED : SEARGE);
-						if (field.name.equals(mappedName))
-							continue;
+					String owner = field.owner.equals(classNode.name) ? classNode.superName : field.owner;
+					String mappedName = Mapper.mapField(owner, field.name, UNOBFUSCATED, obfuscatedClasses ? OBFUSCATED : INTERMEDIARY);
+					if (field.name.equals(mappedName))
+						continue;
 
-						field.name = mappedName;
-						setModified();
-						break;
-					}
+					field.name = mappedName;
+					setModified();
 				}
 			}
 
@@ -105,7 +98,7 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 				if (obfuscatedClasses)
 					mappedName = Mapper.mapMethodName(minecraftClass, method.name, deobfuscateDesc(method.desc), UNOBFUSCATED, OBFUSCATED);
 				else
-					mappedName = Mapper.mapMethodName(minecraftClass, method.name, method.desc, UNOBFUSCATED, SEARGE);
+					mappedName = Mapper.mapMethodName(minecraftClass, method.name, method.desc, UNOBFUSCATED, INTERMEDIARY);
 				if (method.name.equals(mappedName))
 					continue;
 
@@ -115,8 +108,10 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 				int varIdx = 0;
 				bridge.instructions.add(new VarInsnNode(ALOAD, varIdx++));
 
-				for (Type type : Type.getArgumentTypes(method.desc))
-					bridge.instructions.add(new VarInsnNode(getLoadOpcode(type), varIdx++));
+				for (Type type : Type.getArgumentTypes(method.desc)) {
+					bridge.instructions.add(new VarInsnNode(getLoadOpcode(type), varIdx));
+					varIdx += type.getSize();
+				}
 
 				method.name = mappedName;
 				bridge.instructions.add(new MethodInsnNode(INVOKEVIRTUAL, classNode.name, method.name, method.desc, false));

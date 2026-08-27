@@ -10,12 +10,13 @@ package dev.l3g7.griefer_utils.post_processor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.Init;
 import dev.l3g7.griefer_utils.post_processor.processors.build.RecordConverter;
-import dev.l3g7.griefer_utils.post_processor.processors.build.RefmapConverter;
+import dev.l3g7.griefer_utils.post_processor.processors.build.RefmapGenerator;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -24,10 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -69,13 +67,16 @@ public class BuildPostProcessor {
 		try (FileSystem fs = FileSystems.newFileSystem(newJar.toPath())) {
 			BuildPostProcessor.fs = fs;
 			mergeAddonJson();
-			/*
+
 			processBootstrapClasses();
-			RefmapConverter.convertRefmap(fs);
-			AssetsChecker.validateAssets(fs);
+
+			Mapper.loadMappings(Paths.get("./build"));
+			RefmapGenerator.generateRefmap(fs);
+
+//			AssetsChecker.validateAssets(fs);
 			convertRecords();
-			 */
-			cleanup();
+
+//			cleanup();
 		}
 	}
 
@@ -153,11 +154,11 @@ public class BuildPostProcessor {
 		// delete(fs.getPath("fernflower_abstract_parameter_names.txt"));
 
 		// delete build post processors
-		delete(pathOf(RefmapConverter.class).getParent());
+		delete(pathOf(RefmapGenerator.class).getParent());
 		delete(pathOf(BuildPostProcessor.class));
 
 		// mark other build artifacts to emphasize processed jar file
-		empty(Path.of("build/libs/GrieferUtils-release.jar"));
+		empty(Paths.get("build/libs/GrieferUtils-release.jar"));
 	}
 
 	private static void delete(Path path) {

@@ -68,6 +68,21 @@ public class AnnotationMeta implements Opcodes {
 			return c(type = FileProvider.getClassMetaByDesc(desc).load());
 	}
 
+	public <T> T getRawValue(String key) {
+		Object value = values.get(key);
+		if (value == null)
+			return null;
+
+		if (value instanceof List<?> list) {
+			if (list.size() != 1)
+				throw new IllegalStateException("key: " + key + " is " + list);
+
+			return c(list.get(0));
+		}
+
+		return c(value);
+	}
+
 	/**
 	 * @return the defined or default value.
 	 */

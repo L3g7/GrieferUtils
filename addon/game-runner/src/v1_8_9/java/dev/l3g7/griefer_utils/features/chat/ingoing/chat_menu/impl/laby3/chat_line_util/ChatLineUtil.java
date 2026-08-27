@@ -97,20 +97,20 @@ public class ChatLineUtil {
 		@Unique
 		private IChatComponent grieferUtils$modifiedComponent;
 
-		@Inject(method = "setChatLine", at = @At("HEAD"))
+		@Inject(method = "setChatLine(Lnet/minecraft/util/IChatComponent;IIZZLjava/lang/String;Ljava/lang/Integer;)V", at = @At("HEAD"))
 		public void injectSetChatLineHead(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
 			grieferUtils$unmodifiedComponent = component;
 			grieferUtils$modifiedComponent = component;
 		}
 
-		@Redirect(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;tagComponent(Ljava/lang/Object;)Ljava/lang/Object;"))
+		@Redirect(method = "setChatLine(Lnet/minecraft/util/IChatComponent;IIZZLjava/lang/String;Ljava/lang/Integer;)V", at = @At(value = "INVOKE", target = "Lnet/labymod/utils/manager/TagManager;tagComponent(Ljava/lang/Object;)Ljava/lang/Object;"))
 		public Object injectSetChatLineTagComponent(Object a) {
 			IChatComponent modifiedComponent = (IChatComponent) TagManager.tagComponent(a);
 			grieferUtils$modifiedComponent = modifiedComponent;
 			return modifiedComponent;
 		}
 
-		@Redirect(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;addChatLine(Ljava/lang/String;ZLjava/lang/String;Ljava/lang/Object;IILjava/lang/Integer;Z)V"))
+		@Redirect(method = "setChatLine(Lnet/minecraft/util/IChatComponent;IIZZLjava/lang/String;Ljava/lang/Integer;)V", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;addChatLine(Ljava/lang/String;ZLjava/lang/String;Ljava/lang/Object;IILjava/lang/Integer;Z)V"))
 		public void redirectAddLine(ChatRenderer instance, String message, boolean secondChat, String room, Object component, int updateCounter, int chatLineId, Integer highlightColor, boolean refresh) {
 			IChatComponent unmodifiedComponent = unmodifiedChatComponents.remove(new ComponentHash(grieferUtils$unmodifiedComponent));
 			if (unmodifiedComponent == null)

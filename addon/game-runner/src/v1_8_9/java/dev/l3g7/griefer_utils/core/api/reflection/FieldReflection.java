@@ -16,9 +16,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
+import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
 
 /**
  * Field related reflection.

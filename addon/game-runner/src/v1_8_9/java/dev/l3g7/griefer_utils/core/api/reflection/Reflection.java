@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.reflection;
 
-import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
+import dev.pymdk.mapper.Mapping;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

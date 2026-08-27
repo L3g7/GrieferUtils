@@ -17,23 +17,25 @@ import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
 import net.labymod.api.Laby;
+import net.minecraft.launchwrapper.Launch;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
 public class Entrypoint implements AutoUpdater.Entrypoint {
 
 	public void start() {
-		Bridge.Initializer.init(LABY_4);
-
 		// Ensure addon version is up-to-date
 		JsonObject addonJson = IO.read(FileProvider.getData("addon.json")).asJsonObject();
 		Reflection.set(Laby.labyAPI().addonService().getAddon(Main.class).orElseThrow().info(), "version", addonJson.get("version").getAsString());
 
-		// Load mcp mappings for automatic name resolution in Reflection
-		Mapper.loadMappings("1.8.9", "22");
-
 		// Load and inject libraries
 
+		// PyMDK Mapper: For mapping reflection calls to Minecraft
+		LibLoader.loadLibrary(
+			"https://maven.pymdk.dev",
+			"dev/pymdk", "mapper", "2.0.0",
+			"aGbN+dpnJT22kInOQfMei369v4La9yp9ZEe/TQGxpXc="
+		);
 		// mXparser: for evaluating expressions (Calculator)
 		LibLoader.loadLibrary(
 			"https://repo1.maven.org/maven2",
@@ -52,6 +54,11 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 			"com/mojang", "brigadier", "1.0.18",
 			"7cSSaqS0kBD256xG79Yj+zj5UXNE0m9iUdeaJqlzjAs="
 		);
+
+		// Load mappings for automatic name resolution in Reflection
+		Mapper.loadMappings(Launch.assetsDir.toPath());
+
+		Bridge.Initializer.init(LABY_4);
 
 		// Load injector
 		InjectorBase.inject();

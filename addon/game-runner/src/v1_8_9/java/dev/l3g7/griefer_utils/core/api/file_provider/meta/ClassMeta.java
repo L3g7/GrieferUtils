@@ -32,6 +32,7 @@ public class ClassMeta implements IMeta {
 	public final List<String> interfaces;
 	public final int modifiers;
 	public final String signature;
+	public final List<FieldMeta> fields;
 	public final List<MethodMeta> methods;
 	public final List<AnnotationMeta> annotations;
 
@@ -55,6 +56,7 @@ public class ClassMeta implements IMeta {
 		this.interfaces = node.interfaces;
 		this.modifiers = node.access;
 		this.signature = node.signature;
+		this.fields = map(node.fields, f -> new FieldMeta(this, f));
 		this.methods = map(node.methods, m -> new MethodMeta(this, m));
 		this.annotations = node.visibleAnnotations == null ? new ArrayList<>() : map(node.visibleAnnotations, AnnotationMeta::new);
 		if (node.invisibleAnnotations != null)
@@ -75,6 +77,7 @@ public class ClassMeta implements IMeta {
 		this.interfaces = superClass == null ? Collections.emptyList() : Arrays.stream(superClass.getInterfaces()).map(Type::getInternalName).collect(Collectors.toList());
 		this.modifiers = clazz.getModifiers();
 		this.signature = null;
+		this.fields = map(clazz.getDeclaredFields(), f -> new FieldMeta(this, f));
 		this.methods = map(clazz.getDeclaredMethods(), m -> new MethodMeta(this, m));
 		this.annotations = map(clazz.getAnnotations(), AnnotationMeta::new);
 

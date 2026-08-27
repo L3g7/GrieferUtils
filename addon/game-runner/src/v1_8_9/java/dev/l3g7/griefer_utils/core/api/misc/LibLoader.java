@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.core.api.misc;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Access;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import net.minecraft.launchwrapper.Launch;
 import org.jetbrains.annotations.Nullable;
@@ -24,11 +23,8 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Base64;
 
+import static dev.l3g7.griefer_utils.core.api.util.CryptUtil.checkHashFail;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
@@ -37,12 +33,31 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public class LibLoader {
 
 	private static final ClassLoader launchClassLoaderParent = Util.staticInit(() -> {
-		Field field = Reflection.getField(Launch.classLoader.getClass(), "parent");
+		Field field = resolveField(Launch.classLoader, "parent");
 		if (field == null)
-			return Reflection.get(Launch.classLoader, "appClassLoader");
-		else
-			return Reflection.get(Launch.classLoader, "parent");
+			field = resolveField(Launch.classLoader, "appClassLoader");
+
+		return (ClassLoader) field.get(Launch.classLoader);
 	});
+
+	/**
+	 * Reflection.findField can't be used since it requires the LibLoader (Reflection -> Mapper -> MappingDownloder -> LibLoader)
+	 */
+	private static Field resolveField(Object target, String name) {
+		Class<?> currentClass = target instanceof Class<?> ? (Class<?>) target : target.getClass();
+
+		do {
+			try {
+				Field field = currentClass.getDeclaredField(name);
+				field.setAccessible(true);
+				return field;
+			} catch (NoSuchFieldException ignored) {
+				currentClass = currentClass.getSuperclass();
+			}
+		} while (currentClass != null);
+
+		return null;
+	}
 
 	/**
 	 * @param hash base64-encoded SHA256
@@ -86,7 +101,7 @@ public class LibLoader {
 		if (!Files.exists(libPath) || checkHashFail(libPath, hash)) {
 			// Download library
 			Files.createDirectories(libPath.getParent());
-			URLConnection c = URI.create(url).toURL().openConnection(); // TODO: Use IOUtil
+			URLConnection c = URI.create(url).toURL().openConnection();
 			c.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");
 			try (InputStream in = c.getInputStream()) {
 				Files.copy(in, libPath, REPLACE_EXISTING);
@@ -98,19 +113,6 @@ public class LibLoader {
 		}
 
 		return libPath;
-	}
-
-	/**
-	 * @param targetHash base64-encoded SHA256
-	 */
-	private static boolean checkHashFail(Path libPath, String targetHash) throws IOException {
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			byte[] fileHash = md.digest(Files.readAllBytes(libPath));
-			return !Arrays.equals(fileHash, Base64.getDecoder().decode(targetHash));
-		} catch (NoSuchAlgorithmException e) {
-			throw Util.elevate(e);
-		}
 	}
 
 }

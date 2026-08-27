@@ -42,7 +42,7 @@ public interface InjectorBase extends IClassTransformer {
 
 		// Load refmap
 		if (refmap != null)
-			Reflection.set(mixinConfig.getConfig(), "refMapperConfig", "refmaps/" + refmap + ".json");
+			Reflection.set(mixinConfig.getConfig(), "refMapperConfig", "assets/griefer_utils/refmap-" + refmap + ".json");
 
 		// Register mixins
 		Reflection.invoke(Mixins.class, "registerConfiguration", mixinConfig);

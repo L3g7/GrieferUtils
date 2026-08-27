@@ -7,58 +7,24 @@
 
 package dev.l3g7.griefer_utils.core.api.mapping;
 
-import com.google.gson.reflect.TypeToken;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
-import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedClass;
-import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedField;
-import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedList;
-import dev.l3g7.griefer_utils.core.api.mapping.MappingEntries.MappedMethod;
-import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.core.api.util.io.IO;
-import net.minecraft.launchwrapper.Launch;
+import dev.pymdk.mapper.Mapping;
+import dev.pymdk.mapper.impl.MappingEntries.MappedClass;
+import dev.pymdk.mapper.impl.MappingEntries.MappedField;
+import dev.pymdk.mapper.impl.MappingEntries.MappedMethod;
 import org.objectweb.asm.Type;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 
-import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.OBFUSCATED;
-import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.UNOBFUSCATED;
+import static dev.pymdk.mapper.Mapping.OBFUSCATED;
+import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
+import static dev.pymdk.mapper.impl.LowLevelMapper.classes;
 
 public class Mapper {
 
-	public static final MappedList<MappedClass> classes = new MappedList<>();
-
-	public static void loadMappings(String minecraftVersion, String mappingVersion) {
-		loadMappings(minecraftVersion, mappingVersion, Launch.assetsDir.toPath().resolve(String.format("griefer_utils/mappings/%s_stable_%s.json", minecraftVersion, mappingVersion)));
-	}
-
-	public static void loadMappings(String minecraftVersion, String mappingVersion, Path mappings) {
-		try {
-			Collection<MappedClass> mappedClasses;
-
-			if (Files.exists(mappings)) {
-				// Load mappings from file
-				mappedClasses = IO.read(mappings).asJson(new TypeToken<>() {});
-				if (mappedClasses.isEmpty()) {
-					// Probably invalid download, overwrite
-					mappedClasses = new MappingCreator().createMappings(minecraftVersion, mappingVersion);
-					IO.write(mappings).json(mappedClasses);
-				}
-			} else {
-				// Create and store mappings
-				mappedClasses = new MappingCreator().createMappings(minecraftVersion, mappingVersion);
-				IO.write(mappings).json(mappedClasses);
-			}
-
-			classes.addAll(mappedClasses);
-			classes.create();
-
-		} catch (IOException e) {
-			throw Util.elevate(e, "Could not load mappings!");
-		}
+	public static void loadMappings(Path assetsDir) {
+		MappingLoader.loadMappings(assetsDir);
 	}
 
 	public static boolean isObfuscated() {
@@ -90,7 +56,7 @@ public class Mapper {
 			return name;
 
 		// Map name and descriptor
-		MappedMethod method = mappedOwner.methods.get(name + desc, sourceMapping);
+		MappedMethod method = mappedOwner.getMethodRecursive(name + desc, sourceMapping);
 		if (method == null)
 			// Assume method does not need mapping
 			return name;
@@ -117,7 +83,7 @@ public class Mapper {
 			// Assume field does not need mapping as owner is not mapped
 			return name;
 
-		MappedField field = mappedOwner.fields.get(name, sourceMapping);
+		MappedField field = mappedOwner.getFieldRecursive(name, sourceMapping);
 		if (field == null)
 			// Assume field does not need mapping
 			return name;

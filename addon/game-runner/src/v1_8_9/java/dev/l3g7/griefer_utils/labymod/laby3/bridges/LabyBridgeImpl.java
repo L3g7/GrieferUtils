@@ -15,9 +15,9 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.mapping.Mapping;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
+import dev.pymdk.mapper.Mapping;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.main.LabyMod;
 
@@ -29,7 +29,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.api.mapping.Mapping.*;
+import static dev.pymdk.mapper.Mapping.*;
 
 @Bridge
 @Singleton
@@ -50,7 +50,7 @@ public class LabyBridgeImpl implements LabyBridge {
 
 	@Override
 	public Mapping activeMapping() {
-		return obfuscated() ? forge() ? SEARGE : OBFUSCATED : UNOBFUSCATED;
+		return obfuscated() ? forge() ? INTERMEDIARY : OBFUSCATED : UNOBFUSCATED;
 	}
 
 	@Override

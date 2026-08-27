@@ -10,10 +10,12 @@ package dev.l3g7.griefer_utils.post_processor;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.lang.reflect.Field;
 import java.util.AbstractList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Overwrites the class version of all classes to fix OW2 ASM parsing and handles invocation and
@@ -85,6 +87,10 @@ public class EarlyPostProcessor implements IClassTransformer {
 
 				// Fake modCount to avoid a ConcurrentModificationException
 				modCountField.set(transformers, modCount);
+
+				// Force rebuilding of MixinServiceLaunchWrapper's transformers
+				//noinspection deprecation
+				MixinEnvironment.getCurrentEnvironment().addTransformerExclusion(UUID.randomUUID().toString());
 				return true;
 			}
 		} catch (IllegalAccessException | NoSuchFieldException e) {

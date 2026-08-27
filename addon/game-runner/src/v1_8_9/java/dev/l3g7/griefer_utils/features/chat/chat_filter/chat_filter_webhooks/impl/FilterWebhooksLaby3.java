@@ -81,7 +81,7 @@ public class FilterWebhooksLaby3 {
 	@Mixin(value = GuiChatAdapter.class, remap = false)
 	private static class MixinGuiChatAdapter {
 
-		@Inject(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
+		@Inject(method = "setChatLine(Lnet/minecraft/util/IChatComponent;IIZZLjava/lang/String;Ljava/lang/Integer;)V", at = @At(value = "INVOKE", target = "Lnet/labymod/ingamechat/renderer/ChatRenderer;getVisualWidth()I"))
 		public void postChatLineInitEvent(IChatComponent component, int chatLineId, int updateCounter, boolean refresh, boolean secondChat, String room, Integer highlightColor, CallbackInfo ci) {
 			if (!refresh)
 				hookSetChatLine(component);

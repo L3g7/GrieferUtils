@@ -40,7 +40,9 @@ tasks.register("runBuildPostProcessor", JavaExec::class) {
 		var gameRunner = subprojects.first { p -> p.name == "game-runner" }
 		classpath(
 			gameRunner.layout.buildDirectory.get().toString() + "/classes/java/v1_8_9",
-			gameRunner.configurations["v1_8_9RuntimeClasspath"].resolve()
+			gameRunner.configurations["v1_8_9RuntimeClasspath"].resolve(),
+			gameRunner.configurations["runtimeClasspath"].resolve(),
+			fileTree("libs")
 		)
 	}
 

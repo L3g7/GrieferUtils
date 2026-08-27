@@ -39,7 +39,7 @@ public class Injector implements InjectorBase {
 		InjectorBase.class.getClassLoader().loadClass("dev.l3g7.griefer_utils.core.injection.MixinPlugin$1");
 
 		// Initialize injector
-		initMixin(null, "LabyMod-3");
+		initMixin(null, "labymod-3");
 
 		// Finalize mixin initialization
 		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
@@ -59,7 +59,8 @@ public class Injector implements InjectorBase {
 		Object classLoaderUtil = Reflection.get(classLoaderUtil0, "classLoaderUtil");
 		Reflection.set(classLoaderUtil, "cachedClasses", new ConcurrentHashMap<>());
 
-		Class<?> mixinEnv = Reflection.load("org.spongepowered.asm.mixin.MixinEnvironment");
+		// Prevent griefer_utils' transformer being excluded (I think to modify GrieferUtils' own classes)
+		Class<?> mixinEnv = Reflection.load("org.spongepowered.asm.mixin.MixinEnvironment"); // TODO: why???
 		Field excludeTransformersField = Reflection.getField(mixinEnv, "excludeTransformers");
 		Set<String> excludeTransformers = Reflection.get(mixinEnv, excludeTransformersField);
 

@@ -46,24 +46,6 @@ public class SaveSchematicaPosition {
 	private static SchematicWorld schematicWorld = null;
 	private static Vec3i position = null;
 
-	@Mixin(GuiSchematicControl.class)
-	public static class GuiSchematicControlMixin {
-
-		@Shadow
-		@SuppressWarnings("MixinAnnotationTarget")
-		protected List<GuiButton> buttonList;
-
-		@Inject(method = "func_73866_w_", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V"))
-		void injectInitGui(CallbackInfo ci) {
-			SaveSchematicaPosition.addGuiButton(buttonList, ((GuiSchematicControl) (Object) this));
-		}
-
-		@Inject(method = "func_146284_a", at = @At(value = "HEAD"))
-		void injectInitGuiHead(GuiButton guiButton, CallbackInfo ci) {
-			SaveSchematicaPosition.onActionPerformed(guiButton, ((GuiSchematicControl) (Object) this));
-		}
-	}
-
 	public static void addGuiButton(List<GuiButton> buttons, GuiScreen gui) {
 		if (!isSavePositionEnabled())
 			return;
@@ -92,28 +74,8 @@ public class SaveSchematicaPosition {
 		}
 	}
 
-	@Mixin(ClientProxy.class)
-	public static class ClientProxyMixin {
-		@Inject(method = "loadSchematic", at = @At(value = "INVOKE", target = "Lcom/github/lunatrius/schematica/client/world/SchematicWorld;<init>(Lcom/github/lunatrius/schematica/api/ISchematic;)V"))
-		void injectLoadSchematic(EntityPlayer player, File directory, String filename, CallbackInfoReturnable<Boolean> cir) {
-			onSchematicLoaded(directory, filename);
-		}
-	}
-
 	public static void onSchematicLoaded(File directory, String filename) {
 		loadedFile = new File(directory, filename);
-	}
-
-	@Mixin(SchematicFormat.class)
-	public static class SchematicFormatMixin {
-
-		@Redirect(method = "readFromFile(Ljava/io/File;)Lcom/github/lunatrius/schematica/api/ISchematic;", at = @At(value = "INVOKE", target = "Lcom/github/lunatrius/schematica/world/schematic/SchematicUtil;readTagCompoundFromFile(Ljava/io/File;)Lnet/minecraft/nbt/NBTTagCompound;"))
-		private static NBTTagCompound injectReadFromFile(File file) throws IOException {
-			NBTTagCompound result = SchematicUtil.readTagCompoundFromFile(file);
-			SaveSchematicaPosition.readFromNBT(result);
-			return result;
-		}
-
 	}
 
 	public static void readFromNBT(NBTTagCompound tag) {
@@ -137,14 +99,6 @@ public class SaveSchematicaPosition {
 		int y = posNbt.getInteger("y");
 		int z = posNbt.getInteger("z");
 		position = new Vec3i(x, y, z);
-	}
-
-	@Mixin(GuiSchematicLoad.class)
-	public static class GuiSchematicLoadMixin {
-		@Redirect(method = "loadSchematic", at = @At(value = "INVOKE", target = "Lcom/github/lunatrius/schematica/proxy/ClientProxy;moveSchematicToPlayer(Lcom/github/lunatrius/schematica/client/world/SchematicWorld;)V"))
-		void injectLoadSchematic(SchematicWorld world) {
-			SaveSchematicaPosition.setPositionAfterLoading(world);
-		}
 	}
 
 	public static void setPositionAfterLoading(SchematicWorld schematicWorld) {

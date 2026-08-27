@@ -73,12 +73,9 @@ public class HighlightSchematicaBlocks {
 		public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {}
 	};
 
-	@Mixin(RenderOverlay.class)
-	public static class RenderOverlayMixin {
-		@Redirect(method = "func_178581_b", at = @At(value = "INVOKE", target = "Lcom/github/lunatrius/core/client/renderer/GeometryTessellator;drawCuboid(Lnet/minecraft/client/renderer/WorldRenderer;Lnet/minecraft/util/BlockPos;II)V"))
-		void injectDrawCuboid(WorldRenderer worldRenderer, BlockPos pos, int sides, int argb) {
-			GeometryTessellator.drawCuboid(worldRenderer, pos, sides, isHoldingRequiredItem(pos) ? 0x7F00FF00 : argb);
-		}
+	@SuppressWarnings("unused")
+	public static void drawCuboid(WorldRenderer worldRenderer, BlockPos pos, int sides, int argb) {
+		GeometryTessellator.drawCuboid(worldRenderer, pos, sides, isHoldingRequiredItem(pos) ? 0x7F00FF00 : argb);
 	}
 
 	private static boolean isHoldingRequiredItem(BlockPos pos) {

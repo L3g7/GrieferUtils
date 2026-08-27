@@ -10,21 +10,32 @@ package dev.l3g7.griefer_utils.core.injection;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.injection.transformer.Transformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.transformer.Config;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
+import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 
 @Bridged
 public interface InjectorBase extends IClassTransformer {
 
 	AtomicReference<Config> mixinConfig = new AtomicReference<>(null);
+	Map<String, Transformer> transformers = new HashMap<>();
 
 	static void inject() {
 		Class<? extends InjectorBase> impl = FileProvider.getBridgeClass(InjectorBase.class);
@@ -49,6 +60,12 @@ public interface InjectorBase extends IClassTransformer {
 		if (labymodNamespace != null)
 			mixinConfig.getConfig().decorate("labymod-namespace", labymodNamespace);
 
+		// Load transformers
+		for (ClassMeta meta : FileProvider.getClassesWithSuperClass(Transformer.class)) {
+			Transformer transformer = Reflection.construct(meta.load());
+			transformers.put(transformer.getTarget(), transformer);
+		}
+
 		Reflection.setMappingTarget(LabyBridge.labyBridge.activeMapping());
 	}
 
@@ -59,7 +76,19 @@ public interface InjectorBase extends IClassTransformer {
 		else if (name.startsWith("de.emotechat.addon"))
 			Constants.EMOTECHAT = true;
 
-		return basicClass;
+		Transformer transformer = transformers.get(transformedName);
+		if (transformer == null)
+			return basicClass;
+
+		ClassNode classNode = new ClassNode();
+		ClassReader reader = new ClassReader(basicClass);
+		reader.accept(classNode, 0);
+
+		transformer.transform(classNode);
+
+		ClassWriter writer = new ClassWriter(COMPUTE_MAXS | COMPUTE_FRAMES);
+		classNode.accept(writer);
+		return writer.toByteArray();
 	}
 
 }

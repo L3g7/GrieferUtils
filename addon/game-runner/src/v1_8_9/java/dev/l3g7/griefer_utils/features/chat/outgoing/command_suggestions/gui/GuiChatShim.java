@@ -16,7 +16,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.CommandSuggestions;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.CommandDispatcher;
@@ -164,7 +163,6 @@ public class GuiChatShim {
 	@Mixin(GuiChatCustom.class)
 	public static class MixinGuiChatCustom {
 
-		@InheritedInvoke(GuiChat.class)
 		@Inject(method = "drawScreen", at = @At("HEAD"))
 		public void draw(CallbackInfo ci) {
 			GuiChatShim shim = ((ShimAccessor) this).grieferUtils$getShim();

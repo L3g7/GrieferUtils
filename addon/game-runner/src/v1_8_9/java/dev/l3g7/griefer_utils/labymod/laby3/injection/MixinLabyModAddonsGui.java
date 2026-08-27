@@ -8,14 +8,12 @@
 package dev.l3g7.griefer_utils.labymod.laby3.injection;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
-import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.MainPage;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.AddonElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,7 +40,6 @@ public class MixinLabyModAddonsGui {
 	@Shadow
 	private SettingsElement mouseOverElement;
 
-	@InheritedInvoke(GuiScreen.class)
 	@Inject(method = "actionPerformed", at = @At("HEAD"), remap = true)
 	private void injectActionPerformed(GuiButton button, CallbackInfo ci) {
 		if (button != buttonBack
@@ -55,7 +52,6 @@ public class MixinLabyModAddonsGui {
 		MainPage.filter.set(path.isEmpty() ? "" : MainPage.filter.get());
 	}
 
-	@InheritedInvoke(GuiScreen.class)
 	@Inject(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiButton;playPressSound(Lnet/minecraft/client/audio/SoundHandler;)V"), remap = true)
 	private void injectMouseClicked(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
 		if (mouseOverElement instanceof AbstractSetting<?, ?> baseSetting && baseSetting.since() != null && !baseSetting.since().bubbled())

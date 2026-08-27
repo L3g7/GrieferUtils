@@ -7,9 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.debug.suppress;
 
-import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.TimeoutException;
 import net.labymod.user.cosmetic.geometry.effect.effects.GeometryColor;
@@ -76,7 +74,6 @@ public class SuppressErrors {
 	@Mixin(NetworkManager.class)
 	private static class MixinNetworkManager {
 
-		@InheritedInvoke(ChannelHandlerAdapter.class)
 		@Inject(method = "exceptionCaught", at = @At("HEAD"))
 		public void onExceptionCaught(ChannelHandlerContext ctx, Throwable t, CallbackInfo ci) {
 			if (!(t instanceof TimeoutException) && t != null)

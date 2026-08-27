@@ -12,10 +12,9 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.UserSetGroupEvent;
-import dev.l3g7.griefer_utils.core.injection.InheritedInvoke;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.Gui;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.Gui;
 import net.labymod.core_implementation.mc18.gui.ModPlayerTabOverlay;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModSettings;
@@ -115,7 +114,6 @@ public class Laby3BadgeManager implements BadgeManager {
 			return LabyMod.getSettings().revealFamiliarUsers && instance.isFamiliar();
 		}
 
-		@InheritedInvoke(net.minecraft.client.gui.Gui.class)
 		@Redirect(method = "newTabOverlay", at = @At(value = "INVOKE", target = "Lnet/labymod/core_implementation/mc18/gui/ModPlayerTabOverlay;drawRect(IIIII)V", ordinal = 1), require = 1, remap = true)
 		private void redirectDrawRect(int left, int top, int right, int bottom, int color) {
 			this.grieferUtils$tablistPadding = left;

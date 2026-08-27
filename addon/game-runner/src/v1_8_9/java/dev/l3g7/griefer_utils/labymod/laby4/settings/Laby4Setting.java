@@ -8,6 +8,8 @@
 package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
 import com.google.gson.JsonElement;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
@@ -50,6 +52,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 @SuppressWarnings("unchecked")
@@ -316,6 +319,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		return newBadge;
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(value = ModsSettingWidget.class, remap = false)
 	class MixinSettingWidget {
 		@Shadow
@@ -331,6 +335,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		}
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(value = ModsTileWidget.class, remap = false)
 	class MixinModsTileWidget {
 

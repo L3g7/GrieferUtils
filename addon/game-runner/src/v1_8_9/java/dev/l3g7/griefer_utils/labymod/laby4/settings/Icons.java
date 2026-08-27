@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.labymod.laby4.settings;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
@@ -38,6 +40,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Function;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -161,6 +164,7 @@ public class Icons {
 		}
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(value = ScreenCanvas.class, remap = false)
 	private static abstract class ScreenCanvasMixin {
 
@@ -193,6 +197,7 @@ public class Icons {
 		}
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(value = DefaultComponentRendererBuilder.class, remap = false)
 	private static abstract class DefaultComponentRendererBuilderMixin {
 

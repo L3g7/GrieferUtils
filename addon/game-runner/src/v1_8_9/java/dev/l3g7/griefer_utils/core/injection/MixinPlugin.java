@@ -55,19 +55,19 @@ public class MixinPlugin implements IMixinConfigPlugin {
 					continue;
 			}
 
-//			if (Version.LABY_3.isActive()) {
-//				Object value = meta.getAnnotation(Mixin.class).getValue("value", false);
-//				Stream<String> mixinTargets = value instanceof ArrayList<?> list
-//					? list.stream().map(o -> ((Type) o).getClassName())
-//					: Arrays.stream(((Class<?>[]) value)).map(Class::getName);
-//
-//				for (String mixinTarget : mixinTargets.collect(Collectors.toSet())) {
-//					// Only add mixin if the target exists, as some mixins target classes that might be missing (e.g. EmoteChat)
-//					if (!Reflection.exists(mixinTarget)) {
-//						continue classFinder;
-//					}
-//				}
-//			}
+			if (Version.LABY_3.isActive()) {
+				Object value = meta.getAnnotation(Mixin.class).getValue("value", false);
+				Stream<String> mixinTargets = value instanceof ArrayList<?> list
+					? list.stream().map(o -> ((Type) o).getClassName())
+					: Arrays.stream(((Class<?>[]) value)).map(Class::getName);
+
+				for (String mixinTarget : mixinTargets.collect(Collectors.toSet())) {
+					// Only add mixin if the target exists, as some mixins target classes that might be missing (e.g. EmoteChat)
+					if (!Reflection.exists(mixinTarget)) {
+						continue classFinder;
+					}
+				}
+			}
 
 			classes.add(meta.toString().substring("dev/l3g7/".length()));
 

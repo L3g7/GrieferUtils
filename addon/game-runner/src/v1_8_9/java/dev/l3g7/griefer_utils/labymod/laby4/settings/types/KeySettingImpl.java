@@ -10,6 +10,8 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
@@ -36,6 +38,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
 public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>> implements KeySetting {
 
@@ -128,6 +132,7 @@ public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>
 		return i < 0 ? MouseButton.get(-i) : Key.get(i);
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(value = MultiKeybindWidget.class,  remap = false)
 	private static abstract class MixinMultiKeybindWidget {
 

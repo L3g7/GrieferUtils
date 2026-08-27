@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
@@ -28,6 +30,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.lang.reflect.Method;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge.DEFAULT_BADGE;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
 
@@ -75,6 +78,7 @@ public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
 		createGroupComponent.setAccessible(true);
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(value = DefaultGameUserSnapshot.class, remap = false)
 	public interface DefaultGameUserSnapshotAccessor {
 		@Invoker("isFriend")

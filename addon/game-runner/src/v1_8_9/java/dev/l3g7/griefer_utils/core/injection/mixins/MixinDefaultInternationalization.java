@@ -7,12 +7,17 @@
 
 package dev.l3g7.griefer_utils.core.injection.mixins;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import net.labymod.core.localization.DefaultInternationalization;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+
+@ExclusiveTo(LABY_4)
 @Mixin(value = DefaultInternationalization.class, remap = false)
 public class MixinDefaultInternationalization {
 

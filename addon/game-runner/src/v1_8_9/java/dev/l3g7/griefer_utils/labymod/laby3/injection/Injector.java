@@ -59,8 +59,8 @@ public class Injector implements InjectorBase {
 		Object classLoaderUtil = Reflection.get(classLoaderUtil0, "classLoaderUtil");
 		Reflection.set(classLoaderUtil, "cachedClasses", new ConcurrentHashMap<>());
 
-		// Prevent griefer_utils' transformer being excluded (I think to modify GrieferUtils' own classes)
-		Class<?> mixinEnv = Reflection.load("org.spongepowered.asm.mixin.MixinEnvironment"); // TODO: why???
+		// Prevent griefer_utils' transformer from being excluded
+		Class<?> mixinEnv = Reflection.load("org.spongepowered.asm.mixin.MixinEnvironment");
 		Field excludeTransformersField = Reflection.getField(mixinEnv, "excludeTransformers");
 		Set<String> excludeTransformers = Reflection.get(mixinEnv, excludeTransformersField);
 

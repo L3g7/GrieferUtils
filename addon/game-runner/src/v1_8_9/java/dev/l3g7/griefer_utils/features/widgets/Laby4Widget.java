@@ -232,6 +232,7 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 		void grieferUtils$setTextLine(CustomRenderTextLine line);
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(value = RenderableComponent.class, remap = false)
 	private static class RenderableComponentMixin implements RenderableComponentAccessor {
 		@Unique

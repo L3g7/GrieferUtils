@@ -144,6 +144,7 @@ public class ChatFilterTemplatesLaby4 {
 			activity.reload();
 	}
 
+	@ExclusiveTo(LABY_4)
 	@Mixin(SettingContentActivity.class)
 	public static class SettingContentActivityMixin {
 

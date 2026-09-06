@@ -22,6 +22,7 @@ import net.labymod.api.client.gui.screen.widget.widgets.renderer.ScreenRendererW
 import net.labymod.api.event.Event;
 import net.labymod.api.event.LabyEvent;
 import net.labymod.api.event.method.SubscribeMethod;
+import net.labymod.api.event.method.SubscribeMethodFlags;
 import net.labymod.api.models.addon.info.InstalledAddonInfo;
 import net.labymod.core.addon.AddonClassLoader;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
@@ -95,6 +96,7 @@ public class Laby4Util {
 		private final AddonClassLoader classLoader;
 		private final Class<T> event;
 		private final Consumer<T> callback;
+		private int flags = SubscribeMethodFlags.BACKGROUND;
 
 		public CallbackSubscribeMethod(Class<T> event, Consumer<T> callback) {
 			this.annotation = event.getAnnotation(LabyEvent.class);
@@ -103,29 +105,35 @@ public class Laby4Util {
 			this.callback = callback;
 		}
 
-		public void invoke(Event event) {
+		@Override public int flags() {return flags;}
+
+		@Override public void markReplayDelivered() {
+			flags |= SubscribeMethodFlags.REPLAY_DELIVERED;
+		}
+
+		@Override public void invoke(Event event) {
 			callback.accept(c(event));
 		}
 
-		public @Nullable InstalledAddonInfo getAddon() {
+		@Override public @Nullable InstalledAddonInfo addon() {
 			return Main.getAddon().info();
 		}
 
-		public @Nullable ClassLoader getClassLoader() {return classLoader;}
+		@Override public @Nullable ClassLoader classLoader() {return classLoader;}
 
-		public @Nullable Object getListener() {return null;}
+		@Override public @Nullable Object listener() {return null;}
 
-		public byte getPriority() {return 127;}
+		@Override public byte priority() {return 127;}
 
-		public @Nullable Method getMethod() {return null;}
+		@Override public @Nullable Method method() {return null;}
 
-		public @NotNull Class<?> getEventType() {return event;}
+		@Override public @NotNull Class<?> eventType() {return event;}
 
-		public @Nullable LabyEvent getLabyEvent() {return annotation;}
+		@Override public @Nullable LabyEvent labyEvent() {return annotation;}
 
-		public boolean isInClassLoader(ClassLoader other) {return true;}
+		@Override public boolean isInClassLoader(ClassLoader other) {return true;}
 
-		public SubscribeMethod copy(Object newListener) {
+		@Override public SubscribeMethod copy(Object newListener) {
 			return new CallbackSubscribeMethod<>(event, callback);
 		}
 	}

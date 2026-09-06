@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.gui.griefer_games.better_hopper;
 
+import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -27,6 +28,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -158,8 +160,13 @@ class BetterHopperVisualisation implements Disableable {
 
 			String blockPos = line.substring("§7Position: §e".length());
 			String[] coords = blockPos.split(";");
-			if (coords.length == 3)
-				return new BlockPos(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
+			if (coords.length == 3) {
+				try {
+					return new BlockPos(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
+				} catch (NumberFormatException e) {
+					BugReporter.reportError(new Throwable("NFE while parsing " + stack.writeToNBT(new NBTTagCompound())));
+				}
+			}
 		}
 
 		return null;

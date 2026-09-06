@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
@@ -54,6 +55,7 @@ public class UnsafeJsonSerializer {
 					object.addProperty(entry.getKey().getName(), entry.getValue().toString());
 				yield object;
 			}
+			case Minecraft ignored -> new JsonPrimitive("<MINECRAFT>");
 			default -> {
 				for (int i = 0; i < currentPath.size(); i++) {
 					Object obj = currentPath.get(i);

@@ -288,7 +288,7 @@ public class IChatComponentUtil {
 			return component.getUnformattedTextForChat();
 		}
 
-		private String getFormattedSubstring(int start, int end) {
+		public String getFormattedSubstring(int start, int end) {
 			return component.getChatStyle().getFormattingCode()
 				+ getText().substring(start, end)
 				+ EnumChatFormatting.RESET;

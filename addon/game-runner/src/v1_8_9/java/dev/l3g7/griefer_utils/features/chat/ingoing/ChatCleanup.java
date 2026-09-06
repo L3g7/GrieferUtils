@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.IChatComponentUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
@@ -123,31 +124,31 @@ public class ChatCleanup extends Feature {
 			if (removeHeroHighlights.get() && checkForHeroHighlights(event.message, new AtomicInteger(getFormattedLength(event.message)), matcher.start("message"), matcher.end("message")))
 				return;
 
+			if (!antiColoredFont.get())
+				continue;
+
 			String msg = message.replace("§r", "").replaceAll("(§.)* ", "");
 			if (!usesFont(msg))
 				return;
 
 			int messageStart = matcher.start("message");
-			int length = 0;
-
 			IChatComponent startICC = event.message.createCopy();
+			int length = getFormattedLength(startICC);
 
-			Iterator<IChatComponent> iterator = startICC.getSiblings().iterator();
-			while (iterator.hasNext()) {
-				IChatComponent iChatComponent = iterator.next();
+			for (IChatComponentUtil.MutableComponent component : IChatComponentUtil.getNestedSiblings(startICC)) {
 				if (length >= messageStart) {
-					iterator.remove();
-					break;
+					component.remove();
+					continue;
 				}
 
-				length += iChatComponent.getChatStyle().getFormattingCode().length();
-				length += iChatComponent.getUnformattedTextForChat().length();
-				length += "§r".length();
+				length += component.getFormattedSubstring(0, component.getText().length()).length();
 			}
 
 			IChatComponent messageICC = new ChatComponentText(message.replaceAll("§.", ""));
 			messageICC.getChatStyle().setBold(true).setColor(EnumChatFormatting.AQUA);
-			event.setMessage(new ChatComponentText(event.message.getFormattedText().substring(0, matcher.start("message"))).appendSibling(messageICC));
+
+			startICC.appendSibling(messageICC);
+			event.setMessage(startICC);
 			return;
 		}
 	}
@@ -238,7 +239,7 @@ public class ChatCleanup extends Feature {
 	private static int getFormattedLength(IChatComponent icc) {
 		return icc.getChatStyle().getFormattingCode().length() +
 			icc.getUnformattedTextForChat().length() +
-			2 /* §r */;
+			"§r".length();
 	}
 
 	private boolean shouldCancel(String formattedText, String unformattedText) {

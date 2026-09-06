@@ -17,6 +17,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
@@ -45,7 +46,9 @@ public class CtrlQDrag extends Feature {
 		if (theSlot == null || !theSlot.getHasStack())
 			return;
 
-		if (!Keyboard.isKeyDown(mc().gameSettings.keyBindDrop.getKeyCode()) || !GuiScreen.isCtrlKeyDown())
+		int dropKeyCode = mc().gameSettings.keyBindDrop.getKeyCode();
+		if (!(dropKeyCode > 0 ? Keyboard.isKeyDown(dropKeyCode) : Mouse.isButtonDown(-dropKeyCode))
+			|| !GuiScreen.isCtrlKeyDown())
 			return;
 
 		mc().playerController.windowClick(gc.inventorySlots.windowId, theSlot.slotNumber, 1, 4, mc().thePlayer);

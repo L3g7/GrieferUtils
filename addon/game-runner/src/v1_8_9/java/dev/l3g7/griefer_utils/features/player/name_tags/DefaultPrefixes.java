@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.features.player.name_tags;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
@@ -25,15 +24,12 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
-import static dev.l3g7.griefer_utils.core.api.misc.Constants.FORMATTED_PLAYER_PATTERN;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
@@ -81,6 +77,10 @@ public class DefaultPrefixes extends Feature {
 		put("Ultra", new DefaultPattern('b', false));
 		put("Premium", new DefaultPattern('6', false));
 		put("Spieler", new DefaultPattern('7', false));
+	}};
+
+	private static final ArrayList<Pattern> CHAT_PATTERNS = new ArrayList<>(MESSAGE_PATTERNS) {{
+		add(STATUS_PATTERN);
 	}};
 
 	private final SwitchSetting tab = SwitchSetting.create()
@@ -159,7 +159,7 @@ public class DefaultPrefixes extends Feature {
 		if (!chat.get() || !event.message.getUnformattedText().contains("┃"))
 			return;
 
-		for (Pattern pattern : Constants.MESSAGE_PATTERNS)
+		for (Pattern pattern : CHAT_PATTERNS)
 			modify(event.message, pattern, true);
 	}
 

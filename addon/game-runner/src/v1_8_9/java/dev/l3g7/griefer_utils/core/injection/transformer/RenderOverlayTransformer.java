@@ -19,7 +19,7 @@ public class RenderOverlayTransformer extends Transformer {
 
 	@Override
 	protected void process() {
-		MethodNode methodNode = getMethod("func_178581_b", "(FFFLnet/minecraft/client/renderer/chunk/ChunkCompileTaskGenerator;)V");
+		MethodNode methodNode = getMethod("rebuildChunk", "func_178581_b", "(FFFLnet/minecraft/client/renderer/chunk/ChunkCompileTaskGenerator;)V");
 		ListIterator<AbstractInsnNode> iterator = getIterator(methodNode, INVOKESTATIC, "drawCuboid");
 		iterator.previous();
 		MethodInsnNode min = (MethodInsnNode) iterator.next();

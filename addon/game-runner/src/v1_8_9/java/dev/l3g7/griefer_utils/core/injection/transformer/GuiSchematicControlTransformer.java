@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.injection.transformer;
 
+import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.injection.transformer.Transformer.Target;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -18,16 +19,18 @@ import java.util.ListIterator;
 @Target("com.github.lunatrius.schematica.client.gui.control.GuiSchematicControl")
 public class GuiSchematicControlTransformer extends Transformer {
 
+	private static final String BUTTON_LIST_NAME = Mapper.isObfuscated() ? "field_146292_n" : "buttonList";
+
 	@Override
 	protected void process() {
-		ListIterator<AbstractInsnNode> iterator = getIterator(getMethod("func_73866_w_", "()V"), INVOKEINTERFACE, "clear");
+		ListIterator<AbstractInsnNode> iterator = getIterator(getMethod("initGui", "func_73866_w_", "()V"), INVOKEINTERFACE, "clear");
 		iterator.next();
 		iterator.add(new VarInsnNode(ALOAD, 0));
-		iterator.add(new FieldInsnNode(GETFIELD, "com/github/lunatrius/schematica/client/gui/control/GuiSchematicControl", "field_146292_n", "Ljava/util/List;"));
+		iterator.add(new FieldInsnNode(GETFIELD, "com/github/lunatrius/schematica/client/gui/control/GuiSchematicControl", BUTTON_LIST_NAME, "Ljava/util/List;"));
 		iterator.add(new VarInsnNode(ALOAD, 0));
 		iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/SaveSchematicaPosition", "addGuiButton", "(Ljava/util/List;Lnet/minecraft/client/gui/GuiScreen;)V", false));
 
-		iterator = getMethod("func_146284_a", "(Lnet/minecraft/client/gui/GuiButton;)V").instructions.iterator();
+		iterator = getMethod("actionPerformed", "func_146284_a", "(Lnet/minecraft/client/gui/GuiButton;)V").instructions.iterator();
 		iterator.add(new VarInsnNode(ALOAD, 1));
 		iterator.add(new VarInsnNode(ALOAD, 0));
 		iterator.add(new MethodInsnNode(INVOKESTATIC, "dev/l3g7/griefer_utils/features/world/building/better_schematica/SaveSchematicaPosition", "onActionPerformed", "(Lnet/minecraft/client/gui/GuiButton;Lnet/minecraft/client/gui/GuiScreen;)V", false));

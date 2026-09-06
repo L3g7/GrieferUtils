@@ -17,6 +17,7 @@ import org.objectweb.asm.tree.MethodNode;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ListIterator;
+import java.util.Optional;
 
 public abstract class Transformer implements Opcodes {
 
@@ -35,12 +36,22 @@ public abstract class Transformer implements Opcodes {
 	protected abstract void process();
 
 	protected MethodNode getMethod(String name, String desc) {
-		String targetMethod = name + desc;
+		return getMethod(name, name, desc);
+	}
 
-		return classNode.methods.stream()
-			.filter(m -> targetMethod.equals(m.name + m.desc))
-			.findFirst()
-			.orElseThrow(() -> new NoSuchMethodError("Could not find " + name + desc + " / " + targetMethod + "!"));
+	protected MethodNode getMethod(String unobfName, String intermediaryName, String desc) {
+		for (String name : new String[] { unobfName, intermediaryName }) {
+			String targetMethod = name + desc;
+
+			Optional<MethodNode> method = classNode.methods.stream()
+				.filter(m -> targetMethod.equals(m.name + m.desc))
+				.findFirst();
+
+			if (method.isPresent())
+				return method.get();
+		}
+
+		throw new NoSuchMethodError(String.format("Could not find %s / %s %s!", unobfName, intermediaryName, desc));
 	}
 	protected ListIterator<AbstractInsnNode> getIterator(MethodNode method, int opcode, String methodName) {
 		return getIterator(method, opcode, m -> ((MethodInsnNode) m).name.equals(methodName));

@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.misc.os.OS.OS;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
@@ -41,7 +40,7 @@ public class ImageSelection extends ModTextField implements Drawable, Clickable 
 		super(0, mc().fontRendererObj, 0, 0, 0, 20);
 		this.button = new Button("Auswählen")
 			.size(60, 20)
-			.callback(() -> chooseFile(this::processChosenFile, "Bild", ImageIO.getReaderFileSuffixes()));
+			.callback(this::chooseFile);
 
 		this.label = label;
 		setMaxStringLength(Integer.MAX_VALUE);
@@ -139,9 +138,9 @@ public class ImageSelection extends ModTextField implements Drawable, Clickable 
 //		super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
-	private static void chooseFile(Consumer<File> fileConsumer, String filterName, String... allowedFileTypes) {
+	private void chooseFile() {
 		ThreadFactory.run("GrieferUtils File Chooser", MIN_PRIORITY,
-			() -> OS.chooseFile(fileConsumer, filterName, allowedFileTypes));
+			() -> processChosenFile(OS.chooseImageFile()));
 	}
 
 }

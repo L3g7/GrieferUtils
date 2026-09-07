@@ -8,20 +8,19 @@
 package dev.l3g7.griefer_utils.core.api.misc.os.impl;
 
 import com.sun.jna.*;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinUser;
+import com.sun.jna.Structure.FieldOrder;
+import com.sun.jna.win32.StdCallLibrary;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.os.OS;
+import dev.l3g7.griefer_utils.core.api.misc.os.impl.Windows.Comdlg32.OpenFileName;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import org.lwjgl.glfw.GLFWNativeWin32;
-import org.lwjgl.opengl.Display;
+import org.jetbrains.annotations.Nullable;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
@@ -32,78 +31,51 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.WINDOWS;
 @ExclusiveTo(WINDOWS)
 public class Windows implements OS {
 
-	@Override
-	public boolean isFallback() {
-		return false;
-	}
+	private static final Comdlg32 COMDLG32 = Native.load("comdlg32", Comdlg32.class);
 
 	@Override
-	public void maximizeWindow() {
-		long handle = LABY_4.isActive()
-			? GLFWNativeWin32.glfwGetWin32Window(Display.getWindowHandle())
-			: Reflection.invoke(Reflection.invoke(Display.class, "getImplementation"), "getHwnd");
+	public @Nullable File chooseImageFile() {
+		String[] allowedFileTypes = ImageIO.getReaderFileSuffixes();
+		String filterStr = Arrays.stream(allowedFileTypes).map(f -> "*." + f).collect(Collectors.joining(";"));
 
-		HWND hwnd = new HWND(new Pointer(handle));
-		User32.ShowWindow(hwnd, WinUser.SW_SHOWMAXIMIZED);
-		User32.SetForegroundWindow(hwnd);
-		User32.SetActiveWindow(hwnd);
-	}
-
-	@Override
-	public void chooseFile(Consumer<File> callback, String filterName, String... allowedFileTypes) {
-		Comdlg32.OpenFileName params = new Comdlg32.OpenFileName();
+		OpenFileName params = new OpenFileName();
 		params.lpstrFile = new Memory(1041);
 		params.lpstrFile.clear(1041);
 		params.nMaxFile = 260;
-		if (filterName != null)
-			params.lpstrFilter = new WString(filterName + "\0" + Arrays.stream(allowedFileTypes).map(f -> "*." + f).collect(Collectors.joining(";")) + "\0\0");
+		params.lpstrFilter = new WString("Bild\0" + filterStr + "\0\0");
 
-		if (Comdlg32.GetOpenFileNameW(params)) {
+		if (COMDLG32.GetOpenFileNameW(params)) {
 			String path;
 			if (LABY_4.isActive())
 				path = params.lpstrFile.getWideString(0);
 			else
 				path = Reflection.invoke(params.lpstrFile, "getString", 0L, true);
-			callback.accept(new File(path));
-			return;
+			return new File(path);
 		}
 
-		int error = Comdlg32.CommDlgExtendedError();
+		int error = COMDLG32.CommDlgExtendedError();
 		if (error != 0) // Selection was aborted by the user
 			System.err.println("GetOpenFileName failed with error " + error);
 
-		callback.accept(null);
+		return null;
 	}
 
-	public static class User32 {
+	public interface Comdlg32 extends StdCallLibrary {
 
-		static {
-			Native.register("user32");
-		}
+		boolean GetOpenFileNameW(OpenFileName params);
 
-		public static native HWND SetActiveWindow(HWND hwnd);
-
-		public static native boolean SetForegroundWindow(HWND hwnd);
-
-		public static native boolean ShowWindow(HWND hwnd, int nCmdShow);
-
-	}
-
-	public static class Comdlg32 {
-
-		static {
-			Native.register("comdlg32");
-		}
-
-		public static native boolean GetOpenFileNameW(OpenFileName params);
-
-		public static native int CommDlgExtendedError();
+		int CommDlgExtendedError();
 
 		@SuppressWarnings("unused")
-		public static class OpenFileName extends Structure {
+		@FieldOrder({
+			"lStructSize", "hwndOwner", "hInstance", "lpstrFilter", "lpstrCustomFilter", "nMaxCustFilter",
+			"nFilterIndex", "lpstrFile", "nMaxFile", "lpstrDialogTitle", "nMaxDialogTitle", "lpstrInitialDir",
+			"lpstrTitle", "Flags", "nFileOffset", "nFileExtension", "lpstrDefExt", "lCustData", "lpfnHook",
+			"lpTemplateName"
+		})
+		class OpenFileName extends Structure {
 
 			public OpenFileName() {
-				super();
 				lStructSize = size();
 			}
 
@@ -128,15 +100,6 @@ public class Windows implements OS {
 			public Pointer lpfnHook;
 			public Pointer lpTemplateName;
 
-			@Override
-			public List<String> getFieldOrder() {
-				return Arrays.asList("lStructSize",
-					"hwndOwner", "hInstance", "lpstrFilter", "lpstrCustomFilter"
-					, "nMaxCustFilter", "nFilterIndex", "lpstrFile", "nMaxFile"
-					, "lpstrDialogTitle", "nMaxDialogTitle", "lpstrInitialDir", "lpstrTitle"
-					, "Flags", "nFileOffset", "nFileExtension", "lpstrDefExt"
-					, "lCustData", "lpfnHook", "lpTemplateName");
-			}
 		}
 
 	}

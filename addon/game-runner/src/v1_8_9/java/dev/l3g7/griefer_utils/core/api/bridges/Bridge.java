@@ -57,7 +57,8 @@ public @interface Bridge {
 		LABY_4(v -> Initializer.labyVersion == v),
 
 		// Operating systems
-		WINDOWS(Platform::isWindows);
+		WINDOWS(Platform::isWindows),
+		LINUX(Platform::isLinux);
 
 		private final Function<Version, Boolean> activeCheck;
 		private Boolean isActive;

@@ -9,19 +9,22 @@ package dev.l3g7.griefer_utils.core.api.misc.os;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Bridged;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.Display;
 
 import java.io.File;
-import java.util.function.Consumer;
 
 @Bridged
 public interface OS {
 
 	OS OS = FileProvider.getBridge(OS.class);
 
-	boolean isFallback();
+	default void maximizeWindow() {
+		TickScheduler.sync(() -> GLFW.glfwMaximizeWindow(Display.getWindowHandle()));
+	}
 
-	void maximizeWindow();
-
-	void chooseFile(Consumer<File> callback, String filterName, String... allowedFileTypes);
+	@Nullable File chooseImageFile();
 
 }

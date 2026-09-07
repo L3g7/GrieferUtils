@@ -55,14 +55,6 @@ public class AutoPortal extends Feature {
 		.icon("portal")
 		.subSettings(citybuild, join, maximize);
 
-	public void init() {
-		super.init();
-		if (OS.isFallback())
-			maximize.name("§c§o§m" + maximize.name())
-				.description("§c§oMaximierung ist für " + System.getProperty("os.name") + " nicht implementiert.")
-				.callback(v -> { if (v) maximize.set(false); });
-	}
-
 	@EventListener(priority = Priority.HIGH)
 	public void onServerJoin(ServerEvent.GrieferGamesJoinEvent event) {
 		if (citybuild.get() == Citybuild.ANY) {

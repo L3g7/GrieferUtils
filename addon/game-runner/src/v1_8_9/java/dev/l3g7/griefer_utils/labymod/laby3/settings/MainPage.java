@@ -13,10 +13,14 @@ import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
-import dev.l3g7.griefer_utils.core.settings.types.*;
+import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
+import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
+import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
@@ -62,11 +66,11 @@ public class MainPage {
 			.sorted(Comparator.comparing(f -> f.getMainElement().name(), SettingLoader::compareNames))
 			.forEach(feature -> {
 				((SettingsElement) feature.getMainElement()).getSubSettings().getElements().stream()
-					.filter(e -> e instanceof SwitchSetting || e instanceof NumberSetting || e instanceof CategorySetting)
+					.filter(e -> e instanceof BaseSetting<?>)
 					.forEachOrdered(searchableSettings::add);
 
 				BaseSetting<?> e = feature.getMainElement();
-				if (e instanceof SwitchSetting || e instanceof NumberSetting || e instanceof CategorySetting)
+				if (e instanceof AbstractSetting<?,?>)
 					searchableSettings.add((SettingsElement) e);
 
 				if (!(feature.getMainElement() instanceof SwitchSettingImpl main)) {

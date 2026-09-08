@@ -77,6 +77,20 @@ public abstract class Feature implements Disableable, GUIEntry {
 		MainElementData data = SettingLoader.initMainElement(this, category == null ? null : category.configKey());
 		mainElement = data.mainElement;
 		configKey = data.configKey;
+
+		// Enable the feature if one of its settings gets enabled
+		if (!(mainElement instanceof SwitchSetting main))
+			return;
+
+		for (BaseSetting<?> element : main.getChildSettings()) {
+			if (!(element instanceof SwitchSetting sub))
+				continue;
+
+			sub.callback(b -> {
+				if (b)
+					main.set(true);
+			});
+		}
 	}
 
 	@Override

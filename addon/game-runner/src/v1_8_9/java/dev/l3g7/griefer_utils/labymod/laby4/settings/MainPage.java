@@ -12,11 +12,8 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.GUIEntry;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
-import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.Settings;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.Feature.CategoryData;
@@ -59,15 +56,38 @@ public class MainPage {
 		Laby.labyAPI().coreSettingRegistry().addSetting(registry);
 
 		// Collect settings
-		ArrayList<BaseSetting<?>> settings = new ArrayList<>();
-		collectSettings(settings);
+		List<BaseSetting<?>> settings = collectSettings();
 
 		// Initialize settings
-		settings.forEach(s -> {
-			if (s instanceof Laby4Setting<?, ?> b)
-				b.create(registry);
-		});
+		for (BaseSetting<?> s : settings)
+			s.create(registry);
+
 		registry.addSettings(Reflection.<List<Setting>>c(settings));
+	}
+
+	private static List<BaseSetting<?>> collectSettings() {
+		List<BaseSetting<?>> settings = new ArrayList<>();
+
+		// Initialize search
+		Feature.getFeatures()
+			.sorted(Comparator.comparing(f -> f.getMainElement().name(), SettingLoader::compareNames))
+			.forEach(feature -> {
+				if (feature.getMainElement() instanceof SwitchSettingImpl main)
+					main.setSearchTags(new String[]{main.name()});
+			});
+
+		Feature.getFeatures().forEach(f ->
+			((SettingElement) f.getMainElement()).setSearchTags(new String[]{
+				f.getMainElement().name(),
+				f.getClass().getSimpleName()
+			}));
+
+		for (CategoryData c : Feature.getCategories())
+			((SwitchSettingImpl) c.getSetting()).setSearchTags(new String[]{c.getSetting().name()});
+
+		// Initialize settings
+		Settings.buildMainPage(settings, rootSetting);
+		return settings;
 	}
 
 	@EventListener
@@ -110,80 +130,6 @@ public class MainPage {
 				throw new RuntimeException(e);
 			}
 		}));
-	}
-
-	private static void collectSettings(List<BaseSetting<?>> settings) {
-		// Enable the feature category if one of its features gets enabled
-		Feature.getFeatures()
-			.sorted(Comparator.comparing(f -> f.getMainElement().name(), SettingLoader::compareNames))
-			.forEach(feature -> {
-				if (!(feature.getMainElement() instanceof SwitchSettingImpl main))
-					return;
-
-				for (BaseSetting<?> element : main.getChildSettings()) {
-					if (!(element instanceof SwitchSetting sub))
-						continue;
-
-					sub.callback(b -> {
-						if (b)
-							main.set(true);
-					});
-				}
-
-				main.setSearchTags(new String[]{main.name()});
-			});
-
-		// Initialize settings
-		List<GUIEntry> entries = new ArrayList<>(Feature.getCategories());
-
-		Feature.getFeatures().forEach(f -> {
-			entries.add(f);
-			((SettingElement) f.getMainElement()).setSearchTags(new String[]{
-				f.getMainElement().name(),
-				f.getClass().getSimpleName()
-			});
-		});
-
-		// Initialize category settings
-		for (CategoryData c : Feature.getCategories())
-			((SwitchSettingImpl) c.getSetting()).setSearchTags(new String[]{c.getSetting().name()});
-
-		entries.stream()
-			.sorted(Comparator.comparing(GUIEntry::name, SettingLoader::compareNames))
-			.forEach(e -> e.addToParent(settings));
-
-		settings.add(HeaderSetting.create());
-
-		// Add uncategorized features
-		Feature.getUncategorized().stream()
-			.sorted(Comparator.comparing(BaseSetting::name, SettingLoader::compareNames))
-			.forEach(settings::add);
-
-		settings.add(HeaderSetting.create());
-
-		// Wiki link
-		settings.add(ButtonSetting.create()
-			.name("Wiki")
-			.description("Detailierte Erklärungen und Anleitungen für alle Features.")
-			.icon("open_book")
-			.buttonIcon("open_book_outline")
-			.callback(() -> labyBridge.openWebsite("https://grieferutils.wiki")));
-
-		// Ko-fi link
-		settings.add(ButtonSetting.create()
-			.name("Entwickler unterstützen")
-			.description("Wenn dir das Addon gefällt kannst du hier das Entwickler-Team dahinter unterstützen §c❤")
-			.icon("ko_fi")
-			.buttonIcon("ko_fi_outline")
-			.callback(() -> labyBridge.openWebsite("https://ko-fi.com/l3g7_3")));
-
-		// Discord link
-		settings.add(ButtonSetting.create()
-			.name("Discord")
-			.description("Vorschläge, Bugs und Support.")
-			.icon("discord")
-			.buttonIcon("discord_clyde")
-			.callback(() -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")));
 	}
 
 	private static class RootSetting extends RootSettingRegistry {

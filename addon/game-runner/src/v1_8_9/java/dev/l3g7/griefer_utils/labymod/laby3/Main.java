@@ -137,7 +137,7 @@ public class Main extends LabyModAddon {
 
 	@Override
 	protected void fillSettings(List<SettingsElement> list) {
-		list.addAll(c(MainPage.collectSettings()));
+		list.addAll(c(MainPage.getSettings()));
 	}
 
 }

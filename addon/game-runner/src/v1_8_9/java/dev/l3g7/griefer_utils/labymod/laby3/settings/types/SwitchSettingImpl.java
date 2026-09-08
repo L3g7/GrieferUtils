@@ -39,6 +39,14 @@ public class SwitchSettingImpl extends BooleanElement implements Laby3Setting<Sw
 	}
 
 	@Override
+	public SwitchSetting addHotkeySetting(String whatActivates, TriggerMode defaultTriggerMode) {
+		if (getSubSettings().getElements().isEmpty())
+			subSettings();
+
+		return SwitchSetting.super.addHotkeySetting(whatActivates, defaultTriggerMode);
+	}
+
+	@Override
 	public ExtendedStorage<Boolean> getStorage() {
 		return storage;
 	}

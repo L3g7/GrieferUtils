@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
+import dev.pymdk.mapper.Mapping;
 import net.labymod.addon.AddonLoader;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.core.asm.LabyModTransformer;
@@ -44,7 +45,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		LibLoader.loadLibrary(
 			"https://maven.pymdk.dev",
 			"dev/pymdk", "mapper", "2.0.0",
-			"aGbN+dpnJT22kInOQfMei369v4La9yp9ZEe/TQGxpXc="
+			"9BuVn5MohzeAyh7Bc4VX8wmQE+G4L0k2sgWmSpl0BuM="
 		);
 
 		// mXparser: for evaluating expressions (Calculator)
@@ -76,7 +77,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		);
 
 		// Load mappings for automatic name resolution in Reflection
-		Mapper.loadMappings(Launch.assetsDir.toPath(), true);
+		Mapper.loadMappings(Launch.assetsDir.toPath(), LabyModCoreMod.isObfuscated() ? Mapping.OBFUSCATED : Mapping.INTERMEDIARY, true);
 
 		Bridge.Initializer.init(LABY_3);
 

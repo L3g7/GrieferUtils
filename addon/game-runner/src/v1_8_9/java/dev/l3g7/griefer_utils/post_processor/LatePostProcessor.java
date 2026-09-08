@@ -40,6 +40,9 @@ public class LatePostProcessor implements IClassTransformer {
 		if (!transformedClass.startsWith("dev/l3g7/griefer_utils/"))
 			return classBytes;
 
+		if (mappingTransformer != null)
+			classBytes = mappingTransformer.transform(name, transformedName, classBytes);
+
 		ClassNode classNode = new ClassNode();
 		ClassReader reader = new ClassReader(classBytes);
 		reader.accept(classNode, 0);
@@ -51,17 +54,11 @@ public class LatePostProcessor implements IClassTransformer {
 			processor.reset();
 		}
 
-		if (!modified) {
-			if (mappingTransformer != null)
-				classBytes = mappingTransformer.transform(name, transformedName, classBytes);
+		if (!modified)
 			return classBytes;
-		}
 
 		ClassWriter writer = new BoundClassWriter();
 		classNode.accept(writer);
-
-		if (mappingTransformer != null)
-			return mappingTransformer.transform(name, transformedName, writer.toByteArray());
 		return writer.toByteArray();
 	}
 
@@ -86,7 +83,7 @@ public class LatePostProcessor implements IClassTransformer {
 	 * loaded by the parent ClassLoader of the one loading this addon, it wouldn't find the classes
 	 * defined by its child ClassLoader and getCommonSuperClass calls would fail.
 	 */
-	protected class BoundClassWriter extends ClassWriter {
+	class BoundClassWriter extends ClassWriter {
 		public BoundClassWriter() {
 			super(COMPUTE_MAXS | COMPUTE_FRAMES);
 		}

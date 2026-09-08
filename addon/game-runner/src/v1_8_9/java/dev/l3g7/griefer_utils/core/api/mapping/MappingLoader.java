@@ -24,7 +24,7 @@ public class MappingLoader {
 	private static final String ZIP_MAPPINGS_HASH = "iJtxxul6dUe9f4mYzZdRyKcyEcn8v8vDISnlG+lWfqg=";
 	private static final String MAPPINGS_HASH = "JMqZhVdaZJrghxBHoriSMSwmGRU6z3U+QufZlid+8FM=";
 
-	static void loadMappings(Path assetsDir, boolean registerPostProcessor) {
+	static void loadMappings(Path assetsDir, Mapping targetMapping, boolean registerPostProcessor) {
 		Path zipMappings = assetsDir.resolve("griefer_utils/mappings/pymdk-1.8.9.json.xz");
 		Path mappings = assetsDir.resolve("griefer_utils/mappings/pymdk-1.8.9.json");
 
@@ -38,14 +38,18 @@ public class MappingLoader {
 				decompressMappings(zipMappings, mappings);
 
 			// Load mappings
-			FastMapper.configure(Mapping.UNOBFUSCATED, Mapping.INTERMEDIARY);
+			FastMapper.configure(Mapping.UNOBFUSCATED, targetMapping);
 			FastMapper.loadMappings(mappings);
 		} catch (IOException e) {
 			throw Util.elevate(e);
 		}
 
 		if (registerPostProcessor) {
-			LatePostProcessor.mappingTransformer = (name, transformedName, classBytes) -> FastMapper.mapClass(classBytes).getData();
+			LatePostProcessor.mappingTransformer = (name, transformedName, classBytes) -> {
+				byte[] copiedClassBytes = new byte[classBytes.length];
+				System.arraycopy(classBytes, 0, copiedClassBytes, 0, classBytes.length);
+				return FastMapper.mapClass(copiedClassBytes).getData();
+			};
 			LatePostProcessor.processors.add(0, new MixinShadowRemapper());
 		}
 	}

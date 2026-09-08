@@ -16,7 +16,8 @@ import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.Init;
 import dev.l3g7.griefer_utils.post_processor.processors.build.RecordConverter;
-import dev.l3g7.griefer_utils.post_processor.processors.build.RefmapGenerator;
+import dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator.RefmapGenerator;
+import dev.pymdk.mapper.Mapping;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -70,7 +71,7 @@ public class BuildPostProcessor {
 
 			processBootstrapClasses();
 
-			Mapper.loadMappings(Paths.get("./build"), false);
+			Mapper.loadMappings(Paths.get("./build"), Mapping.INTERMEDIARY, false);
 			RefmapGenerator.generateRefmap(fs);
 
 //			AssetsChecker.validateAssets(fs);

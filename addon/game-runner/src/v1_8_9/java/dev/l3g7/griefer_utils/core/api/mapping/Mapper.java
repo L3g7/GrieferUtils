@@ -23,8 +23,8 @@ import static dev.pymdk.mapper.impl.LowLevelMapper.classes;
 
 public class Mapper {
 
-	public static void loadMappings(Path assetsDir, boolean registerPostProcessor) {
-		MappingLoader.loadMappings(assetsDir, registerPostProcessor);
+	public static void loadMappings(Path assetsDir, Mapping targetMapping, boolean registerPostProcessor) {
+		MappingLoader.loadMappings(assetsDir, targetMapping, registerPostProcessor);
 	}
 
 	public static boolean isObfuscated() {

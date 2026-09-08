@@ -41,7 +41,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 	private static final Map<String, CategoryData> categories = new HashMap<>();
 
 	private final CategoryData category = findCategory(getClass().getPackage());
-	private BaseSetting<?> mainElement;
+	private AbstractSetting<?, ?> mainElement;
 	private String configKey;
 
 	private CategoryData findCategory(Package pkg) {
@@ -90,7 +90,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 			category.getSetting().addSetting(mainElement);
 	}
 
-	public BaseSetting<?> getMainElement() {
+	public AbstractSetting<?, ?> getMainElement() {
 		return mainElement;
 	}
 

@@ -29,7 +29,7 @@ public class SettingLoader { // NOTE: cleanup
 			throw new IllegalStateException("Found an invalid amount of main elements for " + ownerClass.getSimpleName());
 
 		Field mainElementField = mainElementFields[0];
-		BaseSetting<?> mainElement = Reflection.get(owner, mainElementField);
+		AbstractSetting<?, ?> mainElement = Reflection.get(owner, mainElementField);
 
 		// Load config key
 		String configKey = StringUtil.convertCasing(owner.getClass().getSimpleName());
@@ -37,8 +37,7 @@ public class SettingLoader { // NOTE: cleanup
 			configKey = parentKey + "." + configKey;
 
 		// Load settings
-		if (mainElement instanceof AbstractSetting<?, ?>)
-			((AbstractSetting<?, ?>) mainElement).config(configKey + "." + mainElementField.getName());
+		mainElement.config(configKey + "." + mainElementField.getName());
 
 		if (mainElementField.getAnnotation(MainElement.class).configureSubSettings())
 			loadSubSettings(owner, mainElement, configKey);
@@ -114,10 +113,10 @@ public class SettingLoader { // NOTE: cleanup
 
 	public static class MainElementData {
 
-		public final BaseSetting<?> mainElement;
+		public final AbstractSetting<?, ?> mainElement;
 		public final String configKey;
 
-		private MainElementData(BaseSetting<?> mainElement, String configKey) {
+		private MainElementData(AbstractSetting<?, ?> mainElement, String configKey) {
 			this.mainElement = mainElement;
 			this.configKey = configKey;
 		}

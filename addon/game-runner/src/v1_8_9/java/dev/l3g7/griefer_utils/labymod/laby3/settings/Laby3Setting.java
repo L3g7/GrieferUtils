@@ -95,9 +95,11 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	}
 
 	@Override
-	default S addSetting(int index, BaseSetting<?> setting) {
-		setting.setParent(this);
-		((SettingsElement) this).getSubSettings().getElements().add(index, c(setting));
+	default S addSetting(int index, BaseSetting<?>... settings) {
+		for (BaseSetting<?> setting : settings)
+			setting.setParent(this);
+
+		((SettingsElement) this).getSubSettings().getElements().addAll(index, c(Arrays.asList(settings)));
 		return (S) this;
 	}
 

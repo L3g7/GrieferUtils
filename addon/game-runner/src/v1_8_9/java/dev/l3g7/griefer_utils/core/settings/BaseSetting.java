@@ -60,7 +60,7 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 	 */
 	S addSetting(BaseSetting<?> setting);
 
-	S addSetting(int index, BaseSetting<?> setting);
+	S addSetting(int index, BaseSetting<?>... setting);
 
 	default void setParent(BaseSetting<?> parent) {}
 

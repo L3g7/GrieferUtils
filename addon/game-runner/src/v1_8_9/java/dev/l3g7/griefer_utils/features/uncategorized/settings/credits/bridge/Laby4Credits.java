@@ -56,7 +56,7 @@ public class Laby4Credits implements CreditsBridge {
 		for (int i = 0; i < settings.size(); i++) {
 			BaseSetting<?> setting = settings.get(i);
 			setting.create(credits);
-			credits.addSetting(4 + i, c(setting));
+			credits.addSetting(4 + i, setting);
 			((AbstractSetting) setting).initialize();
 		}
 	}

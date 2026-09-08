@@ -134,15 +134,22 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	}
 
 	@Override
-	default S addSetting(int index, BaseSetting<?> setting) {
-		setting.setParent(this);
+	default S addSetting(int index, BaseSetting<?>... settings) {
+		List<KeyValue<Setting>> kvs = new ArrayList<>();
+		for (BaseSetting<?> setting : settings) {
+			net.labymod.api.configuration.settings.type.AbstractSetting lmSetting = c(setting);
 
-		net.labymod.api.configuration.settings.type.AbstractSetting lmSetting = c(setting);
+			setting.setParent(this);
+			lmSetting.setParent(this);
+			kvs.add(new KeyValue<>(lmSetting.getId(), lmSetting));
+		}
 
-		lmSetting.setParent(this);
-		getElements().add(index, new KeyValue<>(lmSetting.getId(), lmSetting));
-		if (isInitialized() && lmSetting instanceof AbstractSettingRegistry)
-			lmSetting.initialize();
+		getElements().addAll(index, kvs);
+
+		if (isInitialized())
+			for (KeyValue<Setting> kv : kvs)
+				if (kv.getValue() instanceof AbstractSettingRegistry setting)
+					setting.initialize();
 
 		return (S) this;
 	}

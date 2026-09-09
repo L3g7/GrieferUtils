@@ -66,7 +66,7 @@ public class MainPage {
 				searchableSettings.add((SettingsElement) feature.getMainElement());
 
 				((SettingsElement) feature.getMainElement()).getSubSettings().getElements().stream()
-					.filter(e -> e instanceof BaseSetting<?>)
+					.filter(e -> e instanceof Laby3Setting<?, ?>)
 					.forEach(searchableSettings::add);
 			});
 

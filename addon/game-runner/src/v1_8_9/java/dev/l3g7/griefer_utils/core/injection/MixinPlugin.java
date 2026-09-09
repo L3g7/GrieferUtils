@@ -11,7 +11,9 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
+import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.pymdk.mapper.Mapping;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.Mixin;
@@ -63,6 +65,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 				for (String mixinTarget : mixinTargets.collect(Collectors.toSet())) {
 					// Only add mixin if the target exists, as some mixins target classes that might be missing (e.g. EmoteChat)
+					mixinTarget = Mapper.mapClass(mixinTarget.replace('.', '/'), Mapping.UNOBFUSCATED, Reflection.getMappingTarget());
 					if (!Reflection.exists(mixinTarget)) {
 						continue classFinder;
 					}

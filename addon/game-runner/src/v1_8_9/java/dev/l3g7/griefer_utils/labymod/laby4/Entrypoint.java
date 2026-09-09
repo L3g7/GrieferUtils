@@ -33,7 +33,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		LibLoader.loadLibrary(
 			"https://maven.pymdk.dev",
 			"dev/pymdk", "mapper", "2.0.0",
-			"9BuVn5MohzeAyh7Bc4VX8wmQE+G4L0k2sgWmSpl0BuM="
+			"iJz1EpnesLbISOT11+dDpx2jzdpTijyXhZSJWj1K+Vg="
 		);
 		// mXparser: for evaluating expressions (Calculator)
 		LibLoader.loadLibrary(

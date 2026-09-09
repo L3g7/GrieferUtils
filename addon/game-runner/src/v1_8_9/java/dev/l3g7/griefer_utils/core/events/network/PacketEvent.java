@@ -82,14 +82,9 @@ public abstract class PacketEvent<P extends Packet<?>> extends Event {
 				LAST_QUEUED_PACKET = lvt_0_1_;
 			}
 
-		}
-
-		@Mixin(targets = "net.minecraft.network.PacketThreadUtil$1")
-		private static class MixinPacketThreadUtil$1 {
-
-			@Inject(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Packet;processPacket(Lnet/minecraft/network/INetHandler;)V", shift = At.Shift.AFTER))
-			private void injectCheckThreadAndEnqueue(CallbackInfo ci) {
-				new PacketReceivedEvent<>(LAST_QUEUED_PACKET, null).fire();
+			@Inject(method = "checkThreadAndEnqueue", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/IThreadListener;addScheduledTask(Ljava/lang/Runnable;)Lcom/google/common/util/concurrent/ListenableFuture;", shift = At.Shift.AFTER))
+			private static <T extends INetHandler> void injectCheckThreadAndEnqueue(Packet<T> lvt_0_1_, T lvt_1_1_, IThreadListener lvt_2_1_, CallbackInfo ci) {
+				lvt_2_1_.addScheduledTask(() -> new PacketReceivedEvent<>(LAST_QUEUED_PACKET, null).fire());
 			}
 
 		}

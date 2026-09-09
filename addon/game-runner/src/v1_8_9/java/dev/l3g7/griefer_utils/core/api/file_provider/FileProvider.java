@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static org.objectweb.asm.ClassReader.SKIP_CODE;
+import static org.objectweb.asm.ClassReader.SKIP_FRAMES;
 
 /**
  * A class providing a list of all files in the addon.
@@ -167,7 +168,7 @@ public abstract class FileProvider {
 			ClassNode node = new ClassNode();
 			byte[] bytes = IO.read(in).asBytes();
 			bytes[7 /* major_version */] = (byte) Math.min(bytes[7], 52 /* Java 1.8 */);
-			new ClassReader(bytes).accept(node, SKIP_CODE);
+			new ClassReader(bytes).accept(node, SKIP_CODE | SKIP_FRAMES);
 
 			ClassMeta meta = new ClassMeta(node);
 			if (classExclusions.stream().anyMatch(p -> p.test(meta)))

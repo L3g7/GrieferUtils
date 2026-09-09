@@ -217,7 +217,7 @@ public class SplitLongMessages extends Feature {
 		int lastIndex = text.length();
 
 		while (true) {
-			lastIndex = text.lastIndexOf('&', lastIndex);
+			lastIndex = text.lastIndexOf('&', lastIndex - 1);
 			if (lastIndex == -1)
 				return "";
 

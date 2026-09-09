@@ -155,10 +155,11 @@ class BetterHopperVisualisation implements Disableable {
 
 	private BlockPos getBlockPos(ItemStack stack) {
 		for (String line : ItemUtil.getLore(stack)) {
-			if (!line.startsWith("§7Position: §e"))
+			int posStart = line.indexOf("§e");
+			if (posStart == -1)
 				continue;
 
-			String blockPos = line.substring("§7Position: §e".length());
+			String blockPos = line.substring(posStart + 2);
 			String[] coords = blockPos.split(";");
 			if (coords.length == 3) {
 				try {

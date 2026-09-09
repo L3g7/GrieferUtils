@@ -5,11 +5,6 @@ import dev.l3g7.griefer_utils.post_processor.LatePostProcessor;
 import dev.l3g7.griefer_utils.post_processor.processors.MixinShadowRemapper;
 import dev.pymdk.mapper.FastMapper;
 import dev.pymdk.mapper.Mapping;
-import dev.pymdk.mapper.impl.LowLevelMapper;
-import dev.pymdk.mapper.impl.MappingEntries;
-import net.minecraft.launchwrapper.Launch;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,15 +13,10 @@ import java.net.URI;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.zip.ZipInputStream;
 
 import static dev.l3g7.griefer_utils.core.api.util.CryptUtil.checkHashFail;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static org.objectweb.asm.ClassReader.SKIP_CODE;
-import static org.objectweb.asm.ClassReader.SKIP_FRAMES;
 
 public class MappingLoader {
 
@@ -54,8 +44,10 @@ public class MappingLoader {
 			throw Util.elevate(e);
 		}
 
-		if (registerPostProcessor)
+		if (registerPostProcessor) {
 			LatePostProcessor.mappingTransformer = new MappingTransformer();
+			LatePostProcessor.processors.add(0, new MixinShadowRemapper());
+		}
 	}
 
 	private static void downloadMappings(Path xzMappings) throws IOException {

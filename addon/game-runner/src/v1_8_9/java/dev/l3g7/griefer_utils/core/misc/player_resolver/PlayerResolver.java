@@ -65,8 +65,10 @@ public class PlayerResolver {
 	private static void updateCache(PlayerListEntry entry, boolean found) {
 		entry.isLoaded = true;
 		entry.isValid = found;
-		PlayerListEntry.NAME_LOOKUP_MAP.put(entry.name, entry);
-		PlayerListEntry.UUID_LOOKUP_MAP.put(entry.id, entry);
+		if (entry.name != null)
+			PlayerListEntry.NAME_LOOKUP_MAP.put(entry.name, entry);
+		if (entry.id != null)
+			PlayerListEntry.UUID_LOOKUP_MAP.put(entry.id, entry);
 	}
 
 	protected static void checkHttpCode(HttpGetOperation op) {
@@ -113,6 +115,9 @@ public class PlayerResolver {
 			} catch (Throwable t) {
 				if (t == ERR_NOT_FOUND)
 					return NOT_FOUND;
+
+				if (t == OK_FOUND)
+					return FOUND;
 
 				return ERROR;
 			}

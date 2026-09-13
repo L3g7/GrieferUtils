@@ -29,7 +29,7 @@ public class StringUtil {
 	 * Adds dashes to a stripped UUID.
 	 */
 	public static String normalizeUUID(String uuid) {
-		uuid = uuid.toLowerCase().strip();
+		uuid = uuid.toLowerCase().trim();
 		if (uuid.length() == 32)
 			return uuid.replaceAll("^(.{8})(.{4})(.{4})(.{4})(.{12})$", "$1-$2-$3-$4-$5");
 

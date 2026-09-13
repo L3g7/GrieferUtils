@@ -7,89 +7,27 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.settings.types.list;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
-import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.EntryAddSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
 import net.labymod.main.ModTextures;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.PreviewRenderer;
-import net.labymod.settings.elements.ControlElement;
-import net.labymod.settings.elements.SettingsElement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-public class PlayerListSettingImpl extends ControlElement implements Laby3Setting<ListSetting<PlayerListEntry>, List<PlayerListEntry>>, ListSetting<PlayerListEntry> {
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-	private final ExtendedStorage<List<PlayerListEntry>> storage = new ExtendedStorage<>(list -> {
-		JsonArray array = new JsonArray();
-		list.forEach(e -> array.add(new JsonPrimitive(e.getId())));
-		return array;
-	}, array -> {
-		List<PlayerListEntry> list = new ArrayList<>();
-		array.getAsJsonArray().forEach(e -> list.add(PlayerListEntry.fromUUID(e.getAsString())));
-		return list;
-	}, new ArrayList<>());
-
-	private boolean unpacked = false;
-	private SettingsElement container = this;
+public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 	public PlayerListSettingImpl() {
-		super("§cEs gab einen Fehler!", null);
-		setSettingEnabled(true);
-	}
-
-	public void setContainer(SettingsElement container) {
-		this.container = container;
-	}
-
-	@Override
-	public PlayerListSettingImpl config(String configKey) {
-		Laby3Setting.super.config(configKey);
-
-		List<SettingsElement> settings = new ArrayList<>();
-		for (PlayerListEntry entry : get())
-			settings.add(new PlayerDisplaySetting(entry));
-
-		PlayerAddSetting addSetting = new PlayerAddSetting();
-		settings.add(addSetting);
-		getSettings().remove(this);
-		((Laby3Setting<?, ?>) container).subSettings(Reflection.<ArrayList<BaseSetting<?>>>c(settings));
-
-		return this;
-	}
-
-	private List<SettingsElement> getSettings() {
-		return container.getSubSettings().getElements();
-	}
-
-	@Override
-	public int getObjectWidth() {
-		return 0;
-	}
-
-	@Override
-	public ExtendedStorage<List<PlayerListEntry>> getStorage() {
-		return storage;
-	}
-
-	private List<PlayerListEntry> getAsList() {
-		return ((List<PlayerListEntry>) get());
+		super(PlayerListEntry.class);
+		customEdit(e -> mc().displayGuiScreen(new AddPlayerGui(mc().currentScreen)));
+		addSetting.name("Spieler hinzufügen");
 	}
 
 	public boolean contains(String name, UUID uuid) {
@@ -104,45 +42,19 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 	}
 
 	@Override
-	public void create(Object parent) {
-		if (!unpacked)
-			throw new UnsupportedOperationException("Packed lists are not implemented.");
-
-		Laby3Setting.super.create(parent);
+	protected DisplaySetting<PlayerListEntry> createDisplaySetting(PlayerListEntry entry) {
+		return new PlayerDisplaySetting(this, entry);
 	}
 
-	@Override
-	public void add(PlayerListEntry value) {
-		getAsList().add(value);
-	}
+	private class PlayerDisplaySetting extends DisplaySetting<PlayerListEntry> {
 
-	@Override
-	public ListSetting<PlayerListEntry> customEdit(Consumer<PlayerListEntry> callback) {
-		// No-op
-		return this;
-	}
-
-	@Override
-	public ListSetting<PlayerListEntry> unpacked() {
-		this.unpacked = true;
-		return this;
-	}
-
-	private class PlayerDisplaySetting extends ListEntrySetting {
-
-		private final PlayerListEntry data;
-
-		public PlayerDisplaySetting(PlayerListEntry entry) {
-			super(true, false, false);
-			icon("barrier");
-			container = PlayerListSettingImpl.this.container;
-			data = entry;
+		public PlayerDisplaySetting(ListSettingImpl<PlayerListEntry> parent, PlayerListEntry entry) {
+			super(parent, entry);
 		}
 
 		@Override
-		protected void onChange() {
-			PlayerListSettingImpl.this.getAsList().remove(data);
-			PlayerListSettingImpl.this.notifyChange();
+		public void build() {
+			icon("barrier");
 		}
 
 		@Override
@@ -156,99 +68,89 @@ public class PlayerListSettingImpl extends ControlElement implements Laby3Settin
 
 	}
 
-	private class PlayerAddSetting extends EntryAddSettingImpl {
+	private class AddPlayerGui extends GuiScreen {
 
-		PlayerAddSetting() {
-			name("Spieler hinzufügen");
-			callback(() -> Minecraft.getMinecraft().displayGuiScreen(new AddPlayerGui(Minecraft.getMinecraft().currentScreen)));
+		private final GuiScreen backgroundScreen;
+		private PlayerListEntry entry;
+		private ModTextField inputField;
+		private GuiButton doneButton;
+
+		public AddPlayerGui(GuiScreen backgroundScreen) {
+			this.backgroundScreen = backgroundScreen;
+			EventRegisterer.register(this);
 		}
 
-		private class AddPlayerGui extends GuiScreen {
+		public void initGui() {
+			super.initGui();
+			backgroundScreen.width = width;
+			backgroundScreen.height = height;
+			if (backgroundScreen instanceof LabyModModuleEditorGui)
+				PreviewRenderer.getInstance().init(AddPlayerGui.class);
 
-			private final GuiScreen backgroundScreen;
-			private ModTextField inputField;
-			private GuiButton doneButton;
-			private PlayerListEntry entry;
+			inputField = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 150, height / 4 + 45, 300, 20);
+			inputField.setFocused(true);
+			buttonList.add(new GuiButton(0, width / 2 - 105, height / 4 + 85, 100, 20, "Abbrechen"));
+			buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, height / 4 + 85, 100, 20, "Hinzufügen"));
+		}
 
-			public AddPlayerGui(GuiScreen backgroundScreen) {
-				this.backgroundScreen = backgroundScreen;
-				EventRegisterer.register(this);
-			}
+		@Override
+		public void onGuiClosed() {
+			EventRegisterer.unregister(this);
+		}
 
-			public void initGui() {
-				super.initGui();
-				backgroundScreen.width = width;
-				backgroundScreen.height = height;
-				if (backgroundScreen instanceof LabyModModuleEditorGui)
-					PreviewRenderer.getInstance().init(AddPlayerGui.class);
+		private void updateValidity() {
+			entry = PlayerListEntry.fromName(inputField.getText());
 
-				inputField = new ModTextField(0, LabyModCore.getMinecraft().getFontRenderer(), width / 2 - 150, height / 4 + 45, 300, 20);
-				inputField.setFocused(true);
-				buttonList.add(new GuiButton(0, width / 2 - 105, height / 4 + 85, 100, 20, "Abbrechen"));
-				buttonList.add(doneButton = new GuiButton(1, width / 2 + 5, height / 4 + 85, 100, 20, "Hinzufügen"));
-			}
-
-			@Override
-			public void onGuiClosed() {
-				EventRegisterer.unregister(this);
-			}
-
-			private void updateValidity() {
-				entry = PlayerListEntry.fromName(inputField.getText());
-
-				if (!entry.isValid()) {
-					inputField.setTextColor(0xFFFF0000);
-					doneButton.enabled = false;
-				} else {
-					inputField.setTextColor(0xFFFFFFFF);
-					doneButton.enabled = entry.isLoaded();
-				}
-			}
-
-			public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-				backgroundScreen.drawScreen(0, 0, partialTicks);
-				drawRect(0, 0, width, height, Integer.MIN_VALUE);
-
-				updateValidity();
-				inputField.drawTextBox();
-
-				super.drawScreen(mouseX, mouseY, partialTicks);
-				renderSkull(entry, (width - 32) / 2, height / 4, 32);
-			}
-
-			public void updateScreen() {
-				backgroundScreen.updateScreen();
-				inputField.updateCursorCounter();
-			}
-
-			protected void actionPerformed(GuiButton button) {
-				super.actionPerformed(button);
-				switch (button.id) {
-					case 1:
-						getSettings().add(getSettings().indexOf(PlayerAddSetting.this), new PlayerDisplaySetting(entry));
-						PlayerListSettingImpl.this.getAsList().add(entry);
-						PlayerListSettingImpl.this.notifyChange();
-						// Fall-through
-					case 0:
-						Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
-						backgroundScreen.initGui(); // Update settings
-				}
-			}
-
-			protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-				super.mouseClicked(mouseX, mouseY, mouseButton);
-				inputField.mouseClicked(mouseX, mouseY, mouseButton);
-			}
-
-			protected void keyTyped(char typedChar, int keyCode) {
-				if (keyCode == 1) // ESC
-					Minecraft.getMinecraft().displayGuiScreen(backgroundScreen);
-
-				inputField.textboxKeyTyped(typedChar, keyCode);
-				updateValidity();
+			if (!entry.isValid()) {
+				inputField.setTextColor(0xFFFF0000);
+				doneButton.enabled = false;
+			} else {
+				inputField.setTextColor(0xFFFFFFFF);
+				doneButton.enabled = entry.isLoaded();
 			}
 		}
 
+		public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+			backgroundScreen.drawScreen(0, 0, partialTicks);
+			drawRect(0, 0, width, height, Integer.MIN_VALUE);
+
+			updateValidity();
+			inputField.drawTextBox();
+
+			super.drawScreen(mouseX, mouseY, partialTicks);
+			renderSkull(entry, (width - 32) / 2, height / 4, 32);
+		}
+
+		public void updateScreen() {
+			backgroundScreen.updateScreen();
+			inputField.updateCursorCounter();
+		}
+
+		protected void actionPerformed(GuiButton button) {
+			super.actionPerformed(button);
+			switch (button.id) {
+				case 1:
+					add(entry);
+					notifyChange();
+					// Fall-through
+				case 0:
+					mc().displayGuiScreen(backgroundScreen);
+					backgroundScreen.initGui(); // Update settings
+			}
+		}
+
+		protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+			super.mouseClicked(mouseX, mouseY, mouseButton);
+			inputField.mouseClicked(mouseX, mouseY, mouseButton);
+		}
+
+		protected void keyTyped(char typedChar, int keyCode) {
+			if (keyCode == 1) // ESC
+				mc().displayGuiScreen(backgroundScreen);
+
+			inputField.textboxKeyTyped(typedChar, keyCode);
+			updateValidity();
+		}
 	}
 
 	private void renderSkull(PlayerListEntry e, double x, double y, int size) {

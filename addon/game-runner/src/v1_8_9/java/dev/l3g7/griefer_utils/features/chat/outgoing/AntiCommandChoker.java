@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.StringListEntry;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
@@ -45,7 +43,8 @@ public class AntiCommandChoker extends Feature {
 	private final ListSetting<StringListEntry> customEntries = ListSetting.createStringList()
 		.name("Eigene Einträge")
 		.description("Wenn eine Nachricht mit einem dieser Einträge beginnt, wird sie abgefangen.")
-		.icon("book_and_quill");
+		.icon("book_and_quill")
+		.unpacked();
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -59,7 +58,7 @@ public class AntiCommandChoker extends Feature {
 			t/p h
 			t(p h""")
 		.icon("crossed_out_chat")
-		.subSettings(LABY_4.isActive() ? null : HeaderSetting.create("§e§lEigene Einträge").scale(0.7), customEntries);
+		.subSettings(customEntries);
 
 	@EventListener
 	public void onMessageSend(MessageSendEvent event) {

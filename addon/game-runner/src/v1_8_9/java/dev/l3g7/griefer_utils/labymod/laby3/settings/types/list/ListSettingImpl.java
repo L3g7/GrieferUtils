@@ -11,7 +11,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
+import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
@@ -35,8 +37,9 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 	private boolean unpacked = false;
 	private Consumer<E> customEdit;
 
-	private SettingsElement container = this;
-	private final EntryAddSettingImpl addSetting = new EntryAddSettingImpl();
+	protected SettingsElement container = this;
+	protected final EntryAddSettingImpl addSetting = new EntryAddSettingImpl();
+	private boolean created = false;
 
 	public ListSettingImpl(Class<E> type) {
 		super("§cEs gab einen Fehler!", null);
@@ -67,7 +70,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 				customEdit.accept(null);
 			} else {
 				int index = getSettings().indexOf(addSetting);
-				DisplaySetting<E> setting = new DisplaySetting<>(ListSettingImpl.this, ctor.createNew());
+				DisplaySetting<E> setting = createDisplaySetting(ctor.createNew());
 				getSettings().add(index, setting);
 				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(this::notifyChange, setting));
 			}
@@ -79,19 +82,47 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 		return storage;
 	}
 
+	protected static SettingsElement pack(ControlElement self, Object parent) {
+		Laby3Setting<?, ?> setting = (Laby3Setting<?, ?>) self;
+
+		// Wrap in CategorySetting
+		List<SettingsElement> elements = ((SettingsElement) parent).getSubSettings().getElements();
+		int idx = elements.indexOf(self);
+		elements.remove(self);
+
+		CategorySetting wrapper = CategorySetting.create()
+			.name(self.getDisplayName())
+			.description(self.getDescriptionText())
+			.subSettings(setting);
+
+		Reflection.set(wrapper, "iconData", self.getIconData());
+		elements.add(idx, (SettingsElement) wrapper);
+
+		wrapper.create(parent);
+		setting.create(wrapper);
+		return (SettingsElement) wrapper;
+	}
+
 	@Override
 	public void create(Object parent) {
-		if (!unpacked)
-			throw new UnsupportedOperationException("Packed lists are not implemented.");
+		if (created)
+			return;
 
-		Laby3Setting.super.create(parent);
-		this.container = (SettingsElement) parent;
+		created = true;
+		if (!unpacked) {
+			unpacked = true;
+			this.container = pack(this, parent);
+		} else {
+			Laby3Setting.super.create(parent);
+			this.container = (SettingsElement) parent;
+		}
+
 		int index = getSettings().indexOf(this);
 		getSettings().remove(this);
 
 		List<SettingsElement> settings = new ArrayList<>();
 		for (E entry : get())
-			settings.add(new DisplaySetting<>(this, entry));
+			settings.add(createDisplaySetting(entry));
 
 		settings.add(addSetting);
 		getSettings().addAll(index, settings);
@@ -107,8 +138,8 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 	@Override
 	public void add(E value) {
 		int index = getSettings().indexOf(addSetting);
-		DisplaySetting<E> setting = new DisplaySetting<>(ListSettingImpl.this, value);
-		getSettings().add(index, setting);
+		getSettings().add(index, createDisplaySetting(value));
+		get().add(value);
 	}
 
 	@Override
@@ -123,17 +154,22 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 		return this;
 	}
 
-	private List<SettingsElement> getSettings() {
+	protected List<SettingsElement> getSettings() {
 		return container.getSubSettings().getElements();
 	}
 
-	private static class DisplaySetting<E extends ListEntry<E>> extends ListEntrySetting {
+	protected DisplaySetting<E> createDisplaySetting(E entry) {
+		return new DisplaySetting<>(this, entry);
+	}
+
+	protected static class DisplaySetting<E extends ListEntry<E>> extends ListEntrySetting {
 
 		private final ListSettingImpl<E> parent;
-		private final E data;
+		protected final E data;
 
 		public DisplaySetting(ListSettingImpl<E> parent, E entry) {
 			super(true, true, false);
+			this.container = parent.container;
 			this.parent = parent;
 			data = entry;
 			build();
@@ -154,14 +190,15 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 			else
 				name(data.getName());
 
-			List<SettingsElement> settings = getSubSettings().getElements();
-			settings.clear();
-			settings.addAll(c(data.toSettings()));
+			if (parent.customEdit == null) {
+				List<SettingsElement> settings = getSubSettings().getElements();
+				settings.addAll(c(data.toSettings()));
+			}
 		}
 
 		@Override
 		protected void onChange() {
-			((ArrayList<E>) parent.get()).remove(data);
+			parent.get().remove(data);
 			parent.getSettings().remove(this);
 			parent.notifyChange();
 		}

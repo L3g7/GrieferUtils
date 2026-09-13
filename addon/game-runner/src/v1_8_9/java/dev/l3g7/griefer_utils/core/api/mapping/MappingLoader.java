@@ -45,7 +45,7 @@ public class MappingLoader {
 		}
 
 		if (registerPostProcessor) {
-			LatePostProcessor.mappingTransformer = new MappingTransformer();
+			LatePostProcessor.mappingTransformer = new MappingTransformer(targetMapping);
 			LatePostProcessor.processors.add(0, new MixinShadowRemapper());
 		}
 	}

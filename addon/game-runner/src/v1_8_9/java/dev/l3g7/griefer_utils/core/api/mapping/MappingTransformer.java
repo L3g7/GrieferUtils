@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.core.api.mapping;
 
 import dev.pymdk.mapper.FastMapper;
+import dev.pymdk.mapper.Mapping;
 import dev.pymdk.mapper.impl.LowLevelMapper;
 import dev.pymdk.mapper.impl.MappingEntries;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -19,10 +20,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static dev.pymdk.mapper.Mapping.OBFUSCATED;
+import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
 import static org.objectweb.asm.ClassReader.SKIP_CODE;
 import static org.objectweb.asm.ClassReader.SKIP_FRAMES;
 
 public class MappingTransformer implements IClassTransformer {
+
+	private final Mapping targetMapping;
+
+	public MappingTransformer(Mapping targetMapping) {
+		this.targetMapping = targetMapping;
+	}
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] classBytes) {
@@ -52,32 +61,37 @@ public class MappingTransformer implements IClassTransformer {
 		LowLevelMapper.classes.unobfMap.put(node.name, mappedClass);
 		mappedClass.create();
 
-		return FastMapper.mapClass(copiedClassBytes).getData();
+ 		return FastMapper.mapClass(copiedClassBytes).getData();
 	}
 
 	/**
 	 * Registers the given class in LowLevelMapper's mappings.
+	 * @return The class' unobfuscated name.
 	 */
-	private static void registerClassesRecursively(Class<?> clazz) {
+	private String registerClassesRecursively(Class<?> clazz) {
 		String className = clazz.getName().replace('.', '/');
-		if (LowLevelMapper.classes.unobfMap.containsKey(className))
-			return; // Already registered
+		String unobfName = targetMapping != OBFUSCATED ? className : Mapper.mapClass(className, OBFUSCATED, UNOBFUSCATED);
+		if (LowLevelMapper.classes.unobfMap.containsKey(unobfName))
+			return unobfName; // Already registered
 
-		MappingEntries.MappedClass mappedClass = new MappingEntries.MappedClass(className, className);
+		String obfName = targetMapping == OBFUSCATED ? className : Mapper.mapClass(className, UNOBFUSCATED, OBFUSCATED);
+		MappingEntries.MappedClass mappedClass = new MappingEntries.MappedClass(obfName, unobfName);
 
+		// Register interfaces & super class
 		List<Class<?>> baseClasses = new ArrayList<>(Arrays.asList(clazz.getInterfaces()));
 		if (clazz.getSuperclass() != null && clazz.getSuperclass() != Object.class)
 			baseClasses.add(clazz.getSuperclass());
 
-		for (Class<?> baseClass : baseClasses)
-			registerClassesRecursively(baseClass);
+		String[] baseClassNames = baseClasses.stream()
+			.map(this::registerClassesRecursively)
+			.toArray(String[]::new);
 
-		mappedClass.setBaseClasses(baseClasses.stream()
-			.map(c -> c.getName().replace('.', '/'))
-			.toArray(String[]::new));
+		mappedClass.setBaseClasses(baseClassNames);
 
-		LowLevelMapper.classes.unobfMap.put(className, mappedClass);
+		// Register this class
+		LowLevelMapper.classes.unobfMap.put(unobfName, mappedClass);
 		mappedClass.create();
+		return unobfName;
 	}
 
 }

@@ -46,7 +46,8 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 		Reflection.set(this, "path", path);
 
 		List<SettingsElement> previousPath = new ArrayList<>(path);
-		previousPath.remove(previousPath.size() - 1);
+		if (!previousPath.isEmpty())
+			previousPath.remove(previousPath.size() - 1);
 		Reflection.set(previousScreen, "path", previousPath);
 
 

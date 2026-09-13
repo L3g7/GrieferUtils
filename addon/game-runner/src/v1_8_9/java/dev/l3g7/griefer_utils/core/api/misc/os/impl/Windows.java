@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.core.api.misc.os.impl;
 
 import com.sun.jna.*;
 import com.sun.jna.Structure.FieldOrder;
-import com.sun.jna.win32.StdCallLibrary;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -31,8 +30,6 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.WINDOWS;
 @ExclusiveTo(WINDOWS)
 public class Windows implements OS {
 
-	private static final Comdlg32 COMDLG32 = Native.load("comdlg32", Comdlg32.class);
-
 	@Override
 	public @Nullable File chooseImageFile() {
 		String[] allowedFileTypes = ImageIO.getReaderFileSuffixes();
@@ -44,7 +41,7 @@ public class Windows implements OS {
 		params.nMaxFile = 260;
 		params.lpstrFilter = new WString("Bild\0" + filterStr + "\0\0");
 
-		if (COMDLG32.GetOpenFileNameW(params)) {
+		if (Comdlg32.GetOpenFileNameW(params)) {
 			String path;
 			if (LABY_4.isActive())
 				path = params.lpstrFile.getWideString(0);
@@ -53,18 +50,22 @@ public class Windows implements OS {
 			return new File(path);
 		}
 
-		int error = COMDLG32.CommDlgExtendedError();
+		int error = Comdlg32.CommDlgExtendedError();
 		if (error != 0) // Selection was aborted by the user
 			System.err.println("GetOpenFileName failed with error " + error);
 
 		return null;
 	}
 
-	public interface Comdlg32 extends StdCallLibrary {
+	public static class Comdlg32 {
 
-		boolean GetOpenFileNameW(OpenFileName params);
+		static {
+			Native.register("comdlg32");
+		}
 
-		int CommDlgExtendedError();
+		public static native boolean GetOpenFileNameW(OpenFileName params);
+
+		public static native int CommDlgExtendedError();
 
 		@SuppressWarnings("unused")
 		@FieldOrder({
@@ -73,7 +74,7 @@ public class Windows implements OS {
 			"lpstrTitle", "Flags", "nFileOffset", "nFileExtension", "lpstrDefExt", "lCustData", "lpfnHook",
 			"lpTemplateName"
 		})
-		class OpenFileName extends Structure {
+		public static class OpenFileName extends Structure {
 
 			public OpenFileName() {
 				lStructSize = size();

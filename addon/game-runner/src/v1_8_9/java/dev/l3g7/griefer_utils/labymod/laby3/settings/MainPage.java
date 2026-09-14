@@ -66,7 +66,8 @@ public class MainPage {
 				searchableSettings.add((SettingsElement) feature.getMainElement());
 
 				((SettingsElement) feature.getMainElement()).getSubSettings().getElements().stream()
-					.filter(e -> e instanceof Laby3Setting<?, ?>)
+					.filter(e -> e instanceof Laby3Setting<?, ?>
+						&& !(e instanceof StringSetting)) // Skip StringSettings as they override the back button (for validators) and there is no setting anybody would search for
 					.forEach(searchableSettings::add);
 			});
 

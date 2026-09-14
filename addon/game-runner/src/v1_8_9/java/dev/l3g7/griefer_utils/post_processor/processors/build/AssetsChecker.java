@@ -7,6 +7,9 @@
 
 package dev.l3g7.griefer_utils.post_processor.processors.build;
 
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
+import dev.pymdk.mapper.impl.helpers.ClassScanner;
+
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -18,7 +21,7 @@ import java.util.List;
 public class AssetsChecker {
 
 	private static final List<String> KNOWN_DIRECTORIES = Arrays.asList("litematica", "mob_icons", "biomes", "structures", "high_res");
-	private static final List<String> KNOWN_FILES = Arrays.asList("thonk", "pencil",  "gray_sword", "diamond_sword", "menu_point");
+	private static final List<String> KNOWN_FILES = Arrays.asList("pencil", "gray_sword", "diamond_sword", "menu_point");
 
 	public static void validateAssets(FileSystem fs) throws IOException {
 		List<String> directories = new ArrayList<>();
@@ -56,8 +59,7 @@ public class AssetsChecker {
 				if (name.endsWith("/*")) {
 					if (!directories.remove(name.substring(0, name.length() - 2)))
 						throw new IllegalStateException("Missing directory for " + name);
-				}
-				else {
+				} else {
 					if (!files.remove(name))
 						throw new IllegalStateException("Missing file for " + name);
 				}
@@ -83,39 +85,11 @@ public class AssetsChecker {
 			if (!path.getFileName().toString().endsWith(".class"))
 				return;
 
-			try {
-				// Decode content pool and check CONSTANT_Utf8_info entries
-				byte[] content = Files.readAllBytes(path);
-				short poolCount = (short) (((content[8] & 0xFF) << 8) | (content[9] & 0xFF));
-				int[] startIndices = new int[poolCount];
-				int cursor = 10;
-				for (int idx = 0; idx < poolCount; idx++) {
-					startIndices[idx] = cursor;
-					byte b = content[cursor++];
-					if (b == 1) { // CONSTANT_UTF8
-						short length = (short) (((content[cursor++] & 0xFF) << 8) | (content[cursor++] & 0xFF));
-						cursor += length;
-					} else if (b == 8) { // CONSTANT_String
-						short index = (short) (((content[cursor++] & 0xFF) << 8) | (content[cursor++] & 0xFF));
-						int start = startIndices[index - 1] + 1;
-						short length = (short) (((content[start++] & 0xFF) << 8) | (content[start++] & 0xFF));
-						String data = new String(content, start, length);
-						files.remove(data);
-					}
-					else if (b == 5 || b == 6) {
-						// CONSTANT_Long_info / CONSTANT_Double_info take two entries
-						cursor += 8;
-						idx += 1;
-					}
-					else if (b == 7 || b == 16 || b == 19 || b == 20)
-						cursor += 2;
-					else if (b == 15)
-						cursor += 3;
-					else if (b == 3 || b == 4 || b == 9 || b == 10 || b == 11 || b == 12 || b == 17 || b == 18)
-						cursor += 4;
-				}
-			} catch (IOException e) {
-				throw new RuntimeException(e);
+			byte[] content = IO.read(path).asBytes();
+			files.removeAll(ClassScanner.getStrings(content));
+			for (String string : ClassScanner.getStrings(content)) {
+				if (string.hashCode() == 110336888)
+					System.out.println("HIT AT " + path);
 			}
 		});
 

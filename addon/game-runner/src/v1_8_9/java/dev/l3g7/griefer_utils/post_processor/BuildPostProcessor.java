@@ -77,7 +77,7 @@ public class BuildPostProcessor {
 			RefmapGenerator.generateRefmap(fs);
 			MappingGenerator.generateMappings(fs);
 
-//			AssetsChecker.validateAssets(fs);
+			AssetsChecker.validateAssets(fs);
 			convertRecords();
 
 //			cleanup();

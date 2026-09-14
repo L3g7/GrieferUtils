@@ -39,36 +39,34 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 public class Entrypoint implements AutoUpdater.Entrypoint {
 
 	public void start() {
+		Bridge.Initializer.init(LABY_3);
+
 		// Load and inject libraries
 
 		// PyMDK Mapper: For mapping references to Minecraft classes
 		LibLoader.loadLibrary(
 			"https://maven.pymdk.dev",
 			"dev/pymdk", "mapper", "2.0.0",
-			"FOBCv4afcB3FjOhHQBneUNcDQ8qXT2m6+AyPu3W3DQw="
+			"a7PpSB7cmMMKWL14wixdccTBVMWzmKbd7p4By7BOJoI="
 		);
-
 		// mXparser: for evaluating expressions (Calculator)
 		LibLoader.loadLibrary(
 			"https://repo1.maven.org/maven2",
 			"org/mariuszgromada/math", "MathParser.org-mXparser", "6.1.0",
 			"3OKEK/Y/TeoVTK5OdeBEC8iEsuYPRXdyahAZsmHlYn0="
 		);
-
 		// ZXing: for reading qr codes (QRCodeScanner)
 		LibLoader.loadLibrary(
 			"https://repo1.maven.org/maven2",
 			"com/google/zxing", "core", "3.5.4",
 			"cd5diTQbX89d2J2n9E6E2CXQ4ITN8+x3yaviaw8M6xM="
 		);
-
 		// Mixin: for modifying other classes (core.injection)
 		LibLoader.loadLibrary(
 			"https://repo.spongepowered.org/repository/maven-public",
 			"org/spongepowered", "mixin", "0.7.11-SNAPSHOT", "20180703.121122-1",
 			"2j1uR7nBK1oxLYm2e8J+JCnYI8Cc3oqQKZ6f3MTu/CA="
 		);
-
 		// Brigadier: for parsing commands (CommandSuggestions)
 		LibLoader.loadLibrary(
 			"https://libraries.minecraft.net",
@@ -78,8 +76,6 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 
 		// Load mappings for automatic name resolution in Reflection
 		Mapper.loadMappings(Launch.assetsDir.toPath(), LabyModCoreMod.isObfuscated() ? Mapping.OBFUSCATED : Mapping.INTERMEDIARY, true);
-
-		Bridge.Initializer.init(LABY_3);
 
 		// Sets LabyMod's mapping adapter
 		// It's usually set in the MinecraftVisitor, but since Mixin changes the transformer order (i think),

@@ -4,6 +4,10 @@ plugins {
 	id("de.undercouch.download") version "5.3.0"
 }
 
+repositories {
+	maven("https://maven.pymdk.dev")
+}
+
 dependencies {
 	compileOnly(fileTree("../libs"))
 
@@ -17,4 +21,7 @@ dependencies {
 
 	// Brigadier (Command dispatcher)
 	implementation("com.mojang:brigadier:1.0.18")
+
+	// PyMDK Mapper (Reflection, LabyMod 3)
+	implementation("dev.pymdk:mapper:2.0.0")
 }

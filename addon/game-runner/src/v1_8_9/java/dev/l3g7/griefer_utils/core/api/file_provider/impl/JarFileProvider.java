@@ -8,6 +8,8 @@
 package dev.l3g7.griefer_utils.core.api.file_provider.impl;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.util.Util;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -25,11 +27,13 @@ public class JarFileProvider extends FileProvider {
 
 	/**
 	 * Adds the content of the jar file containing the given class to the cache.
+	 *
 	 * @return the error if one occurred, null otherwise
 	 */
-	protected Throwable update0(Class<?> refClass) {
+	protected @Nullable Throwable update0(Class<?> refClass) {
+		String jarPath = "<uninitialized>";
 		try {
-			String jarPath = refClass.getProtectionDomain().getCodeSource().getLocation().getFile();
+			jarPath = refClass.getProtectionDomain().getCodeSource().getLocation().getFile();
 			if (!jarPath.contains(".jar"))
 				throw new IllegalStateException("Invalid code source location: " + jarPath);
 
@@ -40,19 +44,17 @@ public class JarFileProvider extends FileProvider {
 			Path path = Paths.get(URI.create(jarPath));
 
 			// Read entries
+			@SuppressWarnings("resource") // Keep jarFile open for InputStream suppliers
 			JarFile jarFile = new JarFile(path.toFile());
-
-			if (jarFile.size() == 0)
-				return new IllegalStateException("Empty jar file: " + jarPath);
-
 			jarFile.stream().forEach(entry -> {
 				if (!exclusions.contains(entry.getName()))
 					fileCache.putIfAbsent(entry.getName(), () -> jarFile.getInputStream(entry));
 			});
+
+			return null;
 		} catch (Exception e) {
-			return e;
+			return Util.elevate(e, "Tried to load jar from %s", jarPath);
 		}
-		return null;
 	}
 
 }

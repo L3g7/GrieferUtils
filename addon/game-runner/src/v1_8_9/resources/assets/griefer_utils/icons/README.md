@@ -573,10 +573,6 @@
     <td>selfmade</td>
   </tr>
   <tr>
-    <td><img src="pencil_padded.png" height=16em width=16em />&nbsp;&nbsp;<a href="pencil_padded.png">pencil_padded.png</a></td>
-    <td>selfmade</td>
-  </tr>
-  <tr>
     <td><img src="player_green.png" height=16em width=16em />&nbsp;&nbsp;<a href="player_green.png">player_green.png</a></td>
     <td><a href="https://labymod.net">LabyMod asset</a></td>
   </tr>

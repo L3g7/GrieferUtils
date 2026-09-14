@@ -57,11 +57,6 @@ public class MainPage {
 
 		// Collect settings
 		List<BaseSetting<?>> settings = collectSettings();
-
-		// Initialize settings
-		for (BaseSetting<?> s : settings)
-			s.create(registry);
-
 		registry.addSettings(Reflection.<List<Setting>>c(settings));
 	}
 

@@ -38,6 +38,9 @@ public class URLFileProvider extends FileProvider {
 		for (URL url : ((URLClassLoader) refClass.getClassLoader()).getURLs()) {
 			try {
 				Path root = Paths.get(url.toURI());
+				if (!Files.exists(root))
+					continue;
+
 				try (Stream<@NotNull Path> stream = Files.walk(root)) {
 					stream.forEach(entry -> {
 						if (Files.isRegularFile(entry)) {

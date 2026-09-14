@@ -35,7 +35,7 @@ public class JarFileProvider extends FileProvider {
 		try {
 			jarPath = refClass.getProtectionDomain().getCodeSource().getLocation().getFile();
 			if (!jarPath.contains(".jar"))
-				throw new IllegalStateException("Invalid code source location: " + jarPath);
+				return new IllegalStateException("Invalid code source location: " + jarPath);
 
 			// Sanitize jarPath
 			if (jarPath.contains("!"))

@@ -9,7 +9,9 @@ package dev.l3g7.griefer_utils.core.api.file_provider.impl;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 
-import java.net.URLDecoder;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.jar.JarFile;
 
 /**
@@ -32,11 +34,13 @@ public class JarFileProvider extends FileProvider {
 				throw new IllegalStateException("Invalid code source location: " + jarPath);
 
 			// Sanitize jarPath
-			jarPath = jarPath.substring(5, jarPath.lastIndexOf("!")); // remove protocol and class
-			jarPath = URLDecoder.decode(jarPath, "UTF-8");
+			if (jarPath.contains("!"))
+				jarPath = jarPath.substring(0, jarPath.indexOf("!"));
+
+			Path path = Paths.get(URI.create(jarPath));
 
 			// Read entries
-			JarFile jarFile = new JarFile(jarPath);
+			JarFile jarFile = new JarFile(path.toFile());
 
 			if (jarFile.size() == 0)
 				return new IllegalStateException("Empty jar file: " + jarPath);

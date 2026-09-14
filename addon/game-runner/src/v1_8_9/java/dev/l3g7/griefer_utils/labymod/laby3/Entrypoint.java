@@ -41,11 +41,11 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 	public void start() {
 		// Load and inject libraries
 
-		// PyMDK Mapper: For mapping reflection calls to Minecraft
+		// PyMDK Mapper: For mapping references to Minecraft classes
 		LibLoader.loadLibrary(
 			"https://maven.pymdk.dev",
 			"dev/pymdk", "mapper", "2.0.0",
-			"UQkFtts3UGh+Hh9Q/7MdtcqU1Exx5zpFEaE9VQmseHQ="
+			"FOBCv4afcB3FjOhHQBneUNcDQ8qXT2m6+AyPu3W3DQw="
 		);
 
 		// mXparser: for evaluating expressions (Calculator)

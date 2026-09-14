@@ -1,10 +1,16 @@
 package dev.l3g7.griefer_utils.core.api.mapping;
 
+import com.google.gson.reflect.TypeToken;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.post_processor.LatePostProcessor;
-import dev.l3g7.griefer_utils.post_processor.processors.MixinShadowRemapper;
+import dev.l3g7.griefer_utils.post_processor.processors.mappings.MappingTransformer;
+import dev.l3g7.griefer_utils.post_processor.processors.mappings.MixinShadowRemapper;
 import dev.pymdk.mapper.FastMapper;
 import dev.pymdk.mapper.Mapping;
+import dev.pymdk.mapper.impl.LowLevelMapper;
+import dev.pymdk.mapper.impl.MappingEntries.MappedClass;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +19,7 @@ import java.net.URI;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.zip.ZipInputStream;
 
 import static dev.l3g7.griefer_utils.core.api.util.CryptUtil.checkHashFail;
@@ -37,7 +44,7 @@ public class MappingLoader {
 			if (!Files.exists(mappings) || checkHashFail(mappings, MAPPINGS_HASH))
 				decompressMappings(zipMappings, mappings);
 
-			// Load mappings
+			// Load Minecraft mappings
 			FastMapper.configure(Mapping.UNOBFUSCATED, targetMapping);
 			FastMapper.loadMappings(mappings);
 		} catch (IOException e) {
@@ -45,7 +52,14 @@ public class MappingLoader {
 		}
 
 		if (registerPostProcessor) {
-			LatePostProcessor.mappingTransformer = new MappingTransformer(targetMapping);
+			// Load extended mappings
+			Collection<MappedClass> extendedMappings = IO.read(FileProvider.getData("assets/griefer_utils/mappings-1.8.9-mcp.json"))
+				.asJson((new TypeToken<>() {}));
+            LowLevelMapper.classes.addAll(extendedMappings);
+            LowLevelMapper.classes.create(extendedMappings);
+
+			// Register postprocessor
+			LatePostProcessor.mappingTransformer = new MappingTransformer();
 			LatePostProcessor.processors.add(0, new MixinShadowRemapper());
 		}
 	}

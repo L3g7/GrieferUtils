@@ -90,10 +90,6 @@ public class AssetsChecker {
 
 			byte[] content = IO.read(path).asBytes();
 			files.removeAll(ClassScanner.getStrings(content));
-			for (String string : ClassScanner.getStrings(content)) {
-				if (string.hashCode() == 110336888)
-					System.out.println("HIT AT " + path);
-			}
 		});
 
 		if (!files.isEmpty())

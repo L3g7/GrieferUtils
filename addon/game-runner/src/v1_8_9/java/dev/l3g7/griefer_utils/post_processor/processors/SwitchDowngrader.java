@@ -60,6 +60,7 @@ public class SwitchDowngrader extends Processor implements Opcodes {
 		}
 	}
 
+	@SuppressWarnings("unused") // Invoked by downgraded switches
 	public static int typeSwitch(Object o, int n, Class<?>[] classes) {
 		assert n == 0;
 

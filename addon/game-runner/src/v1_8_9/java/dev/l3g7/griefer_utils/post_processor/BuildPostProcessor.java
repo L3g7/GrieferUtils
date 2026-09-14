@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.Init;
@@ -20,9 +19,6 @@ import dev.l3g7.griefer_utils.post_processor.processors.build.MappingGenerator;
 import dev.l3g7.griefer_utils.post_processor.processors.build.RecordConverter;
 import dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator.RefmapGenerator;
 import dev.pymdk.mapper.Mapping;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,8 +33,6 @@ import java.util.zip.ZipOutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
-import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 
 /**
  * A processor applied after building.
@@ -52,7 +46,7 @@ public class BuildPostProcessor {
 		"icon", "griefer_utils_icon",
 		"debug", System.getProperty("griefer_utils.debug"),
 		"beta", System.getProperty("griefer_utils.beta"),
-		"transformerClass", "dev.l3g7.griefer_utils.labymod.laby3.Init",
+		"transformerClass", dev.l3g7.griefer_utils.labymod.laby3.Init.class.getName(),
 		"addonVersion", System.getProperty("griefer_utils.version")
 	);
 
@@ -69,16 +63,15 @@ public class BuildPostProcessor {
 		// Trigger patches
 		try (FileSystem fs = FileSystems.newFileSystem(newJar.toPath())) {
 			BuildPostProcessor.fs = fs;
-			mergeAddonJson();
-
-			processBootstrapClasses();
 
 			Mapper.loadMappings(Paths.get("./build"), Mapping.INTERMEDIARY, false);
 			RefmapGenerator.generateRefmap(fs);
 			MappingGenerator.generateMappings(fs);
 
+			mergeAddonJson();
+			processBootstrapClasses();
+			RecordConverter.convertRecords(fs);
 			AssetsChecker.validateAssets(fs);
-			convertRecords();
 
 			cleanup();
 		}
@@ -103,31 +96,6 @@ public class BuildPostProcessor {
 		try (OutputStream out = Files.newOutputStream(fs.getPath("addon.json"))) {
 			out.write(gson.toJson(addon).getBytes(UTF_8));
 		}
-	}
-
-	private static void convertRecords() throws IOException {
-		Files.walk(fs.getPath("dev")).forEach((Consumer<Path>) path -> {
-			// Only process classes
-			if (Files.isDirectory(path))
-				return;
-
-			if (!path.getFileName().toString().endsWith(".class"))
-				return;
-
-			// Read
-			ClassReader reader = new ClassReader(Files.readAllBytes(path));
-			ClassNode node = new ClassNode();
-			reader.accept(node, 0);
-
-			// Process
-			boolean computeFrames = RecordConverter.process(node);
-
-			// Write
-			ClassWriter writer = new ClassWriter(computeFrames ? COMPUTE_MAXS | COMPUTE_FRAMES : COMPUTE_MAXS);
-			node.accept(writer);
-
-			Files.write(path, writer.toByteArray());
-		});
 	}
 
 	/**

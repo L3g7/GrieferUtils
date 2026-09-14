@@ -7,16 +7,27 @@
 
 package dev.l3g7.griefer_utils.post_processor.processors.build;
 
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
+import org.jetbrains.annotations.NotNull;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
+import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 import static org.objectweb.asm.Type.ARRAY;
 
 /**
@@ -24,7 +35,7 @@ import static org.objectweb.asm.Type.ARRAY;
  */
 public class RecordConverter implements Opcodes {
 
-	private static final Converter[] CONVERTERS = new Converter[] {
+	private static final Converter[] CONVERTERS = new Converter[]{
 		new Converter("Boolean", 'Z'),
 		new Converter("Character", 'C'),
 		new Converter("Byte", 'B'),
@@ -35,7 +46,34 @@ public class RecordConverter implements Opcodes {
 		new Converter("Double", 'D')
 	};
 
-	public static boolean process(ClassNode classNode) {
+	public static void convertRecords(FileSystem fs) throws IOException {
+		try (Stream<@NotNull Path> stream = Files.walk(fs.getPath("dev"))) {
+			stream.forEach((Consumer<Path>) path -> {
+				// Only process classes
+				if (Files.isDirectory(path))
+					return;
+
+				if (!path.getFileName().toString().endsWith(".class"))
+					return;
+
+				// Read
+				ClassReader reader = new ClassReader(Files.readAllBytes(path));
+				ClassNode node = new ClassNode();
+				reader.accept(node, 0);
+
+				// Process
+				boolean computeFrames = convertRecord(node);
+
+				// Write
+				ClassWriter writer = new ClassWriter(computeFrames ? COMPUTE_MAXS | COMPUTE_FRAMES : COMPUTE_MAXS);
+				node.accept(writer);
+
+				Files.write(path, writer.toByteArray());
+			});
+		}
+	}
+
+	private static boolean convertRecord(ClassNode classNode) {
 		// Only process records
 		if ((classNode.access & Opcodes.ACC_RECORD) == 0)
 			return false;
@@ -223,20 +261,10 @@ public class RecordConverter implements Opcodes {
 		return list;
 	}
 
-	private static final class Converter {
-
-		private final String wrapper;
-		private final char descChar;
-
-		private Converter(String wrapper, char descChar) {
-			this.wrapper = wrapper;
-			this.descChar = descChar;
-		}
-
+	private record Converter(String wrapper, char descChar) {
 		public MethodInsnNode valueOf() {
 			return new MethodInsnNode(INVOKESTATIC, "java/lang/" + wrapper, "valueOf", "(" + descChar + ")Ljava/lang/" + wrapper + ";");
 		}
-
 	}
 
 	private static AbstractInsnNode getNumberInsn(int num) {

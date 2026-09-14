@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.settings.types;
 
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
@@ -55,9 +56,9 @@ public class HeaderSettingImpl extends ControlElement implements HeaderSetting {
 
 	@Override
 	public HeaderSetting name(String name) {
-		this.name = name.trim();
-		this.rows = Collections.singletonList(name);
-		setDisplayName(name);
+		this.name = BaseSetting.normalizeName(name);
+		this.rows = Collections.singletonList(this.name);
+		setDisplayName(this.name);
 		return this;
 	}
 

@@ -126,9 +126,7 @@ public class DefaultPrefixes extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name(LABY_3.isActive()
-			? "Standard- Nametags" // Spacing to allow word wrap
-			: "Standard-Nametags")
+		.name("Standard-\fNametags")
 		.description("Entfernt Änderungen an Nametags.")
 		.icon("name_tag_yellow")
 		.callback(TabListEvent::updatePlayerInfoList)

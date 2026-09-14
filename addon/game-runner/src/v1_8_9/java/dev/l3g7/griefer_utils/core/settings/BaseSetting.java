@@ -12,6 +12,8 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+
 public interface BaseSetting<S extends BaseSetting<S>> {
 
 	Object NULL = new Object();
@@ -20,6 +22,7 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 
 	/**
 	 * Sets the name of the setting.
+	 * Form Feed (\f) acts as LabyMod 3-only spacing.
 	 */
 	S name(String name);
 
@@ -70,6 +73,10 @@ public interface BaseSetting<S extends BaseSetting<S>> {
 
 	default <T> T into() {
 		return Reflection.c(this);
+	}
+
+	static String normalizeName(String name) {
+		return name.trim().replace("\f", LABY_3.isActive() ? " " : "");
 	}
 
 }

@@ -80,7 +80,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 	@Override
 	default S name(String name) {
-		getStorage().name = name.trim();
+		getStorage().name = BaseSetting.normalizeName(name);
 		return (S) this;
 	}
 

@@ -26,9 +26,7 @@ public class Badges {
 		.defaultValue(true);
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
-		.name(LABY_3.isActive()
-			? "GrieferUtils-\nNutzer-Anzeige"
-			: "GrieferUtils-Nutzer-Anzeige")
+		.name("GrieferUtils-\fNutzer-Anzeige")
 		.description("""
 			Zeigt vor den Namen von Spielern ein GrieferUtils-Icon an, wenn sie das Addon benutzen.
 

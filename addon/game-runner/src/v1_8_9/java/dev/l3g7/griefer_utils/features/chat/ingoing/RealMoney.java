@@ -51,9 +51,7 @@ public class RealMoney extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name(LABY_3.isActive()
-			? "Echtgeld- Erkennung" // Spacing to allow word wrap
-			: "Echtgeld-Erkennung")
+		.name("Echtgeld-\fErkennung")
 		.description("Fügt einen Tag zu eingehenden Bezahlungen hinzu.")
 		.icon("coin")
 		.subSettings(highlightCents, tag, position);

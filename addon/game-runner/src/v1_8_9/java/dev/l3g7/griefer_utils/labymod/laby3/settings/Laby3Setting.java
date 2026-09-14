@@ -40,7 +40,7 @@ public interface Laby3Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 
 	@Override
 	default S name(String name) {
-		((SettingsElement) this).setDisplayName(name.trim());
+		((SettingsElement) this).setDisplayName(BaseSetting.normalizeName(name));
 		return (S) this;
 	}
 

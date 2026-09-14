@@ -83,9 +83,7 @@ public class FixTileEntityEnchantments extends Feature {
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-		.name(LABY_3.isActive()
-			? "Tile Entity- Verzauberung fixen" // Spacing to allow word wrap
-			: "Tile Entity-Verzauberung fixen")
+		.name("Tile Entity-\fVerzauberung fixen")
 		.description("Behebt, dass Verzauberungen von Tile Entities (Bannern, Kisten, Köpfen) nicht angezeigt werden.")
 		.icon("enchanted_steve");
 

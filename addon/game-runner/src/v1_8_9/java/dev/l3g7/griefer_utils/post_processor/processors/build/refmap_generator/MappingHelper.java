@@ -10,6 +10,8 @@ package dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator;
 import dev.pymdk.mapper.Mapping;
 import dev.pymdk.mapper.impl.MappingEntries;
 import dev.pymdk.mapper.impl.MappingEntries.MappedClass;
+import dev.pymdk.mapper.impl.MappingEntries.MappedField;
+import dev.pymdk.mapper.impl.MappingEntries.MappedMethod;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -18,14 +20,17 @@ import static dev.pymdk.mapper.Mapping.INTERMEDIARY;
 import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
 import static dev.pymdk.mapper.impl.LowLevelMapper.classes;
 
+/**
+ * @see RefmapGenerator
+ */
 class MappingHelper {
 
-	public static MemberWithOwner findMethod(String unnormalizedOwner, String method) {
+	protected static RefmapEntry findMethod(String unnormalizedOwner, String method) {
 		String owner = unnormalizedOwner.replace('.', '/');
 
 		boolean hasDesc = method.indexOf('(') >= 0;
 		return findMember(owner, mappedClass -> {
-			MappingEntries.MappedMethod found;
+			MappedMethod found;
 			if (hasDesc) {
 				found = mappedClass.methods.unobfMap.get(method);
 			} else {
@@ -40,19 +45,19 @@ class MappingHelper {
 		});
 	}
 
-	public static MemberWithOwner findField(String unnormalizedOwner, String fieldName) {
+	protected static RefmapEntry findField(String unnormalizedOwner, String fieldName) {
 		String owner = unnormalizedOwner.replace('.', '/');
 		return findMember(owner, mappedClass -> {
-			MappingEntries.MappedField found = mappedClass.fields.unobfMap.get(fieldName);
+			MappedField found = mappedClass.fields.unobfMap.get(fieldName);
 			MappedClass mappedOwner = classes.unobfMap.get(owner);
 			return found == null ? null : new MemberWithOwner(mappedOwner == null ? new MappedClass(owner, owner) : mappedOwner, found);
 		});
 	}
 
-	public static MemberWithOwner findMember(String owner, Function<MappedClass, MemberWithOwner> lookup) {
+	protected static RefmapEntry findMember(String owner, Function<MappedClass, RefmapEntry> lookup) {
 		MappedClass mappedClass = classes.unobfMap.get(owner);
 		if (mappedClass != null) {
-			MemberWithOwner member = lookup.apply(mappedClass);
+			RefmapEntry member = lookup.apply(mappedClass);
 			if (member != null)
 				return member;
 		}
@@ -61,7 +66,6 @@ class MappingHelper {
 		try {
 			clazz = Class.forName(owner.replace('/', '.'), false, MappingHelper.class.getClassLoader());
 		} catch (ClassNotFoundException e) {
-//			System.err.println("Can't load class " + e.getMessage());
 			return null;
 		}
 
@@ -70,13 +74,13 @@ class MappingHelper {
 
 		Class<?> superclass = clazz.getSuperclass();
 		if (superclass != null) {
-			MemberWithOwner member = findMember(superclass.getName().replace('.', '/'), lookup);
+			RefmapEntry member = findMember(superclass.getName().replace('.', '/'), lookup);
 			if (member != null)
 				return member;
 		}
 
 		for (Class<?> itf : clazz.getInterfaces()) {
-			MemberWithOwner member = findMember(itf.getName().replace('.', '/'), lookup);
+			RefmapEntry member = findMember(itf.getName().replace('.', '/'), lookup);
 			if (member != null)
 				return member;
 		}
@@ -84,20 +88,20 @@ class MappingHelper {
 		return null;
 	}
 
-	interface RefmapEntry {
+	protected interface RefmapEntry {
 		String toMapped(Mapping mapping);
 	}
 
-	record MemberWithOwner(MappedClass owner, MappingEntries.MappedMember member) implements RefmapEntry {
+	private record MemberWithOwner(MappedClass owner, MappingEntries.MappedMember member) implements RefmapEntry {
 
 		public String toMapped(Mapping mapping) {
-			String format = member instanceof MappingEntries.MappedField ? "L%s;%s:%s" : "L%s;%s%s";
+			String format = member instanceof MappedField ? "L%s;%s:%s" : "L%s;%s%s";
 			return format.formatted(owner.getName(mapping == INTERMEDIARY ? UNOBFUSCATED : mapping), member.getName(mapping), member.getDesc(mapping));
 		}
 
 	}
 
-	record NonRemappedEntry(String owner, String name, String desc) implements RefmapEntry {
+	protected record NonRemappedEntry(String owner, String name, String desc) implements RefmapEntry {
 
 		@Override
 		public String toMapped(Mapping mapping) {

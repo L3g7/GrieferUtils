@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Checks if all assets are used and credited.
+ */
 @SuppressWarnings("resource")
 public class AssetsChecker {
 

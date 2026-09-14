@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * Creates mappings for all classes with a Minecraft class as base class.
+ * Creates PyMDK mappings for all GrieferUtils classes with a Minecraft class as base class.
  */
 public class MappingGenerator implements Opcodes {
 

@@ -80,7 +80,7 @@ public class BuildPostProcessor {
 			AssetsChecker.validateAssets(fs);
 			convertRecords();
 
-//			cleanup();
+			cleanup();
 		}
 	}
 
@@ -154,9 +154,6 @@ public class BuildPostProcessor {
 	}
 
 	private static void cleanup() {
-		// delete LabyMod 4 autogen
-		// delete(fs.getPath("fernflower_abstract_parameter_names.txt"));
-
 		// delete build post processors
 		delete(pathOf(RefmapGenerator.class).getParent());
 		delete(pathOf(BuildPostProcessor.class));

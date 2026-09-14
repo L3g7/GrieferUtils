@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.AnnotationMeta;
@@ -22,6 +21,10 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -31,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator.MappingHelper.findField;
@@ -40,14 +44,25 @@ import static dev.pymdk.mapper.Mapping.OBFUSCATED;
 import static org.objectweb.asm.ClassReader.SKIP_CODE;
 
 /**
- * Generates the refmap for LabyMod 3.
+ * Generates the Mixin refmap for LabyMod 3.
  */
 public class RefmapGenerator {
+
+	private static final String SHADOW_ANNOTATION = Type.getDescriptor(Shadow.class);
+
+	private static final Set<String> REMAPPED_ANNOTATIONS = Stream.of(
+			Inject.class,
+			Redirect.class,
+			ModifyArg.class,
+			ModifyVariable.class,
+			Shadow.class
+		).map(Type::getDescriptor)
+		.collect(Collectors.toSet());
 
 	public static void generateRefmap(FileSystem fs) throws IOException {
 		Map<String, Map<String, RefmapEntry>> mappings = new HashMap<>();
 
-		// Collect
+		// Collect mappings
 		try (Stream<Path> paths = Files.walk(fs.getPath("/dev/l3g7/griefer_utils/"))) {
 			Iterator<Path> iterator = paths.filter(path -> path.getFileName().toString().endsWith(".class")).iterator();
 			while (iterator.hasNext()) {
@@ -72,7 +87,7 @@ public class RefmapGenerator {
 			}
 		}
 
-		// Write as refmap
+		// Write refmap
 		JsonObject notch = new JsonObject();
 		JsonObject searge = new JsonObject();
 		for (Map.Entry<String, Map<String, RefmapEntry>> clazz : mappings.entrySet()) {
@@ -102,14 +117,6 @@ public class RefmapGenerator {
 		Files.writeString(fs.getPath("/assets/griefer_utils/refmap-labymod-3.json"), refMap.toString());
 	}
 
-	private static final Set<String> REMAPPED_ANNOTATIONS = ImmutableSet.of(
-		"Lorg/spongepowered/asm/mixin/injection/Inject;",
-		"Lorg/spongepowered/asm/mixin/injection/Redirect;",
-		"Lorg/spongepowered/asm/mixin/injection/ModifyArg;",
-		"Lorg/spongepowered/asm/mixin/injection/ModifyVariable;",
-		"Lorg/spongepowered/asm/mixin/Shadow;"
-	);
-
 	private static Map<String, RefmapEntry> getMappingsFor(ClassMeta classMeta) {
 		Map<String, RefmapEntry> mappings = new HashMap<>();
 
@@ -120,7 +127,7 @@ public class RefmapGenerator {
 
 		for (MethodMeta method : classMeta.methods) {
 			for (AnnotationMeta annotation : method.annotations()) {
-				if (annotation.desc.equals("Lorg/spongepowered/asm/mixin/Shadow;")) {
+				if (annotation.desc.equals(SHADOW_ANNOTATION)) {
 					addRefMapMethod(mappings, target, method.name() + method.desc(), annotation);
 				} else if (REMAPPED_ANNOTATIONS.contains(annotation.desc)) {
 					processAnnotation(mappings, target, annotation);
@@ -175,7 +182,7 @@ public class RefmapGenerator {
 		String owner = field.substring(1, ownerEnd);
 		String name = field.substring(ownerEnd + 1, descStart);
 
-		String key = annotation.desc.equals("Lorg/spongepowered/asm/mixin/Shadow;") ? "<GU>" + field : field;
+		String key = annotation.desc.equals(SHADOW_ANNOTATION) ? "<GU>" + field : field;
 
 		RefmapEntry entry = skipRemap(annotation) ? null : findField(owner, name);
 		if (entry != null) {
@@ -197,7 +204,7 @@ public class RefmapGenerator {
 			methodWithoutOwner = method.substring(ownerStart + 1);
 		}
 
-		String key = annotation.desc.equals("Lorg/spongepowered/asm/mixin/Shadow;") ? "<GU>" + method : method;
+		String key = annotation.desc.equals(SHADOW_ANNOTATION) ? "<GU>" + method : method;
 
 		RefmapEntry entry = skipRemap(annotation) ? null : findMethod(owner, methodWithoutOwner);
 		if (entry != null) {

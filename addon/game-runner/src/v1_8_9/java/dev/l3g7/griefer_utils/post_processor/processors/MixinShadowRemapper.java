@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors.mappings;
+package dev.l3g7.griefer_utils.post_processor.processors;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

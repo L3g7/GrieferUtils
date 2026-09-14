@@ -5,8 +5,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.post_processor.LatePostProcessor;
-import dev.l3g7.griefer_utils.post_processor.processors.mappings.MappingTransformer;
-import dev.l3g7.griefer_utils.post_processor.processors.mappings.MixinShadowRemapper;
+import dev.l3g7.griefer_utils.post_processor.processors.MixinShadowRemapper;
 import dev.pymdk.mapper.FastMapper;
 import dev.pymdk.mapper.Mapping;
 import dev.pymdk.mapper.impl.LowLevelMapper;
@@ -19,6 +18,7 @@ import java.net.URI;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.zip.ZipInputStream;
 
@@ -59,7 +59,8 @@ public class MappingLoader {
             LowLevelMapper.classes.create(extendedMappings);
 
 			// Register postprocessor
-			LatePostProcessor.mappingTransformer = new MappingTransformer();
+			LatePostProcessor.mappingTransformer = (name, transformedName, classBytes)
+				-> FastMapper.mapClass(Arrays.copyOf(classBytes, classBytes.length)).getData();
 			LatePostProcessor.processors.add(0, new MixinShadowRemapper());
 		}
 	}

@@ -12,7 +12,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Lazy;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.SelectButtonGroup;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
@@ -46,15 +48,15 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 	public Object icon;
 	public boolean enabled = true;
 
-	public static final List<ChatMenuEntry> DEFAULT_ENTRIES = ImmutableList.of(
-		new ChatMenuEntry("Profil öffnen", RUN_CMD, "/profil %name%", IconType.IMAGE_FILE, loadIcon("wooden_board")),
-		new ChatMenuEntry("Namensverlauf", CONSUMER, "/gu:name_history %name%", IconType.IMAGE_FILE, loadIcon("name_tag_yellow")),
-		new ChatMenuEntry("Namen kopieren", CONSUMER, "/gu:copy %name%", IconType.IMAGE_FILE, loadIcon("name_tag_yellow")),
-		new ChatMenuEntry("Im Forum suchen", OPEN_URL, "https://forum.griefergames.de/search/?q=%name%", IconType.IMAGE_FILE, loadIcon("griefer_games")),
-		new ChatMenuEntry("Inventar öffnen", RUN_CMD, "/invsee %name%", IconType.IMAGE_FILE, loadIcon("bundle")),
-		new ChatMenuEntry("Ausrüstung ansehen", RUN_CMD, "/view %name%", IconType.IMAGE_FILE, loadIcon("diamond_chestplate")),
-		new ChatMenuEntry("EC öffnen", RUN_CMD, "/ec %name%", IconType.IMAGE_FILE, loadIcon("chest_ender"))
-	);
+	public static final Lazy<List<ChatMenuEntry>> DEFAULT_ENTRIES = new Lazy<>(() -> ImmutableList.of(
+		new DefaultEntry("Profil öffnen", "wooden_board", RUN_CMD, "/profil %name%"),
+		new DefaultEntry("Namensverlauf", "name_tag_yellow", CONSUMER, "/gu:name_history %name%"),
+		new DefaultEntry("Namen kopieren", "name_tag_yellow", CONSUMER, "/gu:copy %name%"),
+		new DefaultEntry("Im Forum suchen", "griefer_games", OPEN_URL, "https://forum.griefergames.de/search/?q=%name%"),
+		new DefaultEntry("Inventar öffnen", "bundle", RUN_CMD, "/invsee %name%"),
+		new DefaultEntry("Ausrüstung ansehen", "diamond_chestplate", RUN_CMD, "/view %name%"),
+		new DefaultEntry("EC öffnen", "chest_ender", RUN_CMD, "/ec %name%")
+	));
 
 	public ChatMenuEntry() {
 		this("Neuer Eintrag", CONSUMER, "", IconType.DEFAULT, null);
@@ -160,22 +162,7 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 				BufferedImage i = new BufferedImage(Reflection.get(t, "width"), Reflection.get(t, "height"), BufferedImage.TYPE_INT_ARGB);
 				i.setRGB(0, 0, i.getWidth(), i.getHeight(), t.getTextureData(), 0, i.getWidth());
 
-				// Scale to 64x64
-				if (i.getHeight() > 64 || i.getWidth() > 64) {
-					float scaleFactor = (64f / (float) Math.max(i.getHeight(), i.getWidth()));
-					Image scaledImg = (i.getScaledInstance((int) (i.getWidth() * scaleFactor), (int) (i.getHeight() * scaleFactor), Image.SCALE_DEFAULT));
-					i = new BufferedImage(scaledImg.getWidth(null), scaledImg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-					Graphics2D g = i.createGraphics();
-					g.drawImage(scaledImg, 0, 0, null);
-					g.dispose();
-				}
-
-				try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
-					ImageIO.write(i, "PNG", bytes);
-					object.addProperty("icon", Base64.getEncoder().encodeToString(bytes.toByteArray()));
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
+				encodeImage(i, object);
 				object.addProperty("icon_name", ((File) icon).getName());
 			}
 		}
@@ -187,17 +174,24 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 		this.action.trigger.accept(command, name);
 	}
 
-	protected static File loadIcon(String iconName) {
-		var icon = new File(iconName + ".png");
-		ResourceLocation location = new ResourceLocation("griefer_utils", "icons/user_content/" + icon.hashCode() + ".png");
-		try (InputStream in = FileProvider.getData("assets/griefer_utils/icons/" + iconName + ".png")) {
-			BufferedImage img = ImageIO.read(in);
-			mc().getTextureManager().loadTexture(location, new DynamicTexture(img));
-		} catch (IOException | NullPointerException e) {
-			throw new RuntimeException(e);
+	private static void encodeImage(BufferedImage i, JsonObject object) {
+		// Scale to 64x64
+		if (i.getHeight() > 64 || i.getWidth() > 64) {
+			float scaleFactor = (64f / (float) Math.max(i.getHeight(), i.getWidth()));
+			Image scaledImg = (i.getScaledInstance((int) (i.getWidth() * scaleFactor), (int) (i.getHeight() * scaleFactor), Image.SCALE_DEFAULT));
+			i = new BufferedImage(scaledImg.getWidth(null), scaledImg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = i.createGraphics();
+			g.drawImage(scaledImg, 0, 0, null);
+			g.dispose();
 		}
 
-		return icon;
+		// Encode
+		try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
+			ImageIO.write(i, "PNG", bytes);
+			object.addProperty("icon", Base64.getEncoder().encodeToString(bytes.toByteArray()));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public enum Action implements SelectButtonGroup.Selectable {
@@ -264,6 +258,29 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 		@Override
 		public String getIcon() {
 			return defaultIcon;
+		}
+	}
+
+	private static class DefaultEntry extends ChatMenuEntry {
+		public DefaultEntry(String name, String icon, Action action, Object command) {
+			super(name, action, command, IconType.DEFAULT /* Overridden to IMAGE_FILE */, icon);
+		}
+
+		@Override
+		public JsonElement encode() {
+			JsonObject object = super.encode().getAsJsonObject();
+			object.addProperty("icon_type", IconType.IMAGE_FILE.name());
+
+			BufferedImage i;
+			try (InputStream in = FileProvider.getData("assets/griefer_utils/icons/" + icon + ".png")) {
+				i = ImageIO.read(in);
+			} catch (IOException | NullPointerException e) {
+				throw Util.elevate(e);
+			}
+			encodeImage(i, object);
+			object.addProperty("icon_name", icon + ".png");
+
+			return object;
 		}
 	}
 

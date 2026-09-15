@@ -69,7 +69,7 @@ public class ChatMenu extends Feature {
 		if (Config.get(entries.getStorage().configKey) == null) {
 			// No value is loaded, load default entries
 			JsonArray data = new JsonArray();
-			for (ChatMenuEntry defaultEntry : ChatMenuEntry.DEFAULT_ENTRIES)
+			for (ChatMenuEntry defaultEntry : ChatMenuEntry.DEFAULT_ENTRIES.get())
 				data.add(defaultEntry.encode());
 
 			entries.getStorage().decodeFunc.apply(data);

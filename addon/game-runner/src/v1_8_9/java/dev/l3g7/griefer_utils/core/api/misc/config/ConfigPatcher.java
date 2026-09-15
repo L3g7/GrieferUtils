@@ -494,7 +494,7 @@ public class ConfigPatcher {
 
 			JsonArray newEntries = new JsonArray();
 			JsonObject entries = get("chat.ingoing.chat_menu.entries");
-			for (ChatMenuEntry entry : ChatMenuEntry.DEFAULT_ENTRIES) {
+			for (ChatMenuEntry entry : ChatMenuEntry.DEFAULT_ENTRIES.get()) {
 				if (entries.has(entry.name) && entries.get(entry.name).getAsBoolean()) {
 					entry.enabled = true;
 					newEntries.add(entry.encode());

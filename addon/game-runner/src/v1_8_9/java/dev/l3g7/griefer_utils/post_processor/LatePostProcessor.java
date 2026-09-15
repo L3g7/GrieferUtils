@@ -7,7 +7,10 @@
 
 package dev.l3g7.griefer_utils.post_processor;
 
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.post_processor.processors.*;
+import dev.pymdk.mapper.Mapping;
+import dev.pymdk.mapper.impl.LowLevelMapper;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -16,6 +19,8 @@ import org.objectweb.asm.tree.ClassNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static dev.pymdk.mapper.impl.MappingEntries.MappedClass;
 
 /**
  * A collection of transformers allowing the use of GrieferUtils created using the LabyMod 4 SDK in
@@ -93,7 +98,19 @@ public class LatePostProcessor implements IClassTransformer {
 			if (type1.equals(transformedClass) || type2.equals(transformedClass))
 				return "java/lang/Object";
 
-			return super.getCommonSuperClass(type1, type2);
+			if (LatePostProcessor.mappingTransformer == null)
+				return super.getCommonSuperClass(type1, type2);
+
+			Mapping target = Reflection.getMappingTarget();
+			if (target == Mapping.INTERMEDIARY)
+				target = Mapping.UNOBFUSCATED;
+			MappedClass class1 = LowLevelMapper.classes.get(type1, target);
+			MappedClass class2 = LowLevelMapper.classes.get(type2, target);
+
+			if (class1 == null && class2 == null)
+				return super.getCommonSuperClass(type1, type2);
+
+			return "java/lang/Object";
 		}
 	}
 

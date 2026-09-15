@@ -65,7 +65,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 				for (String mixinTarget : mixinTargets.collect(Collectors.toSet())) {
 					// Only add mixin if the target exists, as some mixins target classes that might be missing (e.g. EmoteChat)
-					mixinTarget = Mapper.mapClass(mixinTarget.replace('.', '/'), Mapping.UNOBFUSCATED, Reflection.getMappingTarget());
+					mixinTarget = Mapper.mapClass(mixinTarget.replace('.', '/'), Mapping.UNOBFUSCATED, Mapping.OBFUSCATED); // Reflection.exists works using resources, so Forge's Deobfuscation won't trigger
 					if (!Reflection.exists(mixinTarget)) {
 						continue classFinder;
 					}

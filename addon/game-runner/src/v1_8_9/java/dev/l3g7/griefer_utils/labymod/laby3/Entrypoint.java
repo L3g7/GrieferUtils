@@ -75,7 +75,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		);
 
 		// Load mappings for automatic name resolution in Reflection
-		Mapper.loadMappings(Launch.assetsDir.toPath(), LabyModCoreMod.isObfuscated() ? Mapping.OBFUSCATED : Mapping.INTERMEDIARY, true);
+		Mapper.loadMappings(Launch.assetsDir.toPath(), labyBridge.forge() ? Mapping.INTERMEDIARY : Mapping.OBFUSCATED, true);
 
 		// Sets LabyMod's mapping adapter
 		// It's usually set in the MinecraftVisitor, but since Mixin changes the transformer order (i think),

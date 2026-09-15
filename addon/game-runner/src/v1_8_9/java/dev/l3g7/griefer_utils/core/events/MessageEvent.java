@@ -82,7 +82,7 @@ public class MessageEvent extends Event {
 
 			if (LabyBridge.labyBridge.forge()) {
 				// Wrap in supplier to not cause problems when forge doesn't exist
-				Supplier<Integer> runCommand = () -> Reflection.invoke(ClientCommandHandler.instance, "executeCommand", player(), message);
+				Supplier<Integer> runCommand = () -> Reflection.invoke(ClientCommandHandler.instance, "func_71556_a", player(), message);
 				if (runCommand.get() != 0)
 					return true;
 			}

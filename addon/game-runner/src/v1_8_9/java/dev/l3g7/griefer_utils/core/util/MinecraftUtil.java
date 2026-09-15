@@ -21,6 +21,7 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.GameSettings;
@@ -37,6 +38,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
+import java.lang.reflect.Field;
 import java.util.UUID;
 
 /**
@@ -133,7 +135,8 @@ public class MinecraftUtil {
 	}
 
 	public static Slot getSlotUnderMouse(GuiScreen guiScreen) {
-		return Reflection.get(guiScreen, "theSlot");
+		Field theSlot = Reflection.getField(GuiContainer.class, "theSlot");
+		return Reflection.get(guiScreen, theSlot);
 	}
 
 	public static ItemStack getStackUnderMouse(GuiScreen guiScreen) {

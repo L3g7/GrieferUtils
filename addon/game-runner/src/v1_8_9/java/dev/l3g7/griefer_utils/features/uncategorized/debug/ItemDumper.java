@@ -7,8 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +29,7 @@ class ItemDumper {
 			if (!(mc().currentScreen instanceof GuiContainer gc))
 				return;
 
-			Slot theSlot = Reflection.get(gc, "theSlot");
+			Slot theSlot = MinecraftUtil.getSlotUnderMouse(gc);
 			if (theSlot != null && theSlot.getHasStack())
 				System.out.println(theSlot.getStack().writeToNBT(new NBTTagCompound()));
 		});

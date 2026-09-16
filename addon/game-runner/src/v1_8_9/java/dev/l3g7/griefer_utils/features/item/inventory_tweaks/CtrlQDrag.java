@@ -9,9 +9,9 @@ package dev.l3g7.griefer_utils.features.item.inventory_tweaks;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.DrawScreenEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -38,7 +38,7 @@ public class CtrlQDrag extends Feature {
 		if (!(event.gui instanceof GuiContainer gc))
 			return;
 
-		Slot theSlot = Reflection.get(gc, "theSlot");
+		Slot theSlot = MinecraftUtil.getSlotUnderMouse(gc);
 		if (theSlot == previousTheSlot)
 			return;
 

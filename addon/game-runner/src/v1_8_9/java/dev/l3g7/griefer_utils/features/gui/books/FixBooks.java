@@ -9,11 +9,11 @@ package dev.l3g7.griefer_utils.features.gui.books;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
 import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -65,7 +65,7 @@ public class FixBooks extends Feature {
 
 		boolean shouldOpen = Mouse.getEventButton() == 1;
 		if (shouldOpen) {
-			Slot theSlot = Reflection.get(gc, "theSlot");
+			Slot theSlot = MinecraftUtil.getSlotUnderMouse(gc);
 			shouldOpen = theSlot == null || !theSlot.getHasStack();
 		}
 

@@ -55,13 +55,13 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	}
 
 	public static ItemStack MISSING_TEXTURE = new ItemStack(Blocks.stone, 1, 10000);
-	private final DropDownMenu<ItemStack> menu = new DropDownMenu<>(null, 0, 0, 0, 0);
+	private final DropDownMenu<Citybuild> menu = new DropDownMenu<>(null, 0, 0, 0, 0);
 	private final ModTextField textField = new ModTextField(-2, LabyModCore.getMinecraft().getFontRenderer(), 50, 0, 116, 20);
-	private final List<ItemStack> allItems;
-	private final ArrayList<ItemStack> items = Reflection.get(menu, "list");
-	private final List<Consumer<ItemStack>> callbacks = new ArrayList<>();
+	private final List<Citybuild> allItems;
+	private final ArrayList<Citybuild> items = Reflection.get(menu, "list");
+	private final List<Consumer<Citybuild>> callbacks = new ArrayList<>();
 	private final boolean sorted;
-	private ItemStack currentItem = null;
+	private Citybuild currentItem = null;
 	private ItemStack itemIcon;
 
 	public CitybuildSettingImpl() {
@@ -71,9 +71,8 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 		});
 		setChangeListener(v -> set(menu.getSelected()));
 
-		List<ItemStack> items = Arrays.stream(Citybuild.values())
+		List<Citybuild> items = Arrays.stream(Citybuild.values())
 			.filter(Citybuild::isValid)
-			.map(Citybuild::toItemStack)
 			.collect(Collectors.toList());
 
 		iconData = new IconData();
@@ -93,10 +92,10 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 				return;
 
 			DrawUtils draw = new DrawUtils();
-			ItemStack stack = ((ItemStack) o);
+			Citybuild citybuild = ((Citybuild) o);
 
 			int maxWidth = menu.getWidth() - (items.size() > 10 ? 19 : 14);
-			String displayedString = mc.fontRendererObj.trimStringToWidth(stack.getDisplayName(), maxWidth);
+			String displayedString = mc.fontRendererObj.trimStringToWidth(citybuild.getName(), maxWidth);
 			draw.drawString(displayedString, x + 9, y + (isSelected ? 1 : 0));
 
 			GlStateManager.pushMatrix();
@@ -105,7 +104,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 			double scaledX = (x - 3) * inverseScale;
 			double scaledY = (y - (isSelected ? 0.5 : 2)) * inverseScale;
 			GlStateManager.scale(scale, scale, scale);
-			draw.drawItem(stack, scaledX, scaledY, null);
+			draw.drawItem(citybuild.toItemStack(), scaledX, scaledY, null);
 			GlStateManager.popMatrix();
 		});
 		set(ANY);
@@ -125,49 +124,30 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	}
 
 	public Citybuild get() {
-		return itemToCitybuild(menu.getSelected());
+		return menu.getSelected();
 	}
 
 	@Override
-	public CitybuildSetting set(Citybuild value) {
-		if (!value.isValid())
-			return set(ANY.toItemStack());
+	public CitybuildSetting set(Citybuild cb) {
+		if (!cb.isValid())
+			cb = ANY;
 
-		return set(value.toItemStack());
-	}
-
-	public CitybuildSetting set(ItemStack stack) {
-		Citybuild cb = itemToCitybuild(stack);
 		Laby3Setting.super.set(cb);
-		currentItem = stack;
-		menu.setSelected(stack);
+		currentItem = cb;
+		menu.setSelected(cb);
 		filterItems();
 
-		callbacks.forEach(c -> c.accept(stack));
-		itemIcon = stack;
+		Citybuild fCb = cb;
+		callbacks.forEach(c -> c.accept(fCb));
+		itemIcon = cb.toItemStack();
 		return this;
-	}
-
-	private Citybuild itemToCitybuild(ItemStack item) {
-		for (Citybuild value : Citybuild.values())
-			if (value.toItemStack() == item)
-				return value;
-
-		return ANY;
 	}
 
 	public boolean isOpen() {
 		return menu.isOpen();
 	}
 
-	public CitybuildSetting defaultValue(ItemStack defaultValue) {
-		if (currentItem == null) {
-			set(defaultValue);
-		}
-		return this;
-	}
-
-	public CitybuildSetting callback(Consumer<ItemStack> callback) {
+	public CitybuildSetting callback(Consumer<Citybuild> callback) {
 		callbacks.add(callback);
 		return this;
 	}
@@ -245,12 +225,12 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	}
 
 	public void filterItems() {
-		List<ItemStack> filteredItems = allItems.stream()
-			.filter(i -> i.getDisplayName().toLowerCase().contains(textField.getText().toLowerCase()))
+		List<Citybuild> filteredItems = allItems.stream()
+			.filter(i -> i.getName().toLowerCase().contains(textField.getText().toLowerCase()))
 			.collect(Collectors.toList());
 
 		if (sorted)
-			filteredItems.sort(Comparator.comparing(ItemStack::getDisplayName));
+			filteredItems.sort(Comparator.comparing(Citybuild::getName));
 
 		items.clear();
 		items.addAll(filteredItems);
@@ -272,7 +252,7 @@ public class CitybuildSettingImpl extends DropDownElement<CitybuildSettingImpl.D
 	}
 
 	@Override
-	public DropDownMenu<ItemStack> getDropDownMenu() {
+	public DropDownMenu<Citybuild> getDropDownMenu() {
 		return menu;
 	}
 

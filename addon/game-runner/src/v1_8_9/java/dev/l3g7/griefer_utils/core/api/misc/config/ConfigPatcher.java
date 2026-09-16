@@ -501,6 +501,9 @@ public class ConfigPatcher {
 				}
 			}
 
+			if (entries.has("custom"))
+				newEntries.addAll(entries.get("custom").getAsJsonArray());
+
 			get("chat.ingoing.chat_menu").add("entries", newEntries);
 		}
 

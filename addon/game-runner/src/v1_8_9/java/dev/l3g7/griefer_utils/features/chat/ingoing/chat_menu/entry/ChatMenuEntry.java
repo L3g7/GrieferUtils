@@ -50,8 +50,8 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 
 	public static final Lazy<List<ChatMenuEntry>> DEFAULT_ENTRIES = new Lazy<>(() -> ImmutableList.of(
 		new DefaultEntry("Profil öffnen", "wooden_board", RUN_CMD, "/profil %name%"),
-		new DefaultEntry("Namensverlauf", "name_tag_yellow", CONSUMER, "/gu:name_history %name%"),
-		new DefaultEntry("Namen kopieren", "name_tag_yellow", CONSUMER, "/gu:copy %name%"),
+		new DefaultEntry("Namensverlauf", "name_tag_yellow", RUN_CMD, "/gu:name_history %name%"),
+		new DefaultEntry("Namen kopieren", "name_tag_yellow", RUN_CMD, "/gu:copy %name%"),
 		new DefaultEntry("Im Forum suchen", "griefer_games", OPEN_URL, "https://forum.griefergames.de/search/?q=%name%"),
 		new DefaultEntry("Inventar öffnen", "bundle", RUN_CMD, "/invsee %name%"),
 		new DefaultEntry("Ausrüstung ansehen", "diamond_chestplate", RUN_CMD, "/view %name%"),

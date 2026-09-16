@@ -194,7 +194,7 @@ public class Commands {
 					return;
 				}
 
-				commandBridge.openNameHistory(name);
+				TickScheduler.runNextClientTick(() -> commandBridge.openNameHistory(name));
 			}));
 
 		registerCommand(command("copy")

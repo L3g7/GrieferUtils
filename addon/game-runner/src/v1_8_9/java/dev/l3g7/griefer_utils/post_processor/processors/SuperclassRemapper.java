@@ -46,19 +46,24 @@ public class SuperclassRemapper extends Processor implements Opcodes {
 			obfuscatedClasses = false; // Running SuperclassRemapper from BuildPostProcessor
 		}
 
-		var cb = getClass(classNode.superName);
-		do {
-			if (cb.name.startsWith("net/minecraft/"))
-				minecraftClasses.add(cb.name);
+		List<String> possibleMinecraftClasses = new ArrayList<>(classNode.interfaces);
+		possibleMinecraftClasses.add(classNode.superName);
 
-			else if (!cb.name.contains("/")) {
-				String mappedName = Mapper.mapClass(cb.name, OBFUSCATED, UNOBFUSCATED);
-				if (mappedName.startsWith("net/minecraft/"))
-					minecraftClasses.add(mappedName);
-			}
+		for (String possibleMinecraftClass : possibleMinecraftClasses) {
+			var cb = getClass(possibleMinecraftClass);
+			do {
+				if (cb.name.startsWith("net/minecraft/"))
+					minecraftClasses.add(cb.name);
 
-			cb = getClass(cb.superName);
-		} while (cb != null);
+				else if (!cb.name.contains("/")) {
+					String mappedName = Mapper.mapClass(cb.name, OBFUSCATED, UNOBFUSCATED);
+					if (mappedName.startsWith("net/minecraft/"))
+						minecraftClasses.add(mappedName);
+				}
+
+				cb = getClass(cb.superName);
+			} while (cb != null);
+		}
 
 		if (minecraftClasses.isEmpty())
 			return;

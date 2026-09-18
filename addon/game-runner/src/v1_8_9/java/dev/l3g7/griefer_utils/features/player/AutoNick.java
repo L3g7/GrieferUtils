@@ -34,6 +34,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
 public class AutoNick extends Feature {
 
 	private long lastEvent = 0;
+	private long afkSince = 0;
 	private boolean manuallyAFK = false;
 	private boolean isAFK = false;
 
@@ -141,6 +142,7 @@ public class AutoNick extends Feature {
 				return;
 
 			isAFK = true;
+			afkSince = System.currentTimeMillis();
 			send("/nick " + nickName.get().replace("%name%", MinecraftUtil.name()));
 			return;
 		}
@@ -149,11 +151,15 @@ public class AutoNick extends Feature {
 			return;
 
 		isAFK = manuallyAFK = false;
+		if(System.currentTimeMillis() - afkSince < 5000L) {
 		ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 		executor.schedule(
 				() -> Minecraft.getMinecraft().addScheduledTask(
 						() -> send("/unnick")),
 				5, TimeUnit.SECONDS);
 		executor.shutdown();
+		} else {
+			send("/unnick");
+		}
  	}
 }

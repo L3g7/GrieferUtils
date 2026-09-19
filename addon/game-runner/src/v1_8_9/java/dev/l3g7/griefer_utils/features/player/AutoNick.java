@@ -7,6 +7,10 @@
 
 package dev.l3g7.griefer_utils.features.player;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import net.minecraft.client.Minecraft;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
@@ -15,6 +19,7 @@ import dev.l3g7.griefer_utils.core.events.InputEvent.KeyInputEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
@@ -29,6 +34,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
 public class AutoNick extends Feature {
 
 	private long lastEvent = 0;
+	private long afkSince = 0;
 	private boolean manuallyAFK = false;
 	private boolean isAFK = false;
 
@@ -136,6 +142,7 @@ public class AutoNick extends Feature {
 				return;
 
 			isAFK = true;
+			afkSince = System.currentTimeMillis();
 			send("/nick " + nickName.get().replace("%name%", MinecraftUtil.name()));
 			return;
 		}
@@ -144,7 +151,15 @@ public class AutoNick extends Feature {
 			return;
 
 		isAFK = manuallyAFK = false;
-		send("/unnick");
-	}
-
+		if(System.currentTimeMillis() - afkSince < 5000L) {
+		ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+		executor.schedule(
+				() -> Minecraft.getMinecraft().addScheduledTask(
+						() -> send("/unnick")),
+				5, TimeUnit.SECONDS);
+		executor.shutdown();
+		} else {
+			send("/unnick");
+		}
+ 	}
 }

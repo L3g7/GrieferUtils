@@ -12,7 +12,8 @@ import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
@@ -31,8 +32,6 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
  */
 @Singleton
 public class AutoPortal extends Feature {
-
-	private boolean joined = false;
 
 	private final CitybuildSetting citybuild = CitybuildSetting.create()
 		.name("Citybuild")
@@ -55,30 +54,25 @@ public class AutoPortal extends Feature {
 		.icon("portal")
 		.subSettings(citybuild, join, maximize);
 
-	@EventListener(priority = Priority.HIGH)
-	public void onServerJoin(ServerEvent.GrieferGamesJoinEvent event) {
-		if (citybuild.get() == Citybuild.ANY) {
-			joined = true;
-			send("/portal");
-			return;
-		}
+	private boolean joined = false;
 
+	@EventListener
+	public void onServerJoinStart(ServerJoinEvent event) {
 		joined = false;
+	}
 
-		TickScheduler.runAfterClientTicks(() -> {
-			if (!joined)
-				send("/switch " + citybuild.get().getInternalName());
+	@EventListener(priority = Priority.HIGH)
+	public void onServerJoin(GrieferGamesJoinEvent event) {
+		if (joined)
+			return;
 
-			joined = true;
-		}, 20);
+		TickScheduler.runAfterClientTicks(this::join, 20);
 	}
 
 	@EventListener
 	public void onChatMessage(MessageReceiveEvent event) {
-		if (!joined && event.message.getUnformattedText().equals("[GGAuth] Du wurdest erfolgreich verifiziert.")) {
-			joined = true;
-			send("/switch " + citybuild.get().getInternalName());
-		}
+		if (!joined && event.message.getUnformattedText().equals("[GGAuth] Du wurdest erfolgreich verifiziert."))
+			join();
 	}
 
 	@OnStartupComplete
@@ -91,6 +85,17 @@ public class AutoPortal extends Feature {
 
 		if (maximize.get())
 			TickScheduler.runNextClientTick(OS::maximizeWindow);
+	}
+
+	private void join() {
+		if (!joined) {
+			if (citybuild.get() == Citybuild.ANY)
+				send("/portal");
+			else
+				send("/switch " + citybuild.get().getInternalName());
+		}
+
+		joined = true;
 	}
 
 }

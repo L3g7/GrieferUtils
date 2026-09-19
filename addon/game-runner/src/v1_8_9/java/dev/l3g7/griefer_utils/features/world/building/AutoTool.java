@@ -203,7 +203,7 @@ public class AutoTool extends Feature {
 			if (toolSaver.shouldCancel(itemStack))
 				return Integer.MIN_VALUE;
 
-		if (isOrbPotion(itemStack))
+		if (isOrbPotion(itemStack) || isWand(itemStack))
 			return Integer.MIN_VALUE;
 
 		if (isAdventureToolApplicable(itemStack, state))
@@ -283,6 +283,18 @@ public class AutoTool extends Feature {
 			return false;
 
 		return tag.hasKey("break_potion") || tag.hasKey("fly_potion");
+	}
+
+	private boolean isWand(ItemStack stack) {
+		NBTTagCompound tag = stack.getTagCompound();
+		if (tag == null)
+			return false;
+
+		NBTTagCompound magicForest = tag.getCompoundTag("magicforest");
+		if (magicForest == null)
+			return false;
+
+		return magicForest.hasKey("wand");
 	}
 
 	private boolean isAdventureToolApplicable(ItemStack stack, IBlockState state) {

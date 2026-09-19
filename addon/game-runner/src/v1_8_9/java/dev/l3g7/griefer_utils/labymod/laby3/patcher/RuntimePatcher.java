@@ -5,10 +5,11 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.post_processor.processors.*;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches.*;
+import dev.l3g7.griefer_utils.patcher.runtime_patches.*;
 import dev.pymdk.mapper.Mapping;
 import dev.pymdk.mapper.impl.LowLevelMapper;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -24,12 +25,14 @@ import static dev.pymdk.mapper.impl.MappingEntries.MappedClass;
 
 /**
  * A collection of transformers allowing the use of GrieferUtils created using the LabyMod 4 SDK in
- * LabyMod 3 by post-processing classes if loaded in LabyMod 3.
+ * LabyMod 3 by patching classes if loaded in LabyMod 3.
  */
-public class LatePostProcessor implements IClassTransformer {
+public class RuntimePatcher implements IClassTransformer {
+
+	public static final RuntimePatcher INSTANCE = new RuntimePatcher();
 
 	public static IClassTransformer mappingTransformer = null;
-	public static final List<Processor> processors = new ArrayList<>(Arrays.asList(
+	public static final List<Patcher> patchers = new ArrayList<>(Arrays.asList(
 		new StringConcatShim(),
 		new SwitchDowngrader(),
 		new AccessElevator(),
@@ -45,6 +48,8 @@ public class LatePostProcessor implements IClassTransformer {
 		if (!transformedClass.startsWith("dev/l3g7/griefer_utils/"))
 			return classBytes;
 
+		classBytes[7 /* major_version */] = 52 /* Java 1.8 */;
+
 		if (mappingTransformer != null)
 			classBytes = mappingTransformer.transform(name, transformedName, classBytes);
 
@@ -53,10 +58,10 @@ public class LatePostProcessor implements IClassTransformer {
 		reader.accept(classNode, 0);
 
 		boolean modified = false;
-		for (Processor processor : processors) {
-			processor.process(classNode);
-			modified |= processor.modified;
-			processor.reset();
+		for (Patcher patcher : patchers) {
+			patcher.patch(classNode);
+			modified |= patcher.modified;
+			patcher.reset();
 		}
 
 		if (!modified)
@@ -67,11 +72,11 @@ public class LatePostProcessor implements IClassTransformer {
 		return writer.toByteArray();
 	}
 
-	public abstract static class Processor {
+	public abstract static class Patcher {
 
 		private boolean modified = false;
 
-		public abstract void process(ClassNode classNode);
+		public abstract void patch(ClassNode classNode);
 
 		private void reset() {
 			modified = false;
@@ -84,7 +89,7 @@ public class LatePostProcessor implements IClassTransformer {
 	}
 
 	/**
-	 * A ClassWriter loaded by the same ClassLoader as the processor. As {@link ClassWriter} is normally
+	 * A ClassWriter loaded by the same ClassLoader as the patcher. As {@link ClassWriter} is normally
 	 * loaded by the parent ClassLoader of the one loading this addon, it wouldn't find the classes
 	 * defined by its child ClassLoader and getCommonSuperClass calls would fail.
 	 */
@@ -98,7 +103,7 @@ public class LatePostProcessor implements IClassTransformer {
 			if (type1.equals(transformedClass) || type2.equals(transformedClass))
 				return "java/lang/Object";
 
-			if (LatePostProcessor.mappingTransformer == null)
+			if (RuntimePatcher.mappingTransformer == null)
 				return super.getCommonSuperClass(type1, type2);
 
 			Mapping target = Reflection.getMappingTarget();

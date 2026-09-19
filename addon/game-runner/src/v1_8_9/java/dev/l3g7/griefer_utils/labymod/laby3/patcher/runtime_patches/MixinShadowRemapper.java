@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.meta.FieldMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingLoader;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
-import dev.l3g7.griefer_utils.post_processor.LatePostProcessor;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -30,7 +30,7 @@ import java.util.Map;
  * Remaps @Shadow fields and methods in Mixins.
  * Injected by the {@link MappingLoader} after the mappings have been loaded.
  */
-public class MixinShadowRemapper extends LatePostProcessor.Processor {
+public class MixinShadowRemapper extends RuntimePatcher.Patcher {
 
 	private final Map<String, Map<String, String>> mappings = new HashMap<>(); // class name -> member name -> new member name
 
@@ -71,7 +71,7 @@ public class MixinShadowRemapper extends LatePostProcessor.Processor {
 	}
 
 	@Override
-	public void process(ClassNode classNode) {
+	public void patch(ClassNode classNode) {
 		Map<String, String> mappings = this.mappings.get(classNode.name);
 		if (mappings == null)
 			return; // No fields to map

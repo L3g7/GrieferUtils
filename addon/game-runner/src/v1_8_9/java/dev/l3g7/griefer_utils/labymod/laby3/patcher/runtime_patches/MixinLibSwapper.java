@@ -5,19 +5,19 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches;
 
-import dev.l3g7.griefer_utils.post_processor.LatePostProcessor.Processor;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher.Patcher;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
  * Overwrites method descriptors in MixinPlugin to use the ClassNode class of the bundled library.
  */
-public class MixinLibSwapper extends Processor {
+public class MixinLibSwapper extends Patcher {
 
 	@Override
-	public void process(ClassNode classNode) {
+	public void patch(ClassNode classNode) {
 		if (!classNode.name.equals("dev/l3g7/griefer_utils/core/injection/MixinPlugin"))
 			return;
 

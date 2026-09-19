@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -18,18 +18,16 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Overwrites the class version of all classes to fix OW2 ASM parsing and handles invocation and
- * registration of the processors.
- * @see LatePostProcessor
+ * Overwrites the class version of all classes to fix OW2 ASM parsing and registers the {@link RuntimePatcher}.
  */
-public class EarlyPostProcessor implements IClassTransformer {
+public class RuntimePatcherLoader implements IClassTransformer {
 
-	public static final EarlyPostProcessor INSTANCE = new EarlyPostProcessor();
+	public static final RuntimePatcherLoader INSTANCE = new RuntimePatcherLoader();
 
 	private static final Field modCountField;
 	private static final Field renameTransformerField;
 
-	private final LatePostProcessor lateProcessor = new LatePostProcessor();
+	private final RuntimePatcher runtimePatcher = new RuntimePatcher();
 	private boolean decoupled = false;
 
 	static {
@@ -37,6 +35,7 @@ public class EarlyPostProcessor implements IClassTransformer {
 			// Minecraft not started, transformers of LaunchClassLoader not available
 			modCountField = null;
 			renameTransformerField = null;
+			throw new IllegalStateException("MC not started");
 		} else {
 			try {
 				modCountField = AbstractList.class.getDeclaredField("modCount");
@@ -57,22 +56,22 @@ public class EarlyPostProcessor implements IClassTransformer {
 
 		classBytes[7 /* major_version */] = 52 /* Java 1.8 */;
 
-		if (decoupled || registerProcessors()) {
-			// Processors were added to transformers, don't invoke manually
+		if (decoupled || registerLatePatcher()) {
+			// Patcher was added to transformers, don't invoke manually
 			return classBytes;
 		}
 
-		classBytes = lateProcessor.transform(fileName, transformedName, classBytes);
+		classBytes = runtimePatcher.transform(fileName, transformedName, classBytes);
 		return classBytes;
 	}
 
-	private boolean registerProcessors() {
+	private boolean registerLatePatcher() {
 		if (renameTransformerField == null)
 			return false;
 
 		try {
 			if (renameTransformerField.get(Launch.classLoader) != null) {
-				// renameTransformer is available, add processors to end of transformers
+				// renameTransformer is available, add patchers to end of transformers
 				decoupled = true;
 
 				Field transformersField = LaunchClassLoader.class.getDeclaredField("transformers");
@@ -80,10 +79,10 @@ public class EarlyPostProcessor implements IClassTransformer {
 				@SuppressWarnings("unchecked")
 				List<IClassTransformer> transformers = (List<IClassTransformer>) transformersField.get(Launch.classLoader);
 
-				// Add processors
+				// Add patchers
 				@SuppressWarnings("DataFlowIssue") // IntelliJ is stupid
 				int modCount = (int) modCountField.get(transformers);
-				transformers.add(lateProcessor);
+				transformers.add(runtimePatcher);
 
 				// Fake modCount to avoid a ConcurrentModificationException
 				modCountField.set(transformers, modCount);

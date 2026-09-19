@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
@@ -13,8 +13,8 @@ import dev.l3g7.griefer_utils.core.api.file_provider.meta.AnnotationMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.FieldMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
-import dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator.MappingHelper.NonRemappedEntry;
-import dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator.MappingHelper.RefmapEntry;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator.MappingHelper.NonRemappedEntry;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator.MappingHelper.RefmapEntry;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
@@ -37,8 +37,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator.MappingHelper.findField;
-import static dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator.MappingHelper.findMethod;
+import static dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator.MappingHelper.findField;
+import static dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator.MappingHelper.findMethod;
 import static dev.pymdk.mapper.Mapping.INTERMEDIARY;
 import static dev.pymdk.mapper.Mapping.OBFUSCATED;
 import static org.objectweb.asm.ClassReader.SKIP_CODE;

@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby3;
 
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
-import dev.l3g7.griefer_utils.post_processor.EarlyPostProcessor;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcherLoader;
 import net.labymod.addon.AddonLoader;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -38,7 +38,7 @@ public class Init implements IClassTransformer, AutoUpdater.Init {
 		Field field = LaunchClassLoader.class.getDeclaredField("transformers");
 		field.setAccessible(true);
 		List<IClassTransformer> transformers = (List<IClassTransformer>) field.get(Launch.classLoader);
-		transformers.add(0, EarlyPostProcessor.INSTANCE);
+		transformers.add(0, RuntimePatcherLoader.INSTANCE);
 
 		if (!AutoUpdater.update(this))
 			new Entrypoint().start();

@@ -11,8 +11,8 @@ import com.google.gson.reflect.TypeToken;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
-import dev.l3g7.griefer_utils.post_processor.LatePostProcessor;
-import dev.l3g7.griefer_utils.post_processor.processors.MixinShadowRemapper;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches.MixinShadowRemapper;
 import dev.pymdk.mapper.FastMapper;
 import dev.pymdk.mapper.Mapping;
 import dev.pymdk.mapper.impl.LowLevelMapper;
@@ -38,7 +38,7 @@ public class MappingLoader {
 	private static final String ZIP_MAPPINGS_HASH = "iJtxxul6dUe9f4mYzZdRyKcyEcn8v8vDISnlG+lWfqg=";
 	private static final String MAPPINGS_HASH = "JMqZhVdaZJrghxBHoriSMSwmGRU6z3U+QufZlid+8FM=";
 
-	static void loadMappings(Path assetsDir, Mapping targetMapping, boolean registerPostProcessor) {
+	static void loadMappings(Path assetsDir, Mapping targetMapping, boolean registerTransformer) {
 		Path zipMappings = assetsDir.resolve("griefer_utils/mappings/pymdk-1.8.9.json.xz");
 		Path mappings = assetsDir.resolve("griefer_utils/mappings/pymdk-1.8.9.json");
 
@@ -58,17 +58,17 @@ public class MappingLoader {
 			throw Util.elevate(e);
 		}
 
-		if (registerPostProcessor) {
+		if (registerTransformer) {
 			// Load extended mappings
 			Collection<MappedClass> extendedMappings = IO.read(FileProvider.getData("assets/griefer_utils/mappings-1.8.9-mcp.json"))
 				.asJson((new TypeToken<>() {}));
             LowLevelMapper.classes.addAll(extendedMappings);
             LowLevelMapper.classes.create(extendedMappings);
 
-			// Register postprocessor
-			LatePostProcessor.mappingTransformer = (name, transformedName, classBytes)
+			// Register transformer
+			RuntimePatcher.mappingTransformer = (name, transformedName, classBytes)
 				-> FastMapper.mapClass(Arrays.copyOf(classBytes, classBytes.length)).getData();
-			LatePostProcessor.processors.add(0, new MixinShadowRemapper());
+			RuntimePatcher.patchers.add(0, new MixinShadowRemapper());
 		}
 	}
 

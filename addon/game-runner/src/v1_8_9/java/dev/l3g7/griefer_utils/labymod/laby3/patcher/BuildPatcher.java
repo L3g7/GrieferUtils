@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,10 +14,10 @@ import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.Init;
-import dev.l3g7.griefer_utils.post_processor.processors.build.AssetsChecker;
-import dev.l3g7.griefer_utils.post_processor.processors.build.MappingGenerator;
-import dev.l3g7.griefer_utils.post_processor.processors.build.RecordConverter;
-import dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator.RefmapGenerator;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.AssetsChecker;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.MappingGenerator;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.RecordConverter;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator.RefmapGenerator;
 import dev.pymdk.mapper.Mapping;
 
 import java.io.ByteArrayOutputStream;
@@ -35,9 +35,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
- * A processor applied after building.
+ * Patches applied after building the jar file.
  */
-public class BuildPostProcessor {
+public class BuildPatcher {
 
 	private static final Map<String, String> LABY_3_ADDON_JSON = Map.of(
 		"uuid", "%uuid%",
@@ -50,6 +50,7 @@ public class BuildPostProcessor {
 		"addonVersion", System.getProperty("griefer_utils.version")
 	);
 
+	private static final RuntimePatcher runtimePatcher = new RuntimePatcher();
 	private static FileSystem fs;
 
 	public static void main(String[] args) throws IOException {
@@ -62,14 +63,14 @@ public class BuildPostProcessor {
 
 		// Trigger patches
 		try (FileSystem fs = FileSystems.newFileSystem(newJar.toPath())) {
-			BuildPostProcessor.fs = fs;
+			BuildPatcher.fs = fs;
 
 			Mapper.loadMappings(Paths.get("./build"), Mapping.INTERMEDIARY, false);
 			RefmapGenerator.generateRefmap(fs);
 			MappingGenerator.generateMappings(fs);
 
 			mergeAddonJson();
-			processBootstrapClasses();
+			patchBootstrapClasses();
 			RecordConverter.convertRecords(fs);
 			AssetsChecker.validateAssets(fs);
 
@@ -101,32 +102,32 @@ public class BuildPostProcessor {
 	/**
 	 * Transforms the entrypoint class and transformers.
 	 */
-	private static void processBootstrapClasses() throws IOException {
-		process(pathOf(Init.class));
-		process(pathOf(AutoUpdater.Init.class));
-		try (Stream<Path> stream = Files.walk(pathOf(EarlyPostProcessor.class).getParent())) {
+	private static void patchBootstrapClasses() throws IOException {
+		patch(pathOf(Init.class));
+		patch(pathOf(AutoUpdater.Init.class));
+		try (Stream<Path> stream = Files.walk(pathOf(RuntimePatcherLoader.class).getParent())) {
 			stream
 				.filter(Files::isRegularFile)
-				.forEach(BuildPostProcessor::process);
+				.forEach(BuildPatcher::patch);
 		}
 	}
 
-	private static void process(Path path) {
+	private static void patch(Path path) {
 		try {
 			byte[] bytes = Files.readAllBytes(path);
 			String name = path.toString().substring(0, path.toString().length() - 6).replace('/', '.');
-			Files.write(path, EarlyPostProcessor.INSTANCE.transform(name, name, bytes));
+			Files.write(path, runtimePatcher.transform(name, name, bytes));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private static void cleanup() {
-		// delete build post processors
+		// delete build patches
 		delete(pathOf(RefmapGenerator.class).getParent());
-		delete(pathOf(BuildPostProcessor.class));
+		delete(pathOf(BuildPatcher.class));
 
-		// mark other build artifacts to emphasize processed jar file
+		// empty other build artifacts to emphasize patched jar file
 		empty(Paths.get("build/libs/GrieferUtils-release.jar"));
 	}
 
@@ -143,7 +144,7 @@ public class BuildPostProcessor {
 			try (Stream<Path> walk = Files.walk(path)) {
 				walk.sorted(Comparator.reverseOrder())
 					.filter(Predicate.not(path::equals))
-					.forEach(BuildPostProcessor::delete);
+					.forEach(BuildPatcher::delete);
 			}
 			Files.delete(path);
 		} catch (IOException e) {

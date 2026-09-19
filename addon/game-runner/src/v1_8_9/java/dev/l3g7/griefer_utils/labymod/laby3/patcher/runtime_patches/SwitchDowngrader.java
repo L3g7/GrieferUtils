@@ -5,9 +5,9 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches;
 
-import dev.l3g7.griefer_utils.post_processor.LatePostProcessor.Processor;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher.Patcher;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -18,10 +18,10 @@ import java.util.ListIterator;
 /**
  * Replaces java/lang/MatchException with java/lang/RuntimeException and replaces {@link java.lang.runtime.SwitchBootstraps#typeSwitch(MethodHandles.Lookup, String, MethodType, Object...)}
  */
-public class SwitchDowngrader extends Processor implements Opcodes {
+public class SwitchDowngrader extends Patcher implements Opcodes {
 
 	@Override
-	public void process(ClassNode classNode) {
+	public void patch(ClassNode classNode) {
 		for (MethodNode method : classNode.methods) {
 			ListIterator<AbstractInsnNode> it = method.instructions.iterator();
 			while (it.hasNext()) {

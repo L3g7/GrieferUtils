@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors.build;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches;
 
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.util.Util;

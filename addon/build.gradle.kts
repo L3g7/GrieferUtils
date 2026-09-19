@@ -14,7 +14,7 @@ labyMod {
 		namespace = "griefer_utils"
 		displayName = "GrieferUtils"
 		author = "L3g7, L3g73"
-		description = "Post-processor failed to apply :(" // Overwritten by runBuildPostProcessor task
+		description = "Patches failed to apply :(" // Overwritten by runBuildPatcher task
 		minecraftVersion = "1.8.9"
 		version = providers.gradleProperty("version").get()
 		meta(AddonMeta.RESTART_REQUIRED, AddonMeta.BACKGROUND)
@@ -31,9 +31,9 @@ subprojects {
 	plugins.apply("net.labymod.labygradle.addon")
 }
 
-tasks.createReleaseJar.get().finalizedBy("runBuildPostProcessor")
+tasks.createReleaseJar.get().finalizedBy("runBuildPatcher")
 
-tasks.register("runBuildPostProcessor", JavaExec::class) {
+tasks.register("runBuildPatcher", JavaExec::class) {
 	dependsOn("game-runner:compileV1_8_9Java", "game-runner:v1_8_9Jar")
 
 	doFirst {
@@ -54,7 +54,7 @@ tasks.register("runBuildPostProcessor", JavaExec::class) {
 		"-Dgriefer_utils.version=" + props.getProperty("version"),
 		"-Dgriefer_utils.debug=" + props.getProperty("debug"),
 		"-Dgriefer_utils.beta=" + props.getProperty("beta"),
-		"-Dgriefer_utils.preprocessing=true"
+		"-Dgriefer_utils.building=true"
 	)
-	mainClass.set("dev.l3g7.griefer_utils.post_processor.BuildPostProcessor")
+	mainClass.set("dev.l3g7.griefer_utils.labymod.laby3.patcher.BuildPatcher")
 }

@@ -5,9 +5,9 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches;
 
-import dev.l3g7.griefer_utils.post_processor.LatePostProcessor.Processor;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher.Patcher;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -17,10 +17,10 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * Elevates the access of all classes, fields and methods to avoid having to generate synthetic accessors.
  */
-public class AccessElevator extends Processor implements Opcodes {
+public class AccessElevator extends Patcher implements Opcodes {
 
 	@Override
-	public void process(ClassNode classNode) {
+	public void patch(ClassNode classNode) {
 		// Don't elevate in Mixin classes
 		if (classNode.invisibleAnnotations != null)
 			for (AnnotationNode visibleAnnotation : classNode.invisibleAnnotations)

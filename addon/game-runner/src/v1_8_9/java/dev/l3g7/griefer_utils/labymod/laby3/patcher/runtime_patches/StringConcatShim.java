@@ -5,10 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Access;
-import dev.l3g7.griefer_utils.post_processor.LatePostProcessor.Processor;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher.Patcher;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -28,7 +28,7 @@ import static java.lang.invoke.MethodType.methodType;
 /**
  * Redirects StringConcatFactory.makeConcatWithConstants calls to a shim.
  */
-public class StringConcatShim extends Processor implements Opcodes {
+public class StringConcatShim extends Patcher implements Opcodes {
 
 	private static final String BOOTSTRAP_MTD = "java/lang/invoke/StringConcatFactory.makeConcatWithConstants(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite; (6)";
 
@@ -36,7 +36,7 @@ public class StringConcatShim extends Processor implements Opcodes {
 		mhFoldArgumentsForm, mhCopyWithExtendL;
 
 	@Override
-	public void process(ClassNode classNode) {
+	public void patch(ClassNode classNode) {
 		for (MethodNode method : classNode.methods) {
 			for (AbstractInsnNode node : method.instructions) {
 				if (!(node instanceof InvokeDynamicInsnNode e))
@@ -59,7 +59,8 @@ public class StringConcatShim extends Processor implements Opcodes {
 		try {
 			// Create elevated lookup
 			MethodHandles.Lookup lookup;
-			if ("true".equals(System.getProperty("griefer_utils.preprocessing", "false"))) {
+			if ("true".equals(System.getProperty("griefer_utils.building", "false"))) {
+				// Invoked by BuildPatcher
 				lookup = Access.getElevatedLookup();
 			} else {
 				lookup = MethodHandles.lookup();

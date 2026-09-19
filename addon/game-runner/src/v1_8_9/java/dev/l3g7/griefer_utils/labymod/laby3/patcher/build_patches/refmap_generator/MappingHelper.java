@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors.build.refmap_generator;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator;
 
 import dev.pymdk.mapper.Mapping;
 import dev.pymdk.mapper.impl.MappingEntries;

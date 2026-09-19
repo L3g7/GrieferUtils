@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors.build;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches;
 
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,6 @@ public class RecordConverter implements Opcodes {
 	public static void convertRecords(FileSystem fs) throws IOException {
 		try (Stream<@NotNull Path> stream = Files.walk(fs.getPath("dev"))) {
 			stream.forEach((Consumer<Path>) path -> {
-				// Only process classes
 				if (Files.isDirectory(path))
 					return;
 

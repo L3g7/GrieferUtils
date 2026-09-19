@@ -5,11 +5,10 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.post_processor.processors;
+package dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches;
 
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
-import dev.l3g7.griefer_utils.post_processor.LatePostProcessor.Processor;
-import net.labymod.core.asm.LabyModCoreMod;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher.Patcher;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -30,21 +29,16 @@ import static org.objectweb.asm.Type.*;
 /**
  * Maps accesses to members of superclasses.
  */
-public class SuperclassRemapper extends Processor implements Opcodes {
+public class SuperclassRemapper extends Patcher implements Opcodes {
 
 	@Override
-	public void process(ClassNode classNode) {
+	public void patch(ClassNode classNode) {
 		if (classNode.name.startsWith("dev/l3g7/griefer_utils/core/api/"))
 			return;
 
 		// Find minecraft superclasses
 		List<String> minecraftClasses = new ArrayList<>();
-		boolean obfuscatedClasses;
-		try {
-			obfuscatedClasses = !LabyModCoreMod.isForge();
-		} catch (NoClassDefFoundError error) {
-			obfuscatedClasses = false; // Running SuperclassRemapper from BuildPostProcessor
-		}
+		boolean obfuscatedClasses = !"true".equals(System.getProperty("griefer_utils.building", "false")); // False if invoked by BuildPatcher
 
 		List<String> possibleMinecraftClasses = new ArrayList<>(classNode.interfaces);
 		possibleMinecraftClasses.add(classNode.superName);

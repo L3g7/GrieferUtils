@@ -17,7 +17,6 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtectionListSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.ActivityInitializeEvent.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
@@ -145,7 +144,7 @@ public class ToolProtectionListSetting extends ListSetting implements Laby4Setti
 
 	@EventListener
 	private void onInit(SettingActivityInitEvent event) {
-		if (!(event.parent() instanceof ItemProtectionListSetting))
+		if (!(event.parent() instanceof ToolProtectionListSetting))
 			return;
 
 		// Hook add button

@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches;
 
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher.Patcher;
+import net.labymod.core.asm.LabyModCoreMod;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -38,7 +39,12 @@ public class SuperclassRemapper extends Patcher implements Opcodes {
 
 		// Find minecraft superclasses
 		List<String> minecraftClasses = new ArrayList<>();
-		boolean obfuscatedClasses = !"true".equals(System.getProperty("griefer_utils.building", "false")); // False if invoked by BuildPatcher
+		boolean obfuscatedClasses;
+		try {
+			obfuscatedClasses = !LabyModCoreMod.isForge();
+		} catch (NoClassDefFoundError error) {
+			obfuscatedClasses = false; // Running SuperclassRemapper from BuildPostProcessor
+		}
 
 		List<String> possibleMinecraftClasses = new ArrayList<>(classNode.interfaces);
 		possibleMinecraftClasses.add(classNode.superName);

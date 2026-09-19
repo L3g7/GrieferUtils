@@ -34,7 +34,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class MappingLoader {
 
-	private static final String ZIP_MAPPINGS_URL = "http://maven.pymdk.dev/dev/pymdk/mappings/1.8.9/mappings-1.8.9-mcp.json.zip";
+	private static final String ZIP_MAPPINGS_URL = "https://maven.pymdk.dev/dev/pymdk/mappings/1.8.9/mappings-1.8.9-mcp.json.zip";
 	private static final String ZIP_MAPPINGS_HASH = "iJtxxul6dUe9f4mYzZdRyKcyEcn8v8vDISnlG+lWfqg=";
 	private static final String MAPPINGS_HASH = "JMqZhVdaZJrghxBHoriSMSwmGRU6z3U+QufZlid+8FM=";
 

@@ -66,9 +66,10 @@ public class MappingLoader {
             LowLevelMapper.classes.create(extendedMappings);
 
 			// Register transformer
-			RuntimePatcher.mappingTransformer = (name, transformedName, classBytes)
-				-> FastMapper.mapClass(Arrays.copyOf(classBytes, classBytes.length)).getData();
+			RuntimePatcher.preTransformers.add((name, transformedName, classBytes)
+				-> FastMapper.mapClass(Arrays.copyOf(classBytes, classBytes.length)).getData());
 			RuntimePatcher.patchers.add(0, new MixinShadowRemapper());
+			RuntimePatcher.mappingsLoaded = true;
 		}
 	}
 

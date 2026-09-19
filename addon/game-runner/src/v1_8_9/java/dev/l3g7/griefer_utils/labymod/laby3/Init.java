@@ -8,37 +8,25 @@
 package dev.l3g7.griefer_utils.labymod.laby3;
 
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
-import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcherLoader;
 import net.labymod.addon.AddonLoader;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.launchwrapper.Launch;
-import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.zip.ZipOutputStream;
 
 import static dev.l3g7.griefer_utils.core.auto_update.AutoUpdater.DELETION_MARKER;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 
-@SuppressWarnings("unchecked")
 public class Init implements IClassTransformer, AutoUpdater.Init {
 
-	public Init() throws ReflectiveOperationException {
+	public Init() {
 		if (System.setProperty("griefer_utils_load_flag", "") != null)
 			throw new Error("GrieferUtils wurde bereits geladen!");
-
-		// Add Java17to8Transpiler before every other transformer
-		Field field = LaunchClassLoader.class.getDeclaredField("transformers");
-		field.setAccessible(true);
-		List<IClassTransformer> transformers = (List<IClassTransformer>) field.get(Launch.classLoader);
-		transformers.add(0, RuntimePatcherLoader.INSTANCE);
 
 		if (!AutoUpdater.update(this))
 			new Entrypoint().start();

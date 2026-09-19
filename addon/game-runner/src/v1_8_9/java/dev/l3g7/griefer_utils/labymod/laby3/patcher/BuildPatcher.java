@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
+import dev.l3g7.griefer_utils.labymod.laby3.Entrypoint;
 import dev.l3g7.griefer_utils.labymod.laby3.Init;
 import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.AssetsChecker;
 import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.MappingGenerator;
@@ -103,22 +104,27 @@ public class BuildPatcher {
 	 * Transforms the entrypoint class and transformers.
 	 */
 	private static void patchBootstrapClasses() throws IOException {
-		patch(pathOf(Init.class));
-		patch(pathOf(AutoUpdater.Init.class));
-		try (Stream<Path> stream = Files.walk(pathOf(RuntimePatcherLoader.class).getParent())) {
-			stream
-				.filter(Files::isRegularFile)
-				.forEach(BuildPatcher::patch);
-		}
+		patchClass(pathOf(Init.class));
+		patchClass(pathOf(Entrypoint.class));
+		patchClassesInFolder(pathOf(AutoUpdater.class).getParent());
+		patchClassesInFolder(pathOf(RuntimePatcherLoader.class).getParent());
 	}
 
-	private static void patch(Path path) {
+	private static void patchClass(Path path) {
 		try {
 			byte[] bytes = Files.readAllBytes(path);
 			String name = path.toString().substring(0, path.toString().length() - 6).replace('/', '.');
 			Files.write(path, runtimePatcher.transform(name, name, bytes));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private static void patchClassesInFolder(Path path) throws IOException {
+		try (Stream<Path> stream = Files.walk(path)) {
+			stream
+				.filter(Files::isRegularFile)
+				.forEach(BuildPatcher::patchClass);
 		}
 	}
 

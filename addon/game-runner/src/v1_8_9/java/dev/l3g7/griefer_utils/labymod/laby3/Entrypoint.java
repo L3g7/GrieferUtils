@@ -17,28 +17,48 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcherLoader;
 import dev.pymdk.mapper.Mapping;
 import net.labymod.addon.AddonLoader;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.core.asm.LabyModTransformer;
 import net.labymod.core.asm.mappings.Minecraft18MappingImplementation;
 import net.labymod.core.asm.mappings.UnobfuscatedImplementation;
+import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
-@SuppressWarnings({"CharsetObjectCanBeUsed", "OptionalGetWithoutIsPresent"}) // Must be compatible with Java 8
+@SuppressWarnings({"CharsetObjectCanBeUsed", "OptionalGetWithoutIsPresent", "SequencedCollectionMethodCanBeUsed"}) // Must be compatible with Java 8
 public class Entrypoint implements AutoUpdater.Entrypoint {
 
 	public void start() {
+		try {
+			Field transformersField = LaunchClassLoader.class.getDeclaredField("transformers");
+			transformersField.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			List<IClassTransformer> transformers = (List<IClassTransformer>) transformersField.get(Launch.classLoader);
+
+			// Remove legacy patcher (may have been loaded before auto-update)
+			transformers.removeIf(e -> e.getClass().getName().equals("dev.l3g7.griefer_utils.post_processor.EarlyPostProcessor"));
+
+			// Add RuntimePatcherLoader before every other transformer
+			transformers.add(0, RuntimePatcherLoader.INSTANCE);
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+
 		Bridge.Initializer.init(LABY_3);
 
 		// Load and inject libraries

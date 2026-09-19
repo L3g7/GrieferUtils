@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.labymod.laby3.patcher;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches.*;
-import dev.l3g7.griefer_utils.patcher.runtime_patches.*;
 import dev.pymdk.mapper.Mapping;
 import dev.pymdk.mapper.impl.LowLevelMapper;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -31,7 +30,8 @@ public class RuntimePatcher implements IClassTransformer {
 
 	public static final RuntimePatcher INSTANCE = new RuntimePatcher();
 
-	public static IClassTransformer mappingTransformer = null;
+	public static boolean mappingsLoaded = false;
+	public static final List<IClassTransformer> preTransformers = new ArrayList<>();
 	public static final List<Patcher> patchers = new ArrayList<>(Arrays.asList(
 		new StringConcatShim(),
 		new SwitchDowngrader(),
@@ -40,18 +40,19 @@ public class RuntimePatcher implements IClassTransformer {
 		new SuperclassRemapper()
 	));
 
-	private String transformedClass;
+	public static void preload() {
+		// No-op to initialize the class
+	}
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] classBytes) {
-		transformedClass = transformedName.replace('.', '/');
-		if (!transformedClass.startsWith("dev/l3g7/griefer_utils/"))
+		if (!transformedName.startsWith("dev.l3g7.griefer_utils."))
 			return classBytes;
 
 		classBytes[7 /* major_version */] = 52 /* Java 1.8 */;
 
-		if (mappingTransformer != null)
-			classBytes = mappingTransformer.transform(name, transformedName, classBytes);
+		for (IClassTransformer preTransformer : preTransformers)
+			classBytes = preTransformer.transform(name, transformedName, classBytes);
 
 		ClassNode classNode = new ClassNode();
 		ClassReader reader = new ClassReader(classBytes);
@@ -67,7 +68,7 @@ public class RuntimePatcher implements IClassTransformer {
 		if (!modified)
 			return classBytes;
 
-		ClassWriter writer = new BoundClassWriter();
+		ClassWriter writer = new BoundClassWriter(transformedName.replace('.', '/'));
 		classNode.accept(writer);
 		return writer.toByteArray();
 	}
@@ -93,9 +94,12 @@ public class RuntimePatcher implements IClassTransformer {
 	 * loaded by the parent ClassLoader of the one loading this addon, it wouldn't find the classes
 	 * defined by its child ClassLoader and getCommonSuperClass calls would fail.
 	 */
-	class BoundClassWriter extends ClassWriter {
-		public BoundClassWriter() {
+	private static class BoundClassWriter extends ClassWriter {
+		private final String transformedClass;
+
+		public BoundClassWriter(String transformedClass) {
 			super(COMPUTE_MAXS | COMPUTE_FRAMES);
+			this.transformedClass = transformedClass;
 		}
 
 		@Override
@@ -103,7 +107,7 @@ public class RuntimePatcher implements IClassTransformer {
 			if (type1.equals(transformedClass) || type2.equals(transformedClass))
 				return "java/lang/Object";
 
-			if (RuntimePatcher.mappingTransformer == null)
+			if (!RuntimePatcher.mappingsLoaded)
 				return super.getCommonSuperClass(type1, type2);
 
 			Mapping target = Reflection.getMappingTarget();

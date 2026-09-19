@@ -21,9 +21,8 @@ import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtectionListSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.ActivityInitializeEvent.SettingActivityInitEvent;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.ActivityInitializeEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
@@ -159,12 +158,12 @@ public class ItemValueListSetting extends ListSetting implements Laby4Setting<It
 	}
 
 	@EventListener
-	private void onInit(SettingActivityInitEvent event) {
-		if (!(event.parent() instanceof ItemProtectionListSetting))
+	private void onInit(ActivityInitializeEvent<SettingContentActivity> event) {
+		if (!(event.getActivity().getCurrentHolder() instanceof ItemValueListSetting))
 			return;
 
 		// Hook add button
-		event.get("container", "mods-breadcrumb", "accent-button").setPressable(() -> {
+		event.get("content", "setting-header", "add-button").setPressable(() -> {
 			if (mc().thePlayer == null) {
 				LabyBridge.labyBridge.notify("§e§lFehler ⚠", "§eHinzufügen von Items ist nur Ingame möglich!", 5000);
 				return;

@@ -59,7 +59,7 @@ public class Init implements IClassTransformer, AutoUpdater.Init {
 
 		// Add old file to LabyMod's .delete
 		Path deleteFilePath = AddonLoader.getDeleteQueueFile().toPath();
-		String deleteLine = jar.getName() + System.lineSeparator();
+		String deleteLine = jar.getName().concat(System.lineSeparator());
 		Files.write(deleteFilePath, deleteLine.getBytes(), CREATE, APPEND);
 	}
 

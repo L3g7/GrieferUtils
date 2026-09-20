@@ -130,7 +130,7 @@ public class AutoUpdater {
 
 		// Get info about the latest release
 		String url = System.getProperty("griefer_utils.latest_release_url", "https://api.grieferutils.l3g7.dev/v6/latest_release/");
-		InputStream in = read(url + addonJson.get("addonVersion").getAsString() + "/" + infoProvider.getLabyVersion() + "/");
+		InputStream in = read(String.format("%s%s/%s/", url, addonJson.get("addonVersion").getAsString(), infoProvider.getLabyVersion()));
 
 		// Check if the server could be reached
 		if (in == null)
@@ -158,12 +158,12 @@ public class AutoUpdater {
 		String downloadUrl = preferredChannel.downloadURL.replace("{version}", version);
 
 		// Get target file
-		File targetFile = new File(jarFile.getParentFile(), "griefer-utils-v" + version + ".jar");
+		File targetFile = new File(jarFile.getParentFile(), String.format("griefer-utils-v%s.jar", version));
 		boolean shouldDownload = true;
 
 		for (int suffix = 1; targetFile.exists(); suffix++) {
 			if (!hash(targetFile).equals(preferredRelease.hash)) {
-				targetFile = new File(jarFile.getParentFile(), "griefer-utils-v" + version + " - auto-updated #" + suffix + ".jar");
+				targetFile = new File(jarFile.getParentFile(), String.format("griefer-utils-v%s - auto-updated #%d.jar", version, suffix));
 			} else {
 				// Hash matches, don't download again
 				shouldDownload = false;
@@ -316,7 +316,7 @@ public class AutoUpdater {
 
 		// Remove old URL
 		path.remove(urlToRemove);
-		Object loader = lmap.remove("file://" + urlToRemove.getFile());
+		Object loader = lmap.remove(String.format("file://%s", urlToRemove.getFile()));
 		if (loader == null)
 			return;
 
@@ -372,7 +372,7 @@ public class AutoUpdater {
 			keyStore.load(null, null);
 
 			// Load default certs
-			String filename = System.getProperty("java.home") + "/lib/security/cacerts".replace('/', File.separatorChar);
+			String filename = System.getProperty("java.home").concat("/lib/security/cacerts".replace('/', File.separatorChar));
 			KeyStore defaultKeyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			defaultKeyStore.load(Files.newInputStream(Paths.get(filename)), "changeit".toCharArray());
 
@@ -404,7 +404,7 @@ public class AutoUpdater {
 	private static JsonObject getAddonJson() throws IOException {
 		String jarPath = AutoUpdater.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		if (!jarPath.contains(".jar"))
-			throw new IllegalStateException("Invalid code source location: " + jarPath);
+			throw new IllegalStateException("Invalid code source location: ".concat(jarPath));
 
 		// Sanitize jarPath
 		jarPath = jarPath.substring(5, jarPath.lastIndexOf("!")); // remove protocol and class
@@ -413,7 +413,7 @@ public class AutoUpdater {
 		// Read entries
 		try (JarFile jarFile = new JarFile(jarPath)) {
 			if (jarFile.size() == 0)
-				throw new IllegalStateException("Empty jar file: " + jarPath);
+				throw new IllegalStateException("Empty jar file: ".concat(jarPath));
 
 			Optional<JarEntry> addonJson = jarFile.stream().filter(entry -> entry.getName().equals("addon.json")).findFirst();
 			if (addonJson.isPresent())

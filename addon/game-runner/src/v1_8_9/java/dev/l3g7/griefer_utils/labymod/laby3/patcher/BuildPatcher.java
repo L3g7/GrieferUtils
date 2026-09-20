@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
+import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.labymod.laby3.Entrypoint;
@@ -106,6 +107,7 @@ public class BuildPatcher {
 	private static void patchBootstrapClasses() throws IOException {
 		patchClass(pathOf(Init.class), true);
 		patchClass(pathOf(Entrypoint.class), true);
+		patchClass(pathOf(Named.class), true); // For ReleaseChannel enum
 		patchClassesInFolder(pathOf(AutoUpdater.class).getParent(), true);
 		patchClassesInFolder(pathOf(RuntimePatcherLoader.class).getParent(), false);
 	}

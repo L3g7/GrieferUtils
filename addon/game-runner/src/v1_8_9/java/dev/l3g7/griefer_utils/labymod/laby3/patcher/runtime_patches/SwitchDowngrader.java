@@ -22,7 +22,7 @@ public class SwitchDowngrader extends Patcher implements Opcodes {
 
 	@Override
 	public boolean isCompatible(String target, boolean checkForwardCompatibility) {
-		return checkForwardCompatibility;
+		return !checkForwardCompatibility;
 	}
 
 	@Override

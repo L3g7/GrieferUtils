@@ -17,6 +17,11 @@ import org.objectweb.asm.tree.MethodNode;
 public class MixinLibSwapper extends Patcher {
 
 	@Override
+	public boolean isCompatible(String target, boolean checkForwardCompatibility) {
+		return !checkForwardCompatibility && target.equals("dev.l3g7.griefer_utils.core.injection.MixinPlugin");
+	}
+
+	@Override
 	public void patch(ClassNode classNode) {
 		if (!classNode.name.equals("dev/l3g7/griefer_utils/core/injection/MixinPlugin"))
 			return;

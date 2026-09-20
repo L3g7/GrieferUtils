@@ -46,6 +46,10 @@ public class RuntimePatcher implements IClassTransformer {
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] classBytes) {
+		return transform(name, transformedName, classBytes, false);
+	}
+
+	public byte[] transform(String name, String transformedName, byte[] classBytes, boolean checkForwardCompatibility) {
 		if (!transformedName.startsWith("dev.l3g7.griefer_utils."))
 			return classBytes;
 
@@ -61,6 +65,9 @@ public class RuntimePatcher implements IClassTransformer {
 		boolean modified = false;
 		for (Patcher patcher : patchers) {
 			patcher.patch(classNode);
+			if (patcher.modified && !patcher.isCompatible(transformedName, checkForwardCompatibility))
+				throw new UnsupportedOperationException(String.format("%s was modified by %s", transformedName, patcher.getClass().getSimpleName()));
+
 			modified |= patcher.modified;
 			patcher.reset();
 		}
@@ -78,6 +85,11 @@ public class RuntimePatcher implements IClassTransformer {
 		private boolean modified = false;
 
 		public abstract void patch(ClassNode classNode);
+
+		/**
+		 * @param checkForwardCompatibility true if the patch should be applicable to LabyMod 4-specific classes as well.
+		 */
+		public abstract boolean isCompatible(String target, boolean checkForwardCompatibility);
 
 		private void reset() {
 			modified = false;

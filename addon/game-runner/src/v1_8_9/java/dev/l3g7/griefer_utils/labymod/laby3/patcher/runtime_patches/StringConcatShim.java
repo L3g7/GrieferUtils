@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby3.patcher.runtime_patches;
 
 import dev.l3g7.griefer_utils.core.api.reflection.Access;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher;
 import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher.Patcher;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
@@ -34,6 +35,13 @@ public class StringConcatShim extends Patcher implements Opcodes {
 
 	private static final MethodHandle mhRebind, mhEditor, mhBasicType,
 		mhFoldArgumentsForm, mhCopyWithExtendL;
+
+	@Override
+	public boolean isCompatible(String target, boolean checkForwardCompatibility) {
+		return !checkForwardCompatibility
+			&& !target.equals(StringConcatShim.class.getName())
+			&& !target.startsWith(RuntimePatcher.class.getName());
+	}
 
 	@Override
 	public void patch(ClassNode classNode) {
@@ -92,7 +100,7 @@ public class StringConcatShim extends Patcher implements Opcodes {
 	                                               String recipe,
 	                                               Object... constants) throws Throwable {
 		if (recipe.contains("\u0002"))
-			throw new UnsupportedOperationException("Unimplemented recipe: " + Base64.getEncoder().encodeToString(recipe.getBytes(StandardCharsets.UTF_8)));
+			throw new UnsupportedOperationException("Unimplemented recipe: ".concat(Base64.getEncoder().encodeToString(recipe.getBytes(StandardCharsets.UTF_8))));
 
 		// Parse recipe
 		List<String> elements = new ArrayList<>();

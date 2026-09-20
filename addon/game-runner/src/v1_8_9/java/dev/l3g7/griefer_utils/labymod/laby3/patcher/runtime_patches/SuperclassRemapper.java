@@ -33,6 +33,11 @@ import static org.objectweb.asm.Type.*;
 public class SuperclassRemapper extends Patcher implements Opcodes {
 
 	@Override
+	public boolean isCompatible(String target, boolean checkForwardCompatibility) {
+		return !checkForwardCompatibility;
+	}
+
+	@Override
 	public void patch(ClassNode classNode) {
 		if (classNode.name.startsWith("dev/l3g7/griefer_utils/core/api/"))
 			return;

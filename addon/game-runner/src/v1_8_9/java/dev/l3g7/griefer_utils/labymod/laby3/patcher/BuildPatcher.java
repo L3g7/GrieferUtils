@@ -104,27 +104,27 @@ public class BuildPatcher {
 	 * Transforms the entrypoint class and transformers.
 	 */
 	private static void patchBootstrapClasses() throws IOException {
-		patchClass(pathOf(Init.class));
-		patchClass(pathOf(Entrypoint.class));
-		patchClassesInFolder(pathOf(AutoUpdater.class).getParent());
-		patchClassesInFolder(pathOf(RuntimePatcherLoader.class).getParent());
+		patchClass(pathOf(Init.class), true);
+		patchClass(pathOf(Entrypoint.class), true);
+		patchClassesInFolder(pathOf(AutoUpdater.class).getParent(), true);
+		patchClassesInFolder(pathOf(RuntimePatcherLoader.class).getParent(), false);
 	}
 
-	private static void patchClass(Path path) {
+	private static void patchClass(Path path, boolean checkForwardCompatibility) {
 		try {
 			byte[] bytes = Files.readAllBytes(path);
 			String name = path.toString().substring(0, path.toString().length() - 6).replace('/', '.');
-			Files.write(path, runtimePatcher.transform(name, name, bytes));
+			Files.write(path, runtimePatcher.transform(name, name, bytes, checkForwardCompatibility));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private static void patchClassesInFolder(Path path) throws IOException {
+	private static void patchClassesInFolder(Path path, boolean checkForwardCompatibility) throws IOException {
 		try (Stream<Path> stream = Files.walk(path)) {
 			stream
 				.filter(Files::isRegularFile)
-				.forEach(BuildPatcher::patchClass);
+				.forEach(c -> patchClass(c, checkForwardCompatibility));
 		}
 	}
 

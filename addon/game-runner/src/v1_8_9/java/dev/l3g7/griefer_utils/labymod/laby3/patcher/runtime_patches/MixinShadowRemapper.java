@@ -71,6 +71,11 @@ public class MixinShadowRemapper extends RuntimePatcher.Patcher {
 	}
 
 	@Override
+	public boolean isCompatible(String target, boolean checkForwardCompatibility) {
+		return !checkForwardCompatibility;
+	}
+
+	@Override
 	public void patch(ClassNode classNode) {
 		Map<String, String> mappings = this.mappings.get(classNode.name);
 		if (mappings == null)

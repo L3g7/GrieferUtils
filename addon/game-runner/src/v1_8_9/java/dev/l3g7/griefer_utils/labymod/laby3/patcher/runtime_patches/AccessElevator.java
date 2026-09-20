@@ -20,6 +20,11 @@ import org.objectweb.asm.tree.MethodNode;
 public class AccessElevator extends Patcher implements Opcodes {
 
 	@Override
+	public boolean isCompatible(String target, boolean checkForwardCompatibility) {
+		return true;
+	}
+
+	@Override
 	public void patch(ClassNode classNode) {
 		// Don't elevate in Mixin classes
 		if (classNode.invisibleAnnotations != null)

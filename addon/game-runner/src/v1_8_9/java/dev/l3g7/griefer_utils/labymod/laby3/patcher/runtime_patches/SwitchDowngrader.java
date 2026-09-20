@@ -21,6 +21,11 @@ import java.util.ListIterator;
 public class SwitchDowngrader extends Patcher implements Opcodes {
 
 	@Override
+	public boolean isCompatible(String target, boolean checkForwardCompatibility) {
+		return checkForwardCompatibility;
+	}
+
+	@Override
 	public void patch(ClassNode classNode) {
 		for (MethodNode method : classNode.methods) {
 			ListIterator<AbstractInsnNode> it = method.instructions.iterator();

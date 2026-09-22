@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.DebugSettings;
-import dev.l3g7.griefer_utils.features.uncategorized.debug.suppress.SuppressErrors;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
@@ -56,7 +55,7 @@ public class BugReporter {
 		.icon("bug")
 		.defaultValue(true)
 		.subSettings(
-			shouldSendUuid, shouldSendIdentifiers, SuppressErrors.enabled,
+			shouldSendUuid, shouldSendIdentifiers,
 			HeaderSetting.create(),
 			DebugSettings.enabled
 		);

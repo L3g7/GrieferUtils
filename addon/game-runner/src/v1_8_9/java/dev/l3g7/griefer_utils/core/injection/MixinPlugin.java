@@ -76,10 +76,12 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 		}
 
-		if (Reflection.exists("net.ccbluex.liquidbounce.injection.forge.mixins.render.MixinRendererLivingEntity"))
+		if (Reflection.exists("net/ccbluex/liquidbounce/injection/forge/mixins/render/MixinRendererLivingEntity"))
 			classes.remove("griefer_utils/features/render/TrueSight$MixinRendererLivingEntity");
 		if (Reflection.exists("net/minecraftforge/common/ForgeHooks"))
 			classes.remove("griefer_utils/features/render/SkullEnchantmentFix$MixinFramebuffer");
+		else
+			classes.remove("griefer_utils/core/events/BlockPickEvent$MixinForgeHooks");
 
 		mixinCount.set(classes.size());
 		return classes;

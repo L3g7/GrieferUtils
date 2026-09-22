@@ -38,6 +38,7 @@ public class RemoveWalkingMiniMes extends Feature {
 		return get(RemoveWalkingMiniMes.class);
 	}
 
+	@ExclusiveTo(LABY_3)
 	@Mixin(value = UserManager.class, remap = false)
 	private static class MixinUserManager {
 

@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.injection;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
@@ -18,9 +19,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
+@ExclusiveTo(LABY_3)
 @Mixin(value = ControlElement.class, remap = false)
 public abstract class MixinControlElement {
 

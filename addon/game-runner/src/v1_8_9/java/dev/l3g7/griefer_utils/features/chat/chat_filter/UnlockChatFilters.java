@@ -34,6 +34,7 @@ public class UnlockChatFilters extends Feature {
 		return get(UnlockChatFilters.class);
 	}
 
+	@ExclusiveTo(LABY_3)
 	@Mixin(GuiChatFilter.class)
 	private static class MixinGuiChatFilter {
 

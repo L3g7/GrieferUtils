@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.labymod.laby3.settings;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.render.GlEngine;
 import net.labymod.main.LabyMod;
@@ -23,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public abstract class Icons {
@@ -105,6 +107,7 @@ public abstract class Icons {
 	/**
 	 * Injects a redirect to the Icon#draw function.
 	 */
+	@ExclusiveTo(LABY_3)
 	@Mixin(ControlElement.class)
 	public static class MixinControlElement {
 

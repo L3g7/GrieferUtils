@@ -45,7 +45,6 @@ public class Credits {
 			creditsBridge.createIconSetting("TuxFRI", "tuxfri"),
 			creditsBridge.createIconSetting("CobbleShop", "cobbleshop"),
 			creditsBridge.createIconSetting("Pleezon", "pleezon"),
-			creditsBridge.createIconSetting("Frreiheit", "frreiheit"),
 			creditsBridge.createIconSetting("verbvllert_", "verbvllert_"),
 			creditsBridge.createIconSetting("Griefer.Info", "griefer_info"),
 			creditsBridge.createIconSetting("CommunityRadar", "community_radar"),
@@ -83,10 +82,14 @@ public class Credits {
 		List<String> supporter = new ArrayList<>();
 		List<BaseSetting<?>> elements = new ArrayList<>();
 
-		if (Badges.getBadge(UUID.fromString("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db")).isPresent())
-			supporter.add("MoosLeitung");
 		if (Badges.getBadge(UUID.fromString("bc1f3d61-0878-4006-ba46-fb479fc37a1e")).isPresent())
 			supporter.add("0001EnderGirlLP");
+		if (Badges.getBadge(UUID.fromString("b45c62ef-fa60-4bc0-87bb-3a929ae8c7aa")).isPresent())
+			supporter.add("Frreiheit");
+		if (Badges.getBadge(UUID.fromString("75c4a4bd-2dcf-46a2-b8f1-e5f44ce120db")).isPresent())
+			supporter.add("MoosLeitung");
+		if (Badges.getBadge(UUID.fromString("39184854-ad19-4ea8-a797-5b7778a640a5")).isPresent())
+			supporter.add("PoliceModzXD");
 
 		if (!supporter.isEmpty()) {
 			elements.add(HeaderSetting.create("Supporter"));

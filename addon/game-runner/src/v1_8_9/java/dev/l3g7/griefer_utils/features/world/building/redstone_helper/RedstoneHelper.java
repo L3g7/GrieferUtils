@@ -85,7 +85,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		.description("Zeigt an einem Kessel seinen derzeitigen Füllstand an.")
 		.icon("water_breathing");
 
-	private static final NumberSetting range = NumberSetting.create()
+	public static final NumberSetting range = NumberSetting.create()
 		.name("Radius")
 		.description("Der Radius um den Spieler in Chunks, in dem die Informationen angezeigt werden."
 			+ "\n(-1 ist unendlich)")

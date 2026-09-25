@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.chunkDistanceToPlayer;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
@@ -58,7 +59,15 @@ public class Renderer {
 		Frustum frustum = new Frustum();
 		GlStateManager.popMatrix();
 
+		int range = RedstoneHelper.range.get();
+		if (range == -1)
+			range = Integer.MAX_VALUE;
+
 		for (Map.Entry<ChunkCoordIntPair, Chunk> entry : RenderObjectObserver.data.entrySet()) {
+			int chunksFromPlayer = chunkDistanceToPlayer(entry.getKey().chunkXPos, entry.getKey().chunkZPos);
+			if (range < chunksFromPlayer)
+				continue;
+
 			GlStateManager.pushMatrix();
 
 			GlStateManager.translate(entry.getKey().chunkXPos * 16 - EntityFX.interpPosX,

@@ -55,6 +55,10 @@ public class WorldBlockOverlayRenderer {
 		generators.add(generator);
 	}
 
+	public static int chunkDistanceToPlayer(int chunkX, int chunkZ) {
+		return Math.max(Math.abs(chunkX - player().chunkCoordX), Math.abs(chunkZ - player().chunkCoordZ));
+	}
+
 	@EventListener
 	private static void onChunkFilled(ChunkFilledEvent event) {
 		mc().addScheduledTask(() -> {
@@ -151,7 +155,7 @@ public class WorldBlockOverlayRenderer {
 		GlStateManager.disableTexture2D();
 
 		for (Map.Entry<ChunkCoordIntPair, Map<BlockPos, RenderObject>> entry : renderObjects.entrySet()) {
-			int chunksFromPlayer = Math.max(Math.abs(entry.getKey().chunkXPos - player().chunkCoordX), Math.abs(entry.getKey().chunkZPos - player().chunkCoordZ));
+			int chunksFromPlayer = chunkDistanceToPlayer(entry.getKey().chunkXPos, entry.getKey().chunkZPos);
 
 			for (Map.Entry<BlockPos, RenderObject> chunkEntry : entry.getValue().entrySet())
 				if (chunkEntry.getValue().generator.isEnabled())
@@ -171,10 +175,14 @@ public class WorldBlockOverlayRenderer {
 		if (SchematicaUtil.dontRender())
 			return;
 
-		for (Map.Entry<BlockPos, RenderObject> entry : schematicasROs.entrySet())
-			if (SchematicaUtil.shouldLayerBeRendered(entry.getKey().getY()))
-				if (entry.getValue().generator.isEnabled())
-					entry.getValue().render(entry.getKey(), partialTicks, 0);
+		for (Map.Entry<BlockPos, RenderObject> entry : schematicasROs.entrySet()) {
+			if (SchematicaUtil.shouldLayerBeRendered(entry.getKey().getY())) {
+				if (entry.getValue().generator.isEnabled()) {
+					int chunksFromPlayer = WorldBlockOverlayRenderer.chunkDistanceToPlayer(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4);
+					entry.getValue().render(entry.getKey(), partialTicks, chunksFromPlayer);
+				}
+			}
+		}
 	}
 
 	private static void updateSchematic() {

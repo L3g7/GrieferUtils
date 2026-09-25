@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.events.griefergames.BlockOfTheDayRewardEvent;
 import net.minecraft.item.ItemStack;
 
+import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,7 +62,11 @@ class Reward {
 				return null;
 
 			try {
-				return new Reward(this, Integer.parseInt(matcher.group(1).replace(",", "").replace(".", "")));
+				int amount = new BigDecimal(matcher.group(1).replace(",", "").replace(".", "")).intValueExact();
+				return new Reward(this, amount);
+			} catch (ArithmeticException e) {
+				// Not representable as an integer (e.g. too big or nonzero fractional part), not a possible BDT reward
+				return null;
 			} catch (NumberFormatException e) {
 				BugReporter.reportError(new Throwable("Error parsing BDT from " + formattedMessage));
 				return null;

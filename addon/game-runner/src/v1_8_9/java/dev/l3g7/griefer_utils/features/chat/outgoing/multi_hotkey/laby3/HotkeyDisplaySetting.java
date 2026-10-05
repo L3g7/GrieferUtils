@@ -147,7 +147,7 @@ public class HotkeyDisplaySetting extends ListEntrySetting {
 	public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
 		super.draw(x, y, maxX, maxY, mouseX, mouseY);
 
-		String subtitle = String.format("§e[%s] §f§o➡ %s", KeySettingImpl.formatKeys(keys.get()), commands.get().size() + (commands.get().size() == 1 ? " Befehl" : " Befehle"));
+		String subtitle = String.format("§e[%s] §f§o➡ %s", keys.getFormattedKeys(), commands.get().size() + (commands.get().size() == 1 ? " Befehl" : " Befehle"));
 
 		String trimmedName = LabyMod.getInstance().getDrawUtils().trimStringToWidth(name.get(), maxX - x - 25 - 48);
 		String trimmedSubtitle = LabyMod.getInstance().getDrawUtils().trimStringToWidth(subtitle, maxX - x - 25 - 48);

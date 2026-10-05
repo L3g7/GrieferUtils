@@ -26,6 +26,7 @@ import net.labymod.api.client.gui.screen.key.Key;
 import net.labymod.api.client.gui.screen.key.MouseButton;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.MultiKeybindWidget;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.spongepowered.asm.mixin.Mixin;
@@ -94,6 +95,14 @@ public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>
 		return this;
 	}
 
+	@Override
+	public @Nullable String getFormattedKeys() {
+		var keys = get();
+		if (keys.isEmpty())
+			return null;
+
+		return Key.concat(keys.stream().map(Key::get).collect(Collectors.toSet()));
+	}
 
 	@EventListener
 	public void onGuiKeyPress(GuiScreenEvent.KeyboardInputEvent.Post event) {

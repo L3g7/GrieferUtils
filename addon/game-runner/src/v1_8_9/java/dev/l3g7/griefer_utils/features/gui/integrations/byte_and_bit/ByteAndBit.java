@@ -126,12 +126,10 @@ public class ByteAndBit extends Feature {
 	}
 
 	void drawTooltip() {
-		String keys;
-		if (LABY_4.isActive()) {
-			keys = Key.concat(keybind.get().stream().map(Key::get).collect(Collectors.toSet()));
-		} else {
-			keys = KeySettingImpl.formatKeys(keybind.get());
-		}
+		String keys = keybind.getFormattedKeys();
+		if (keys == null)
+			return;
+
 		BossStatus.bossName = "Botshop-Gui verfügbar! [" + keys + "]";
 		BossStatus.statusBarTime = 1;
 		BossStatus.healthScale = 0f;

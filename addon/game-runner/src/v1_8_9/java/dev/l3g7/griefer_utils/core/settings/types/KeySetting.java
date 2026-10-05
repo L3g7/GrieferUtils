@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.settings.types;
 
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -39,5 +40,10 @@ public interface KeySetting extends AbstractSetting<KeySetting, Set<Integer>> {
 	 * Enables detection of button presses even if a GUI is open.
 	 */
 	KeySetting triggersInContainers();
+
+	/**
+	 * @return The key names, concatenated using +.
+	 */
+	@Nullable String getFormattedKeys();
 
 }

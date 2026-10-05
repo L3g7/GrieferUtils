@@ -98,6 +98,15 @@ public class KeySettingImpl extends ControlElement implements Laby3Setting<KeySe
 		return this;
 	}
 
+	@Override
+	public String getFormattedKeys() {
+		Set<Integer> keys = get();
+		if (keys.isEmpty())
+			return null;
+
+		return formatKeys(keys);
+	}
+
 	@EventListener
 	public void onGuiKeyPress(GuiScreenEvent.KeyboardInputEvent.Post event) {
 		if (!Keyboard.isRepeatEvent() && triggersInContainers)
@@ -296,7 +305,7 @@ public class KeySettingImpl extends ControlElement implements Laby3Setting<KeySe
 		}
 	}
 
-	public static String formatKeys(Collection<Integer> keys) {
+	private static String formatKeys(Collection<Integer> keys) {
 		if (keys.isEmpty())
 			return "NONE";
 

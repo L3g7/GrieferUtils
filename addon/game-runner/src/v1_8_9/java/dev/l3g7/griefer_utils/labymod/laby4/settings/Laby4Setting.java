@@ -341,22 +341,4 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		}
 	}
 
-	@ExclusiveTo(LABY_4)
-	@Mixin(value = ModsTileWidget.class, remap = false)
-	class MixinModsTileWidget {
-
-		@Shadow
-		private Widget actionWidget;
-
-		@Redirect(method = "initialize", at = @At(value = "INVOKE", target = "Lnet/labymod/core/client/gui/screen/activity/activities/labymod/child/mods/ModsOptionsBuilder;newBadge(Lnet/labymod/api/revision/Revision;)Lnet/labymod/api/client/gui/screen/widget/widgets/renderer/IconWidget;"))
-		public IconWidget redirectNewBadge(Revision revision) {
-			if (!(revision instanceof GrieferUtilsRevision rev))
-				return newBadge(revision);
-
-			Switchable switchable = Reflection.get(actionWidget, "switchable");
-			Laby4Widget widget = Reflection.get(switchable, "arg$2");
-			return rev.createBadge(widget.getSetting());
-		}
-	}
-
 }

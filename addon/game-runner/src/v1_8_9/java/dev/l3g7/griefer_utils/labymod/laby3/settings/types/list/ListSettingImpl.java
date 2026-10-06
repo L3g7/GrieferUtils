@@ -191,8 +191,12 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 				name(data.getName());
 
 			if (parent.customEdit == null) {
-				List<SettingsElement> settings = getSubSettings().getElements();
-				settings.addAll(c(data.toSettings()));
+				List<SettingsElement> subSettings = getSubSettings().getElements();
+				if (subSettings.isEmpty()) {
+					var settings = data.toSettings();
+					subSettings.addAll(c(settings));
+					settings.forEach(s -> s.create(this));
+				}
 			}
 		}
 
@@ -208,7 +212,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 			if (parent.customEdit != null)
 				parent.customEdit.accept(data);
 			else
-				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(this::notifyChange, this));
+				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(parent::notifyChange, this));
 		}
 
 	}

@@ -233,6 +233,10 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		if (setting.customEdit != null) {
 			event.get("container", "mods-breadcrumb", "accent-button").setPressable(() ->
 				setting.customEdit.accept(null));
+
+			var emptyAdd = event.get("container", "mods-options-scroll", "mods-options-list", "empty-state-empty", "empty-state-content", "empty-state-actions", "accent-button");
+			if (emptyAdd != null)
+				emptyAdd.setPressable(() -> setting.customEdit.accept(null));
 		}
 	}
 

@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.ScoreboardUpdateEvent;
-import dev.l3g7.griefer_utils.core.events.griefergames.BlockOfTheDayRewardEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.widgets.botd.Reward;
 
@@ -48,10 +47,8 @@ class RewardHandler {
 	}
 
 	public static void send(Reward reward) {
-		if (RewardHandler.shouldSend()) {
+		if (RewardHandler.shouldSend())
 			GUServer.sendBlockOfTheDayReward(reward.type.toString().toLowerCase(), RewardHandler.getCounter(reward.type), reward.amount, reward.eventItem);
-			new BlockOfTheDayRewardEvent().fire();
-		}
 	}
 
 	@EventListener

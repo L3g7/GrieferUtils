@@ -27,7 +27,6 @@ public class ScoreboardUpdateEvent extends Event {
 	public ScoreboardUpdateEvent(String key, String value) {
 		this.key = key;
 		this.value = value;
-		System.out.println(key + ": " + value);
 	}
 
 	@EventListener

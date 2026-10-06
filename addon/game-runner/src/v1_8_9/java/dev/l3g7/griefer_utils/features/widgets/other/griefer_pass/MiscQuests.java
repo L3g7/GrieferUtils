@@ -18,8 +18,8 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageAboutToBeSentEvent
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
-import dev.l3g7.griefer_utils.core.events.griefergames.BlockOfTheDayRewardEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
+import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
@@ -480,8 +480,9 @@ abstract class MiscQuests {
 
 	static class ReceiveBotdQuest extends AbstractQuest {
 		@EventListener
-		private void onBotd(BlockOfTheDayRewardEvent event) {
-			increaseAmount();
+		private void onReward(GrieferGamesPayloadEvent event) {
+			if (event.channel.equals("blockoftheday_progress"))
+				increaseAmount();
 		}
 	}
 

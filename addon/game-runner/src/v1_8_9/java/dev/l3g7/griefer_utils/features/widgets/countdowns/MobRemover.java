@@ -9,28 +9,24 @@ package dev.l3g7.griefer_utils.features.widgets.countdowns;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
-import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
+import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.Countdown;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 
 @Singleton
 public class MobRemover extends SimpleWidget {
-
-	private static final Pattern MOB_REMOVER_PATTERN = Pattern.compile("§r§8\\[§r§6MobRemover§r§8] §r§4Achtung! §r§7In §r§e(?<minutes>\\d) Minuten? §r§7werden alle Tiere gelöscht\\.§r");
 
 	private final DropDownSetting<TimeFormat> timeFormat = DropDownSetting.create(TimeFormat.class)
 		.name("Zeitformat")
@@ -68,30 +64,15 @@ public class MobRemover extends SimpleWidget {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onMessageReceive(MessageReceiveEvent event) {
-		Matcher matcher = MOB_REMOVER_PATTERN.matcher(event.message.getFormattedText());
-		if (matcher.matches())
-			countdown.set(60 * Integer.parseInt(matcher.group("minutes")));
-		else if (event.message.getFormattedText().matches("^§r§8\\[§r§6MobRemover§r§8] §r§7Es wurden (?:§r§\\d+§r§7|keine) Tiere entfernt\\.§r$"))
-			countdown.set(60 * 15);
-		else
+	private void onMobRemover(GrieferGamesPayloadEvent event) {
+		if (!event.channel.equals("entityremover"))
 			return;
 
-		if (GUServer.isAvailable()) {
-			long passedSeconds = NTP.getAccurateTime() / 1000;
-			GUServer.sendMobRemoverData(Citybuild.current(), countdown.secondsRemaining() + passedSeconds);
+		try (DataInputStream in = event.createStream()) {
+			this.countdown.set((int) in.readLong());
+		} catch (IOException e) {
+			throw elevate(e);
 		}
-	}
-
-	@EventListener(triggerWhenDisabled = true)
-	private void onCitybuildEarlyJoin(CitybuildJoinEvent.Early event) {
-		if (!GUServer.isAvailable())
-			return;
-
-		GUServer.getMobRemoverData(event.citybuild).thenAccept(end -> {
-			if (end != null)
-				countdown.setEnd(end * 1000);
-		});
 	}
 
 	private enum TimeFormat implements Named {

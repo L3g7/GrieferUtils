@@ -7,10 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.misc.griefer_games;
 
-import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
-import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -41,12 +39,15 @@ public class Balances {
 	}
 
 	@EventListener
-	private static void onBank(MysteryModPayloadEvent event) {
-		if (!event.channel.equals("bank"))
+	private static void onBank(GrieferGamesPayloadEvent event) {
+		if (!event.channel.equals("bankbalance"))
 			return;
 
-		JsonObject payload = event.payload.getAsJsonObject();
-		bankBalance = payload.get("amount").getAsLong();
+		try (DataInputStream in = event.createStream()) {
+			bankBalance = BigDecimal.valueOf(in.readDouble()).longValue();
+		} catch (IOException e) {
+			throw elevate(e);
+		}
 	}
 
 	@EventListener
@@ -54,13 +55,11 @@ public class Balances {
 		if (!event.channel.equals("accountbalance"))
 			return;
 
-
 		try (DataInputStream in = event.createStream()) {
 			accountBalance = BigDecimal.valueOf(in.readDouble());
 		} catch (IOException e) {
 			throw elevate(e);
 		}
-
 	}
 
 }

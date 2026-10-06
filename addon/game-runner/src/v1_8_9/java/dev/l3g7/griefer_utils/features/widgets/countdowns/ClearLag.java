@@ -7,13 +7,12 @@
 
 package dev.l3g7.griefer_utils.features.widgets.countdowns;
 
-import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
-import dev.l3g7.griefer_utils.core.events.network.MysteryModPayloadEvent;
+import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.Countdown;
@@ -24,8 +23,10 @@ import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 
-import java.util.concurrent.TimeUnit;
+import java.io.DataInputStream;
+import java.io.IOException;
 
+import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ALL_ITEMS;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
 
@@ -73,13 +74,15 @@ public class ClearLag extends SimpleWidget {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	private void onMMCustomPayload(MysteryModPayloadEvent event) {
-		if (!event.channel.equals("countdown_create"))
+	private void onClearlag(GrieferGamesPayloadEvent event) {
+		if (!event.channel.equals("clearlag"))
 			return;
 
-		JsonObject countdown = event.payload.getAsJsonObject();
-		if (countdown.get("name").getAsString().equals("ClearLag"))
-			this.countdown.set((int) TimeUnit.SECONDS.convert(countdown.get("until").getAsInt(), TimeUnit.valueOf(countdown.get("unit").getAsString())));
+		try (DataInputStream in = event.createStream()) {
+			this.countdown.set((int) in.readLong());
+		} catch (IOException e) {
+			throw elevate(e);
+		}
 	}
 
 	@EventListener

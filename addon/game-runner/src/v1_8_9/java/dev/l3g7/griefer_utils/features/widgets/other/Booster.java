@@ -13,20 +13,14 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
-import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
-import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
+import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.misc.Countdown;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.uncategorized.commands.Commands;
 import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.features.widgets.Widget;
@@ -36,21 +30,17 @@ import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextLine;
 import net.labymod.main.LabyMod;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.HIDDEN;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
@@ -58,16 +48,12 @@ import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
 @Singleton
 public class Booster extends Widget {
 
-	private final static Pattern BOOSTER_INFO_PATTERN = Pattern.compile("^(?<name>[A-z]+)-Booster: (?:Deaktiviert|\\dx Multiplikator (?<durations>\\(.+\\) ?)+)");
-	private final static Pattern BOOSTER_INFO_TIME_PATTERN = Pattern.compile("\\((\\d+):(\\d+)\\)");
-	private final static Pattern BOOSTER_ACTIVATE_PATTERN = Pattern.compile("^\\[Booster] .* hat für die GrieferGames Community den (?<name>.*)-Booster für 15 Minuten aktiviert\\.$");
-
 	private final Map<String, BoosterData> boosters = ImmutableMap.of(
-		"Break", new BoosterData("Break", false),
-		"Drops", new BoosterData("Drop", true),
-		"Fly", new BoosterData("Fly", false),
-		"Mob", new BoosterData("Mob", true),
-		"Erfahrung", new BoosterData("XP", true)
+		"BREAK", new BoosterData("Break", false),
+		"DROP", new BoosterData("Drop", true),
+		"FLY", new BoosterData("Fly", false),
+		"MOB", new BoosterData("Mob", true),
+		"XP", new BoosterData("XP", true)
 	);
 
 	private final DropDownSetting<KeyMode> design = DropDownSetting.create(KeyMode.class)
@@ -84,93 +70,51 @@ public class Booster extends Widget {
 		.icon("absorption")
 		.subSettings(design);
 
-	private boolean waitingForBoosterGUI = false;
-	private boolean waitingForBoosterInfo = false;
-
 	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
-		// Clear all booster
-		boosters.values().forEach(d -> d.expirationDates.clear());
+		clearBooster();
 	}
 
-	@EventListener
-	private void onCbEarlyJoin(CitybuildJoinEvent.Early event) {
-		if (!event.citybuild.isValid() || event.citybuild == Citybuild.MAGIC_FOREST)
-			return;
-
-		Commands.runOnCb("/booster");
-		waitingForBoosterGUI = waitingForBoosterInfo = true;
-	}
-
-	@EventListener
-	private void onGuiChestOpen(GuiOpenEvent<GuiChest> event) {
-		if (!waitingForBoosterGUI)
-			return;
-
-		IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
-		if (!lowerChestInventory.getDisplayName().getFormattedText().equals("§6Booster - Übersicht§r"))
-			return;
-
-		event.cancel();
-		waitingForBoosterGUI = false;
+	private void clearBooster() {
+		boosters.values().forEach(d -> {
+			d.expirationDates.forEach(Countdown::invalidate);
+			d.expirationDates.clear();
+		});
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onMsg(MessageReceiveEvent event) {
-		String msg = event.message.getUnformattedText();
-
-		if (waitingForBoosterInfo && msg.equals("Folgende Booster sind auf diesem Server aktiv:")) {
-			event.cancel();
-			TickScheduler.runNextClientTick(() -> waitingForBoosterInfo = false);
+	public void onBooster(GrieferGamesPayloadEvent event) {
+		if (!event.channel.equals("booster"))
 			return;
-		}
 
-		// Check for activation
-		Matcher m = BOOSTER_ACTIVATE_PATTERN.matcher(msg);
-		if (m.matches()) {
-			String name = m.group("name");
+		clearBooster();
 
-			BoosterData booster = boosters.get(name);
-			Queue<Countdown> dates = booster.expirationDates;
+		try (DataInputStream in = event.createStream()) {
+			int boosterCount = in.readInt();
+			for (int i = 0; i < boosterCount; i++) {
+				String type = in.readUTF();
+				int multiplier = in.readInt();
+				in.readInt(); // tierCount, drop
 
-			if (booster.stackable) {
-				dates.add(Countdown.ticking().set(15 * 60));
-				return;
+				BoosterData boosterData = boosters.get(type);
+				Queue<Countdown> expirationDates = boosterData.expirationDates;
+
+				List<Integer> durations = new ArrayList<>(multiplier);
+
+				for (int j = 0; j < multiplier; j++)
+					durations.add((int) in.readLong());
+
+				if (boosterData.stackable) {
+					durations.forEach(seconds -> {
+						expirationDates.add(Countdown.ticking().set(seconds));
+					});
+				} else {
+					expirationDates.add(Countdown.ticking().set(durations.stream().max(Integer::compareTo).orElseThrow()));
+				}
 			}
-
-			if (dates.isEmpty())
-				dates.add(Countdown.ticking().set(15 * 60));
-			else
-				dates.peek().addMinutes(15);
-
-			return;
+		} catch (IOException e) {
+			throw elevate(e);
 		}
-
-		// Check for info
-		m = BOOSTER_INFO_PATTERN.matcher(msg);
-		if (!m.matches())
-			return;
-
-		if (waitingForBoosterInfo)
-			event.cancel();
-
-		String name = m.group("name");
-		String durations = m.group("durations");
-		Queue<Countdown> expirationDates = boosters.get(name).expirationDates;
-		expirationDates.forEach(Countdown::invalidate);
-		expirationDates.clear();
-
-		if (durations == null)
-			return;
-
-		m = BOOSTER_INFO_TIME_PATTERN.matcher(durations);
-		while (m.find()) {
-			int min = Integer.parseInt(m.group(1));
-			int sek = Integer.parseInt(m.group(2));
-
-			expirationDates.add(Countdown.ticking().set(min * 60 + sek));
-		}
-
 	}
 
 	@Override

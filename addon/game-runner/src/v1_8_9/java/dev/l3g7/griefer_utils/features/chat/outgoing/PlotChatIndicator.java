@@ -7,32 +7,25 @@
 
 package dev.l3g7.griefer_utils.features.chat.outgoing;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.DrawScreenEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent;
-import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
+import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.core.misc.ServerCheck;
-import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 
-import java.util.List;
+import java.io.DataInputStream;
+import java.io.IOException;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
-import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.*;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 /**
  * Draws an orange frame around the chat input box if plot chat is activated.
@@ -40,11 +33,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 @Singleton
 public class PlotChatIndicator extends Feature {
 
-	private final List<Citybuild> specialServers = ImmutableList.of(NATURE, EXTREME, CBE, EVENT);
-	private StringBuilder states = new StringBuilder(Strings.repeat("?", 27)); // A StringBuilder is used since it has .setCharAt, and with HashMaps you'd have 26 entries per account in the config)
-
 	private Boolean plotchatState = null;
-	private boolean waitingForPlotchatStatus = false;
 
 	private final SwitchSetting replaceGlobalChat = SwitchSetting.create()
 		.name("@ ersetzen")
@@ -57,13 +46,7 @@ public class PlotChatIndicator extends Feature {
 		.name("Plot-Chat-Indikator")
 		.description("Zeichnet einen orangen Rahmen um die Chateingabe, wenn der Plotchat aktiviert ist.")
 		.icon("chat_orange")
-		.subSettings(replaceGlobalChat)
-		.callback(enabled -> {
-			if (enabled && ServerCheck.isOnCitybuild() && plotchatState == null && !waitingForPlotchatStatus) {
-				waitingForPlotchatStatus = true;
-				send("/p chat");
-			}
-		});
+		.subSettings(replaceGlobalChat);
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onServerSwitch(ServerSwitchEvent event) {
@@ -71,65 +54,15 @@ public class PlotChatIndicator extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onServerJoin(GrieferGamesJoinEvent event) {
-		String path = "chat.outgoing.plot_chat_indicator.states." + mc().getSession().getProfile().getId();
-		if (Config.has(path)) {
-			try {
-				states = new StringBuilder(Config.get(path).getAsString());
-				if (states.length() == 26)
-					states.append('?');
-				return;
-			} catch (UnsupportedOperationException ignored) {
-				// Fix for old configs
-			}
-		}
-
-		states = new StringBuilder(Strings.repeat("?", 27));
-	}
-
-	@EventListener(triggerWhenDisabled = true)
-	public void onCitybuildJoin(CitybuildJoinEvent event) {
-		Citybuild citybuild = current();
-		if (!citybuild.hasPlots()) {
-			plotchatState = false;
-			return;
-		}
-
-		char character = states.charAt(getIndex(citybuild));
-		plotchatState = character == '?' ? null : character == 'Y';
-
-		if (plotchatState != null || !isEnabled())
+	public void onPlotChatConfiguration(GrieferGamesPayloadEvent event) {
+		if (!event.channel.equals("plotchat_configuration"))
 			return;
 
-		waitingForPlotchatStatus = true;
-		send("/p chat");
-	}
-
-	@EventListener(triggerWhenDisabled = true)
-	public void onReceive(MessageReceiveEvent event) {
-		Citybuild citybuild = current();
-		if (!citybuild.hasPlots())
-			return;
-
-		// Update plot chat state
-		if (event.message.getFormattedText().matches("^§r§8\\[§r§6GrieferGames§r§8] §r§.Die Einstellung §r§.chat §r§.wurde (?:de)?aktiviert\\.§r$")) {
-			plotchatState = event.message.getFormattedText().contains(" aktiviert");
-			states.setCharAt(getIndex(citybuild), plotchatState ? 'Y' : 'N');
-			Config.set("chat.outgoing.plot_chat_indicator.states." + mc().getSession().getProfile().getId(), new JsonPrimitive(states.toString()));
-			Config.save();
-
-			if (waitingForPlotchatStatus) {
-				waitingForPlotchatStatus = false;
-				send("/p chat");
-			}
+		try (DataInputStream in = event.createStream()) {
+			plotchatState = in.readBoolean();
+		} catch (IOException e) {
+			throw elevate(e);
 		}
-	}
-
-	private int getIndex(Citybuild server) {
-		if (specialServers.contains(server))
-			return specialServers.indexOf(server) + 22;
-
-		return server.ordinal();
 	}
 
 	@EventListener(priority = Priority.HIGH)

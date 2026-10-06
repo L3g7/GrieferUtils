@@ -18,7 +18,10 @@ import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.Sta
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFGetReadyRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFProcessRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFSearchRequest;
-import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.*;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.BlockOfTheDayRequest;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.KeepAliveRequest;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.LogoutRequest;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.OnlineUsersRequest;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
@@ -137,17 +140,6 @@ public class GUServer {
 		});
 	}
 
-	public static CompletableFuture<Void> sendMobRemoverData(Citybuild citybuild, Long value) {
-		return CompletableFuture.supplyAsync(() -> {
-			new MobRemoverRequest(citybuild.getInternalName(), value).send();
-			return null;
-		});
-	}
-
-	public static CompletableFuture<Long> getMobRemoverData(Citybuild citybuild) {
-		return CompletableFuture.supplyAsync(() -> new MobRemoverRequest(citybuild.getInternalName(), null).send());
-	}
-
 	public static CompletableFuture<LeaderboardData> getLeaderboardData() {
 		return CompletableFuture.supplyAsync(() -> new LeaderboardRequest(false).get());
 	}
@@ -166,6 +158,13 @@ public class GUServer {
 	public static CompletableFuture<Void> sendBlockOfTheDayReward(String type, int counter, int amount, ItemStack eventItem) {
 		return CompletableFuture.supplyAsync(() -> {
 			new BlockOfTheDayRequest.Reward(type, counter, amount, eventItem).send();
+			return null;
+		});
+	}
+
+	public static CompletableFuture<Void> sendBlockOfTheDayInferReward(int amount) {
+		return CompletableFuture.supplyAsync(() -> {
+			new BlockOfTheDayRequest.InferReward(amount).send();
 			return null;
 		});
 	}

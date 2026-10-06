@@ -60,4 +60,15 @@ public abstract class BlockOfTheDayRequest extends Request<Void> {
 
 	}
 
+	public static class InferReward extends BlockOfTheDayRequest {
+
+		private final int amount;
+
+		public InferReward(int amount) {
+			super("infer_reward");
+			this.amount = amount;
+		}
+
+	}
+
 }

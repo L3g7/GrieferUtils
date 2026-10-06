@@ -8,19 +8,17 @@
 package dev.l3g7.griefer_utils.features.widgets.botd;
 
 import dev.l3g7.griefer_utils.core.api.BugReporter;
-import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
-import dev.l3g7.griefer_utils.core.events.griefergames.BlockOfTheDayRewardEvent;
 import net.minecraft.item.ItemStack;
 
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class Reward {
+public class Reward {
 
 	public final RewardType type;
-	private final int amount;
-	private final ItemStack eventItem;
+	public final int amount;
+	public final ItemStack eventItem;
 
 	public Reward(RewardType type, int amount) {
 		this.type = type;
@@ -32,13 +30,6 @@ class Reward {
 		type = RewardType.CUSTOM;
 		amount = eventItem.stackSize;
 		this.eventItem = eventItem;
-	}
-
-	public void send() {
-		if (RewardCounter.shouldSend()) {
-			GUServer.sendBlockOfTheDayReward(type.toString().toLowerCase(), RewardCounter.getCounter(type), amount, eventItem);
-			new BlockOfTheDayRewardEvent().fire();
-		}
 	}
 
 	public enum RewardType {

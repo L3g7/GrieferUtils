@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.events.griefergames.BlockOfTheDayRewardEvent;
+import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
@@ -49,7 +49,10 @@ public class BlockOfTheDayCounter extends SimpleWidget {
 		.since("2.4-BETA-1");
 
 	@EventListener
-	private void onReward(BlockOfTheDayRewardEvent event) {
+	private void onReward(GrieferGamesPayloadEvent event) {
+		if (!event.channel.equals("blockoftheday_progress"))
+			return;
+
 		checkReset();
 		UUID uuid = uuid();
 		values.put(uuid, values.getOrDefault(uuid, 0) + 1);

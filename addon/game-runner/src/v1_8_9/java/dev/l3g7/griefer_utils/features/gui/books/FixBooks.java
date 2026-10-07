@@ -66,7 +66,7 @@ public class FixBooks extends Feature {
 		boolean shouldOpen = Mouse.getEventButton() == 1;
 		if (shouldOpen) {
 			Slot theSlot = MinecraftUtil.getSlotUnderMouse(gc);
-			shouldOpen = theSlot == null || !theSlot.getHasStack();
+			shouldOpen = theSlot != null && theSlot.getHasStack();
 		}
 
 		if (processClick(getStackUnderMouse(mc().currentScreen), shouldOpen))

@@ -20,8 +20,6 @@ import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BABBot;
 import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BotSource;
 import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.gui.BotshopGUI;
-import dev.l3g7.griefer_utils.labymod.laby3.settings.types.KeySettingImpl;
-import net.labymod.api.client.gui.screen.key.Key;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
@@ -32,9 +30,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**
@@ -144,7 +140,7 @@ public class ByteAndBit extends Feature {
 			if (bot.isVecInsideOrTouching(player().getPositionVector())) {
 				bot.sync().whenComplete((dataPresent, ex) -> {
 					if (ex == null)
-						mc().addScheduledTask(() -> mc().displayGuiScreen(new BotshopGUI(bot)));
+						mc().addScheduledTask(() -> new BotshopGUI(bot).open());
 				});
 			}
 		}

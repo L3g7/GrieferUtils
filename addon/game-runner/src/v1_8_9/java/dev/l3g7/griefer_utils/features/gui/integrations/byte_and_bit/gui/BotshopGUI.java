@@ -90,7 +90,6 @@ public class BotshopGUI extends GuiBigChest {
 		this.boughtItems = Collections.synchronizedList(new ArrayList<>());
 		this.searchField.setFocused(true);
 		this.updatePage();
-		this.open();
 		EventRegisterer.register(this);
 	}
 

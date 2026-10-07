@@ -56,6 +56,8 @@ public class RenderObjectObserver {
 
 		if (chunk.hasData())
 			data.put(coords, chunk);
+		else
+			data.remove(coords);
 	}
 
 	@EventListener

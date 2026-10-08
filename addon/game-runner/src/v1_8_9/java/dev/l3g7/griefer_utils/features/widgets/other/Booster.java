@@ -109,7 +109,7 @@ public class Booster extends Widget {
 						expirationDates.add(Countdown.ticking().set(seconds));
 					});
 				} else {
-					expirationDates.add(Countdown.ticking().set(durations.stream().max(Integer::compareTo).orElseThrow()));
+					expirationDates.add(Countdown.ticking().set(durations.stream().max(Integer::compareTo).orElse(0)));
 				}
 			}
 		} catch (IOException e) {

@@ -65,7 +65,7 @@ public class Settings extends Feature {
 
 	public Settings() {
 		if (LABY_4.isActive())
-			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, autoUpdateEnabled, showUpdateInfos, BugReporter.enabled);
+			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, MainMenuSkull.enabled, autoUpdateEnabled, showUpdateInfos, BugReporter.enabled);
 		else
 			element.subSettings(credits, changelog, HeaderSetting.create(), Badges.enabled, autoUpdateEnabled, showUpdateInfos, BugReporter.enabled);
 	}

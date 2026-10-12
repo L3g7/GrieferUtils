@@ -18,7 +18,7 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons.TextureIcon;
-import net.labymod.api.Textures;
+import net.labymod.api.client.gui.icon.catalog.IconsCommon;
 import net.labymod.main.ModTextures;
 
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class Changelog {
 	private void addIconLaby4(ButtonSetting button) {
 		button
 			.<dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl>into()
-			.buttonIcon(Textures.SpriteCommon.SETTINGS);
+			.buttonIcon(IconsCommon.GEAR);
 	}
 
 	private void addIconLaby3(ButtonSetting button) {

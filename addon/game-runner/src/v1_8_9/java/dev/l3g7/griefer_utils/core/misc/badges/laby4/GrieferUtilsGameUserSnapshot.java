@@ -46,7 +46,8 @@ public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
 			userServerFeature == null ? null : userServerFeature.getBadges().toArray(new ServerBadge[0]),
 			DefaultGameUserSnapshotAccessor.grieferUtils$calculateNameTagOffset(user),
 			userServerFeature == null ? null : userServerFeature.getSubtitle(), createGroupComponent(user, badge),
-			DefaultGameUserSnapshotAccessor.grieferUtils$isFriend(user), config.ingame().showUserIndicatorBesideName().get(), config.ingame().showCountryFlag().get(), config.ingame().cosmetics().renderCosmetics().get(), extras);
+			DefaultGameUserSnapshotAccessor.grieferUtils$isFriend(user), config.ingame().showUserIndicatorBesideName().get(), config.ingame().showCountryFlag().get(), config.ingame().cosmetics().renderCosmetics().get(),
+			DefaultGameUserSnapshotAccessor.grieferUtils$groupTier(user), DefaultGameUserSnapshotAccessor.grieferUtils$joinYear(user), extras);
 		this.badge = badge;
 	}
 
@@ -70,6 +71,8 @@ public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
 	public static final Method isFriend = Reflection.getMethod(DefaultGameUserSnapshot.class, "isFriend", GameUser.class);
 	public static final Method calculateNameTagOffset = Reflection.getMethod(DefaultGameUserSnapshot.class, "calculateNameTagOffset", GameUser.class);
 	public static final Method createGroupComponent = Reflection.getMethod(DefaultGameUserSnapshot.class, "createGroupComponent", Group.class);
+	public static final Method groupTier = Reflection.getMethod(DefaultGameUserSnapshot.class, "groupTier", GameUser.class);
+	public static final Method joinYear = Reflection.getMethod(DefaultGameUserSnapshot.class, "joinYear", GameUser.class);
 
 	static {
 		isFriend.setAccessible(true);
@@ -93,6 +96,16 @@ public class GrieferUtilsGameUserSnapshot extends DefaultGameUserSnapshot {
 		@Invoker("createGroupComponent")
 		static Component grieferUtils$createGroupComponent(Group group) {
 			return Reflection.invoke(DefaultGameUserSnapshot.class, createGroupComponent, group);
+		}
+
+		@Invoker("groupTier")
+		static int grieferUtils$groupTier(GameUser user) {
+			return Reflection.invoke(DefaultGameUserSnapshot.class, groupTier, user);
+		}
+
+		@Invoker("joinYear")
+		static int grieferUtils$joinYear(GameUser user) {
+			return Reflection.invoke(DefaultGameUserSnapshot.class, joinYear, user);
 		}
 	}
 

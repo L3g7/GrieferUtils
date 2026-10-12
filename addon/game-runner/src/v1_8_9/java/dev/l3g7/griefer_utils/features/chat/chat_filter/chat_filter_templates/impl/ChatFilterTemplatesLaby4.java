@@ -15,8 +15,8 @@ import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.Ch
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates.FilterTemplate;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
-import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
+import net.labymod.api.client.gui.icon.catalog.IconsCommon;
 import net.labymod.api.client.gui.screen.Parent;
 import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -79,7 +79,7 @@ public class ChatFilterTemplatesLaby4 {
 
 				// Add normal filter
 				contextMenu.addEntry(ContextMenuEntry.builder()
-					.icon(Textures.SpriteCommon.ADD)
+					.icon(IconsCommon.ADD)
 					.text(Component.text("Neuer Filter"))
 					.clickHandler(v -> {
 						openSetting(self, filterList.createNew());
@@ -89,7 +89,7 @@ public class ChatFilterTemplatesLaby4 {
 
 				// Open template list
 				contextMenu.addEntry(ContextMenuEntry.builder()
-					.icon(Textures.SpriteCommon.ADD)
+					.icon(IconsCommon.ADD)
 					.text(Component.text("Vorlage verwenden"))
 					.clickHandler(v -> {
 						// Open template list
@@ -101,7 +101,7 @@ public class ChatFilterTemplatesLaby4 {
 								ButtonSetting.create()
 									.name(template.name)
 									.<ButtonSettingImpl>into()
-									.buttonIcon(Textures.SpriteCommon.DARK_ADD)
+									.buttonIcon(IconsCommon.ADD)
 									.callback(() -> loadTemplate(self, template)));
 						}
 

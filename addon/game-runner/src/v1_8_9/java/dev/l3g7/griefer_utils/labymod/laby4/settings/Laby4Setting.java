@@ -13,16 +13,13 @@ import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
-import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.NamedTextColor;
 import net.labymod.api.client.component.format.TextDecoration;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.action.Switchable;
+import net.labymod.api.client.gui.icon.catalog.IconsCommon;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.loader.property.ConfigProperty;
@@ -38,7 +35,6 @@ import net.labymod.api.util.KeyValue;
 import net.labymod.api.util.version.SemanticVersion;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsActivity;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsSettingWidget;
-import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsTileWidget;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -294,7 +290,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		}
 
 		public IconWidget createBadge(AbstractSetting<?, ?> source) {
-			IconWidget newBadge = new IconWidget(Textures.SpriteCommon.NEW);
+			IconWidget newBadge = new IconWidget(IconsCommon.NEW);
 			newBadge.addId("new-badge");
 			newBadge.setHoverComponent(Component.text(getDisplayName()));
 
@@ -312,7 +308,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	 * Copy of ModsOptionsBuilder#newBadge, but accessible
 	 */
 	static IconWidget newBadge(Revision revision) {
-		IconWidget newBadge = new IconWidget(Textures.SpriteCommon.NEW);
+		IconWidget newBadge = new IconWidget(IconsCommon.NEW);
 		newBadge.addId("new-badge");
 		newBadge.setHoverComponent(Component
 			.translatable("labymod.misc.introduced")

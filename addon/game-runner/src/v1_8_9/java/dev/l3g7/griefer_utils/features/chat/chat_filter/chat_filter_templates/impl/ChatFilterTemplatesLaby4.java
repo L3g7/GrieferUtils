@@ -9,33 +9,26 @@ package dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.i
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
-import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates.FilterTemplate;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
+import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.catalog.IconsCommon;
-import net.labymod.api.client.gui.screen.Parent;
-import net.labymod.api.client.gui.screen.activity.activities.labymod.child.SettingContentActivity;
+import net.labymod.api.client.gui.screen.activity.AutoActivity;
 import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.context.ContextMenu;
-import net.labymod.api.client.gui.screen.widget.context.ContextMenuEntry;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.input.TagInputWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.input.TextFieldWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.entry.HorizontalListEntry;
-import net.labymod.api.configuration.settings.Setting;
-import net.labymod.api.configuration.settings.type.SettingElement;
-import net.labymod.api.configuration.settings.type.list.ListSetting;
-import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.ChatSettingActivity;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.list.HorizontalListWidget;
+import net.labymod.api.client.gui.screen.widget.widgets.layout.list.VerticalListWidget;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.ChatDialogActivity;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.ChatRuleDraft;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.ChatTabDialogActivity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.Function;
+import java.util.Arrays;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
@@ -43,114 +36,89 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 @ExclusiveTo(LABY_4)
 public class ChatFilterTemplatesLaby4 {
 
-	/**
-	 * The setting that redirected to the currently open templateList.
-	 */
-	private static ListSetting filterList;
-
-	/**
-	 * The holder setting for the template selection.
-	 */
-	private static CategorySettingImpl templateList;
-
-	public static void modifyAddButton(SettingContentActivity self) {
-		if (!ChatFilterTemplates.enabled.get())
-			return;
-
-		if (!(self instanceof ChatSettingActivity))
-			return;
-
-		// Modify back button in template list
-		if (self.getCurrentHolder() == templateList) {
-			for (Widget child : self.document().getChild("content").getChildren().get(0).getChildren()) { // NOTE: replace with SettingActivityInitEvent#get / generalize
-				if (child.hasId("back-button")) {
-					ButtonWidget backButton = (ButtonWidget) ((HorizontalListEntry) child).childWidget();
-					backButton.setPressable(() -> openSetting(self, filterList));
-				}
-			}
-		}
-
-		for (Widget child : self.document().getChild("content").getChildren().get(0).getChildren()) {
-			if (child.hasId("add-button")) {
-				filterList = (ListSetting) self.getCurrentHolder();
-				ButtonWidget button = (ButtonWidget) ((HorizontalListEntry) child).childWidget();
-
-				ContextMenu contextMenu = button.createContextMenu();
-
-				// Add normal filter
-				contextMenu.addEntry(ContextMenuEntry.builder()
-					.icon(IconsCommon.ADD)
-					.text(Component.text("Neuer Filter"))
-					.clickHandler(v -> {
-						openSetting(self, filterList.createNew());
-						return true;
-					})
-					.build());
-
-				// Open template list
-				contextMenu.addEntry(ContextMenuEntry.builder()
-					.icon(IconsCommon.ADD)
-					.text(Component.text("Vorlage verwenden"))
-					.clickHandler(v -> {
-						// Open template list
-						templateList = (CategorySettingImpl) CategorySetting.create()
-							.name("Vorlagen");
-
-						for (FilterTemplate template : ChatFilterTemplates.TEMPLATES) {
-							templateList.addSetting(
-								ButtonSetting.create()
-									.name(template.name)
-									.<ButtonSettingImpl>into()
-									.buttonIcon(IconsCommon.ADD)
-									.callback(() -> loadTemplate(self, template)));
-						}
-
-						openSetting(self, templateList);
-						return true;
-					})
-					.build());
-
-				button.setPressable(button::openContextMenu);
-			}
-		}
-	}
-
-	private static void loadTemplate(SettingContentActivity activity, FilterTemplate ft) {
-		Setting entry = filterList.createNew();
-
-		TextFieldWidget name = (TextFieldWidget) ((SettingElement) entry.getById("name")).getWidgets()[0];
-		name.setText(ft.name);
-
-		TagInputWidget includeTags = (TagInputWidget) (((SettingElement) entry.getById("includeTags")).getWidgets()[0]);
-		for (String contain : ft.contains)
-			includeTags.tagCollection().add(contain);
-
-		TagInputWidget excludeTags = (TagInputWidget) (((SettingElement) entry.getById("excludeTags")).getWidgets()[0]);
-		for (String contain : ft.containsNot)
-			excludeTags.tagCollection().add(contain);
-
-		openSetting(activity, entry);
-	}
-
-	private static void openSetting(SettingContentActivity activity, Setting setting) {
-		Function<Setting, Setting> screenCallback = Reflection.get(activity, "screenCallback");
-
-		Reflection.set(activity, "currentHolder", setting);
-		if (screenCallback != null)
-			setting = screenCallback.apply(activity.getCurrentHolder());
-
-		Reflection.set(activity, "currentHolder", setting);
-		if (setting != null)
-			activity.reload();
-	}
-
 	@ExclusiveTo(LABY_4)
-	@Mixin(SettingContentActivity.class)
-	public static class SettingContentActivityMixin {
+	@Mixin(ChatTabDialogActivity.class)
+	public static class ChatTabDialogActivityMixin {
 
-		@Inject(method = "initialize", at = @At("RETURN"), remap = false)
-		public void onInitialize(Parent parent, CallbackInfo ci) {
-			modifyAddButton(c(this));
+		@Inject(method = "addRules", at = @At(value = "INVOKE", target = "Lnet/labymod/core/client/gui/screen/activity/activities/ingame/chat/dialog/ChatTabDraft;picks()Z"), remap = false)
+		public void onToSettings(VerticalListWidget<Widget> card, CallbackInfo ci) {
+			Widget section = card.getChildren().getLast();
+			HorizontalListWidget last = Reflection.c(section.getChildren().getLast());
+
+			ButtonWidget button = ButtonWidget.component(Component.text("Vorlage verwenden"), IconsCommon.COPY,
+				() -> Laby.labyAPI().minecraft().minecraftWindow().displayScreen(new ChatRuleTemplateDialogActivity(c(this))));
+
+			button.addId("dialog-action", "chat-dialog-add");
+			last.addEntry(button);
+		}
+
+	}
+
+	@AutoActivity
+	public static class ChatRuleTemplateDialogActivity extends ChatDialogActivity {
+
+		ChatTabDialogActivity tabDialog;
+
+		public ChatRuleTemplateDialogActivity(ChatTabDialogActivity tabDialog) {
+			super(tabDialog);
+			this.tabDialog = tabDialog;
+		}
+
+		@Override
+		protected String dialogId() {
+			return "chat-rule-template-dialog";
+		}
+
+		@Override
+		protected Component title() {
+			return Component.text("Vorlagen");
+		}
+
+		@Override
+		protected Component intro() {
+			return Component.text("Wähle eine Vorlage aus, um sie einzufügen.");
+		}
+
+		@Override
+		protected void fill(VerticalListWidget<Widget> card) {
+			VerticalListWidget<Widget> rules = new VerticalListWidget<>();
+			rules.addId("chat-dialog-rules");
+
+			var chatRuleSummaryCls = Reflection.load("net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.ChatRuleSummary");
+
+			for (FilterTemplate template : ChatFilterTemplates.TEMPLATES) {
+				ChatRuleDraft rule = buildRule(template);
+				Component summary = Reflection.invoke(chatRuleSummaryCls, "of", rule);
+
+				FlexibleContentWidget row = this.row(Component.text(template.name), summary, null);
+				this.onCardPress(row, () -> Reflection.invoke(tabDialog, "editRule", rule, true));
+
+				FlexibleContentWidget split = new FlexibleContentWidget();
+				split.addId("chat-dialog-split");
+				row.removeId("chat-dialog-row");
+				row.addId("chat-dialog-split-main");
+				split.addFlexibleContent(row);
+
+				rules.addChild(split);
+			}
+			card.addChild(rules);
+		}
+
+		private ChatRuleDraft buildRule(FilterTemplate template) {
+			var rule = ChatRuleDraft.empty();
+			rule.include().addAll(Arrays.asList(template.contains));
+			rule.exclude().addAll(Arrays.asList(template.containsNot));
+			if (template.highlighting) {
+				rule.setHighlight(true);
+				rule.setColor(
+					// ARGB
+					0xFF << 24
+						| template.red << 16
+						| template.green << 8
+						| template.blue
+				);
+			}
+			return rule;
 		}
 
 	}

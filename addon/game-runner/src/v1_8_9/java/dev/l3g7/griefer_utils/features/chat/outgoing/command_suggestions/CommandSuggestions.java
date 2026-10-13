@@ -45,7 +45,7 @@ public class CommandSuggestions extends Feature {
 			node.register(dispatcher, dispatcher.getRoot()::addChild);
 
 		if (dispatcher.getErrors() > 0)
-			logger.warn("Dropped {} commands", dispatcher.getErrors());
+			logger.warn("Dropped {} commands", new Object[]{dispatcher.getErrors()});
 	}
 
 }

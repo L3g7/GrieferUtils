@@ -1,3 +1,4 @@
+import net.labymod.labygradle.common.extension.model.labymod.ReleaseChannels
 import net.labymod.labygradle.common.internal.labymod.addon.model.AddonMeta
 import java.util.Properties
 
@@ -17,6 +18,7 @@ labyMod {
 		description = "Patches failed to apply :(" // Overwritten by runBuildPatcher task
 		minecraftVersion = "1.8.9"
 		version = providers.gradleProperty("version").get()
+		releaseChannel = ReleaseChannels.SNAPSHOT
 		meta(AddonMeta.RESTART_REQUIRED, AddonMeta.BACKGROUND)
 	}
 

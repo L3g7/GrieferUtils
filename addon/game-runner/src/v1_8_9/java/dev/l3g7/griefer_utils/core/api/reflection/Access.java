@@ -7,12 +7,12 @@
 
 package dev.l3g7.griefer_utils.core.api.reflection;
 
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.BiConsumer;
+import com.sun.management.HotSpotDiagnosticMXBean;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 
-import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 
 /**
@@ -30,21 +30,24 @@ public class Access {
 			Field theUnsafe = unsafeClass.getDeclaredField("theUnsafe");
 			theUnsafe.setAccessible(true);
 
+			int allowedModesOffset = (useCompactObjectHeaders() ? 8 : 12); // Result of Unsafe#objectFieldOffset(Lookup#allowedModes)
 			unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class)
-					.invoke(theUnsafe.get(null), lookup, 12 /* allowedModes */, -1 /* TRUSTED */);
+					.invoke(theUnsafe.get(null), lookup, allowedModesOffset, -1 /* TRUSTED */);
 			return lookup;
 		});
 	}
 
+	private static boolean useCompactObjectHeaders() {
+        try {
+            HotSpotDiagnosticMXBean bean = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
+            return Boolean.parseBoolean(bean.getVMOption("UseCompactObjectHeaders").getValue());
+        } catch (IllegalArgumentException e) {
+            return false; // Flag is unknown (older than JDK 24)
+        }
+    }
+
 	public static Lookup getElevatedLookup() {
 		return lookup;
-	}
-
-	public static <O, V> BiConsumer<O, V> createSetter(Field field) {
-		return Util.tryFatal(() -> {
-			MethodHandle setter = lookup.unreflectSetter(field);
-			return setter::invoke;
-		});
 	}
 
 }

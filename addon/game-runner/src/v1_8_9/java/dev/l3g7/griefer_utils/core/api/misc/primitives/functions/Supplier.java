@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.core.api.misc.primitives.functions;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 
 /**
- * Like {@link java.util.function.Consumer}, but able to throw exceptions.
+ * Like {@link java.util.function.Supplier}, but able to throw exceptions.
  */
 @FunctionalInterface
 public interface Supplier<T> extends java.util.function.Supplier<T> {

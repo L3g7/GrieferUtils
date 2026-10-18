@@ -71,7 +71,11 @@ public class PlayerUtil {
 		if (team == null)
 			return Option.empty();
 
-		return Option.of(team.getColorPrefix().replaceAll("§.", "").split("┃")[0].trim());
+		String rank = team.getColorPrefix().replaceAll("§.", "").split("┃")[0].trim();
+		if (rank.equals("Sup"))
+			rank = "Supporter"; // They're renamed for some reason
+
+		return Option.of(rank);
 	}
 
 	public static String getName() {

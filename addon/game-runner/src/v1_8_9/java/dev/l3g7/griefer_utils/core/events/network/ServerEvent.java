@@ -38,7 +38,7 @@ public class ServerEvent extends Event {
 
 	}
 
-	public static class ServerJoinEvent extends ServerEvent {
+	public static class ServerJoinEvent extends ServerEvent { // TODO dissolve
 
 		@EventListener
 		private static void onEncryptionStart(PacketReceiveEvent<S01PacketEncryptionRequest> event) {
@@ -59,7 +59,7 @@ public class ServerEvent extends Event {
 		@EventListener(priority = Priority.HIGHEST)
 		private static void onPacketReceive(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
 			if (pendingGGHeader && event.packet.getHeader().getUnformattedText().contains("GrieferGames.net")) {
-				pendingGGHeader = false;
+				pendingGGHeader = false; // TODO cleanup
 				new GrieferGamesJoinEvent().fire();
 			}
 		}

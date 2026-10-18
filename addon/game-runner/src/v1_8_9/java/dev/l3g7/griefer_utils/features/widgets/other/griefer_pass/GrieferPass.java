@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
@@ -21,6 +22,7 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -34,6 +36,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -51,6 +57,9 @@ public class GrieferPass extends ComplexWidget {
 	private static final ItemStack ADD_ALL = ItemUtil.createItem(new ItemStack(Items.gold_ingot), false, "§6Alle Aufgaben anpinnen");
 	private static final ItemStack REMOVE_ALL = ItemUtil.createItem(new ItemStack(Items.gold_ingot), true, "§6Alle Aufgaben entpinnen");
 
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.uuuu");
+
+	private String seasonEnd = "";
 	private int lastIndex = -1;
 	private final Map<String, TreeSet<AbstractQuest>> questLookup = new HashMap<>();
 	private final Map<String, TreeSet<AbstractQuest>> questTypeLookup = new HashMap<>();
@@ -74,12 +83,19 @@ public class GrieferPass extends ComplexWidget {
 		.icon("chest_golden")
 		.defaultValue(true);
 
+	private final ButtonSetting reset = ButtonSetting.create()
+		.name("Zurücksetzen")
+		.description("Entpinnt alle Aufgaben.")
+		.icon("loop")
+		.callback(this::reset)
+		.since("2.4.8-BETA-6");
+
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("GrieferPass")
 		.description("Zeigt dir angepinnte GrieferPass-Aufgaben.")
 		.icon("fancy_book")
-		.subSettings(sorting, removeFinished, ignoreCaseOpening)
+		.subSettings(sorting, removeFinished, ignoreCaseOpening, reset)
 		.since("2.4-BETA-1");
 
 	void onQuestUpdate(boolean updateShadowing) {
@@ -94,8 +110,31 @@ public class GrieferPass extends ComplexWidget {
 		Config.save();
 	}
 
+	private void reset() {
+		streamQuests().forEach(EventRegisterer::unregister);
+		questLookup.clear();
+		questTypeLookup.clear();
+		onQuestUpdate(false);
+	}
+
 	@EventListener
 	private void loadQuests(GrieferGamesJoinEvent event) {
+		if (Config.has("modules.griefer_pass.season_end")) {
+			seasonEnd = Config.get("modules.griefer_pass.season_end").getAsString();
+			LocalDateTime seasonEndDate = LocalDate.parse(seasonEnd, DATE_FORMATTER).atTime(4, 0);
+			if (LocalDateTime.now().isAfter(seasonEndDate)) {
+				// Season changed
+				reset();
+				return;
+			} else {
+				new Timer().schedule(new TimerTask() {
+					public void run() {
+						reset();
+					}
+				}, new Date(seasonEndDate.toEpochSecond(ZoneOffset.UTC) * 1000));
+			}
+		}
+
 		String key = "modules.griefer_pass.quests." + uuid();
 		if (!Config.has(key))
 			return;
@@ -141,8 +180,19 @@ public class GrieferPass extends ComplexWidget {
 	private void onGuiModify(GuiModifyItemsEvent event) {
 		String title = event.getTitle();
 		boolean isDaily = title.startsWith("§6Pass-Aufgaben");
-		if (!isDaily && !title.startsWith("§6Wöchentliche Aufgaben §7- §0Woche "))
+		if (!isDaily && !title.startsWith("§6Wöchentliche Aufgaben §7- §0Woche ")) {
+			String end = ItemUtil.getLoreAtIndex(event.getItem(52), 2);
+			if (!end.startsWith("§7Ende: §e"))
+				return;
+
+			String endDate = end.substring("§7Ende: §e".length());
+			if (!endDate.equals(seasonEnd)) {
+				Config.set("modules.griefer_pass.season_end", new JsonPrimitive(endDate));
+				Config.save();
+				seasonEnd = endDate;
+			}
 			return;
+		}
 
 		lastIndex = isDaily ? 0 : Integer.parseInt(title.substring("§6Wöchentliche Aufgaben §7- §0Woche ".length()).replaceAll("§.", ""));
 		boolean isAnyPinned = streamQuests().anyMatch(q -> q.index / 100 == lastIndex);

@@ -16,7 +16,9 @@ import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.event.client.network.server.ServerDisconnectEvent;
 import net.labymod.main.LabyMod;
+import net.minecraft.network.login.server.S01PacketEncryptionRequest;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
+import net.minecraft.network.play.server.S47PacketPlayerListHeaderFooter;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
@@ -38,38 +40,26 @@ public class ServerEvent extends Event {
 
 	public static class ServerJoinEvent extends ServerEvent {
 
-		@ExclusiveTo(LABY_3)
-		private static class Laby3Registrar {
-			@OnEnable
-			private static void register() {
-				LabyMod.getInstance().getEventManager().registerOnJoin(v -> new ServerJoinEvent().fire());
-			}
-		}
-
-		@ExclusiveTo(LABY_4)
-		private static class Laby4Registrar {
-			@OnEnable
-			private static void register() {
-				Laby4Util.register(net.labymod.api.event.client.network.server.ServerJoinEvent.class, v -> new ServerJoinEvent().fire());
-			}
+		@EventListener
+		private static void onEncryptionStart(PacketReceiveEvent<S01PacketEncryptionRequest> event) {
+			new ServerJoinEvent().fire();
 		}
 
 	}
 
 	public static class GrieferGamesJoinEvent extends ServerEvent {
 
-		private static boolean pendingGGPayload = false;
+		private static boolean pendingGGHeader = false;
 
 		@EventListener(priority = Priority.HIGHEST)
 		private static void onServerJoin(ServerJoinEvent event) {
-			pendingGGPayload = true;
+			pendingGGHeader = true;
 		}
 
 		@EventListener(priority = Priority.HIGHEST)
-		private static void onPacketReceive(PacketReceiveEvent<S3FPacketCustomPayload> event) {
-			String channel = event.packet.getChannelName();
-			if (pendingGGPayload && (channel.equals("mysterymod:mm") || channel.equals("griefergames:main"))) {
-				pendingGGPayload = false;
+		private static void onPacketReceive(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
+			if (pendingGGHeader && event.packet.getHeader().getUnformattedText().contains("GrieferGames.net")) {
+				pendingGGHeader = false;
 				new GrieferGamesJoinEvent().fire();
 			}
 		}

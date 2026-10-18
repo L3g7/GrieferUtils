@@ -121,7 +121,7 @@ public class Main extends LabyModAddon {
 			addons.put(offlineAddon.getUuid(), offlineAddon.getName());
 		}
 
-		throw new RuntimeException("GrieferUtils couldn't be loaded: " + uuid + " not found in " + addons);
+		System.err.println("GrieferUtils couldn't be loaded: " + uuid + " not found in " + addons);
 	}
 
 	@Override

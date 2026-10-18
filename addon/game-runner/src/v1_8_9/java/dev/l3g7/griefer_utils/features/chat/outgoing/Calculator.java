@@ -117,7 +117,7 @@ public class Calculator extends Feature {
 		.subSettings(decimalPlaces, HeaderSetting.create(),
 			autoWithdraw, starPlaceholder, placeholder, autoEquationDetect, inlineCalculation, prefix);
 
-	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:^|(?: |^)[^/\\n][^ \\r\\n]* )(?<match>(?<equation>[+-]?\\d+(?:[.,]\\d+)?[mk]?(?: *[*+\\-/] *[+-]?\\d+(?:[.,]\\d+)?[mk]?)*))", CASE_INSENSITIVE);
+	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:^|(?: |^)[^/\\n][^ \\r\\n]* )(?<match>(?<equation>[+-]?\\d+(?:[.,]\\d+)?[mk]?(?: *[*+\\-/] *[+-]?\\d+(?:[.,]\\d+)?[mk]?)*))(?= |$)", CASE_INSENSITIVE);
 	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay (?<recipient>%s|\\*) (?<amount>.+)", Constants.UNFORMATTED_PLAYER_NAME_PATTERN), CASE_INSENSITIVE);
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 
@@ -419,6 +419,7 @@ public class Calculator extends Feature {
 	}
 
 	public static double calculate(String equation, boolean displayErrors) {
+		equation = equation.toLowerCase();
 		equation = equation.replace(",", ".");
 
 		equation = resolveLetterZeros(equation, 'k', 3);

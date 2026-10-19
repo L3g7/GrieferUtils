@@ -44,9 +44,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks.HOOK_URL_PATTERN;
 import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks.webhooks;
 
 @ExclusiveTo(LABY_3)
@@ -93,8 +93,6 @@ public class FilterWebhooksLaby3 {
 	 * Copied and modified from {@link GuiChatFilter}
 	 */
 	public static class CustomGuiChatFilter extends GuiChatCustom {
-
-		private static final Pattern HOOK_URL_PATTERN = Pattern.compile("^https://(?:\\w+\\.)?discord(?:app)?\\.com/api/webhooks/(\\d{18}\\d?/[\\w-]{68})$");
 
 		private final Scrollbar scrollbar = new Scrollbar(15);
 		private Filters.Filter selectedFilter;

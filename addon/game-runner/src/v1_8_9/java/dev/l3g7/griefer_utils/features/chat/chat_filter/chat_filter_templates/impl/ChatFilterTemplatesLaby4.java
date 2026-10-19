@@ -11,31 +11,25 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates.FilterTemplate;
-import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
-import net.labymod.api.client.gui.icon.catalog.IconsCommon;
 import net.labymod.api.client.gui.screen.activity.AutoActivity;
 import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.FlexibleContentWidget;
-import net.labymod.api.client.gui.screen.widget.widgets.layout.list.HorizontalListWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.layout.list.VerticalListWidget;
+import net.labymod.core.client.chat.advanced.edit.ChatConditionDraft;
+import net.labymod.core.client.chat.advanced.edit.ChatRuleDraft;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.ChatDialogActivity;
-import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.ChatRuleDraft;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.ChatTabDialogActivity;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.part.ChatDialogWidgets;
 
 import java.util.Arrays;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
 @ExclusiveTo(LABY_4)
 public class ChatFilterTemplatesLaby4 {
 
+	/*
 	@ExclusiveTo(LABY_4)
 	@Mixin(ChatTabDialogActivity.class)
 	public static class ChatTabDialogActivityMixin {
@@ -53,6 +47,7 @@ public class ChatFilterTemplatesLaby4 {
 		}
 
 	}
+	*/
 
 	@AutoActivity
 	public static class ChatRuleTemplateDialogActivity extends ChatDialogActivity {
@@ -90,8 +85,8 @@ public class ChatFilterTemplatesLaby4 {
 				ChatRuleDraft rule = buildRule(template);
 				Component summary = Reflection.invoke(chatRuleSummaryCls, "of", rule);
 
-				FlexibleContentWidget row = this.row(Component.text(template.name), summary, null);
-				this.onCardPress(row, () -> Reflection.invoke(tabDialog, "editRule", rule, true));
+				FlexibleContentWidget row = ChatDialogWidgets.row(Component.text(template.name), summary, null);
+				ChatDialogWidgets.onCardPress(row, () -> Reflection.invoke(tabDialog, "editRule", rule, true));
 
 				FlexibleContentWidget split = new FlexibleContentWidget();
 				split.addId("chat-dialog-split");
@@ -105,9 +100,11 @@ public class ChatFilterTemplatesLaby4 {
 		}
 
 		private ChatRuleDraft buildRule(FilterTemplate template) {
-			var rule = ChatRuleDraft.empty();
-			rule.include().addAll(Arrays.asList(template.contains));
-			rule.exclude().addAll(Arrays.asList(template.containsNot));
+			var condition = ChatConditionDraft.empty();
+			condition.include().addAll(Arrays.asList(template.contains));
+			condition.exclude().addAll(Arrays.asList(template.containsNot));
+
+			var rule = ChatRuleDraft.of(condition);
 			if (template.highlighting) {
 				rule.setHighlight(true);
 				rule.setColor(

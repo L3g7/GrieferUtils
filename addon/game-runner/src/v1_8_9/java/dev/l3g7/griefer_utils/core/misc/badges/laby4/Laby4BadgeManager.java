@@ -17,6 +17,7 @@ import net.labymod.api.Laby;
 import net.labymod.api.LabyAPI;
 import net.labymod.api.client.entity.player.badge.BadgeRegistry;
 import net.labymod.api.client.entity.player.badge.PositionType;
+import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.widget.attributes.bounds.Bounds;
 import net.labymod.api.client.render.font.RenderableComponent;
@@ -31,6 +32,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -94,7 +96,7 @@ public class Laby4BadgeManager implements BadgeManager {
 	private static class MixinPlayerListRenderer {
 
 		@Inject(method = "render", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-		private void injectRender(ScreenContext context, LabyAPI labyAPI, Bounds bounds, boolean update, CallbackInfo ci, int screenWidth, float columnsWidth, float backgroundWidth, RenderableComponent headerRenderableComponent, RenderableComponent footerRenderableComponent, int x, int y) {
+		private void injectRender(ScreenContext context, LabyAPI labyAPI, Bounds bounds, boolean update, @Coerce Object strip, CallbackInfo ci, float screenWidth, float screenHeight, RenderableComponent header, RenderableComponent footer, Icon banner, boolean showBanner, float guiScale, float scale, float stripHeight, float stripSpace, int top, float fixedHeight, int frameWidth, float columnsWidth, float backgroundWidth, int rowsPerColumn, float listHeight, float contentHeight, float originY, float slide, float hitOriginX, float hitOriginY, float alpha, boolean translucent, int x, int y, int statsY) {
 			Badges.renderUserPercentage(x + backgroundWidth);
 		}
 

@@ -71,6 +71,9 @@ public interface InjectorBase extends IClassTransformer {
 
 	@Override
 	default byte[] transform(String name, String transformedName, byte[] basicClass) {
+		if (basicClass == null)
+			return null;
+
 		if (name.startsWith("com.github.lunatrius.schematica"))
 			Constants.SCHEMATICA = true;
 		else if (name.startsWith("de.emotechat.addon"))

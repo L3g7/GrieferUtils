@@ -8,11 +8,12 @@
 package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
-import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import net.labymod.api.Laby;
+import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.network.NetworkPlayerInfo;
 import net.labymod.core.main.user.serverfeature.badge.RankBadgeRenderer;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.UUID;
 
@@ -40,7 +41,8 @@ public class GrieferUtilsRankBadgeRenderer extends RankBadgeRenderer {
 		if (icon.equals("icon"))
 			color = (revealFamiliarUsers ? badge.colorWithLabymod() : badge.colorWithoutLabymod()) | 0xFF000000;
 
-        context.canvas().submitIcon(Icons.of("high_res/" + Badges.icon), x, y, 8.0F, 8.0F, false, color);
+		Icon lmIcon = Icon.svg((net.labymod.api.client.resources.ResourceLocation) new ResourceLocation("griefer_utils", "icons/high_res/" + icon + ".svg"));
+        context.canvas().submitIcon(lmIcon, x, y, 8.0F, 8.0F, false, color);
 	}
 
 }

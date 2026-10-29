@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
@@ -66,7 +65,9 @@ public class DefaultPrefixes extends Feature {
 		put("Streamer+", new DefaultPattern('5', false));
 		put("Streamer", new DefaultPattern('5', false));
 		put("YouTuber+", new DefaultPattern('5', false));
+		put("YT+", new DefaultPattern('5', false));
 		put("YouTuber", new DefaultPattern('5', false));
+		put("YT", new DefaultPattern('5', false));
 		put("Helfer", new DefaultPattern('2', false));
 
 		put("Hero", new DefaultPattern('e', true, true));

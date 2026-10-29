@@ -61,4 +61,9 @@ public class GrieferUtilsGroupIconTag extends GroupIconTag {
 		return super.getColor(snapshot);
 	}
 
+	@Override
+	public float getScale() {
+		return badge == null ? super.getScale() : 1;
+	}
+
 }

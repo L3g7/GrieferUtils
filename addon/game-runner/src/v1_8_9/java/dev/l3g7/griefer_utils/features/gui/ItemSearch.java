@@ -81,7 +81,7 @@ public class ItemSearch extends Feature {
 			return;
 
 		String title = getGuiChestTitle(event.gui);
-		if (title.startsWith(marker) || title.startsWith("§6Profil") || title.startsWith("§6Lottoschein "))
+		if (title.startsWith(marker) || title.startsWith("§6Profil") || title.startsWith("§6Lottoschein ") || title.startsWith("§0Lager: §6"))
 			return;
 
 		searchField = new ModTextField(0, mc().fontRendererObj, 82, 6, 83, mc().fontRendererObj.FONT_HEIGHT);

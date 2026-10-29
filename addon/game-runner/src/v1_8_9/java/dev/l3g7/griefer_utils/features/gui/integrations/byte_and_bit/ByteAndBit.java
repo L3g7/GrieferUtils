@@ -54,7 +54,6 @@ public class ByteAndBit extends Feature {
 	@EventListener
 	private void onStaticData(StaticDataReceiveEvent event) {
 		this.syncBots(event.data.botSources);
-		TickScheduler.runAfterClientTicks(() -> syncBots(event.data.botSources), 60 * 20 * 5);
 	}
 
 	private void syncBots(BotSource[] botSources) {
@@ -64,6 +63,8 @@ public class ByteAndBit extends Feature {
 					allBots.put(bot, new BABBot(botSource.getUrl(), bot));
 			});
 		}
+
+		TickScheduler.runAfterClientTicks(() -> syncBots(botSources), 20 * 60 * 15);
 	}
 
 	@EventListener(triggerWhenDisabled = true)

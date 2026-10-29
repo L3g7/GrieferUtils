@@ -47,8 +47,7 @@ public class InteractableMessages extends Feature {
 			Macht Folgendes interagierbar:
 			- Von GrieferGames vorgeschlagene Befehle (z.B /tpaccept, /tpadeny, /zauberwald accept/deny)
 			- Den Citybuild bei Globalchat-Nachrichten (Switcht zum CB)
-			- Den Clan-Namen bei Globalchat-Nachrichten (Führt /clan info aus)
-			- Den Status, Msgs, Plotchat- und Globalchat-Nachrichten (Schlägt /msg vor)
+			- Den Status, Chatchat- und Plotchat-Nachrichten (Schlägt /msg vor)
 			- "/p h" in Nachrichten (Teleportiert zum Plot)
 			- Spielernamen bei /clan info (Öffnet das Profil)
 			- Spielernamen bei /p i (Öffnet das Profil)
@@ -73,37 +72,14 @@ public class InteractableMessages extends Feature {
 			return;
 
 		String cb = matcher.group("cb");
-		String clan = matcher.group("clantag");
-		if (clan != null)
-			clan = clan.replace('§', '&');
-
 		IChatComponent message = event.message;
-
-		boolean foundCb = false;
-		boolean foundClan = false;
 
 		for (IChatComponent sibling : message.getSiblings()) {
 			if (sibling.getUnformattedTextForChat().equals(cb)) {
 				IChatComponent hoverText = new ChatComponentText("Klicke, um auf den CB zu wechseln");
 				hoverText.getChatStyle().setColor(EnumChatFormatting.GOLD);
 				addRunCommand(sibling, "/switch " + Citybuild.parse(cb).getInternalName(), hoverText);
-
-				foundCb = true;
-				if (clan == null)
-					break;
-			}
-
-			if (foundCb) {
-				if (!foundClan) {
-					if (sibling.getFormattedText().equals("§6[§r"))
-						foundClan = true;
-					continue;
-				}
-
-				if (sibling.getFormattedText().equals("§6] §r"))
-					break;
-
-				addRunCommand(sibling, "/clan info " + clan);
+				break;
 			}
 		}
 
@@ -240,7 +216,7 @@ public class InteractableMessages extends Feature {
 	public boolean addMsgSuggestions(MessageModifyEvent event) {
 		String text = event.original.getFormattedText();
 
-		for (Pattern p : new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, CLANCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN, GLOBAL_CHAT_PATTERN}) {
+		for (Pattern p : new Pattern[] {PLOTCHAT_RECEIVE_PATTERN, CLANCHAT_RECEIVE_PATTERN, STATUS_PATTERN}) {
 			Matcher matcher = p.matcher(text);
 			if (!matcher.find())
 				continue;

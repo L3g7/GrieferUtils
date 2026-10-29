@@ -3,10 +3,11 @@ package dev.l3g7.griefer_utils.core.misc.griefer_games;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import net.minecraft.network.play.client.C01PacketChatMessage;
+import net.minecraft.network.play.server.S47PacketPlayerListHeaderFooter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,12 @@ public class GGAuthResend {
 	private static boolean waitingForGGAuth = false;
 
 	@EventListener
-	private static void onServerJoin(GrieferGamesJoinEvent event) {
-		waitingForGGAuth = false;
+	private static void onHubJoin(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
+		Citybuild cb = Citybuild.current();
+		if (cb == Citybuild.LOBBY) {
+			waitingForGGAuth = false;
+			sentMessages.clear();
+		}
 	}
 
 	@EventListener
@@ -40,7 +45,7 @@ public class GGAuthResend {
 	@EventListener
 	private static void onMessageReceive(MessageReceiveEvent event) {
 		if (waitingForGGAuth && event.message.getUnformattedText().equals(GG_AUTH_SUCCESS)) {
-			waitingForGGAuth = true;
+			waitingForGGAuth = false;
 			sentMessages.forEach(ChatQueue::send);
 		}
 	}

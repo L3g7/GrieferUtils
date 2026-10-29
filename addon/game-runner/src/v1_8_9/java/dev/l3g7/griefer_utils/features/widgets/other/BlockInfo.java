@@ -102,6 +102,7 @@ public class BlockInfo extends Widget {
 			GlStateManager.scale(1.5, 1.5, 1.5);
 			DrawUtils.drawItem(data.getRight(), a / 1.5 + 0.5, b / 1.5 + (showCoords.get() ? 2 : -2), null);
 			GlStateManager.popMatrix();
+			GlStateManager.enableDepth();
 		});
 		GlStateManager.disableLighting();
 	}

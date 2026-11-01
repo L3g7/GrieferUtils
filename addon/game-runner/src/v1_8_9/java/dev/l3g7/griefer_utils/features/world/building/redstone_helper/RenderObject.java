@@ -8,6 +8,9 @@
 package dev.l3g7.griefer_utils.features.world.building.redstone_helper;
 
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.Renderer.CompiledChunk;
+import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.CharRenderInfo;
+import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.TextureUV;
+import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.Vertices;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.BlockRedstoneWire;
@@ -48,8 +51,8 @@ public abstract class RenderObject {
 	}
 
 	public abstract double getYOffset();
-	public abstract double[] getTexData();
-	public abstract double[] getOffsets(int rotation);
+	public abstract CharRenderInfo[] getRenderInfos();
+	public abstract Vertices getVertices(CharRenderInfo charRenderInfo, int rotation);
 
 	public abstract boolean shouldRender();
 
@@ -65,24 +68,20 @@ public abstract class RenderObject {
 			draw(chunks[i], i);
 	}
 
-	@SuppressWarnings("PointlessArithmeticExpression")
 	public void draw(CompiledChunk chunk, int rotation) {
 		double x = (double) pos.getX() + 0.5d;
 		double y = (double) pos.getY() + getYOffset();
 		double z = (double) pos.getZ() + 0.5d;
 
-		double[] texData = getTexData();
-		double[] offsets = getOffsets(rotation);
-
-		for (int i = 0; i < texData.length / 4; i++) {
-			int oo = i * 8;
-			int to = i * 4;
+		for (CharRenderInfo charRenderInfo : getRenderInfos()) {
+			Vertices offsets = getVertices(charRenderInfo, rotation);
+			TextureUV texData = charRenderInfo.textureUV();
 
 			chunk.ensureCapacity();
-			chunk.pos(x + offsets[0 + oo], y, z + offsets[4 + oo]).tex(texData[1 + to], texData[3 + to]).endVertex();
-			chunk.pos(x + offsets[1 + oo], y, z + offsets[5 + oo]).tex(texData[0 + to], texData[3 + to]).endVertex();
-			chunk.pos(x + offsets[2 + oo], y, z + offsets[6 + oo]).tex(texData[0 + to], texData[2 + to]).endVertex();
-			chunk.pos(x + offsets[3 + oo], y, z + offsets[7 + oo]).tex(texData[1 + to], texData[2 + to]).endVertex();
+			chunk.pos(x + offsets.topLeft()    .x(), y, z + offsets.topLeft()    .y()).tex(texData.maxX(), texData.maxY()).endVertex();
+			chunk.pos(x + offsets.topRight()   .x(), y, z + offsets.topRight()   .y()).tex(texData.minX(), texData.maxY()).endVertex();
+			chunk.pos(x + offsets.bottomRight().x(), y, z + offsets.bottomRight().y()).tex(texData.minX(), texData.minY()).endVertex();
+			chunk.pos(x + offsets.bottomLeft() .x(), y, z + offsets.bottomLeft() .y()).tex(texData.maxX(), texData.minY()).endVertex();
 		}
 	}
 

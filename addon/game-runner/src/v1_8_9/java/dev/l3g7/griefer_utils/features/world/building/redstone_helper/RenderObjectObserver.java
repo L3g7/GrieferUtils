@@ -186,7 +186,7 @@ public class RenderObjectObserver {
 			private void recompile() {
 				int[] size = new int[TextureType.values().length];
 				for (RenderObject ro : renderObjects.values())
-					size[ro.textureType.ordinal()] += ro.getTexData().length / 4;
+					size[ro.textureType.ordinal()] += ro.getRenderInfos().length;
 
 				compiledChunks = new CompiledChunk[size.length][];
 				for (int i = 0; i < TextureType.values().length; i++) {

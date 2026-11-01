@@ -19,6 +19,8 @@ import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer;
 import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderObject;
 import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.CharRenderInfo;
+import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.Vertices;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockDispenser;
@@ -168,8 +170,16 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		}
 
 		public double getYOffset() { return 0.02f; }
-		public double[] getTexData() { return VertexDataStorage.getTexData(power); }
-		public double[] getOffsets(int rotation) { return VertexDataStorage.getVertexOffsets(power)[rotation]; }
+
+		@Override
+		public CharRenderInfo[] getRenderInfos() {
+			return FontRenderData.getCharRenderInfos(String.valueOf(power));
+		}
+
+		@Override
+		public Vertices getVertices(CharRenderInfo charRenderInfo, int rotation) {
+			return charRenderInfo.rotatedVertices()[rotation];
+		}
 
 		@Override
 		public boolean shouldRender() {
@@ -201,13 +211,13 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		}
 
 		@Override
-		public double[] getTexData() {
-			return VertexDataStorage.getTexData("⬆");
+		public CharRenderInfo[] getRenderInfos() {
+			return FontRenderData.getCharRenderInfos("⬆");
 		}
 
 		@Override
-		public double[] getOffsets(int rotation) {
-			return VertexDataStorage.getVertexOffsets("⬆")[facing];
+		public Vertices getVertices(CharRenderInfo charRenderInfo, int rotation) {
+			return charRenderInfo.rotatedVertices()[facing];
 		}
 
 		@Override

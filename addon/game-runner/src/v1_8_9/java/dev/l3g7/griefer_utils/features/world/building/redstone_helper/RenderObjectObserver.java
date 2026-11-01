@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.core.events.ChunkFilledEvent;
 import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.features.world.building.redstone_helper.RenderObject.TextureType;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.Renderer.CompiledChunk;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -21,11 +21,15 @@ import net.minecraft.network.play.server.S22PacketMultiBlockChange;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class RenderObjectObserver {
 
@@ -55,32 +59,47 @@ public class RenderObjectObserver {
 		}
 
 		if (chunk.hasData())
-			data.put(coords, chunk);
+			delete(data.put(coords, chunk));
 		else
-			data.remove(coords);
+			delete(data.remove(coords));
 	}
 
 	@EventListener
 	private static void onChunkUnload(ChunkUnloadEvent event) {
+		if (!event.chunk.getWorld().isRemote)
+			return; // Integrated server chunk, its thread has no GL context
+
 		ChunkCoordIntPair coordPair = new ChunkCoordIntPair(event.chunk.xPosition, event.chunk.zPosition);
-		data.remove(coordPair);
+		delete(data.remove(coordPair));
 	}
 
 	@EventListener
 	private static void onWorldUnload(WorldUnloadEvent event) {
+		for (Chunk chunk : data.values())
+			chunk.delete();
+
 		data.clear();
 	}
 
 	@EventListener
 	private static void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
-		if (event.packet instanceof S23PacketBlockChange packet)
-			updateBlock(packet.getBlockPosition(), packet.getBlockState());
+		if (event.packet instanceof S23PacketBlockChange packet) {
+			TickScheduler.sync(() -> updateBlock(packet.getBlockPosition(), packet.getBlockState()));
+			return;
+		}
 
 		if (!(event.packet instanceof S22PacketMultiBlockChange packet))
 			return;
 
-		for (S22PacketMultiBlockChange.BlockUpdateData data : packet.getChangedBlocks())
-			updateBlock(data.getPos(), data.getBlockState());
+		TickScheduler.sync(() -> {
+			for (S22PacketMultiBlockChange.BlockUpdateData data : packet.getChangedBlocks())
+				updateBlock(data.getPos(), data.getBlockState());
+		});
+	}
+
+	private static void delete(Chunk chunk) {
+		if (chunk != null)
+			chunk.delete();
 	}
 
 	private static void updateBlock(BlockPos pos, IBlockState state) {
@@ -137,10 +156,22 @@ public class RenderObjectObserver {
 
 			RenderObject prevObject = part.renderObjects.remove(pos);
 
-			if (part.renderObjects.isEmpty())
+			if (part.renderObjects.isEmpty()) {
 				parts.remove(pos.getY() / 16);
-			else if (prevObject != null && prevObject.shouldRender())
+				partsToRecompile.remove(part);
+				part.delete();
+			} else if (prevObject != null && prevObject.shouldRender())
 				partsToRecompile.add(part);
+		}
+
+		void delete() {
+			synchronized (parts) {
+				for (ChunkPart part : parts.values())
+					part.delete();
+
+				parts.clear();
+			}
+			partsToRecompile.clear();
 		}
 
 		boolean hasData() {
@@ -151,7 +182,7 @@ public class RenderObjectObserver {
 			if (!partsToRecompile.isEmpty()) {
 				synchronized (partsToRecompile) {
 					partsToRecompile.removeIf(p -> {
-						p.recompile();
+						p.compile();
 						return true;
 					});
 				}
@@ -168,11 +199,15 @@ public class RenderObjectObserver {
 						pair.getZEnd()));
 
 					if (isVisible) {
-						if (entry.getValue().compiledChunks == null)
-							entry.getValue().recompile();
+						ChunkPart part = entry.getValue();
+						if (!part.compiled)
+							part.compile();
 
-						for (TextureType value : TextureType.values())
-							value.draw(entry.getValue().compiledChunks, rotation);
+						if (part.list == 0)
+							return;
+
+						mc().getTextureManager().bindTexture(new ResourceLocation("textures/font/ascii.png"));
+						GL11.glCallList(part.list + rotation);
 					}
 				}
 			}
@@ -180,29 +215,49 @@ public class RenderObjectObserver {
 
 		private static class ChunkPart {
 
-			CompiledChunk[][] compiledChunks = null;
+			private static final CompiledChunk scratch = new CompiledChunk(80 * 256);
+
+			int list = 0; // display list base per texture type, 0 if not allocated
+			boolean compiled = false;
 			Map<BlockPos, RenderObject> renderObjects = new ConcurrentHashMap<>();
 
-			private void recompile() {
-				int[] size = new int[TextureType.values().length];
+			private void compile() {
 				for (RenderObject ro : renderObjects.values())
-					size[ro.textureType.ordinal()] += ro.getRenderInfos().length;
+					ro.previousRenderState = ro.shouldRender();
 
-				compiledChunks = new CompiledChunk[size.length][];
-				for (int i = 0; i < TextureType.values().length; i++) {
-					if (size[i] == 0)
-						continue;
-
-					TextureType type = TextureType.values()[i];
-					compiledChunks[i] = new CompiledChunk[type.chunks()];
-
-					for (int j = 0; j < compiledChunks[i].length; j++)
-						compiledChunks[i][j] = new CompiledChunk(size[i] * 80);
-
-					for (RenderObject renderObject : renderObjects.values())
-						if (renderObject.textureType == type)
-							renderObject.draw(compiledChunks[i]);
+				if (renderObjects.values().stream().noneMatch(ro -> ro.previousRenderState)) {
+					delete();
+					compiled = true;
+					return;
 				}
+
+				if (list == 0)
+					list = GL11.glGenLists(16);
+
+				if (list == 0)
+					return; // glGenLists failed
+
+				for (int rotation = 0; rotation < 16; rotation++) {
+					scratch.reset();
+					for (RenderObject ro : renderObjects.values())
+						if (ro.previousRenderState)
+							ro.draw(scratch, rotation);
+
+					GL11.glNewList(list + rotation, GL11.GL_COMPILE);
+					scratch.draw();
+					GL11.glEndList();
+				}
+
+				compiled = true;
+			}
+
+			private void delete() {
+				compiled = false;
+				if (list == 0)
+					return;
+
+				GL11.glDeleteLists(list, 16);
+				list = 0;
 			}
 
 		}

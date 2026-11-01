@@ -152,9 +152,7 @@ public class Renderer {
 			if (i <= byteBuffer.capacity())
 				return;
 
-			int increase = 80 * 32;
-
-			int newSize = byteBuffer.capacity() + increase;
+			int newSize = Math.max(byteBuffer.capacity() * 2, i); // TODO: Needed?
 			LogManager.getLogger().warn("[GU] Needed to grow BufferBuilder buffer: Old size " + byteBuffer.capacity() + " bytes, new size " + newSize + " bytes.");
 			ByteBuffer buf = GLAllocation.createDirectByteBuffer(newSize);
 			// Invoke position of superclass because ByteBuffer#position doesn't exist in Java 8

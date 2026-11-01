@@ -21,10 +21,7 @@ import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderO
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.CharRenderInfo;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.Vertices;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockCauldron;
-import net.minecraft.block.BlockDispenser;
-import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
@@ -125,6 +122,11 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		if (block == cauldron)
 			return new TextRRO(showCauldronLevel, () -> state.getValue(BlockCauldron.LEVEL));
 
+		if (block == hopper) {
+			EnumFacing facing = state.getValue(BlockHopper.FACING);
+			return facing.getHorizontalIndex() == -1 ? null : new RedstoneHelper.Hopper(facing);
+		}
+
 		if (block != dropper && block != dispenser)
 			return null;
 
@@ -165,7 +167,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		public final int power;
 
 		public Wire(BlockPos pos, int power) {
-			super(TextureType.ROTATING_TEXT, pos);
+			super(pos);
 			this.power = power;
 		}
 
@@ -196,41 +198,41 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	}
 
-	public static class Hopper extends dev.l3g7.griefer_utils.features.world.building.redstone_helper.RenderObject {
+	public class Hopper extends RenderObject {
 
-		private final int facing;
+		private final EnumFacing dir;
 
-		public Hopper(BlockPos pos, EnumFacing facing) {
-			super(TextureType.ARROWS, pos);
-			this.facing = facing.getHorizontalIndex();
+		private Hopper(EnumFacing dir) {
+			super(RedstoneHelper.this);
+			this.dir = dir;
 		}
 
-		@Override
-		public double getYOffset() {
-			return 0.7f;
-		}
+		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
+			if (!showDirection.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
+				return;
 
-		@Override
-		public CharRenderInfo[] getRenderInfos() {
-			return FontRenderData.getCharRenderInfos("⬆");
-		}
+			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
 
-		@Override
-		public Vertices getVertices(CharRenderInfo charRenderInfo, int rotation) {
-			return charRenderInfo.rotatedVertices()[facing];
-		}
+			switch (dir) {
+				case NORTH:
+					GlStateManager.rotate(90, 0, -1, 0);
+					break;
+				case SOUTH:
+					GlStateManager.rotate(90, 0, 1, 0);
+					break;
+				case EAST:
+					GlStateManager.rotate(180, 0, 1, 0);
+					break;
+				case WEST:
+					break;
+			}
+			GlStateManager.scale(0.1, 0.1, 0.1);
+			GlStateManager.translate(-3.5, 7.01, -5.25);
 
-		@Override
-		public boolean shouldRender() {
-			if (!RedstoneHelper.get().isEnabled())
-				return false;
+			GlStateManager.rotate(90, 1, 0, 0);
+			mc().fontRendererObj.drawString("⬅", 0, 0, 0xFFFFFF);
 
-			return showDirection.get();
-		}
-
-		@Override
-		public boolean equals(dev.l3g7.griefer_utils.features.world.building.redstone_helper.RenderObject r) {
-			return super.equals(r) && facing == ((Hopper) r).facing;
+			GlStateManager.popMatrix();
 		}
 
 	}

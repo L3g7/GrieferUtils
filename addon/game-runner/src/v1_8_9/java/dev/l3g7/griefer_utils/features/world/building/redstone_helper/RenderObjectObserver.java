@@ -10,8 +10,8 @@ package dev.l3g7.griefer_utils.features.world.building.redstone_helper;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.ChunkFilledEvent;
 import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;
+import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.RenderObject.TextureType;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.Renderer.CompiledChunk;
 import net.minecraft.block.state.IBlockState;
@@ -67,7 +67,7 @@ public class RenderObjectObserver {
 	}
 
 	@EventListener
-	private static void onServerChange(ServerEvent.ServerSwitchEvent event) {
+	private static void onWorldUnload(WorldUnloadEvent event) {
 		data.clear();
 	}
 

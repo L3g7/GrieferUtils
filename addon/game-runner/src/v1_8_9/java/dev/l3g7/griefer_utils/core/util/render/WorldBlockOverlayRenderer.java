@@ -12,8 +12,8 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.ChunkFilledEvent;
 import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;
+import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
@@ -85,6 +85,8 @@ public class WorldBlockOverlayRenderer {
 
 			if (!newRenderObjects.isEmpty())
 				renderObjects.put(coords, newRenderObjects);
+			else
+				renderObjects.remove(coords);
 		});
 	}
 
@@ -95,7 +97,7 @@ public class WorldBlockOverlayRenderer {
 	}
 
 	@EventListener
-	private static void onServerChange(ServerEvent.ServerSwitchEvent event) {
+	private static void onWorldUnload(WorldUnloadEvent event) {
 		renderObjects.clear();
 	}
 

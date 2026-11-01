@@ -22,10 +22,6 @@ public class RenderChunk {
 
 	private final ChunkPart[] parts = new ChunkPart[16];
 
-	private ChunkPart getPartFor(BlockPos pos) {
-		return parts[pos.getY() / 16];
-	}
-
 	public void add(RenderObject renderObject) {
 		int index = renderObject.pos.getY() / 16;
 		ChunkPart part = parts[index];
@@ -117,10 +113,6 @@ public class RenderChunk {
 				mustRecompile = true;
 
 			return renderObjects.isEmpty();
-		}
-
-		public synchronized boolean hasData() {
-			return !renderObjects.isEmpty();
 		}
 
 		private synchronized void recompile() {

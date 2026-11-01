@@ -8,11 +8,8 @@
 package dev.l3g7.griefer_utils.core.events.render;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventProfiler;
-import dev.l3g7.griefer_utils.features.uncategorized.debug.EventBusProfiler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

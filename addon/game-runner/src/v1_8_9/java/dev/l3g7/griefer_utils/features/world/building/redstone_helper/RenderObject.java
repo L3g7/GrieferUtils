@@ -32,7 +32,6 @@ public abstract class RenderObject {
 	}
 
 	public final BlockPos pos;
-	public boolean previousRenderState = false;
 
 	protected RenderObject(BlockPos pos) {
 		this.pos = pos;

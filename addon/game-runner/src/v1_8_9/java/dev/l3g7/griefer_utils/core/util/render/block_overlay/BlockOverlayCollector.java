@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.util.render;
+package dev.l3g7.griefer_utils.core.util.render.block_overlay;
 
 import com.github.lunatrius.schematica.api.ISchematic;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
 import net.minecraft.block.state.IBlockState;
@@ -38,7 +39,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
-public class WorldBlockOverlayRenderer {
+public class BlockOverlayCollector {
 
 	private static final Map<ChunkCoordIntPair, Map<BlockPos, RenderObject>> renderObjects = new ConcurrentHashMap<>();
 	private static final Map<BlockPos, RenderObject> schematicasROs = new ConcurrentHashMap<>();
@@ -55,13 +56,13 @@ public class WorldBlockOverlayRenderer {
 		generators.add(generator);
 	}
 
-	public static int chunkDistanceToPlayer(int chunkX, int chunkZ) {
-		return Math.max(Math.abs(chunkX - player().chunkCoordX), Math.abs(chunkZ - player().chunkCoordZ));
+	public static void regenerate() {
+		mc().renderGlobal.loadRenderers();
 	}
 
 	@EventListener
 	private static void onChunkFilled(ChunkFilledEvent event) {
-		mc().addScheduledTask(() -> {
+		TickScheduler.sync(() -> {
 			Map<BlockPos, RenderObject> newRenderObjects = new ConcurrentHashMap<>();
 			ChunkCoordIntPair coords = new ChunkCoordIntPair(event.getChunk().xPosition, event.getChunk().zPosition);
 
@@ -104,14 +105,14 @@ public class WorldBlockOverlayRenderer {
 	@EventListener
 	private static void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
 		if (event.packet instanceof S23PacketBlockChange packet) {
-			mc().addScheduledTask(() -> onBlockUpdate(packet.getBlockPosition(), packet.getBlockState()));
+			TickScheduler.sync(() -> onBlockUpdate(packet.getBlockPosition(), packet.getBlockState()));
 			return;
 		}
 
 		if (!(event.packet instanceof S22PacketMultiBlockChange packet))
 			return;
 
-		mc().addScheduledTask(() -> {
+		TickScheduler.sync(() -> {
 			for (S22PacketMultiBlockChange.BlockUpdateData data : packet.getChangedBlocks())
 				onBlockUpdate(data.getPos(), data.getBlockState());
 		});
@@ -137,32 +138,26 @@ public class WorldBlockOverlayRenderer {
 		if (map == null)
 			return;
 
-		for (RenderObjectGenerator generator : generators)
-			generator.onBlockUpdate(map, pos, state);
-
 		if (map.isEmpty())
 			renderObjects.remove(pair);
 	}
 
 	@EventListener
 	private static void onRenderWorldLast(RenderWorldLastEvent event) {
-		if (!isEnabled() || (renderObjects.isEmpty() && schematicasROs.isEmpty()))
+		if (renderObjects.isEmpty() && schematicasROs.isEmpty())
 			return;
 
+		mc().mcProfiler.startSection("blockoverlays");
 		if (Constants.SCHEMATICA)
-			updateSchematic();
+			updateSchematic(); // TODO: this
 
 		GlStateManager.disableDepth();
 		GlStateManager.disableCull();
 		GlStateManager.disableTexture2D();
 
-		for (Map.Entry<ChunkCoordIntPair, Map<BlockPos, RenderObject>> entry : renderObjects.entrySet()) {
-			int chunksFromPlayer = chunkDistanceToPlayer(entry.getKey().chunkXPos, entry.getKey().chunkZPos);
-
+		for (Map.Entry<ChunkCoordIntPair, Map<BlockPos, RenderObject>> entry : renderObjects.entrySet())
 			for (Map.Entry<BlockPos, RenderObject> chunkEntry : entry.getValue().entrySet())
-				if (chunkEntry.getValue().generator.isEnabled())
-					chunkEntry.getValue().render(chunkEntry.getKey(), event.partialTicks, chunksFromPlayer);
-		}
+				chunkEntry.getValue().render(chunkEntry.getKey(), event.partialTicks);
 
 		if (Constants.SCHEMATICA)
 			renderSchematicasRROs(event.partialTicks);
@@ -171,20 +166,17 @@ public class WorldBlockOverlayRenderer {
 		GlStateManager.enableTexture2D();
 		GlStateManager.enableDepth();
 		GlStateManager.enableCull();
+
+		mc().mcProfiler.endSection();
 	}
 
 	private static void renderSchematicasRROs(float partialTicks) {
 		if (SchematicaUtil.dontRender())
 			return;
 
-		for (Map.Entry<BlockPos, RenderObject> entry : schematicasROs.entrySet()) {
-			if (SchematicaUtil.shouldLayerBeRendered(entry.getKey().getY())) {
-				if (entry.getValue().generator.isEnabled()) {
-					int chunksFromPlayer = WorldBlockOverlayRenderer.chunkDistanceToPlayer(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4);
-					entry.getValue().render(entry.getKey(), partialTicks, chunksFromPlayer);
-				}
-			}
-		}
+		for (Map.Entry<BlockPos, RenderObject> entry : schematicasROs.entrySet())
+			if (SchematicaUtil.shouldLayerBeRendered(entry.getKey().getY()))
+				entry.getValue().render(entry.getKey(), partialTicks);
 	}
 
 	private static void updateSchematic() {
@@ -215,14 +207,6 @@ public class WorldBlockOverlayRenderer {
 		}
 	}
 
-	private static boolean isEnabled() {
-		for (RenderObjectGenerator container : generators)
-			if (container.isEnabled())
-				return true;
-
-		return false;
-	}
-
 	public abstract static class RenderObject {
 
 		private static RenderObject fromState(IBlockState state, BlockPos pos, WorldClient world) {
@@ -236,12 +220,6 @@ public class WorldBlockOverlayRenderer {
 			}
 
 			return null;
-		}
-
-		private final RenderObjectGenerator generator;
-
-		protected RenderObject(RenderObjectGenerator generator) {
-			this.generator = generator;
 		}
 
 		protected static void prepareRender(Vec3d loc, float partialTicks) {
@@ -260,17 +238,13 @@ public class WorldBlockOverlayRenderer {
 			GlStateManager.enableTexture2D();
 		}
 
-		protected abstract void render(BlockPos pos, float partialTicks, int chunksFromPlayer);
+		protected abstract void render(BlockPos pos, float partialTicks);
 
 	}
 
 	public interface RenderObjectGenerator {
 
-		boolean isEnabled();
-
 		RenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world);
-
-		default void onBlockUpdate(Map<BlockPos, RenderObject> map, BlockPos pos, IBlockState state) {}
 
 	}
 

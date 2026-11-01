@@ -22,13 +22,12 @@ import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
-import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer;
-import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderObject;
-import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
+import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector;
+import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObject;
+import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObjectGenerator;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import net.minecraft.block.Block;
@@ -89,19 +88,10 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		.description("Ob die Partikel vom Spawner versteckt werden sollen.")
 		.icon("particle");
 
-	private final NumberSetting range = NumberSetting.create()
-		.name("Radius")
-		.description("Der Radius um den Spieler in Chunks, in dem die Icons angezeigt werden."
-			+ "\n(-1 ist unendlich)")
-		.defaultValue(-1)
-		.min(-1)
-		.icon("measurement");
-
 	private final SwitchSetting showSpawnerIcons = SwitchSetting.create()
 		.name("Spawner-Icons anzeigen")
 		.description("Zeigt an Spawnern ein Icon des Mobs an, das gespawnt wird.")
-		.icon("mob_icons/outlined_minecraft/silverfish")
-		.subSettings(range);
+		.icon("mob_icons/outlined_minecraft/silverfish");
 
 	private final SwitchSetting markTriggeredSpawners = SwitchSetting.create()
 		.name("Aktivierte Spawner markieren")
@@ -127,7 +117,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	@Override
 	public void init() {
 		super.init();
-		WorldBlockOverlayRenderer.registerRenderObjectGenerator(this);
+		BlockOverlayCollector.registerRenderObjectGenerator(this);
 	}
 
 	// Spawner with held item fix
@@ -249,7 +239,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 			return;
 
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(event.tileEntity.getPos().getX() >> 4, event.tileEntity.getPos().getZ() >> 4);
-		WorldBlockOverlayRenderer.getRenderObjectsForChunk(pair).put(event.tileEntity.getPos(), new SpawnerRenderObject(event.tileEntity));
+		BlockOverlayCollector.getRenderObjectsForChunk(pair).put(event.tileEntity.getPos(), new SpawnerRenderObject(event.tileEntity));
 	}
 
 	// Hide mobs
@@ -290,8 +280,6 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		private final MobSpawnerBaseLogic mobSpawnerBaseLogic;
 
 		private SpawnerRenderObject(TileEntity tileEntity) {
-			super(BetterSpawners.this);
-
 			TileEntityMobSpawner spawner = (TileEntityMobSpawner) tileEntity;
 			this.mobSpawnerBaseLogic = spawner.getSpawnerBaseLogic();
 			Entity entity = spawner.getSpawnerBaseLogic().func_180612_a(world());
@@ -304,7 +292,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		}
 
 		@Override
-		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
+		public void render(BlockPos pos, float partialTicks) {
 			if (markTriggeredSpawners.get() && (boolean) Reflection.invoke(mobSpawnerBaseLogic, "isActivated")) {
 				GlStateManager.disableDepth();
 				RenderUtil.drawBoxOutlines(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0xFFFF00), 3);
@@ -317,7 +305,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 				GlStateManager.enableDepth();
 			}
 
-			if (!showSpawnerIcons.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
+			if (!showSpawnerIcons.get())
 				return;
 
 			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);

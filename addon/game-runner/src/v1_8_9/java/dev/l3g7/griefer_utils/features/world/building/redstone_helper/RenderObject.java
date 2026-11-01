@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.world.building.redstone_helper;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.CharRenderInfo;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.TextureUV;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.Vertices;
-import dev.l3g7.griefer_utils.features.world.building.redstone_helper.Renderer.CompiledChunk;
+import dev.l3g7.griefer_utils.features.world.building.redstone_helper.render_pipeline.ChunkCompiler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
@@ -42,13 +42,11 @@ public abstract class RenderObject {
 	public abstract CharRenderInfo[] getRenderInfos();
 	public abstract Vertices getVertices(CharRenderInfo charRenderInfo, int rotation);
 
-	public abstract boolean shouldRender();
-
 	public boolean equals(RenderObject r) {
 		return getClass().isInstance(r);
 	}
 
-	public void draw(CompiledChunk chunk, int rotation) {
+	public void draw(ChunkCompiler chunk, int rotation) {
 		double x = (double) pos.getX() + 0.5d;
 		double y = (double) pos.getY() + getYOffset();
 		double z = (double) pos.getZ() + 0.5d;

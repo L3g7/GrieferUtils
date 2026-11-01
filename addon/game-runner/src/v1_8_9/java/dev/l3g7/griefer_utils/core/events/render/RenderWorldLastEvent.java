@@ -8,8 +8,11 @@
 package dev.l3g7.griefer_utils.core.events.render;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventProfiler;
+import dev.l3g7.griefer_utils.features.uncategorized.debug.EventBusProfiler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,8 +35,9 @@ public class RenderWorldLastEvent extends Event {
 
 		@Inject(method = "renderWorldPass", at = @At(value = "INVOKE_STRING", target= "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V", args = "ldc=hand", shift = At.Shift.BEFORE))
 	    public void injectRenderWorldPass(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci) {
-		    mc.mcProfiler.endStartSection("gu_render_last");
+		    mc.mcProfiler.startSection("gu_render_last");
 			new RenderWorldLastEvent(partialTicks).fire();
+			mc.mcProfiler.endSection();
 	    }
 
 	}

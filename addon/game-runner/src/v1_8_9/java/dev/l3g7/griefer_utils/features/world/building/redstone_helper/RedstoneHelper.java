@@ -7,34 +7,29 @@
 
 package dev.l3g7.griefer_utils.features.world.building.redstone_helper;
 
-import com.google.common.base.Strings;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.NoteBlockPlayEvent;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer;
-import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderObject;
-import dev.l3g7.griefer_utils.core.util.render.WorldBlockOverlayRenderer.RenderObjectGenerator;
+import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector;
+import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObject;
+import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObjectGenerator;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.CharRenderInfo;
 import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.Vertices;
+import dev.l3g7.griefer_utils.features.world.building.redstone_helper.render_pipeline.RenderChunk;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -51,46 +46,25 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		.name("0 anzeigen")
 		.description("Ob die Stärke-Anzeige auch angezeigt werden soll, wenn die Stärke 0 beträgt.")
 		.icon("redstone_repeater")
-		.callback(RenderObjectObserver.Chunk::onSettingsChange);
+		.callback(RenderChunk::onSettingsChange);
 
 	private static final SwitchSetting showPower = SwitchSetting.create()
 		.name("Redstone-Stärke anzeigen")
 		.description("Zeigt auf Redstone-Kabeln ihre derzeitige Stärke an.")
 		.icon("redstone")
 		.subSettings(showZeroPower)
-		.callback(RenderObjectObserver.Chunk::onSettingsChange);
+		.callback(RenderChunk::onSettingsChange);
 
 	private static final SwitchSetting showDirection = SwitchSetting.create()
 		.name("Richtung anzeigen")
 		.description("Zeigt die Richtung von Werfern / Spendern und Trichtern.")
 		.icon("axes")
-		.callback(RenderObjectObserver.Chunk::onSettingsChange);
-
-	private static final SwitchSetting showNoteId = SwitchSetting.create()
-		.name("Ton-ID anzeigen")
-		.description("Ob der Name des Tons oder die ID angezeigt werden soll.")
-		.icon("sounds")
-		.defaultValue(true);
-
-	private static final SwitchSetting showNoteBlockPitch = SwitchSetting.create()
-		.name("Notenblock-Höhe anzeigen")
-		.description("Zeigt an, welche Tonhöhe bei Notenblöcken eingestellt ist."
-			+ "\nDafür muss von diesem Block ein Ton abgespielt worden sein.")
-		.icon("sounds")
-		.subSettings(showNoteId);
+		.callback(RenderChunk::onSettingsChange);
 
 	private static final SwitchSetting showCauldronLevel = SwitchSetting.create()
 		.name("Kessel-Füllstand anzeigen")
 		.description("Zeigt an einem Kessel seinen derzeitigen Füllstand an.")
 		.icon("water_breathing");
-
-	public static final NumberSetting range = NumberSetting.create()
-		.name("Radius")
-		.description("Der Radius um den Spieler in Chunks, in dem die Informationen angezeigt werden."
-			+ "\n(-1 ist unendlich)")
-		.defaultValue(-1)
-		.min(-1)
-		.icon("measurement");
 
 	public static final SwitchSetting hideRedstoneParticles = SwitchSetting.create()
 		.name("Redstone-Partikel verstecken")
@@ -103,8 +77,8 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		.name("Redstone-Helfer")
 		.description("Hilft beim Arbeiten mit Redstone.")
 		.icon("redstone_comparator")
-		.subSettings(showPower, showDirection, showNoteBlockPitch, showCauldronLevel, range, HeaderSetting.create(), hideRedstoneParticles)
-		.callback(RenderObjectObserver.Chunk::onSettingsChange);
+		.subSettings(showPower, showDirection, showCauldronLevel, HeaderSetting.create(), hideRedstoneParticles)
+		.callback(RenderChunk::onSettingsChange);
 
 	public static RedstoneHelper get() {
 		return get(RedstoneHelper.class);
@@ -113,7 +87,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	@Override
 	public void init() {
 		super.init();
-		WorldBlockOverlayRenderer.registerRenderObjectGenerator(this);
+		BlockOverlayCollector.registerRenderObjectGenerator(this);
 	}
 
 	@Override
@@ -124,7 +98,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 		if (block == hopper) {
 			EnumFacing facing = state.getValue(BlockHopper.FACING);
-			return facing.getHorizontalIndex() == -1 ? null : new RedstoneHelper.Hopper(facing);
+			return facing.getHorizontalIndex() == -1 ? null : new Hopper(facing);
 		}
 
 		if (block != dropper && block != dispenser)
@@ -132,23 +106,6 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 		EnumFacing dir = state.getValue(BlockDispenser.FACING);
 		return new Dropper(dir);
-	}
-
-	@Override
-	public void onBlockUpdate(Map<BlockPos, RenderObject> map, BlockPos pos, IBlockState state) {
-		if (state.getBlock() != noteblock || !showNoteBlockPitch.get())
-			map.remove(pos);
-	}
-
-	@EventListener
-	private void onNoteBlock(NoteBlockPlayEvent event) {
-		BlockPos pos = event.pos;
-		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
-		Map<BlockPos, RenderObject> map = WorldBlockOverlayRenderer.getRenderObjectsForChunk(pair);
-		String name = event.getNote().name().replace("_SHARP", "is");
-		name += Strings.repeat("'", event.getOctave().ordinal() + 1);
-		String finalName = name;
-		map.put(pos, new TextRRO(showNoteBlockPitch, () -> showNoteId.get() ? String.valueOf(event.getVanillaNoteId()) : finalName));
 	}
 
 	@Mixin(BlockRedstoneWire.class)
@@ -184,31 +141,22 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		}
 
 		@Override
-		public boolean shouldRender() {
-			if (!RedstoneHelper.get().isEnabled() || !showPower.get())
-				return false;
-
-			return power > 0 || showZeroPower.get();
-		}
-
-		@Override
 		public boolean equals(dev.l3g7.griefer_utils.features.world.building.redstone_helper.RenderObject r) {
 			return super.equals(r) && power == ((Wire) r).power;
 		}
 
 	}
 
-	public class Hopper extends RenderObject {
+	public static class Hopper extends RenderObject {
 
 		private final EnumFacing dir;
 
 		private Hopper(EnumFacing dir) {
-			super(RedstoneHelper.this);
 			this.dir = dir;
 		}
 
-		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
-			if (!showDirection.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
+		public void render(BlockPos pos, float partialTicks) {
+			if (!showDirection.get())
 				return;
 
 			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
@@ -237,17 +185,16 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	}
 
-	private class Dropper extends RenderObject {
+	private static class Dropper extends RenderObject {
 
 		private final EnumFacing dir;
 
 		private Dropper(EnumFacing dir) {
-			super(RedstoneHelper.this);
 			this.dir = dir;
 		}
 
-		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
-			if (!showDirection.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
+		public void render(BlockPos pos, float partialTicks) {
+			if (!showDirection.get())
 				return;
 
 			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
@@ -294,20 +241,19 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		}
 	}
 
-	private class TextRRO extends RenderObject {
+	private static class TextRRO extends RenderObject {
 
 		private final SwitchSetting setting;
 		private final Supplier<Object> textSupplier;
 
 		private TextRRO(SwitchSetting setting, Supplier<Object> textSupplier) {
-			super(RedstoneHelper.this);
 			this.textSupplier = textSupplier;
 			this.setting = setting;
 		}
 
 		@Override
-		public void render(BlockPos pos, float partialTicks, int chunksFromPlayer) {
-			if (!setting.get() || (range.get() != -1 && range.get() < chunksFromPlayer))
+		public void render(BlockPos pos, float partialTicks) {
+			if (!setting.get())
 				return;
 
 			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);

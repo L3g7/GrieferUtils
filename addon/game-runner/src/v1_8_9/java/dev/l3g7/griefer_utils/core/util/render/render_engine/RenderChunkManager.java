@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.world.building.redstone_helper.render_pipeline;
+package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.ChunkFilledEvent;
@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.features.world.building.redstone_helper.RenderObject;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
@@ -22,15 +21,17 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 /**
  * Generates {@link RenderChunk}s and updates their data
  */
-public class RenderChunkManager {
+class RenderChunkManager {
 
-	public static final Map<ChunkCoordIntPair, RenderChunk> data = new ConcurrentHashMap<>();
+	static final Map<ChunkCoordIntPair, RenderChunk> chunks = new ConcurrentHashMap<>();
 
 	@EventListener
 	private static void onChunkFilled(ChunkFilledEvent event) {
@@ -44,21 +45,26 @@ public class RenderChunkManager {
 			for (int x = 0; x < 16; x++) {
 				for (int y = 0; y < 16; y++) {
 					for (int z = 0; z < 16; z++) {
-						BlockPos targetPos = new BlockPos(x, y + ebs.getYLocation(), z);
-						RenderObject renderObject = RenderObject.fromState(targetPos, ebs.get(x, y, z)); // TODO: use data[] directly
+						BlockPos targetPos = new BlockPos(
+							x + (coords.chunkXPos << 4),
+							y + ebs.getYLocation(),
+							z + (coords.chunkZPos << 4)
+						);
+
+						RenderObject renderObject = RenderObject.fromState(targetPos, ebs.get(x, y, z), world());
 						if (renderObject == null)
 							continue;
 
-						chunk.add(renderObject);
+						chunk.add(targetPos, renderObject);
 					}
 				}
 			}
 		}
 
 		if (chunk.hasData())
-			delete(data.put(coords, chunk));
+			delete(chunks.put(coords, chunk));
 		else
-			delete(data.remove(coords));
+			delete(chunks.remove(coords));
 	}
 
 	@EventListener
@@ -67,15 +73,12 @@ public class RenderChunkManager {
 			return; // Integrated server chunk, its thread has no GL context
 
 		ChunkCoordIntPair coordPair = new ChunkCoordIntPair(event.chunk.xPosition, event.chunk.zPosition);
-		delete(data.remove(coordPair));
+		delete(chunks.remove(coordPair));
 	}
 
 	@EventListener
 	private static void onWorldUnload(WorldUnloadEvent event) {
-		data.values().removeIf(chunk -> {
-			chunk.delete();
-			return true;
-		});
+		RenderChunk.deleteAll(chunks.values());
 	}
 
 	@EventListener
@@ -101,18 +104,17 @@ public class RenderChunkManager {
 
 	private static void updateBlock(BlockPos pos, IBlockState state) {
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
-		BlockPos ebsPos = new BlockPos(pos.getX() - (pair.chunkXPos << 4), pos.getY(), pos.getZ() - (pair.chunkZPos << 4));
-		RenderObject renderObject = RenderObject.fromState(ebsPos, state);
+		RenderObject renderObject = RenderObject.fromState(pos, state, world());
 
 		if (renderObject != null) {
-			RenderChunk chunk = data.computeIfAbsent(pair, k -> new RenderChunk());
-			chunk.add(renderObject);
+			RenderChunk chunk = chunks.computeIfAbsent(pair, k -> new RenderChunk());
+			chunk.add(pos, renderObject);
 			return;
 		}
 
-		RenderChunk chunk = data.get(pair);
+		RenderChunk chunk = chunks.get(pair);
 		if (chunk != null && chunk.hasData())
-			chunk.remove(ebsPos);
+			chunk.remove(pos);
 	}
 
 

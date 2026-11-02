@@ -41,14 +41,14 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class BlockOverlayCollector {
 
-	private static final Map<ChunkCoordIntPair, Map<BlockPos, RenderObject>> renderObjects = new ConcurrentHashMap<>();
-	private static final Map<BlockPos, RenderObject> schematicasROs = new ConcurrentHashMap<>();
+	private static final Map<ChunkCoordIntPair, Map<BlockPos, OldRenderObject>> renderObjects = new ConcurrentHashMap<>();
+	private static final Map<BlockPos, OldRenderObject> schematicasROs = new ConcurrentHashMap<>();
 	private static final List<RenderObjectGenerator> generators = new ArrayList<>();
 
 	private static Object previousSchematic = null;
 	private static BlockPos previousSchematicPos = null;
 
-	public static Map<BlockPos, RenderObject> getRenderObjectsForChunk(ChunkCoordIntPair pair) {
+	public static Map<BlockPos, OldRenderObject> getRenderObjectsForChunk(ChunkCoordIntPair pair) {
 		return renderObjects.computeIfAbsent(pair, k -> new ConcurrentHashMap<>());
 	}
 
@@ -56,14 +56,10 @@ public class BlockOverlayCollector {
 		generators.add(generator);
 	}
 
-	public static void regenerate() {
-		mc().renderGlobal.loadRenderers();
-	}
-
 	@EventListener
 	private static void onChunkFilled(ChunkFilledEvent event) {
 		TickScheduler.sync(() -> {
-			Map<BlockPos, RenderObject> newRenderObjects = new ConcurrentHashMap<>();
+			Map<BlockPos, OldRenderObject> newRenderObjects = new ConcurrentHashMap<>();
 			ChunkCoordIntPair coords = new ChunkCoordIntPair(event.getChunk().xPosition, event.getChunk().zPosition);
 
 			for (ExtendedBlockStorage ebs : event.getChunk().getBlockStorageArray()) {
@@ -74,11 +70,11 @@ public class BlockOverlayCollector {
 					for (int y = 0; y < 16; y++) {
 						for (int z = 0; z < 16; z++) {
 							BlockPos targetPos = coords.getBlock(x, y + ebs.getYLocation(), z);
-							RenderObject redstoneRenderObject = RenderObject.fromState(ebs.get(x, y, z), targetPos, world());
-							if (redstoneRenderObject == null)
+							OldRenderObject redstoneOldRenderObject = OldRenderObject.fromState(ebs.get(x, y, z), targetPos, world());
+							if (redstoneOldRenderObject == null)
 								continue;
 
-							newRenderObjects.put(targetPos, redstoneRenderObject);
+							newRenderObjects.put(targetPos, redstoneOldRenderObject);
 						}
 					}
 				}
@@ -119,13 +115,13 @@ public class BlockOverlayCollector {
 	}
 
 	private static void onBlockUpdate(BlockPos pos, IBlockState state) {
-		RenderObject redstoneRenderObject = RenderObject.fromState(state, pos, world());
+		OldRenderObject redstoneOldRenderObject = OldRenderObject.fromState(state, pos, world());
 
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
 
-		if (redstoneRenderObject != null) {
-			RenderObject ro = RenderObject.fromState(state, pos, world());
-			Map<BlockPos, RenderObject> map = getRenderObjectsForChunk(pair);
+		if (redstoneOldRenderObject != null) {
+			OldRenderObject ro = OldRenderObject.fromState(state, pos, world());
+			Map<BlockPos, OldRenderObject> map = getRenderObjectsForChunk(pair);
 
 			if (ro == null)
 				map.remove(pos);
@@ -134,7 +130,7 @@ public class BlockOverlayCollector {
 			return;
 		}
 
-		Map<BlockPos, RenderObject> map = renderObjects.get(pair);
+		Map<BlockPos, OldRenderObject> map = renderObjects.get(pair);
 		if (map == null)
 			return;
 
@@ -155,8 +151,8 @@ public class BlockOverlayCollector {
 		GlStateManager.disableCull();
 		GlStateManager.disableTexture2D();
 
-		for (Map.Entry<ChunkCoordIntPair, Map<BlockPos, RenderObject>> entry : renderObjects.entrySet())
-			for (Map.Entry<BlockPos, RenderObject> chunkEntry : entry.getValue().entrySet())
+		for (Map.Entry<ChunkCoordIntPair, Map<BlockPos, OldRenderObject>> entry : renderObjects.entrySet())
+			for (Map.Entry<BlockPos, OldRenderObject> chunkEntry : entry.getValue().entrySet())
 				chunkEntry.getValue().render(chunkEntry.getKey(), event.partialTicks);
 
 		if (Constants.SCHEMATICA)
@@ -174,7 +170,7 @@ public class BlockOverlayCollector {
 		if (SchematicaUtil.dontRender())
 			return;
 
-		for (Map.Entry<BlockPos, RenderObject> entry : schematicasROs.entrySet())
+		for (Map.Entry<BlockPos, OldRenderObject> entry : schematicasROs.entrySet())
 			if (SchematicaUtil.shouldLayerBeRendered(entry.getKey().getY()))
 				entry.getValue().render(entry.getKey(), partialTicks);
 	}
@@ -197,26 +193,26 @@ public class BlockOverlayCollector {
 			for (int dY = 0; dY < schematic.getHeight(); dY++) {
 				for (int dZ = 0; dZ < schematic.getLength(); dZ++) {
 					BlockPos pos = new BlockPos(dX, dY, dZ);
-					RenderObject renderObject = RenderObject.fromState(schematic.getBlockState(pos), pos, SchematicaUtil.getWorld());
-					if (renderObject == null)
+					OldRenderObject oldRenderObject = OldRenderObject.fromState(schematic.getBlockState(pos), pos, SchematicaUtil.getWorld());
+					if (oldRenderObject == null)
 						continue;
 
-					schematicasROs.put(position.add(dX, dY, dZ), renderObject);
+					schematicasROs.put(position.add(dX, dY, dZ), oldRenderObject);
 				}
 			}
 		}
 	}
 
-	public abstract static class RenderObject {
+	public abstract static class OldRenderObject {
 
-		private static RenderObject fromState(IBlockState state, BlockPos pos, WorldClient world) {
+		private static OldRenderObject fromState(IBlockState state, BlockPos pos, WorldClient world) {
 			if (world == null || state == null)
 				return null;
 
 			for (RenderObjectGenerator generator : generators) {
-				RenderObject renderObject = generator.getRenderObject(state, pos, world);
-				if (renderObject != null)
-					return renderObject;
+				OldRenderObject oldRenderObject = generator.getRenderObject(state, pos, world);
+				if (oldRenderObject != null)
+					return oldRenderObject;
 			}
 
 			return null;
@@ -244,7 +240,7 @@ public class BlockOverlayCollector {
 
 	public interface RenderObjectGenerator {
 
-		RenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world);
+		OldRenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world);
 
 	}
 

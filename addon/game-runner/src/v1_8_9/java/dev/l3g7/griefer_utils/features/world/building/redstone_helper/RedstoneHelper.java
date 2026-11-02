@@ -12,12 +12,10 @@ import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector;
-import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObject;
+import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.OldRenderObject;
 import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObjectGenerator;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.CharRenderInfo;
-import dev.l3g7.griefer_utils.features.world.building.redstone_helper.FontRenderData.Vertices;
-import dev.l3g7.griefer_utils.features.world.building.redstone_helper.render_pipeline.RenderChunk;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -40,26 +38,23 @@ import static net.minecraft.init.Blocks.*;
  * Implements cursor movement, selection and copy and paste in the sign edit gui.
  */
 @Singleton
-public class RedstoneHelper extends Feature implements RenderObjectGenerator {
+public class RedstoneHelper extends Feature implements RenderObjectGenerator, RenderObject.Generator {
 
 	private static final SwitchSetting showZeroPower = SwitchSetting.create()
 		.name("0 anzeigen")
 		.description("Ob die Stärke-Anzeige auch angezeigt werden soll, wenn die Stärke 0 beträgt.")
-		.icon("redstone_repeater")
-		.callback(RenderChunk::onSettingsChange);
+		.icon("redstone_repeater");
 
 	private static final SwitchSetting showPower = SwitchSetting.create()
 		.name("Redstone-Stärke anzeigen")
 		.description("Zeigt auf Redstone-Kabeln ihre derzeitige Stärke an.")
 		.icon("redstone")
-		.subSettings(showZeroPower)
-		.callback(RenderChunk::onSettingsChange);
+		.subSettings(showZeroPower);
 
 	private static final SwitchSetting showDirection = SwitchSetting.create()
 		.name("Richtung anzeigen")
 		.description("Zeigt die Richtung von Werfern / Spendern und Trichtern.")
-		.icon("axes")
-		.callback(RenderChunk::onSettingsChange);
+		.icon("axes");
 
 	private static final SwitchSetting showCauldronLevel = SwitchSetting.create()
 		.name("Kessel-Füllstand anzeigen")
@@ -77,8 +72,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		.name("Redstone-Helfer")
 		.description("Hilft beim Arbeiten mit Redstone.")
 		.icon("redstone_comparator")
-		.subSettings(showPower, showDirection, showCauldronLevel, HeaderSetting.create(), hideRedstoneParticles)
-		.callback(RenderChunk::onSettingsChange);
+		.subSettings(showPower, showDirection, showCauldronLevel, HeaderSetting.create(), hideRedstoneParticles);
 
 	public static RedstoneHelper get() {
 		return get(RedstoneHelper.class);
@@ -88,10 +82,11 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 	public void init() {
 		super.init();
 		BlockOverlayCollector.registerRenderObjectGenerator(this);
+		RenderObject.registerGenerator(this);
 	}
 
 	@Override
-	public RenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world) {
+	public OldRenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world) {
 		Block block = state.getBlock();
 		if (block == cauldron)
 			return new TextRRO(showCauldronLevel, () -> state.getValue(BlockCauldron.LEVEL));
@@ -108,6 +103,17 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		return new Dropper(dir);
 	}
 
+	@Override
+	public RenderObject getRenderObject(BlockPos worldPos, IBlockState state, WorldClient world) {
+		if (state.getBlock() == redstone_wire && showPower.get()) {
+			int power = state.getValue(BlockRedstoneWire.POWER);
+			if (power > 0 || showZeroPower.get())
+				return new RedstoneHelper.Wire(state.getValue(BlockRedstoneWire.POWER));
+		}
+
+		return null;
+	}
+
 	@Mixin(BlockRedstoneWire.class)
 	private static class MixinBlockRedstoneWire {
 
@@ -119,35 +125,13 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	}
 
-	public static class Wire extends dev.l3g7.griefer_utils.features.world.building.redstone_helper.RenderObject {
-
-		public final int power;
-
-		public Wire(BlockPos pos, int power) {
-			super(pos);
-			this.power = power;
+	public static class Wire extends RotatingTextRenderObject {
+		public Wire(int power) {
+			super(String.valueOf(power));
 		}
-
-		public double getYOffset() { return 0.02f; }
-
-		@Override
-		public CharRenderInfo[] getRenderInfos() {
-			return FontRenderData.getCharRenderInfos(String.valueOf(power));
-		}
-
-		@Override
-		public Vertices getVertices(CharRenderInfo charRenderInfo, int rotation) {
-			return charRenderInfo.rotatedVertices()[rotation];
-		}
-
-		@Override
-		public boolean equals(dev.l3g7.griefer_utils.features.world.building.redstone_helper.RenderObject r) {
-			return super.equals(r) && power == ((Wire) r).power;
-		}
-
 	}
 
-	public static class Hopper extends RenderObject {
+	public static class Hopper extends OldRenderObject {
 
 		private final EnumFacing dir;
 
@@ -185,7 +169,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 
 	}
 
-	private static class Dropper extends RenderObject {
+	private static class Dropper extends OldRenderObject {
 
 		private final EnumFacing dir;
 
@@ -241,7 +225,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator {
 		}
 	}
 
-	private static class TextRRO extends RenderObject {
+	private static class TextRRO extends OldRenderObject {
 
 		private final SwitchSetting setting;
 		private final Supplier<Object> textSupplier;

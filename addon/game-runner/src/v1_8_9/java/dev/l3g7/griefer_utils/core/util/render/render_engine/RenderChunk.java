@@ -1,6 +1,5 @@
-package dev.l3g7.griefer_utils.features.world.building.redstone_helper.render_pipeline;
+package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
-import dev.l3g7.griefer_utils.features.world.building.redstone_helper.RenderObject;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -8,27 +7,30 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ChunkCoordIntPair;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-public class RenderChunk {
+class RenderChunk {
 
-	public static void onSettingsChange() {
-//			for (CompiledChunk chunk : data.values())
-//				chunk.partsToRecompile.addAll(chunk.parts.values());
+	public static void deleteAll(Collection<RenderChunk> renderChunks) {
+		renderChunks.removeIf(chunk -> {
+			chunk.delete();
+			return true;
+		});
 	}
 
 	private final ChunkPart[] parts = new ChunkPart[16];
 
-	public void add(RenderObject renderObject) {
-		int index = renderObject.pos.getY() / 16;
+	public void add(BlockPos pos, RenderObject renderObject) {
+		int index = pos.getY() / 16;
 		ChunkPart part = parts[index];
 		if (part == null)
 			part = parts[index] = new ChunkPart();
 
-		part.add(renderObject);
+		part.add(pos, renderObject);
 	}
 
 	public void remove(BlockPos pos) {
@@ -92,14 +94,14 @@ public class RenderChunk {
 
 	private static class ChunkPart {
 
-		private static final ChunkCompiler COMPILER = new ChunkCompiler(80 * 256);
+		private static final ChunkCompiler COMPILER = new ChunkCompiler(4096);
 
 		int list = 0;
 		boolean mustRecompile = false;
 		private final Map<BlockPos, RenderObject> renderObjects = new HashMap<>();
 
-		public synchronized void add(RenderObject newRenderObject) {
-			RenderObject oldRenderObject = this.renderObjects.put(newRenderObject.pos, newRenderObject);
+		public synchronized void add(BlockPos pos, RenderObject newRenderObject) {
+			RenderObject oldRenderObject = this.renderObjects.put(pos, newRenderObject);
 
 			if (oldRenderObject == null || !oldRenderObject.equals(newRenderObject))
 				this.mustRecompile = true;
@@ -132,8 +134,8 @@ public class RenderChunk {
 
 			for (int rotation = 0; rotation < 16; rotation++) {
 				COMPILER.reset();
-				for (RenderObject ro : renderObjects.values())
-					ro.draw(COMPILER, rotation);
+				for (Map.Entry<BlockPos, RenderObject> entry : renderObjects.entrySet())
+					entry.getValue().draw(COMPILER, entry.getKey(), rotation);
 
 				GL11.glNewList(list + rotation, GL11.GL_COMPILE);
 				COMPILER.draw();

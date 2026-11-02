@@ -1,11 +1,12 @@
-package dev.l3g7.griefer_utils.features.world.building.redstone_helper.render_pipeline;
+package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Texture;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Vertices;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.Buffer;
@@ -21,26 +22,13 @@ public class ChunkCompiler {
 	private int vertexFormatIndex;
 	private final VertexFormat vertexFormat = DefaultVertexFormats.POSITION_TEX;
 
-	private boolean isDrawing;
-
-	public ChunkCompiler(int bytes) {
+	ChunkCompiler(int bytes) {
 		this.byteBuffer = GLAllocation.createDirectByteBuffer(bytes);
-		begin(); // TODO: remove
 	}
 
 	public void reset() {
 		this.vertexCount = 0;
 		this.vertexFormatIndex = 0;
-	}
-
-	public void begin() {
-		if (this.isDrawing)
-			throw new IllegalStateException("Already building!");
-
-		isDrawing = true;
-		reset();
-		// Invoke limit of superclass because ByteBuffer#position doesn't exist in Java 8 // NOTE beautify
-		((Buffer) byteBuffer).limit(byteBuffer.capacity());
 	}
 
 	public ChunkCompiler tex(double u, double v) {
@@ -64,14 +52,22 @@ public class ChunkCompiler {
 		return this;
 	}
 
+	public void render(Texture texture, Vertices vertices) {
+		texture.bind();
+
+		ensureCapacity();
+		pos(vertices.a().xCoord, vertices.a().yCoord, vertices.a().zCoord).tex(texture.maxU(), texture.maxV()).endVertex();
+		pos(vertices.b().xCoord, vertices.b().yCoord, vertices.b().zCoord).tex(texture.minU(), texture.maxV()).endVertex();
+		pos(vertices.c().xCoord, vertices.c().yCoord, vertices.c().zCoord).tex(texture.minU(), texture.minV()).endVertex();
+		pos(vertices.d().xCoord, vertices.d().yCoord, vertices.d().zCoord).tex(texture.maxU(), texture.minV()).endVertex();
+	}
+
 	public void ensureCapacity() {
-		// TODO: this shouldn't be needed
 		int i = (vertexCount + 4) * vertexFormat.getNextOffset();
 		if (i <= byteBuffer.capacity())
 			return;
 
 		int newSize = Math.max(byteBuffer.capacity() * 2, i);
-		LogManager.getLogger().warn("[GU] Needed to grow BufferBuilder buffer: Old size " + byteBuffer.capacity() + " bytes, new size " + newSize + " bytes.");
 		ByteBuffer buf = GLAllocation.createDirectByteBuffer(newSize);
 		// Invoke position of superclass because ByteBuffer#position doesn't exist in Java 8
 		((Buffer) this.byteBuffer).position(0);
@@ -110,7 +106,7 @@ public class ChunkCompiler {
 			postDraw(elements.get(i).getUsage(), i);
 	}
 
-	public void preDraw(VertexFormatElement.EnumUsage attrType, int element, int stride, ByteBuffer buffer) {
+	private void preDraw(VertexFormatElement.EnumUsage attrType, int element, int stride, ByteBuffer buffer) {
 		VertexFormatElement attr = vertexFormat.getElement(element);
 		int count = attr.getElementCount();
 		int constant = attr.getType().getGlConstant();
@@ -130,7 +126,7 @@ public class ChunkCompiler {
 		}
 	}
 
-	public void postDraw(VertexFormatElement.EnumUsage attrType, int element) {
+	private void postDraw(VertexFormatElement.EnumUsage attrType, int element) {
 		VertexFormatElement attr = vertexFormat.getElement(element);
 		switch (attrType) {
 			case POSITION -> glDisableClientState(GL_VERTEX_ARRAY);

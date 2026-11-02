@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector;
-import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObject;
+import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.OldRenderObject;
 import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObjectGenerator;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
@@ -222,7 +222,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	// Show spawner icons & show triggered spawners
 
 	@Override
-	public RenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world) {
+	public OldRenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world) {
 		if (state.getBlock() != Blocks.mob_spawner)
 			return null;
 
@@ -230,7 +230,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		if (!(tileEntity instanceof TileEntityMobSpawner))
 			return null;
 
-		return new SpawnerRenderObject(tileEntity);
+		return new SpawnerOldRenderObject(tileEntity);
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -239,7 +239,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 			return;
 
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(event.tileEntity.getPos().getX() >> 4, event.tileEntity.getPos().getZ() >> 4);
-		BlockOverlayCollector.getRenderObjectsForChunk(pair).put(event.tileEntity.getPos(), new SpawnerRenderObject(event.tileEntity));
+		BlockOverlayCollector.getRenderObjectsForChunk(pair).put(event.tileEntity.getPos(), new SpawnerOldRenderObject(event.tileEntity));
 	}
 
 	// Hide mobs
@@ -274,12 +274,12 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 
 	}
 
-	private class SpawnerRenderObject extends RenderObject {
+	private class SpawnerOldRenderObject extends OldRenderObject {
 
 		private final ResourceLocation resourceLocation;
 		private final MobSpawnerBaseLogic mobSpawnerBaseLogic;
 
-		private SpawnerRenderObject(TileEntity tileEntity) {
+		private SpawnerOldRenderObject(TileEntity tileEntity) {
 			TileEntityMobSpawner spawner = (TileEntityMobSpawner) tileEntity;
 			this.mobSpawnerBaseLogic = spawner.getSpawnerBaseLogic();
 			Entity entity = spawner.getSpawnerBaseLogic().func_180612_a(world());

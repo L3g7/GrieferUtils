@@ -32,7 +32,7 @@ public class RenderWorldLastEvent extends Event {
 
 		@Inject(method = "renderWorldPass", at = @At(value = "INVOKE_STRING", target= "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V", args = "ldc=hand", shift = At.Shift.BEFORE))
 	    public void injectRenderWorldPass(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci) {
-		    mc.mcProfiler.startSection("gu_render_last");
+		    mc.mcProfiler.startSection("griefer_utils_render_last");
 			new RenderWorldLastEvent(partialTicks).fire();
 			mc.mcProfiler.endSection();
 	    }

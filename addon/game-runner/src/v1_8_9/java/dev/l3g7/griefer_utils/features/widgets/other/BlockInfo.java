@@ -222,7 +222,7 @@ public class BlockInfo extends Widget {
 			size.set((float) getWidth(), getHeight());
 			if (context != null) {
 				this.renderEntireBackground(context, size);
-				draw(0, 0, isEditorContext);
+				BlockInfo.this.draw(0, 0, isEditorContext);
 			}
 		}
 

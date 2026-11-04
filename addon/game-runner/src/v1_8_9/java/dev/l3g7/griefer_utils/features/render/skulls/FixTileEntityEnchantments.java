@@ -109,6 +109,12 @@ public class FixTileEntityEnchantments extends Feature {
 
 			// Enable stencil
 			glClear(GL_STENCIL_BUFFER_BIT);
+
+			// On RTX 50 cards, the alpha test discards everything after a stencil clear until the texture state is changed
+			// This shit took me months to find
+			GlStateManager.disableTexture2D();
+			GlStateManager.enableTexture2D();
+
 			glEnable(GL_STENCIL_TEST);
 			glStencilFunc(GL_ALWAYS, 1, 0);
 			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);

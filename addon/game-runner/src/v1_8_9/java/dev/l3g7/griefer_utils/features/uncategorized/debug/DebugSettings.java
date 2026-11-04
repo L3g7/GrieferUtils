@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -20,6 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DebugSettings {
+
+	public static final SwitchSetting profileRender = SwitchSetting.create()
+		.name("Render-Profiler")
+		.description("Misst, wie lange Listener des RenderWorldLastEvents dauern.")
+		.icon("clock")
+		.callback(RenderWorldLastEvent::updateProfiler);
 
 	private static final SwitchSetting disableEventBus = SwitchSetting.create()
 		.name("Eventbus deaktivieren")
@@ -35,6 +42,7 @@ public class DebugSettings {
 			PacketDumper.enabled,
 			ThreadDumper.enabled,
 			RecraftLogger.enabled,
+			profileRender,
 			EventBusProfiler.enabled,
 			ItemDumper.key,
 			HeaderSetting.create(),

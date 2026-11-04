@@ -9,10 +9,12 @@ package dev.l3g7.griefer_utils.core.api.event_bus;
 
 public interface EventProfiler {
 
-	void onEventProfile(Event event, boolean profilingListeners, long ms);
+	void onEventStart(Event event, boolean profilingListeners);
+	void onEventEnd(Event event, boolean profilingListeners);
 
 	boolean profileListeners(Event event);
 
-	void onListenerProfile(Object owner, long ms);
+	void onListenerStart(Object owner);
+	void onListenerEnd(Object owner);
 
 }

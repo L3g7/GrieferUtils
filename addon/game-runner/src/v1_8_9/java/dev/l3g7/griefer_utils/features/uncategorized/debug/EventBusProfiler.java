@@ -38,9 +38,19 @@ public class EventBusProfiler {
 
 	private static final Logger LOGGER = LogManager.getLogger("EventBus Profiler");
 	private static final EventProfiler PROFILER = new EventProfiler() {
+
+		private static long listenerStart = 0;
+		private static long eventStart = 0;
+
 		@Override
-		public void onEventProfile(Event event, boolean profilingListeners, long ms) {
-			if (ms >= minTime.get() || profileListeners(event))
+		public void onEventStart(Event event, boolean profilingListeners) {
+			eventStart = System.currentTimeMillis();
+		}
+
+		@Override
+		public void onEventEnd(Event event, boolean profilingListeners) {
+			long ms = System.currentTimeMillis() - eventStart;
+			if (ms >= minTime.get() || profilingListeners)
 				LOGGER.info(event.getClass().getName() + " took " + ms + "ms.");
 		}
 
@@ -50,9 +60,14 @@ public class EventBusProfiler {
 		}
 
 		@Override
-		public void onListenerProfile(Object owner, long ms) {
+		public void onListenerStart(Object owner) {
+			listenerStart = System.currentTimeMillis();
+		}
+
+		@Override
+		public void onListenerEnd(Object owner) {
+			long ms = System.currentTimeMillis() - listenerStart;
 			Class<?> clazz = owner instanceof Class<?> c ? c : owner.getClass();
-			boolean isStatic = clazz == owner;
 			StringBuilder sb = new StringBuilder("\t");
 			if (clazz == owner)
 				sb.append("Static listener ");

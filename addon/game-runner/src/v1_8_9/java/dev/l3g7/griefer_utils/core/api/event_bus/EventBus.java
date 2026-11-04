@@ -65,21 +65,23 @@ class EventBus {
 			return;
 
 		boolean profilingListeners = profiler.profileListeners(event);
-		long start = System.currentTimeMillis();
+		profiler.onEventStart(event, profilingListeners);
 
 		for (Listener listener : list) {
 			try {
-				long listenerStart = System.currentTimeMillis();
+				if (profilingListeners)
+					profiler.onListenerStart(listener.owner());
+
 				listener.consumer().accept(event);
 
 				if (profilingListeners)
-					profiler.onListenerProfile(listener.owner(), System.currentTimeMillis() - listenerStart);
+					profiler.onListenerEnd(listener.owner());
 			} catch (Throwable t) {
 				BugReporter.reportError(t);
 			}
 		}
 
-		profiler.onEventProfile(event, profilingListeners, System.currentTimeMillis() - start);
+		profiler.onEventEnd(event, profilingListeners);
 	}
 
 	/**

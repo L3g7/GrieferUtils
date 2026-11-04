@@ -22,7 +22,7 @@ public class StringListSettingImpl extends ListSettingImpl<StringListEntry> {
 
 	public StringListSettingImpl() {
 		super(StringListEntry.class);
-		customEdit(e -> mc().displayGuiScreen(new AddStringGui(mc().currentScreen, e)));
+		custom(e -> mc().displayGuiScreen(new AddStringGui(mc().currentScreen, e)));
 	}
 
 	private class AddStringGui extends GuiScreen {

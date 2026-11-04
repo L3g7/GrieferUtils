@@ -39,7 +39,7 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 	public PlayerListSettingImpl() {
 		super(PlayerListEntry.class);
-		customEdit(e -> new PlayerListInputActivity(e).open());
+		custom(e -> new PlayerListInputActivity(e).open());
 	}
 
 	@Override

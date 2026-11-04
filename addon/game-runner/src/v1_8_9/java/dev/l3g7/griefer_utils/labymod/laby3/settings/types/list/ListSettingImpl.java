@@ -35,6 +35,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 	private final E ctor;
 
 	private boolean unpacked = false;
+	private Runnable customAdd;
 	private Consumer<E> customEdit;
 
 	protected SettingsElement container = this;
@@ -66,8 +67,8 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 
 		addSetting.name("Eintrag hinzufügen");
 		addSetting.callback(() -> {
-			if (customEdit != null) {
-				customEdit.accept(null);
+			if (customAdd != null) {
+				customAdd.run();
 			} else {
 				int index = getSettings().indexOf(addSetting);
 				DisplaySetting<E> setting = createDisplaySetting(ctor.createNew());
@@ -149,8 +150,14 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 	}
 
 	@Override
+	public ListSetting<E> customAdd(Runnable callback) {
+		this.customAdd = callback;
+		return this;
+	}
+
+	@Override
 	public ListSetting<E> customEdit(Consumer<E> callback) {
-		customEdit = callback;
+		this.customEdit = callback;
 		return this;
 	}
 

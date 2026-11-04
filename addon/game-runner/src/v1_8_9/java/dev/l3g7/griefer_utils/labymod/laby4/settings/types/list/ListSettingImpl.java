@@ -20,7 +20,6 @@ import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.ActivityInitializeEvent.SettingActivityInitEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
-import net.labymod.api.Textures;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.icon.catalog.IconsCommon;
@@ -50,6 +49,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	protected final E ctor;
 
 	protected boolean unpacked = false;
+	protected Runnable customAdd;
 	protected Consumer<E> customEdit;
 
 	public ListSettingImpl(Class<E> type) {
@@ -90,6 +90,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		this.rawList = original.rawList;
 		this.ctor = original.ctor;
 		this.unpacked = false;
+		this.customAdd = original.customAdd;
 		this.customEdit = original.customEdit;
 	}
 
@@ -122,6 +123,12 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	@Override
 	public ListSetting<E> unpacked() {
 		this.unpacked = true;
+		return this;
+	}
+
+	@Override
+	public ListSetting<E> customAdd(Runnable callback) {
+		this.customAdd = callback;
 		return this;
 	}
 
@@ -186,7 +193,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	}
 
 	private ListSettingEntry add(E value, boolean isCreateNew) {
-		if (customEdit != null && isCreateNew)
+		if (customAdd != null && isCreateNew)
 			throw new IllegalStateException("Failed to intercept add!");
 
 		EntryConfig<E> config = new EntryConfig<>(this, value);
@@ -231,13 +238,12 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 			return;
 
 		// Hook add button
-		if (setting.customEdit != null) {
-			event.get("container", "mods-breadcrumb", "accent-button").setPressable(() ->
-				setting.customEdit.accept(null));
+		if (setting.customAdd != null) {
+			event.get("container", "mods-breadcrumb", "accent-button").setPressable(() -> setting.customAdd.run());
 
 			var emptyAdd = event.get("container", "mods-options-scroll", "mods-options-list", "empty-state-empty", "empty-state-content", "empty-state-actions", "accent-button");
 			if (emptyAdd != null)
-				emptyAdd.setPressable(() -> setting.customEdit.accept(null));
+				emptyAdd.setPressable(() -> setting.customAdd.run());
 		}
 	}
 

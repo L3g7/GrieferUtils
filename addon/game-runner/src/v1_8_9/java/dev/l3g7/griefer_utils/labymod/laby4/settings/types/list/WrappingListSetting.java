@@ -27,6 +27,9 @@ import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Wraps a SwitchSetting into a ListSetting to create unpacked lists.
+ */
 public class WrappingListSetting<E extends ListEntry<E>> extends ListSettingImpl<E> {
 
 	private final List<KeyValue<Setting>> subsettings = new ArrayList<>();

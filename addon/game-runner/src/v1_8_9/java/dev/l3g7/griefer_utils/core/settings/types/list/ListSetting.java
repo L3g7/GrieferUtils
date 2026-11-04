@@ -32,6 +32,18 @@ public interface ListSetting<E extends ListEntry<E>> extends AbstractSetting<Lis
 	/**
 	 * Registers a callback for entry edits and adds.
 	 */
+	default ListSetting<E> custom(Consumer<@Nullable E> callback) {
+		return customAdd(() -> callback.accept(null)).customEdit(callback);
+	}
+
+	/**
+	 * Registers a callback for entry creation.
+	 */
+	ListSetting<E> customAdd(Runnable callback);
+
+	/**
+	 * Registers a callback for entry edits.
+	 */
 	ListSetting<E> customEdit(Consumer<@Nullable E> callback);
 
 	/**

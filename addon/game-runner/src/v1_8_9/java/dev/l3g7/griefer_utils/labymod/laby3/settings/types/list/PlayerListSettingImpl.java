@@ -26,7 +26,7 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 	public PlayerListSettingImpl() {
 		super(PlayerListEntry.class);
-		customEdit(e -> mc().displayGuiScreen(new AddPlayerGui(mc().currentScreen)));
+		custom(e -> mc().displayGuiScreen(new AddPlayerGui(mc().currentScreen)));
 		addSetting.name("Spieler hinzufügen");
 	}
 

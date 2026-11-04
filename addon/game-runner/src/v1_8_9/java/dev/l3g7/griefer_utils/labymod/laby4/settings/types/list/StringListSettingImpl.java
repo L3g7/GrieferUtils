@@ -32,7 +32,7 @@ public class StringListSettingImpl extends ListSettingImpl<StringListEntry> {
 
 	public StringListSettingImpl() {
 		super(StringListEntry.class);
-		customEdit(e -> new StringListInputActivity(e).open());
+		custom(e -> new StringListInputActivity(e).open());
 	}
 
 	@AutoActivity

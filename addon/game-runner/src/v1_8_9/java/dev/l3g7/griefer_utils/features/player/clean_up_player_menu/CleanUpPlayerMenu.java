@@ -8,52 +8,66 @@
 package dev.l3g7.griefer_utils.features.player.clean_up_player_menu;
 
 import com.google.gson.JsonPrimitive;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.Config;
+import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import net.labymod.api.Laby;
+import net.labymod.api.client.entity.player.interaction.BulletPoint;
+import net.labymod.api.util.KeyValue;
+import net.labymod.main.LabyMod;
+import net.labymod.user.util.UserActionEntry;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+
+/**
+ * Removes predefined player menu entries.
+ */
 @Singleton
 public class CleanUpPlayerMenu extends Feature {
 
 	@MainElement
-	public static final SwitchSetting enabled = SwitchSetting.create()
+	private static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spielermenü aufräumen")
 		.description("Entfernt Spielermenü-Einträge, die eigentlich nicht entfernt werden können.")
 		.icon("player_menu");
 
-	public static CleanUpPlayerMenu get() {
+	private static CleanUpPlayerMenu get() {
 		return get(CleanUpPlayerMenu.class);
 	}
 
-	public static abstract class CleanUpPlayerMenuBridge<V> {
+	private static class PlayerMenuCleaner<V> {
 
-		private List<V> shownEntries;
-		private List<V> allEntries;
-		private String statesKey;
-		private int mask = 0;
+		private final List<V> shownEntriesRef;
+		private final List<V> allEntries;
+		private final String statesKey;
+		private int mask = 0; // Remove everything by default
 
-		protected abstract List<V> getEntriesReference();
-
-		protected abstract String getName(V entry);
-
-		public void init() {
-			shownEntries = getEntriesReference();
-			allEntries = new ArrayList<>(shownEntries);
+		public PlayerMenuCleaner(List<V> entriesReference) {
+			shownEntriesRef = entriesReference;
+			allEntries = new ArrayList<>(entriesReference);
 
 			statesKey = CleanUpPlayerMenu.get().getConfigKey() + ".entries";
 			if (Config.has(statesKey)) {
 				mask = Config.get(statesKey).getAsInt();
-				updateEntries();
+				updateEntriesRef();
 			}
+		}
 
+		public void register(Function<V, String> nameGetter) {
 			List<SwitchSetting> settings = new ArrayList<>();
 
 			for (int i = 0; i < allEntries.size(); i++) {
-				String name = getName(allEntries.get(i));
+				String name = nameGetter.apply(allEntries.get(i));
 				int index = 1 << i;
 
 				SwitchSetting setting = SwitchSetting.create()
@@ -67,7 +81,7 @@ public class CleanUpPlayerMenu extends Feature {
 						else
 							mask &= ~index;
 
-						updateEntries();
+						updateEntriesRef();
 					});
 
 				setting.create(enabled);
@@ -75,20 +89,43 @@ public class CleanUpPlayerMenu extends Feature {
 			}
 
 			enabled.subSettings(settings.toArray(new SwitchSetting[0]));
-			enabled.callback(this::updateEntries);
-			CleanUpPlayerMenu.get().getCategory().callback(this::updateEntries);
+			enabled.callback(this::updateEntriesRef);
+			CleanUpPlayerMenu.get().getCategory().callback(this::updateEntriesRef);
 		}
 
-		private void updateEntries() {
-			shownEntries.clear();
+		private void updateEntriesRef() {
+			shownEntriesRef.clear();
 			boolean enabled = CleanUpPlayerMenu.get().isEnabled();
 
 			for (int i = 0; i < allEntries.size(); i++)
 				if ((mask & 1 << i) != 0 || !enabled)
-					shownEntries.add(allEntries.get(i));
+					shownEntriesRef.add(allEntries.get(i));
 
 			Config.set(statesKey, new JsonPrimitive(mask));
 			Config.save();
+		}
+
+	}
+
+	@ExclusiveTo(LABY_3)
+	private static class Laby3 {
+
+		@OnStartupComplete
+		public static void init() {
+			List<UserActionEntry> entriesRef = Reflection.get(LabyMod.getInstance().getUserManager().getUserActionGui(), "defaultEntries");
+			new PlayerMenuCleaner<>(entriesRef).register(UserActionEntry::getDisplayName);
+		}
+
+	}
+
+	@ExclusiveTo(LABY_4)
+	private static class Laby4 {
+
+		@OnStartupComplete
+		public static void init() {
+			List<KeyValue<BulletPoint>> entriesRef = Laby.references().interactionMenuRegistry().getElements();
+			new PlayerMenuCleaner<>(entriesRef).register(e ->
+				((IChatComponent) e.getValue().getTitle()).getUnformattedText());
 		}
 
 	}

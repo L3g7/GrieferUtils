@@ -5,25 +5,29 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4;
+package dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
-import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.core.events.MouseClickEvent.LeftClickEvent;
+import dev.l3g7.griefer_utils.core.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
 import dev.l3g7.griefer_utils.features.world.building.AutoTool;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -39,15 +43,14 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.ResourceLocation;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtection.ProtectionType.*;
-import static dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.laby4.ItemProtection.UNPROTECTED;
+import static dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemProtection.UNPROTECTED;
 import static net.minecraft.network.play.client.C02PacketUseEntity.Action.ATTACK;
 
-@Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
-public class SpecificItemSaver extends Feature implements TempItemSaverBridge { // FIXME: test, test dependant features
+public class SpecificItemSaver extends Feature {
 
 	private static final ItemStack BLOCKED = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");
 
@@ -55,21 +58,59 @@ public class SpecificItemSaver extends Feature implements TempItemSaverBridge { 
 
 	private final SwitchSetting displayIcon = SwitchSetting.create()
 		.name("Icon anzeigen")
-		.description("Ob Items im ItemSaver mit einem Icon markiert werden sollen.")
+		.description("Ob Items im Item-Saver mit einem Icon markiert werden sollen.")
 		.icon("shield_with_sword")
 		.defaultValue(true);
 
-	private final ItemProtectionListSetting entries = new ItemProtectionListSetting()
+	private final ListSetting<ItemProtection> entries = ListSetting.create(ItemProtection.class)
 		.name("Geschützte Items")
-		.disableSubsettingConfig()
-		.icon("diamond");
+		.icon("diamond")
+		.customAdd(this::addProtectedItem)
+		.unpacked();
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Spezifischer Item-Saver")
-		.description("Deaktiviert Klicks, Dropping und Abgeben bei einstellbaren Items.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
+		.description("Deaktiviert Klicks, Drops und Abgeben bei einstellbaren Items.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
 		.icon("shield_with_sword")
 		.subSettings(displayIcon, HeaderSetting.create(), entries);
+
+	// Item add logic
+
+	/**
+	 * The screen that triggered the current item add selection.
+	 * If null, no selection is active.
+	 */
+	private GuiScreen previousScreen = null;
+
+	private void addProtectedItem() {
+		if (mc().thePlayer == null) {
+			LabyBridge.labyBridge.notify("§e§lFehler ⚠", "§eHinzufügen von Items ist nur Ingame möglich!", 5000);
+			return;
+		}
+
+		previousScreen = mc().currentScreen;
+		display(Constants.ADDON_PREFIX + "Bitte klicke das Item an, das du hinzufügen möchtest.");
+		MinecraftUtil.closeClientsideGUI();
+	}
+
+	@EventListener
+	private void onAddItem(WindowClickEvent event) {
+		if (previousScreen == null || event.itemStack == null)
+			return;
+
+		mc().displayGuiScreen(previousScreen);
+		entries.add(new ItemProtection(event.itemStack));
+		entries.notifyChange();
+		previousScreen = null;
+		event.cancel();
+	}
+
+	// Helpers
+
+	public static ItemProtection getProtectionFor(ItemStack stack) {
+		return get(SpecificItemSaver.class).getProtection(stack);
+	}
 
 	private ItemProtection getProtection(ItemStack stack) {
 		if (stack == null || !isEnabled())
@@ -126,15 +167,17 @@ public class SpecificItemSaver extends Feature implements TempItemSaverBridge { 
 		GlStateManager.popMatrix();
 	}
 
+	// Protections
+
 	@EventListener
-	private void onRightClick(MouseClickEvent.RightClickEvent event) {
-		if (getProtection(heldItem()).isProtectedAgainst(RIGHT_CLICK))
+	private void denyRightClick(RightClickEvent event) {
+		if (getProtection(heldItem()).deniesRightClick())
 			event.cancel();
 	}
 
 	@EventListener
-	private void onLeftClick(MouseClickEvent.LeftClickEvent event) {
-		if (getProtection(heldItem()).isProtectedAgainst(LEFT_CLICK))
+	private void denyLeftClick(LeftClickEvent event) {
+		if (getProtection(heldItem()).deniesLeftClick())
 			event.cancel();
 	}
 
@@ -142,7 +185,7 @@ public class SpecificItemSaver extends Feature implements TempItemSaverBridge { 
 	 * Protects against GUIs that might remove an item.
 	 */
 	@EventListener
-	private void onGuiSetItems(GuiModifyItemsEvent event) {
+	private void denyGuiActions(GuiModifyItemsEvent event) {
 		// Protect against adventure trader
 		if (event.getTitle().startsWith("§6Adventure-Jobs")) {
 			for (int i : new int[]{10, 13, 16}) {
@@ -198,65 +241,23 @@ public class SpecificItemSaver extends Feature implements TempItemSaverBridge { 
 	}
 
 	@EventListener
-	private void onWindowClick(WindowClickEvent event) {
+	private void denyWindowClick(WindowClickEvent event) {
 		if (event.itemStack == BLOCKED) {
 			event.cancel();
 			return;
 		}
 
 		ItemProtection protection = getProtection(event.itemStack);
-		if (protection.isProtectedAgainst(ITEM_PICKUP) && !isAuctionHouse(event.windowId)) {
+		if (protection.deniesItemPickup() && !isAuctionHouse(event.windowId)) {
 			if (event.mode == 0 || event.mode == 6)
 				event.cancel();
 		}
 
-		if (protection.isProtectedAgainst(DROP) && event.mode == 4)
+		if (protection.deniesDrop() && event.mode == 4)
 			event.cancel();
 	}
 
-
-	@EventListener
-	private void onPacketDigging(PacketSendEvent<C07PacketPlayerDigging> event) {
-		switch (event.packet.getStatus()) {
-			case START_DESTROY_BLOCK -> {
-				if (getProtection(heldItem()).isProtectedAgainst(LEFT_CLICK))
-					event.cancel();
-			}
-			case DROP_ALL_ITEMS, DROP_ITEM -> {
-				if (getProtection(heldItem()).isProtectedAgainst(DROP))
-					event.cancel();
-			}
-		}
-	}
-
-	@EventListener
-	private void onPacketUseEntity(PacketSendEvent<C02PacketUseEntity> event) {
-		if (getProtection(heldItem()).isProtectedAgainst(event.packet.getAction() == ATTACK ? LEFT_CLICK : RIGHT_CLICK))
-			event.cancel();
-	}
-
-	@EventListener
-	private void onPacketPlaceBlock(PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
-		if (getProtection(heldItem()).isProtectedAgainst(RIGHT_CLICK))
-			event.cancel();
-	}
-
-	@Override
-	public boolean isProtected(ItemStack itemStack) {
-		return getProtection(itemStack).isProtected();
-	}
-
-	@Override
-	public boolean isProtectedAgainstLeftClick(ItemStack itemStack) {
-		return getProtection(itemStack).isProtectedAgainst(LEFT_CLICK);
-	}
-
-	@Override
-	public boolean isProtectedAgainstItemPickup(ItemStack itemStack) {
-		return getProtection(itemStack).isProtectedAgainst(ITEM_PICKUP);
-	}
-
-	public boolean isAuctionHouse(int windowId) {
+	private boolean isAuctionHouse(int windowId) {
 		if (!(mc().currentScreen instanceof GuiChest gc) || gc.inventorySlots.windowId != windowId)
 			return false;
 
@@ -266,6 +267,33 @@ public class SpecificItemSaver extends Feature implements TempItemSaverBridge { 
 			return false;
 
 		return title.contains("Auktion") || title.startsWith("§6Filter auswählen");
+	}
+
+	@EventListener
+	private void denyDigging(PacketSendEvent<C07PacketPlayerDigging> event) {
+		switch (event.packet.getStatus()) {
+			case START_DESTROY_BLOCK -> {
+				if (getProtection(heldItem()).deniesLeftClick())
+					event.cancel();
+			}
+			case DROP_ALL_ITEMS, DROP_ITEM -> {
+				if (getProtection(heldItem()).deniesDrop())
+					event.cancel();
+			}
+		}
+	}
+
+	@EventListener
+	private void denyUseEntity(PacketSendEvent<C02PacketUseEntity> event) {
+		var protection = getProtection(heldItem());
+		if (event.packet.getAction() == ATTACK ? protection.deniesLeftClick() : protection.deniesRightClick())
+			event.cancel();
+	}
+
+	@EventListener
+	private void denyPlaceBlock(PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
+		if (getProtection(heldItem()).deniesRightClick())
+			event.cancel();
 	}
 
 }

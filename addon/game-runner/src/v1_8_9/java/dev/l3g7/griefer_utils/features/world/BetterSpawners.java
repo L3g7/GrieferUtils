@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
@@ -29,7 +28,7 @@ import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollect
 import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.OldRenderObject;
 import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObjectGenerator;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -141,8 +140,8 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 		if (!spawnerWithHeldItemFix.get() || event.stack == null)
 			return;
 
-		if (FileProvider.getBridge(TempItemSaverBridge.class).isProtectedAgainstItemPickup(event.stack)) {
-			labyBridge.notify("§cItemSaver", "§cDas Item in deiner Hand ist im ItemSaver!");
+		if (SpecificItemSaver.getProtectionFor(event.stack).deniesItemPickup()) {
+			labyBridge.notify("§cItem-Saver", "§cDas Item in deiner Hand ist im Item-Saver!");
 			return;
 		}
 

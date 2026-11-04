@@ -8,9 +8,8 @@
 package dev.l3g7.griefer_utils.features.item.recraft;
 
 import com.google.gson.JsonElement;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -96,7 +95,7 @@ public abstract class RecraftAction {
 				if (!check(this, inv[i]))
 					continue;
 
-				if (checkForItemSaver && FileProvider.getBridge(TempItemSaverBridge.class).isProtected(inv[i]))
+				if (checkForItemSaver && SpecificItemSaver.getProtectionFor(inv[i]).isProtected())
 					continue;
 
 				for (int excludedSlot : excludedSlots)

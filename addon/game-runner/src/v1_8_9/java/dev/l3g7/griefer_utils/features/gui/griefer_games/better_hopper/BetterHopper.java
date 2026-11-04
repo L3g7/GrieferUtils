@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.features.gui.griefer_games.better_hopper;
 
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockInteractEvent;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
@@ -24,7 +23,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -220,8 +219,8 @@ public class BetterHopper extends Feature {
 		if (!sneakMode.get() || !hopperWithHeldItemFix.get() || event.stack == null)
 			return;
 
-		if (FileProvider.getBridge(TempItemSaverBridge.class).isProtectedAgainstItemPickup(event.stack)) {
-			labyBridge.notify("§cItemSaver", "§cDas Item in deiner Hand ist im ItemSaver!");
+		if (SpecificItemSaver.getProtectionFor(event.stack).deniesItemPickup()) {
+			labyBridge.notify("§cItem-Saver", "§cDas Item in deiner Hand ist im Item-Saver!");
 			return;
 		}
 

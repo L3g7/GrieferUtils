@@ -7,9 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft.decompressor;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftAction;
@@ -101,7 +100,7 @@ public class DecompressPlayer {
 			if (slotIngredient.compression == 0)
 				continue;
 
-			if (checkForItemSaver && FileProvider.getBridge(TempItemSaverBridge.class).isProtected(inv[i]))
+			if (checkForItemSaver && SpecificItemSaver.getProtectionFor(inv[i]).isProtected())
 				continue;
 
 			if (getAdditionalRequiredSlots(slotIngredient.compression, inv[i].stackSize) > freeSlots) {

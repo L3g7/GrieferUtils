@@ -25,7 +25,7 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
 import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
 import dev.l3g7.griefer_utils.features.widgets.other.MissingAdventurerBlocks;
 import net.minecraft.block.*;
@@ -196,7 +196,7 @@ public class AutoTool extends Feature {
 		if (itemStack == null)
 			return 1000.1;
 
-		if (FileProvider.getBridge(TempItemSaverBridge.class).isProtectedAgainstLeftClick(itemStack))
+		if (SpecificItemSaver.getProtectionFor(itemStack).deniesLeftClick())
 			return Integer.MIN_VALUE;
 
 		if (toolSaver.isEnabled())

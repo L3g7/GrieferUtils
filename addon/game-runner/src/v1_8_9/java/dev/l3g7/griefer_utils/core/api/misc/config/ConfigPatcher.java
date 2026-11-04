@@ -485,7 +485,7 @@ public class ConfigPatcher {
 		}
 
 		chatMenuPatch:
-		if (isConfigOlderThan("2.4.8")) {
+		if (isConfigOlderThan("2.4.8-BETA-1")) {
 			JsonObject chatMenu = get("chat.ingoing.chat_menu");
 			if (!chatMenu.has("entries") || !chatMenu.get("entries").isJsonObject())
 				break chatMenuPatch;
@@ -507,6 +507,29 @@ public class ConfigPatcher {
 			get("chat.ingoing.chat_menu").add("entries", newEntries);
 		}
 
+		if (isConfigOlderThan("2.4.8-BETA-8")) {
+			JsonObject itemSaver = get("item.item_saver.specific_item_saver");
+			if (itemSaver.has("entries") && itemSaver.get("entries").isJsonObject()) {
+				JsonArray newEntries = new JsonArray();
+
+				for (Entry<String, JsonElement> entry : itemSaver.get("entries").getAsJsonObject().entrySet()) {
+					JsonObject oldEntry = entry.getValue().getAsJsonObject();
+					JsonObject newEntry = new JsonObject();
+
+					newEntry.addProperty("nbt", entry.getKey());
+					newEntry.add("name", oldEntry.get("name"));
+
+					newEntry.add("deny_drop", oldEntry.get("drop"));
+					newEntry.add("deny_item_pickup", oldEntry.get("extreme_drop"));
+					newEntry.add("deny_left_click", oldEntry.get("leftclick"));
+					newEntry.add("deny_right_click", oldEntry.get("rightclick"));
+
+					newEntries.add(newEntry);
+				}
+
+				itemSaver.add("entries", newEntries);
+			}
+		}
 	}
 
 	protected void moveBulk(String oldParent, String newParent, String... keys) {

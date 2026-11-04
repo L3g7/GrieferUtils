@@ -7,8 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft.recipe;
 
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
 import net.minecraft.item.ItemStack;
 
@@ -61,7 +60,7 @@ class SizedIngredient {
 			if (!ingredient.equals(Ingredient.fromItemStack(stack)))
 				continue;
 
-			if (checkForItemSaver && FileProvider.getBridge(TempItemSaverBridge.class).isProtected(stack))
+			if (checkForItemSaver && SpecificItemSaver.getProtectionFor(stack).isProtected())
 				return false;
 
 			count += stack.stackSize;

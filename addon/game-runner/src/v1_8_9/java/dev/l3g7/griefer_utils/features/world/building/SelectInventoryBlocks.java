@@ -8,13 +8,12 @@
 package dev.l3g7.griefer_utils.features.world.building;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.BlockPickEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
-import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.TempItemSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -52,7 +51,7 @@ public class SelectInventoryBlocks extends Feature {
 			() -> getHotbarSlot(true, is -> is.getItem() instanceof ItemBlock), // Block
 			() -> getHotbarSlot(true, is -> !is.isItemStackDamageable()), // Not a tool
 			() -> getHotbarSlot(true, is -> true), // Not in the ItemSaver
-			() -> getHotbarSlot(false, is -> !FileProvider.getBridge(TempItemSaverBridge.class).isProtectedAgainstItemPickup(is))}) { // Doesn't have pickup protection enabled
+			() -> getHotbarSlot(false, is -> !SpecificItemSaver.getProtectionFor(is).deniesItemPickup())}) { // Doesn't have pickup protection enabled
 			targetSlot = slotSupplier.get();
 			if (targetSlot != -1)
 				break;
@@ -93,7 +92,7 @@ public class SelectInventoryBlocks extends Feature {
 
 	private int getScore(ItemStack requiredStack, int slot) {
 		ItemStack stack = player().inventory.getStackInSlot(slot);
-		if (stack == null || !stack.isItemEqual(requiredStack) || FileProvider.getBridge(TempItemSaverBridge.class).isProtected(stack))
+		if (stack == null || !stack.isItemEqual(requiredStack) || SpecificItemSaver.getProtectionFor(stack).isProtected())
 			return -1;
 
 		if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("stackSize"))
@@ -112,7 +111,7 @@ public class SelectInventoryBlocks extends Feature {
 	private int getHotbarSlot(boolean prefilter, Predicate<ItemStack> filter) {
 		ItemStack[] stacks = player().inventory.mainInventory;
 		for (int i = 0; i < 9; i++) {
-			if (prefilter && (stacks[i] == null) || FileProvider.getBridge(TempItemSaverBridge.class).isProtected(stacks[i]))
+			if (prefilter && (stacks[i] == null) || SpecificItemSaver.getProtectionFor(stacks[i]).isProtected())
 				continue;
 
 			if (filter.test(stacks[i]))

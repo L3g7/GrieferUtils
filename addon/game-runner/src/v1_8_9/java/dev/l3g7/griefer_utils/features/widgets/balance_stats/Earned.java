@@ -14,8 +14,6 @@ import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
-import static dev.l3g7.griefer_utils.features.widgets.balance_stats.Received.moneyReceived;
-import static dev.l3g7.griefer_utils.features.widgets.balance_stats.Spent.moneySpent;
 import static java.math.BigDecimal.ZERO;
 
 @Singleton
@@ -32,13 +30,13 @@ public class Earned extends SimpleWidget {
 			.icon("loop")
 			.buttonIcon("loop")
 			.callback(() -> {
-				Received.setBalance(ZERO);
-				Spent.setBalance(ZERO);
+				get(Received.class).setBalance(ZERO);
+				get(Spent.class).setBalance(ZERO);
 			}));
 
 	@Override
 	public String getValue() {
-		return DECIMAL_FORMAT_98.format(moneyReceived.subtract(moneySpent)) + "$";
+		return DECIMAL_FORMAT_98.format(get(Received.class).getBalance().subtract(get(Spent.class).getBalance())) + "$";
 	}
 
 }

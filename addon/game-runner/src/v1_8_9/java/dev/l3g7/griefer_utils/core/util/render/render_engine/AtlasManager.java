@@ -8,10 +8,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -163,11 +160,6 @@ class AtlasManager {
 
 		int textureId = TextureUtil.glGenTextures();
 
-		try { // TODO: Remove
-			ImageIO.write(atlas, "png", new File("atlas_" + textureId + ".png"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 		TextureUtil.uploadTextureImageAllocate(textureId, atlas, false /* blur */, false /* clamp uv */);
 		uploadedAtlas.delete();
 		uploadedAtlas = new UploadedAtlas(ImmutableMap.copyOf(sprites), slots, textureId);

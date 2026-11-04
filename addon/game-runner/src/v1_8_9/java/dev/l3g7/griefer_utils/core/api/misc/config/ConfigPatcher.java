@@ -32,6 +32,9 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.VersionComparator.VERSION_COMPARATOR;
 
+/**
+ * Migrates old configs.
+ */
 public class ConfigPatcher {
 
 	public static boolean versionChanged = false;
@@ -528,6 +531,20 @@ public class ConfigPatcher {
 				}
 
 				itemSaver.add("entries", newEntries);
+			}
+
+			JsonObject toolSaver = get("item.item_saver.tool_saver");
+			if (toolSaver.has("exclusions") && toolSaver.get("exclusions").isJsonObject()) {
+				JsonArray newExclusions = new JsonArray();
+
+				for (Entry<String, JsonElement> entry : toolSaver.get("exclusions").getAsJsonObject().entrySet()) {
+					JsonObject exclusion = new JsonObject();
+					exclusion.addProperty("nbt", entry.getKey());
+					exclusion.add("name", entry.getValue());
+					newExclusions.add(exclusion);
+				}
+
+				toolSaver.add("exclusions", newExclusions);
 			}
 		}
 	}

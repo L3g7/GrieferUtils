@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
-import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
@@ -26,7 +25,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
-import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.TempToolSaverBridge;
+import dev.l3g7.griefer_utils.features.item.item_saver.tool_saver.ToolSaver;
 import dev.l3g7.griefer_utils.features.widgets.other.MissingAdventurerBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
@@ -85,8 +84,6 @@ public class AutoTool extends Feature {
 		BlockTallGrass.class,
 		BlockVine.class
 	);
-
-	private final TempToolSaverBridge toolSaver = FileProvider.getBridge(TempToolSaverBridge.class);
 
 	private final DropDownSetting<EnchantPreference> preference = DropDownSetting.create(EnchantPreference.class)
 		.name("Bevorzugte Verzauberung")
@@ -199,9 +196,8 @@ public class AutoTool extends Feature {
 		if (SpecificItemSaver.getProtectionFor(itemStack).deniesLeftClick())
 			return Integer.MIN_VALUE;
 
-		if (toolSaver.isEnabled())
-			if (toolSaver.shouldCancel(itemStack))
-				return Integer.MIN_VALUE;
+		if (ToolSaver.shouldProtect(itemStack))
+			return Integer.MIN_VALUE;
 
 		if (isOrbPotion(itemStack) || isWand(itemStack))
 			return Integer.MIN_VALUE;

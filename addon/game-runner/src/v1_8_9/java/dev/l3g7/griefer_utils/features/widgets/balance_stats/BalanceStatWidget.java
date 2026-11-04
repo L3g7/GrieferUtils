@@ -25,8 +25,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getNextServerRestar
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static java.math.BigDecimal.ZERO;
 
-@Singleton
-public class BalanceStatWidget extends SimpleWidget {
+public abstract class BalanceStatWidget extends SimpleWidget {
 
 	protected BigDecimal money = ZERO;
 	private boolean initialized = false;

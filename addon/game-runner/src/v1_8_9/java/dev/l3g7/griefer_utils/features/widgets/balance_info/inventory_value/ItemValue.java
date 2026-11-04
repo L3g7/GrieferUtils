@@ -9,12 +9,14 @@ package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.chat.outgoing.Calculator;
 import net.minecraft.item.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,6 +96,11 @@ public class ItemValue implements ListEntry<ItemValue> {
 	@Override
 	public ItemValue createNew() {
 		return new ItemValue();
+	}
+
+	@Override
+	public List<BaseSetting<?>> toSettings() {
+		return Collections.singletonList(value);
 	}
 
 	@Override

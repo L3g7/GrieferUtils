@@ -10,56 +10,29 @@ package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager;
-import net.labymod.api.Laby;
 import net.labymod.api.LabyAPI;
-import net.labymod.api.client.entity.player.badge.BadgeRegistry;
-import net.labymod.api.client.entity.player.badge.PositionType;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.widget.attributes.bounds.Bounds;
 import net.labymod.api.client.render.font.RenderableComponent;
-import net.labymod.api.client.render.state.entity.GameUserSnapshot;
-import net.labymod.api.laby3d.renderer.snapshot.Extras;
-import net.labymod.api.user.GameUser;
-import net.labymod.api.user.group.Group;
-import net.labymod.core.client.gui.screen.activity.activities.ingame.playerlist.PlayerListRenderer;
-import net.labymod.core.client.render.state.entity.GameUserSnapshotFactory;
-import net.labymod.core.main.user.group.tag.GroupTextTag;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static net.labymod.api.client.entity.player.tag.PositionType.LEFT_TO_NAME;
 
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
 public class Laby4BadgeManager implements BadgeManager {
-
-	public static Group GRIEFERUTILS_GROUP = new Group(99, "grieferutils", "GrieferUtils", "FFFFFF", 'f', "", "", false);
-
-	@OnEnable
-	private void overrideBadgeRenderer() {
-		BadgeRegistry badges = Laby.references().badgeRegistry();
-		badges.unregister("labymod_rank");
-		badges.register("labymod_rank", PositionType.LEFT_TO_NAME, new GrieferUtilsRankBadgeRenderer());
-
-		var tags = Laby.references().tagRegistry();
-		tags.unregister("labymod_icon_role");
-		tags.register("labymod_icon_role", LEFT_TO_NAME, new GrieferUtilsGroupIconTag());
-	}
 
 	@Override
 	public void setOnline(UUID uuid) { /* NO-OP */ }
@@ -71,31 +44,14 @@ public class Laby4BadgeManager implements BadgeManager {
 	public void toggleBadges(boolean enabled) { /* NO-OP */ }
 
 	/**
-	 * Injects badges into {@link GroupTextTag} by overriding the rendered snapshot.
-	 */
-	@ExclusiveTo(LABY_4)
-	@Mixin(value = GameUserSnapshotFactory.class, remap = false)
-	private static abstract class MixinGameUserSnapshotFactory {
-
-		@Shadow
-		@Final
-		private LabyAPI labyAPI;
-
-		@Inject(method = "create(Lnet/labymod/api/user/GameUser;Lnet/labymod/api/laby3d/renderer/snapshot/Extras;)Lnet/labymod/api/client/render/state/entity/GameUserSnapshot;", at = @At("HEAD"), cancellable = true)
-		private void injectCreate(GameUser user, Extras extras, CallbackInfoReturnable<GameUserSnapshot> cir) {
-			cir.setReturnValue(new GrieferUtilsGameUserSnapshot(user, extras, labyAPI));
-		}
-
-	}
-
-	/**
 	 * Render player percentage in tablist.
 	 */
+	@Pseudo
 	@ExclusiveTo(LABY_4)
-	@Mixin(value = PlayerListRenderer.class, remap = false)
+	@Mixin(targets = "net.labymod.core.client.gui.screen.activity.activities.ingame.playerlist.PlayerListRenderer", remap = false)
 	private static class MixinPlayerListRenderer {
 
-		@Inject(method = "render", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+		@Inject(method = "render", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT, require = 0)
 		private void injectRender(ScreenContext context, LabyAPI labyAPI, Bounds bounds, boolean update, @Coerce Object strip, CallbackInfo ci, float screenWidth, float screenHeight, RenderableComponent header, RenderableComponent footer, Icon banner, boolean showBanner, float guiScale, float scale, float stripHeight, float stripSpace, int top, float fixedHeight, int frameWidth, float columnsWidth, float backgroundWidth, int rowsPerColumn, float listHeight, float contentHeight, float originY, float slide, float hitOriginX, float hitOriginY, float alpha, boolean translucent, int x, int y, int statsY) {
 			Badges.renderUserPercentage(x + backgroundWidth);
 		}

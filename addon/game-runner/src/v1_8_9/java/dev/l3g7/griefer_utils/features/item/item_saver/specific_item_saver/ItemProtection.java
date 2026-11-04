@@ -143,7 +143,7 @@ public class ItemProtection implements ListEntry<ItemProtection> {
 
 		// Deny left click if item is a tool, otherwise deny right click by default
 		denyLeftClick.set(stack.isItemStackDamageable());
-		denyRightClick.set(stack.isItemStackDamageable());
+		denyRightClick.set(!stack.isItemStackDamageable());
 	}
 
 	@Override

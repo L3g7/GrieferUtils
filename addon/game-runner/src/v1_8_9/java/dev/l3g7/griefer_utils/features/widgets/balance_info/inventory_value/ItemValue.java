@@ -5,8 +5,12 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value.laby4;
+package dev.l3g7.griefer_utils.features.widgets.balance_info.inventory_value;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
+import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.chat.outgoing.Calculator;
 import net.minecraft.item.ItemStack;
@@ -15,22 +19,27 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ItemValue {
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 
-	private static final Pattern VALUE_PATTERN = Pattern.compile("\\b([\\d,.k]+)\\b");
+public class ItemValue implements ListEntry<ItemValue> {
 
 	/**
 	 * A pattern matching all obfuscated parts of a formatted text to prevent their detection.
 	 */
 	private static final Pattern OBFUSCATED_TEXT_PATTERN = Pattern.compile("§k.+?(?:§[^lonmk]|$)");
+	private static final Pattern VALUE_PATTERN = Pattern.compile("\\b([\\d,.k]+)\\b");
 
-	ItemStack stack;
-	int value;
+	private transient ItemStack stack;
 
-	ItemValue(ItemStack stack, int value) {
+	protected final NumberSetting value = NumberSetting.create()
+		.name("Wert")
+		.icon("coin_pile");
+
+	private ItemValue() {}
+
+	ItemValue(ItemStack stack) {
 		this.stack = stack.copy();
 		this.stack.stackSize = 1;
-		this.value = value;
 	}
 
 	public boolean appliesTo(ItemStack stack) {
@@ -80,6 +89,41 @@ public class ItemValue {
 		}
 
 		return detectedValue;
+	}
+
+	@Override
+	public ItemValue createNew() {
+		return new ItemValue();
+	}
+
+	@Override
+	public void load(JsonElement element) {
+		JsonObject data = element.getAsJsonObject();
+		this.stack = ItemUtil.fromNBT(data.get("nbt").getAsString());
+		this.value.set(data.get("value").getAsInt());
+	}
+
+	@Override
+	public JsonElement encode() {
+		JsonObject data = new JsonObject();
+		data.addProperty("nbt", ItemUtil.serializeNBT(this.stack));
+		data.addProperty("value", value.get());
+		return data;
+	}
+
+	@Override
+	public String getName() {
+		return stack.getDisplayName();
+	}
+
+	@Override
+	public ItemStack itemIcon() {
+		return stack;
+	}
+
+	@Override
+	public String subtext() {
+		return DECIMAL_FORMAT_98.format(value) + "$";
 	}
 
 }

@@ -546,6 +546,20 @@ public class ConfigPatcher {
 
 				toolSaver.add("exclusions", newExclusions);
 			}
+
+			JsonObject inventoryValue = get("modules.inventory_value");
+			if (inventoryValue.has("entries") && inventoryValue.get("entries").isJsonObject()) {
+				JsonArray newEntries = new JsonArray();
+
+				for (Entry<String, JsonElement> entry : inventoryValue.get("entries").getAsJsonObject().entrySet()) {
+					JsonObject exclusion = new JsonObject();
+					exclusion.addProperty("nbt", entry.getKey());
+					exclusion.add("value", entry.getValue());
+					newEntries.add(exclusion);
+				}
+
+				inventoryValue.add("entries", newEntries);
+			}
 		}
 	}
 

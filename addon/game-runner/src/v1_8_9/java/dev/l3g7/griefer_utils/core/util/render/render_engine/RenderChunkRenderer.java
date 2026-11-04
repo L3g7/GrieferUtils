@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -27,16 +26,17 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 class RenderChunkRenderer {
 
-	/**
-	 * Overwrites the currently loaded textures to prevent GlStateManager thinking textures.
-	 */
-	private static void resetTexture() {
-		mc().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+	private static void checkRecompile(boolean forceRecompilation) {
+		for (RenderChunk chunk : RenderChunkManager.chunks.values())
+			chunk.checkRecompile(forceRecompilation);
+		for (RenderChunk chunk : SchematicaRenderChunkManager.schematicChunks.values())
+			chunk.checkRecompile(forceRecompilation);
 	}
 
 	@EventListener
 	private static void onRenderWorldLast(RenderWorldLastEvent event) {
-		if (RenderChunkManager.chunks.isEmpty())
+		if (RenderChunkManager.chunks.isEmpty()
+			&& SchematicaRenderChunkManager.schematicChunks.isEmpty())
 			return;
 
 		mc().mcProfiler.startSection("render_engine");
@@ -44,6 +44,15 @@ class RenderChunkRenderer {
 		if (Constants.SCHEMATICA) {
 			mc().mcProfiler.startSection("update_schematic");
 			SchematicaRenderChunkManager.checkForSchematicUpdate();
+			mc().mcProfiler.endStartSection("check_recompile");
+		} else {
+			mc().mcProfiler.startSection("check_recompile");
+		}
+
+		checkRecompile(false);
+		if (AtlasManager.isOutdated()) {
+			AtlasManager.recompile();
+			checkRecompile(true);
 		}
 
 		mc().mcProfiler.endStartSection("setup");
@@ -52,7 +61,6 @@ class RenderChunkRenderer {
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.003921569F);
 		GlStateManager.depthMask(true);
-		resetTexture();
 		GlStateManager.color(1, 1, 1, 1);
 
 		double viewY = mc().getRenderManager().playerViewY + 12.5d;
@@ -72,7 +80,6 @@ class RenderChunkRenderer {
 		}
 
 		mc().mcProfiler.endStartSection("teardown");
-		resetTexture();
 		GlStateManager.depthMask(true);
 		GlStateManager.disableBlend();
 		GlStateManager.alphaFunc(516, 0.1F);
@@ -100,11 +107,11 @@ class RenderChunkRenderer {
 				continue;
 
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(entry.getKey().chunkXPos * 16 - EntityFX.interpPosX,
-				-EntityFX.interpPosY, entry.getKey().chunkZPos * 16 - EntityFX.interpPosZ);
+			GlStateManager.translate(pair.chunkXPos * 16 - EntityFX.interpPosX,
+				-EntityFX.interpPosY, pair.chunkZPos * 16 - EntityFX.interpPosZ);
 			mc().mcProfiler.startSection("render_chunk");
 
-			entry.getValue().draw(entry.getKey(), frustum, rotationIndex);
+			entry.getValue().draw(pair, frustum, rotationIndex);
 
 			mc().mcProfiler.endSection();
 			GlStateManager.popMatrix();

@@ -14,9 +14,8 @@ public class TextureAtlas {
 
 	protected final ResourceLocation texture;
 	protected final int[] pixels;
-	protected final int texWidth;
-	protected final int texHeight;
-
+	public final int textureWidth;
+	public final int textureHeight;
 	protected final int entriesX;
 	protected final int entriesY;
 	protected final int entryWidth;
@@ -30,31 +29,27 @@ public class TextureAtlas {
 		// TextureUtil.readBufferedImage closes the stream
 
 		this.texture = texture;
-		texWidth = img.getWidth();
-		texHeight = img.getHeight();
+		textureWidth = img.getWidth();
+		textureHeight = img.getHeight();
 		this.entriesX = entriesX;
 		this.entriesY = entriesY;
-		entryHeight = texHeight / entriesX;
-		entryWidth = texWidth / entriesY;
+		entryHeight = textureHeight / entriesX;
+		entryWidth = textureWidth / entriesY;
 
-		pixels = new int[texWidth * texHeight];
-		img.getRGB(0, 0, texWidth, texHeight, pixels, 0, texWidth);
+		pixels = new int[textureWidth * textureHeight];
+		img.getRGB(0, 0, textureWidth, textureHeight, pixels, 0, textureWidth);
 	}
 
-	/**
-	 * Converts pixel coordinates into relative UV coordinates
-	 */
-	protected Texture createSprite(int minX, int maxX, int minY, int maxY) {
-		return new Texture(
+	protected TextureCutout createSprite(int minX, int maxX, int minY, int maxY) {
+		return new TextureCutout(
 			texture,
-			minX / (double) texWidth,
-			maxX / (double) texWidth,
-			minY / (double) texHeight,
-			maxY / (double) texHeight
+			minX,
+			minY, maxX,
+			maxY
 		);
 	}
 
-	public Texture getSprite(int spriteIndex) {
+	public TextureCutout getSprite(int spriteIndex) {
 		this.x = (spriteIndex % entriesX) * entryWidth;
 		this.y = (spriteIndex / entriesY) * entryHeight;
 
@@ -71,7 +66,7 @@ public class TextureAtlas {
 		}
 
 		@Override
-		public Texture getSprite(int spriteIndex) {
+		public TextureCutout getSprite(int spriteIndex) {
 			this.x = (spriteIndex % 16) * entryWidth;
 			this.y = (spriteIndex / 16) * entryHeight;
 
@@ -114,7 +109,7 @@ public class TextureAtlas {
 		}
 
 		private boolean isPixelFilled(int x, int y) {
-			return (pixels[x + y * texWidth] >> 24) != 0;
+			return (pixels[x + y * textureWidth] >> 24) != 0;
 		}
 
 	}

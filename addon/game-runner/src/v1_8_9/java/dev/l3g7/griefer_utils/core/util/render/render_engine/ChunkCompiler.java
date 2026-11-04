@@ -1,141 +1,45 @@
 package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
-import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Texture;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.UV;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Vertices;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.util.Vec3;
 
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.util.List;
-
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.AtlasManager.getAtlas;
 import static org.lwjgl.opengl.GL11.*;
 
 public class ChunkCompiler {
 
-	private ByteBuffer byteBuffer;
-	private int vertexCount;
-	private int vertexFormatIndex;
-	private final VertexFormat vertexFormat = DefaultVertexFormats.POSITION_TEX;
-
-	ChunkCompiler(int bytes) {
-		this.byteBuffer = GLAllocation.createDirectByteBuffer(bytes);
+	void bindTexture() {
+		getAtlas().bind();
 	}
 
-	public void reset() {
-		this.vertexCount = 0;
-		this.vertexFormatIndex = 0;
+	void begin(int list) {
+		glNewList(list, GL_COMPILE);
+		glBegin(GL_QUADS);
 	}
 
-	public ChunkCompiler tex(double u, double v) {
-		int i = vertexCount * vertexFormat.getNextOffset() + vertexFormat.getOffset(vertexFormatIndex);
-
-		this.byteBuffer.putFloat(i, (float) u);
-		this.byteBuffer.putFloat(i + 4, (float) v);
-
-		this.nextVertexFormatIndex();
-		return this;
+	void end() {
+		glEnd();
+		glEndList();
 	}
 
-	public ChunkCompiler pos(double x, double y, double z) {
-		int i = vertexCount * vertexFormat.getNextOffset() + vertexFormat.getOffset(vertexFormatIndex);
-
-		this.byteBuffer.putFloat(i, (float) x);
-		this.byteBuffer.putFloat(i + 4, (float) y);
-		this.byteBuffer.putFloat(i + 8, (float) z);
-
-		this.nextVertexFormatIndex();
-		return this;
+	public void render(TextureCutout cutout, Vertices vertices) {
+		AtlasManager.register(cutout);
+		if (!AtlasManager.isOutdated())
+			render(AtlasManager.getAtlas().getUV(cutout), vertices);
 	}
 
-	public void render(Texture texture, Vertices vertices) {
-		texture.bind();
-
-		ensureCapacity();
-		pos(vertices.a().xCoord, vertices.a().yCoord, vertices.a().zCoord).tex(texture.maxU(), texture.maxV()).endVertex();
-		pos(vertices.b().xCoord, vertices.b().yCoord, vertices.b().zCoord).tex(texture.minU(), texture.maxV()).endVertex();
-		pos(vertices.c().xCoord, vertices.c().yCoord, vertices.c().zCoord).tex(texture.minU(), texture.minV()).endVertex();
-		pos(vertices.d().xCoord, vertices.d().yCoord, vertices.d().zCoord).tex(texture.maxU(), texture.minV()).endVertex();
+	public void render(UV uv, Vertices vertices) {
+		vertex(vertices.a(), uv.maxU(), uv.maxV());
+		vertex(vertices.b(), uv.minU(), uv.maxV());
+		vertex(vertices.c(), uv.minU(), uv.minV());
+		vertex(vertices.d(), uv.maxU(), uv.minV());
 	}
 
-	public void ensureCapacity() {
-		int i = (vertexCount + 4) * vertexFormat.getNextOffset();
-		if (i <= byteBuffer.capacity())
-			return;
-
-		int newSize = Math.max(byteBuffer.capacity() * 2, i);
-		ByteBuffer buf = GLAllocation.createDirectByteBuffer(newSize);
-		// Invoke position of superclass because ByteBuffer#position doesn't exist in Java 8
-		((Buffer) this.byteBuffer).position(0);
-		buf.put(this.byteBuffer);
-		((Buffer) buf).position(0);
-		this.byteBuffer = buf;
-	}
-
-	public void endVertex() {
-		vertexCount++;
-	}
-
-	private void nextVertexFormatIndex() {
-		vertexFormatIndex++;
-		vertexFormatIndex %= vertexFormat.getElementCount();
-	}
-
-	public void draw() {
-		ByteBuffer bytebuffer = byteBuffer;
-
-		if (vertexCount <= 0)
-			return;
-
-		int offset = vertexFormat.getNextOffset();
-		List<VertexFormatElement> elements = vertexFormat.getElements();
-
-		// preDraw
-		for (int i = 0; i < elements.size(); i++)
-			preDraw(elements.get(i).getUsage(), i, offset, bytebuffer);
-
-		// draw
-		GL11.glDrawArrays(GL_QUADS, 0, vertexCount);
-
-		// postDraw
-		for (int i = 0; i < elements.size(); i++)
-			postDraw(elements.get(i).getUsage(), i);
-	}
-
-	private void preDraw(VertexFormatElement.EnumUsage attrType, int element, int stride, ByteBuffer buffer) {
-		VertexFormatElement attr = vertexFormat.getElement(element);
-		int count = attr.getElementCount();
-		int constant = attr.getType().getGlConstant();
-		// Invoke position of superclass because ByteBuffer#position doesn't exist in Java 8
-		((Buffer) buffer).position(vertexFormat.getOffset(element));
-		switch (attrType) {
-			case POSITION -> {
-				glVertexPointer(count, constant, stride, buffer);
-				glEnableClientState(GL_VERTEX_ARRAY);
-			}
-			case UV -> {
-				OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-				glTexCoordPointer(count, constant, stride, buffer);
-				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-			}
-		}
-	}
-
-	private void postDraw(VertexFormatElement.EnumUsage attrType, int element) {
-		VertexFormatElement attr = vertexFormat.getElement(element);
-		switch (attrType) {
-			case POSITION -> glDisableClientState(GL_VERTEX_ARRAY);
-			case UV -> {
-				OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-				OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-			}
-		}
+	private void vertex(Vec3 pos, double u, double v) {
+		glTexCoord2f((float) u, (float) v);
+		glVertex3f((float) pos.xCoord, (float) pos.yCoord, (float) pos.zCoord);
 	}
 
 }

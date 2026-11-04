@@ -1,9 +1,9 @@
 package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ChunkCoordIntPair;
 import org.lwjgl.opengl.GL11;
 
@@ -24,22 +24,24 @@ class RenderChunk {
 
 	private final ChunkPart[] parts = new ChunkPart[16];
 
-	public void add(BlockPos pos, RenderObject renderObject) {
-		int index = pos.getY() / 16;
+	public void add(BlockPos chunkPos, RenderObject renderObject) {
+		int index = chunkPos.getY() / 16;
 		ChunkPart part = parts[index];
 		if (part == null)
 			part = parts[index] = new ChunkPart();
 
-		part.add(pos, renderObject);
+		part.add(chunkPos, renderObject);
 	}
 
-	public void remove(BlockPos pos) {
+	public void remove(BlockPos chunkPos) {
 		synchronized (parts) {
-			int index = pos.getY() / 16;
+			int index = chunkPos.getY() / 16;
 
 			ChunkPart part = parts[index];
-			if (part != null && part.remove(pos))
+			if (part != null && part.remove(chunkPos)) {
+				part.delete();
 				parts[index] = null;
+			}
 		}
 	}
 
@@ -61,6 +63,14 @@ class RenderChunk {
 		}
 	}
 
+	public void checkRecompile(boolean forceRecompilation) {
+		synchronized (parts) {
+			for (ChunkPart part : parts)
+				if (part != null && (part.mustRecompile || forceRecompilation))
+					part.recompile();
+		}
+	}
+
 	public void draw(ChunkCoordIntPair pair, Frustum frustum, int rotation) {
 		synchronized (parts) {
 			for (int i = 0; i < parts.length; i++) {
@@ -79,14 +89,12 @@ class RenderChunk {
 				if (!isVisible)
 					continue;
 
-				if (part.mustRecompile) {
-					part.recompile();
-				} else if (part.list == 0) {
+				if (part.list == 0) {
 					parts[i] = null;
 					return;
 				}
 
-				mc().getTextureManager().bindTexture(new ResourceLocation("textures/font/ascii.png"));
+				part.compiler.bindTexture();
 				GL11.glCallList(part.list + rotation);
 			}
 		}
@@ -94,17 +102,17 @@ class RenderChunk {
 
 	private static class ChunkPart {
 
-		private static final ChunkCompiler COMPILER = new ChunkCompiler(4096);
+		private final ChunkCompiler compiler = new ChunkCompiler();
+		private boolean mustRecompile = false;
 
 		int list = 0;
-		boolean mustRecompile = false;
 		private final Map<BlockPos, RenderObject> renderObjects = new HashMap<>();
 
 		public synchronized void add(BlockPos pos, RenderObject newRenderObject) {
 			RenderObject oldRenderObject = this.renderObjects.put(pos, newRenderObject);
 
 			if (oldRenderObject == null || !oldRenderObject.equals(newRenderObject))
-				this.mustRecompile = true;
+				mustRecompile = true;
 		}
 
 		/**
@@ -124,29 +132,32 @@ class RenderChunk {
 			}
 
 			if (list != 0)
-				delete();
+				deleteList();
 
-			if (list == 0)
-				list = GL11.glGenLists(16);
+			list = GL11.glGenLists(16);
 
 			if (list == 0)
 				return; // glGenLists failed
 
 			for (int rotation = 0; rotation < 16; rotation++) {
-				COMPILER.reset();
-				for (Map.Entry<BlockPos, RenderObject> entry : renderObjects.entrySet())
-					entry.getValue().draw(COMPILER, entry.getKey(), rotation);
-
-				GL11.glNewList(list + rotation, GL11.GL_COMPILE);
-				COMPILER.draw();
-				GL11.glEndList();
+				mc().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+				compiler.begin(list + rotation);
+				try {
+					for (Map.Entry<BlockPos, RenderObject> entry : renderObjects.entrySet())
+						entry.getValue().draw(compiler, entry.getKey(), rotation);
+				} finally {
+					compiler.end();
+				}
 			}
 
 			mustRecompile = false;
 		}
 
 		private synchronized void delete() {
-			mustRecompile = true;
+			deleteList();
+		}
+
+		private synchronized void deleteList() {
 			if (list == 0)
 				return;
 

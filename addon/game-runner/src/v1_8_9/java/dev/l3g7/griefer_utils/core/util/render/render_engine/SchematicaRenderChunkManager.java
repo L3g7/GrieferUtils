@@ -50,8 +50,10 @@ class SchematicaRenderChunkManager {
 						continue;
 
 					ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
+					BlockPos worldPos = pos.add(dX, dY, dZ);
+					BlockPos chunkPos = new BlockPos(worldPos.getX() & 15, worldPos.getY(), worldPos.getZ() & 15);
 					schematicChunks.computeIfAbsent(pair, p -> new RenderChunk())
-						.add(position.add(dX, dY, dZ), renderObject);
+						.add(chunkPos, renderObject);
 				}
 			}
 		}

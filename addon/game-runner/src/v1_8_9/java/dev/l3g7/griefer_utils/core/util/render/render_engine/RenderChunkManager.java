@@ -55,7 +55,7 @@ class RenderChunkManager {
 						if (renderObject == null)
 							continue;
 
-						chunk.add(targetPos, renderObject);
+						chunk.add(new BlockPos(x, y + ebs.getYLocation(), z), renderObject);
 					}
 				}
 			}
@@ -105,16 +105,17 @@ class RenderChunkManager {
 	private static void updateBlock(BlockPos pos, IBlockState state) {
 		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
 		RenderObject renderObject = RenderObject.fromState(pos, state, world());
+		BlockPos chunkPos = new BlockPos(pos.getX() & 15, pos.getY(), pos.getZ() & 16);
 
 		if (renderObject != null) {
 			RenderChunk chunk = chunks.computeIfAbsent(pair, k -> new RenderChunk());
-			chunk.add(pos, renderObject);
+			chunk.add(chunkPos, renderObject);
 			return;
 		}
 
 		RenderChunk chunk = chunks.get(pair);
 		if (chunk != null && chunk.hasData())
-			chunk.remove(pos);
+			chunk.remove(chunkPos);
 	}
 
 

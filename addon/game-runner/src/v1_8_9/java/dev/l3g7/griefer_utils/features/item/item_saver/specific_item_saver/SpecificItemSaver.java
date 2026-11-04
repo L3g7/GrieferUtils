@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -42,14 +41,12 @@ import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.ResourceLocation;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.ItemProtection.UNPROTECTED;
 import static net.minecraft.network.play.client.C02PacketUseEntity.Action.ATTACK;
 
 @Singleton
-@ExclusiveTo(LABY_4)
 public class SpecificItemSaver extends Feature {
 
 	private static final ItemStack BLOCKED = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");
@@ -65,8 +62,7 @@ public class SpecificItemSaver extends Feature {
 	private final ListSetting<ItemProtection> entries = ListSetting.create(ItemProtection.class)
 		.name("Geschützte Items")
 		.icon("diamond")
-		.customAdd(this::addProtectedItem)
-		.unpacked();
+		.customAdd(this::addProtectedItem);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -85,7 +81,7 @@ public class SpecificItemSaver extends Feature {
 
 	private void addProtectedItem() {
 		if (mc().thePlayer == null) {
-			LabyBridge.labyBridge.notify("§e§lFehler ⚠", "§eHinzufügen von Items ist nur Ingame möglich!", 5000);
+			LabyBridge.labyBridge.notify("§e§lFehler ⚠", "§eHinzufügen von Items ist nur ingame möglich!", 5000);
 			return;
 		}
 

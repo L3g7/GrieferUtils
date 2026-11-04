@@ -5,14 +5,13 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.settings.credits.bridge;
+package dev.l3g7.griefer_utils.features.uncategorized.settings.credits.settings;
 
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.util.render.AsyncSkullRenderer;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
@@ -30,16 +29,11 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_3)
-public class Laby3Credits implements CreditsBridge {
+public class Laby3CreditsSettings implements CreditsSettings {
 
 	@Override
-	public BaseSetting<?> createIconSetting(String displayName, String icon) {
-		return new IconSetting(displayName, icon);
-	}
-
-	@Override
-	public BaseSetting<?> createTextSetting(String... text) {
-		return new TextSetting(text);
+	public BaseSetting<?> createTextSetting(String... lines) {
+		return new TextSetting(lines);
 	}
 
 	@Override
@@ -48,12 +42,7 @@ public class Laby3Credits implements CreditsBridge {
 	}
 
 	@Override
-	public BaseSetting<?> createPadding(int height) {
-		return HeaderSetting.create().entryHeight(height);
-	}
-
-	@Override
-	public BaseSetting<?> createCookieLib() {
+	public BaseSetting<?> createCookieSetting() {
 		return new CookieSetting("com.github.l3g73:freecookies", "Stellt gratis Kekse bereit: Klicke hier", "Cookie License 4.2");
 	}
 
@@ -62,18 +51,28 @@ public class Laby3Credits implements CreditsBridge {
 		return new UserSetting();
 	}
 
-	private static class IconSetting extends ControlElement implements Laby3Setting<IconSetting, Object> {
+	private static class TextSetting extends HeaderSettingImpl {
 
-		private final ExtendedStorage<Object> storage = new ExtendedStorage<>(e -> JsonNull.INSTANCE, e -> NULL, NULL);
+		private final String[] lines;
 
-		public IconSetting(String displayName, String icon) {
-			super(displayName, new IconData(icon.startsWith("../") ? "griefer_utils/icons/" + icon.substring(6) + ".png" : "griefer_utils/icons/high_res/credits/" + icon + ".png"));
+		public TextSetting(String... lines) {
+			super();
+			this.lines = lines;
+			entryHeight(lines.length * 10 + 3);
 		}
 
 		@Override
-		public ExtendedStorage<Object> getStorage() {
-			return storage;
+		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
+			LabyMod.getInstance().getDrawUtils().drawRectangle(x - 50, y, maxX + 50, maxY, ModColor.toRGB(80, 80, 80, 60));
+
+			int drawY = y + 2;
+			for (String line : lines) {
+				LabyMod.getInstance().getDrawUtils().drawString(line, x - 48, drawY);
+				drawY += 10;
+			}
 		}
+
+
 	}
 
 	private static class UserSetting extends ControlElement implements Laby3Setting<UserSetting, Object> {
@@ -97,35 +96,6 @@ public class Laby3Credits implements CreditsBridge {
 
 	}
 
-	private static class TextSetting extends HeaderSettingImpl {
-
-		private final String[] lines;
-
-		public TextSetting(String... text) {
-			super();
-			lines = text;
-			entryHeight(lines.length * 10 + 3);
-
-			for (int i = 1; i < lines.length - 1; i++)
-				lines[i] = "  - " + lines[i];
-
-			int i = lines.length - 1;
-			lines[i] = "  - Lizenziert unter " + lines[i];
-		}
-
-		@Override
-		public void draw(int x, int y, int maxX, int maxY, int mouseX, int mouseY) {
-			LabyMod.getInstance().getDrawUtils().drawRectangle(x - 50, y, maxX + 50, maxY, ModColor.toRGB(80, 80, 80, 60));
-
-			int drawY = y + 2;
-			for (String line : lines) {
-				LabyMod.getInstance().getDrawUtils().drawString(line, x - 48, drawY);
-				drawY += 10;
-			}
-		}
-
-	}
-
 	public static class CookieSetting extends TextSetting {
 
 		public CookieSetting(String... text) {
@@ -134,7 +104,7 @@ public class Laby3Credits implements CreditsBridge {
 
 		@Override
 		public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-			Credits.giveCookie();
+			CreditsSettings.giveCookie();
 		}
 
 		@Override

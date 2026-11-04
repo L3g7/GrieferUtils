@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.settings.credits.bridge;
+package dev.l3g7.griefer_utils.features.uncategorized.settings.credits.settings;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CategorySettingImpl;
 import net.labymod.api.client.component.Component;
@@ -25,30 +24,16 @@ import net.labymod.api.configuration.settings.type.AbstractSetting;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
-import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits.credits;
 
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
-public class Laby4Credits implements CreditsBridge {
+public class Laby4CreditsSettings implements CreditsSettings {
 
-	public CategorySetting createIconSetting(String displayName, String icon) {
+	public BaseSetting<?> createTextSetting(String... lines) {
 		return CategorySetting.create()
-			.name(displayName)
-			.icon("high_res/credits/" + icon);
-	}
-
-	public BaseSetting<?> createTextSetting(String... text) {
-
-		for (int i = 1; i < text.length - 1; i++)
-			text[i] = "  - " + text[i];
-
-		int i = text.length - 1;
-		text[i] = "  - Lizenziert unter " + text[i];
-
-		return CategorySetting.create()
-			.name(String.join("\n", text));
+			.name(String.join("\n", lines));
 	}
 
 	@Override
@@ -62,12 +47,7 @@ public class Laby4Credits implements CreditsBridge {
 	}
 
 	@Override
-	public BaseSetting<?> createPadding(int height) {
-		return null;
-	}
-
-	@Override
-	public BaseSetting<?> createCookieLib() {
+	public BaseSetting<?> createCookieSetting() {
 		return new CookieSettingImpl();
 	}
 
@@ -96,7 +76,7 @@ public class Laby4Credits implements CreditsBridge {
 	public void onMessageSend(MessageSendEvent event) {
 		if (event.message.equals("/gu:y6Y7s8G88J1OLHwhMTEQYPbJ")) {
 			event.cancel();
-			Credits.giveCookie();
+			CreditsSettings.giveCookie();
 		}
 	}
 

@@ -9,12 +9,12 @@ package dev.l3g7.griefer_utils.features.gui.griefer_games;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.item.ItemStack;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,14 +76,14 @@ public class BetterJobExchange extends Feature {
 
 		for (int i = 0; i < offers.size(); i++) {
 			Pair<Integer, Integer> offer = offers.get(i);
-			int stacks = offer.getLeft();
+			int stacks = offer.a;
 			if (remainingStacks > 0) {
-				money += Math.min(remainingStacks, stacks) * offer.getRight();
+				money += Math.min(remainingStacks, stacks) * offer.b;
 				remainingStacks -= stacks;
 			}
 
 			if (calculateDKs.get()) {
-				String line = String.format("§7 / §e%s á §a%d§2$", stacks == 54 ? "1§7 DK" : String.format("%.1f§7 DKs", (stacks * 10 / 54) / 10d), offer.getRight() * 54);
+				String line = String.format("§7 / §e%s á §a%d§2$", stacks == 54 ? "1§7 DK" : String.format("%.1f§7 DKs", (stacks * 10 / 54) / 10d), offer.b * 54);
 				lore.set(i, lore.get(i) + line);
 			}
 		}
@@ -105,7 +105,7 @@ public class BetterJobExchange extends Feature {
 		Integer stacks = Integer.parseInt(line.substring(0, line.indexOf('§')));
 
 		line = line.substring(line.indexOf("§a") + 2, line.length() - 3);
-		return Pair.of(stacks, Integer.parseInt(line));
+		return new Pair<>(stacks, Integer.parseInt(line));
 	}
 
 	private static int getOwnedStacks(ItemStack requiredStack) {

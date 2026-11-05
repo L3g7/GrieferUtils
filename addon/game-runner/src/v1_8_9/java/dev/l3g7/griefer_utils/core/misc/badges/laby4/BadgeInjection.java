@@ -8,14 +8,14 @@
 package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.TextColor;
+import net.labymod.api.client.entity.player.badge.BadgeRegistry;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.gui.screen.ScreenContext;
-import net.labymod.api.client.network.NetworkPlayerInfo;
 import net.labymod.api.client.render.state.EntityExtraKeys;
 import net.labymod.api.client.render.state.entity.EntitySnapshot;
 import net.labymod.api.configuration.labymod.main.LabyConfig;
@@ -25,7 +25,7 @@ import net.labymod.api.user.GameUser;
 import net.labymod.api.user.badge.ServerBadge;
 import net.labymod.api.user.group.Group;
 import net.labymod.api.util.CountryCode;
-import net.minecraft.util.ResourceLocation;
+import net.labymod.core.main.user.serverfeature.badge.RankBadgeRenderer;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -38,12 +38,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.awt.*;
-import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge.DEFAULT_BADGE;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.icon;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
+import static net.labymod.api.client.entity.player.badge.PositionType.LEFT_TO_NAME;
 
 /**
  * Fail-soft injection of GrieferUtils badges.
@@ -52,6 +52,18 @@ public class BadgeInjection {
 
 	public interface GrieferUtilsGameUserSnapshot {
 		@Nullable SpecialBadge grieferUtils$getBadge();
+	}
+
+	@OnEnable
+	private static void overrideBadgeRenderer() {
+		BadgeRegistry badges = Laby.references().badgeRegistry();
+		try {
+			var renderer = new GrieferUtilsBadgeRenderer(new RankBadgeRenderer(false));
+			badges.unregister("labymod_rank");
+			badges.register("labymod_rank", LEFT_TO_NAME, renderer);
+		} catch (Throwable t) {
+			t.printStackTrace(System.err); // Fail softly
+		}
 	}
 
 	/**
@@ -110,38 +122,6 @@ public class BadgeInjection {
 			}
 
 			return groupComponent;
-		}
-
-	}
-
-	/**
-	 * Tablist rendering
-	 */
-	@Pseudo
-	@ExclusiveTo(LABY_4)
-	@Mixin(targets = "net.labymod.core.main.user.serverfeature.badge.RankBadgeRenderer", remap = false)
-	public static abstract class GrieferUtilsRankBadgeRenderer {
-
-		@Inject(
-			method = "render(Lnet/labymod/api/client/gui/screen/ScreenContext;FFLnet/labymod/api/client/network/NetworkPlayerInfo;)V",
-			at = @At("HEAD"),
-			cancellable = true,
-			require = 0
-		)
-		private void injectRender(ScreenContext context, float x, float y, NetworkPlayerInfo player, CallbackInfo ci) {
-			UUID uuid = player.profile().getUniqueId();
-			if (!showBadges() || !Badges.isOnline(uuid))
-				return; // Fall through to LabyMod's original rendering
-
-			Badges.SpecialBadge badge = Badges.getBadge(uuid).orElse(DEFAULT_BADGE);
-			boolean revealFamiliarUsers = Boolean.TRUE.equals(Laby.labyAPI().config().multiplayer().tabList().labyModBadge().get());
-			int color = 0xFFFFFFFF;
-			if (icon.equals("icon"))
-				color = (revealFamiliarUsers ? badge.colorWithLabymod() : badge.colorWithoutLabymod()) | 0xFF000000;
-
-			Icon lmIcon = Icon.svg((net.labymod.api.client.resources.ResourceLocation) new ResourceLocation("griefer_utils", "icons/high_res/" + icon + ".svg"));
-			context.canvas().submitIcon(lmIcon, x, y, 8.0F, 8.0F, false, color);
-			ci.cancel();
 		}
 
 	}

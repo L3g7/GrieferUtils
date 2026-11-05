@@ -69,7 +69,7 @@ public class SpecificItemSaver extends Feature {
 		.name("Spezifischer Item-Saver")
 		.description("Deaktiviert Klicks, Drops und Abgeben bei einstellbaren Items.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
 		.icon("shield_with_sword")
-		.subSettings(displayIcon, HeaderSetting.create(), entries);
+		.subSettings(displayIcon,  entries);
 
 	// Item add logic
 

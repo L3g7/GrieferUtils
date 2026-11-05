@@ -239,7 +239,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 
 		// Hook add button
 		if (setting.customAdd != null) {
-			event.get("container", "mods-breadcrumb", "accent-button").setPressable(() -> setting.customAdd.run());
+			event.get("container", "window-header", "mods-breadcrumb", "accent-button").setPressable(() -> setting.customAdd.run());
 
 			var emptyAdd = event.get("container", "mods-options-scroll", "mods-options-list", "empty-state-empty", "empty-state-content", "empty-state-actions", "accent-button");
 			if (emptyAdd != null)

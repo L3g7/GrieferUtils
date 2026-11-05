@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.UserSetGroupEvent;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import net.labymod.core_implementation.mc18.gui.ModPlayerTabOverlay;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModSettings;
@@ -22,6 +23,7 @@ import net.labymod.user.group.LabyGroup;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,7 +37,10 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.misc.badges.Badges.icon;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showPercentage;
 
 @Bridge
 @Singleton
@@ -88,6 +93,22 @@ public class Laby3BadgeManager implements BadgeManager {
 		return LabyMod.getInstance().getUserManager().getUser(uuid);
 	}
 
+	public static void renderStats(double rightEnd) {
+		if (!showBadges() || !showPercentage.get())
+			return;
+
+		double y = mc().fontRendererObj.FONT_HEIGHT;
+
+		String text = Badges.getUserCount();
+		if (text == null)
+			return;
+
+		DrawUtils.drawRightString(text, rightEnd, 1.5 + y, 0.7);
+		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/high_res/" + icon + ".png"));
+		rightEnd -= mc().fontRendererObj.getStringWidth(text) * 0.7;
+		DrawUtils.drawTexture(rightEnd - 8, 1.25 + y, 256, 256, 7, 7);
+	}
+
 	@ExclusiveTo(LABY_3)
 	@Mixin(value = ModPlayerTabOverlay.class, remap = false)
 	private static class MixinModPlayerTabOverlay {
@@ -122,7 +143,7 @@ public class Laby3BadgeManager implements BadgeManager {
 
 		@Inject(method = "newTabOverlay", at = @At("TAIL"), remap = false)
 		public void injectNewTabOverlay(int screenWidth, Scoreboard scoreboardIn, ScoreObjective scoreObjectiveIn, CallbackInfo ci) {
-			Badges.renderUserPercentage(screenWidth - grieferUtils$tablistPadding);
+			renderStats(screenWidth - grieferUtils$tablistPadding);
 		}
 
 	}

@@ -16,6 +16,7 @@ import net.labymod.api.client.component.Component;
 import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.entity.player.badge.BadgeRegistry;
 import net.labymod.api.client.gui.icon.Icon;
+import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.render.state.EntityExtraKeys;
 import net.labymod.api.client.render.state.entity.EntitySnapshot;
 import net.labymod.api.configuration.labymod.main.LabyConfig;
@@ -36,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.awt.*;
 
@@ -131,6 +133,21 @@ public class BadgeInjection {
 	 */
 	@Pseudo
 	@ExclusiveTo(LABY_4)
+	@Mixin(targets = "net.labymod.core.client.gui.screen.activity.activities.ingame.playerlist.PlayerListRenderer", remap = false)
+	public static abstract class MixinPlayerListRenderer {
+
+		@Inject(method = "renderLabyModStats", at = @At("TAIL"), require = 0, locals = LocalCapture.CAPTURE_FAILSOFT)
+		private void renderLabyModStats(ScreenContext context, float backgroundWidth, int x, int y, CallbackInfo ci, int onlineCount, int userCount) {
+			Laby4BadgeManager.renderStats(context, backgroundWidth, x, y, onlineCount, userCount);
+		}
+
+	}
+
+	/**
+	 * Display name rendering.
+	 */
+	@Pseudo
+	@ExclusiveTo(LABY_4)
 	@Mixin(targets = "net.labymod.core.main.user.group.tag.GroupIconTag", remap = false)
 	public static abstract class MixinGroupIconTag {
 
@@ -138,7 +155,7 @@ public class BadgeInjection {
 		private @Nullable SpecialBadge grieferUtils$badge;
 
 		@Inject(method = "begin", at = @At("HEAD"), require = 0)
-		private void grieferUtils$injectBegin(EntitySnapshot snapshot, CallbackInfo ci) {
+		private void injectBegin(EntitySnapshot snapshot, CallbackInfo ci) {
 			grieferUtils$badge = null;
 
 			if (snapshot instanceof GrieferUtilsGameUserSnapshot guSnapshot)
@@ -148,13 +165,13 @@ public class BadgeInjection {
 		}
 
 		@Inject(method = "getIcon", at = @At("HEAD"), cancellable = true, require = 0)
-		private void grieferUtils$injectGetIcon(EntitySnapshot snapshot, CallbackInfoReturnable<Icon> cir) {
+		private void injectGetIcon(EntitySnapshot snapshot, CallbackInfoReturnable<Icon> cir) {
 			if (grieferUtils$badge != null)
 				cir.setReturnValue(Icon.svg(Laby.references().resourceLocationFactory().create("griefer_utils", "icons/high_res/" + icon + ".svg")));
 		}
 
 		@Inject(method = "getColor", at = @At("HEAD"), cancellable = true, require = 0)
-		private void grieferUtils$injectGetColor(EntitySnapshot snapshot, CallbackInfoReturnable<Integer> cir) {
+		private void injectGetColor(EntitySnapshot snapshot, CallbackInfoReturnable<Integer> cir) {
 			if (grieferUtils$badge == null)
 				return;
 
@@ -169,16 +186,15 @@ public class BadgeInjection {
 		}
 
 		@Inject(method = "getScale", at = @At("HEAD"), cancellable = true, require = 0)
-		private void grieferUtils$injectGetScale(CallbackInfoReturnable<Float> cir) {
+		private void injectGetScale(CallbackInfoReturnable<Float> cir) {
 			if (grieferUtils$badge != null)
 				cir.setReturnValue(1f);
 		}
 
 		@Inject(method = "getIconOffsetX", at = @At("HEAD"), cancellable = true, require = 0)
-		private void grieferUtils$injectGetIconOffsetX(CallbackInfoReturnable<Float> cir) {
+		private void injectGetIconOffsetX(CallbackInfoReturnable<Float> cir) {
 			if (grieferUtils$badge != null)
 				cir.setReturnValue(-1f);
 		}
-
 	}
 }

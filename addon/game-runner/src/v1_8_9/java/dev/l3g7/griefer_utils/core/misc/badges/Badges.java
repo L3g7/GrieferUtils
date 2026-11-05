@@ -16,11 +16,9 @@ import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListClearEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.*;
 
@@ -112,14 +110,13 @@ public class Badges {
 
 	}
 
-	public static void renderUserPercentage(double rightEnd) {
+	public static String getUserCount() {
 		if (!showBadges() || !showPercentage.get())
-			return;
+			return null;
 
-		double y = mc().fontRendererObj.FONT_HEIGHT;
 		NetHandlerPlayClient netHandler = mc().getNetHandler();
 		if (netHandler == null)
-			return;
+			return null;
 
 		int totalCount = netHandler.getPlayerInfoMap().size();
 		int userCount = 0;
@@ -128,12 +125,7 @@ public class Badges {
 				userCount++;
 
 		int percent = totalCount == 0 ? 0 : (int) Math.round(userCount / (double) totalCount * 100);
-		String text = GUServer.isAvailable() ? String.format("§7%d§8/§7%d §a%d%%", userCount, totalCount, percent) : "§c?";
-		DrawUtils.drawRightString(text, rightEnd, 1.5 + y, 0.7);
-
-		DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/high_res/" + icon + ".png"));
-		rightEnd -= mc().fontRendererObj.getStringWidth(text) * 0.7;
-		DrawUtils.drawTexture(rightEnd - 8, 1.25 + y, 256, 256, 7, 7);
+		return GUServer.isAvailable() ? String.format("§7%d§8/§7%d §a%d%%", userCount, totalCount, percent) : "§c?";
 	}
 
 	@Bridged

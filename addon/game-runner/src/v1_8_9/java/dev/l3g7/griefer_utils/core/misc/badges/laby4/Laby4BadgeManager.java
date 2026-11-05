@@ -12,27 +12,29 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager;
-import net.labymod.api.LabyAPI;
+import net.labymod.api.Laby;
+import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.NamedTextColor;
+import net.labymod.api.client.gfx.pipeline.renderer.text.TextRenderingOptions;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.ScreenContext;
-import net.labymod.api.client.gui.screen.widget.attributes.bounds.Bounds;
-import net.labymod.api.client.render.font.RenderableComponent;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Coerce;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import net.labymod.api.client.gui.screen.state.ScreenCanvas;
+import net.labymod.api.client.render.font.FontSize;
+import net.labymod.api.client.resources.ResourceLocation;
+import net.labymod.api.util.math.MathHelper;
 
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
+import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showPercentage;
 
 @Bridge
 @Singleton
 @ExclusiveTo(LABY_4)
 public class Laby4BadgeManager implements BadgeManager {
+
+    private static final ResourceLocation LABY_BADGE = ResourceLocation.labymod("textures/labymod_badge.svg");
 
 	@Override
 	public void setOnline(UUID uuid) { /* NO-OP */ }
@@ -43,19 +45,44 @@ public class Laby4BadgeManager implements BadgeManager {
 	@Override
 	public void toggleBadges(boolean enabled) { /* NO-OP */ }
 
-	/**
-	 * Render player percentage in tablist.
-	 */
-	@Pseudo
-	@ExclusiveTo(LABY_4)
-	@Mixin(targets = "net.labymod.core.client.gui.screen.activity.activities.ingame.playerlist.PlayerListRenderer", remap = false)
-	private static class MixinPlayerListRenderer {
+	public static void renderStats(ScreenContext context, float backgroundWidth, int x, int y, int labyOnlineCount, int labyUserCount) {
+		if (!showBadges() || !showPercentage.get())
+			return;
 
-		@Inject(method = "render", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT, require = 0)
-		private void injectRender(ScreenContext context, LabyAPI labyAPI, Bounds bounds, boolean update, @Coerce Object strip, CallbackInfo ci, float screenWidth, float screenHeight, RenderableComponent header, RenderableComponent footer, Icon banner, boolean showBanner, float guiScale, float scale, float stripHeight, float stripSpace, int top, float fixedHeight, int frameWidth, float columnsWidth, float backgroundWidth, int rowsPerColumn, float listHeight, float contentHeight, float originY, float slide, float hitOriginX, float hitOriginY, float alpha, boolean translucent, int x, int y, int statsY) {
-			Badges.renderUserPercentage(x + backgroundWidth);
+		String text = Badges.getUserCount();
+		if (text == null)
+			return;
+
+		ScreenCanvas canvas = context.canvas();
+		float fontSize = FontSize.PredefinedFontSize.SMALL.fontSize().getSize();
+		int iconSize = (int) ((float) 12 * fontSize);
+
+		// Render GrieferUtils stats
+		{
+			var icon = Icon.texture(Laby.references().resourceLocationFactory().create("griefer_utils", "icons/high_res/" + Badges.icon + ".png"));
+			Component component = Component.text(text);
+
+			canvas.submitComponent(component,
+				x + backgroundWidth + 2 - canvas.getTextWidth(component) * fontSize,
+				y, 0xFFFFFFFF, fontSize, TextRenderingOptions.SHADOW);
+
+			canvas.submitComponent(Component.icon(icon, iconSize),
+				(float) x + backgroundWidth + 2F - canvas.getTextWidth(component) * fontSize - iconSize,
+				y, 0xFFFFFFFF, fontSize, TextRenderingOptions.NONE);
 		}
 
+		// Render LabyMod badge to original stats
+		Component component = Component.text(labyUserCount, NamedTextColor.GRAY)
+			.append(Component.text("/", NamedTextColor.DARK_GRAY))
+			.append(Component.text(labyOnlineCount, NamedTextColor.GRAY))
+			.append(Component.space())
+			.append(Component.text(MathHelper.ceil(100F / (float) labyOnlineCount * (float) labyUserCount) + "%", NamedTextColor.GREEN));
+
+		var icon = Icon.svg(LABY_BADGE);
+
+        canvas.submitComponent(Component.icon(icon, iconSize),
+	        (float)x + backgroundWidth + 2F - canvas.getTextWidth(component) * fontSize - iconSize,
+	        (float)y - canvas.getLineHeight() * fontSize, 0xFFFFFFFF, fontSize, TextRenderingOptions.NONE);
 	}
 
 }

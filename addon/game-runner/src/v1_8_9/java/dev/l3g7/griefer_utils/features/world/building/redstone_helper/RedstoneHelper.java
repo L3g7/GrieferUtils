@@ -7,19 +7,20 @@
 
 package dev.l3g7.griefer_utils.features.world.building.redstone_helper;
 
+import com.google.common.base.Strings;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector;
-import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.OldRenderObject;
-import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObjectGenerator;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunkManager;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Vertices;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -28,22 +29,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.awt.*;
 import java.util.Random;
-import java.util.function.Supplier;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.minecraft.init.Blocks.*;
 
 /**
  * Implements cursor movement, selection and copy and paste in the sign edit gui.
  */
 @Singleton
-public class RedstoneHelper extends Feature implements RenderObjectGenerator, RenderObject.Generator {
+public class RedstoneHelper extends Feature implements RenderObject.Generator {
+
+	private static final TextureCutout ARROW_TEXTURE = new TextureCutout("griefer_utils", "textures/arrow.png");
 
 	private static final SwitchSetting showZeroPower = SwitchSetting.create()
 		.name("0 anzeigen")
 		.description("Ob die Stärke-Anzeige auch angezeigt werden soll, wenn die Stärke 0 beträgt.")
-		.icon("redstone_repeater");
+		.icon("redstone_repeater")
+		.callback(RenderChunkManager::reloadAll);
 
 	private static final SwitchSetting showPower = SwitchSetting.create()
 		.name("Redstone-Stärke anzeigen")
@@ -55,6 +58,18 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator, Re
 		.name("Richtung anzeigen")
 		.description("Zeigt die Richtung von Werfern / Spendern und Trichtern.")
 		.icon("axes");
+
+	private static final SwitchSetting showNoteId = SwitchSetting.create()
+		.name("Ton-ID anzeigen")
+		.description("Ob der Name des Tons oder die ID angezeigt werden soll.")
+		.icon("sounds")
+		.defaultValue(true);
+
+	private static final SwitchSetting showNoteBlockPitch = SwitchSetting.create()
+		.name("Notenblock-Höhe anzeigen")
+		.description("Zeigt an, welche Tonhöhe bei Notenblöcken eingestellt ist.")
+		.icon("sounds")
+		.subSettings(showNoteId);
 
 	private static final SwitchSetting showCauldronLevel = SwitchSetting.create()
 		.name("Kessel-Füllstand anzeigen")
@@ -72,7 +87,7 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator, Re
 		.name("Redstone-Helfer")
 		.description("Hilft beim Arbeiten mit Redstone.")
 		.icon("redstone_comparator")
-		.subSettings(showPower, showDirection, showCauldronLevel, HeaderSetting.create(), hideRedstoneParticles);
+		.subSettings(showPower, showDirection, showNoteBlockPitch, showCauldronLevel, HeaderSetting.create(), hideRedstoneParticles);
 
 	public static RedstoneHelper get() {
 		return get(RedstoneHelper.class);
@@ -81,34 +96,57 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator, Re
 	@Override
 	public void init() {
 		super.init();
-		BlockOverlayCollector.registerRenderObjectGenerator(this);
 		RenderObject.registerGenerator(this);
 	}
 
 	@Override
-	public OldRenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world) {
+	public RenderObject getRenderObject(BlockPos worldPos, IBlockState state, WorldClient world) {
 		Block block = state.getBlock();
-		if (block == cauldron)
-			return new TextRRO(showCauldronLevel, () -> state.getValue(BlockCauldron.LEVEL));
+
+		if (block == redstone_wire) {
+			if (!showPower.get())
+				return null;
+
+			int power = state.getValue(BlockRedstoneWire.POWER);
+			if (power == 0 && !showZeroPower.get())
+				return null;
+
+			return new Wire(state.getValue(BlockRedstoneWire.POWER));
+
+		}
 
 		if (block == hopper) {
+			if (!showDirection.get())
+				return null;
 			EnumFacing facing = state.getValue(BlockHopper.FACING);
 			return facing.getHorizontalIndex() == -1 ? null : new Hopper(facing);
 		}
 
-		if (block != dropper && block != dispenser)
-			return null;
+		if (block == dropper || block == dispenser) {
+			if (!showDirection.get())
+				return null;
+			return new Dropper(state.getValue(BlockDispenser.FACING));
+		}
 
-		EnumFacing dir = state.getValue(BlockDispenser.FACING);
-		return new Dropper(dir);
-	}
+		if (block == noteblock) {
+			if (!showNoteBlockPitch.get())
+				return null;
 
-	@Override
-	public RenderObject getRenderObject(BlockPos worldPos, IBlockState state, WorldClient world) {
-		if (state.getBlock() == redstone_wire && showPower.get()) {
-			int power = state.getValue(BlockRedstoneWire.POWER);
-			if (power > 0 || showZeroPower.get())
-				return new RedstoneHelper.Wire(state.getValue(BlockRedstoneWire.POWER));
+			if (!(world.getTileEntity(worldPos) instanceof TileEntityNote noteBlock))
+				return null;
+
+			String[] NOTES = new String[] { "Fis", "G", "Gis", "A", "Ais", "B", "C", "Cis", "D", "Dis", "E", "F" };
+			String note = NOTES[noteBlock.note % 12];
+			int octave = (noteBlock.note / 12) + 1;
+
+			return new TextRenderObject(note + Strings.repeat("'", octave));
+		}
+
+		if (block == cauldron) {
+			if (!showCauldronLevel.get())
+				return null;
+
+			return new TextRenderObject(String.valueOf(state.getValue(BlockCauldron.LEVEL)));
 		}
 
 		return null;
@@ -125,51 +163,57 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator, Re
 
 	}
 
-	public static class Wire extends RotatingTextRenderObject {
+	public static class Wire extends RenderObject {
+
+		private final int power;
+
 		public Wire(int power) {
-			super(String.valueOf(power));
+			this.power = power;
+		}
+
+		@Override
+		public boolean equals(RenderObject r) {
+			return r instanceof Wire w && power == w.power;
+		}
+
+		@Override
+		public void draw(ChunkCompiler compiler, int rotation) {
+			for (FontRenderData.CharRenderInfo renderInfo : FontRenderData.getCharRenderInfos(String.valueOf(power))) {
+				Vertices offsets = renderInfo.rotatedVertices()[rotation];
+				compiler.render(renderInfo.texture(), offsets.translate(0, -0.48, 0));
+			}
 		}
 	}
 
-	public static class Hopper extends OldRenderObject {
+	private static class Hopper extends RenderObject {
+
+		private static final Vertices BASE_VERTICES = Vertices.onYPlane(0.7, 0.7);
 
 		private final EnumFacing dir;
+		private final Vertices vertices;
 
 		private Hopper(EnumFacing dir) {
 			this.dir = dir;
+			this.vertices = BASE_VERTICES
+				.rotateY(-90 * dir.getHorizontalIndex())
+				.translate(0, 0.201, 0);
 		}
 
-		public void render(BlockPos pos, float partialTicks) {
-			if (!showDirection.get())
-				return;
+		@Override
+		public boolean equals(RenderObject r) {
+			return r instanceof Hopper h && dir == h.dir;
+		}
 
-			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
-
-			switch (dir) {
-				case NORTH:
-					GlStateManager.rotate(90, 0, -1, 0);
-					break;
-				case SOUTH:
-					GlStateManager.rotate(90, 0, 1, 0);
-					break;
-				case EAST:
-					GlStateManager.rotate(180, 0, 1, 0);
-					break;
-				case WEST:
-					break;
-			}
-			GlStateManager.scale(0.1, 0.1, 0.1);
-			GlStateManager.translate(-3.5, 7.01, -5.25);
-
-			GlStateManager.rotate(90, 1, 0, 0);
-			mc().fontRendererObj.drawString("⬅", 0, 0, 0xFFFFFF);
-
-			GlStateManager.popMatrix();
+		@Override
+		public void draw(ChunkCompiler compiler, int rotation) {
+			compiler.render(ARROW_TEXTURE, vertices);
 		}
 
 	}
 
-	private static class Dropper extends OldRenderObject {
+	private static class Dropper extends RenderObject {
+		private static final Vertices BASE_VERTICES = Vertices.onYPlane(1, 1)
+			.translate(0, 0.51, 0);
 
 		private final EnumFacing dir;
 
@@ -177,107 +221,62 @@ public class RedstoneHelper extends Feature implements RenderObjectGenerator, Re
 			this.dir = dir;
 		}
 
-		public void render(BlockPos pos, float partialTicks) {
-			if (!showDirection.get())
-				return;
-
-			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
-
-			switch (dir) {
-				case UP:
-					GlStateManager.rotate(270, 0, 0, 1);
-					GlStateManager.translate(-0.51, -0.51, 0);
-					break;
-				case DOWN:
-					GlStateManager.rotate(270, 0, 0, -1);
-					GlStateManager.translate(0.51, -0.51, 0);
-					break;
-				case NORTH:
-					GlStateManager.rotate(90, 0, -1, 0);
-					break;
-				case SOUTH:
-					GlStateManager.rotate(90, 0, 1, 0);
-					break;
-				case EAST:
-					GlStateManager.rotate(180, 0, 1, 0);
-					break;
-				case WEST:
-					break;
-			}
-			GlStateManager.translate(-0.35, 0, -0.51);
-
-			GlStateManager.scale(0.1, 0.1, 0.1);
-
-			mc().fontRendererObj.drawString("⬅", 0, 0, 0);
-
-			GlStateManager.translate(0, 0, 10.2);
-
-			mc().fontRendererObj.drawString("⬅", 0, 0, 0);
-			GlStateManager.translate(0, 10.2, -10.35);
-
-			GlStateManager.rotate(90, 1, 0, 0);
-			mc().fontRendererObj.drawString("⬅", 0, 0, 0);
-
-			GlStateManager.translate(0, 0, 10.5);
-			mc().fontRendererObj.drawString("⬅", 0, 0, 0);
-
-			GlStateManager.popMatrix();
-		}
-	}
-
-	private static class TextRRO extends OldRenderObject {
-
-		private final SwitchSetting setting;
-		private final Supplier<Object> textSupplier;
-
-		private TextRRO(SwitchSetting setting, Supplier<Object> textSupplier) {
-			this.textSupplier = textSupplier;
-			this.setting = setting;
+		@Override
+		public boolean equals(RenderObject r) {
+			return r instanceof Dropper d && dir == d.dir;
 		}
 
 		@Override
-		public void render(BlockPos pos, float partialTicks) {
-			if (!setting.get())
-				return;
+		public void draw(ChunkCompiler compiler, int rotation) {
+			compiler.setColor(Color.BLACK);
+			compiler.setTransformation(v -> {
+				if (dir == EnumFacing.UP)
+					return v.rotateX(270);
+				if (dir == EnumFacing.DOWN)
+					return v.rotateX(90);
+				return v.rotateY(-90 * dir.getHorizontalIndex());
+			});
 
-			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
+			compiler.render(ARROW_TEXTURE,
+				BASE_VERTICES,
+				BASE_VERTICES.rotateZ(90),
+				BASE_VERTICES.rotateZ(180),
+				BASE_VERTICES.rotateZ(270)
+			);
+		}
+	}
 
-			GlStateManager.translate(-0.0175, 0.63, -0.51);
-			GlStateManager.scale(-0.035, -0.035, 0.035);
+	private static class TextRenderObject extends RenderObject {
 
-			String text = String.valueOf(textSupplier.get());
-			int x = -mc().fontRendererObj.getStringWidth(text) / 2;
+		private final String text;
 
-			mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
-
-			GlStateManager.translate(-1, 0, 29);
-			GlStateManager.scale(-1, 1, 1);
-
-			mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
-			GlStateManager.translate(14, 0, -15);
-
-			GlStateManager.rotate(90, 0, 1, 0);
-			mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
-
-			GlStateManager.translate(-1, 0, -29);
-			GlStateManager.scale(-1, 1, 1);
-			mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
-
-			GlStateManager.scale(-1, 1, 1);
-			GlStateManager.translate(4, -11, 15);
-
-			GlStateManager.rotate(90, 1, 0, 0);
-			GlStateManager.rotate(90, 0, 0, 1);
-			mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
-
-			GlStateManager.translate(0, 7.1, -29.1);
-			GlStateManager.scale(1, -1, 1);
-
-			mc().fontRendererObj.drawString(text, x, 0, 0xFFFFFF);
-
-			GlStateManager.popMatrix();
+		private TextRenderObject(String text) {
+			this.text = text;
 		}
 
+		@Override
+		public boolean equals(RenderObject r) {
+			return r instanceof TextRenderObject t && text.equals(t.text);
+		}
+
+		@Override
+		public void draw(ChunkCompiler compiler, int rotation) {
+			for (FontRenderData.CharRenderInfo renderInfo : FontRenderData.getCharRenderInfos(text)) {
+				Vertices offsets = renderInfo.rotatedVertices()[0];
+
+				Vertices base = offsets.translate(0, 0.51, 0);
+				Vertices sideBase = offsets.translate(0, 0.51, 0).rotateX(270);
+
+				compiler.render(renderInfo.texture(),
+					base, // up
+					base.rotateX(180).translate(0, 0.18, 0), // down
+					sideBase,
+					sideBase.rotateY(90),
+					sideBase.rotateY(180),
+					sideBase.rotateY(270)
+				);
+			}
+		}
 	}
 
 }

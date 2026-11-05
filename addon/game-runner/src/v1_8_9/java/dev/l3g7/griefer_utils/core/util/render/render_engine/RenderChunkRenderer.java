@@ -8,13 +8,13 @@
 package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -27,35 +27,32 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 class RenderChunkRenderer {
 
 	private static void checkRecompile(boolean forceRecompilation) {
-		for (RenderChunk chunk : RenderChunkManager.chunks.values())
-			chunk.checkRecompile(forceRecompilation);
-		for (RenderChunk chunk : SchematicaRenderChunkManager.schematicChunks.values())
-			chunk.checkRecompile(forceRecompilation);
+		for (RenderChunkManager manager : RenderChunkManager.managers)
+			manager.checkRecompilation(forceRecompilation);
 	}
 
 	@EventListener
 	private static void onRenderWorldLast(RenderWorldLastEvent event) {
-		if (RenderChunkManager.chunks.isEmpty()
-			&& SchematicaRenderChunkManager.schematicChunks.isEmpty())
+		emptyCheck: {
+			for (RenderChunkManager manager : RenderChunkManager.managers)
+				if (!manager.chunks.isEmpty())
+					break emptyCheck;
+
 			return;
-
-		mc().mcProfiler.startSection("render_engine");
-
-		if (Constants.SCHEMATICA) {
-			mc().mcProfiler.startSection("update_schematic");
-			SchematicaRenderChunkManager.checkForSchematicUpdate();
-			mc().mcProfiler.endStartSection("check_recompile");
-		} else {
-			mc().mcProfiler.startSection("check_recompile");
 		}
 
+		Profiler profiler = mc().mcProfiler;
+
+		profiler.startSection("griefer_utils_render_engine");
+
+		profiler.startSection("check_recompile");
 		checkRecompile(false);
 		if (AtlasManager.isOutdated()) {
 			AtlasManager.recompile();
 			checkRecompile(true);
 		}
 
-		mc().mcProfiler.endStartSection("setup");
+		profiler.endStartSection("setup_gl");
 		GlStateManager.disableCull();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -63,7 +60,8 @@ class RenderChunkRenderer {
 		GlStateManager.depthMask(true);
 		GlStateManager.color(1, 1, 1, 1);
 
-		double viewY = mc().getRenderManager().playerViewY + 12.5d;
+		profiler.endStartSection("frustum");
+		double viewY = 360 - mc().getRenderManager().playerViewY + 12.5d;
 		while (viewY < 0)
 			viewY += 360;
 
@@ -72,14 +70,38 @@ class RenderChunkRenderer {
 		Vec3d cam = RenderUtil.camPos();
 		frustum.setPosition(cam.x, cam.y, cam.z);
 
-		mc().mcProfiler.endStartSection("render_chunks");
-		renderChunks(RenderChunkManager.chunks, frustum, rotationIndex);
-		if (Constants.SCHEMATICA) {
-			mc().mcProfiler.endStartSection("render_chunks_schematic");
-			renderChunks(SchematicaRenderChunkManager.schematicChunks, frustum, rotationIndex);
+		profiler.endStartSection("render_chunks");
+		for (RenderChunkManager manager : RenderChunkManager.managers) {
+			profiler.startSection(manager.getClass().getSimpleName());
+
+			for (Map.Entry<ChunkCoordIntPair, RenderChunk> entry : manager.chunks.entrySet()) {
+				ChunkCoordIntPair pair = entry.getKey();
+				boolean isVisible = frustum.isBoundingBoxInFrustum(new AxisAlignedBB(
+					pair.getXStart(),
+					0,
+					pair.getZStart(),
+					pair.getXEnd(),
+					255,
+					pair.getZEnd())
+				);
+				if (!isVisible)
+					continue;
+
+				GlStateManager.pushMatrix();
+				GlStateManager.translate(pair.chunkXPos * 16 - EntityFX.interpPosX,
+					-EntityFX.interpPosY, pair.chunkZPos * 16 - EntityFX.interpPosZ);
+				mc().mcProfiler.startSection("render_chunk");
+
+				entry.getValue().draw(pair, frustum, rotationIndex);
+
+				mc().mcProfiler.endSection();
+				GlStateManager.popMatrix();
+			}
+
+			profiler.endSection();
 		}
 
-		mc().mcProfiler.endStartSection("teardown");
+		profiler.endStartSection("teardown");
 		GlStateManager.depthMask(true);
 		GlStateManager.disableBlend();
 		GlStateManager.alphaFunc(516, 0.1F);
@@ -87,35 +109,9 @@ class RenderChunkRenderer {
 		GlStateManager.enableTexture2D();
 		GlStateManager.enableDepth();
 		GlStateManager.enableCull();
-		mc().mcProfiler.endSection();
+		profiler.endSection();
 
-		mc().mcProfiler.endSection();
-	}
-
-	private static void renderChunks(Map<ChunkCoordIntPair, RenderChunk> chunks, Frustum frustum, int rotationIndex) {
-		for (Map.Entry<ChunkCoordIntPair, RenderChunk> entry : chunks.entrySet()) {
-			ChunkCoordIntPair pair = entry.getKey();
-			boolean isVisible = frustum.isBoundingBoxInFrustum(new AxisAlignedBB(
-				pair.getXStart(),
-				0,
-				pair.getZStart(),
-				pair.getXEnd(),
-				255,
-				pair.getZEnd())
-			);
-			if (!isVisible)
-				continue;
-
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(pair.chunkXPos * 16 - EntityFX.interpPosX,
-				-EntityFX.interpPosY, pair.chunkZPos * 16 - EntityFX.interpPosZ);
-			mc().mcProfiler.startSection("render_chunk");
-
-			entry.getValue().draw(pair, frustum, rotationIndex);
-
-			mc().mcProfiler.endSection();
-			GlStateManager.popMatrix();
-		}
+		profiler.endSection();
 	}
 
 }

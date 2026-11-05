@@ -113,10 +113,8 @@ class FontRenderData {
 
 			double singleRotation = 360 / (double) rotations;
 
-			for (int i = 1; i < rotations; i++) {
-				double rotation = Math.toRadians(-i * singleRotation);
-				rotatedVertices[i] = baseVertices.rotateY((float) rotation);
-			}
+			for (int i = 1; i < rotations; i++)
+				rotatedVertices[i] = baseVertices.rotateY(i * singleRotation);
 
 			return new CharRenderInfo(texture, rotatedVertices);
 		}

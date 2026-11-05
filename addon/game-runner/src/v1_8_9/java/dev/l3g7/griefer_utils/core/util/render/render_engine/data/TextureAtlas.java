@@ -10,6 +10,10 @@ import java.io.InputStream;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
+/**
+ * Reads individual textures out of an atlas as {@link TextureCutout}s.
+ * @see FontAtlas
+ */
 public class TextureAtlas {
 
 	protected final ResourceLocation texture;
@@ -57,7 +61,8 @@ public class TextureAtlas {
 	}
 
 	/**
-	 * Trims the UV data of each char by finding its edges
+	 * Reads glyphs out of Minecraft's atlas pages.
+	 * Removes padding by finding a glyphs edges.
 	 */
 	public static class FontAtlas extends TextureAtlas {
 

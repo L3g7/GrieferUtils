@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
-class RenderChunk {
+public class RenderChunk {
 
 	public static void deleteAll(Collection<RenderChunk> renderChunks) {
 		renderChunks.removeIf(chunk -> {
@@ -94,7 +94,7 @@ class RenderChunk {
 					return;
 				}
 
-				part.compiler.bindTexture();
+				AtlasManager.getAtlas().bind();
 				GL11.glCallList(part.list + rotation);
 			}
 		}
@@ -141,13 +141,13 @@ class RenderChunk {
 
 			for (int rotation = 0; rotation < 16; rotation++) {
 				mc().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+
 				compiler.begin(list + rotation);
-				try {
-					for (Map.Entry<BlockPos, RenderObject> entry : renderObjects.entrySet())
-						entry.getValue().draw(compiler, entry.getKey(), rotation);
-				} finally {
-					compiler.end();
+				for (Map.Entry<BlockPos, RenderObject> entry : renderObjects.entrySet()) {
+					compiler.prepareForRenderObject(entry.getKey());
+					entry.getValue().draw(compiler, rotation);
 				}
+				compiler.end();
 			}
 
 			mustRecompile = false;

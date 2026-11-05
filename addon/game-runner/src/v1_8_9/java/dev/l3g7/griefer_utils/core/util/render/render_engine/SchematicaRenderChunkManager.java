@@ -8,25 +8,34 @@
 package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import com.github.lunatrius.schematica.api.ISchematic;
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Generates {@link RenderChunk}s and updates their data
- */
-class SchematicaRenderChunkManager {
+@Singleton
+class SchematicaRenderChunkManager extends RenderChunkManager {
 
-	static final Map<ChunkCoordIntPair, RenderChunk> schematicChunks = new ConcurrentHashMap<>();
+	@Override
+	public void reload() {
+		previousSchematic = null;
+		checkForSchematicUpdate();
+	}
+
+	@Override
+	protected void checkRecompilation(boolean forceRecompilation) {
+		if (!forceRecompilation)
+			checkForSchematicUpdate();
+
+		super.checkRecompilation(forceRecompilation);
+	}
 
 	private static Object previousSchematic = null;
 	private static BlockPos previousSchematicPos = null;
 
-	public static void checkForSchematicUpdate() {
+	private void checkForSchematicUpdate() {
 		ISchematic schematic = SchematicaUtil.getWorld() == null ? null : SchematicaUtil.getSchematic();
 		BlockPos position = SchematicaUtil.getWorld() == null ? null : SchematicaUtil.getPosition();
 
@@ -34,12 +43,11 @@ class SchematicaRenderChunkManager {
 			return;
 
 		previousSchematic = schematic;
-		previousSchematicPos = position == null ? null : position.up().down();
+		previousSchematicPos = position == null ? null : new BlockPos(position);
 
-		if (schematic == null || position == null) {
-			RenderChunk.deleteAll(schematicChunks.values());
+		RenderChunk.deleteAll(chunks.values());
+		if (schematic == null || position == null)
 			return;
-		}
 
 		for (int dX = 0; dX < schematic.getWidth(); dX++) {
 			for (int dY = 0; dY < schematic.getHeight(); dY++) {
@@ -52,7 +60,7 @@ class SchematicaRenderChunkManager {
 					ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
 					BlockPos worldPos = pos.add(dX, dY, dZ);
 					BlockPos chunkPos = new BlockPos(worldPos.getX() & 15, worldPos.getY(), worldPos.getZ() & 15);
-					schematicChunks.computeIfAbsent(pair, p -> new RenderChunk())
+					chunks.computeIfAbsent(pair, p -> new RenderChunk())
 						.add(chunkPos, renderObject);
 				}
 			}

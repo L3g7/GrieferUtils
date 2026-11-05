@@ -40,7 +40,7 @@ public abstract class RenderObject {
 
 	public abstract boolean equals(RenderObject r);
 
-	public abstract void draw(ChunkCompiler compiler, BlockPos pos, int rotation);
+	public abstract void draw(ChunkCompiler compiler, int rotation);
 
 	public interface Generator {
 

@@ -9,10 +9,8 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types.list;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
@@ -26,13 +24,13 @@ import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
-public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement implements Laby3Setting<ListSetting<E>, List<E>>, ListSetting<E> {
+public class ListSettingImpl<E extends ListEntry> extends ControlElement implements Laby3Setting<ListSetting<E>, List<E>>, ListSetting<E> {
 
 	private final ExtendedStorage<List<E>> storage;
-	private final E ctor;
 
 	private boolean unpacked = false;
 	private Runnable customAdd;
@@ -42,10 +40,9 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 	protected final EntryAddSettingImpl addSetting = new EntryAddSettingImpl();
 	private boolean created = false;
 
-	public ListSettingImpl(Class<E> type) {
+	public ListSettingImpl(Supplier<E> ctor) {
 		super("§cEs gab einen Fehler!", null);
 		setSettingEnabled(true);
-		this.ctor = IO.GSON.fromJson(new JsonObject(), type);
 
 		storage = new ExtendedStorage<>(e -> {
 			JsonArray data = new JsonArray();
@@ -56,7 +53,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 		}, e -> {
 			List<E> list = new ArrayList<>();
 			for (JsonElement element : e.getAsJsonArray()) {
-				E entry = ctor.createNew();
+				E entry = ctor.get();
 				entry.load(element);
 				list.add(entry);
 			}
@@ -71,7 +68,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 				customAdd.run();
 			} else {
 				int index = getSettings().indexOf(addSetting);
-				DisplaySetting<E> setting = createDisplaySetting(ctor.createNew());
+				DisplaySetting<E> setting = createDisplaySetting(ctor.get());
 				getSettings().add(index, setting);
 				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(this::notifyChange, setting));
 			}
@@ -169,7 +166,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends ControlElement impl
 		return new DisplaySetting<>(this, entry);
 	}
 
-	protected static class DisplaySetting<E extends ListEntry<E>> extends ListEntrySetting {
+	protected static class DisplaySetting<E extends ListEntry> extends ListEntrySetting {
 
 		private final ListSettingImpl<E> parent;
 		protected final E data;

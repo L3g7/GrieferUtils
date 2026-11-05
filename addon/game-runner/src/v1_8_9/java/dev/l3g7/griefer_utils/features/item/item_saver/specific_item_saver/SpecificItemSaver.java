@@ -19,7 +19,6 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderItemOverlayEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -59,7 +58,7 @@ public class SpecificItemSaver extends Feature {
 		.icon("shield_with_sword")
 		.defaultValue(true);
 
-	private final ListSetting<ItemProtection> entries = ListSetting.create(ItemProtection.class)
+	private final ListSetting<ItemProtection> entries = ListSetting.create(ItemProtection::new)
 		.name("Geschützte Items")
 		.icon("diamond")
 		.customAdd(this::addProtectedItem);

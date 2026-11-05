@@ -14,9 +14,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public interface ListEntry<E extends ListEntry<E>> extends Named {
-
-	E createNew();
+public interface ListEntry extends Named {
 
 	default String resourceIcon() {return null;}
 

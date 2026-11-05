@@ -43,7 +43,7 @@ public class ChatMenu extends Feature {
 
 	private ChatMenuRenderer activeRenderer = null;
 
-	protected final ListSetting<ChatMenuEntry> entries = ListSetting.create(ChatMenuEntry.class)
+	protected final ListSetting<ChatMenuEntry> entries = ListSetting.create(ChatMenuEntry::new)
 		.name("Einträge")
 		.icon("player_menu")
 		.unpacked()

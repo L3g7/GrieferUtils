@@ -13,12 +13,13 @@ import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.core.settings.Settings.settings;
 
-public interface ListSetting<E extends ListEntry<E>> extends AbstractSetting<ListSetting<E>, List<E>> {
+public interface ListSetting<E extends ListEntry> extends AbstractSetting<ListSetting<E>, List<E>> {
 
-	static <E extends ListEntry<E>> ListSetting<E> create(Class<E> type) {return settings.createListSetting(type);}
+	static <E extends ListEntry> ListSetting<E> create(Supplier<E> ctor) {return settings.createListSetting(ctor);}
 
 	static ListSetting<PlayerListEntry> createPlayerList() {return settings.createPlayerListSetting();}
 

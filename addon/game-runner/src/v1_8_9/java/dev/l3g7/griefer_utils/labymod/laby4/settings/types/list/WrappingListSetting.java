@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Wraps a SwitchSetting into a ListSetting to create unpacked lists.
  */
-public class WrappingListSetting<E extends ListEntry<E>> extends ListSettingImpl<E> {
+public class WrappingListSetting<E extends ListEntry> extends ListSettingImpl<E> {
 
 	private final List<KeyValue<Setting>> subsettings = new ArrayList<>();
 	private final AbstractSettingImpl<?, ?> inner;

@@ -58,7 +58,7 @@ public class ToolSaver extends Feature {
 		.icon("weakness")
 		.defaultValue(true);
 
-	private final ListSetting<ToolExclusion> exclusions = ListSetting.create(ToolExclusion.class)
+	private final ListSetting<ToolExclusion> exclusions = ListSetting.create(ToolExclusion::new)
 		.name("Ausnahmen")
 		.description("Werkzeuge, die nicht vor Zerstörung geschützt werden sollen.")
 		.icon("weakness")

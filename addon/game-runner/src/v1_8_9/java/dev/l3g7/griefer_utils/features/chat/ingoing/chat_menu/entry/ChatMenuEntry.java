@@ -39,7 +39,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.Action.*;
 
-public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
+public class ChatMenuEntry implements ListEntry {
 
 	public String name;
 	public Action action;
@@ -68,11 +68,6 @@ public class ChatMenuEntry implements ListEntry<ChatMenuEntry> {
 		this.command = command;
 		this.iconType = iconType;
 		this.icon = icon;
-	}
-
-	@Override
-	public ChatMenuEntry createNew() {
-		return new ChatMenuEntry();
 	}
 
 	@Override

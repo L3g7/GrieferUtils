@@ -50,7 +50,7 @@ public class InventoryValue extends Widget {
 		.defaultValue(true)
 		.icon("gold_ingot");
 
-	private final ListSetting<ItemValue> entries = ListSetting.create(ItemValue.class)
+	private final ListSetting<ItemValue> entries = ListSetting.create(ItemValue::new)
 		.name("Werte")
 		.icon("coin")
 		.customAdd(this::addProtectedItem);

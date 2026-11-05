@@ -23,6 +23,8 @@ import dev.l3g7.griefer_utils.labymod.laby3.settings.types.list.ListSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.list.PlayerListSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.list.StringListSettingImpl;
 
+import java.util.function.Supplier;
+
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 @Bridge
@@ -86,8 +88,8 @@ public class SettingsImpl implements Settings {
 	}
 
 	@Override
-	public <E extends ListEntry<E>> ListSetting<E> createListSetting(Class<E> type) {
-		return new ListSettingImpl<>(type);
+	public <E extends ListEntry> ListSetting<E> createListSetting(Supplier<E> ctor) {
+		return new ListSettingImpl<>(ctor);
 	}
 
 	@Override

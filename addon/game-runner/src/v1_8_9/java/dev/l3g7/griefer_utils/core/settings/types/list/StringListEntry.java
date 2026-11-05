@@ -14,7 +14,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.stream.IntStream;
 
-public class StringListEntry implements CharSequence, ListEntry<StringListEntry> {
+public class StringListEntry implements CharSequence, ListEntry {
 
 	private String text;
 
@@ -29,11 +29,6 @@ public class StringListEntry implements CharSequence, ListEntry<StringListEntry>
 	@Override
 	public String resourceIcon() {
 		return "book_and_quill";
-	}
-
-	@Override
-	public StringListEntry createNew() {
-		return new StringListEntry();
 	}
 
 	@Override

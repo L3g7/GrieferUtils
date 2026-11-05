@@ -28,6 +28,7 @@ import net.labymod.api.client.gui.screen.widget.AbstractWidget;
 import net.labymod.api.client.gui.screen.widget.Widget;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
@@ -105,8 +106,8 @@ public class SettingsImpl implements Settings { // Note: replace with multiple b
 	}
 
 	@Override
-	public <E extends ListEntry<E>> ListSetting<E> createListSetting(Class<E> type) {
-		return new ListSettingImpl<>(type);
+	public <E extends ListEntry> ListSetting<E> createListSetting(Supplier<E> ctor) {
+		return new ListSettingImpl<>(ctor);
 	}
 
 	@Override

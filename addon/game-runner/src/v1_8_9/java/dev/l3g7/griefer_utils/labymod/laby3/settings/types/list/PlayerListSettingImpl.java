@@ -25,7 +25,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 	public PlayerListSettingImpl() {
-		super(PlayerListEntry.class);
+		super(PlayerListEntry::new);
 		custom(e -> mc().displayGuiScreen(new AddPlayerGui(mc().currentScreen)));
 		addSetting.name("Spieler hinzufügen");
 	}

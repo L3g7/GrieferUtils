@@ -21,7 +21,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 public class StringListSettingImpl extends ListSettingImpl<StringListEntry> {
 
 	public StringListSettingImpl() {
-		super(StringListEntry.class);
+		super(StringListEntry::new);
 		custom(e -> mc().displayGuiScreen(new AddStringGui(mc().currentScreen, e)));
 	}
 

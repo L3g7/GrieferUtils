@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-public class PlayerListEntry implements ListEntry<PlayerListEntry> {
+public class PlayerListEntry implements ListEntry {
 
 	private final static Pattern UUID_PATTERN = Pattern.compile("^[\\da-f]{8}-(?:[\\da-f]{4}-){3}[\\da-f]{12}$");
 
@@ -41,7 +41,7 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 	protected boolean isValid = false;
 	protected boolean isLoaded;
 
-	private PlayerListEntry() {
+	public PlayerListEntry() {
 		isLoaded = true;
 	}
 
@@ -95,11 +95,6 @@ public class PlayerListEntry implements ListEntry<PlayerListEntry> {
 
 	public boolean isLoaded() {
 		return isLoaded;
-	}
-
-	@Override
-	public PlayerListEntry createNew() {
-		return new PlayerListEntry();
 	}
 
 	public void copyFrom(PlayerListEntry entry) {

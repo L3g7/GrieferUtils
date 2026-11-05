@@ -9,10 +9,8 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings.types.list;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
-import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.settings.AbstractSetting;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
@@ -38,29 +36,30 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 
-public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.configuration.settings.type.list.ListSetting implements Laby4Setting<ListSetting<E>, List<E>>, ListSetting<E> {
+public class ListSettingImpl<E extends ListEntry> extends net.labymod.api.configuration.settings.type.list.ListSetting implements Laby4Setting<ListSetting<E>, List<E>>, ListSetting<E> {
 
 	private final ExtendedStorage<List<E>> storage;
 	protected final List<EntryConfig<E>> rawList;
-	protected final List<E> view = new View();
-	protected final E ctor;
+	private final List<E> view = new View();
+	private final Supplier<E> ctor;
 
-	protected boolean unpacked = false;
-	protected Runnable customAdd;
-	protected Consumer<E> customEdit;
+	private boolean unpacked = false;
+	private Runnable customAdd;
+	private Consumer<E> customEdit;
 
-	public ListSettingImpl(Class<E> type) {
-		this(type, new SettingAccessor<>());
+	public ListSettingImpl(Supplier<E> ctor) {
+		this(ctor, new SettingAccessor<>());
 	}
 
-	private ListSettingImpl(Class<E> type, SettingAccessor accessor) {
+	private ListSettingImpl(Supplier<E> ctor, SettingAccessor accessor) {
 		super(UUID.randomUUID().toString(), null, null, new String[0], (SettingPermissionHolder) null, null, (byte) -127, accessor);
 
 		this.rawList = c(accessor.list);
-		this.ctor = IO.GSON.fromJson(new JsonObject(), type);
+		this.ctor = ctor;
 
 		storage = new ExtendedStorage<>(e -> {
 			JsonArray data = new JsonArray();
@@ -71,7 +70,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		}, e -> {
 			rawList.clear();
 			for (JsonElement element : e.getAsJsonArray()) {
-				E entry = ctor.createNew();
+				E entry = ctor.get();
 				entry.load(element);
 				rawList.add(new EntryConfig<>(this, entry));
 			}
@@ -189,7 +188,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 
 	@Override
 	public ListSettingEntry createNew() {
-		return add(ctor.createNew(), true);
+		return add(ctor.get(), true);
 	}
 
 	private ListSettingEntry add(E value, boolean isCreateNew) {
@@ -250,7 +249,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 	/**
 	 * ListEntry -> Config adapter.
 	 */
-	protected static class EntryConfig<E extends ListEntry<E>> extends Config implements ListSettingConfig {
+	protected static class EntryConfig<E extends ListEntry> extends Config implements ListSettingConfig {
 
 		private final ListSettingImpl<E> parent;
 		public final E value;
@@ -351,7 +350,7 @@ public class ListSettingImpl<E extends ListEntry<E>> extends net.labymod.api.con
 		}
 	}
 
-	private static class SettingAccessor<E extends ListEntry<E>> extends ConfigPropertySettingAccessor {
+	private static class SettingAccessor<E extends ListEntry> extends ConfigPropertySettingAccessor {
 
 		public final ArrayList<E> list = new ArrayList<>();
 

@@ -38,7 +38,7 @@ import java.util.UUID;
 public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 	public PlayerListSettingImpl() {
-		super(PlayerListEntry.class);
+		super(PlayerListEntry::new);
 		custom(e -> new PlayerListInputActivity(e).open());
 	}
 

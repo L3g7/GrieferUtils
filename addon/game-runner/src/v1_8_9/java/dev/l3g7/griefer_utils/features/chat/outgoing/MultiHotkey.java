@@ -29,7 +29,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 @Singleton
 public class MultiHotkey extends Feature {
 
-	private final ListSetting<HotkeySequence> entries = ListSetting.create(HotkeySequence.class)
+	private final ListSetting<HotkeySequence> entries = ListSetting.create(HotkeySequence::new)
 		.name("Hotkeys")
 		.icon("key")
 		.unpacked();
@@ -45,12 +45,13 @@ public class MultiHotkey extends Feature {
 		return get(MultiHotkey.class);
 	}
 
-	private static class HotkeySequence implements ListEntry<HotkeySequence> {
+	private static class HotkeySequence implements ListEntry {
 
 		public final StringSetting name = StringSetting.create()
 			.name("Name")
 			.description("Wie dieser Hotkey heißen soll.")
-			.icon("name_tag");
+			.icon("name_tag")
+			.defaultValue("Neuer Hotkey");
 
 		public final KeySetting key = KeySetting.create()
 			.name("Taste")
@@ -120,13 +121,6 @@ public class MultiHotkey extends Feature {
 		@Override
 		public String subtextLaby4() {
 			return formatSubtext("[%s] -> %s", "");
-		}
-
-		@Override
-		public HotkeySequence createNew() {
-			HotkeySequence hotkey = new HotkeySequence();
-			hotkey.name.set("Neuer Hotkey");
-			return hotkey;
 		}
 
 		@Override

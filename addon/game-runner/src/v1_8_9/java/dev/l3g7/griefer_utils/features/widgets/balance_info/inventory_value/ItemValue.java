@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 
-public class ItemValue implements ListEntry<ItemValue> {
+public class ItemValue implements ListEntry {
 
 	/**
 	 * A pattern matching all obfuscated parts of a formatted text to prevent their detection.
@@ -37,7 +37,7 @@ public class ItemValue implements ListEntry<ItemValue> {
 		.name("Wert")
 		.icon("coin_pile");
 
-	private ItemValue() {}
+	ItemValue() {}
 
 	ItemValue(ItemStack stack) {
 		this.stack = stack.copy();
@@ -91,11 +91,6 @@ public class ItemValue implements ListEntry<ItemValue> {
 		}
 
 		return detectedValue;
-	}
-
-	@Override
-	public ItemValue createNew() {
-		return new ItemValue();
 	}
 
 	@Override

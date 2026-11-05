@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import java.util.Collections;
 import java.util.List;
 
-public final class ToolExclusion implements ListEntry<ToolExclusion> {
+public final class ToolExclusion implements ListEntry {
 
 	private transient ItemStack stack;
 	private String name;
@@ -48,11 +48,6 @@ public final class ToolExclusion implements ListEntry<ToolExclusion> {
 
 	public ItemStack getStack() {
 		return stack;
-	}
-
-	@Override
-	public ToolExclusion createNew() {
-		return new ToolExclusion();
 	}
 
 	@Override

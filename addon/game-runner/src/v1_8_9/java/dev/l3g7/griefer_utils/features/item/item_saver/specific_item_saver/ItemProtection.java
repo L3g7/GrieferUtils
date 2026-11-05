@@ -21,7 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.Arrays;
 import java.util.List;
 
-public class ItemProtection implements ListEntry<ItemProtection> {
+public class ItemProtection implements ListEntry {
 
 	protected static final ItemProtection UNPROTECTED = new ItemProtection();
 
@@ -114,11 +114,6 @@ public class ItemProtection implements ListEntry<ItemProtection> {
 		}
 
 		return cleanedStackNBT.equals(settingNBT);
-	}
-
-	@Override
-	public ItemProtection createNew() {
-		return new ItemProtection();
 	}
 
 	@Override

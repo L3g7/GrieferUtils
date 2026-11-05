@@ -21,6 +21,7 @@ import dev.l3g7.griefer_utils.features.Feature;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 
@@ -51,7 +52,7 @@ public interface Settings {
 
 	<E extends Enum<E> & Named> DropDownSetting<E> createDropDownSetting(Class<E> enumClass);
 
-	<E extends ListEntry<E>> ListSetting<E> createListSetting(Class<E> type);
+	<E extends ListEntry> ListSetting<E> createListSetting(Supplier<E> ctor);
 
 	ListSetting<PlayerListEntry> createPlayerListSetting();
 

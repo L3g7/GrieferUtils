@@ -174,5 +174,11 @@ public class BadgeInjection {
 				cir.setReturnValue(1f);
 		}
 
+		@Inject(method = "getIconOffsetX", at = @At("HEAD"), cancellable = true, require = 0)
+		private void grieferUtils$injectGetIconOffsetX(CallbackInfoReturnable<Float> cir) {
+			if (grieferUtils$badge != null)
+				cir.setReturnValue(-1f);
+		}
+
 	}
 }

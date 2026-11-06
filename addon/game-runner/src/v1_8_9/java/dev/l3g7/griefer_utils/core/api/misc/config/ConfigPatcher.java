@@ -560,6 +560,12 @@ public class ConfigPatcher {
 
 				inventoryValue.add("entries", newEntries);
 			}
+
+			JsonObject betterSpawners = get("world.better_spawners");
+			if (betterSpawners.has("show_spawner_icons") && betterSpawners.get("show_spawner_icons").isJsonObject()) {
+				JsonElement value = betterSpawners.get("show_spawner_icons").getAsJsonObject().get("value");
+				betterSpawners.addProperty("show_spawner_icons", getBooleanValue(value));
+			}
 		}
 	}
 

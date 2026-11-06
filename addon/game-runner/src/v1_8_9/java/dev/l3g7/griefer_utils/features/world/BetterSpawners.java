@@ -303,7 +303,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 			if (!showSpawnerIcons.get())
 				return;
 
-			prepareRender(new Vec3(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
+			prepareRender(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
 
 			GlStateManager.translate(0, 0.75, 0);
 			GlStateManager.scale(1, -1, 1);

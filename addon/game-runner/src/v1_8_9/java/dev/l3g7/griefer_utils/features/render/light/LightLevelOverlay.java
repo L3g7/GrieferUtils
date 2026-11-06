@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
+import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
@@ -25,6 +26,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import org.lwjgl.opengl.GL11;
@@ -101,18 +103,16 @@ public class LightLevelOverlay extends Feature {
 
 	@EventListener
 	private void onRenderWorldLast(RenderWorldLastEvent event) {
-		Entity viewer = mc().getRenderViewEntity();
-		double viewerX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * event.partialTicks;
-		double viewerY = viewer.lastTickPosY - 0.01 + (viewer.posY - viewer.lastTickPosY) * event.partialTicks;
-		double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * event.partialTicks;
+		Entity renderViewEntity = mc().getRenderViewEntity();
+		Vec3 camPos = RenderUtil.camPos();
 
 		GlStateManager.pushMatrix();
 		DrawUtils.bindTexture(texture);
 		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
 		wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-		wr.setTranslation(-viewerX, -viewerY, -viewerZ);
+		wr.setTranslation(-camPos.xCoord, -camPos.yCoord, -camPos.zCoord);
 
-		double rotation = viewer.rotationYaw % 360;
+		double rotation = renderViewEntity.rotationYaw % 360;
 		if (rotation < 0)
 			rotation += 360;
 

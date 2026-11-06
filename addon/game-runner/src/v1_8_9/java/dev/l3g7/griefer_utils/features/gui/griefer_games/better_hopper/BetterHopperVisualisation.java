@@ -32,6 +32,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -95,7 +96,7 @@ class BetterHopperVisualisation implements Disableable {
 			}
 
 			if (slot == 52) {
-				displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
+				displayEnd = System.currentTimeMillis() + displayTime.get() * 1000L;
 				MinecraftUtil.closeServersideGUI();
 				event.cancel();
 			}
@@ -147,7 +148,7 @@ class BetterHopperVisualisation implements Disableable {
 		mainConnection = EnchantmentHelper.getEnchantments(targetStack).isEmpty() ? null : getBlockPos(targetStack);
 
 		if (slot == 34) {
-			displayEnd = System.currentTimeMillis() + displayTime.get() * 1000;
+			displayEnd = System.currentTimeMillis() + displayTime.get() * 1000L;
 			MinecraftUtil.closeServersideGUI();
 			event.cancel();
 		}
@@ -213,7 +214,7 @@ class BetterHopperVisualisation implements Disableable {
 		if (mainConnection != null)
 			drawConnection(mainConnection, 0xFF0000);
 
-		renderFilteredConnections(event.partialTicks);
+		renderFilteredConnections();
 
 		AxisAlignedBB collectionBox;
 		if (borderSize > 1)
@@ -233,19 +234,17 @@ class BetterHopperVisualisation implements Disableable {
 		GL11.glEnable(GL_DEPTH_TEST);
 	}
 
-	private void renderFilteredConnections(float partialTicks) {
+	private void renderFilteredConnections() {
 		for (BlockPos blockPos : filteredConnections.keySet())
 			drawConnection(blockPos, 0xFF4040);
 
 		for (EntityItem entityItem : filteredConnections.values()) {
+			Vec3 camPos = RenderUtil.camPos();
 			Entity renderEntity = mc().getRenderViewEntity();
-			double x = entityItem.posX - renderEntity.lastTickPosX - (renderEntity.posX - renderEntity.lastTickPosX) * partialTicks;
-			double y = entityItem.posY - renderEntity.lastTickPosY - (renderEntity.posY - renderEntity.lastTickPosY) * partialTicks;
-			double z = entityItem.posZ - renderEntity.lastTickPosZ - (renderEntity.posZ - renderEntity.lastTickPosZ) * partialTicks;
 			ItemStack stack = entityItem.getEntityItem();
 
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(x, y, z);
+			GlStateManager.translate(camPos.xCoord, camPos.yCoord, camPos.zCoord);
 			double yaw = Math.toDegrees(MathHelper.atan2(entityItem.posX - renderEntity.posX, entityItem.posZ - renderEntity.posZ));
 			GlStateManager.rotate((float) yaw, 0, 1, 0);
 

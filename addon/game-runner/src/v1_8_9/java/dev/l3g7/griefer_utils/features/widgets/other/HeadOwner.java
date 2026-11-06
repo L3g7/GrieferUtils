@@ -99,7 +99,7 @@ public class HeadOwner extends SimpleWidget {
 	}
 
 	/**
-	 * Source: EntityRenderer.getMouseOver(float partialTicks)
+	 * Source: {@link net.minecraft.client.renderer.EntityRenderer#getMouseOver(float)}
 	 */
 	private Entity rayTraceEntity() {
 

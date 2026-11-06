@@ -22,17 +22,18 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.TOGGLE;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 import static net.minecraft.world.EnumSkyBlock.BLOCK;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -118,14 +119,11 @@ public class LightBugESP extends Feature {
 
 	@EventListener
 	private void onRenderWorldLast(RenderWorldLastEvent event) {
-		Entity viewer = mc().getRenderViewEntity();
-		double viewerX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * event.partialTicks;
-		double viewerY = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * event.partialTicks;
-		double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * event.partialTicks;
+		Vec3 camPos = RenderUtil.camPos();
 
 		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
 		wr.begin(GL_QUADS, DefaultVertexFormats.POSITION);
-		wr.setTranslation(-viewerX, -viewerY, -viewerZ);
+		wr.setTranslation(-camPos.xCoord, -camPos.yCoord, -camPos.zCoord);
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();

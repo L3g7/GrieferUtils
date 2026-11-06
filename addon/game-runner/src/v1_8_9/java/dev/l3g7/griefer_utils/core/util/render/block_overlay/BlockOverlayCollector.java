@@ -17,10 +17,10 @@ import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
+import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
 import net.minecraft.network.play.server.S23PacketBlockChange;
@@ -219,15 +219,12 @@ public class BlockOverlayCollector {
 			return null;
 		}
 
-		protected static void prepareRender(Vec3 loc, float partialTicks) {
+		protected static void prepareRender(Vec3 loc) {
 			GlStateManager.pushMatrix();
-			Entity viewer = mc().getRenderViewEntity();
-			double viewerX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * partialTicks;
-			double viewerY = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * partialTicks;
-			double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * partialTicks;
-			double tx = (int) loc.xCoord - viewerX + 0.5;
-			double ty = loc.yCoord - viewerY;
-			double tz = (int) loc.zCoord - viewerZ + 0.5;
+			Vec3 camPos = RenderUtil.camPos();
+			double tx = (int) loc.xCoord - camPos.xCoord + 0.5;
+			double ty = loc.yCoord - camPos.yCoord;
+			double tz = (int) loc.zCoord - camPos.zCoord + 0.5;
 			GlStateManager.translate(tx, ty, tz);
 
 			GlStateManager.enableDepth();

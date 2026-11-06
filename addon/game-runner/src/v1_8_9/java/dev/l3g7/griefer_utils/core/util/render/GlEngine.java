@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.core.util.render;
 
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -15,6 +14,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.Vec3;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -95,9 +95,9 @@ public class GlEngine {
 		GlStateManager.translate(translation, translation, translation);
 	}
 
-	public static void translate(Vec3d translation) {
+	public static void translate(Vec3 translation) {
 		checkActive();
-		GlStateManager.translate(translation.x, translation.y, translation.z);
+		GlStateManager.translate(translation.xCoord, translation.yCoord, translation.zCoord);
 	}
 
 	public static void scale(float scale) {
@@ -175,8 +175,8 @@ public class GlEngine {
 	/**
 	 * Adds a position to the current WorldRenderer drawing session.
 	 */
-	public static WorldRenderer pos(Vec3d pos) {
-		return worldrenderer.pos((float) pos.x, (float) pos.y, (float) pos.z);
+	public static WorldRenderer pos(Vec3 pos) {
+		return worldrenderer.pos((float) pos.xCoord, (float) pos.yCoord, (float) pos.zCoord);
 	}
 
 	/**

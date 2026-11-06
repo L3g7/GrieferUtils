@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.world.building.easy_place;
 
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.util.render.GlEngine;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
@@ -33,16 +32,20 @@ class SideRenderer {
 		new int[] {0, 2, 0, 0, 3, 1}  // Z
 	};
 
-	Vec3d[] outer = new Vec3d[4];
-	Vec3d[] inner = new Vec3d[4];
+	private static Vec3 multiply(Vec3 a, Vec3i b) {
+		return new Vec3(a.xCoord * b.getX(), a.yCoord * b.getY(), a.zCoord * b.getZ());
+	}
+
+	Vec3[] outer = new Vec3[4];
+	Vec3[] inner = new Vec3[4];
 
 	public SideRenderer(Vec3i[] masks) {
-		Vec3d outerStart = outer[0] = new Vec3d(-0.5f, -0.5f, -0.5f).mul(masks[1]);
-		Vec3d innerStart = inner[0] = new Vec3d(-0.2f, -0.2f, -0.2f).mul(masks[1]);
+		Vec3 outerStart = outer[0] = multiply(new Vec3(-0.5f, -0.5f, -0.5f), masks[1]);
+		Vec3 innerStart = inner[0] = multiply(new Vec3(-0.2f, -0.2f, -0.2f), masks[1]);
 
 		for (int i = 0; i < masks.length; i++) {
-			outer[i + 1] = outerStart.add(new Vec3d(1f, 1f, 1f).mul(masks[i]));
-			inner[i + 1] = innerStart.add(new Vec3d(0.4f, 0.4f, 0.4f).mul(masks[i]));
+			outer[i + 1] = outerStart.add(multiply(new Vec3(1f, 1f, 1f), masks[i]));
+			inner[i + 1] = innerStart.add(multiply(new Vec3(0.4f, 0.4f, 0.4f), masks[i]));
 		}
 	}
 
@@ -51,7 +54,7 @@ class SideRenderer {
 		GlStateManager.enableBlend();
 		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		Vec3d pos3d = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+		Vec3 pos3d = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
 
 		for (int i = 0; i < 4; i++) {
 			line(outer[i].add(pos3d), inner[i].add(pos3d));
@@ -73,11 +76,18 @@ class SideRenderer {
 		}
 	}
 
-	private static void line(Vec3d start, Vec3d end) {
-		RenderUtil.drawLineWhenRenderingStarted((float) start.x, (float) start.y, (float) start.z, (float) end.x, (float) end.y, (float) end.z);
+	private static void line(Vec3 start, Vec3 end) {
+		RenderUtil.drawLineWhenRenderingStarted(
+			(float) start.xCoord,
+			(float) start.yCoord,
+			(float) start.zCoord,
+			(float) end.xCoord,
+			(float) end.yCoord,
+			(float) end.zCoord
+		);
 	}
 
-	private void drawPolygon(Vec3d shift, boolean enabled, int selectedFace) {
+	private void drawPolygon(Vec3 shift, boolean enabled, int selectedFace) {
 		Color color = enabled
 			? new Color(0, 196, 0, 128)
 			: new Color(64, 64, 64, 196);
@@ -100,7 +110,7 @@ class SideRenderer {
 		);
 	}
 
-	private static void polygon(Color color, Vec3d... vertices) {
+	private static void polygon(Color color, Vec3... vertices) {
 		Vec3 cam = RenderUtil.camPos();
 		GlStateManager.disableTexture2D();
 
@@ -110,13 +120,13 @@ class SideRenderer {
 		GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
 		for (int i = vertices.length - 1; i >= 0; i--) {
-			Vec3d vertex = vertices[i];
-			buf.pos(vertex.x - cam.xCoord, vertex.y - cam.yCoord, vertex.z - cam.zCoord);
+			Vec3 vertex = vertices[i];
+			buf.pos(vertex.zCoord - cam.xCoord, vertex.zCoord - cam.yCoord, vertex.zCoord - cam.zCoord);
 			buf.endVertex();
 		}
 
-		for (Vec3d vertex : vertices) {
-			buf.pos(vertex.x - cam.xCoord, vertex.y - cam.yCoord, vertex.z - cam.zCoord);
+		for (Vec3 vertex : vertices) {
+			buf.pos(vertex.zCoord - cam.xCoord, vertex.zCoord - cam.yCoord, vertex.zCoord - cam.zCoord);
 			buf.endVertex();
 		}
 

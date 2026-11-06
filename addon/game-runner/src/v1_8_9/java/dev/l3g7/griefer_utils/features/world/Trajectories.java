@@ -11,8 +11,8 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
+import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import org.lwjgl.util.glu.Disk;
 
 import java.util.ArrayList;
@@ -66,23 +67,23 @@ public class Trajectories extends Feature {
 		if (p == null)
 			return;
 
-		Vec3d renderPos = renderPos();
+		Vec3 renderPos = renderPos();
 
 		// Calculate position
 		float pitchDeg = player().rotationPitch;
 		float pitch = (float) Math.toRadians(pitchDeg);
 		float yaw = (float) Math.toRadians(player().rotationYaw);
 
-		Vec3d pos = renderPos.subtract(Math.cos(yaw) * 0.16f, 0, Math.sin(yaw) * 0.16f)
-		                          .add(0, player().getEyeHeight() - 0.1f, 0);
+		Vec3 pos = renderPos.subtract(Math.cos(yaw) * 0.16f, 0, Math.sin(yaw) * 0.16f)
+		                          .addVector(0, player().getEyeHeight() - 0.1f, 0);
 
 		// Calculate motion
-		Vec3d motion = new Vec3d(-Math.sin(yaw) * Math.cos(pitch), -Math.sin(Math.toRadians(pitchDeg + p.pitchOffset)), Math.cos(yaw) * Math.cos(pitch));
+		Vec3 motion = new Vec3(-Math.sin(yaw) * Math.cos(pitch), -Math.sin(Math.toRadians(pitchDeg + p.pitchOffset)), Math.cos(yaw) * Math.cos(pitch));
 
 		if (!p.isBow)
-			motion = motion.scale(0.4);
+			motion = RenderUtil.scaleVec3(motion, 0.4);
 		motion = motion.normalize();
-		motion = motion.scale(p.motionFactor);
+		motion = RenderUtil.scaleVec3(motion, p.motionFactor);
 
 		MovingObjectPosition landingPosition = null;
 		boolean hasLanded = false;
@@ -101,20 +102,20 @@ public class Trajectories extends Feature {
 
 		beginWorldDrawing(3, DefaultVertexFormats.POSITION);
 
-		while (!hasLanded && pos.y > 0.0D) {
-			Vec3d posBefore = new Vec3d(pos.x, pos.y, pos.z);
-			Vec3d posAfter = new Vec3d(pos.x + motion.x, pos.y + motion.y, pos.z + motion.z);
+		while (!hasLanded && pos.yCoord > 0.0D) {
+			Vec3 posBefore = new Vec3(pos.xCoord, pos.yCoord, pos.zCoord);
+			Vec3 posAfter = new Vec3(pos.xCoord + motion.xCoord, pos.yCoord + motion.yCoord, pos.zCoord + motion.zCoord);
 
 			// Check block collision
 			landingPosition = world().rayTraceBlocks(posBefore, posAfter, false, true, false);
 			if (landingPosition != null) {
 				hasLanded = true;
-				posAfter = new Vec3d(landingPosition.hitVec.xCoord, landingPosition.hitVec.yCoord, landingPosition.hitVec.zCoord);
+				posAfter = new Vec3(landingPosition.hitVec.xCoord, landingPosition.hitVec.yCoord, landingPosition.hitVec.zCoord);
 			}
 
 			// Check entity collision
-			AxisAlignedBB aabb = axisAlignedBB(pos.subtract(p.size), pos.add(p.size))
-				.addCoord(motion.x, motion.y, motion.z)
+			AxisAlignedBB aabb = axisAlignedBB(pos.subtract(p.size, p.size, p.size), pos.addVector(p.size, p.size, p.size))
+				.addCoord(motion.xCoord, motion.yCoord, motion.zCoord)
 				.expand(1, 1, 1);
 
 			MovingObjectPosition collision = checkForEntityCollision(aabb, p.size, posBefore, posAfter);
@@ -125,8 +126,7 @@ public class Trajectories extends Feature {
 
 			// Move
 			pos = pos.add(motion);
-			motion = motion
-				.scale(blockAt(pos).getMaterial() == water ? 0.6 : p.motionSlowdown)
+			motion = RenderUtil.scaleVec3(motion, blockAt(pos).getMaterial() == water ? 0.6 : p.motionSlowdown)
 				.subtract(0, p.gravity, 0);
 
 			// Draw trail
@@ -156,7 +156,7 @@ public class Trajectories extends Feature {
 		finish();
 	}
 
-	private MovingObjectPosition checkForEntityCollision(AxisAlignedBB arrowBox, float size, Vec3d posBefore, Vec3d posAfter) {
+	private MovingObjectPosition checkForEntityCollision(AxisAlignedBB arrowBox, float size, Vec3 posBefore, Vec3 posAfter) {
 		int chunkMinX = (int) Math.floor((arrowBox.minX - 2) / 16);
 		int chunkMaxX = (int) Math.floor((arrowBox.maxX + 2) / 16);
 		int chunkMinZ = (int) Math.floor((arrowBox.minZ - 2) / 16);

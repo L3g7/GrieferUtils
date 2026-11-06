@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.render.ScaledResolutionInitEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -35,6 +34,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -71,24 +71,24 @@ public class MinecraftUtil {
 		return uuid == null ? UUID.fromString("606e2ff0-ed77-4842-9d6c-e1d3321c7838") /* MHF_Question */ : uuid;
 	}
 
-	public static AxisAlignedBB axisAlignedBB(Vec3d a, Vec3d b) {
-		return new AxisAlignedBB(a.x, a.y, a.z, b.x, b.y, b.z);
+	public static AxisAlignedBB axisAlignedBB(Vec3 a, Vec3 b) {
+		return new AxisAlignedBB(a.xCoord, a.yCoord, a.zCoord, b.xCoord, b.yCoord, b.zCoord);
 	}
 
-	public static Block blockAt(Vec3d pos) {
-		return world().getBlockState(new BlockPos(pos.x, pos.y, pos.z)).getBlock();
+	public static Block blockAt(Vec3 pos) {
+		return world().getBlockState(new BlockPos(pos.xCoord, pos.yCoord, pos.zCoord)).getBlock();
 	}
 
-	public static Vec3d pos(Entity e) {
-		return new Vec3d(e.posX, e.posY, e.posZ);
+	public static Vec3 pos(Entity e) {
+		return new Vec3(e.posX, e.posY, e.posZ);
 	}
 
-	public static Vec3d renderPos() {
+	public static Vec3 renderPos() {
 		RenderManager renderManager = mc().getRenderManager();
 		double x = Reflection.get(renderManager, "renderPosX");
 		double y = Reflection.get(renderManager, "renderPosY");
 		double z = Reflection.get(renderManager, "renderPosZ");
-		return new Vec3d(x, y, z);
+		return new Vec3(x, y, z);
 	}
 
 	public static void send(String message) {

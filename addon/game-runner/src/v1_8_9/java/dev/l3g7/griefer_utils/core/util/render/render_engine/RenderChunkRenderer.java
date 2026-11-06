@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunkManager;
 import net.minecraft.client.particle.EntityFX;
@@ -18,6 +17,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
 import org.lwjgl.opengl.GL11;
 
@@ -79,8 +79,8 @@ class RenderChunkRenderer {
 
 		int rotationIndex = MathHelper.clamp_int((int) (Math.floor(viewY / ROTATION_SLICE) % ROTATION_STEPS), 0, ROTATION_STEPS - 1);
 		Frustum frustum = new Frustum();
-		Vec3d cam = RenderUtil.camPos();
-		frustum.setPosition(cam.x, cam.y, cam.z);
+		Vec3 cam = RenderUtil.camPos();
+		frustum.setPosition(cam.xCoord, cam.yCoord, cam.zCoord);
 
 		profiler.endStartSection("render_chunks");
 		for (RenderChunkManager manager : RenderChunkManager.managers) {

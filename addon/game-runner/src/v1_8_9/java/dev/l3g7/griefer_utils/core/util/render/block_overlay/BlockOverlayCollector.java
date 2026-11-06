@@ -16,7 +16,6 @@ import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -26,6 +25,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
@@ -35,7 +35,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
@@ -218,15 +219,15 @@ public class BlockOverlayCollector {
 			return null;
 		}
 
-		protected static void prepareRender(Vec3d loc, float partialTicks) {
+		protected static void prepareRender(Vec3 loc, float partialTicks) {
 			GlStateManager.pushMatrix();
 			Entity viewer = mc().getRenderViewEntity();
 			double viewerX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * partialTicks;
 			double viewerY = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * partialTicks;
 			double viewerZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * partialTicks;
-			double tx = (int) loc.x - viewerX + 0.5;
-			double ty = loc.y - viewerY;
-			double tz = (int) loc.z - viewerZ + 0.5;
+			double tx = (int) loc.xCoord - viewerX + 0.5;
+			double ty = loc.yCoord - viewerY;
+			double tz = (int) loc.zCoord - viewerZ + 0.5;
 			GlStateManager.translate(tx, ty, tz);
 
 			GlStateManager.enableDepth();

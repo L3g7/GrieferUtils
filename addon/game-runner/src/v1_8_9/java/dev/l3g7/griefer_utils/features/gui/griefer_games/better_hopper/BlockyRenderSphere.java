@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.gui.griefer_games.better_hopper;
 
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -17,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
@@ -49,13 +49,12 @@ public class BlockyRenderSphere {
 	public void render() {
 		GlStateManager.pushMatrix();
 		Entity entity = mc().getRenderViewEntity();
-		Vec3d prevPos = new Vec3d(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
-		Vec3d cam = prevPos.add(pos(entity).subtract(prevPos).scale(partialTicks()));
+		Vec3 prevPos = new Vec3(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
+		Vec3 cam = prevPos.add(RenderUtil.scaleVec3(pos(entity).subtract(prevPos), partialTicks()));
 
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 		worldRenderer.begin(GL_QUADS, DefaultVertexFormats.POSITION);
-//		drawUtils().bindTexture("textures/blocks/wool_colored_red.png");
 
 		GL11.glColor4f(1, 0, 0, 0.3f);
 		GlStateManager.enableBlend();
@@ -125,8 +124,8 @@ public class BlockyRenderSphere {
 			);
 		}
 
-		private void render(Vec3d cam) {
-			AxisAlignedBB bb = this.bb.offset(-cam.x, -cam.y, -cam.z);
+		private void render(Vec3 cam) {
+			AxisAlignedBB bb = this.bb.offset(-cam.xCoord, -cam.yCoord, -cam.zCoord);
 
 			if (up)
 				RenderUtil.drawFace(bb, UP, true);

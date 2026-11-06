@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderToolTipEvent;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -61,10 +60,14 @@ public class RenderUtil {
 		return maxY < 0 || RenderUtil.scaledResolution.getScaledHeight() < minY;
 	}
 
-	public static Vec3d camPos() {
+	public static Vec3 scaleVec3(Vec3 vector, double factor) {
+		return new Vec3(vector.xCoord * factor, vector.yCoord * factor, vector.zCoord * factor);
+	}
+
+	public static Vec3 camPos() {
 		Entity entity = mc().getRenderViewEntity();
-		Vec3d prevPos = new Vec3d(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
-		return prevPos.add(pos(entity).subtract(prevPos).scale(partialTicks()));
+		Vec3 prevPos = new Vec3(entity.prevPosX, entity.prevPosY, entity.prevPosZ);
+		return prevPos.add(scaleVec3(pos(entity).subtract(prevPos), partialTicks()));
 	}
 
 	/**
@@ -153,8 +156,8 @@ public class RenderUtil {
 	}
 
 	public static void drawFilledBox(AxisAlignedBB bb, Color color, boolean drawInside) {
-		Vec3d cam = camPos();
-		bb = bb.offset(-cam.x, -cam.y, -cam.z);
+		Vec3 cam = camPos();
+		bb = bb.offset(-cam.xCoord, -cam.yCoord, -cam.zCoord);
 
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldRenderer = tessellator.getWorldRenderer();

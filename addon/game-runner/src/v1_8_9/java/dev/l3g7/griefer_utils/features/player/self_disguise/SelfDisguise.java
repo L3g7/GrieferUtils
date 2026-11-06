@@ -20,7 +20,6 @@ import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.core.events.render.InvisibilityCheckEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -34,6 +33,7 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityMinecartEmpty;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
+import net.minecraft.util.Vec3;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -128,14 +128,25 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 		if (p == null)
 			return;
 
-		Vec3d renderPos = renderPos();
+		Vec3 renderPos = renderPos();
 
 		p.setInvisible(true);
 		currentDisguise.setInvisible(false);
-		if (blockCoordinates)
-			currentDisguise.setLocationAndAngles(((int) renderPos.x) + 0.5 * Math.signum(renderPos.x), (int) (renderPos.y + 0.5), ((int) renderPos.z) + 0.5 * Math.signum(renderPos.z), p.rotationYaw, p.rotationPitch);
-		else
-			currentDisguise.setLocationAndAngles(renderPos.x, renderPos.y, renderPos.z, p.rotationYaw, p.rotationPitch);
+		if (blockCoordinates) {
+			currentDisguise.setLocationAndAngles(
+				((int) renderPos.xCoord) + 0.5 * Math.signum(renderPos.xCoord),
+				(int) (renderPos.yCoord + 0.5),
+				((int) renderPos.zCoord) + 0.5 * Math.signum(renderPos.zCoord),
+				p.rotationYaw, p.rotationPitch
+			);
+		} else {
+			currentDisguise.setLocationAndAngles(
+				renderPos.xCoord,
+				renderPos.yCoord,
+				renderPos.zCoord,
+				p.rotationYaw, p.rotationPitch
+			);
+		}
 		currentDisguise.setRotationYawHead(p.getRotationYawHead());
 	}
 
@@ -227,7 +238,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 			player().setInvisible(false);
 		if (currentDisguise != null) {
 			currentDisguise.setInvisible(true);
-			currentDisguise.setPosition(renderPos().x, -5, renderPos().z);
+			currentDisguise.setPosition(renderPos().xCoord, -5, renderPos().zCoord);
 		}
 	}
 

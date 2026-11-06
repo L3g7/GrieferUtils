@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -46,10 +45,7 @@ import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityMobSpawner;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -307,7 +303,7 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 			if (!showSpawnerIcons.get())
 				return;
 
-			prepareRender(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
+			prepareRender(new Vec3(pos.getX(), pos.getY(), pos.getZ()), partialTicks);
 
 			GlStateManager.translate(0, 0.75, 0);
 			GlStateManager.scale(1, -1, 1);

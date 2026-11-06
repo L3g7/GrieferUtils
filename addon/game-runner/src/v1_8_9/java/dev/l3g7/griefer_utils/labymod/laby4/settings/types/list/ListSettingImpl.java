@@ -261,7 +261,7 @@ public class ListSettingImpl<E extends ListEntry> extends net.labymod.api.config
 
 		@Override
 		public @NotNull Component newEntryTitle() {
-			return Component.text(value.createNew().getName());
+			return Component.text(parent.ctor.get().getName());
 		}
 
 		@Override

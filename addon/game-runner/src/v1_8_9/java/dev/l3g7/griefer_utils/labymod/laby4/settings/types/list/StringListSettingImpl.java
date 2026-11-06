@@ -31,7 +31,7 @@ import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods
 public class StringListSettingImpl extends ListSettingImpl<StringListEntry> {
 
 	public StringListSettingImpl() {
-		super(StringListEntry.class);
+		super(StringListEntry::new);
 		custom(e -> new StringListInputActivity(e).open());
 	}
 

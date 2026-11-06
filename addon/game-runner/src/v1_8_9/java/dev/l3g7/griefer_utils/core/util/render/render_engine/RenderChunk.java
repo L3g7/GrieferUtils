@@ -1,29 +1,43 @@
 package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 import org.lwjgl.opengl.GL11;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
-
+/**
+ * A single compiled chunk.
+ * @see ChunkPart
+ */
 public class RenderChunk {
 
+	public static final int ROTATION_STEPS = 16;
+	public static final double ROTATION_SLICE = 360d / ROTATION_STEPS;
+
+	/**
+	 * Helper method to delete all RenderChunks.
+	 */
 	public static void deleteAll(Collection<RenderChunk> renderChunks) {
-		renderChunks.removeIf(chunk -> {
+		for (RenderChunk chunk : renderChunks)
 			chunk.delete();
-			return true;
-		});
+
+		renderChunks.clear();
 	}
 
+	/**
+	 * All parts in this chunk, is there's no data in an entry it is <code>null</code>.
+	 */
 	private final ChunkPart[] parts = new ChunkPart[16];
 
+	/**
+	 * Adds a RenderObject to this chunk.
+	 * @param chunkPos The position in this chunk (x and z are between 0 and 15)
+	 * @param renderObject The RenderObject to add.
+	 */
 	public void add(BlockPos chunkPos, RenderObject renderObject) {
 		int index = chunkPos.getY() / 16;
 		ChunkPart part = parts[index];
@@ -33,6 +47,10 @@ public class RenderChunk {
 		part.add(chunkPos, renderObject);
 	}
 
+	/**
+	 * Removes the RenderObject at the given position, if there is one.
+	 * @param chunkPos The position in this chunk (x and z are between 0 and 15)
+	 */
 	public void remove(BlockPos chunkPos) {
 		synchronized (parts) {
 			int index = chunkPos.getY() / 16;
@@ -45,6 +63,9 @@ public class RenderChunk {
 		}
 	}
 
+	/**
+	 * Deletes all GL resources used in this chunk.
+	 */
 	public void delete() {
 		synchronized (parts) {
 			for (ChunkPart part : parts)
@@ -53,6 +74,9 @@ public class RenderChunk {
 		}
 	}
 
+	/**
+	 * @return Whether any part of this chunk has any RenderObjects.
+	 */
 	public boolean hasData() {
 		synchronized (parts) {
 			for (ChunkPart compiledPart : parts)
@@ -63,6 +87,10 @@ public class RenderChunk {
 		}
 	}
 
+	/**
+	 * Checks whether any part must be recompiled.
+	 * @param forceRecompilation Forcefully recompiles all parts.
+	 */
 	public void checkRecompile(boolean forceRecompilation) {
 		synchronized (parts) {
 			for (ChunkPart part : parts)
@@ -71,6 +99,12 @@ public class RenderChunk {
 		}
 	}
 
+	/**
+	 * Draws this chunk into the world.
+	 * @param pair The chunk's position, used for culling.
+	 * @param frustum The frustum to cull with.
+	 * @param rotation The player's rotation.
+	 */
 	public void draw(ChunkCoordIntPair pair, Frustum frustum, int rotation) {
 		synchronized (parts) {
 			for (int i = 0; i < parts.length; i++) {
@@ -89,62 +123,90 @@ public class RenderChunk {
 				if (!isVisible)
 					continue;
 
-				if (part.list == 0) {
+				if (part.glList == 0) {
 					parts[i] = null;
 					return;
 				}
 
-				AtlasManager.getAtlas().bind();
-				GL11.glCallList(part.list + rotation);
+				Atlas.getAtlas().bind();
+				GL11.glCallList(part.glList); // Render non-rotating
+				GL11.glCallList(part.glList + 1 + rotation); // Render rotating
 			}
 		}
 	}
 
+	/**
+	 * A single 16x16x16 part of a chunk.
+	 */
 	private static class ChunkPart {
 
 		private final ChunkCompiler compiler = new ChunkCompiler();
 		private boolean mustRecompile = false;
 
-		int list = 0;
+		int glList = 0;
 		private final Map<BlockPos, RenderObject> renderObjects = new HashMap<>();
 
-		public synchronized void add(BlockPos pos, RenderObject newRenderObject) {
-			RenderObject oldRenderObject = this.renderObjects.put(pos, newRenderObject);
+		/**
+		 * Adds a RenderObject to this chunk.
+		 * @param chunkPos The position in this chunk (x and z are between 0 and 15)
+		 * @param newRenderObject The RenderObject to add.
+		 */
+		public synchronized void add(BlockPos chunkPos, RenderObject newRenderObject) {
+			RenderObject oldRenderObject = this.renderObjects.put(chunkPos, newRenderObject);
 
 			if (oldRenderObject == null || !oldRenderObject.equals(newRenderObject))
 				mustRecompile = true;
 		}
 
 		/**
+		 * Removes the RenderObject at the given position, if there is one.
+		 * @param chunkPos The position in this chunk (x and z are between 0 and 15)
 		 * @return Whether this part is empty after removing the position.
 		 */
-		public synchronized boolean remove(BlockPos pos) {
-			if (renderObjects.remove(pos) != null)
+		public synchronized boolean remove(BlockPos chunkPos) {
+			if (renderObjects.remove(chunkPos) != null)
 				mustRecompile = true;
 
 			return renderObjects.isEmpty();
 		}
 
+		/**
+		 * Recompiles this section by drawing it into a new list and deleting the old one.
+		 */
 		private synchronized void recompile() {
 			if (renderObjects.isEmpty()) {
 				delete();
 				return;
 			}
 
-			if (list != 0)
-				deleteList();
+			if (glList != 0)
+				delete();
 
-			list = GL11.glGenLists(16);
+			glList = GL11.glGenLists(ROTATION_STEPS + 1);
 
-			if (list == 0)
+			if (glList == 0)
 				return; // glGenLists failed
 
-			for (int rotation = 0; rotation < 16; rotation++) {
-				mc().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+			List<Entry<BlockPos, RenderObject>> rotatingRenderObjects = new ArrayList<>(renderObjects.size());
 
-				compiler.begin(list + rotation);
-				for (Map.Entry<BlockPos, RenderObject> entry : renderObjects.entrySet()) {
-					compiler.prepareForRenderObject(entry.getKey());
+			// Render non-rotating RenderObjects
+			compiler.begin(glList);
+			for (Entry<BlockPos, RenderObject> entry : renderObjects.entrySet()) {
+				if (entry.getValue().rotates()) {
+					rotatingRenderObjects.add(entry);
+					continue;
+				}
+
+				compiler.prepare(entry.getKey());
+				entry.getValue().draw(compiler, 0);
+			}
+			compiler.end();
+
+			// Render rotating RenderObjects
+			for (int rotation = 0; rotation < ROTATION_STEPS; rotation++) {
+				compiler.begin(glList + 1 + rotation);
+				for (Entry<BlockPos, RenderObject> entry : rotatingRenderObjects) {
+					compiler.prepare(entry.getKey());
 					entry.getValue().draw(compiler, rotation);
 				}
 				compiler.end();
@@ -154,15 +216,11 @@ public class RenderChunk {
 		}
 
 		private synchronized void delete() {
-			deleteList();
-		}
-
-		private synchronized void deleteList() {
-			if (list == 0)
+			if (glList == 0)
 				return;
 
-			GL11.glDeleteLists(list, 16);
-			list = 0;
+			GL11.glDeleteLists(glList, ROTATION_STEPS + 1);
+			glList = 0;
 		}
 
 	}

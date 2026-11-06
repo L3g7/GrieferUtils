@@ -661,6 +661,10 @@
     <td><a href="https://minecraft.wiki/w/File:EnvSprite_sneak.png?c2821">Minecraft Wiki (Mudscape)</a></td>
   </tr>
   <tr>
+    <td><img src="sounds.png" height=16em width=16em />&nbsp;&nbsp;<a href="sounds.png">sounds.png</a></td>
+    <td><a href="https://minecraft.wiki/w/File:EnvSprite_ambience.png?d7c92">Minecraft Wiki (Mudscape)</a></td>
+  </tr>
+  <tr>
     <td><img src="spawner.png" height=16em width=16em />&nbsp;&nbsp;<a href="spawner.png">spawner.png</a></td>
     <td><a href="https://minecraft-heads.com/custom-heads/head/36418-spawner">Minecraft Heads (Ncxz)</a></td>
   </tr>

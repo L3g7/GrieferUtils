@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.Vec3d;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunkManager;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -23,9 +24,18 @@ import org.lwjgl.opengl.GL11;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk.ROTATION_SLICE;
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk.ROTATION_STEPS;
 
+/**
+ * Renders the {@link RenderChunk RenderChunks} of all {@link RenderChunkManager managers}.
+ */
 class RenderChunkRenderer {
 
+	/**
+	 * Checks whether any chunks need recompilation.
+	 * @param forceRecompilation Whether all chunks should forcefully be recompiled.
+	 */
 	private static void checkRecompile(boolean forceRecompilation) {
 		for (RenderChunkManager manager : RenderChunkManager.managers)
 			manager.checkRecompilation(forceRecompilation);
@@ -46,9 +56,11 @@ class RenderChunkRenderer {
 		profiler.startSection("griefer_utils_render_engine");
 
 		profiler.startSection("check_recompile");
+		// Check whether any chunks need recompilation
 		checkRecompile(false);
-		if (AtlasManager.isOutdated()) {
-			AtlasManager.recompile();
+		if (Atlas.isOutdated()) {
+			Atlas.recompile();
+			// Force recompilation
 			checkRecompile(true);
 		}
 
@@ -61,11 +73,11 @@ class RenderChunkRenderer {
 		GlStateManager.color(1, 1, 1, 1);
 
 		profiler.endStartSection("frustum");
-		double viewY = 360 - mc().getRenderManager().playerViewY + 12.5d;
+		double viewY = 360 - mc().getRenderManager().playerViewY + (ROTATION_SLICE / 2d);
 		while (viewY < 0)
 			viewY += 360;
 
-		int rotationIndex = MathHelper.clamp_int((int) (Math.floor(viewY / 22.5) % 16), 0, 15);
+		int rotationIndex = MathHelper.clamp_int((int) (Math.floor(viewY / ROTATION_SLICE) % ROTATION_STEPS), 0, ROTATION_STEPS - 1);
 		Frustum frustum = new Frustum();
 		Vec3d cam = RenderUtil.camPos();
 		frustum.setPosition(cam.x, cam.y, cam.z);

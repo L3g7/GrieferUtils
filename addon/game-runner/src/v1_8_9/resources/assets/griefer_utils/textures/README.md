@@ -2,6 +2,10 @@
 
 <table>
   <tr>
+    <td><img src="arrow.png" height=16em width=16em />&nbsp;&nbsp;<a href="arrow.png">arrow.png</a></td>
+    <td>selfmade</td>
+  </tr>
+  <tr>
     <td><img src="icon.png" height=16em width=16em />&nbsp;&nbsp;<a href="icon.png">icon.png</a></td>
     <td>selfmade</td>
   </tr>

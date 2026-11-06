@@ -5,48 +5,63 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.util.render.render_engine;
+package dev.l3g7.griefer_utils.core.util.render.render_engine.manager;
 
 import com.github.lunatrius.schematica.api.ISchematic;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.util.SchematicaUtil;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
 
 import java.util.Objects;
 
+/**
+ * The {@link RenderChunkManager} responsible for {@link RenderObject RenderObjects} in schematics.
+ */
 @Singleton
 class SchematicaRenderChunkManager extends RenderChunkManager {
 
+	private ISchematic schematic = null;
+	private BlockPos schematicPos = null;
+
 	@Override
-	public void reload() {
-		previousSchematic = null;
-		checkForSchematicUpdate();
+	public void rescan() {
+		schematic = null;
+		if (checkSchematicUpdate())
+			rescanSchematic();
 	}
 
 	@Override
-	protected void checkRecompilation(boolean forceRecompilation) {
-		if (!forceRecompilation)
-			checkForSchematicUpdate();
+	public void checkRecompilation(boolean forceRecompilation) {
+		if (!forceRecompilation && checkSchematicUpdate())
+			rescanSchematic();
 
 		super.checkRecompilation(forceRecompilation);
 	}
 
-	private static Object previousSchematic = null;
-	private static BlockPos previousSchematicPos = null;
-
-	private void checkForSchematicUpdate() {
-		ISchematic schematic = SchematicaUtil.getWorld() == null ? null : SchematicaUtil.getSchematic();
+	/**
+	 * @return Whether the schematic has changed since the last check.
+	 */
+	private boolean checkSchematicUpdate() {
+		ISchematic newSchematic = SchematicaUtil.getWorld() == null ? null : SchematicaUtil.getSchematic();
 		BlockPos position = SchematicaUtil.getWorld() == null ? null : SchematicaUtil.getPosition();
 
-		if (previousSchematic == schematic && Objects.equals(previousSchematicPos, position))
-			return;
+		if (schematic == newSchematic && Objects.equals(schematicPos, position))
+			return false;
 
-		previousSchematic = schematic;
-		previousSchematicPos = position == null ? null : new BlockPos(position);
+		schematic = newSchematic;
+		schematicPos = position == null ? null : new BlockPos(position);
+		return true;
+	}
 
+	/**
+	 * Rescans the entire schematic for {@link RenderObject RenderObjects}.
+	 */
+	private void rescanSchematic() {
 		RenderChunk.deleteAll(chunks.values());
-		if (schematic == null || position == null)
+		if (schematic == null || schematicPos == null)
 			return;
 
 		for (int dX = 0; dX < schematic.getWidth(); dX++) {

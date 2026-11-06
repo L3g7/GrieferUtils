@@ -5,18 +5,21 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.core.util.render.render_engine;
+package dev.l3g7.griefer_utils.core.util.render.render_engine.manager;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.ChunkFilledEvent;
 import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.network.Packet;
+import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.BlockPos;
@@ -28,13 +31,21 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**
- * Generates {@link RenderChunk}s and updates their data
+ * The {@link RenderChunkManager} responsible for {@link RenderObject RenderObjects} in the world.
+ * Handles blockstate changes and chunk loads / unloads.
  */
 @Singleton
-class DefaultRenderChunkManager extends RenderChunkManager {
+public class WorldRenderChunkManager extends RenderChunkManager {
 
+	public static WorldRenderChunkManager get() {
+		return FileProvider.getSingleton(WorldRenderChunkManager.class);
+	}
+
+	/**
+	 * Rescans all loaded chunks.
+	 */
 	@Override
-	public void reload() {
+	public void rescan() {
 		WorldClient world = world();
 		if (world == null)
 			return;
@@ -54,17 +65,21 @@ class DefaultRenderChunkManager extends RenderChunkManager {
 
 				Chunk chunk = chunkProvider.provideChunk(playerX + dX, playerZ + dZ);
 				if (!chunk.isEmpty())
-					checkChunk(chunk);
+					scanChunk(chunk);
 			}
 		}
 	}
 
 	@EventListener
 	private void onChunkFilled(ChunkFilledEvent event) {
-		checkChunk(event.getChunk());
+		scanChunk(event.getChunk());
 	}
 
-	private void checkChunk(Chunk chunk) {
+	/**
+	 * Scans a single chunk for {@link RenderObject RenderObjects}.
+	 * @param chunk The chunk to scan.
+	 */
+	private void scanChunk(Chunk chunk) {
 		ChunkCoordIntPair coords = new ChunkCoordIntPair(chunk.xPosition, chunk.zPosition);
 		RenderChunk renderChunk = new RenderChunk();
 
@@ -75,13 +90,17 @@ class DefaultRenderChunkManager extends RenderChunkManager {
 			for (int x = 0; x < 16; x++) {
 				for (int y = 0; y < 16; y++) {
 					for (int z = 0; z < 16; z++) {
+						IBlockState state = ebs.get(x, y, z);
+						if (state.getBlock() == Blocks.air)
+							continue;
+
 						BlockPos targetPos = new BlockPos(
 							x + (coords.chunkXPos << 4),
 							y + ebs.getYLocation(),
 							z + (coords.chunkZPos << 4)
 						);
 
-						RenderObject renderObject = RenderObject.fromState(targetPos, ebs.get(x, y, z), world());
+						RenderObject renderObject = RenderObject.fromState(targetPos, state, world());
 						if (renderObject == null)
 							continue;
 
@@ -91,10 +110,12 @@ class DefaultRenderChunkManager extends RenderChunkManager {
 			}
 		}
 
-		if (renderChunk.hasData())
-			delete(chunks.put(coords, renderChunk));
-		else
-			delete(chunks.remove(coords));
+		RenderChunk oldChunk = renderChunk.hasData()
+			? chunks.put(coords, renderChunk)
+			: chunks.remove(coords);
+
+		if (oldChunk != null)
+			oldChunk.delete();
 	}
 
 	@EventListener
@@ -103,7 +124,9 @@ class DefaultRenderChunkManager extends RenderChunkManager {
 			return; // Integrated server chunk, its thread has no GL context
 
 		ChunkCoordIntPair coordPair = new ChunkCoordIntPair(event.chunk.xPosition, event.chunk.zPosition);
-		delete(chunks.remove(coordPair));
+		RenderChunk oldChunk = chunks.remove(coordPair);
+		if (oldChunk != null)
+			oldChunk.delete();
 	}
 
 	@EventListener
@@ -112,40 +135,22 @@ class DefaultRenderChunkManager extends RenderChunkManager {
 	}
 
 	@EventListener
-	private void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
-		if (event.packet instanceof S23PacketBlockChange packet) {
-			TickScheduler.sync(() -> updateBlock(packet.getBlockPosition(), packet.getBlockState()));
-			return;
-		}
-
-		if (!(event.packet instanceof S22PacketMultiBlockChange packet))
-			return;
-
+	private void onBlockChange(PacketReceiveEvent<S23PacketBlockChange> event) {
 		TickScheduler.sync(() -> {
-			for (S22PacketMultiBlockChange.BlockUpdateData data : packet.getChangedBlocks())
-				updateBlock(data.getPos(), data.getBlockState());
+			BlockPos pos = event.packet.getBlockPosition();
+			RenderObject renderObject = RenderObject.fromState(pos, event.packet.getBlockState(), world());
+			setRenderObject(pos, renderObject);
 		});
 	}
 
-	private void delete(RenderChunk chunk) {
-		if (chunk != null)
-			chunk.delete();
-	}
-
-	private void updateBlock(BlockPos pos, IBlockState state) {
-		ChunkCoordIntPair pair = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
-		RenderObject renderObject = RenderObject.fromState(pos, state, world());
-		BlockPos chunkPos = new BlockPos(pos.getX() & 15, pos.getY(), pos.getZ() & 15);
-
-		if (renderObject != null) {
-			RenderChunk chunk = chunks.computeIfAbsent(pair, k -> new RenderChunk());
-			chunk.add(chunkPos, renderObject);
-			return;
-		}
-
-		RenderChunk chunk = chunks.get(pair);
-		if (chunk != null && chunk.hasData())
-			chunk.remove(chunkPos);
+	@EventListener
+	private void onMultiBlockChange(PacketReceiveEvent<S22PacketMultiBlockChange> event) {
+		TickScheduler.sync(() -> {
+			for (S22PacketMultiBlockChange.BlockUpdateData data : event.packet.getChangedBlocks()) {
+				RenderObject renderObject = RenderObject.fromState(data.getPos(), data.getBlockState(), world());
+				setRenderObject(data.getPos(), renderObject);
+			}
+		});
 	}
 
 

@@ -16,6 +16,9 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+/**
+ * Copies the config before migrating or deleting (due to errors).
+ */
 public class ConfigBackuper {
 
 	public static void backup(String prevVersion) {

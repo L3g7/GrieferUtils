@@ -141,7 +141,7 @@ public class Config {
 		if (config == null) {
 			if (Files.notExists(configFile)) {
 				config = new JsonObject();
-				new ConfigPatcher(config).patch();
+				ConfigPatcher.patch(config);
 				return config;
 			}
 
@@ -153,7 +153,7 @@ public class Config {
 				}
 			}
 
-			new ConfigPatcher(config).patch();
+			ConfigPatcher.patch(config);
 		}
 
 		return config;

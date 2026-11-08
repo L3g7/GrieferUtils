@@ -1,37 +1,54 @@
+/*
+ * This file is part of GrieferUtils (https://github.com/L3g7/GrieferUtils).
+ * Copyright (c) L3g7.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ */
+
 package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.UV;
+import dev.l3g7.griefer_utils.core.util.render.sinks.VertexSink;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.function.Function;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class ChunkCompiler {
-
-	/**
-	 * A transformation applied to every quad drawn.<br>
-	 * <code>null</code> if no transformation has been set.
-	 */
-	private Function<Quad, Quad> transformation;
+public class ChunkCompiler implements VertexSink {
 
 	/**
 	 * The position of the RenderObject currently being drawing
 	 */
 	private BlockPos blockPos;
 	private Color currentColor = Color.WHITE;
+	private boolean isActive = false;
+
+	private final Map<Integer, Boolean> capabilities = new HashMap<>();
+
+	public void ensureActiveState(boolean active) {
+		if (isActive == active)
+			return;
+
+		if (active)
+			glBegin(GL_QUADS);
+		else
+			glEnd();
+
+		isActive = active;
+	}
 
 	/**
 	 * Prepares the compiler for drawing a new {@link RenderObject}
 	 * @param blockPos The RenderObject's positions
 	 */
-	void prepare(BlockPos blockPos) {
-		transformation = null;
+	public void prepare(BlockPos blockPos) {
 		setColor(Color.WHITE);
 		this.blockPos = blockPos;
 	}
@@ -40,26 +57,18 @@ public class ChunkCompiler {
 	 * Begins drawing into a GL list.
 	 * @param list The list's id.
 	 */
-	void begin(int list) {
+	public void begin(int list) {
 		glNewList(list, GL_COMPILE);
-		glBegin(GL_QUADS);
 	}
 
 	/**
 	 * Ends drawing into the current GL list.
 	 */
-	void end() {
+	public void end() {
 		setColor(Color.WHITE);
-		glEnd();
+		capabilities.clear();
+		ensureActiveState(false);
 		glEndList();
-	}
-
-	/**
-	 * Sets the transformation applied to every quad drawn.<br>
-	 * Only one transformation can be active at the same time.
-	 */
-	public void setTransformation(Function<Quad, Quad> transformation) {
-		this.transformation = transformation;
 	}
 
 	/**
@@ -77,6 +86,28 @@ public class ChunkCompiler {
 			color.getBlue() / 255f,
 			color.getAlpha() / 255f
 		);
+	}
+
+	/**
+	 * Enables the given capabilities if they were not already enabled.
+	 */
+	public void enable(int... capabilities) {
+		for (int capability : capabilities) {
+			if (!Boolean.TRUE.equals(this.capabilities.put(capability, true))) {
+				ensureActiveState(false);
+				GL11.glEnable(capability);
+			}
+		}
+	}
+
+	/**
+	 * Disables the given capabilities if they were not already disabled.
+	 */
+	public void disable(int... capabilities) {
+		ensureActiveState(false);
+		for (int capability : capabilities)
+			if (!Boolean.FALSE.equals(this.capabilities.put(capability, false)))
+				GL11.glDisable(capability);
 	}
 
 	/**
@@ -105,11 +136,9 @@ public class ChunkCompiler {
 	}
 
 	private void draw(UV uv, Quad quad) {
-		if (transformation != null)
-			quad = transformation.apply(quad);
-
 		quad = quad.translate(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5);
 
+		ensureActiveState(true);
 		drawVertex(quad.a(), uv.maxU(), uv.maxV());
 		drawVertex(quad.b(), uv.minU(), uv.maxV());
 		drawVertex(quad.c(), uv.minU(), uv.minV());
@@ -118,7 +147,13 @@ public class ChunkCompiler {
 
 	private void drawVertex(Vec3 pos, double u, double v) {
 		glTexCoord2f((float) u, (float) v);
-		glVertex3f((float) pos.xCoord, (float) pos.yCoord, (float) pos.zCoord);
+		drawVertex(pos.xCoord, pos.yCoord, pos.zCoord);
+	}
+
+	@Override
+	public void drawVertex(double x, double y, double z) {
+		ensureActiveState(true);
+		glVertex3f((float) x, (float) y, (float) z);
 	}
 
 }

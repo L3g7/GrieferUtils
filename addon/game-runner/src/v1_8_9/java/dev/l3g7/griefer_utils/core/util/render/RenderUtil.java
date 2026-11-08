@@ -13,6 +13,8 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderToolTipEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
+import dev.l3g7.griefer_utils.core.util.render.sinks.VertexSink;
+import dev.l3g7.griefer_utils.core.util.render.sinks.WorldSink;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -173,7 +175,7 @@ public class RenderUtil {
 		int originalDstFactor = Reflection.get(blendState, "dstFactor");
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		drawFilledBoxWhenRenderingStarted(bb, drawInside);
+		drawFilledBoxWhenRenderingStarted(WorldSink.INSTANCE, bb, drawInside);
 
 		tessellator.draw();
 		GlStateManager.blendFunc(originalSrcFactor, originalDstFactor);
@@ -182,17 +184,16 @@ public class RenderUtil {
 		GL11.glColor4f(1f, 1f, 1f, 1f);
 	}
 
-	public static void drawFilledBoxWhenRenderingStarted(AxisAlignedBB bb, boolean drawInside) {
-		drawFace(bb, UP, drawInside);
-		drawFace(bb, DOWN, drawInside);
-		drawFace(bb, NORTH, drawInside);
-		drawFace(bb, SOUTH, drawInside);
-		drawFace(bb, WEST, drawInside);
-		drawFace(bb, EAST, drawInside);
+	public static void drawFilledBoxWhenRenderingStarted(VertexSink sink, AxisAlignedBB bb, boolean drawInside) {
+		drawFace(sink, bb, UP, drawInside);
+		drawFace(sink, bb, DOWN, drawInside);
+		drawFace(sink, bb, NORTH, drawInside);
+		drawFace(sink, bb, SOUTH, drawInside);
+		drawFace(sink, bb, WEST, drawInside);
+		drawFace(sink, bb, EAST, drawInside);
 	}
 
-	public static void drawFace(AxisAlignedBB bb, EnumFacing face, boolean bothSides) {
-		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
+	public static void drawFace(VertexSink sink, AxisAlignedBB bb, EnumFacing face, boolean bothSides) {
 		if (bothSides) {
 			bb = new AxisAlignedBB(
 				face == EAST ? bb.maxX : bb.minX,
@@ -206,62 +207,62 @@ public class RenderUtil {
 
 		if (face.getAxis() == Axis.Y) {
 			if (face == UP || bothSides) {
-				wr.pos(bb.minX, bb.maxY, bb.maxZ); wr.endVertex();
-				wr.pos(bb.maxX, bb.maxY, bb.maxZ); wr.endVertex();
-				wr.pos(bb.maxX, bb.maxY, bb.minZ); wr.endVertex();
-				wr.pos(bb.minX, bb.maxY, bb.minZ); wr.endVertex();
+				sink.drawVertex(bb.minX, bb.maxY, bb.maxZ);
+				sink.drawVertex(bb.maxX, bb.maxY, bb.maxZ);
+				sink.drawVertex(bb.maxX, bb.maxY, bb.minZ);
+				sink.drawVertex(bb.minX, bb.maxY, bb.minZ);
 			}
 
 			if (face == DOWN || bothSides) {
-				wr.pos(bb.maxX, bb.minY, bb.maxZ); wr.endVertex();
-				wr.pos(bb.minX, bb.minY, bb.maxZ); wr.endVertex();
-				wr.pos(bb.minX, bb.minY, bb.minZ); wr.endVertex();
-				wr.pos(bb.maxX, bb.minY, bb.minZ); wr.endVertex();
+				sink.drawVertex(bb.maxX, bb.minY, bb.maxZ);
+				sink.drawVertex(bb.minX, bb.minY, bb.maxZ);
+				sink.drawVertex(bb.minX, bb.minY, bb.minZ);
+				sink.drawVertex(bb.maxX, bb.minY, bb.minZ);
 			}
 			return;
 		}
 
 		if (face.getAxis() == Axis.X) {
 			if (face == EAST || bothSides) {
-				wr.pos(bb.maxX, bb.maxY, bb.maxZ); wr.endVertex();
-				wr.pos(bb.maxX, bb.minY, bb.maxZ); wr.endVertex();
-				wr.pos(bb.maxX, bb.minY, bb.minZ); wr.endVertex();
-				wr.pos(bb.maxX, bb.maxY, bb.minZ); wr.endVertex();
+				sink.drawVertex(bb.maxX, bb.maxY, bb.maxZ);
+				sink.drawVertex(bb.maxX, bb.minY, bb.maxZ);
+				sink.drawVertex(bb.maxX, bb.minY, bb.minZ);
+				sink.drawVertex(bb.maxX, bb.maxY, bb.minZ);
 			}
 
 			if (face == WEST || bothSides) {
-				wr.pos(bb.minX, bb.minY, bb.maxZ); wr.endVertex();
-				wr.pos(bb.minX, bb.maxY, bb.maxZ); wr.endVertex();
-				wr.pos(bb.minX, bb.maxY, bb.minZ); wr.endVertex();
-				wr.pos(bb.minX, bb.minY, bb.minZ); wr.endVertex();
+				sink.drawVertex(bb.minX, bb.minY, bb.maxZ);
+				sink.drawVertex(bb.minX, bb.maxY, bb.maxZ);
+				sink.drawVertex(bb.minX, bb.maxY, bb.minZ);
+				sink.drawVertex(bb.minX, bb.minY, bb.minZ);
 			}
 			return;
 		}
 
 		if (face == SOUTH || bothSides) {
-			wr.pos(bb.maxX, bb.maxY, bb.maxZ); wr.endVertex();
-			wr.pos(bb.minX, bb.maxY, bb.maxZ); wr.endVertex();
-			wr.pos(bb.minX, bb.minY, bb.maxZ); wr.endVertex();
-			wr.pos(bb.maxX, bb.minY, bb.maxZ); wr.endVertex();
+			sink.drawVertex(bb.maxX, bb.maxY, bb.maxZ);
+			sink.drawVertex(bb.minX, bb.maxY, bb.maxZ);
+			sink.drawVertex(bb.minX, bb.minY, bb.maxZ);
+			sink.drawVertex(bb.maxX, bb.minY, bb.maxZ);
 		}
 
 		if (face == NORTH || bothSides) {
-			wr.pos(bb.minX, bb.maxY, bb.minZ); wr.endVertex();
-			wr.pos(bb.maxX, bb.maxY, bb.minZ); wr.endVertex();
-			wr.pos(bb.maxX, bb.minY, bb.minZ); wr.endVertex();
-			wr.pos(bb.minX, bb.minY, bb.minZ); wr.endVertex();
+			sink.drawVertex(bb.minX, bb.maxY, bb.minZ);
+			sink.drawVertex(bb.maxX, bb.maxY, bb.minZ);
+			sink.drawVertex(bb.maxX, bb.minY, bb.minZ);
+			sink.drawVertex(bb.minX, bb.minY, bb.minZ);
 		}
 	}
 
 	public static void drawGradientRect(double left, double top, double right, double bottom, double zLevel, int startColor, int endColor) {
-		float f = (startColor >> 24 & 255) / 255f;
-		float f1 = (startColor >> 16 & 255) / 255f;
-		float f2 = (startColor >> 8 & 255) / 255f;
-		float f3 = (startColor & 255) / 255f;
-		float f4 = (endColor >> 24 & 255) / 255f;
-		float f5 = (endColor >> 16 & 255) / 255f;
-		float f6 = (endColor >> 8 & 255) / 255f;
-		float f7 = (endColor & 255) / 255f;
+		float startA = (startColor >> 24 & 255) / 255f;
+		float startR = (startColor >> 16 & 255) / 255f;
+		float startG = (startColor >> 8 & 255) / 255f;
+		float startB = (startColor & 255) / 255f;
+		float endA = (endColor >> 24 & 255) / 255f;
+		float endR = (endColor >> 16 & 255) / 255f;
+		float endG = (endColor >> 8 & 255) / 255f;
+		float endB = (endColor & 255) / 255f;
 
 		GlStateManager.disableTexture2D();
 		GlStateManager.enableBlend();
@@ -272,10 +273,10 @@ public class RenderUtil {
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 		worldrenderer.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-		worldrenderer.pos(right, top, zLevel).color(f1, f2, f3, f).endVertex();
-		worldrenderer.pos(left, top, zLevel).color(f1, f2, f3, f).endVertex();
-		worldrenderer.pos(left, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
-		worldrenderer.pos(right, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
+		worldrenderer.pos(right, top, zLevel).color(startR, startG, startB, startA).endVertex();
+		worldrenderer.pos(left, top, zLevel).color(startR, startG, startB, startA).endVertex();
+		worldrenderer.pos(left, bottom, zLevel).color(endR, endG, endB, endA).endVertex();
+		worldrenderer.pos(right, bottom, zLevel).color(endR, endG, endB, endA).endVertex();
 		tessellator.draw();
 
 		GlStateManager.shadeModel(GL_FLAT);

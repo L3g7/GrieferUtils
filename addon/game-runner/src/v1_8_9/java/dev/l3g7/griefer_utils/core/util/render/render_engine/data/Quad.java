@@ -11,6 +11,14 @@ import java.util.function.Function;
  */
 public record Quad(Vec3 a, Vec3 b, Vec3 c, Vec3 d) {
 
+	public static Quad[] transform(Function<Quad, Quad> transformation, Quad... quads) {
+		Quad[] newQuads = new Quad[quads.length];
+		for (int i = 0; i < quads.length; i++)
+			newQuads[i] = transformation.apply(quads[i]);
+
+		return newQuads;
+	}
+
 	/**
 	 * Creates new vertices on the y plane, centered at the middle of a block.
 	 */

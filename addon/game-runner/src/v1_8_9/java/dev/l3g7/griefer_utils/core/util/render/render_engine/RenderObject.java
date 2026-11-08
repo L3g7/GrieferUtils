@@ -16,6 +16,9 @@ import net.minecraft.util.BlockPos;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+
 /**
  * A single object being rendered at a block.
  */
@@ -64,12 +67,21 @@ public interface RenderObject {
 	}
 
 	/**
+	 * Sets up GL capabilities before rendering.
+	 * @param compiler The compiler to set up.
+	 */
+	default void setup(ChunkCompiler compiler) {
+		compiler.enable(GL_DEPTH_TEST, GL_TEXTURE_2D);
+	}
+
+	/**
 	 * Draws this object into a {@link ChunkCompiler}.
 	 * @param compiler The compiler to draw into.
+	 * @param chunkPosition This object's chunkPosition.
 	 * @param rotation The player rotation step to draw for. Always 0 if {@link RenderObject#rotates()} returns <code>false</code>.
 	 * @see ChunkCompiler
 	 */
-	void draw(ChunkCompiler compiler, int rotation);
+	void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation);
 
 	/**
 	 * A factory generating RenderObjects.

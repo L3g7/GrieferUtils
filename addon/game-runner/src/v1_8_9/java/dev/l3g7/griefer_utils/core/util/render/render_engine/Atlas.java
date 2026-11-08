@@ -19,9 +19,10 @@ import java.util.Map;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 /**
- * Stitches multiple textures into one atlas.
+ * Stitches multiple textures into one atlas.<br>
+ * Should only be used internally by the render engine.
  */
-class Atlas {
+public class Atlas {
 
 	/**
 	 * The padding between individual textures in pixels
@@ -49,11 +50,11 @@ class Atlas {
 	 */
 	private static UploadedAtlas uploadedAtlas = UploadedAtlas.empty();
 
-	static boolean isOutdated() {
+	public static boolean isOutdated() {
 		return isOutdated;
 	}
 
-	static UploadedAtlas getAtlas() {
+	public static UploadedAtlas getAtlas() {
 		return uploadedAtlas;
 	}
 

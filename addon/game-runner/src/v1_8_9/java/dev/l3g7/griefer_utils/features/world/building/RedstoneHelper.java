@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.world.building;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 import dev.l3g7.griefer_utils.core.events.NoteBlockPlayEvent;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -180,7 +181,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, int rotation) {
+		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
 			for (GlyphModel renderInfo : TextGeometry.getGlyphModels(String.valueOf(power))) {
 				Quad offsets = renderInfo.rotatedVertices()[rotation];
 				compiler.draw(renderInfo.texture(), offsets.translate(0, -0.48, 0));
@@ -204,7 +205,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, int rotation) {
+		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
 			compiler.draw(ARROW_TEXTURE, quad);
 		}
 	}
@@ -220,22 +221,24 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, int rotation) {
+		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
 			compiler.setColor(Color.BLACK);
 
-			compiler.setTransformation(v -> {
+			Function<Quad, Quad> transformation = q -> {
 				if (dir == EnumFacing.UP)
-					return v.rotateX(270);
+					return q.rotateX(270);
 				if (dir == EnumFacing.DOWN)
-					return v.rotateX(90);
-				return v.rotateY(-90 * dir.getHorizontalIndex());
-			});
+					return q.rotateX(90);
+				return q.rotateY(-90 * dir.getHorizontalIndex());
+			};
 
 			compiler.draw(ARROW_TEXTURE,
-				BASE_QUAD,
-				BASE_QUAD.rotateZ(90),
-				BASE_QUAD.rotateZ(180),
-				BASE_QUAD.rotateZ(270)
+				Quad.transform(transformation,
+					BASE_QUAD,
+					BASE_QUAD.rotateZ(90),
+					BASE_QUAD.rotateZ(180),
+					BASE_QUAD.rotateZ(270)
+				)
 			);
 		}
 	}
@@ -249,7 +252,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, int rotation) {
+		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
 			for (GlyphModel renderInfo : TextGeometry.getGlyphModels(text)) {
 				Quad offsets = renderInfo.rotatedVertices()[0];
 

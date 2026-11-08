@@ -198,7 +198,8 @@ public class RenderChunk {
 				}
 
 				compiler.prepare(entry.getKey());
-				entry.getValue().draw(compiler, 0);
+				entry.getValue().setup(compiler);
+				entry.getValue().draw(compiler, entry.getKey(), 0);
 			}
 			compiler.end();
 
@@ -207,7 +208,8 @@ public class RenderChunk {
 				compiler.begin(glList + 1 + rotation);
 				for (Entry<BlockPos, RenderObject> entry : rotatingRenderObjects) {
 					compiler.prepare(entry.getKey());
-					entry.getValue().draw(compiler, rotation);
+					entry.getValue().setup(compiler);
+					entry.getValue().draw(compiler, entry.getKey(), rotation);
 				}
 				compiler.end();
 			}

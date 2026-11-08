@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.sinks.WorldSink;
 import dev.l3g7.griefer_utils.features.Feature;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.block.Block;
@@ -133,7 +134,7 @@ public class LightBugESP extends Feature {
 		GlStateManager.disableDepth();
 
 		for (AxisAlignedBB bb : lightBugs)
-			RenderUtil.drawFilledBoxWhenRenderingStarted(bb, false);
+			RenderUtil.drawFilledBoxWhenRenderingStarted(WorldSink.INSTANCE, bb, false);
 
 		Tessellator.getInstance().draw();
 		wr.setTranslation(0, 0, 0);

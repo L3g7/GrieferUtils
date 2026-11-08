@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.features.gui.griefer_games.better_hopper;
 
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.sinks.WorldSink;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -128,17 +129,17 @@ public class BlockyRenderSphere {
 			AxisAlignedBB bb = this.bb.offset(-cam.xCoord, -cam.yCoord, -cam.zCoord);
 
 			if (up)
-				RenderUtil.drawFace(bb, UP, true);
+				RenderUtil.drawFace(WorldSink.INSTANCE, bb, UP, true);
 			if (down)
-				RenderUtil.drawFace(bb, DOWN, true);
+				RenderUtil.drawFace(WorldSink.INSTANCE, bb, DOWN, true);
 			if (north)
-				RenderUtil.drawFace(bb, NORTH, true);
+				RenderUtil.drawFace(WorldSink.INSTANCE, bb, NORTH, true);
 			if (south)
-				RenderUtil.drawFace(bb, SOUTH, true);
+				RenderUtil.drawFace(WorldSink.INSTANCE, bb, SOUTH, true);
 			if (west)
-				RenderUtil.drawFace(bb, WEST, true);
+				RenderUtil.drawFace(WorldSink.INSTANCE, bb, WEST, true);
 			if (east)
-				RenderUtil.drawFace(bb, EAST, true);
+				RenderUtil.drawFace(WorldSink.INSTANCE, bb, EAST, true);
 		}
 
 		@Override

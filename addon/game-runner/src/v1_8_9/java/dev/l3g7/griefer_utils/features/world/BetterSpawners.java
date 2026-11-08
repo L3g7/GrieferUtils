@@ -63,6 +63,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
@@ -204,24 +205,36 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 		});
 	}
 
-	// Mark last opened spawner
+	// Show spawner icons & mark last opened spawner
 
 	@EventListener
 	private void onGuiOpen(GuiOpenEvent<GuiChest> event) {
 		IInventory lowerChestInventory = Reflection.get(event.gui, "lowerChestInventory");
 		String title = lowerChestInventory.getDisplayName().getFormattedText();
-		if (title.startsWith("§6Spawner - Lager") && lastClickedSpawner != null) {
-			lastOpenedSpawner = lastClickedSpawner;
+		if (!title.startsWith("§6Spawner - Lager") || lastClickedSpawner == null)
+			return;
+
+		if (Objects.equals(lastOpenedSpawner, lastClickedSpawner)) {
 			lastClickedSpawner = null;
+			return;
 		}
+
+		TileEntity tileEntity = world().getTileEntity(lastClickedSpawner);
+		if (!(tileEntity instanceof TileEntityMobSpawner spawner))
+			return;
+
+		if (lastOpenedSpawner != null)
+			WorldRenderChunkManager.get().setRenderObject(lastOpenedSpawner, null);
+
+		WorldRenderChunkManager.get().setRenderObject(lastClickedSpawner, SpawnerRenderObject.of(spawner, true));
+		lastOpenedSpawner = lastClickedSpawner;
+		lastClickedSpawner = null;
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onServerSwitch(ServerSwitchEvent event) {
 		lastOpenedSpawner = lastClickedSpawner = null;
 	}
-
-	// Show spawner icons & show triggered spawners
 
 	@Override
 	public RenderObject getRenderObject(BlockPos worldPos, IBlockState state, WorldClient world) {
@@ -243,6 +256,28 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 
 		BlockPos pos = event.tileEntity.getPos();
 		WorldRenderChunkManager.get().setRenderObject(pos, SpawnerRenderObject.of(spawner, pos.equals(lastOpenedSpawner)));
+	}
+
+	// Show triggered spawners
+
+	@EventListener
+	private void renderTriggeredSpawners(RenderWorldLastEvent event) {
+		if (!markTriggeredSpawners.get())
+			return;
+
+		spawners.removeIf(pos -> {
+			if (!(world().getTileEntity(pos) instanceof TileEntityMobSpawner spawner))
+				return true;
+
+			boolean isActivated = Reflection.invoke(spawner.getSpawnerBaseLogic(), "isActivated");
+			if (isActivated) {
+				GlStateManager.disableDepth();
+				RenderUtil.drawBoxOutlines(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0xFFFF00), 3);
+				GlStateManager.enableDepth();
+			}
+
+			return false;
+		});
 	}
 
 	// Hide mobs
@@ -297,13 +332,16 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 				? new ResourceLocation("missing_entity_texture_null")
 				: new ResourceLocation("griefer_utils", "icons/mob_icons/outlined_minecraft/" + EntityList.getEntityString(entity).toLowerCase() + ".png");
 
-			return new SpawnerRenderObject(new TextureCutout(resourceLocation), isLastOpenedSpawner);
+			return new SpawnerRenderObject(
+				BetterSpawners.get().showSpawnerIcons.get() ? new TextureCutout(resourceLocation) : null,
+				BetterSpawners.get().markLastOpenedSpawner.get() && isLastOpenedSpawner
+			);
 		}
 
 		@Override
 		public boolean equals(RenderObject r) {
 			return r instanceof SpawnerRenderObject(TextureCutout otherTexture, boolean otherIsLastOpenedSpawner)
-				&& texture.equals(otherTexture) && isLastOpenedSpawner == otherIsLastOpenedSpawner;
+				&& Objects.equals(texture, otherTexture) && isLastOpenedSpawner == otherIsLastOpenedSpawner;
 		}
 
 		@Override
@@ -320,26 +358,6 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 			compiler.enable(GL_DEPTH_TEST, GL_TEXTURE_2D);
 		}
 
-	}
-
-	@EventListener
-	private void renderTriggeredSpawners(RenderWorldLastEvent event) {
-		if (!markTriggeredSpawners.get())
-			return;
-
-		spawners.removeIf(pos -> {
-			if (!(world().getTileEntity(pos) instanceof TileEntityMobSpawner spawner))
-				return true;
-
-			boolean isActivated = Reflection.invoke(spawner.getSpawnerBaseLogic(), "isActivated");
-			if (isActivated) {
-				GlStateManager.disableDepth();
-				RenderUtil.drawBoxOutlines(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0xFFFF00), 3);
-				GlStateManager.enableDepth();
-			}
-
-			return false;
-		});
 	}
 
 }

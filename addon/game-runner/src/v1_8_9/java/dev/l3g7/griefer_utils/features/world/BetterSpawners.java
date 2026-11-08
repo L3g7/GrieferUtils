@@ -16,16 +16,19 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TileEntityDataSetEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
+import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
-import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector;
-import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.OldRenderObject;
-import dev.l3g7.griefer_utils.core.util.render.block_overlay.BlockOverlayCollector.RenderObjectGenerator;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunkManager;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
 import net.minecraft.block.Block;
@@ -45,8 +48,10 @@ import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityMobSpawner;
-import net.minecraft.util.*;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -56,15 +61,21 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 
 @Singleton
-public class BetterSpawners extends Feature implements RenderObjectGenerator {
+public class BetterSpawners extends Feature implements RenderObject.Generator {
 
 	private BlockPos lastClickedSpawner = null;
 	private BlockPos lastOpenedSpawner = null;
+
+	private static final List<BlockPos> spawners = new ArrayList<>();
 
 	private int itemMoveOrigin = -1;
 
@@ -86,7 +97,8 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	private final SwitchSetting showSpawnerIcons = SwitchSetting.create()
 		.name("Spawner-Icons anzeigen")
 		.description("Zeigt an Spawnern ein Icon des Mobs an, das gespawnt wird.")
-		.icon("mob_icons/outlined_minecraft/silverfish");
+		.icon("mob_icons/outlined_minecraft/silverfish")
+		.callback(RenderChunkManager::reloadAll);
 
 	private final SwitchSetting markTriggeredSpawners = SwitchSetting.create()
 		.name("Aktivierte Spawner markieren")
@@ -96,7 +108,8 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	private final SwitchSetting markLastOpenedSpawner = SwitchSetting.create()
 		.name("Zuletzt geöffneten Spawner markieren")
 		.description("Markiert den Spawner, der als letztes geöffnet wurde.")
-		.icon("spawner");
+		.icon("spawner")
+		.callback(RenderChunkManager::reloadAll);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -107,12 +120,6 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 
 	public static BetterSpawners get() {
 		return get(BetterSpawners.class);
-	}
-
-	@Override
-	public void init() {
-		super.init();
-		BlockOverlayCollector.registerRenderObjectGenerator(this);
 	}
 
 	// Spawner with held item fix
@@ -217,24 +224,25 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 	// Show spawner icons & show triggered spawners
 
 	@Override
-	public OldRenderObject getRenderObject(IBlockState state, BlockPos pos, WorldClient world) {
+	public RenderObject getRenderObject(BlockPos worldPos, IBlockState state, WorldClient world) {
 		if (state.getBlock() != Blocks.mob_spawner)
 			return null;
 
-		TileEntity tileEntity = world.getTileEntity(pos);
-		if (!(tileEntity instanceof TileEntityMobSpawner))
+		TileEntity tileEntity = world.getTileEntity(worldPos);
+		if (!(tileEntity instanceof TileEntityMobSpawner spawner))
 			return null;
 
-		return new SpawnerOldRenderObject(tileEntity);
+		spawners.add(worldPos);
+		return SpawnerRenderObject.of(spawner, worldPos.equals(lastOpenedSpawner));
 	}
 
 	@EventListener(triggerWhenDisabled = true)
 	private void onTileEntityDataSet(TileEntityDataSetEvent event) {
-		if (!(event.tileEntity instanceof TileEntityMobSpawner))
+		if (!(event.tileEntity instanceof TileEntityMobSpawner spawner))
 			return;
 
-		ChunkCoordIntPair pair = new ChunkCoordIntPair(event.tileEntity.getPos().getX() >> 4, event.tileEntity.getPos().getZ() >> 4);
-		BlockOverlayCollector.getRenderObjectsForChunk(pair).put(event.tileEntity.getPos(), new SpawnerOldRenderObject(event.tileEntity));
+		BlockPos pos = event.tileEntity.getPos();
+		WorldRenderChunkManager.get().setRenderObject(pos, SpawnerRenderObject.of(spawner, pos.equals(lastOpenedSpawner)));
 	}
 
 	// Hide mobs
@@ -269,74 +277,69 @@ public class BetterSpawners extends Feature implements RenderObjectGenerator {
 
 	}
 
-	private class SpawnerOldRenderObject extends OldRenderObject {
+	private record SpawnerRenderObject(TextureCutout texture, boolean isLastOpenedSpawner) implements RenderObject {
 
-		private final ResourceLocation resourceLocation;
-		private final MobSpawnerBaseLogic mobSpawnerBaseLogic;
+		private static final Quad BASE_QUAD = Quad.onYPlane(0.5, 0.5).translate(0, 0.51, 0);
 
-		private SpawnerOldRenderObject(TileEntity tileEntity) {
-			TileEntityMobSpawner spawner = (TileEntityMobSpawner) tileEntity;
-			this.mobSpawnerBaseLogic = spawner.getSpawnerBaseLogic();
+		private static final Quad[] ICON_QUADS = new Quad[] {
+			BASE_QUAD,
+			BASE_QUAD.rotateX(180),
+			BASE_QUAD.rotateX(270),
+			BASE_QUAD.rotateX(270).rotateY(90),
+			BASE_QUAD.rotateX(270).rotateY(180),
+			BASE_QUAD.rotateX(270).rotateY(270)
+		};
+
+		public static SpawnerRenderObject of(TileEntityMobSpawner spawner, boolean isLastOpenedSpawner) {
 			Entity entity = spawner.getSpawnerBaseLogic().func_180612_a(world());
-			if (entity == null) {
-				resourceLocation = new ResourceLocation("missing_entity_texture_null");
-				return;
-			}
 
-			resourceLocation = new ResourceLocation("griefer_utils", "icons/mob_icons/outlined_minecraft/" + EntityList.getEntityString(entity).toLowerCase() + ".png");
+			ResourceLocation resourceLocation = entity == null
+				? new ResourceLocation("missing_entity_texture_null")
+				: new ResourceLocation("griefer_utils", "icons/mob_icons/outlined_minecraft/" + EntityList.getEntityString(entity).toLowerCase() + ".png");
+
+			return new SpawnerRenderObject(new TextureCutout(resourceLocation), isLastOpenedSpawner);
 		}
 
 		@Override
-		public void render(BlockPos pos, float partialTicks) {
-			if (markTriggeredSpawners.get() && (boolean) Reflection.invoke(mobSpawnerBaseLogic, "isActivated")) {
+		public boolean equals(RenderObject r) {
+			return r instanceof SpawnerRenderObject(TextureCutout otherTexture, boolean otherIsLastOpenedSpawner)
+				&& texture.equals(otherTexture) && isLastOpenedSpawner == otherIsLastOpenedSpawner;
+		}
+
+		@Override
+		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+			if (texture != null)
+				compiler.draw(texture, ICON_QUADS);
+
+			if (!isLastOpenedSpawner)
+				return;
+
+			compiler.disable(GL_DEPTH_TEST, GL_TEXTURE_2D);
+			compiler.setColor(new Color(0x6000FF00, true));
+			RenderUtil.drawFilledBoxWhenRenderingStarted(compiler, new AxisAlignedBB(chunkPosition, chunkPosition.add(1, 1, 1)), false);
+			compiler.enable(GL_DEPTH_TEST, GL_TEXTURE_2D);
+		}
+
+	}
+
+	@EventListener
+	private void renderTriggeredSpawners(RenderWorldLastEvent event) {
+		if (!markTriggeredSpawners.get())
+			return;
+
+		spawners.removeIf(pos -> {
+			if (!(world().getTileEntity(pos) instanceof TileEntityMobSpawner spawner))
+				return true;
+
+			boolean isActivated = Reflection.invoke(spawner.getSpawnerBaseLogic(), "isActivated");
+			if (isActivated) {
 				GlStateManager.disableDepth();
 				RenderUtil.drawBoxOutlines(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0xFFFF00), 3);
 				GlStateManager.enableDepth();
 			}
 
-			if (markLastOpenedSpawner.get() && pos.equals(lastOpenedSpawner)) {
-				GlStateManager.disableDepth();
-				RenderUtil.drawFilledBox(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0x6000FF00, true), false);
-				GlStateManager.enableDepth();
-			}
-
-			if (!showSpawnerIcons.get())
-				return;
-
-			prepareRender(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
-
-			GlStateManager.translate(0, 0.75, 0);
-			GlStateManager.scale(1, -1, 1);
-
-			GlStateManager.color(1, 1, 1, 1);
-			mc().getTextureManager().bindTexture(resourceLocation);
-
-			for (int i = 0; i < 4; i++) {
-				GlStateManager.pushMatrix();
-				GlStateManager.translate(-0.25f, 0, 0.51f);
-				GlStateManager.scale(1 / 512f, 1 / 512f, 1 / 512f);
-				DrawUtils.drawTexturedModalRect(0, 0, 256, 256);
-				GlStateManager.popMatrix();
-				GlStateManager.rotate(90, 0, 1, 0);
-			}
-
-			GlStateManager.pushMatrix();
-			GlStateManager.rotate(90, 1, 0, 0);
-			GlStateManager.translate(-0.25f, -0.25f, 0.26f);
-			GlStateManager.scale(1 / 512f, 1 / 512f, 1 / 512f);
-			DrawUtils.drawTexturedModalRect(0, 0, 256, 256);
-			GlStateManager.popMatrix();
-
-			GlStateManager.pushMatrix();
-			GlStateManager.rotate(90, -1, 0, 0);
-			GlStateManager.translate(-0.25f, -0.25f, 0.76f);
-			GlStateManager.scale(1 / 512f, 1 / 512f, 1 / 512f);
-			DrawUtils.drawTexturedModalRect(0, 0, 256, 256);
-			GlStateManager.popMatrix();
-
-			GlStateManager.popMatrix();
-		}
-
+			return false;
+		});
 	}
 
 }

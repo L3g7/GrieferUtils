@@ -214,7 +214,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 
 			if (mouseOver) {
 				boolean isButtonHovered = mouseX >= button.xPosition && mouseY >= button.yPosition && mouseX < button.xPosition + button.getButtonWidth() && mouseY < button.yPosition + 20;
-				RenderUtil.color(new Color(isButtonHovered ? 0x33FF33 : 0x3BB3FF));
+				RenderUtil.glColor(new Color(isButtonHovered ? 0x33FF33 : 0x3BB3FF));
 			} else {
 				GlStateManager.color(0.9f, 0.9f, 0.9f);
 			}

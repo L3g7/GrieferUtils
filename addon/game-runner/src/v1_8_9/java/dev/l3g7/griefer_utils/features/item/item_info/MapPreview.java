@@ -14,7 +14,7 @@ import dev.l3g7.griefer_utils.core.events.render.RenderToolTipEvent;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.TooltipRenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -51,7 +51,7 @@ public class MapPreview extends Feature {
 		if (mapData == null)
 			return;
 
-		RenderUtil.renderToolTipWithLeftPadding(event, 17 * size.get(), (left, top) -> {
+		TooltipRenderUtil.renderToolTipWithLeftPadding(event, 17 * size.get(), (left, top) -> {
 			GlStateManager.translate(left + (size.get() / 2f), top + (size.get() / 2f), 750);
 			EntityRenderer renderer = mc().entityRenderer;
 

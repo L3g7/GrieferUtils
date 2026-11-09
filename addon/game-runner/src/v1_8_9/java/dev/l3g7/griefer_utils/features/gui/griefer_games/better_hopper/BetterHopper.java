@@ -21,7 +21,7 @@ import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.item.item_saver.specific_item_saver.SpecificItemSaver;
 import net.minecraft.block.Block;
@@ -178,7 +178,7 @@ public class BetterHopper extends Feature {
 		for (int i = 0; i < lastClickedHoppers.size(); ) {
 			BlockPos lastClickedHopper = lastClickedHoppers.get(i);
 			AxisAlignedBB bb = new AxisAlignedBB(lastClickedHopper, lastClickedHopper.add(1, 1, 1)).expand(0.001, 0.001, 0.001);
-			RenderUtil.drawFilledBox(bb, new Color(0, (int) (++i * color) + 63, 0, 0x80), false);
+			GeometryRenderUtil.drawFilledBox(bb, new Color(0, (int) (++i * color) + 63, 0, 0x80), false);
 		}
 	}
 

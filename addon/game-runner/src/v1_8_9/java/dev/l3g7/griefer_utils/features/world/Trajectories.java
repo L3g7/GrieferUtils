@@ -98,7 +98,7 @@ public class Trajectories extends Feature {
 		glDisable(GL_TEXTURE_2D);
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-		RenderUtil.color(new Color(1, 1, 1, .3f));
+		RenderUtil.glColor(new Color(1, 1, 1, .3f));
 		glLineWidth(2f);
 
 		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
@@ -142,7 +142,7 @@ public class Trajectories extends Feature {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(pos.xCoord - renderPos.xCoord, pos.yCoord - renderPos.yCoord, pos.zCoord - renderPos.zCoord);
 
-		RenderUtil.color(hitEntity ? RED : WHITE);
+		RenderUtil.glColor(hitEntity ? RED : WHITE);
 
 		if (landingPosition != null) {
 

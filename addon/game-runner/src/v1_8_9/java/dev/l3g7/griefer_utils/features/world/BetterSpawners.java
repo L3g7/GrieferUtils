@@ -22,7 +22,7 @@ import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
-import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
@@ -272,7 +272,7 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 			boolean isActivated = Reflection.invoke(spawner.getSpawnerBaseLogic(), "isActivated");
 			if (isActivated) {
 				GlStateManager.disableDepth();
-				RenderUtil.drawBoxOutlines(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0xFFFF00), 3);
+				GeometryRenderUtil.drawBoxOutlines(new AxisAlignedBB(pos, pos.add(1, 1, 1)), new Color(0xFFFF00), 3);
 				GlStateManager.enableDepth();
 			}
 
@@ -354,7 +354,7 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 
 			compiler.disable(GL_DEPTH_TEST, GL_TEXTURE_2D);
 			compiler.setColor(new Color(0x6000FF00, true));
-			RenderUtil.drawFilledBoxWhenRenderingStarted(compiler, new AxisAlignedBB(chunkPosition, chunkPosition.add(1, 1, 1)), false);
+			GeometryRenderUtil.drawFilledBoxWhenRenderingStarted(compiler, new AxisAlignedBB(chunkPosition, chunkPosition.add(1, 1, 1)), false);
 			compiler.enable(GL_DEPTH_TEST, GL_TEXTURE_2D);
 		}
 

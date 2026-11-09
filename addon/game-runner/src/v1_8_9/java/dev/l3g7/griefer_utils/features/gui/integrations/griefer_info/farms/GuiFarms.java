@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiSearchable;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.TooltipRenderUtil;
 import dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.BigChestUtil;
 import dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.GuiGrieferInfo;
 import net.minecraft.client.renderer.GlStateManager;
@@ -154,7 +154,7 @@ public class GuiFarms extends GuiSearchable<Farm> {
 			textures.add(texturesNbt.getStringTagAt(i));
 
 		// Render
-		Pair<Integer, Integer> tooltipTranslation = RenderUtil.getTooltipTranslation(tooltip, x, y, width, height);
+		Pair<Integer, Integer> tooltipTranslation = TooltipRenderUtil.getTooltipTranslation(tooltip, x, y, width, height);
 		int tooltipY = tooltipTranslation.getRight() + 12;
 
 		RenderHelper.enableGUIStandardItemLighting();

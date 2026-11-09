@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
+import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
@@ -225,8 +226,8 @@ class BetterHopperVisualisation implements Disableable {
 			collectionBox = new AxisAlignedBB(hopper, hopper).expand(0.125, 0.125, 0.125).offset(0.5, 0.5, 0.5);
 
 		if (fillBoxes.get())
-			RenderUtil.drawFilledBox(collectionBox, new Color(0x1A880088, true), true);
-		RenderUtil.drawBoxOutlines(collectionBox, new Color(0x880088), 1.5f);
+			GeometryRenderUtil.drawFilledBox(collectionBox, new Color(0x1A880088, true), true);
+		GeometryRenderUtil.drawBoxOutlines(collectionBox, new Color(0x880088), 1.5f);
 		GlStateManager.enableBlend();
 		GlStateManager.enableBlend();
 		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -279,9 +280,9 @@ class BetterHopperVisualisation implements Disableable {
 	private void drawConnection(BlockPos target, int color) {
 		AxisAlignedBB targetBox = new AxisAlignedBB(target, target.add(1, 1, 1));
 		if (fillBoxes.get())
-			RenderUtil.drawFilledBox(targetBox, new Color(0x1A000000 | color, true), true);
-		RenderUtil.drawBoxOutlines(targetBox, new Color(color), 1.5f);
-		RenderUtil.drawLine(hopper.getX() + 0.5f, hopper.getY() + 0.5f, hopper.getZ() + 0.5f, target.getX() + 0.5f, target.getY() + 0.5f, target.getZ() + 0.5f, new Color(color), 1.5f);
+			GeometryRenderUtil.drawFilledBox(targetBox, new Color(0x1A000000 | color, true), true);
+		GeometryRenderUtil.drawBoxOutlines(targetBox, new Color(color), 1.5f);
+		GeometryRenderUtil.drawLine(hopper.getX() + 0.5f, hopper.getY() + 0.5f, hopper.getZ() + 0.5f, target.getX() + 0.5f, target.getY() + 0.5f, target.getZ() + 0.5f, new Color(color), 1.5f);
 	}
 
 	@Override

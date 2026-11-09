@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.render.RenderToolTipEvent;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.TooltipRenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -43,7 +43,7 @@ public class HeadPreview extends Feature {
 		if (event.stack.getItem() != Items.skull || event.stack.getMetadata() != 3)
 			return;
 
-		RenderUtil.renderToolTipWithLeftPadding(event, 12 * size.get(), (left, top) -> {
+		TooltipRenderUtil.renderToolTipWithLeftPadding(event, 12 * size.get(), (left, top) -> {
 			GlStateManager.translate(left - (size.get() * 2), top - (size.get() * 2), 1);
 			RenderHelper.enableGUIStandardItemLighting();
 			GlStateManager.scale(size.get(), size.get(), 1);

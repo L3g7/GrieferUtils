@@ -188,7 +188,7 @@ public abstract class PieMenu extends Gui implements Disableable {
 
 		Minecraft.getMinecraft().getTextureManager().bindTexture(MISC_MENU_POINT);
 
-		RenderUtil.color(new Color(hover ? 0x33FF33 : 0x3BB3FF));
+		RenderUtil.glColor(new Color(hover ? 0x33FF33 : 0x3BB3FF));
 
 		if (finalDestX - midX > -10 && finalDestX - midX < 10) {
 			DrawUtils.drawTexture(x - textureWidth / 2, y - 13, 256, 256, textureWidth, textureHeight);

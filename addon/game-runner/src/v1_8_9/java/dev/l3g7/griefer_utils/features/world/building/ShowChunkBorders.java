@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.util.BlockPos;
 
@@ -87,7 +87,7 @@ public class ShowChunkBorders extends Feature {
 				continue;
 
 			for (int side = 0; side < 4; side++)
-				RenderUtil.drawLine(chunkRoot.add(rotate(line.startOffset, side)), chunkRoot.add(rotate(line.endOffset, side)), line.color, 1.5f);
+				GeometryRenderUtil.drawLine(chunkRoot.add(rotate(line.startOffset, side)), chunkRoot.add(rotate(line.endOffset, side)), line.color, 1.5f);
 		}
 	}
 

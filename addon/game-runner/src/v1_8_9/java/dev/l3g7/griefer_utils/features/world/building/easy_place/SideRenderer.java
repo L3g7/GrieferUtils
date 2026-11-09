@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.world.building.easy_place;
 
+import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -50,7 +51,7 @@ class SideRenderer {
 	}
 
 	public void render(BlockPos pos, EnumFacing facing, EnumFacing selectedFacing) {
-		RenderUtil.startLineDrawing(new Color(0, 0, 0, 196), 5f);
+		GeometryRenderUtil.startLineDrawing(new Color(0, 0, 0, 196), 5f);
 		GlStateManager.enableBlend();
 		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -62,7 +63,7 @@ class SideRenderer {
 			line(inner[i].add(pos3d), inner[i == 3 ? 0 : i + 1].add(pos3d));
 		}
 
-		RenderUtil.finishLineDrawing();
+		GeometryRenderUtil.finishLineDrawing();
 		drawPolygon(pos3d, true, getSelectionIndex(facing, selectedFacing));
 
 		for (EnumFacing value : values()) {
@@ -77,7 +78,7 @@ class SideRenderer {
 	}
 
 	private static void line(Vec3 start, Vec3 end) {
-		RenderUtil.drawLineWhenRenderingStarted(
+		GeometryRenderUtil.drawLineWhenRenderingStarted(
 			(float) start.xCoord,
 			(float) start.yCoord,
 			(float) start.zCoord,

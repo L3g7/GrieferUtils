@@ -14,6 +14,9 @@ import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
@@ -26,18 +29,15 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import org.lwjgl.util.glu.Disk;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static dev.l3g7.griefer_utils.core.util.render.GlEngine.*;
-import static dev.l3g7.griefer_utils.core.util.render.GlEngine.pos;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static net.minecraft.block.material.Material.water;
 import static net.minecraft.init.Items.*;
-import static net.minecraft.util.EnumFacing.Axis.X;
-import static net.minecraft.util.EnumFacing.Axis.Y;
 import static net.minecraft.util.EnumFacing.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.GLU_SILHOUETTE;
@@ -89,18 +89,20 @@ public class Trajectories extends Feature {
 		boolean hasLanded = false;
 		boolean hitEntity = false;
 
-		begin();
-
 		// Begin rendering
-		disableDepth();
-		enable(GL_BLEND, GL_LINE_SMOOTH);
-		disable(GL_ALPHA_TEST, GL_TEXTURE_2D);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-		color(WHITE, .3f);
-		glLineWidth(2);
+		GlStateManager.disableDepth();
+		GlStateManager.enableBlend();
+		GlStateManager.disableAlpha();
 
-		beginWorldDrawing(3, DefaultVertexFormats.POSITION);
+		glEnable(GL_LINE_SMOOTH);
+		glDisable(GL_TEXTURE_2D);
+		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+		RenderUtil.color(new Color(1, 1, 1, .3f));
+		glLineWidth(2f);
+
+		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
+		wr.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION);
 
 		while (!hasLanded && pos.yCoord > 0.0D) {
 			Vec3 posBefore = new Vec3(pos.xCoord, pos.yCoord, pos.zCoord);
@@ -131,29 +133,29 @@ public class Trajectories extends Feature {
 
 			// Draw trail
 			if (mode.get() == TrajectoryMode.TRAIL)
-				pos(pos.subtract(renderPos)).endVertex();
+				wr.pos(pos.xCoord - renderPos.xCoord, pos.yCoord - renderPos.yCoord, pos.zCoord - renderPos.zCoord).endVertex();
 		}
 
-		endWorldDrawing();
+		Tessellator.getInstance().draw();
 
 		// Draw landing point
-		translate(pos.subtract(renderPos));
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(pos.xCoord - renderPos.xCoord, pos.yCoord - renderPos.yCoord, pos.zCoord - renderPos.zCoord);
 
-		color(hitEntity ? RED : WHITE);
+		RenderUtil.color(hitEntity ? RED : WHITE);
 
 		if (landingPosition != null) {
 
 			// Rotate based on side hit
 			EnumFacing side = landingPosition.sideHit;
 			if (side == UP || side == DOWN)
-				rotate(90, X);
+				GlStateManager.rotate(90, 1, 0, 0);
 			else if (side == EAST || side == WEST)
-				rotate(90, Y);
+				GlStateManager.rotate(90, 0, 1, 0);
 		}
 
 		circle.draw(0, .2f, 40, 1);
-
-		finish();
+		GlStateManager.popMatrix();
 	}
 
 	private MovingObjectPosition checkForEntityCollision(AxisAlignedBB arrowBox, float size, Vec3 posBefore, Vec3 posAfter) {

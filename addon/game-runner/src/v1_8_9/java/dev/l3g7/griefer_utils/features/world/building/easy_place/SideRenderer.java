@@ -7,9 +7,9 @@
 
 package dev.l3g7.griefer_utils.features.world.building.easy_place;
 
-import dev.l3g7.griefer_utils.core.util.render.GlEngine;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockPos;
@@ -115,22 +115,22 @@ class SideRenderer {
 		GlStateManager.disableTexture2D();
 
 		// Draw lines
-		GlEngine.begin();
-		WorldRenderer buf = GlEngine.beginWorldDrawing(GL_POLYGON, DefaultVertexFormats.POSITION);
+		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
+		wr.begin(GL_POLYGON, DefaultVertexFormats.POSITION);
 		GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
 		for (int i = vertices.length - 1; i >= 0; i--) {
 			Vec3 vertex = vertices[i];
-			buf.pos(vertex.zCoord - cam.xCoord, vertex.zCoord - cam.yCoord, vertex.zCoord - cam.zCoord);
-			buf.endVertex();
+			wr.pos(vertex.xCoord - cam.xCoord, vertex.yCoord - cam.yCoord, vertex.zCoord - cam.zCoord);
+			wr.endVertex();
 		}
 
 		for (Vec3 vertex : vertices) {
-			buf.pos(vertex.zCoord - cam.xCoord, vertex.zCoord - cam.yCoord, vertex.zCoord - cam.zCoord);
-			buf.endVertex();
+			wr.pos(vertex.xCoord - cam.xCoord, vertex.yCoord - cam.yCoord, vertex.zCoord - cam.zCoord);
+			wr.endVertex();
 		}
 
-		GlEngine.finish();
+		Tessellator.getInstance().draw();
 
 		// Reset line width
 		GlStateManager.enableTexture2D();

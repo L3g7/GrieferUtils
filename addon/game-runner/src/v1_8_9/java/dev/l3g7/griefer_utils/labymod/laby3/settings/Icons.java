@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.core.util.render.GlEngine;
 import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.ControlElement.IconData;
@@ -73,10 +72,10 @@ public abstract class Icons {
 
 		@Override
 		public void draw(int x, int y, float scale) {
-			GlEngine.begin();
-			GlEngine.scale(scale);
+			GlStateManager.pushMatrix();
+			GlStateManager.scale(scale, scale, scale);
 			DrawUtils.drawItem(stack, x + 3 / scale, y + 2 / scale, null);
-			GlEngine.finish();
+			GlStateManager.popMatrix();
 		}
 
 	}

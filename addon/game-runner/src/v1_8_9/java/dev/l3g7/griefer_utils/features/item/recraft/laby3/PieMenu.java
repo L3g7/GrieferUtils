@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.events.MouseEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderGameOverlayEvent;
 import dev.l3g7.griefer_utils.core.events.render.ScaledResolutionInitEvent;
-import dev.l3g7.griefer_utils.core.util.render.GlEngine;
+import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.labymod.main.LabyMod;
 import net.labymod.main.ModTextures;
 import net.labymod.utils.DrawUtils;
@@ -192,7 +192,7 @@ public abstract class PieMenu extends Gui implements Disableable {
 
 		Minecraft.getMinecraft().getTextureManager().bindTexture(ModTextures.MISC_MENU_POINT);
 
-		GlEngine.color(new Color(hover ? 0x33FF33 : 0x3BB3FF));
+		RenderUtil.color(new Color(hover ? 0x33FF33 : 0x3BB3FF));
 
 		if (finalDestX - midX > -10 && finalDestX - midX < 10) {
 			LabyMod.getInstance().getDrawUtils().drawTexture(x - textureWidth / 2, y - 13, 256, 256, textureWidth, textureHeight);

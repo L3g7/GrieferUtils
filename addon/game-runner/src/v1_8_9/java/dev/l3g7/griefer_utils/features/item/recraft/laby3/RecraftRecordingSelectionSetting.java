@@ -11,7 +11,7 @@ import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
-import dev.l3g7.griefer_utils.core.util.render.GlEngine;
+import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
@@ -214,7 +214,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 
 			if (mouseOver) {
 				boolean isButtonHovered = mouseX >= button.xPosition && mouseY >= button.yPosition && mouseX < button.xPosition + button.getButtonWidth() && mouseY < button.yPosition + 20;
-				GlEngine.color(new Color(isButtonHovered ? 0x33FF33 : 0x3BB3FF));
+				RenderUtil.color(new Color(isButtonHovered ? 0x33FF33 : 0x3BB3FF));
 			} else {
 				GlStateManager.color(0.9f, 0.9f, 0.9f);
 			}

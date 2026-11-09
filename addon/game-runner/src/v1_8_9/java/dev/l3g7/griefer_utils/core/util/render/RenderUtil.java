@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.Entity;
@@ -39,8 +40,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.pos;
-import static dev.l3g7.griefer_utils.core.util.render.GlEngine.*;
 import static net.minecraft.util.EnumFacing.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -51,7 +50,7 @@ public class RenderUtil {
 
 	private static final RenderItem itemRender = mc().getRenderItem();
 	private static ScaledResolution scaledResolution = null;
-	private static WorldRenderer wr = null;
+	private static final WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
 
 	@EventListener(priority = Priority.HIGH)
 	private static void onRenderTick(RenderTickEvent event) {
@@ -72,26 +71,32 @@ public class RenderUtil {
 		return prevPos.add(scaleVec3(pos(entity).subtract(prevPos), partialTicks()));
 	}
 
+	public static void color(Color color) {
+		glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+	}
+
 	/**
 	 * Renders an item with a given color tint.
 	 */
 	public static void renderItem(ItemStack stack, int x, int y, int color) {
 		IBakedModel model = itemRender.getItemModelMesher().getItemModel(stack);
 
-		begin();
-		disableBlocksBlurAndMipmap();
+		mc().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+		mc().getTextureManager().getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
+		GlStateManager.pushMatrix();
 
 		// Transform
 		Reflection.invoke(itemRender, "setupGuiTransform", x, y, model.isGui3d());
 		model.getItemCameraTransforms().applyTransform(TransformType.GUI);
-		scale(0.5F);
-		translate(-0.5F);
+		GlStateManager.scale(0.5f, 0.5f, 0.5f);
+		GlStateManager.translate(-0.5f, -0.5f, -0.5f);
 
 		// Draw item
-		WorldRenderer worldrenderer = beginWorldDrawing(GL_QUADS, DefaultVertexFormats.ITEM);
-		Reflection.invoke(itemRender, "renderQuads", worldrenderer, model.getGeneralQuads(), color, stack);
+		wr.begin(GL_QUADS, DefaultVertexFormats.ITEM);
+		Reflection.invoke(itemRender, "renderQuads", wr, model.getGeneralQuads(), color, stack);
 
-		finish();
+		GlStateManager.popMatrix();
+		Tessellator.getInstance().draw();
 	}
 
 	public static void drawBoxOutlines(AxisAlignedBB bb, Color color, float width) {
@@ -138,8 +143,7 @@ public class RenderUtil {
 		GlStateManager.disableTexture2D();
 
 		// Draw lines
-		begin();
-		wr = GlEngine.beginWorldDrawing(GL_LINES, DefaultVertexFormats.POSITION);
+		wr.begin(GL_LINES, DefaultVertexFormats.POSITION);
 		GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
 		GlStateManager.pushMatrix();
@@ -147,7 +151,7 @@ public class RenderUtil {
 
 	public static void finishLineDrawing() {
 		GlStateManager.popMatrix();
-		GlEngine.finish();
+		Tessellator.getInstance().draw();
 		GlStateManager.enableTexture2D();
 	}
 

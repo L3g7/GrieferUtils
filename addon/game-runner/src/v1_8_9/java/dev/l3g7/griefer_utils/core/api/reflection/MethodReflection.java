@@ -65,7 +65,7 @@ class MethodReflection {
 		}
 
 		if (method == null)
-			throw elevate(new NoSuchMethodException(), "Could not find method '%s' with parameters '%s' in '%s'", name, ArrayUtil.toString(params, o -> o.getClass().toString(), ", "), target);
+			throw elevate(new NoSuchMethodException(), "Could not find method '%s' with parameters '%s' in '%s'", name, ArrayUtil.toString(params, o -> o == null ? "null" : o.getClass().toString(), ", "), target);
 
 		return invoke(target, method, params);
 	}

@@ -9,41 +9,43 @@ package dev.l3g7.griefer_utils.features.render.light;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
-import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
+import dev.l3g7.griefer_utils.core.events.ChunkFilledEvent;
+import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;
+import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
-import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
-import dev.l3g7.griefer_utils.core.util.render.sinks.WorldSink;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
 import dev.l3g7.griefer_utils.features.Feature;
-import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.EnumSkyBlock;
 
+import java.awt.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.TOGGLE;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
-import static net.minecraft.world.EnumSkyBlock.BLOCK;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 
 @Singleton
-public class LightBugESP extends Feature {
+public class LightBugESP extends Feature implements RenderObject.Generator {
 
-	private final Set<AxisAlignedBB> lightBugs = new ConcurrentSet<>();
-	private int passedTicks = 0;
+	private final Map<ChunkCoordIntPair, Set<BlockPos>> pendingChunks = new HashMap<>();
 
 	private final SwitchSetting inBlocks = SwitchSetting.create()
 		.name("Lichtbugs in Blöcken anzeigen")
@@ -70,80 +72,119 @@ public class LightBugESP extends Feature {
 		.subSettings(inBlocks, HeaderSetting.create(), range, updateDelay)
 		.addHotkeySetting("das Anzeigen der Lichtbugs", TOGGLE);
 
-	@EventListener
-	private void onTick(TickEvent.ClientTickEvent event) {
-		if (player() == null)
-			return;
+	@Override
+	public RenderObject getRenderObject(BlockPos worldPos, IBlockState state, WorldClient world) {
+		Block block = state.getBlock();
+		if (!inBlocks.get() && block != Blocks.air)
+			return null;
 
-		if (passedTicks++ % Math.max(updateDelay.get(), 1) != 0)
-			return;
+		int light = world.getLightFor(EnumSkyBlock.BLOCK, worldPos);
+		if (block.getLightValue() == light)
+			return null;
 
-		lightBugs.clear();
-		for (int dX = -range.get(); dX <= range.get(); dX++) {
-			yLoop:
-			for (int dY = -range.get(); dY <= range.get(); dY++) {
-				zloop:
-				for (int dZ = -range.get(); dZ <= range.get(); dZ++) {
-					BlockPos pos = player().getPosition().add(dX, dY, dZ);
-					if (pos.getY() < 0 || pos.getY() > 255)
-						continue yLoop;
+		ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(worldPos.getX() >> 4, worldPos.getZ() >> 4);
 
-					int level = world().getLightFor(BLOCK, pos);
+		Boolean result = processPosition(worldPos);
+		if (Boolean.TRUE.equals(result))
+			return LightBug.INSTANCE;
 
-					Block block = world().getBlockState(pos).getBlock();
-					if (block.getLightValue() == level || (!inBlocks.get() && block != Blocks.air))
-						continue;
-
-					// Check if no neighbor has a higher light level (-> the light source is there)
-					for (EnumFacing value : EnumFacing.values())
-						if (world().getLightFor(BLOCK, pos.add(value.getDirectionVec())) > level)
-							continue zloop;
-
-					// Check if block is visible
-					if (inBlocks.get()) {
-						boolean visible = false;
-						for (EnumFacing value : EnumFacing.values()) {
-							if (block.shouldSideBeRendered(world(), pos.offset(value), value)) {
-								visible = true;
-								break;
-							}
-						}
-
-						if (!visible)
-							continue;
-					}
-
-					lightBugs.add(new AxisAlignedBB(pos, pos.add(1, 1, 1)));
-				}
-			}
-		}
+		if (result == null)
+			pendingChunks.computeIfAbsent(chunkCoord, k -> new HashSet<>()).add(worldPos);
+		return null;
 	}
 
 	@EventListener
-	private void onRenderWorldLast(RenderWorldLastEvent event) {
-		Vec3 camPos = RenderUtil.camPos();
+	private void onChunkLoad(ChunkFilledEvent event) {
+		TickScheduler.sync(() -> {
+			int cX = event.getChunk().xPosition;
+			int cZ = event.getChunk().zPosition;
 
-		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
-		wr.begin(GL_QUADS, DefaultVertexFormats.POSITION);
-		wr.setTranslation(-camPos.xCoord, -camPos.yCoord, -camPos.zCoord);
+			for (int[] delta : new int[][] {
+				new int[] {  0,  1 },
+				new int[] {  0, -1 },
+				new int[] {  1,  0 },
+				new int[] { -1,  0 },
+			}) {
+				ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(cX + delta[0], cZ + delta[1]);
 
-		GlStateManager.pushMatrix();
-		GlStateManager.enableBlend();
-		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4f(1, 1, 0, 48 / 255f);
-		GlStateManager.disableTexture2D();
-		GlStateManager.disableDepth();
+				Set<BlockPos> positions = pendingChunks.get(chunkCoord);
+				if (positions == null)
+					continue;
 
-		for (AxisAlignedBB bb : lightBugs)
-			GeometryRenderUtil.drawFilledBoxWhenRenderingStarted(WorldSink.INSTANCE, bb, false);
+				positions.removeIf(pos -> {
+					Boolean result = processPosition(pos);
+					if (Boolean.TRUE.equals(result))
+						WorldRenderChunkManager.get().setRenderObject(pos, LightBug.INSTANCE);
 
-		Tessellator.getInstance().draw();
-		wr.setTranslation(0, 0, 0);
-		GL11.glColor4f(1, 1, 1, 1);
-		GlStateManager.enableDepth();
-		GlStateManager.disableBlend();
-		GlStateManager.enableTexture2D();
-		GlStateManager.popMatrix();
+					return result != null;
+				});
+				if (positions.isEmpty())
+					pendingChunks.remove(chunkCoord);
+			}
+		});
+	}
+
+	@EventListener
+	private void onWorldUnload(WorldUnloadEvent event) {
+		pendingChunks.clear();
+	}
+
+	@EventListener
+	private void onChunkUnload(ChunkUnloadEvent event) {
+		ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(event.chunk.xPosition, event.chunk.zPosition);
+		pendingChunks.remove(chunkCoord);
+	}
+
+	/**
+	 * @return Whether the position has a light bug, or <code>null</code> if it couldn't be checked.
+	 */
+	private Boolean processPosition(BlockPos worldPos) {
+		int light = world().getLightFor(EnumSkyBlock.BLOCK, worldPos);
+
+		// Check if no neighbor has a higher light level (-> the light source is there)
+		for (EnumFacing facing : EnumFacing.values()) {
+			BlockPos neighbor = worldPos.offset(facing);
+			if (!world().isBlockLoaded(neighbor, false))
+				return null;
+
+			if (world().getLightFor(EnumSkyBlock.BLOCK, neighbor) > light)
+				return false;
+		}
+
+		// Check if block is visible
+		if (!inBlocks.get())
+			return true;
+
+		Block block = world().getBlockState(worldPos).getBlock();
+
+		boolean visible = false;
+		for (EnumFacing facing : EnumFacing.values()) {
+			if (block.shouldSideBeRendered(world(), worldPos.offset(facing), facing)) {
+				visible = true;
+				break;
+			}
+		}
+
+		return visible;
+
+	}
+
+	private static class LightBug implements RenderObject {
+
+		public static final LightBug INSTANCE = new LightBug();
+
+		@Override
+		public boolean equals(RenderObject r) {
+			return r == INSTANCE;
+		}
+
+		@Override
+		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+			compiler.disable(GL_DEPTH_TEST, GL_TEXTURE_2D);
+			compiler.setColor(new Color(0x30FFFF00, true));
+			GeometryRenderUtil.drawFilledBoxWhenRenderingStarted(compiler, new AxisAlignedBB(chunkPosition, chunkPosition.add(1, 1, 1)), false);
+			compiler.enable(GL_DEPTH_TEST, GL_TEXTURE_2D);
+		}
 	}
 
 }

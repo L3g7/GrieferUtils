@@ -19,7 +19,6 @@ import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.BlockPos;
@@ -91,9 +90,6 @@ public class WorldRenderChunkManager extends RenderChunkManager {
 				for (int y = 0; y < 16; y++) {
 					for (int z = 0; z < 16; z++) {
 						IBlockState state = ebs.get(x, y, z);
-						if (state.getBlock() == Blocks.air)
-							continue;
-
 						BlockPos targetPos = new BlockPos(
 							x + (coords.chunkXPos << 4),
 							y + ebs.getYLocation(),

@@ -13,8 +13,6 @@ import dev.l3g7.griefer_utils.core.events.ChunkFilledEvent;
 import dev.l3g7.griefer_utils.core.events.ChunkUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
-import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
-import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
@@ -50,38 +48,26 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 	private final SwitchSetting inBlocks = SwitchSetting.create()
 		.name("Lichtbugs in Blöcken anzeigen")
 		.description("Zeigt auch Lichtbugs an, die sich in Blöcken befinden.")
-		.icon("light_bulb_glitch");
-
-	private final NumberSetting range = NumberSetting.create()
-		.name("Radius")
-		.description("Der Radius um den Spieler in Blöcken, in dem nach Lichtbugs überprüft wird.")
-		.defaultValue(20)
-		.icon("measurement");
-
-	private final NumberSetting updateDelay = NumberSetting.create()
-		.name("Update-Wartezeit (Ticks)")
-		.description("Wie lange zwischen den Überprüfungen nach Lichtbugs gewartet werden soll.")
-		.defaultValue(5)
-		.icon("clock");
+		.icon("light_bulb_glitch")
+		.callback(() -> {
+			pendingChunks.clear();
+			WorldRenderChunkManager.reloadAll();
+		});
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Lichtbugs anzeigen")
 		.description("Zeigt Lichtbugs an, auch durch Wände.")
 		.icon("light_bulb_glitch")
-		.subSettings(inBlocks, HeaderSetting.create(), range, updateDelay)
-		.addHotkeySetting("das Anzeigen der Lichtbugs", TOGGLE);
+		.subSettings(inBlocks)
+		.addHotkeySetting("das Anzeigen der Lichtbugs", TOGGLE)
+		.callback(() -> {
+			pendingChunks.clear();
+			WorldRenderChunkManager.reloadAll();
+		});
 
 	@Override
 	public RenderObject getRenderObject(BlockPos worldPos, IBlockState state, WorldClient world) {
-		Block block = state.getBlock();
-		if (!inBlocks.get() && block != Blocks.air)
-			return null;
-
-		int light = world.getLightFor(EnumSkyBlock.BLOCK, worldPos);
-		if (block.getLightValue() == light)
-			return null;
-
 		ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(worldPos.getX() >> 4, worldPos.getZ() >> 4);
 
 		Boolean result = processPosition(worldPos);
@@ -139,7 +125,13 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 	 * @return Whether the position has a light bug, or <code>null</code> if it couldn't be checked.
 	 */
 	private Boolean processPosition(BlockPos worldPos) {
+		Block block = world().getBlockState(worldPos).getBlock();
+		if (!inBlocks.get() && block != Blocks.air)
+			return null;
+
 		int light = world().getLightFor(EnumSkyBlock.BLOCK, worldPos);
+		if (block.getLightValue() == light)
+			return null;
 
 		// Check if no neighbor has a higher light level (-> the light source is there)
 		for (EnumFacing facing : EnumFacing.values()) {
@@ -154,8 +146,6 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 		// Check if block is visible
 		if (!inBlocks.get())
 			return true;
-
-		Block block = world().getBlockState(worldPos).getBlock();
 
 		boolean visible = false;
 		for (EnumFacing facing : EnumFacing.values()) {

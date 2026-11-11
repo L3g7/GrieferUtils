@@ -78,7 +78,7 @@ public class WorldRenderChunkManager extends RenderChunkManager {
 	 * Scans a single chunk for {@link RenderObject RenderObjects}.
 	 * @param chunk The chunk to scan.
 	 */
-	private void scanChunk(Chunk chunk) {
+	protected void scanChunk(Chunk chunk) {
 		ChunkCoordIntPair coords = new ChunkCoordIntPair(chunk.xPosition, chunk.zPosition);
 		RenderChunk renderChunk = new RenderChunk();
 
@@ -96,7 +96,7 @@ public class WorldRenderChunkManager extends RenderChunkManager {
 							z + (coords.chunkZPos << 4)
 						);
 
-						RenderObject renderObject = RenderObject.fromState(targetPos, state, world());
+						RenderObject renderObject = fromState(targetPos, state, world());
 						if (renderObject == null)
 							continue;
 
@@ -134,7 +134,7 @@ public class WorldRenderChunkManager extends RenderChunkManager {
 	private void onBlockChange(PacketReceiveEvent<S23PacketBlockChange> event) {
 		TickScheduler.sync(() -> {
 			BlockPos pos = event.packet.getBlockPosition();
-			RenderObject renderObject = RenderObject.fromState(pos, event.packet.getBlockState(), world());
+			RenderObject renderObject = fromState(pos, event.packet.getBlockState(), world());
 			setRenderObject(pos, renderObject);
 		});
 	}
@@ -143,11 +143,20 @@ public class WorldRenderChunkManager extends RenderChunkManager {
 	private void onMultiBlockChange(PacketReceiveEvent<S22PacketMultiBlockChange> event) {
 		TickScheduler.sync(() -> {
 			for (S22PacketMultiBlockChange.BlockUpdateData data : event.packet.getChangedBlocks()) {
-				RenderObject renderObject = RenderObject.fromState(data.getPos(), data.getBlockState(), world());
+				RenderObject renderObject = fromState(data.getPos(), data.getBlockState(), world());
 				setRenderObject(data.getPos(), renderObject);
 			}
 		});
 	}
 
+	/**
+	 * @param worldPos The RenderObject's position in the world.
+	 * @param state The block state at the given position.
+	 * @param world The world to use.
+	 * @return The RenderObject for the given position, or <code>null</code> if there is none.
+	 */
+	protected RenderObject fromState(BlockPos worldPos, IBlockState state, WorldClient world) {
+		return RenderObject.fromState(worldPos, state, world);
+	}
 
 }

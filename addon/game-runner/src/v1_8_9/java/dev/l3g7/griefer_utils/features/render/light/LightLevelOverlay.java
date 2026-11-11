@@ -8,130 +8,161 @@
 package dev.l3g7.griefer_utils.features.render.light;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
-import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
-import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.text.TextGeometry;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunkManager;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.play.server.S22PacketMultiBlockChange;
+import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.TOGGLE;
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
 @Singleton
 public class LightLevelOverlay extends Feature {
 
-	private final Map<BlockPos, Integer> lightPositions = new ConcurrentHashMap<>();
-	private final ResourceLocation texture = new ResourceLocation("griefer_utils", "textures/light_level_overlay.png");
-	private final double[] textureX = new double[17];
-	private final double[] textureY = new double[9];
-	private int passedTicks = 0;
+	private static final LightLevelOverlayRenderChunkManager renderChunkManager = new LightLevelOverlayRenderChunkManager();
 
-	private final NumberSetting range = NumberSetting.create()
-		.name("Radius")
-		.description("Der Radius um den Spieler in Blöcken, in dem das Lichtlevel angezeigt wird.")
-		.defaultValue(20)
-		.icon("measurement");
-
-	private final NumberSetting updateDelay = NumberSetting.create()
-		.name("Update-Wartezeit (Ticks)")
-		.description("Wie lange zwischen den Berechnungen der Lichtlevel gewartet werden soll.")
-		.defaultValue(5)
-		.icon("clock");
+	@Override
+	public void init() {
+		super.init();
+		RenderChunkManager.managers.add(renderChunkManager);
+		EventRegisterer.register(renderChunkManager);
+	}
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Lichtlevel anzeigen")
 		.description("Zeigt das Lichtlevel auf Blöcken an.")
 		.icon("light_bulb")
-		.subSettings(range, updateDelay)
 		.addHotkeySetting("das Anzeigen des Lichtlevels", TOGGLE);
 
-	public LightLevelOverlay() {
-		for (int i = 0; i <= 16; i++)
-			textureX[i] = i / 16d;
+	private record LightLevel(int level) implements RenderObject {
 
-		for (int i = 0; i <= 8; i++)
-			textureY[i] = i / 8d;
-	}
+		@Override
+		public boolean rotates() {
+			return true;
+		}
 
-	@EventListener
-	private void onTick(TickEvent.ClientTickEvent event) {
-		if (world() == null)
-			return;
+		@Override
+		public boolean equals(RenderObject r) {
+			return r instanceof LightLevel(int otherLevel) && this.level == otherLevel;
+		}
 
-		if (passedTicks++ % Math.max(updateDelay.get(), 1) != 0)
-			return;
+		@Override
+		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+			compiler.setColor(new Color(1f, level / 15f, 0f));
 
-		lightPositions.clear();
-
-		for (int dX = -range.get(); dX <= range.get(); dX++) {
-			for (int dY = -range.get(); dY <= range.get(); dY++) {
-				for (int dZ = -range.get(); dZ <= range.get(); dZ++) {
-					BlockPos pos = player().getPosition().add(dX, dY, dZ);
-					if (world().getBlockState(pos).getBlock() != Blocks.air)
-						continue;
-
-					Block downBlock = world().getBlockState(pos.down()).getBlock();
-					if (!isUpperSideSolid(downBlock, world(), pos.down()) && !(downBlock instanceof BlockFarmland))
-						continue;
-
-					lightPositions.put(pos, world().getLightFor(EnumSkyBlock.BLOCK, pos));
-				}
+			for (TextGeometry.GlyphModel renderInfo : TextGeometry.getGlyphModels(String.valueOf(level))) {
+				Quad offsets = renderInfo.rotatedVertices()[rotation];
+				compiler.draw(renderInfo.texture(), offsets.translate(0, -0.485, 0));
 			}
 		}
 	}
 
 	@EventListener
-	private void onRenderWorldLast(RenderWorldLastEvent event) {
-		Entity renderViewEntity = mc().getRenderViewEntity();
-		Vec3 camPos = RenderUtil.camPos();
-
-		GlStateManager.pushMatrix();
-		DrawUtils.bindTexture(texture);
-		WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
-		wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-		wr.setTranslation(-camPos.xCoord, -camPos.yCoord, -camPos.zCoord);
-
-		double rotation = renderViewEntity.rotationYaw % 360;
-		if (rotation < 0)
-			rotation += 360;
-
-		int rot = (int) (Math.round(rotation / 45d) % 8);
-
-		for (Map.Entry<BlockPos, Integer> entry : lightPositions.entrySet()) {
-			BlockPos p = entry.getKey();
-			wr.pos(p.getX()    , p.getY(), p.getZ()    ).tex(textureX[entry.getValue()    ], textureY[rot    ]).color(255, 255, 255, 255).endVertex();
-			wr.pos(p.getX()    , p.getY(), p.getZ() + 1).tex(textureX[entry.getValue()    ], textureY[rot + 1]).color(255, 255, 255, 255).endVertex();
-			wr.pos(p.getX() + 1, p.getY(), p.getZ() + 1).tex(textureX[entry.getValue() + 1], textureY[rot + 1]).color(255, 255, 255, 255).endVertex();
-			wr.pos(p.getX() + 1, p.getY(), p.getZ()    ).tex(textureX[entry.getValue() + 1], textureY[rot    ]).color(255, 255, 255, 255).endVertex();
-		}
-
-		Tessellator.getInstance().draw();
-		wr.setTranslation(0, 0, 0);
-		GlStateManager.popMatrix();
+	private void onBlockChange(PacketEvent.PacketReceiveEvent<S23PacketBlockChange> event) {
+		renderChunkManager.registerForRescan(event.packet.getBlockPosition());
+		renderChunkManager.submitRescan();
 	}
 
-	private boolean isUpperSideSolid(Block block, IBlockAccess world, BlockPos pos) {
+	@EventListener
+	private void onMultiBlockChange(PacketEvent.PacketReceiveEvent<S22PacketMultiBlockChange> event) {
+		for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : event.packet.getChangedBlocks())
+			renderChunkManager.registerForRescan(changedBlock.getPos());
+		renderChunkManager.submitRescan();
+	}
+
+	private static class LightLevelOverlayRenderChunkManager extends WorldRenderChunkManager {
+
+		private final Set<ChunkCoordIntPair> chunksToRescan = new HashSet<>();
+
+		/**
+		 * Saves the position's chunk and its neighboring chunks to rescan.
+		 */
+		private void registerForRescan(BlockPos pos) {
+			int chunkX = pos.getX() >> 4;
+			int chunkZ = pos.getZ() >> 4;
+
+			synchronized (chunksToRescan) {
+				for (int dZ = -1; dZ <= 1; dZ++)
+					for (int dX = -1; dX <= 1; dX++)
+						chunksToRescan.add(new ChunkCoordIntPair(chunkX + dX, chunkZ + dZ));
+			}
+		}
+
+		/**
+		 * Submits a rescan to run on the next tick.
+		 */
+		private void submitRescan() {
+			TickScheduler.runNextClientTick(() -> {
+				WorldClient world = world();
+				if (world == null)
+					return;
+
+				synchronized (chunksToRescan) {
+					IChunkProvider chunkProvider = world.getChunkProvider();
+
+					for (ChunkCoordIntPair coord : chunksToRescan) {
+						RenderChunk renderChunk = chunks.remove(coord);
+						if (renderChunk != null)
+							renderChunk.delete();
+
+						if (!chunkProvider.chunkExists(coord.chunkXPos, coord.chunkZPos))
+							continue;
+
+						Chunk chunk = chunkProvider.provideChunk(coord.chunkXPos, coord.chunkZPos);
+						if (!chunk.isEmpty())
+							scanChunk(chunk);
+					}
+
+					chunksToRescan.clear();
+				}
+			});
+		}
+
+		@Override
+		protected RenderObject fromState(BlockPos worldPos, IBlockState state, WorldClient world) {
+			if (!FileProvider.getSingleton(LightLevelOverlay.class).isEnabled())
+				return null;
+
+			if (world().getBlockState(worldPos).getBlock() != Blocks.air)
+				return null;
+
+			Block downBlock = world().getBlockState(worldPos.down()).getBlock();
+			if (!isUpperSideSolid(downBlock, world(), worldPos.down()) && !(downBlock instanceof BlockFarmland))
+				return null;
+
+			return new LightLevel(world().getLightFor(EnumSkyBlock.BLOCK, worldPos));
+		}
+
+	}
+
+	private static boolean isUpperSideSolid(Block block, IBlockAccess world, BlockPos pos) {
 		if (block instanceof BlockFarmland)
 			return false;
 

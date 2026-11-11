@@ -101,6 +101,7 @@ public class ChatFilterWebhooks extends Feature {
 		JsonObject root = new JsonObject();
 		if (messageStyle.get() == Style.EMBED) {
 			root.add("content", JsonNull.INSTANCE);
+			root.addProperty("wait", true);
 
 			JsonArray embeds = new JsonArray();
 			JsonObject embed = new JsonObject();
@@ -131,7 +132,13 @@ public class ChatFilterWebhooks extends Feature {
 				stream.flush();
 			}
 
-			conn.getInputStream().close();
+			if (conn.getResponseCode() / 100 == 2) {
+				conn.getInputStream().close();
+			} else if (conn.getResponseCode() == 404) {
+				labyBridge.notifyMildError("Webhook existiert nicht!");
+			} else {
+				labyBridge.notifyError("Ungültige Discord-Antwort " + conn.getResponseCode());
+			}
 		});
 	}
 

@@ -2,7 +2,6 @@ package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.render.RefreshResourcesEvent;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.UV;
@@ -11,6 +10,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +29,16 @@ public class Atlas {
 	 */
 	private static final int PADDING = 1;
 
+	/**
+	 * The fallback used for textures that can't be resolved.
+	 */
+	private static final BufferedImage MISSING_TEXTURE;
+
+	static {
+		MISSING_TEXTURE = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		MISSING_TEXTURE.setRGB(0, 0, 16, 16, TextureUtil.missingTextureData, 0, 16);
+	}
+
 	private static final Map<ResourceLocation, BufferedImage> imageCache = new HashMap<>();
 	/**
 	 * All textures in this atlas.
@@ -36,7 +46,7 @@ public class Atlas {
 	private static final Map<TextureCutout, Texture> textures = new HashMap<>();
 
 	/**
-	 * The sum of the area of all textures in {@link textures}.
+	 * The sum of the area of all textures in {@link #textures}.
 	 */
 	private static int cumulatedArea = 0;
 	private static int minAtlasWidth = 1;
@@ -79,9 +89,14 @@ public class Atlas {
 		if (textures.containsKey(cutout))
 			return;
 
-		BufferedImage image = imageCache.computeIfAbsent(cutout.texture(), location -> Util.tryFatal(() -> {
-			return TextureUtil.readBufferedImage(mc().getResourceManager().getResource(location).getInputStream());
-		}));
+		BufferedImage image = imageCache.computeIfAbsent(cutout.texture(), location -> {
+			try {
+				return TextureUtil.readBufferedImage(mc().getResourceManager().getResource(location).getInputStream());
+			} catch (IOException e) {
+				System.err.println("Error while loading texture " + cutout.texture());
+				return MISSING_TEXTURE;
+			}
+		});
 		int maxX = Math.min(cutout.maxX(), image.getWidth());
 		int maxY = Math.min(cutout.maxY(), image.getHeight());
 		int width = maxX - cutout.minX();

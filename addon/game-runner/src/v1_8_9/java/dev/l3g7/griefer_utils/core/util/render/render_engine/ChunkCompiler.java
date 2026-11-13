@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
+import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.UV;
@@ -28,6 +29,7 @@ public class ChunkCompiler implements VertexSink {
 	 */
 	private BlockPos blockPos;
 	private Color currentColor = Color.WHITE;
+	private Function<Quad, Quad> currentTransformation;
 	private boolean isActive = false;
 
 	private final Map<Integer, Boolean> capabilities = new HashMap<>();
@@ -50,6 +52,7 @@ public class ChunkCompiler implements VertexSink {
 	 */
 	public void prepare(BlockPos blockPos) {
 		setColor(Color.WHITE);
+		this.currentTransformation = null;
 		this.blockPos = blockPos;
 	}
 
@@ -72,8 +75,18 @@ public class ChunkCompiler implements VertexSink {
 	}
 
 	/**
+	 * Sets the current color to a gray color with the given brightness.
+	 * @param brightness The color's brightness value, from 0 to 255.
+	 * @see #setColor(Color)
+	 */
+	public void setBrightness(int brightness) {
+		setColor(new Color(brightness, brightness, brightness));
+	}
+
+	/**
 	 * Sets the current color.
 	 * If it's not equal to the previous color, it'll be changed in GL too.
+	 * Will be reset to white before starting a new RenderObject.
 	 */
 	public void setColor(Color color) {
 		if (currentColor.equals(color))
@@ -86,6 +99,14 @@ public class ChunkCompiler implements VertexSink {
 			color.getBlue() / 255f,
 			color.getAlpha() / 255f
 		);
+	}
+
+	/**
+	 * Sets the current transformation, which will be applied to each Quad before rendering.
+	 * Will be reset before starting a new RenderObject.
+	 */
+	public void setTransformation(Function<Quad, Quad> transformation) {
+		this.currentTransformation = transformation;
 	}
 
 	/**
@@ -136,6 +157,8 @@ public class ChunkCompiler implements VertexSink {
 	}
 
 	private void draw(UV uv, Quad quad) {
+		if (this.currentTransformation != null)
+			quad = this.currentTransformation.apply(quad);
 		quad = quad.translate(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5);
 
 		ensureActiveState(true);

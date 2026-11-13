@@ -9,16 +9,16 @@ package dev.l3g7.griefer_utils.features.world.building;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
+import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.events.NoteBlockPlayEvent;
+import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
-import dev.l3g7.griefer_utils.core.util.render.render_engine.data.text.TextGeometry;
-import dev.l3g7.griefer_utils.core.util.render.render_engine.data.text.TextGeometry.GlyphModel;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunkManager;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -33,15 +33,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.awt.*;
 import java.util.Random;
 
 import static net.minecraft.init.Blocks.*;
 
 @Singleton
 public class RedstoneHelper extends Feature implements RenderObject.Generator {
-
-	private static final TextureCutout ARROW_TEXTURE = new TextureCutout("griefer_utils", "textures/arrow.png");
 
 	private static final SwitchSetting showZeroPower = SwitchSetting.create()
 		.name("0 anzeigen")
@@ -56,29 +53,56 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		.subSettings(showZeroPower)
 		.callback(RenderChunkManager::reloadAll);
 
+	public static final DropDownSetting<DisplayType> dropperDisplayType = DropDownSetting.create(DisplayType.class)
+		.name("Dropper-Anzeigetyp")
+		.icon("dropper")
+		.defaultValue(DisplayType.DISTINCT)
+		.callback(RenderChunkManager::reloadAll);
+
+	public static final DropDownSetting<DisplayType> hopperDisplayType = DropDownSetting.create(DisplayType.class)
+		.name("Trichter-Anzeigetyp")
+		.icon("hopper")
+		.defaultValue(DisplayType.DISTINCT)
+		.callback(RenderChunkManager::reloadAll);
+
+	public static final SwitchSetting showHopperSide = SwitchSetting.create()
+		.name("Trichter-Richtung seitlich anzeigen")
+		.icon("hopper")
+		.defaultValue(true)
+		.callback(RenderChunkManager::reloadAll);
+
 	private static final SwitchSetting showDirection = SwitchSetting.create()
 		.name("Richtung anzeigen")
 		.description("Zeigt die Richtung von Werfern / Spendern und Trichtern.")
 		.icon("axes")
+		.subSettings(dropperDisplayType, hopperDisplayType, showHopperSide)
 		.callback(RenderChunkManager::reloadAll);
 
-	private static final SwitchSetting showNoteId = SwitchSetting.create()
-		.name("Ton-ID anzeigen")
-		.description("Ob die ID des Tons anstatt des Namens angezeigt werden soll.")
+	public static final SwitchSetting showNoteBlockInstrument = SwitchSetting.create()
+		.name("Instrument anzeigen")
+		.description("Ob das Instrument des Notenblocks angezeigt werden soll.")
 		.icon("sounds")
+		.defaultValue(true)
 		.callback(RenderChunkManager::reloadAll);
 
 	private static final SwitchSetting showNoteBlockPitch = SwitchSetting.create()
 		.name("Notenblock-Höhe anzeigen")
 		.description("Zeigt an, welche Tonhöhe bei Notenblöcken eingestellt ist.")
 		.icon("sounds")
-		.subSettings(showNoteId)
+		.subSettings(showNoteBlockInstrument)
 		.callback(RenderChunkManager::reloadAll);
 
-	private static final SwitchSetting showCauldronLevel = SwitchSetting.create()
+	public static final DropDownSetting<DisplayType> cauldronDisplayType = DropDownSetting.create(DisplayType.class)
+		.name("Anzeigetyp")
+		.icon("lens")
+		.defaultValue(DisplayType.DISTINCT)
+		.callback(RenderChunkManager::reloadAll);
+
+	public static final SwitchSetting showCauldronLevel = SwitchSetting.create()
 		.name("Kessel-Füllstand anzeigen")
 		.description("Zeigt an einem Kessel seinen derzeitigen Füllstand an.")
 		.icon("water_breathing")
+		.subSettings(cauldronDisplayType)
 		.callback(RenderChunkManager::reloadAll);
 
 	public static final SwitchSetting hideRedstoneParticles = SwitchSetting.create()
@@ -122,8 +146,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 			if (!showDirection.get())
 				return null;
 
-			EnumFacing facing = state.getValue(BlockHopper.FACING);
-			return facing.getHorizontalIndex() == -1 ? null : new Hopper(facing);
+			return new Hopper(state.getValue(BlockHopper.FACING));
 		}
 
 		// Dropper / Dispenser
@@ -139,7 +162,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 			if (!showCauldronLevel.get())
 				return null;
 
-			return new TextRenderObject(String.valueOf(state.getValue(BlockCauldron.LEVEL)), 0.18);
+			return new Cauldron(state.getValue(BlockCauldron.LEVEL));
 		}
 
 		// Nothing
@@ -151,10 +174,8 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		if (!showNoteBlockPitch.get())
 			return;
 
-		String text = showNoteId.get() ? String.valueOf(event.noteId) : event.note;
-
 		WorldRenderChunkManager manager = WorldRenderChunkManager.get();
-		manager.setRenderObject(event.pos, new TextRenderObject(text, 0));
+		manager.setRenderObject(event.pos, new NoteBlock(event.instrument, event.noteId));
 	}
 
 	@Mixin(BlockRedstoneWire.class)
@@ -168,11 +189,49 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 	}
 
-	private record Wire(int power) implements RenderObject {
+	public enum DisplayType implements Named {
+
+		DISTINCT("Deutlich"), SUBTLE("Subtil");
+
+		final String name;
+		DisplayType(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+	}
+
+	private static TextureCutout tex(DropDownSetting<DisplayType> displayTypeSetting, String type, String name) {
+		StringBuilder path = new StringBuilder("textures/redstone_helper_overlays/");
+		path.append(type).append('/');
+
+		if (displayTypeSetting != null) {
+			boolean subtle = cauldronDisplayType.get() == DisplayType.SUBTLE;
+			path.append(subtle ? "subtle" : "distinct").append('_');
+		}
+
+		path.append(name);
+		path.append(".png");
+
+		return new TextureCutout("griefer_utils", path.toString());
+	}
+
+	record Wire(int power, TextureCutout texture) implements RenderObject {
+
+		private static final Quad BASE_QUAD = Quad.onYPlane(11 / 32f, 8 / 32f)
+			.translate(0, -0.48, 0);
+
+		public Wire(int power) {
+			this(power, new TextureCutout("griefer_utils", "textures/numbers/" + power + ".png"));
+		}
 
 		@Override
 		public boolean equals(RenderObject r) {
-			return r instanceof Wire(int other) && power == other;
+			return r instanceof Wire w && power == w.power;
 		}
 
 		@Override
@@ -182,38 +241,69 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
-			for (GlyphModel renderInfo : TextGeometry.getGlyphModels(String.valueOf(power))) {
-				Quad offsets = renderInfo.rotatedVertices()[rotation];
-				compiler.draw(renderInfo.texture(), offsets.translate(0, -0.48, 0));
-			}
+			compiler.draw(texture, BASE_QUAD.rotateY(RenderChunk.ROTATION_SLICE * rotation));
 		}
+
 	}
 
-	private record Hopper(EnumFacing dir, Quad quad) implements RenderObject {
+	record Hopper(EnumFacing dir) implements RenderObject {
 
-		private static final Quad BASE_QUAD = Quad.onYPlane(0.7, 0.7);
-
-		private Hopper(EnumFacing dir) {
-			this(dir, BASE_QUAD
-				.rotateY(-90 * dir.getHorizontalIndex())
-				.translate(0, 0.201, 0));
+		private static TextureCutout tex(String name) {
+			return RedstoneHelper.tex(hopperDisplayType, "hopper", name);
 		}
+
+		private static final Quad INNER_QUAD = Quad.onYPlane(1, 1).translate(0, 0.201, 0);
+		private static final Quad BASE_SIDE_QUAD = Quad.onXPlane(1, 1).translate(0.501, 0, 0);
 
 		@Override
 		public boolean equals(RenderObject r) {
-			return r instanceof Hopper h && dir == h.dir;
+			return r instanceof Hopper(EnumFacing otherDir) && dir == otherDir;
 		}
 
 		@Override
 		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
-			compiler.draw(ARROW_TEXTURE, quad);
+			if (dir == EnumFacing.DOWN) {
+				compiler.draw(tex("inner_down"), INNER_QUAD);
+				if (!showHopperSide.get())
+					return;
+
+				compiler.draw(tex("side_down"),
+					BASE_SIDE_QUAD.rotateY(90),
+					BASE_SIDE_QUAD.rotateY(270)
+				);
+
+				compiler.setBrightness(0xCE);
+				compiler.draw(tex("side_down"),
+					BASE_SIDE_QUAD,
+					BASE_SIDE_QUAD.rotateY(180)
+				);
+				return;
+			}
+
+			compiler.setTransformation(q -> q.rotateY(-90 * dir.getHorizontalIndex()));
+
+			compiler.draw(tex("inner_lateral"), INNER_QUAD);
+			if (!showHopperSide.get())
+				return;
+
+			compiler.setBrightness(dir.getAxis() == EnumFacing.Axis.X ? 0xFF : 0xCE);
+			compiler.draw(tex("side_lateral"), BASE_SIDE_QUAD.translate(-1.002, 0, 0));
+			compiler.draw(tex("side_lateral"), BASE_SIDE_QUAD);
+
+			compiler.setBrightness(dir.getAxis() == EnumFacing.Axis.X ? 0xCE : 0xFF);
+			compiler.draw(tex("side_back"), BASE_SIDE_QUAD.rotateY(90));
+			compiler.draw(tex("side_front"), BASE_SIDE_QUAD.rotateY(-90));
 		}
 	}
 
-	private record Dropper(EnumFacing dir) implements RenderObject {
+	record Dropper(EnumFacing dir) implements RenderObject {
 
-		private static final Quad BASE_QUAD = Quad.onYPlane(1, 1)
-			.translate(0, 0.51, 0);
+		private static TextureCutout tex(String name) {
+			return RedstoneHelper.tex(dropperDisplayType, "dropper", name);
+		}
+
+		private static final Quad BASE_Y_QUAD = Quad.onYPlane(1, 1)
+			.translate(0, 0.501, 0);
 
 		@Override
 		public boolean equals(RenderObject r) {
@@ -222,53 +312,136 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
-			compiler.setColor(Color.BLACK);
-
-			Function<Quad, Quad> transformation = q -> {
+			if (dir.getAxis() == EnumFacing.Axis.Y) {
+				/*
+				 * Vertical dropper
+				 */
 				if (dir == EnumFacing.UP)
-					return q.rotateX(270);
-				if (dir == EnumFacing.DOWN)
-					return q.rotateX(90);
-				return q.rotateY(-90 * dir.getHorizontalIndex());
-			};
+					compiler.setTransformation(q -> q.rotateX(180));
 
-			compiler.draw(ARROW_TEXTURE,
-				Quad.transform(transformation,
-					BASE_QUAD,
-					BASE_QUAD.rotateZ(90),
-					BASE_QUAD.rotateZ(180),
-					BASE_QUAD.rotateZ(270)
-				)
+				Quad side = BASE_Y_QUAD.rotateZ(90);
+
+				compiler.draw(tex("lateral_base"),
+					side.rotateY(90),
+					side.rotateY(270)
+				);
+
+				if (dir == EnumFacing.UP)
+					compiler.setBrightness(0x80);
+				compiler.draw(tex("vertical_back"), BASE_Y_QUAD);
+
+				compiler.setBrightness(0xCE);
+				compiler.draw(tex("lateral_base"),
+					side,
+					side.rotateY(180)
+				);
+				return;
+			}
+
+			/*
+			 * Horizontal dropper
+			 */
+			compiler.setTransformation(q -> q.rotateY(-90 * dir.getHorizontalIndex()));
+
+			// Top, Bottom
+
+			Quad baseYQuad = Quad.onYPlane(1, 1).rotateY(90);
+			compiler.draw(tex("lateral_base"), baseYQuad.translate(0, 0.501, 0));
+			compiler.setBrightness(0x80);
+			compiler.draw(tex("lateral_base"), baseYQuad.translate(0, -0.501, 0));
+
+			// Sides
+			Quad baseXQuad = Quad.onXPlane(1, 1).translate(0.501, 0, 0);
+			compiler.setBrightness(dir.getAxis() == EnumFacing.Axis.X ? 0xFF : 0xCE);
+			compiler.draw(tex(dir.getAxis() == EnumFacing.Axis.Y ? "lateral_base" : "lateral_side"),
+				baseXQuad,
+				baseXQuad.translate(-1.002, 0, 0)
+			);
+
+			// Back
+			compiler.setBrightness(dir.getAxis() == EnumFacing.Axis.X ? 0xCE : 0xFF);
+			compiler.draw(tex(dir.getAxis() == EnumFacing.Axis.Y ? "vertical_back" : "horizontal_back"),
+				baseXQuad.rotateY(90)
 			);
 		}
+
 	}
 
-	private record TextRenderObject(String text, double bottomYDelta) implements RenderObject {
+	record NoteBlock(int instrument, int noteId) implements RenderObject {
+
+		private static TextureCutout tex(String name) {
+			return RedstoneHelper.tex(null, "note_block", name);
+		}
+
+		private static final Quad BASE_QUAD = Quad.onXPlane(1, 1)
+			.translate(-0.501, 0, 0);
 
 		@Override
 		public boolean equals(RenderObject r) {
-			return r instanceof TextRenderObject(String otherText, double otherY)
-				&& text.equals(otherText) && bottomYDelta == otherY;
+			return r instanceof NoteBlock n && instrument == n.instrument && noteId == n.noteId;
 		}
 
 		@Override
 		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
-			for (GlyphModel renderInfo : TextGeometry.getGlyphModels(text)) {
-				Quad offsets = renderInfo.rotatedVertices()[0];
+			if (noteId >= 0 && noteId <= 24)
+				drawTexture(compiler, tex("notes/" + noteId));
+			if (showNoteBlockInstrument.get() && instrument >= 1 && instrument <= 4)
+				drawTexture(compiler, tex("instruments/" + instrument));
+		}
 
-				Quad base = offsets.translate(0, 0.51, 0);
-				Quad sideBase = offsets.translate(0, 0.51, 0).rotateX(270);
+		private void drawTexture(ChunkCompiler compiler, TextureCutout texture) {
+			compiler.draw(texture, // Light
+				BASE_QUAD.rotateY(90), // South
+				BASE_QUAD.rotateY(270), // North
+				BASE_QUAD.rotateZ(270) // Up
+			);
 
-				compiler.draw(renderInfo.texture(),
-					base,
-					base.rotateX(180).translate(0, bottomYDelta, 0),
-					sideBase,
-					sideBase.rotateY(90),
-					sideBase.rotateY(180),
-					sideBase.rotateY(270)
-				);
-			}
+			compiler.setBrightness(0xCE);
+
+			compiler.draw(texture, // Dark
+				BASE_QUAD, // West
+				BASE_QUAD.rotateY(180) // East
+			);
+
+			compiler.setBrightness(0x80);
+			compiler.draw(texture, BASE_QUAD.rotateZ(90)); // Down
 		}
 	}
 
+	record Cauldron(int level, TextureCutout texture) implements RenderObject {
+
+		private static final Quad BASE_QUAD = Quad.onXPlane(1, 1)
+			.translate(-0.501, 0, 0);
+
+		public Cauldron(int level) {
+			this(level, tex(cauldronDisplayType, "cauldron", "" + level));
+		}
+
+		@Override
+		public boolean equals(RenderObject r) {
+			return r instanceof Cauldron c && level == c.level;
+		}
+
+		@Override
+		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+			compiler.draw(texture, // Light
+				BASE_QUAD.rotateY(90),
+				BASE_QUAD.rotateY(270)
+			);
+
+			if (cauldronDisplayType.get() == DisplayType.SUBTLE)
+				compiler.setBrightness(0xC0);
+
+			compiler.draw(texture, // Dark
+				BASE_QUAD,
+				BASE_QUAD.rotateY(180)
+			);
+
+			if (cauldronDisplayType.get() == DisplayType.DISTINCT)
+				compiler.setBrightness(0xC0);
+			compiler.draw(texture, // Bottom
+				BASE_QUAD.rotateZ(90).translate(1 / 16f, 0.18f, 0)
+			);
+		}
+	}
 }

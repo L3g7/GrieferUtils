@@ -18,7 +18,7 @@ import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
-import dev.l3g7.griefer_utils.core.util.render.render_engine.data.text.TextGeometry;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunkManager;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -59,9 +59,17 @@ public class LightLevelOverlay extends Feature {
 		.name("Lichtlevel anzeigen")
 		.description("Zeigt das Lichtlevel auf Blöcken an.")
 		.icon("light_bulb")
-		.addHotkeySetting("das Anzeigen des Lichtlevels", TOGGLE);
+		.addHotkeySetting("das Anzeigen des Lichtlevels", TOGGLE)
+		.callback(RenderChunkManager::reloadAll);
 
-	private record LightLevel(int level) implements RenderObject {
+	private record LightLevel(int level, TextureCutout texture) implements RenderObject {
+
+		private static final Quad BASE_QUAD = Quad.onYPlane(11 / 32f, 8 / 32f)
+			.translate(0, -0.48, 0);
+
+		public LightLevel(int level) {
+			this(level, new TextureCutout("griefer_utils", "textures/numbers/" + level + ".png"));
+		}
 
 		@Override
 		public boolean rotates() {
@@ -70,17 +78,13 @@ public class LightLevelOverlay extends Feature {
 
 		@Override
 		public boolean equals(RenderObject r) {
-			return r instanceof LightLevel(int otherLevel) && this.level == otherLevel;
+			return r instanceof LightLevel l && this.level == l.level;
 		}
 
 		@Override
 		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
 			compiler.setColor(new Color(1f, level / 15f, 0f));
-
-			for (TextGeometry.GlyphModel renderInfo : TextGeometry.getGlyphModels(String.valueOf(level))) {
-				Quad offsets = renderInfo.rotatedVertices()[rotation];
-				compiler.draw(renderInfo.texture(), offsets.translate(0, -0.485, 0));
-			}
+			compiler.draw(texture, BASE_QUAD.rotateY(RenderChunk.ROTATION_SLICE * rotation));
 		}
 	}
 

@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.config.ConfigPatcher.ConfigPatch;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -36,7 +37,7 @@ public class Cleanup extends ConfigPatch {
 	private boolean cleanup(JsonElement element) {
 		return switch (element) {
 			case JsonObject obj -> {
-				for (Entry<String, JsonElement> entry : obj.entrySet())
+				for (Entry<String, JsonElement> entry : new ArrayList<>(obj.entrySet()))
 					if (cleanup(entry.getValue()))
 						obj.remove(entry.getKey());
 

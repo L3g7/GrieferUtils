@@ -82,6 +82,18 @@ public class To2_4_8_BETA_8 extends ConfigPatch {
 			boolean value = betterSpawners.getObject("show_spawner_icons").isTrue("value");
 			betterSpawners.set("show_spawner_icons", value);
 		}
+
+		// Switched to fixed config keys in CleanUpPlayerMenu
+		var cleanUpPlayerMenu = get("player.clean_up_player_menu");
+		if (cleanUpPlayerMenu.has("entries") & cleanUpPlayerMenu.get("entries").isJsonPrimitive()) {
+			String[] configKeys = new String[]{"laby_net", "copy_name", "name_history", "report_cloak", "add_friend"};
+			int mask = cleanUpPlayerMenu.get("entries").getAsInt();
+
+			var entries = new JsonObject();
+			cleanUpPlayerMenu.set("entries", entries);
+			for (int i = 0; i < configKeys.length; i++)
+				entries.addProperty(configKeys[i], (mask & 1 << i) == 0);
+		}
 	}
 
 }

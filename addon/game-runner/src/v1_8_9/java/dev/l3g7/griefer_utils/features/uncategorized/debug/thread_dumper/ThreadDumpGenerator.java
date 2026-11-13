@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.debug.thread;
+package dev.l3g7.griefer_utils.features.uncategorized.debug.thread_dumper;
 
 import java.util.*;
 

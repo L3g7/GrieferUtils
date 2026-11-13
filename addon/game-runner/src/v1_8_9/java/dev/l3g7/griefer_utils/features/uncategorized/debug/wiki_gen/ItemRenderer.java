@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki;
+package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki_gen;
 
 import com.madgag.gif.fmsware.AnimatedGifEncoder;
 import net.minecraft.client.Minecraft;

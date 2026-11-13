@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  */
 
-package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki;
+package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki_gen;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -61,7 +61,11 @@ public class WikiGen {
 		return "minecraft/" + stack.getDisplayName().toLowerCase().replace(' ', '_') + (stack.hasEffect() ? ".gif" : ".png");
 	}
 
-	private static JsonObject serialize(String parentType, BaseSetting<?> mainSetting) {
+	private static JsonObject serialize(String parentType, BaseSetting<?> vMainSetting) {
+		if (vMainSetting instanceof WrappingListSetting<?>)
+			vMainSetting = Reflection.get(vMainSetting, "inner");
+
+		BaseSetting<?> mainSetting = vMainSetting;
 		if (!(mainSetting instanceof Laby4Setting<?, ?> setting))
 			return null;
 
@@ -89,10 +93,6 @@ public class WikiGen {
 			type = "category";
 		else
 			type = "setting";
-
-		if (setting instanceof WrappingListSetting<?>) {
-			setting = Reflection.get(setting, "inner");
-		}
 
 		JsonObject obj = new JsonObject();
 		obj.addProperty("name", setting.getStorage().name);

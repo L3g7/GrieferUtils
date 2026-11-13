@@ -8,30 +8,17 @@
 package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
-import dev.l3g7.griefer_utils.core.api.event_bus.Event;
-import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.l3g7.griefer_utils.features.uncategorized.debug.thread.ThreadDumper;
-import dev.l3g7.griefer_utils.features.uncategorized.debug.wiki.EnchantmentRenderer;
-import dev.l3g7.griefer_utils.features.uncategorized.debug.wiki.WikiGen;
+import dev.l3g7.griefer_utils.features.uncategorized.debug.thread_dumper.ThreadDumper;
+import dev.l3g7.griefer_utils.features.uncategorized.debug.wiki_gen.EnchantmentRenderer;
+import dev.l3g7.griefer_utils.features.uncategorized.debug.wiki_gen.WikiGen;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DebugSettings {
-
-	public static final SwitchSetting profileRender = SwitchSetting.create()
-		.name("Render-Profiler")
-		.description("Misst, wie lange Listener des RenderWorldLastEvents dauern.")
-		.icon("clock")
-		.callback(RenderWorldLastEvent::updateProfiler);
-
-	private static final SwitchSetting disableEventBus = SwitchSetting.create()
-		.name("Eventbus deaktivieren")
-		.description("Deaktiviert GrieferUtils' Eventbus.")
-		.icon("brick");
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Debug")
@@ -42,11 +29,11 @@ public class DebugSettings {
 			PacketDumper.enabled,
 			ThreadDumper.enabled,
 			RecraftLogger.enabled,
-			profileRender,
+			RenderProfiler.enabled,
 			EventBusProfiler.enabled,
 			ItemDumper.key,
 			HeaderSetting.create(),
-			disableEventBus)
+			EventBusBlocker.enabled)
 		.callback(b -> {
 			if (b) {
 				ThreadDumper.tryStartThread();
@@ -55,10 +42,9 @@ public class DebugSettings {
 		});
 
 	static {
-		disableEventBus.callback(b -> Event.fireEvents = !enabled.get() || !b);
-
 		if (Boolean.parseBoolean(System.getProperty("addWiki", "false"))) {
 			List<BaseSetting<?>> settings = new ArrayList<>();
+
 			settings.add(WikiGen.button);
 			if (Bridge.Version.LABY_3.isActive())
 				settings.add(EnchantmentRenderer.enabled);

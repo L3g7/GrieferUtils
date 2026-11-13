@@ -6,5 +6,5 @@
  */
 
 // Used to generate the wiki, not visible to the public.
-package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki;
+package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki_gen;
 

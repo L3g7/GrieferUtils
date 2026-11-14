@@ -1,5 +1,6 @@
 package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -123,14 +124,18 @@ public class RenderChunk {
 				if (!isVisible)
 					continue;
 
-				if (part.glList == 0) {
+				if (part.lists.isEmpty()) {
 					parts[i] = null;
 					return;
 				}
 
 				Atlas.getAtlas().bind();
-				GL11.glCallList(part.glList); // Render non-rotating
-				GL11.glCallList(part.glList + 1 + rotation); // Render rotating
+				for (Entry<RenderType, Integer> entry : part.lists.entrySet()) {
+					if (entry.getKey() == RenderType.TEXTURED_ROTATING)
+						GL11.glCallList(entry.getValue() + rotation);
+					else
+						GL11.glCallList(entry.getValue());
+				}
 			}
 		}
 	}
@@ -143,7 +148,7 @@ public class RenderChunk {
 		private final ChunkCompiler compiler = new ChunkCompiler();
 		private boolean mustRecompile = false;
 
-		int glList = 0;
+		private final Map<RenderType, Integer> lists = new HashMap<>();
 		private final Map<BlockPos, RenderObject> renderObjects = new HashMap<>();
 
 		/**
@@ -179,50 +184,51 @@ public class RenderChunk {
 				return;
 			}
 
-			if (glList != 0)
+			if (!lists.isEmpty())
 				delete();
 
-			glList = GL11.glGenLists(ROTATION_STEPS + 1);
+			Map<RenderType, List<Entry<BlockPos, RenderObject>>> renderObjectsByType = new HashMap<>();
 
-			if (glList == 0)
-				return; // glGenLists failed
-
-			List<Entry<BlockPos, RenderObject>> rotatingRenderObjects = new ArrayList<>(renderObjects.size());
-
-			// Render non-rotating RenderObjects
-			compiler.begin(glList);
+			// Sort RenderObjects
 			for (Entry<BlockPos, RenderObject> entry : renderObjects.entrySet()) {
-				if (entry.getValue().rotates()) {
-					rotatingRenderObjects.add(entry);
-					continue;
+				for (RenderType renderType : entry.getValue().renderTypes()) {
+					renderObjectsByType
+						.computeIfAbsent(renderType, k -> new ArrayList<>())
+						.add(entry);
 				}
-
-				compiler.prepare(entry.getKey());
-				entry.getValue().setup(compiler);
-				entry.getValue().draw(compiler, entry.getKey(), 0);
 			}
-			compiler.end();
 
-			// Render rotating RenderObjects
-			for (int rotation = 0; rotation < ROTATION_STEPS; rotation++) {
-				compiler.begin(glList + 1 + rotation);
-				for (Entry<BlockPos, RenderObject> entry : rotatingRenderObjects) {
-					compiler.prepare(entry.getKey());
-					entry.getValue().setup(compiler);
-					entry.getValue().draw(compiler, entry.getKey(), rotation);
+			// Render by type
+			for (Entry<RenderType, List<Entry<BlockPos, RenderObject>>> typeEntry : renderObjectsByType.entrySet()) {
+				RenderType type = typeEntry.getKey();
+				int size = type.size;
+				int glList = GL11.glGenLists(size);
+				if (glList == 0)
+					return; // glGenLists failed
+
+				lists.put(type, glList);
+
+				for (int offset = 0; offset < size; offset++) {
+					compiler.begin(glList + offset);
+					type.setup();
+					for (Entry<BlockPos, RenderObject> renderObject : typeEntry.getValue()) {
+						compiler.prepare(renderObject.getKey());
+						renderObject.getValue().draw(compiler, type, renderObject.getKey(), offset);
+					}
+					compiler.end();
 				}
-				compiler.end();
 			}
 
 			mustRecompile = false;
 		}
 
 		private synchronized void delete() {
-			if (glList == 0)
+			if (lists.isEmpty())
 				return;
 
-			GL11.glDeleteLists(glList, ROTATION_STEPS + 1);
-			glList = 0;
+			for (Entry<RenderType, Integer> entry : lists.entrySet())
+				GL11.glDeleteLists(entry.getValue(), entry.getKey().size);
+			lists.clear();
 		}
 
 	}

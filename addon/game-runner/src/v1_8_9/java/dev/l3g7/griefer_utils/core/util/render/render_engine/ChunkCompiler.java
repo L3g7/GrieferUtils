@@ -17,8 +17,6 @@ import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -30,21 +28,6 @@ public class ChunkCompiler implements VertexSink {
 	private BlockPos blockPos;
 	private Color currentColor = Color.WHITE;
 	private Function<Quad, Quad> currentTransformation;
-	private boolean isActive = false;
-
-	private final Map<Integer, Boolean> capabilities = new HashMap<>();
-
-	public void ensureActiveState(boolean active) {
-		if (isActive == active)
-			return;
-
-		if (active)
-			glBegin(GL_QUADS);
-		else
-			glEnd();
-
-		isActive = active;
-	}
 
 	/**
 	 * Prepares the compiler for drawing a new {@link RenderObject}
@@ -62,6 +45,7 @@ public class ChunkCompiler implements VertexSink {
 	 */
 	public void begin(int list) {
 		glNewList(list, GL_COMPILE);
+		glBegin(GL_QUADS);
 	}
 
 	/**
@@ -69,8 +53,7 @@ public class ChunkCompiler implements VertexSink {
 	 */
 	public void end() {
 		setColor(Color.WHITE);
-		capabilities.clear();
-		ensureActiveState(false);
+		glEnd();
 		glEndList();
 	}
 
@@ -110,28 +93,6 @@ public class ChunkCompiler implements VertexSink {
 	}
 
 	/**
-	 * Enables the given capabilities if they were not already enabled.
-	 */
-	public void enable(int... capabilities) {
-		for (int capability : capabilities) {
-			if (!Boolean.TRUE.equals(this.capabilities.put(capability, true))) {
-				ensureActiveState(false);
-				GL11.glEnable(capability);
-			}
-		}
-	}
-
-	/**
-	 * Disables the given capabilities if they were not already disabled.
-	 */
-	public void disable(int... capabilities) {
-		ensureActiveState(false);
-		for (int capability : capabilities)
-			if (!Boolean.FALSE.equals(this.capabilities.put(capability, false)))
-				GL11.glDisable(capability);
-	}
-
-	/**
 	 * Draws multiple quads with the given texture
 	 */
 	public void draw(TextureCutout cutout, Quad... allVertices) {
@@ -161,7 +122,6 @@ public class ChunkCompiler implements VertexSink {
 			quad = this.currentTransformation.apply(quad);
 		quad = quad.translate(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5);
 
-		ensureActiveState(true);
 		drawVertex(quad.a(), uv.maxU(), uv.maxV());
 		drawVertex(quad.b(), uv.minU(), uv.maxV());
 		drawVertex(quad.c(), uv.minU(), uv.minV());
@@ -175,7 +135,6 @@ public class ChunkCompiler implements VertexSink {
 
 	@Override
 	public void drawVertex(double x, double y, double z) {
-		ensureActiveState(true);
 		glVertex3f((float) x, (float) y, (float) z);
 	}
 

@@ -9,15 +9,13 @@ package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Lazy;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.BlockPos;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 
 /**
  * A single object being rendered at a block.
@@ -58,30 +56,21 @@ public interface RenderObject {
 	boolean equals(RenderObject r);
 
 	/**
-	 * Whether this RenderObject is affected by the player's rotation.<br>
+	 * How this RenderObject is rendered.<br>
 	 * Must be constant for each RenderObject.<br>
-	 * If <code>true</code> this RenderObject will be rendered once per rotation step.
 	 */
-	default boolean rotates() {
-		return false;
-	}
-
-	/**
-	 * Sets up GL capabilities before rendering.
-	 * @param compiler The compiler to set up.
-	 */
-	default void setup(ChunkCompiler compiler) {
-		compiler.enable(GL_DEPTH_TEST, GL_TEXTURE_2D);
-	}
+	RenderType[] renderTypes();
 
 	/**
 	 * Draws this object into a {@link ChunkCompiler}.
-	 * @param compiler The compiler to draw into.
+	 *
+	 * @param compiler      The compiler to draw into.
+	 * @param renderType    How this RenderObject is rendered. A value from {@link #renderTypes()}.
 	 * @param chunkPosition This object's chunkPosition.
-	 * @param rotation The player rotation step to draw for. Always 0 if {@link RenderObject#rotates()} returns <code>false</code>.
+	 * @param listOffset    The offset of the list currently being rendered into.
 	 * @see ChunkCompiler
 	 */
-	void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation);
+	void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset);
 
 	/**
 	 * A factory generating RenderObjects.

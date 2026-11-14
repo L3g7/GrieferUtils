@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunkManager;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
@@ -72,8 +73,8 @@ public class LightLevelOverlay extends Feature {
 		}
 
 		@Override
-		public boolean rotates() {
-			return true;
+		public RenderType[] renderTypes() {
+			return new RenderType[] { RenderType.TEXTURED_ROTATING };
 		}
 
 		@Override
@@ -82,7 +83,7 @@ public class LightLevelOverlay extends Feature {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int rotation) {
 			compiler.setColor(new Color(1f, level / 15f, 0f));
 			compiler.draw(texture, BASE_QUAD.rotateY(RenderChunk.ROTATION_SLICE * rotation));
 		}

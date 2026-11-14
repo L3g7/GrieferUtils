@@ -26,6 +26,7 @@ import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunkManager;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
@@ -67,8 +68,8 @@ import java.util.Objects;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.TEXTURED;
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.UNTEXTURED_DEPTHLESS;
 
 @Singleton
 public class BetterSpawners extends Feature implements RenderObject.Generator {
@@ -339,23 +340,30 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
+		public RenderType[] renderTypes() {
+			List<RenderType> renderTypes = new ArrayList<>(2);
+			if (texture != null)
+				renderTypes.add(TEXTURED);
+			if (isLastOpenedSpawner)
+				renderTypes.add(UNTEXTURED_DEPTHLESS);
+			return renderTypes.toArray(RenderType[]::new);
+		}
+
+		@Override
 		public boolean equals(RenderObject r) {
 			return r instanceof SpawnerRenderObject(TextureCutout otherTexture, boolean otherIsLastOpenedSpawner)
 				&& Objects.equals(texture, otherTexture) && isLastOpenedSpawner == otherIsLastOpenedSpawner;
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
-			if (texture != null)
-				compiler.draw(texture, ICON_QUADS);
-
-			if (!isLastOpenedSpawner)
-				return;
-
-			compiler.disable(GL_DEPTH_TEST, GL_TEXTURE_2D);
-			compiler.setColor(new Color(0x6000FF00, true));
-			GeometryRenderUtil.drawFilledBoxWhenRenderingStarted(compiler, new AxisAlignedBB(chunkPosition, chunkPosition.add(1, 1, 1)), false);
-			compiler.enable(GL_DEPTH_TEST, GL_TEXTURE_2D);
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
+			switch (renderType) {
+				case TEXTURED -> compiler.draw(texture, ICON_QUADS);
+				case UNTEXTURED_DEPTHLESS -> {
+					compiler.setColor(new Color(0x6000FF00, true));
+					GeometryRenderUtil.drawFilledBoxWhenRenderingStarted(compiler, new AxisAlignedBB(chunkPosition, chunkPosition.add(1, 1, 1)), false);
+				}
+			}
 		}
 
 	}

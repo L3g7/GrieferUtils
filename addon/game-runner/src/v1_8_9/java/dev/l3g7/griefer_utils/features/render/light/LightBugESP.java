@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.Block;
@@ -37,8 +38,6 @@ import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 
 @Singleton
 public class LightBugESP extends Feature implements RenderObject.Generator {
@@ -164,16 +163,19 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 		public static final LightBug INSTANCE = new LightBug();
 
 		@Override
+		public RenderType[] renderTypes() {
+			return new RenderType[] { RenderType.UNTEXTURED_DEPTHLESS };
+		}
+
+		@Override
 		public boolean equals(RenderObject r) {
 			return r == INSTANCE;
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
-			compiler.disable(GL_DEPTH_TEST, GL_TEXTURE_2D);
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
 			compiler.setColor(new Color(0x30FFFF00, true));
 			GeometryRenderUtil.drawFilledBoxWhenRenderingStarted(compiler, new AxisAlignedBB(chunkPosition, chunkPosition.add(1, 1, 1)), false);
-			compiler.enable(GL_DEPTH_TEST, GL_TEXTURE_2D);
 		}
 	}
 

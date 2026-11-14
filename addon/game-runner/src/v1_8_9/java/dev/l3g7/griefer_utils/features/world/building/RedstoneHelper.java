@@ -18,6 +18,7 @@ import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
+import dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunkManager;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
@@ -35,6 +36,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Random;
 
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.TEXTURED;
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.TEXTURED_ROTATING;
 import static net.minecraft.init.Blocks.*;
 
 @Singleton
@@ -230,17 +233,17 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
+		public RenderType[] renderTypes() {
+			return new RenderType[] { TEXTURED_ROTATING };
+		}
+
+		@Override
 		public boolean equals(RenderObject r) {
 			return r instanceof Wire w && power == w.power;
 		}
 
 		@Override
-		public boolean rotates() {
-			return true;
-		}
-
-		@Override
-		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int rotation) {
 			compiler.draw(texture, BASE_QUAD.rotateY(RenderChunk.ROTATION_SLICE * rotation));
 		}
 
@@ -256,12 +259,17 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		private static final Quad BASE_SIDE_QUAD = Quad.onXPlane(1, 1).translate(0.501, 0, 0);
 
 		@Override
+		public RenderType[] renderTypes() {
+			return new RenderType[] { TEXTURED };
+		}
+
+		@Override
 		public boolean equals(RenderObject r) {
 			return r instanceof Hopper(EnumFacing otherDir) && dir == otherDir;
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
 			if (dir == EnumFacing.DOWN) {
 				compiler.draw(tex("inner_down"), INNER_QUAD);
 				if (!showHopperSide.get())
@@ -306,12 +314,17 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 			.translate(0, 0.501, 0);
 
 		@Override
+		public RenderType[] renderTypes() {
+			return new RenderType[] { TEXTURED };
+		}
+
+		@Override
 		public boolean equals(RenderObject r) {
 			return r instanceof Dropper(EnumFacing other) && dir == other;
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
 			if (dir.getAxis() == EnumFacing.Axis.Y) {
 				/*
 				 * Vertical dropper
@@ -377,12 +390,17 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 			.translate(-0.501, 0, 0);
 
 		@Override
+		public RenderType[] renderTypes() {
+			return new RenderType[] { TEXTURED };
+		}
+
+		@Override
 		public boolean equals(RenderObject r) {
 			return r instanceof NoteBlock n && instrument == n.instrument && noteId == n.noteId;
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
 			if (noteId >= 0 && noteId <= 24)
 				drawTexture(compiler, tex("notes/" + noteId));
 			if (showNoteBlockInstrument.get() && instrument >= 1 && instrument <= 4)
@@ -418,12 +436,17 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
+		public RenderType[] renderTypes() {
+			return new RenderType[] { TEXTURED };
+		}
+
+		@Override
 		public boolean equals(RenderObject r) {
 			return r instanceof Cauldron c && level == c.level;
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, BlockPos chunkPosition, int rotation) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
 			compiler.draw(texture, // Light
 				BASE_QUAD.rotateY(90),
 				BASE_QUAD.rotateY(270)

@@ -55,7 +55,7 @@ public class ChatFilterWebhooks extends Feature {
 		.defaultValue(Style.EMBED);
 
 	@MainElement
-	public static final SwitchSetting enabled = SwitchSetting.create()
+	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Webhooks in Filtern")
 		.description("Sendet eine Chatnachricht an einen Discord-Webhook, wenn ein LabyMod-Filter auslöst.")
 		.icon("discord")
@@ -63,6 +63,10 @@ public class ChatFilterWebhooks extends Feature {
 
 	public static Map<String, String> getWebhooks() {
 		return webhooks;
+	}
+
+	public static ChatFilterWebhooks get() {
+		return get(ChatFilterWebhooks.class);
 	}
 
 	@Override
@@ -91,7 +95,7 @@ public class ChatFilterWebhooks extends Feature {
 	}
 
 	public static void triggerWebhook(String url, IChatComponent component, String name, Integer color) {
-		if (!enabled.get())
+		if (!get().isEnabled())
 			return;
 
 		if (url == null)

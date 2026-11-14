@@ -65,7 +65,7 @@ public class SplitLongMessages extends Feature {
 			return;
 
 		GuiTextField inputField = Reflection.get(event.gui, "inputField");
-		if (!enabled.get()) {
+		if (!get().isEnabled()) {
 			inputField.setMaxStringLength(previousLength);
 			return;
 		}

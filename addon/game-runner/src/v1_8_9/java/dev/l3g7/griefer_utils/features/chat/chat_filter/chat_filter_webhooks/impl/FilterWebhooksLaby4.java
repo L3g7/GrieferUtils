@@ -63,7 +63,7 @@ public class FilterWebhooksLaby4 {
 
 		@Inject(method = "fillLast", at = @At(value = "INVOKE", target = "Lnet/labymod/core/client/gui/screen/activity/activities/ingame/chat/dialog/ChatRuleDialogActivity;updateThen()V"), require = 0)
 		public void injectWebhookWidget(VerticalListWidget<Widget> card, CallbackInfo ci) {
-			if (!ChatFilterWebhooks.enabled.get())
+			if (!ChatFilterWebhooks.get().isEnabled())
 				return;
 
 			String needle = I18n.translate("labymod.activity.chat.dialog.rule.then.title");

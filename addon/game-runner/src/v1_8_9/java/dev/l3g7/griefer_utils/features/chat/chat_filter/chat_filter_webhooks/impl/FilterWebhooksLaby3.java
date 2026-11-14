@@ -54,7 +54,7 @@ public class FilterWebhooksLaby3 {
 
 	@EventListener
 	public static void onGuiOpen(GuiOpenEvent<GuiScreen> event) {
-		if (!ChatFilterWebhooks.enabled.get())
+		if (!ChatFilterWebhooks.get().isEnabled())
 			return;
 
 		if (event.gui instanceof GuiChatFilter)

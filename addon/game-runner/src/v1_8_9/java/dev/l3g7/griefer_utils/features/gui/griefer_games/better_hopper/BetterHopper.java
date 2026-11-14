@@ -137,7 +137,7 @@ public class BetterHopper extends Feature {
 		if (world().getBlockState(event.pos).getBlock() != Blocks.hopper)
 			return;
 
-		boolean isSneakModeEnabled = sneakMode.get() && enabled.get();
+		boolean isSneakModeEnabled = sneakMode.get() && get().isEnabled();
 
 		if (player().getHeldItem() != null && (!isSneakModeEnabled || !hopperWithHeldItemFix.get()))
 			return;

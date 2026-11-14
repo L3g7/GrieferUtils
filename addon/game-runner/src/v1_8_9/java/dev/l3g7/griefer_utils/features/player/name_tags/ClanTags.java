@@ -36,11 +36,11 @@ public class ClanTags extends Feature {
 	private static final Map<UUID, Pair<String, Double>> subtitles = new HashMap<>();
 
 	@MainElement
-	private static final SwitchSetting enabled = SwitchSetting.create()
+	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Clantags")
 		.description("Zeigt den Clantag eines Spielers unter seinem Nametag.")
 		.icon("name_tag_rainbow")
-		.callback(ClanTags::toggleSubtitles);
+		.callback(this::toggleSubtitles);
 
 	@EventListener(triggerWhenDisabled = true)
 	public void onSubtitle(LabyModNeoPayloadEvent<SubtitlePacket> event) {
@@ -48,9 +48,9 @@ public class ClanTags extends Feature {
 			setSubtitle(subtitle.uuid(), subtitle.text(), subtitle.scale());
 	}
 
-	private static void setSubtitle(UUID uuid, String text, double scale) {
+	private void setSubtitle(UUID uuid, String text, double scale) {
 		subtitles.put(uuid, new Pair<>(text, scale));
-		if (!enabled.get())
+		if (!isEnabled())
 			return;
 
 		User user = LabyMod.getInstance().getUserManager().getUser(uuid);
@@ -58,7 +58,7 @@ public class ClanTags extends Feature {
 		user.setSubTitleSize(scale);
 	}
 
-	private static void toggleSubtitles(boolean enabled) {
+	private void toggleSubtitles(boolean enabled) {
 		if (enabled)
 			subtitles.forEach((uuid, tag) -> setSubtitle(uuid, tag.a, tag.b));
 		else

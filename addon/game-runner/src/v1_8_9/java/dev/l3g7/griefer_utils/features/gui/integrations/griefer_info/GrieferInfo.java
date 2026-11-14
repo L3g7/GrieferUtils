@@ -57,9 +57,13 @@ public class GrieferInfo extends Feature {
 				: CategorySetting.create().name("Das Griefer.Info GUI lässt sich auch mit /info oder /gi öffnen.").icon("lectern")
 		);
 
+	private static GrieferInfo get() {
+		return get(GrieferInfo.class);
+	}
+
 	@EventListener
 	private static void onGuiModify(GuiModifyItemsEvent event) {
-		if (!profile.get())
+		if (!profile.get() || !get().isEnabled())
 			return;
 
 		if (!event.getTitle().startsWith("§6Profil") || event.getTitle().startsWith("§6Profil - Einstellungen"))

@@ -15,8 +15,14 @@ import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import net.minecraft.util.IChatComponent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Objects;
 
 class MessageDumper {
+
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils MessageDumper");
 
 	private static final DropDownSetting<CopyFormat> copyFormat = DropDownSetting.create(CopyFormat.class)
 		.name("Format")
@@ -33,8 +39,21 @@ class MessageDumper {
 	@EventListener(priority = Priority.LOWEST)
 	private static void onMessageModify(MessageModifyEvent event) {
 		if (enabled.get() && DebugSettings.enabled.get()) {
+			Function<IChatComponent, String> toJsonString = CopyFormat.JSON.componentToString;
 			Function<IChatComponent, String> toString = copyFormat.get().componentToString;
-			System.out.println(toString.apply(event.original) + " was modified to " + toString.apply(event.message));
+
+			boolean wasModified = Objects.equals(toJsonString.apply(event.original), toJsonString.apply(event.message));
+			boolean wasTransparentlyModified = Objects.equals(toString.apply(event.original), toString.apply(event.message));
+
+			String mod;
+			if (!wasModified)
+				mod = "unmodified";
+			else if (wasTransparentlyModified)
+				mod = "transparently modified"; // Modified, but no change in the current log format
+			else
+				mod = "modified to " + toString.apply(event.message);
+
+			LOGGER.info("{} is {}", toString.apply(event.original), mod);
 		}
 	}
 

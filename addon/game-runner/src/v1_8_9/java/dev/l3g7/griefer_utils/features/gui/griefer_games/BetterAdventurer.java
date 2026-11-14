@@ -98,9 +98,7 @@ public class BetterAdventurer extends Feature {
 			String amount = lore.substring("§7Anzahl: §e".length());
 			amount = amount.substring(0, amount.indexOf(isAdventurer ? '§' : ' '));
 			stack.stackSize = Integer.parseInt(amount);
-		} catch (NumberFormatException | StringIndexOutOfBoundsException e) {
-			System.err.println(lore);
-		}
+		} catch (NumberFormatException | StringIndexOutOfBoundsException ignored) {}
 	}
 
 	@EventListener

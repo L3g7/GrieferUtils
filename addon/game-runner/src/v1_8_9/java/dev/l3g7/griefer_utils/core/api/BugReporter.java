@@ -15,6 +15,8 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.DebugSettings;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
@@ -34,6 +36,8 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DYNAMIC_API_URL;
 
 public class BugReporter {
+
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils BugReporter");
 
 	public static final SwitchSetting shouldSendUuid = SwitchSetting.create()
 		.name("UUID mitsenden")
@@ -92,7 +96,7 @@ public class BugReporter {
 	}
 
 	public static void reportError(Throwable error) {
-		error.printStackTrace(System.err);
+		LOGGER.error(error);
 		if (!enabled.get() || !shouldReportError(error))
 			return;
 

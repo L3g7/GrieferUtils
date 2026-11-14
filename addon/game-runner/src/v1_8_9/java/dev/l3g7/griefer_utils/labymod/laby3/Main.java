@@ -120,8 +120,6 @@ public class Main extends LabyModAddon {
 			}
 			addons.put(offlineAddon.getUuid(), offlineAddon.getName());
 		}
-
-		System.err.println("GrieferUtils couldn't be loaded: " + uuid + " not found in " + addons);
 	}
 
 	@Override

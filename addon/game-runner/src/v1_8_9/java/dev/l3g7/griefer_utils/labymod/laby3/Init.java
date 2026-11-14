@@ -10,6 +10,8 @@ package dev.l3g7.griefer_utils.labymod.laby3;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import net.labymod.addon.AddonLoader;
 import net.minecraft.launchwrapper.IClassTransformer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,6 +25,8 @@ import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 
 public class Init implements IClassTransformer, AutoUpdater.Init {
+
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils Init");
 
 	public Init() {
 		if (System.setProperty("griefer_utils_load_flag", "") != null)
@@ -54,7 +58,7 @@ public class Init implements IClassTransformer, AutoUpdater.Init {
 			Files.write(jar.toPath(), bout.toByteArray());
 		} catch (Throwable t) {
 			// Overwrite failed, but it doesn't matter
-			t.printStackTrace(System.err);
+			LOGGER.error(t);
 		}
 
 		// Add old file to LabyMod's .delete

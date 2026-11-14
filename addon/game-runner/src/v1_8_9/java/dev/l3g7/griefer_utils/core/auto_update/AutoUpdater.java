@@ -14,6 +14,8 @@ import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -55,6 +57,8 @@ import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel
  */
 @SuppressWarnings("CharsetObjectCanBeUsed") // Must be compatible with Java 8
 public class AutoUpdater {
+
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils AutoUpdater");
 
 	// Let's Encrypt's ISRG ROOT X1 certificate
 	// Used by the api server, api.grieferutils.l3g7.dev, and missing on older versions of Java, so it has to be added manually.
@@ -102,7 +106,7 @@ public class AutoUpdater {
 			return true;
 		} catch (IOException e) {
 			// Allow start if updating failed due to network errors
-			e.printStackTrace(System.err);
+			LOGGER.error(e);
 			return false;
 		} catch (Throwable e) {
 			throw new RuntimeException("Could not update GrieferUtils!", e);

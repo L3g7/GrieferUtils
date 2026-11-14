@@ -8,6 +8,8 @@ import dev.l3g7.griefer_utils.core.util.render.render_engine.data.UV;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -23,6 +25,8 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
  * Should only be used internally by the render engine.
  */
 public class Atlas {
+
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils RenderEngine Atlas");
 
 	/**
 	 * The padding between individual textures in pixels
@@ -93,7 +97,8 @@ public class Atlas {
 			try {
 				return TextureUtil.readBufferedImage(mc().getResourceManager().getResource(location).getInputStream());
 			} catch (IOException e) {
-				System.err.println("Error while loading texture " + cutout.texture());
+				//noinspection StringConcatenationArgumentToLogCall
+				LOGGER.error("Error while loading texture " + cutout.texture(), e);
 				return MISSING_TEXTURE;
 			}
 		});

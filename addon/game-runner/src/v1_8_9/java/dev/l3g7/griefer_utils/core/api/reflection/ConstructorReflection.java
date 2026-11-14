@@ -47,17 +47,6 @@ class ConstructorReflection {
 			// Check arg types
 			if (ArrayUtil.equals(constructor.getParameterTypes(), parameters, ClassReflection::isApplicable))
 				return c(constructor);
-			else if (targetClass.getSimpleName().endsWith("DefaultSubscribeMethod")) {
-				Class<?>[] a = constructor.getParameterTypes();
-				Object[] b = parameters;
-				if(a.length != b.length)
-					System.err.println(a.length + " isn't applicable to " + b.length);
-
-				else
-					for(int i = 0; i < a.length; i++)
-						if(!ClassReflection.isApplicable(a[i], b[i]))
-							System.err.println(a[i] + " isn't applicable to " + b[i]);
-			}
 		}
 
 		return null;

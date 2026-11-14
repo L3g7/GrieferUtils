@@ -53,7 +53,6 @@ public class Main {
 			EventRegisterer.init();
 			Event.fire(OnEnable.class);
 		} catch (Throwable e) {
-			e.printStackTrace(System.err);
 			throw Util.elevate(e);
 		}
 

@@ -27,6 +27,8 @@ import net.labymod.api.user.badge.ServerBadge;
 import net.labymod.api.user.group.Group;
 import net.labymod.api.util.CountryCode;
 import net.labymod.core.main.user.serverfeature.badge.RankBadgeRenderer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -52,6 +54,8 @@ import static net.labymod.api.client.entity.player.badge.PositionType.LEFT_TO_NA
  */
 public class BadgeInjection {
 
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils Badges");
+
 	public interface GrieferUtilsGameUserSnapshot {
 		@Nullable SpecialBadge grieferUtils$getBadge();
 	}
@@ -64,7 +68,7 @@ public class BadgeInjection {
 			badges.unregister("labymod_rank");
 			badges.register("labymod_rank", LEFT_TO_NAME, renderer);
 		} catch (Throwable t) {
-			t.printStackTrace(System.err); // Fail softly
+			LOGGER.error(t); // Fail softly
 		}
 	}
 

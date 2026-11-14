@@ -30,7 +30,7 @@ public class Access {
 			Field theUnsafe = unsafeClass.getDeclaredField("theUnsafe");
 			theUnsafe.setAccessible(true);
 
-			int allowedModesOffset = (useCompactObjectHeaders() ? 8 : 12); // Result of Unsafe#objectFieldOffset(Lookup#allowedModes)
+			int allowedModesOffset = (isOpenJ9() ? 20 : useCompactObjectHeaders() ? 8 : 12); // Result of Unsafe#objectFieldOffset(Lookup#allowedModes)
 			unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class)
 					.invoke(theUnsafe.get(null), lookup, allowedModesOffset, -1 /* TRUSTED */);
 			return lookup;
@@ -45,6 +45,10 @@ public class Access {
             return false; // Flag is unknown (older than JDK 24)
         }
     }
+
+	private static boolean isOpenJ9() {
+		return System.getProperty("com.ibm.oti.vm.library.version") != null;
+	}
 
 	public static Lookup getElevatedLookup() {
 		return lookup;

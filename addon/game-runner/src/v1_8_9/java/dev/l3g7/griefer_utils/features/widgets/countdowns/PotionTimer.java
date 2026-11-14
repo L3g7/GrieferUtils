@@ -104,7 +104,7 @@ public class PotionTimer extends Widget {
 		try {
 			potions.get("fly_potion").countdown.setEnd(DATE_FORMAT.parse(end).getTime());
 		} catch (ParseException e) {
-			BugReporter.reportError(new Throwable("Error while parsing fly potion end from " + event.message.getFormattedText(), e));
+			BugReporter.reportError(Util.elevate(e, "Error while parsing fly potion end from " + event.message.getFormattedText()));
 		}
 	}
 

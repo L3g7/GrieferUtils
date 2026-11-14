@@ -114,7 +114,7 @@ class Quests {
 			}
 		}
 
-		BugReporter.reportError(new Throwable("Unknown quest at index " + index + ": " + message));
+		BugReporter.reportError("Unknown quest at index " + index + ": " + message);
 		return null;
 	}
 }

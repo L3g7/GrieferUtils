@@ -47,7 +47,7 @@ class Translator {
 		lookupFailed = properties.isEmpty();
 		if (lookupFailed) {
 			// If this happens in the dev env: Just use a resource pack lol
-			BugReporter.reportError(new Throwable("Lookup failed! (de_DE not found)"));
+			BugReporter.reportError("Lookup failed! (de_DE not found)");
 		}
 
 		parseTranslationKeys(properties, ITEM_TRANSLATION_KEYS, BLOCK_TRANSLATION_KEYS, ENTITY_TRANSLATION_KEYS);
@@ -140,7 +140,7 @@ class Translator {
 		if (!lookupFailed) {
 			String message = op + " failed for " + key;
 			if (translationErrors.add(message))
-				BugReporter.reportError(new Throwable(message));
+				BugReporter.reportError(message);
 		}
 		return null;
 	}

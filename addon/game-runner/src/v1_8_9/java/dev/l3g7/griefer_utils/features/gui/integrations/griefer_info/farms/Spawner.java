@@ -8,6 +8,7 @@
 package dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.farms;
 
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,7 @@ public class Spawner {
 	static Spawner fromJson(JsonObject object) {
 		SpawnerType spawnerType = SpawnerType.TYPES_BY_ID.get(object.get("entity").getAsString());
 		if (spawnerType == null)
-			System.err.println("Missing spawner type: " + object.get("entity").getAsString());
+			BugReporter.reportError("Missing spawner type: " + object.get("entity").getAsString());
 
 		int amount = object.get("spawner").getAsInt();
 		boolean active = object.get("spawntype").getAsString().equals("Aktiv");

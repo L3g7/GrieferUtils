@@ -17,6 +17,6 @@ public class InstantlyCompletableQuest extends AbstractQuest {
 	public void init(int index, Matcher matcher, String displayText, boolean approximate, int maxAmount, int maxCompletions) {
 		super.init(index, matcher, displayText, approximate, maxAmount, maxCompletions);
 		if (maxAmount != 1)
-			BugReporter.reportError(new Throwable("InstantlyCompletableQuest with maxAmount " + maxAmount + ": " + matcher.group()));
+			BugReporter.reportError("InstantlyCompletableQuest with maxAmount " + maxAmount + ": " + matcher.group());
 	}
 }

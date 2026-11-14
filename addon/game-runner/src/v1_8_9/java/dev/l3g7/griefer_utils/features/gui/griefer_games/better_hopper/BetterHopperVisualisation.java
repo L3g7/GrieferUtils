@@ -167,7 +167,7 @@ class BetterHopperVisualisation implements Disableable {
 				try {
 					return new BlockPos(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2]));
 				} catch (NumberFormatException e) {
-					BugReporter.reportError(new Throwable("NFE while parsing " + stack.writeToNBT(new NBTTagCompound())));
+					BugReporter.reportError("NFE while parsing " + stack.writeToNBT(new NBTTagCompound()));
 				}
 			}
 		}

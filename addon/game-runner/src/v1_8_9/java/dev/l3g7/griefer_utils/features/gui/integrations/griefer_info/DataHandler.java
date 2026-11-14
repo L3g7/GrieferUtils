@@ -51,7 +51,7 @@ public class DataHandler {
 			ItemStack stack = ItemUtil.fromNBT(itemEntry.getValue().stack);
 			if (stack == null) {
 				if (staticDataReceiveEvent != null)
-					BugReporter.reportError(new Throwable("Could not deserialize GI item " + itemEntry.getKey() + ": " + itemEntry.getValue().stack + " returned null"));
+					BugReporter.reportError("Could not deserialize GI item " + itemEntry.getKey() + ": " + itemEntry.getValue().stack + " returned null");
 				staticDataReceiveEvent = event;
 				ItemFilter.FILTER.clear();
 				return;
@@ -94,7 +94,7 @@ public class DataHandler {
 			}
 
 			if (!missingItems.isEmpty())
-				BugReporter.reportError(new Throwable("Missing FSM-Filter: " + String.join(";", missingItems)));
+				BugReporter.reportError("Missing FSM-Filter: " + String.join(";", missingItems));
 
 			requestFreestuff();
 		}).failLog();

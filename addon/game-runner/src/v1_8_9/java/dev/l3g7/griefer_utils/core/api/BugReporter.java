@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.core.api;
 import dev.l3g7.griefer_utils.core.api.misc.CustomSSLSocketFactoryProvider;
 import dev.l3g7.griefer_utils.core.api.misc.Identifier;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
+import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
@@ -84,6 +85,10 @@ public class BugReporter {
 
 		// Check cause
 		return error.getCause() == null || !shouldReportError(error.getCause());
+	}
+
+	public static void reportError(String message) {
+		reportError(Util.elevate(null, message));
 	}
 
 	public static void reportError(Throwable error) {

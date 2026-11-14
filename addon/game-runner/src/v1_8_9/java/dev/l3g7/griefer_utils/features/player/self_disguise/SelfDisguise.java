@@ -189,7 +189,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 			} else if (entity.equals("Zombie")) {
 				currentDisguise = new EntityZombie(world());
 			} else {
-				BugReporter.reportError(new Throwable("Sword disguise \"" + entity + "\" is not known"));
+				BugReporter.reportError("Unknown sword disguise \"" + entity + "\"");
 				return;
 			}
 			world().addEntityToWorld(currentDisguise.getEntityId(), currentDisguise);

@@ -68,7 +68,7 @@ class SpecialRewardHandler {
 
 	public static Reward parseReward() {
 		if (lastStack == null) {
-			BugReporter.reportError(new Throwable("BOTD message received stack :("));
+			BugReporter.reportError("BOTD message received stack :(");
 			return null;
 		}
 

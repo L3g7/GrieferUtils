@@ -78,8 +78,7 @@ public class Linux implements OS {
 						return;
 			}
 
-			BugReporter.reportError(Util.elevate(null,
-				"Unsupported DM: " + sessionType + " / " + desktop + " / " + GLFW.glfwGetPlatform()));
+			BugReporter.reportError("Unsupported DM: " + sessionType + " / " + desktop + " / " + GLFW.glfwGetPlatform());
 		}
 	}
 

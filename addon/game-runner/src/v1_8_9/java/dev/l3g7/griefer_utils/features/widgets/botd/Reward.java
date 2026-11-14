@@ -59,7 +59,7 @@ public class Reward {
 				// Not representable as an integer (e.g. too big or nonzero fractional part), not a possible BDT reward
 				return null;
 			} catch (NumberFormatException e) {
-				BugReporter.reportError(new Throwable("Error parsing BDT from " + formattedMessage));
+				BugReporter.reportError("NFE parsing BDT from " + formattedMessage);
 				return null;
 			}
 		}

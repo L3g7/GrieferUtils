@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.freestuff;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiList;
@@ -44,7 +45,7 @@ public class FreeStuff {
 			JsonObject item = entry.getAsJsonObject();
 			ItemFilter filter = ItemFilter.TYPES_BY_ID.get(item.get("item").getAsString());
 			if (filter == null)
-				System.err.println("Missing item: " + item.get("item").getAsString());
+				BugReporter.reportError("Missing item: " + item.get("item").getAsString());
 			else
 				items.put(filter, item.get("info").getAsString());
 

@@ -314,7 +314,7 @@ public class AutoTool extends Feature {
 		int data = adv.getInteger("adventure.data");
 		Block block = RENAMED_BLOCKS.getOrDefault(material, Block.getBlockFromName(material));
 		if (block == null) {
-			BugReporter.reportError(new Throwable("Adventure tool breaks unknown block: " + material));
+			BugReporter.reportError("Adventure tool breaks unknown block: " + material);
 			return false;
 		}
 

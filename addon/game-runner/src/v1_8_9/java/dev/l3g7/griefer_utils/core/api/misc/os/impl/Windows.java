@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.core.api.misc.os.impl;
 
 import com.sun.jna.*;
 import com.sun.jna.Structure.FieldOrder;
+import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
@@ -52,7 +53,7 @@ public class Windows implements OS {
 
 		int error = Comdlg32.CommDlgExtendedError();
 		if (error != 0) // Selection was aborted by the user
-			System.err.println("GetOpenFileName failed with error " + error);
+			BugReporter.reportError("GetOpenFileName failed with error " + error);
 
 		return null;
 	}

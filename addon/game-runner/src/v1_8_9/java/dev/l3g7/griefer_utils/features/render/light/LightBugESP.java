@@ -67,7 +67,6 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 
 	@Override
 	public void init() {
-		super.init();
 		getCategory().callback(() -> {
 			pendingChunks.clear();
 			WorldRenderChunkManager.reloadAll();

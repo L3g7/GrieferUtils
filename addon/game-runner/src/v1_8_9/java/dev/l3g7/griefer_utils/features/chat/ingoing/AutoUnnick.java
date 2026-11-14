@@ -61,7 +61,6 @@ public class AutoUnnick extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 

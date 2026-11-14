@@ -64,7 +64,6 @@ public class FixOrbSeller extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		String key = getCategory().configKey() + ".orb_seller_fix.";
 		if (!Config.has(key + "ids"))
 			return;

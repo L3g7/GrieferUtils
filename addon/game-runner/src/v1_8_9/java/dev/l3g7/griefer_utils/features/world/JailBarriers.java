@@ -49,7 +49,6 @@ public class JailBarriers extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		getCategory().callback(() -> {
 			targetBlock = isEnabled() ? Blocks.barrier : Blocks.air;
 			checkIfChunksAreLoaded();

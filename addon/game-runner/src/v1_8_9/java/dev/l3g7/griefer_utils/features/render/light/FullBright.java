@@ -48,7 +48,6 @@ public class FullBright extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		getCategory().callback(this::syncGamma);
 	}
 

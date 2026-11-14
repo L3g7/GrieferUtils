@@ -100,7 +100,6 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 		.callback(v -> { if (!v) hideDisguise(); });
 
 	public void init() {
-		super.init();
 		getCategory().callback(v -> { if (!v) hideDisguise(); });
 	}
 

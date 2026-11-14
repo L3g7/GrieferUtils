@@ -130,7 +130,6 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 	@Override
 	public void init() {
-		super.init();
 		getCategory().callback(RenderChunkManager::reloadAll);
 	}
 

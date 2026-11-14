@@ -50,7 +50,6 @@ public class LightLevelOverlay extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		RenderChunkManager.managers.add(renderChunkManager);
 		EventRegisterer.register(renderChunkManager);
 		getCategory().callback(RenderChunkManager::reloadAll);

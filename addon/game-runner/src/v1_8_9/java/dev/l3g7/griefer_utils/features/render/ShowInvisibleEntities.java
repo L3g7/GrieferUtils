@@ -81,7 +81,6 @@ public class ShowInvisibleEntities extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		enabled.subSettings(Arrays.asList(toggleAll, HeaderSetting.create())); // hotfix to prevent toggleAll from being saved
 		add(EntityArmorStand.class, "Armorstand");
 		add(EntityBat.class, "Fledermaus");

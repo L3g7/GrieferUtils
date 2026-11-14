@@ -52,7 +52,6 @@ public class KeepChunksLoaded extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		getCategory().callback(this::checkChunkUnload);
 	}
 

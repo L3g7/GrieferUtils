@@ -44,7 +44,6 @@ public class ClanTags extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		getCategory().callback(this::toggleSubtitles);
 	}
 

@@ -71,9 +71,9 @@ public abstract class Feature implements Disableable, GUIEntry {
 	}
 
 	/**
-	 * Initializes the main element and config key.
+	 * Initializes the main element and config key, and runs {@link #init}.
 	 */
-	public void init() {
+	public void preInit() {
 		MainElementData data = SettingLoader.initMainElement(this, category == null ? null : category.configKey());
 		mainElement = data.mainElement;
 		configKey = data.configKey;
@@ -91,7 +91,14 @@ public abstract class Feature implements Disableable, GUIEntry {
 					main.set(true);
 			});
 		}
+
+		init();
 	}
+
+	/**
+	 * Entrypoint for implementations.
+	 */
+	public void init() {}
 
 	@Override
 	public String name() {

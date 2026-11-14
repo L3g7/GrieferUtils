@@ -80,8 +80,6 @@ public class CommandPieMenu extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
-
 		entryKey = getConfigKey() + ".pages";
 
 		if (!Config.has(entryKey))

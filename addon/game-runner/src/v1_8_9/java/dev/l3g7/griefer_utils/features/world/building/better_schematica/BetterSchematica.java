@@ -52,8 +52,6 @@ public class BetterSchematica extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
-
 		if (!SCHEMATICA) {
 			enabled.name("§7Schematica verbessern")
 				.description("Verbessert Schematica.\n\n(Schematica ist nicht installiert.)")

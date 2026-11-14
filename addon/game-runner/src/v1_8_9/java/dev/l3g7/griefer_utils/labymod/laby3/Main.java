@@ -68,7 +68,7 @@ public class Main extends LabyModAddon {
 		long begin = System.currentTimeMillis();
 
 		// Initialize addon
-		Feature.getFeatures().forEach(Feature::init);
+		Feature.getFeatures().forEach(Feature::preInit);
 		EventRegisterer.init();
 		Event.fire(OnEnable.class);
 

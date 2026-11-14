@@ -135,7 +135,6 @@ public class DefaultPrefixes extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 

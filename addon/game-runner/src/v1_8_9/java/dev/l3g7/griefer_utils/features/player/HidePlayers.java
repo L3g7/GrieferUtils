@@ -59,7 +59,6 @@ public class HidePlayers extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		getCategory().callback(this::syncPlayers);
 	}
 

@@ -27,7 +27,6 @@ public class RemoveMagicText extends TextComponentTweak {
 
 	@Override
 	public void init() {
-		super.init();
 		chat.description("Ob magische Texte im Chat deaktiviert werden sollen.");
 		tab.description("Ob magische Texte in der Tabliste deaktiviert werden sollen.");
 		item.description("Ob magische Texte in Item-Beschreibungen deaktiviert werden sollen.");

@@ -65,7 +65,6 @@ public class ChatMenu extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		if (Config.get(entries.getStorage().configKey) == null) {
 			// No value is loaded, load default entries
 			JsonArray data = new JsonArray();

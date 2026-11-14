@@ -52,7 +52,7 @@ public class Main {
 		long begin = System.currentTimeMillis();
 
 		try {
-			Feature.getFeatures().forEach(Feature::init);
+			Feature.getFeatures().forEach(Feature::preInit);
 
 			EventRegisterer.init();
 			Event.fire(OnEnable.class);

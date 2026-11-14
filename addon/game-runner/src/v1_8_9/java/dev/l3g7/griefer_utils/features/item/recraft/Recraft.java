@@ -77,7 +77,6 @@ public class Recraft extends Feature {
 
 	@Override
 	public void init() {
-		super.init();
 		recraftBridge.init();
 	}
 

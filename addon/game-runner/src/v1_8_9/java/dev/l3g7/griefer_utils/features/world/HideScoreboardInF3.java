@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.world;
 
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -14,10 +15,12 @@ import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.scoreboard.ScoreObjective;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 @Singleton
@@ -38,6 +41,19 @@ public class HideScoreboardInF3 extends Feature {
 
 		@Inject(method = "renderScoreboard", at = @At("HEAD"), cancellable = true)
 		public void injectRenderScoreboard(ScoreObjective objective, ScaledResolution scaledRes, CallbackInfo ci) {
+			if (mc().gameSettings.showDebugInfo && HideScoreboardInF3.get().isEnabled())
+				ci.cancel();
+		}
+
+	}
+
+	@Pseudo
+	@ExclusiveTo(LABY_4)
+	@Mixin(targets = "net.labymod.core.client.gui.hud.hudwidget.ScoreboardHudWidget", remap = false)
+	private static class MixinScoreboardHudWidget {
+
+		@Inject(method = "render", at = @At("HEAD"), cancellable = true, require = 0)
+		public void injectRenderScoreboard(CallbackInfo ci) {
 			if (mc().gameSettings.showDebugInfo && HideScoreboardInF3.get().isEnabled())
 				ci.cancel();
 		}

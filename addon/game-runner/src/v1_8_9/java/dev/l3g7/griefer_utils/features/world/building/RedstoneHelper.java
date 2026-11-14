@@ -90,7 +90,8 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 	private static final SwitchSetting showNoteBlockPitch = SwitchSetting.create()
 		.name("Notenblock-Höhe anzeigen")
-		.description("Zeigt an, welche Tonhöhe bei Notenblöcken eingestellt ist.")
+		.description("Zeigt an, welche Tonhöhe bei Notenblöcken eingestellt ist.",
+			"Dafür muss von diesem Block ein Ton abgespielt worden sein.")
 		.icon("sounds")
 		.subSettings(showNoteBlockInstrument)
 		.callback(RenderChunkManager::reloadAll);

@@ -64,7 +64,7 @@ public class LightLevelOverlay extends Feature {
 
 	private record LightLevel(int level, TextureCutout texture) implements RenderObject {
 
-		private static final Quad BASE_QUAD = Quad.onYPlane(11 / 32f, 8 / 32f)
+		private static final Quad BASE_QUAD = Quad.onYPlane(16.5 / 32f, 12 / 32f)
 			.translate(0, -0.48, 0);
 
 		public LightLevel(int level) {

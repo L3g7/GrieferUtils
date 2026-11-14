@@ -118,6 +118,7 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 		.name("Spawner verbessern")
 		.description("Verbessert Spawner.")
 		.icon("spawner")
+		.callback(RenderChunkManager::reloadAll)
 		.subSettings(spawnerWithHeldItemFix, showSpawnerIcons, markTriggeredSpawners, markLastOpenedSpawner, HeaderSetting.create(), hideMobPreview, hideParticles);
 
 	public static BetterSpawners get() {

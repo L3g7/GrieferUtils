@@ -52,19 +52,24 @@ public class ThreadDumper {
 		.description("Dumpt in regelmäßigen Abständen die Stacktraces laufender Threads.", "Die Dumps werden in GrieferUtils/threaddumps.txt geschrieben.")
 		.icon("glass_pane")
 		.subSettings(interval, maxDumps, dumpAll)
-		.callback(enabled -> {
-			if (DebugSettings.enabled.get())
-				tryStartThread();
-		});
+		.callback(ThreadDumper::tryStartThread);
 
-	public static void tryStartThread() throws IOException {
-		if (enabled.get() && running)
+	static {
+		DebugSettings.enabled.callback(ThreadDumper::tryStartThread);
+	}
+
+	private static boolean isEnabled() {
+		return enabled.get() && DebugSettings.enabled.get();
+	}
+
+	private static void tryStartThread() throws IOException {
+		if (isEnabled() && running)
 			return;
 
 		FILE.getParentFile().mkdirs();
 		FILE.createNewFile();
 		ThreadFactory.run("GrieferUtils Thread Dumper", MIN_PRIORITY, () -> {
-			while (enabled.get()) {
+			while (isEnabled()) {
 				dumps.add(ThreadDumpGenerator.generateThreadDumps(dumpAll.get()));
 				if (dumps.size() > maxDumps.get())
 					dumps.remove(0);

@@ -99,6 +99,7 @@ public class CleanUpPlayerMenu extends Feature {
 
 			enabled.subSettings(settings.toArray(new SwitchSetting[0]));
 			enabled.callback(this::updateShownEntries);
+			get().getCategory().callback(this::updateShownEntries);
 			CleanUpPlayerMenu.get().getCategory().callback(this::updateShownEntries);
 
 			updateShownEntries();

@@ -33,13 +33,7 @@ public class DebugSettings {
 			EventBusProfiler.enabled,
 			ItemDumper.key,
 			HeaderSetting.create(),
-			EventBusBlocker.enabled)
-		.callback(b -> {
-			if (b) {
-				ThreadDumper.tryStartThread();
-				EventBusProfiler.updateProfiler();
-			}
-		});
+			EventBusBlocker.enabled);
 
 	static {
 		if (Boolean.parseBoolean(System.getProperty("addWiki", "false"))) {

@@ -125,6 +125,12 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 		return get(BetterSpawners.class);
 	}
 
+	@Override
+	public void init() {
+		super.init();
+		getCategory().callback(RenderChunkManager::reloadAll);
+	}
+
 	// Spawner with held item fix
 
 	@EventListener

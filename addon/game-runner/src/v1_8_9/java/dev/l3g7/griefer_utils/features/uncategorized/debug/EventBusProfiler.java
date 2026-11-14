@@ -36,6 +36,10 @@ public class EventBusProfiler {
 		.callback(EventBusProfiler::updateProfiler)
 		.subSettings(minTime, filter);
 
+	static {
+		DebugSettings.enabled.callback(EventBusProfiler::updateProfiler);
+	}
+
 	private static final Logger LOGGER = LogManager.getLogger("EventBus Profiler");
 	private static final EventProfiler PROFILER = new EventProfiler() {
 
@@ -83,7 +87,7 @@ public class EventBusProfiler {
 		}
 	};
 
-	public static void updateProfiler() {
+	private static void updateProfiler() {
 		if (!enabled.get() || !DebugSettings.enabled.get()) {
 			Event.setEventProfiler(null);
 			return;

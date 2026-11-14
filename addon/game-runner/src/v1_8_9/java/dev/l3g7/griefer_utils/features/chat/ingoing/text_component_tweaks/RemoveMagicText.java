@@ -31,6 +31,8 @@ public class RemoveMagicText extends TextComponentTweak {
 		chat.description("Ob magische Texte im Chat deaktiviert werden sollen.");
 		tab.description("Ob magische Texte in der Tabliste deaktiviert werden sollen.");
 		item.description("Ob magische Texte in Item-Beschreibungen deaktiviert werden sollen.");
+
+		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 
 	@Override

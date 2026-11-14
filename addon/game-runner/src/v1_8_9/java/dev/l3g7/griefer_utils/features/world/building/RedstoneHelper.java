@@ -121,11 +121,17 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		.name("Redstone-Helfer")
 		.description("Hilft beim Arbeiten mit Redstone.")
 		.icon("redstone_comparator")
-		.subSettings(showPower, showDirection, showNoteBlockPitch, showCauldronLevel, HeaderSetting.create(), hideRedstoneParticles)
-		.callback(RenderChunkManager::reloadAll);
+		.callback(RenderChunkManager::reloadAll)
+		.subSettings(showPower, showDirection, showNoteBlockPitch, showCauldronLevel, HeaderSetting.create(), hideRedstoneParticles);
 
 	public static RedstoneHelper get() {
 		return get(RedstoneHelper.class);
+	}
+
+	@Override
+	public void init() {
+		super.init();
+		getCategory().callback(RenderChunkManager::reloadAll);
 	}
 
 	@Override

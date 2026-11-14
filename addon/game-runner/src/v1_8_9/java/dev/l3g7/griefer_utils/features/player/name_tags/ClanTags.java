@@ -42,6 +42,12 @@ public class ClanTags extends Feature {
 		.icon("name_tag_rainbow")
 		.callback(this::toggleSubtitles);
 
+	@Override
+	public void init() {
+		super.init();
+		getCategory().callback(this::toggleSubtitles);
+	}
+
 	@EventListener(triggerWhenDisabled = true)
 	public void onSubtitle(LabyModNeoPayloadEvent<SubtitlePacket> event) {
 		for (Subtitle subtitle : event.packet.subtitles)

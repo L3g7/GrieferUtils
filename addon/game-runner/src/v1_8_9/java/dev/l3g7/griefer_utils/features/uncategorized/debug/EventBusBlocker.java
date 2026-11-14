@@ -16,6 +16,14 @@ public class EventBusBlocker {
 		.name("Eventbus deaktivieren")
 		.description("Deaktiviert GrieferUtils' Eventbus.")
 		.icon("brick")
-		.callback(b -> Event.fireEvents = !DebugSettings.enabled.get() || !b);
+		.callback(EventBusBlocker::toggle);
+
+	private static void toggle() {
+		Event.fireEvents = !DebugSettings.enabled.get() || !enabled.get();
+	}
+
+	static {
+		DebugSettings.enabled.callback(EventBusBlocker::toggle);
+	}
 
 }

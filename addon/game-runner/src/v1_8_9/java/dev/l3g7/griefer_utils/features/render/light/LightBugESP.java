@@ -66,6 +66,15 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 		});
 
 	@Override
+	public void init() {
+		super.init();
+		getCategory().callback(() -> {
+			pendingChunks.clear();
+			WorldRenderChunkManager.reloadAll();
+		});
+	}
+
+	@Override
 	public RenderObject getRenderObject(BlockPos worldPos, IBlockState state, WorldClient world) {
 		ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(worldPos.getX() >> 4, worldPos.getZ() >> 4);
 

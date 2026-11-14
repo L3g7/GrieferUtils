@@ -48,6 +48,8 @@ public class Enlighten extends TextComponentTweak {
 		chat.description("Ob Texte im Chat aufgehellt werden sollen.");
 		tab.description("Ob Texte in der Tabliste aufgehellt werden sollen.");
 		item.description("Ob Texte in Item-Beschreibungen aufgehellt werden sollen.");
+
+		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 
 	@MainElement

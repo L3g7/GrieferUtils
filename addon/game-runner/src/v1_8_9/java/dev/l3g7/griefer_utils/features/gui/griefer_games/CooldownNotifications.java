@@ -65,16 +65,24 @@ public class CooldownNotifications extends Feature {
 		.name("Cooldown-Benachrichtigungen")
 		.description("Zeigt die momentanen Cooldowns beim ersten Beitritt eines Citybuilds an.")
 		.icon("bell")
-		.callback(v -> {
-			// If no data is found, open and close /cooldowns automatically
-			if (v && endDates.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForCooldownsGui) {
-				chatLock = ChatQueue.sendBlocking("/cooldowns", () -> {
-					LabyBridge.labyBridge.notifyError("Cooldowns konnten nicht geöffnet werden!");
-					waitingForCooldownsGui = false;
-				});
-				waitingForCooldownsGui = true;
-			}
-		});
+		.callback(this::checkDataAfterToggle);
+
+	@Override
+	public void init() {
+		super.init();
+		getCategory().callback(this::checkDataAfterToggle);
+	}
+
+	private void checkDataAfterToggle() {
+		// If no data is found, open and close /cooldowns automatically
+		if (isEnabled() && endDates.isEmpty() && ServerCheck.isOnCitybuild() && !waitingForCooldownsGui) {
+			chatLock = ChatQueue.sendBlocking("/cooldowns", () -> {
+				LabyBridge.labyBridge.notifyError("Cooldowns konnten nicht geöffnet werden!");
+				waitingForCooldownsGui = false;
+			});
+			waitingForCooldownsGui = true;
+		}
+	}
 
 	@EventListener
 	private void onStaticData(StaticDataReceiveEvent event) {

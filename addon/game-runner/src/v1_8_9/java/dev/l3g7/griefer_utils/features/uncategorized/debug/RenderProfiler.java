@@ -22,6 +22,10 @@ public class RenderProfiler {
 		.icon("clock")
 		.callback(RenderProfiler::updateProfiler);
 
+	static {
+		DebugSettings.enabled.callback(RenderProfiler::updateProfiler);
+	}
+
 	private static final EventProfiler profiler = new EventProfiler() {
 		@Override
 		public void onEventStart(Event event, boolean profilingListeners) {

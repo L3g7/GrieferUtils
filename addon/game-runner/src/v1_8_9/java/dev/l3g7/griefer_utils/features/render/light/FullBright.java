@@ -31,18 +31,26 @@ public class FullBright extends Feature {
 		.description("Stellt den Gammawert auf 10.")
 		.icon("light_bulb")
 		.addHotkeySetting("FullBright", null)
-		.callback(active -> {
-			if (active) {
-				float gamma = mc().gameSettings.gammaSetting;
-				if (gamma <= 1)
-					Config.set(GAMMA_PATH, new JsonPrimitive(gamma));
+		.callback(this::syncGamma);
 
-				return;
-			}
+	private void syncGamma() {
+		if (isEnabled()) {
+			float gamma = mc().gameSettings.gammaSetting;
+			if (gamma <= 1)
+				Config.set(GAMMA_PATH, new JsonPrimitive(gamma));
 
-			if (Config.has(GAMMA_PATH))
-				mc().gameSettings.gammaSetting = Config.get(GAMMA_PATH).getAsFloat();
-		});
+			return;
+		}
+
+		if (Config.has(GAMMA_PATH))
+			mc().gameSettings.gammaSetting = Config.get(GAMMA_PATH).getAsFloat();
+	}
+
+	@Override
+	public void init() {
+		super.init();
+		getCategory().callback(this::syncGamma);
+	}
 
 	@EventListener
 	public void onPlayerTick(TickEvent.ClientTickEvent event) {

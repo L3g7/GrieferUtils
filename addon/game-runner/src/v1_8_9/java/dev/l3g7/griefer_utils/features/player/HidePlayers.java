@@ -14,9 +14,10 @@ import dev.l3g7.griefer_utils.core.events.PlaySoundAtEntityEvent;
 import dev.l3g7.griefer_utils.core.events.PlaySoundEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderPlayerEvent;
+import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
-import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.entity.Entity;
@@ -27,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static dev.l3g7.griefer_utils.core.misc.ServerCheck.isOnGrieferGames;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 
@@ -41,11 +41,7 @@ public class HidePlayers extends Feature {
 		.icon("steve")
 		.description("Ob Spieler, die von GrieferGames erzeugt wurden (z.B. Orbhändler), auch angezeigt werden sollen.")
 		.defaultValue(true)
-		.callback(() -> {
-			if (isOnGrieferGames())
-				for (EntityPlayer player : world().playerEntities)
-					updatePlayer(player);
-		});
+		.callback(this::syncPlayers);
 
 	private final ListSetting<PlayerListEntry> excludedPlayers = ListSetting.createPlayerList()
 		.name("Ausgenommene Spieler")
@@ -57,19 +53,25 @@ public class HidePlayers extends Feature {
 		.name("Spieler verstecken")
 		.description("Versteckt andere Spieler.")
 		.icon("invisibility")
-		.callback(() -> {
-			if (isOnGrieferGames())
-				for (EntityPlayer player : world().playerEntities)
-					updatePlayer(player);
-		})
+		.callback(this::syncPlayers)
 		.subSettings(showNPCs, excludedPlayers)
 		.addHotkeySetting("das Verstecken von Spielern", null);
 
-	@EventListener
-	public void onTick(TickEvent.ClientTickEvent event) {
-		if (world() != null)
+	@Override
+	public void init() {
+		super.init();
+		getCategory().callback(this::syncPlayers);
+	}
+
+	private void syncPlayers() {
+		if (isEnabled() && ServerCheck.isOnGrieferGames() && world() != null)
 			for (EntityPlayer player : world().playerEntities)
 				updatePlayer(player);
+	}
+
+	@EventListener
+	public void onTick(TickEvent.ClientTickEvent event) {
+		syncPlayers();
 	}
 
 	/**

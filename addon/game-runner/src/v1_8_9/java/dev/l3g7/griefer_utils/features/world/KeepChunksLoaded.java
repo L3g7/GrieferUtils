@@ -44,20 +44,28 @@ public class KeepChunksLoaded extends Feature {
 		.name("Chunks geladen lassen")
 		.icon("filled_map")
 		.description("Lässt Chunks nicht entladen.")
-		.callback(enabled -> {
-			if (enabled)
-				return;
-
-			// Unload chunks
-			if (world() == null)
-				return;
-
-			for (ChunkCoordIntPair chunkCoords : forceLoadedChunks)
-				world().doPreChunk(chunkCoords.chunkXPos, chunkCoords.chunkZPos, false);
-		});
+		.callback(this::checkChunkUnload);
 
 	public static KeepChunksLoaded get() {
 		return get(KeepChunksLoaded.class);
+	}
+
+	@Override
+	public void init() {
+		super.init();
+		getCategory().callback(this::checkChunkUnload);
+	}
+
+	private void checkChunkUnload() {
+		if (isEnabled())
+			return;
+
+		// Unload chunks
+		if (world() == null)
+			return;
+
+		for (ChunkCoordIntPair chunkCoords : forceLoadedChunks)
+			world().doPreChunk(chunkCoords.chunkXPos, chunkCoords.chunkZPos, false);
 	}
 
 	@EventListener

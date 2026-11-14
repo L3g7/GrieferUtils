@@ -66,20 +66,14 @@ public class BetterSchematica extends Feature {
 			return;
 		}
 
-		highlightBlocks.callback(() -> {
-			if (isEnabled())
-				SchematicaUtil.refresh();
-		});
+		highlightBlocks.callback(this::refresh);
+		enabled.callback(this::refresh);
+		getCategory().callback(this::refresh);
+	}
 
-		enabled.callback(() -> {
-			if (highlightBlocks.get())
-				SchematicaUtil.refresh();
-		});
-
-		getCategory().callback(() -> {
-			if (enabled.get() && highlightBlocks.get())
-				SchematicaUtil.refresh();
-		});
+	private void refresh() {
+		// Don't inline as this would generate a CONSTANT_MethodHandle entry
+		SchematicaUtil.refresh();
 	}
 
 	@EventListener

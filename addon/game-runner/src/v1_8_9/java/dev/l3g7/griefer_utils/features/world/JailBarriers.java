@@ -43,9 +43,18 @@ public class JailBarriers extends Feature {
 		.icon("iron_bars")
 		.description("Fügt beim Jail Projektil-durchlässige Barrieren hinzu, um das Reinfallen zu verhindern.")
 		.callback(b -> {
-			targetBlock = b ? Blocks.barrier: Blocks.air;
+			targetBlock = isEnabled() ? Blocks.barrier : Blocks.air;
 			checkIfChunksAreLoaded();
 		});
+
+	@Override
+	public void init() {
+		super.init();
+		getCategory().callback(() -> {
+			targetBlock = isEnabled() ? Blocks.barrier : Blocks.air;
+			checkIfChunksAreLoaded();
+		});
+	}
 
 	@EventListener
 	private void onCBSwitch(ServerSwitchEvent event) {

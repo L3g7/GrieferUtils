@@ -23,6 +23,8 @@ import net.labymod.api.event.Subscribe;
 import net.labymod.api.event.addon.lifecycle.AddonPostEnableEvent;
 import net.labymod.api.models.addon.annotation.AddonMain;
 import net.labymod.api.models.addon.info.InstalledAddonInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
@@ -31,6 +33,8 @@ import static net.labymod.api.client.component.format.NamedTextColor.YELLOW;
 @AddonMain
 @ExclusiveTo(LABY_4)
 public class Main {
+
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils");
 
 	private static LoadedAddon addon;
 	private static String addonDescription = YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :(";
@@ -44,7 +48,7 @@ public class Main {
 
 	@Subscribe
 	public final void onAddonInitialize(AddonPostEnableEvent event) {
-		System.out.println("GrieferUtils enabling");
+		LOGGER.info("Enabling...");
 		long begin = System.currentTimeMillis();
 
 		try {
@@ -56,7 +60,7 @@ public class Main {
 			throw Util.elevate(e);
 		}
 
-		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
+		LOGGER.info("Enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}
 
 	@EventListener

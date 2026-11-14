@@ -20,6 +20,8 @@ import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Result;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.util.Util;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +39,7 @@ import static java.lang.Thread.MIN_PRIORITY;
 
 public abstract class ReadOperation {
 
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils IO");
 	protected static final long FALLBACK_SIZE = 32;
 
 	protected abstract String getType();
@@ -310,7 +313,7 @@ public abstract class ReadOperation {
 		 */
 		public void failLog() {
 			future.exceptionally(e -> {
-				e.printStackTrace(System.out);
+				LOGGER.error(e);
 				return null;
 			});
 		}

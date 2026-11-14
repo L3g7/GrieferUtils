@@ -63,10 +63,8 @@ public class Laby3ModuleFix {
 			ModuleConfig.loadModule(module);
 		}
 
-		if (detachedModuleCount > 0) {
-			System.out.println("GrieferUtils fixed " + detachedModuleCount + " detached modules");
+		if (detachedModuleCount > 0)
 			ModuleConfig.getConfigManager().save();
-		}
 	}
 
 

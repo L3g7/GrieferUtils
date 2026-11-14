@@ -12,10 +12,14 @@ import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 class ItemDumper {
+
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils ItemDumper");
 
 	public static final KeySetting key = KeySetting.create()
 		.name("Item-Dumper")
@@ -31,7 +35,7 @@ class ItemDumper {
 
 			Slot theSlot = MinecraftUtil.getSlotUnderMouse(gc);
 			if (theSlot != null && theSlot.getHasStack())
-				System.out.println(theSlot.getStack().writeToNBT(new NBTTagCompound()));
+				LOGGER.info(theSlot.getStack().writeToNBT(new NBTTagCompound()));
 		});
 
 }

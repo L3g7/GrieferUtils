@@ -275,11 +275,8 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 		currentDisguise = disguise.create(args);
 		blockCoordinates = disguise.clampCoordinates(args);
 
-		if (!args.isEmpty() && isEnabled()) {
+		if (!args.isEmpty() && isEnabled())
 			LabyBridge.display(Constants.ADDON_PREFIX + "§cUnbekannte Argumente: " + Strings.join(args, ", "));
-			System.out.println(Arrays.toString(arguments));
-			System.out.println(Arrays.toString(subArgs));
-		}
 
 		world().addEntityToWorld(currentDisguise.getEntityId(), currentDisguise);
 		if (!isEnabled())

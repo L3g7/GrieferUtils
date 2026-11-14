@@ -26,6 +26,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -40,6 +42,8 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 public class PacketDumper {
+
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils PacketDumper");
 
 	private static final OneSidedPacketDumper incoming = new OneSidedPacketDumper("[INCOMING] ", "Eingehende", "00,03,19,3E");
 	private static final OneSidedPacketDumper outgoing = new OneSidedPacketDumper("[OUTGOING] ", "Ausgehende", "00,03,04,05,06");
@@ -95,13 +99,13 @@ public class PacketDumper {
 		PacketBuffer buffer = Reflection.invoke(packet, "getBufferData");
 		byte[] bytes = buffer.array();
 
-		System.out.println(dumper.prefix + "[" + getLastReadTime() + "] " + packet.getClass().getSimpleName());
+		LOGGER.info("{}[{}] {}", dumper.prefix, getLastReadTime(), packet.getClass().getSimpleName());
 		JsonObject obj = new JsonObject();
 		obj.addProperty("channel", channelName);
 		obj.addProperty("bufferB64", Base64.getEncoder().encodeToString(bytes));
 		obj.addProperty("bufferUTF8", new String(bytes, StandardCharsets.UTF_8));
 
-		System.out.println(IO.GSON.toJson(obj));
+		LOGGER.info(IO.GSON.toJson(obj));
 	}
 
 	private static class OneSidedPacketDumper {
@@ -145,15 +149,14 @@ public class PacketDumper {
 			if (blacklistList.contains(id))
 				return;
 
-			System.out.println(prefix + "[" + getLastReadTime() + "] " + name);
+			LOGGER.info("{}[{}] {}", prefix, getLastReadTime(), name);
 			if (!dumpFieldsList.contains(id))
 				return;
 
 			try {
-				System.out.println(IO.GSON.toJson(UnsafeJsonSerializer.toJson(packet)));
+				LOGGER.info(IO.GSON.toJson(UnsafeJsonSerializer.toJson(packet)));
 			} catch (Throwable t) {
-				System.out.println("Packet's fields could not be dumped");
-				t.printStackTrace();
+				LOGGER.error("Packet's fields could not be dumped", t);
 				blacklistList.add(id);
 			}
 		}

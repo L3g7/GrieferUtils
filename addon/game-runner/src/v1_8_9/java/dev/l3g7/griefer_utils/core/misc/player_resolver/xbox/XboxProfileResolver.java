@@ -11,6 +11,8 @@ import com.google.gson.*;
 import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.token_providers.*;
 import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.util.DateTime;
 import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.util.Requests;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,6 +22,8 @@ import java.util.Set;
 import static dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.util.Util.strMap;
 
 public class XboxProfileResolver {
+
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils XboxProfileResolver");
 
 	private static boolean available = false;
 
@@ -76,7 +80,7 @@ public class XboxProfileResolver {
 		}
 
 		if (!available)
-			System.out.println("[XboxProfileResolver] No valid token could be found!");
+			LOGGER.error("No valid token could be found!");
 	}
 
 }

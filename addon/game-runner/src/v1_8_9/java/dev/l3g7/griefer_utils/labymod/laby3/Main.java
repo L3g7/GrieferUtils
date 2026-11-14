@@ -29,6 +29,8 @@ import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.texture.DynamicModTexture;
 import net.minecraft.util.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -47,6 +49,8 @@ import static net.labymod.utils.ModColor.YELLOW;
 @ExclusiveTo(LABY_3)
 public class Main extends LabyModAddon {
 
+	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils");
+
 	private static Main instance;
 	private static String addonDescription = YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :(";
 
@@ -60,7 +64,7 @@ public class Main extends LabyModAddon {
 
 	@Override
 	public void onEnable() {
-		System.out.println("GrieferUtils enabling");
+		LOGGER.info("Enabling...");
 		long begin = System.currentTimeMillis();
 
 		// Initialize addon
@@ -72,7 +76,7 @@ public class Main extends LabyModAddon {
 		Map<String, DynamicModTexture> map = LabyMod.getInstance().getDynamicTextureManager().getResourceLocations();
 		map.put("griefer_utils_icon", new DynamicModTexture(new ResourceLocation("griefer_utils/icons/high_res/icon.png"), "griefer_utils_icon"));
 
-		System.out.println("GrieferUtils enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
+		LOGGER.info("Enabled! (took {} ms)", System.currentTimeMillis() - begin);
 	}
 
 	@EventListener

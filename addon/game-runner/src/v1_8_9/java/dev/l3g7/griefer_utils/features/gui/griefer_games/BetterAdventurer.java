@@ -68,9 +68,7 @@ public class BetterAdventurer extends Feature {
 				List<String> adventureToolTip = getMissingItems(e.itemStack);
 				if (adventureToolTip != null)
 					e.toolTip.addAll(adventureToolTip);
-			} catch (NumberFormatException nfe) {
-				System.out.println(nfe.getMessage());
-			}
+			} catch (NumberFormatException ignored) {}
 		}
 	}
 

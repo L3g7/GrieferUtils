@@ -1,16 +1,14 @@
 package dev.l3g7.griefer_utils.core.util.render.render_engine;
 
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
-import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 import java.util.Map.Entry;
-
-import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.TEXTURED_ROTATING;
 
 /**
  * A single compiled chunk.
@@ -20,6 +18,11 @@ public class RenderChunk {
 
 	public static final int ROTATION_STEPS = 16;
 	public static final double ROTATION_SLICE = 360d / ROTATION_STEPS;
+
+	/**
+	 * The compiler used for all chunks. Compilation only happens on the render thread.
+	 */
+	private static final ChunkCompiler compiler = new ChunkCompiler();
 
 	/**
 	 * Helper method to delete all RenderChunks.
@@ -112,7 +115,7 @@ public class RenderChunk {
 		synchronized (parts) {
 			for (int i = 0; i < parts.length; i++) {
 				ChunkPart part = parts[i];
-				if (part == null)
+				if (part == null || part.buffers.isEmpty())
 					continue;
 
 				boolean isVisible = frustum.isBoundingBoxInFrustum(new AxisAlignedBB(
@@ -126,17 +129,10 @@ public class RenderChunk {
 				if (!isVisible)
 					continue;
 
-				if (part.lists.isEmpty()) {
-					parts[i] = null;
-					return;
-				}
-
 				Atlas.getAtlas().bind();
-				for (Entry<RenderType, Integer> entry : part.lists.entrySet()) {
-					if (entry.getKey() == TEXTURED_ROTATING)
-						GL11.glCallList(entry.getValue() + rotation);
-					else
-						GL11.glCallList(entry.getValue());
+				for (Entry<RenderType, CompiledBuffer> entry : part.buffers.entrySet()) {
+					entry.getKey().setup();
+					entry.getValue().draw(rotation);
 				}
 			}
 		}
@@ -147,10 +143,9 @@ public class RenderChunk {
 	 */
 	private static class ChunkPart {
 
-		private final ChunkCompiler compiler = new ChunkCompiler();
 		private boolean mustRecompile = false;
 
-		private final Map<RenderType, Integer> lists = new HashMap<>();
+		private final Map<RenderType, CompiledBuffer> buffers = new EnumMap<>(RenderType.class);
 		private final Map<BlockPos, RenderObject> renderObjects = new HashMap<>();
 
 		/**
@@ -178,16 +173,12 @@ public class RenderChunk {
 		}
 
 		/**
-		 * Recompiles this section by drawing it into a new list and deleting the old one.
+		 * Recompiles this section by drawing it into new VBOs and deleting the old ones.
 		 */
 		private synchronized void recompile() {
-			if (renderObjects.isEmpty()) {
-				delete();
+			delete();
+			if (renderObjects.isEmpty())
 				return;
-			}
-
-			if (!lists.isEmpty())
-				delete();
 
 			Map<RenderType, List<Entry<BlockPos, RenderObject>>> renderObjectsByType = new HashMap<>();
 
@@ -203,34 +194,41 @@ public class RenderChunk {
 			// Render by type
 			for (Entry<RenderType, List<Entry<BlockPos, RenderObject>>> typeEntry : renderObjectsByType.entrySet()) {
 				RenderType type = typeEntry.getKey();
-				int size = type.size;
-				int glList = GL11.glGenLists(size);
-				if (glList == 0)
-					return; // glGenLists failed
+				int[] firstVertexForStep = new int[type.size];
+				int[] vertexCount = new int[type.size];
 
-				lists.put(type, glList);
-
-				for (int offset = 0; offset < size; offset++) {
-					compiler.begin(glList + offset);
-					type.setup();
+				// Draw all steps consecutively into the compiler
+				compiler.begin();
+				for (int step = 0; step < type.size; step++) {
+					firstVertexForStep[step] = compiler.getVertexCount();
 					for (Entry<BlockPos, RenderObject> renderObject : typeEntry.getValue()) {
 						compiler.prepare(renderObject.getKey());
-						renderObject.getValue().draw(compiler, type, renderObject.getKey(), offset);
+						renderObject.getValue().draw(compiler, type, renderObject.getKey(), step);
 					}
-					compiler.end();
+					vertexCount[step] = compiler.getVertexCount() - firstVertexForStep[step];
 				}
+
+				if (compiler.getVertexCount() == 0)
+					continue; // Nothing to draw
+
+				int vbo = OpenGlHelper.glGenBuffers();
+				if (vbo == 0)
+					return; // glGenBuffers failed, try again next frame
+
+				compiler.upload(vbo);
+				buffers.put(type, new CompiledBuffer(vbo, firstVertexForStep, vertexCount));
 			}
 
 			mustRecompile = false;
 		}
 
 		private synchronized void delete() {
-			if (lists.isEmpty())
+			if (buffers.isEmpty())
 				return;
 
-			for (Entry<RenderType, Integer> entry : lists.entrySet())
-				GL11.glDeleteLists(entry.getValue(), entry.getKey().size);
-			lists.clear();
+			for (CompiledBuffer buffer : buffers.values())
+				buffer.delete();
+			buffers.clear();
 		}
 
 	}

@@ -67,10 +67,10 @@ public interface RenderObject {
 	 * @param compiler      The compiler to draw into.
 	 * @param renderType    How this RenderObject is rendered. A value from {@link #renderTypes()}.
 	 * @param chunkPosition This object's chunkPosition.
-	 * @param listOffset    The offset of the list currently being rendered into.
+	 * @param step          The step currently being compiled, from 0 to {@link RenderType#size} - 1.
 	 * @see ChunkCompiler
 	 */
-	void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset);
+	void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int step);
 
 	/**
 	 * A factory generating RenderObjects.

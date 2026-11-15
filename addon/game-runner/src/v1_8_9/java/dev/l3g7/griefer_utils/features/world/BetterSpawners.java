@@ -362,7 +362,7 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int step) {
 			switch (renderType) {
 				case TEXTURED -> compiler.draw(texture, ICON_QUADS);
 				case UNTEXTURED_DEPTHLESS -> {

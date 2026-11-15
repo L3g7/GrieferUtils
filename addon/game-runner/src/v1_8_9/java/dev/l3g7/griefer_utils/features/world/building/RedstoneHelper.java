@@ -282,7 +282,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int step) {
 			if (dir == DOWN) {
 				compiler.draw(tex("inner_down"), INNER_QUAD);
 				if (!showHopperSide.get())
@@ -337,7 +337,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int step) {
 			if (dir.getAxis() == Y) {
 				/*
 				 * Vertical dropper
@@ -413,7 +413,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int step) {
 			if (noteId >= 0 && noteId <= 24)
 				drawTexture(compiler, tex("notes/" + noteId));
 			if (showNoteBlockInstrument.get() && instrument >= 1 && instrument <= 4)
@@ -459,7 +459,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int step) {
 			compiler.draw(texture, // Light
 				BASE_QUAD.rotateY(90),
 				BASE_QUAD.rotateY(270)

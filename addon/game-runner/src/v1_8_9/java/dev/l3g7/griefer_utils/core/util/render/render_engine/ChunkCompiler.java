@@ -12,16 +12,29 @@ import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.TextureCutout;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.UV;
 import dev.l3g7.griefer_utils.core.util.render.sinks.VertexSink;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.nio.ByteBuffer;
 
 import static java.awt.Color.WHITE;
-import static org.lwjgl.opengl.GL11.*;
 
+/**
+ * Collects the vertices of {@link RenderObject RenderObjects} into a buffer, which is then uploaded into a VBO.
+ * @see CompiledBuffer
+ */
 public class ChunkCompiler implements VertexSink {
+
+	/**
+	 * The initial size of the vertex buffer, in vertices.
+	 */
+	private static final int INITIAL_CAPACITY = 8192;
+
+	private ByteBuffer buffer = GLAllocation.createDirectByteBuffer(INITIAL_CAPACITY * CompiledBuffer.VERTEX_SIZE);
+	private int vertexCount = 0;
 
 	/**
 	 * The position of the RenderObject currently being drawing
@@ -41,21 +54,30 @@ public class ChunkCompiler implements VertexSink {
 	}
 
 	/**
-	 * Begins drawing into a GL list.
-	 * @param list The list's id.
+	 * Discards all previously drawn vertices.
 	 */
-	public void begin(int list) {
-		glNewList(list, GL_COMPILE);
-		glBegin(GL_QUADS);
+	void begin() {
+		buffer.clear();
+		vertexCount = 0;
 	}
 
 	/**
-	 * Ends drawing into the current GL list.
+	 * @return The amount of vertices drawn since the last call to {@link #begin()}.
 	 */
-	public void end() {
-		setColor(WHITE);
-		glEnd();
-		glEndList();
+	int getVertexCount() {
+		return vertexCount;
+	}
+
+	/**
+	 * Uploads all vertices drawn since {@link #begin()} into the given VBO.
+	 */
+	void upload(int vbo) {
+		buffer.flip();
+		OpenGlHelper.glBindBuffer(OpenGlHelper.GL_ARRAY_BUFFER, vbo);
+		OpenGlHelper.glBufferData(OpenGlHelper.GL_ARRAY_BUFFER, buffer, OpenGlHelper.GL_STATIC_DRAW);
+		OpenGlHelper.glBindBuffer(OpenGlHelper.GL_ARRAY_BUFFER, 0);
+		buffer.clear();
+		vertexCount = 0;
 	}
 
 	/**
@@ -69,20 +91,10 @@ public class ChunkCompiler implements VertexSink {
 
 	/**
 	 * Sets the current color.
-	 * If it's not equal to the previous color, it'll be changed in GL too.
 	 * Will be reset to white before starting a new RenderObject.
 	 */
 	public void setColor(Color color) {
-		if (currentColor.equals(color))
-			return;
-
 		currentColor = color;
-		GL11.glColor4f(
-			color.getRed() / 255f,
-			color.getGreen() / 255f,
-			color.getBlue() / 255f,
-			color.getAlpha() / 255f
-		);
 	}
 
 	/**
@@ -130,13 +142,41 @@ public class ChunkCompiler implements VertexSink {
 	}
 
 	private void drawVertex(Vec3 pos, double u, double v) {
-		glTexCoord2f((float) u, (float) v);
-		drawVertex(pos.xCoord, pos.yCoord, pos.zCoord);
+		putVertex(pos.xCoord, pos.yCoord, pos.zCoord, (float) u, (float) v);
 	}
 
 	@Override
 	public void drawVertex(double x, double y, double z) {
-		glVertex3f((float) x, (float) y, (float) z);
+		putVertex(x, y, z, 0, 0);
+	}
+
+	private void putVertex(double x, double y, double z, float u, float v) {
+		ensureCapacity();
+
+		buffer.putFloat((float) x);
+		buffer.putFloat((float) y);
+		buffer.putFloat((float) z);
+		buffer.putFloat(u);
+		buffer.putFloat(v);
+		buffer.put((byte) currentColor.getRed());
+		buffer.put((byte) currentColor.getGreen());
+		buffer.put((byte) currentColor.getBlue());
+		buffer.put((byte) currentColor.getAlpha());
+
+		vertexCount++;
+	}
+
+	/**
+	 * Grows the buffer if there's no space for another vertex.
+	 */
+	private void ensureCapacity() {
+		if (buffer.remaining() >= CompiledBuffer.VERTEX_SIZE)
+			return;
+
+		ByteBuffer newBuffer = GLAllocation.createDirectByteBuffer(buffer.capacity() * 2);
+		buffer.flip();
+		newBuffer.put(buffer);
+		buffer = newBuffer;
 	}
 
 }

@@ -183,7 +183,7 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 		}
 
 		@Override
-		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
+		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int step) {
 			compiler.setColor(new Color(0x30FFFF00, true));
 			GeometryRenderUtil.drawFilledBoxWhenRenderingStarted(compiler, new AxisAlignedBB(chunkPosition, chunkPosition.add(1, 1, 1)), false);
 		}

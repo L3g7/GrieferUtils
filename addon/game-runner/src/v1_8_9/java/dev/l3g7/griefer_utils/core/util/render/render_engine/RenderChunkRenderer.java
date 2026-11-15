@@ -71,6 +71,7 @@ class RenderChunkRenderer {
 		GlStateManager.alphaFunc(GL_GREATER, 0.003921569F);
 		GlStateManager.depthMask(true);
 		GlStateManager.color(1, 1, 1, 1);
+		CompiledBuffer.beginDrawing();
 
 		profiler.endStartSection("frustum");
 		double viewY = 360 - mc().getRenderManager().playerViewY + (ROTATION_SLICE / 2d);
@@ -114,6 +115,8 @@ class RenderChunkRenderer {
 		}
 
 		profiler.endStartSection("teardown");
+		CompiledBuffer.endDrawing();
+		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.depthMask(true);
 		GlStateManager.disableBlend();
 		GlStateManager.alphaFunc(516, 0.1F);

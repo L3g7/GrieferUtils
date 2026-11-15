@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.item.recraft.laby3;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.Disableable;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
@@ -35,8 +35,10 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
+import static java.lang.Math.PI;
+import static net.labymod.main.ModTextures.MISC_MENU_POINT;
 
-@Bridge.ExclusiveTo(LABY_3)
+@ExclusiveTo(LABY_3)
 public abstract class PieMenu extends Gui implements Disableable {
 
 	private List<Pair<String, List<Pair<String, Runnable>>>> allPages = new ArrayList<>();
@@ -167,7 +169,7 @@ public abstract class PieMenu extends Gui implements Disableable {
 	private void drawUnit(Pair<String, Runnable> entry, double midX, double midY, double radius, int amount, int index, double cursorX, double cursorY, double distance) {
 		long timePassed = System.currentTimeMillis() - (this.selectionStarted - 1072L);
 		float animation = (float)(timePassed < 1572L ? Math.sin((float)timePassed / 1000f) : 1);
-		double tau = Math.PI * 2;
+		double tau = PI * 2;
 		double destinationShift = 3.0707963267948966;
 		double shift = destinationShift / (double) (animation * animation);
 
@@ -190,7 +192,7 @@ public abstract class PieMenu extends Gui implements Disableable {
 		double textureWidth = 9 * size;
 		double textureHeight = 9 * size;
 
-		Minecraft.getMinecraft().getTextureManager().bindTexture(ModTextures.MISC_MENU_POINT);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(MISC_MENU_POINT);
 
 		RenderUtil.glColor(new Color(hover ? 0x33FF33 : 0x3BB3FF));
 

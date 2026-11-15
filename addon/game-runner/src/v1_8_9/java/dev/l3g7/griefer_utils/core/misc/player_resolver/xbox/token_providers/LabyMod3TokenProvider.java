@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.Authorization;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.Map.Entry;
 
 public class LabyMod3TokenProvider implements TokenProvider {
 
@@ -27,7 +27,7 @@ public class LabyMod3TokenProvider implements TokenProvider {
 
 		JsonObject accounts = IO.read(path).asJsonObject().getAsJsonObject("accounts");
 
-		for (Map.Entry<String, JsonElement> entry : accounts.entrySet()) {
+		for (Entry<String, JsonElement> entry : accounts.entrySet()) {
 
 			Authorization.set(new Authorization(entry.getValue().getAsJsonObject().get("refresh_token").getAsString()));
 			if (Authorization.get().validate())

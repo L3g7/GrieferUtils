@@ -27,7 +27,7 @@ import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
-import dev.l3g7.griefer_utils.features.widgets.Laby3Widget;
+import dev.l3g7.griefer_utils.features.widgets.Laby3Widget.ComplexLaby3Widget;
 import dev.l3g7.griefer_utils.features.widgets.Widget.ComplexWidget;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -38,9 +38,9 @@ import net.minecraft.util.ChatComponentText;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,6 +49,10 @@ import java.util.stream.Stream;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.features.widgets.other.griefer_pass.GrieferPass.Sorting.PROGRESS;
+import static dev.l3g7.griefer_utils.features.widgets.other.griefer_pass.GrieferPass.Sorting.TIME;
+import static dev.l3g7.griefer_utils.features.widgets.other.griefer_pass.Quests.DISPLAY_PATTERNS;
+import static java.time.ZoneOffset.UTC;
 
 @Singleton
 public class GrieferPass extends ComplexWidget {
@@ -70,7 +74,7 @@ public class GrieferPass extends ComplexWidget {
 		.name("Sortierung")
 		.description("In welcher Reihenfolge GrieferPass-Aufgaben angezeigt werden sollen.")
 		.icon("command_suggestions")
-		.defaultValue(Sorting.PROGRESS);
+		.defaultValue(PROGRESS);
 
 	private final SwitchSetting removeFinished = SwitchSetting.create()
 		.name("Fertige Aufgaben entfernen")
@@ -131,7 +135,7 @@ public class GrieferPass extends ComplexWidget {
 					public void run() {
 						reset();
 					}
-				}, new Date(seasonEndDate.toEpochSecond(ZoneOffset.UTC) * 1000));
+				}, new Date(seasonEndDate.toEpochSecond(UTC) * 1000));
 			}
 		}
 
@@ -263,7 +267,7 @@ public class GrieferPass extends ComplexWidget {
 				continue;
 
 			if (isAdd) {
-				if (!ignoreCaseOpening.get() || !Quests.DISPLAY_PATTERNS.get(quest.getMatcher().pattern()).equals("Öffne {TARGET} Kisten"))
+				if (!ignoreCaseOpening.get() || !DISPLAY_PATTERNS.get(quest.getMatcher().pattern()).equals("Öffne {TARGET} Kisten"))
 					quest.pin(questLookup, questTypeLookup);
 			} else {
 				quest.unpin(questLookup, questTypeLookup);
@@ -356,7 +360,7 @@ public class GrieferPass extends ComplexWidget {
 		}
 
 		totalQuests.entrySet().stream()
-			.sorted(Map.Entry.comparingByKey(sorting.get().comparator.thenComparing(Sorting.TIME.comparator)))
+			.sorted(Entry.comparingByKey(sorting.get().comparator.thenComparing(TIME.comparator)))
 			.forEachOrdered(e -> {
 				totalCompletions.addAndGet(e.getKey().completions);
 				maxTotalCompletions.addAndGet(e.getKey().maxCompletions);
@@ -378,7 +382,7 @@ public class GrieferPass extends ComplexWidget {
 		return new GrieferPassL3();
 	}
 
-	private class GrieferPassL3 extends Laby3Widget.ComplexLaby3Widget {
+	private class GrieferPassL3 extends ComplexLaby3Widget {
 		public GrieferPassL3() {
 			super(GrieferPass.this);
 		}

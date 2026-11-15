@@ -18,7 +18,6 @@ import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
 import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcherLoader;
-import dev.pymdk.mapper.Mapping;
 import net.labymod.addon.AddonLoader;
 import net.labymod.core.asm.LabyModCoreMod;
 import net.labymod.core.asm.LabyModTransformer;
@@ -39,6 +38,8 @@ import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.pymdk.mapper.Mapping.INTERMEDIARY;
+import static dev.pymdk.mapper.Mapping.OBFUSCATED;
 
 @SuppressWarnings({"CharsetObjectCanBeUsed", "OptionalGetWithoutIsPresent", "SequencedCollectionMethodCanBeUsed"}) // Must be compatible with Java 8
 public class Entrypoint implements AutoUpdater.Entrypoint {
@@ -95,7 +96,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		);
 
 		// Load mappings for automatic name resolution in Reflection
-		Mapper.loadMappings(Launch.assetsDir.toPath(), labyBridge.forge() ? Mapping.INTERMEDIARY : Mapping.OBFUSCATED, true);
+		Mapper.loadMappings(Launch.assetsDir.toPath(), labyBridge.forge() ? INTERMEDIARY : OBFUSCATED, true);
 
 		// Sets LabyMod's mapping adapter
 		// It's usually set in the MinecraftVisitor, but since Mixin changes the transformer order (i think),

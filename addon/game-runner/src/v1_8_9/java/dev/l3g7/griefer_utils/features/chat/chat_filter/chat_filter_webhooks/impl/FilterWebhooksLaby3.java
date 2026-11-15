@@ -14,7 +14,9 @@ import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.UnlockChatFilters;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates;
+import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.ChatFilterTemplates.FilterTemplate;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.impl.ChatFilterTemplatesLaby3;
+import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_templates.impl.ChatFilterTemplatesLaby3.GuiChatFilterWithTemplates;
 import dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks;
 import net.labymod.core.LabyModCore;
 import net.labymod.core_implementation.mc18.gui.GuiChatAdapter;
@@ -22,7 +24,7 @@ import net.labymod.gui.elements.Scrollbar;
 import net.labymod.ingamechat.GuiChatCustom;
 import net.labymod.ingamechat.tabs.GuiChatFilter;
 import net.labymod.ingamechat.tools.filter.FilterChatManager;
-import net.labymod.ingamechat.tools.filter.Filters;
+import net.labymod.ingamechat.tools.filter.Filters.Filter;
 import net.labymod.main.LabyMod;
 import net.labymod.main.lang.LanguageManager;
 import net.labymod.utils.ModColor;
@@ -48,6 +50,7 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks.HOOK_URL_PATTERN;
 import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks.webhooks;
+import static net.labymod.gui.elements.Scrollbar.EnumMouseAction.*;
 
 @ExclusiveTo(LABY_3)
 public class FilterWebhooksLaby3 {
@@ -64,7 +67,7 @@ public class FilterWebhooksLaby3 {
 	public static void hookSetChatLine(IChatComponent component) {
 		// Check if filters match
 		String msg = component.getUnformattedText().toLowerCase().replaceAll("§.", "");
-		for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
+		for (Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
 			if (webhooks.containsKey(filter.getFilterName())
 				&& !webhooks.get(filter.getFilterName()).trim().isEmpty()
 				&& Arrays.stream(filter.getWordsContains()).anyMatch(w -> msg.contains(w.toLowerCase()))
@@ -95,7 +98,7 @@ public class FilterWebhooksLaby3 {
 	public static class CustomGuiChatFilter extends GuiChatCustom {
 
 		private final Scrollbar scrollbar = new Scrollbar(15);
-		private Filters.Filter selectedFilter;
+		private Filter selectedFilter;
 		private GuiTextField textFieldFilterName;
 		private GuiTextField textFieldFilterContains;
 		private GuiTextField textFieldFilterContainsNot;
@@ -110,7 +113,7 @@ public class FilterWebhooksLaby3 {
 		private String editStartName = "";
 		private boolean canScroll;
 		private static final List<String> soundNames = new ArrayList<>();
-		private final ChatFilterTemplatesLaby3.GuiChatFilterWithTemplates templatesRenderer;
+		private final GuiChatFilterWithTemplates templatesRenderer;
 
 		static {
 			SoundRegistry soundRegistry = Reflection.get(Minecraft.getMinecraft().getSoundHandler(), "sndRegistry");
@@ -123,9 +126,9 @@ public class FilterWebhooksLaby3 {
 			super(defaultText);
 
 			if (ChatFilterTemplates.get().isEnabled())
-				templatesRenderer = new ChatFilterTemplatesLaby3.GuiChatFilterWithTemplates("") {
+				templatesRenderer = new GuiChatFilterWithTemplates("") {
 					@Override
-					public void loadTemplate(ChatFilterTemplates.FilterTemplate template) {
+					public void loadTemplate(FilterTemplate template) {
 						CustomGuiChatFilter.this.loadFilter(ChatFilterTemplatesLaby3.createFilter(template));
 					}
 				};
@@ -187,7 +190,7 @@ public class FilterWebhooksLaby3 {
 			canScroll = mouseX > width - 150 && mouseX < width - 2 && mouseY > height - 150 && mouseY < height - 16;
 			int row = 0;
 
-			for (Filters.Filter component : LabyMod.getInstance().getChatToolManager().getFilters()) {
+			for (Filter component : LabyMod.getInstance().getChatToolManager().getFilters()) {
 				double posY = (double) (height - 230 + row * 10) + scrollbar.getScrollY();
 				++row;
 				if (!(posY < (double) (height - 235)) && !(posY > (double) (height - 25))) {
@@ -292,7 +295,7 @@ public class FilterWebhooksLaby3 {
 						hint.append("Global");
 						count++;
 					}
-					for (Filters.Filter filterComponent : LabyMod.getInstance().getChatToolManager().getFilters()) {
+					for (Filter filterComponent : LabyMod.getInstance().getChatToolManager().getFilters()) {
 						if (filterComponent.getRoom() != null && filterComponent.getRoom().toLowerCase().contains(textFieldFilterRoom.getText().toLowerCase()) && !hint.toString().contains(filterComponent.getRoom())) {
 							hint.append(filterComponent.getRoom()).append("\n");
 							count++;
@@ -326,23 +329,23 @@ public class FilterWebhooksLaby3 {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-			scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
+			scrollbar.mouseAction(mouseX, mouseY, CLICKED);
 			if (selectedFilter == null && mouseX > width - 165 && mouseX < width - 152 && mouseY > height - 235 && mouseY < height - 222)
 				if (templatesRenderer == null || !templatesRenderer.templatesOpen)
-					loadFilter(new Filters.Filter("", new String[0], new String[0], false, "note.harp", true, (short) 200, (short) 200, (short) 50, false, false, false, "Global"));
+					loadFilter(new Filter("", new String[0], new String[0], false, "note.harp", true, (short) 200, (short) 200, (short) 50, false, false, false, "Global"));
 
 			if (selectedFilter == null) {
 				int row = 0;
-				Filters.Filter todoDelete = null;
+				Filter todoDelete = null;
 
-				for (Filters.Filter component : LabyMod.getInstance().getChatToolManager().getFilters()) {
+				for (Filter component : LabyMod.getInstance().getChatToolManager().getFilters()) {
 					double posY = (double) (height - 230 + row * 10) + scrollbar.getScrollY();
 					++row;
 					if (!(posY < (double) (height - 235)) && !(posY > (double) (height - 25))) {
 						if (mouseX > width - 12 - 1 && mouseX < width - 12 + 7 && (double) mouseY > posY && (double) mouseY < posY + 8.0) {
 							todoDelete = component;
 						} else if (mouseX > width - 150 + 1 && mouseX < width - 2 - 1 && (double) mouseY > posY - 1.0 && (double) mouseY < posY + 9.0) {
-							loadFilter(new Filters.Filter(component));
+							loadFilter(new Filter(component));
 							editStartName = component.getFilterName();
 						}
 					}
@@ -406,10 +409,10 @@ public class FilterWebhooksLaby3 {
 					markWebhookRed = !(textFieldFilterWebhook.getText().isEmpty() || (HOOK_URL_PATTERN.matcher(textFieldFilterWebhook.getText()).matches() && IO.read(textFieldFilterWebhook.getText()).getResponseCode() == 200));
 
 					if (!(markFilterNameRed || markSoundNameRed || markContainsRed || markWebhookRed)) {
-						List<Filters.Filter> filters = LabyMod.getInstance().getChatToolManager().getFilters();
-						Iterator<Filters.Filter> it = filters.iterator();
+						List<Filter> filters = LabyMod.getInstance().getChatToolManager().getFilters();
+						Iterator<Filter> it = filters.iterator();
 						while (it.hasNext()) {
-							Filters.Filter next = it.next();
+							Filter next = it.next();
 							if (editStartName == null) {
 								if (next.getFilterName().equalsIgnoreCase(selectedFilter.getFilterName()))
 									it.remove();
@@ -488,7 +491,7 @@ public class FilterWebhooksLaby3 {
 				String newText = textFieldFilterName.getText().replaceAll(" ", "");
 				boolean equals = false;
 
-				for (Filters.Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
+				for (Filter filter : LabyMod.getInstance().getChatToolManager().getFilters()) {
 					if (filter.getFilterName().equalsIgnoreCase(newText) && !filter.getFilterName().equalsIgnoreCase(editStartName)) {
 						equals = true;
 						break;
@@ -526,7 +529,7 @@ public class FilterWebhooksLaby3 {
 
 		@Override
 		protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-			scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
+			scrollbar.mouseAction(mouseX, mouseY, DRAGGING);
 			super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
 			if (selectedFilter != null) {
 				int relX = width - 270;
@@ -543,7 +546,7 @@ public class FilterWebhooksLaby3 {
 		protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
 			super.mouseReleased(mouseX, mouseY, mouseButton);
 			sliderDrag = -1;
-			scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.RELEASED);
+			scrollbar.mouseAction(mouseX, mouseY, RELEASED);
 			textFieldFilterName.mouseClicked(mouseX, mouseY, mouseButton);
 			textFieldFilterContains.mouseClicked(mouseX, mouseY, mouseButton);
 			textFieldFilterContainsNot.mouseClicked(mouseX, mouseY, mouseButton);
@@ -637,7 +640,7 @@ public class FilterWebhooksLaby3 {
 			}
 		}
 
-		private void loadFilter(Filters.Filter filter) {
+		private void loadFilter(Filter filter) {
 			editStartName = null;
 			selectedFilter = filter;
 			markFilterNameRed = false;

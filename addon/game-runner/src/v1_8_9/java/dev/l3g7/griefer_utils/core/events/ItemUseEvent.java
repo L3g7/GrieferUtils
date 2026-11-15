@@ -22,7 +22,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import static org.spongepowered.asm.mixin.injection.callback.LocalCapture.CAPTURE_FAILHARD;
 
 public abstract class ItemUseEvent extends Event {
 
@@ -51,7 +52,7 @@ public abstract class ItemUseEvent extends Event {
 		@Mixin(PlayerControllerMP.class)
 		private static class MixinPlayerControllerMP {
 
-			@Inject(method = "onPlayerRightClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/WorldClient;getBlockState(Lnet/minecraft/util/BlockPos;)Lnet/minecraft/block/state/IBlockState;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+			@Inject(method = "onPlayerRightClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/WorldClient;getBlockState(Lnet/minecraft/util/BlockPos;)Lnet/minecraft/block/state/IBlockState;"), cancellable = true, locals = CAPTURE_FAILHARD)
 			public void injectOnPlayerRightClick(EntityPlayerSP player, WorldClient worldIn, ItemStack heldStack, BlockPos hitPos, EnumFacing side, Vec3 hitVec, CallbackInfoReturnable<Boolean> cir, float f, float f1, float f2) {
 				if (new Pre(heldStack, player, worldIn, hitPos, side, f, f1, f2).fire().isCanceled())
 					cir.setReturnValue(false);
@@ -85,7 +86,7 @@ public abstract class ItemUseEvent extends Event {
 				stackBeforeUse = ((ItemStack) (Object) this).copy();
 			}
 
-			@Inject(method = "onItemUse", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+			@Inject(method = "onItemUse", at = @At("TAIL"), locals = CAPTURE_FAILHARD)
 			public void injectOnItemUseTail(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, CallbackInfoReturnable<Boolean> cir, boolean flag) {
 				if (flag)
 					new Post(stackBeforeUse, ((ItemStack) (Object) this).copy()).fire();

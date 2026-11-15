@@ -21,6 +21,8 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static java.awt.Color.RED;
+import static java.awt.Color.YELLOW;
 
 /**
  * Shows chunk boundaries.
@@ -71,7 +73,7 @@ public class ShowChunkBorders extends Feature {
 		// vertical lines of the outer chunks
 		if (red_lines.get())
 			for (int i = 0; i < 3; i++)
-				lines.add(new RenderLine(16 * i, -16, Color.RED));
+				lines.add(new RenderLine(16 * i, -16, RED));
 
 		// vertical lines of the inner chunk
 		for (int i = 0; i < 16; i += 2)
@@ -115,7 +117,7 @@ public class ShowChunkBorders extends Feature {
 		if (cyan_lines.get() && offset % 8 == 0)
 			return CYAN;
 		if (yellow_lines.get() && offset % 2 == 0)
-			return Color.YELLOW;
+			return YELLOW;
 		return null;
 	}
 

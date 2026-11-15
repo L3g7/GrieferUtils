@@ -28,7 +28,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.EnumSkyBlock;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -38,6 +37,9 @@ import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.UNTEXTURED_DEPTHLESS;
+import static java.lang.Boolean.TRUE;
+import static net.minecraft.world.EnumSkyBlock.BLOCK;
 
 @Singleton
 public class LightBugESP extends Feature implements RenderObject.Generator {
@@ -78,7 +80,7 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 		ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(worldPos.getX() >> 4, worldPos.getZ() >> 4);
 
 		Boolean result = processPosition(worldPos);
-		if (Boolean.TRUE.equals(result))
+		if (TRUE.equals(result))
 			return LightBug.INSTANCE;
 
 		if (result == null)
@@ -106,7 +108,7 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 
 				positions.removeIf(pos -> {
 					Boolean result = processPosition(pos);
-					if (Boolean.TRUE.equals(result))
+					if (TRUE.equals(result))
 						WorldRenderChunkManager.get().setRenderObject(pos, LightBug.INSTANCE);
 
 					return result != null;
@@ -136,7 +138,7 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 		if (!inBlocks.get() && block != Blocks.air)
 			return null;
 
-		int light = world().getLightFor(EnumSkyBlock.BLOCK, worldPos);
+		int light = world().getLightFor(BLOCK, worldPos);
 		if (block.getLightValue() == light)
 			return null;
 
@@ -146,7 +148,7 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 			if (!world().isBlockLoaded(neighbor, false))
 				return null;
 
-			if (world().getLightFor(EnumSkyBlock.BLOCK, neighbor) > light)
+			if (world().getLightFor(BLOCK, neighbor) > light)
 				return false;
 		}
 
@@ -172,7 +174,7 @@ public class LightBugESP extends Feature implements RenderObject.Generator {
 
 		@Override
 		public RenderType[] renderTypes() {
-			return new RenderType[] { RenderType.UNTEXTURED_DEPTHLESS };
+			return new RenderType[] { UNTEXTURED_DEPTHLESS };
 		}
 
 		@Override

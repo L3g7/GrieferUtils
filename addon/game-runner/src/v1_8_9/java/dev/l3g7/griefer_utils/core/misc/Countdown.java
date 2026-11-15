@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.NTP;
 import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
@@ -88,7 +88,7 @@ public abstract class Countdown {
 		}
 
 		@EventListener
-		private void onTimeUpdate(PacketEvent.PacketReceiveEvent<S03PacketTimeUpdate> event) {
+		private void onTimeUpdate(PacketReceiveEvent<S03PacketTimeUpdate> event) {
 			secondsRemaining--;
 		}
 

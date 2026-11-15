@@ -15,8 +15,8 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Lazy;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.SelectButtonGroup;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.SelectButtonGroup.Selectable;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -36,8 +36,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.util.ItemUtil.MISSING_TEXTURE;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.Action.*;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.IconType.*;
+import static java.awt.Image.SCALE_DEFAULT;
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 
 public class ChatMenuEntry implements ListEntry {
 
@@ -59,7 +63,7 @@ public class ChatMenuEntry implements ListEntry {
 	));
 
 	public ChatMenuEntry() {
-		this("Neuer Eintrag", CONSUMER, "", IconType.DEFAULT, null);
+		this("Neuer Eintrag", CONSUMER, "", DEFAULT, null);
 	}
 
 	public ChatMenuEntry(String name, Action action, Object command, IconType iconType, Object icon) {
@@ -91,14 +95,14 @@ public class ChatMenuEntry implements ListEntry {
 
 	@Override
 	public ItemStack itemIcon() {
-		if (iconType != IconType.ITEM)
+		if (iconType != ITEM)
 			return null;
 
 		return getIconAsItemStack();
 	}
 
 	public ItemStack getIconAsItemStack() {
-		return icon != null ? (ItemStack) icon : ItemUtil.MISSING_TEXTURE;
+		return icon != null ? (ItemStack) icon : MISSING_TEXTURE;
 	}
 
 	public void drawIcon(int x, int y, int w, int h) {
@@ -154,7 +158,7 @@ public class ChatMenuEntry implements ListEntry {
 			case ITEM -> object.addProperty("icon", ItemUtil.serializeNBT(getIconAsItemStack()));
 			case IMAGE_FILE -> {
 				DynamicTexture t = (DynamicTexture) mc().getTextureManager().getTexture(new ResourceLocation("griefer_utils", "icons/user_content/" + icon.hashCode() + ".png"));
-				BufferedImage i = new BufferedImage(Reflection.get(t, "width"), Reflection.get(t, "height"), BufferedImage.TYPE_INT_ARGB);
+				BufferedImage i = new BufferedImage(Reflection.get(t, "width"), Reflection.get(t, "height"), TYPE_INT_ARGB);
 				i.setRGB(0, 0, i.getWidth(), i.getHeight(), t.getTextureData(), 0, i.getWidth());
 
 				encodeImage(i, object);
@@ -173,8 +177,8 @@ public class ChatMenuEntry implements ListEntry {
 		// Scale to 64x64
 		if (i.getHeight() > 64 || i.getWidth() > 64) {
 			float scaleFactor = (64f / (float) Math.max(i.getHeight(), i.getWidth()));
-			Image scaledImg = (i.getScaledInstance((int) (i.getWidth() * scaleFactor), (int) (i.getHeight() * scaleFactor), Image.SCALE_DEFAULT));
-			i = new BufferedImage(scaledImg.getWidth(null), scaledImg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+			Image scaledImg = (i.getScaledInstance((int) (i.getWidth() * scaleFactor), (int) (i.getHeight() * scaleFactor), SCALE_DEFAULT));
+			i = new BufferedImage(scaledImg.getWidth(null), scaledImg.getHeight(null), TYPE_INT_ARGB);
 			Graphics2D g = i.createGraphics();
 			g.drawImage(scaledImg, 0, 0, null);
 			g.dispose();
@@ -189,7 +193,7 @@ public class ChatMenuEntry implements ListEntry {
 		}
 	}
 
-	public enum Action implements SelectButtonGroup.Selectable {
+	public enum Action implements Selectable {
 		CONSUMER(null, null, (command, name) ->
 			Reflection.<Consumer<String>>c(command).accept(name)),
 
@@ -203,7 +207,7 @@ public class ChatMenuEntry implements ListEntry {
 
 		RUN_CMD("Befehl ausführen", "cpu", (command, name) -> {
 			String cmd = ((String) command).replaceAll("(?i)%name%", name);
-			if (!MessageEvent.MessageSendEvent.post(cmd))
+			if (!MessageSendEvent.post(cmd))
 				MinecraftUtil.send((cmd));
 		}),
 
@@ -232,7 +236,7 @@ public class ChatMenuEntry implements ListEntry {
 
 	}
 
-	public enum IconType implements SelectButtonGroup.Selectable {
+	public enum IconType implements Selectable {
 		DEFAULT("Standard", null),
 		ITEM("Item", "gold_ingot"),
 		IMAGE_FILE("Bild", "tree_file");
@@ -258,13 +262,13 @@ public class ChatMenuEntry implements ListEntry {
 
 	private static class DefaultEntry extends ChatMenuEntry {
 		public DefaultEntry(String name, String icon, Action action, Object command) {
-			super(name, action, command, IconType.DEFAULT /* Overridden to IMAGE_FILE */, icon);
+			super(name, action, command, DEFAULT /* Overridden to IMAGE_FILE */, icon);
 		}
 
 		@Override
 		public JsonElement encode() {
 			JsonObject object = super.encode().getAsJsonObject();
-			object.addProperty("icon_type", IconType.IMAGE_FILE.name());
+			object.addProperty("icon_type", IMAGE_FILE.name());
 
 			BufferedImage i;
 			try (InputStream in = FileProvider.getData("assets/griefer_utils/icons/" + icon + ".png")) {

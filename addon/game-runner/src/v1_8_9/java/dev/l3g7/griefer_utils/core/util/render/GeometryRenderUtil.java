@@ -15,6 +15,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
+import static net.minecraft.util.EnumFacing.Axis.X;
+import static net.minecraft.util.EnumFacing.Axis.Y;
 import static net.minecraft.util.EnumFacing.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -138,7 +140,7 @@ public class GeometryRenderUtil {
 			);
 		}
 
-		if (face.getAxis() == Axis.Y) {
+		if (face.getAxis() == Y) {
 			if (face == UP || bothSides) {
 				sink.drawVertex(bb.minX, bb.maxY, bb.maxZ);
 				sink.drawVertex(bb.maxX, bb.maxY, bb.maxZ);
@@ -155,7 +157,7 @@ public class GeometryRenderUtil {
 			return;
 		}
 
-		if (face.getAxis() == Axis.X) {
+		if (face.getAxis() == X) {
 			if (face == EAST || bothSides) {
 				sink.drawVertex(bb.maxX, bb.maxY, bb.maxZ);
 				sink.drawVertex(bb.maxX, bb.minY, bb.maxZ);

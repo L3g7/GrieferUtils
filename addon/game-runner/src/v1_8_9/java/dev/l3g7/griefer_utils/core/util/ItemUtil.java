@@ -15,11 +15,11 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
 
 import static net.minecraft.init.Blocks.*;
+import static net.minecraftforge.common.util.Constants.NBT.TAG_LIST;
 
 /**
  * A utility class for item processing.
@@ -224,7 +224,7 @@ public class ItemUtil {
 			tag = new NBTTagCompound();
 		}
 
-		NBTTagList ench = tag.getTagList("ench", Constants.NBT.TAG_LIST);
+		NBTTagList ench = tag.getTagList("ench", TAG_LIST);
 		if (ench == null) ench = new NBTTagList();
 
 		for (ItemEnchantment e : enchantments)

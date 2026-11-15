@@ -15,9 +15,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
+import static org.spongepowered.asm.mixin.injection.callback.LocalCapture.CAPTURE_FAILHARD;
 
 public class TileEntityDataSetEvent extends Event {
 
@@ -30,7 +31,7 @@ public class TileEntityDataSetEvent extends Event {
 	@Mixin(NetHandlerPlayClient.class)
 	private static class MixinNetHandlerPlayClient {
 
-		@Inject(method = "handleUpdateTileEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/tileentity/TileEntity;readFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+		@Inject(method = "handleUpdateTileEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/tileentity/TileEntity;readFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", shift = AFTER), locals = CAPTURE_FAILHARD)
 		public void inject(S35PacketUpdateTileEntity packetIn, CallbackInfo ci) {
 			new TileEntityDataSetEvent(world().getTileEntity(packetIn.getPos())).fire();
 		}

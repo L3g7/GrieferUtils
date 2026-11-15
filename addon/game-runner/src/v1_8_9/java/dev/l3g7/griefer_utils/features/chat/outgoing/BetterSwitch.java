@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 @Singleton
 public class BetterSwitch extends Feature {
@@ -34,7 +35,7 @@ public class BetterSwitch extends Feature {
 		.icon("portal")
 		.defaultValue(true);
 
-	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern COMMAND_PATTERN = Pattern.compile("^/(?:cb|switch) ?(?:cb)?(\\w+)(?: (.*))?$", CASE_INSENSITIVE);
 
 	private static Citybuild targetCitybuild = null;
 	private static String command = null;
@@ -47,7 +48,7 @@ public class BetterSwitch extends Feature {
 		.subSettings(rejoin);
 
 	@EventListener
-	public void onMessageSend(MessageEvent.MessageSendEvent event) {
+	public void onMessageSend(MessageSendEvent event) {
 		if (!ServerCheck.isOnGrieferGames())
 			return;
 
@@ -102,7 +103,7 @@ public class BetterSwitch extends Feature {
 			return;
 		}
 
-		if (!MessageEvent.MessageSendEvent.post(command))
+		if (!MessageSendEvent.post(command))
 			player().sendChatMessage(command);
 		command = null;
 	}

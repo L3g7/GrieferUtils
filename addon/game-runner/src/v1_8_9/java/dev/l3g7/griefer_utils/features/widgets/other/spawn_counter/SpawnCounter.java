@@ -20,7 +20,7 @@ import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.UserData;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ActionBar;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
@@ -43,7 +43,6 @@ import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.state.ScreenCanvas;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.main.LabyMod;
-import net.labymod.main.ModTextures;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -60,9 +59,12 @@ import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry.INVALID_PLAYER;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static dev.l3g7.griefer_utils.features.widgets.other.spawn_counter.SpawnCounter.LeaderboardDisplayType.OFF;
+import static dev.l3g7.griefer_utils.features.widgets.other.spawn_counter.SpawnCounter.LeaderboardDisplayType.*;
+import static dev.l3g7.griefer_utils.features.widgets.other.spawn_counter.SpawnCounter.NotificationType.ACTIONBAR;
+import static dev.l3g7.griefer_utils.features.widgets.other.spawn_counter.SpawnCounter.RoundDisplayType.*;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.DISABLED;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
+import static net.labymod.main.ModTextures.MISC_HEAD_QUESTION;
 
 @Singleton
 public class SpawnCounter extends Widget { // NOTE: cleanup
@@ -76,21 +78,21 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 		.name("Nachricht")
 		.description("Wie die Benachrichtung aussehen soll, wenn eine Runde abgeschlossen wurde.")
 		.icon("clock")
-		.defaultValue(NotificationType.ACTIONBAR);
+		.defaultValue(ACTIONBAR);
 
 	private final DropDownSetting<RoundDisplayType> displayType = DropDownSetting.create(RoundDisplayType.class)
 		.name("Rundenart")
 		.description("Welche Arten von Runden angezeigt werden sollen.")
 		.icon("speed")
-		.defaultValue(RoundDisplayType.BOTH);
+		.defaultValue(BOTH);
 
 	final DropDownSetting<LeaderboardDisplayType> leaderboard = DropDownSetting.create(LeaderboardDisplayType.class)
 		.name("Leaderboard")
 		.description("Das Aussehen des Leaderboards.\nBei §oAus§r wird auch die Teilnahme am Leaderboard deaktiviert.")
 		.icon("trophy")
-		.defaultValue(LeaderboardDisplayType.ON)
+		.defaultValue(ON)
 		.callback(t -> {
-			if (t != LeaderboardDisplayType.OFF && ServerCheck.isOnGrieferGames() && getLeaderboardHandler().data != null)
+			if (t != OFF && ServerCheck.isOnGrieferGames() && getLeaderboardHandler().data != null)
 				onGrieferGamesJoin(null);
 		});
 
@@ -116,7 +118,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onGrieferGamesJoin(ServerEvent.GrieferGamesJoinEvent event) {
+	public void onGrieferGamesJoin(GrieferGamesJoinEvent event) {
 		getLeaderboardHandler().update(GUServer::getLeaderboardData);
 	}
 
@@ -156,7 +158,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 	}
 
-	private enum RoundDisplayType implements Named {
+	enum RoundDisplayType implements Named {
 
 		RAN("Laufen"),
 		FLOWN("Fliegen"),
@@ -223,7 +225,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 		@Override
 		public List<List<Text>> getTexts() {
 			List<List<Text>> texts = super.getTexts();
-			if (LeaderboardHandlerL3.data != null && leaderboard.get() == LeaderboardDisplayType.COMPACT)
+			if (LeaderboardHandlerL3.data != null && leaderboard.get() == COMPACT)
 				texts.get(0).add(toText(LeaderboardHandlerL3.getCompactText()));
 
 			return texts;
@@ -247,11 +249,11 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 		public String[] getDefaultValues() {
 			StringBuilder value = new StringBuilder();
 
-			if (displayType.get() != RoundDisplayType.FLOWN)
+			if (displayType.get() != FLOWN)
 				value.append("  ").append(DECIMAL_FORMAT_98.format(roundHandler.roundsRan));
-			if (displayType.get() == RoundDisplayType.BOTH)
+			if (displayType.get() == BOTH)
 				value.append(" ");
-			if (displayType.get() != RoundDisplayType.RAN)
+			if (displayType.get() != RAN)
 				value.append("  ").append(DECIMAL_FORMAT_98.format(roundHandler.roundsFlown));
 
 			return new String[]{value.toString()};
@@ -279,21 +281,21 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 				xDiff += getStringWidth(" ");
 			}
 
-			if (displayType.get() != RoundDisplayType.FLOWN) {
+			if (displayType.get() != FLOWN) {
 				mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/speed.png"));
 				LabyMod.getInstance().getDrawUtils().drawTexture(x + xDiff, y, 256, 256, 7, 7);
 				xDiff += getStringWidth("  " + roundHandler.roundsRan);
 			}
 
-			if (displayType.get() == RoundDisplayType.BOTH)
+			if (displayType.get() == BOTH)
 				xDiff += getStringWidth(" ");
 
-			if (displayType.get() != RoundDisplayType.RAN) {
+			if (displayType.get() != RAN) {
 				mc.getTextureManager().bindTexture(new ResourceLocation("griefer_utils/icons/booster/fly.png"));
 				LabyMod.getInstance().getDrawUtils().drawTexture(x + xDiff, y, 256, 256, 7, 7);
 			}
 
-			if (leaderboard.get() == LeaderboardDisplayType.ON && LeaderboardHandlerL3.data != null && player() != null)
+			if (leaderboard.get() == ON && LeaderboardHandlerL3.data != null && player() != null)
 				((LeaderboardHandlerL3) leaderboardHandler).draw(x + padding, y);
 		}
 
@@ -331,7 +333,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 			}
 
 			public int countLines() {
-				if (data == null || leaderboard.get() != LeaderboardDisplayType.ON)
+				if (data == null || leaderboard.get() != ON)
 					return 1;
 
 				int i = 2; // Yourself + the normal line
@@ -406,7 +408,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 
 			private static void renderSkull(PlayerListEntry e, double x, double y) {
 				if (e.getSkin() == null) {
-					mc.getTextureManager().bindTexture(ModTextures.MISC_HEAD_QUESTION);
+					mc.getTextureManager().bindTexture(MISC_HEAD_QUESTION);
 					DrawUtils.drawTexture(x, y, 0, 0, 256, 256, 8, 8);
 					return;
 				}
@@ -450,18 +452,18 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 		public Object getValue() {
 			Component value = Component.empty();
 
-			if (displayType.get() != RoundDisplayType.FLOWN)
+			if (displayType.get() != FLOWN)
 				value.append(Component.icon(Icons.offset(Icons.of("speed"), -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT))
 					.append(Component.text(roundHandler.roundsRan));
 
-			if (displayType.get() == RoundDisplayType.BOTH)
+			if (displayType.get() == BOTH)
 				value.append(Component.text(" "));
 
-			if (displayType.get() != RoundDisplayType.RAN)
+			if (displayType.get() != RAN)
 				value.append(Component.icon(Icons.offset(Icons.of("booster/fly"), -2, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)) // NOTE: cleanup
 					.append(Component.text(roundHandler.roundsFlown));
 
-			if (leaderboard.get() == LeaderboardDisplayType.COMPACT)
+			if (leaderboard.get() == COMPACT)
 				value.append(Component.text(" ┃ " + leaderboardHandler.data.position + ".: " + leaderboardHandler.data.score));
 
 			return value;
@@ -510,7 +512,7 @@ public class SpawnCounter extends Widget { // NOTE: cleanup
 			public void tickLines() {
 				LeaderboardDisplayType displayType = leaderboard.get();
 
-				if (displayType == LeaderboardDisplayType.ON && data != null) {
+				if (displayType == ON && data != null) {
 					maxPosWidth = 0;
 
 					tickOtherPlayerLine(data.previous, previousRank);

@@ -23,7 +23,6 @@ import net.labymod.api.client.gui.screen.widget.widgets.layout.list.VerticalList
 import net.labymod.core.client.chat.advanced.edit.ChatConditionDraft;
 import net.labymod.core.client.chat.advanced.edit.ChatDialogSteps;
 import net.labymod.core.client.chat.advanced.edit.ChatRuleDraft;
-import net.labymod.core.client.chat.advanced.edit.ChatTabPreset;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.ChatRuleDialogActivity;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.part.ChatDialogWidgets;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.dialog.part.ChatStartPicker;
@@ -39,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static net.labymod.core.client.chat.advanced.edit.ChatTabPreset.SOMETHING_ELSE;
 
 @ExclusiveTo(LABY_4)
 public class ChatFilterTemplatesLaby4 {
@@ -119,7 +119,7 @@ public class ChatFilterTemplatesLaby4 {
 		Reflection.set(picker, "words", List.of());
 		var selected = Reflection.get(picker, "selected");
 		if (selected != null)
-			Reflection.set(picker, "selected", ChatTabPreset.SOMETHING_ELSE);
+			Reflection.set(picker, "selected", SOMETHING_ELSE);
 
 		ChatDialogWidgets.playButtonPress();
 
@@ -133,7 +133,7 @@ public class ChatFilterTemplatesLaby4 {
 		draft.include().addAll(Arrays.asList(template.contains));
 		draft.exclude().addAll(Arrays.asList(template.containsNot));
 
-		steps.choose(ChatTabPreset.SOMETHING_ELSE, draft);
+		steps.choose(SOMETHING_ELSE, draft);
 		ChatRuleDraft rule = Reflection.get(activity, "rule");
 
 		if (template.highlighting) {

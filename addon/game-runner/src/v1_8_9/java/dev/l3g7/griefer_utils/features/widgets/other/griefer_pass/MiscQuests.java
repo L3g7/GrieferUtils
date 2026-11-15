@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.widgets.other.griefer_pass;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
 import dev.l3g7.griefer_utils.core.events.ApproximateEntityKillEvent;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockBrokeEvent;
@@ -20,7 +19,6 @@ import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.WorldUnloadEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
@@ -29,7 +27,7 @@ import dev.l3g7.griefer_utils.features.gui.integrations.bsf.BSF;
 import dev.l3g7.griefer_utils.features.uncategorized.debug.PacketDumper;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.DataWatcher;
+import net.minecraft.entity.DataWatcher.WatchableObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
@@ -54,7 +52,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.MAGIC_FOREST;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static net.minecraft.network.play.client.C02PacketUseEntity.Action.INTERACT;
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.RELEASE_USE_ITEM;
+import static net.minecraft.network.play.server.S42PacketCombatEvent.Event.END_COMBAT;
+import static net.minecraft.network.play.server.S42PacketCombatEvent.Event.ENTER_COMBAT;
 
 abstract class MiscQuests {
 
@@ -148,7 +153,7 @@ abstract class MiscQuests {
 	static class JoinCitybuildQuest extends AbstractQuest {
 		@EventListener
 		private void onCitybuildJoin(CitybuildJoinEvent.Early event) {
-			if (event.citybuild.isValid() && event.citybuild != Citybuild.MAGIC_FOREST)
+			if (event.citybuild.isValid() && event.citybuild != MAGIC_FOREST)
 				increaseAmount();
 		}
 	}
@@ -188,8 +193,8 @@ abstract class MiscQuests {
 		private final Set<Entity> interactedAnimals = new HashSet<>();
 
 		@EventListener
-		private void onPacketSend(PacketEvent.PacketSendEvent<C02PacketUseEntity> event) {
-			if (event.packet.getAction() != C02PacketUseEntity.Action.INTERACT)
+		private void onPacketSend(PacketSendEvent<C02PacketUseEntity> event) {
+			if (event.packet.getAction() != INTERACT)
 				return;
 
 			Entity entity = event.packet.getEntityFromWorld(world());
@@ -317,7 +322,7 @@ abstract class MiscQuests {
 			if (readTime == -1 || !(world().getEntityByID(event.packet.getEntityId()) instanceof EntityItem))
 				return;
 
-			for (DataWatcher.WatchableObject wo : event.packet.func_149376_c())
+			for (WatchableObject wo : event.packet.func_149376_c())
 				if (wo.getDataValueId() == 10 && wo.getObject() instanceof ItemStack is && is.isItemEqual(target))
 					increaseAmount();
 
@@ -335,7 +340,7 @@ abstract class MiscQuests {
 			this.target = "/" + matcher.group(2).toLowerCase();
 		}
 
-		@EventListener(priority = Priority.LOWEST)
+		@EventListener(priority = LOWEST)
 		private void onMessageSend(MessageAboutToBeSentEvent event) {
 			if (event.message.startsWith(target))
 				increaseAmount();
@@ -356,7 +361,7 @@ abstract class MiscQuests {
 
 		@EventListener
 		private void onBowRelease(PacketSendEvent<C07PacketPlayerDigging> event) {
-			if (event.packet.getStatus() != C07PacketPlayerDigging.Action.RELEASE_USE_ITEM)
+			if (event.packet.getStatus() != RELEASE_USE_ITEM)
 				return;
 
 			if (player().getHeldItem() == null || player().getHeldItem().getItem() != Items.bow)
@@ -420,7 +425,7 @@ abstract class MiscQuests {
 			luckyBlockPlaceTimes.add(System.currentTimeMillis());
 		}
 
-		@EventListener(priority = Priority.HIGH)
+		@EventListener(priority = HIGH)
 		private void onLuckyBlockMessage(MessageReceiveEvent event) {
 			if (!event.message.getUnformattedText().startsWith("[LuckyBlock]"))
 				return;
@@ -451,7 +456,7 @@ abstract class MiscQuests {
 			if (!isInCombat || event.packet.getEntityId() != player().getEntityId())
 				return;
 
-			for (DataWatcher.WatchableObject wo : event.packet.func_149376_c())
+			for (WatchableObject wo : event.packet.func_149376_c())
 				if (wo.getDataValueId() == 6)
 					metadataReceive = PacketDumper.getLastReadTime();
 		}
@@ -464,9 +469,9 @@ abstract class MiscQuests {
 
 		@EventListener
 		private void onCombatEvent(PacketReceiveEvent<S42PacketCombatEvent> event) {
-			if (event.packet.eventType == S42PacketCombatEvent.Event.ENTER_COMBAT)
+			if (event.packet.eventType == ENTER_COMBAT)
 				isInCombat = true;
-			else if (event.packet.eventType == S42PacketCombatEvent.Event.END_COMBAT)
+			else if (event.packet.eventType == END_COMBAT)
 				isInCombat = false;
 		}
 

@@ -28,19 +28,19 @@ import net.minecraft.item.ItemStack;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ORB_BUY_PATTERN;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ORB_SELL_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static java.util.Locale.GERMAN;
 
 @Singleton
 public class OrbBalance extends SimpleWidget {
 
 	private static final Pattern SKULL_PATTERN = Pattern.compile("^§7Du besitzt aktuell §e(?<orbs>[\\d.]+) Orbs§7\\.$");
-	private static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
+	private static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(GERMAN));
 
 	private static long balance = -1;
 

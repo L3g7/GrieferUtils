@@ -33,6 +33,7 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
+import static java.lang.Math.PI;
 
 public abstract class PieMenu extends Gui implements Disableable {
 
@@ -163,7 +164,7 @@ public abstract class PieMenu extends Gui implements Disableable {
 	private void drawUnit(Pair<String, Runnable> entry, double midX, double midY, double radius, int amount, int index, double cursorX, double cursorY, double distance) {
 		long timePassed = System.currentTimeMillis() - (this.selectionStarted - 1072L);
 		float animation = (float)(timePassed < 1572L ? Math.sin((float)timePassed / 1000f) : 1);
-		double tau = Math.PI * 2;
+		double tau = PI * 2;
 		double destinationShift = 3.0707963267948966;
 		double shift = destinationShift / (double) (animation * animation);
 

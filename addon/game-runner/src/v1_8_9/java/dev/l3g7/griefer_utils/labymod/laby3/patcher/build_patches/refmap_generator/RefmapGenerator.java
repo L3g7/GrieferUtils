@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator;
 
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.AnnotationMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.FieldMeta;
@@ -33,6 +33,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,6 +42,7 @@ import static dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_
 import static dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator.MappingHelper.findMethod;
 import static dev.pymdk.mapper.Mapping.INTERMEDIARY;
 import static dev.pymdk.mapper.Mapping.OBFUSCATED;
+import static java.lang.Boolean.FALSE;
 import static org.objectweb.asm.ClassReader.SKIP_CODE;
 
 /**
@@ -77,8 +79,8 @@ public class RefmapGenerator {
 				if (!meta.hasAnnotation(Mixin.class))
 					continue;
 
-				if (meta.hasAnnotation(Bridge.ExclusiveTo.class)) {
-					String[] version = meta.getAnnotation(Bridge.ExclusiveTo.class).getRawValue("value");
+				if (meta.hasAnnotation(ExclusiveTo.class)) {
+					String[] version = meta.getAnnotation(ExclusiveTo.class).getRawValue("value");
 					if (version.length != 2 || version[1].equals("LABY_4"))
 						continue;
 				}
@@ -90,11 +92,11 @@ public class RefmapGenerator {
 		// Write refmap
 		JsonObject notch = new JsonObject();
 		JsonObject searge = new JsonObject();
-		for (Map.Entry<String, Map<String, RefmapEntry>> clazz : mappings.entrySet()) {
+		for (Entry<String, Map<String, RefmapEntry>> clazz : mappings.entrySet()) {
 			JsonObject notchClass = new JsonObject();
 			JsonObject seargeClass = new JsonObject();
 
-			for (Map.Entry<String, RefmapEntry> entry : clazz.getValue().entrySet()) {
+			for (Entry<String, RefmapEntry> entry : clazz.getValue().entrySet()) {
 				notchClass.addProperty(entry.getKey(), entry.getValue().toMapped(OBFUSCATED));
 				seargeClass.addProperty(entry.getKey(), entry.getValue().toMapped(INTERMEDIARY));
 			}
@@ -173,7 +175,7 @@ public class RefmapGenerator {
 	}
 
 	private static boolean skipRemap(AnnotationMeta annotation) {
-		return Boolean.FALSE.equals(annotation.getRawValue("remap"));
+		return FALSE.equals(annotation.getRawValue("remap"));
 	}
 
 	private static void addRefMapField(Map<String, RefmapEntry> mappings, String field, AnnotationMeta annotation) {

@@ -8,13 +8,14 @@
 package dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills;
 
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
-import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar.EnumMouseAction;
 import net.minecraft.client.gui.Gui;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+
+import static dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar.EnumMouseAction.*;
+import static java.awt.Color.*;
 
 /**
  * Polyfill for LabyMod 3's DropDownMenu.
@@ -63,21 +64,21 @@ public class DropDownMenu<T> extends Gui {
 
     public void onDrag(int mouseX, int mouseY, int mouseButton) {
         if (this.scrollbar != null) {
-            this.scrollbar.mouseAction(mouseX, mouseY, EnumMouseAction.DRAGGING);
+            this.scrollbar.mouseAction(mouseX, mouseY, DRAGGING);
         }
 
     }
 
     public void onRelease(int mouseX, int mouseY, int mouseButton) {
         if (this.scrollbar != null) {
-            this.scrollbar.mouseAction(mouseX, mouseY, EnumMouseAction.RELEASED);
+            this.scrollbar.mouseAction(mouseX, mouseY, RELEASED);
         }
 
     }
 
     public boolean onClick(int mouseX, int mouseY, int mouseButton) {
         if (this.scrollbar != null && this.scrollbar.isHoverTotalScrollbar(mouseX, mouseY)) {
-            this.scrollbar.mouseAction(mouseX, mouseY, EnumMouseAction.CLICKED);
+            this.scrollbar.mouseAction(mouseX, mouseY, CLICKED);
             return true;
         } else if (this.enabled && !this.list.isEmpty()) {
             if (mouseX > this.x - 1 && mouseX < this.x + this.width + 1 && mouseY > this.y - 1 && mouseY < this.y + this.height + 1) {
@@ -117,8 +118,8 @@ public class DropDownMenu<T> extends Gui {
     public void draw(int mouseX, int mouseY) {
         T prevHover = this.hoverSelected;
         this.hoverSelected = null;
-        drawRect(this.x - 1, this.y - 1, this.x + this.width + 1, this.y + this.height + 1, Color.GRAY.getRGB());
-        drawRect(this.x, this.y, this.x + this.width, this.y + this.height, Color.BLACK.getRGB());
+        drawRect(this.x - 1, this.y - 1, this.x + this.width + 1, this.y + this.height + 1, GRAY.getRGB());
+        drawRect(this.x, this.y, this.x + this.width, this.y + this.height, BLACK.getRGB());
         if (this.selected != null) {
             String trimmedEntry = DrawUtils.trimStringToWidth(("§f") + this.selected, this.width - 5);
             (this.entryDrawer == null ? defaultDrawer : this.entryDrawer).draw(this.selected, this.x + 5, this.y + this.height / 2 - 4, trimmedEntry);
@@ -126,7 +127,7 @@ public class DropDownMenu<T> extends Gui {
 
         if (this.enabled && !this.list.isEmpty()) {
             for(int i = 0; i <= 5; ++i) {
-                drawRect(this.x + this.width - 16 + i, this.y + this.height / 2 - 2 + i, this.x + this.width - 5 - i, this.y + this.height / 2 + 1 - 2 + i, Color.LIGHT_GRAY.getRGB());
+                drawRect(this.x + this.width - 16 + i, this.y + this.height / 2 - 2 + i, this.x + this.width - 5 - i, this.y + this.height / 2 + 1 - 2 + i, LIGHT_GRAY.getRGB());
             }
         }
 

@@ -14,10 +14,10 @@ import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import org.jetbrains.annotations.Contract;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.last;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.*;
@@ -125,7 +125,7 @@ public class Config {
 				} catch (AccessDeniedException e) {
 					// TODO: cleanup
 					//noinspection ReadWriteStringCanBeUsed
-					Files.write(configFile, json.getBytes(StandardCharsets.UTF_8), WRITE, TRUNCATE_EXISTING, CREATE);
+					Files.write(configFile, json.getBytes(UTF_8), WRITE, TRUNCATE_EXISTING, CREATE);
 					try {
 						Files.deleteIfExists(newConfigFile);
 					} catch (IOException ignored) {}

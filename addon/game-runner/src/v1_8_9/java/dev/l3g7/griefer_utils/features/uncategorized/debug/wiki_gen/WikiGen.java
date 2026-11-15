@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki_gen;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
+import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version;
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
@@ -21,6 +21,7 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
+import dev.l3g7.griefer_utils.features.Feature.CategoryData;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
 import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.features.widgets.Widget;
@@ -36,6 +37,8 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.IMPLEMENTATION;
 
 public class WikiGen {
 
@@ -129,7 +132,7 @@ public class WikiGen {
 			JsonObject result = new JsonObject();
 
 			// Features
-			for (Feature.CategoryData category : Feature.getCategories()) {
+			for (CategoryData category : Feature.getCategories()) {
 				Object parent = Reflection.get(category, "parent");
 				if (parent != null)
 					continue;
@@ -162,13 +165,13 @@ public class WikiGen {
 			// Exclusives
 			JsonObject exclusives = new JsonObject();
 			UncheckedFileProvider.getFeatures().forEach(m -> {
-				if (m.hasAnnotation(Bridge.ExclusiveTo.class)) {
-					var ann = m.getAnnotation(Bridge.ExclusiveTo.class);
+				if (m.hasAnnotation(ExclusiveTo.class)) {
+					var ann = m.getAnnotation(ExclusiveTo.class);
 					Version version = ann.getValue("value", true);
 					Reason reason = ann.getValue("reason", true);
 					String customMessage = ann.getValue("customMessage", false);
 
-					if (reason != Reason.IMPLEMENTATION) {
+					if (reason != IMPLEMENTATION) {
 						JsonObject data = new JsonObject();
 						data.addProperty("version", version.name());
 						data.addProperty("message", customMessage);

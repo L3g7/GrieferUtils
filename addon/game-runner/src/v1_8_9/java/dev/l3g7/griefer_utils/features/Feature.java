@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -140,7 +141,7 @@ public abstract class Feature implements Disableable, GUIEntry {
 	public static List<CategoryData> getCategories() {
 		return categories.entrySet().stream()
 			.filter(e -> e.getKey() != null)
-			.map(Map.Entry::getValue)
+			.map(Entry::getValue)
 			.collect(Collectors.toList());
 	}
 

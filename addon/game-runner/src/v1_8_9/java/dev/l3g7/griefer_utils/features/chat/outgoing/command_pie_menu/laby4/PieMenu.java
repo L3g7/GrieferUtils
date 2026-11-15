@@ -7,7 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.chat.outgoing.command_pie_menu.laby4;
 
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_pie_menu.laby4.Page.Entry;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -23,12 +24,12 @@ public class PieMenu extends dev.l3g7.griefer_utils.core.misc.gui.guis.PieMenu {
 		for (Page page : pages.get()) {
 			List<Pair<String, Runnable>> entries = new ArrayList<>();
 
-			for (Page.Entry entry : page.entries()) {
+			for (Entry entry : page.entries()) {
 				if (!entry.citybuild().isOnCb())
 					continue;
 
 				entries.add(Pair.of(entry.name().replace('&', '§'), () -> {
-					if (!MessageEvent.MessageSendEvent.post(entry.command()))
+					if (!MessageSendEvent.post(entry.command()))
 						player().sendChatMessage(entry.command());
 				}));
 			}

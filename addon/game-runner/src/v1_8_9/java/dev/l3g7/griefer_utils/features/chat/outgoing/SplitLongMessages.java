@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageAboutToBeSentEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -125,7 +125,7 @@ public class SplitLongMessages extends Feature {
 	}
 
 	@EventListener
-	public void onSend(MessageEvent.MessageAboutToBeSentEvent event) {
+	public void onSend(MessageAboutToBeSentEvent event) {
 		try {
 			onSendCaught(event);
 		} catch (Throwable t) {
@@ -133,7 +133,7 @@ public class SplitLongMessages extends Feature {
 		}
 	}
 
-	private void onSendCaught(MessageEvent.MessageAboutToBeSentEvent event) {
+	private void onSendCaught(MessageAboutToBeSentEvent event) {
 		String text = event.message;
 
 		if (!lastParts.isEmpty() && text.equals(lastParts.get(lastParts.size() - 1))) {

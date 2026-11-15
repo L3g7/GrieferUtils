@@ -18,11 +18,12 @@ import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadi
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.LiteralListNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativeLiteralNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.Requirement;
-import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeFixedRequirement;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.minecraft.SubserverRequirement;
 
 import java.util.List;
 import java.util.function.Consumer;
+
+import static dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeFixedRequirement.ALWAYS;
 
 /**
  * A command node.
@@ -144,7 +145,7 @@ public abstract class Node<T extends ArgumentBuilder<Source, ? super T>> {
 
 		private Requirement toRequirement() {
 			return switch (this) {
-				case ALL -> NativeFixedRequirement.ALWAYS;
+				case ALL -> ALWAYS;
 				case LOBBY -> new SubserverRequirement("PORTAL").not();
 				case PORTAL -> new SubserverRequirement("LOBBY").not();
 				case UNAVAILABLE -> LOBBY.toRequirement().and(PORTAL.toRequirement());

@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.chat.ingoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
@@ -16,10 +15,10 @@ import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.event.ClickEvent;
+import net.minecraft.event.ClickEvent.Action;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
@@ -28,15 +27,18 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.ClickEvent.Action.SUGGEST_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
+import static net.minecraft.util.EnumChatFormatting.*;
 
 @Singleton
 public class InteractableMessages extends Feature {
 
-	private static final Pattern P_H_PATTERN = Pattern.compile("^.*(?<command>/p h [^ ]+).*$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern P_H_PATTERN = Pattern.compile("^.*(?<command>/p h [^ ]+).*$", CASE_INSENSITIVE);
 	private static final Pattern CLAN_INFO_PATTERN = Pattern.compile("^» (?<name>[^ ]+) \\((?:offline|online)\\)$");
 	private static final Pattern PLOT_INFO_PLAYER_PATTERN = Pattern.compile("^§r§7(?:Besitzer|Helfer|Vertraut|Verboten): .+$");
 
@@ -55,7 +57,7 @@ public class InteractableMessages extends Feature {
 			""")
 		.icon("mouse_left");
 
-	@EventListener(priority = Priority.HIGH)
+	@EventListener(priority = HIGH)
 	public void modifyMessage(MessageModifyEvent event) {
 		modifyGlobalChats(event);
 		modifyPHs(event);
@@ -77,7 +79,7 @@ public class InteractableMessages extends Feature {
 		for (IChatComponent sibling : message.getSiblings()) {
 			if (sibling.getUnformattedTextForChat().equals(cb)) {
 				IChatComponent hoverText = new ChatComponentText("Klicke, um auf den CB zu wechseln");
-				hoverText.getChatStyle().setColor(EnumChatFormatting.GOLD);
+				hoverText.getChatStyle().setColor(GOLD);
 				addRunCommand(sibling, "/switch " + Citybuild.parse(cb).getInternalName(), hoverText);
 				break;
 			}
@@ -204,7 +206,7 @@ public class InteractableMessages extends Feature {
 			if (sibling.getUnformattedText().endsWith(": "))
 				modify = true;
 			else if (modify) {
-				if (sibling.getChatStyle().getColor() != EnumChatFormatting.YELLOW) // red = invalid, gray = empty
+				if (sibling.getChatStyle().getColor() != YELLOW) // red = invalid, gray = empty
 					continue;
 
 				if (!sibling.getUnformattedText().trim().isEmpty())
@@ -222,7 +224,7 @@ public class InteractableMessages extends Feature {
 				continue;
 
 			String name = matcher.group("name").replaceAll("§.", "");
-			event.message.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", name)));
+			event.message.getChatStyle().setChatClickEvent(new ClickEvent(SUGGEST_COMMAND, String.format("/msg %s ", name)));
 			return true;
 		}
 
@@ -231,7 +233,7 @@ public class InteractableMessages extends Feature {
 
 	private static void addRunCommand(IChatComponent icc, String command) {
 		IChatComponent coloredCommand = new ChatComponentText(command);
-		coloredCommand.getChatStyle().setColor(EnumChatFormatting.WHITE);
+		coloredCommand.getChatStyle().setColor(WHITE);
 		addRunCommand(icc, command, coloredCommand);
 	}
 
@@ -239,14 +241,14 @@ public class InteractableMessages extends Feature {
 		addClickEvent(RUN_COMMAND, icc, command, coloredCommand);
 	}
 
-	private static void addClickEvent(ClickEvent.Action action, IChatComponent icc, String command, IChatComponent coloredCommand) {
+	private static void addClickEvent(Action action, IChatComponent icc, String command, IChatComponent coloredCommand) {
 		if (coloredCommand == icc)
 			coloredCommand = coloredCommand.createCopy();
 
 		IChatComponent prefix = new ChatComponentText("Klicke, um \"");
 		IChatComponent suffix = new ChatComponentText(action == RUN_COMMAND ? "\" auszuführen" : "\" vorzuschlagen");
-		prefix.getChatStyle().setColor(EnumChatFormatting.GRAY);
-		suffix.getChatStyle().setColor(EnumChatFormatting.GRAY);
+		prefix.getChatStyle().setColor(GRAY);
+		suffix.getChatStyle().setColor(GRAY);
 
 		icc.getChatStyle()
 			.setChatClickEvent(new ClickEvent(action, command))

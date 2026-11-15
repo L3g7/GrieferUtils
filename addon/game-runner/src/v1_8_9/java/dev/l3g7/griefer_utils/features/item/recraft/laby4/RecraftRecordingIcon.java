@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.features.item.recraft.laby4;
 
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
-import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons.SynchronousIcon;
 import net.labymod.api.Laby;
 import net.labymod.api.client.gui.screen.ScreenContext;
@@ -23,6 +22,8 @@ import net.minecraft.util.ResourceLocation;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording.ROMAN_NUMERALS;
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.CRAFT;
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.RECIPE;
 
 class RecraftRecordingIcon extends SynchronousIcon { // NOTE: move somewhere else
 
@@ -56,10 +57,10 @@ class RecraftRecordingIcon extends SynchronousIcon { // NOTE: move somewhere els
 		double sX = (x + 10) * 2;
 		double sY = (y + 1) * 2;
 
-		if (recording.mode().get() == RecraftRecordingCore.RecordingMode.CRAFT) {
+		if (recording.mode().get() == CRAFT) {
 			DrawUtils.drawItem(ItemUtil.createItem(new ItemStack(Blocks.crafting_table), true, null), sX, sY, null);
 		} else {
-			String icon = recording.mode().get() == RecraftRecordingCore.RecordingMode.RECIPE ? "knowledge_book" : "chest";
+			String icon = recording.mode().get() == RECIPE ? "knowledge_book" : "chest";
 			DrawUtils.bindTexture(new ResourceLocation("griefer_utils", "icons/" + icon + ".png"));
 			DrawUtils.drawTexture(sX, sY, 256, 256, 16, 16);
 		}

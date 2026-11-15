@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.IconType.IMAGE_FILE;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.CopyTextEntry.CopyFormat.UNFORMATTED;
 import static dev.l3g7.griefer_utils.features.uncategorized.commands.Commands.CommandBridge.commandBridge;
 
 public class CopyTextEntry extends ChatMenuEntry {
@@ -34,7 +36,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.name("Format")
 		.description("Wie der kopierte Text sein soll.")
 		.config(configKey + "format")
-		.defaultValue(CopyFormat.UNFORMATTED)
+		.defaultValue(UNFORMATTED)
 		.icon("command_suggestions");
 
 	public final SwitchSetting modifiedMessage = SwitchSetting.create()
@@ -53,7 +55,7 @@ public class CopyTextEntry extends ChatMenuEntry {
 		.subSettings(copyFormat, modifiedMessage);
 
 	public CopyTextEntry() {
-		super("Text kopieren", null, null, IconType.IMAGE_FILE, loadIcon());
+		super("Text kopieren", null, null, IMAGE_FILE, loadIcon());
 	}
 
 	private static File loadIcon() {

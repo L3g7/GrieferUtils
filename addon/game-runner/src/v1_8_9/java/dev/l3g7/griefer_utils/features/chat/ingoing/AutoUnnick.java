@@ -8,10 +8,10 @@
 package dev.l3g7.griefer_utils.features.chat.ingoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
+import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.misc.color_patterns.ColorPattern;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
+import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
 
 @Singleton
 public class AutoUnnick extends Feature {
@@ -64,8 +66,8 @@ public class AutoUnnick extends Feature {
 		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 
-	@EventListener(priority = Priority.HIGH)
-	public void onTabListNameUpdate(TabListEvent.TabListNameUpdateEvent event) {
+	@EventListener(priority = HIGH)
+	public void onTabListNameUpdate(TabListNameUpdateEvent event) {
 		if (!tab.get())
 			return;
 
@@ -77,7 +79,7 @@ public class AutoUnnick extends Feature {
 	}
 
 	@EventListener
-	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
+	public void onMessageModifyChat(MessageModifyEvent event) {
 		if (!chat.get())
 			return;
 
@@ -102,7 +104,7 @@ public class AutoUnnick extends Feature {
 		boolean allowBold = isChat || DefaultPrefixes.isBoldInTabList(m);
 		return pattern.paintName(realName, allowBold, new ChatStyle()
 			.setChatHoverEvent(addHover
-				? new HoverEvent(HoverEvent.Action.SHOW_TEXT, pattern.paintName(nickName, true))
+				? new HoverEvent(SHOW_TEXT, pattern.paintName(nickName, true))
 				: null)
 			.setItalic(true));
 	}

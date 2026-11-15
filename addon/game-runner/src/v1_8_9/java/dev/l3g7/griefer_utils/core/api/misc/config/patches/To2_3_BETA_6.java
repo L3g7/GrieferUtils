@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.core.api.misc.config.patches;
 
 import dev.l3g7.griefer_utils.core.api.misc.config.ConfigPatcher.ConfigPatch;
-import net.labymod.ingamechat.tools.filter.Filters;
 import net.labymod.ingamechat.tools.filter.Filters.Filter;
 import net.labymod.ingamegui.ModuleConfig;
 import net.labymod.ingamegui.ModuleConfigElement;

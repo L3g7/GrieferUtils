@@ -23,6 +23,7 @@ import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.resources.ResourceLocation;
 import net.labymod.api.models.OperatingSystem;
 import net.labymod.api.notification.Notification;
+import net.labymod.api.notification.Notification.NotificationButton;
 import net.labymod.core.client.gui.screen.activity.activities.ingame.chat.input.ChatInputOverlay;
 
 import java.io.File;
@@ -31,6 +32,7 @@ import java.net.MalformedURLException;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
 import static net.labymod.api.Laby.labyAPI;
+import static net.labymod.api.notification.Notification.Type.SYSTEM;
 
 @Bridge
 @Singleton
@@ -92,12 +94,12 @@ public class LabyBridgeImpl implements LabyBridge {
 	public void notifyError(String message) {
 		createNotification("§c§lFehler ⚠", "§c" + message)
 			.duration(15_000)
-			.addButton(Notification.NotificationButton.of(Component.text("Zum Discord"), () -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")))
+			.addButton(NotificationButton.of(Component.text("Zum Discord"), () -> labyBridge.openWebsite("https://grieferutils.l3g7.dev/discord")))
 			.buildAndPush();
 	}
 
 	private Notification.Builder createNotification(String title, String message) {
-		return Notification.builder().type(Notification.Type.SYSTEM)
+		return Notification.builder().type(SYSTEM)
 			.title(Component.text(title))
 			.text(Component.text(message))
 			.icon(Icon.sprite(ResourceLocation.create("griefer_utils", "icons/high_res/icon.png"), 0, 0, 128, 128, 128, 128));

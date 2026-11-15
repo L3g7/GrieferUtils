@@ -10,10 +10,10 @@ package dev.l3g7.griefer_utils.core.api.util.io;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.*;
 
 public abstract class WriteOperation {
@@ -37,7 +37,7 @@ public abstract class WriteOperation {
 	 * Writes a UTF-8 string, elevating errors to RuntimeExceptions.
 	 */
 	public void value(String text) {
-		value(text.getBytes(StandardCharsets.UTF_8));
+		value(text.getBytes(UTF_8));
 	}
 
 	/**

@@ -14,9 +14,8 @@ import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -28,6 +27,8 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static net.minecraftforge.fml.common.eventhandler.EventPriority.HIGHEST;
+import static net.minecraftforge.fml.common.gameevent.TickEvent.Phase.START;
 
 @ExclusiveTo(value = LABY_3, reason = NOT_NEEDED)
 public class EnchantmentRenderer {
@@ -77,9 +78,9 @@ public class EnchantmentRenderer {
 		itemRenderer = new ItemRenderer(player().getHeldItem(), scale.get());
 	}).subSettings(scale).icon("enchanted_book");
 
-	@SubscribeEvent(priority= EventPriority.HIGHEST)
-	public void onFrameStart(TickEvent.RenderTickEvent e) {
-		if (e.phase != TickEvent.Phase.START || itemRenderer == null)
+	@SubscribeEvent(priority = HIGHEST)
+	public void onFrameStart(RenderTickEvent e) {
+		if (e.phase != START || itemRenderer == null)
 			return;
 
 		new File(Minecraft.getMinecraft().mcDataDir, "rendered_enchantments/").mkdirs();

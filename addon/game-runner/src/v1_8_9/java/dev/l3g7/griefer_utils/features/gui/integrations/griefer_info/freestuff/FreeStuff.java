@@ -24,10 +24,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.farms.Farm.FARMS;
 
 public class FreeStuff {
 
@@ -110,7 +115,7 @@ public class FreeStuff {
 			if (farm == null)
 				return;
 
-			for (Farm f : Farm.FARMS) {
+			for (Farm f : FARMS) {
 				if (f.id.equals(farm)) {
 					f.openGui(chest);
 					return;
@@ -123,7 +128,7 @@ public class FreeStuff {
 
 	public void openGui(GuiBigChest previousGui) {
 		GuiList gui = new GuiList("§8§lFreeStuff - " + name, 7, previousGui);
-		for (Map.Entry<ItemFilter, String> entry : items.entrySet()) {
+		for (Entry<ItemFilter, String> entry : items.entrySet()) {
 			ItemStack freeStuffStack = entry.getKey().stack.copy();
 			if (!entry.getValue().isEmpty())
 				ItemUtil.setLore(freeStuffStack, "§7" + entry.getValue());

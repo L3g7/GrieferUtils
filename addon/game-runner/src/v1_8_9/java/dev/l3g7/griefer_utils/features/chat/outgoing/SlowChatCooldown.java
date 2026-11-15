@@ -9,10 +9,10 @@ package dev.l3g7.griefer_utils.features.chat.outgoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerQuitEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.ActionBar;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -22,6 +22,8 @@ import dev.l3g7.griefer_utils.features.Feature;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.GLOBAL_RECEIVE_PATTERN;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.PLOTCHAT_RECEIVE_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
 @Singleton
@@ -47,7 +49,7 @@ public class SlowChatCooldown extends Feature {
 		else if (msg.equals("§r§cPlease do not repeat the same (or similar) message.§r"))
 			timeoutEnd = System.currentTimeMillis() + 10_000;
 		else {
-			for (Pattern p : new Pattern[] {Constants.GLOBAL_RECEIVE_PATTERN, Constants.PLOTCHAT_RECEIVE_PATTERN}) {
+			for (Pattern p : new Pattern[] {GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN}) {
 				Matcher matcher = p.matcher(msg);
 				if (!matcher.matches())
 					continue;
@@ -60,19 +62,19 @@ public class SlowChatCooldown extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
+	public void onServerSwitch(ServerSwitchEvent event) {
 		timeoutEnd = -1;
 		isSlowChatEnabled = false;
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onServerQuit(ServerEvent.ServerQuitEvent event) {
+	public void onServerQuit(ServerQuitEvent event) {
 		timeoutEnd = -1;
 		isSlowChatEnabled = false;
 	}
 
 	@EventListener
-	public void onTick(TickEvent.ClientTickEvent event) {
+	public void onTick(ClientTickEvent event) {
 		if (player() == null || !isSlowChatEnabled)
 			return;
 

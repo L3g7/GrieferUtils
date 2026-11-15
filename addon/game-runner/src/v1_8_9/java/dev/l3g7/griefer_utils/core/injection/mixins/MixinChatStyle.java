@@ -16,10 +16,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static org.spongepowered.asm.mixin.injection.callback.LocalCapture.CAPTURE_FAILHARD;
 
 /**
  * Hopefully this class can soon be removed when LabyMod fixed their code
@@ -28,13 +28,13 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 @ExclusiveTo(value = LABY_4, reason = NOT_NEEDED)
 public class MixinChatStyle {
 
-	@Inject(method = "createShallowCopy", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "createShallowCopy", at = @At("TAIL"), locals = CAPTURE_FAILHARD)
 	private void injectCreateShallowCopy(CallbackInfoReturnable<ChatStyle> cir, ChatStyle style) {
 		VersionedTextColor labyMod$color = Reflection.get(this, "labyMod$color");
 		((VersionedStyle) style).setLabyColor(labyMod$color);
 	}
 
-	@Inject(method = "createDeepCopy", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "createDeepCopy", at = @At("TAIL"), locals = CAPTURE_FAILHARD)
 	private void injectCreateDeepCopy(CallbackInfoReturnable<ChatStyle> cir, ChatStyle style) {
 		VersionedTextColor labyMod$color = Reflection.get(this, "labyMod$color");
 		((VersionedStyle) style).setLabyColor(labyMod$color);

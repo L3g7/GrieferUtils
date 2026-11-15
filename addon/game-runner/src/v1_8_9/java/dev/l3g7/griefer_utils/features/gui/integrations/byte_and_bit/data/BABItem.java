@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.ItemUtil.ItemEnchantment;
 import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.ByteAndBit;
-import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.gui.BotshopGUI;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,6 +25,10 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BABItem.Availability.*;
+import static dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.gui.BotshopGUI.PRICE_FORMAT_DE;
+import static java.math.BigDecimal.ZERO;
+
 /**
  * An implementation of an Item-API parser for {@link ByteAndBit}
  */
@@ -37,10 +40,10 @@ public class BABItem implements Comparable<BABItem> {
 
 	public Availability getAvailability() {
 		if (stack.stackSize == 0)
-			return Availability.AVAILABLE;
+			return AVAILABLE;
 
 		int count = warehouseCount.get() / stack.stackSize;
-		return count > 0 ? (count > 7 ? Availability.AVAILABLE : Availability.SCARCE) : Availability.EMPTY;
+		return count > 0 ? (count > 7 ? AVAILABLE : SCARCE) : EMPTY;
 	}
 
 	public ItemStack getStack() {
@@ -113,7 +116,7 @@ public class BABItem implements Comparable<BABItem> {
 			for (var veloPrice : this.prices) {
 				if (veloPrice.price == null) continue;
 				BigDecimal price = new BigDecimal(veloPrice.price);
-				if (price.compareTo(BigDecimal.ZERO) < 0) continue; // ankauf - TODO
+				if (price.compareTo(ZERO) < 0) continue; // ankauf - TODO
 
 				ItemStack stack = new ItemStack(Blocks.stone, veloPrice.amount, 10000);
 				if (material.name != null) {
@@ -123,7 +126,7 @@ public class BABItem implements Comparable<BABItem> {
 				}
 
 				stack.setRepairCost(repairCost);
-				stack.setStackDisplayName("§r" + displayName + " §r§a(" + BotshopGUI.PRICE_FORMAT_DE.format(price) + "$)");
+				stack.setStackDisplayName("§r" + displayName + " §r§a(" + PRICE_FORMAT_DE.format(price) + "$)");
 
 				if (!lore.isEmpty())
 					ItemUtil.setLore(stack, lore.stream().map(l -> l.lineContent).toArray(String[]::new));

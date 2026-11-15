@@ -33,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 
 @Singleton
 public class AntiCommandChoker extends Feature {
@@ -153,7 +154,7 @@ public class AntiCommandChoker extends Feature {
 		if (command != null)
 			cmd += " " + command;
 
-		return new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd);
+		return new ClickEvent(RUN_COMMAND, cmd);
 	}
 
 }

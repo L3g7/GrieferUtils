@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.core.misc.griefer_games;
 
 import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
@@ -21,6 +20,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S47PacketPlayerListHeaderFooter;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static net.minecraft.init.Blocks.*;
 import static net.minecraft.init.Items.*;
 
@@ -202,7 +202,7 @@ public enum Citybuild implements Named {
 
 		private static Citybuild currentCitybuild = UNKNOWN;
 
-		@EventListener(priority = Priority.HIGH)
+		@EventListener(priority = HIGH)
 		private static void onCitybuildInit(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
 			String[] lines = event.packet.getHeader().getFormattedText().split("\n");
 			if (lines.length != 3) {

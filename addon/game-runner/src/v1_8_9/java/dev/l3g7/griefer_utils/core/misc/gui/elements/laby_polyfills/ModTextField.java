@@ -18,8 +18,9 @@ import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 
-import java.awt.*;
 import java.util.function.Predicate;
+
+import static java.awt.Color.LIGHT_GRAY;
 
 /**
  * Based on LabyMod 3's ModTextField.
@@ -447,7 +448,7 @@ public class ModTextField extends Gui {
             }
 
             if (placeHolder) {
-                this.drawString(this.fontRendererInstance, this.placeHolder, k1, i1, Color.LIGHT_GRAY.getRGB());
+                this.drawString(this.fontRendererInstance, this.placeHolder, k1, i1, LIGHT_GRAY.getRGB());
             }
         }
 

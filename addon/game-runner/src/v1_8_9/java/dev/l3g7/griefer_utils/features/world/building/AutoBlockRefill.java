@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.world.building;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static net.minecraft.item.EnumDyeColor.BROWN;
 
 @Singleton
 public class AutoBlockRefill extends Feature {
@@ -38,7 +39,7 @@ public class AutoBlockRefill extends Feature {
 		.icon("bundle");
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onPacketReceive(PacketEvent.PacketReceiveEvent<S2FPacketSetSlot> event) {
+	public void onPacketReceive(PacketReceiveEvent<S2FPacketSetSlot> event) {
 		if (expectedStack == null || player() == null)
 			return;
 
@@ -86,7 +87,7 @@ public class AutoBlockRefill extends Feature {
 		Item item = event.stackBeforeUse.getItem();
 
 		if (!(item instanceof ItemBlock
-			|| (item == Items.dye && EnumDyeColor.byDyeDamage(event.stackBeforeUse.getMetadata()) == EnumDyeColor.BROWN)
+			|| (item == Items.dye && EnumDyeColor.byDyeDamage(event.stackBeforeUse.getMetadata()) == BROWN)
 			|| item == Items.redstone
 			|| item instanceof ItemReed
 			|| item instanceof ItemBucket))

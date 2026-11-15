@@ -7,7 +7,6 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
-import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -17,6 +16,8 @@ import dev.l3g7.griefer_utils.features.uncategorized.debug.wiki_gen.WikiGen;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 
 public class DebugSettings {
 
@@ -40,7 +41,7 @@ public class DebugSettings {
 			List<BaseSetting<?>> settings = new ArrayList<>();
 
 			settings.add(WikiGen.button);
-			if (Bridge.Version.LABY_3.isActive())
+			if (LABY_3.isActive())
 				settings.add(EnchantmentRenderer.enabled);
 
 			enabled.subSettings(settings);

@@ -19,6 +19,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -98,7 +99,7 @@ public class TabListEvent extends Event {
 	}
 
 	@EventListener
-	public static void onServerLeave(ServerEvent.ServerQuitEvent event) {
+	public static void onServerLeave(ServerQuitEvent event) {
 		cachedNames.clear();
 	}
 

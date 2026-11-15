@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.gui.integrations.bsf.data;
 
-import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest.TextureItem;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public enum Category implements BSFSearchable {
 	public final BSFSearchable[] entries;
 	public final List<Integer> biomeIds = new ArrayList<>();
 	private final BSFName name;
-	private final GuiBigChest.TextureItem icon;
+	private final TextureItem icon;
 	private final Color color;
 
 	Category(BSFName name, Color color, BSFSearchable... entries) {
@@ -61,7 +61,7 @@ public enum Category implements BSFSearchable {
 	}
 
 	@Override
-	public GuiBigChest.TextureItem getIcon() {
+	public TextureItem getIcon() {
 		return icon;
 	}
 

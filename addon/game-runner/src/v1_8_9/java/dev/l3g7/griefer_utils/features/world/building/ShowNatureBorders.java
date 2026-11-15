@@ -17,12 +17,12 @@ import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static java.awt.Color.YELLOW;
 
 @Singleton
 public class ShowNatureBorders extends Feature {
@@ -85,9 +85,9 @@ public class ShowNatureBorders extends Feature {
 		// Render collected lines
 		Vec3 center = new Vec3(xSize / 2d, 0, zSize / 2d);
 		for (RenderLine line : lines) {
-			GeometryRenderUtil.drawLine(plotRoot.add(line.startOffset), plotRoot.add(line.endOffset), Color.YELLOW, 1.5f);
+			GeometryRenderUtil.drawLine(plotRoot.add(line.startOffset), plotRoot.add(line.endOffset), YELLOW, 1.5f);
 			RenderLine rotLine = line.rotate(2, center);
-			GeometryRenderUtil.drawLine(plotRoot.add(rotLine.startOffset), plotRoot.add(rotLine.endOffset), Color.YELLOW, 1.5f);
+			GeometryRenderUtil.drawLine(plotRoot.add(rotLine.startOffset), plotRoot.add(rotLine.endOffset), YELLOW, 1.5f);
 		}
 	}
 

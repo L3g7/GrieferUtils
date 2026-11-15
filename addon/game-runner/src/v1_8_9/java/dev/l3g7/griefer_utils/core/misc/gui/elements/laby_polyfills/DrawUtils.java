@@ -25,13 +25,11 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -40,6 +38,8 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType.GUI;
+import static net.minecraft.util.EnumChatFormatting.RED;
 
 /**
  * Polyfill for LabyMod 3's DrawUtils and ModColors.
@@ -141,7 +141,7 @@ public class DrawUtils {
 		GlStateManager.blendFunc(770, 771);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		setupGuiTransform(x, y, ibakedmodel.isGui3d());
-		ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GUI);
+		ibakedmodel.getItemCameraTransforms().applyTransform(GUI);
 		Minecraft.getMinecraft().getRenderItem().renderItem(stack, ibakedmodel);
 		GlStateManager.disableAlpha();
 		GlStateManager.disableRescaleNormal();
@@ -189,7 +189,7 @@ public class DrawUtils {
 			if (stack.stackSize != 1 || text != null) {
 				String s = text == null ? String.valueOf(stack.stackSize) : text;
 				if (text == null && stack.stackSize < 1) {
-					s = EnumChatFormatting.RED + String.valueOf(stack.stackSize);
+					s = RED + String.valueOf(stack.stackSize);
 				}
 
 				GlStateManager.disableLighting();

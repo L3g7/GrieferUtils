@@ -24,6 +24,7 @@ import org.objectweb.asm.tree.ClassNode;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -103,7 +104,7 @@ public abstract class FileProvider {
 	 */
 	public static void exclude(Predicate<ClassMeta> filter) {
 		classExclusions.add(filter);
-		for (Map.Entry<String, ClassMeta> entry : classMetaCache.entrySet())
+		for (Entry<String, ClassMeta> entry : classMetaCache.entrySet())
 			if (entry.getValue() != null && filter.test(entry.getValue()))
 				entry.setValue(null);
 	}

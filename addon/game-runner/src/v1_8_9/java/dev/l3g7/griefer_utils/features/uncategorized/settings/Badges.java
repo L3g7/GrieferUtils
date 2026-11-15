@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings;
 
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager.badgeManager;
 
 /**

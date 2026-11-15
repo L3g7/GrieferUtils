@@ -10,7 +10,9 @@ package dev.l3g7.griefer_utils.features.gui;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiInitEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.MouseInputEvent;
 import dev.l3g7.griefer_utils.core.events.render.DrawGuiContainerForegroundLayerEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.ModTextField;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -70,7 +72,7 @@ public class ItemSearch extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onGuiInit(GuiScreenEvent.GuiInitEvent event) {
+	public void onGuiInit(GuiInitEvent event) {
 		if (searchField != null)
 			previousSearch = searchField.getText();
 
@@ -92,7 +94,7 @@ public class ItemSearch extends Feature {
 	}
 
 	@EventListener
-	public void onKeyPress(GuiScreenEvent.KeyboardInputEvent.Pre event) {
+	public void onKeyPress(KeyboardInputEvent.Pre event) {
 		if (searchField != null && Keyboard.getEventKeyState()) {
 			if (searchField.textboxKeyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey())) {
 				// Suppress inventory closing when keyBindInventory is pressed
@@ -106,7 +108,7 @@ public class ItemSearch extends Feature {
 	}
 
 	@EventListener
-	public void onMousePress(GuiScreenEvent.MouseInputEvent.Post event) {
+	public void onMousePress(MouseInputEvent.Post event) {
 		if (searchField != null && Mouse.getEventButton() != -1) {
 			int guiLeft = Reflection.get(event.gui, "guiLeft");
 			int guiTop = Reflection.get(event.gui, "guiTop");

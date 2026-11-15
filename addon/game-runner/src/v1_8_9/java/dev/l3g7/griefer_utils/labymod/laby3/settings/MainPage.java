@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Lazy;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiInitEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
@@ -25,7 +25,6 @@ import net.labymod.gui.elements.ModTextField;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.SettingsElement;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.*;
 
@@ -35,6 +34,7 @@ import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.icon;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @ExclusiveTo(LABY_3)
 public class MainPage {
@@ -90,7 +90,7 @@ public class MainPage {
 				return;
 
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			byte[] bytes = digest.digest(("griefer_utils_salt_" + filter.get()).getBytes(StandardCharsets.UTF_8));
+			byte[] bytes = digest.digest(("griefer_utils_salt_" + filter.get()).getBytes(UTF_8));
 			String hash = Base64.getEncoder().encodeToString(bytes);
 
 			if (hash.equals("IBmzqW3cyeMT0Gj/VqDLhnOhI0Qdhx6FgqFsdLbvzGA=")) {
@@ -135,7 +135,7 @@ public class MainPage {
 	}
 
 	@EventListener
-	private static void onGuiInit(GuiScreenEvent.GuiInitEvent event) {
+	private static void onGuiInit(GuiInitEvent event) {
 		if (!(event.gui instanceof LabyModAddonsGui))
 			return;
 

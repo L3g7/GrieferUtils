@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static dev.pymdk.mapper.Mapping.INTERMEDIARY;
+import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
 import static dev.pymdk.mapper.impl.MappingEntries.MappedClass;
 
 /**
@@ -123,8 +125,8 @@ public class RuntimePatcher implements IClassTransformer {
 				return super.getCommonSuperClass(type1, type2);
 
 			Mapping target = Reflection.getMappingTarget();
-			if (target == Mapping.INTERMEDIARY)
-				target = Mapping.UNOBFUSCATED;
+			if (target == INTERMEDIARY)
+				target = UNOBFUSCATED;
 			MappedClass class1 = LowLevelMapper.classes.get(type1, target);
 			MappedClass class2 = LowLevelMapper.classes.get(type2, target);
 

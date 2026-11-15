@@ -26,6 +26,7 @@ import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.features.widgets.other.ServerPerformance.DisplayMode.PERCENT;
 
 /**
  * Concept by <a href="https://github.com/Pleezon/ServerTPS/blob/bebc5e75e592fdc1bf9401b1a5d42454028227b0/src/main/java/de/techgamez/pleezon/Main.java">Pleezon/ServerTPS</a>
@@ -43,7 +44,7 @@ public class ServerPerformance extends SimpleWidget {
 		.name("Anzeigemodus")
 		.icon("wooden_board")
 		.description("Ob die Performance in Prozent angezeigt oder in TPS angezeigt werden soll.")
-		.defaultValue(DisplayMode.PERCENT);
+		.defaultValue(PERCENT);
 
 	private final SwitchSetting applyColor = SwitchSetting.create()
 		.name("Anzeige färben")
@@ -63,7 +64,7 @@ public class ServerPerformance extends SimpleWidget {
 		if (currentTPS == null)
 			return "?";
 
-		if (displayMode.get() == DisplayMode.PERCENT)
+		if (displayMode.get() == PERCENT)
 			return Math.round(currentTPS / .002) / 100 + "%";
 		else
 			return String.valueOf(currentTPS);
@@ -142,7 +143,7 @@ public class ServerPerformance extends SimpleWidget {
 		lastMillis = currentMillis;
 	}
 
-	private enum DisplayMode implements Named {
+	enum DisplayMode implements Named {
 		PERCENT("Prozent"),
 		TPS("TPS");
 

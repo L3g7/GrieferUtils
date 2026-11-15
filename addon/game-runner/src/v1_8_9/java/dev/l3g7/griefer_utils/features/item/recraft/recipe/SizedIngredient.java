@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class SizedIngredient {
@@ -32,7 +33,7 @@ class SizedIngredient {
 				ingredientCounts.computeIfAbsent(ingredient, k -> new AtomicInteger(0)).incrementAndGet();
 
 		List<SizedIngredient> sizedIngredients = new ArrayList<>();
-		for (Map.Entry<Ingredient, AtomicInteger> entry : ingredientCounts.entrySet())
+		for (Entry<Ingredient, AtomicInteger> entry : ingredientCounts.entrySet())
 			sizedIngredients.add(new SizedIngredient(entry.getKey(), entry.getValue().intValue()));
 
 		return sizedIngredients;

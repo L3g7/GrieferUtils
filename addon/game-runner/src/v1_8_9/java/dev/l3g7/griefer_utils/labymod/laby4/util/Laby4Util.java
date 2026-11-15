@@ -22,7 +22,6 @@ import net.labymod.api.client.gui.screen.widget.widgets.renderer.ScreenRendererW
 import net.labymod.api.event.Event;
 import net.labymod.api.event.LabyEvent;
 import net.labymod.api.event.method.SubscribeMethod;
-import net.labymod.api.event.method.SubscribeMethodFlags;
 import net.labymod.api.models.addon.info.InstalledAddonInfo;
 import net.labymod.core.addon.AddonClassLoader;
 import net.labymod.core.client.gui.navigation.elements.LabyModNavigationElement;
@@ -36,6 +35,8 @@ import java.lang.reflect.Method;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static net.labymod.api.Laby.labyAPI;
+import static net.labymod.api.event.method.SubscribeMethodFlags.BACKGROUND;
+import static net.labymod.api.event.method.SubscribeMethodFlags.REPLAY_DELIVERED;
 
 public class Laby4Util {
 
@@ -96,7 +97,7 @@ public class Laby4Util {
 		private final AddonClassLoader classLoader;
 		private final Class<T> event;
 		private final Consumer<T> callback;
-		private int flags = SubscribeMethodFlags.BACKGROUND;
+		private int flags = BACKGROUND;
 
 		public CallbackSubscribeMethod(Class<T> event, Consumer<T> callback) {
 			this.annotation = event.getAnnotation(LabyEvent.class);
@@ -108,7 +109,7 @@ public class Laby4Util {
 		@Override public int flags() {return flags;}
 
 		@Override public void markReplayDelivered() {
-			flags |= SubscribeMethodFlags.REPLAY_DELIVERED;
+			flags |= REPLAY_DELIVERED;
 		}
 
 		@Override public void invoke(Event event) {

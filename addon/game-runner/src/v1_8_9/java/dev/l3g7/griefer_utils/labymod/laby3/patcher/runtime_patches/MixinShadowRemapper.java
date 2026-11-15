@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.meta.FieldMeta;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.MethodMeta;
 import dev.l3g7.griefer_utils.core.api.mapping.MappingLoader;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
-import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher;
+import dev.l3g7.griefer_utils.labymod.laby3.patcher.RuntimePatcher.Patcher;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -25,12 +25,15 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import static java.lang.Boolean.FALSE;
 
 /**
  * Remaps @Shadow fields and methods in Mixins.
  * Injected by the {@link MappingLoader} after the mappings have been loaded.
  */
-public class MixinShadowRemapper extends RuntimePatcher.Patcher {
+public class MixinShadowRemapper extends Patcher {
 
 	private final Map<String, Map<String, String>> mappings = new HashMap<>(); // class name -> member name -> new member name
 
@@ -38,11 +41,11 @@ public class MixinShadowRemapper extends RuntimePatcher.Patcher {
 		JsonObject refMap = IO.read(FileProvider.getData("assets/griefer_utils/refmap-labymod-3.json")).asJsonObject();
 		JsonObject notch = refMap.getAsJsonObject("data").getAsJsonObject("notch");
 
-		for (Map.Entry<String, JsonElement> classEntry : notch.entrySet()) {
+		for (Entry<String, JsonElement> classEntry : notch.entrySet()) {
 			JsonObject classMapping = classEntry.getValue().getAsJsonObject();
 
 			Map<String, String> members = new HashMap<>();
-			for (Map.Entry<String, JsonElement> member : classMapping.entrySet()) {
+			for (Entry<String, JsonElement> member : classMapping.entrySet()) {
 				if (!member.getKey().startsWith("<GU>"))
 					continue;
 
@@ -88,7 +91,7 @@ public class MixinShadowRemapper extends RuntimePatcher.Patcher {
 
 		for (FieldMeta field : classMeta.fields) {
 			AnnotationMeta shadow = field.getAnnotation(Shadow.class);
-			if (shadow != null && !Boolean.FALSE.equals(shadow.getRawValue("remap"))) {
+			if (shadow != null && !FALSE.equals(shadow.getRawValue("remap"))) {
 				String newName = mappings.get(field.name());
 				if (newName == null)
 					continue; // Not mapped
@@ -101,7 +104,7 @@ public class MixinShadowRemapper extends RuntimePatcher.Patcher {
 
 		for (MethodMeta method : classMeta.methods) {
 			AnnotationMeta shadow = method.getAnnotation(Shadow.class);
-			if (shadow != null && !Boolean.FALSE.equals(shadow.getRawValue("remap"))) {
+			if (shadow != null && !FALSE.equals(shadow.getRawValue("remap"))) {
 				String newName = mappings.get(method.name());
 				if (newName == null)
 					continue; // Not mapped

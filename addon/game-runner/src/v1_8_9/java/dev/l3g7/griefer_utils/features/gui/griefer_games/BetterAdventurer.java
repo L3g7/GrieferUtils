@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.ItemTooltipEvent;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -109,7 +109,7 @@ public class BetterAdventurer extends Feature {
 	}
 
 	@EventListener
-	private void onMessageModify(MessageEvent.MessageModifyEvent event) {
+	private void onMessageModify(MessageModifyEvent event) {
 		Matcher matcher = SELL_PATTERN.matcher(event.original.getFormattedText());
 		if (!matcher.matches() || clickedStack == null)
 			return;

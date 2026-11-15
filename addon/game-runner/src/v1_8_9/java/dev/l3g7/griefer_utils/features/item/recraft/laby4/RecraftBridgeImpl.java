@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftBridge;
+import dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftPage.RecraftPageListSetting;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 
@@ -25,7 +26,7 @@ public class RecraftBridgeImpl implements RecraftBridge {
 
 	private final RecraftPieMenu pieMenu = new RecraftPieMenu();
 
-	public static final RecraftPage.RecraftPageListSetting pages = new RecraftPage.RecraftPageListSetting()
+	public static final RecraftPageListSetting pages = new RecraftPageListSetting()
 		.name("Seiten")
 		.icon("lectern")
 		.inferConfig("pages");

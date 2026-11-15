@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
@@ -36,6 +37,7 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.CRAFT;
+import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.RECIPE;
 
 public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.recraft.RecraftRecording {
 
@@ -104,7 +106,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 		object.add("keys", key().getStorage().encodeFunc.apply(key().get()));
 
 		if (icon != null)
-			object.addProperty("icon", new RecraftAction.Ingredient(icon, icon.stackSize).toLong());
+			object.addProperty("icon", new Ingredient(icon, icon.stackSize).toLong());
 
 		object.addProperty("ignore_sub_ids", ignoreSubIds().get());
 		object.addProperty("mode", mode().get().getName());
@@ -129,7 +131,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 		JsonElement icon = object.get("icon");
 		if (icon != null) {
 			if (icon.isJsonPrimitive()) {
-				RecraftAction.Ingredient ingredient = RecraftAction.Ingredient.fromLong(icon.getAsLong());
+				Ingredient ingredient = Ingredient.fromLong(icon.getAsLong());
 				recording.setIcon(new ItemStack(Item.getItemById(ingredient.itemId), ingredient.compression, ingredient.meta));
 			} else {
 				JsonObject iconObj = icon.getAsJsonObject();
@@ -147,14 +149,14 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 				if (recordingMode.getName().equals(mode))
 					recording.mode().set(recordingMode);
 
-			if (recording.mode().get() == RecordingMode.CRAFT)
+			if (recording.mode().get() == CRAFT)
 				recording.craftAll().set(object.get("craftAll").getAsBoolean());
 		} else {
 			return recording;
 		}
 
 		if (icon != null && icon.isJsonPrimitive()) {
-			RecraftAction.Ingredient ingredient = RecraftAction.Ingredient.fromLong(icon.getAsLong());
+			Ingredient ingredient = Ingredient.fromLong(icon.getAsLong());
 			recording.setIcon(new ItemStack(Item.getItemById(ingredient.itemId), ingredient.compression, ingredient.meta));
 		}
 
@@ -213,10 +215,10 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 			double sX = (x + 13) * 2;
 			double sY = (y + 1) * 2;
 
-			if (recording.mode().get() == RecordingMode.CRAFT) {
+			if (recording.mode().get() == CRAFT) {
 				DrawUtils.drawItem(ItemUtil.createItem(new ItemStack(Blocks.crafting_table), true, null), sX, sY, null);
 			} else {
-				String icon = recording.mode().get() == RecordingMode.RECIPE ? "knowledge_book" : "chest";
+				String icon = recording.mode().get() == RECIPE ? "knowledge_book" : "chest";
 				DrawUtils.bindTexture("griefer_utils/icons/" + icon + ".png");
 				DrawUtils.drawTexture(sX, sY, 256, 256, 16, 16);
 			}

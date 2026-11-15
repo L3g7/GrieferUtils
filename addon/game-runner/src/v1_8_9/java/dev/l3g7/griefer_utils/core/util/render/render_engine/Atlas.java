@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 
 /**
  * Stitches multiple textures into one atlas.<br>
@@ -39,7 +40,7 @@ public class Atlas {
 	private static final BufferedImage MISSING_TEXTURE;
 
 	static {
-		MISSING_TEXTURE = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		MISSING_TEXTURE = new BufferedImage(16, 16, TYPE_INT_ARGB);
 		MISSING_TEXTURE.setRGB(0, 0, 16, 16, TextureUtil.missingTextureData, 0, 16);
 	}
 
@@ -156,7 +157,7 @@ public class Atlas {
 
 		// Render sprites into the final atlas
 		int atlasHeight = Math.max(nextRowY - PADDING, 1);
-		BufferedImage atlas = new BufferedImage(atlasWidth, atlasHeight, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage atlas = new BufferedImage(atlasWidth, atlasHeight, TYPE_INT_ARGB);
 		UV[] slots = new UV[texturesDH.size()];
 
 		for (Texture texture : texturesDH) {

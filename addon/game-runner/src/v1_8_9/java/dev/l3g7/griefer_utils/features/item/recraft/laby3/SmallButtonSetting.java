@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.item.recraft.laby3;
 
 import net.labymod.main.LabyMod;
-import net.labymod.main.ModTextures;
 import net.labymod.settings.elements.ControlElement;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,11 +15,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.labymod.main.ModTextures.BUTTON_ADVANCED;
+
 public class SmallButtonSetting extends ControlElement {
 
 	private final GuiButton button = new GuiButton(-2, 0, 0, 23, 20, "");
 	private final List<Runnable> callbacks = new ArrayList<>();
-	private IconData buttonIcon = new IconData(ModTextures.BUTTON_ADVANCED);
+	private IconData buttonIcon = new IconData(BUTTON_ADVANCED);
 
 	public SmallButtonSetting(IconData i) {
 		super("§cNo name set", i);

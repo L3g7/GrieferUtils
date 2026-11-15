@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,7 +87,7 @@ class Quests {
 	}
 
 	public static AbstractQuest parseQuest(int index, String message, int amount, int maxAmount, int completions, int maxCompletions) {
-		for (Map.Entry<Pattern, Class<? extends AbstractQuest>> entry : QUESTS.entrySet()) {
+		for (Entry<Pattern, Class<? extends AbstractQuest>> entry : QUESTS.entrySet()) {
 			Matcher matcher = entry.getKey().matcher(message);
 			if (!matcher.matches())
 				continue;
@@ -97,7 +98,7 @@ class Quests {
 				AbstractQuest quest = constructor.newInstance();
 
 				// Compute display text
-				String pattern = Quests.DISPLAY_PATTERNS.get(entry.getKey());
+				String pattern = DISPLAY_PATTERNS.get(entry.getKey());
 				String displayText;
 
 				if (!pattern.contains("{TARGET}"))

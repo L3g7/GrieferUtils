@@ -15,7 +15,6 @@ import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
-import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.Quad;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType;
@@ -36,9 +35,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Random;
 
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk.ROTATION_SLICE;
 import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.TEXTURED;
 import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.TEXTURED_ROTATING;
+import static dev.l3g7.griefer_utils.features.world.building.RedstoneHelper.DisplayType.DISTINCT;
+import static dev.l3g7.griefer_utils.features.world.building.RedstoneHelper.DisplayType.SUBTLE;
 import static net.minecraft.init.Blocks.*;
+import static net.minecraft.util.EnumFacing.Axis.X;
+import static net.minecraft.util.EnumFacing.Axis.Y;
+import static net.minecraft.util.EnumFacing.DOWN;
+import static net.minecraft.util.EnumFacing.UP;
 
 @Singleton
 public class RedstoneHelper extends Feature implements RenderObject.Generator {
@@ -59,13 +65,13 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 	public static final DropDownSetting<DisplayType> dropperDisplayType = DropDownSetting.create(DisplayType.class)
 		.name("Dropper-Anzeigetyp")
 		.icon("dropper")
-		.defaultValue(DisplayType.DISTINCT)
+		.defaultValue(DISTINCT)
 		.callback(RenderChunkManager::reloadAll);
 
 	public static final DropDownSetting<DisplayType> hopperDisplayType = DropDownSetting.create(DisplayType.class)
 		.name("Trichter-Anzeigetyp")
 		.icon("hopper")
-		.defaultValue(DisplayType.DISTINCT)
+		.defaultValue(DISTINCT)
 		.callback(RenderChunkManager::reloadAll);
 
 	public static final SwitchSetting showHopperSide = SwitchSetting.create()
@@ -99,7 +105,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 	public static final DropDownSetting<DisplayType> cauldronDisplayType = DropDownSetting.create(DisplayType.class)
 		.name("Anzeigetyp")
 		.icon("lens")
-		.defaultValue(DisplayType.DISTINCT)
+		.defaultValue(DISTINCT)
 		.callback(RenderChunkManager::reloadAll);
 
 	public static final SwitchSetting showCauldronLevel = SwitchSetting.create()
@@ -219,7 +225,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		path.append(type).append('/');
 
 		if (displayTypeSetting != null) {
-			boolean subtle = cauldronDisplayType.get() == DisplayType.SUBTLE;
+			boolean subtle = cauldronDisplayType.get() == SUBTLE;
 			path.append(subtle ? "subtle" : "distinct").append('_');
 		}
 
@@ -250,7 +256,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int rotation) {
-			compiler.draw(texture, BASE_QUAD.rotateY(RenderChunk.ROTATION_SLICE * rotation));
+			compiler.draw(texture, BASE_QUAD.rotateY(ROTATION_SLICE * rotation));
 		}
 
 	}
@@ -276,7 +282,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
-			if (dir == EnumFacing.DOWN) {
+			if (dir == DOWN) {
 				compiler.draw(tex("inner_down"), INNER_QUAD);
 				if (!showHopperSide.get())
 					return;
@@ -300,11 +306,11 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 			if (!showHopperSide.get())
 				return;
 
-			compiler.setBrightness(dir.getAxis() == EnumFacing.Axis.X ? 0xFF : 0xCE);
+			compiler.setBrightness(dir.getAxis() == X ? 0xFF : 0xCE);
 			compiler.draw(tex("side_lateral"), BASE_SIDE_QUAD.translate(-1.002, 0, 0));
 			compiler.draw(tex("side_lateral"), BASE_SIDE_QUAD);
 
-			compiler.setBrightness(dir.getAxis() == EnumFacing.Axis.X ? 0xCE : 0xFF);
+			compiler.setBrightness(dir.getAxis() == X ? 0xCE : 0xFF);
 			compiler.draw(tex("side_back"), BASE_SIDE_QUAD.rotateY(90));
 			compiler.draw(tex("side_front"), BASE_SIDE_QUAD.rotateY(-90));
 		}
@@ -331,11 +337,11 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int listOffset) {
-			if (dir.getAxis() == EnumFacing.Axis.Y) {
+			if (dir.getAxis() == Y) {
 				/*
 				 * Vertical dropper
 				 */
-				if (dir == EnumFacing.UP)
+				if (dir == UP)
 					compiler.setTransformation(q -> q.rotateX(180));
 
 				Quad side = BASE_Y_QUAD.rotateZ(90);
@@ -345,7 +351,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 					side.rotateY(270)
 				);
 
-				if (dir == EnumFacing.UP)
+				if (dir == UP)
 					compiler.setBrightness(0x80);
 				compiler.draw(tex("vertical_back"), BASE_Y_QUAD);
 
@@ -371,15 +377,15 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 			// Sides
 			Quad baseXQuad = Quad.onXPlane(1, 1).translate(0.501, 0, 0);
-			compiler.setBrightness(dir.getAxis() == EnumFacing.Axis.X ? 0xFF : 0xCE);
-			compiler.draw(tex(dir.getAxis() == EnumFacing.Axis.Y ? "lateral_base" : "lateral_side"),
+			compiler.setBrightness(dir.getAxis() == X ? 0xFF : 0xCE);
+			compiler.draw(tex(dir.getAxis() == Y ? "lateral_base" : "lateral_side"),
 				baseXQuad,
 				baseXQuad.translate(-1.002, 0, 0)
 			);
 
 			// Back
-			compiler.setBrightness(dir.getAxis() == EnumFacing.Axis.X ? 0xCE : 0xFF);
-			compiler.draw(tex(dir.getAxis() == EnumFacing.Axis.Y ? "vertical_back" : "horizontal_back"),
+			compiler.setBrightness(dir.getAxis() == X ? 0xCE : 0xFF);
+			compiler.draw(tex(dir.getAxis() == Y ? "vertical_back" : "horizontal_back"),
 				baseXQuad.rotateY(90)
 			);
 		}
@@ -458,7 +464,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 				BASE_QUAD.rotateY(270)
 			);
 
-			if (cauldronDisplayType.get() == DisplayType.SUBTLE)
+			if (cauldronDisplayType.get() == SUBTLE)
 				compiler.setBrightness(0xC0);
 
 			compiler.draw(texture, // Dark
@@ -466,7 +472,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 				BASE_QUAD.rotateY(180)
 			);
 
-			if (cauldronDisplayType.get() == DisplayType.DISTINCT)
+			if (cauldronDisplayType.get() == DISTINCT)
 				compiler.setBrightness(0xC0);
 			compiler.draw(texture, // Bottom
 				BASE_QUAD.rotateZ(90).translate(1 / 16f, 0.18f, 0)

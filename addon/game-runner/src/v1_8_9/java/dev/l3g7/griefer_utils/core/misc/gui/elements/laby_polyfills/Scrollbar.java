@@ -13,6 +13,8 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.input.Mouse;
 
+import static dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar.EnumMouseAction.DRAGGING;
+
 /**
  * Polyfill for LabyMod 3's scrollbar
  * NOTE: remove?
@@ -93,7 +95,7 @@ public class Scrollbar {
     }
 
     public void draw(int mouseX, int mouseY) {
-        this.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
+        this.mouseAction(mouseX, mouseY, DRAGGING);
         this.draw();
     }
 

@@ -27,6 +27,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
+import static dev.l3g7.griefer_utils.features.widgets.countdowns.ClearLag.TimeFormat.LONG;
+import static dev.l3g7.griefer_utils.features.widgets.countdowns.ClearLag.TimeFormat.SHORT;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ALL_ITEMS;
 import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.DROP_ITEM;
 
@@ -37,7 +39,7 @@ public class ClearLag extends SimpleWidget {
 		.name("Zeitformat")
 		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
 		.icon("hourglass")
-		.defaultValue(TimeFormat.LONG);
+		.defaultValue(LONG);
 
 	private final NumberSetting warnTime = NumberSetting.create()
 		.name("Warn-Zeit (s)")
@@ -65,7 +67,7 @@ public class ClearLag extends SimpleWidget {
 
 		// Warn if clearlag is less than the set amount of seconds away
 		countdown.checkWarning("Clearlag!", warnTime.get());
-		return Util.formatTimeSeconds(countdown.secondsRemaining(), timeFormat.get() == TimeFormat.SHORT);
+		return Util.formatTimeSeconds(countdown.secondsRemaining(), timeFormat.get() == SHORT);
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -105,7 +107,7 @@ public class ClearLag extends SimpleWidget {
 			event.cancel();
 	}
 
-	private enum TimeFormat implements Named {
+	enum TimeFormat implements Named {
 		SHORT("Kurz"),
 		LONG("Lang");
 

@@ -28,9 +28,12 @@ import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.botshops.BotShop.BOT_SHOPS;
+import static dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.farms.Farm.FARMS;
+import static dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.freestuff.FreeStuff.FREE_STUFF;
 
 public class DataHandler {
 
@@ -47,7 +50,7 @@ public class DataHandler {
 
 	@EventListener
 	private static void onStaticData(StaticDataReceiveEvent event) {
-		for (Map.Entry<String, GrieferInfoItem> itemEntry : event.data.grieferInfoItems.entrySet()) {
+		for (Entry<String, GrieferInfoItem> itemEntry : event.data.grieferInfoItems.entrySet()) {
 			ItemStack stack = ItemUtil.fromNBT(itemEntry.getValue().stack);
 			if (stack == null) {
 				if (staticDataReceiveEvent != null)
@@ -103,10 +106,10 @@ public class DataHandler {
 	}
 
 	public static void requestFarms() {
-		Farm.FARMS.clear();
+		FARMS.clear();
 		IO.read("https://griefer.info/grieferutils/farm?cb=0&passive=0&aktive=0&entity=0&order=0").asJsonArray(response -> {
 			for (JsonElement entry : response)
-				Farm.FARMS.add(Farm.fromJson(entry.getAsJsonObject()));
+				FARMS.add(Farm.fromJson(entry.getAsJsonObject()));
 
 			if (mc().currentScreen instanceof GuiFarms)
 				((GuiFarms) mc().currentScreen).onEntryData();
@@ -114,10 +117,10 @@ public class DataHandler {
 	}
 
 	public static void requestFreestuff() {
-		FreeStuff.FREE_STUFF.clear();
+		FREE_STUFF.clear();
 		IO.read("https://griefer.info/grieferutils/freestuff?cb=0&item=0").asJsonArray(response -> {
 			for (JsonElement entry : response)
-				FreeStuff.FREE_STUFF.add(FreeStuff.fromJson(entry.getAsJsonObject()));
+				FREE_STUFF.add(FreeStuff.fromJson(entry.getAsJsonObject()));
 
 			if (mc().currentScreen instanceof GuiFreestuff)
 				((GuiFreestuff) mc().currentScreen).onEntryData();
@@ -125,10 +128,10 @@ public class DataHandler {
 	}
 
 	public static void requestBotshops() {
-		BotShop.BOT_SHOPS.clear();
+		BOT_SHOPS.clear();
 		IO.read("https://griefer.info/grieferutils/botshops?cb=0&ankauf=0&verkauf=0").asJsonArray(response -> {
 			for (JsonElement entry : response)
-				BotShop.BOT_SHOPS.add(BotShop.fromJson(entry.getAsJsonObject()));
+				BOT_SHOPS.add(BotShop.fromJson(entry.getAsJsonObject()));
 
 			if (mc().currentScreen instanceof GuiBotShops)
 				((GuiBotShops) mc().currentScreen).onEntryData();

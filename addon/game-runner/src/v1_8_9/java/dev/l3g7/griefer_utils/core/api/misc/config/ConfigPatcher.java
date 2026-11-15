@@ -149,7 +149,7 @@ public class ConfigPatcher {
 			return wrapped;
 		}
 
-		public @NotNull ConfigPatcher.ConfigObject getObject(String memberName) {
+		public @NotNull ConfigObject getObject(String memberName) {
 			if (!has(memberName))
 				set(memberName, new JsonObject());
 

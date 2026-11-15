@@ -22,13 +22,14 @@ import net.minecraft.util.IChatComponent;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
+import static java.lang.reflect.Modifier.STATIC;
 
 public class UnsafeJsonSerializer {
 
@@ -51,7 +52,7 @@ public class UnsafeJsonSerializer {
 			case IBlockState state -> {
 				JsonObject object = new JsonObject();
 				object.add("block", toJson0(state.getBlock()));
-				for (Map.Entry<IProperty, Comparable> entry : state.getProperties().entrySet())
+				for (Entry<IProperty, Comparable> entry : state.getProperties().entrySet())
 					object.addProperty(entry.getKey().getName(), entry.getValue().toString());
 				yield object;
 			}
@@ -98,7 +99,7 @@ public class UnsafeJsonSerializer {
 
 		while (clazz != Object.class) {
 			for (Field declaredField : clazz.getDeclaredFields()) {
-				if ((declaredField.getModifiers() & Modifier.STATIC) != 0)
+				if ((declaredField.getModifiers() & STATIC) != 0)
 					continue;
 
 				String name = declaredField.getName();

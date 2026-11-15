@@ -20,7 +20,6 @@ import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.AssetsChecker;
 import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.MappingGenerator;
 import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.RecordConverter;
 import dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator.RefmapGenerator;
-import dev.pymdk.mapper.Mapping;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +32,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.zip.ZipOutputStream;
 
+import static dev.pymdk.mapper.Mapping.INTERMEDIARY;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -67,7 +67,7 @@ public class BuildPatcher {
 		try (FileSystem fs = FileSystems.newFileSystem(newJar.toPath())) {
 			BuildPatcher.fs = fs;
 
-			Mapper.loadMappings(Paths.get("./build"), Mapping.INTERMEDIARY, false);
+			Mapper.loadMappings(Paths.get("./build"), INTERMEDIARY, false);
 			RefmapGenerator.generateRefmap(fs);
 			MappingGenerator.generateMappings(fs);
 

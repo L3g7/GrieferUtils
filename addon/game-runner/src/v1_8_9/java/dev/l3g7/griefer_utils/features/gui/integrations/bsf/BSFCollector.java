@@ -28,6 +28,8 @@ import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static java.lang.Math.PI;
+import static net.minecraft.network.play.server.S44PacketWorldBorder.Action.INITIALIZE;
 
 public class BSFCollector {
 
@@ -52,7 +54,7 @@ public class BSFCollector {
 	}
 
 	private static Pair<Integer, Integer> parseWorldCenter(S44PacketWorldBorder packet) {
-		if (Reflection.get(packet, "action") != S44PacketWorldBorder.Action.INITIALIZE)
+		if (Reflection.get(packet, "action") != INITIALIZE)
 			return null;
 
 		double targetSize = Reflection.get(packet, "targetSize");
@@ -74,7 +76,7 @@ public class BSFCollector {
 
 	/** @noinspection BooleanMethodIsAlwaysInverted */
 	private static boolean checkFoundation(double x) {
-		return 65535d * Math.sin((Math.PI * (x + 32351.5d)) / 65535d) == 0x1.ffeb5726e48c5p15;
+		return 65535d * Math.sin((PI * (x + 32351.5d)) / 65535d) == 0x1.ffeb5726e48c5p15;
 	}
 
 	private static int cpos2int(int x, int z) {

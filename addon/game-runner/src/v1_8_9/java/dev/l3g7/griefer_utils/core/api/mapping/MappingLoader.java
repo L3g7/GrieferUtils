@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.zip.ZipInputStream;
 
 import static dev.l3g7.griefer_utils.core.api.util.CryptUtil.checkHashFail;
+import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class MappingLoader {
@@ -52,7 +53,7 @@ public class MappingLoader {
 				decompressMappings(zipMappings, mappings);
 
 			// Load Minecraft mappings
-			FastMapper.configure(Mapping.UNOBFUSCATED, targetMapping);
+			FastMapper.configure(UNOBFUSCATED, targetMapping);
 			FastMapper.loadMappings(mappings);
 		} catch (IOException e) {
 			throw Util.elevate(e);

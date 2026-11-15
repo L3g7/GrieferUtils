@@ -8,6 +8,9 @@
 package dev.l3g7.griefer_utils.features.uncategorized.debug.thread_dumper;
 
 import java.util.*;
+import java.util.Map.Entry;
+
+import static dev.l3g7.griefer_utils.features.uncategorized.debug.thread_dumper.ThreadDumpGenerator.ThreadType.*;
 
 public class ThreadDumpGenerator {
 
@@ -15,7 +18,7 @@ public class ThreadDumpGenerator {
 		Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces();
 
 		if (onlyClient) {
-			for (Map.Entry<Thread, StackTraceElement[]> threadEntry : map.entrySet())
+			for (Entry<Thread, StackTraceElement[]> threadEntry : map.entrySet())
 				if (threadEntry.getKey().getName().equals("Client thread"))
 					return generateThreadDump(threadEntry.getKey(), threadEntry.getValue());
 
@@ -34,7 +37,7 @@ public class ThreadDumpGenerator {
 
 		StringBuilder dumps = new StringBuilder();
 
-		for (Map.Entry<Thread, StackTraceElement[]> threadEntry : sorted.entrySet())
+		for (Entry<Thread, StackTraceElement[]> threadEntry : sorted.entrySet())
 			dumps.append(generateThreadDump(threadEntry.getKey(), threadEntry.getValue()));
 
 		return dumps.toString();
@@ -42,11 +45,11 @@ public class ThreadDumpGenerator {
 
 	public static String generateThreadDump(Thread thread, StackTraceElement[] elements) {
 		ThreadType type = determineType(thread, elements);
-		boolean isThreadClass = thread.getClass() == Thread.class || type == ThreadType.WAITING_TIMER;
+		boolean isThreadClass = thread.getClass() == Thread.class || type == WAITING_TIMER;
 
 		StringBuilder dump = new StringBuilder(String.format("[%d] %s%s\n", thread.getPriority(), type, generateName(isThreadClass, thread)));
 
-		if (type == ThreadType.DEAD || type == ThreadType.WAITING_TIMER)
+		if (type == DEAD || type == WAITING_TIMER)
 			return dump.toString();
 
 		for (StackTraceElement stackTraceElement : filterStackTrace(elements, type, isThreadClass)) {
@@ -78,31 +81,31 @@ public class ThreadDumpGenerator {
 
 	private static ThreadType determineType(Thread thread, StackTraceElement[] stackTraceElements) {
 		if (stackTraceElements.length == 0)
-			return ThreadType.DEAD;
+			return DEAD;
 
 		StackTraceElement currentStackTrace = stackTraceElements[0];
 		String clazz = currentStackTrace.getClassName();
 		String method = currentStackTrace.getMethodName();
 
 		if (clazz.equals("sun.misc.Unsafe") && method.equals("park"))
-			return ThreadType.PARKED;
+			return PARKED;
 
 		if (clazz.equals("java.lang.Object") && method.equals("wait")) {
 			if (thread.getClass().getName().equals("java.util.TimerThread"))
-				return ThreadType.WAITING_TIMER;
+				return WAITING_TIMER;
 
-			return ThreadType.WAITING;
+			return WAITING;
 		}
 
 		if (clazz.equals("java.lang.Thread") && method.equals("sleep"))
-			return ThreadType.SLEEPING;
+			return SLEEPING;
 
-		return ThreadType.NORMAL;
+		return NORMAL;
 	}
 
 	private static List<StackTraceElement> filterStackTrace(StackTraceElement[] elements, ThreadType type, boolean isThreadClass) {
 		List<StackTraceElement> list = new ArrayList<>(Arrays.asList(elements));
-		if (type != ThreadType.NORMAL)
+		if (type != NORMAL)
 			list.remove(0);
 
 		if (isThreadClass)
@@ -118,7 +121,7 @@ public class ThreadDumpGenerator {
 		return list;
 	}
 
-	private enum ThreadType {
+	enum ThreadType {
 		NORMAL,
 		DEAD,
 

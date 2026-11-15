@@ -34,6 +34,7 @@ import java.util.Set;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.DYNAMIC_API_URL;
+import static java.lang.Thread.MIN_PRIORITY;
 
 public class BugReporter {
 
@@ -103,7 +104,7 @@ public class BugReporter {
 		labyBridge.notifyError("Ein unbekannter Fehler ist aufgetreten!");
 
 		timestampOfLastReport = System.currentTimeMillis();
-		ThreadFactory.runSync("GrieferUtils Bug Reporter", Thread.MIN_PRIORITY, () -> {
+		ThreadFactory.runSync("GrieferUtils Bug Reporter", MIN_PRIORITY, () -> {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				// Get stacktrace
 				error.printStackTrace(new PrintStream(out));

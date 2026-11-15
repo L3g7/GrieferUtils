@@ -20,6 +20,7 @@ import dev.l3g7.griefer_utils.core.util.render.render_engine.RenderObject;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
+import net.minecraft.network.play.server.S22PacketMultiBlockChange.BlockUpdateData;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -142,7 +143,7 @@ public class WorldRenderChunkManager extends RenderChunkManager {
 	@EventListener
 	private void onMultiBlockChange(PacketReceiveEvent<S22PacketMultiBlockChange> event) {
 		TickScheduler.sync(() -> {
-			for (S22PacketMultiBlockChange.BlockUpdateData data : event.packet.getChangedBlocks()) {
+			for (BlockUpdateData data : event.packet.getChangedBlocks()) {
 				RenderObject renderObject = fromState(data.getPos(), data.getBlockState(), world());
 				setRenderObject(data.getPos(), renderObject);
 			}

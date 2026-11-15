@@ -24,8 +24,11 @@ import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadi
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.DeserializationException;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.EnumNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.KeyValueNode;
-import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativePrimitiveNode;
-import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativeStringNode;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativePrimitiveNode.NativeBooleanNode;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativePrimitiveNode.NativeFloatNode;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativePrimitiveNode.NativeIntegerNode;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativeStringNode.NativeTextNode;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.internal.NativeStringNode.NativeWordNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.minecraft.ChestTimeNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.minecraft.PlayerNameNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.minecraft.PlayerTimeNode;
@@ -58,11 +61,11 @@ public abstract class ArgumentNode<T> extends Node<RequiredArgumentBuilder<Sourc
 
 		String type = json.get("type").getAsString();
 		return switch (type) {
-			case "boolean" -> context.deserialize(json, NativePrimitiveNode.NativeBooleanNode.class);
-			case "float" -> context.deserialize(json, NativePrimitiveNode.NativeFloatNode.class);
-			case "integer" -> context.deserialize(json, NativePrimitiveNode.NativeIntegerNode.class);
-			case "word" -> context.deserialize(json, NativeStringNode.NativeWordNode.class);
-			case "text" -> context.deserialize(json, NativeStringNode.NativeTextNode.class);
+			case "boolean" -> context.deserialize(json, NativeBooleanNode.class);
+			case "float" -> context.deserialize(json, NativeFloatNode.class);
+			case "integer" -> context.deserialize(json, NativeIntegerNode.class);
+			case "word" -> context.deserialize(json, NativeWordNode.class);
+			case "text" -> context.deserialize(json, NativeTextNode.class);
 
 			case "enum" -> context.deserialize(json, EnumNode.class);
 			case "key_value" -> context.deserialize(json, KeyValueNode.class);

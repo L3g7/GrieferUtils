@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.features.widgets.botd.Reward.RewardType.CUSTOM;
+
 public class Reward {
 
 	public final RewardType type;
@@ -27,7 +29,7 @@ public class Reward {
 	}
 
 	public Reward(ItemStack eventItem) {
-		type = RewardType.CUSTOM;
+		type = CUSTOM;
 		amount = eventItem.stackSize;
 		this.eventItem = eventItem;
 	}

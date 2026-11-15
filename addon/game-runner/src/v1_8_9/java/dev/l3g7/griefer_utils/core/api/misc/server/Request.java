@@ -32,10 +32,10 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.MIN_PRIORITY;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 public abstract class Request<R> {
 
@@ -74,7 +74,7 @@ public abstract class Request<R> {
 		// All tries failed, try again in 10 min
 		Arrays.stream(exceptions).forEach(Throwable::printStackTrace);
 		try {
-			return SCHEDULED_EXECUTOR.schedule(() -> request(errorHandler, post), 10, TimeUnit.MINUTES).get();
+			return SCHEDULED_EXECUTOR.schedule(() -> request(errorHandler, post), 10, MINUTES).get();
 		} catch (ExecutionException | InterruptedException e) {
 			errorHandler.accept(new IOException(e));
 			return null;

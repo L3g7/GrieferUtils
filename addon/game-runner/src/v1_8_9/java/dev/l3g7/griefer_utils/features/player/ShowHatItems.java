@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.layers.LayerCustomHead;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType.NONE;
+import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 @Singleton
 public class ShowHatItems extends Feature {
@@ -43,7 +44,7 @@ public class ShowHatItems extends Feature {
 	@Mixin(LayerCustomHead.class)
 	private static class MixinLayerCustomHead {
 
-		@Inject(method = "doRenderLayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V", shift = At.Shift.AFTER), cancellable = true)
+		@Inject(method = "doRenderLayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;color(FFFF)V", shift = AFTER), cancellable = true)
 		public void injectDoRenderLayer(EntityLivingBase entity, float p_177141_2_, float p_177141_3_, float partialTicks, float p_177141_5_, float p_177141_6_, float p_177141_7_, float scale, CallbackInfo ci) {
 			if (!ShowHatItems.get().isEnabled() || entity instanceof EntityArmorStand)
 				return;
@@ -62,7 +63,7 @@ public class ShowHatItems extends Feature {
 			GlStateManager.translate(0.0f, -0.75, 0.275f);
 			GlStateManager.scale(0.625f, -0.625f, -0.625f);
 
-			mc().getItemRenderer().renderItem(entity, stack, ItemCameraTransforms.TransformType.NONE);
+			mc().getItemRenderer().renderItem(entity, stack, NONE);
 			GlStateManager.popMatrix();
 			ci.cancel();
 		}

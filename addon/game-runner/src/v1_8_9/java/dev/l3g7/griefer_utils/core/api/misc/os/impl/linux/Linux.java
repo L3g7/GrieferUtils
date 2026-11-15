@@ -16,7 +16,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.os.OS;
 import dev.l3g7.griefer_utils.core.api.misc.os.OSFallback;
-import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.api.util.io.ReadOperation;
 import joptsimple.internal.Strings;
@@ -31,11 +30,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.StreamSupport;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LINUX;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.lwjgl.glfw.GLFW.GLFW_PLATFORM_X11;
 
 @Bridge
 @Singleton
@@ -58,7 +58,7 @@ public class Linux implements OS {
 
 	public Linux() {
 		String sessionType = System.getenv("XDG_SESSION_TYPE");
-		boolean isX11OrXWayland = GLFW.glfwGetPlatform() == GLFW.GLFW_PLATFORM_X11;
+		boolean isX11OrXWayland = GLFW.glfwGetPlatform() == GLFW_PLATFORM_X11;
 		String desktop = System.getenv("XDG_CURRENT_DESKTOP").toLowerCase();
 
 		Runnable fallbackImpl = FileProvider.getSingleton(OSFallback.class)::maximizeWindow;
@@ -151,7 +151,7 @@ public class Linux implements OS {
 			.command("sh", "-c", command)
 			.start();
 
-		if (!proc.waitFor(1, TimeUnit.SECONDS))
+		if (!proc.waitFor(1, SECONDS))
 			throw new TimeoutException();
 
 		if (!allowFailure && proc.exitValue() != 0)

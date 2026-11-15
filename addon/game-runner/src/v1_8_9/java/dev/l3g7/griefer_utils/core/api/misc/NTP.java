@@ -20,9 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.MIN_PRIORITY;
+import static java.util.concurrent.TimeUnit.DAYS;
 
 public class NTP {
 
@@ -48,7 +48,7 @@ public class NTP {
 					throw new RuntimeException(e);
 				}
 			}
-		}, 0, 1, TimeUnit.DAYS);
+		}, 0, 1, DAYS);
 	}
 
 	public static long getAccurateTime() {

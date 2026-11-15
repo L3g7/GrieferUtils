@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.core.events;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import net.minecraft.network.play.server.S3EPacketTeams;
 
 import java.util.HashMap;
@@ -30,7 +30,7 @@ public class ScoreboardUpdateEvent extends Event {
 	}
 
 	@EventListener
-	private static void onTeams(PacketEvent.PacketReceiveEvent<S3EPacketTeams> event) {
+	private static void onTeams(PacketReceiveEvent<S3EPacketTeams> event) {
 		String teamName = event.packet.getName();
 		int lastUnderscore = teamName.lastIndexOf('_');
 		if (lastUnderscore == -1)

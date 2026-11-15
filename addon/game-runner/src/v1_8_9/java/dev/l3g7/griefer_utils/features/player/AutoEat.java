@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -29,6 +29,8 @@ import net.minecraft.util.MovingObjectPosition;
 import java.util.function.BiPredicate;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.features.player.AutoEat.PreferredFood.HIGH_SATURATION;
+import static dev.l3g7.griefer_utils.features.player.AutoEat.TriggerMode.EFFICIENTLY;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 /**
@@ -41,13 +43,13 @@ public class AutoEat extends Feature {
 		.name("Auslösung")
 		.description("Wann AutoEat essen soll.", "Wenn effizient ausgewählt ist, wird gegessen, wenn kein Sättigungspunkt des Essens verschwendet wird.")
 		.icon("bone_with_meat")
-		.defaultValue(TriggerMode.EFFICIENTLY);
+		.defaultValue(EFFICIENTLY);
 
 	private final DropDownSetting<PreferredFood> preferredFood = DropDownSetting.create(PreferredFood.class)
 		.name("Bevorzugte Nahrung")
 		.description("Welche Art von Nahrung bevorzugt gegessen werden soll.")
 		.icon("hopper")
-		.defaultValue(PreferredFood.HIGH_SATURATION);
+		.defaultValue(HIGH_SATURATION);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -60,7 +62,7 @@ public class AutoEat extends Feature {
 	private boolean finishing = false;
 
 	@EventListener
-	public void onClientTick(TickEvent.ClientTickEvent event) {
+	public void onClientTick(ClientTickEvent event) {
 		if (player() == null || finishing)
 			return;
 
@@ -139,7 +141,7 @@ public class AutoEat extends Feature {
 		}
 
 		// Check trigger mode
-		if (triggerMode.get() == TriggerMode.EFFICIENTLY && hunger < currentSaturation)
+		if (triggerMode.get() == EFFICIENTLY && hunger < currentSaturation)
 			return -1;
 
 		return currentIndex;

@@ -7,14 +7,15 @@
 
 package dev.l3g7.griefer_utils.core.api.file_provider;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * A marker for <a href="https://en.wikipedia.org/wiki/Singleton_pattern">singletons</a>.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Retention(RUNTIME)
+@Target(TYPE)
 public @interface Singleton {}

@@ -184,12 +184,12 @@ public class BlockyRenderSphere {
 
 						BlockPos pos = new BlockPos(x, y, z);
 						SpherePart part = new SpherePart(pos,
-							isNotValid(pos, EnumFacing.DOWN),
-							isNotValid(pos, EnumFacing.UP),
-							isNotValid(pos, EnumFacing.NORTH),
-							isNotValid(pos, EnumFacing.SOUTH),
-							isNotValid(pos, EnumFacing.WEST),
-							isNotValid(pos, EnumFacing.EAST)
+							isNotValid(pos, DOWN),
+							isNotValid(pos, UP),
+							isNotValid(pos, NORTH),
+							isNotValid(pos, SOUTH),
+							isNotValid(pos, WEST),
+							isNotValid(pos, EAST)
 						);
 
 						if (part.isFullyBlocked())

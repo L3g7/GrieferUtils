@@ -32,6 +32,7 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.lang.invoke.MethodType.methodType;
+import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
 
 public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElement<E> implements Laby3Setting<DropDownSetting<E>, E>, DropDownSetting<E> {
 
@@ -147,13 +148,13 @@ public class DropDownSettingImpl<E extends Enum<E> & Named> extends DropDownElem
 		int height = maxY - y - 6;
 
 		// Draw selected entry with fixed width
-		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		GL11.glEnable(GL_SCISSOR_TEST);
 		GL11.glScissor(0, 0, (int) ((maxX - 21) / new ScaledResolution(mc).getScaledWidth_double() * mc.displayWidth), mc.displayHeight);
 
 		String trimmedEntry = drawUtils.trimStringToWidth(ModColor.cl("f") + selected.getName(), width - 10);
 		drawUtils.drawString(trimmedEntry, menu.getX() + 5, (y + 3) + height / 2f - 4);
 
-		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		GL11.glDisable(GL_SCISSOR_TEST);
 
 		// Draw gradient
 		drawUtils.drawGradientShadowRight(maxX - 21, y + 3, maxY - 3);

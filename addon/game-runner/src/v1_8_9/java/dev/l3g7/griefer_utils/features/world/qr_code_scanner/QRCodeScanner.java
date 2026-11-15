@@ -33,16 +33,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 
+import static com.google.zxing.DecodeHintType.TRY_HARDER;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ADDON_PREFIX;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static java.awt.image.BufferedImage.TYPE_INT_RGB;
+import static java.lang.Boolean.TRUE;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.ENTITY;
 
 @Singleton
 public class QRCodeScanner extends Feature {
 
-	private static final Map<DecodeHintType, ?> DECODE_HINTS = ImmutableMap.of(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+	private static final Map<DecodeHintType, ?> DECODE_HINTS = ImmutableMap.of(TRY_HARDER, TRUE);
 	public static boolean suppressCorrectionErrors = false;
 
 	@MainElement
@@ -84,7 +87,7 @@ public class QRCodeScanner extends Feature {
 				return;
 			}
 
-			BufferedImage img = new BufferedImage(128, 128, BufferedImage.TYPE_INT_RGB);
+			BufferedImage img = new BufferedImage(128, 128, TYPE_INT_RGB);
 
 			for (int i = 0; i < 16384; ++i) {
 				int colorId = mapData.colors[i] & 255;

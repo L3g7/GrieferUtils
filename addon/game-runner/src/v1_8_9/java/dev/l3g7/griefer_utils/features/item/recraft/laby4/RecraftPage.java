@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.features.item.recraft.laby4.RecraftRecording.RecraftRecordingListSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
@@ -47,7 +48,7 @@ public class RecraftPage extends net.labymod.api.configuration.loader.Config imp
 		.icon("name_tag")
 		.callback(s -> pages.notifyChange());
 
-	public final RecraftRecording.RecraftRecordingListSetting recordings = new RecraftRecording.RecraftRecordingListSetting()
+	public final RecraftRecordingListSetting recordings = new RecraftRecordingListSetting()
 		.name("Aufzeichnungen")
 		.icon("camera")
 		.callback(pages::notifyChange);

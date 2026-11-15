@@ -21,9 +21,10 @@ import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadi
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.CommandDispatcher.Source;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.Node;
 
-import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+
+import static java.util.Locale.ROOT;
 
 /**
  * A brigadier literal node.
@@ -89,7 +90,7 @@ public class NativeLiteralNode extends Node<NativeLiteralNode.TooltipLiteralArgu
 		public TooltipLiteralCommandNode(String literal, Command<Source> command, Predicate<Source> requirement, CommandNode<Source> redirect, RedirectModifier<Source> modifier, boolean forks, Message tooltip) {
 			super(literal, command, requirement, redirect, modifier, forks);
 			this.tooltip = tooltip;
-			this.literalLowerCase = literal.toLowerCase(Locale.ROOT);
+			this.literalLowerCase = literal.toLowerCase(ROOT);
 		}
 
 		@Override

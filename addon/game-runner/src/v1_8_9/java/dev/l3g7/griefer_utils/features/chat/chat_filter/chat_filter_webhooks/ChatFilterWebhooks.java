@@ -22,9 +22,9 @@ import net.minecraft.util.IChatComponent;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
@@ -32,7 +32,9 @@ import java.util.regex.Pattern;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.STATIC_API_URL;
+import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks.Style.EMBED;
 import static java.lang.Thread.MIN_PRIORITY;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Singleton
 public class ChatFilterWebhooks extends Feature {
@@ -52,7 +54,7 @@ public class ChatFilterWebhooks extends Feature {
 	private static final DropDownSetting<Style> messageStyle = DropDownSetting.create(Style.class)
 		.name("Nachrichten-Stil")
 		.icon("color_palette")
-		.defaultValue(Style.EMBED);
+		.defaultValue(EMBED);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -75,7 +77,7 @@ public class ChatFilterWebhooks extends Feature {
 		if (!Config.has(configKey))
 			return;
 
-		for (Map.Entry<String, JsonElement> entry : Config.get(configKey).getAsJsonObject().entrySet()) {
+		for (Entry<String, JsonElement> entry : Config.get(configKey).getAsJsonObject().entrySet()) {
 			String value = entry.getValue().isJsonNull() ? null : entry.getValue().getAsString();
 			if (value == null || value.trim().isEmpty())
 				continue;
@@ -86,7 +88,7 @@ public class ChatFilterWebhooks extends Feature {
 
 	public static void saveWebhooks() {
 		JsonObject data = new JsonObject();
-		for (Map.Entry<String, String> entry : webhooks.entrySet())
+		for (Entry<String, String> entry : webhooks.entrySet())
 			data.addProperty(entry.getKey(), entry.getValue());
 
 		Config.set(configKey, data);
@@ -102,7 +104,7 @@ public class ChatFilterWebhooks extends Feature {
 
 		// Build payload
 		JsonObject root = new JsonObject();
-		if (messageStyle.get() == Style.EMBED) {
+		if (messageStyle.get() == EMBED) {
 			root.add("content", JsonNull.INSTANCE);
 			root.addProperty("wait", true);
 
@@ -131,7 +133,7 @@ public class ChatFilterWebhooks extends Feature {
 			conn.setRequestMethod("POST");
 
 			try (OutputStream stream = conn.getOutputStream()) {
-				stream.write(root.toString().getBytes(StandardCharsets.UTF_8));
+				stream.write(root.toString().getBytes(UTF_8));
 				stream.flush();
 			}
 
@@ -153,7 +155,7 @@ public class ChatFilterWebhooks extends Feature {
 		return new JsonPrimitive(value);
 	}
 
-	private enum Style implements Named {
+	enum Style implements Named {
 		EMBED("Embed"),
 		TEXT("Text");
 

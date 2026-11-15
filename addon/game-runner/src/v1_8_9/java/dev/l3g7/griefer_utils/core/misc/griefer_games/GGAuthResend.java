@@ -12,6 +12,8 @@ import net.minecraft.network.play.server.S47PacketPlayerListHeaderFooter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.LOBBY;
+
 /**
  * Re-sends messages caught my GG Auth
  */
@@ -25,7 +27,7 @@ public class GGAuthResend {
 	@EventListener
 	private static void onHubJoin(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
 		Citybuild cb = Citybuild.current();
-		if (cb == Citybuild.LOBBY) {
+		if (cb == LOBBY) {
 			waitingForGGAuth = false;
 			sentMessages.clear();
 		}

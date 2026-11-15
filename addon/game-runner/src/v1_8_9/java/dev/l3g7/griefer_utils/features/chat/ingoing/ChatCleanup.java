@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.features.chat.ingoing;
 
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
@@ -19,9 +18,9 @@ import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.IChatComponentUtil;
+import dev.l3g7.griefer_utils.core.util.IChatComponentUtil.MutableComponent;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
@@ -32,7 +31,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.ChatCleanup.NewsMode.*;
+import static net.minecraft.util.EnumChatFormatting.AQUA;
+import static net.minecraft.util.EnumChatFormatting.WHITE;
 
 @Singleton
 public class ChatCleanup extends Feature {
@@ -71,7 +74,7 @@ public class ChatCleanup extends Feature {
 		.name("News")
 		.description("Ändert die Darstellung von News.")
 		.icon("enchanted_book")
-		.defaultValue(NewsMode.NORMAL);
+		.defaultValue(NORMAL);
 
 	private final SwitchSetting removeBroadcast = SwitchSetting.create()
 		.name("Broadcasts entfernen")
@@ -110,7 +113,7 @@ public class ChatCleanup extends Feature {
 			event.cancel();
 	}
 
-	@EventListener(priority = Priority.HIGH)
+	@EventListener(priority = HIGH)
 	public void removeColoredFont(MessageModifyEvent event) {
 		if (!antiColoredFont.get() && !removeHeroHighlights.get())
 			return;
@@ -135,7 +138,7 @@ public class ChatCleanup extends Feature {
 			IChatComponent startICC = event.message.createCopy();
 			int length = getFormattedLength(startICC);
 
-			for (IChatComponentUtil.MutableComponent component : IChatComponentUtil.getNestedSiblings(startICC)) {
+			for (MutableComponent component : IChatComponentUtil.getNestedSiblings(startICC)) {
 				if (length >= messageStart) {
 					component.remove();
 					continue;
@@ -145,7 +148,7 @@ public class ChatCleanup extends Feature {
 			}
 
 			IChatComponent messageICC = new ChatComponentText(message.replaceAll("§.", ""));
-			messageICC.getChatStyle().setBold(true).setColor(EnumChatFormatting.AQUA);
+			messageICC.getChatStyle().setBold(true).setColor(AQUA);
 
 			startICC.appendSibling(messageICC);
 			event.setMessage(startICC);
@@ -198,7 +201,7 @@ public class ChatCleanup extends Feature {
 			boolean isStart = cursor.get() == start;
 			cursor.addAndGet(getFormattedLength(sibling));
 
-			if (sibling.getChatStyle().getColor() != EnumChatFormatting.WHITE || !sibling.getChatStyle().getBold())
+			if (sibling.getChatStyle().getColor() != WHITE || !sibling.getChatStyle().getBold())
 				continue;
 
 			String text = sibling.getUnformattedTextForChat();
@@ -227,7 +230,7 @@ public class ChatCleanup extends Feature {
 			// Fallback
 			iterator.add(sibling);
 			sibling.getChatStyle().setBold(true);
-			sibling.getChatStyle().setColor(EnumChatFormatting.AQUA);
+			sibling.getChatStyle().setColor(AQUA);
 		}
 
 		return false;
@@ -248,9 +251,9 @@ public class ChatCleanup extends Feature {
 			isNews = !isNews;
 
 		// News mode
-		if (news.get() == NewsMode.NONE && (isNews || isNewsLine))
+		if (news.get() == NONE && (isNews || isNewsLine))
 			return true;
-		else if (news.get() == NewsMode.COMPACT && (isNewsLine || (isNews && formattedText.trim().equals("§r§8\u00bb§r"))))
+		else if (news.get() == COMPACT && (isNewsLine || (isNews && formattedText.trim().equals("§r§8\u00bb§r"))))
 			return true;
 
 		// Anti clear chat
@@ -278,7 +281,7 @@ public class ChatCleanup extends Feature {
 			|| (formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] ") && unformattedText.contains("hat eine Kiste geöffnet und")));
 	}
 
-	private enum NewsMode implements Named {
+	enum NewsMode implements Named {
 
 		NORMAL("Normal"), COMPACT("Kompakt"), NONE("Versteckt");
 

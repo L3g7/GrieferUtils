@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
 import dev.l3g7.griefer_utils.core.events.InputEvent.KeyInputEvent;
 import dev.l3g7.griefer_utils.core.events.InputEvent.MouseInputEvent;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
@@ -108,7 +109,7 @@ public class KeySettingImpl extends ControlElement implements Laby3Setting<KeySe
 	}
 
 	@EventListener
-	public void onGuiKeyPress(GuiScreenEvent.KeyboardInputEvent.Post event) {
+	public void onGuiKeyPress(KeyboardInputEvent.Post event) {
 		if (!Keyboard.isRepeatEvent() && triggersInContainers)
 			onPress(Keyboard.getEventKey());
 	}

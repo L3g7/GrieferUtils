@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getPickBlock;
+import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 public class BlockPickEvent extends Event {
 
@@ -46,7 +47,7 @@ public class BlockPickEvent extends Event {
 		@Inject(method = "middleClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerCapabilities;isCreativeMode:Z"), cancellable = true)
 		private void injectMiddleClickMouse(CallbackInfo ci) {
 			MovingObjectPosition mop = objectMouseOver;
-			if (mop == null || mop.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+			if (mop == null || mop.typeOfHit != BLOCK)
 				return;
 
 			Block block = theWorld.getBlockState(mop.getBlockPos()).getBlock();
@@ -64,7 +65,7 @@ public class BlockPickEvent extends Event {
 
 		@Inject(method = "onPickBlock", at = @At("HEAD"), remap = false, cancellable = true)
 		private static void inject(MovingObjectPosition target, EntityPlayer player, World world, CallbackInfoReturnable<Boolean> cir) {
-			if (target == null || target.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+			if (target == null || target.typeOfHit != BLOCK)
 				return;
 
 			Block block = world.getBlockState(target.getBlockPos()).getBlock();

@@ -8,14 +8,14 @@
 package dev.l3g7.griefer_utils.core.events.render;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 
 /**
  * A RenderTickEvent called when no gui is opened.
  */
-public class RenderWorldEvent extends TickEvent.RenderTickEvent {
+public class RenderWorldEvent extends RenderTickEvent {
 
 	public RenderWorldEvent(float renderTickTime) {
 		super(renderTickTime);

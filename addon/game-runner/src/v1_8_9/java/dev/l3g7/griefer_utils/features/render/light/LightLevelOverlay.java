@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.render.render_engine.ChunkCompiler;
@@ -24,14 +24,15 @@ import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.RenderChunk
 import dev.l3g7.griefer_utils.core.util.render.render_engine.manager.WorldRenderChunkManager;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.block.*;
+import net.minecraft.block.BlockStairs.EnumHalf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
+import net.minecraft.network.play.server.S22PacketMultiBlockChange.BlockUpdateData;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -42,6 +43,9 @@ import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.TOGGLE;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk.ROTATION_SLICE;
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.TEXTURED_ROTATING;
+import static net.minecraft.world.EnumSkyBlock.BLOCK;
 
 @Singleton
 public class LightLevelOverlay extends Feature {
@@ -74,7 +78,7 @@ public class LightLevelOverlay extends Feature {
 
 		@Override
 		public RenderType[] renderTypes() {
-			return new RenderType[] { RenderType.TEXTURED_ROTATING };
+			return new RenderType[] { TEXTURED_ROTATING };
 		}
 
 		@Override
@@ -85,19 +89,19 @@ public class LightLevelOverlay extends Feature {
 		@Override
 		public void draw(ChunkCompiler compiler, RenderType renderType, BlockPos chunkPosition, int rotation) {
 			compiler.setColor(new Color(1f, level / 15f, 0f));
-			compiler.draw(texture, BASE_QUAD.rotateY(RenderChunk.ROTATION_SLICE * rotation));
+			compiler.draw(texture, BASE_QUAD.rotateY(ROTATION_SLICE * rotation));
 		}
 	}
 
 	@EventListener
-	private void onBlockChange(PacketEvent.PacketReceiveEvent<S23PacketBlockChange> event) {
+	private void onBlockChange(PacketReceiveEvent<S23PacketBlockChange> event) {
 		renderChunkManager.registerForRescan(event.packet.getBlockPosition());
 		renderChunkManager.submitRescan();
 	}
 
 	@EventListener
-	private void onMultiBlockChange(PacketEvent.PacketReceiveEvent<S22PacketMultiBlockChange> event) {
-		for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : event.packet.getChangedBlocks())
+	private void onMultiBlockChange(PacketReceiveEvent<S22PacketMultiBlockChange> event) {
+		for (BlockUpdateData changedBlock : event.packet.getChangedBlocks())
 			renderChunkManager.registerForRescan(changedBlock.getPos());
 		renderChunkManager.submitRescan();
 	}
@@ -162,7 +166,7 @@ public class LightLevelOverlay extends Feature {
 			if (!isUpperSideSolid(downBlock, world(), worldPos.down()) && !(downBlock instanceof BlockFarmland))
 				return null;
 
-			return new LightLevel(world().getLightFor(EnumSkyBlock.BLOCK, worldPos));
+			return new LightLevel(world().getLightFor(BLOCK, worldPos));
 		}
 
 	}
@@ -180,7 +184,7 @@ public class LightLevelOverlay extends Feature {
 			return state.getValue(BlockSnow.LAYERS) >= 8;
 
 		if (block instanceof BlockStairs)
-			return state.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
+			return state.getValue(BlockStairs.HALF) == EnumHalf.TOP;
 
 		if (block instanceof BlockSlab)
 			return block.isFullBlock() || (state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP);

@@ -16,6 +16,7 @@ import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
+import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording.RecordingDisplaySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.HeaderSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
@@ -35,7 +36,7 @@ class RecraftPageSetting extends ListEntrySetting {
 		icon("command_suggestions");
 		subSettings();
 
-		entrySettings.forEach(e -> ((RecraftRecording.RecordingDisplaySetting) e).container = this);
+		entrySettings.forEach(e -> ((RecordingDisplaySetting) e).container = this);
 
 		entrySettings.add(0, (SettingsElement) (this.name = StringSetting.create()
 			.name("Name")
@@ -81,7 +82,7 @@ class RecraftPageSetting extends ListEntrySetting {
 
 	protected void onChange() {
 		if (!container.getSubSettings().getElements().contains(this))
-			for (RecraftRecording.RecordingDisplaySetting displaySetting : RecraftBridgeImpl.getSubSettingsOfType(this, RecraftRecording.RecordingDisplaySetting.class))
+			for (RecordingDisplaySetting displaySetting : RecraftBridgeImpl.getSubSettingsOfType(this, RecordingDisplaySetting.class))
 				displaySetting.recording.key().set(ImmutableSet.of());
 
 		RecraftBridgeImpl.save();
@@ -96,10 +97,10 @@ class RecraftPageSetting extends ListEntrySetting {
 		JsonObject object = new JsonObject();
 		object.addProperty("name", name.get());
 
-		List<RecraftRecording.RecordingDisplaySetting> recordings = RecraftBridgeImpl.getSubSettingsOfType(this, RecraftRecording.RecordingDisplaySetting.class);
+		List<RecordingDisplaySetting> recordings = RecraftBridgeImpl.getSubSettingsOfType(this, RecordingDisplaySetting.class);
 
 		JsonArray jsonRecordings = new JsonArray();
-		for (RecraftRecording.RecordingDisplaySetting recording : recordings)
+		for (RecordingDisplaySetting recording : recordings)
 			jsonRecordings.add(recording.recording.toJson());
 		object.add("recordings", jsonRecordings);
 

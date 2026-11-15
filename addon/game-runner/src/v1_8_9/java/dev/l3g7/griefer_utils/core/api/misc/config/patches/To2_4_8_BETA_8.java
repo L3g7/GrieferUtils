@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.config.ConfigPatcher.ConfigPatch;
 
-import java.util.Map;
+import java.util.Map.Entry;
 
 public class To2_4_8_BETA_8 extends ConfigPatch {
 
@@ -28,7 +28,7 @@ public class To2_4_8_BETA_8 extends ConfigPatch {
 		if (itemSaver.has("entries") && itemSaver.get("entries").isJsonObject()) {
 			JsonArray newEntries = new JsonArray();
 
-			for (Map.Entry<String, JsonElement> entry : itemSaver.getObject("entries")) {
+			for (Entry<String, JsonElement> entry : itemSaver.getObject("entries")) {
 				JsonObject oldEntry = entry.getValue().getAsJsonObject();
 				JsonObject newEntry = new JsonObject();
 
@@ -51,7 +51,7 @@ public class To2_4_8_BETA_8 extends ConfigPatch {
 		if (toolSaver.has("exclusions") && toolSaver.get("exclusions").isJsonObject()) {
 			JsonArray newExclusions = new JsonArray();
 
-			for (Map.Entry<String, JsonElement> entry : toolSaver.getObject("exclusions")) {
+			for (Entry<String, JsonElement> entry : toolSaver.getObject("exclusions")) {
 				JsonObject exclusion = new JsonObject();
 				exclusion.addProperty("nbt", entry.getKey());
 				exclusion.add("name", entry.getValue());
@@ -66,7 +66,7 @@ public class To2_4_8_BETA_8 extends ConfigPatch {
 		if (inventoryValue.has("entries") && inventoryValue.get("entries").isJsonObject()) {
 			JsonArray newEntries = new JsonArray();
 
-			for (Map.Entry<String, JsonElement> entry : inventoryValue.getObject("entries")) {
+			for (Entry<String, JsonElement> entry : inventoryValue.getObject("entries")) {
 				JsonObject exclusion = new JsonObject();
 				exclusion.addProperty("nbt", entry.getKey());
 				exclusion.add("value", entry.getValue());

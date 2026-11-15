@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
@@ -20,6 +19,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
+import static dev.l3g7.griefer_utils.features.uncategorized.debug.MessageDumper.CopyFormat.JSON;
+
 class MessageDumper {
 
 	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils MessageDumper");
@@ -27,7 +29,7 @@ class MessageDumper {
 	private static final DropDownSetting<CopyFormat> copyFormat = DropDownSetting.create(CopyFormat.class)
 		.name("Format")
 		.description("Wie der gedumpte Text sein soll.")
-		.defaultValue(CopyFormat.JSON)
+		.defaultValue(JSON)
 		.icon("command_suggestions");
 
 	public static final SwitchSetting enabled = SwitchSetting.create()
@@ -36,10 +38,10 @@ class MessageDumper {
 		.subSettings(copyFormat)
 		.icon("book_and_quill");
 
-	@EventListener(priority = Priority.LOWEST)
+	@EventListener(priority = LOWEST)
 	private static void onMessageModify(MessageModifyEvent event) {
 		if (enabled.get() && DebugSettings.enabled.get()) {
-			Function<IChatComponent, String> toJsonString = CopyFormat.JSON.componentToString;
+			Function<IChatComponent, String> toJsonString = JSON.componentToString;
 			Function<IChatComponent, String> toString = copyFormat.get().componentToString;
 
 			boolean wasModified = Objects.equals(toJsonString.apply(event.original), toJsonString.apply(event.message));
@@ -57,7 +59,7 @@ class MessageDumper {
 		}
 	}
 
-	private enum CopyFormat implements Named {
+	enum CopyFormat implements Named {
 		UNFORMATTED("Unformattiert", icc -> icc.getUnformattedText().replaceAll("§.", "")),
 		FORMATTED("Formattiert", IChatComponent::getFormattedText),
 		JSON("JSON", IChatComponent.Serializer::componentToJson);

@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.core.events.render.InvisibilityCheckEvent;
@@ -40,6 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.FORMATTED_PLAYER_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 
 /**
@@ -48,7 +49,7 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 @Singleton
 public class SelfDisguise extends Feature { // NOTE cleanup
 
-	private static final Pattern LUCKY_SWORD_DISGUISE_PATTERN = Pattern.compile("^§r§8\\[§r§e§lLuckySword§r§8] " + Constants.FORMATTED_PLAYER_PATTERN.pattern() + " §r§7ist nun als §r§e(?<disguise>\\w+) §r§7verkleidet!§r$");
+	private static final Pattern LUCKY_SWORD_DISGUISE_PATTERN = Pattern.compile("^§r§8\\[§r§e§lLuckySword§r§8] " + FORMATTED_PLAYER_PATTERN.pattern() + " §r§7ist nun als §r§e(?<disguise>\\w+) §r§7verkleidet!§r$");
 
 	private static final Map<String, Disguise<?>> DISGUISES = new HashMap<>() {{
 		put("bat", new BatDisguise());
@@ -104,7 +105,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 	}
 
 	@EventListener
-	public void onTick(TickEvent.RenderTickEvent event) {
+	public void onTick(RenderTickEvent event) {
 		Entity currentDisguise = this.currentDisguise;
 		WorldClient world = world();
 		if (currentDisguise == null || world == null)

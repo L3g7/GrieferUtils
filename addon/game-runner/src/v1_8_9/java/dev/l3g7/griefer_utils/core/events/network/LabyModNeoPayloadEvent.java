@@ -18,7 +18,6 @@ import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.util.ChatComponentText;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +25,7 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Reason.NOT_NEEDED;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOW;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * An event being posted when a {@link S3FPacketCustomPayload} on the {@code labymod:neo} channel is received.
@@ -63,7 +63,7 @@ public class LabyModNeoPayloadEvent<T extends LabyModNeoPacket> extends Event {
 				return;
 
 			// Register labymod:neo connection
-			PacketBuffer register = new PacketBuffer(Unpooled.wrappedBuffer("labymod:neo".getBytes(StandardCharsets.UTF_8)));
+			PacketBuffer register = new PacketBuffer(Unpooled.wrappedBuffer("labymod:neo".getBytes(UTF_8)));
 			// Use sendPacket with listener to circumvent LiquidBounce's custom payload block
 			event.manager.sendPacket(new C17PacketCustomPayload("REGISTER", register), f -> {});
 

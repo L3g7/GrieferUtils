@@ -10,6 +10,8 @@ import org.lwjgl.opengl.GL11;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static dev.l3g7.griefer_utils.core.util.render.render_engine.data.RenderType.TEXTURED_ROTATING;
+
 /**
  * A single compiled chunk.
  * @see ChunkPart
@@ -131,7 +133,7 @@ public class RenderChunk {
 
 				Atlas.getAtlas().bind();
 				for (Entry<RenderType, Integer> entry : part.lists.entrySet()) {
-					if (entry.getKey() == RenderType.TEXTURED_ROTATING)
+					if (entry.getKey() == TEXTURED_ROTATING)
 						GL11.glCallList(entry.getValue() + rotation);
 					else
 						GL11.glCallList(entry.getValue());

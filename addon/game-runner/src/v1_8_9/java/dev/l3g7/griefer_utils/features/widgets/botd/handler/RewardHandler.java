@@ -9,14 +9,16 @@ package dev.l3g7.griefer_utils.features.widgets.botd.handler;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.ScoreboardUpdateEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.features.widgets.botd.Reward;
+import dev.l3g7.griefer_utils.features.widgets.botd.Reward.RewardType;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.features.widgets.botd.Reward.RewardType.*;
 import static dev.l3g7.griefer_utils.features.widgets.botd.handler.BlockOfTheDayHandler.currentServerDay;
 
 class RewardHandler {
@@ -32,8 +34,8 @@ class RewardHandler {
 		return counter != -1;
 	}
 
-	public static int getCounter(Reward.RewardType type) {
-		if (type != Reward.RewardType.CUSTOM && !BlockOfTheDayHandler.isEvent) {
+	public static int getCounter(RewardType type) {
+		if (type != CUSTOM && !BlockOfTheDayHandler.isEvent) {
 			counter = -1;
 			return type.defaultAmount;
 		}
@@ -52,7 +54,7 @@ class RewardHandler {
 	}
 
 	@EventListener
-	private static void onMessageReceive(MessageEvent.MessageReceiveEvent event) {
+	private static void onMessageReceive(MessageReceiveEvent event) {
 		String msg = event.message.getFormattedText();
 		if (msg.equals("§r§8[§r§6Block des Tages§r§8] §r§aDu hast ein seltenes Sammel-Item erhalten!§r")) {
 			Reward reward = SpecialRewardHandler.parseReward();
@@ -67,9 +69,9 @@ class RewardHandler {
 			return;
 		}
 
-		Reward newReward = Reward.RewardType.MONEY.getReward(msg);
+		Reward newReward = MONEY.getReward(msg);
 		if (newReward == null)
-			newReward = Reward.RewardType.CRYSTALS.getReward(msg);
+			newReward = CRYSTALS.getReward(msg);
 
 		if (newReward != null) {
 			rewardReceived = System.currentTimeMillis();

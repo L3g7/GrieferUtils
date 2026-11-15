@@ -18,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
+import static java.awt.Color.WHITE;
 import static org.lwjgl.opengl.GL11.*;
 
 public class ChunkCompiler implements VertexSink {
@@ -26,7 +27,7 @@ public class ChunkCompiler implements VertexSink {
 	 * The position of the RenderObject currently being drawing
 	 */
 	private BlockPos blockPos;
-	private Color currentColor = Color.WHITE;
+	private Color currentColor = WHITE;
 	private Function<Quad, Quad> currentTransformation;
 
 	/**
@@ -34,7 +35,7 @@ public class ChunkCompiler implements VertexSink {
 	 * @param blockPos The RenderObject's positions
 	 */
 	public void prepare(BlockPos blockPos) {
-		setColor(Color.WHITE);
+		setColor(WHITE);
 		this.currentTransformation = null;
 		this.blockPos = blockPos;
 	}
@@ -52,7 +53,7 @@ public class ChunkCompiler implements VertexSink {
 	 * Ends drawing into the current GL list.
 	 */
 	public void end() {
-		setColor(Color.WHITE);
+		setColor(WHITE);
 		glEnd();
 		glEndList();
 	}

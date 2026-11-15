@@ -9,8 +9,8 @@ package dev.l3g7.griefer_utils.features.gui.books;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
-import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.MouseInputEvent;
+import dev.l3g7.griefer_utils.core.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
@@ -47,7 +47,7 @@ public class FixBooks extends Feature {
 	 * Fixes direct book interactions.
 	 */
 	@EventListener
-	public void onMouse(MouseClickEvent.RightClickEvent event) {
+	public void onMouse(RightClickEvent event) {
 		if (player() == null || mc().currentScreen != null)
 			return;
 
@@ -59,7 +59,7 @@ public class FixBooks extends Feature {
 	 * Fixes book interactions in guis.
 	 */
 	@EventListener
-	public void onMouseGui(GuiScreenEvent.MouseInputEvent.Pre event) {
+	public void onMouseGui(MouseInputEvent.Pre event) {
 		if (Mouse.getEventButton() == -1 || !(mc().currentScreen instanceof GuiContainer gc))
 			return;
 

@@ -11,6 +11,8 @@ import dev.l3g7.griefer_utils.features.player.self_disguise.Disguise;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.item.EnumDyeColor;
 
+import static net.minecraft.item.EnumDyeColor.WHITE;
+
 /**
  * Disguised as {@link EntitySheep}.
  */
@@ -26,7 +28,7 @@ public class SheepDisguise extends Disguise<EntitySheep> {
 	public EntitySheep create(Arguments arguments) {
 		String colorName = arguments.getEnum("white", colors);
 
-		EnumDyeColor color = EnumDyeColor.WHITE;
+		EnumDyeColor color = WHITE;
 		for (EnumDyeColor value : EnumDyeColor.values())
 			if (value.getName().equalsIgnoreCase(colorName))
 				color = value;

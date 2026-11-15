@@ -13,12 +13,14 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import static dev.pymdk.mapper.Mapping.OBFUSCATED;
+
 /**
  * The "frontend" of reflection.
  */
 public class Reflection {
 
-	static Mapping mappingTarget = Mapping.OBFUSCATED;
+	static Mapping mappingTarget = OBFUSCATED;
 
 	/**
 	 * Sets the mapping target.

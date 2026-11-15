@@ -13,10 +13,10 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.AuctionHouseCheck;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
@@ -33,16 +33,21 @@ import org.mariuszgromada.math.mxparser.License;
 import org.mariuszgromada.math.mxparser.mXparser;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.PAYMENT_SEND_PATTERN;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.UNFORMATTED_PLAYER_NAME_PATTERN;
 import static dev.l3g7.griefer_utils.core.misc.griefer_games.Balances.getBalance;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.features.chat.outgoing.Calculator.WithdrawAction.SUGGEST;
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.*;
+import static java.util.Locale.GERMAN;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static org.lwjgl.input.Keyboard.KEY_TAB;
 
 @Singleton
 public class Calculator extends Feature {
@@ -51,7 +56,7 @@ public class Calculator extends Feature {
 		.name("Auto. abheben")
 		.description("Ob automatisch Geld abgehoben werden soll, wenn man nicht genügend für die gewünschte Bezahlung auf dem Konto hat.")
 		.icon("bank")
-		.defaultValue(WithdrawAction.SUGGEST);
+		.defaultValue(SUGGEST);
 
 	private final SwitchSetting starPlaceholder = SwitchSetting.create()
 		.name("\"*\"-Placeholder")
@@ -118,18 +123,18 @@ public class Calculator extends Feature {
 			autoWithdraw, starPlaceholder, placeholder, autoEquationDetect, inlineCalculation, prefix);
 
 	private static final Pattern SIMPLE_EQUATION_PATTERN = Pattern.compile("(?:^|(?: |^)[^/\\n][^ \\r\\n]* )(?<match>(?<equation>[+-]?\\d+(?:[.,]\\d+)?[mk]?(?: *[*+\\-/] *[+-]?\\d+(?:[.,]\\d+)?[mk]?)*))(?= |$)", CASE_INSENSITIVE);
-	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay (?<recipient>%s|\\*) (?<amount>.+)", Constants.UNFORMATTED_PLAYER_NAME_PATTERN), CASE_INSENSITIVE);
+	private static final Pattern PAYMENT_COMMAND_PATTERN = Pattern.compile(String.format("/pay (?<recipient>%s|\\*) (?<amount>.+)", UNFORMATTED_PLAYER_NAME_PATTERN), CASE_INSENSITIVE);
 	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 
 	private Pattern placeholderPattern;
 	private String escapedPlaceholderPattern = "\\\\([{}])";
-	private BigDecimal lastPayment = BigDecimal.ZERO;
+	private BigDecimal lastPayment = ZERO;
 	private String lastPaymentReceiver;
 
 	private Calculator() {
 		updatePlaceholderPattern();
 		License.iConfirmNonCommercialUse("grieferutils@l3g7.dev");
-		mXparser.changeLanguageTo(Locale.GERMAN);
+		mXparser.changeLanguageTo(GERMAN);
 	}
 
 	private void updatePlaceholderPattern() {
@@ -155,19 +160,19 @@ public class Calculator extends Feature {
 	}
 
 	@EventListener
-	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
+	public void onServerSwitch(ServerSwitchEvent event) {
 		lastPaymentReceiver = null;
 	}
 
 	@EventListener
-	public void onTabComplete(GuiScreenEvent.KeyboardInputEvent.Pre event) {
+	public void onTabComplete(KeyboardInputEvent.Pre event) {
 		if (!inlineCalculation.get())
 			return;
 
 		if (!(event.gui instanceof GuiChat gui))
 			return;
 
-		if (!Keyboard.getEventKeyState() || Keyboard.getEventKey() != Keyboard.KEY_TAB)
+		if (!Keyboard.getEventKeyState() || Keyboard.getEventKey() != KEY_TAB)
 			return;
 
 		double result = Double.NaN;
@@ -213,7 +218,7 @@ public class Calculator extends Feature {
 			return;
 
 		int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
-		String strResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, RoundingMode.HALF_UP)).replace(".", "");
+		String strResult = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(result).setScale(decPlaces, HALF_UP)).replace(".", "");
 		field.writeText(strResult);
 
 		event.cancel();
@@ -224,7 +229,7 @@ public class Calculator extends Feature {
 		if (!ServerCheck.isOnGrieferGames())
 			return;
 
-		Matcher paymentMatcher = Constants.PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
+		Matcher paymentMatcher = PAYMENT_SEND_PATTERN.matcher(event.message.getFormattedText());
 		if (paymentMatcher.matches()) {
 			lastPaymentReceiver = null;
 			return;
@@ -236,11 +241,11 @@ public class Calculator extends Feature {
 		 * ************* */
 		if (event.message.getFormattedText().equals("§r§cFehler:§r§4 §r§4Du hast nicht genug Guthaben.§r")) {
 			event.cancel();
-			BigDecimal moneyRequired = lastPayment.subtract(getBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
+			BigDecimal moneyRequired = lastPayment.subtract(getBalance()).setScale(0, CEILING).max(THOUSAND);
 			BigDecimal difference = moneyRequired.subtract(new BigDecimal(Balances.getBankBalance()));
 
 			// Bank balance is smaller than money required, unable to withdraw
-			if (difference.compareTo(BigDecimal.ZERO) > 0) {
+			if (difference.compareTo(ZERO) > 0) {
 				display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", difference.toPlainString());
 			} else {
 				// Withdraw difference
@@ -277,7 +282,7 @@ public class Calculator extends Feature {
 				return;
 
 			int decPlaces = Math.min(Math.max(decimalPlaces.get(), 0), 98);
-			String text = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(exp).setScale(decPlaces, RoundingMode.HALF_UP));
+			String text = Constants.DECIMAL_FORMAT_98.format(new BigDecimal(exp).setScale(decPlaces, HALF_UP));
 			display(Constants.ADDON_PREFIX + "Ergebnis: " + text);
 			labyBridge.copyText(text.replace(".", ""));
 			return;
@@ -302,9 +307,9 @@ public class Calculator extends Feature {
 
 		// If /bank abheben with the exact difference was sent and withdraw is SUGGEST
 		if (lastPaymentReceiver != null && msg.startsWith("/bank abheben")) {
-			BigDecimal moneyRequired = lastPayment.subtract(getBalance()).setScale(0, RoundingMode.CEILING).max(THOUSAND);
-			if (msg.equals(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == WithdrawAction.SUGGEST) {
-				String amount = lastPayment.equals(BigDecimal.ZERO) ? "0.001" : lastPayment.stripTrailingZeros().toPlainString();
+			BigDecimal moneyRequired = lastPayment.subtract(getBalance()).setScale(0, CEILING).max(THOUSAND);
+			if (msg.equals(String.format("/bank abheben %d", moneyRequired.toBigInteger())) && autoWithdraw.get() == SUGGEST) {
+				String amount = lastPayment.equals(ZERO) ? "0.001" : lastPayment.stripTrailingZeros().toPlainString();
 
 				// Wait 1 tick (chat screen still open)
 				TickScheduler.runNextRenderTick(() -> suggest("/pay %s %s", lastPaymentReceiver, amount));
@@ -322,10 +327,10 @@ public class Calculator extends Feature {
 					display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getBalance()).toPlainString());
 				}  else {
 					send("/bank abheben 1000");
-					send("/bank einzahlen %d", getBalance().add(THOUSAND).setScale(0, RoundingMode.FLOOR).toBigInteger());
+					send("/bank einzahlen %d", getBalance().add(THOUSAND).setScale(0, FLOOR).toBigInteger());
 				}
 			} else
-				send("/bank einzahlen %d", getBalance().setScale(0, RoundingMode.FLOOR).toBigInteger());
+				send("/bank einzahlen %d", getBalance().setScale(0, FLOOR).toBigInteger());
 			return;
 		} else if (msg.equals("/bank abheben *") && starPlaceholder.get()) {
 			long balance = Balances.getBankBalance();
@@ -336,7 +341,7 @@ public class Calculator extends Feature {
 			event.cancel();
 			return;
 		} else if (starPlaceholder.get()) {
-			Matcher matcher = Pattern.compile(String.format("/pay %s \\*", Constants.UNFORMATTED_PLAYER_NAME_PATTERN)).matcher(msg);
+			Matcher matcher = Pattern.compile(String.format("/pay %s \\*", UNFORMATTED_PLAYER_NAME_PATTERN)).matcher(msg);
 			if (matcher.matches()) {
 				send("/pay %s %s", matcher.group("player"), getBalance().stripTrailingZeros().toPlainString());
 				event.cancel();
@@ -403,7 +408,7 @@ public class Calculator extends Feature {
 
 			// Replace value
 			int decPlaces = transactionCommand ? 3 : Math.min(Math.max(decimalPlaces.get(), 0), 98);
-			msg = msg.substring(0, matcher.start("match")) + Constants.DECIMAL_FORMAT_98.format(new BigDecimal(expResult).setScale(decPlaces, RoundingMode.HALF_UP)) + msg.substring(matcher.end("match"));
+			msg = msg.substring(0, matcher.start("match")) + Constants.DECIMAL_FORMAT_98.format(new BigDecimal(expResult).setScale(decPlaces, HALF_UP)) + msg.substring(matcher.end("match"));
 
 			// Fix symbols
 			if (transactionCommand)
@@ -483,7 +488,7 @@ public class Calculator extends Feature {
 			try {
 				// Round number
 				BigDecimal num = new BigDecimal(message.replace(".", "").replace(",", "."));
-				message = Constants.DECIMAL_FORMAT_98.format(num.setScale(0, RoundingMode.HALF_UP));
+				message = Constants.DECIMAL_FORMAT_98.format(num.setScale(0, HALF_UP));
 
 				// Fix formatting for GrieferGames' parser
 				message = message.replace(",", "").replace(".", "");
@@ -494,7 +499,7 @@ public class Calculator extends Feature {
 		ChatQueue.send(message);
 	}
 
-	private enum WithdrawAction implements Named {
+	enum WithdrawAction implements Named {
 
 		NONE("Nein"), SUGGEST("Vorschlagen"), SEND("Senden");
 

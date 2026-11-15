@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldEvent;
 import dev.l3g7.griefer_utils.core.settings.types.NumberSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -18,7 +18,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -28,6 +27,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType.GUI;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 /**
@@ -50,7 +50,7 @@ public class ArmorBreakWarning extends Feature {
 		.icon("diamond_chestplate");
 
 	@EventListener
-	public void onClientTick(TickEvent.ClientTickEvent event) {
+	public void onClientTick(ClientTickEvent event) {
 		if (player() == null)
 			return;
 
@@ -103,7 +103,7 @@ public class ArmorBreakWarning extends Feature {
 
 		// Transform
 		Reflection.invoke(renderItem, "setupGuiTransform", 0, 0, model.isGui3d());
-		model.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GUI);
+		model.getItemCameraTransforms().applyTransform(GUI);
 		GlStateManager.scale(0.5f, 0.5f, 0.5f);
 		GlStateManager.translate(-0.5f, -0.5f, -0.5f);
 

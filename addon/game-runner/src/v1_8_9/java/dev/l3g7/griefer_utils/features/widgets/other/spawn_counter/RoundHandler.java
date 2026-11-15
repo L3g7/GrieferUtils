@@ -27,6 +27,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 import static net.minecraft.util.EnumFacing.*;
@@ -34,7 +35,7 @@ import static net.minecraft.util.EnumFacing.*;
 class RoundHandler {
 
 	private static final EnumFacing[] HORIZONTALS = new EnumFacing[] {SOUTH, WEST, NORTH, EAST};
-	private static final List<Citybuild> excludedCitybuilds = ImmutableList.of(Citybuild.NATURE, Citybuild.EXTREME, Citybuild.CBE);
+	private static final List<Citybuild> excludedCitybuilds = ImmutableList.of(NATURE, EXTREME, CBE);
 	private static final byte[] quadrantData = new byte[] {
 		-1, -1,
 		-1, +1,
@@ -170,7 +171,7 @@ class RoundHandler {
 	}
 
 	private boolean isSpawnMiddle(BlockPos pos) {
-		Block targetBlock = Citybuild.current() == Citybuild.EVENT ? Blocks.quartz_block : Blocks.piston;
+		Block targetBlock = Citybuild.current() == EVENT ? Blocks.quartz_block : Blocks.piston;
 		return world().getBlockState(pos).getBlock() == targetBlock;
 	}
 

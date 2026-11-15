@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 public abstract class PacketEvent<P extends Packet<?>> extends Event {
 
@@ -67,7 +68,7 @@ public abstract class PacketEvent<P extends Packet<?>> extends Event {
 		@Mixin(NetworkManager.class)
 		private static class MixinNetworkManager {
 
-			@Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/Packet;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Packet;processPacket(Lnet/minecraft/network/INetHandler;)V", shift = At.Shift.AFTER))
+			@Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/Packet;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Packet;processPacket(Lnet/minecraft/network/INetHandler;)V", shift = AFTER))
 			public void injectChannelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
 				new PacketReceivedEvent<>(packet, c(this)).fire();
 			}
@@ -82,7 +83,7 @@ public abstract class PacketEvent<P extends Packet<?>> extends Event {
 				LAST_QUEUED_PACKET = lvt_0_1_;
 			}
 
-			@Inject(method = "checkThreadAndEnqueue", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/IThreadListener;addScheduledTask(Ljava/lang/Runnable;)Lcom/google/common/util/concurrent/ListenableFuture;", shift = At.Shift.AFTER))
+			@Inject(method = "checkThreadAndEnqueue", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/IThreadListener;addScheduledTask(Ljava/lang/Runnable;)Lcom/google/common/util/concurrent/ListenableFuture;", shift = AFTER))
 			private static <T extends INetHandler> void injectCheckThreadAndEnqueue(Packet<T> lvt_0_1_, T lvt_1_1_, IThreadListener lvt_2_1_, CallbackInfo ci) {
 				lvt_2_1_.addScheduledTask(() -> new PacketReceivedEvent<>(LAST_QUEUED_PACKET, null).fire());
 			}

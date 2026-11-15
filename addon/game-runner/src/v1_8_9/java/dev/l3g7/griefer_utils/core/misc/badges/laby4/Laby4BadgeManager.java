@@ -14,12 +14,11 @@ import dev.l3g7.griefer_utils.core.misc.badges.Badges;
 import dev.l3g7.griefer_utils.core.misc.badges.Badges.BadgeManager;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
-import net.labymod.api.client.component.format.NamedTextColor;
 import net.labymod.api.client.gfx.pipeline.renderer.text.TextRenderingOptions;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.gui.screen.state.ScreenCanvas;
-import net.labymod.api.client.render.font.FontSize;
+import net.labymod.api.client.render.font.FontSize.PredefinedFontSize;
 import net.labymod.api.client.resources.ResourceLocation;
 import net.labymod.api.util.math.MathHelper;
 
@@ -28,6 +27,7 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showPercentage;
+import static net.labymod.api.client.component.format.NamedTextColor.*;
 
 @Bridge
 @Singleton
@@ -54,7 +54,7 @@ public class Laby4BadgeManager implements BadgeManager {
 			return;
 
 		ScreenCanvas canvas = context.canvas();
-		float fontSize = FontSize.PredefinedFontSize.SMALL.fontSize().getSize();
+		float fontSize = PredefinedFontSize.SMALL.fontSize().getSize();
 		int iconSize = (int) ((float) 12 * fontSize);
 
 		// Render GrieferUtils stats
@@ -72,11 +72,11 @@ public class Laby4BadgeManager implements BadgeManager {
 		}
 
 		// Render LabyMod badge to original stats
-		Component component = Component.text(labyUserCount, NamedTextColor.GRAY)
-			.append(Component.text("/", NamedTextColor.DARK_GRAY))
-			.append(Component.text(labyOnlineCount, NamedTextColor.GRAY))
+		Component component = Component.text(labyUserCount, GRAY)
+			.append(Component.text("/", DARK_GRAY))
+			.append(Component.text(labyOnlineCount, GRAY))
 			.append(Component.space())
-			.append(Component.text(MathHelper.ceil(100F / (float) labyOnlineCount * (float) labyUserCount) + "%", NamedTextColor.GREEN));
+			.append(Component.text(MathHelper.ceil(100F / (float) labyOnlineCount * (float) labyUserCount) + "%", GREEN));
 
 		var icon = Icon.svg(LABY_BADGE);
 

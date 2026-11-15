@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_pie_menu.laby4.Page.Entry;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.CitybuildSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.types.StringSettingImpl;
 import net.labymod.api.client.component.Component;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class EntryConfig extends net.labymod.api.configuration.loader.Config implements ListSettingConfig, Page.Entry {
+public class EntryConfig extends net.labymod.api.configuration.loader.Config implements ListSettingConfig, Entry {
 
 	public final StringSettingImpl name = (StringSettingImpl) StringSetting.create()
 		.name("Name")

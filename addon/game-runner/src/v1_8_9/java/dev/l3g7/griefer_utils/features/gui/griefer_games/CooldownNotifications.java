@@ -39,6 +39,7 @@ import net.minecraft.network.play.server.S30PacketWindowItems;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
@@ -199,13 +200,13 @@ public class CooldownNotifications extends Feature {
 			// Display cooldown information on server join
 			display(TITLE);
 
-			for (Map.Entry<String, Long> entry : endDates.entrySet())
+			for (Entry<String, Long> entry : endDates.entrySet())
 				if (entry.getValue() == 0)
 					display("§8» §e%s§7:§r %s", entry.getKey(), "§aVerfügbar");
-			for (Map.Entry<String, Long> entry : endDates.entrySet())
+			for (Entry<String, Long> entry : endDates.entrySet())
 				if (entry.getValue() > 0)
 					display("§8» §e%s§7:§r %s", entry.getKey(), "§6Verfügbar am " + DATE_FORMAT.format(new Date(entry.getValue())));
-			for (Map.Entry<String, Long> entry : endDates.entrySet())
+			for (Entry<String, Long> entry : endDates.entrySet())
 				if (entry.getValue() < 0)
 					display("§8» §e%s§7:§r %s", entry.getKey(), "§cNicht freigeschaltet");
 		}
@@ -245,7 +246,7 @@ public class CooldownNotifications extends Feature {
 	private void saveCooldowns() {
 		JsonObject o = new JsonObject();
 		synchronized (endDates) {
-			for (Map.Entry<String, Long> entry : endDates.entrySet())
+			for (Entry<String, Long> entry : endDates.entrySet())
 				o.addProperty(entry.getKey(), entry.getValue());
 		}
 
@@ -262,7 +263,7 @@ public class CooldownNotifications extends Feature {
 			return;
 
 		endDates.clear();
-		for (Map.Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet()) {
+		for (Entry<String, JsonElement> e : Config.get(path).getAsJsonObject().entrySet()) {
 			if (e.getKey().startsWith("/clan") || e.getKey().contains("Riesige GS") || e.getKey().equals("/premium"))
 				continue;
 

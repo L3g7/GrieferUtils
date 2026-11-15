@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.*;
+import dev.l3g7.griefer_utils.core.misc.gui.elements.SelectButtonGroup.Selectable;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
@@ -25,7 +26,11 @@ import org.lwjgl.opengl.GL11;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar.EnumMouseAction.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getButtonHeight;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_reactor.laby4.AddChatReactionGui.TextCompareMode.CONTAINS;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_reactor.laby4.AddChatReactionGui.TextCompareMode.EQUALS;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_reactor.laby4.AddChatReactionGui.TextType.*;
 
 public class AddChatReactionGui extends Gui {
 
@@ -98,7 +103,7 @@ public class AddChatReactionGui extends Gui {
 		scrollbar.init();
 
 		// Text type selection
-		textTypeInput = createSelectGroup(TextType.NONE, "Text-Form")
+		textTypeInput = createSelectGroup(NONE, "Text-Form")
 			.y(top);
 
 		int width = textTypeInput.width();
@@ -116,7 +121,7 @@ public class AddChatReactionGui extends Gui {
 			.width(width)
 			.renderGroup(RENDER_GROUP_SELECTED);
 
-		compareModeInput = createDropDown(TextCompareMode.CONTAINS, "Auslösen")
+		compareModeInput = createDropDown(CONTAINS, "Auslösen")
 			.y(commandInput.bottom() + PADDING)
 			.width(width)
 			.renderGroup(RENDER_GROUP_TEXT);
@@ -132,10 +137,10 @@ public class AddChatReactionGui extends Gui {
 
 		// Initialize inputs with default values
 		ChatReaction reaction = editedReaction.reaction;
-		textTypeInput.select(reaction.regEx ? TextType.REGEX : TextType.TEXT);
+		textTypeInput.select(reaction.regEx ? REGEX : TEXT);
 		triggerInput.setText(reaction.trigger);
 		commandInput.setText(reaction.command);
-		compareModeInput.setSelected(reaction.matchAll ? TextCompareMode.EQUALS : TextCompareMode.CONTAINS);
+		compareModeInput.setSelected(reaction.matchAll ? EQUALS : CONTAINS);
 		citybuildInput.setSelected(reaction.citybuild);
 	}
 
@@ -147,11 +152,11 @@ public class AddChatReactionGui extends Gui {
 		GL11.glTranslated(0, scrollbar.getScrollY(), 0);
 
 		// Configure content
-		if (textTypeInput.getSelected() == TextType.NONE) {
+		if (textTypeInput.getSelected() == NONE) {
 			cancelButton.yPosition = saveButton.yPosition = (int) textTypeInput.bottom() + 35; // 35px padding (as in initGui)
 		} else {
 			int bottom;
-			if (textTypeInput.getSelected() == TextType.TEXT) {
+			if (textTypeInput.getSelected() == TEXT) {
 				triggerInput.label("Text").placeholder("[GrieferUtils] /freekiste ist nun verfügbar!");
 				commandInput.placeholder("/gu:run_on_cb /freekiste");
 				bottom = (int) compareModeInput.bottom();
@@ -186,7 +191,7 @@ public class AddChatReactionGui extends Gui {
 		// Draw content
 		draw(mouseX, mouseY);
 
-		if (textTypeInput.getSelected() != TextType.NONE)
+		if (textTypeInput.getSelected() != NONE)
 			draw(mouseX, mouseY, RENDER_GROUP_SELECTED);
 
 		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
@@ -227,11 +232,11 @@ public class AddChatReactionGui extends Gui {
 		if (mouseY < HEADER_HEIGHT - 5) // allow click in gradient (5px)
 			return;
 
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
+		scrollbar.mouseAction(mouseX, mouseY, CLICKED);
 		mouseY -= scrollbar.getScrollY();
 
 		// prioritize citybuild as it overlaps with the save and close buttons
-		if (textTypeInput.getSelected() != TextType.NONE && citybuildInput.onClick(mouseX, mouseY, mouseButton))
+		if (textTypeInput.getSelected() != NONE && citybuildInput.onClick(mouseX, mouseY, mouseButton))
 			return;
 
 		for (Clickable clickable : clickables)
@@ -242,14 +247,14 @@ public class AddChatReactionGui extends Gui {
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
 		mouseY -= scrollbar.getScrollY();
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.RELEASED);
+		scrollbar.mouseAction(mouseX, mouseY, RELEASED);
 		super.mouseReleased(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
 		mouseY -= scrollbar.getScrollY();
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
+		scrollbar.mouseAction(mouseX, mouseY, DRAGGING);
 		super.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
 	}
 
@@ -278,7 +283,7 @@ public class AddChatReactionGui extends Gui {
 			// Command -> Citybuild / Compare mode
 			else if (commandInput.isFocused()) {
 				commandInput.setFocused(false);
-				if (textTypeInput.getSelected() == TextType.REGEX)
+				if (textTypeInput.getSelected() == REGEX)
 					citybuildInput.onClick(citybuildInput.getX(), citybuildInput.getY(), 0); // Use onClick so scrollbar is initialized
 				else
 					compareModeInput.setOpen(true);
@@ -307,8 +312,8 @@ public class AddChatReactionGui extends Gui {
 
 	private void save() {
 		ChatReaction reaction = editedReaction != null ? editedReaction.reaction : new ChatReaction();
-		reaction.regEx = textTypeInput.getSelected() == TextType.REGEX;
-		reaction.matchAll = compareModeInput.getSelected() == TextCompareMode.EQUALS;
+		reaction.regEx = textTypeInput.getSelected() == REGEX;
+		reaction.matchAll = compareModeInput.getSelected() == EQUALS;
 		reaction.trigger = triggerInput.getText();
 		reaction.command = commandInput.getText();
 		reaction.citybuild = citybuildInput.getSelected();
@@ -330,7 +335,7 @@ public class AddChatReactionGui extends Gui {
 		close();
 	}
 
-	private enum TextType implements SelectButtonGroup.Selectable {
+	enum TextType implements Selectable {
 
 		NONE("", ""), TEXT("normaler Text", "book_and_quill"), REGEX("regulärer Ausdruck", "cpu");
 
@@ -352,7 +357,7 @@ public class AddChatReactionGui extends Gui {
 		}
 	}
 
-	private enum TextCompareMode implements Named {
+	enum TextCompareMode implements Named {
 
 		CONTAINS("Wenn die Nachricht den Text beinhaltet"), EQUALS("Wenn die Nachricht dem Text entspricht");
 

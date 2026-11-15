@@ -11,12 +11,13 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @SuppressWarnings("ReadWriteStringCanBeUsed")
 public class Identifier {
@@ -48,14 +49,14 @@ public class Identifier {
 	private Identifier(Path path) {
 		try {
 			if (Files.exists(path)) {
-				identifier = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+				identifier = new String(Files.readAllBytes(path), UTF_8);
 			} else {
 				// Generate ident
 				byte[] data = new byte[16];
 				SecureRandom.getInstanceStrong().nextBytes(data);
 				identifier = bytesToHex(data);
 
-				Files.write(path, identifier.getBytes(StandardCharsets.UTF_8));
+				Files.write(path, identifier.getBytes(UTF_8));
 
 				try {
 					Files.setAttribute(path, "dos:hidden", true);

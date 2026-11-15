@@ -20,7 +20,6 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Laby4Setting;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.gui.icon.catalog.IconsCommon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
 import net.labymod.api.configuration.loader.Config;
@@ -39,6 +38,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static net.labymod.api.client.gui.icon.catalog.IconsCommon.GEAR;
 
 public class ListSettingImpl<E extends ListEntry> extends net.labymod.api.configuration.settings.type.list.ListSetting implements Laby4Setting<ListSetting<E>, List<E>>, ListSetting<E> {
 
@@ -315,7 +315,7 @@ public class ListSettingImpl<E extends ListEntry> extends net.labymod.api.config
 
 			hasHookedEdit = parent.customEdit != null;
 			if (hasHookedEdit) {
-				ButtonWidget widget = ButtonWidget.component(null, IconsCommon.GEAR,
+				ButtonWidget widget = ButtonWidget.component(null, GEAR,
 						() -> parent.customEdit.accept(c(entry)))
 					.addId("mods-setting-advanced-button"); // Fix for button size
 

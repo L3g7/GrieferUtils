@@ -11,6 +11,8 @@ import dev.l3g7.griefer_utils.features.player.self_disguise.Disguise;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.item.EnumDyeColor;
 
+import static net.minecraft.item.EnumDyeColor.WHITE;
+
 /**
  * Disguised as {@link EntityWolf}.
  */
@@ -28,7 +30,7 @@ public class WolfDisguise extends Disguise<EntityWolf> {
 		boolean tamed = arguments.getLiteral("tamed");
 		String colorName = arguments.getEnum("white", colors);
 
-		EnumDyeColor color = EnumDyeColor.WHITE;
+		EnumDyeColor color = WHITE;
 		for (EnumDyeColor value : EnumDyeColor.values())
 			if (value.getName().equalsIgnoreCase(colorName))
 				color = value;

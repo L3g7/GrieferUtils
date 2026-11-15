@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.core.events.network;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
@@ -22,6 +21,7 @@ import net.minecraft.network.play.server.S47PacketPlayerListHeaderFooter;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGHEST;
 
 /**
  * An event related to the server connection.
@@ -51,12 +51,12 @@ public class ServerEvent extends Event {
 
 		private static boolean pendingGGHeader = false;
 
-		@EventListener(priority = Priority.HIGHEST)
+		@EventListener(priority = HIGHEST)
 		private static void onServerJoin(ServerJoinEvent event) {
 			pendingGGHeader = true;
 		}
 
-		@EventListener(priority = Priority.HIGHEST)
+		@EventListener(priority = HIGHEST)
 		private static void onPacketReceive(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
 			if (pendingGGHeader && event.packet.getHeader().getUnformattedText().contains("GrieferGames.net")) {
 				pendingGGHeader = false; // TODO cleanup

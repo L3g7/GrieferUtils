@@ -18,8 +18,6 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons.TextureIcon;
-import net.labymod.api.client.gui.icon.catalog.IconsCommon;
-import net.labymod.main.ModTextures;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,6 +29,8 @@ import java.util.function.Consumer;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.misc.VersionComparator.VERSION_COMPARATOR;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static net.labymod.api.client.gui.icon.catalog.IconsCommon.GEAR;
+import static net.labymod.main.ModTextures.BUTTON_ADVANCED;
 
 @Singleton
 public class Changelog {
@@ -92,13 +92,13 @@ public class Changelog {
 	private void addIconLaby4(ButtonSetting button) {
 		button
 			.<dev.l3g7.griefer_utils.labymod.laby4.settings.types.ButtonSettingImpl>into()
-			.buttonIcon(IconsCommon.GEAR);
+			.buttonIcon(GEAR);
 	}
 
 	private void addIconLaby3(ButtonSetting button) {
 		button
 			.<dev.l3g7.griefer_utils.labymod.laby3.settings.types.ButtonSettingImpl>into()
-			.buttonIcon(new TextureIcon(ModTextures.BUTTON_ADVANCED));
+			.buttonIcon(new TextureIcon(BUTTON_ADVANCED));
 	}
 
 }

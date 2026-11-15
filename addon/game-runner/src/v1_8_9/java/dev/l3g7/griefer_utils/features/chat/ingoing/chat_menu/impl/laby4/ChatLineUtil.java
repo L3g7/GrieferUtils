@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.impl.laby4;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Pair;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import net.labymod.api.client.chat.ChatMessage;
 import net.labymod.api.client.chat.advanced.ChatMessagesWidget;
 import net.labymod.api.client.gui.screen.ScreenContext;
@@ -25,13 +25,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static org.spongepowered.asm.mixin.injection.At.Shift.BEFORE;
+import static org.spongepowered.asm.mixin.injection.callback.LocalCapture.CAPTURE_FAILHARD;
 
 @ExclusiveTo(LABY_4)
 public class ChatLineUtil {
@@ -61,7 +61,7 @@ public class ChatLineUtil {
 	}
 
 	@EventListener
-	private static void onMessageModify(MessageEvent.MessageModifyEvent event) {
+	private static void onMessageModify(MessageModifyEvent event) {
 		UNMODIFIED_COMPONENTS.add(event.original);
 	}
 
@@ -94,13 +94,13 @@ public class ChatLineUtil {
 	@Mixin(value = DefaultChatController.class, remap = false)
 	private static class MixinDefaultChatController {
 
-		@Inject(method = "addMessage(Lnet/labymod/api/client/chat/ChatMessage;Z)Lnet/labymod/api/client/chat/ChatMessage;", at = @At(value = "INVOKE", target = "Lnet/labymod/api/event/client/chat/ChatReceiveEvent;isCancelled()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
+		@Inject(method = "addMessage(Lnet/labymod/api/client/chat/ChatMessage;Z)Lnet/labymod/api/client/chat/ChatMessage;", at = @At(value = "INVOKE", target = "Lnet/labymod/api/event/client/chat/ChatReceiveEvent;isCancelled()Z"), locals = CAPTURE_FAILHARD)
 		private void injectAddMessageCancel(ChatMessage chatMessage, boolean justReceived, CallbackInfoReturnable<ChatMessage> cir, DefaultChatMessage message, ChatReceiveEvent event) {
 			if (event.isCancelled())
 				UNMODIFIED_COMPONENTS.remove(UNMODIFIED_COMPONENTS.size() - 1);
 		}
 
-		@Inject(method = "addMessage(Lnet/labymod/api/client/chat/ChatMessage;Z)Lnet/labymod/api/client/chat/ChatMessage;", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V", shift = BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
+		@Inject(method = "addMessage(Lnet/labymod/api/client/chat/ChatMessage;Z)Lnet/labymod/api/client/chat/ChatMessage;", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V", shift = BEFORE), locals = CAPTURE_FAILHARD)
 		private void injectAddMessagePost(ChatMessage chatMessage, boolean justReceived, CallbackInfoReturnable<ChatMessage> cir, DefaultChatMessage message) {
 			if (justReceived)
 				MODIFIED_COMPONENTS.add((IChatComponent) message.component());

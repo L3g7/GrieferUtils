@@ -21,7 +21,6 @@ import net.labymod.api.client.gui.screen.activity.Link;
 import net.labymod.api.client.gui.screen.key.InputType;
 import net.labymod.api.client.gui.screen.key.Key;
 import net.labymod.api.client.gui.screen.widget.Widget;
-import net.labymod.api.client.gui.screen.widget.attributes.ObjectFitType;
 import net.labymod.api.client.gui.screen.widget.overlay.ScreenOverlay;
 import net.labymod.api.client.gui.screen.widget.widgets.DivWidget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
@@ -34,6 +33,8 @@ import net.labymod.api.util.bounds.ModifyReason;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsActivity;
 
 import java.util.UUID;
+
+import static net.labymod.api.client.gui.screen.widget.attributes.ObjectFitType.CONTAIN;
 
 public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
@@ -88,7 +89,7 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 			// Player preview
 			previewWidget = new IconWidget(createIcon(defaultName));
-			previewWidget.objectFit().set(ObjectFitType.CONTAIN);
+			previewWidget.objectFit().set(CONTAIN);
 			rows.addChild(previewWidget);
 
 			// Text input

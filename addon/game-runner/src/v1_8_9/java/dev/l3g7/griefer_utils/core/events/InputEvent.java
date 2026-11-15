@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static org.objectweb.asm.Opcodes.GOTO;
+import static org.spongepowered.asm.mixin.injection.At.Shift.BEFORE;
 
 public class InputEvent extends Event {
 
@@ -25,14 +26,14 @@ public class InputEvent extends Event {
 	@Mixin(Minecraft.class)
 	private static class MixinMinecraft {
 
-		@Inject(method = "runTick", at = @At(value = "JUMP", opcode = GOTO, ordinal = 1, shift = At.Shift.BEFORE), slice = @Slice(
+		@Inject(method = "runTick", at = @At(value = "JUMP", opcode = GOTO, ordinal = 1, shift = BEFORE), slice = @Slice(
 			from = @At(value = "INVOKE:LAST", target = "Lnet/minecraft/client/Minecraft;updateDebugProfilerName(I)V")
 		))
 		public void injectKeyboardEvent(CallbackInfo ci) {
 			new KeyInputEvent().fire();
 		}
 
-		@Inject(method = "runTick", at = @At(value = "JUMP", opcode = GOTO, ordinal = 0, shift = At.Shift.BEFORE), slice = @Slice(
+		@Inject(method = "runTick", at = @At(value = "JUMP", opcode = GOTO, ordinal = 0, shift = BEFORE), slice = @Slice(
 			from = @At(value = "INVOKE:LAST", target = "Lnet/minecraft/client/gui/GuiScreen;handleMouseInput()V")
 		))
 		public void injectMouseEvent(CallbackInfo ci) {

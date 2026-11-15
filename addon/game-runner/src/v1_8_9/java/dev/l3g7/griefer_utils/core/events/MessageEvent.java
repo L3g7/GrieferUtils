@@ -18,7 +18,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Supplier;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.event.client.chat.ChatMessageSendEvent;
@@ -174,7 +174,7 @@ public class MessageEvent extends Event {
 
 			@Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
 			public void injectSendChatMessage(String message, CallbackInfo ci) {
-				if (message != null && !message.trim().isEmpty() && new MessageEvent.MessageAboutToBeSentEvent(message).fire().isCanceled())
+				if (message != null && !message.trim().isEmpty() && new MessageAboutToBeSentEvent(message).fire().isCanceled())
 					ci.cancel();
 			}
 
@@ -193,7 +193,7 @@ public class MessageEvent extends Event {
 		}
 
 		@EventListener
-		private static void onPacketReceive(PacketEvent.PacketReceiveEvent<S02PacketChat> event) {
+		private static void onPacketReceive(PacketReceiveEvent<S02PacketChat> event) {
 			if (new MessageReceiveEvent(event.packet.getChatComponent(), event.packet.getType()).fire().isCanceled())
 				event.cancel();
 		}

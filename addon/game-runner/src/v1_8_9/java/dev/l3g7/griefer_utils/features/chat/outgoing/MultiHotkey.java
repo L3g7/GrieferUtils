@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.chat.outgoing;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
@@ -82,7 +82,7 @@ public class MultiHotkey extends Feature {
 				return;
 
 			String command = values.get(triggers %= values.size()).get();
-			if (!MessageEvent.MessageSendEvent.post(command))
+			if (!MessageSendEvent.post(command))
 				player().sendChatMessage(command);
 
 			triggers++;

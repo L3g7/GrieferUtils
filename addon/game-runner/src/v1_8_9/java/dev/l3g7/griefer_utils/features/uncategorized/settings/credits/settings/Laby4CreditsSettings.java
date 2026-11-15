@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.features.uncategorized.settings.credits.settings;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge;
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
@@ -24,6 +23,7 @@ import net.labymod.api.configuration.settings.type.AbstractSetting;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGHEST;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.credits.Credits.credits;
 
 @Bridge
@@ -72,7 +72,7 @@ public class Laby4CreditsSettings implements CreditsSettings {
 
 	}
 
-	@EventListener(priority = Priority.HIGHEST)
+	@EventListener(priority = HIGHEST)
 	public void onMessageSend(MessageSendEvent event) {
 		if (event.message.equals("/gu:y6Y7s8G88J1OLHwhMTEQYPbJ")) {
 			event.cancel();

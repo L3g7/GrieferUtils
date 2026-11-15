@@ -30,16 +30,19 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S0CPacketSpawnPlayer;
 import net.minecraft.network.play.server.S0EPacketSpawnObject;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
+import net.minecraft.network.play.server.S38PacketPlayerListItem.AddPlayerData;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.world.WorldSettings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Mouse;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.ADD_PLAYER;
+import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.REMOVE_PLAYER;
+import static net.minecraft.world.WorldSettings.GameType.SURVIVAL;
 
 @Singleton
 public class FixOrbSeller extends Feature {
@@ -69,7 +72,7 @@ public class FixOrbSeller extends Feature {
 			return;
 
 		JsonObject ids = Config.get(key + "ids").getAsJsonObject();
-		for (Map.Entry<String, JsonElement> entry : ids.entrySet())
+		for (Entry<String, JsonElement> entry : ids.entrySet())
 			cbToId.put(Citybuild.parse(entry.getKey()), entry.getValue().getAsInt());
 
 		new Timer().schedule(new TimerTask() {
@@ -137,7 +140,7 @@ public class FixOrbSeller extends Feature {
 			if (packet.getAction() != ADD_PLAYER)
 				return;
 
-			for (S38PacketPlayerListItem.AddPlayerData entry : packet.getEntries()) {
+			for (AddPlayerData entry : packet.getEntries()) {
 				if ("§6Händler".equals(entry.getProfile().getName())) {
 					orbSellerUUID = entry.getProfile().getId();
 					if (cbToId.containsKey(Citybuild.current()))
@@ -164,7 +167,7 @@ public class FixOrbSeller extends Feature {
 		// Add seller to tab list, required for the S0CPacketSpawnPlayer and the skin
 		S38PacketPlayerListItem s38 = new S38PacketPlayerListItem();
 		Reflection.set(s38, "action", ADD_PLAYER);
-		s38.getEntries().add(s38.new AddPlayerData(gp, 0, WorldSettings.GameType.SURVIVAL, new ChatComponentText("§6Händler")));
+		s38.getEntries().add(s38.new AddPlayerData(gp, 0, SURVIVAL, new ChatComponentText("§6Händler")));
 		s38.processPacket(mc().getNetHandler());
 
 		// Spawn the seller himself
@@ -177,7 +180,7 @@ public class FixOrbSeller extends Feature {
 		world().getEntityByID(id).setRotationYawHead(yaw);
 
 		// Remove player from tab list
-		Reflection.set(s38, "action", S38PacketPlayerListItem.Action.REMOVE_PLAYER);
+		Reflection.set(s38, "action", REMOVE_PLAYER);
 		s38.processPacket(mc().getNetHandler());
 		adding = false;
 	}
@@ -187,7 +190,7 @@ public class FixOrbSeller extends Feature {
 		Config.set(key + "reset", new JsonPrimitive(getNextServerRestart()));
 
 		JsonObject ids = new JsonObject();
-		for (Map.Entry<Citybuild, Integer> entry : cbToId.entrySet())
+		for (Entry<Citybuild, Integer> entry : cbToId.entrySet())
 			ids.addProperty(entry.getKey().name(), entry.getValue());
 
 		Config.set(key + "ids", ids);

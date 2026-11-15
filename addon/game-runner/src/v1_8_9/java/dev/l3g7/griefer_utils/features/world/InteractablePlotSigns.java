@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.world;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -35,7 +35,7 @@ public class InteractablePlotSigns extends Feature {
 		.icon("sign");
 
 	@EventListener
-	public void onPacketSend(PacketEvent.PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
+	public void onPacketSend(PacketSendEvent<C08PacketPlayerBlockPlacement> event) {
 		WorldClient world = world();
 		if (world == null)
 			return;

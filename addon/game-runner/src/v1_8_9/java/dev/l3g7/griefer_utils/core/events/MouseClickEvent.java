@@ -26,19 +26,19 @@ public class MouseClickEvent extends Event {
 
 		@Inject(method = "clickMouse", at = @At("HEAD"), cancellable = true)
 		public void injectClickMouse(CallbackInfo ci) {
-			if (new MouseClickEvent.LeftClickEvent().fire().isCanceled())
+			if (new LeftClickEvent().fire().isCanceled())
 				ci.cancel();
 		}
 
 		@Inject(method = "rightClickMouse", at = @At("HEAD"), cancellable = true)
 		public void injectRightClickMouse(CallbackInfo ci) {
-			if (new MouseClickEvent.RightClickEvent().fire().isCanceled())
+			if (new RightClickEvent().fire().isCanceled())
 				ci.cancel();
 		}
 
 		@ModifyArg(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;sendClickBlockToController(Z)V"))
 		public boolean injectSendClickBlockToController(boolean leftClick) {
-			return leftClick && !new MouseClickEvent.LeftClickEvent().fire().isCanceled();
+			return leftClick && !new LeftClickEvent().fire().isCanceled();
 		}
 
 	}

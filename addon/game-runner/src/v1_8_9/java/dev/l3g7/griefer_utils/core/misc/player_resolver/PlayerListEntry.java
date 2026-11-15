@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.core.misc.player_resolver;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import net.minecraft.util.ResourceLocation;
@@ -17,6 +16,8 @@ import net.minecraft.util.ResourceLocation;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.UNFORMATTED_PLAYER_NAME_PATTERN;
 
 public class PlayerListEntry implements ListEntry {
 
@@ -53,8 +54,8 @@ public class PlayerListEntry implements ListEntry {
 	}
 
 	public static PlayerListEntry fromName(String name) {
-		if (!Constants.UNFORMATTED_PLAYER_NAME_PATTERN.matcher(name).matches())
-			return PlayerListEntry.INVALID_PLAYER;
+		if (!UNFORMATTED_PLAYER_NAME_PATTERN.matcher(name).matches())
+			return INVALID_PLAYER;
 
 		return NAME_LOOKUP_MAP.computeIfAbsent(name, k -> new PlayerListEntry(name, null));
 	}
@@ -62,7 +63,7 @@ public class PlayerListEntry implements ListEntry {
 	public static PlayerListEntry fromUUID(String uuid) {
 		uuid = StringUtil.normalizeUUID(uuid);
 		if (!UUID_PATTERN.matcher(uuid).matches())
-			return PlayerListEntry.INVALID_PLAYER;
+			return INVALID_PLAYER;
 
 		String id = uuid;
 		return UUID_LOOKUP_MAP.computeIfAbsent(uuid, k -> new PlayerListEntry(null, id));

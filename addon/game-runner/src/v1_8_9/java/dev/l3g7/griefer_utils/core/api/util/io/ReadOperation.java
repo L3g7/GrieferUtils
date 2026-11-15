@@ -14,7 +14,6 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Result;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
@@ -29,13 +28,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.concurrent.CompletableFuture;
 
+import static com.google.gson.stream.JsonToken.END_DOCUMENT;
 import static java.lang.Thread.MIN_PRIORITY;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.READ;
 
 public abstract class ReadOperation {
 
@@ -74,7 +74,7 @@ public abstract class ReadOperation {
 	 * Reads the content as a UTF-8 string, elevating errors to RuntimeExceptions.
 	 */
 	public @NotNull String asString() {
-		return new String(asBytes(), StandardCharsets.UTF_8);
+		return new String(asBytes(), UTF_8);
 	}
 
 	/**
@@ -164,9 +164,9 @@ public abstract class ReadOperation {
 	 * GSON 2.2.4-compatible JSON parse.
 	 */
 	private JsonElement parseJsonSync() throws Exception {
-		try (JsonReader reader = new JsonReader(new InputStreamReader(getIn(), StandardCharsets.UTF_8))) {
+		try (JsonReader reader = new JsonReader(new InputStreamReader(getIn(), UTF_8))) {
 			JsonElement element = Streams.parse(reader);
-			if (reader.peek() != JsonToken.END_DOCUMENT)
+			if (reader.peek() != END_DOCUMENT)
 				throw new JsonSyntaxException("Trailing data");
 
 			return element;
@@ -286,7 +286,7 @@ public abstract class ReadOperation {
 
 		@Override
 		protected InputStream getIn() throws IOException {
-			return Files.newInputStream(path, StandardOpenOption.READ);
+			return Files.newInputStream(path, READ);
 		}
 
 	}

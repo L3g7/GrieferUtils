@@ -19,7 +19,6 @@ import net.labymod.api.client.gui.screen.state.states.AbstractGuiRenderState;
 import net.labymod.api.client.gui.screen.util.scissor.ScissorArea;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.api.client.resources.ResourceLocation;
-import net.labymod.api.laby3d.pipeline.RenderStates;
 import net.labymod.api.laby3d.pipeline.material.GuiMaterial;
 import net.labymod.api.util.bounds.Rectangle;
 import net.labymod.core.client.render.font.component.DefaultComponentRendererBuilder;
@@ -41,6 +40,7 @@ import java.util.function.Function;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static net.labymod.api.laby3d.pipeline.RenderStates.GUI_TEXTURED;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Icons {
@@ -212,7 +212,7 @@ public class Icons {
 		private final SynchronousIcon icon;
 
 		public SynchronousRenderState(ScreenContext context, SynchronousIcon icon, Matrix4f pose, float x, float y, float width, float height, @Nullable ScissorArea scissorArea) {
-			super(GuiMaterial.untextured(RenderStates.GUI_TEXTURED), pose, x, y, width, height, scissorArea);
+			super(GuiMaterial.untextured(GUI_TEXTURED), pose, x, y, width, height, scissorArea);
 			this.context = context;
 			this.icon = icon;
 		}

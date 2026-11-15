@@ -9,11 +9,12 @@ package dev.l3g7.griefer_utils.features.gui.integrations.bsf.gui;
 
 import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
-import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFSearchRequest;
+import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFSearchRequest.SearchResponse;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.BSF;
+import dev.l3g7.griefer_utils.features.gui.integrations.bsf.BSF.SearchData;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.Waypoint;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.data.BSFSearchable;
 import dev.l3g7.griefer_utils.features.gui.integrations.bsf.data.Biome;
@@ -29,12 +30,13 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.distanceToPlayer;
 import static dev.l3g7.griefer_utils.features.gui.integrations.bsf.Waypoint.rainbow;
+import static dev.l3g7.griefer_utils.features.gui.integrations.bsf.data.Structure.STRONGHOLD;
 
 class GuiSearches extends GuiBigChest {
 
 	private static boolean addRainbow = false;
 	private final BSFSearchable searchable;
-	private final List<BSF.SearchData> searchData;
+	private final List<SearchData> searchData;
 
 	public GuiSearches(BSFSearchable searchable, String title, TextureItem icon, GuiBigChest previousGui) {
 		this(searchable, title, icon, previousGui, !BSF.isInFarmwelt()
@@ -43,7 +45,7 @@ class GuiSearches extends GuiBigChest {
 			.computeIfAbsent(searchable, k -> new ArrayList<>()));
 	}
 
-	private GuiSearches(BSFSearchable searchable, String title, TextureItem icon, GuiBigChest previousGui, List<BSF.SearchData> searchData) {
+	private GuiSearches(BSFSearchable searchable, String title, TextureItem icon, GuiBigChest previousGui, List<SearchData> searchData) {
 		super(title, Math.max(4, (searchData.size() % 5 == 0 ? 2 : 3 /* fix rounding */) + (searchData.size() / 5)), previousGui);
 		this.searchable = searchable;
 		this.searchData = searchData;
@@ -60,7 +62,7 @@ class GuiSearches extends GuiBigChest {
 		} else {
 			addTextureItem(10, new TextureItem("lens", "§f" + searchNewName), () -> {
 				MinecraftUtil.closeClientsideGUI();
-				List<Integer> exclude = searchData.stream().map(BSF.SearchData::index).collect(Collectors.toList());
+				List<Integer> exclude = searchData.stream().map(SearchData::index).collect(Collectors.toList());
 
 				if (searchable instanceof Structure s) {
 					GUServer.searchStructure(BSF.isInGlitchwelt(), s.ordinal(), exclude).thenAccept(this::onSearchResponse);
@@ -82,7 +84,7 @@ class GuiSearches extends GuiBigChest {
 
 		int counter = 12;
 
-		for (BSF.SearchData coordinates : searchData) {
+		for (SearchData coordinates : searchData) {
 			TextureItem searchItem = icon.copy();
 			searchItem.toolTipStack.setStackDisplayName("§fKoordinaten: " + coordinates.x() + ", " + coordinates.z() + " (" + distanceToPlayer(coordinates.x(), coordinates.z()) + "m)");
 			addTextureItem(counter++, searchItem, () -> {
@@ -112,8 +114,8 @@ class GuiSearches extends GuiBigChest {
 		}
 	}
 
-	private void onSearchResponse(BSFSearchRequest.SearchResponse r) {
-		if (r == BSFSearchRequest.SearchResponse.ALL_FOUND) {
+	private void onSearchResponse(SearchResponse r) {
+		if (r == SearchResponse.ALL_FOUND) {
 			labyBridge.notify("§cAlles gefunden \u26A0", "§cDu hast schon alle " + searchable.getName().plural() + " gefunden!");
 
 			if (!addRainbow) {
@@ -123,7 +125,7 @@ class GuiSearches extends GuiBigChest {
 			return;
 		}
 
-		if (r == BSFSearchRequest.SearchResponse.WORLD_NOT_READY) {
+		if (r == SearchResponse.WORLD_NOT_READY) {
 			labyBridge.notify("§cWelt gelöscht \u26A0", "§cBitte erkunde die Farmwelt erneut.");
 			String cb = BSF.getCurrentCBString();
 			BSF.READY_CBS.remove(cb);
@@ -134,12 +136,12 @@ class GuiSearches extends GuiBigChest {
 
 		int mc_x = r.pos().x;
 		int mc_z = r.pos().z;
-		if (searchable != Structure.STRONGHOLD) {
+		if (searchable != STRONGHOLD) {
 			mc_x = r.pos().x * 16 + 8;
 			mc_z = r.pos().z * 16 + 8;
 		}
 
-		searchData.add(new BSF.SearchData(mc_x, mc_z, r.index()));
+		searchData.add(new SearchData(mc_x, mc_z, r.index()));
 		if (searchData.size() > 20)
 			searchData.remove(0);
 

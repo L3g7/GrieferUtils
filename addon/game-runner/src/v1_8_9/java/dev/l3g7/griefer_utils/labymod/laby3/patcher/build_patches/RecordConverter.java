@@ -74,10 +74,10 @@ public class RecordConverter implements Opcodes {
 
 	private static boolean convertRecord(ClassNode classNode) {
 		// Only process records
-		if ((classNode.access & Opcodes.ACC_RECORD) == 0)
+		if ((classNode.access & ACC_RECORD) == 0)
 			return false;
 
-		classNode.access &= ~Opcodes.ACC_RECORD;
+		classNode.access &= ~ACC_RECORD;
 		if (classNode.superName.equals("java/lang/Record"))
 			classNode.superName = "java/lang/Object";
 

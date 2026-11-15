@@ -49,8 +49,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,6 +58,9 @@ import java.util.regex.Pattern;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.CommandDispatcher.SOURCE;
+import static java.util.Locale.ROOT;
+import static net.minecraft.util.EnumChatFormatting.*;
+import static org.lwjgl.input.Keyboard.*;
 
 /**
  * Backport of 1.13.2 GuiChat to 1.8.9.
@@ -182,7 +185,7 @@ public class GuiChatShim {
 		if (suggestions != null && suggestions.keyPressed(Keyboard.getEventKey()))
 			return true;
 
-		if (Keyboard.getEventKey() == Keyboard.KEY_TAB) {
+		if (Keyboard.getEventKey() == KEY_TAB) {
 			hasEdits = true;
 			showSuggestions();
 			return true;
@@ -230,8 +233,8 @@ public class GuiChatShim {
 		if (this.currentParse == null)
 			return message;
 
-		EnumChatFormatting[] colors = new EnumChatFormatting[]{EnumChatFormatting.AQUA, EnumChatFormatting.YELLOW, EnumChatFormatting.GREEN, EnumChatFormatting.LIGHT_PURPLE, EnumChatFormatting.GOLD};
-		StringBuilder result = new StringBuilder(EnumChatFormatting.GRAY.toString());
+		EnumChatFormatting[] colors = new EnumChatFormatting[]{AQUA, YELLOW, GREEN, LIGHT_PURPLE, GOLD};
+		StringBuilder result = new StringBuilder(GRAY.toString());
 		int start = 0;
 		int idx = -1;
 		CommandContextBuilder<Source> node = this.currentParse.getContext().getLastChild();
@@ -250,7 +253,7 @@ public class GuiChatShim {
 				result.append(message, start, cursorEnd);
 				result.append(colors[idx]);
 				result.append(message, cursorEnd, cursorStart);
-				result.append(EnumChatFormatting.GRAY);
+				result.append(GRAY);
 				start = cursorStart;
 			}
 		}
@@ -260,7 +263,7 @@ public class GuiChatShim {
 			if (cursorEnd < message.length()) {
 				int cursorStart = Math.min(cursorEnd + this.currentParse.getReader().getRemainingLength(), message.length());
 				result.append(message, start, cursorEnd);
-				result.append(EnumChatFormatting.RED);
+				result.append(RED);
 				result.append(message, cursorEnd, cursorStart);
 				start = cursorStart;
 			}
@@ -337,11 +340,11 @@ public class GuiChatShim {
 	}
 
 	private static CompletableFuture<Suggestions> suggestNames(SuggestionsBuilder builder) {
-		String remaining = builder.getRemaining().toLowerCase(Locale.ROOT);
+		String remaining = builder.getRemaining().toLowerCase(ROOT);
 
 		return PlayerNameSuggestionProvider.request(remaining).thenApply(matches -> {
 			for (String name : matches)
-				if (name.toLowerCase(Locale.ROOT).startsWith(remaining))
+				if (name.toLowerCase(ROOT).startsWith(remaining))
 					builder.suggest(name);
 
 			return builder.build();
@@ -352,7 +355,7 @@ public class GuiChatShim {
 		if (this.pendingSuggestions.join().isEmpty() && !this.currentParse.getExceptions().isEmpty() && this.inputField.getCursorPosition() == this.inputField.getText().length()) {
 			int lvt_1_1_ = 0;
 
-			for (Map.Entry<CommandNode<Source>, CommandSyntaxException> lvt_3_1_ : this.currentParse.getExceptions().entrySet()) {
+			for (Entry<CommandNode<Source>, CommandSyntaxException> lvt_3_1_ : this.currentParse.getExceptions().entrySet()) {
 				CommandSyntaxException lvt_4_1_ = lvt_3_1_.getValue();
 				if (lvt_4_1_.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.literalIncorrect()) {
 					++lvt_1_1_;
@@ -369,7 +372,7 @@ public class GuiChatShim {
 		commandUsagePosition = 0;
 		commandUsageWidth = gui.width;
 		if (commandUsage.isEmpty()) {
-			this.fillNodeUsage(EnumChatFormatting.GRAY);
+			this.fillNodeUsage(GRAY);
 		}
 
 		suggestions = null;
@@ -408,7 +411,7 @@ public class GuiChatShim {
 			List<String> usageText = Lists.newArrayList();
 			int width = 0;
 
-			for (Map.Entry<CommandNode<Source>, String> lvt_10_1_ : usage.entrySet()) {
+			for (Entry<CommandNode<Source>, String> lvt_10_1_ : usage.entrySet()) {
 				if (!(lvt_10_1_.getKey() instanceof LiteralCommandNode)) {
 					usageText.add(p_195132_1_ + lvt_10_1_.getValue());
 					width = Math.max(width, mc().fontRendererObj.getStringWidth(lvt_10_1_.getValue()));
@@ -543,22 +546,22 @@ public class GuiChatShim {
 		}
 
 		public boolean keyPressed(int key) {
-			if (key == Keyboard.KEY_UP) {
+			if (key == KEY_UP) {
 				this.cycle(-1);
 				this.cycling = false;
 				return true;
-			} else if (key == Keyboard.KEY_DOWN) {
+			} else if (key == KEY_DOWN) {
 				this.cycle(1);
 				this.cycling = false;
 				return true;
-			} else if (key == Keyboard.KEY_TAB) {
+			} else if (key == KEY_TAB) {
 				if (this.cycling) {
 					this.cycle(GuiScreen.isShiftKeyDown() ? -1 : 1);
 				}
 
 				this.useSuggestion();
 				return true;
-			} else if (key == Keyboard.KEY_ESCAPE) {
+			} else if (key == KEY_ESCAPE) {
 				this.hide();
 				return true;
 			} else {

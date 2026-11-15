@@ -21,6 +21,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S2DPacketOpenWindow;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.CBE;
+
 @Singleton
 public class BetterPlotMenu extends Feature {
 
@@ -58,7 +60,7 @@ public class BetterPlotMenu extends Feature {
 				Citybuild citybuild = Citybuild.values()[i + 1 /* Skip ANY */];
 				itemStacks[i] = citybuild.toItemStack();
 				addItem(i * 2 - i / 5, itemStacks[i], citybuild::join);
-				if (citybuild == Citybuild.CBE)
+				if (citybuild == CBE)
 					break;
 			}
 		}

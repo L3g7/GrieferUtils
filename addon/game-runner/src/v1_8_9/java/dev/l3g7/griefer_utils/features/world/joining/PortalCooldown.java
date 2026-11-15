@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.world.joining;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerQuitEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
@@ -60,7 +60,7 @@ public class PortalCooldown extends Feature {
 	}
 
 	@EventListener
-	public void onTick(TickEvent.ClientTickEvent event) {
+	public void onTick(ClientTickEvent event) {
 		if (player() == null)
 			return;
 

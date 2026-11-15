@@ -17,6 +17,9 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+import static javax.swing.JFileChooser.FILES_ONLY;
+
 @Bridge
 @Fallback
 @Singleton
@@ -27,7 +30,7 @@ public class OSFallback implements OS {
 		// Open javax.swing file chooser
 		JFileChooser fc = new JFileChooser((File) null);
 		fc.setMultiSelectionEnabled(false);
-		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fc.setFileSelectionMode(FILES_ONLY);
 
 		String[] allowedFileTypes = ImageIO.getReaderFileSuffixes();
 		fc.addChoosableFileFilter(new FileFilter() {
@@ -49,6 +52,6 @@ public class OSFallback implements OS {
 			}
 		});
 
-		return fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION ? fc.getSelectedFile() : null;
+		return fc.showOpenDialog(null) == APPROVE_OPTION ? fc.getSelectedFile() : null;
 	}
 }

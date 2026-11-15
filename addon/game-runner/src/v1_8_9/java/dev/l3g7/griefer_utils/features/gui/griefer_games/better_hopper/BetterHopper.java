@@ -13,8 +13,8 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockInteractEvent;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.ItemUseEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
@@ -267,7 +267,7 @@ public class BetterHopper extends Feature {
 	}
 
 	@EventListener
-	private void onGuiClose(PacketEvent.PacketSendEvent<C0DPacketCloseWindow> e) {
+	private void onGuiClose(PacketSendEvent<C0DPacketCloseWindow> e) {
 		TickScheduler.sync(() -> {
 			if (itemMoveOrigin != -1)
 				move(true);

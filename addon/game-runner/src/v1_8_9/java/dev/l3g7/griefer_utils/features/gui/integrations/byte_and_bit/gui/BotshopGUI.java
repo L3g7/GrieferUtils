@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.gui;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
 import dev.l3g7.griefer_utils.core.misc.JoinCooldownTimer;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Balances;
@@ -19,7 +19,6 @@ import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BABBot;
 import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BABItem;
-import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BABItem.Availability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
@@ -38,6 +37,10 @@ import java.util.stream.DoubleStream;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BABItem.Availability.EMPTY;
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
+import static org.lwjgl.input.Keyboard.KEY_BACK;
 
 /**
  * Class implementing the BotShop-GUI for a specific {@link BABBot}
@@ -45,8 +48,8 @@ import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
  */
 public class BotshopGUI extends GuiBigChest {
 
-	public static final DecimalFormat PRICE_FORMAT_DE = new DecimalFormat("###,###,###.##", DecimalFormatSymbols.getInstance(Locale.GERMAN));
-	public static final DecimalFormat PRICE_FORMAT_EN = new DecimalFormat("###,###,###.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+	public static final DecimalFormat PRICE_FORMAT_DE = new DecimalFormat("###,###,###.##", DecimalFormatSymbols.getInstance(GERMAN));
+	public static final DecimalFormat PRICE_FORMAT_EN = new DecimalFormat("###,###,###.##", DecimalFormatSymbols.getInstance(ENGLISH));
 
 	private static final ResourceLocation SEARCH_TAB_TEXTURE = new ResourceLocation("textures/gui/container/creative_inventory/tab_item_search.png");
 	private static final ResourceLocation SCROLLBAR_TEXTURE = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
@@ -102,11 +105,11 @@ public class BotshopGUI extends GuiBigChest {
 	}
 
 	@EventListener
-	public void onTick(TickEvent.ClientTickEvent event) {
+	public void onTick(ClientTickEvent event) {
 		if (backspaceSpeed != 0) {
 			backspaceSpeed += 10;
 			if (backspaceTimer > 50) {
-				searchField.textboxKeyTyped('\0', Keyboard.KEY_BACK);
+				searchField.textboxKeyTyped('\0', KEY_BACK);
 				backspaceTimer = 0;
 			} else {
 				backspaceTimer += backspaceSpeed;
@@ -341,7 +344,7 @@ public class BotshopGUI extends GuiBigChest {
 				if (index >= 0 && index < itemsDisplayed.size()) {
 					BABItem babItem = entriesAsList.get(index);
 					if (babItem == null) availabilities[iidx] = true;
-					else availabilities[iidx] = !babItem.getAvailability().equals(Availability.EMPTY);
+					else availabilities[iidx] = !babItem.getAvailability().equals(EMPTY);
 					setMenuItem(babItem, slotId);
 				} else {
 					availabilities[iidx] = true;
@@ -372,7 +375,7 @@ public class BotshopGUI extends GuiBigChest {
 
 	@Override
 	public void handleKeyboardInput() {
-		if (Keyboard.isKeyDown(Keyboard.KEY_BACK)) {
+		if (Keyboard.isKeyDown(KEY_BACK)) {
 			backspaceSpeed = 1;
 		} else {
 			if (backspaceSpeed > 0) {

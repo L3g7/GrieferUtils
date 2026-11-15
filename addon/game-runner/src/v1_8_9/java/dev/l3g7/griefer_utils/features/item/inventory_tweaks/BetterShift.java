@@ -26,6 +26,7 @@ import net.minecraft.village.MerchantRecipe;
 import org.lwjgl.input.Keyboard;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static org.lwjgl.input.Keyboard.KEY_LMENU;
 
 @Singleton
 public class BetterShift extends Feature {
@@ -56,7 +57,7 @@ public class BetterShift extends Feature {
 		if (!(mc().currentScreen instanceof GuiInventory))
 			return;
 
-		if (event.mode != 1 || event.slotId <= 8 || ! Keyboard.isKeyDown(Keyboard.KEY_LMENU))
+		if (event.mode != 1 || event.slotId <= 8 || ! Keyboard.isKeyDown(KEY_LMENU))
 			return;
 
 		move(5, event);

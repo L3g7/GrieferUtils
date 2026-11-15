@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings.changelog;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.TextList;
@@ -20,6 +19,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
+import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
 
 public class GuiStable extends GuiScreen {
 
@@ -99,7 +99,7 @@ public class GuiStable extends GuiScreen {
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		if (button.id == 0)
-			Settings.releaseChannel.set(ReleaseInfo.ReleaseChannel.STABLE);
+			Settings.releaseChannel.set(STABLE);
 
 		// Close GUI on disableButton and on closeButton
 		mc.displayGuiScreen(previousScreen);

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.FormatMode.*;
 import static net.minecraft.enchantment.EnchantmentHelper.getEnchantments;
 
 @Singleton
@@ -43,7 +44,7 @@ public class ItemCounter extends Feature {
 		.name("Formattierung")
 		.description("In welchem Format die Anzahl angezeigt werden soll.")
 		.icon("color_palette")
-		.defaultValue(FormatMode.FORMATTED);
+		.defaultValue(FORMATTED);
 
 	public static final SwitchSetting ignoreDamage = SwitchSetting.create()
 		.name("Schaden / Sub-IDs ignorieren")
@@ -128,9 +129,9 @@ public class ItemCounter extends Feature {
 
 	private String getFormattedAmount(long amount, int stackSize) {
 		String formatString = "";
-		if (formatting.get() != FormatMode.UNFORMATTED) formatString += formatAmount(amount, stackSize);
-		if (formatting.get() == FormatMode.BOTH) formatString += " / ";
-		if (formatting.get() != FormatMode.FORMATTED) formatString += Constants.DECIMAL_FORMAT_98.format(amount);
+		if (formatting.get() != UNFORMATTED) formatString += formatAmount(amount, stackSize);
+		if (formatting.get() == BOTH) formatString += " / ";
+		if (formatting.get() != FORMATTED) formatString += Constants.DECIMAL_FORMAT_98.format(amount);
 
 		return formatString;
 	}

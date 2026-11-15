@@ -12,6 +12,7 @@ import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.CitybuildSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons;
+import dev.l3g7.griefer_utils.labymod.laby4.settings.Icons.ProxiedIcon;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.widget.Widget;
@@ -40,7 +41,7 @@ public class CitybuildSettingImpl extends AbstractSettingImpl<CitybuildSetting, 
 		}, e -> Citybuild.parse(e.getAsString()), Citybuild.ANY);
 
 		currentIcon = Icons.of(Citybuild.ANY.toItemStack());
-		icon(new Icons.ProxiedIcon(() -> currentIcon, 0, 0));
+		icon(new ProxiedIcon(() -> currentIcon, 0, 0));
 		callback(v -> currentIcon = Icons.of(v.toItemStack()));
 	}
 

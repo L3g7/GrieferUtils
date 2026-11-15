@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.features.world.Trajectories.TrajectoryMode.DISABLED;
+import static dev.l3g7.griefer_utils.features.world.Trajectories.TrajectoryMode.TRAIL;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static net.minecraft.block.material.Material.water;
@@ -53,14 +55,14 @@ public class Trajectories extends Feature {
 		.name("Flugbahn anzeigen")
 		.description("Zeigt dir die Flugbahn des gehaltenen Items an.")
 		.icon("crosshair")
-		.defaultValue(TrajectoryMode.DISABLED);
+		.defaultValue(DISABLED);
 
 	private final Disk circle = new Disk();
 	{ circle.setDrawStyle(GLU_SILHOUETTE); }
 
 	@EventListener
 	public void onRender(RenderWorldLastEvent event) {
-		if (mode.get() == TrajectoryMode.DISABLED || player() == null)
+		if (mode.get() == DISABLED || player() == null)
 			return;
 
 		TrajectoryProperties p = getTrajectoryProperties();
@@ -132,7 +134,7 @@ public class Trajectories extends Feature {
 				.subtract(0, p.gravity, 0);
 
 			// Draw trail
-			if (mode.get() == TrajectoryMode.TRAIL)
+			if (mode.get() == TRAIL)
 				wr.pos(pos.xCoord - renderPos.xCoord, pos.yCoord - renderPos.yCoord, pos.zCoord - renderPos.zCoord).endVertex();
 		}
 

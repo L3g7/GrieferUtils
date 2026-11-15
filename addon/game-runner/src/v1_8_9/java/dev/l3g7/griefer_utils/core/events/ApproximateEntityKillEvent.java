@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.core.events;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.play.client.C02PacketUseEntity;
@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static net.minecraft.network.play.client.C02PacketUseEntity.Action.ATTACK;
 
 public class ApproximateEntityKillEvent extends Event {
 
@@ -35,8 +36,8 @@ public class ApproximateEntityKillEvent extends Event {
 	}
 
 	@EventListener
-	private static void onPacketSend(PacketEvent.PacketSendEvent<C02PacketUseEntity> event) {
-		if (event.packet.getAction() != C02PacketUseEntity.Action.ATTACK)
+	private static void onPacketSend(PacketSendEvent<C02PacketUseEntity> event) {
+		if (event.packet.getAction() != ATTACK)
 			return;
 
 		synchronized (attackedEntities) {

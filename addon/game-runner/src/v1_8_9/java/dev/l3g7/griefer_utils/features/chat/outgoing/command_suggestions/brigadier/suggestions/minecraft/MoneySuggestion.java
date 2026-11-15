@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Balances;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.suggestions.Suggestion;
 
-import java.math.RoundingMode;
+import static java.math.RoundingMode.FLOOR;
 
 /**
  * A suggestion for the current money owned on GrieferGames.
@@ -22,7 +22,7 @@ public class MoneySuggestion extends Suggestion {
 	public String get() {
 		return Constants.DECIMAL_FORMAT_98.format(
 			Balances.getBalance()
-				.setScale(0, RoundingMode.FLOOR))
+				.setScale(0, FLOOR))
 			.replaceAll("\\.", "");
 	}
 

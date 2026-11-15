@@ -15,9 +15,10 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ListIterator;
 import java.util.Optional;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 public abstract class Transformer implements Opcodes {
 
@@ -73,7 +74,7 @@ public abstract class Transformer implements Opcodes {
 		return target;
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RUNTIME)
 	public @interface Target {
 		String value();
 	}

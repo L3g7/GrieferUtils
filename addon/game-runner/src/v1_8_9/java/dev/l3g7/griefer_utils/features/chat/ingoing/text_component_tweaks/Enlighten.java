@@ -67,7 +67,7 @@ public class Enlighten extends TextComponentTweak {
 		if (!component.getUnformattedTextForChat().equals("\u2503 ")) {
 			if (component.getChatStyle().getColor() == BLACK)
 				component.setChatStyle(component.getChatStyle().setColor(enlightenBlack.get().formatting));
-			else if (component.getChatStyle().getColor() == EnumChatFormatting.DARK_GRAY)
+			else if (component.getChatStyle().getColor() == DARK_GRAY)
 				component.setChatStyle(component.getChatStyle().setColor(enlightenGray.get().formatting));
 			else if (component.getChatStyle().getColor() == GRAY)
 				component.setChatStyle(component.getChatStyle().setColor(enlightenLightGray.get() ? WHITE : GRAY));
@@ -103,9 +103,9 @@ public class Enlighten extends TextComponentTweak {
 		return new String(result).replaceAll("§[f70](§l)?\u2503", "§8$1\u2503"); // Don't enlighten delimiter
 	}
 
-	private enum GrayMode implements Named {
+	enum GrayMode implements Named {
 
-		GRAY("Grau", EnumChatFormatting.DARK_GRAY),
+		GRAY("Grau", DARK_GRAY),
 		LIGHT("Hellgrau", EnumChatFormatting.GRAY),
 		WHITE("Weiß", EnumChatFormatting.WHITE);
 
@@ -124,10 +124,10 @@ public class Enlighten extends TextComponentTweak {
 
 	}
 
-	private enum BlackMode implements Named {
+	enum BlackMode implements Named {
 
 		BLACK("Schwarz", EnumChatFormatting.BLACK),
-		GRAY("Grau", EnumChatFormatting.DARK_GRAY),
+		GRAY("Grau", DARK_GRAY),
 		LIGHT("Hellgrau", EnumChatFormatting.GRAY),
 		WHITE("Weiß", EnumChatFormatting.WHITE);
 

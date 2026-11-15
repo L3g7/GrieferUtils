@@ -28,7 +28,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,13 +41,14 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static net.minecraft.client.renderer.OpenGlHelper.GL_FRAMEBUFFER;
 import static net.minecraft.client.renderer.OpenGlHelper.GL_RENDERBUFFER;
+import static net.minecraft.util.EnumFacing.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT;
 import static org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 /**
@@ -61,12 +61,12 @@ public class FixTileEntityEnchantments extends Feature {
 	@SuppressWarnings("unchecked")
 	public static final IBakedModel cubeModel = new IBakedModel() {
 		private final List<BakedQuad>[] bakedQuads = new List[] { // Data was copied from the IBakedModel of a standard dirt block
-			ImmutableList.of(new BakedQuad(new int[] {0, 0, 1065353216, -8421505, 1048576655, 1044383007, 33024, 0, 0, 0, -8421505, 1048576655, 1046477537, 33024, 1065353216, 0, 0, -8421505, 1049623921, 1046477537, 33024, 1065353216, 0, 1065353216, -8421505, 1049623921, 1044383007, 33024}, -1, EnumFacing.DOWN)),
-			ImmutableList.of(new BakedQuad(new int[] {0, 1065353216, 0, -1, 1048576655, 1044383007, 32512, 0, 1065353216, 1065353216, -1, 1048576655, 1046477537, 32512, 1065353216, 1065353216, 1065353216, -1, 1049623921, 1046477537, 32512, 1065353216, 1065353216, 0, -1, 1049623921, 1044383007, 32512}, -1, EnumFacing.UP)),
-			ImmutableList.of(new BakedQuad(new int[] {1065353216, 1065353216, 0, -3355444, 1048576655, 1044383007, 8454144, 1065353216, 0, 0, -3355444, 1048576655, 1046477537, 8454144, 0, 0, 0, -3355444, 1049623921, 1046477537, 8454144, 0, 1065353216, 0, -3355444, 1049623921, 1044383007, 8454144}, -1, EnumFacing.NORTH)),
-			ImmutableList.of(new BakedQuad(new int[] {0, 1065353216, 1065353216, -3355444, 1048576655, 1044383007, 8323072, 0, 0, 1065353216, -3355444, 1048576655, 1046477537, 8323072, 1065353216, 0, 1065353216, -3355444, 1049623921, 1046477537, 8323072, 1065353216, 1065353216, 1065353216, -3355444, 1049623921, 1044383007, 8323072}, -1, EnumFacing.SOUTH)),
-			ImmutableList.of(new BakedQuad(new int[] {0, 1065353216, 0, -6710887, 1048576655, 1044383007, 129, 0, 0, 0, -6710887, 1048576655, 1046477537, 129, 0, 0, 1065353216, -6710887, 1049623921, 1046477537, 129, 0, 1065353216, 1065353216, -6710887, 1049623921, 1044383007, 129}, -1, EnumFacing.WEST)),
-			ImmutableList.of(new BakedQuad(new int[] {1065353216, 1065353216, 1065353216, -6710887, 1048576655, 1044383007, 127, 1065353216, 0, 1065353216, -6710887, 1048576655, 1046477537, 127, 1065353216, 0, 0, -6710887, 1049623921, 1046477537, 127, 1065353216, 1065353216, 0, -6710887, 1049623921, 1044383007, 127}, -1, EnumFacing.EAST))
+			ImmutableList.of(new BakedQuad(new int[] {0, 0, 1065353216, -8421505, 1048576655, 1044383007, 33024, 0, 0, 0, -8421505, 1048576655, 1046477537, 33024, 1065353216, 0, 0, -8421505, 1049623921, 1046477537, 33024, 1065353216, 0, 1065353216, -8421505, 1049623921, 1044383007, 33024}, -1, DOWN)),
+			ImmutableList.of(new BakedQuad(new int[] {0, 1065353216, 0, -1, 1048576655, 1044383007, 32512, 0, 1065353216, 1065353216, -1, 1048576655, 1046477537, 32512, 1065353216, 1065353216, 1065353216, -1, 1049623921, 1046477537, 32512, 1065353216, 1065353216, 0, -1, 1049623921, 1044383007, 32512}, -1, UP)),
+			ImmutableList.of(new BakedQuad(new int[] {1065353216, 1065353216, 0, -3355444, 1048576655, 1044383007, 8454144, 1065353216, 0, 0, -3355444, 1048576655, 1046477537, 8454144, 0, 0, 0, -3355444, 1049623921, 1046477537, 8454144, 0, 1065353216, 0, -3355444, 1049623921, 1044383007, 8454144}, -1, NORTH)),
+			ImmutableList.of(new BakedQuad(new int[] {0, 1065353216, 1065353216, -3355444, 1048576655, 1044383007, 8323072, 0, 0, 1065353216, -3355444, 1048576655, 1046477537, 8323072, 1065353216, 0, 1065353216, -3355444, 1049623921, 1046477537, 8323072, 1065353216, 1065353216, 1065353216, -3355444, 1049623921, 1044383007, 8323072}, -1, SOUTH)),
+			ImmutableList.of(new BakedQuad(new int[] {0, 1065353216, 0, -6710887, 1048576655, 1044383007, 129, 0, 0, 0, -6710887, 1048576655, 1046477537, 129, 0, 0, 1065353216, -6710887, 1049623921, 1046477537, 129, 0, 1065353216, 1065353216, -6710887, 1049623921, 1044383007, 129}, -1, WEST)),
+			ImmutableList.of(new BakedQuad(new int[] {1065353216, 1065353216, 1065353216, -6710887, 1048576655, 1044383007, 127, 1065353216, 0, 1065353216, -6710887, 1048576655, 1046477537, 127, 1065353216, 0, 0, -6710887, 1049623921, 1046477537, 127, 1065353216, 1065353216, 0, -6710887, 1049623921, 1044383007, 127}, -1, EAST))
 		};
 
 		public List<BakedQuad> getFaceQuads(EnumFacing facing) {
@@ -142,7 +142,7 @@ public class FixTileEntityEnchantments extends Feature {
 		@Inject(method = "renderEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;disableLighting()V"))
 		public void injectRenderEffect(IBakedModel iBakedModel, CallbackInfo ci) {
 			if (iBakedModel == cubeModel)
-				GlStateManager.depthFunc(GL11.GL_LEQUAL);
+				GlStateManager.depthFunc(GL_LEQUAL);
 		}
 
 	}
@@ -178,12 +178,12 @@ public class FixTileEntityEnchantments extends Feature {
 
 		@Redirect(method = "setupFrameBuffer", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTexImage2D(IIIIIIIILjava/nio/FloatBuffer;)V"))
 		private static void injectTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, FloatBuffer pixels) {
-			GL11.glTexImage2D(target, level, GL30.GL_DEPTH32F_STENCIL8, width, height, border, GL30.GL_DEPTH_STENCIL, GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV, pixels);
+			GL11.glTexImage2D(target, level, GL_DEPTH32F_STENCIL8, width, height, border, GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, pixels);
 		}
 
 		@Redirect(method = "setupFrameBuffer", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/EXTFramebufferObject;glFramebufferTexture2DEXT(IIIII)V", ordinal = 0))
 		private static void injectBindFramebuffer(int target, int attachment, int texTarget, int texture, int level) {
-			EXTFramebufferObject.glFramebufferTexture2DEXT(target, GL30.GL_DEPTH_STENCIL_ATTACHMENT, texTarget, texture, level);
+			EXTFramebufferObject.glFramebufferTexture2DEXT(target, GL_DEPTH_STENCIL_ATTACHMENT, texTarget, texture, level);
 		}
 	}
 

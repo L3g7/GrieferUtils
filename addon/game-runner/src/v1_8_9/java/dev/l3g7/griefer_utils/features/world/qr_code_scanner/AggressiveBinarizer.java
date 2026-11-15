@@ -14,7 +14,7 @@ import com.google.zxing.common.BitMatrix;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -37,11 +37,11 @@ public class AggressiveBinarizer extends Binarizer {
 		if (usedColors.size() == 1)
 			return null;
 
-		Map.Entry<Integer, AtomicInteger> mostUsedColor = null;
-		Map.Entry<Integer, AtomicInteger>  secondColor = null;
+		Entry<Integer, AtomicInteger> mostUsedColor = null;
+		Entry<Integer, AtomicInteger>  secondColor = null;
 
 		// Get most and second-most used colors
-		for (Map.Entry<Integer, AtomicInteger> color : usedColors.entrySet()) {
+		for (Entry<Integer, AtomicInteger> color : usedColors.entrySet()) {
 			if (mostUsedColor == null) {
 				mostUsedColor = color;
 				continue;

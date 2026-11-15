@@ -8,13 +8,15 @@
 package dev.l3g7.griefer_utils.core.misc;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
+import net.minecraft.network.play.server.S38PacketPlayerListItem.AddPlayerData;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 
 public class NameCache {
 
@@ -37,7 +39,7 @@ public class NameCache {
 		return nickToUuidCache.get(nick);
 	}
 
-	@EventListener(priority = Priority.HIGH)
+	@EventListener(priority = HIGH)
 	public static void onPacket(PacketReceiveEvent<S38PacketPlayerListItem> event) {
 		switch (event.packet.getAction()) {
 			case ADD_PLAYER -> processAddPacket(event.packet);
@@ -47,7 +49,7 @@ public class NameCache {
 	}
 
 	private static void processAddPacket(S38PacketPlayerListItem packet) {
-		for (S38PacketPlayerListItem.AddPlayerData data : packet.getEntries()) {
+		for (AddPlayerData data : packet.getEntries()) {
 			if (data.getProfile().getName() != null)
 				uuidToUser.put(data.getProfile().getId(), data.getProfile().getName());
 
@@ -60,7 +62,7 @@ public class NameCache {
 	}
 
 	private static void processRemovePacket(S38PacketPlayerListItem packet) {
-		for (S38PacketPlayerListItem.AddPlayerData data : packet.getEntries()) {
+		for (AddPlayerData data : packet.getEntries()) {
 
 			UUID uuid = data.getProfile().getId();
 
@@ -71,7 +73,7 @@ public class NameCache {
 		}
 	}
 
-	private static void checkForNick(S38PacketPlayerListItem.AddPlayerData data) {
+	private static void checkForNick(AddPlayerData data) {
 		if (data.getDisplayName() == null)
 			return;
 

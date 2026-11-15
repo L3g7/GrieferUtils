@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.misc.Countdown;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
@@ -42,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.features.widgets.countdowns.PotionTimer.KeyMode.*;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.HIDDEN;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
@@ -68,7 +70,7 @@ public class PotionTimer extends Widget {
 			.name("Design")
 			.description("In welchem die Design die aktivierten Tränke angezeigt werden sollen.")
 			.icon("color_palette")
-			.defaultValue(KeyMode.TEXT_AND_ICON);
+			.defaultValue(TEXT_AND_ICON);
 
 	private final NumberSetting warnTime = NumberSetting.create()
 			.name("Warn-Zeit für Fly Tränke (s)")
@@ -95,7 +97,7 @@ public class PotionTimer extends Widget {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	private void onMessage(MessageEvent.MessageReceiveEvent event) {
+	private void onMessage(MessageReceiveEvent event) {
 		Matcher matcher = END_PATTERN.matcher(event.message.getFormattedText());
 		if (!matcher.matches())
 			return;
@@ -121,7 +123,7 @@ public class PotionTimer extends Widget {
 			return;
 
 		NBTTagCompound tag = heldItem.getTagCompound();
-		for (Map.Entry<String, PotionData> entry : potions.entrySet()) {
+		for (Entry<String, PotionData> entry : potions.entrySet()) {
 			if (tag.hasKey(entry.getKey())) {
 				entry.getValue().countdown.set(15 * 60);
 				break;
@@ -141,7 +143,7 @@ public class PotionTimer extends Widget {
 
 	private record PotionData(String displayName, Countdown countdown) {}
 
-	private enum KeyMode implements Named {
+	enum KeyMode implements Named {
 		ICON("Icon"),
 		TEXT("Text"),
 		TEXT_AND_ICON("Text & Icon");
@@ -213,7 +215,7 @@ public class PotionTimer extends Widget {
 			if (!ServerCheck.isOnCitybuild())
 				return;
 
-			if (design.get() == KeyMode.TEXT || !keyVisible)
+			if (design.get() == TEXT || !keyVisible)
 				return;
 
 			List<PotionData> data = potions.values().stream()
@@ -231,7 +233,7 @@ public class PotionTimer extends Widget {
 			if (getDisplayFormatting() == SQUARE_BRACKETS)
 				xDiff -= signum * mc.fontRendererObj.getStringWidth(new Text("[", 0, bold, italic, underline).getText());
 
-			if (design.get() == KeyMode.ICON)
+			if (design.get() == ICON)
 				xDiff += .5;
 
 			// Add padding
@@ -268,9 +270,9 @@ public class PotionTimer extends Widget {
 			KeyMode mode = design.get();
 			String name = "";
 
-			if (mode != KeyMode.TEXT)
+			if (mode != TEXT)
 				name += "  "; // Space for the icon
-			if (mode != KeyMode.ICON)
+			if (mode != ICON)
 				name += data.displayName;
 
 			return name;
@@ -323,18 +325,18 @@ public class PotionTimer extends Widget {
 				KeyMode mode = design.get();
 				Component name = Component.empty();
 
-				if (mode != KeyMode.TEXT) {
-					if (mode == KeyMode.ICON)
+				if (mode != TEXT) {
+					if (mode == ICON)
 						name.append(Component.icon(Icons.offset(Icons.of("booster/" + data.displayName.toLowerCase()), -0.5f, -.5f), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
 					else
 						// Text and icon
 						name.append(Component.icon(Icons.offset(Icons.of("booster/" + data.displayName.toLowerCase()), .5f, -1), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
 				}
 
-				if (mode == KeyMode.TEXT_AND_ICON)
+				if (mode == TEXT_AND_ICON)
 					name.append(Component.text(" "));
 
-				if (mode != KeyMode.ICON)
+				if (mode != ICON)
 					name.append(Component.text(data.displayName));
 
 				keyComponent.setChildren(Collections.singleton(name));

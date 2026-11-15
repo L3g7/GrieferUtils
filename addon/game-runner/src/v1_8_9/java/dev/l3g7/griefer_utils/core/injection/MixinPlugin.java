@@ -13,7 +13,6 @@ import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.meta.ClassMeta;
 import dev.l3g7.griefer_utils.core.api.mapping.Mapper;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
-import dev.pymdk.mapper.Mapping;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,6 +26,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.pymdk.mapper.Mapping.OBFUSCATED;
+import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 
@@ -57,7 +60,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 					continue;
 			}
 
-			if (Version.LABY_3.isActive()) {
+			if (LABY_3.isActive()) {
 				Object value = meta.getAnnotation(Mixin.class).getValue("value", false);
 				Stream<String> mixinTargets = value instanceof ArrayList<?> list
 					? list.stream().map(o -> ((Type) o).getClassName())
@@ -65,7 +68,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 				for (String mixinTarget : mixinTargets.collect(Collectors.toSet())) {
 					// Only add mixin if the target exists, as some mixins target classes that might be missing (e.g. EmoteChat)
-					mixinTarget = Mapper.mapClass(mixinTarget.replace('.', '/'), Mapping.UNOBFUSCATED, Mapping.OBFUSCATED); // Reflection.exists works using resources, so Forge's Deobfuscation won't trigger
+					mixinTarget = Mapper.mapClass(mixinTarget.replace('.', '/'), UNOBFUSCATED, OBFUSCATED); // Reflection.exists works using resources, so Forge's Deobfuscation won't trigger
 					if (!Reflection.exists(mixinTarget)) {
 						continue classFinder;
 					}

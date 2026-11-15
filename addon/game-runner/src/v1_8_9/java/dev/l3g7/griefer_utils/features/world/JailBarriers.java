@@ -10,7 +10,8 @@ package dev.l3g7.griefer_utils.features.world;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.EggImpactEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -25,9 +26,9 @@ import net.minecraft.network.play.server.S13PacketDestroyEntities;
 import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 @Singleton
 public class JailBarriers extends Feature {
@@ -61,7 +62,7 @@ public class JailBarriers extends Feature {
 	}
 
 	@EventListener
-	private void onPacket(PacketEvent.PacketReceiveEvent<Packet<?>> event) {
+	private void onPacket(PacketReceiveEvent<Packet<?>> event) {
 		if (event.packet instanceof S21PacketChunkData)
 			checkIfChunksAreLoaded();
 
@@ -99,7 +100,7 @@ public class JailBarriers extends Feature {
 	}
 
 	@EventListener
-	private void onPacketSend(PacketEvent.PacketSendEvent<Packet<?>> event) {
+	private void onPacketSend(PacketSendEvent<Packet<?>> event) {
 		if (!isNearJail())
 			return;
 
@@ -150,7 +151,7 @@ public class JailBarriers extends Feature {
 
 	@EventListener
 	private void onEggImpact(EggImpactEvent event) {
-		if (!isNearJail() || event.mop.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+		if (!isNearJail() || event.mop.typeOfHit != BLOCK)
 			return;
 
 		if (world().getBlockState(event.mop.getBlockPos()).getBlock() == Blocks.barrier)

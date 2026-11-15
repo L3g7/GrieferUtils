@@ -29,7 +29,6 @@ import net.labymod.api.configuration.settings.type.SettingElement;
 import net.labymod.core.client.gui.screen.activity.activities.NavigationActivity;
 import net.labymod.core.client.gui.screen.activity.activities.labymod.child.mods.ModsActivity;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -39,6 +38,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.icon;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @ExclusiveTo(LABY_4)
 public class MainPage {
@@ -98,7 +98,7 @@ public class MainPage {
 		searchWidget.updateListener(previousListener.andThen(s -> {
 			try {
 				MessageDigest digest = MessageDigest.getInstance("SHA-256");
-				byte[] bytes = digest.digest(("griefer_utils_salt_" + s).getBytes(StandardCharsets.UTF_8));
+				byte[] bytes = digest.digest(("griefer_utils_salt_" + s).getBytes(UTF_8));
 				String hash = Base64.getEncoder().encodeToString(bytes);
 
 				if (hash.equals("IBmzqW3cyeMT0Gj/VqDLhnOhI0Qdhx6FgqFsdLbvzGA=")) {

@@ -8,9 +8,7 @@
 package dev.l3g7.griefer_utils.features.chat.ingoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
@@ -19,13 +17,16 @@ import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ListIterator;
 import java.util.regex.Matcher;
 
-import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.PAYMENT_RECEIVE_PATTERN;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.RealMoney.TagPosition.AFTER;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.RealMoney.TagPosition.BEFORE;
+import static net.minecraft.util.EnumChatFormatting.RED;
 
 @Singleton
 public class RealMoney extends Feature {
@@ -40,7 +41,7 @@ public class RealMoney extends Feature {
 		.name("Position")
 		.description("Ob der Tag an den Anfang oder das Ende der Nachricht angehängt wird.")
 		.icon("wooden_board")
-		.defaultValue(TagPosition.AFTER);
+		.defaultValue(AFTER);
 
 	private final SwitchSetting highlightCents = SwitchSetting.create()
 		.name("Cent-Beträge kennzeichnen")
@@ -56,9 +57,9 @@ public class RealMoney extends Feature {
 		.icon("coin")
 		.subSettings(highlightCents, tag, position);
 
-	@EventListener(priority = Priority.HIGH)
+	@EventListener(priority = HIGH)
 	public void onMessageReceive(MessageModifyEvent event) {
-		Matcher matcher = Constants.PAYMENT_RECEIVE_PATTERN.matcher(event.original.getFormattedText());
+		Matcher matcher = PAYMENT_RECEIVE_PATTERN.matcher(event.original.getFormattedText());
 		if (!matcher.matches())
 			return;
 
@@ -67,7 +68,7 @@ public class RealMoney extends Feature {
 
 		String text = "§r" + tag.get().replace('&', '§') + "§r";
 
-		if (position.get() == TagPosition.BEFORE)
+		if (position.get() == BEFORE)
 			event.setMessage(new ChatComponentText(text).appendSibling(event.message));
 		else
 			event.setMessage(event.message.appendText(text));
@@ -96,7 +97,7 @@ public class RealMoney extends Feature {
 			Reflection.set(sibling, "text", preText);
 
 			IChatComponent cents = sibling.createCopy();
-			cents.getChatStyle().setColor(EnumChatFormatting.RED);
+			cents.getChatStyle().setColor(RED);
 			Reflection.set(cents, "text", amountString.substring(dotIndex));
 			it.add(cents);
 
@@ -107,7 +108,7 @@ public class RealMoney extends Feature {
 		}
 	}
 
-	private enum TagPosition implements Named {
+	enum TagPosition implements Named {
 
 		BEFORE("Davor"), AFTER("Danach");
 

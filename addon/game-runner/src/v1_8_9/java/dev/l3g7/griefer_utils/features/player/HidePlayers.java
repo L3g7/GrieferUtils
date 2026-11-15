@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.PlaySoundAtEntityEvent;
 import dev.l3g7.griefer_utils.core.events.PlaySoundEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderPlayerEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
@@ -69,7 +69,7 @@ public class HidePlayers extends Feature {
 	}
 
 	@EventListener
-	public void onTick(TickEvent.ClientTickEvent event) {
+	public void onTick(ClientTickEvent event) {
 		syncPlayers();
 	}
 

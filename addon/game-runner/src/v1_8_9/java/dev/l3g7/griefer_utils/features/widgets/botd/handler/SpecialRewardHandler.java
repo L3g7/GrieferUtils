@@ -22,6 +22,7 @@ import net.minecraft.network.play.server.S2FPacketSetSlot;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.features.widgets.botd.Reward.RewardType.BLOCK;
 
 class SpecialRewardHandler {
 
@@ -73,7 +74,7 @@ class SpecialRewardHandler {
 		}
 
 		if (ItemUtil.getLastLore(lastStack).equals("§7Block des Tages X"))
-			return new Reward(Reward.RewardType.BLOCK, lastStack.stackSize);
+			return new Reward(BLOCK, lastStack.stackSize);
 
 		return new Reward(lastStack);
 	}

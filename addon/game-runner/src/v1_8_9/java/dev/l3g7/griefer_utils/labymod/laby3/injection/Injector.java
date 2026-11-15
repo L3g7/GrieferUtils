@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
+import static org.spongepowered.asm.mixin.MixinEnvironment.Side.CLIENT;
 
 @Bridge
 @ExclusiveTo(LABY_3)
@@ -42,7 +43,7 @@ public class Injector implements InjectorBase {
 		initMixin(null, "labymod-3");
 
 		// Finalize mixin initialization
-		MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
+		MixinEnvironment.getDefaultEnvironment().setSide(CLIENT);
 
 		if (!Reflection.exists("net.minecraftforge.common.ForgeHooks")) {
 			// Account for transformers loading classes while GrieferUtils' mixin config is being initialised, causing the mixins not be applied // TODO what?

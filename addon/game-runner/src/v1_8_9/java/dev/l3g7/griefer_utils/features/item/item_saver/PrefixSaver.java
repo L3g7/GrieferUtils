@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.core.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
@@ -56,7 +56,7 @@ public class PrefixSaver extends Feature {
 	}
 
 	@EventListener
-	public void onMouseClick(MouseClickEvent.RightClickEvent event) {
+	public void onMouseClick(RightClickEvent event) {
 		EntityPlayer player = player();
 		if (player == null || !"§fVergibt §aein Farbrecht§f! (Rechtsklick)".equals(ItemUtil.getLastLore(player.getHeldItem())))
 			return;

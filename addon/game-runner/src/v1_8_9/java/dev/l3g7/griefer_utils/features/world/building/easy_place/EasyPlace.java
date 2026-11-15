@@ -18,7 +18,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3i;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,6 +26,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 import static net.minecraft.util.EnumFacing.values;
+import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
+import static org.objectweb.asm.Opcodes.GETFIELD;
 
 @Singleton
 public class EasyPlace extends Feature {
@@ -57,7 +58,7 @@ public class EasyPlace extends Feature {
 	@EventListener
 	private void onWorldRenderLast(RenderWorldLastEvent event) {
 		MovingObjectPosition mop = mc().objectMouseOver;
-		if (mop == null || mop.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK || !enabled) {
+		if (mop == null || mop.typeOfHit != BLOCK || !enabled) {
 			selectedFacing = null;
 			return;
 		}
@@ -130,7 +131,7 @@ public class EasyPlace extends Feature {
 	@Mixin(Minecraft.class)
 	private static class MixinMinecraft {
 
-	    @Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/item/ItemStack;stackSize:I", opcode = Opcodes.GETFIELD, ordinal = 0))
+	    @Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/item/ItemStack;stackSize:I", opcode = GETFIELD, ordinal = 0))
 	    private void injectRightClickMouse(CallbackInfo ci) {
 			onBlockPlaceStart();
 	    }

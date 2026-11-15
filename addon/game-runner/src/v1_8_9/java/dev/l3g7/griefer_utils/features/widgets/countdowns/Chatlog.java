@@ -19,6 +19,9 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 
+import static dev.l3g7.griefer_utils.features.widgets.countdowns.Chatlog.TimeFormat.LONG;
+import static dev.l3g7.griefer_utils.features.widgets.countdowns.Chatlog.TimeFormat.SHORT;
+
 @Singleton
 public class Chatlog extends SimpleWidget {
 
@@ -29,7 +32,7 @@ public class Chatlog extends SimpleWidget {
 		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
 		.icon("hourglass")
 		.config("modules.chatlog.time_format")
-		.defaultValue(TimeFormat.LONG);
+		.defaultValue(LONG);
 
 	private final SwitchSetting hide = SwitchSetting.create()
 		.name("Verstecken, wenn fertig")
@@ -48,7 +51,7 @@ public class Chatlog extends SimpleWidget {
 
 	@Override
 	public String getValue() {
-		return Util.formatTimeSeconds(countdown.secondsRemaining(), timeFormat.get() == TimeFormat.SHORT);
+		return Util.formatTimeSeconds(countdown.secondsRemaining(), timeFormat.get() == SHORT);
 	}
 
 	@Override
@@ -76,7 +79,7 @@ public class Chatlog extends SimpleWidget {
 		}
 	}
 
-	private enum TimeFormat implements Named {
+	enum TimeFormat implements Named {
 		SHORT("Kurz"),
 		LONG("Lang");
 

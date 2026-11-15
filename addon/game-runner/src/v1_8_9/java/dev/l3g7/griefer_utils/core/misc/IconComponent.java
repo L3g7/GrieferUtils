@@ -34,12 +34,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Random;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static java.util.Locale.ENGLISH;
 
 /**
  * A custom ChatComponent for LabyMod 3 imitating LabyMod 4's IconComponent.
@@ -190,7 +190,7 @@ public abstract class IconComponent extends ChatComponentStyle {
 						continue;
 					}
 					// Changes end here
-					i1 = "0123456789abcdefklmnor".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(i + 1));
+					i1 = "0123456789abcdefklmnor".indexOf(text.toLowerCase(ENGLISH).charAt(i + 1));
 					if (i1 < 16) {
 						this.randomStyle = false;
 						this.boldStyle = false;

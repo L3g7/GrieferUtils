@@ -18,13 +18,14 @@ import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.lang.invoke.*;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
 import static java.lang.invoke.MethodType.methodType;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Redirects StringConcatFactory.makeConcatWithConstants calls to a shim.
@@ -66,13 +67,13 @@ public class StringConcatShim extends Patcher implements Opcodes {
 	static {
 		try {
 			// Create elevated lookup
-			MethodHandles.Lookup lookup;
+			Lookup lookup;
 			if ("true".equals(System.getProperty("griefer_utils.building", "false"))) {
 				// Invoked by BuildPatcher
 				lookup = Access.getElevatedLookup();
 			} else {
 				lookup = MethodHandles.lookup();
-				Field allowedModes = MethodHandles.Lookup.class.getDeclaredField("allowedModes");
+				Field allowedModes = Lookup.class.getDeclaredField("allowedModes");
 				allowedModes.setAccessible(true);
 				allowedModes.set(lookup, -1 /* TRUSTED */); // Can use reflection because shim is only needed in Java 8
 			}
@@ -94,13 +95,13 @@ public class StringConcatShim extends Patcher implements Opcodes {
 	}
 
 	@SuppressWarnings("unused") // Invoked dynamically
-	public static CallSite makeConcatWithConstants(MethodHandles.Lookup lookup,
+	public static CallSite makeConcatWithConstants(Lookup lookup,
 	                                               String name,
 	                                               MethodType concatType,
 	                                               String recipe,
 	                                               Object... constants) throws Throwable {
 		if (recipe.contains("\u0002"))
-			throw new UnsupportedOperationException("Unimplemented recipe: ".concat(Base64.getEncoder().encodeToString(recipe.getBytes(StandardCharsets.UTF_8))));
+			throw new UnsupportedOperationException("Unimplemented recipe: ".concat(Base64.getEncoder().encodeToString(recipe.getBytes(UTF_8))));
 
 		// Parse recipe
 		List<String> elements = new ArrayList<>();

@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.chat.outgoing.command_pie_menu.laby3;
 
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.utils.ModColor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,7 +36,7 @@ public class PieMenu extends dev.l3g7.griefer_utils.core.misc.gui.guis.PieMenu {
 					continue;
 
 				entries.add(Pair.of(ModColor.createColors(entry.name.get()), () -> {
-					if (!MessageEvent.MessageSendEvent.post(entry.command.get()))
+					if (!MessageSendEvent.post(entry.command.get()))
 						player().sendChatMessage(entry.command.get());
 				}));
 			}

@@ -10,9 +10,10 @@ package dev.l3g7.griefer_utils.labymod.laby4.settings.types;
 import com.google.gson.JsonNull;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.settings.AbstractSettingImpl;
-import net.labymod.api.client.gui.icon.catalog.IconsCommon;
 import net.labymod.api.client.gui.screen.widget.Widget;
 import net.labymod.api.client.gui.screen.widget.widgets.input.ButtonWidget;
+
+import static net.labymod.api.client.gui.icon.catalog.IconsCommon.ADD;
 
 public class EntryAddSettingImpl extends AbstractSettingImpl<EntryAddSetting, Object> implements EntryAddSetting {
 
@@ -22,7 +23,7 @@ public class EntryAddSettingImpl extends AbstractSettingImpl<EntryAddSetting, Ob
 
 	@Override
 	protected Widget[] createWidgets() {
-		ButtonWidget widget = ButtonWidget.component(null, IconsCommon.ADD, () -> set(null))
+		ButtonWidget widget = ButtonWidget.component(null, ADD, () -> set(null))
 			.addId("mods-setting-advanced-button"); // Fix for button size
 
 		// ModsSettingWidget resets the widget and its icon, which causes it to disappear.

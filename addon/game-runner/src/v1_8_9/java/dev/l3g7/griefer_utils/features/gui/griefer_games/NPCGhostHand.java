@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.gui.griefer_games;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.MouseClickEvent;
+import dev.l3g7.griefer_utils.core.events.MouseClickEvent.RightClickEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -22,6 +22,7 @@ import net.minecraft.util.Vec3;
 import java.util.ArrayList;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static net.minecraft.util.MovingObjectPosition.MovingObjectType.MISS;
 
 /**
  * Displays a message when players join or leave.
@@ -36,7 +37,7 @@ public class NPCGhostHand extends Feature {
 		.icon("mouse_right");
 
 	@EventListener
-	public void onClick(MouseClickEvent.RightClickEvent event) {
+	public void onClick(RightClickEvent event) {
 		if (world() == null || player() == null)
 			return;
 
@@ -78,7 +79,7 @@ public class NPCGhostHand extends Feature {
 
 		// Check if a block is in the way
 		MovingObjectPosition targetedBlock = mc().getRenderViewEntity().rayTrace(reachDistance, partialTicks());
-		if (targetedBlock != null && targetedBlock.typeOfHit != MovingObjectPosition.MovingObjectType.MISS) {
+		if (targetedBlock != null && targetedBlock.typeOfHit != MISS) {
 			if (eyes.squareDistanceTo(targetedBlock.hitVec) < eyes.squareDistanceTo(entityHitPos)) {
 				// The block is in front of the npc
 				return;

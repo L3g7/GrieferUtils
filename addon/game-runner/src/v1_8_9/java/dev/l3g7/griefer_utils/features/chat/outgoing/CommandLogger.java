@@ -8,14 +8,15 @@
 package dev.l3g7.griefer_utils.features.chat.outgoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
 
 @Singleton
 public class CommandLogger extends Feature {
@@ -28,8 +29,8 @@ public class CommandLogger extends Feature {
 
 	private final Logger logger = LogManager.getLogger("CommandLogger");
 
-	@EventListener(priority = Priority.LOWEST)
-	private void onMessageSend(PacketEvent.PacketSendEvent<C01PacketChatMessage> event) {
+	@EventListener(priority = LOWEST)
+	private void onMessageSend(PacketSendEvent<C01PacketChatMessage> event) {
 		if (event.packet.getMessage().startsWith("/"))
 			logger.info("executed " + event.packet.getMessage());
 	}

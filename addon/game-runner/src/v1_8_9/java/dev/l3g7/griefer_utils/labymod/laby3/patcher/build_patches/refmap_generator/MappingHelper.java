@@ -8,12 +8,12 @@
 package dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches.refmap_generator;
 
 import dev.pymdk.mapper.Mapping;
-import dev.pymdk.mapper.impl.MappingEntries;
 import dev.pymdk.mapper.impl.MappingEntries.MappedClass;
 import dev.pymdk.mapper.impl.MappingEntries.MappedField;
+import dev.pymdk.mapper.impl.MappingEntries.MappedMember;
 import dev.pymdk.mapper.impl.MappingEntries.MappedMethod;
 
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 import static dev.pymdk.mapper.Mapping.INTERMEDIARY;
@@ -36,7 +36,7 @@ class MappingHelper {
 			} else {
 				found = mappedClass.methods.unobfMap.entrySet().stream()
 					.filter(e -> e.getKey().substring(0, e.getKey().indexOf('(')).equals(method))
-					.map(Map.Entry::getValue)
+					.map(Entry::getValue)
 					.findFirst()
 					.orElse(null);
 			}
@@ -92,7 +92,7 @@ class MappingHelper {
 		String toMapped(Mapping mapping);
 	}
 
-	private record MemberWithOwner(MappedClass owner, MappingEntries.MappedMember member) implements RefmapEntry {
+	private record MemberWithOwner(MappedClass owner, MappedMember member) implements RefmapEntry {
 
 		public String toMapped(Mapping mapping) {
 			String format = member instanceof MappedField ? "L%s;%s:%s" : "L%s;%s%s";

@@ -14,7 +14,6 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.griefergames.CitybuildJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.ChatQueue;
@@ -36,6 +35,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ADDON_PREFIX;
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.UNFORMATTED_JAVA_PLAYER_NAME_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.features.uncategorized.commands.Command.CommandBuilder.command;
@@ -189,7 +189,7 @@ public class Commands {
 					return;
 				}
 
-				if (!Constants.UNFORMATTED_JAVA_PLAYER_NAME_PATTERN.matcher(name).matches()) {
+				if (!UNFORMATTED_JAVA_PLAYER_NAME_PATTERN.matcher(name).matches()) {
 					labyBridge.notifyMildError("Ungültiger Spielername.");
 					return;
 				}

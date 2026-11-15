@@ -11,7 +11,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static java.util.Calendar.*;
 
 @Singleton
 public class BSF extends Feature {
@@ -121,7 +122,7 @@ public class BSF extends Feature {
 	}
 
 	@EventListener
-	private static void onMessageSend(MessageEvent.MessageSendEvent event ) {
+	private static void onMessageSend(MessageSendEvent event ) {
 		if (event.message.toLowerCase().startsWith("/bss")) {
 			event.cancel();
 			TickScheduler.runNextRenderTick(() -> new GuiBSF().open());
@@ -132,13 +133,13 @@ public class BSF extends Feature {
 	private static Calendar getNextFarmweltReset() {
 		Calendar reset = Calendar.getInstance();
 
-		reset.set(Calendar.DAY_OF_MONTH, 4);
-		reset.set(Calendar.HOUR_OF_DAY, 4);
-		reset.set(Calendar.MINUTE, 0);
-		reset.set(Calendar.SECOND, 0);
+		reset.set(DAY_OF_MONTH, 4);
+		reset.set(HOUR_OF_DAY, 4);
+		reset.set(MINUTE, 0);
+		reset.set(SECOND, 0);
 
 		if (reset.before(Calendar.getInstance()))
-			reset.add(Calendar.MONTH, 1);
+			reset.add(MONTH, 1);
 
 		return reset;
 	}

@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.core.events.griefergames;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
@@ -76,7 +76,7 @@ public class CitybuildJoinEvent extends Event {
 		}
 
 		@EventListener
-		private static void onHeaderPacket(PacketEvent.PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
+		private static void onHeaderPacket(PacketReceiveEvent<S47PacketPlayerListHeaderFooter> event) {
 			if (!switchedServer)
 				return;
 

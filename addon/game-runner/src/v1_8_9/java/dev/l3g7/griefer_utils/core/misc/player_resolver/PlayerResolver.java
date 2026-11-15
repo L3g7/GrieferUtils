@@ -23,6 +23,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import static dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry.NAME_LOOKUP_MAP;
+import static dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry.UUID_LOOKUP_MAP;
+import static dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerResolver.Result.ERROR;
+import static dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerResolver.Result.FOUND;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static java.lang.Thread.MAX_PRIORITY;
 
@@ -55,10 +59,10 @@ public class PlayerResolver {
 				? JavaPlayerResolver.load(entry)
 				: BedrockPlayerResolver.load(entry);
 
-			if (res == Result.ERROR)
+			if (res == ERROR)
 				return;
 
-			updateCache(entry, res == Result.FOUND);
+			updateCache(entry, res == FOUND);
 		});
 	}
 
@@ -66,9 +70,9 @@ public class PlayerResolver {
 		entry.isLoaded = true;
 		entry.isValid = found;
 		if (entry.name != null)
-			PlayerListEntry.NAME_LOOKUP_MAP.put(entry.name, entry);
+			NAME_LOOKUP_MAP.put(entry.name, entry);
 		if (entry.id != null)
-			PlayerListEntry.UUID_LOOKUP_MAP.put(entry.id, entry);
+			UUID_LOOKUP_MAP.put(entry.id, entry);
 	}
 
 	protected static void checkHttpCode(HttpGetOperation op) {

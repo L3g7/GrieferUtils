@@ -10,7 +10,6 @@ package dev.l3g7.griefer_utils.labymod.laby3.patcher.build_patches;
 import com.google.gson.JsonElement;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
-import dev.pymdk.mapper.Mapping;
 import dev.pymdk.mapper.impl.LowLevelMapper;
 import dev.pymdk.mapper.impl.MappingEntries.MappedClass;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +22,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
+
+import static dev.pymdk.mapper.Mapping.UNOBFUSCATED;
 
 /**
  * Creates PyMDK mappings for all GrieferUtils classes with a Minecraft class as base class.
@@ -56,7 +57,7 @@ public class MappingGenerator implements Opcodes {
 			return cached;
 
 		if (isMinecraftClass(cls))
-			return LowLevelMapper.classes.get(internalName, Mapping.UNOBFUSCATED);
+			return LowLevelMapper.classes.get(internalName, UNOBFUSCATED);
 
 		// Check if class hierarchy contains Minecraft class
 		if (!hasMinecraftClassInHierarchy(cls))
@@ -65,11 +66,11 @@ public class MappingGenerator implements Opcodes {
 		// Build mapping entry
 		List<String> baseClasses = new ArrayList<>();
 		if (createMapping(cls.getSuperclass()) instanceof MappedClass mc)
-			baseClasses.add(mc.getName(Mapping.UNOBFUSCATED));
+			baseClasses.add(mc.getName(UNOBFUSCATED));
 
 		for (Class<?> itf : cls.getInterfaces())
 			if (createMapping(itf) instanceof MappedClass mc)
-				baseClasses.add(mc.getName(Mapping.UNOBFUSCATED));
+				baseClasses.add(mc.getName(UNOBFUSCATED));
 
 		MappedClass mappedClass = new MappedClass(internalName, internalName);
 		mappedClass.setBaseClasses(baseClasses.toArray(String[]::new));

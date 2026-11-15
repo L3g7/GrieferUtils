@@ -22,6 +22,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringTranslate;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 class Translator {
 
@@ -83,7 +84,7 @@ class Translator {
 	}
 
 	private static void parseTranslationKeys(Map<String, String> properties, Map<String, String> items,	Map<String, String> blocks,	Map<String, String> entities) {
-		for (Map.Entry<String, String> entry : properties.entrySet()) {
+		for (Entry<String, String> entry : properties.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue().toLowerCase();
 			if (key.startsWith("item."))

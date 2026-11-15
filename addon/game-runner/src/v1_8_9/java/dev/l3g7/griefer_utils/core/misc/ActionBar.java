@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.core.misc;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import net.minecraft.util.IChatComponent;
 
 import java.util.Timer;
@@ -57,7 +57,7 @@ public class ActionBar {
 	}
 
 	@EventListener
-	private static void onTickEvent(TickEvent.ClientTickEvent event) {
+	private static void onTickEvent(ClientTickEvent event) {
 		if (currentText != null)
 			mc().ingameGUI.setRecordPlaying(currentText, false);
 	}

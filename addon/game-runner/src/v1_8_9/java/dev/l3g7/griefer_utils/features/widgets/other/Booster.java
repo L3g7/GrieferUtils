@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.util.Util;
 import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.misc.Countdown;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
+import static dev.l3g7.griefer_utils.features.widgets.other.Booster.KeyMode.*;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.HIDDEN;
 import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.VISIBLE;
 import static net.labymod.ingamegui.enums.EnumModuleFormatting.SQUARE_BRACKETS;
@@ -61,7 +62,7 @@ public class Booster extends Widget {
 		.description("In welchem Design die derzeit aktiven Booster angezeigt werden sollen.")
 		.icon("wooden_board")
 		.config("modules.booster.design")
-		.defaultValue(KeyMode.TEXT_AND_ICON);
+		.defaultValue(TEXT_AND_ICON);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -71,7 +72,7 @@ public class Booster extends Widget {
 		.subSettings(design);
 
 	@EventListener(triggerWhenDisabled = true)
-	public void onServerSwitch(ServerEvent.ServerSwitchEvent event) {
+	public void onServerSwitch(ServerSwitchEvent event) {
 		clearBooster();
 	}
 
@@ -152,7 +153,7 @@ public class Booster extends Widget {
 
 	}
 
-	private enum KeyMode implements Named {
+	enum KeyMode implements Named {
 		ICON("Icon"),
 		TEXT("Text"),
 		TEXT_AND_ICON("Text & Icon");
@@ -214,7 +215,7 @@ public class Booster extends Widget {
 		public void draw(double x, double y, double rightX) {
 			super.draw(x, y, rightX);
 
-			if (design.get() == KeyMode.TEXT || !keyVisible)
+			if (design.get() == TEXT || !keyVisible)
 				return;
 
 			List<BoosterData> data = boosters.values().stream()
@@ -232,7 +233,7 @@ public class Booster extends Widget {
 			if (getDisplayFormatting() == SQUARE_BRACKETS)
 				xDiff -= signum * mc.fontRendererObj.getStringWidth(new Text("[", 0, bold, italic, underline).getText());
 
-			if (design.get() == KeyMode.ICON)
+			if (design.get() == ICON)
 				xDiff += .5;
 
 			// Add padding
@@ -271,9 +272,9 @@ public class Booster extends Widget {
 			KeyMode mode = design.get();
 			String name = "";
 
-			if (mode != KeyMode.TEXT)
+			if (mode != TEXT)
 				name += "  "; // Space for the icon
-			if (mode != KeyMode.ICON)
+			if (mode != ICON)
 				name += data.displayName;
 			if (data.stackable)
 				name += " x" + data.expirationDates.size();
@@ -331,18 +332,18 @@ public class Booster extends Widget {
 				KeyMode mode = design.get();
 				Component name = Component.empty();
 
-				if (mode != KeyMode.TEXT) {
-					if (mode == KeyMode.ICON)
+				if (mode != TEXT) {
+					if (mode == ICON)
 						name.append(Component.icon(Icons.offset(Icons.of("booster/" + data.displayName.toLowerCase()), -0.5f, -.5f), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
 					else
 						// Text and icon
 						name.append(Component.icon(Icons.offset(Icons.of("booster/" + data.displayName.toLowerCase()), .5f, -1), Style.builder().color(TextColor.color(-1)).build(), MinecraftUtil.mc().fontRendererObj.FONT_HEIGHT));
 				}
 
-				if (mode == KeyMode.TEXT_AND_ICON)
+				if (mode == TEXT_AND_ICON)
 					name.append(Component.text(" "));
 
-				if (mode != KeyMode.ICON)
+				if (mode != ICON)
 					name.append(Component.text(data.displayName));
 
 				keyComponent.setChildren(Collections.singleton(name));

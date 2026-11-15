@@ -13,7 +13,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static org.lwjgl.opengl.GL11.*;
 
 public class ItemRenderer {
 
@@ -58,7 +58,7 @@ public class ItemRenderer {
 
 		GlStateManager.pushMatrix();
 		GlStateManager.clearColor(0, 0, 0, 0);
-		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GlStateManager.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		mc().getRenderItem().renderItemAndEffectIntoGUI(stack, 0, 0);
 		mc().getRenderItem().renderItemOverlayIntoGUI(mc().fontRendererObj, stack, 0, 0, null);
@@ -77,7 +77,7 @@ public class ItemRenderer {
 
 		GlStateManager.pushMatrix();
 		GlStateManager.clearColor(0, 0, 0, 0);
-		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GlStateManager.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		mc().getRenderItem().renderItemAndEffectIntoGUI(stack, 0, 0);
 		GlStateManager.popMatrix();
 		buffers.add(ImageUtil.readPixels());
@@ -99,8 +99,8 @@ public class ItemRenderer {
 		GlStateManager.enableColorMaterial();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE);
+		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.disableAlpha();
 	}
 

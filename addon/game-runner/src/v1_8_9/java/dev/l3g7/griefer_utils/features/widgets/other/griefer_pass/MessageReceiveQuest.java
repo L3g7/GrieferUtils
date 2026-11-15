@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.widgets.other.griefer_pass;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
@@ -91,7 +90,7 @@ abstract class MessageReceiveQuest extends AbstractQuest {
 			if (!lastMessageSent.startsWith("/pay") || lastMessageSent.contains("*"))
 				return 0;
 
-			Matcher matcher = Constants.PAYMENT_SEND_PATTERN.matcher(message.getFormattedText());
+			Matcher matcher = PAYMENT_SEND_PATTERN.matcher(message.getFormattedText());
 			if (!matcher.matches())
 				return 0;
 
@@ -103,9 +102,9 @@ abstract class MessageReceiveQuest extends AbstractQuest {
 	static class WriteMessageQuest extends MessageReceiveQuest {
 		@Override
 		protected int processMessage(IChatComponent message) {
-			Matcher matcher = Constants.GLOBAL_RECEIVE_PATTERN.matcher(message.getFormattedText());
+			Matcher matcher = GLOBAL_RECEIVE_PATTERN.matcher(message.getFormattedText());
 			if (!matcher.matches())
-				matcher = Constants.PLOTCHAT_RECEIVE_PATTERN.matcher(message.getFormattedText());
+				matcher = PLOTCHAT_RECEIVE_PATTERN.matcher(message.getFormattedText());
 			if (!matcher.matches())
 				return 0;
 

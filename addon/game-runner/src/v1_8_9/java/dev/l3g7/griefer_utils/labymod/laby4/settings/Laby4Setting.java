@@ -16,10 +16,7 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
-import net.labymod.api.client.component.format.NamedTextColor;
-import net.labymod.api.client.component.format.TextDecoration;
 import net.labymod.api.client.gui.icon.Icon;
-import net.labymod.api.client.gui.icon.catalog.IconsCommon;
 import net.labymod.api.client.gui.screen.widget.widgets.renderer.IconWidget;
 import net.labymod.api.configuration.loader.Config;
 import net.labymod.api.configuration.loader.property.ConfigProperty;
@@ -49,6 +46,10 @@ import java.util.stream.Collectors;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.reflection.Reflection.c;
+import static net.labymod.api.client.component.format.NamedTextColor.BLUE;
+import static net.labymod.api.client.component.format.NamedTextColor.WHITE;
+import static net.labymod.api.client.component.format.TextDecoration.BOLD;
+import static net.labymod.api.client.gui.icon.catalog.IconsCommon.NEW;
 
 @SuppressWarnings("unchecked")
 public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends AbstractSetting<S, V>, Setting {
@@ -290,7 +291,7 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 		}
 
 		public IconWidget createBadge(AbstractSetting<?, ?> source) {
-			IconWidget newBadge = new IconWidget(IconsCommon.NEW);
+			IconWidget newBadge = new IconWidget(NEW);
 			newBadge.addId("new-badge");
 			newBadge.setHoverComponent(Component.text(getDisplayName()));
 
@@ -308,15 +309,15 @@ public interface Laby4Setting<S extends AbstractSetting<S, V>, V> extends Abstra
 	 * Copy of ModsOptionsBuilder#newBadge, but accessible
 	 */
 	static IconWidget newBadge(Revision revision) {
-		IconWidget newBadge = new IconWidget(IconsCommon.NEW);
+		IconWidget newBadge = new IconWidget(NEW);
 		newBadge.addId("new-badge");
 		newBadge.setHoverComponent(Component
 			.translatable("labymod.misc.introduced")
-			.color(NamedTextColor.BLUE)
+			.color(BLUE)
 			.argument(Component
 				.text(revision.getDisplayName())
-				.color(NamedTextColor.WHITE)
-				.decorate(TextDecoration.BOLD)));
+				.color(WHITE)
+				.decorate(BOLD)));
 
 		return newBadge;
 	}

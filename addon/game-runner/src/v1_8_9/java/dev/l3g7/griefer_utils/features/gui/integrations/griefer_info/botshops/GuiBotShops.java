@@ -16,7 +16,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeSet;
+
+import static dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.botshops.BotShop.BOT_SHOPS;
 
 public class GuiBotShops extends GuiSearchable<BotShop> {
 
@@ -32,7 +38,7 @@ public class GuiBotShops extends GuiSearchable<BotShop> {
 	public GuiBotShops() {
 		super("§8§lBotshops", 7, GuiGrieferInfo.GUI, "Botshop suchen...", Comparator.comparing(BotShop::toString));
 
-		for (Map.Entry<Integer, ItemStack> cb : BigChestUtil.getCBs().entrySet()) {
+		for (Entry<Integer, ItemStack> cb : BigChestUtil.getCBs().entrySet()) {
 			String asFilter = cb.getValue().getDisplayName().replaceAll("§.", "");
 
 			CB_SELECT_GUI.addItem(cb.getKey(), cb.getValue(), () -> {
@@ -44,7 +50,7 @@ public class GuiBotShops extends GuiSearchable<BotShop> {
 
 	@Override
 	protected int fillEntriesOnEmptySearch(TreeSet<BotShop> botShops) {
-		for (BotShop botShop : new ArrayList<>(BotShop.BOT_SHOPS))
+		for (BotShop botShop : new ArrayList<>(BOT_SHOPS))
 			if (botShop.matchesFilter(cbFilter, filteringForBuying, filteringForSelling))
 				botShops.add(botShop);
 

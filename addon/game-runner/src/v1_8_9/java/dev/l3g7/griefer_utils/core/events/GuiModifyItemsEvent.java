@@ -7,9 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.events;
 
-import dev.l3g7.griefer_utils.core.api.event_bus.Event;
+import dev.l3g7.griefer_utils.core.api.event_bus.Event.TypedEvent;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceivedEvent;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import net.minecraft.client.gui.GuiScreen;
@@ -19,15 +18,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.network.play.server.S30PacketWindowItems;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOW;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
-public class GuiModifyItemsEvent extends Event.TypedEvent<GuiModifyItemsEvent> {
+public class GuiModifyItemsEvent extends TypedEvent<GuiModifyItemsEvent> {
 
-	@EventListener(priority = Priority.LOW)
+	@EventListener(priority = LOW)
 	private static void onGuiItems(PacketReceivedEvent<S30PacketWindowItems> packets) { fireEvent(); }
 
-	@EventListener(priority = Priority.LOW)
+	@EventListener(priority = LOW)
 	private static void onGuiISetSlot(PacketReceivedEvent<S2FPacketSetSlot> packets) { fireEvent(); }
 
 	private static void fireEvent() {

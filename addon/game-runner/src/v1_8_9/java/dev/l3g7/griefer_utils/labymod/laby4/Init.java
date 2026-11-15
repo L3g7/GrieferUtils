@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.labymod.laby4;
 
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
-import net.labymod.api.Constants;
 import net.labymod.api.models.addon.annotation.AddonEntryPoint;
 import net.labymod.api.models.version.Version;
 
@@ -22,6 +21,7 @@ import java.util.zip.ZipOutputStream;
 import static dev.l3g7.griefer_utils.core.auto_update.AutoUpdater.DELETION_MARKER;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
+import static net.labymod.api.Constants.Files.ADDONS_SCHEDULE_FOR_REMOVAL;
 
 @AddonEntryPoint(priority = 900)
 @SuppressWarnings("UnstableApiUsage")
@@ -49,7 +49,7 @@ public class Init implements net.labymod.api.addon.entrypoint.Entrypoint, AutoUp
 
 		// Add jar to .asfr
 		String deleteLine = "griefer_utils-marked_for_deletion" + System.lineSeparator();
-		Files.write(Constants.Files.ADDONS_SCHEDULE_FOR_REMOVAL, deleteLine.getBytes(), CREATE, APPEND);
+		Files.write(ADDONS_SCHEDULE_FOR_REMOVAL, deleteLine.getBytes(), CREATE, APPEND);
 	}
 
 	@Override

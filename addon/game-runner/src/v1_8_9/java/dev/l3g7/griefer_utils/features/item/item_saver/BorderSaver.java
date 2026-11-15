@@ -10,7 +10,7 @@ package dev.l3g7.griefer_utils.features.item.item_saver;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockInteractEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -23,11 +23,12 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.network.play.client.C07PacketPlayerDigging.Action;
 import net.minecraft.util.BlockPos;
 
 import static dev.l3g7.griefer_utils.core.util.ItemUtil.createItem;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.START_DESTROY_BLOCK;
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.*;
 import static net.minecraft.util.EnumFacing.UP;
 
 /**
@@ -59,9 +60,9 @@ public class BorderSaver extends Feature {
 	}
 
 	@EventListener
-	public void onPacket(PacketEvent.PacketSendEvent<C07PacketPlayerDigging> event) {
-		C07PacketPlayerDigging.Action action = event.packet.getStatus();
-		if (action == C07PacketPlayerDigging.Action.DROP_ITEM || action == C07PacketPlayerDigging.Action.DROP_ALL_ITEMS)
+	public void onPacket(PacketSendEvent<C07PacketPlayerDigging> event) {
+		Action action = event.packet.getStatus();
+		if (action == DROP_ITEM || action == DROP_ALL_ITEMS)
 			return;
 
 		if (isHoldingBorder()) {

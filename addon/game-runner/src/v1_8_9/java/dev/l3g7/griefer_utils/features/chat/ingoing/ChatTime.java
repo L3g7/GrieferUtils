@@ -11,7 +11,7 @@ import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -81,7 +81,7 @@ public class ChatTime extends Feature {
 	}
 
 	@EventListener(priority = LOW)
-	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
+	public void onMessageModifyChat(MessageModifyEvent event) {
 		String time = String.format(style.get(), new SimpleDateFormat(format.get()).format(new Date())).replace('&', '§') + "§r";
 		event.setMessage(new ChatComponentText(time).appendSibling(event.message));
 	}

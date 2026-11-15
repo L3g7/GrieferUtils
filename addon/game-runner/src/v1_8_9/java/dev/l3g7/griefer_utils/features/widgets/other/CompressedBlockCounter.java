@@ -8,25 +8,27 @@
 package dev.l3g7.griefer_utils.features.widgets.other;
 
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import dev.l3g7.griefer_utils.features.Feature.MainElement;
 import dev.l3g7.griefer_utils.features.item.item_info.ItemCounter;
+import dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.FormatMode;
 import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import net.minecraft.item.ItemStack;
 
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.DECIMAL_FORMAT_98;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.features.item.item_info.ItemCounter.FormatMode.*;
 
 @Singleton
 public class CompressedBlockCounter extends SimpleWidget {
 
-	private final DropDownSetting<ItemCounter.FormatMode> formatting = DropDownSetting.create(ItemCounter.FormatMode.class)
+	private final DropDownSetting<FormatMode> formatting = DropDownSetting.create(FormatMode.class)
 		.name("Formattierung")
 		.description("In welchem Format die Anzahl angezeigt werden soll.")
 		.icon("color_palette")
-		.defaultValue(ItemCounter.FormatMode.UNFORMATTED);
+		.defaultValue(UNFORMATTED);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -59,9 +61,9 @@ public class CompressedBlockCounter extends SimpleWidget {
 
 	private String getFormattedAmount(long amount, int stackSize) {
 		String formatString = "";
-		if (formatting.get() != ItemCounter.FormatMode.UNFORMATTED) formatString += ItemCounter.formatAmount(amount, stackSize);
-		if (formatting.get() == ItemCounter.FormatMode.BOTH) formatString += " / ";
-		if (formatting.get() != ItemCounter.FormatMode.FORMATTED) formatString += Constants.DECIMAL_FORMAT_98.format(amount);
+		if (formatting.get() != UNFORMATTED) formatString += ItemCounter.formatAmount(amount, stackSize);
+		if (formatting.get() == BOTH) formatString += " / ";
+		if (formatting.get() != FORMATTED) formatString += DECIMAL_FORMAT_98.format(amount);
 
 		return formatString;
 	}

@@ -7,28 +7,27 @@
 
 package dev.l3g7.griefer_utils.features.player;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import net.minecraft.client.Minecraft;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.api.misc.Constants;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
 import dev.l3g7.griefer_utils.core.events.InputEvent.KeyInputEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
-import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.settings.types.*;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
+import net.minecraft.client.Minecraft;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 
+import static dev.l3g7.griefer_utils.core.api.misc.Constants.MESSAGE_RECEIVE_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
 public class AutoNick extends Feature {
@@ -95,7 +94,7 @@ public class AutoNick extends Feature {
 	}
 
 	@EventListener(triggerWhenDisabled = true)
-	private void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent.Pre event) {
+	private void onGuiKeyboardInput(KeyboardInputEvent.Pre event) {
 		if (!manuallyAFK)
 			lastEvent = System.currentTimeMillis();
 	}
@@ -105,7 +104,7 @@ public class AutoNick extends Feature {
 		if (!isAFK || messageReply.get().isEmpty())
 			return;
 
-		Matcher matcher = Constants.MESSAGE_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
+		Matcher matcher = MESSAGE_RECEIVE_PATTERN.matcher(event.message.getFormattedText());
 		if (!matcher.matches())
 			return;
 
@@ -156,7 +155,7 @@ public class AutoNick extends Feature {
 		executor.schedule(
 				() -> Minecraft.getMinecraft().addScheduledTask(
 						() -> send("/unnick")),
-				5, TimeUnit.SECONDS);
+				5, SECONDS);
 		executor.shutdown();
 		} else {
 			send("/unnick");

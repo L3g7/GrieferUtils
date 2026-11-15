@@ -8,11 +8,11 @@
 package dev.l3g7.griefer_utils.features.player.name_tags;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.containers.Option;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
+import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
 import dev.l3g7.griefer_utils.core.misc.color_patterns.ColorPattern;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -28,6 +28,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGHEST;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
@@ -138,8 +140,8 @@ public class DefaultPrefixes extends Feature {
 		getCategory().callback(TabListEvent::updatePlayerInfoList);
 	}
 
-	@EventListener(priority = Priority.HIGHEST)
-	public void onTabListNameUpdate(TabListEvent.TabListNameUpdateEvent event) {
+	@EventListener(priority = HIGHEST)
+	public void onTabListNameUpdate(TabListNameUpdateEvent event) {
 		if (!(removeColors.get() || removePrefixNames.get() || removeSuffixes.get()))
 			return;
 
@@ -149,8 +151,8 @@ public class DefaultPrefixes extends Feature {
 		modify(event.component, FORMATTED_PLAYER_PATTERN, false);
 	}
 
-	@EventListener(priority = Priority.HIGH)
-	public void onMessageModifyChat(MessageEvent.MessageModifyEvent event) {
+	@EventListener(priority = HIGH)
+	public void onMessageModifyChat(MessageModifyEvent event) {
 		if (!(removeColors.get() || removePrefixNames.get() || removeSuffixes.get()))
 			return;
 

@@ -16,8 +16,10 @@ import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
+import dev.l3g7.griefer_utils.core.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.features.widgets.Widget.ComplexWidget;
+import dev.l3g7.griefer_utils.features.widgets.Widget.ComplexWidget.KVPair;
 import dev.l3g7.griefer_utils.features.widgets.Widget.LabyWidget;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import net.labymod.core.LabyModCore;
@@ -163,7 +165,7 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 	private String configKey;
 
 	private Laby3Widget initModule() {
-		SettingLoader.MainElementData data = SettingLoader.initMainElement(owner, "modules");
+		MainElementData data = SettingLoader.initMainElement(owner, "modules");
 		mainElement = (SwitchSettingImpl) data.mainElement;
 		configKey = data.configKey;
 		return this;
@@ -285,7 +287,7 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 			EnumModuleFormatting displayFormatting = this.getDisplayFormatting();
 			List<List<TextPart>> texts = new ArrayList<>();
 
-			for (ComplexWidget.KVPair line : widget.getLines()) {
+			for (KVPair line : widget.getLines()) {
 				IChatComponent key = line.key;
 				if (key == null)
 					key = new ChatComponentText(getName());

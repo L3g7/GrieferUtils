@@ -20,7 +20,6 @@ import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording.Recor
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Icons;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import net.labymod.main.LabyMod;
-import net.labymod.main.ModTextures;
 import net.labymod.settings.LabyModAddonsGui;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
@@ -36,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode.*;
 import static dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftBridgeImpl.getSubSettingsOfType;
 import static dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftBridgeImpl.iterate;
+import static net.labymod.main.ModTextures.MISC_MENU_POINT;
 
 public class RecraftRecordingSelectionSetting extends SmallButtonSetting implements Laby3Setting<RecraftRecordingSelectionSetting, Object> {
 
@@ -226,7 +226,7 @@ public class RecraftRecordingSelectionSetting extends SmallButtonSetting impleme
 
 		private void drawButtonIcon(int buttonX, int buttonY) {
 			GlStateManager.enableBlend();
-			mc.getTextureManager().bindTexture(ModTextures.MISC_MENU_POINT);
+			mc.getTextureManager().bindTexture(MISC_MENU_POINT);
 
 			mc.getTextureManager().bindTexture(new ResourceLocation("labymod/textures/misc/menu_point.png"));
 			LabyMod.getInstance().getDrawUtils().drawTexture(buttonX + 3.5f, buttonY + 3.5f, 0, 0, 256, 256, 13, 13, 2);

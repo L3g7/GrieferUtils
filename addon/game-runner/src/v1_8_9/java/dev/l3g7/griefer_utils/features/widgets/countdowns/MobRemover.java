@@ -24,6 +24,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
+import static dev.l3g7.griefer_utils.features.widgets.countdowns.MobRemover.TimeFormat.LONG;
+import static dev.l3g7.griefer_utils.features.widgets.countdowns.MobRemover.TimeFormat.SHORT;
 
 @Singleton
 public class MobRemover extends SimpleWidget {
@@ -32,7 +34,7 @@ public class MobRemover extends SimpleWidget {
 		.name("Zeitformat")
 		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
 		.icon("hourglass")
-		.defaultValue(TimeFormat.LONG);
+		.defaultValue(LONG);
 
 	private final NumberSetting warnTime = NumberSetting.create()
 		.name("Warn-Zeit (s)")
@@ -55,7 +57,7 @@ public class MobRemover extends SimpleWidget {
 
 		// Warn if mob remover is less than the set amount of seconds away
 		countdown.checkWarning("MobRemover!", warnTime.get());
-		return Util.formatTimeSeconds(countdown.secondsRemaining(), timeFormat.get() == TimeFormat.SHORT);
+		return Util.formatTimeSeconds(countdown.secondsRemaining(), timeFormat.get() == SHORT);
 	}
 
 	@EventListener(triggerWhenDisabled = true)
@@ -75,7 +77,7 @@ public class MobRemover extends SimpleWidget {
 		}
 	}
 
-	private enum TimeFormat implements Named {
+	enum TimeFormat implements Named {
 		SHORT("Kurz"),
 		LONG("Lang");
 

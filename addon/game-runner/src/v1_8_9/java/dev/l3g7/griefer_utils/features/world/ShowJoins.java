@@ -17,19 +17,21 @@ import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
-import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.util.MinecraftUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.player.player_list.PlayerList;
 import dev.l3g7.griefer_utils.features.player.player_list.ScammerList;
 import dev.l3g7.griefer_utils.features.player.player_list.TrustedList;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
+import net.minecraft.network.play.server.S38PacketPlayerListItem.AddPlayerData;
 
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
+import static net.minecraft.network.play.server.S38PacketPlayerListItem.Action.UPDATE_GAME_MODE;
 
 /**
  * Displays a message when players join or leave.
@@ -154,10 +156,10 @@ public class ShowJoins extends Feature {
 
 	@EventListener
 	private void onUpdateGamemode(PacketReceiveEvent<S38PacketPlayerListItem> event) {
-		if (event.packet.getAction() != S38PacketPlayerListItem.Action.UPDATE_GAME_MODE)
+		if (event.packet.getAction() != UPDATE_GAME_MODE)
 			return;
 
-		for (S38PacketPlayerListItem.AddPlayerData entry : event.packet.getEntries())
+		for (AddPlayerData entry : event.packet.getEntries())
 			missingGameMode.remove(entry.getProfile().getId());
 	}
 

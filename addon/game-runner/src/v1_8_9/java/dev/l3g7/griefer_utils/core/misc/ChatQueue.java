@@ -9,9 +9,9 @@ package dev.l3g7.griefer_utils.core.misc;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
-import dev.l3g7.griefer_utils.core.events.network.ServerEvent;
+import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerQuitEvent;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -45,7 +45,7 @@ public class ChatQueue {
 	}
 
 	@EventListener
-	public void onQuit(ServerEvent.ServerQuitEvent event) {
+	public void onQuit(ServerQuitEvent event) {
 		lastMessageSentTimestamp = 0;
 		currentBlock = null;
 		queuedMessages.clear();
@@ -54,7 +54,7 @@ public class ChatQueue {
 	}
 
 	@EventListener
-	public void onTick(TickEvent.ClientTickEvent event) {
+	public void onTick(ClientTickEvent event) {
 
 		currentQueueDelay--;
 

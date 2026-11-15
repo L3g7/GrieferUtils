@@ -15,13 +15,14 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
+import static java.math.BigDecimal.ZERO;
 
 /**
  * Cash and bank balance.
  */
 public class Balances {
 
-	private static BigDecimal accountBalance = BigDecimal.ZERO;
+	private static BigDecimal accountBalance = ZERO;
 	private static long bankBalance = 0;
 
 	/**

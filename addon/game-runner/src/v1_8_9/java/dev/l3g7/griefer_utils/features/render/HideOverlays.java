@@ -13,10 +13,10 @@ import dev.l3g7.griefer_utils.core.events.render.BurningCheckEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderPortalCheckEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderPortalDistortionEvent;
 import dev.l3g7.griefer_utils.core.events.render.SetupFogEvent;
-import dev.l3g7.griefer_utils.core.events.render.SetupFogEvent.FogType;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 
+import static dev.l3g7.griefer_utils.core.events.render.SetupFogEvent.FogType.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
@@ -70,11 +70,11 @@ public class HideOverlays extends Feature {
 
 	@EventListener
 	private void onDisplayNameRender(SetupFogEvent event) {
-		if (event.fogType == FogType.BLINDNESS) {
+		if (event.fogType == BLINDNESS) {
 			if (blindness.get()) event.cancel();
-		} else if (event.fogType == FogType.WATER) {
+		} else if (event.fogType == WATER) {
 			if (water.get()) event.cancel();
-		} else if (event.fogType == FogType.LAVA) {
+		} else if (event.fogType == LAVA) {
 			if (lava.get()) event.cancel();
 		}
 	}

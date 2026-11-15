@@ -24,6 +24,7 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.net.*;
@@ -66,7 +67,7 @@ public class AutoUpdater {
 	public static final String DELETION_MARKER = "File marked for deletion by GrieferUtils updater";
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-	private static MethodHandles.Lookup lookup;
+	private static Lookup lookup;
 
 	public static boolean hasUpdated = false;
 
@@ -75,7 +76,7 @@ public class AutoUpdater {
 	 *
 	 * @see dev.l3g7.griefer_utils.core.api.reflection.Access
 	 */
-	private static MethodHandles.Lookup getLookup() {
+	private static Lookup getLookup() {
 		if (lookup != null)
 			return lookup;
 

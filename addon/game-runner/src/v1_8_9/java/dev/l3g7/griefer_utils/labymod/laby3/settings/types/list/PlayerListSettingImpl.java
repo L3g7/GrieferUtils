@@ -12,7 +12,6 @@ import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import net.labymod.core.LabyModCore;
 import net.labymod.gui.elements.ModTextField;
-import net.labymod.main.ModTextures;
 import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.PreviewRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -21,6 +20,7 @@ import net.minecraft.client.gui.GuiScreen;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static net.labymod.main.ModTextures.MISC_HEAD_QUESTION;
 
 public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
@@ -155,7 +155,7 @@ public class PlayerListSettingImpl extends ListSettingImpl<PlayerListEntry> {
 
 	private void renderSkull(PlayerListEntry e, double x, double y, int size) {
 		if (e.getSkin() == null) {
-			mc.getTextureManager().bindTexture(ModTextures.MISC_HEAD_QUESTION);
+			mc.getTextureManager().bindTexture(MISC_HEAD_QUESTION);
 			DrawUtils.drawTexture(x, y, 0, 0, 256, 256, size, size);
 			return;
 		}

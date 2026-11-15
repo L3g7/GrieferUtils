@@ -11,12 +11,16 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.GrieferUtilsConfigRequirement;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.GrieferUtilsVersionRequirement;
-import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeBoolOpRequirement;
-import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeFixedRequirement;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeBoolOpRequirement.NativeAndRequirement;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeBoolOpRequirement.NativeNotRequirement;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeBoolOpRequirement.NativeOrRequirement;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.minecraft.RankRequirement;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.minecraft.SubserverRequirement;
 
 import java.util.Arrays;
+
+import static dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeFixedRequirement.ALWAYS;
+import static dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.internal.NativeFixedRequirement.NEVER;
 
 /**
  * A condition that hides suggestions / nodes if it fails.
@@ -35,11 +39,11 @@ public abstract class Requirement {
 		String type = json.get("type").getAsString();
 
 		return switch (type) {
-			case "true" -> NativeFixedRequirement.ALWAYS;
-			case "false" -> NativeFixedRequirement.NEVER;
-			case "and" -> context.deserialize(json, NativeBoolOpRequirement.NativeAndRequirement.class);
-			case "not" -> context.deserialize(json, NativeBoolOpRequirement.NativeNotRequirement.class);
-			case "or" -> context.deserialize(json, NativeBoolOpRequirement.NativeOrRequirement.class);
+			case "true" -> ALWAYS;
+			case "false" -> NEVER;
+			case "and" -> context.deserialize(json, NativeAndRequirement.class);
+			case "not" -> context.deserialize(json, NativeNotRequirement.class);
+			case "or" -> context.deserialize(json, NativeOrRequirement.class);
 
 			case "griefer_utils_config" -> context.deserialize(json, GrieferUtilsConfigRequirement.class);
 			case "griefer_utils_version" -> context.deserialize(json, GrieferUtilsVersionRequirement.class);
@@ -53,11 +57,11 @@ public abstract class Requirement {
 	public abstract boolean test();
 
 	public Requirement and(Requirement other) {
-		return new NativeBoolOpRequirement.NativeAndRequirement(Arrays.asList(this, other));
+		return new NativeAndRequirement(Arrays.asList(this, other));
 	}
 
 	public Requirement not() {
-		return new NativeBoolOpRequirement.NativeNotRequirement(this);
+		return new NativeNotRequirement(this);
 	}
 
 }

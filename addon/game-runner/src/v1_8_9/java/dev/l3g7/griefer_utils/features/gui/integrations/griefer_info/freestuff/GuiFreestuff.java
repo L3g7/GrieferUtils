@@ -23,9 +23,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.freestuff.FreeStuff.FREE_STUFF;
 
 public class GuiFreestuff extends GuiSearchable<FreeStuff> {
 
@@ -39,7 +44,7 @@ public class GuiFreestuff extends GuiSearchable<FreeStuff> {
 	public GuiFreestuff() {
 		super("§8§lFreestuff", 7, GuiGrieferInfo.GUI, "Suchen...", Comparator.comparing(FreeStuff::toString));
 
-		for (Map.Entry<Integer, ItemStack> cb : BigChestUtil.getCBs().entrySet()) {
+		for (Entry<Integer, ItemStack> cb : BigChestUtil.getCBs().entrySet()) {
 			String asFilter = cb.getValue().getDisplayName().replaceAll("§.", "");
 
 			CB_SELECT_GUI.addItem(cb.getKey(), cb.getValue(), () -> {
@@ -127,7 +132,7 @@ public class GuiFreestuff extends GuiSearchable<FreeStuff> {
 
 	@Override
 	protected int fillEntriesOnEmptySearch(TreeSet<FreeStuff> entries) {
-		for (FreeStuff freeStuff : new ArrayList<>(FreeStuff.FREE_STUFF))
+		for (FreeStuff freeStuff : new ArrayList<>(FREE_STUFF))
 			if (freeStuff.matchesFilter(cbFilter, itemFilter))
 				entries.add(freeStuff);
 

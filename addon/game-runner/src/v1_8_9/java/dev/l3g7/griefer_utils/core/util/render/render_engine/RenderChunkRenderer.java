@@ -19,13 +19,13 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
-import org.lwjgl.opengl.GL11;
 
-import java.util.Map;
+import java.util.Map.Entry;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk.ROTATION_SLICE;
 import static dev.l3g7.griefer_utils.core.util.render.render_engine.RenderChunk.ROTATION_STEPS;
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Renders the {@link RenderChunk RenderChunks} of all {@link RenderChunkManager managers}.
@@ -67,8 +67,8 @@ class RenderChunkRenderer {
 		profiler.endStartSection("setup_gl");
 		GlStateManager.disableCull();
 		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.003921569F);
+		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.alphaFunc(GL_GREATER, 0.003921569F);
 		GlStateManager.depthMask(true);
 		GlStateManager.color(1, 1, 1, 1);
 
@@ -86,7 +86,7 @@ class RenderChunkRenderer {
 		for (RenderChunkManager manager : RenderChunkManager.managers) {
 			profiler.startSection(manager.getClass().getSimpleName());
 
-			for (Map.Entry<ChunkCoordIntPair, RenderChunk> entry : manager.chunks.entrySet()) {
+			for (Entry<ChunkCoordIntPair, RenderChunk> entry : manager.chunks.entrySet()) {
 				ChunkCoordIntPair pair = entry.getKey();
 				boolean isVisible = frustum.isBoundingBoxInFrustum(new AxisAlignedBB(
 					pair.getXStart(),

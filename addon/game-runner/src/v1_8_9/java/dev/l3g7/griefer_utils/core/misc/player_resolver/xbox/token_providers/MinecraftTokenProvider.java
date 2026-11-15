@@ -16,7 +16,7 @@ import dev.l3g7.griefer_utils.core.misc.player_resolver.xbox.Authorization;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.Map.Entry;
 
 public class MinecraftTokenProvider implements TokenProvider {
 
@@ -28,7 +28,7 @@ public class MinecraftTokenProvider implements TokenProvider {
 
 		byte[] raw = Crypt32Util.cryptUnprotectData(IO.read(path).asBytes());
 		JsonObject o = IO.read(raw).asJsonObject();
-		for (Map.Entry<String, JsonElement> entry : o.get("credentials").getAsJsonObject().entrySet()) {
+		for (Entry<String, JsonElement> entry : o.get("credentials").getAsJsonObject().entrySet()) {
 			if (entry.getKey().equals("common"))
 				continue;
 

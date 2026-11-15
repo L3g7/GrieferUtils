@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.KeyboardInputEvent;
 import dev.l3g7.griefer_utils.core.events.InputEvent.KeyInputEvent;
 import dev.l3g7.griefer_utils.core.events.InputEvent.MouseInputEvent;
 import dev.l3g7.griefer_utils.core.settings.types.KeySetting;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static net.labymod.api.client.gui.screen.key.InputType.ACTION;
 
 public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>> implements KeySetting {
 
@@ -105,7 +107,7 @@ public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>
 	}
 
 	@EventListener
-	public void onGuiKeyPress(GuiScreenEvent.KeyboardInputEvent.Post event) {
+	public void onGuiKeyPress(KeyboardInputEvent.Post event) {
 		if (!Keyboard.isRepeatEvent() && triggersInContainers)
 			onPress(Keyboard.getEventKey());
 	}
@@ -152,7 +154,7 @@ public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>
 			if (!mouseButton.getActualName().startsWith("M"))
 				return;
 
-			this.keyPressed(mouseButton, InputType.ACTION);
+			this.keyPressed(mouseButton, ACTION);
 			cir.setReturnValue(true);
 		}
 

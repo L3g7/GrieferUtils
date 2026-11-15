@@ -16,11 +16,11 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.injection.InjectorBase;
-import dev.pymdk.mapper.Mapping;
 import net.labymod.api.Laby;
 import net.minecraft.launchwrapper.Launch;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.pymdk.mapper.Mapping.INTERMEDIARY;
 
 public class Entrypoint implements AutoUpdater.Entrypoint {
 
@@ -55,7 +55,7 @@ public class Entrypoint implements AutoUpdater.Entrypoint {
 		);
 
 		// Load mappings for automatic name resolution in Reflection
-		Mapper.loadMappings(Launch.assetsDir.toPath(), Mapping.INTERMEDIARY, false);
+		Mapper.loadMappings(Launch.assetsDir.toPath(), INTERMEDIARY, false);
 
 		// Ensure addon version is up-to-date
 		JsonObject addonJson = IO.read(FileProvider.getData("addon.json")).asJsonObject();

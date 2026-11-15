@@ -16,7 +16,6 @@ import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.StringSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
-import dev.pymdk.mapper.Mapping;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.util.concurrent.Future;
@@ -33,13 +32,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.pymdk.mapper.Mapping.OBFUSCATED;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class PacketDumper {
 
@@ -57,7 +57,7 @@ public class PacketDumper {
 		.name("Paket-Dumper")
 		.description("Dumpt ein-/ausgehende Pakete.")
 		.icon("portal")
-		.enabled(LabyBridge.labyBridge.activeMapping() != Mapping.OBFUSCATED)
+		.enabled(LabyBridge.labyBridge.activeMapping() != OBFUSCATED) // TODO auto-map
 		.subSettings(incoming.enabled, outgoing.enabled, dumpCustomPayloads);
 
 	@EventListener
@@ -103,7 +103,7 @@ public class PacketDumper {
 		JsonObject obj = new JsonObject();
 		obj.addProperty("channel", channelName);
 		obj.addProperty("bufferB64", Base64.getEncoder().encodeToString(bytes));
-		obj.addProperty("bufferUTF8", new String(bytes, StandardCharsets.UTF_8));
+		obj.addProperty("bufferUTF8", new String(bytes, UTF_8));
 
 		LOGGER.info(IO.GSON.toJson(obj));
 	}

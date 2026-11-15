@@ -10,12 +10,15 @@ package dev.l3g7.griefer_utils.features.uncategorized.debug.wiki_gen;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
+
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL12.GL_BGRA;
 
 class ImageUtil {
 
@@ -23,12 +26,12 @@ class ImageUtil {
 
 	public static ByteBuffer readPixels() {
 		ByteBuffer buf = BufferUtils.createByteBuffer(size * size * 4);
-		GL11.glReadPixels(0, Minecraft.getMinecraft().displayHeight-size, size, size, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, buf);
+		GL11.glReadPixels(0, Minecraft.getMinecraft().displayHeight - size, size, size, GL_BGRA, GL_UNSIGNED_BYTE, buf);
 		return buf;
 	}
 
 	public static BufferedImage toImage(ByteBuffer buf) {
-		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = new BufferedImage(size, size, TYPE_INT_ARGB);
 		int[] pixels = new int[size*size];
 		buf.asIntBuffer().get(pixels);
 		img.setRGB(0, 0, size, size, pixels, 0, size);
@@ -43,7 +46,7 @@ class ImageUtil {
 	}
 
 	public static BufferedImage createTransformed(BufferedImage image, AffineTransform at) {
-		BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), TYPE_INT_ARGB);
 		Graphics2D g = newImage.createGraphics();
 		g.transform(at);
 		g.drawImage(image, 0, 0, null);

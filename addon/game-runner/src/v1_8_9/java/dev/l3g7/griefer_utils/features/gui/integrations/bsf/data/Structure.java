@@ -7,7 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.gui.integrations.bsf.data;
 
-import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
+import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest.TextureItem;
 
 import java.awt.*;
 
@@ -22,13 +22,13 @@ public enum Structure implements BSFSearchable {
 	SWAMP_HUT(new BSFName("", "Sumpfhütte", "n"), new Color(0x60D69D), "mob_icons/faithless/witch");
 
 	private final BSFName name;
-	private final GuiBigChest.TextureItem stack;
+	private final TextureItem stack;
 	private final Color color;
 
 	Structure(BSFName name, Color color, String icon) {
 		this.name = name;
 		this.color = color;
-		this.stack = new GuiBigChest.TextureItem(icon, "§f" + name.singular());
+		this.stack = new TextureItem(icon, "§f" + name.singular());
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public enum Structure implements BSFSearchable {
 	}
 
 	@Override
-	public GuiBigChest.TextureItem getIcon() {
+	public TextureItem getIcon() {
 		return stack;
 	}
 

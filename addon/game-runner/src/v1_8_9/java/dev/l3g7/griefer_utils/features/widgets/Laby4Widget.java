@@ -27,7 +27,6 @@ import dev.l3g7.griefer_utils.labymod.laby4.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby4.util.Laby4Util;
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
-import net.labymod.api.client.component.format.Style;
 import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.gui.hud.binding.category.HudWidgetCategory;
 import net.labymod.api.client.gui.hud.hudwidget.text.TextHudWidget;
@@ -55,6 +54,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static net.labymod.api.client.component.format.Style.EMPTY;
+import static net.labymod.api.client.gui.hud.hudwidget.text.TextLine.State.DISABLED;
 
 @ExclusiveTo(LABY_4)
 public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements Disableable, LabyWidget { // TODO simplify
@@ -255,7 +256,7 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 		public CustomRenderTextLine(TextHudWidget<?> widget) {
 			super(widget, (Component) null, "");
 			// Fix LabyMod using line#renderableComponent#getWidth instead of line#getWidth to calculate x offset
-			renderableComponent = RenderableComponent.of("", null, Style.EMPTY, 0, 0, List.of(), 0);
+			renderableComponent = RenderableComponent.of("", null, EMPTY, 0, 0, List.of(), 0);
 			((RenderableComponentAccessor) renderableComponent).grieferUtils$setTextLine(this);
 		}
 
@@ -268,7 +269,7 @@ public abstract class Laby4Widget extends TextHudWidget<ModuleConfig> implements
 
 		@Override
 		public State state() {
-			return isAvailable() ? state : State.DISABLED;
+			return isAvailable() ? state : DISABLED;
 		}
 
 		public abstract boolean isAvailable();

@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.gui.griefer_games;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.GuiScreenEvent;
+import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.MouseInputEvent;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -38,7 +38,7 @@ public class InteractableProfiles extends Feature {
 		.icon("mouse_left");
 
 	@EventListener
-	public void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
+	public void onMouse(MouseInputEvent.Pre event) {
 		if (!Mouse.getEventButtonState() || !(event.gui instanceof GuiChest gui))
 			return;
 

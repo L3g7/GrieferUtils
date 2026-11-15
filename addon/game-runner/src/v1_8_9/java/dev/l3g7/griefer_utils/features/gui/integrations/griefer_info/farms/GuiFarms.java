@@ -24,9 +24,14 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.farms.Farm.FARMS;
 
 public class GuiFarms extends GuiSearchable<Farm> {
 
@@ -48,7 +53,7 @@ public class GuiFarms extends GuiSearchable<Farm> {
 
 		typeFiler = null;
 
-		for (Map.Entry<Integer, ItemStack> cb : BigChestUtil.getCBs().entrySet()) {
+		for (Entry<Integer, ItemStack> cb : BigChestUtil.getCBs().entrySet()) {
 			String asFilter = cb.getValue().getDisplayName().replaceAll("§.", "");
 
 			CB_SELECT_GUI.addItem(cb.getKey(), cb.getValue(), () -> {
@@ -177,7 +182,7 @@ public class GuiFarms extends GuiSearchable<Farm> {
 
 	@Override
 	protected int fillEntriesOnEmptySearch(TreeSet<Farm> entries) {
-		for (Farm farm : new ArrayList<>(Farm.FARMS))
+		for (Farm farm : new ArrayList<>(FARMS))
 			if (farm.matchesFilter(cbFilter, typeFiler, filteringForActive, filteringForPassive))
 				entries.add(farm);
 

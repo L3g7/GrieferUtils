@@ -20,7 +20,6 @@ import dev.l3g7.griefer_utils.features.widgets.Laby4Widget;
 import dev.l3g7.griefer_utils.features.widgets.Widget;
 import net.labymod.api.client.gui.hud.HudWidgetRendererAccessor;
 import net.labymod.api.client.gui.hud.binding.dropzone.HudWidgetDropzone;
-import net.labymod.api.client.gui.hud.binding.dropzone.NamedHudWidgetDropzones;
 import net.labymod.api.client.gui.hud.hudwidget.HudWidget;
 import net.labymod.api.client.gui.hud.position.HudSize;
 import net.labymod.api.client.gui.hud.position.HudWidgetAnchor;
@@ -45,6 +44,9 @@ import java.util.List;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_3;
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static net.labymod.api.client.gui.hud.binding.dropzone.NamedHudWidgetDropzones.BOSS_BAR;
+import static net.labymod.api.client.gui.hud.binding.dropzone.NamedHudWidgetDropzones.DIRECTION;
+import static net.labymod.api.client.gui.hud.position.HudWidgetAnchor.CENTER_TOP;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 @Singleton
@@ -246,11 +248,11 @@ public class BlockInfo extends Widget {
 			public float getY(HudWidgetRendererAccessor renderer, HudSize hudWidgetSize) {
 				float offset = 0.0f;
 
-				HudWidget<?> bossBar = renderer.getRelevantHudWidgetForDropzone(NamedHudWidgetDropzones.BOSS_BAR);
+				HudWidget<?> bossBar = renderer.getRelevantHudWidgetForDropzone(BOSS_BAR);
 				if (bossBar != null)
 					offset += renderer.getWidget(bossBar).scaledBounds().getHeight();
 
-				HudWidget<?> direction = renderer.getRelevantHudWidgetForDropzone(NamedHudWidgetDropzones.DIRECTION);
+				HudWidget<?> direction = renderer.getRelevantHudWidgetForDropzone(DIRECTION);
 				if (direction != null)
 					offset += renderer.getWidget(direction).scaledBounds().getHeight() + 4;
 				else if (bossBar != null)
@@ -264,7 +266,7 @@ public class BlockInfo extends Widget {
 			}
 
 			public HudWidgetAnchor getAnchor() {
-				return HudWidgetAnchor.CENTER_TOP;
+				return CENTER_TOP;
 			}
 		}
 

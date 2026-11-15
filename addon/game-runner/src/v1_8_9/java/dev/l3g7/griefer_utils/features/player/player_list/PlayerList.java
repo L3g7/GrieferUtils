@@ -9,7 +9,6 @@ package dev.l3g7.griefer_utils.features.player.player_list;
 
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.misc.Constants;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
@@ -17,13 +16,14 @@ import dev.l3g7.griefer_utils.core.events.DisplayNameGetEvent;
 import dev.l3g7.griefer_utils.core.events.GuiModifyItemsEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
+import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
+import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListSetting;
-import dev.l3g7.griefer_utils.core.misc.player_resolver.PlayerListEntry;
 import dev.l3g7.griefer_utils.core.util.PlayerUtil;
 import dev.l3g7.griefer_utils.features.Feature;
 import net.minecraft.event.ClickEvent;
@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOW;
 import static dev.l3g7.griefer_utils.features.player.player_list.PlayerList.MarkAction.*;
 import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
 import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
@@ -131,7 +132,7 @@ public abstract class PlayerList extends Feature {
 	 *
 	 * @see PlayerList#displayNameAction
 	 */
-	@EventListener(priority = Priority.LOW)
+	@EventListener(priority = LOW)
 	public void onDisplayNameRender(DisplayNameGetEvent event) {
 		if (displayNameAction.get() == DISABLED)
 			return;
@@ -146,7 +147,7 @@ public abstract class PlayerList extends Feature {
 	 * @see PlayerList#tabAction
 	 */
 	@EventListener
-	public void onTabNameUpdate(TabListEvent.TabListNameUpdateEvent event) {
+	public void onTabNameUpdate(TabListNameUpdateEvent event) {
 		if (tabAction.get() == DISABLED)
 			return;
 
@@ -159,7 +160,7 @@ public abstract class PlayerList extends Feature {
 	 *
 	 * @see PlayerList#chatAction
 	 */
-	@EventListener(priority = Priority.LOW)
+	@EventListener(priority = LOW)
 	public void onMessageModify(MessageModifyEvent event) {
 		if (chatAction.get() == DISABLED)
 			return;

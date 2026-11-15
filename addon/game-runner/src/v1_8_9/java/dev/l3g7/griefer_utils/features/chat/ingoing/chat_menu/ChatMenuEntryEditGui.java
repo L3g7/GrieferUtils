@@ -28,8 +28,11 @@ import org.lwjgl.opengl.GL11;
 import java.io.File;
 import java.util.List;
 
+import static dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.Scrollbar.EnumMouseAction.*;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.getButtonHeight;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.Action.CONSUMER;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.entry.ChatMenuEntry.IconType.*;
 
 @SuppressWarnings("lossy-conversions")
 public class ChatMenuEntryEditGui extends Gui {
@@ -95,7 +98,7 @@ public class ChatMenuEntryEditGui extends Gui {
 			.callback(this::save);
 
 		// Action selection
-		actionTypeInput = createSelectGroup(Action.CONSUMER, "Aktion")
+		actionTypeInput = createSelectGroup(CONSUMER, "Aktion")
 			.y(top);
 
 		int width = actionTypeInput.width();
@@ -120,7 +123,7 @@ public class ChatMenuEntryEditGui extends Gui {
 			.width(width)
 			.renderGroup(RENDER_GROUP_SELECTED);
 
-		iconInput = createSelectGroup(IconType.DEFAULT, "Icon")
+		iconInput = createSelectGroup(DEFAULT, "Icon")
 			.y(nameInput.bottom() + PADDING)
 			.renderGroup(RENDER_GROUP_SELECTED);
 
@@ -161,7 +164,7 @@ public class ChatMenuEntryEditGui extends Gui {
 		// Configure content
 		saveButton.enabled = !actionInput.getText().isEmpty() && !nameInput.getText().isEmpty();
 
-		if (actionTypeInput.getSelected() == Action.CONSUMER)
+		if (actionTypeInput.getSelected() == CONSUMER)
 			cancelButton.yPosition = saveButton.yPosition = (int) actionTypeInput.bottom() + PADDING;
 		else {
 			switch (actionTypeInput.getSelected()) {
@@ -199,12 +202,12 @@ public class ChatMenuEntryEditGui extends Gui {
 		// Draw content
 		draw(mouseX, mouseY);
 
-		if (actionTypeInput.getSelected() != Action.CONSUMER)
+		if (actionTypeInput.getSelected() != CONSUMER)
 			draw(mouseX, mouseY, RENDER_GROUP_SELECTED);
 
-		if (iconInput.getSelected() == IconType.ITEM)
+		if (iconInput.getSelected() == ITEM)
 			draw(mouseX, mouseY, RENDER_GROUP_ITEM_ICON);
-		else if (iconInput.getSelected() == IconType.IMAGE_FILE)
+		else if (iconInput.getSelected() == IMAGE_FILE)
 			draw(mouseX, mouseY, RENDER_GROUP_FILE_ICON);
 
 		GL11.glTranslated(0, -scrollbar.getScrollY(), 0);
@@ -245,11 +248,11 @@ public class ChatMenuEntryEditGui extends Gui {
 		if (mouseY < HEADER_HEIGHT - 5) // allow click in gradient (5px)
 			return;
 
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
+		scrollbar.mouseAction(mouseX, mouseY, CLICKED);
 		mouseY -= scrollbar.getScrollY();
 
 		// prioritize citybuild as it overlaps with the save and close buttons
-		if (iconInput.getSelected() == IconType.ITEM && itemIconInput.onClick(mouseX, mouseY, mouseButton))
+		if (iconInput.getSelected() == ITEM && itemIconInput.onClick(mouseX, mouseY, mouseButton))
 			return;
 
 		for (Clickable clickable : clickables)
@@ -261,14 +264,14 @@ public class ChatMenuEntryEditGui extends Gui {
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
 		mouseY -= scrollbar.getScrollY();
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.RELEASED);
+		scrollbar.mouseAction(mouseX, mouseY, RELEASED);
 		super.mouseReleased(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
 		mouseY -= scrollbar.getScrollY();
-		scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
+		scrollbar.mouseAction(mouseX, mouseY, DRAGGING);
 		super.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
 	}
 
@@ -297,7 +300,7 @@ public class ChatMenuEntryEditGui extends Gui {
 			// Command -> Trigger / Item icon
 			else if (nameInput.isFocused()) {
 				nameInput.setFocused(false);
-				if (iconInput.getSelected() == IconType.ITEM)
+				if (iconInput.getSelected() == ITEM)
 					itemIconInput.onClick(itemIconInput.getX(), itemIconInput.getY(), 0); // Use onClick so scrollbar is initialized
 				else
 					actionInput.setFocused(true);
@@ -324,7 +327,7 @@ public class ChatMenuEntryEditGui extends Gui {
 		editedEntry.action = actionTypeInput.getSelected();
 		editedEntry.command = actionInput.getText();
 		editedEntry.iconType = iconInput.getSelected();
-		editedEntry.icon = iconInput.getSelected() == IconType.ITEM ? itemIconInput.getSelected() : fileIconInput.getSelection();
+		editedEntry.icon = iconInput.getSelected() == ITEM ? itemIconInput.getSelected() : fileIconInput.getSelection();
 
 		if (this.editedEntry == null)
 			ChatMenu.get().entries.add(editedEntry);

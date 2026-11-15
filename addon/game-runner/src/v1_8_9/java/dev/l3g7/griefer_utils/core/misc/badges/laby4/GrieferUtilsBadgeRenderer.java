@@ -8,13 +8,13 @@
 package dev.l3g7.griefer_utils.core.misc.badges.laby4;
 
 import dev.l3g7.griefer_utils.core.misc.badges.Badges;
+import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
 import net.labymod.api.Laby;
 import net.labymod.api.client.entity.player.badge.renderer.BadgeRenderer;
 import net.labymod.api.client.gui.icon.Icon;
 import net.labymod.api.client.gui.screen.ScreenContext;
 import net.labymod.api.client.network.NetworkPlayerInfo;
 import net.labymod.api.configuration.labymod.main.laby.multiplayer.TabListConfig;
-import net.labymod.api.configuration.labymod.main.laby.multiplayer.TabListConfig.LabyModBadgePosition;
 import net.labymod.api.user.GameUserService;
 
 import java.util.UUID;
@@ -22,6 +22,9 @@ import java.util.UUID;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge.DEFAULT_BADGE;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.icon;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
+import static java.lang.Boolean.TRUE;
+import static net.labymod.api.configuration.labymod.main.laby.multiplayer.TabListConfig.LabyModBadgePosition.BEFORE_NAME_SPACED;
+import static net.labymod.api.configuration.labymod.main.laby.multiplayer.TabListConfig.LabyModBadgePosition.BEFORE_PING;
 
 /**
  * Tablist rendering.
@@ -44,8 +47,8 @@ public class GrieferUtilsBadgeRenderer extends BadgeRenderer {
 			return;
 		}
 
-		Badges.SpecialBadge badge = Badges.getBadge(uuid).orElse(DEFAULT_BADGE);
-		boolean revealFamiliarUsers = Boolean.TRUE.equals(Laby.labyAPI().config().multiplayer().tabList().labyModBadge().get());
+		SpecialBadge badge = Badges.getBadge(uuid).orElse(DEFAULT_BADGE);
+		boolean revealFamiliarUsers = TRUE.equals(Laby.labyAPI().config().multiplayer().tabList().labyModBadge().get());
 		int color = 0xFFFFFFFF;
 		if (icon.equals("icon"))
 			color = (revealFamiliarUsers ? badge.colorWithLabymod() : badge.colorWithoutLabymod()) | 0xFF000000;
@@ -57,7 +60,7 @@ public class GrieferUtilsBadgeRenderer extends BadgeRenderer {
 	@Override
     public boolean isVisible(NetworkPlayerInfo player) {
         var position = Laby.labyAPI().config().multiplayer().tabList().labyModBadgePosition().get();
-		return position == LabyModBadgePosition.BEFORE_NAME_SPACED || this.gameUserService.gameUser(player.profile().getUniqueId()).isUsingLabyMod();
+		return position == BEFORE_NAME_SPACED || this.gameUserService.gameUser(player.profile().getUniqueId()).isUsingLabyMod();
 	}
 
 	@Override
@@ -71,7 +74,7 @@ public class GrieferUtilsBadgeRenderer extends BadgeRenderer {
         if (!(Boolean) tabList.labyModBadge().get())
             return false;
         else
-            return tabList.labyModBadgePosition().get() != LabyModBadgePosition.BEFORE_PING;
+            return tabList.labyModBadgePosition().get() != BEFORE_PING;
     }
 
 }

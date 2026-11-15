@@ -8,7 +8,7 @@
 package dev.l3g7.griefer_utils.features.gui.integrations.griefer_info;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.GuiBigChest;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -49,7 +49,7 @@ public class GuiGrieferInfo extends GuiBigChest {
 	}
 
 	@EventListener
-	public static void onMsg(MessageEvent.MessageSendEvent event) {
+	public static void onMsg(MessageSendEvent event) {
 		String message = event.message.trim().toLowerCase();
 
 		if (message.equals("/gi") || message.equals("/info")) {

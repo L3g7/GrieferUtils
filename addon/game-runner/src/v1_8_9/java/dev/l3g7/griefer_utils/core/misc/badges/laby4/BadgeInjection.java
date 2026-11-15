@@ -39,7 +39,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.awt.*;
 
@@ -47,7 +46,9 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge.DEFAULT_BADGE;
 import static dev.l3g7.griefer_utils.core.misc.badges.Badges.icon;
 import static dev.l3g7.griefer_utils.features.uncategorized.settings.Badges.showBadges;
+import static java.lang.Boolean.TRUE;
 import static net.labymod.api.client.entity.player.badge.PositionType.LEFT_TO_NAME;
+import static org.spongepowered.asm.mixin.injection.callback.LocalCapture.CAPTURE_FAILSOFT;
 
 /**
  * Fail-soft injection of GrieferUtils badges.
@@ -140,7 +141,7 @@ public class BadgeInjection {
 	@Mixin(targets = "net.labymod.core.client.gui.screen.activity.activities.ingame.playerlist.PlayerListRenderer", remap = false)
 	public static abstract class MixinPlayerListRenderer {
 
-		@Inject(method = "renderLabyModStats", at = @At("TAIL"), require = 0, locals = LocalCapture.CAPTURE_FAILSOFT)
+		@Inject(method = "renderLabyModStats", at = @At("TAIL"), require = 0, locals = CAPTURE_FAILSOFT)
 		private void renderLabyModStats(ScreenContext context, float backgroundWidth, int x, int y, CallbackInfo ci, int onlineCount, int userCount) {
 			Laby4BadgeManager.renderStats(context, backgroundWidth, x, y, onlineCount, userCount);
 		}
@@ -184,7 +185,7 @@ public class BadgeInjection {
 				return;
 			}
 
-			boolean revealFamiliarUsers = Boolean.TRUE.equals(Laby.labyAPI().config().multiplayer().tabList().labyModBadge().get());
+			boolean revealFamiliarUsers = TRUE.equals(Laby.labyAPI().config().multiplayer().tabList().labyModBadge().get());
 			Color color = new Color(revealFamiliarUsers ? grieferUtils$badge.colorWithLabymod() : grieferUtils$badge.colorWithoutLabymod());
 			cir.setReturnValue(color.getRGB());
 		}

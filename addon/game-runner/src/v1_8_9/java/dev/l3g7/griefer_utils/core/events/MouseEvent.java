@@ -15,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static org.spongepowered.asm.mixin.injection.At.Shift.BEFORE;
+
 public class MouseEvent extends Event {
 
 	public final int x;
@@ -40,7 +42,7 @@ public class MouseEvent extends Event {
 	@Mixin(Minecraft.class)
 	private static class MixinMinecraft {
 
-	    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventButton()I", shift = At.Shift.BEFORE, remap = false), cancellable = true)
+	    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventButton()I", shift = BEFORE, remap = false), cancellable = true)
 	    public void injectRunTick(CallbackInfo ci) {
 		    if (new MouseEvent().fire().isCanceled())
 				ci.cancel();

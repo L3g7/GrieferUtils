@@ -14,6 +14,7 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.misc.TickScheduler;
 import dev.l3g7.griefer_utils.core.settings.types.ButtonSetting;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction;
+import dev.l3g7.griefer_utils.features.item.recraft.RecraftAction.Ingredient;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftRecordingCore.RecordingMode;
 import dev.l3g7.griefer_utils.features.item.recraft.crafter.CraftPlayer;
@@ -166,7 +167,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 					obj.addProperty("name", entry.name().get());
 					obj.add("keys", entry.key().getStorage().encodeFunc.apply(entry.key().get()));
 
-					obj.addProperty("icon", new RecraftAction.Ingredient(entry.icon, entry.icon.stackSize).toLong());
+					obj.addProperty("icon", new Ingredient(entry.icon, entry.icon.stackSize).toLong());
 
 					obj.addProperty("ignore_sub_ids", entry.ignoreSubIds().get());
 					obj.addProperty("mode", entry.mode().get().getName());
@@ -212,7 +213,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 					JsonElement icon = object.get("icon");
 					if (icon != null) {
 						if (icon.isJsonPrimitive()) {
-							RecraftAction.Ingredient ingredient = RecraftAction.Ingredient.fromLong(icon.getAsLong());
+							Ingredient ingredient = Ingredient.fromLong(icon.getAsLong());
 							recording.icon = new ItemStack(Item.getItemById(ingredient.itemId), ingredient.compression, ingredient.meta);
 						} else {
 							JsonObject iconObj = icon.getAsJsonObject();
@@ -230,7 +231,7 @@ public class RecraftRecording extends net.labymod.api.configuration.loader.Confi
 							if (recordingMode.getName().equals(mode))
 								recording.mode().set(recordingMode);
 
-						if (recording.mode().get() == RecordingMode.CRAFT)
+						if (recording.mode().get() == CRAFT)
 							recording.craftAll().set(object.get("craftAll").getAsBoolean());
 					} else {
 						v.add(recording);

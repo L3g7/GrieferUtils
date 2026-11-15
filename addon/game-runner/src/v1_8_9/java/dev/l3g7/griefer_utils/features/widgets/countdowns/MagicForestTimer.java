@@ -24,6 +24,9 @@ import dev.l3g7.griefer_utils.features.widgets.Widget.SimpleWidget;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild.MAGIC_FOREST;
+import static dev.l3g7.griefer_utils.features.widgets.countdowns.MagicForestTimer.TimeFormat.SHORT;
+
 @Singleton
 public class MagicForestTimer extends SimpleWidget {
 
@@ -36,7 +39,7 @@ public class MagicForestTimer extends SimpleWidget {
 		.name("Zeitformat")
 		.description("In welchem Format die verbleibende Zeit angezeigt werden soll.")
 		.icon("hourglass")
-		.defaultValue(TimeFormat.SHORT);
+		.defaultValue(SHORT);
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
@@ -48,18 +51,18 @@ public class MagicForestTimer extends SimpleWidget {
 
 	@Override
 	public boolean isVisibleInGame() {
-		return Citybuild.current() == Citybuild.MAGIC_FOREST;
+		return Citybuild.current() == MAGIC_FOREST;
 	}
 
 	@Override
 	public String getValue() {
 		int secondsRemaining = Math.max(COUNTDOWN.secondsRemaining(), 0);
-		return Util.formatTimeSeconds(secondsRemaining, timeFormat.get() == TimeFormat.SHORT);
+		return Util.formatTimeSeconds(secondsRemaining, timeFormat.get() == SHORT);
 	}
 
 	@EventListener
 	private void onJoin(CitybuildJoinEvent.Early event) {
-		if (event.citybuild != Citybuild.MAGIC_FOREST)
+		if (event.citybuild != MAGIC_FOREST)
 			return;
 
 		MinecraftUtil.send("/zauberwald");
@@ -83,7 +86,7 @@ public class MagicForestTimer extends SimpleWidget {
 		event.cancel();
 	}
 
-	private enum TimeFormat implements Named {
+	enum TimeFormat implements Named {
 		SHORT("Kurz"),
 		LONG("Lang");
 

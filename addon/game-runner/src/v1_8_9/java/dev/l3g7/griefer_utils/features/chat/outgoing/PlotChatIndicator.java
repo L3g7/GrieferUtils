@@ -8,10 +8,8 @@
 package dev.l3g7.griefer_utils.features.chat.outgoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.DrawScreenEvent;
-import dev.l3g7.griefer_utils.core.events.MessageEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
 import dev.l3g7.griefer_utils.core.events.network.GrieferGamesPayloadEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerSwitchEvent;
@@ -24,6 +22,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.api.util.Util.elevate;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
 
@@ -65,7 +64,7 @@ public class PlotChatIndicator extends Feature {
 		}
 	}
 
-	@EventListener(priority = Priority.HIGH)
+	@EventListener(priority = HIGH)
 	private void replaceGlobalChat(MessageSendEvent event) {
 		if (!replaceGlobalChat.get())
 			return;
@@ -73,7 +72,7 @@ public class PlotChatIndicator extends Feature {
 		if (plotchatState != null && plotchatState && event.message.startsWith("@")) {
 			event.cancel();
 			String newMessage = "/globalchat " + event.message.substring(1);
-			if (!MessageEvent.MessageSendEvent.post(newMessage))
+			if (!MessageSendEvent.post(newMessage))
 				player().sendChatMessage(newMessage);
 		}
 	}

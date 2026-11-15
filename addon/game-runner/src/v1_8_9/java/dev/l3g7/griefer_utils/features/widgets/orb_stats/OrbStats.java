@@ -43,20 +43,21 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.ORB_SELL_PATTERN;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
+import static java.util.Locale.GERMAN;
 
 @Singleton
 public class OrbStats extends SimpleWidget {
 
 	private static final Pattern RANKING_PATTERN = Pattern.compile("§7(?<item>.*): §e(?<amount>[0-9.]+).*");
-	private static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.GERMAN));
+	private static final DecimalFormat DECIMAL_FORMAT_3 = new DecimalFormat("###,###", new DecimalFormatSymbols(GERMAN));
 	private static final Map<String, String> GUI_TO_CHAT_MAPPING = new HashMap<>() {{
 		put("Hasenfelle", "Hasenfell");
 		put("Rohe Fische", "Roher Fisch");
@@ -296,7 +297,7 @@ public class OrbStats extends SimpleWidget {
 		public static String toString(HashMap<Integer, Long> map) {
 			ByteBuffer buf = ByteBuffer.allocate(map.size() * 12);
 
-			for (Map.Entry<Integer, Long> entry : map.entrySet()) {
+			for (Entry<Integer, Long> entry : map.entrySet()) {
 				buf.putInt(entry.getKey());
 				buf.putLong(entry.getValue());
 			}

@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.BlockPos;
@@ -29,7 +29,7 @@ public class VisitBiomesQuest extends AbstractQuest {
 	Set<Byte> visitedBiomes = new HashSet<>();
 
 	@EventListener
-	private void onTick(TickEvent.ClientTickEvent event) {
+	private void onTick(ClientTickEvent event) {
 		EntityPlayerSP player = player();
 		WorldClient world = world();
 		if (player == null || world == null)

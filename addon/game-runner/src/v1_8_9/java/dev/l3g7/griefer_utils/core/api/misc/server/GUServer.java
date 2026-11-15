@@ -11,6 +11,7 @@ import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
 import dev.l3g7.griefer_utils.core.api.misc.ThreadFactory;
+import dev.l3g7.griefer_utils.core.api.misc.server.Request.AuthData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest;
@@ -96,7 +97,7 @@ public class GUServer {
 		UUID uuid = UUIDTypeAdapter.fromString(mc().getSession().getPlayerID());
 
 		try {
-			return "v2 " + IO.GSON.toJson(new Request.AuthData(uuid, currentKeyPair)).replaceAll("[\r\n]", "");
+			return "v2 " + IO.GSON.toJson(new AuthData(uuid, currentKeyPair)).replaceAll("[\r\n]", "");
 		} catch (GeneralSecurityException t) {
 			return null; // generateAuthHeader is not called on invalid sessions, this exception will never happen
 		}

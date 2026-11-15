@@ -11,13 +11,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.BlockEvent.BlockClickEvent;
 import dev.l3g7.griefer_utils.core.events.TickEvent.ClientTickEvent;
-import dev.l3g7.griefer_utils.core.events.network.PacketEvent;
+import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketSendEvent;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -38,7 +37,6 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
 
 import java.util.List;
 import java.util.Map;
@@ -47,8 +45,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.collect.ImmutableList.of;
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static dev.l3g7.griefer_utils.features.world.building.AutoTool.EnchantPreference.FORTUNE;
+import static dev.l3g7.griefer_utils.features.world.building.AutoTool.EnchantPreference.SILK_TOUCH;
 import static net.minecraft.enchantment.Enchantment.*;
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.START_DESTROY_BLOCK;
+import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 /**
  * Allowed on GrieferGames, as per <a href="https://forum.griefergames.de/faq/85-modifikationen/#entry-85">the list of recommended modifications</a>.<br>
@@ -89,7 +92,7 @@ public class AutoTool extends Feature {
 		.name("Bevorzugte Verzauberung")
 		.description("Ob Glück oder Behutsamkeit bevorzugt werden soll.")
 		.icon("enchanted_book")
-		.defaultValue(EnchantPreference.FORTUNE);
+		.defaultValue(FORTUNE);
 
 	private final SwitchSetting switchBack = SwitchSetting.create()
 		.name("Zurück wechseln")
@@ -129,17 +132,17 @@ public class AutoTool extends Feature {
 	/**
 	 * Required for compatability with ToolSaver
 	 */
-	@EventListener(priority = Priority.HIGH)
+	@EventListener(priority = HIGH)
 	public void onMouse(BlockClickEvent event) {
-		if (mc().objectMouseOver == null || mc().objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+		if (mc().objectMouseOver == null || mc().objectMouseOver.typeOfHit != BLOCK)
 			return;
 
 		switchToTool(mc().objectMouseOver.getBlockPos());
 	}
 
 	@EventListener
-	public void onPacket(PacketEvent.PacketSendEvent<C07PacketPlayerDigging> event) {
-		if (event.packet.getStatus() != C07PacketPlayerDigging.Action.START_DESTROY_BLOCK)
+	public void onPacket(PacketSendEvent<C07PacketPlayerDigging> event) {
+		if (event.packet.getStatus() != START_DESTROY_BLOCK)
 			return;
 
 		switchToTool(event.packet.getPosition());
@@ -233,8 +236,8 @@ public class AutoTool extends Feature {
 			score += EnchantmentHelper.getEnchantmentLevel(efficiency.effectId, itemStack);
 			score += EnchantmentHelper.getEnchantmentLevel(unbreaking.effectId, itemStack);
 
-			score += EnchantmentHelper.getEnchantmentLevel(fortune.effectId, itemStack) * (preference.get() != EnchantPreference.SILK_TOUCH ? 10 : 1);
-			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * (preference.get() != EnchantPreference.FORTUNE ? 10 : 1);
+			score += EnchantmentHelper.getEnchantmentLevel(fortune.effectId, itemStack) * (preference.get() != SILK_TOUCH ? 10 : 1);
+			score += EnchantmentHelper.getEnchantmentLevel(silkTouch.effectId, itemStack) * (preference.get() != FORTUNE ? 10 : 1);
 		}
 
 		if (canMine && enforceSilkTouch.get() && isSilkTouchApplicable(itemStack, state.getBlock()))
@@ -329,7 +332,7 @@ public class AutoTool extends Feature {
 		Reflection.invoke(mc().playerController, "syncCurrentPlayItem"); // Send switch packet
 	}
 
-	private enum EnchantPreference implements Named {
+	enum EnchantPreference implements Named {
 
 		NONE("Egal"),
 		FORTUNE("Glück"),

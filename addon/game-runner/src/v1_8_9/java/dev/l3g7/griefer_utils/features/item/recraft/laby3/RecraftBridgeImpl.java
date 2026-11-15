@@ -17,6 +17,7 @@ import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.EntryAddSetting;
 import dev.l3g7.griefer_utils.features.item.recraft.Recraft;
 import dev.l3g7.griefer_utils.features.item.recraft.RecraftBridge;
+import dev.l3g7.griefer_utils.features.item.recraft.laby3.RecraftRecording.RecordingDisplaySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.SwitchSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
 import net.labymod.settings.elements.ControlElement;
@@ -112,10 +113,10 @@ public class RecraftBridgeImpl implements RecraftBridge {
 	public static void iterate(BiConsumer<Integer, RecraftRecording> consumer) {
 		List<RecraftPageSetting> pages = getSubSettingsOfType((SettingsElement) getMainSetting(), RecraftPageSetting.class);
 		for (int i = 0; i < pages.size(); i++) {
-			List<RecraftRecording.RecordingDisplaySetting> recordings = RecraftBridgeImpl.getSubSettingsOfType(pages.get(i), RecraftRecording.RecordingDisplaySetting.class);
+			List<RecordingDisplaySetting> recordings = RecraftBridgeImpl.getSubSettingsOfType(pages.get(i), RecordingDisplaySetting.class);
 
 			for (int j = 0; j < recordings.size(); j++) {
-				RecraftRecording.RecordingDisplaySetting recording = recordings.get(j);
+				RecordingDisplaySetting recording = recordings.get(j);
 				consumer.accept(i << 16 | j, recording.recording);
 			}
 		}

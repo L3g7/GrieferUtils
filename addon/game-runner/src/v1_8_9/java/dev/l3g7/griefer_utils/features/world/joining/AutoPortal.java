@@ -8,7 +8,6 @@
 package dev.l3g7.griefer_utils.features.world.joining;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.event_bus.Priority;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
@@ -23,6 +22,7 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
 
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.api.misc.os.OS.OS;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.send;
@@ -61,7 +61,7 @@ public class AutoPortal extends Feature {
 		joined = false;
 	}
 
-	@EventListener(priority = Priority.HIGH)
+	@EventListener(priority = HIGH)
 	public void onServerJoin(GrieferGamesJoinEvent event) {
 		if (joined)
 			return;

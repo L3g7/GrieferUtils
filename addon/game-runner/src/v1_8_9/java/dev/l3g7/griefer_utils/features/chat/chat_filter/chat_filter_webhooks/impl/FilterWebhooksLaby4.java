@@ -43,6 +43,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
+import static dev.l3g7.griefer_utils.features.chat.chat_filter.chat_filter_webhooks.ChatFilterWebhooks.HOOK_URL_PATTERN;
 
 @ExclusiveTo(LABY_4)
 public class FilterWebhooksLaby4 {
@@ -105,7 +106,7 @@ public class FilterWebhooksLaby4 {
 			if (webhook.isBlank())
 				return null;
 
-			if (!ChatFilterWebhooks.HOOK_URL_PATTERN.matcher(webhook).matches())
+			if (!HOOK_URL_PATTERN.matcher(webhook).matches())
 				return Component.text("Ungültiger Webhook");
 			else
 				return null;

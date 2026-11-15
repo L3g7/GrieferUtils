@@ -35,6 +35,7 @@ import static dev.l3g7.griefer_utils.core.api.bridges.Bridge.Version.LABY_4;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.display;
 import static dev.l3g7.griefer_utils.core.api.bridges.LabyBridge.labyBridge;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
+import static net.minecraft.network.play.client.C07PacketPlayerDigging.Action.START_DESTROY_BLOCK;
 import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 /**
@@ -174,7 +175,7 @@ public class ToolSaver extends Feature {
 
 	@EventListener
 	private void denyDigging(PacketSendEvent<C07PacketPlayerDigging> event) {
-		if (event.packet.getStatus() == C07PacketPlayerDigging.Action.START_DESTROY_BLOCK && shouldProtectItem(player().getHeldItem()))
+		if (event.packet.getStatus() == START_DESTROY_BLOCK && shouldProtectItem(player().getHeldItem()))
 			event.cancel();
 	}
 

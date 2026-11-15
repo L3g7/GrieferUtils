@@ -11,8 +11,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
+
+import static java.util.Locale.GERMAN;
 
 /**
  * Constant variables for the addon.
@@ -55,7 +56,7 @@ public class Constants {
 	public static final List<Pattern> MESSAGE_PATTERNS = Arrays.asList(GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, CLANCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, GLOBAL_CHAT_PATTERN);
 
 	public static final Pattern PAYMENT_RECEIVE_PATTERN = Pattern.compile(String.format("^%s(?<!§f) §r§ahat dir \\$(?<amount>[\\d.,]+) (?:§r§a)?gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
-	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s ?§r§a ?\\$(?<amount>[\\d.,]+) gegeben\\.§r$", Constants.FORMATTED_PLAYER_PATTERN));
+	public static final Pattern PAYMENT_SEND_PATTERN = Pattern.compile(String.format("^§r§aDu hast %s ?§r§a ?\\$(?<amount>[\\d.,]+) gegeben\\.§r$", FORMATTED_PLAYER_PATTERN));
 
 	public static final Pattern ORB_BUY_PATTERN = Pattern.compile("^\\[GrieferGames] Du hast erfolgreich das Produkt .+ für (?<orbs>[\\d.]+) Orbs gekauft\\.$");
 	public static final Pattern ORB_SELL_PATTERN = Pattern.compile("^\\[Orbs] Du hast erfolgreich (?<amount>[\\d.]+) (?<item>[\\S ]+) für (?<orbs>[\\d.,]+) Orbs verkauft\\.$");
@@ -66,7 +67,7 @@ public class Constants {
 	static {
 		char[] decimalPattern = new char[98];
 		Arrays.fill(decimalPattern, '#');
-		DECIMAL_FORMAT_98 = new DecimalFormat("###,###." + new String(decimalPattern), new DecimalFormatSymbols(Locale.GERMAN));
+		DECIMAL_FORMAT_98 = new DecimalFormat("###,###." + new String(decimalPattern), new DecimalFormatSymbols(GERMAN));
 	}
 
 	// Servers

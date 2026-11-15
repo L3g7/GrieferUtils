@@ -26,6 +26,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.suggest;
+import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
+import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
+import static net.minecraft.util.EnumChatFormatting.DARK_RED;
+import static net.minecraft.util.EnumChatFormatting.RESET;
 
 /**
  * A utility class for methods related to {@link IChatComponent}s.
@@ -88,11 +92,11 @@ public class IChatComponentUtil {
 		for (IChatComponent component : nameComponents) {
 			if (withHover)
 				component.getChatStyle()
-					.setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, nickName))
+					.setChatHoverEvent(new HoverEvent(SHOW_TEXT, nickName))
 					.setItalic(true);
 
 			if (clickEvent != null)
-				component.getChatStyle().setChatClickEvent(withHover ? new ClickEvent(ClickEvent.Action.RUN_COMMAND, COMMAND + clickEvent.getValue()) : clickEvent);
+				component.getChatStyle().setChatClickEvent(withHover ? new ClickEvent(RUN_COMMAND, COMMAND + clickEvent.getValue()) : clickEvent);
 		}
 
 		parent.getChatStyle().setChatClickEvent(clickEvent);
@@ -104,7 +108,7 @@ public class IChatComponentUtil {
 	 */
 	public static Collection<IChatComponent> paint(String text, String colorPattern, boolean disableBold) {
 		if (text == null)
-			return ImmutableList.of(new ChatComponentText("404").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.DARK_RED)));
+			return ImmutableList.of(new ChatComponentText("404").setChatStyle(new ChatStyle().setColor(DARK_RED)));
 
 		// Fixed-color patterns
 		if (colorPattern.length() <= 2) {
@@ -291,7 +295,7 @@ public class IChatComponentUtil {
 		public String getFormattedSubstring(int start, int end) {
 			return component.getChatStyle().getFormattingCode()
 				+ getText().substring(start, end)
-				+ EnumChatFormatting.RESET;
+				+ RESET;
 		}
 
 		public void setText(String newText) {

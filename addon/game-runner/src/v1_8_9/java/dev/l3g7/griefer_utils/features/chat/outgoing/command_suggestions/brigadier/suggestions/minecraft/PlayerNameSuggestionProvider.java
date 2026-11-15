@@ -13,12 +13,12 @@ import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadi
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.network.play.server.S3APacketTabComplete;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
 
 import java.util.concurrent.CompletableFuture;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.player;
+import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
 
 /**
  * The suggestion provider for {@link PlayerNameNode}.
@@ -43,7 +43,7 @@ public class PlayerNameSuggestionProvider {
 		}
 
 		BlockPos target = null;
-		if (mc().objectMouseOver != null && mc().objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+		if (mc().objectMouseOver != null && mc().objectMouseOver.typeOfHit == BLOCK)
 			target = mc().objectMouseOver.getBlockPos();
 
 		player().sendQueue.addToSendQueue(new C14PacketTabComplete("", target));

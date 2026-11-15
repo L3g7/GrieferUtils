@@ -7,20 +7,22 @@
 
 package dev.l3g7.griefer_utils.core.api.event_bus;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.NORMAL;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Retention(RUNTIME)
+@Target(METHOD)
 public @interface EventListener {
 
 	/**
 	 * The priority of the event listener.
 	 * Listeners with a higher priority will be called sooner than listeners with a lower priority.
 	 */
-	Priority priority() default Priority.NORMAL;
+	Priority priority() default NORMAL;
 
 	/**
 	 * Whether the listener should be triggered for canceled events.

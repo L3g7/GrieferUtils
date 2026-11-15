@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static org.spongepowered.asm.mixin.injection.At.Shift.BEFORE;
+
 public class RenderWorldLastEvent extends Event {
 
 	public final float partialTicks;
@@ -25,7 +27,7 @@ public class RenderWorldLastEvent extends Event {
 	@Mixin(EntityRenderer.class)
 	private static class MixinEntityRenderer {
 
-		@Inject(method = "renderWorldPass", at = @At(value = "INVOKE_STRING", target= "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V", args = "ldc=hand", shift = At.Shift.BEFORE))
+		@Inject(method = "renderWorldPass", at = @At(value = "INVOKE_STRING", target= "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V", args = "ldc=hand", shift = BEFORE))
 	    public void injectRenderWorldPass(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci) {
 			new RenderWorldLastEvent(partialTicks).fire();
 	    }

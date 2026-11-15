@@ -13,7 +13,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.TickEvent;
+import dev.l3g7.griefer_utils.core.events.TickEvent.RenderTickEvent;
 import dev.l3g7.griefer_utils.core.events.WindowClickEvent;
 import dev.l3g7.griefer_utils.core.events.render.RenderWorldLastEvent;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
@@ -22,7 +22,6 @@ import dev.l3g7.griefer_utils.core.util.render.GeometryRenderUtil;
 import dev.l3g7.griefer_utils.core.util.render.RenderUtil;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -43,6 +42,7 @@ import java.util.Map;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.world;
 import static dev.l3g7.griefer_utils.features.gui.griefer_games.better_hopper.BetterHopper.*;
+import static net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType.FIXED;
 import static org.lwjgl.opengl.GL11.*;
 
 @Singleton
@@ -176,7 +176,7 @@ class BetterHopperVisualisation implements Disableable {
 	}
 
 	@EventListener
-	public void onRenderTick(TickEvent.RenderTickEvent event) {
+	public void onRenderTick(RenderTickEvent event) {
 		if (!betterVisualisation.get() || !(mc().currentScreen instanceof GuiChest chest))
 			return;
 
@@ -273,7 +273,7 @@ class BetterHopperVisualisation implements Disableable {
 	private void drawStack(double shiftX, double shiftY, ItemStack stack) {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(shiftX, shiftY, 0);
-		mc().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
+		mc().getRenderItem().renderItem(stack, FIXED);
 		GlStateManager.popMatrix();
 	}
 

@@ -21,7 +21,7 @@ import java.util.List;
  */
 public interface RecraftRecording {
 
-	String[] ROMAN_NUMERALS = new String[] {"", "I", "II", "III", "IV", "V", "VI", "VII"};
+	String[] ROMAN_NUMERALS = new String[]{"", "I", "II", "III", "IV", "V", "VI", "VII"};
 
 	RecraftRecordingCore getCore();
 

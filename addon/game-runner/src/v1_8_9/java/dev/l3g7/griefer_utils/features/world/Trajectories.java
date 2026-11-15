@@ -77,7 +77,7 @@ public class Trajectories extends Feature {
 		float yaw = (float) Math.toRadians(player().rotationYaw);
 
 		Vec3 pos = renderPos.subtract(Math.cos(yaw) * 0.16f, 0, Math.sin(yaw) * 0.16f)
-		                          .addVector(0, player().getEyeHeight() - 0.1f, 0);
+			.addVector(0, player().getEyeHeight() - 0.1f, 0);
 
 		// Calculate motion
 		Vec3 motion = new Vec3(-Math.sin(yaw) * Math.cos(pitch), -Math.sin(Math.toRadians(pitchDeg + p.pitchOffset)), Math.cos(yaw) * Math.cos(pitch));

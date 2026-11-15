@@ -88,7 +88,7 @@ public class FreeStuff {
 			stack.setStackDisplayName(String.format("§e[%s] %s", cb.getAbbreviation(), stack.getDisplayName()));
 
 		boolean fancy = LABY_4.isActive() && Laby.labyAPI().themeService().currentTheme().getId().equals("fancy");
-		List<String> lines = items.keySet().stream().map(it -> (fancy ? "  " : "") +  "  §f" + it.germanName).collect(Collectors.toList());
+		List<String> lines = items.keySet().stream().map(it -> (fancy ? "  " : "") + "  §f" + it.germanName).collect(Collectors.toList());
 
 		if (lines.size() > 10) {
 			int extraLines = lines.size() - 10;

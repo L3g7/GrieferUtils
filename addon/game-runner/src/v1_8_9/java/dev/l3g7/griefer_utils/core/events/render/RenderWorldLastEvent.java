@@ -27,10 +27,10 @@ public class RenderWorldLastEvent extends Event {
 	@Mixin(EntityRenderer.class)
 	private static class MixinEntityRenderer {
 
-		@Inject(method = "renderWorldPass", at = @At(value = "INVOKE_STRING", target= "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V", args = "ldc=hand", shift = BEFORE))
-	    public void injectRenderWorldPass(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci) {
+		@Inject(method = "renderWorldPass", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V", args = "ldc=hand", shift = BEFORE))
+		public void injectRenderWorldPass(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci) {
 			new RenderWorldLastEvent(partialTicks).fire();
-	    }
+		}
 
 	}
 

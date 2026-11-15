@@ -105,7 +105,7 @@ public class SplitLongMessages extends Feature {
 			return;
 		}
 
-		for (Pattern pattern : new Pattern[] {MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN}) {
+		for (Pattern pattern : new Pattern[]{MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN}) {
 			Matcher matcher = pattern.matcher(event.message.getFormattedText());
 			if (!matcher.matches())
 				continue;

@@ -27,10 +27,10 @@ public class ChunkUnloadEvent extends Event {
 	@Mixin(Chunk.class)
 	private static class MixinChunk {
 
-	    @Inject(method = "onChunkUnload", at = @At("HEAD"))
-	    public void injectonChunkUnload(CallbackInfo ci) {
-		    new ChunkUnloadEvent(c(this)).fire();
-	    }
+		@Inject(method = "onChunkUnload", at = @At("HEAD"))
+		public void injectonChunkUnload(CallbackInfo ci) {
+			new ChunkUnloadEvent(c(this)).fire();
+		}
 
 	}
 

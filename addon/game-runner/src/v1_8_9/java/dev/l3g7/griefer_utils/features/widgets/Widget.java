@@ -62,7 +62,7 @@ public abstract class Widget implements Disableable {
 
 		@Override
 		public KVPair[] getLines() {
-			return new KVPair[] {
+			return new KVPair[]{
 				new KVPair(name == null ? null : new ChatComponentText(name), getValue(), getColor())
 			};
 		}
@@ -113,6 +113,7 @@ public abstract class Widget implements Disableable {
 
 	public interface LabyWidget {
 		void setOwner(Widget widget);
+
 		boolean isEnabled();
 	}
 

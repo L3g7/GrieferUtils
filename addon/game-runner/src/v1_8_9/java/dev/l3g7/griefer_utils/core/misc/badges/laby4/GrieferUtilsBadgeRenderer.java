@@ -28,16 +28,17 @@ import static net.labymod.api.configuration.labymod.main.laby.multiplayer.TabLis
 
 /**
  * Tablist rendering.
+ *
  * @implNote based on Laby Client v49's RankBadgeRenderer.
  */
 public class GrieferUtilsBadgeRenderer extends BadgeRenderer {
 
-    private final GameUserService gameUserService = Laby.references().gameUserService();
+	private final GameUserService gameUserService = Laby.references().gameUserService();
 	private final BadgeRenderer originalRenderer;
 
-    public GrieferUtilsBadgeRenderer(BadgeRenderer originalRenderer) {
+	public GrieferUtilsBadgeRenderer(BadgeRenderer originalRenderer) {
 		this.originalRenderer = originalRenderer;
-    }
+	}
 
 	@Override
 	public void render(ScreenContext context, float x, float y, NetworkPlayerInfo player) {
@@ -58,23 +59,23 @@ public class GrieferUtilsBadgeRenderer extends BadgeRenderer {
 	}
 
 	@Override
-    public boolean isVisible(NetworkPlayerInfo player) {
-        var position = Laby.labyAPI().config().multiplayer().tabList().labyModBadgePosition().get();
+	public boolean isVisible(NetworkPlayerInfo player) {
+		var position = Laby.labyAPI().config().multiplayer().tabList().labyModBadgePosition().get();
 		return position == BEFORE_NAME_SPACED || this.gameUserService.gameUser(player.profile().getUniqueId()).isUsingLabyMod();
 	}
 
 	@Override
-    public int getSize(NetworkPlayerInfo player) {
-        return 7;
-    }
+	public int getSize(NetworkPlayerInfo player) {
+		return 7;
+	}
 
 	@Override
-    protected boolean begin(ScreenContext context) {
-        TabListConfig tabList = Laby.labyAPI().config().multiplayer().tabList();
-        if (!(Boolean) tabList.labyModBadge().get())
-            return false;
-        else
-            return tabList.labyModBadgePosition().get() != BEFORE_PING;
-    }
+	protected boolean begin(ScreenContext context) {
+		TabListConfig tabList = Laby.labyAPI().config().multiplayer().tabList();
+		if (!(Boolean) tabList.labyModBadge().get())
+			return false;
+		else
+			return tabList.labyModBadgePosition().get() != BEFORE_PING;
+	}
 
 }

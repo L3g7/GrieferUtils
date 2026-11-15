@@ -31,11 +31,11 @@ public class Requests {
 
 	public static JsonElement post(String url, Map<String, String> headers, byte[] payload, String contentType) throws IOException {
 		headers.putAll(Util.strMap(
-				"Accept", "*/*",
-				"Accept-Encoding", "identity",
-				"Content-Length", Integer.toString(payload.length),
-				"Content-Type", contentType,
-				"User-Agent", "GrieferUtils"
+			"Accept", "*/*",
+			"Accept-Encoding", "identity",
+			"Content-Length", Integer.toString(payload.length),
+			"Content-Type", contentType,
+			"User-Agent", "GrieferUtils"
 		));
 
 		return request(url, "POST", headers, payload);

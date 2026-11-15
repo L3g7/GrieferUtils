@@ -43,7 +43,7 @@ public class ChestTimeNode extends ArgumentNode<String> {
 
 		@Override
 		public void check(StringReader reader) throws CommandSyntaxException {
- 			INITIAL.parse(reader);
+			INITIAL.parse(reader);
 
 			if (!reader.canRead())
 				throw INVALID_TIME_LOCALIZED.create();

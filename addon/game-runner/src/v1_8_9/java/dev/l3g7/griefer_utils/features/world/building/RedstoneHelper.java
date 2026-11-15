@@ -209,6 +209,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		DISTINCT("Deutlich"), SUBTLE("Subtil");
 
 		final String name;
+
 		DisplayType(String name) {
 			this.name = name;
 		}
@@ -246,7 +247,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public RenderType[] renderTypes() {
-			return new RenderType[] { TEXTURED_ROTATING };
+			return new RenderType[]{ TEXTURED_ROTATING };
 		}
 
 		@Override
@@ -272,7 +273,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public RenderType[] renderTypes() {
-			return new RenderType[] { TEXTURED };
+			return new RenderType[]{ TEXTURED };
 		}
 
 		@Override
@@ -327,7 +328,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public RenderType[] renderTypes() {
-			return new RenderType[] { TEXTURED };
+			return new RenderType[]{ TEXTURED };
 		}
 
 		@Override
@@ -403,7 +404,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public RenderType[] renderTypes() {
-			return new RenderType[] { TEXTURED };
+			return new RenderType[]{ TEXTURED };
 		}
 
 		@Override
@@ -449,7 +450,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 
 		@Override
 		public RenderType[] renderTypes() {
-			return new RenderType[] { TEXTURED };
+			return new RenderType[]{ TEXTURED };
 		}
 
 		@Override

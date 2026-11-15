@@ -36,7 +36,7 @@ class Painter {
 
 		char[] colors = pattern.toCharArray();
 		char[] chars = text.toCharArray();
-		for (int i = 0; i < chars.length;) {
+		for (int i = 0; i < chars.length; ) {
 			StringBuilder content = new StringBuilder();
 			char color = colors[i % colors.length];
 			while (i < chars.length && colors[i % colors.length] == color)

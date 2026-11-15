@@ -20,8 +20,8 @@ public class NativePrimitiveNode {
 
 	public static class NativeIntegerNode extends ArgumentNode<Integer> {
 
-		private int min = Integer.MIN_VALUE;
-		private int max = Integer.MAX_VALUE;
+		private final int min = Integer.MIN_VALUE;
+		private final int max = Integer.MAX_VALUE;
 
 		@Override
 		public ArgumentType<Integer> getType() {

@@ -50,7 +50,7 @@ public class BABItem implements Comparable<BABItem> {
 		ItemStack stack = this.stack.copy();
 		var lore = ItemUtil.getLore(stack);
 		lore.add("§r");
-		if(stack.stackSize != 0)
+		if (stack.stackSize != 0)
 			lore.add("§r" + String.format(getAvailability().name, (warehouseCount.get() / stack.stackSize)));
 		ItemUtil.setLore(stack, lore);
 		return stack;

@@ -147,8 +147,8 @@ public abstract class PieMenu extends Gui implements Disableable {
 		GlStateManager.popMatrix();
 
 		if (offsetX == 0 && offsetY == 0) {
-			cursorX = (int)cursorX;
-			cursorY = (int)cursorY;
+			cursorX = (int) cursorX;
+			cursorY = (int) cursorY;
 		}
 
 		// draw crosshair
@@ -163,7 +163,7 @@ public abstract class PieMenu extends Gui implements Disableable {
 	@SuppressWarnings("DuplicateExpressions")
 	private void drawUnit(Pair<String, Runnable> entry, double midX, double midY, double radius, int amount, int index, double cursorX, double cursorY, double distance) {
 		long timePassed = System.currentTimeMillis() - (this.selectionStarted - 1072L);
-		float animation = (float)(timePassed < 1572L ? Math.sin((float)timePassed / 1000f) : 1);
+		float animation = (float) (timePassed < 1572L ? Math.sin((float) timePassed / 1000f) : 1);
 		double tau = PI * 2;
 		double destinationShift = 3.0707963267948966;
 		double shift = destinationShift / (double) (animation * animation);
@@ -232,8 +232,8 @@ public abstract class PieMenu extends Gui implements Disableable {
 
 		switch (alignment) {
 			case -1 -> DrawUtils.drawRightString(displayName, x, y, size);
-			case 0 ->  DrawUtils.drawCenteredString(displayName, x, y, size);
-			case 1 ->  DrawUtils.drawString(displayName, x, y, size);
+			case 0 -> DrawUtils.drawCenteredString(displayName, x, y, size);
+			case 1 -> DrawUtils.drawString(displayName, x, y, size);
 		}
 	}
 
@@ -253,7 +253,7 @@ public abstract class PieMenu extends Gui implements Disableable {
 		if (player() == null)
 			return;
 
-		double radius = (double)DrawUtils.getHeight() / 4 / 3;
+		double radius = (double) DrawUtils.getHeight() / 4 / 3;
 		float centerX = this.lockedYaw;
 		float centerY = this.lockedPitch;
 
@@ -272,7 +272,7 @@ public abstract class PieMenu extends Gui implements Disableable {
 		double fromOriginToObjectX = player().rotationYaw - centerX;
 		double fromOriginToObjectY = player().rotationPitch - centerY;
 		double multiplier = radius / distance;
-		player().rotationYaw = player().prevRotationYaw= (float) (centerX + fromOriginToObjectX * multiplier);
+		player().rotationYaw = player().prevRotationYaw = (float) (centerX + fromOriginToObjectX * multiplier);
 		player().rotationPitch = player().prevRotationPitch = (float) (centerY + fromOriginToObjectY * multiplier);
 	}
 

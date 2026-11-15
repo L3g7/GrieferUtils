@@ -28,9 +28,9 @@ import static org.lwjgl.opengl.GL11.*;
 class SideRenderer {
 
 	private static final int[][] selectionIndices = new int[][]{
-		new int[] {3, 1, 0, 2, 0, 0}, // X
-		new int[] {0, 0, 0, 2, 3, 1}, // Y
-		new int[] {0, 2, 0, 0, 3, 1}  // Z
+		new int[]{3, 1, 0, 2, 0, 0}, // X
+		new int[]{0, 0, 0, 2, 3, 1}, // Y
+		new int[]{0, 2, 0, 0, 3, 1}  // Z
 	};
 
 	private static Vec3 multiply(Vec3 a, Vec3i b) {

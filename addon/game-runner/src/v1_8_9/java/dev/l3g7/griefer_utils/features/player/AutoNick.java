@@ -150,15 +150,15 @@ public class AutoNick extends Feature {
 			return;
 
 		isAFK = manuallyAFK = false;
-		if(System.currentTimeMillis() - afkSince < 5000L) {
-		ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-		executor.schedule(
+		if (System.currentTimeMillis() - afkSince < 5000L) {
+			ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+			executor.schedule(
 				() -> Minecraft.getMinecraft().addScheduledTask(
-						() -> send("/unnick")),
+					() -> send("/unnick")),
 				5, SECONDS);
-		executor.shutdown();
+			executor.shutdown();
 		} else {
 			send("/unnick");
 		}
- 	}
+	}
 }

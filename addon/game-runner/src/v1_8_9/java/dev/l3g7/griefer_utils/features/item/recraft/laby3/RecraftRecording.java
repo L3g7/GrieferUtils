@@ -67,7 +67,7 @@ public class RecraftRecording implements dev.l3g7.griefer_utils.features.item.re
 	public RecraftRecording() {
 		mainSetting = new RecordingDisplaySetting();
 
-		mode().callback(m ->  {
+		mode().callback(m -> {
 			mode().icon(m.icon);
 			actions().clear();
 

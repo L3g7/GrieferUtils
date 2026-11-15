@@ -31,10 +31,10 @@ public class PlaySoundEvent extends Event {
 		private boolean loaded;
 
 		@Inject(method = "playSound", at = @At("HEAD"), cancellable = true)
-	    public void injectPlaySound(ISound p_sound, CallbackInfo ci) {
-	    	if (loaded && new PlaySoundEvent(p_sound).fire().isCanceled())
+		public void injectPlaySound(ISound p_sound, CallbackInfo ci) {
+			if (loaded && new PlaySoundEvent(p_sound).fire().isCanceled())
 				ci.cancel();
-	    }
+		}
 
 	}
 

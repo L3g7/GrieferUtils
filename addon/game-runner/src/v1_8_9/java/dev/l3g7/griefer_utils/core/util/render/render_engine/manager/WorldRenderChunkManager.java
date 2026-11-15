@@ -152,8 +152,8 @@ public class WorldRenderChunkManager extends RenderChunkManager {
 
 	/**
 	 * @param worldPos The RenderObject's position in the world.
-	 * @param state The block state at the given position.
-	 * @param world The world to use.
+	 * @param state    The block state at the given position.
+	 * @param world    The world to use.
 	 * @return The RenderObject for the given position, or <code>null</code> if there is none.
 	 */
 	protected RenderObject fromState(BlockPos worldPos, IBlockState state, WorldClient world) {

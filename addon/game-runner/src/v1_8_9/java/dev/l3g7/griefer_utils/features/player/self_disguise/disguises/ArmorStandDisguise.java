@@ -31,9 +31,9 @@ public class ArmorStandDisguise extends Disguise<EntityArmorStand> {
 
 		byte flags = entity.getDataWatcher().getWatchableObjectByte(10);
 		if (showArms)
-			flags = (byte)(flags | 4);
+			flags = (byte) (flags | 4);
 		else
-			flags = (byte)(flags & -5);
+			flags = (byte) (flags & -5);
 
 		entity.getDataWatcher().updateObject(10, flags);
 		return entity;

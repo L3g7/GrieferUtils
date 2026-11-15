@@ -32,7 +32,7 @@ class ImageUtil {
 
 	public static BufferedImage toImage(ByteBuffer buf) {
 		BufferedImage img = new BufferedImage(size, size, TYPE_INT_ARGB);
-		int[] pixels = new int[size*size];
+		int[] pixels = new int[size * size];
 		buf.asIntBuffer().get(pixels);
 		img.setRGB(0, 0, size, size, pixels, 0, size);
 		return img;

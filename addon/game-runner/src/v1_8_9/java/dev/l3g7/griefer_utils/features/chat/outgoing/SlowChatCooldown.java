@@ -49,7 +49,7 @@ public class SlowChatCooldown extends Feature {
 		else if (msg.equals("§r§cPlease do not repeat the same (or similar) message.§r"))
 			timeoutEnd = System.currentTimeMillis() + 10_000;
 		else {
-			for (Pattern p : new Pattern[] {GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN}) {
+			for (Pattern p : new Pattern[]{GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN}) {
 				Matcher matcher = p.matcher(msg);
 				if (!matcher.matches())
 					continue;

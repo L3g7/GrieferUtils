@@ -19,6 +19,7 @@ public class WorldSink implements VertexSink {
 	public static WorldSink INSTANCE = new WorldSink();
 
 	private final WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
+
 	private WorldSink() {}
 
 	@Override

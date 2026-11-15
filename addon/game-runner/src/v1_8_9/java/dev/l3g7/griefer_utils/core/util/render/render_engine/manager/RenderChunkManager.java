@@ -55,7 +55,7 @@ public abstract class RenderChunkManager {
 	 * Sets the render object at the given position in the world.
 	 * If there already was a render object, it is overwritten.
 	 * If this method removes the last render object in a chunk, the whole chunk is removed.
-	 * @param worldPos The render object's position in the world.
+	 * @param worldPos     The render object's position in the world.
 	 * @param renderObject The new render object, or null if there is none.
 	 */
 	public void setRenderObject(BlockPos worldPos, RenderObject renderObject) {

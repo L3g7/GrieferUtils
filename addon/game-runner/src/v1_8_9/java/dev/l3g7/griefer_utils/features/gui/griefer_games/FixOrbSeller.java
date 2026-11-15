@@ -61,7 +61,7 @@ public class FixOrbSeller extends Feature {
 	private final SwitchSetting enabled = SwitchSetting.create()
 		.name("Orb-Händler fixen")
 		.description("Behebt, dass der Orb-Händler nicht sichtbar ist, wenn man sich mit einem Home zu ihm teleportiert."
-			 + "\n§8(Der Orbhändler auf dem Citybuild muss dafür seit dem letzten Server-Neustart gesehen worden sein.)")
+			+ "\n§8(Der Orbhändler auf dem Citybuild muss dafür seit dem letzten Server-Neustart gesehen worden sein.)")
 		.icon("orbseller")
 		.subSettings(restoreMousePos);
 

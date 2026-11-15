@@ -194,8 +194,8 @@ public class JailBarriers extends Feature {
 		cuboid(266, 32, 91, 293, 32, 123);
 		ceiling(268, 89, 271, 90);
 		ceiling(282, 88, 286, 90);
-		ceiling(294 , 92, 294, 103);
-		ceiling(295 , 89, 296, 102);
+		ceiling(294, 92, 294, 103);
+		ceiling(295, 89, 296, 102);
 		ceiling(297, 89, 297, 95);
 		ceiling(298, 90, 298, 94);
 		ceiling(299, 91, 299, 92);

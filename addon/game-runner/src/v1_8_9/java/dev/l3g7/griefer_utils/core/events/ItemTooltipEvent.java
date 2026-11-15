@@ -30,7 +30,7 @@ public class ItemTooltipEvent extends Event {
 	}
 
 	@Mixin(value = ItemStack.class, priority = 999)
-	private static class MixinItemStack  {
+	private static class MixinItemStack {
 
 		@Inject(method = "getTooltip", at = @At("TAIL"))
 		public void injectGetTooltip(EntityPlayer playerIn, boolean advanced, CallbackInfoReturnable<List<String>> cir) {

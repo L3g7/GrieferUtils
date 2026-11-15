@@ -35,7 +35,7 @@ public class ItemFilter {
 		if (customName) {
 			otherNames = new String[0];
 		} else {
-			otherNames = new String[] {
+			otherNames = new String[]{
 				StatCollector.translateToLocal(stack.getUnlocalizedName() + ".name").toLowerCase(),
 				StatCollector.translateToFallback(stack.getUnlocalizedName() + ".name").toLowerCase()
 			};

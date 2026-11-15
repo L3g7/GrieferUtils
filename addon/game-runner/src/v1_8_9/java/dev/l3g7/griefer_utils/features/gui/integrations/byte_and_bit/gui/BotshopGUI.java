@@ -210,11 +210,11 @@ public class BotshopGUI extends GuiBigChest {
 			int dX = (i % 9) * 18 + 8;
 			int dY = (i / 9) * 18 + 19;
 
-			DrawUtils.bindTexture(new ResourceLocation("griefer_utils", textureItem.texture));
-			double dSize = (16 - textureItem.renderSize) / 2d;
+			DrawUtils.bindTexture(new ResourceLocation("griefer_utils", textureItem.texture()));
+			double dSize = (16 - textureItem.renderSize()) / 2d;
 
-			DrawUtils.drawTexture(x + dX + dSize, y + dY + dSize, 0, 0, 256, 256, textureItem.renderSize, textureItem.renderSize);
-			mc().getRenderItem().renderItemOverlays(mc().fontRendererObj, textureItem.toolTipStack, x + dX, y + dY);
+			DrawUtils.drawTexture(x + dX + dSize, y + dY + dSize, 0, 0, 256, 256, textureItem.renderSize(), textureItem.renderSize());
+			mc().getRenderItem().renderItemOverlays(mc().fontRendererObj, textureItem.toolTipStack(), x + dX, y + dY);
 			GlStateManager.disableLighting();
 		}
 

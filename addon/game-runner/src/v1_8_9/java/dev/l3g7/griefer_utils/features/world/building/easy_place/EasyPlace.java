@@ -131,10 +131,10 @@ public class EasyPlace extends Feature {
 	@Mixin(Minecraft.class)
 	private static class MixinMinecraft {
 
-	    @Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/item/ItemStack;stackSize:I", opcode = GETFIELD, ordinal = 0))
-	    private void injectRightClickMouse(CallbackInfo ci) {
+		@Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/item/ItemStack;stackSize:I", opcode = GETFIELD, ordinal = 0))
+		private void injectRightClickMouse(CallbackInfo ci) {
 			onBlockPlaceStart();
-	    }
+		}
 
 	}
 

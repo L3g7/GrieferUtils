@@ -30,11 +30,11 @@ public class XboxProfileResolver {
 	private static final Set<Long> requestSendTimes = new HashSet<>();
 
 	public static final Gson GSON = new GsonBuilder()
-			.registerTypeAdapter(DateTime.class, (JsonSerializer<DateTime>) (src, type, ctx) -> new JsonPrimitive(src.toString()))
-			.registerTypeAdapter(DateTime.class, (JsonDeserializer<DateTime>) (json, type, ctx) -> new DateTime(json.getAsString()))
-			.registerTypeAdapter(XboxProfile.class, (JsonDeserializer<XboxProfile>) (json, type, ctx) -> new XboxProfile(json.getAsJsonObject()))
-			.setPrettyPrinting()
-			.create();
+		.registerTypeAdapter(DateTime.class, (JsonSerializer<DateTime>) (src, type, ctx) -> new JsonPrimitive(src.toString()))
+		.registerTypeAdapter(DateTime.class, (JsonDeserializer<DateTime>) (json, type, ctx) -> new DateTime(json.getAsString()))
+		.registerTypeAdapter(XboxProfile.class, (JsonDeserializer<XboxProfile>) (json, type, ctx) -> new XboxProfile(json.getAsJsonObject()))
+		.setPrettyPrinting()
+		.create();
 
 	public static boolean isAvailable() {
 		return available;

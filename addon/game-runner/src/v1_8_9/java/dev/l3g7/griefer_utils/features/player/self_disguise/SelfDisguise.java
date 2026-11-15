@@ -76,7 +76,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 		put("slime", new SlimeDisguise<>(EntitySlime.class));
 		put("snowman", new Disguise<>(EntitySnowman.class));
 		put("squid", new Disguise<>(EntitySquid.class));
-		put("undead_horse",  new AbstractHorseDisguise(3));
+		put("undead_horse", new AbstractHorseDisguise(3));
 		put("villager", new VillagerDisguise());
 		put("witch", new Disguise<>(EntityWitch.class));
 		put("wolf", new WolfDisguise());
@@ -219,7 +219,7 @@ public class SelfDisguise extends Feature { // NOTE cleanup
 			try {
 				loadDisguise(lastSentDisguiseCommand);
 			} catch (Throwable t) {
-				throw new RuntimeException("Error when disguising with command: \"" + lastSentDisguiseCommand + "\" " + t.getClass().getSimpleName()  + " : " + t.getMessage());
+				throw new RuntimeException("Error when disguising with command: \"" + lastSentDisguiseCommand + "\" " + t.getClass().getSimpleName() + " : " + t.getMessage());
 			}
 			unknownArgs = null;
 			lastSentDisguiseCommand = null;

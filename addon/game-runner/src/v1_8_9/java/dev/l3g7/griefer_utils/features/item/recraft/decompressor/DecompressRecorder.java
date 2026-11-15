@@ -45,7 +45,7 @@ public class DecompressRecorder {
 
 	@EventListener
 	private static void onGuiOpenEvent(GuiOpenEvent<?> event) {
-	    if (previousScreen == null)
+		if (previousScreen == null)
 			return;
 
 		if (event.gui instanceof GuiInventory || event.gui == previousScreen)

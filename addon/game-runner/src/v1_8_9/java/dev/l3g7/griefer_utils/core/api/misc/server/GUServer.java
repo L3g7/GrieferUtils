@@ -179,7 +179,7 @@ public class GUServer {
 			cb, // Might have been queued -> Not always the current one
 			centerX,
 			centerZ,
-			new int[] {origin.getX(), origin.getY(), origin.getZ()},
+			new int[]{origin.getX(), origin.getY(), origin.getZ()},
 			data
 		).send());
 	}

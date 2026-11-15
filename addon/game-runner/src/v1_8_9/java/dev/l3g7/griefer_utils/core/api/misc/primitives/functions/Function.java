@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 @FunctionalInterface
 public interface Function<T, R> extends java.util.function.Function<T, R> {
 
-    R applyWithThrowable(T t) throws Throwable;
+	R applyWithThrowable(T t) throws Throwable;
 
 	default R apply(T t) {
 		try {

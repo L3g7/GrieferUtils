@@ -32,19 +32,19 @@ public class Access {
 
 			int allowedModesOffset = (isOpenJ9() ? 20 : useCompactObjectHeaders() ? 8 : 12); // Result of Unsafe#objectFieldOffset(Lookup#allowedModes)
 			unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class)
-					.invoke(theUnsafe.get(null), lookup, allowedModesOffset, -1 /* TRUSTED */);
+				.invoke(theUnsafe.get(null), lookup, allowedModesOffset, -1 /* TRUSTED */);
 			return lookup;
 		});
 	}
 
 	private static boolean useCompactObjectHeaders() {
-        try {
-            HotSpotDiagnosticMXBean bean = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
-            return Boolean.parseBoolean(bean.getVMOption("UseCompactObjectHeaders").getValue());
-        } catch (IllegalArgumentException e) {
-            return false; // Flag is unknown (older than JDK 24)
-        }
-    }
+		try {
+			HotSpotDiagnosticMXBean bean = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
+			return Boolean.parseBoolean(bean.getVMOption("UseCompactObjectHeaders").getValue());
+		} catch (IllegalArgumentException e) {
+			return false; // Flag is unknown (older than JDK 24)
+		}
+	}
 
 	private static boolean isOpenJ9() {
 		return System.getProperty("com.ibm.oti.vm.library.version") != null;

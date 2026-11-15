@@ -43,7 +43,7 @@ public abstract class MixinControlElement {
 		LabyMod.getInstance().getDrawUtils().drawTexture(x, y, 0, 0, 256, 256, 20, 9, 1);
 
 		if (x <= mouseX && mouseX <= x + NEW_BADGE_WIDTH && y <= mouseY && mouseY <= y + NEW_BADGE_HEIGHT)
-			TooltipHelper.getHelper().pointTooltip(mouseX, mouseY, 0L, new String[]{ setting.since().toString() });
+			TooltipHelper.getHelper().pointTooltip(mouseX, mouseY, 0L, new String[]{setting.since().toString()});
 	}
 
 }

@@ -113,6 +113,7 @@ public class RealMoney extends Feature {
 		BEFORE("Davor"), AFTER("Danach");
 
 		private final String name;
+
 		TagPosition(String name) {
 			this.name = name;
 		}

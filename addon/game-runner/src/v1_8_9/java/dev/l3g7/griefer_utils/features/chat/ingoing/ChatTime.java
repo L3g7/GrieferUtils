@@ -66,9 +66,9 @@ public class ChatTime extends Feature {
 		.subSettings(style, format);
 
 	public ChatTime() {
-		if(enabled.getStorage().value == null) { // If no value loaded, try loading from TebosBrime's addon
+		if (enabled.getStorage().value == null) { // If no value loaded, try loading from TebosBrime's addon
 			Path configFile = mc().mcDataDir.toPath().resolve("LabyMod/addons-1.8/config/ChatTime.json");
-			if(Files.exists(configFile)) {
+			if (Files.exists(configFile)) {
 				IO.read(configFile).tryAsJsonObject().ifOk(obj -> {
 					JsonObject cfg = obj.get("config").getAsJsonObject();
 					if (cfg.has("chatData"))

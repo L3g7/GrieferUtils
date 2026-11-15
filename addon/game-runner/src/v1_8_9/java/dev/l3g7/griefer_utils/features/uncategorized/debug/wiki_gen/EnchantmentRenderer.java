@@ -91,7 +91,7 @@ public class EnchantmentRenderer {
 				ImageIO.write(img, "png", new File(Minecraft.getMinecraft().mcDataDir, "rendered_enchantments/" + itemRenderer.stack.getDisplayName().toLowerCase().replace(' ', '_') + ".png"));
 			} catch (IOException ex) {
 				try {
-					ImageIO.write(img, "png", new File(Minecraft.getMinecraft().mcDataDir, "rendered_enchantments/" + UUID.randomUUID().toString() + ".png"));
+					ImageIO.write(img, "png", new File(Minecraft.getMinecraft().mcDataDir, "rendered_enchantments/" + UUID.randomUUID() + ".png"));
 				} catch (IOException ex2) {
 					itemRenderer = null;
 					throw new RuntimeException(ex);

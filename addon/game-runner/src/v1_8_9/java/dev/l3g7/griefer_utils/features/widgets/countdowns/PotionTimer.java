@@ -62,32 +62,32 @@ public class PotionTimer extends Widget {
 	private static final Pattern END_PATTERN = Pattern.compile("^§r§8\\[§r§6GrieferGames§r§8] §r§7Bis: §r§e(?<end>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})§r");
 
 	private final Map<String, PotionData> potions = ImmutableMap.of(
-			"break_potion", new PotionData("Break", Countdown.ticking()),
-			"fly_potion", new PotionData("Fly", Countdown.realtime())
+		"break_potion", new PotionData("Break", Countdown.ticking()),
+		"fly_potion", new PotionData("Fly", Countdown.realtime())
 	);
 
 	private final DropDownSetting<KeyMode> design = DropDownSetting.create(KeyMode.class)
-			.name("Design")
-			.description("In welchem die Design die aktivierten Tränke angezeigt werden sollen.")
-			.icon("color_palette")
-			.defaultValue(TEXT_AND_ICON);
+		.name("Design")
+		.description("In welchem die Design die aktivierten Tränke angezeigt werden sollen.")
+		.icon("color_palette")
+		.defaultValue(TEXT_AND_ICON);
 
 	private final NumberSetting warnTime = NumberSetting.create()
-			.name("Warn-Zeit für Fly Tränke (s)")
-			.description("Wie viele Sekunden vor dem Ablauf eines Fly-Tranks eine Warnung angezeigt werden soll.")
-			.icon("clock");
+		.name("Warn-Zeit für Fly Tränke (s)")
+		.description("Wie viele Sekunden vor dem Ablauf eines Fly-Tranks eine Warnung angezeigt werden soll.")
+		.icon("clock");
 
 	private final SwitchSetting hide = SwitchSetting.create()
-			.name("Verstecken, wenn nichts getrunken")
-			.description("Ob das Modul versteckt werden soll, wenn derzeit kein Orbtrank aktiv ist.")
-			.icon("glass_pane");
+		.name("Verstecken, wenn nichts getrunken")
+		.description("Ob das Modul versteckt werden soll, wenn derzeit kein Orbtrank aktiv ist.")
+		.icon("glass_pane");
 
 	@MainElement
 	private final SwitchSetting enabled = SwitchSetting.create()
-			.name("Orbtrank-\nTimer")
-			.description("Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.")
-			.icon("potion")
-			.subSettings(design, warnTime, hide);
+		.name("Orbtrank-\nTimer")
+		.description("Zeigt dir an, wie lange aktivierte Fly/Break Tränke noch anhalten.")
+		.icon("potion")
+		.subSettings(design, warnTime, hide);
 
 	private void checkFlyWarning() {
 		// Warn if the fly potion end is less than the set amount of seconds away
@@ -172,13 +172,13 @@ public class PotionTimer extends Widget {
 		@Override
 		public String[] getKeys() {
 			if (!ServerCheck.isOnCitybuild())
-				return new String[] {"Orbtrank-Timer"};
+				return new String[]{"Orbtrank-Timer"};
 
 			// Get names as Strings
 			List<String> keys = potions.values().stream()
-					.filter(d -> d.countdown != null && !d.countdown.isExpired())
-					.map(this::getDisplayName)
-					.collect(Collectors.toList());
+				.filter(d -> d.countdown != null && !d.countdown.isExpired())
+				.map(this::getDisplayName)
+				.collect(Collectors.toList());
 
 			keys.add(0, "Orbtrank-Timer");
 			return keys.toArray(new String[0]);
@@ -186,7 +186,7 @@ public class PotionTimer extends Widget {
 
 		@Override
 		public String[] getDefaultValues() {
-			return new String[] {""};
+			return new String[]{""};
 		}
 
 		@Override
@@ -196,9 +196,9 @@ public class PotionTimer extends Widget {
 
 			// Get expirations dates as Strings
 			List<String> values = potions.values().stream()
-					.filter(d -> d.countdown != null && !d.countdown.isExpired())
-					.map(this::getFormattedTime)
-					.collect(Collectors.toList());
+				.filter(d -> d.countdown != null && !d.countdown.isExpired())
+				.map(this::getFormattedTime)
+				.collect(Collectors.toList());
 
 			if (values.isEmpty())
 				return getDefaultValues();
@@ -219,8 +219,8 @@ public class PotionTimer extends Widget {
 				return;
 
 			List<PotionData> data = potions.values().stream()
-					.filter(d -> d.countdown != null && !d.countdown.isExpired())
-					.collect(Collectors.toList());
+				.filter(d -> d.countdown != null && !d.countdown.isExpired())
+				.collect(Collectors.toList());
 
 			if (data.isEmpty())
 				return;
@@ -284,8 +284,8 @@ public class PotionTimer extends Widget {
 	private class PotionTimerL4 extends Laby4Widget {
 
 		private final List<PotionLine> lines = List.of(
-				new PotionLine(potions.get("break_potion")),
-				new PotionLine(potions.get("fly_potion"))
+			new PotionLine(potions.get("break_potion")),
+			new PotionLine(potions.get("fly_potion"))
 		);
 
 		@Override

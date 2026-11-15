@@ -40,7 +40,7 @@ public class GUEmoteChatLine extends EmoteChatLine implements GUChatLine {
 		return originalComponent;
 	}
 
-	public static ChatLine tryCreatingEmoteChatLine(ChatRenderer emoteChatRenderer, IChatComponent modifiedComponent, IChatComponent originalComponent,  String message, boolean secondChat, String room, Object component, int updateCounter, int chatLineId, Integer highlightColor) {
+	public static ChatLine tryCreatingEmoteChatLine(ChatRenderer emoteChatRenderer, IChatComponent modifiedComponent, IChatComponent originalComponent, String message, boolean secondChat, String room, Object component, int updateCounter, int chatLineId, Integer highlightColor) {
 		if (!(emoteChatRenderer instanceof EmoteChatRendererType))
 			return null;
 

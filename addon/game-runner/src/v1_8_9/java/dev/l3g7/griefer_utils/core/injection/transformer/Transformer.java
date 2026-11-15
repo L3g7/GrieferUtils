@@ -41,7 +41,7 @@ public abstract class Transformer implements Opcodes {
 	}
 
 	protected MethodNode getMethod(String unobfName, String intermediaryName, String desc) {
-		for (String name : new String[] { unobfName, intermediaryName }) {
+		for (String name : new String[]{ unobfName, intermediaryName }) {
 			String targetMethod = name + desc;
 
 			Optional<MethodNode> method = classNode.methods.stream()
@@ -54,6 +54,7 @@ public abstract class Transformer implements Opcodes {
 
 		throw new NoSuchMethodError(String.format("Could not find %s / %s %s!", unobfName, intermediaryName, desc));
 	}
+
 	protected ListIterator<AbstractInsnNode> getIterator(MethodNode method, int opcode, String methodName) {
 		return getIterator(method, opcode, m -> ((MethodInsnNode) m).name.equals(methodName));
 	}

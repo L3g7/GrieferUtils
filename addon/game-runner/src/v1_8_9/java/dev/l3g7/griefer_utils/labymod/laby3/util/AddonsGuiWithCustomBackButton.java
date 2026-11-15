@@ -31,7 +31,10 @@ public class AddonsGuiWithCustomBackButton extends LabyModAddonsGui {
 
 	public AddonsGuiWithCustomBackButton(Runnable onBack, SettingsElement element) {
 		this(element);
-		addCheck(() -> { onBack.run(); return true; });
+		addCheck(() -> {
+			onBack.run();
+			return true;
+		});
 	}
 
 	public static ArrayList<SettingsElement> path() { return Reflection.get(mc().currentScreen, "path"); }

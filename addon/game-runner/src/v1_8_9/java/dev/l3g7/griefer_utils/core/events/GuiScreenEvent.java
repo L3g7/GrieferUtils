@@ -170,7 +170,7 @@ public abstract class GuiScreenEvent extends Event {
 			public EntityPlayerSP thePlayer;
 
 			@ModifyVariable(method = "displayGuiScreen", at = @At("HEAD"), argsOnly = true)
-		    public GuiScreen injectDisplayGuiScreen(GuiScreen screen) {
+			public GuiScreen injectDisplayGuiScreen(GuiScreen screen) {
 				if (screen == null) {
 					if (theWorld == null)
 						screen = new GuiMainMenu();
@@ -180,7 +180,7 @@ public abstract class GuiScreenEvent extends Event {
 
 				GuiOpenEvent<?> event = new GuiOpenEvent<>(screen).fire();
 				return event.isCanceled() ? CANCEL_INDICATOR : event.gui;
-		    }
+			}
 
 			@Inject(method = "displayGuiScreen", at = @At("HEAD"), cancellable = true)
 			public void injectDisplayGuiScreen(GuiScreen guiScreenIn, CallbackInfo ci) {
@@ -199,9 +199,9 @@ public abstract class GuiScreenEvent extends Event {
 			private int windowId;
 
 			@Inject(method = "processPacket(Lnet/minecraft/network/play/INetHandlerPlayClient;)V", at = @At("HEAD"))
-		    private void injectProcessPacketHead(INetHandlerPlayClient handler, CallbackInfo ci) {
+			private void injectProcessPacketHead(INetHandlerPlayClient handler, CallbackInfo ci) {
 				cancelOpenPacket = true;
-		    }
+			}
 
 			@Inject(method = "processPacket(Lnet/minecraft/network/play/INetHandlerPlayClient;)V", at = @At("RETURN"))
 			private void injectProcessPacketTail(INetHandlerPlayClient handler, CallbackInfo ci) {

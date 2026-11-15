@@ -323,7 +323,7 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 
 		private static final Quad BASE_QUAD = Quad.onYPlane(0.5, 0.5).translate(0, 0.51, 0);
 
-		private static final Quad[] ICON_QUADS = new Quad[] {
+		private static final Quad[] ICON_QUADS = new Quad[]{
 			BASE_QUAD,
 			BASE_QUAD.rotateX(180),
 			BASE_QUAD.rotateX(270),

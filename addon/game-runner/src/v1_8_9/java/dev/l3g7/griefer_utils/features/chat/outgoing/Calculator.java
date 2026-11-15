@@ -325,7 +325,7 @@ public class Calculator extends Feature {
 			if (getBalance().compareTo(THOUSAND) < 0) {
 				if (Balances.getBankBalance() < 1000) {
 					display(Constants.ADDON_PREFIX + "§r§4⚠ §cDir fehlen %s$. §4⚠§r", THOUSAND.subtract(getBalance()).toPlainString());
-				}  else {
+				} else {
 					send("/bank abheben 1000");
 					send("/bank einzahlen %d", getBalance().add(THOUSAND).setScale(0, FLOOR).toBigInteger());
 				}

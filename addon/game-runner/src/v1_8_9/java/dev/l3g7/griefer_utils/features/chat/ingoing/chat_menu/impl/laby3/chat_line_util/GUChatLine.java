@@ -12,6 +12,7 @@ import net.minecraft.util.IChatComponent;
 public interface GUChatLine {
 
 	IChatComponent getModifiedComponent();
+
 	IChatComponent getOriginalComponent();
 
 }

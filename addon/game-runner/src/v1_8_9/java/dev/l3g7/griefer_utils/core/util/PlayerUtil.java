@@ -31,13 +31,13 @@ public class PlayerUtil {
 		if (mc().getNetHandler() == null)
 			return null;
 
-		for(NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
-			if(info.getGameProfile().getName().equalsIgnoreCase(name))
+		for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
+			if (info.getGameProfile().getName().equalsIgnoreCase(name))
 				return info.getGameProfile().getId();
 
-			if(info.getDisplayName() != null) {
+			if (info.getDisplayName() != null) {
 				String[] parts = info.getDisplayName().getUnformattedText().split("\u2503");
-				if(parts.length > 1 && parts[1].trim().equalsIgnoreCase(name))
+				if (parts.length > 1 && parts[1].trim().equalsIgnoreCase(name))
 					return info.getGameProfile().getId();
 			}
 		}

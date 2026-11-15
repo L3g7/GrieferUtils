@@ -21,10 +21,10 @@ public class RenderGameOverlayEvent extends Event {
 	@Mixin(EntityRenderer.class)
 	private static class MixinEntityRenderer {
 
-	    @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiIngame;renderGameOverlay(F)V", shift = AFTER))
-	    public void injectUpdateCameraAndRender(float partialTicks, long nanoTime, CallbackInfo ci) {
-	    	new RenderGameOverlayEvent().fire();
-	    }
+		@Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiIngame;renderGameOverlay(F)V", shift = AFTER))
+		public void injectUpdateCameraAndRender(float partialTicks, long nanoTime, CallbackInfo ci) {
+			new RenderGameOverlayEvent().fire();
+		}
 
 	}
 

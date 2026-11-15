@@ -25,10 +25,10 @@ public class WorldUnloadEvent extends Event {
 		public WorldClient theWorld;
 
 		@Inject(method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V", at = @At("HEAD"))
-	    public void injectLoadWorld(WorldClient worldClientIn, String loadingMessage, CallbackInfo ci) {
+		public void injectLoadWorld(WorldClient worldClientIn, String loadingMessage, CallbackInfo ci) {
 			if (theWorld != null)
 				new WorldUnloadEvent().fire();
-	    }
+		}
 
 	}
 

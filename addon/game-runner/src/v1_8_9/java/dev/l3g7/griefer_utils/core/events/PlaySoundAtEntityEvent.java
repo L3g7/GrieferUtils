@@ -30,11 +30,11 @@ public class PlaySoundAtEntityEvent extends Event {
 	@Mixin(EntityPlayerSP.class)
 	private static class MixinEntityPlayerSP {
 
-	    @Inject(method = "playSound", at = @At("HEAD"), cancellable = true)
-	    public void injectPlaySound(String name, float volume, float pitch, CallbackInfo ci) {
-	    	if (new PlaySoundAtEntityEvent(c(this)).fire().isCanceled())
+		@Inject(method = "playSound", at = @At("HEAD"), cancellable = true)
+		public void injectPlaySound(String name, float volume, float pitch, CallbackInfo ci) {
+			if (new PlaySoundAtEntityEvent(c(this)).fire().isCanceled())
 				ci.cancel();
-	    }
+		}
 
 	}
 
@@ -42,10 +42,10 @@ public class PlaySoundAtEntityEvent extends Event {
 	private static abstract class MixinWorld {
 
 		@Inject(method = "playSoundAtEntity", at = @At("HEAD"), cancellable = true)
-	    public void injectPlaySoundAtEntity(Entity entityIn, String name, float volume, float pitch, CallbackInfo ci) {
-		    if (new PlaySoundAtEntityEvent(entityIn).fire().isCanceled())
-			    ci.cancel();
-	    }
+		public void injectPlaySoundAtEntity(Entity entityIn, String name, float volume, float pitch, CallbackInfo ci) {
+			if (new PlaySoundAtEntityEvent(entityIn).fire().isCanceled())
+				ci.cancel();
+		}
 
 		@Inject(method = "playSoundToNearExcept", at = @At("HEAD"), cancellable = true)
 		public void injectPlaySoundToNearExcept(EntityPlayer player, String name, float volume, float pitch, CallbackInfo ci) {

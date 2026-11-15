@@ -57,7 +57,7 @@ public class BetterShift extends Feature {
 		if (!(mc().currentScreen instanceof GuiInventory))
 			return;
 
-		if (event.mode != 1 || event.slotId <= 8 || ! Keyboard.isKeyDown(KEY_LMENU))
+		if (event.mode != 1 || event.slotId <= 8 || !Keyboard.isKeyDown(KEY_LMENU))
 			return;
 
 		move(5, event);

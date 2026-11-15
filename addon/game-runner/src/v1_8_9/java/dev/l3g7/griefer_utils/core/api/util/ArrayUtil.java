@@ -30,11 +30,11 @@ public class ArrayUtil {
 	 * @return whether two arrays are equal using a custom function.
 	 */
 	public static <A, B> boolean equals(A[] a, B[] b, BiPredicate<A, B> check) {
-		if(a.length != b.length)
+		if (a.length != b.length)
 			return false;
 
-		for(int i = 0; i < a.length; i++)
-			if(!check.test(a[i], b[i]))
+		for (int i = 0; i < a.length; i++)
+			if (!check.test(a[i], b[i]))
 				return false;
 
 		return true;
@@ -47,7 +47,7 @@ public class ArrayUtil {
 		StringBuilder s = new StringBuilder();
 
 		for (int i = 0; i < array.length; i++) {
-			if(i != 0)
+			if (i != 0)
 				s.append(delimiter);
 
 			s.append(func.apply(array[i]));

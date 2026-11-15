@@ -27,11 +27,11 @@ public class RenderPlayerEvent extends Event {
 	@Mixin(RenderPlayer.class)
 	private static class MixinRenderPlayer {
 
-	    @Inject(method = "doRender(Lnet/minecraft/client/entity/AbstractClientPlayer;DDDFF)V", at = @At("HEAD"), cancellable = true)
-	    public void injectdoRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw, float partialTicks, CallbackInfo ci) {
-		    if (new RenderPlayerEvent(entity).fire().isCanceled())
+		@Inject(method = "doRender(Lnet/minecraft/client/entity/AbstractClientPlayer;DDDFF)V", at = @At("HEAD"), cancellable = true)
+		public void injectdoRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw, float partialTicks, CallbackInfo ci) {
+			if (new RenderPlayerEvent(entity).fire().isCanceled())
 				ci.cancel();
-	    }
+		}
 
 	}
 

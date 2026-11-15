@@ -132,11 +132,11 @@ public abstract class IconComponent extends ChatComponentStyle {
 	@Mixin(Serializer.class)
 	private static class MixinIChatComponentSerializer {
 
-	    @Inject(method = "serialize(Lnet/minecraft/util/IChatComponent;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement;", at = @At("HEAD"), cancellable = true)
-	    private void injectSerialize(IChatComponent icc, Type type, JsonSerializationContext context, CallbackInfoReturnable<JsonElement> cir) {
-		    if (icc instanceof IconComponent ic)
-			    cir.setReturnValue(new JsonPrimitive(""));
-	    }
+		@Inject(method = "serialize(Lnet/minecraft/util/IChatComponent;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement;", at = @At("HEAD"), cancellable = true)
+		private void injectSerialize(IChatComponent icc, Type type, JsonSerializationContext context, CallbackInfoReturnable<JsonElement> cir) {
+			if (icc instanceof IconComponent ic)
+				cir.setReturnValue(new JsonPrimitive(""));
+		}
 
 	}
 

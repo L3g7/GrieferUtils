@@ -21,8 +21,8 @@ public class MoneySuggestion extends Suggestion {
 	@Override
 	public String get() {
 		return Constants.DECIMAL_FORMAT_98.format(
-			Balances.getBalance()
-				.setScale(0, FLOOR))
+				Balances.getBalance()
+					.setScale(0, FLOOR))
 			.replaceAll("\\.", "");
 	}
 

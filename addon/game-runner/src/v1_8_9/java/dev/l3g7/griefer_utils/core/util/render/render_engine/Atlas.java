@@ -183,8 +183,8 @@ public class Atlas {
 
 	/**
 	 * A single texture added to this atlas.
-	 * @param index The texture's index in this atlas.
-	 * @param width The texture's width in pixels.
+	 * @param index  The texture's index in this atlas.
+	 * @param width  The texture's width in pixels.
 	 * @param height The texture's height in pixels.
 	 * @param pixels The RGBA pixels of the texture.
 	 */

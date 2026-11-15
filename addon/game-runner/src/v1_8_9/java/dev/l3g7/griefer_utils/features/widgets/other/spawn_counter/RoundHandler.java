@@ -34,9 +34,9 @@ import static net.minecraft.util.EnumFacing.*;
 
 class RoundHandler {
 
-	private static final EnumFacing[] HORIZONTALS = new EnumFacing[] {SOUTH, WEST, NORTH, EAST};
+	private static final EnumFacing[] HORIZONTALS = new EnumFacing[]{SOUTH, WEST, NORTH, EAST};
 	private static final List<Citybuild> excludedCitybuilds = ImmutableList.of(NATURE, EXTREME, CBE);
-	private static final byte[] quadrantData = new byte[] {
+	private static final byte[] quadrantData = new byte[]{
 		-1, -1,
 		-1, +1,
 		+1, -1,

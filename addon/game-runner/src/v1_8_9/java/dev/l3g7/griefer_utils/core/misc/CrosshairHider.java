@@ -32,11 +32,11 @@ public class CrosshairHider {
 	@Mixin(GuiIngame.class)
 	private static class MixinGuiIngame {
 
-	    @Inject(method = "showCrosshair", at = @At("HEAD"), cancellable = true)
-	    private void injectShowCrosshair(CallbackInfoReturnable<Boolean> cir) {
-	    	if (!isVisible())
+		@Inject(method = "showCrosshair", at = @At("HEAD"), cancellable = true)
+		private void injectShowCrosshair(CallbackInfoReturnable<Boolean> cir) {
+			if (!isVisible())
 				cir.setReturnValue(false);
-	    }
+		}
 
 	}
 

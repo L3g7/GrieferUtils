@@ -33,6 +33,7 @@ public abstract class GuiSearchable<T> extends GuiBigChest {
 	private boolean isScrolling = false;
 
 	public TreeSet<T> entries;
+
 	public GuiSearchable(String title, int rows, GuiBigChest previousGui, String searchPlaceHolder, int searchFieldWidth, Comparator<T> comparator) {
 		super(title, rows, previousGui);
 

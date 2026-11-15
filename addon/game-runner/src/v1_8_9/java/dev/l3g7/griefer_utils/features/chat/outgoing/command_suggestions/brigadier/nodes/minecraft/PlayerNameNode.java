@@ -44,7 +44,7 @@ public class PlayerNameNode extends ArgumentNode<String> {
 		public String parse(StringReader reader) throws CommandSyntaxException {
 			int start = reader.getCursor();
 
-			while(reader.canRead() && reader.peek() != ' ')
+			while (reader.canRead() && reader.peek() != ' ')
 				reader.skip();
 
 			String name = reader.getString().substring(start, reader.getCursor());

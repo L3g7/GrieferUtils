@@ -15,7 +15,7 @@ import dev.l3g7.griefer_utils.core.api.util.Util;
 @FunctionalInterface
 public interface Supplier<T> extends java.util.function.Supplier<T> {
 
-    T getWithThrowable() throws Throwable;
+	T getWithThrowable() throws Throwable;
 
 	default T get() {
 		try {

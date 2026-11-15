@@ -143,7 +143,7 @@ public class KeySettingImpl extends AbstractSettingImpl<KeySetting, Set<Integer>
 	}
 
 	@ExclusiveTo(LABY_4)
-	@Mixin(value = MultiKeybindWidget.class,  remap = false)
+	@Mixin(value = MultiKeybindWidget.class, remap = false)
 	private static abstract class MixinMultiKeybindWidget {
 
 		@Shadow

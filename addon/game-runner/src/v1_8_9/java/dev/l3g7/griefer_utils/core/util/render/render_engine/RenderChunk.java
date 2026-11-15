@@ -38,7 +38,7 @@ public class RenderChunk {
 
 	/**
 	 * Adds a RenderObject to this chunk.
-	 * @param chunkPos The position in this chunk (x and z are between 0 and 15)
+	 * @param chunkPos     The position in this chunk (x and z are between 0 and 15)
 	 * @param renderObject The RenderObject to add.
 	 */
 	public void add(BlockPos chunkPos, RenderObject renderObject) {
@@ -104,8 +104,8 @@ public class RenderChunk {
 
 	/**
 	 * Draws this chunk into the world.
-	 * @param pair The chunk's position, used for culling.
-	 * @param frustum The frustum to cull with.
+	 * @param pair     The chunk's position, used for culling.
+	 * @param frustum  The frustum to cull with.
 	 * @param rotation The player's rotation.
 	 */
 	public void draw(ChunkCoordIntPair pair, Frustum frustum, int rotation) {
@@ -155,7 +155,7 @@ public class RenderChunk {
 
 		/**
 		 * Adds a RenderObject to this chunk.
-		 * @param chunkPos The position in this chunk (x and z are between 0 and 15)
+		 * @param chunkPos        The position in this chunk (x and z are between 0 and 15)
 		 * @param newRenderObject The RenderObject to add.
 		 */
 		public synchronized void add(BlockPos chunkPos, RenderObject newRenderObject) {

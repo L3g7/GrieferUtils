@@ -33,8 +33,8 @@ public interface RenderObject {
 
 	/**
 	 * @param worldPos The RenderObject's position in the world.
-	 * @param state The block state at the given position.
-	 * @param world The world to use.
+	 * @param state    The block state at the given position.
+	 * @param world    The world to use.
 	 * @return The RenderObject for the given position, or <code>null</code> if there is none.
 	 */
 	static RenderObject fromState(BlockPos worldPos, IBlockState state, WorldClient world) {
@@ -81,8 +81,8 @@ public interface RenderObject {
 
 		/**
 		 * @param worldPos The RenderObject's position in the world.
-		 * @param state The block state at the given position.
-		 * @param world The world to use.
+		 * @param state    The block state at the given position.
+		 * @param world    The world to use.
 		 * @return The RenderObject for the given position, or <code>null</code> if there is none.
 		 */
 		RenderObject getRenderObject(BlockPos worldPos, IBlockState state, WorldClient world);

@@ -164,13 +164,13 @@ public class BSFCollector {
 		}
 
 		// estimate world start
-		long index = NTP.getAccurateTime()/1000 - world().getTotalWorldTime()/20;
+		long index = NTP.getAccurateTime() / 1000 - world().getTotalWorldTime() / 20;
 		Map<Integer, byte[]> entries = new HashMap<>(dataTails);
 		List<Integer> keys = new ArrayList<>(dataTails.keySet());
 
 		data.forEach(cd -> {
-			entries.remove(cd.position);
-			keys.remove((Integer) cd.position);
+			entries.remove(cd.position());
+			keys.remove((Integer) cd.position());
 		});
 
 		// Acquire missing chunk data

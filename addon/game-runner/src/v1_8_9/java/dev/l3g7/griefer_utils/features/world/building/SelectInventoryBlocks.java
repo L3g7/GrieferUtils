@@ -46,7 +46,7 @@ public class SelectInventoryBlocks extends Feature {
 
 		int targetSlot = -1;
 
-		for(Supplier<Integer> slotSupplier : new Supplier[] {
+		for (Supplier<Integer> slotSupplier : new Supplier[]{
 			() -> getHotbarSlot(false, Objects::isNull), // Empty slot
 			() -> getHotbarSlot(true, is -> is.getItem() instanceof ItemBlock), // Block
 			() -> getHotbarSlot(true, is -> !is.isItemStackDamageable()), // Not a tool

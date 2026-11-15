@@ -286,6 +286,7 @@ public class ChatCleanup extends Feature {
 		NORMAL("Normal"), COMPACT("Kompakt"), NONE("Versteckt");
 
 		private final String name;
+
 		NewsMode(String name) {
 			this.name = name;
 		}

@@ -41,60 +41,52 @@ public class KeyValueNode<T> extends ArgumentNode<T> {
 		return new KeyValueArgumentType<T>(key, value.getType());
 	}
 
-	private static class KeyValueArgumentType<V> implements ArgumentType<V> {
+	private record KeyValueArgumentType<V>(String key, ArgumentType<V> value) implements ArgumentType<V> {
 
-		private static final SimpleCommandExceptionType EXPECTED_KEY = new SimpleCommandExceptionType(new LiteralMessage("Expected key"));
-		private static final Dynamic2CommandExceptionType INVALID_KEY = new Dynamic2CommandExceptionType((got, wanted) -> new LiteralMessage("Invalid key '" + got + "', expected '" + wanted + "'"));
-
-		private final String key;
-		private final ArgumentType<V> value;
-
-		public KeyValueArgumentType(String key, ArgumentType<V> value) {
-			this.key = key;
-			this.value = value;
-		}
+			private static final SimpleCommandExceptionType EXPECTED_KEY = new SimpleCommandExceptionType(new LiteralMessage("Expected key"));
+			private static final Dynamic2CommandExceptionType INVALID_KEY = new Dynamic2CommandExceptionType((got, wanted) -> new LiteralMessage("Invalid key '" + got + "', expected '" + wanted + "'"));
 
 		@Override
-		public V parse(StringReader reader) throws CommandSyntaxException {
-			int start = reader.getCursor();
-			String key = reader.readStringUntil('=');
+			public V parse(StringReader reader) throws CommandSyntaxException {
+				int start = reader.getCursor();
+				String key = reader.readStringUntil('=');
 
-			if (key.isEmpty()) {
-				reader.setCursor(start);
-				throw EXPECTED_KEY.create();
+				if (key.isEmpty()) {
+					reader.setCursor(start);
+					throw EXPECTED_KEY.create();
+				}
+
+				if (!key.equals(this.key)) {
+					reader.setCursor(start);
+					throw INVALID_KEY.create(key, this.key);
+				}
+
+				return value.parse(reader);
 			}
 
-			if (!key.equals(this.key)) {
-				reader.setCursor(start);
-				throw INVALID_KEY.create(key, this.key);
+			@Override
+			public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+				String fullKey = key + "=";
+				// If key is done, suggest value
+				if (builder.getRemainingLowerCase().startsWith(fullKey))
+					return value.listSuggestions(context, builder.createOffset(builder.getStart() + fullKey.length()));
+
+				// If key is partial, suggest key
+				if (fullKey.startsWith(builder.getRemainingLowerCase()))
+					builder.suggest(fullKey);
+
+				return builder.buildFuture();
 			}
 
-			return value.parse(reader);
+			@Override
+			public Collection<String> getExamples() {
+				var values = value.getExamples();
+
+				List<String> examples = new ArrayList<>(values.size());
+				for (String s : values)
+					examples.add(key + "=" + s);
+
+				return examples;
+			}
 		}
-
-		@Override
-		public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-			String fullKey = key + "=";
-			// If key is done, suggest value
-			if (builder.getRemainingLowerCase().startsWith(fullKey))
-				return value.listSuggestions(context, builder.createOffset(builder.getStart() + fullKey.length()));
-
-			// If key is partial, suggest key
-			if (fullKey.startsWith(builder.getRemainingLowerCase()))
-				builder.suggest(fullKey);
-
-			return builder.buildFuture();
-		}
-
-		@Override
-		public Collection<String> getExamples() {
-			var values = value.getExamples();
-
-			List<String> examples = new ArrayList<>(values.size());
-			for (String s : values)
-				examples.add(key + "=" + s);
-
-			return examples;
-		}
-	}
 }

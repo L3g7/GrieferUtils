@@ -88,9 +88,9 @@ public class NearbyPlayers extends Widget {
 
 		@MainElement
 		private final SwitchSetting enabled = SwitchSetting.create()
-				.name("Spieler in der Nähe")
-				.description("Zeigt Spieler in deiner Nähe an.")
-				.icon("radar");
+			.name("Spieler in der Nähe")
+			.description("Zeigt Spieler in deiner Nähe an.")
+			.icon("radar");
 
 		@Override
 		public String[] getValues() {
@@ -198,8 +198,8 @@ public class NearbyPlayers extends Widget {
 
 				this.distance = createRenderableComponent(Component.text(distance + "m "));
 				this.player = createRenderableComponent(
-						Component.icon(Icons.offset(Icon.head(player.getUniqueID()), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
-								.append(Component.text(" ")).append(c(displayName)));
+					Component.icon(Icons.offset(Icon.head(player.getUniqueID()), 0, -1), Style.builder().color(TextColor.color(-1)).build(), mc().fontRendererObj.FONT_HEIGHT)
+						.append(Component.text(" ")).append(c(displayName)));
 
 				maxDistWidth = Math.max(maxDistWidth, this.distance.getWidth());
 			}

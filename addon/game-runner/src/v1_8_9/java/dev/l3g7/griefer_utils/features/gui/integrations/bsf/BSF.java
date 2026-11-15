@@ -122,7 +122,7 @@ public class BSF extends Feature {
 	}
 
 	@EventListener
-	private static void onMessageSend(MessageSendEvent event ) {
+	private static void onMessageSend(MessageSendEvent event) {
 		if (event.message.toLowerCase().startsWith("/bss")) {
 			event.cancel();
 			TickScheduler.runNextRenderTick(() -> new GuiBSF().open());

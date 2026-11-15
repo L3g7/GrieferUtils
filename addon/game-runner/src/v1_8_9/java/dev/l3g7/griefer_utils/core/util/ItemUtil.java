@@ -142,8 +142,8 @@ public class ItemUtil {
 		do {
 			try {
 				newCompound = (NBTTagCompound) tag.copy();
-			} catch (ConcurrentModificationException ignored) {}
-			catch (NullPointerException e) {
+			} catch (ConcurrentModificationException ignored) {
+			} catch (NullPointerException e) {
 				if (System.currentTimeMillis() - start >= 1000)
 					throw new RuntimeException("NPE while safe copying " + tag);
 			}
@@ -183,7 +183,7 @@ public class ItemUtil {
 
 		CB_ITEMS.add(createItem(Items.nether_star, 0, "Egal"));
 
-		Block[] blocks = new Block[] {diamond_block, emerald_block, gold_block, redstone_block, lapis_block, coal_block, emerald_ore, redstone_ore, diamond_ore, gold_ore, iron_ore, coal_ore, lapis_ore, bedrock, gravel, obsidian, barrier, iron_block, barrier, prismarine, mossy_cobblestone, brick_block};
+		Block[] blocks = new Block[]{diamond_block, emerald_block, gold_block, redstone_block, lapis_block, coal_block, emerald_ore, redstone_ore, diamond_ore, gold_ore, iron_ore, coal_ore, lapis_ore, bedrock, gravel, obsidian, barrier, iron_block, barrier, prismarine, mossy_cobblestone, brick_block};
 		for (int i = 0; i < blocks.length; i++)
 			CB_ITEMS.add(createItem(blocks[i], 0, "CB" + (i + 1)));
 

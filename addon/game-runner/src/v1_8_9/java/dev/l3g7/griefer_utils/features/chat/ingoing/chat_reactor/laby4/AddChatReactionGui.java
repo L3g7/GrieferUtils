@@ -327,8 +327,7 @@ public class AddChatReactionGui extends Gui {
 			SwitchSettingImpl parent = (SwitchSettingImpl) ChatReactor.get().getMainElement();
 			setting.create(parent);
 			parent.addSetting((BaseSetting<?>) setting);
-		}
-		else
+		} else
 			editedReaction.initDisplay();
 
 		ChatReactor.saveEntries();

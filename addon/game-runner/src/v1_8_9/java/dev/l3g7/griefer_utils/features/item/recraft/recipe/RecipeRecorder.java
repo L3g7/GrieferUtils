@@ -117,7 +117,7 @@ public class RecipeRecorder {
 			return;
 		}
 
-		if (slot == 45)  { // Back button
+		if (slot == 45) { // Back button
 			if (action.slot != -1) {
 				action.slot = -1;
 				RecraftLogger.log("Clicked back, reset slot");

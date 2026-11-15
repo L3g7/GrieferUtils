@@ -38,7 +38,7 @@ public class AggressiveBinarizer extends Binarizer {
 			return null;
 
 		Entry<Integer, AtomicInteger> mostUsedColor = null;
-		Entry<Integer, AtomicInteger>  secondColor = null;
+		Entry<Integer, AtomicInteger> secondColor = null;
 
 		// Get most and second-most used colors
 		for (Entry<Integer, AtomicInteger> color : usedColors.entrySet()) {
@@ -71,7 +71,7 @@ public class AggressiveBinarizer extends Binarizer {
 		}
 
 		//noinspection DataFlowIssue
-		return new AggressiveBinarizer[] {
+		return new AggressiveBinarizer[]{
 			new AggressiveBinarizer(colors, mostUsedColor.getKey()),
 			new AggressiveBinarizer(colors, secondColor.getKey()),
 		};

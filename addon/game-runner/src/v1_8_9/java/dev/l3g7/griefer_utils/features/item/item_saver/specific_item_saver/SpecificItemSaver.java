@@ -50,7 +50,9 @@ public class SpecificItemSaver extends Feature {
 
 	private static final ItemStack BLOCKED = ItemUtil.createItem(Blocks.stained_glass_pane, 14, "§c§lGeblockt!");
 
-	static {ItemUtil.setLore(BLOCKED, "§cEin Item im Inventar ist im Item-Saver!");}
+	static {
+		ItemUtil.setLore(BLOCKED, "§cEin Item im Inventar ist im Item-Saver!");
+	}
 
 	private final SwitchSetting displayIcon = SwitchSetting.create()
 		.name("Icon anzeigen")
@@ -68,7 +70,7 @@ public class SpecificItemSaver extends Feature {
 		.name("Spezifischer Item-Saver")
 		.description("Deaktiviert Klicks, Drops und Abgeben bei einstellbaren Items.\n§7(Funktioniert auch bei anderen Mods / Addons.)")
 		.icon("shield_with_sword")
-		.subSettings(displayIcon,  entries);
+		.subSettings(displayIcon, entries);
 
 	// Item add logic
 

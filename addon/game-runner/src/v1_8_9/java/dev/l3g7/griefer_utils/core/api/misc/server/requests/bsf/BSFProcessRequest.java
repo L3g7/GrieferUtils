@@ -39,16 +39,10 @@ public class BSFProcessRequest extends Request<List<String>> {
 		return response.convertTo(List.class);
 	}
 
-	public static class Data {
-
-		public final int position;
-		public final int[] m1;
-		public final byte[] tail;
+	public record Data(int position, int[] m1, byte[] tail) {
 
 		public Data(int position, char[] m1, byte[] tail) {
-			this.position = position;
-			this.tail = tail;
-			this.m1 = new int[m1.length];
+			this(position, new int[m1.length], tail);
 			for (int i = 0; i < m1.length; i++) {
 				this.m1[i] = m1[i];
 			}

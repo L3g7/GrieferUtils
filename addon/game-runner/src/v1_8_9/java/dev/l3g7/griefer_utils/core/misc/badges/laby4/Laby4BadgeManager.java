@@ -34,7 +34,7 @@ import static net.labymod.api.client.component.format.NamedTextColor.*;
 @ExclusiveTo(LABY_4)
 public class Laby4BadgeManager implements BadgeManager {
 
-    private static final ResourceLocation LABY_BADGE = ResourceLocation.labymod("textures/labymod_badge.svg");
+	private static final ResourceLocation LABY_BADGE = ResourceLocation.labymod("textures/labymod_badge.svg");
 
 	@Override
 	public void setOnline(UUID uuid) { /* NO-OP */ }
@@ -80,9 +80,9 @@ public class Laby4BadgeManager implements BadgeManager {
 
 		var icon = Icon.svg(LABY_BADGE);
 
-        canvas.submitComponent(Component.icon(icon, iconSize),
-	        (float)x + backgroundWidth + 2F - canvas.getTextWidth(component) * fontSize - iconSize,
-	        (float)y - canvas.getLineHeight() * fontSize, 0xFFFFFFFF, fontSize, TextRenderingOptions.NONE);
+		canvas.submitComponent(Component.icon(icon, iconSize),
+			(float) x + backgroundWidth + 2F - canvas.getTextWidth(component) * fontSize - iconSize,
+			(float) y - canvas.getLineHeight() * fontSize, 0xFFFFFFFF, fontSize, TextRenderingOptions.NONE);
 	}
 
 }

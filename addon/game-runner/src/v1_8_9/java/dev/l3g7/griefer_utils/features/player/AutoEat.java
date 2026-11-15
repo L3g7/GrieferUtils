@@ -153,6 +153,7 @@ public class AutoEat extends Feature {
 		HALF_BAR("bei halbem Hungerbalken"), EFFICIENTLY("effizient");
 
 		final String name;
+
 		TriggerMode(String name) {
 			this.name = name;
 		}

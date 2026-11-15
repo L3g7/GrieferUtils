@@ -83,7 +83,7 @@ class Translator {
 		addAlias(ITEM_TRANSLATION_KEYS, "lachs", "roher lachs");
 	}
 
-	private static void parseTranslationKeys(Map<String, String> properties, Map<String, String> items,	Map<String, String> blocks,	Map<String, String> entities) {
+	private static void parseTranslationKeys(Map<String, String> properties, Map<String, String> items, Map<String, String> blocks, Map<String, String> entities) {
 		for (Entry<String, String> entry : properties.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue().toLowerCase();

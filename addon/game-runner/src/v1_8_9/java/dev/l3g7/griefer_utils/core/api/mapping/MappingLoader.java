@@ -63,8 +63,8 @@ public class MappingLoader {
 			// Load extended mappings
 			Collection<MappedClass> extendedMappings = IO.read(FileProvider.getData("assets/griefer_utils/mappings-1.8.9-mcp.json"))
 				.asJson((new TypeToken<>() {}));
-            LowLevelMapper.classes.addAll(extendedMappings);
-            LowLevelMapper.classes.create(extendedMappings);
+			LowLevelMapper.classes.addAll(extendedMappings);
+			LowLevelMapper.classes.create(extendedMappings);
 
 			// Register transformer
 			RuntimePatcher.preTransformers.add((name, transformedName, classBytes)

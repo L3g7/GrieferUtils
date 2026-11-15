@@ -80,7 +80,7 @@ public class GuiBigChest extends GuiContainer {
 		mc().displayGuiScreen(this);
 	}
 
-	public void setGuiTitle(String s){
+	public void setGuiTitle(String s) {
 		InventoryBasic b = (InventoryBasic) this.inventory;
 		b.setCustomName(s);
 	}
@@ -94,11 +94,12 @@ public class GuiBigChest extends GuiContainer {
 
 	/**
 	 * Sets a {@code slot} to hold a specific {@link ItemStack} and links it with a {@link Runnable} to be called on specific click events.
-	 * @param slot the slot to be set
-	 * @param stack the stack to be displayed in the slot
-	 * @param onLeftClick the callback to be run on-left-click
+	 *
+	 * @param slot         the slot to be set
+	 * @param stack        the stack to be displayed in the slot
+	 * @param onLeftClick  the callback to be run on-left-click
 	 * @param onRightClick the callback to be run on-right-click
-	 * @param onMidClick the callback to be run on-mid-click
+	 * @param onMidClick   the callback to be run on-mid-click
 	 */
 	public void addItem(int slot, ItemStack stack, Runnable onLeftClick, Runnable onRightClick, Runnable onMidClick) {
 		inventory.setInventorySlotContents(slot, stack);
@@ -251,25 +252,21 @@ public class GuiBigChest extends GuiContainer {
 	/**
 	 * Used for what to the user looks like items with custom textures
 	 */
-	public static class TextureItem {
-		public final String texture;
-		public final int renderSize;
-		public final ItemStack toolTipStack;
+		public record TextureItem(String texture, int renderSize, ItemStack toolTipStack) {
+			public TextureItem(String texture, String title, String... lore) {
+				this(texture, 16, ItemUtil.setLore(ItemUtil.createItem(Blocks.command_block, 0, title), lore));
+			}
 
-		public TextureItem(String texture, String title, String... lore) {
-			this(texture, 16, ItemUtil.setLore(ItemUtil.createItem(Blocks.command_block, 0, title), lore));
+			public TextureItem(String texture, int renderSize, ItemStack toolTipStack) {
+				this.texture = texture.endsWith(".png") ? texture : "icons/" + texture + ".png";
+				this.renderSize = renderSize;
+				this.toolTipStack = toolTipStack;
+			}
+
+			public TextureItem copy() {
+				return new TextureItem(texture, renderSize, toolTipStack.copy());
+			}
+
 		}
-
-		public TextureItem(String texture, int renderSize, ItemStack toolTipStack) {
-			this.texture = texture.endsWith(".png") ? texture : "icons/" + texture + ".png";
-			this.renderSize = renderSize;
-			this.toolTipStack = toolTipStack;
-		}
-
-		public TextureItem copy() {
-			return new TextureItem(texture, renderSize, toolTipStack.copy());
-		}
-
-	}
 
 }

@@ -21,7 +21,7 @@ class GuiSelect extends GuiBigChest {
 
 		if (category.getName() != null) { // ALL categories
 			TextureItem item = category.getIcon().copy();
-			item.toolTipStack.setStackDisplayName("§fGesamte " + category.getName().singular() + "-Kategorie ");
+			item.toolTipStack().setStackDisplayName("§fGesamte " + category.getName().singular() + "-Kategorie ");
 			addTextureItem(counter, item, () -> {
 				new GuiSearches(category, title + " | " + category.getName().singular() + "-Kategorie", item, this).open();
 			});

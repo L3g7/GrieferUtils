@@ -77,10 +77,10 @@ public class Authorization {
 	private void refreshOAuth2Token() throws IOException {
 		// POST
 		Map<String, String> data = strMap(
-				"grant_type", "refresh_token",
-				"scope", "service::user.auth.xboxlive.com::MBI_SSL",
-				"refresh_token", oauth2Token.refreshToken,
-				"client_id", oauth2Token.msaClientId
+			"grant_type", "refresh_token",
+			"scope", "service::user.auth.xboxlive.com::MBI_SSL",
+			"refresh_token", oauth2Token.refreshToken,
+			"client_id", oauth2Token.msaClientId
 		);
 
 		OAuth2Token newToken = GSON.fromJson(Requests.post("https://login.live.com/oauth20_token.srf", strMap(), data), OAuth2Token.class);
@@ -99,7 +99,7 @@ public class Authorization {
 		JsonObject properties = new JsonObject();
 		properties.addProperty("AuthMethod", "RPS");
 		properties.addProperty("SiteName", "user.auth.xboxlive.com");
-		properties.addProperty("RpsTicket", "" + oauth2Token.accessToken);
+		properties.addProperty("RpsTicket", oauth2Token.accessToken);
 		data.add("Properties", properties);
 		userToken = GSON.fromJson(Requests.post(url, headers, data), XToken.class);
 	}

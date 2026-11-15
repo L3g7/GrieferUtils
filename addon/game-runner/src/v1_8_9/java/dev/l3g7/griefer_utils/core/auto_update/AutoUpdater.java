@@ -141,7 +141,7 @@ public class AutoUpdater {
 		if (in == null)
 			return null;
 
-		Map<String, ReleaseInfo> releases = GSON.fromJson(new InputStreamReader(in), new TypeToken<Map<String, ReleaseInfo>>(){}.getType());
+		Map<String, ReleaseInfo> releases = GSON.fromJson(new InputStreamReader(in), new TypeToken<Map<String, ReleaseInfo>>() {}.getType());
 		in.close();
 
 		// Get preferred release channel

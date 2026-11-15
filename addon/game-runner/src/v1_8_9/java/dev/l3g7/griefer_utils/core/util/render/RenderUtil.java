@@ -7,13 +7,13 @@
 
 package dev.l3g7.griefer_utils.core.util.render;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Vec3;
 
 import java.awt.*;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.*;
-import static org.lwjgl.opengl.GL11.glColor4f;
 
 /**
  * A utility class for rendering stuff.
@@ -31,7 +31,7 @@ public class RenderUtil {
 	}
 
 	public static void glColor(Color color) {
-		glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+		GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 	}
 
 }

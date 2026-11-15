@@ -97,7 +97,7 @@ public class Trajectories extends Feature {
 		GlStateManager.disableAlpha();
 
 		glEnable(GL_LINE_SMOOTH);
-		glDisable(GL_TEXTURE_2D);
+		GlStateManager.disableTexture2D();
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 		RenderUtil.glColor(new Color(1, 1, 1, .3f));
@@ -157,6 +157,10 @@ public class Trajectories extends Feature {
 		}
 
 		circle.draw(0, .2f, 40, 1);
+		GlStateManager.enableDepth();
+		GlStateManager.disableBlend();
+		GlStateManager.enableAlpha();
+		GlStateManager.enableTexture2D();
 		GlStateManager.popMatrix();
 	}
 

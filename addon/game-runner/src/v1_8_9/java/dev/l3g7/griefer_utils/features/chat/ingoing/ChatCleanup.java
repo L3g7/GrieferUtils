@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.HIGH;
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.*;
-import static dev.l3g7.griefer_utils.features.chat.ingoing.ChatCleanup.NewsMode.*;
+import static dev.l3g7.griefer_utils.features.chat.ingoing.ChatCleanup.NewsOrStatusMode.*;
 import static net.minecraft.util.EnumChatFormatting.AQUA;
 import static net.minecraft.util.EnumChatFormatting.WHITE;
 
@@ -42,6 +42,10 @@ public class ChatCleanup extends Feature {
 
 	private List<String> COLORED_FONTS = ImmutableList.of();
 	private static final Pattern SINGLE_COLORED_FONT_PATTERN = Pattern.compile("^§(.)§l[^§]+$");
+	private static final String MULTILINE_STATUS_PREFIX = "§r§8  └ §r§f";
+
+	private static final String NEWS_LINE = "§f§m------------§r§8 [ §r§6News§r§8 ] §r§f§m------------§r";
+	private static final String STATUS_LINE = "§r§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━§r";
 
 	private final SwitchSetting antiClearChat = SwitchSetting.create()
 		.name("Clearchat unterbinden")
@@ -70,10 +74,16 @@ public class ChatCleanup extends Feature {
 		.description("Unterdrückt Benachrichtigungen über CaseOpening-Gewinne.")
 		.icon("chest_golden");
 
-	private final DropDownSetting<NewsMode> news = DropDownSetting.create(NewsMode.class)
+	private final DropDownSetting<NewsOrStatusMode> news = DropDownSetting.create(NewsOrStatusMode.class)
 		.name("News")
 		.description("Ändert die Darstellung von News.")
 		.icon("enchanted_book")
+		.defaultValue(NORMAL);
+
+	private final DropDownSetting<NewsOrStatusMode> status = DropDownSetting.create(NewsOrStatusMode.class)
+		.name("Status")
+		.description("Ändert die Darstellung der Status.")
+		.icon("players")
 		.defaultValue(NORMAL);
 
 	private final SwitchSetting removeBroadcast = SwitchSetting.create()
@@ -98,9 +108,10 @@ public class ChatCleanup extends Feature {
 		.name("Chat aufräumen")
 		.icon("crossed_out_book")
 		.description("Räumt den Chat auf.")
-		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, removeBroadcast, removeHeroHighlights, antiColoredFont);
+		.subSettings(antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, news, status, removeBroadcast, removeHeroHighlights, antiColoredFont);
 
 	private boolean isNews = false;
+	private boolean isCustomStatus = false;
 
 	@EventListener
 	private void onStaticData(StaticDataReceiveEvent event) {
@@ -246,14 +257,27 @@ public class ChatCleanup extends Feature {
 	}
 
 	private boolean shouldCancel(String formattedText, String unformattedText) {
-		boolean isNewsLine = formattedText.equals("§f§m------------§r§8 [ §r§6News§r§8 ] §r§f§m------------§r");
+		boolean isNewsLine = formattedText.equals(NEWS_LINE);
 		if (isNewsLine)
 			isNews = !isNews;
+
+		boolean isStatusLine = formattedText.equals(STATUS_LINE);
+		if (isStatusLine)
+			isCustomStatus = !isCustomStatus;
 
 		// News mode
 		if (news.get() == NONE && (isNews || isNewsLine))
 			return true;
 		else if (news.get() == COMPACT && (isNewsLine || (isNews && formattedText.trim().equals("§r§8\u00bb§r"))))
+			return true;
+
+		// Status mode
+		if (status.get() == NONE && (isCustomStatus || isStatusLine
+			|| BASIC_STATUS_PATTERN.matcher(formattedText).matches()
+			|| CUSTOM_STATUS_PATTERN.matcher(formattedText).matches()
+			|| formattedText.startsWith(MULTILINE_STATUS_PREFIX)))
+			return true;
+		else if (status.get() == COMPACT && isStatusLine)
 			return true;
 
 		// Anti clear chat
@@ -281,13 +305,13 @@ public class ChatCleanup extends Feature {
 			|| (formattedText.startsWith("§r§8[§r§bCase§r§fOpening§r§8] ") && unformattedText.contains("hat eine Kiste geöffnet und")));
 	}
 
-	enum NewsMode implements Named {
+	enum NewsOrStatusMode implements Named {
 
 		NORMAL("Normal"), COMPACT("Kompakt"), NONE("Versteckt");
 
 		private final String name;
 
-		NewsMode(String name) {
+		NewsOrStatusMode(String name) {
 			this.name = name;
 		}
 

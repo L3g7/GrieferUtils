@@ -39,6 +39,11 @@ import static dev.l3g7.griefer_utils.features.chat.ingoing.chat_menu.ChatMenu.Ch
 @Singleton
 public class ChatMenu extends Feature {
 
+	private static final ArrayList<Pattern> PATTERNS = new ArrayList<>(MESSAGE_PATTERNS) {{
+		add(BASIC_STATUS_PATTERN);
+		add(CUSTOM_STATUS_PATTERN);
+	}};
+
 	private final CopyTextEntry COPY_TEXT_ENTRY = new CopyTextEntry();
 
 	private ChatMenuRenderer activeRenderer = null;
@@ -106,7 +111,7 @@ public class ChatMenu extends Feature {
 		String name = null;
 
 		// Find name from message
-		for (Pattern p : new Pattern[]{GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, CLANCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, STATUS_PATTERN, GLOBAL_CHAT_PATTERN}) {
+		for (Pattern p : PATTERNS) {
 			Matcher matcher = p.matcher(component.b.getFormattedText());
 			if (!matcher.find())
 				continue;

@@ -51,7 +51,10 @@ public class Constants {
 	public static final Pattern CLANCHAT_RECEIVE_PATTERN = Pattern.compile(String.format("^§r§8\\[§r§6Clan\\-Chat§r§8\\] %s§r §r§8» §r%s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 	public static final Pattern GLOBAL_RECEIVE_PATTERN = Pattern.compile(String.format("^§r%s%s§r§f §r§8» §r%s$", FORMATTED_CLAN_TAG_PATTERN, FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
 	public static final Pattern GLOBAL_CHAT_PATTERN = Pattern.compile(String.format("^§r§a§l@§r§8\\[§r§6(?<cb>\\w+)§r§8] %s%s §r§8» §r%s$", FORMATTED_CLAN_TAG_PATTERN, FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
-	public static final Pattern STATUS_PATTERN = Pattern.compile(String.format("^%s§f (?<message>[^\u00bb]*)§*r*$", FORMATTED_PLAYER_PATTERN));
+
+	// Status patterns
+	public static final Pattern BASIC_STATUS_PATTERN = Pattern.compile(String.format("^§r§6§l⚐§r %s§f %s$", FORMATTED_PLAYER_PATTERN, CHAT_MESSAGE_PATTERN));
+	public static final Pattern CUSTOM_STATUS_PATTERN = Pattern.compile(String.format("^§r[^\\]]*Status von %s§r(?<message>).*$", FORMATTED_PLAYER_PATTERN)); // Empty message group to not break matchers using it
 
 	public static final List<Pattern> MESSAGE_PATTERNS = Arrays.asList(GLOBAL_RECEIVE_PATTERN, PLOTCHAT_RECEIVE_PATTERN, CLANCHAT_RECEIVE_PATTERN, MESSAGE_RECEIVE_PATTERN, MESSAGE_SEND_PATTERN, GLOBAL_CHAT_PATTERN);
 

@@ -37,7 +37,6 @@ public class AutoUnnick extends Feature {
 	private static final ArrayList<Pattern> PATTERNS = new ArrayList<>(MESSAGE_PATTERNS) {{
 		// TODO move to Constants
 		remove(GLOBAL_CHAT_PATTERN);
-		add(STATUS_PATTERN);
 	}};
 
 	private final SwitchSetting tab = SwitchSetting.create()

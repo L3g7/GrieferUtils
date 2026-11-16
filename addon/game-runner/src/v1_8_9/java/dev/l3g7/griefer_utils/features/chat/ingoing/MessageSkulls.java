@@ -27,7 +27,8 @@ public class MessageSkulls extends Feature {
 
 	private static final ArrayList<Pattern> PATTERNS = new ArrayList<>(MESSAGE_PATTERNS) {{
 		remove(GLOBAL_CHAT_PATTERN);
-		add(STATUS_PATTERN);
+		add(BASIC_STATUS_PATTERN);
+		add(CUSTOM_STATUS_PATTERN);
 	}};
 
 	@MainElement

@@ -218,7 +218,7 @@ public class InteractableMessages extends Feature {
 	public boolean addMsgSuggestions(MessageModifyEvent event) {
 		String text = event.original.getFormattedText();
 
-		for (Pattern p : new Pattern[]{PLOTCHAT_RECEIVE_PATTERN, CLANCHAT_RECEIVE_PATTERN, STATUS_PATTERN}) {
+		for (Pattern p : new Pattern[]{PLOTCHAT_RECEIVE_PATTERN, CLANCHAT_RECEIVE_PATTERN, BASIC_STATUS_PATTERN, CUSTOM_STATUS_PATTERN}) {
 			Matcher matcher = p.matcher(text);
 			if (!matcher.find())
 				continue;

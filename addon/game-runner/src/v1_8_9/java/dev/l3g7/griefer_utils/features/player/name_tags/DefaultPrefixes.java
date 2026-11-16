@@ -83,7 +83,8 @@ public class DefaultPrefixes extends Feature {
 	}};
 
 	private static final ArrayList<Pattern> CHAT_PATTERNS = new ArrayList<>(MESSAGE_PATTERNS) {{
-		add(STATUS_PATTERN);
+		add(BASIC_STATUS_PATTERN);
+		add(CUSTOM_STATUS_PATTERN);
 	}};
 
 	private final SwitchSetting tab = SwitchSetting.create()

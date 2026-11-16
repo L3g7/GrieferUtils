@@ -11,6 +11,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
 import dev.l3g7.griefer_utils.core.events.network.PacketEvent.PacketReceiveEvent;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.Item;
@@ -38,7 +39,11 @@ public class BlockOfTheDayHandler {
 
 	@EventListener
 	private static void onEquipment(PacketReceiveEvent<S1CPacketEntityMetadata> event) {
-		Entity entity = world().getEntityByID(event.packet.getEntityId());
+		WorldClient world = world();
+		if (world == null)
+			return;
+
+		Entity entity = world.getEntityByID(event.packet.getEntityId());
 		if (!(entity instanceof EntityArmorStand eas) || entity.getRotationYawHead() == 0)
 			return;
 

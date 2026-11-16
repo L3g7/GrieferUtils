@@ -226,7 +226,7 @@ public class RedstoneHelper extends Feature implements RenderObject.Generator {
 		path.append(type).append('/');
 
 		if (displayTypeSetting != null) {
-			boolean subtle = cauldronDisplayType.get() == SUBTLE;
+			boolean subtle = displayTypeSetting.get() == SUBTLE;
 			path.append(subtle ? "subtle" : "distinct").append('_');
 		}
 

@@ -97,7 +97,7 @@ public class BugReporter {
 	}
 
 	public static void reportError(Throwable error) {
-		LOGGER.error(error);
+		LOGGER.error("An error occured", error);
 		if (!enabled.get() || !shouldReportError(error))
 			return;
 

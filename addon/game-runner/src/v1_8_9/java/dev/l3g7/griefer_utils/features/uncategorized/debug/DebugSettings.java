@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.features.uncategorized.debug;
 
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -24,8 +25,11 @@ public class DebugSettings {
 	public static final SwitchSetting enabled = SwitchSetting.create()
 		.name("Debug")
 		.description("Verschiedene Werkzeuge, um GrieferUtils zu debuggen.", "Es wird empfohlen, dies nur auf Anweisung vom GrieferUtils-Team zu aktivieren.")
-		.icon("cpu")
-		.subSettings(
+		.icon("cpu");
+
+	@OnEnable
+	private static void init() {
+		enabled.subSettings(
 			MessageDumper.enabled,
 			PacketDumper.enabled,
 			ThreadDumper.enabled,
@@ -34,9 +38,9 @@ public class DebugSettings {
 			EventBusProfiler.enabled,
 			ItemDumper.key,
 			HeaderSetting.create(),
-			EventBusBlocker.enabled);
+			EventBusBlocker.enabled
+		);
 
-	static {
 		if (Boolean.parseBoolean(System.getProperty("addWiki", "false"))) {
 			List<BaseSetting<?>> settings = new ArrayList<>();
 

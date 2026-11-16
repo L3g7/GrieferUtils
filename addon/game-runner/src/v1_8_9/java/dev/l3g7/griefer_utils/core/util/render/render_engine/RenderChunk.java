@@ -132,7 +132,7 @@ public class RenderChunk {
 				Atlas.getAtlas().bind();
 				for (Entry<RenderType, CompiledBuffer> entry : part.buffers.entrySet()) {
 					entry.getKey().setup();
-					entry.getValue().draw(rotation);
+					entry.getValue().draw(entry.getKey() == RenderType.TEXTURED_ROTATING ? rotation : 0);
 				}
 			}
 		}

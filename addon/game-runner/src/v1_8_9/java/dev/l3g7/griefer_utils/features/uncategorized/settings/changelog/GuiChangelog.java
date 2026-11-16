@@ -107,13 +107,15 @@ public class GuiChangelog extends GuiScreen {
 	@Override
 	public void handleMouseInput() {
 		super.handleMouseInput();
-		textList.handleMouseInput();
+		if (textList != null)
+			textList.handleMouseInput();
 	}
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
 		super.mouseReleased(mouseX, mouseY, state);
-		textList.mouseReleased(mouseX, mouseY, state);
+		if (textList != null)
+			textList.mouseReleased(mouseX, mouseY, state);
 	}
 
 	@Override

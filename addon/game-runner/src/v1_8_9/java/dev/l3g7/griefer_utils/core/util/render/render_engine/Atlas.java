@@ -13,10 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.mc;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
@@ -127,9 +124,8 @@ public class Atlas {
 	public static void recompile() {
 		int atlasWidth = Math.max(minAtlasWidth, (int) Math.ceil(Math.sqrt(cumulatedArea)));
 
-		List<Texture> texturesDH = textures.values().stream()
-			.sorted(Comparator.comparingInt(Texture::height).reversed())
-			.toList();
+		List<Texture> texturesDH = new ArrayList<>(textures.values());
+		texturesDH.sort(Comparator.comparingInt(Texture::height).reversed());
 
 		int[] slotX = new int[texturesDH.size()];
 		int[] slotY = new int[texturesDH.size()];

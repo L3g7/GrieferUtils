@@ -352,7 +352,7 @@ public class BetterSpawners extends Feature implements RenderObject.Generator {
 				renderTypes.add(TEXTURED);
 			if (isLastOpenedSpawner)
 				renderTypes.add(UNTEXTURED_DEPTHLESS);
-			return renderTypes.toArray(RenderType[]::new);
+			return renderTypes.toArray(new RenderType[0]);
 		}
 
 		@Override

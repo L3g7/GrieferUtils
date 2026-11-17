@@ -18,6 +18,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
 import java.awt.*;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 import static java.awt.Color.WHITE;
@@ -57,7 +58,7 @@ public class ChunkCompiler implements VertexSink {
 	 * Discards all previously drawn vertices.
 	 */
 	void begin() {
-		buffer.clear();
+		((Buffer) buffer).clear();
 		vertexCount = 0;
 	}
 
@@ -72,11 +73,11 @@ public class ChunkCompiler implements VertexSink {
 	 * Uploads all vertices drawn since {@link #begin()} into the given VBO.
 	 */
 	void upload(int vbo) {
-		buffer.flip();
+		((Buffer) buffer).flip();
 		OpenGlHelper.glBindBuffer(OpenGlHelper.GL_ARRAY_BUFFER, vbo);
 		OpenGlHelper.glBufferData(OpenGlHelper.GL_ARRAY_BUFFER, buffer, OpenGlHelper.GL_STATIC_DRAW);
 		OpenGlHelper.glBindBuffer(OpenGlHelper.GL_ARRAY_BUFFER, 0);
-		buffer.clear();
+		((Buffer) buffer).clear();
 		vertexCount = 0;
 	}
 
@@ -174,7 +175,7 @@ public class ChunkCompiler implements VertexSink {
 			return;
 
 		ByteBuffer newBuffer = GLAllocation.createDirectByteBuffer(buffer.capacity() * 2);
-		buffer.flip();
+		((Buffer) buffer).flip();
 		newBuffer.put(buffer);
 		buffer = newBuffer;
 	}

@@ -15,13 +15,18 @@ import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.settings.types.list.ListEntry;
 import dev.l3g7.griefer_utils.core.util.ItemUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ItemProtection implements ListEntry {
+
+	private static final String[] IGNORED_TAGS = new String[] {
+		"display",
+		"RepairCost",
+		"talisman-id"
+	};
 
 	protected static final ItemProtection UNPROTECTED = new ItemProtection();
 
@@ -103,16 +108,9 @@ public class ItemProtection implements ListEntry {
 		if (stackNBT == null)
 			return settingNBT == null;
 
-		stackNBT = ItemUtil.safeCopy(stackNBT);
-		NBTTagCompound cleanedStackNBT = new NBTTagCompound(); // A copy of stackNBT without display, RepairCost
-		for (String s : stackNBT.getKeySet()) {
-			if (s.equals("display") || s.equals("RepairCost"))
-				continue;
-
-			NBTBase tag = stackNBT.getTag(s);
-			cleanedStackNBT.setTag(s, tag == null ? null : tag.copy());
-		}
-
+		NBTTagCompound cleanedStackNBT = ItemUtil.safeCopy(stackNBT);
+		for (String ignoredTag : IGNORED_TAGS)
+			cleanedStackNBT.removeTag(ignoredTag);
 		return cleanedStackNBT.equals(settingNBT);
 	}
 
@@ -128,8 +126,8 @@ public class ItemProtection implements ListEntry {
 			this.stack.setItemDamage(0);
 
 		if (this.stack.hasTagCompound()) {
-			this.stack.getTagCompound().removeTag("display");
-			this.stack.getTagCompound().removeTag("RepairCost");
+			for (String ignoredTag : IGNORED_TAGS)
+				this.stack.getTagCompound().removeTag(ignoredTag);
 		}
 
 		this.stack.stackSize = 1;

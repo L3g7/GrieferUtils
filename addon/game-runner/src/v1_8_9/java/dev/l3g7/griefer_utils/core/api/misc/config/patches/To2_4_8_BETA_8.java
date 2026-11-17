@@ -85,7 +85,7 @@ public class To2_4_8_BETA_8 extends ConfigPatch {
 
 		// Switched to fixed config keys in CleanUpPlayerMenu
 		var cleanUpPlayerMenu = get("player.clean_up_player_menu");
-		if (cleanUpPlayerMenu.has("entries") & cleanUpPlayerMenu.get("entries").isJsonPrimitive()) {
+		if (cleanUpPlayerMenu.has("entries") && cleanUpPlayerMenu.get("entries").isJsonPrimitive()) {
 			String[] configKeys = new String[]{"laby_net", "copy_name", "name_history", "report_cloak", "add_friend"};
 			int mask = cleanUpPlayerMenu.get("entries").getAsInt();
 

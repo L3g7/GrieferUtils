@@ -53,6 +53,7 @@ import static org.spongepowered.asm.mixin.injection.callback.LocalCapture.CAPTUR
 /**
  * Fail-soft injection of GrieferUtils badges.
  */
+@ExclusiveTo(LABY_4)
 public class BadgeInjection {
 
 	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils Badges");

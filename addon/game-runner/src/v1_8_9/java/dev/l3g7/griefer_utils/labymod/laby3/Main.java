@@ -76,7 +76,7 @@ public class Main extends LabyModAddon {
 		Map<String, DynamicModTexture> map = LabyMod.getInstance().getDynamicTextureManager().getResourceLocations();
 		map.put("griefer_utils_icon", new DynamicModTexture(new ResourceLocation("griefer_utils/icons/high_res/icon.png"), "griefer_utils_icon"));
 
-		LOGGER.info("Enabled! (took {} ms)", System.currentTimeMillis() - begin);
+		LOGGER.info(String.format("Enabled! (took %d ms)", System.currentTimeMillis() - begin));
 	}
 
 	@EventListener

@@ -37,7 +37,7 @@ public class NTP {
 			while (true) {
 				try {
 					currentOffset = NTPClient.requestOffset();
-					LOGGER.info("Sync complete, offset: {}", currentOffset);
+					LOGGER.info("Sync complete, offset: " + currentOffset);
 					return;
 				} catch (IOException ignored) {}
 

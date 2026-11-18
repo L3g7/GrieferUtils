@@ -28,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
@@ -48,7 +49,6 @@ import static net.minecraft.util.EnumFacing.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT;
 import static org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 /**
@@ -178,12 +178,12 @@ public class FixTileEntityEnchantments extends Feature {
 
 		@Redirect(method = "setupFrameBuffer", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTexImage2D(IIIIIIIILjava/nio/FloatBuffer;)V"))
 		private static void injectTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, FloatBuffer pixels) {
-			GL11.glTexImage2D(target, level, GL_DEPTH32F_STENCIL8, width, height, border, GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, pixels);
+			GL11.glTexImage2D(target, level, GL30.GL_DEPTH32F_STENCIL8, width, height, border, GL30.GL_DEPTH_STENCIL, GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV, pixels);
 		}
 
 		@Redirect(method = "setupFrameBuffer", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/EXTFramebufferObject;glFramebufferTexture2DEXT(IIIII)V", ordinal = 0))
 		private static void injectBindFramebuffer(int target, int attachment, int texTarget, int texture, int level) {
-			EXTFramebufferObject.glFramebufferTexture2DEXT(target, GL_DEPTH_STENCIL_ATTACHMENT, texTarget, texture, level);
+			EXTFramebufferObject.glFramebufferTexture2DEXT(target, GL30.GL_DEPTH_STENCIL_ATTACHMENT, texTarget, texture, level);
 		}
 	}
 

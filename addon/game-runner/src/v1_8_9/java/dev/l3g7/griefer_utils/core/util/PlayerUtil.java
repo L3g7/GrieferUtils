@@ -37,10 +37,38 @@ public class PlayerUtil {
 
 			if (info.getDisplayName() != null) {
 				String[] parts = info.getDisplayName().getUnformattedText().split("\u2503");
-				if (parts.length > 1 && parts[1].trim().equalsIgnoreCase(name))
-					return info.getGameProfile().getId();
+				if (parts.length > 1) { // TODO clean this shit up
+					String[] nameParts = parts[1].trim().split(" ");
+					if (nameParts[0].equalsIgnoreCase(name))
+						return info.getGameProfile().getId();
+				}
 			}
 		}
+		return null;
+	}
+
+	/**
+	 * @return the player's suffix.
+	 */
+	public static String getSuffix(String name) {
+		if (mc().getNetHandler() == null)
+			return null;
+
+		for (NetworkPlayerInfo info : mc().getNetHandler().getPlayerInfoMap()) {
+			if (info.getGameProfile().getName().equalsIgnoreCase(name)) {
+				if (info.getDisplayName() != null) {
+					String[] parts = info.getDisplayName().getUnformattedText().split("\u2503");
+					if (parts.length > 1) {
+						String[] nameParts = parts[1].trim().split(" ");
+						if (nameParts.length > 1)
+							return nameParts[1].trim();
+						else
+							return null; // Known to have no suffix
+					}
+				}
+			}
+		}
+
 		return null;
 	}
 

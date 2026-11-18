@@ -7,28 +7,16 @@
 
 package dev.l3g7.griefer_utils.core.util;
 
-import com.google.common.collect.ImmutableList;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
-import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageSendEvent;
-import net.minecraft.event.ClickEvent;
-import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dev.l3g7.griefer_utils.core.util.MinecraftUtil.suggest;
-import static net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
-import static net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
-import static net.minecraft.util.EnumChatFormatting.DARK_RED;
 import static net.minecraft.util.EnumChatFormatting.RESET;
 
 /**
@@ -36,113 +24,35 @@ import static net.minecraft.util.EnumChatFormatting.RESET;
  */
 public class IChatComponentUtil {
 
-	private static final String COMMAND = "/grieferutils_namehistory_prompt_fix ";
+	/**
+	 * Converts an index pointing to an unformatted char to an index to the same char in formatted text.
+	 */
+	public static int unformattedIndexToFormatted(IChatComponent root, int index) {
+		if (index <= 0)
+			return 0;
 
-	@EventListener
-	private static void onMessageSend(MessageSendEvent event) {
-		if (event.message.startsWith(COMMAND)) {
-			suggest(event.message.substring(COMMAND.length()));
-			event.cancel();
-		}
-	}
+		String formatted = root.getFormattedText();
+		int rawIndex = 0;
 
-	public static void setNameWithPrefix(IChatComponent iChatComponent, String name, String realName, String prefix, boolean isTabList) {
-		List<IChatComponent> everything = iChatComponent.getSiblings();
-		IChatComponent parent = everything.size() > 0 ? everything.get(everything.size() - 1) : iChatComponent;
-
-		if (parent.getSiblings().isEmpty())
-			parent = iChatComponent;
-
-		List<IChatComponent> lastSiblings = parent.getSiblings();
-
-		int playerIndex = -1;
-
-		for (ListIterator<IChatComponent> iterator = lastSiblings.listIterator(); iterator.hasNext(); ) {
-			String text = iterator.next().getUnformattedTextForChat();
-
-			if (playerIndex == -1) {
-				if (text.matches(" ?\u2503 "))
-					playerIndex = iterator.nextIndex();
-				continue;
-			}
-
-			if (text.contains(" ") || text.contains("]")) {
-				if (isTabList)
-					iterator.remove();
-				break;
+		char[] chars = formatted.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[i];
+			if (c == '§') {
+				// Skip next
+				i++;
 			} else {
-				iterator.remove();
+				rawIndex++;
+				if (rawIndex == index)
+					return i + 1;
 			}
 		}
 
-		if (playerIndex == -1) {
-			// TODO: wtf
-			return;
-		}
-
-		Collection<IChatComponent> nameComponents = paint(realName, prefix, isTabList);
-
-		ChatComponentText nickName = new ChatComponentText("");
-		paint(name, prefix, false).forEach(nickName::appendSibling);
-
-		// Add the HoverEvent and make it italic
-		ClickEvent clickEvent = parent.getChatStyle().getChatClickEvent();
-		boolean withHover = !realName.equals(name);
-
-		for (IChatComponent component : nameComponents) {
-			if (withHover)
-				component.getChatStyle()
-					.setChatHoverEvent(new HoverEvent(SHOW_TEXT, nickName))
-					.setItalic(true);
-
-			if (clickEvent != null)
-				component.getChatStyle().setChatClickEvent(withHover ? new ClickEvent(RUN_COMMAND, COMMAND + clickEvent.getValue()) : clickEvent);
-		}
-
-		parent.getChatStyle().setChatClickEvent(clickEvent);
-		lastSiblings.addAll(playerIndex, nameComponents);
+		return chars.length;
 	}
 
 	/**
-	 * Paints the text in the given color pattern.
+	 * Converts an index pointing to a formatted char to an index to the same char in unformatted text.
 	 */
-	public static Collection<IChatComponent> paint(String text, String colorPattern, boolean disableBold) {
-		if (text == null)
-			return ImmutableList.of(new ChatComponentText("404").setChatStyle(new ChatStyle().setColor(DARK_RED)));
-
-		// Fixed-color patterns
-		if (colorPattern.length() <= 2) {
-			ChatStyle style = new ChatStyle().setColor(color(colorPattern.charAt(0)))
-				.setBold(colorPattern.contains("l") && !disableBold)
-				.setObfuscated(colorPattern.contains("k"));
-
-			return ImmutableList.of(new ChatComponentText(text).setChatStyle(style));
-		}
-
-		// Repeating patterns
-		List<IChatComponent> components = new ArrayList<>();
-		char[] colors = colorPattern.toCharArray();
-
-		for (int i = 0; i < text.length(); i++) {
-			ChatStyle style = new ChatStyle()
-				.setColor(color(colors[i % colors.length]))
-				.setBold(!disableBold);
-
-			String content = String.valueOf(text.charAt(i));
-			if (colors[i % colors.length] == colors[(i + 1) % colors.length] && text.length() != i + 1)
-				// Merge components with same color
-				content += text.charAt(++i);
-
-			components.add(new ChatComponentText(content).setChatStyle(style));
-		}
-
-		return components;
-	}
-
-	private static EnumChatFormatting color(char code) {
-		return EnumChatFormatting.func_175744_a(Integer.parseInt(String.valueOf(code), 16));
-	}
-
 	public static int formattedIndexToUnformatted(IChatComponent root, int index) {
 		String formatted = root.getFormattedText();
 		int rawIndex = 0;
@@ -161,41 +71,28 @@ public class IChatComponentUtil {
 	}
 
 	/**
-	 * Returns a substring of the formatted text, indexed using the unformatted text.
+	 * Builds a copy of the text, truncated from start to end.
+	 *
+	 * @param start inclusive, formatted
+	 * @param end   exclusive, formatted
 	 */
-	public static String getFormattedSubstringByUnformattedRange(IChatComponent root, int start, int end) {
-		StringBuilder text = new StringBuilder();
+	public static IChatComponent extractFromFormatted(IChatComponent root, int start, int end) {
+		start = formattedIndexToUnformatted(root, start);
+		end = formattedIndexToUnformatted(root, end);
+		return extractFromUnformatted(root, start, end);
+	}
 
-		int index = 0;
-		for (MutableComponent component : getNestedSiblings(root)) {
-			int len = component.getText().length();
-
-			if (index >= start) {
-				// Range already started
-				if (index + len < end) {
-					// Range end after component
-					text.append(component.getFormattedSubstring(0, component.getText().length()));
-				} else {
-					// Range end in component
-					text.append(component.getFormattedSubstring(0, end - index));
-				}
-			} else if (index + len >= start) {
-				// Range start in component
-				if (index + len < end) {
-					// Range end after component
-					text.append(component.getFormattedSubstring(start - index, component.getText().length()));
-				} else {
-					// Range start and end in component
-					return component.getFormattedSubstring(start - index, end - index);
-				}
-			}
-
-			index += len;
-			if (index >= end)
-				return text.toString();
-		}
-
-		return text.toString();
+	/**
+	 * Builds a copy of the text, truncated from start to end.
+	 *
+	 * @param start inclusive, unformatted
+	 * @param end   exclusive, unformatted
+	 */
+	public static IChatComponent extractFromUnformatted(IChatComponent root, int start, int end) {
+		IChatComponent res = root.createCopy();
+		replace(res, end, res.getUnformattedText().length(), Collections.emptyList()); // Remove end
+		replace(res, 0, start, Collections.emptyList()); // Remove start
+		return res;
 	}
 
 	/**

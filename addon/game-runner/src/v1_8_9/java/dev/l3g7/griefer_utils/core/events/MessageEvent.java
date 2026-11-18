@@ -28,6 +28,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
+import org.jetbrains.annotations.TestOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -192,12 +193,49 @@ public class MessageEvent extends Event {
 			this.type = type;
 		}
 
-		@EventListener
-		private static void onPacketReceive(PacketReceiveEvent<S02PacketChat> event) {
-			if (new MessageReceiveEvent(event.packet.getChatComponent(), event.packet.getType()).fire().isCanceled())
-				event.cancel();
+	}
+
+	/**
+	 * Triggers at network level, result must be a valid message.
+	 * Cancellation aborts receiving.
+	 */
+	public static class RawMessageModifyEvent extends MessageEvent {
+
+		@TestOnly // If you need it you're doing something wrong
+		public final IChatComponent original; // A copy of the original
+
+		public IChatComponent message;
+
+		public RawMessageModifyEvent(IChatComponent original) {
+			this.original = original.createCopy();
+			this.message = original;
 		}
 
+		public void setMessage(IChatComponent message) {
+			if (this.message == null) {
+				cancel();
+				return;
+			}
+
+			this.message = message;
+		}
+
+		public void dropMessage() {
+			cancel();
+		}
+
+	}
+
+	@EventListener
+	private static void onPacketReceive(PacketReceiveEvent<S02PacketChat> event) {
+		if (new MessageReceiveEvent(event.packet.getChatComponent(), event.packet.getType()).fire().isCanceled())
+			event.cancel();
+
+		var modify = new RawMessageModifyEvent(event.packet.getChatComponent());
+		if (modify.fire().isCanceled())
+			event.cancel();
+
+		Reflection.set(event.packet, "chatComponent", modify.message);
 	}
 
 }

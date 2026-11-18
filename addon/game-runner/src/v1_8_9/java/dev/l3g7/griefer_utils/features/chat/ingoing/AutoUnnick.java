@@ -9,7 +9,7 @@ package dev.l3g7.griefer_utils.features.chat.ingoing;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
-import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.RawMessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListNameUpdateEvent;
 import dev.l3g7.griefer_utils.core.misc.NameCache;
@@ -78,7 +78,7 @@ public class AutoUnnick extends Feature {
 	}
 
 	@EventListener
-	public void onMessageModifyChat(MessageModifyEvent event) {
+	public void onMessageModifyChat(RawMessageModifyEvent event) {
 		if (!chat.get())
 			return;
 

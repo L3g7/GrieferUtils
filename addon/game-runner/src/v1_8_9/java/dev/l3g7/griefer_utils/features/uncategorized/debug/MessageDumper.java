@@ -10,6 +10,7 @@ package dev.l3g7.griefer_utils.features.uncategorized.debug;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.Named;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Function;
+import dev.l3g7.griefer_utils.core.events.MessageEvent.RawMessageModifyEvent;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
 import dev.l3g7.griefer_utils.core.settings.types.DropDownSetting;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
@@ -40,22 +41,31 @@ class MessageDumper {
 
 	@EventListener(priority = LOWEST)
 	private static void onMessageModify(MessageModifyEvent event) {
+		dump("gui", event.original, event.message);
+	}
+
+	@EventListener(priority = LOWEST)
+	private static void onMessageModify(RawMessageModifyEvent event) {
+		dump("raw", event.original, event.message);
+	}
+
+	private static void dump(String step, IChatComponent original, IChatComponent message) {
 		if (enabled.get() && DebugSettings.enabled.get()) {
 			Function<IChatComponent, String> toJsonString = JSON.componentToString;
 			Function<IChatComponent, String> toString = copyFormat.get().componentToString;
 
-			boolean wasModified = Objects.equals(toJsonString.apply(event.original), toJsonString.apply(event.message));
-			boolean wasTransparentlyModified = Objects.equals(toString.apply(event.original), toString.apply(event.message));
+			boolean unmodified = Objects.equals(toJsonString.apply(original), toJsonString.apply(message));
+			boolean transparentlyModified = Objects.equals(toString.apply(original), toString.apply(message));
 
 			String mod;
-			if (!wasModified)
+			if (unmodified)
 				mod = "unmodified";
-			else if (wasTransparentlyModified)
+			else if (transparentlyModified)
 				mod = "transparently modified"; // Modified, but no change in the current log format
 			else
-				mod = "modified to " + toString.apply(event.message);
+				mod = "modified to " + toString.apply(message);
 
-			LOGGER.info("{} is {}", toString.apply(event.original), mod);
+			LOGGER.info("{} is {} (#{})", toString.apply(original), mod, step);
 		}
 	}
 

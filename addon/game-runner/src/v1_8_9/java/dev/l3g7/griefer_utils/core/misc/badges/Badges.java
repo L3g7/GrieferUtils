@@ -12,7 +12,7 @@ import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.FileProvider;
 import dev.l3g7.griefer_utils.core.api.misc.DebounceTimer;
 import dev.l3g7.griefer_utils.core.api.misc.server.GUServer;
-import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
+import dev.l3g7.griefer_utils.core.api.misc.server.Remote;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListClearEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerAddEvent;
 import dev.l3g7.griefer_utils.core.events.network.TabListEvent.TabListPlayerRemoveEvent;
@@ -36,7 +36,7 @@ public class Badges {
 	}
 
 	public static Optional<SpecialBadge> getBadge(UUID uuid) {
-		return Optional.ofNullable(SpecialPlayers.specialPlayers.get(uuid));
+		return Optional.ofNullable(SpecialPlayers.SPECIAL_PLAYERS.get().get(uuid));
 	}
 
 	public static boolean isOnline(UUID uuid) {
@@ -46,14 +46,9 @@ public class Badges {
 	/**
 	 * GrieferUtils team members.
 	 */
-	private static class SpecialPlayers {
+	private static class SpecialPlayers extends HashMap<UUID, SpecialBadge> {
 
-		private static final HashMap<UUID, SpecialBadge> specialPlayers = new HashMap<>();
-
-		@EventListener
-		private static void onStaticData(StaticDataReceiveEvent event) {
-			specialPlayers.putAll(event.data.specialBadges);
-		}
+		private static final Remote<SpecialPlayers> SPECIAL_PLAYERS = new Remote<>("specialBadges", new SpecialPlayers());
 
 	}
 

@@ -9,11 +9,10 @@ package dev.l3g7.griefer_utils.labymod.laby4;
 
 import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.misc.server.Remote;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.api.util.Util;
-import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -37,7 +36,10 @@ public class Main {
 	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils");
 
 	private static LoadedAddon addon;
-	private static String addonDescription = YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :(";
+	private static final Remote<String> ADDON_DESCRIPTION = new Remote<>(
+		"addonDescription", // Load description from server, so it can be used as news board
+		YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :(")
+		.addConsumer(s -> updateDescription());
 
 	public static LoadedAddon getAddon() {
 		if (addon == null)
@@ -63,19 +65,11 @@ public class Main {
 		LOGGER.info("Enabled! (took " + (System.currentTimeMillis() - begin) + " ms)");
 	}
 
-	@EventListener
-	private static void onStaticData(StaticDataReceiveEvent event) {
-		// Load description from server, so it can be used as news board
-		addonDescription = event.data.addonDescription;
-
-		updateDescription();
-	}
-
 	@OnStartupComplete
 	private static void updateDescription() {
 		InstalledAddonInfo addon = getAddon().info();
 		Reflection.set(addon, "author", "L3g7, L3g73 ┃ v" + labyBridge.addonVersion());
-		Reflection.set(addon, "description", addonDescription);
+		Reflection.set(addon, "description", ADDON_DESCRIPTION.get());
 	}
 
 }

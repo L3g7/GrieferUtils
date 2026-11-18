@@ -11,7 +11,6 @@ import dev.l3g7.griefer_utils.core.api.bridges.LabyBridge;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.api.misc.config.ConfigPatcher;
-import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData.ChangelogEntry;
 import dev.l3g7.griefer_utils.core.auto_update.AutoUpdater;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.BaseSetting;
@@ -35,8 +34,6 @@ import static net.labymod.main.ModTextures.BUTTON_ADVANCED;
 @Singleton
 public class Changelog {
 
-	public Map<String, ChangelogEntry> changelogs;
-
 	public static final CategorySetting changelog = CategorySetting.create()
 		.name("§eChangelog")
 		.description("§eVerbindet...")
@@ -48,7 +45,7 @@ public class Changelog {
 	private void onStaticData(StaticDataReceiveEvent event) {
 		List<BaseSetting<?>> entries = new ArrayList<>();
 
-		changelogs = event.data.changelog.merged;
+		Map<String, ChangelogEntry> changelogs = event.read("changelog", ChangelogData.class).merged;
 
 		Consumer<ButtonSetting> buttonIconSetter = LABY_4.isActive() ? this::addIconLaby4 : this::addIconLaby3;
 
@@ -74,7 +71,7 @@ public class Changelog {
 				.enable();
 		});
 
-		if (!AutoUpdater.hasUpdated || !ConfigPatcher.versionChanged || changelogs == null)
+		if (!AutoUpdater.hasUpdated || !ConfigPatcher.versionChanged)
 			return;
 
 		String version = LabyBridge.labyBridge.addonVersion();
@@ -99,6 +96,15 @@ public class Changelog {
 		button
 			.<dev.l3g7.griefer_utils.labymod.laby3.settings.types.ButtonSettingImpl>into()
 			.buttonIcon(new TextureIcon(BUTTON_ADVANCED));
+	}
+
+	static class ChangelogData {
+		public Map<String, ChangelogEntry> merged;
+	}
+
+	static class ChangelogEntry {
+		public Map<String, String[]> changelog;
+		public boolean beta;
 	}
 
 }

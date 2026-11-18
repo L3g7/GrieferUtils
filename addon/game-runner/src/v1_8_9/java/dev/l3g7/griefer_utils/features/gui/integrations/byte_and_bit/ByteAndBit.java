@@ -53,7 +53,7 @@ public class ByteAndBit extends Feature {
 
 	@EventListener
 	private void onStaticData(StaticDataReceiveEvent event) {
-		this.syncBots(event.data.botSources);
+		this.syncBots(event.read("botSources", BotSource[].class));
 	}
 
 	private void syncBots(BotSource[] botSources) {

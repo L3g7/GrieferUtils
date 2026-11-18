@@ -7,6 +7,8 @@
 
 package dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
@@ -14,12 +16,22 @@ import dev.l3g7.griefer_utils.core.misc.ServerCheck;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.CommandDispatcher;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.ArgumentNode;
 import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.Node;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.Requirement;
+import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.suggestions.Suggestion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Singleton
 public class CommandSuggestions extends Feature {
+
+	private static final Gson gson = new GsonBuilder()
+		.registerTypeAdapter(Node.class, Node.DESERIALIZER)
+		.registerTypeAdapter(ArgumentNode.class, ArgumentNode.DESERIALIZER)
+		.registerTypeAdapter(Requirement.class, Requirement.DESERIALIZER)
+		.registerTypeAdapter(Suggestion.class, Suggestion.DESERIALIZER)
+		.create();
 
 	@MainElement
 	private static final SwitchSetting enabled = SwitchSetting.create()
@@ -41,7 +53,8 @@ public class CommandSuggestions extends Feature {
 	@EventListener
 	private static void onStaticData(StaticDataReceiveEvent event) {
 		dispatcher = new CommandDispatcher();
-		for (Node<?> node : event.data.commands)
+		Node<?>[] nodes = event.read("commands", json -> gson.fromJson(json, Node[].class));
+		for (Node<?> node : nodes)
 			node.register(dispatcher, dispatcher.getRoot()::addChild);
 
 		if (dispatcher.getErrors() > 0)

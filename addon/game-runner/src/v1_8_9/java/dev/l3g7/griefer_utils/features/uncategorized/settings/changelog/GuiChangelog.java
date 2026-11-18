@@ -8,12 +8,12 @@
 package dev.l3g7.griefer_utils.features.uncategorized.settings.changelog;
 
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData.ChangelogEntry;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
 import dev.l3g7.griefer_utils.core.misc.gui.elements.laby_polyfills.DrawUtils;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.SubtleGuiButton;
 import dev.l3g7.griefer_utils.core.misc.gui.guis.TextList;
 import dev.l3g7.griefer_utils.features.uncategorized.settings.Settings;
+import dev.l3g7.griefer_utils.features.uncategorized.settings.changelog.Changelog.ChangelogEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
 
-public class GuiChangelog extends GuiScreen {
+class GuiChangelog extends GuiScreen {
 
 	private static GuiScreen previousScreen;
 

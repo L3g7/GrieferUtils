@@ -7,66 +7,21 @@
 
 package dev.l3g7.griefer_utils.core.api.misc.server.requests;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.misc.server.Request;
-import dev.l3g7.griefer_utils.core.misc.badges.Badges.SpecialBadge;
-import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.ArgumentNode;
-import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.nodes.Node;
-import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.requirements.Requirement;
-import dev.l3g7.griefer_utils.features.chat.outgoing.command_suggestions.brigadier.suggestions.Suggestion;
-import dev.l3g7.griefer_utils.features.gui.integrations.byte_and_bit.data.BotSource;
-
-import java.util.Map;
-import java.util.UUID;
+import dev.l3g7.griefer_utils.core.api.util.io.IO;
 
 import static dev.l3g7.griefer_utils.core.api.misc.Constants.STATIC_API_URL;
 
-public class StaticApiRequest extends Request<StaticApiRequest.StaticApiData> {
-
-	private static final Gson gson = new GsonBuilder()
-		.registerTypeAdapter(Node.class, Node.DESERIALIZER)
-		.registerTypeAdapter(ArgumentNode.class, ArgumentNode.DESERIALIZER)
-		.registerTypeAdapter(Requirement.class, Requirement.DESERIALIZER)
-		.registerTypeAdapter(Suggestion.class, Suggestion.DESERIALIZER)
-		.create();
+public class StaticApiRequest extends Request<JsonObject> {
 
 	public StaticApiRequest() {
 		super(STATIC_API_URL, "/v6/");
 	}
 
 	@Override
-	protected StaticApiData parseResponse(Response response) {
-		return response.convertTo(StaticApiData.class, gson);
-	}
-
-	public static class StaticApiData {
-
-		public String addonDescription;
-		public Changelog changelog;
-		public Map<String, GrieferInfoItem> grieferInfoItems;
-		public Node<?>[] commands;
-		public BotSource[] botSources;
-		public String[] repeatingPrefixes;
-		public String[] coloredFonts;
-		public Map<UUID, SpecialBadge> specialBadges;
-		public String[] cooldowns;
-
-		public static class Changelog {
-			public Map<String, ChangelogEntry> merged;
-		}
-
-		public static class ChangelogEntry {
-			public Map<String, String[]> changelog;
-			public boolean beta;
-		}
-
-		public static class GrieferInfoItem {
-			public String stack;
-			public int categories;
-			public boolean customName;
-		}
-
+	protected JsonObject parseResponse(Response response) {
+		return response.convertTo(JsonObject.class, IO.GSON);
 	}
 
 }

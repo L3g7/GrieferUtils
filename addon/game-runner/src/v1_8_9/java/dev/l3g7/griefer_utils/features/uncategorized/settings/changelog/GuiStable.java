@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import static dev.l3g7.griefer_utils.core.api.event_bus.Priority.LOWEST;
 import static dev.l3g7.griefer_utils.core.auto_update.ReleaseInfo.ReleaseChannel.STABLE;
 
-public class GuiStable extends GuiScreen {
+class GuiStable extends GuiScreen {
 
 	private static GuiScreen previousScreen;
 	private TextList textList;

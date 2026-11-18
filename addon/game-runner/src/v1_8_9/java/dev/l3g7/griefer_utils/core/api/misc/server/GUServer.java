@@ -7,6 +7,7 @@
 
 package dev.l3g7.griefer_utils.core.api.misc.server;
 
+import com.google.gson.JsonObject;
 import com.mojang.util.UUIDTypeAdapter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.misc.PlayerKeyPair;
@@ -15,7 +16,6 @@ import dev.l3g7.griefer_utils.core.api.misc.server.Request.AuthData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.LeaderboardRequest.LeaderboardData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest;
-import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFGetReadyRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFProcessRequest;
 import dev.l3g7.griefer_utils.core.api.misc.server.requests.bsf.BSFSearchRequest;
@@ -26,7 +26,7 @@ import dev.l3g7.griefer_utils.core.api.misc.server.requests.hive_mind.OnlineUser
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.AccountSwitchEvent;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
-import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
+import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.ServerJoinEvent;
 import dev.l3g7.griefer_utils.core.misc.griefer_games.Citybuild;
 import net.minecraft.item.ItemStack;
@@ -55,7 +55,7 @@ public class GUServer {
 		1, new ThreadFactory("GrieferUtils Server - Keepalive #%d", MIN_PRIORITY));
 
 	private static PlayerKeyPair currentKeyPair;
-	private static StaticApiData staticApiData;
+	private static JsonObject staticApiData;
 
 	// Authorization
 	static {
@@ -109,12 +109,11 @@ public class GUServer {
 		loadStaticApiData();
 	}
 
-	@OnStartupComplete
+	@OnEnable
 	static void loadStaticApiData() {
 		if (staticApiData != null)
 			return;
 
-		// TODO: Request in @OnEnable
 		CompletableFuture.supplyAsync(() -> {
 			staticApiData = new StaticApiRequest().get();
 			new StaticDataReceiveEvent(staticApiData).fire();

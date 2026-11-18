@@ -7,9 +7,8 @@
 
 package dev.l3g7.griefer_utils.core.misc.color_patterns;
 
-import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.misc.server.Remote;
 import dev.l3g7.griefer_utils.core.api.util.StringUtil;
-import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 
 import static dev.l3g7.griefer_utils.core.misc.color_patterns.ColorPattern.BOLD;
 import static dev.l3g7.griefer_utils.core.misc.color_patterns.ColorPattern.OBFUSCATED;
@@ -22,7 +21,7 @@ class ColorPatternFinder {
 	public static final ColorPattern WHITE_COLOR_PATTERN = new ColorPattern(WHITE, WHITE, BOLD);
 	public static final ColorPattern MAGIC_COLOR_PATTERN = new ColorPattern(RED, RED, OBFUSCATED);
 
-	private static String[] repeatingPrefixes = new String[0];
+	private static final Remote<String[]> REPEATING_PREFIXES = new Remote<>("repeatingPrefixes", new String[0]);
 
 	/**
 	 * @param rank formatted
@@ -47,12 +46,12 @@ class ColorPatternFinder {
 			return new ColorPattern(colors.charAt(0), extractDecorations(rank).contains("l"));
 
 		// Find exact match
-		for (String pattern : repeatingPrefixes)
+		for (String pattern : REPEATING_PREFIXES.get())
 			if (colors.startsWith(pattern))
 				return new ColorPattern(pattern);
 
 		// Find approx. match
-		for (String pattern : repeatingPrefixes)
+		for (String pattern : REPEATING_PREFIXES.get())
 			if (isStartingSubset(colors, pattern))
 				return new ColorPattern(pattern);
 
@@ -111,11 +110,6 @@ class ColorPatternFinder {
 	 */
 	private static boolean isStartingSubset(String a, String b) {
 		return a.length() > b.length() ? a.startsWith(b) : b.startsWith(a);
-	}
-
-	@EventListener
-	private static void onStaticData(StaticDataReceiveEvent event) {
-		repeatingPrefixes = event.data.repeatingPrefixes;
 	}
 
 }

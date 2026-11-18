@@ -13,9 +13,9 @@ import dev.l3g7.griefer_utils.core.api.bridges.Bridge.ExclusiveTo;
 import dev.l3g7.griefer_utils.core.api.event_bus.Event;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
+import dev.l3g7.griefer_utils.core.api.misc.server.Remote;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.GuiScreenEvent.GuiOpenEvent;
-import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.features.Feature;
@@ -52,7 +52,10 @@ public class Main extends LabyModAddon {
 	private static final Logger LOGGER = LogManager.getLogger("GrieferUtils");
 
 	private static Main instance;
-	private static String addonDescription = YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :(";
+	private static final Remote<String> ADDON_DESCRIPTION = new Remote<>(
+		"addonDescription", // Load description from server, so it can be used as news board
+		YELLOW + "Der GrieferUtils-Server scheint nicht erreichbar zu sein :(")
+		.addConsumer(s -> updateDescription());
 
 	public static Main getInstance() {
 		return instance;
@@ -79,12 +82,6 @@ public class Main extends LabyModAddon {
 		LOGGER.info(String.format("Enabled! (took %d ms)", System.currentTimeMillis() - begin));
 	}
 
-	@EventListener
-	private static void onStaticData(StaticDataReceiveEvent event) {
-		addonDescription = event.data.addonDescription;
-		updateDescription();
-	}
-
 	@OnStartupComplete
 	private static void updateDescription() {
 		AddonInfoManager addonInfoManager = AddonInfoManager.getInstance();
@@ -102,7 +99,7 @@ public class Main extends LabyModAddon {
 
 		// Update description
 		Reflection.set(addonInfo, "author", "L3g7, L3g73 \u2503 v" + labyBridge.addonVersion());
-		Reflection.set(addonInfo, "description", addonDescription);
+		Reflection.set(addonInfo, "description", ADDON_DESCRIPTION.get());
 	}
 
 	/**

@@ -11,7 +11,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.l3g7.griefer_utils.core.api.BugReporter;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
-import dev.l3g7.griefer_utils.core.api.misc.server.requests.StaticApiRequest.StaticApiData.GrieferInfoItem;
 import dev.l3g7.griefer_utils.core.api.util.io.IO;
 import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.events.network.ServerEvent.GrieferGamesJoinEvent;
@@ -27,6 +26,7 @@ import dev.l3g7.griefer_utils.features.gui.integrations.griefer_info.freestuff.I
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -50,7 +50,9 @@ public class DataHandler {
 
 	@EventListener
 	private static void onStaticData(StaticDataReceiveEvent event) {
-		for (Entry<String, GrieferInfoItem> itemEntry : event.data.grieferInfoItems.entrySet()) {
+		GrieferInfoItems grieferInfoItems = event.read("grieferInfoItems", GrieferInfoItems.class);
+
+		for (Entry<String, GrieferInfoItem> itemEntry : grieferInfoItems.entrySet()) {
 			ItemStack stack = ItemUtil.fromNBT(itemEntry.getValue().stack);
 			if (stack == null) {
 				if (staticDataReceiveEvent != null)
@@ -136,6 +138,14 @@ public class DataHandler {
 			if (mc().currentScreen instanceof GuiBotShops)
 				((GuiBotShops) mc().currentScreen).onEntryData();
 		}).failLog();
+	}
+
+	private static class GrieferInfoItems extends HashMap<String, GrieferInfoItem> {}
+
+	public static class GrieferInfoItem {
+		public String stack;
+		public int categories;
+		public boolean customName;
 	}
 
 }

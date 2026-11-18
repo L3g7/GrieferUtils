@@ -7,10 +7,9 @@
 
 package dev.l3g7.griefer_utils.features.chat.ingoing.chat_cleanup;
 
-import com.google.common.collect.ImmutableList;
 import dev.l3g7.griefer_utils.core.api.event_bus.EventListener;
+import dev.l3g7.griefer_utils.core.api.misc.server.Remote;
 import dev.l3g7.griefer_utils.core.events.MessageEvent.MessageModifyEvent;
-import dev.l3g7.griefer_utils.core.events.StaticDataReceiveEvent;
 import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.core.util.IChatComponentUtil;
 import dev.l3g7.griefer_utils.core.util.IChatComponentUtil.MutableComponent;
@@ -29,7 +28,7 @@ import static net.minecraft.util.EnumChatFormatting.AQUA;
 
 public class CleanupColoredFont {
 
-	private static List<String> COLORED_FONTS = ImmutableList.of();
+	private static final Remote<List<String>> COLORED_FONTS = new Remote<>("coloredFonts", new ArrayList<>(0));
 	private static final Pattern SINGLE_COLORED_FONT_PATTERN = Pattern.compile("^§(.)§l[^§]+$");
 
 	static final SwitchSetting enabled = SwitchSetting.create()
@@ -37,11 +36,6 @@ public class CleanupColoredFont {
 		.description("Entfernt die Farben von Nachrichten mit farbiger Schrift §8(/schrift)§r.")
 		.icon("tabping_colored")
 		.inferConfig("anti_colored_font");
-
-	@EventListener
-	private static void onStaticData(StaticDataReceiveEvent event) {
-		COLORED_FONTS = ImmutableList.copyOf(event.data.coloredFonts);
-	}
 
 	@EventListener(priority = HIGH)
 	public static void removeColoredFont(MessageModifyEvent event) {
@@ -83,13 +77,13 @@ public class CleanupColoredFont {
 	private static boolean usesFont(String msg) {
 		Matcher singleColoredFontMatcher = SINGLE_COLORED_FONT_PATTERN.matcher(msg);
 		if (singleColoredFontMatcher.matches())
-			return COLORED_FONTS.contains(singleColoredFontMatcher.group(1));
+			return COLORED_FONTS.get().contains(singleColoredFontMatcher.group(1));
 
 		msg = msg.replace("§l", "");
 		if (msg.length() % 3 != 0)
 			return false;
 
-		List<String> fonts = new ArrayList<>(COLORED_FONTS);
+		List<String> fonts = new ArrayList<>(COLORED_FONTS.get());
 		for (int i = 0; i < msg.length() / 3 && !fonts.isEmpty(); i++) {
 			int index = i * 3;
 

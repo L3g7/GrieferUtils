@@ -5,7 +5,23 @@
  * you may not use this file except in compliance with the License.
  */
 
-@Category(name = "§hItem-Infos", description = "Zeigt unterschiedliche Informationen unter einem Item an.", icon = "magnifying_glass", setting = _ItemInfo.class)
+@Category(name = "§hItem-Infos", description = "Zeigt unterschiedliche Informationen unter einem Item an.", icon = "magnifying_glass", setting = Setting.class)
 package dev.l3g7.griefer_utils.features.item.item_info;
 
+import dev.l3g7.griefer_utils.core.api.file_provider.Singleton;
+import dev.l3g7.griefer_utils.core.settings.GUIEntry.SwitchSettingBuilder;
+import dev.l3g7.griefer_utils.core.settings.types.SwitchSetting;
 import dev.l3g7.griefer_utils.features.Feature.Category;
+
+import static dev.l3g7.griefer_utils.core.settings.types.SwitchSetting.TriggerMode.HOLD;
+
+@Singleton
+class Setting extends SwitchSettingBuilder {
+
+	@Override
+	public SwitchSetting build(Category meta, String configKey) {
+		return super.build(meta, configKey)
+			.addHotkeySetting("Item-Infos", HOLD);
+	}
+
+}

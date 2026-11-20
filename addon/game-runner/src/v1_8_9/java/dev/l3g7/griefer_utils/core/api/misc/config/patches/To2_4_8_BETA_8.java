@@ -92,7 +92,7 @@ public class To2_4_8_BETA_8 extends ConfigPatch {
 			var entries = new JsonObject();
 			cleanUpPlayerMenu.set("entries", entries);
 			for (int i = 0; i < configKeys.length; i++)
-				entries.addProperty(configKeys[i], (mask & 1 << i) == 0);
+				entries.addProperty(configKeys[i], (mask & 1 << i) != 0);
 		}
 	}
 

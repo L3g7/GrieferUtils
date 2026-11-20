@@ -50,20 +50,20 @@ public class CleanUpPlayerMenu extends Feature {
 	}
 
 	private static class PlayerMenuEntry {
-		private final SwitchSetting shouldHide;
+		private final SwitchSetting shouldShow;
 
 		public PlayerMenuEntry(String name, String partialConfigKey, PlayerMenuCleaner<?> cleaner) {
 			String configKey = CleanUpPlayerMenu.get().getConfigKey() + ".entries." + partialConfigKey;
 
-			boolean isHidden = true;
+			boolean isVisible = true;
 			if (Config.has(configKey))
-				isHidden = Config.get(configKey).getAsBoolean();
+				isVisible = Config.get(configKey).getAsBoolean();
 
-			shouldHide = SwitchSetting.create()
+			shouldShow = SwitchSetting.create()
 				.name(name)
-				.description("Ob der Spielermenü-Eintrag \"" + name + "\" versteckt werden soll.")
+				.description("Ob der Spielermenü-Eintrag \"" + name + "\" angezeigt werden soll.")
 				.icon("player_menu")
-				.defaultValue(isHidden)
+				.defaultValue(isVisible)
 				.callback(b -> {
 					Config.set(configKey, new JsonPrimitive(b));
 					Config.save();
@@ -92,7 +92,7 @@ public class CleanUpPlayerMenu extends Feature {
 			List<SwitchSetting> settings = new ArrayList<>();
 
 			for (Entry<V, PlayerMenuEntry> entry : entries.entrySet()) {
-				SwitchSetting setting = entry.getValue().shouldHide;
+				SwitchSetting setting = entry.getValue().shouldShow;
 				setting.create(enabled);
 				settings.add(setting);
 			}
@@ -112,7 +112,7 @@ public class CleanUpPlayerMenu extends Feature {
 			for (V allEntry : allEntries) {
 				if (entries.containsKey(allEntry)) {
 					var entry = entries.get(allEntry);
-					if (!(enabled && entry.shouldHide.get()))
+					if (!enabled || entry.shouldShow.get())
 						shownEntriesRef.add(allEntry);
 				}
 			}

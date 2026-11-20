@@ -53,8 +53,8 @@ public class To2_4_8_BETA_8 extends ConfigPatch {
 
 			for (Entry<String, JsonElement> entry : toolSaver.getObject("exclusions")) {
 				JsonObject exclusion = new JsonObject();
-				exclusion.addProperty("nbt", entry.getKey());
-				exclusion.add("name", entry.getValue());
+				exclusion.add("nbt", entry.getValue());
+				exclusion.addProperty("name", entry.getKey());
 				newExclusions.add(exclusion);
 			}
 

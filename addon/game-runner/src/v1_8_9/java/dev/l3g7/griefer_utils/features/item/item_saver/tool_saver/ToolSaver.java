@@ -43,7 +43,6 @@ import static net.minecraft.util.MovingObjectPosition.MovingObjectType.BLOCK;
  */
 @Bridge
 @Singleton
-@ExclusiveTo(LABY_4)
 public class ToolSaver extends Feature {
 
 	private final NumberSetting damage = NumberSetting.create()

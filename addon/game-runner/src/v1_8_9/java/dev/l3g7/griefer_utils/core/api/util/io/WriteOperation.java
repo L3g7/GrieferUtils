@@ -9,7 +9,10 @@ package dev.l3g7.griefer_utils.core.api.util.io;
 
 import dev.l3g7.griefer_utils.core.api.util.Util;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -81,9 +84,31 @@ public abstract class WriteOperation {
 			if (parent != null)
 				Files.createDirectories(parent);
 
-			return Files.newOutputStream(path, WRITE, CREATE, TRUNCATE_EXISTING);
+			FileChannel channel = FileChannel.open(path, WRITE, CREATE, TRUNCATE_EXISTING);
+			return new OutputStream() {
+
+				@Override
+				public void write(int b) throws IOException {
+					write(new byte[] {(byte) b}, 0, 1);
+				}
+
+				@Override
+				public void write(byte[] b, int off, int len) throws IOException {
+					ByteBuffer buf = ByteBuffer.wrap(b, off, len);
+					while (buf.hasRemaining())
+						channel.write(buf);
+				}
+
+				@Override
+				public void close() throws IOException {
+					try {
+						channel.force(true); // flush OS file buffer
+					} finally {
+						channel.close();
+					}
+				}
+			};
 		}
 	}
-
 
 }

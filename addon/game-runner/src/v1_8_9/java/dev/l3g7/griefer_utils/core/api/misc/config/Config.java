@@ -17,10 +17,8 @@ import java.io.IOException;
 import java.nio.file.*;
 
 import static dev.l3g7.griefer_utils.core.api.util.ArrayUtil.last;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static java.nio.file.StandardOpenOption.*;
 
 /**
  * A class handling access and storage of the configuration.
@@ -109,11 +107,8 @@ public class Config {
 				if (json.hashCode() == hash)
 					return;
 
-				// Write to newConfigFile
 				hash = json.hashCode();
-				do {
-					IO.write(newConfigFile).value(json);
-				} while (IO.read(newConfigFile).asString().hashCode() != hash);
+				IO.write(newConfigFile).value(json);
 
 				// Move newConfigFile to configFile
 				try {
@@ -123,9 +118,8 @@ public class Config {
 						Files.move(newConfigFile, configFile, REPLACE_EXISTING);
 					}
 				} catch (AccessDeniedException e) {
-					// TODO: cleanup
-					//noinspection ReadWriteStringCanBeUsed
-					Files.write(configFile, json.getBytes(UTF_8), WRITE, TRUNCATE_EXISTING, CREATE);
+					// Move failed, e.g. because the file is locked
+					IO.write(newConfigFile).value(json);
 					try {
 						Files.deleteIfExists(newConfigFile);
 					} catch (IOException ignored) {}

@@ -9,6 +9,7 @@ package dev.l3g7.griefer_utils.labymod.laby3.settings.types.list;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import dev.l3g7.griefer_utils.core.api.event_bus.EventRegisterer;
 import dev.l3g7.griefer_utils.core.api.misc.primitives.functions.Consumer;
 import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.settings.types.CategorySetting;
@@ -18,9 +19,17 @@ import dev.l3g7.griefer_utils.labymod.laby3.settings.Laby3Setting;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.EntryAddSettingImpl;
 import dev.l3g7.griefer_utils.labymod.laby3.settings.types.ListEntrySetting;
 import dev.l3g7.griefer_utils.labymod.laby3.util.AddonsGuiWithCustomBackButton;
+import net.labymod.ingamegui.ModuleGui;
+import net.labymod.settings.LabyModModuleEditorGui;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.item.ItemStack;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,7 +175,7 @@ public class ListSettingImpl<E extends ListEntry> extends ControlElement impleme
 		return new DisplaySetting<>(this, entry);
 	}
 
-	protected static class DisplaySetting<E extends ListEntry> extends ListEntrySetting {
+	public static class DisplaySetting<E extends ListEntry> extends ListEntrySetting {
 
 		private final ListSettingImpl<E> parent;
 		protected final E data;
@@ -177,6 +186,7 @@ public class ListSettingImpl<E extends ListEntry> extends ControlElement impleme
 			this.parent = parent;
 			data = entry;
 			build();
+			EventRegisterer.registerWeak(this);
 		}
 
 		public void build() {
@@ -215,8 +225,26 @@ public class ListSettingImpl<E extends ListEntry> extends ControlElement impleme
 		protected void openSettings() {
 			if (parent.customEdit != null)
 				parent.customEdit.accept(data);
-			else
+			else if (mc.currentScreen instanceof LabyModModuleEditorGui gui) {
+				Reflection.set(gui, "searchedString", "");
+				Reflection.<List<SettingsElement>>get(gui, "path").add(this);
+				Reflection.<ModuleGui>get(gui.getClass(), "moduleGui").setFocusedModule(null);
+				mc.currentScreen.initGui();
+			} else {
 				mc.displayGuiScreen(new AddonsGuiWithCustomBackButton(parent::notifyChange, this));
+			}
+		}
+
+		@Mixin(LabyModModuleEditorGui.class)
+		public static class LabyModModuleEditorGuiMixin {
+			@Shadow
+			private List<SettingsElement> path;
+
+			@Inject(method = "actionPerformed", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"))
+			void asD(GuiButton button, CallbackInfo ci) {
+				if (!this.path.isEmpty() && path.get(path.size() - 1) instanceof DisplaySetting<?> setting)
+						setting.parent.notifyChange();
+			}
 		}
 
 	}

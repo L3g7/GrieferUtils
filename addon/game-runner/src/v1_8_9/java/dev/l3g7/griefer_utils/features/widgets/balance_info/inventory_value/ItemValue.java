@@ -35,7 +35,7 @@ public class ItemValue implements ListEntry {
 
 	protected final NumberSetting value = NumberSetting.create()
 		.name("Wert")
-		.icon("coin_pile");
+		.icon("coin");
 
 	ItemValue() {}
 
@@ -125,7 +125,7 @@ public class ItemValue implements ListEntry {
 
 	@Override
 	public String subtext() {
-		return DECIMAL_FORMAT_98.format(value) + "$";
+		return DECIMAL_FORMAT_98.format(value.get()) + "$";
 	}
 
 }

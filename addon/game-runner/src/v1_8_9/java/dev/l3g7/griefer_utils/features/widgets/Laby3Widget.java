@@ -15,6 +15,7 @@ import dev.l3g7.griefer_utils.core.api.reflection.Reflection;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnEnable;
 import dev.l3g7.griefer_utils.core.events.annotation_events.OnStartupComplete;
 import dev.l3g7.griefer_utils.core.misc.ServerCheck;
+import dev.l3g7.griefer_utils.core.settings.BaseSetting;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader;
 import dev.l3g7.griefer_utils.core.settings.SettingLoader.MainElementData;
 import dev.l3g7.griefer_utils.core.settings.types.HeaderSetting;
@@ -119,6 +120,11 @@ public abstract class Laby3Widget extends SimpleTextModule implements Disableabl
 			for (SettingsElement elem : elems)
 				if (((ControlElement) elem).getModule() == null)
 					Reflection.set(elem, "module", stylingModule);
+
+			for (SettingsElement root : elems)
+				for (SettingsElement elem : root.getSubSettings().getElements())
+					if (elem instanceof BaseSetting<?> s)
+						s.create(root);
 		}
 	};
 

@@ -70,7 +70,7 @@ public class ChatCleanup extends Feature {
 			antiClearChat, removeSupremeSpaces, removeStreamerNotifications, removeLuckyBlock, removeCaseOpening, removeBroadcast,
 			CleanupHeroHighlights.enabled, CleanupColoredFont.enabled,
 			HeaderSetting.create(),
-			news
+			news, CleanupStatus.displayType
 		);
 
 	private boolean isNews = false;

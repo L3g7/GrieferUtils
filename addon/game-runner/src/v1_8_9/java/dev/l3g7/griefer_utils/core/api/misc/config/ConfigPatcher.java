@@ -64,7 +64,7 @@ public class ConfigPatcher {
 			new To2_4_BETA_5(),
 			new To2_4_8_BETA_1(),
 			new To2_4_8_BETA_8(),
-			new Cleanup()
+			// new Cleanup()
 		};
 
 		for (var patch : patches) {

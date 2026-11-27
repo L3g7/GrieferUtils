@@ -121,7 +121,7 @@ public abstract class PieMenu extends Gui implements Disableable {
 		double distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 		double cursorX = midX - offsetX * 1.5;
 		double cursorY = midY - offsetY * 1.5;
-		DrawUtils.drawCenteredString(name(), midX += offsetX, (midY += offsetY) - radius / 2.5, radius / 70);
+		DrawUtils.drawCenteredString(name(), midX += offsetX, (midY += offsetY) - radius / 2.5);
 
 
 		long timePassed = System.currentTimeMillis() - selectionStarted;
@@ -155,9 +155,9 @@ public abstract class PieMenu extends Gui implements Disableable {
 		DrawUtils.drawRect(cursorX, cursorY - 4, cursorX + 1, cursorY + 5, MAX_VALUE);
 		DrawUtils.drawRect(cursorX - 4, cursorY, cursorX + 5, cursorY + 1, MAX_VALUE);
 
-		DrawUtils.drawCenteredString(currentPage.getKey(), midX, midY + radius * 1.25, radius / 70);
+		DrawUtils.drawCenteredString(currentPage.getKey(), midX, midY + radius * 1.25);
 		int currentPage = allPages.size() == 0 ? 0 : page + 1;
-		DrawUtils.drawCenteredString(currentPage + "/" + allPages.size(), midX, midY + radius * 1.25 + radius / 7, radius / 70);
+		DrawUtils.drawCenteredString(currentPage + "/" + allPages.size(), midX, midY + radius * 1.25 + radius / 7);
 	}
 
 	@SuppressWarnings("DuplicateExpressions")
@@ -192,13 +192,13 @@ public abstract class PieMenu extends Gui implements Disableable {
 		RenderUtil.glColor(new Color(hover ? 0x33FF33 : 0x3BB3FF));
 
 		if (finalDestX - midX > -10 && finalDestX - midX < 10) {
-			DrawUtils.drawTexture(x - textureWidth / 2, y - 13, 256, 256, textureWidth, textureHeight);
+			DrawUtils.drawTexture(x - textureWidth / 2, y - 13, 256, 256, textureWidth, textureHeight, Float.NaN);
 			drawOptionTag(entry.getKey(), x, y, hover, radius, 0);
 		} else if (finalDestX > midX) {
-			DrawUtils.drawTexture(x - 13 * size, y, 256, 256, textureWidth, textureHeight);
+			DrawUtils.drawTexture(x - 13 * size, y, 256, 256, textureWidth, textureHeight, Float.NaN);
 			drawOptionTag(entry.getKey(), x, y, hover, radius, 1);
 		} else {
-			DrawUtils.drawTexture(x + 4, y, 256, 256, textureWidth, textureHeight);
+			DrawUtils.drawTexture(x + 4, y, 256, 256, textureWidth, textureHeight, Float.NaN);
 			drawOptionTag(entry.getKey(), x, y, hover, radius, -1);
 		}
 
